@@ -1,0 +1,24 @@
+{
+  "name": "@wix/astro-ricos",
+  "type": "module",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "yarn astro dev",
+    "build": "yarn astro build",
+    "preview": "yarn astro preview",
+    "astro": "yarn run -T astro --root ./packages/astro-ricos"
+  },
+  "peerDependencies": {
+    "@wix/sdk": "^1.15.9",
+    "astro": "^5.1.8"
+  },
+  "devDependencies": {
+    "@astrojs/react": "^4.1.6",
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
+    "@wix/ricos": "^10.116.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}
