@@ -1,8 +1,10 @@
 {
   "name": "@wix/astro-ricos",
   "type": "module",
-  "version": "0.0.1",
-  "main": "index.ts",
+  "version": "1.0.0",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "dev": "yarn astro dev",
     "build": "yarn astro build",
