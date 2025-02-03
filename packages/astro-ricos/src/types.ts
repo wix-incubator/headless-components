@@ -11,9 +11,9 @@ export enum DecorationType {
 }
 
 export enum RicosAlignment {
-  LEFT = "left",
-  CENTER = "center",
-  RIGHT = "right",
+  LEFT = "LEFT",
+  CENTER = "CENTER",
+  RIGHT = "RIGHT",
 }
 
 export enum RicosNodeType {
@@ -105,7 +105,7 @@ export type RicosNode = {
   style?: { paddingTop?: string; paddingBottom?: string };
   paragraphData?: { textStyle?: TextStyle; indentation?: number };
   blockquoteData?: { indentation?: number };
-  nodes?: RicosNode[];
+  nodes: RicosNode[];
   imageData?: {
     image: MediaData;
     containerData: ContainerData;
