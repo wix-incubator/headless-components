@@ -26,17 +26,17 @@
     "@astrojs/underscore-redirects": "^0.4.0",
     "@cloudflare/kv-asset-handler": "^0.3.4",
     "@cloudflare/workers-types": "^4.20241224.0",
-    "@wix/sdk": "^1.15.7",
+    "@wix/sdk": "^1.15.9",
     "esm-resolve": "^1.0.11",
     "globby": "^14.0.2",
     "magic-string": "^0.30.17"
   },
   "peerDependencies": {
-    "astro": "^5.1.1"
+    "astro": "^5.1.8"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
-    "astro": "^5.1.1",
+    "astro": "^5.1.8",
     "typescript": "^5.7.3"
   }
 }
