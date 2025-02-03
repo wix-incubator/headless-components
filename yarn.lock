@@ -2293,14 +2293,14 @@ __metadata:
     "@astrojs/react": "npm:^4.1.6"
     "@types/react": "npm:^18.0.8"
     "@types/react-dom": "npm:^18.0.3"
-    "@wix/astro-ricos": "workspace:*"
+    "@wix/astro-ricos": "npm:0.0.1"
     "@wix/ricos": "npm:^10.116.1"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
   languageName: unknown
   linkType: soft
 
-"@wix/astro-ricos@workspace:*, @wix/astro-ricos@workspace:packages/astro-ricos":
+"@wix/astro-ricos@npm:0.0.1, @wix/astro-ricos@workspace:packages/astro-ricos":
   version: 0.0.0-use.local
   resolution: "@wix/astro-ricos@workspace:packages/astro-ricos"
   dependencies:
