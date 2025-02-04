@@ -1726,6 +1726,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/astro-blog-loader@workspace:packages/astro-blog-loader":
+  version: 0.0.0-use.local
+  resolution: "@wix/astro-blog-loader@workspace:packages/astro-blog-loader"
+  dependencies:
+    "@wix/blog": "npm:^1.0.340"
+    "@wix/sdk": "npm:^1.15.9"
+  peerDependencies:
+    astro: ^5.1.8
+    typescript: ^5.7.3
+  languageName: unknown
+  linkType: soft
+
 "@wix/astro-ricos-app@workspace:packages/astro-ricos-app":
   version: 0.0.0-use.local
   resolution: "@wix/astro-ricos-app@workspace:packages/astro-ricos-app"
@@ -1770,6 +1782,80 @@ __metadata:
     astro: ^5.1.8
   languageName: unknown
   linkType: soft
+
+"@wix/blog@npm:^1.0.340":
+  version: 1.0.344
+  resolution: "@wix/blog@npm:1.0.344"
+  dependencies:
+    "@wix/blog_blog-cache": "npm:1.0.13"
+    "@wix/blog_blog-importer": "npm:1.0.27"
+    "@wix/blog_categories": "npm:1.0.59"
+    "@wix/blog_draft-posts": "npm:1.0.60"
+    "@wix/blog_posts": "npm:1.0.69"
+    "@wix/blog_tags": "npm:1.0.67"
+  checksum: 10c0/409d2e6f1be6c1a20c1f98461b5658077a9304aa87e78d1d5eb5cf2a72a5c6d39116fc03b8c0a349dc96aa0753de844999d53acda6c937f8ad0bc5c2874beb1e
+  languageName: node
+  linkType: hard
+
+"@wix/blog_blog-cache@npm:1.0.13":
+  version: 1.0.13
+  resolution: "@wix/blog_blog-cache@npm:1.0.13"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.22"
+    "@wix/sdk-types": "npm:^1.12.4"
+  checksum: 10c0/8e5c74fffec78e0177d73d969ba352f80de82f9b6ffd8328ad779acf0540313b8c5551a3a55d31e9eb5f08b37c57d0ad7fe375e79d86d0370ecdc428c9b98e5e
+  languageName: node
+  linkType: hard
+
+"@wix/blog_blog-importer@npm:1.0.27":
+  version: 1.0.27
+  resolution: "@wix/blog_blog-importer@npm:1.0.27"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.22"
+    "@wix/sdk-types": "npm:^1.12.4"
+  checksum: 10c0/fb1e69e2d517329bc881997a1762552554f6362fc47856b92637a7481257bb1c1dc96643b936f00091a999dbe330c2e755a5a224021df764fe3f30475835c3f0
+  languageName: node
+  linkType: hard
+
+"@wix/blog_categories@npm:1.0.59":
+  version: 1.0.59
+  resolution: "@wix/blog_categories@npm:1.0.59"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.22"
+    "@wix/sdk-types": "npm:^1.12.4"
+  checksum: 10c0/aa147dd695472fd503a10a215dcbed0264cd70d1cc1b6fcce434970fdafd22bf2e0ee90cc8c351af8ffc7a6b00150bc5e2dc075a3fae3cdbd79324222bd4d3dd
+  languageName: node
+  linkType: hard
+
+"@wix/blog_draft-posts@npm:1.0.60":
+  version: 1.0.60
+  resolution: "@wix/blog_draft-posts@npm:1.0.60"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.22"
+    "@wix/sdk-types": "npm:^1.12.4"
+  checksum: 10c0/1091db9709bd825d859320447f96d8fccd7e107ddcd6b387bb9ff39cf18bba25c8e5e7b2b0104e3c51832312f6220424ae5f9cfc7bb6bad735c069713f7282c5
+  languageName: node
+  linkType: hard
+
+"@wix/blog_posts@npm:1.0.69":
+  version: 1.0.69
+  resolution: "@wix/blog_posts@npm:1.0.69"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.22"
+    "@wix/sdk-types": "npm:^1.12.4"
+  checksum: 10c0/ca18470d3d2c7cea56f5cec42a8800269d102cbb466c4c30bed6ee4a772608ec2108497537d26c8c1a93d9f97e82b037281e98fc2029465dcbb5fbf3ea4b8a6e
+  languageName: node
+  linkType: hard
+
+"@wix/blog_tags@npm:1.0.67":
+  version: 1.0.67
+  resolution: "@wix/blog_tags@npm:1.0.67"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.22"
+    "@wix/sdk-types": "npm:^1.12.4"
+  checksum: 10c0/41161b5ccd5aa56449a7338bde3e01ecdfa90e462c4bb7fc6ee511da1268f7306a9d71ccf37d0285efde6256f4a8ae564b62bb5512e8fc99a68532b31cceb4d6
+  languageName: node
+  linkType: hard
 
 "@wix/design-system-tokens@npm:^1.71.0":
   version: 1.71.0
