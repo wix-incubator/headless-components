@@ -1,0 +1,23 @@
+{
+  "name": "@wix/astro-ricos",
+  "type": "module",
+  "version": "0.0.1",
+  "exports": {
+    ".": "./dist/components/RicosViewer.astro"
+  },
+  "scripts": {
+    "build": "yarn run -T tsc --project packages/astro-ricos && cp -r src/components dist/"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@wix/sdk": "^1.15.9"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "peerDependencies": {
+    "astro": "^5.1.8"
+  }
+}
