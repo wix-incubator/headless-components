@@ -26,7 +26,7 @@ enum PostFieldField {
   CONTENT_TEXT = "CONTENT_TEXT",
 }
 
-export function wixBlogLoader(): Loader {
+export function wixBlogLoader(transform = (item) => item): Loader {
   return {
     name: "wix-blog-loader",
     load: async (context: LoaderContext) => {
@@ -38,17 +38,17 @@ export function wixBlogLoader(): Loader {
         .find();
 
       for (const item of items) {
-        const data = {
+        const data = transform({
           ...item,
           ...(item.media?.wixMedia?.image && {
             mediaUrl: media.getImageUrl(item.media?.wixMedia?.image).url,
           }),
-        };
+        });
 
         const digest = context.generateDigest(data);
 
         context.store.set({
-          id: item._id as string,
+          id: data.id,
           data,
           digest,
           rendered: {
