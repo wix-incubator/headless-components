@@ -3,18 +3,18 @@ import { createClient, media, OAuthStrategy } from "@wix/sdk";
 import type { Loader, LoaderContext } from "astro/loaders";
 
 const getWixClient = () => {
-  const { PUBLIC_WIX_CLIENT_ID } = import.meta.env;
+  const { WIX_CLIENT_ID } = import.meta.env;
 
-  if (!PUBLIC_WIX_CLIENT_ID) {
+  if (!WIX_CLIENT_ID) {
     throw new Error(
-      `❌ Wix Client ID is missing! Please create an ".env.local" file with PUBLIC_WIX_CLIENT_ID.`
+      `❌ Wix Client ID is missing! Please create an ".env.local" file with WIX_CLIENT_ID.`
     );
   }
 
   const wixClient = createClient({
     modules: { posts },
     auth: OAuthStrategy({
-      clientId: PUBLIC_WIX_CLIENT_ID,
+      clientId: WIX_CLIENT_ID,
     }),
   });
 
