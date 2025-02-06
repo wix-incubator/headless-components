@@ -1726,18 +1726,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/astro-blog-loader@workspace:packages/astro-blog-loader":
-  version: 0.0.0-use.local
-  resolution: "@wix/astro-blog-loader@workspace:packages/astro-blog-loader"
-  dependencies:
-    "@wix/blog": "npm:^1.0.340"
-    "@wix/sdk": "npm:^1.15.9"
-  peerDependencies:
-    astro: ^5.1.8
-    typescript: ^5.7.3
-  languageName: unknown
-  linkType: soft
-
 "@wix/astro-ricos-app@workspace:packages/astro-ricos-app":
   version: 0.0.0-use.local
   resolution: "@wix/astro-ricos-app@workspace:packages/astro-ricos-app"
@@ -1772,6 +1760,7 @@ __metadata:
     "@cloudflare/kv-asset-handler": "npm:^0.3.4"
     "@cloudflare/workers-types": "npm:^4.20241224.0"
     "@types/node": "npm:^20.9.0"
+    "@wix/blog": "npm:^1.0.345"
     "@wix/sdk": "npm:^1.15.9"
     astro: "npm:^5.1.8"
     esm-resolve: "npm:^1.0.11"
@@ -1783,17 +1772,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/blog@npm:^1.0.340":
-  version: 1.0.344
-  resolution: "@wix/blog@npm:1.0.344"
+"@wix/blog@npm:^1.0.345":
+  version: 1.0.345
+  resolution: "@wix/blog@npm:1.0.345"
   dependencies:
     "@wix/blog_blog-cache": "npm:1.0.13"
     "@wix/blog_blog-importer": "npm:1.0.27"
     "@wix/blog_categories": "npm:1.0.59"
-    "@wix/blog_draft-posts": "npm:1.0.60"
+    "@wix/blog_draft-posts": "npm:1.0.61"
     "@wix/blog_posts": "npm:1.0.69"
     "@wix/blog_tags": "npm:1.0.67"
-  checksum: 10c0/409d2e6f1be6c1a20c1f98461b5658077a9304aa87e78d1d5eb5cf2a72a5c6d39116fc03b8c0a349dc96aa0753de844999d53acda6c937f8ad0bc5c2874beb1e
+  checksum: 10c0/9596066339d69cc2f7ad0df0bccd4a84e1dcafeb8a098fb103151760d52f82056e546a6f70bfed55010d477ded165ba5b915255f9cc6b70f6e489a8315eb1786
   languageName: node
   linkType: hard
 
@@ -1827,13 +1816,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/blog_draft-posts@npm:1.0.60":
-  version: 1.0.60
-  resolution: "@wix/blog_draft-posts@npm:1.0.60"
+"@wix/blog_draft-posts@npm:1.0.61":
+  version: 1.0.61
+  resolution: "@wix/blog_draft-posts@npm:1.0.61"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.3.22"
     "@wix/sdk-types": "npm:^1.12.4"
-  checksum: 10c0/1091db9709bd825d859320447f96d8fccd7e107ddcd6b387bb9ff39cf18bba25c8e5e7b2b0104e3c51832312f6220424ae5f9cfc7bb6bad735c069713f7282c5
+  checksum: 10c0/0ced4d726dc00442b5fe9ee799c25c00b6ebf7c5aff15f1166ce563b09762492368d7f79a6167a701a14c89f2c2b317988b24ca01a6354b772fb8e6995f9861b
   languageName: node
   linkType: hard
 
