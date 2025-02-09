@@ -1,4 +1,4 @@
-import { posts } from "@wix/blog";
+import { categories, posts, tags } from "@wix/blog";
 import { createClient, media, OAuthStrategy } from "@wix/sdk";
 import type { Loader, LoaderContext } from "astro/loaders";
 
@@ -12,7 +12,7 @@ const getWixClient = () => {
   }
 
   const wixClient = createClient({
-    modules: { posts },
+    modules: { posts, categories, tags },
     auth: OAuthStrategy({
       clientId: WIX_CLIENT_ID,
     }),
@@ -36,13 +36,27 @@ export function wixBlogLoader(transform = (item: any) => item): Loader {
           fieldsets: [PostFieldField.RICH_CONTENT, PostFieldField.CONTENT_TEXT],
         })
         .find();
+      const useCategories = getWixClient().use(categories);
+      const useTags = getWixClient().use(tags);
 
       for (const item of items) {
+        const categories = await Promise.all(
+          (item.categoryIds || []).map(async (categoryId) => {
+            const { category } = await useCategories.getCategory(categoryId);
+            return category;
+          })
+        );
+        const { items: tags } = await useTags.queryTags().find();
+
         const data = transform({
           ...item,
+
+          // Additions
           ...(item.media?.wixMedia?.image && {
             mediaUrl: media.getImageUrl(item.media?.wixMedia?.image).url,
           }),
+          categories,
+          tags,
         });
 
         const digest = context.generateDigest(data);
