@@ -77,17 +77,6 @@ export function createIntegration(): AstroIntegration {
               // not sure if it's necessary to inject the Wix SDK context into the client bundle
               // wixSDKContext(),
             ],
-            environments: {
-              wixManifest: {
-                build: {
-                  lib: {
-                    entry: "src/wix/index",
-                    formats: ["iife"],
-                    name: "wixManifest",
-                  },
-                },
-              },
-            },
           },
           image: {
             service: passthroughImageService(),
