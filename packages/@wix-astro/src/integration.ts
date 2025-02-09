@@ -11,6 +11,9 @@ import { buildResolver } from "esm-resolve";
 import { fileURLToPath } from "node:url";
 
 import { wixBlogLoader } from "./loaders/blog.js";
+import { loadEnv } from "vite";
+import chalk from "chalk";
+import { outdent } from "outdent";
 export { wixBlogLoader };
 
 export type { Runtime } from "./entrypoints/server.js";
@@ -21,7 +24,12 @@ export function createIntegration(): AstroIntegration {
   return {
     name: "@wix/astro",
     hooks: {
-      "astro:config:setup": async ({ config, updateConfig, addMiddleware }) => {
+      "astro:config:setup": async ({
+        config,
+        updateConfig,
+        addMiddleware,
+        logger,
+      }) => {
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
           resolveToAbsolute: true,
         });
@@ -31,6 +39,37 @@ export function createIntegration(): AstroIntegration {
           order: "pre",
         });
 
+        const userEnv = loadEnv(
+          process.env["NODE_ENV"] ?? "development",
+          process.cwd(),
+          ""
+        );
+
+        if (!userEnv["WIX_CLIENT_ID"]) {
+          logger.error(
+            outdent`
+            Missing environment variable ${chalk.blueBright(`WIX_CLIENT_ID`)}
+            To use the Wix SDK, you must provide the ${chalk.blueBright(
+              "WIX_CLIENT_ID"
+            )} environment variable.
+
+            💡 To pull the required environment variables from Wix, run:
+              ${chalk.magenta("npx wix edge pull-env --prod")}
+
+            🔍 Need Help?
+            - Visit our docs: https://dev.wix.com/docs/go-headless
+            - Join the community: https://discord.com/channels/1114269395317968906/1288424190969511987
+
+              `
+          );
+
+          throw new Error(
+            `${chalk.magenta(
+              `WIX_CLIENT_ID`
+            )} not found in loaded environment variables`
+          );
+        }
+
         updateConfig({
           env: {
             schema: {
@@ -38,7 +77,6 @@ export function createIntegration(): AstroIntegration {
                 type: "string",
                 access: "public",
                 context: "client",
-                optional: true,
               },
               WIX_CLIENT_SECRET: {
                 type: "string",
