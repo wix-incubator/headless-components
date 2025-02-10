@@ -1,7 +1,7 @@
 {
   "name": "@wix/astro",
   "description": "Develop your Astro site on the Wix Platform",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -28,6 +28,8 @@
     "@cloudflare/kv-asset-handler": "^0.3.4",
     "@cloudflare/workers-types": "^4.20241224.0",
     "@wix/blog": "^1.0.345",
+    "@wix/data": "^1.0.194",
+    "@wix/pricing-plans": "^1.0.121",
     "@wix/sdk": "^1.15.9",
     "chalk": "^5.4.1",
     "esm-resolve": "^1.0.11",

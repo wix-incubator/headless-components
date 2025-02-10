@@ -1,25 +1,7 @@
-import { posts } from "@wix/blog";
-import { createClient, media, OAuthStrategy } from "@wix/sdk";
+import { categories, posts, tags } from "@wix/blog";
+import { media } from "@wix/sdk";
 import type { Loader, LoaderContext } from "astro/loaders";
-
-const getWixClient = () => {
-  const { WIX_CLIENT_ID } = import.meta.env;
-
-  if (!WIX_CLIENT_ID) {
-    throw new Error(
-      `❌ Wix Client ID is missing! Please create an ".env.local" file with WIX_CLIENT_ID.`
-    );
-  }
-
-  const wixClient = createClient({
-    modules: { posts },
-    auth: OAuthStrategy({
-      clientId: WIX_CLIENT_ID,
-    }),
-  });
-
-  return wixClient;
-};
+import { getWixClient } from "../client.js";
 
 enum PostFieldField {
   RICH_CONTENT = "RICH_CONTENT",
@@ -36,13 +18,27 @@ export function wixBlogLoader(transform = (item: any) => item): Loader {
           fieldsets: [PostFieldField.RICH_CONTENT, PostFieldField.CONTENT_TEXT],
         })
         .find();
+      const useCategories = getWixClient().use(categories);
+      const useTags = getWixClient().use(tags);
 
       for (const item of items) {
+        const categories = await Promise.all(
+          (item.categoryIds || []).map(async (categoryId) => {
+            const { category } = await useCategories.getCategory(categoryId);
+            return category;
+          })
+        );
+        const { items: tags } = await useTags.queryTags().find();
+
         const data = transform({
           ...item,
+
+          // Additions
           ...(item.media?.wixMedia?.image && {
             mediaUrl: media.getImageUrl(item.media?.wixMedia?.image).url,
           }),
+          categories,
+          tags,
         });
 
         const digest = context.generateDigest(data);
