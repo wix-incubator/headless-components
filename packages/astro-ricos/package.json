@@ -1,7 +1,7 @@
 {
   "name": "@wix/astro-ricos",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "exports": {
     ".": "./dist/components/RicosViewer.astro"
   },
