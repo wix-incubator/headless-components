@@ -2,6 +2,9 @@ import { renderNodeStyle, renderTextStyle } from "./styles.js";
 import { DecorationType, type RicosNode, RicosNodeType } from "./types.js";
 import { renderTag } from "./utils.js";
 
+const getId = (object: { _id: string } | { id: string }): string =>
+  "_id" in object ? object._id : object.id; // TODO: remove when all IDs are aligned to "id"
+
 const renderSpanNode = (node: RicosNode): string =>
   renderTag({
     tag: "span",
@@ -135,7 +138,7 @@ const renderNode = {
     renderTag({
       tag: "p",
       children: renderRicosNode(node.nodes),
-      attributes: { id: node.id },
+      attributes: { id: getId(node) },
       style: {
         ...(node.style && renderNodeStyle(node.style)),
         ...(node.paragraphData && renderTextStyle(node.paragraphData)),
@@ -246,7 +249,7 @@ const renderNode = {
   [RicosNodeType.IMAGE]: (node: RicosNode, helpers: any) => {
     const { src, width, height } = node.imageData!.image;
     const imageUrl = helpers.media.getImageUrl(
-      `https://static.wixstatic.com/media/${src.id}`
+      `https://static.wixstatic.com/media/${getId(src)}`
     ).url;
     const alignment = node.imageData?.containerData.alignment.toLowerCase();
     const caption = renderRicosNode(node.nodes!, helpers);
@@ -305,15 +308,15 @@ const renderNode = {
         children: `
         <iframe
          loading="lazy"
-          src="https://www.youtube.com/embed/${youtubeId}?autoplay=0" 
-          frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" 
+          src="https://www.youtube.com/embed/${youtubeId}?autoplay=0"
+          frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen aria-label="Embedded YouTube video">
         </iframe>
       `,
       });
     } else {
       const videoUrl = helpers.media.getVideoUrl(
-        `https://video.wixstatic.com/${src.id}`
+        `https://video.wixstatic.com/${getId(src)}`
       ).url;
       return renderTag({
         tag: "figure",
