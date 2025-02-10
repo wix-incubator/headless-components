@@ -1,25 +1,7 @@
 import { categories, posts, tags } from "@wix/blog";
-import { createClient, media, OAuthStrategy } from "@wix/sdk";
+import { media } from "@wix/sdk";
 import type { Loader, LoaderContext } from "astro/loaders";
-
-const getWixClient = () => {
-  const { WIX_CLIENT_ID } = import.meta.env;
-
-  if (!WIX_CLIENT_ID) {
-    throw new Error(
-      `❌ Wix Client ID is missing! Please create an ".env.local" file with WIX_CLIENT_ID.`
-    );
-  }
-
-  const wixClient = createClient({
-    modules: { posts, categories, tags },
-    auth: OAuthStrategy({
-      clientId: WIX_CLIENT_ID,
-    }),
-  });
-
-  return wixClient;
-};
+import { getWixClient } from "../client.js";
 
 enum PostFieldField {
   RICH_CONTENT = "RICH_CONTENT",
