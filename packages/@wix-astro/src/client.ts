@@ -1,9 +1,10 @@
 import { categories, posts, tags } from "@wix/blog";
 import { items } from "@wix/data";
+import { plans } from "@wix/pricing-plans";
 import { createClient, OAuthStrategy } from "@wix/sdk";
 
 export const getWixClient = (
-  { modules } = { modules: { items, posts, categories, tags } }
+  { modules } = { modules: { items, posts, categories, tags, plans } }
 ) => {
   const { WIX_CLIENT_ID } = import.meta.env;
 
