@@ -1795,7 +1795,6 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@wix/blog": "npm:^1.0.345"
     "@wix/data": "npm:^1.0.194"
-    "@wix/pricing-plans": "npm:^1.0.121"
     "@wix/sdk": "npm:^1.15.9"
     chalk: "npm:^5.4.1"
     esm-resolve: "npm:^1.0.11"
@@ -2292,36 +2291,6 @@ __metadata:
   version: 0.5.0
   resolution: "@wix/monitoring-types@npm:0.5.0"
   checksum: 10c0/0a5cb43c443cef12f9b1cabb50147b02abe5950b16e004d6fca0a8a43602c0c850a8298a48f67b5f448b983bf4bd003fbd0767126066ce5c9684e7b21601de0a
-  languageName: node
-  linkType: hard
-
-"@wix/pricing-plans@npm:^1.0.121":
-  version: 1.0.121
-  resolution: "@wix/pricing-plans@npm:1.0.121"
-  dependencies:
-    "@wix/pricing-plans_orders": "npm:1.0.62"
-    "@wix/pricing-plans_plans": "npm:1.0.54"
-  checksum: 10c0/f343676cb27199ab1a38070f457c7061a6681090784708fc7357278fa81e5203ecd76aada7a420248319e2708bfe366ecef4e60222ae4933102d65920eb4b819
-  languageName: node
-  linkType: hard
-
-"@wix/pricing-plans_orders@npm:1.0.62":
-  version: 1.0.62
-  resolution: "@wix/pricing-plans_orders@npm:1.0.62"
-  dependencies:
-    "@wix/sdk-runtime": "npm:^0.3.22"
-    "@wix/sdk-types": "npm:^1.12.4"
-  checksum: 10c0/d556db998164ff604de061358384587166c36390c5122ec478c7246eac905fafae81af04c57196552499d0db227b12219132fa2e32dc11cd81e3548755979f5e
-  languageName: node
-  linkType: hard
-
-"@wix/pricing-plans_plans@npm:1.0.54":
-  version: 1.0.54
-  resolution: "@wix/pricing-plans_plans@npm:1.0.54"
-  dependencies:
-    "@wix/sdk-runtime": "npm:^0.3.22"
-    "@wix/sdk-types": "npm:^1.12.4"
-  checksum: 10c0/b0195128c61bb9aa7c31257b97e55259f46769dcb6a6b613df650420156d4aebbef432398c41afde5904b2c65ec1c27c5c8ba3711b8a8dd6e20f1b533496a978
   languageName: node
   linkType: hard
 
