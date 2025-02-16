@@ -54,7 +54,7 @@ export function createIntegration(): AstroIntegration {
             )} environment variable.
 
             💡 To pull the required environment variables from Wix, run:
-              ${chalk.magenta("npx wix edge pull-env --prod")}
+              ${chalk.magenta("npx wix edge pull-env local")}
 
             🔍 Need Help?
             - Visit our docs: https://dev.wix.com/docs/go-headless
