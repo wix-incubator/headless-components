@@ -5,11 +5,11 @@ import { createClient, OAuthStrategy } from "@wix/sdk";
 export const getWixClient = (
   { modules } = { modules: { items, posts, categories, tags } }
 ) => {
-  const { WIX_CLIENT_ID, ENV_NAME } = import.meta.env;
+  const { WIX_CLIENT_ID } = import.meta.env;
 
   if (!WIX_CLIENT_ID) {
     throw new Error(
-      `❌ Wix Client ID is missing on '${ENV_NAME}'! Please create an ".env.local" file with WIX_CLIENT_ID.\nRun: npx wix edge env --env local pull`
+      `❌ Wix Client ID is missing! Please create an ".env.local" file with WIX_CLIENT_ID.`
     );
   }
 

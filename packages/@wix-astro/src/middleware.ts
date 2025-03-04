@@ -7,7 +7,7 @@ import {
 } from "@wix/sdk";
 import type { MiddlewareHandler } from "astro";
 import { z } from "astro/zod";
-import { WIX_CLIENT_ID, ENV_NAME } from "astro:env/client";
+import { WIX_CLIENT_ID } from "astro:env/client";
 import { defineMiddleware } from "astro:middleware";
 import { AsyncLocalStorage } from "node:async_hooks";
 
@@ -107,7 +107,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   } else {
     console.warn(
       `
-      No Wix client ID found in the environment ${ENV_NAME}. Wix APIs will not be available.
+      No Wix client ID found in the environment. Wix APIs will not be available.
       `
     );
     response = await next();
