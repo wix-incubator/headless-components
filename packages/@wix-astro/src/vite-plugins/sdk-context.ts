@@ -48,6 +48,8 @@ export function wixSDKContext(): Plugin {
           import { createClient } from "${wixSDKResolved}";
           import { OAuthStrategy } from "${wixSDKAuthResolved}";
 
+          const WIXSTRO_DA_BEST_ENV_NAME = "${process.env["ENV_NAME"]}";
+
           function getCookie(name) {
             // To prevent the for loop in the first place assign an empty array
             // in case there are no cookies at all.

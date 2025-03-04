@@ -14,6 +14,7 @@ import { wixBlogLoader } from "./loaders/blog.js";
 import { loadEnv } from "vite";
 import chalk from "chalk";
 import { outdent } from "outdent";
+import { wixSDKContext } from "./vite-plugins/sdk-context.js";
 export { wixBlogLoader };
 
 export type { Runtime } from "./entrypoints/server.js";
@@ -45,10 +46,32 @@ export function createIntegration(): AstroIntegration {
           ""
         );
 
+        if (!userEnv["ENV_NAME"]) {
+          logger.error(
+            outdent`
+            Missing environment definition.'
+
+            💡 To pull the required environment variables from Wix, run:
+              ${chalk.magenta("npx wix edge env --env local pull")}
+
+            🔍 Need Help?
+            - Visit our docs: https://dev.wix.com/docs/go-headless
+            - Join the community: https://discord.com/channels/1114269395317968906/1288424190969511987
+
+              `
+          );
+
+          throw new Error(
+            `${chalk.magenta(
+              `ENV_NAME`
+            )} not found in loaded environment variables`
+          );
+        }
+
         if (!userEnv["WIX_CLIENT_ID"]) {
           logger.error(
             outdent`
-            Missing environment variable ${chalk.blueBright(`WIX_CLIENT_ID`)}
+            Missing environment variable ${chalk.blueBright(`WIX_CLIENT_ID`)} on environment '${userEnv["ENV_NAME"]}'
             To use the Wix SDK, you must provide the ${chalk.blueBright(
               "WIX_CLIENT_ID"
             )} environment variable.
@@ -96,6 +119,11 @@ export function createIntegration(): AstroIntegration {
                 context: "server",
                 optional: true,
               },
+              ENV_NAME: {
+                type: "string",
+                access: "public",
+                context: "client",
+              }
             },
           },
           build: {
@@ -113,7 +141,7 @@ export function createIntegration(): AstroIntegration {
               // It's currently commented out because there are some issues with the current implementation
               // (currently the magic import is injected into any type of module, not only JS)
               // not sure if it's necessary to inject the Wix SDK context into the client bundle
-              // wixSDKContext(),
+              wixSDKContext(),
             ],
           },
           image: {
