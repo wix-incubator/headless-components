@@ -188,8 +188,8 @@ export function createIntegration(): AstroIntegration {
           );
         }
       },
-      "astro:build:done": async (buildResult) => {
-        await fs.writeFile(path.join(buildResult.dir.pathname, '..', 'build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"] }, null, '\t'));
+      "astro:build:done": async (_buildResult) => {
+        await fs.writeFile(path.join(_config.outDir.pathname, 'build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"] }, null, '\t'));
       },
     },
   };
