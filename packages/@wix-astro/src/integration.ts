@@ -14,6 +14,8 @@ import { wixBlogLoader } from "./loaders/blog.js";
 import { loadEnv } from "vite";
 import chalk from "chalk";
 import { outdent } from "outdent";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 export { wixBlogLoader };
 
 export type { Runtime } from "./entrypoints/server.js";
@@ -185,6 +187,9 @@ export function createIntegration(): AstroIntegration {
             (c) => c !== "workerd" && c !== "worker"
           );
         }
+      },
+      "astro:build:done": async (buildResult) => {
+        await fs.writeFile(path.join(buildResult.dir.pathname, '..', 'build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"] }, null, '\t'));
       },
     },
   };
