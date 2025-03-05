@@ -204,8 +204,13 @@ export function createIntegration(): AstroIntegration {
           );
         }
       },
-      "astro:build:done": async (_buildResult) => {
-        await fs.writeFile(path.join(_config.outDir.pathname, 'build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutput: _buildOutput }, null, '\t'));
+      "astro:build:done": async (buildResult) => {
+        const hasPages = buildResult.pages.length > 0;
+        const buildOutputType = _buildOutput === "static" ?
+          "static"
+          : hasPages ? "hybrid" : "server-only";
+
+        await fs.writeFile(path.join(_config.outDir.pathname, 'build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutputType, }, null, '\t'));
       },
     },
   };
