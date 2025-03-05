@@ -210,7 +210,7 @@ export function createIntegration(): AstroIntegration {
           "static"
           : hasPages ? "hybrid" : "server-only";
 
-        await fs.writeFile(path.join(_config.outDir.pathname, 'build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutputType, }, null, '\t'));
+        await fs.writeFile(path.join(_config.outDir.pathname, '.wix-build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutputType, }, null, '\t'));
       },
     },
   };
