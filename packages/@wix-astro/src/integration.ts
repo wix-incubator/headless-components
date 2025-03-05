@@ -14,12 +14,15 @@ import { wixBlogLoader } from "./loaders/blog.js";
 import { loadEnv } from "vite";
 import chalk from "chalk";
 import { outdent } from "outdent";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 export { wixBlogLoader };
 
 export type { Runtime } from "./entrypoints/server.js";
 
 export function createIntegration(): AstroIntegration {
   let _config: AstroConfig;
+  let _buildOutput: "server" | "static";
 
   return {
     name: "@wix/astro",
@@ -96,6 +99,11 @@ export function createIntegration(): AstroIntegration {
                 context: "server",
                 optional: true,
               },
+              ENV_NAME: {
+                type: "string",
+                access: "public",
+                context: "client",
+              },
             },
           },
           build: {
@@ -122,8 +130,14 @@ export function createIntegration(): AstroIntegration {
           },
         });
       },
-      "astro:config:done": async ({ setAdapter, config }) => {
+      "astro:config:done": async ({ setAdapter, config, buildOutput }) => {
         _config = config;
+
+        _buildOutput = buildOutput;
+
+        if (_buildOutput === "static") {
+          return;
+        }
 
         setAdapter({
           name: "@wix/astro",
@@ -138,7 +152,7 @@ export function createIntegration(): AstroIntegration {
           supportedAstroFeatures: {
             serverOutput: "stable",
             hybridOutput: "stable",
-            staticOutput: "stable",
+            staticOutput: "unsupported",
             i18nDomains: "experimental",
             sharpImageService: "unsupported",
             envGetSecret: "stable",
@@ -146,6 +160,10 @@ export function createIntegration(): AstroIntegration {
         });
       },
       "astro:build:setup": ({ vite, target }) => {
+        if (_buildOutput === "static") {
+          return;
+        }
+
         if (target === "server") {
           vite.resolve ||= {};
           vite.resolve.alias ||= {};
@@ -185,6 +203,14 @@ export function createIntegration(): AstroIntegration {
             (c) => c !== "workerd" && c !== "worker"
           );
         }
+      },
+      "astro:build:done": async (buildResult) => {
+        const hasPages = buildResult.pages.length > 0;
+        const buildOutputType = _buildOutput === "static" ?
+          "static"
+          : hasPages ? "hybrid" : "server-only";
+
+        await fs.writeFile(path.join(_config.outDir.pathname, '.wix-build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutputType, }, null, '\t'));
       },
     },
   };
