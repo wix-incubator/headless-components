@@ -206,11 +206,49 @@ export function createIntegration(): AstroIntegration {
       },
       "astro:build:done": async (buildResult) => {
         const hasPages = buildResult.pages.length > 0;
-        const buildOutputType = _buildOutput === "static" ?
-          "static"
-          : hasPages ? "hybrid" : "server-only";
+        const buildOutputType = _buildOutput === "static"
+          ? "static"
+          : hasPages
+          ? "hybrid"
+          : "server-only";
 
-        await fs.writeFile(path.join(_config.outDir.pathname, '.wix-build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutputType, }, null, '\t'));
+
+        const moveToClientDir = async () => {
+          const clientDir = path.join(_config.outDir.pathname, "client");
+          await fs.mkdir(clientDir, { recursive: true });
+
+          // Move all files except "client" directory
+          const files = await fs.readdir(_config.outDir.pathname);
+          await Promise.all(
+            files
+              .filter(file => file !== "client")
+              .map(file =>
+                fs.rename(
+                  path.join(_config.outDir.pathname, file),
+                  path.join(clientDir, file)
+                )
+              )
+          );
+        }
+
+        if (_buildOutput === "static") {
+          try {
+            await moveToClientDir();
+          } catch(ex) {
+            console.error(`@wix/astro failed to move files to client directory: ${(ex as Error).message}`);
+            throw ex;
+          }
+        }
+
+        const metadata = {
+          envName: process.env["ENV_NAME"],
+          buildOutputType,
+        };
+
+        await fs.writeFile(
+          path.join(_config.outDir.pathname, ".wix-build-metadata.json"),
+          JSON.stringify(metadata, null, 2) // More conventional JSON formatting
+        );
       },
     },
   };
