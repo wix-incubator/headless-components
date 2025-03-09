@@ -206,30 +206,49 @@ export function createIntegration(): AstroIntegration {
       },
       "astro:build:done": async (buildResult) => {
         const hasPages = buildResult.pages.length > 0;
-        const buildOutputType = _buildOutput === "static" ?
-          "static"
-          : hasPages ? "hybrid" : "server-only";
+        const buildOutputType = _buildOutput === "static"
+          ? "static"
+          : hasPages
+          ? "hybrid"
+          : "server-only";
 
-        // if build output is static, we need to create dist/client and move all artifacts there
-        if (_buildOutput === "static") {
+
+        const moveToClientDir = async () => {
           const clientDir = path.join(_config.outDir.pathname, "client");
           await fs.mkdir(clientDir, { recursive: true });
 
-          // use globby to scan the outDir for all files and move them to clientDir
+          // Move all files except "client" directory
           const files = await fs.readdir(_config.outDir.pathname);
-          for (const file of files) {
-            if (file === "client") {
-              continue;
-            }
+          await Promise.all(
+            files
+              .filter(file => file !== "client")
+              .map(file =>
+                fs.rename(
+                  path.join(_config.outDir.pathname, file),
+                  path.join(clientDir, file)
+                )
+              )
+          );
+        }
 
-            await fs.rename(
-              path.join(_config.outDir.pathname, file),
-              path.join(clientDir, file)
-            );
+        if (_buildOutput === "static") {
+          try {
+            await moveToClientDir();
+          } catch(ex) {
+            console.error(`@wix/astro failed to move files to client directory: ${(ex as Error).message}`);
+            throw ex;
           }
         }
 
-        await fs.writeFile(path.join(_config.outDir.pathname, '.wix-build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutputType, }, null, '\t'));
+        const metadata = {
+          envName: process.env["ENV_NAME"],
+          buildOutputType,
+        };
+
+        await fs.writeFile(
+          path.join(_config.outDir.pathname, ".wix-build-metadata.json"),
+          JSON.stringify(metadata, null, 2) // More conventional JSON formatting
+        );
       },
     },
   };
