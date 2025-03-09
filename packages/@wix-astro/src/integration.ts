@@ -210,6 +210,25 @@ export function createIntegration(): AstroIntegration {
           "static"
           : hasPages ? "hybrid" : "server-only";
 
+        // if build output is static, we need to create dist/client and move all artifacts there
+        if (_buildOutput === "static") {
+          const clientDir = path.join(_config.outDir.pathname, "client");
+          await fs.mkdir(clientDir, { recursive: true });
+
+          // use globby to scan the outDir for all files and move them to clientDir
+          const files = await fs.readdir(_config.outDir.pathname);
+          for (const file of files) {
+            if (file === "client") {
+              continue;
+            }
+
+            await fs.rename(
+              path.join(_config.outDir.pathname, file),
+              path.join(clientDir, file)
+            );
+          }
+        }
+
         await fs.writeFile(path.join(_config.outDir.pathname, '.wix-build-metadata.json'), JSON.stringify({ envName: process.env["ENV_NAME"], buildOutputType, }, null, '\t'));
       },
     },
