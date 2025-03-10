@@ -46,6 +46,10 @@ export function createExports(manifest: SSRManifest) {
       request.headers.get("cf-connecting-ip")
     );
 
+    if (!app.match(request)) {
+      return await (env['ASSETS'] as { fetch: (req: Request) => Promise<Response>}).fetch(request);
+    }
+
     const response = await app.render(request);
 
     if (app.setCookieHeaders) {
