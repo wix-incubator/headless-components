@@ -46,11 +46,16 @@ export function createExports(manifest: SSRManifest) {
       request.headers.get("cf-connecting-ip")
     );
 
-    if (!app.match(request)) {
-      return await (env['ASSETS'] as { fetch: (req: Request) => Promise<Response>}).fetch(request);
-    }
-
     const response = await app.render(request);
+
+    // Thats to handle the quirk where Astro calls prerender 404s via fetch() to itself, and CF will return 522.
+    if (response.status === 404) {
+      const targetStatusURL = new URL(request.url);
+      const errorRoute = app.match({ url: `${targetStatusURL.origin}/${response.status}${manifest.trailingSlash === "always" ? '/' : null}` } as Request);
+      if (errorRoute && errorRoute.prerender) {
+        return await (env['ASSETS'] as { fetch: (req: Request) => Promise<Response>}).fetch(request);
+      }
+    }
 
     if (app.setCookieHeaders) {
       for (const setCookieHeader of app.setCookieHeaders(response)) {
