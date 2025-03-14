@@ -1,19 +1,10 @@
 /// <reference types="astro/client" />
-import {
-  AuthenticationStrategy,
-  OAuthStrategy,
-  TokenRole,
-  createClient,
-} from "@wix/sdk";
+import { OAuthStrategy, TokenRole, createClient } from "@wix/sdk";
 import type { MiddlewareHandler } from "astro";
 import { z } from "astro/zod";
 import { WIX_CLIENT_ID } from "astro:env/client";
 import { defineMiddleware } from "astro:middleware";
-import { AsyncLocalStorage } from "node:async_hooks";
-
-const authStrategyAsyncLocalStorage = new AsyncLocalStorage<{
-  auth: AuthenticationStrategy<void>;
-}>();
+import { authStrategyAsyncLocalStorage } from "./auth-context.js";
 
 const sessionClient = createClient({
   auth: {

@@ -35,6 +35,7 @@
     "globby": "^14.0.2",
     "magic-string": "^0.30.17",
     "outdent": "^0.8.0",
+    "p-retry": "^6.2.1",
     "vite": "^6.0.0"
   },
   "peerDependencies": {
