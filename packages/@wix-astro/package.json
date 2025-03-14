@@ -1,7 +1,7 @@
 {
   "name": "@wix/astro",
   "description": "Develop your Astro site on the Wix Platform",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "type": "module",
   "license": "MIT",
   "keywords": [
@@ -13,7 +13,8 @@
     ".": "./dist/index.js",
     "./loaders": "./dist/loaders/index.js",
     "./entrypoints/server.js": "./dist/entrypoints/server.js",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./runtime": "./dist/runtime.js"
   },
   "files": [
     "dist"

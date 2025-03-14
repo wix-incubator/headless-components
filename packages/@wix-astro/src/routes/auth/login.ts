@@ -4,7 +4,7 @@ import {
   OAUTH_COOKIE_STATE,
   PROMPT_QUERY_PARAM,
 } from "./constants.js";
-import { getAuth } from "./runtime.js";
+import { getAuth } from "../../runtime.js";
 import type { APIContext } from "astro";
 
 export const prerender = false;

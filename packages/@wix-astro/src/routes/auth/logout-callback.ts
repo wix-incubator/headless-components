@@ -1,4 +1,5 @@
-import { getAuth, getSessionCookieFromTokens } from "./runtime.js";
+import { getAuth } from "../../runtime.js";
+import { getSessionCookieFromTokens } from "./runtime.js";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
