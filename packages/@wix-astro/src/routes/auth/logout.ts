@@ -3,7 +3,7 @@ import type { APIContext } from "astro";
 
 export const prerender = false;
 
-export async function GET({ request }: APIContext) {
+export async function GET({ request, redirect }: APIContext) {
   const returnTo = request.headers.get("Referer") ?? "/";
   const baseUrl = new URL(request.url).origin + "/" + import.meta.env.BASE_URL;
   const postFlowUrl = new URL("/api/auth/logout-callback", baseUrl);
@@ -11,5 +11,5 @@ export async function GET({ request }: APIContext) {
 
   const { logoutUrl } = await getAuth().logout(postFlowUrl.toString());
 
-  return Response.redirect(logoutUrl);
+  return redirect(logoutUrl);
 }

@@ -1,10 +1,11 @@
 /// <reference types="astro/client" />
 import { OAuthStrategy, TokenRole, createClient } from "@wix/sdk";
-import type { MiddlewareHandler } from "astro";
+import type { APIContext, MiddlewareHandler } from "astro";
 import { z } from "astro/zod";
 import { WIX_CLIENT_ID } from "astro:env/client";
 import { defineMiddleware } from "astro:middleware";
 import { authStrategyAsyncLocalStorage } from "./auth-context.js";
+import { sessionCookieJson } from "./routes/auth/runtime.js";
 
 const sessionClient = createClient({
   auth: {
@@ -38,14 +39,13 @@ function checkIsDynamicPageRequest(
   }
 }
 
-export const onRequest = defineMiddleware(async (context, next) => {
-  const wixSessionCookie = checkIsDynamicPageRequest(context)
-    ? context.cookies.get("wixSession")?.json()
-    : undefined;
+function getSessionTokensFromCookie(context: APIContext) {
+  if (!checkIsDynamicPageRequest(context)) {
+    return;
+  }
 
-  let tokens;
-
-  if (wixSessionCookie) {
+  const rawCookie = context.cookies.get("wixSession")?.json();
+  if (rawCookie) {
     const tokensParseResult = z
       .object({
         clientId: z.string(),
@@ -60,48 +60,54 @@ export const onRequest = defineMiddleware(async (context, next) => {
           }),
         }),
       })
-      .safeParse(wixSessionCookie);
+      .safeParse(rawCookie);
 
-    if (!tokensParseResult.success) {
-      throw new Error(`Invalid wixSession cookie: ${tokensParseResult.error}`);
-    } else {
-      if (tokensParseResult.data.clientId === WIX_CLIENT_ID) {
-        tokens = tokensParseResult.data.tokens;
-      }
+    if (
+      tokensParseResult.success &&
+      tokensParseResult.data.clientId === WIX_CLIENT_ID
+    ) {
+      return tokensParseResult.data;
     }
   }
+}
 
-  let response;
-  if (WIX_CLIENT_ID) {
-    const auth = OAuthStrategy({
-      clientId: WIX_CLIENT_ID,
-      tokens,
-    });
+function saveSessionTokensToCookie(context: APIContext, tokens: any) {
+  context.cookies.set("wixSession", sessionCookieJson(tokens), {
+    secure: true,
+    path: "/",
+  });
+}
 
-    response = await authStrategyAsyncLocalStorage.run(
-      {
-        auth,
-      },
-      () => next()
-    );
+export const onRequest = defineMiddleware(async (context, next) => {
+  if (!WIX_CLIENT_ID) {
+    return next();
+  }
 
-    if (checkIsDynamicPageRequest(context)) {
-      context.cookies.set(
-        "wixSession",
-        JSON.stringify({ clientId: WIX_CLIENT_ID, tokens: auth.getTokens() }),
-        {
-          secure: true,
-          path: "/",
-        }
-      );
-    }
+  const sessionTokensFromCookie = getSessionTokensFromCookie(context);
+
+  const auth = OAuthStrategy({
+    clientId: WIX_CLIENT_ID,
+  });
+
+  if (sessionTokensFromCookie) {
+    auth.setTokens(sessionTokensFromCookie.tokens);
   } else {
-    console.warn(
-      `
-      No Wix client ID found in the environment. Wix APIs will not be available.
-      `
-    );
-    response = await next();
+    auth.setTokens(await auth.generateVisitorTokens());
+  }
+
+  const response = await authStrategyAsyncLocalStorage.run(
+    {
+      auth,
+    },
+    () => next()
+  );
+
+  if (
+    checkIsDynamicPageRequest(context) &&
+    sessionTokensFromCookie?.tokens.accessToken.expiresAt !==
+      auth.getTokens().accessToken.expiresAt
+  ) {
+    saveSessionTokensToCookie(context, auth.getTokens());
   }
 
   return response;
