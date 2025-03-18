@@ -37,7 +37,7 @@ export async function GET({ url, cookies, redirect }: APIContext) {
       () => auth.getMemberTokens(code, state, oauthData),
       {
         retries: 3,
-        onFailedAttempt: (error) => {
+        onFailedAttempt: (error: unknown) => {
           console.error("Error getting member tokens", error);
         },
       }
