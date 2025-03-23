@@ -8,12 +8,13 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": ":",
+    "test": "playwright install && playwright test",
     "deploy:preview": "wix edge deploy",
     "deploy:prod": "wix edge deploy --prod"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.1",
+    "@playwright/test": "^1.51.1",
     "@wix/astro": "workspace:*",
     "astro": "^5.5.4",
     "react": "^18.3.1",
