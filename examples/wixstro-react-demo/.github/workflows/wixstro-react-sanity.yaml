@@ -1,0 +1,17 @@
+name: Wixstro
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/wixstro-deploy.yaml
+    name: Production
+    with:
+      env-name: production
+      title: Production Deploy
+      ref: ${{ github.context.ref }}
+    secrets:
+      wix-api-key: ${{ secrets.WIX_CLI_API_KEY }}

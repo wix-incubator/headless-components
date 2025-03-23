@@ -1,0 +1,84 @@
+name: Wixstro Deploy
+
+on:
+  workflow_call:
+    inputs:
+      env-name:
+        required: true
+        type: string
+      title:
+        required: true
+        type: string
+      ref:
+        required: true
+        type: string
+    secrets:
+      wix-api-key:
+        required: true
+    outputs:
+      deploy-result:
+        description: "Output of deploy command"
+        value: ${{ jobs.deploy.outputs.deploy-result }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Build & Deploy
+    outputs:
+      deploy-result: ${{ steps.deploy-preview.outputs.output }}
+    environment:
+      name: ${{ inputs.env-name }}
+      url: https://${{ steps.deploy-preview.outputs.deployment_domain }}
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      # - name: Auth CLI
+      #   run: |
+      #     yarn wix login --api-key $WIX_CLI_API_KEY
+      #   env:
+      #     WIX_CLI_API_KEY: ${{ secrets.wix-api-key }}
+
+      # - name: CLI pull env
+      #   run: |
+      #     yarn wix edge env --env ${{ inputs.env-name }} pull
+
+      - name: Build
+        run: |
+          yarn build
+
+      - name: Test
+        run: |
+          yarn test
+
+      # - name: Deploy
+      #   id: deploy-preview
+      #   run: |
+      #     delimiter="$(openssl rand -hex 8)"
+      #     echo "output<<${delimiter}" >> "${GITHUB_OUTPUT}"
+      #     yarn wix edge deploy --env $ENV_NAME --output-summary ./wix/deploy-summary.json >> "${GITHUB_OUTPUT}"
+      #     echo "${delimiter}" >> "${GITHUB_OUTPUT}"
+      #     echo "deployment_domain=$(jq -r .siteDeployment.domain ./wix/deploy-summary.json)" >> "${GITHUB_OUTPUT}"
+      #   env:
+      #     ENV_NAME: ${{ inputs.env-name }}
+
+      # - name: Comment PR with deploy output
+      #   if: github.event_name == 'pull_request'
+      #   uses: thollander/actions-comment-pull-request@v3
+      #   with:
+      #     message: |
+      #       ## Deployment - ${{ inputs.title }}
+      #       ${{ join(steps.deploy-preview.outputs.output, ' ') }}
+      #     comment-tag: deploy-preview-output-${{ inputs.env-name }}
