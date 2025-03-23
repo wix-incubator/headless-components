@@ -53,6 +53,7 @@ jobs:
 
       - name: CLI pull env
         run: |
+          cd examples/wixstro-react-demo
           npx wix edge env --env ${{ inputs.env-name }} pull
 
       - name: Build
