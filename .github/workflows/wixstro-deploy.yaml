@@ -57,6 +57,7 @@ jobs:
 
       - name: Build
         run: |
+          yarn workspace @wix/astro build
           yarn workspace @wix/wixstro-react-demo build
 
       - name: Test
