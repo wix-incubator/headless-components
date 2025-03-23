@@ -57,11 +57,11 @@ jobs:
 
       - name: Build
         run: |
-          yarn build
+          yarn workspace @wix/wixstro-react-demo build
 
       - name: Test
         run: |
-          yarn test
+          yarn workspace @wix/wixstro-react-demo test
 
       # - name: Deploy
       #   id: deploy-preview
