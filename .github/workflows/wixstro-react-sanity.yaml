@@ -1,7 +1,12 @@
 name: Wixstro
 
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - "examples/wixstro-react-demo/**"
+  pull_request:
+    paths:
+      - "examples/wixstro-react-demo/**"
 
 jobs:
   deploy:
