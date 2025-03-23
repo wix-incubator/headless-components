@@ -3,15 +3,17 @@
   "packageManager": "yarn@4.6.0",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
     "build:all": "turbo run build",
     "astro": "astro",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "syncpack": "syncpack"
   },
   "devDependencies": {
-    "astro": "^5.1.8",
+    "astro": "^5.5.4",
     "knip": "^5.43.6",
     "lefthook": "^1.1.1",
     "lint-staged": "^15.4.3",
