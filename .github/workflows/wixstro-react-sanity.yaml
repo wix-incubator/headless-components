@@ -2,11 +2,16 @@ name: Wixstro React Sanity
 
 on:
   push:
+    branches:
+      - master
     paths:
       - "examples/wixstro-react-demo/**"
-  pull_request:
-    paths:
-      - "examples/wixstro-react-demo/**"
+      - "packages/@wix-astro/**"
+
+  schedule:
+    - cron: "0 10 * * 0" # Every Sunday at 10:00
+
+  workflow_dispatch:
 
 jobs:
   deploy:
