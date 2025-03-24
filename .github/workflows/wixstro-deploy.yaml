@@ -61,12 +61,11 @@ jobs:
           yarn workspace @wix/astro build
           yarn workspace @wix/wixstro-react-demo build
 
-      - name: Test
-        run: |
-          yarn workspace @wix/wixstro-react-demo test
-
       - name: Deploy
         id: deploy-preview
         run: |
-          cd examples/wixstro-react-demo
           yarn workspace @wix/wixstro-react-demo deploy:prod
+
+      - name: Test
+        run: |
+          yarn workspace @wix/wixstro-react-demo test
