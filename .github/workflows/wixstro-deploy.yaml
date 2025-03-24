@@ -70,7 +70,7 @@ jobs:
         run: |
           delimiter="$(openssl rand -hex 8)"
           echo "output<<${delimiter}" >> "${GITHUB_OUTPUT}"
-          yarn workspace @wix/wixstro-react-demo deploy:prod -- --output-summary ./wix/deploy-summary.json >> "${GITHUB_OUTPUT}"
+          yarn workspace @wix/wixstro-react-demo deploy:prod --output-summary ./wix/deploy-summary.json >> "${GITHUB_OUTPUT}"
           echo "${delimiter}" >> "${GITHUB_OUTPUT}"
           echo "deployment_domain=$(jq -r .siteDeployment.domain ./wix/deploy-summary.json)" >> "${GITHUB_OUTPUT}"
         env:
