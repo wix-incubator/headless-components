@@ -10,7 +10,7 @@ export default defineConfig({
   reporter: "list",
 
   use: {
-    baseURL: "https://astro-react-example-cnin2sul-nitayn9.wix-sites.dev/",
+    baseURL: "https://astro-react-demo-56olqgbv-org-headless7.wix-sites.dev/",
     trace: "on-first-retry",
     timeout: 30 * 1000,
     expect: { timeout: 5000 },
