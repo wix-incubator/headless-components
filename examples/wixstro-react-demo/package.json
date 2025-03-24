@@ -10,7 +10,7 @@
     "astro": "astro",
     "test": "playwright install && playwright test",
     "deploy:preview": "wix edge deploy",
-    "deploy:prod": "wix edge deploy --prod"
+    "deploy:prod": "wix edge deploy --prod --no-prod-confirm"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.1",
