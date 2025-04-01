@@ -43,33 +43,19 @@ export function createIntegration(
         injectRoute,
         logger,
       }) => {
+        console.log('fileURLToPath(import.meta.url)', fileURLToPath(import.meta.url));
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
           resolveToAbsolute: true,
+          allowImportingExtraExtensions: ['.ts', '.tsx', '.astro'],
         });
 
-        injectRoute({
-          entrypoint: aRequire("./routes/auth/login")!,
-          pattern: "/api/auth/login",
+        const loginRoute = {
+          entrypoint: '/Users/yurym/wix/headless-integrations/packages/@wix-astro/dist/routes/auth/login.astro', //aRequire("./routes/auth/yury.astro")!,
+          pattern: "/login",
           prerender: false,
-        });
+        };
 
-        injectRoute({
-          entrypoint: aRequire("./routes/auth/logout")!,
-          pattern: "/api/auth/logout",
-          prerender: false,
-        });
-
-        injectRoute({
-          entrypoint: aRequire("./routes/auth/callback")!,
-          pattern: "/api/auth/callback",
-          prerender: false,
-        });
-
-        injectRoute({
-          entrypoint: aRequire("./routes/auth/logout-callback")!,
-          pattern: "/api/auth/logout-callback",
-          prerender: false,
-        });
+        injectRoute(loginRoute);
 
         addMiddleware({
           entrypoint: aRequire("./middleware")!,

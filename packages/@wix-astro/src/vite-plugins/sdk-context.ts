@@ -46,7 +46,7 @@ export function wixSDKContext(opts: { sessionCookieName: string }): Plugin {
         const wixSDKAuthResolved = aRequire(
           "@wix/sdk/auth/site-session"
         );
-     
+
       return `import { createClient } from "${wixSDKResolved}";
               import { SiteSessionAuth } from "${wixSDKAuthResolved}";
 
@@ -75,7 +75,10 @@ export function wixSDKContext(opts: { sessionCookieName: string }): Plugin {
                       opts.sessionCookieName
                     )})?.tokens,
                   }),
-                })
+                }),
+                clientId: ${JSON.stringify(
+                  userLoadedEnv["WIX_CLIENT_ID"]
+                )},
               };
                 `;
       }

@@ -30,6 +30,7 @@
     "@cloudflare/workers-types": "^4.20241224.0",
     "@wix/blog": "^1.0.345",
     "@wix/data": "^1.0.194",
+    "@wix/identity": "^1.0.125",
     "@wix/sdk": "^1.15.14",
     "chalk": "^5.4.1",
     "esm-resolve": "^1.0.11",
