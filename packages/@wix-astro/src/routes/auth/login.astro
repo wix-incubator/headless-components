@@ -1,128 +1,211 @@
 ---
 ---
-<login-form>
-  <form id="loginForm" class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white rounded-lg shadow-xl p-8">
-      <h3 id="formTitle" class="text-2xl font-bold text-gray-900 mb-6 text-center">Log In</h3>
 
-      <!-- Success message with animation -->
-      <div id="successMessage" class="hidden text-center">
-        <div class="success-animation mb-4">
-          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-          </svg>
-        </div>
-        <p class="text-xl font-medium text-green-600 mb-2">Login Successful!</p>
-        <p id="successText" class="text-gray-700 mb-4">You are now logged in.</p>
-      </div>
+<div class="login-form-wrapper">
+  <login-form>
+    <form id="loginForm">
+      <div class="form-container">
+        <h3 id="formTitle">
+          <span id="title-login">
+            <slot name="title-login">Log In</slot>
+          </span>
+          <span id="title-signup" style="display: none;">
+            <slot name="title-signup">Sign Up</slot>
+          </span>
+          <span id="title-reset" style="display: none;">
+            <slot name="title-reset">Reset Password</slot>
+          </span>
+          <span id="title-verify" style="display: none;">
+            <slot name="title-verify">Email Verification</slot>
+          </span>
+          <span id="title-success" style="display: none;">
+            <slot name="title-success">Success</slot>
+          </span>
+        </h3>
 
-      <div id="pendingMessage" class="text-center hidden">
-        <p id="pendingText" class="text-gray-700 mb-4"></p>
-        <button id="okButton" type="button" class="w-full bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">OK</button>
-      </div>
-
-      <!-- General Error Message -->
-      <div id="errorMessage" class="mb-4 hidden text-center">
-        <div class="bg-red-100 border border-red-500 rounded-lg p-4 mx-auto">
-          <svg class="h-6 w-6 text-red-600 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-          </svg>
-          <p id="errorText" class="text-red-600 font-medium">
-            Authentication error. Please try again.
+        <!-- Success message with animation -->
+        <div id="successMessage" style="display: none;">
+          <div class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+          </div>
+          <p class="success-title">
+            <slot name="success-title">Login Successful!</slot>
+          </p>
+          <p id="successText">
+            <slot name="success-message">You are now logged in.</slot>
           </p>
         </div>
-      </div>
 
-      <div id="formFields">
-        <!-- Username field (sign up only) -->
-        <div id="usernameField" class="mb-4 hidden">
-          <div class="mb-1">
-            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-          </div>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        <!-- Email field -->
-        <div id="emailField" class="mb-4">
-          <div class="mb-1">
-            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-          </div>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        <!-- Verification code field -->
-        <div id="codeField" class="mb-4 hidden">
-          <div class="mb-1">
-            <label for="code" class="block text-sm font-medium text-gray-700">Code</label>
-          </div>
-          <input
-            id="code"
-            name="code"
-            type="number"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        <!-- Password field -->
-        <div id="passwordField" class="mb-4">
-          <div class="mb-1">
-            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-          </div>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        <!-- Forgot password link -->
-        <div id="forgotPasswordLink" class="mb-6">
-          <a id="forgotPassword" href="#" class="text-sm text-blue-600 hover:text-blue-700">Forgot password?</a>
-        </div>
-
-        <!-- reCAPTCHA container -->
-        <div id="recaptcha-container" class="mb-6 hidden"></div>
-
-        <!-- Submit button -->
-        <div class="mb-6">
-          <button
-            id="submitButton"
-            type="submit"
-            class="w-full bg-blue-600 text-white rounded-lg px-4 py-2 font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
-          >
-            Log In
+        <div id="pendingMessage" style="display: none;">
+          <p id="pendingText"></p>
+          <button id="okButton" type="button">
+            <slot name="ok-button">OK</slot>
           </button>
         </div>
 
-        <!-- Toggle login/signup -->
-        <div id="toggleStateContainer" class="text-center text-sm text-gray-600">
-          Not registered?
-          <a id="toggleState" href="#" class="text-blue-600 hover:text-blue-700 font-medium">
-            Sign up
-          </a>
+        <!-- General Error Message -->
+        <div id="errorMessage" style="display: none;">
+          <div class="error-container">
+            <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            <p id="errorText">
+              <slot name="error-message">Authentication error. Please try again.</slot>
+            </p>
+          </div>
+        </div>
+
+        <div id="formFields">
+          <!-- Username field (sign up only) -->
+          <div id="usernameField" style="display: none;">
+            <div class="field-label">
+              <label for="username">
+                <slot name="username-label">Username</slot>
+              </label>
+            </div>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              required
+            />
+          </div>
+
+          <!-- Email field -->
+          <div id="emailField">
+            <div class="field-label">
+              <label for="email">
+                <slot name="email-label">Email</slot>
+              </label>
+            </div>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+            />
+          </div>
+
+          <!-- Verification code field -->
+          <div id="codeField" style="display: none;">
+            <div class="field-label">
+              <label for="code">
+                <slot name="code-label">Code</slot>
+              </label>
+            </div>
+            <input
+              id="code"
+              name="code"
+              type="number"
+              required
+            />
+          </div>
+
+          <!-- Password field -->
+          <div id="passwordField">
+            <div class="field-label">
+              <label for="password">
+                <slot name="password-label">Password</slot>
+              </label>
+            </div>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+            />
+          </div>
+
+          <!-- Forgot password link -->
+          <div id="forgotPasswordLink">
+            <a id="forgotPassword" href="#">
+              <slot name="forgot-password">Forgot password?</slot>
+            </a>
+          </div>
+
+          <!-- reCAPTCHA container -->
+          <div id="recaptcha-container" style="display: none;"></div>
+
+          <!-- Submit button -->
+          <div class="submit-button-container">
+            <button id="submitButton" type="submit">
+              <span class="login-text">
+                <slot name="button-login">Log In</slot>
+              </span>
+              <span class="signup-text" style="display: none;">
+                <slot name="button-signup">Sign Up</slot>
+              </span>
+              <span class="reset-text" style="display: none;">
+                <slot name="button-reset">Reset</slot>
+              </span>
+              <span class="verify-text" style="display: none;">
+                <slot name="button-verify">Submit</slot>
+              </span>
+              <span class="loading-text loading-bounce" style="display: none;">
+                <slot name="button-loading">Loading</slot><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+              </span>
+            </button>
+          </div>
+
+          <!-- Toggle login/signup -->
+          <div id="toggleStateContainer">
+            <span class="login-toggle">
+              <slot name="toggle-login-text">Not registered?</slot>
+              <a id="toggleState" href="#">
+                <slot name="toggle-login-link">Sign up</slot>
+              </a>
+            </span>
+            <span class="signup-toggle" style="display: none;">
+              <slot name="toggle-signup-text">Already registered?</slot>
+              <a id="toggleState-signup" href="#">
+                <slot name="toggle-signup-link">Log in</slot>
+              </a>
+            </span>
+          </div>
         </div>
       </div>
-    </div>
-  </form>
-</login-form>
+    </form>
+  </login-form>
+</div>
 
 <style>
+  /* Basic styling - users can override or replace these */
+  .login-form-wrapper {
+    font-family: system-ui, sans-serif;
+  }
+
+  .form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    cursor: pointer;
+    padding: 8px 16px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   /* Success animation styles */
   .success-animation {
     display: flex;
@@ -176,8 +259,73 @@
 
   @keyframes fill {
     100% {
-      box-shadow: inset 0px 0px 0px 30px #4BB71B33;
+      box-shadow: inset 0px 0px 0px 30px rgba(75, 183, 27, 0.2);
     }
+  }
+
+  /* Error styling */
+  .error-container {
+    text-align: center;
+    background-color: #fff0f0;
+    border: 1px solid #ff0000;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .error-icon {
+    width: 24px;
+    height: 24px;
+    margin: 0 auto 8px;
+    color: #ff0000;
+  }
+
+  /* RTL support for Hebrew and other RTL languages */
+  :global([dir="rtl"]) .form-container {
+    text-align: right;
+  }
+
+  :global([dir="rtl"]) input {
+    text-align: right;
+  }
+
+
+  /* Loading text on submit button animation */
+  .loading-bounce .dot {
+  display: inline-block; /* Needed for transform */
+  position: relative; /* Or just rely on inline-block default */
+  animation: bounce 0.6s infinite ease-in-out alternate;
+  }
+
+  /* Add delays to each dot */
+  .loading-bounce .dot:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+
+  .loading-bounce .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .loading-bounce .dot:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes bounce {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-5px); /* Adjust bounce height */
+    }
+  }
+
+  /* Style to make it visible for testing/use */
+  .loading-text {
+    /* Remove or override this when you want to show it */
+    /* display: none; */
+    display: inline-block; /* Or block, depending on layout */
+    font-size: 1.2em; /* Example styling */
+    font-family: sans-serif; /* Example styling */
   }
 </style>
 
@@ -275,7 +423,7 @@
           };
         }
       } catch (error) {
-        console.error("Error setting up client:", error);
+        console.error("Error setting up captcha:", error);
       }
     }
 
@@ -323,115 +471,12 @@
       this.updateInputValues();
     }
 
-    /**
-     * Update input values without full re-render
-     * This keeps focus intact while typing
-     */
-    updateInputValues() {
-      // Update email input if it exists
-      const emailInput = this.querySelector('#email');
-      if (emailInput) {
-        emailInput.value = this.email;
-        if (this.emailInvalid) {
-          emailInput.classList.add('error');
-          emailInput.classList.add('border-red-500');
-          emailInput.classList.remove('border-gray-300');
-          const errorMsg = this.querySelector('#email-error');
-          if (!errorMsg) {
-            const div = document.createElement('div');
-            div.id = 'email-error';
-            div.className = 'mt-1 text-sm text-red-600';
-            div.textContent = 'Invalid email';
-            emailInput.parentNode.appendChild(div);
-          }
-        } else {
-          emailInput.classList.remove('error');
-          emailInput.classList.remove('border-red-500');
-          emailInput.classList.add('border-gray-300');
-          const errorMsg = this.querySelector('#email-error');
-          if (errorMsg) errorMsg.remove();
-        }
-      }
-
-      // Update password input if it exists
-      const passwordInput = this.querySelector('#password');
-      if (passwordInput) {
-        passwordInput.value = this.password;
-        if (this.passwordInvalid) {
-          passwordInput.classList.add('error');
-          passwordInput.classList.add('border-red-500');
-          passwordInput.classList.remove('border-gray-300');
-          const errorMsg = this.querySelector('#password-error');
-          if (!errorMsg) {
-            const div = document.createElement('div');
-            div.id = 'password-error';
-            div.className = 'mt-1 text-sm text-red-600';
-            div.textContent = 'Invalid password';
-            passwordInput.parentNode.appendChild(div);
-          }
-        } else {
-          passwordInput.classList.remove('error');
-          passwordInput.classList.remove('border-red-500');
-          passwordInput.classList.add('border-gray-300');
-          const errorMsg = this.querySelector('#password-error');
-          if (errorMsg) errorMsg.remove();
-        }
-      }
-
-      // Update username input if it exists
-      const usernameInput = this.querySelector('#username');
-      if (usernameInput) {
-        usernameInput.value = this.username;
-      }
-
-      // Update code input if it exists
-      const codeInput = this.querySelector('#code');
-      if (codeInput) {
-        codeInput.value = this.code;
-      }
-
-      // Update submit button state
-      const submitButton = this.querySelector('#submitButton');
-      if (submitButton) {
-        const shouldDisable =
-          (!this.email && this.state !== this.State.EMAIL_VERIFICATION) ||
-          (!this.password &&
-            this.state !== this.State.RESET_PASSWORD &&
-            this.state !== this.State.EMAIL_VERIFICATION) ||
-          this.loading;
-
-        submitButton.disabled = shouldDisable;
-        submitButton.textContent = this.loading ? 'Loading...' : this.getStateSubmitText();
-      }
-    }
-
-    getStateSubmitText() {
-      return this.state === this.State.RESET_PASSWORD
-        ? 'Reset'
-        : this.state === this.State.LOGIN
-        ? 'Log In'
-        : this.state === this.State.EMAIL_VERIFICATION
-        ? 'Submit'
-        : 'Sign Up';
-    }
-
-    getStateTitle() {
-      return this.state === this.State.RESET_PASSWORD
-        ? 'Reset Password'
-        : this.state === this.State.LOGIN
-        ? 'Log In'
-        : this.state === this.State.EMAIL_VERIFICATION
-        ? 'Email Verification'
-        : this.state === this.State.SUCCESS
-        ? 'Success'
-        : 'Sign Up';
-    }
-
     async submit(event) {
       event.preventDefault();
       this.loading = true;
       this.error = { state: false, message: '' }; // Clear any previous errors
       this.updateInputValues(); // Update UI without full render
+      this.updateButtonText();
 
       let response;
 
@@ -487,7 +532,7 @@
           this.setCookie('wixSession', JSON.stringify(tokens.refreshToken), 2);
 
           // Show success animation
-          this.showSuccessMessage(`Welcome${this.username ? ', ' + this.username : ''}!`);
+          this.showSuccessMessage();
 
           // Dispatch a success event that consumers can listen for
           this.dispatchEvent(new CustomEvent('login-success'));
@@ -520,13 +565,17 @@
             this.updateUI(); // Update UI for state change
           } else {
             // Handle other error codes with a generic message
-            this.showErrorMessage(`Authentication failed: ${response.errorCode || 'Unknown error'}`);
+            this.showErrorMessage();
+            const errorElem = this.querySelector('#errorText');
+            if (errorElem) {
+              errorElem.setAttribute('data-error-code', response.errorCode || 'unknown');
+            }
           }
         }
       } catch (error) {
         console.error('Authentication error:', error);
         // Show user-friendly error message
-        this.showErrorMessage('Authentication error. Please try again.');
+        this.showErrorMessage();
       }
 
       // Reset recaptcha
@@ -536,6 +585,12 @@
 
       this.loading = false;
       this.updateInputValues(); // Update UI without full render
+    }
+
+    // New method to show error message
+    showErrorMessage() {
+      this.error = { state: true, message: '' };
+      this.updateUI();
     }
 
     setCookie(name, value, days) {
@@ -551,41 +606,43 @@
 
     onCaptchaChange(token) {
       this.captcha = token;
+      this.updateInputValues(); // Update UI without full render
+    }
+
+    // New method to show success message with animation
+    showSuccessMessage() {
+      // Update state
+      this.state = this.State.SUCCESS;
+
+      // Update UI to show success message
+      this.updateUI();
     }
 
     updateUI() {
-      // Remember which element had focus before updating
-      const activeElementId = document.activeElement?.id;
-
       // Handle success message visibility first
       const successMessage = this.querySelector('#successMessage');
       if (this.state === this.State.SUCCESS) {
-        // Update title for success state
-        const formTitle = this.querySelector('#formTitle');
-        formTitle.textContent = this.getStateTitle();
+        this.updateTitleVisibility();
 
-        successMessage.classList.remove('hidden');
-        this.querySelector('#formFields').classList.add('hidden');
-        this.querySelector('#pendingMessage').classList.add('hidden');
-        this.querySelector('#errorMessage').classList.add('hidden');
+        successMessage.style.display = 'block';
+        this.querySelector('#formFields').style.display = 'none';
+        this.querySelector('#pendingMessage').style.display = 'none';
+        this.querySelector('#errorMessage').style.display = 'none';
         return; // Exit early as we don't need to update other UI parts
       } else {
-        successMessage.classList.add('hidden');
+        successMessage.style.display = 'none';
       }
 
-      // Update title for non-success states
-      const formTitle = this.querySelector('#formTitle');
-      formTitle.textContent = this.getStateTitle();
+      // Update title visibility
+      this.updateTitleVisibility();
 
       // Handle error message visibility
       const errorMessage = this.querySelector('#errorMessage');
-      const errorText = this.querySelector('#errorText');
 
       if (this.error.state) {
-        errorMessage.classList.remove('hidden');
-        errorText.textContent = this.error.message;
+        errorMessage.style.display = 'block';
       } else {
-        errorMessage.classList.add('hidden');
+        errorMessage.style.display = 'none';
       }
 
       // Handle pending message visibility
@@ -605,8 +662,61 @@
       // Update input values
       this.updateInputValues();
 
-      // Restore focus if needed
-      this.restoreFocus(activeElementId);
+      // Update button text
+      this.updateButtonText();
+    }
+
+    updateTitleVisibility() {
+      // First create a map of all title elements
+      const titleMap = {
+        [this.State.LOGIN]: this.querySelector('#title-login'),
+        [this.State.SIGNUP]: this.querySelector('#title-signup'),
+        [this.State.RESET_PASSWORD]: this.querySelector('#title-reset'),
+        [this.State.EMAIL_VERIFICATION]: this.querySelector('#title-verify'),
+        [this.State.SUCCESS]: this.querySelector('#title-success')
+      };
+
+      // Hide all title elements first
+      Object.values(titleMap).forEach(elem => {
+        if (elem) elem.style.display = 'none';
+      });
+
+      // Show only the current state's title
+      const currentTitleElem = titleMap[this.state];
+      if (currentTitleElem) {
+        currentTitleElem.style.display = '';
+      }
+    }
+
+    updateButtonText() {
+      // Hide all button text elements
+      const buttonTextElements = {
+        login: this.querySelector('.login-text'),
+        signup: this.querySelector('.signup-text'),
+        reset: this.querySelector('.reset-text'),
+        verify: this.querySelector('.verify-text'),
+        loading: this.querySelector('.loading-text')
+      };
+
+      // Hide all text elements first
+      Object.values(buttonTextElements).forEach(elem => {
+        if (elem) elem.style.display = 'none';
+      });
+
+      // Determine which text to show based on state
+      const textToShow = this.loading ? 'loading' : 
+        {
+          [this.State.LOGIN]: 'login',
+          [this.State.SIGNUP]: 'signup',
+          [this.State.RESET_PASSWORD]: 'reset',
+          [this.State.EMAIL_VERIFICATION]: 'verify'
+        }[this.state];
+
+      // Show the selected text
+      const selectedElement = buttonTextElements[textToShow];
+      if (selectedElement) {
+        selectedElement.style.display = '';
+      }
     }
 
     updatePendingMessageVisibility() {
@@ -614,12 +724,12 @@
       const formFields = this.querySelector('#formFields');
 
       if (this.pending.state) {
-        pendingMessage.classList.remove('hidden');
-        formFields.classList.add('hidden');
+        pendingMessage.style.display = 'block';
+        formFields.style.display = 'none';
         this.querySelector('#pendingText').textContent = this.pending.message;
       } else {
-        pendingMessage.classList.add('hidden');
-        formFields.classList.remove('hidden');
+        pendingMessage.style.display = 'none';
+        formFields.style.display = 'block';
       }
     }
 
@@ -628,10 +738,10 @@
       const usernameField = this.querySelector('#usernameField');
       const usernameInput = this.querySelector('#username');
       if (this.state === this.State.SIGNUP) {
-        usernameField.classList.remove('hidden');
+        usernameField.style.display = 'block';
         usernameInput.setAttribute('required', '');
       } else {
-        usernameField.classList.add('hidden');
+        usernameField.style.display = 'none';
         usernameInput.removeAttribute('required');
       }
 
@@ -642,14 +752,14 @@
       const codeInput = this.querySelector('#code');
 
       if (this.state === this.State.EMAIL_VERIFICATION) {
-        emailField.classList.add('hidden');
+        emailField.style.display = 'none';
         emailInput.removeAttribute('required');
-        codeField.classList.remove('hidden');
+        codeField.style.display = 'block';
         codeInput.setAttribute('required', '');
       } else {
-        emailField.classList.remove('hidden');
+        emailField.style.display = 'block';
         emailInput.setAttribute('required', '');
-        codeField.classList.add('hidden');
+        codeField.style.display = 'none';
         codeInput.removeAttribute('required');
       }
 
@@ -657,10 +767,10 @@
       const passwordField = this.querySelector('#passwordField');
       const passwordInput = this.querySelector('#password');
       if (this.state === this.State.RESET_PASSWORD || this.state === this.State.EMAIL_VERIFICATION) {
-        passwordField.classList.add('hidden');
+        passwordField.style.display = 'none';
         passwordInput.removeAttribute('required');
       } else {
-        passwordField.classList.remove('hidden');
+        passwordField.style.display = 'block';
         passwordInput.setAttribute('required', '');
       }
 
@@ -668,52 +778,114 @@
       const forgotPasswordLink = this.querySelector('#forgotPasswordLink');
       if (this.state === this.State.LOGIN) {
         forgotPasswordLink.style.display = 'block';
-        forgotPasswordLink.classList.remove('hidden');
       } else {
         forgotPasswordLink.style.display = 'none';
-        forgotPasswordLink.classList.add('hidden');
       }
 
       // Recaptcha visibility
       const recaptchaContainer = this.querySelector('#recaptcha-container');
       if (this.state === this.State.SIGNUP) {
-        recaptchaContainer.classList.remove('hidden');
+        recaptchaContainer.style.display = 'block';
       } else {
-        recaptchaContainer.classList.add('hidden');
+        recaptchaContainer.style.display = 'none';
       }
     }
 
     updateToggleStateLink() {
       const toggleStateContainer = this.querySelector('#toggleStateContainer');
+      const loginToggle = this.querySelector('.login-toggle');
+      const signupToggle = this.querySelector('.signup-toggle');
+
       if (this.state === this.State.RESET_PASSWORD || this.state === this.State.EMAIL_VERIFICATION) {
-        toggleStateContainer.classList.add('hidden');
+        toggleStateContainer.style.display = 'none';
       } else {
-        toggleStateContainer.classList.remove('hidden');
-        // Update toggle state text
-        const toggleText = this.state === this.State.LOGIN ? 'Sign up' : 'Log in';
-        const togglePrefix = this.state === this.State.LOGIN ? 'Not' : '';
+        toggleStateContainer.style.display = 'block';
 
-        // Create new elements instead of using innerHTML to preserve event listeners
-        const text = document.createTextNode(`${togglePrefix} registered? `);
-        const link = document.createElement('a');
-        link.id = 'toggleState';
-        link.href = '#';
-        link.className = 'text-blue-600 hover:text-blue-700 font-medium';
-        link.textContent = toggleText;
+        // Show the appropriate toggle based on state
+        if (this.state === this.State.LOGIN) {
+          loginToggle.style.display = '';
+          signupToggle.style.display = 'none';
 
-        // Clear existing content
-        toggleStateContainer.innerHTML = '';
+          // Add event listener to login toggle
+          const toggleLink = loginToggle.querySelector('#toggleState');
+          if (toggleLink) {
+            toggleLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.state = this.State.SIGNUP;
+              this.updateUI();
+            });
+          }
+        } else {
+          loginToggle.style.display = 'none';
+          signupToggle.style.display = '';
 
-        // Add new elements
-        toggleStateContainer.appendChild(text);
-        toggleStateContainer.appendChild(link);
+          // Add event listener to signup toggle
+          const toggleLink = signupToggle.querySelector('#toggleState-signup');
+          if (toggleLink) {
+            toggleLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.state = this.State.LOGIN;
+              this.updateUI();
+            });
+          }
+        }
+      }
+    }
 
-        // Add event listener to the newly created link
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          this.state = this.state === this.State.LOGIN ? this.State.SIGNUP : this.State.LOGIN;
-          this.updateUI(); // Call updateUI directly
-        });
+    updateInputValues() {
+      // Update email input
+      const emailInput = this.querySelector('#email');
+      if (emailInput) {
+        emailInput.value = this.email;
+        if (this.emailInvalid) {
+          emailInput.classList.add('error');
+        } else {
+          emailInput.classList.remove('error');
+        }
+      }
+
+      // Update password input
+      const passwordInput = this.querySelector('#password');
+      if (passwordInput) {
+        passwordInput.value = this.password;
+        if (this.passwordInvalid) {
+          passwordInput.classList.add('error');
+        } else {
+          passwordInput.classList.remove('error');
+        }
+      }
+
+      // Update username input
+      const usernameInput = this.querySelector('#username');
+      if (usernameInput) {
+        usernameInput.value = this.username;
+      }
+
+      // Update code input
+      const codeInput = this.querySelector('#code');
+      if (codeInput) {
+        codeInput.value = this.code;
+      }
+
+      // Update submit button state
+      const submitButton = this.querySelector('#submitButton');
+      if (submitButton) {
+        let shouldDisable =
+          (!this.email && this.state !== this.State.EMAIL_VERIFICATION) ||
+          (!this.password &&
+            this.state !== this.State.RESET_PASSWORD &&
+            this.state !== this.State.EMAIL_VERIFICATION) ||
+          this.loading;
+
+        // Add captcha check for signup
+        if (this.state === this.State.SIGNUP) {
+          // For signup, require username and captcha as well
+          shouldDisable = shouldDisable ||
+            !this.username ||
+            !this.captcha; // Make button disabled if captcha is not completed
+        }
+
+        submitButton.disabled = shouldDisable;
       }
     }
 
@@ -729,29 +901,6 @@
           }
         }
       }
-    }
-
-    // New method to show success message with animation
-    showSuccessMessage(message = 'You are now logged in.') {
-      // Update state
-      this.state = this.State.SUCCESS;
-
-      // Set success message
-      const successText = this.querySelector('#successText');
-      successText.textContent = message;
-
-      // Update UI to show success message
-      this.updateUI();
-
-      // No automatic reset - let the success message stay visible
-      // If you want to redirect or reset after animation completes,
-      // you can handle that externally or in a separate method
-    }
-
-    // New method to show error message
-    showErrorMessage(message = 'Authentication error. Please try again.') {
-      this.error = { state: true, message };
-      this.updateUI();
     }
   }
 
