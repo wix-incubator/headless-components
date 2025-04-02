@@ -14,7 +14,8 @@
     "./loaders": "./dist/loaders/index.js",
     "./entrypoints/server.js": "./dist/entrypoints/server.js",
     "./package.json": "./package.json",
-    "./runtime": "./dist/runtime.js"
+    "./runtime": "./dist/runtime.js",
+    "./components/login.astro": "./dist/routes/auth/login.astro"
   },
   "files": [
     "dist"

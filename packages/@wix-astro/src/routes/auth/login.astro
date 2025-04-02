@@ -67,6 +67,7 @@
               </label>
             </div>
             <input
+              class={Astro.props["input-class"]}
               id="username"
               name="username"
               type="text"
@@ -82,6 +83,7 @@
               </label>
             </div>
             <input
+              class={Astro.props["input-class"]}
               id="email"
               name="email"
               type="email"
@@ -97,6 +99,7 @@
               </label>
             </div>
             <input
+              class={Astro.props["input-class"]}
               id="code"
               name="code"
               type="number"
@@ -112,6 +115,7 @@
               </label>
             </div>
             <input
+              class={Astro.props["input-class"]}
               id="password"
               name="password"
               type="password"
@@ -131,7 +135,7 @@
 
           <!-- Submit button -->
           <div class="submit-button-container">
-            <button id="submitButton" type="submit">
+            <button id="submitButton" type="submit" class={Astro.props["button-class"]}>
               <span class="login-text">
                 <slot name="button-login">Log In</slot>
               </span>
@@ -172,35 +176,6 @@
 </div>
 
 <style>
-  /* Basic styling - users can override or replace these */
-  .login-form-wrapper {
-    font-family: system-ui, sans-serif;
-  }
-
-  .form-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  input {
-    display: block;
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  button {
-    cursor: pointer;
-    padding: 8px 16px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-  }
-
   button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -263,22 +238,6 @@
     }
   }
 
-  /* Error styling */
-  .error-container {
-    text-align: center;
-    background-color: #fff0f0;
-    border: 1px solid #ff0000;
-    border-radius: 4px;
-    padding: 12px;
-    margin-bottom: 15px;
-  }
-
-  .error-icon {
-    width: 24px;
-    height: 24px;
-    margin: 0 auto 8px;
-    color: #ff0000;
-  }
 
   /* RTL support for Hebrew and other RTL languages */
   :global([dir="rtl"]) .form-container {
@@ -292,9 +251,9 @@
 
   /* Loading text on submit button animation */
   .loading-bounce .dot {
-  display: inline-block; /* Needed for transform */
-  position: relative; /* Or just rely on inline-block default */
-  animation: bounce 0.6s infinite ease-in-out alternate;
+    display: inline-block; /* Needed for transform */
+    position: relative; /* Or just rely on inline-block default */
+    animation: bounce 0.6s infinite ease-in-out alternate;
   }
 
   /* Add delays to each dot */
@@ -317,15 +276,6 @@
     to {
       transform: translateY(-5px); /* Adjust bounce height */
     }
-  }
-
-  /* Style to make it visible for testing/use */
-  .loading-text {
-    /* Remove or override this when you want to show it */
-    /* display: none; */
-    display: inline-block; /* Or block, depending on layout */
-    font-size: 1.2em; /* Example styling */
-    font-family: sans-serif; /* Example styling */
   }
 </style>
 
@@ -704,7 +654,7 @@
       });
 
       // Determine which text to show based on state
-      const textToShow = this.loading ? 'loading' : 
+      const textToShow = this.loading ? 'loading' :
         {
           [this.State.LOGIN]: 'login',
           [this.State.SIGNUP]: 'signup',
