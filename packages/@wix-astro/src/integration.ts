@@ -43,7 +43,6 @@ export function createIntegration(
         injectRoute,
         logger,
       }) => {
-        console.log('fileURLToPath(import.meta.url)', fileURLToPath(import.meta.url));
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
           resolveToAbsolute: true,
           allowImportingExtraExtensions: ['.ts', '.tsx', '.astro'],
