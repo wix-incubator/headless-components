@@ -1,8 +1,8 @@
-import { pkceChallenge } from './pkce-challenge.js';
 import { redirects } from '@wix/redirects';
 import { loadFrame, addPostMessageListener } from './iframeUtils.js';
 import { biHeaderGenerator } from './bi-header-generator.js';
 import { wixContext } from '@wix/sdk-context';
+import { generateRandomCodeVerifier, calculatePKCECodeChallenge, generateRandomState } from 'oauth4webapi';
 
 const DEFAULT_API_URL = 'readonly.wixapis.com';
 
@@ -37,12 +37,13 @@ export enum TokenRole {
   MEMBER = 'member',
 }
 
-const generatePKCE = (): OauthPKCE => {
-  const pkceState = pkceChallenge();
+const generatePKCE = async (): Promise<OauthPKCE> => {
+  const codeVerifier = generateRandomCodeVerifier();
+  const pkceState = await calculatePKCECodeChallenge(codeVerifier);
   return {
-    codeChallenge: pkceState.code_challenge,
-    codeVerifier: pkceState.code_verifier,
-    state: pkceChallenge().code_challenge,
+    codeChallenge: pkceState,
+    codeVerifier: codeVerifier,
+    state: generateRandomState(),
   };
 };
 
@@ -162,7 +163,7 @@ const getMemberTokens = async (
 };
 
 export const getMemberTokensForDirectLogin = async (sessionToken: string) => {
-  const oauthPKCE = generatePKCE();
+  const oauthPKCE = await generatePKCE();
   const { authUrl } = await getAuthorizationUrlWithOptions(
     oauthPKCE,
     'web_message',
