@@ -40,7 +40,6 @@ export function createIntegration(
         config,
         updateConfig,
         addMiddleware,
-        injectRoute,
         logger,
       }) => {
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
