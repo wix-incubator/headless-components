@@ -48,14 +48,6 @@ export function createIntegration(
           allowImportingExtraExtensions: ['.ts', '.tsx', '.astro'],
         });
 
-        const loginRoute = {
-          entrypoint: '@wix-astro/components/login.astro',
-          pattern: "/login",
-          prerender: false,
-        };
-
-        injectRoute(loginRoute);
-
         addMiddleware({
           entrypoint: aRequire("./middleware")!,
           order: "pre",
