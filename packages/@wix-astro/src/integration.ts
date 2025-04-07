@@ -49,7 +49,7 @@ export function createIntegration(
         });
 
         const loginRoute = {
-          entrypoint: '/Users/yurym/wix/headless-integrations/packages/@wix-astro/dist/routes/auth/login.astro', //aRequire("./routes/auth/yury.astro")!,
+          entrypoint: '@wix-astro/components/login.astro',
           pattern: "/login",
           prerender: false,
         };
