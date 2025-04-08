@@ -44,7 +44,6 @@ export function createIntegration(
       }) => {
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
           resolveToAbsolute: true,
-          allowImportingExtraExtensions: ['.ts', '.tsx', '.astro'],
         });
 
         addMiddleware({
