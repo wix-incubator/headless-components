@@ -4,7 +4,7 @@ import { biHeaderGenerator } from './bi-header-generator.js';
 import { wixContext } from '@wix/sdk-context';
 import { generateRandomCodeVerifier, calculatePKCECodeChallenge, generateRandomState } from 'oauth4webapi';
 
-const DEFAULT_API_URL = 'readonly.wixapis.com';
+const DEFAULT_API_URL = 'www.wixapis.com';
 
 export interface OauthPKCE {
   codeVerifier: string;
