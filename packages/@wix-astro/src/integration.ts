@@ -40,10 +40,35 @@ export function createIntegration(
         config,
         updateConfig,
         addMiddleware,
+        injectRoute,
         logger,
       }) => {
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
           resolveToAbsolute: true,
+        });
+
+        injectRoute({
+          entrypoint: aRequire("./routes/auth/login")!,
+          pattern: "/api/auth/login",
+          prerender: false,
+        });
+
+        injectRoute({
+          entrypoint: aRequire("./routes/auth/logout")!,
+          pattern: "/api/auth/logout",
+          prerender: false,
+        });
+
+        injectRoute({
+          entrypoint: aRequire("./routes/auth/callback")!,
+          pattern: "/api/auth/callback",
+          prerender: false,
+        });
+
+        injectRoute({
+          entrypoint: aRequire("./routes/auth/logout-callback")!,
+          pattern: "/api/auth/logout-callback",
+          prerender: false,
         });
 
         addMiddleware({
