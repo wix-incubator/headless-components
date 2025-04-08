@@ -14,7 +14,8 @@
     "./loaders": "./dist/loaders/index.js",
     "./entrypoints/server.js": "./dist/entrypoints/server.js",
     "./package.json": "./package.json",
-    "./runtime": "./dist/runtime.js"
+    "./runtime": "./dist/runtime.js",
+    "./components/login.astro": "./components/login.astro"
   },
   "files": [
     "dist"
@@ -30,11 +31,13 @@
     "@cloudflare/workers-types": "^4.20241224.0",
     "@wix/blog": "^1.0.345",
     "@wix/data": "^1.0.194",
+    "@wix/identity": "^1.0.125",
     "@wix/sdk": "^1.15.14",
     "chalk": "^5.4.1",
     "esm-resolve": "^1.0.11",
     "globby": "^14.0.2",
     "magic-string": "^0.30.17",
+    "oauth4webapi": "^3.4.0",
     "outdent": "^0.8.0",
     "p-retry": "^6.2.1",
     "vite": "^6.0.0"

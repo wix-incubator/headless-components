@@ -1,0 +1,859 @@
+---
+---
+
+<div class="login-form-wrapper">
+  <login-form>
+    <form id="loginForm">
+      <div class="form-container">
+        <h3 id="formTitle">
+          <span id="title-login">
+            <slot name="title-login">Log In</slot>
+          </span>
+          <span id="title-signup" style="display: none;">
+            <slot name="title-signup">Sign Up</slot>
+          </span>
+          <span id="title-reset" style="display: none;">
+            <slot name="title-reset">Reset Password</slot>
+          </span>
+          <span id="title-verify" style="display: none;">
+            <slot name="title-verify">Email Verification</slot>
+          </span>
+          <span id="title-success" style="display: none;">
+            <slot name="title-success">Success</slot>
+          </span>
+        </h3>
+
+        <!-- Success message with animation -->
+        <div id="successMessage" style="display: none;">
+          <div class="success-animation">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+          </div>
+          <p class="success-title">
+            <slot name="success-title">Login Successful!</slot>
+          </p>
+          <p id="successText">
+            <slot name="success-message">You are now logged in.</slot>
+          </p>
+        </div>
+
+        <div id="pendingMessage" style="display: none;">
+          <p id="pendingText"></p>
+          <button id="okButton" type="button">
+            <slot name="ok-button">OK</slot>
+          </button>
+        </div>
+
+        <!-- General Error Message -->
+        <div id="errorMessage" style="display: none;">
+          <div class="error-container">
+            <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            <p id="errorText">
+              <slot name="error-message">Authentication error. Please try again.</slot>
+            </p>
+          </div>
+        </div>
+
+        <div id="formFields">
+          <!-- Username field (sign up only) -->
+          <div id="usernameField" style="display: none;">
+            <div class="field-label">
+              <label for="username">
+                <slot name="username-label">Username</slot>
+              </label>
+            </div>
+            <input
+              class={Astro.props["input-class"]}
+              id="username"
+              name="username"
+              type="text"
+              required
+            />
+          </div>
+
+          <!-- Email field -->
+          <div id="emailField">
+            <div class="field-label">
+              <label for="email">
+                <slot name="email-label">Email</slot>
+              </label>
+            </div>
+            <input
+              class={Astro.props["input-class"]}
+              id="email"
+              name="email"
+              type="email"
+              required
+            />
+          </div>
+
+          <!-- Verification code field -->
+          <div id="codeField" style="display: none;">
+            <div class="field-label">
+              <label for="code">
+                <slot name="code-label">Code</slot>
+              </label>
+            </div>
+            <input
+              class={Astro.props["input-class"]}
+              id="code"
+              name="code"
+              type="number"
+              required
+            />
+          </div>
+
+          <!-- Password field -->
+          <div id="passwordField">
+            <div class="field-label">
+              <label for="password">
+                <slot name="password-label">Password</slot>
+              </label>
+            </div>
+            <input
+              class={Astro.props["input-class"]}
+              id="password"
+              name="password"
+              type="password"
+              required
+            />
+          </div>
+
+          <!-- Forgot password link -->
+          <div id="forgotPasswordLink">
+            <a id="forgotPassword" href="#">
+              <slot name="forgot-password">Forgot password?</slot>
+            </a>
+          </div>
+
+          <!-- reCAPTCHA container -->
+          <div id="recaptcha-container" style="display: none;"></div>
+
+          <!-- Submit button -->
+          <div class="submit-button-container">
+            <button id="submitButton" type="submit" class={Astro.props["button-class"]}>
+              <span class="login-text">
+                <slot name="button-login">Log In</slot>
+              </span>
+              <span class="signup-text" style="display: none;">
+                <slot name="button-signup">Sign Up</slot>
+              </span>
+              <span class="reset-text" style="display: none;">
+                <slot name="button-reset">Reset</slot>
+              </span>
+              <span class="verify-text" style="display: none;">
+                <slot name="button-verify">Submit</slot>
+              </span>
+              <span class="loading-text loading-bounce" style="display: none;">
+                <slot name="button-loading">Loading</slot><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+              </span>
+            </button>
+          </div>
+
+          <!-- Toggle login/signup -->
+          <div id="toggleStateContainer">
+            <span class="login-toggle">
+              <slot name="toggle-login-text">Not registered?</slot>
+              <a id="toggleState" href="#">
+                <slot name="toggle-login-link">Sign up</slot>
+              </a>
+            </span>
+            <span class="signup-toggle" style="display: none;">
+              <slot name="toggle-signup-text">Already registered?</slot>
+              <a id="toggleState-signup" href="#">
+                <slot name="toggle-signup-link">Log in</slot>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </login-form>
+</div>
+
+<style>
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Success animation styles */
+  .success-animation {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  .checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #4BB71B;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #4BB71B;
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+  }
+
+  .checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #4BB71B;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+
+  .checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+
+  @keyframes stroke {
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes scale {
+    0%, 100% {
+      transform: none;
+    }
+    50% {
+      transform: scale3d(1.1, 1.1, 1);
+    }
+  }
+
+  @keyframes fill {
+    100% {
+      box-shadow: inset 0px 0px 0px 30px rgba(75, 183, 27, 0.2);
+    }
+  }
+
+
+  /* RTL support for Hebrew and other RTL languages */
+  :global([dir="rtl"]) .form-container {
+    text-align: right;
+  }
+
+  :global([dir="rtl"]) input {
+    text-align: right;
+  }
+
+
+  /* Loading text on submit button animation */
+  .loading-bounce .dot {
+    display: inline-block; /* Needed for transform */
+    position: relative; /* Or just rely on inline-block default */
+    animation: bounce 0.6s infinite ease-in-out alternate;
+  }
+
+  /* Add delays to each dot */
+  .loading-bounce .dot:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+
+  .loading-bounce .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .loading-bounce .dot:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes bounce {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-5px); /* Adjust bounce height */
+    }
+  }
+</style>
+
+<script>
+  import { authentication, verification, recovery } from '@wix/identity';
+  import { getMemberTokensForDirectLogin } from './login-helpers/login-helpers.js';
+  import { wixContext } from '@wix/sdk-context';
+
+  class LoginForm extends HTMLElement {
+    constructor() {
+      super();
+      // States enum
+      this.State = {
+        LOGIN: 'LOGIN',
+        SIGNUP: 'SIGNUP',
+        RESET_PASSWORD: 'RESET_PASSWORD',
+        EMAIL_VERIFICATION: 'EMAIL_VERIFICATION',
+        SUCCESS: 'SUCCESS'
+      };
+
+      // Initialize state variables
+      this.state = this.State.LOGIN;
+      this.loading = false;
+      this.email = '';
+      this.code = '';
+      this.username = '';
+      this.password = '';
+      this.pending = { state: false, message: '' };
+      this.passwordInvalid = false;
+      this.emailInvalid = false;
+      this.captcha = '';
+      this.error = { state: false, message: '' };
+
+      // Bind methods to this
+      this.resetState = this.resetState.bind(this);
+      this.submit = this.submit.bind(this);
+      this.updateUI = this.updateUI.bind(this);
+      this.handleInputChange = this.handleInputChange.bind(this);
+      this.showSuccessMessage = this.showSuccessMessage.bind(this);
+      this.showErrorMessage = this.showErrorMessage.bind(this);
+    }
+
+    connectedCallback() {
+      // Initial setup
+      this.setupEventListenersForStaticElements();
+      this.updateUI(); // This will handle dynamic element setup
+    }
+
+    setupEventListenersForStaticElements() {
+      // Form submission
+      this.querySelector('#loginForm').addEventListener('submit', this.submit);
+
+      // OK button for messages
+      this.querySelector('#okButton').addEventListener('click', () => {
+        this.resetState();
+      });
+
+      // Forgot password link
+      const forgotPasswordLink = this.querySelector('#forgotPassword');
+      if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.state = this.State.RESET_PASSWORD;
+          this.resetState();
+        });
+      }
+
+      // Input event listeners for all form fields
+      const inputs = this.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('input', this.handleInputChange);
+      });
+    }
+
+    async setupCaptcha() {
+      try {
+        // Set up recaptcha
+        if (!window.grecaptcha && this.state === this.State.SIGNUP) {
+          const script = document.createElement('script');
+          script.src = "https://www.google.com/recaptcha/enterprise.js";
+          document.head.appendChild(script);
+
+          script.onload = () => {
+            window.grecaptcha.enterprise.ready(() => {
+              window.grecaptcha.enterprise.render('recaptcha-container', {
+                'sitekey': '6Ld0J8IcAAAAANyrnxzrRlX1xrrdXsOmsepUYosy',  // Replace with your actual site key
+                'size': 'normal', // or 'compact' for mobile-friendly
+                'callback': this.onCaptchaChange.bind(this),
+                'expired-callback': () => {
+                  this.captcha = '';
+                  this.updateInputValues(); // Update UI without full render
+                },
+              });
+            });
+          };
+        }
+      } catch (error) {
+        console.error("Error setting up captcha:", error);
+      }
+    }
+
+    resetState() {
+      this.loading = false;
+      this.pending = { state: false, message: '' };
+      this.email = '';
+      this.code = '';
+      this.passwordInvalid = false;
+      this.emailInvalid = false;
+      this.username = '';
+      this.password = '';
+      this.error = { state: false, message: '' };
+
+      // Reset recaptcha if it exists
+      if (this.querySelector('.g-recaptcha') && window.grecaptcha) {
+        window.grecaptcha.enterprise.reset();
+      }
+
+      this.updateUI();
+    }
+
+    handleInputChange(event) {
+      const { id, value } = event.target;
+
+      // Clear error message when user starts typing
+      if (this.error.state) {
+        this.error = { state: false, message: '' };
+        this.updateUI();
+      }
+
+      if (id === 'email') {
+        this.email = value;
+        this.emailInvalid = false;
+      } else if (id === 'password') {
+        this.password = value;
+        this.passwordInvalid = false;
+      } else if (id === 'username') {
+        this.username = value;
+      } else if (id === 'code') {
+        this.code = value;
+      }
+
+      // Update UI state without full re-render
+      this.updateInputValues();
+    }
+
+    async submit(event) {
+      event.preventDefault();
+      this.loading = true;
+      this.error = { state: false, message: '' }; // Clear any previous errors
+      this.updateInputValues(); // Update UI without full render
+      this.updateButtonText();
+
+      let response;
+
+      try {
+        if (this.state === this.State.RESET_PASSWORD) {
+          await recovery.sendRecoveryEmail(
+            this.email,
+            { redirect: { url: window.location.origin, clientId: wixContext['clientId'] as string } }
+          );
+          this.pending = { message: 'Password reset email sent', state: true };
+          this.updateUI(); // Update UI for modal state change
+          return;
+        }
+
+        if (this.state === this.State.EMAIL_VERIFICATION) {
+          response = await verification.verifyDuringAuthentication(
+            this.code,
+            { stateToken: this.emailVerificationStateToken },
+          );
+        } else if (this.state === this.State.LOGIN) {
+          response = await authentication.loginV2(
+            {
+            email: this.email,
+            },
+            {
+              password: this.password,
+            }
+          );
+        } else {
+          response = await authentication.registerV2({
+            email: this.email,
+          },
+          {
+            password: this.password,
+            profile: {
+              nickname: this.username,
+            },
+            captchaTokens: [
+              {
+                Recaptcha: this.captcha,
+              },
+            ],
+          });
+        }
+
+        // Handle login success
+        if (response.state === 'SUCCESS') {
+          const tokens = await getMemberTokensForDirectLogin(
+            response.sessionToken!
+          );
+
+          // Set cookie
+          this.setCookie('wixSession', JSON.stringify(tokens.refreshToken), 2);
+
+          // Show success animation
+          this.showSuccessMessage();
+
+          // Dispatch a success event that consumers can listen for
+          this.dispatchEvent(new CustomEvent('login-success'));
+          return;
+        }
+
+        // Handle various states
+        if (response.state === 'OWNER_APPROVAL_REQUIRED') {
+          this.pending = { message: 'Your account is pending approval', state: true };
+          this.updateUI(); // Update UI for state change
+        } else if (response.state === 'REQUIRE_EMAIL_VERIFICATION') {
+          this.state = this.State.EMAIL_VERIFICATION;
+          this.emailVerificationStateToken = response.stateToken;
+          this.updateUI(); // Update UI for state change
+        } else if (response.state === 'FAILURE') {
+          if (response.errorCode === 'invalidPassword') {
+            this.passwordInvalid = true;
+            this.updateInputValues(); // Update without full render
+          } else if (
+            response.errorCode === 'invalidEmail' ||
+            response.errorCode === 'emailAlreadyExists'
+          ) {
+            this.emailInvalid = true;
+            this.updateInputValues(); // Update without full render
+          } else if (response.errorCode === 'resetPassword') {
+            this.pending = {
+              message: 'Your password requires reset',
+              state: true,
+            };
+            this.updateUI(); // Update UI for state change
+          } else {
+            // Handle other error codes with a generic message
+            this.showErrorMessage();
+            const errorElem = this.querySelector('#errorText');
+            if (errorElem) {
+              errorElem.setAttribute('data-error-code', response.errorCode || 'unknown');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Authentication error:', error);
+        // Show user-friendly error message
+        this.showErrorMessage();
+      }
+
+      // Reset recaptcha
+      if (this.querySelector('.g-recaptcha') && window.grecaptcha) {
+        window.grecaptcha.reset();
+      }
+
+      this.loading = false;
+      this.updateInputValues(); // Update UI without full render
+    }
+
+    // New method to show error message
+    showErrorMessage() {
+      this.error = { state: true, message: '' };
+      this.updateUI();
+    }
+
+    setCookie(name, value, days) {
+      // Using a simplified cookie setter for demonstration
+      let expires = '';
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    onCaptchaChange(token) {
+      this.captcha = token;
+      this.updateInputValues(); // Update UI without full render
+    }
+
+    // New method to show success message with animation
+    showSuccessMessage() {
+      // Update state
+      this.state = this.State.SUCCESS;
+
+      // Update UI to show success message
+      this.updateUI();
+    }
+
+    updateUI() {
+      // Handle success message visibility first
+      const successMessage = this.querySelector('#successMessage');
+      if (this.state === this.State.SUCCESS) {
+        this.updateTitleVisibility();
+
+        successMessage.style.display = 'block';
+        this.querySelector('#formFields').style.display = 'none';
+        this.querySelector('#pendingMessage').style.display = 'none';
+        this.querySelector('#errorMessage').style.display = 'none';
+        return; // Exit early as we don't need to update other UI parts
+      } else {
+        successMessage.style.display = 'none';
+      }
+
+      // Update title visibility
+      this.updateTitleVisibility();
+
+      // Handle error message visibility
+      const errorMessage = this.querySelector('#errorMessage');
+
+      if (this.error.state) {
+        errorMessage.style.display = 'block';
+      } else {
+        errorMessage.style.display = 'none';
+      }
+
+      // Handle pending message visibility
+      this.updatePendingMessageVisibility();
+
+      // Update field visibility based on current state
+      this.updateFieldVisibility();
+
+      // Update toggle state link
+      this.updateToggleStateLink();
+
+      // Set up captcha if needed
+      if (this.state === this.State.SIGNUP) {
+        this.setupCaptcha();
+      }
+
+      // Update input values
+      this.updateInputValues();
+
+      // Update button text
+      this.updateButtonText();
+    }
+
+    updateTitleVisibility() {
+      // First create a map of all title elements
+      const titleMap = {
+        [this.State.LOGIN]: this.querySelector('#title-login'),
+        [this.State.SIGNUP]: this.querySelector('#title-signup'),
+        [this.State.RESET_PASSWORD]: this.querySelector('#title-reset'),
+        [this.State.EMAIL_VERIFICATION]: this.querySelector('#title-verify'),
+        [this.State.SUCCESS]: this.querySelector('#title-success')
+      };
+
+      // Hide all title elements first
+      Object.values(titleMap).forEach(elem => {
+        if (elem) elem.style.display = 'none';
+      });
+
+      // Show only the current state's title
+      const currentTitleElem = titleMap[this.state];
+      if (currentTitleElem) {
+        currentTitleElem.style.display = '';
+      }
+    }
+
+    updateButtonText() {
+      // Hide all button text elements
+      const buttonTextElements = {
+        login: this.querySelector('.login-text'),
+        signup: this.querySelector('.signup-text'),
+        reset: this.querySelector('.reset-text'),
+        verify: this.querySelector('.verify-text'),
+        loading: this.querySelector('.loading-text')
+      };
+
+      // Hide all text elements first
+      Object.values(buttonTextElements).forEach(elem => {
+        if (elem) elem.style.display = 'none';
+      });
+
+      // Determine which text to show based on state
+      const textToShow = this.loading ? 'loading' :
+        {
+          [this.State.LOGIN]: 'login',
+          [this.State.SIGNUP]: 'signup',
+          [this.State.RESET_PASSWORD]: 'reset',
+          [this.State.EMAIL_VERIFICATION]: 'verify'
+        }[this.state];
+
+      // Show the selected text
+      const selectedElement = buttonTextElements[textToShow];
+      if (selectedElement) {
+        selectedElement.style.display = '';
+      }
+    }
+
+    updatePendingMessageVisibility() {
+      const pendingMessage = this.querySelector('#pendingMessage');
+      const formFields = this.querySelector('#formFields');
+
+      if (this.pending.state) {
+        pendingMessage.style.display = 'block';
+        formFields.style.display = 'none';
+        this.querySelector('#pendingText').textContent = this.pending.message;
+      } else {
+        pendingMessage.style.display = 'none';
+        formFields.style.display = 'block';
+      }
+    }
+
+    updateFieldVisibility() {
+      // Username field (only visible during signup)
+      const usernameField = this.querySelector('#usernameField');
+      const usernameInput = this.querySelector('#username');
+      if (this.state === this.State.SIGNUP) {
+        usernameField.style.display = 'block';
+        usernameInput.setAttribute('required', '');
+      } else {
+        usernameField.style.display = 'none';
+        usernameInput.removeAttribute('required');
+      }
+
+      // Email vs Code field visibility
+      const emailField = this.querySelector('#emailField');
+      const emailInput = this.querySelector('#email');
+      const codeField = this.querySelector('#codeField');
+      const codeInput = this.querySelector('#code');
+
+      if (this.state === this.State.EMAIL_VERIFICATION) {
+        emailField.style.display = 'none';
+        emailInput.removeAttribute('required');
+        codeField.style.display = 'block';
+        codeInput.setAttribute('required', '');
+      } else {
+        emailField.style.display = 'block';
+        emailInput.setAttribute('required', '');
+        codeField.style.display = 'none';
+        codeInput.removeAttribute('required');
+      }
+
+      // Password field visibility
+      const passwordField = this.querySelector('#passwordField');
+      const passwordInput = this.querySelector('#password');
+      if (this.state === this.State.RESET_PASSWORD || this.state === this.State.EMAIL_VERIFICATION) {
+        passwordField.style.display = 'none';
+        passwordInput.removeAttribute('required');
+      } else {
+        passwordField.style.display = 'block';
+        passwordInput.setAttribute('required', '');
+      }
+
+      // Forgot password link visibility
+      const forgotPasswordLink = this.querySelector('#forgotPasswordLink');
+      if (this.state === this.State.LOGIN) {
+        forgotPasswordLink.style.display = 'block';
+      } else {
+        forgotPasswordLink.style.display = 'none';
+      }
+
+      // Recaptcha visibility
+      const recaptchaContainer = this.querySelector('#recaptcha-container');
+      if (this.state === this.State.SIGNUP) {
+        recaptchaContainer.style.display = 'block';
+      } else {
+        recaptchaContainer.style.display = 'none';
+      }
+    }
+
+    updateToggleStateLink() {
+      const toggleStateContainer = this.querySelector('#toggleStateContainer');
+      const loginToggle = this.querySelector('.login-toggle');
+      const signupToggle = this.querySelector('.signup-toggle');
+
+      if (this.state === this.State.RESET_PASSWORD || this.state === this.State.EMAIL_VERIFICATION) {
+        toggleStateContainer.style.display = 'none';
+      } else {
+        toggleStateContainer.style.display = 'block';
+
+        // Show the appropriate toggle based on state
+        if (this.state === this.State.LOGIN) {
+          loginToggle.style.display = '';
+          signupToggle.style.display = 'none';
+
+          // Add event listener to login toggle
+          const toggleLink = loginToggle.querySelector('#toggleState');
+          if (toggleLink) {
+            toggleLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.state = this.State.SIGNUP;
+              this.updateUI();
+            });
+          }
+        } else {
+          loginToggle.style.display = 'none';
+          signupToggle.style.display = '';
+
+          // Add event listener to signup toggle
+          const toggleLink = signupToggle.querySelector('#toggleState-signup');
+          if (toggleLink) {
+            toggleLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.state = this.State.LOGIN;
+              this.updateUI();
+            });
+          }
+        }
+      }
+    }
+
+    updateInputValues() {
+      // Update email input
+      const emailInput = this.querySelector('#email');
+      if (emailInput) {
+        emailInput.value = this.email;
+        if (this.emailInvalid) {
+          emailInput.classList.add('error');
+        } else {
+          emailInput.classList.remove('error');
+        }
+      }
+
+      // Update password input
+      const passwordInput = this.querySelector('#password');
+      if (passwordInput) {
+        passwordInput.value = this.password;
+        if (this.passwordInvalid) {
+          passwordInput.classList.add('error');
+        } else {
+          passwordInput.classList.remove('error');
+        }
+      }
+
+      // Update username input
+      const usernameInput = this.querySelector('#username');
+      if (usernameInput) {
+        usernameInput.value = this.username;
+      }
+
+      // Update code input
+      const codeInput = this.querySelector('#code');
+      if (codeInput) {
+        codeInput.value = this.code;
+      }
+
+      // Update submit button state
+      const submitButton = this.querySelector('#submitButton');
+      if (submitButton) {
+        let shouldDisable =
+          (!this.email && this.state !== this.State.EMAIL_VERIFICATION) ||
+          (!this.password &&
+            this.state !== this.State.RESET_PASSWORD &&
+            this.state !== this.State.EMAIL_VERIFICATION) ||
+          this.loading;
+
+        // Add captcha check for signup
+        if (this.state === this.State.SIGNUP) {
+          // For signup, require username and captcha as well
+          shouldDisable = shouldDisable ||
+            !this.username ||
+            !this.captcha; // Make button disabled if captcha is not completed
+        }
+
+        submitButton.disabled = shouldDisable;
+      }
+    }
+
+    restoreFocus(activeElementId) {
+      if (activeElementId) {
+        const elementToFocus = this.querySelector(`#${activeElementId}`);
+        if (elementToFocus) {
+          elementToFocus.focus();
+
+          // If it's an input, place cursor at the end
+          if (elementToFocus.tagName === 'INPUT' && (elementToFocus.type === 'text' || elementToFocus.type === 'email')) {
+            elementToFocus.selectionStart = elementToFocus.selectionEnd = elementToFocus.value.length;
+          }
+        }
+      }
+    }
+  }
+
+  // Define the custom element
+  customElements.define('login-form', LoginForm);
+</script>
