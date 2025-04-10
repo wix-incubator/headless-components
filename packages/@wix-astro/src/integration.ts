@@ -17,20 +17,40 @@ import { outdent } from "outdent";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { wixSDKContext } from "./vite-plugins/sdk-context.js";
+import { wrapWixRedirectsSimplePlugin } from "./vite-plugins/rewrite-redirects.js";
 export { wixBlogLoader };
 
 export type { Runtime } from "./entrypoints/server.js";
 
+export interface WixAstroIntegrationOptions {
+  /**
+   * Name of the cookie used for the Wix session
+   * @default "wixSession"
+   */
+  sessionCookieName?: string;
+
+  /**
+   * Whether to pre-warm the redirect session by injecting an iframe to cookie.wix.com
+   * @default false
+   */
+  preWarmRedirectSession?: boolean;
+
+  /***
+   * Wether to inect routes for Wix Auth
+   * @default true
+   */
+  useWixAuth: boolean;
+}
+
 export function createIntegration(
-  opts: {
-    sessionCookieName?: string;
-    useWixAuth?: boolean;
-  } = {
+  opts: WixAstroIntegrationOptions = {
     sessionCookieName: "wixSession",
+    preWarmRedirectSession: false,
     useWixAuth: true,
   }
 ): AstroIntegration {
   const sessionCookieName = opts.sessionCookieName ?? "wixSession";
+  const preWarmRedirectSession = opts.preWarmRedirectSession ?? false;
 
   let _config: AstroConfig;
   let _buildOutput: "server" | "static";
@@ -44,6 +64,7 @@ export function createIntegration(
         addMiddleware,
         injectRoute,
         logger,
+        injectScript,
       }) => {
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
           resolveToAbsolute: true,
@@ -111,6 +132,13 @@ export function createIntegration(
           );
         }
 
+        // If preWarmRedirectSession is enabled, inject our client script
+        if (preWarmRedirectSession) {
+          const scriptLocation = path.resolve(import.meta.dirname, './redirect-warmup/client-script.js')!;
+          const scriptContent = await fs.readFile(scriptLocation, 'utf-8');
+          injectScript('page', scriptContent);
+        }
+
         updateConfig({
           env: {
             schema: {
@@ -169,6 +197,7 @@ export function createIntegration(
               wixSDKContext({
                 sessionCookieName,
               }),
+              ...(preWarmRedirectSession ? [wrapWixRedirectsSimplePlugin()] : []),
             ],
           },
           image: {
