@@ -24,8 +24,10 @@ export type { Runtime } from "./entrypoints/server.js";
 export function createIntegration(
   opts: {
     sessionCookieName?: string;
+    useWixAuth?: boolean;
   } = {
     sessionCookieName: "wixSession",
+    useWixAuth: true,
   }
 ): AstroIntegration {
   const sessionCookieName = opts.sessionCookieName ?? "wixSession";
@@ -47,11 +49,12 @@ export function createIntegration(
           resolveToAbsolute: true,
         });
 
-        injectRoute({
-          entrypoint: aRequire("./routes/auth/login")!,
-          pattern: "/api/auth/login",
-          prerender: false,
-        });
+        if (opts.useWixAuth) {
+          injectRoute({
+            entrypoint: aRequire("./routes/auth/login")!,
+            pattern: "/api/auth/login",
+            prerender: false,
+          });
 
         injectRoute({
           entrypoint: aRequire("./routes/auth/logout")!,
@@ -67,9 +70,10 @@ export function createIntegration(
 
         injectRoute({
           entrypoint: aRequire("./routes/auth/logout-callback")!,
-          pattern: "/api/auth/logout-callback",
-          prerender: false,
-        });
+            pattern: "/api/auth/logout-callback",
+            prerender: false,
+          });
+        }
 
         addMiddleware({
           entrypoint: aRequire("./middleware")!,
