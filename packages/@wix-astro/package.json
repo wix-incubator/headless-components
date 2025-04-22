@@ -32,7 +32,7 @@
     "@wix/blog": "^1.0.345",
     "@wix/data": "^1.0.194",
     "@wix/identity": "^1.0.125",
-    "@wix/sdk": "^1.15.14",
+    "@wix/sdk": "https://cdn.dev.wixpress.com/@wix/sdk/fe3ba09f66f6c94d95dea4554e9cc971e4db9e7571b93d9c7f6f6246.tar.gz",
     "chalk": "^5.4.1",
     "esm-resolve": "^1.0.11",
     "globby": "^14.0.2",
