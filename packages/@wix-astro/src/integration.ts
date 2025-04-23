@@ -132,7 +132,7 @@ export function createIntegration(
         }
 
         if (preWarmRedirectSession) {
-          injectScript('page', `import { wixContext } from '@wix/sdk-context'; wixContext.client.auth.preWarmVisitorCookie.preWarm();`);
+          injectScript('page', `import { getWixClient } from '@wix/astro/helpers'; getWixClient().auth.syncToWixPages();`);
         }
 
         updateConfig({

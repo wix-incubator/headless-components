@@ -15,7 +15,8 @@
     "./entrypoints/server.js": "./dist/entrypoints/server.js",
     "./package.json": "./package.json",
     "./runtime": "./dist/runtime.js",
-    "./components/login.astro": "./dist/components/login.astro"
+    "./components/login.astro": "./dist/components/login.astro",
+    "./helpers": "./dist/helpers/index.js"
   },
   "files": [
     "dist"
@@ -32,7 +33,7 @@
     "@wix/blog": "^1.0.345",
     "@wix/data": "^1.0.194",
     "@wix/identity": "^1.0.125",
-    "@wix/sdk": "https://cdn.dev.wixpress.com/@wix/sdk/fe3ba09f66f6c94d95dea4554e9cc971e4db9e7571b93d9c7f6f6246.tar.gz",
+    "@wix/sdk": "https://cdn.dev.wixpress.com/@wix/sdk/7f12c40e810b9de2a1823423539adc125e7f06ab4c6ee0a02157aac0.tar.gz",
     "chalk": "^5.4.1",
     "esm-resolve": "^1.0.11",
     "globby": "^14.0.2",
