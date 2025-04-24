@@ -1,6 +1,6 @@
 import type { APIContext } from "astro";
 import pRetry from "p-retry";
-import { getAuth } from "../../runtime.js";
+import { getAuth } from "../../runtime.server.js";
 import { OAUTH_COOKIE_STATE, WIX_LOGIN_REDIRECT } from "./constants.js";
 import { sessionCookieJson } from "./runtime.js";
 

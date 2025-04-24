@@ -14,7 +14,8 @@
     "./loaders": "./dist/loaders/index.js",
     "./entrypoints/server.js": "./dist/entrypoints/server.js",
     "./package.json": "./package.json",
-    "./runtime": "./dist/runtime.js",
+    "./runtime/client": "./dist/runtime.client.js",
+    "./runtime/server": "./dist/runtime.server.js",
     "./components/login.astro": "./dist/components/login.astro"
   },
   "files": [
@@ -32,7 +33,7 @@
     "@wix/blog": "^1.0.345",
     "@wix/data": "^1.0.194",
     "@wix/identity": "^1.0.125",
-    "@wix/sdk": "^1.15.14",
+    "@wix/sdk": "^1.15.18",
     "chalk": "^5.4.1",
     "esm-resolve": "^1.0.11",
     "globby": "^14.0.2",

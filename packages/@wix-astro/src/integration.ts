@@ -21,16 +21,35 @@ export { wixBlogLoader };
 
 export type { Runtime } from "./entrypoints/server.js";
 
+export interface WixAstroIntegrationOptions {
+  /**
+   * Name of the cookie used for the Wix session
+   * @default "wixSession"
+   */
+  sessionCookieName?: string;
+
+  /**
+   * Whether to pre-warm the redirect session by injecting an iframe to cookie.wix.com
+   * @default false
+   */
+  preWarmRedirectSession?: boolean;
+
+  /***
+   * Wether to inect routes for Wix Auth
+   * @default true
+   */
+  useWixAuth?: boolean;
+}
+
 export function createIntegration(
-  opts: {
-    sessionCookieName?: string;
-    useWixAuth?: boolean;
-  } = {
+  opts: WixAstroIntegrationOptions = {
     sessionCookieName: "wixSession",
     useWixAuth: true,
+    preWarmRedirectSession: false,
   }
 ): AstroIntegration {
   const sessionCookieName = opts.sessionCookieName ?? "wixSession";
+  const preWarmRedirectSession = opts.preWarmRedirectSession ?? false;
 
   let _config: AstroConfig;
   let _buildOutput: "server" | "static";
@@ -43,6 +62,7 @@ export function createIntegration(
         updateConfig,
         addMiddleware,
         injectRoute,
+        injectScript,
         logger,
       }) => {
         const aRequire = buildResolver(fileURLToPath(import.meta.url), {
@@ -109,6 +129,10 @@ export function createIntegration(
               `WIX_CLIENT_ID`
             )} not found in loaded environment variables`
           );
+        }
+
+        if (preWarmRedirectSession) {
+          injectScript('page', `import { getAuth } from '@wix/astro/runtime/client'; getAuth().syncToWixPages();`);
         }
 
         updateConfig({
