@@ -151,14 +151,17 @@ const getMemberTokens = async (
   });
 
   return {
-    accessToken: createAccessToken(
-      tokensResponse.access_token!,
-      tokensResponse.expires_in!,
-    ),
-    refreshToken: {
-      value: tokensResponse.refresh_token!,
-      role: TokenRole.MEMBER,
-    },
+    clientId: wixContext['clientId'] as string,
+    tokens: {
+      accessToken: createAccessToken(
+        tokensResponse.access_token!,
+        tokensResponse.expires_in!,
+      ),
+      refreshToken: {
+        value: tokensResponse.refresh_token!,
+        role: TokenRole.MEMBER,
+      },
+    }
   };
 };
 
