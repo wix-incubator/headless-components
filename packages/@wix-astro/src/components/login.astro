@@ -283,6 +283,8 @@
   import { authentication, verification, recovery } from '@wix/identity';
   import { getMemberTokensForDirectLogin } from './login-helpers/login-helpers.js';
   import { wixContext } from '@wix/sdk-context';
+  import type { WixClient } from '@wix/sdk';
+  import type { SiteSessionAuth } from "@wix/sdk/auth/site-session";
 
   class LoginForm extends HTMLElement {
     constructor() {
@@ -477,6 +479,9 @@
           const tokens = await getMemberTokensForDirectLogin(
             response.sessionToken!
           );
+
+          // Update context
+          (wixContext['client'] as WixClient<undefined, ReturnType<typeof SiteSessionAuth>>).auth.setTokens(tokens.tokens);
 
           // Set cookie
           this.setCookie('wixSession', JSON.stringify(tokens), 2);
