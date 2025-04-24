@@ -132,7 +132,7 @@ export function createIntegration(
         }
 
         if (preWarmRedirectSession) {
-          injectScript('page', `import { getWixClient } from '@wix/astro/helpers'; getWixClient().auth.syncToWixPages();`);
+          injectScript('page', `import { getAuth } from '@wix/astro/runtime/client'; getAuth().syncToWixPages();`);
         }
 
         updateConfig({

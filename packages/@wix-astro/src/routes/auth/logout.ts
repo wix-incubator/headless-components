@@ -1,4 +1,4 @@
-import { getAuth } from "../../runtime.js";
+import { getAuth } from "../../runtime.server.js";
 import type { APIContext } from "astro";
 
 export const prerender = false;
