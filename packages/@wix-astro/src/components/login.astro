@@ -486,6 +486,9 @@
           // Set cookie
           this.setCookie('wixSession', JSON.stringify(tokens), 2);
 
+          // Reset loading state before exiting
+          this.loading = false;
+          
           // Show success animation
           this.showSuccessMessage();
 
