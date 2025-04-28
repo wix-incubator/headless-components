@@ -48,7 +48,7 @@ export async function GET({ url, cookies, redirect }: APIContext) {
     cookies.set("wixSession", sessionCookieJson(memberTokens), {
       maxAge: 60 * 60 * 24 * 2,
       path: "/",
-      httpOnly: true,
+      secure: true,
     });
 
     return redirect(originalUrl);
