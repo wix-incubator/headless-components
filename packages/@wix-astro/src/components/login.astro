@@ -485,8 +485,7 @@
           // Update context
           (wixContext['client'] as WixClient<undefined, ReturnType<typeof SiteSessionAuth>>).auth.setTokens(tokens.tokens);
 
-          localStorage.removeItem('wixRedirectSessionLastPreWarm');
-          await getAuth().syncToWixPages();
+          await getAuth().syncToWixPages({ force: true });
 
           // Set cookie
           this.setCookie('wixSession', JSON.stringify(tokens), 2);
