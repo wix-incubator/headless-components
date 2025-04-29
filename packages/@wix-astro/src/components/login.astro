@@ -283,6 +283,8 @@
   import { authentication, verification, recovery } from '@wix/identity';
   import { getMemberTokensForDirectLogin } from './login-helpers/login-helpers.js';
   import { wixContext } from '@wix/sdk-context';
+  import { getAuth } from '@wix/astro/runtime/client';
+
   import type { WixClient } from '@wix/sdk';
   import type { SiteSessionAuth } from "@wix/sdk/auth/site-session";
 
@@ -483,12 +485,15 @@
           // Update context
           (wixContext['client'] as WixClient<undefined, ReturnType<typeof SiteSessionAuth>>).auth.setTokens(tokens.tokens);
 
+          localStorage.removeItem('wixRedirectSessionLastPreWarm');
+          await getAuth().syncToWixPages();
+
           // Set cookie
           this.setCookie('wixSession', JSON.stringify(tokens), 2);
 
           // Reset loading state before exiting
           this.loading = false;
-          
+
           // Show success animation
           this.showSuccessMessage();
 
