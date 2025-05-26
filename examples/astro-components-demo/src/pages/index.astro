@@ -2,8 +2,14 @@
 import React from "react";
 import App from "../components/App.jsx";
 import Layout from "../layouts/Layout.astro";
+import { BuyNow } from "@wix/headless-stores/react";
 ---
 
 <Layout>
   <App />
+  <BuyNow client:load productId="4fbd6e70-c240-4533-8dc2-9e8f3fa94d2b" variant={{ Color: "Black" }}>
+    {({ isLoading, redirectToCheckout }) => {
+      return <button onClick={redirectToCheckout} className="bg-blue-500 text-white p-2 rounded-md">Yalla, Buy</button>;
+    }}
+  </BuyNow>
 </Layout>
