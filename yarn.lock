@@ -2108,6 +2108,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/astro-components-demo@workspace:examples/astro-components-demo":
+  version: 0.0.0-use.local
+  resolution: "@wix/astro-components-demo@workspace:examples/astro-components-demo"
+  dependencies:
+    "@astrojs/react": "npm:^4.2.1"
+    "@playwright/test": "npm:^1.51.1"
+    "@wix/astro": "workspace:*"
+    "@wix/cli-edge": "npm:^1.1.74"
+    "@wix/headless-bookings": "workspace:*"
+    "@wix/headless-ecom": "workspace:*"
+    "@wix/headless-stores": "workspace:*"
+    astro: "npm:^5.5.4"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+  languageName: unknown
+  linkType: soft
+
 "@wix/astro-ricos-app@workspace:packages/astro-ricos-app":
   version: 0.0.0-use.local
   resolution: "@wix/astro-ricos-app@workspace:packages/astro-ricos-app"
@@ -2637,7 +2654,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-bookings@workspace:packages/headless-components/bookings":
+"@wix/headless-bookings@workspace:*, @wix/headless-bookings@workspace:packages/headless-components/bookings":
   version: 0.0.0-use.local
   resolution: "@wix/headless-bookings@workspace:packages/headless-components/bookings"
   dependencies:
@@ -2646,7 +2663,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -2669,7 +2686,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-stores@workspace:packages/headless-components/stores":
+"@wix/headless-stores@workspace:*, @wix/headless-stores@workspace:packages/headless-components/stores":
   version: 0.0.0-use.local
   resolution: "@wix/headless-stores@workspace:packages/headless-components/stores"
   dependencies:
