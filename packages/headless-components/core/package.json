@@ -1,0 +1,11 @@
+{
+  "name": "@wix/headless-components-core",
+  "private": true,
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "typescript": "^5.7.3"
+  }
+}
