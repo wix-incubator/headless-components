@@ -10,5 +10,9 @@
   "devDependencies": {
     "@types/node": "^20.9.0",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@wix/ecom": "^1.0.1169",
+    "@wix/redirects": "^1.0.79"
   }
 }
