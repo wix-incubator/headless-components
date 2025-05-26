@@ -1,0 +1,14 @@
+{
+  "name": "@wix/headless-stores",
+  "private": true,
+  "scripts": {
+    "build": "tsc"
+  },
+  "exports": {
+    "./react": "./dist/react/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "typescript": "^5.7.3"
+  }
+}
