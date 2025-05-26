@@ -2663,6 +2663,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wix/headless-components-core@workspace:packages/headless-components/core":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-components-core@workspace:packages/headless-components/core"
+  dependencies:
+    "@types/node": "npm:^20.9.0"
+    typescript: "npm:^5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
