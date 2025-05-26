@@ -10,9 +10,11 @@ export function BuyNow(props: {
     redirectToCheckout: () => void;
   }) => React.ReactNode;
 }) {
+  console.log("BuyNow component render:start", props);
   const [isLoading, setIsLoading] = useState(false);
 
   const redirectToCheckout = async () => {
+    console.log("BuyNow redirectToCheckout");
     try {
       setIsLoading(true);
       const createdCart = await cart.createCart({
@@ -31,12 +33,16 @@ export function BuyNow(props: {
       });
 
       if (!createdCart || !createdCart._id) {
-        throw new Error("Failed to create cart");
+        throw new Error("Failed to create cart :(");
       }
+
+      console.log(`Buy now cart created: ${createdCart._id}`);
 
       const { checkoutId } = await cart.createCheckout(createdCart._id, {
         channelType: cart.ChannelType.WEB
       });
+
+      console.log(`Buy now checkout created: ${checkoutId}`);
 
       const { redirectSession } = await redirects.createRedirectSession({
         ecomCheckout: { checkoutId },
@@ -45,6 +51,7 @@ export function BuyNow(props: {
         },
       });
 
+      console.log(`Buy now redirecting to: ${redirectSession?.fullUrl}`);
       window.location.href = redirectSession?.fullUrl!;
     } catch (error) {
       console.error("Error during checkout:", error);
@@ -53,6 +60,7 @@ export function BuyNow(props: {
     }
   }
 
+  console.log("BuyNow component render:end");
   return props.children({
     isLoading,
     redirectToCheckout,
