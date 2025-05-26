@@ -2637,6 +2637,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/headless-bookings@workspace:packages/headless-components/bookings":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-bookings@workspace:packages/headless-components/bookings"
+  dependencies:
+    "@types/node": "npm:^20.9.0"
+    typescript: "npm:^5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@wix/headless-ecom@workspace:packages/headless-components/ecom":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
+  dependencies:
+    "@types/node": "npm:^20.9.0"
+    typescript: "npm:^5.7.3"
+  languageName: unknown
+  linkType: soft
+
 "@wix/headless-integrations@workspace:.":
   version: 0.0.0-use.local
   resolution: "@wix/headless-integrations@workspace:."
@@ -2647,6 +2665,15 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     syncpack: "npm:^13.0.0"
     turbo: "npm:^2.3.4"
+    typescript: "npm:^5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@wix/headless-stores@workspace:packages/headless-components/stores":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-stores@workspace:packages/headless-components/stores"
+  dependencies:
+    "@types/node": "npm:^20.9.0"
     typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
