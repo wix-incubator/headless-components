@@ -1,19 +1,18 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { BuyNow } from './BuyNow'; // This is the component under test
+import { BuyNow } from './BuyNow';
 
 vi.mock('@wix/ecom', () => ({
   checkout: {
-    createCheckout: vi.fn(), // Define vi.fn() directly here
+    createCheckout: vi.fn(),
     ChannelType: { WEB: 'WEB' },
   },
 }));
 
 vi.mock('@wix/redirects', () => ({
   redirects: {
-    createRedirectSession: vi.fn(), // Define vi.fn() directly here
+    createRedirectSession: vi.fn(),
   },
 }));
 
@@ -22,18 +21,16 @@ let ecomCheckoutMock: any;
 let redirectsMock: any;
 
 beforeEach(async () => {
-  // Dynamically import the mocked modules to get the mock functions
   const ecom = await import('@wix/ecom');
   ecomCheckoutMock = ecom.checkout;
   const redirectsModule = await import('@wix/redirects');
   redirectsMock = redirectsModule.redirects;
 
-  vi.clearAllMocks(); // This will clear all vi.fn() instances, including those above
+  vi.clearAllMocks();
 
   delete (window as any).location;
   (window as any).location = { ...originalLocation, href: '' };
 
-  // Default successful responses
   ecomCheckoutMock.createCheckout.mockResolvedValue({ _id: 'test-checkout-id' });
   redirectsMock.createRedirectSession.mockResolvedValue({
     redirectSession: { fullUrl: 'http://mocked-redirect-url.com' },
@@ -41,14 +38,13 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
-  window.location = originalLocation;
+  (window as any).location = originalLocation; // Use type assertion for restoration
 });
 
 describe('BuyNow Component from @wix/headless-stores/react', () => {
   const testProductId = 'test-product-123';
   const testVariant = { color: 'blue' };
 
-  // Updated to capture the redirectToCheckout function for direct invocation in rejection tests
   const renderComponent = (props = {}) => {
     let capturedRedirectToCheckout: () => Promise<void> = async () => {};
     const renderOutput = render(
@@ -117,6 +113,7 @@ describe('BuyNow Component from @wix/headless-stores/react', () => {
     ecomCheckoutMock.createCheckout.mockResolvedValueOnce({ _id: null });
 
     const { redirectToCheckoutDirectly } = renderComponent();
+
     await act(async () => {
       await expect(redirectToCheckoutDirectly()).rejects.toThrow('Failed to create checkout');
     });
@@ -130,6 +127,7 @@ describe('BuyNow Component from @wix/headless-stores/react', () => {
     redirectsMock.createRedirectSession.mockRejectedValueOnce(new Error('Redirect failed'));
 
     const { redirectToCheckoutDirectly } = renderComponent();
+
     await act(async () => {
       await expect(redirectToCheckoutDirectly()).rejects.toThrow('Redirect failed');
     });
