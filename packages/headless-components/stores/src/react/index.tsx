@@ -1,6 +1,9 @@
-import { cart } from "@wix/ecom";
-import { redirects, checkout } from "@wix/redirects";
+import { checkout } from "@wix/ecom";
+import { redirects } from "@wix/redirects";
 import { useState } from "react";
+
+// const CATALOG_APP_ID = "1380b703-ce81-ff05-f115-39571d94dfcd";
+const CATLOG_APP_ID_V3 = "215238eb-22a5-4c36-9e7b-e7c08025e04e";
 
 export function BuyNow(props: {
   productId: string;
@@ -10,19 +13,17 @@ export function BuyNow(props: {
     redirectToCheckout: () => void;
   }) => React.ReactNode;
 }) {
-  console.log("BuyNow component render:start", props);
   const [isLoading, setIsLoading] = useState(false);
 
   const redirectToCheckout = async () => {
-    console.log("BuyNow redirectToCheckout");
     try {
       setIsLoading(true);
 
-      const { checkoutId } = await checkout.createCheckout({
+      const checkoutResult = await checkout.createCheckout({
         lineItems: [{
           catalogReference: {
             catalogItemId: props.productId,
-            appId: "1380b703-ce81-ff05-f115-39571d94dfcd",
+            appId: CATLOG_APP_ID_V3,
             options: {
                 options: props.variant,
             }
@@ -32,8 +33,12 @@ export function BuyNow(props: {
         channelType: checkout.ChannelType.WEB,
       });
 
+      if (!checkoutResult._id) {
+        throw new Error("Failed to create checkout");
+      }
+
       const { redirectSession } = await redirects.createRedirectSession({
-        ecomCheckout: { checkoutId },
+        ecomCheckout: { checkoutId: checkoutResult._id },
         callbacks: {
           postFlowUrl: window.location.href,
         },
@@ -45,7 +50,6 @@ export function BuyNow(props: {
     }
   }
 
-  console.log("BuyNow component render:end");
   return props.children({
     isLoading,
     redirectToCheckout,
