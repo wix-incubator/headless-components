@@ -43,7 +43,12 @@ export async function GET({ url, cookies, redirect }: APIContext) {
       }
     );
 
-    cookies.delete(OAUTH_COOKIE_STATE);
+    cookies.delete(OAUTH_COOKIE_STATE, {
+      path: "/",
+      secure: true,
+      sameSite: "lax",
+      httpOnly: true,
+    }); // Params neeed to match the set cookie params in login.ts
     cookies.delete(WIX_LOGIN_REDIRECT);
     cookies.set("wixSession", sessionCookieJson(memberTokens), {
       maxAge: 60 * 60 * 24 * 2,

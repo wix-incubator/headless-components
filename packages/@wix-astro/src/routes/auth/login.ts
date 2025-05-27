@@ -33,7 +33,7 @@ export async function GET({ url }: APIContext) {
       Location: authUrl,
       "Set-Cookie": `${OAUTH_COOKIE_STATE}=${JSON.stringify(
         oauthData
-      )}; Max-Age=1800; Path=/; HttpOnly; SameSite=Lax`,
+      )}; Max-Age=1800; Path=/; HttpOnly; Secure; SameSite=Lax`,
     },
   });
 
