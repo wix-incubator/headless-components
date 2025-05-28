@@ -85,7 +85,8 @@ export function BuyNow(props: {
             appId: CATLOG_APP_ID_V3,
             options: {
                 options: props.variant,
-            }
+                //variantId: "08efa314-a7fe-48d5-944c-942a1a0e57a6"
+            },
           },
           quantity: 1
         }],

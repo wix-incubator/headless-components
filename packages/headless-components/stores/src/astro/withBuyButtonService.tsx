@@ -1,9 +1,10 @@
-
 import type { Signal } from "@wix/services-definitions";
-import { withBuyButtonService } from "@wix/headless-stores/astro/BuyNowServiceContext";
+import { withContext } from "@wix/headless-components-core";
+import { getBuyNowServiceProvider } from "@wix/headless-stores/astro/BuyNowServiceContext";
 
-export const BuyNow = withBuyButtonService(({ context }) => {
+export const BuyNow = withContext(getBuyNowServiceProvider, ({ context }) => {
   console.log("context", context);
+  // @ts-expect-error
   const { loading, error, redirectToCheckout } = context;
 
   if ((loading as Signal<boolean>).get()) return <>Preparing checkout...</>;
@@ -14,3 +15,6 @@ export const BuyNow = withBuyButtonService(({ context }) => {
   </button>
 });
 
+export const withBuyButtonService = (Component: React.ComponentType<any>) => {
+  return withContext(getBuyNowServiceProvider, Component);
+}
