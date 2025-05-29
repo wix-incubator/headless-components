@@ -7,12 +7,10 @@ import { useMemo } from "react"
  *
  * @returns A tuple containing the Provider component and a getter function for the current context.
  */
-let counter = 0;
 export const createContext = <T extends any>() => {
 	// initialize context casted to type `T`.
 	let context: T
-	const contextId = ++counter;
-	console.log('ze create context', contextId, new Error().stack);
+
 	/**
 	 * Provider component for the context.
 	 * This component sets the context value and provides it to its children components.
@@ -29,7 +27,6 @@ export const createContext = <T extends any>() => {
 		// avoid unintended side-effects caused by shared references
 		//props = structuredClone(props)
 
-		console.log(`Provider::props ${contextId}`, props);
 		return {
 			/* Symbol indicating this is an Astro component object. */
 			[Symbol.toStringTag]: 'AstroComponent',
@@ -38,14 +35,12 @@ export const createContext = <T extends any>() => {
 				// ensure a deep clone of the provided value
 				// avoid unintended side-effects caused by shared references
 				context = props
-				console.log(`Provider::props set ${contextId}`, props);
 
 				// yield rendered children components
 				yield await slots.default()
 
 				// reset context to undefined after rendering is complete
 				context = undefined as T
-				console.log(`Provider::props reset ${contextId}`, context);
 			},
 		}
 	}
@@ -56,10 +51,7 @@ export const createContext = <T extends any>() => {
 	// return a tuple of Provider component and a getter function for the current context
 	return [
 		Provider,
-		() => {
-			console.log(`Provider::context return ${contextId}`, context);
-			return context;
-		},
+		() => context,
 	] as any as [
 		/** Provider component for context. */
 		(props: T) => any,

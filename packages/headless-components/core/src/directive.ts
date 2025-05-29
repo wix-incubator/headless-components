@@ -36,6 +36,7 @@ export default <ClientDirective>(async (load, _, el) => {
 });
 
 async function processPendingTasks() {
+  console.log("ClientDirective - processing pending tasks", pendingTasks.size);
   const tasks = Array.from(pendingTasks);
   for (const task of tasks) {
     await processTask(task);
@@ -45,9 +46,10 @@ async function processPendingTasks() {
 async function processTask(task: Task) {
   const service = getServiceFromElement(task.el);
   if (!service) {
-    console.log("Service not found on closest service provider");
+    console.log("ClientDirective - Service not found on closest service provider");
     return;
   }
+  console.log("ClientDirective - assigning service to element", service);
   assignServiceToElement(task.el, service);
   const [hydrate] = await Promise.all([task.load()]);
   await hydrate();
@@ -56,7 +58,6 @@ async function processTask(task: Task) {
 }
 
 function assignServiceToElement(el: Element, service: any) {
-  console.log("assign service to element", service);
   const contextId = crypto.randomUUID();
   (globalThis as any).contexts = (globalThis as any).contexts || {};
   (globalThis as any).contexts[contextId] = service;
@@ -78,7 +79,7 @@ function getServiceFromElement(el: Element) {
 
 function setContextIdOnProps(el: Element, contextId: string) {
   const props = JSON.parse(el.getAttribute("props") || "{}");
-  console.log("context-provider Props from wait-for-store:", props);
+
 
   props["contextId"] = [0, contextId];
   el.setAttribute("props", JSON.stringify(props));
