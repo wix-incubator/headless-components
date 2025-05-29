@@ -2,6 +2,10 @@
 import { defineService, Signal } from "@wix/services-definitions";
 
 // VariantSelectorService
+// 🧠 Purpose: Handles the entire product configuration and selection flow.
+// Enables users to select from available options (e.g., size, color), resolve the appropriate variant, and retrieve associated data such as SKU, price, availability, ribbons, and stock level.
+// Supports pre-order state logic and calculates dynamic pricing based on variant and discount status.
+// Core to enabling all other product-related behaviors on the page — gallery, cart, stock messages, and price display rely on this selection state.
 // 📄 Covers the following logic from the spec sheet:
 // - Product Options: stored in `options`, selected via `setOption`, tracked in `selectedOptions`
 // - Product Variants: available in `variants`, current one selected via `selectedVariantId` and `selectVariantById`, accessed using `selectedVariant()`
@@ -67,6 +71,9 @@ export const variantSelectorServiceDefinition = defineService<{
 }>("variantSelector");
 
 // ProductGalleryService
+// 🧠 Purpose: Manages dynamic image gallery behavior, including syncing selected product variant with specific images and allowing user-driven image navigation.
+// Enables image selection either manually or programmatically based on variant selection.
+// Maintains state of currently displayed image and allows fine-grained control over how variants are visually represented.
 // 📄 Covers the following logic from the spec sheet:
 // - Image Gallery: stored in `images`, selected with `setImageIndex()`, reset with `resetGallery()`
 // - Main Product Image: resolved using `currentImage()`
@@ -92,6 +99,9 @@ export const productGalleryServiceDefinition = defineService<{
 }>("productGallery");
 
 // CurrentCartService
+// 🧠 Purpose: Handles all cart interactions — including item state, quantity management, wishlist toggling, and immediate checkout.
+// Tracks pre-order flags and provides derived totals to reflect cart state globally.
+// Supports both persistent wishlist behavior and rapid purchasing flows like Buy Now.
 // 📄 Covers the following logic from the spec sheet:
 // - Action Buttons: performed via `addItem()` and `buyNow()`
 // - Quantity: stored per item in `items[].quantity`
