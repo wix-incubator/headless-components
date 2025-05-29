@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 
 const integration = {
-  name: "kaki-integration",
+  name: "headless-components-integration",
   hooks: {
     "astro:config:setup": ({ addClientDirective }) => {
       addClientDirective({
