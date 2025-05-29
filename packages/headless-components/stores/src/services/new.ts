@@ -1,4 +1,3 @@
-// Signal-based service definitions with detailed logic and widget coverage from spec sheet
 import { defineService, Signal } from "@wix/services-definitions";
 
 // VariantSelectorService
@@ -7,13 +6,13 @@ import { defineService, Signal } from "@wix/services-definitions";
 // Supports pre-order state logic and calculates dynamic pricing based on variant and discount status.
 // Core to enabling all other product-related behaviors on the page — gallery, cart, stock messages, and price display rely on this selection state.
 // 📄 Covers the following logic from the spec sheet:
-// - Product Options: stored in `options`, selected via `setOption`, tracked in `selectedOptions`
-// - Product Variants: available in `variants`, current one selected via `selectedVariantId` and `selectVariantById`, accessed using `selectedVariant()`
-// - Product discount: calculated using `basePrice`, `discountPrice`, `isOnSale`, and derived `finalPrice()`
-// - SKU: managed in `sku`
-// - Ribbons: exposed via `ribbonLabel` and also `selectedVariant().ribbon`
-// - Low stock message: derived from `selectedVariant().stock` using `isLowStock()`
-// - Pre-order logic: indicated by `selectedVariant().isPreOrder`
+// - Product Options (Must): stored in `options`, selected via `setOption`, tracked in `selectedOptions`
+// - Product Variants (Must): available in `variants`, selected via `selectedVariantId` and `selectVariantById`, accessed using `selectedVariant()`
+// - Product discount (High): calculated via `basePrice`, `discountPrice`, `isOnSale`, and derived `finalPrice()`
+// - SKU (Mid): managed in `sku`
+// - Ribbons (Low): exposed via `ribbonLabel` and also `selectedVariant().ribbon`
+// - Low stock message (Low): derived from `selectedVariant().stock` using `isLowStock()`
+// - Pre-order logic (Mid): indicated by `selectedVariant().isPreOrder`
 // 🧩 Covers the following widget elements:
 // - Product Options
 // - Product Variants
@@ -24,14 +23,8 @@ import { defineService, Signal } from "@wix/services-definitions";
 // - Low Stock Message
 export const variantSelectorServiceDefinition = defineService<{
   // --- State ---
-  productId: Signal<string>;
-  sku: Signal<string>;
-  basePrice: Signal<number>;
-  discountPrice: Signal<number | null>;
-  isOnSale: Signal<boolean | null>;
-  ribbonLabel: Signal<string | null>;
-  options: Signal<Record<string, string[]>>;
   selectedOptions: Signal<Record<string, string>>;
+  selectedVariantId: Signal<string>;
   variants: Signal<
     {
       id: string;
@@ -41,8 +34,14 @@ export const variantSelectorServiceDefinition = defineService<{
       isPreOrder: boolean | null;
     }[]
   >;
-  selectedVariantId: Signal<string>;
+  options: Signal<Record<string, string[]>>;
+  basePrice: Signal<number>;
+  discountPrice: Signal<number | null>;
+  isOnSale: Signal<boolean | null>;
   quantityAvailable: Signal<number>;
+  productId: Signal<string>;
+  sku: Signal<string>;
+  ribbonLabel: Signal<string | null>;
 
   // --- Getters ---
   selectedVariant: () => {
@@ -75,9 +74,9 @@ export const variantSelectorServiceDefinition = defineService<{
 // Enables image selection either manually or programmatically based on variant selection.
 // Maintains state of currently displayed image and allows fine-grained control over how variants are visually represented.
 // 📄 Covers the following logic from the spec sheet:
-// - Image Gallery: stored in `images`, selected with `setImageIndex()`, reset with `resetGallery()`
-// - Main Product Image: resolved using `currentImage()`
-// - Variant display rules: mapped via `variantImageMap`, resolved via `variantMappedImage()`
+// - Image Gallery (High): stored in `images`, selected with `setImageIndex()`, reset with `resetGallery()`
+// - Main Product Image (Must): resolved using `currentImage()`
+// - Variant display rules (Mid): mapped via `variantImageMap`, resolved via `variantMappedImage()`
 // 🧩 Covers the following widget elements:
 // - Main Product Image
 // - Image Gallery
@@ -92,10 +91,10 @@ export const productGalleryServiceDefinition = defineService<{
   variantMappedImage: (variantId: string) => string;
 
   // --- Actions ---
+  loadImages: (images: string[]) => void;
   setImageIndex: (index: number) => void;
   resetGallery: () => void;
   mapVariantToImage: (variantId: string, index: number) => void;
-  loadImages: (images: string[]) => void;
 }>("productGallery");
 
 // CurrentCartService
@@ -103,11 +102,11 @@ export const productGalleryServiceDefinition = defineService<{
 // Tracks pre-order flags and provides derived totals to reflect cart state globally.
 // Supports both persistent wishlist behavior and rapid purchasing flows like Buy Now.
 // 📄 Covers the following logic from the spec sheet:
-// - Action Buttons: performed via `addItem()` and `buyNow()`
-// - Quantity: stored per item in `items[].quantity`
-// - Pre-order logic: flagged in `items[].isPreOrder`
-// - Wishlist: handled using `wishlist`, `toggleWishlist()`
-// - Cart icon summary: shown using `totalQuantity()` and `itemCount()`
+// - Action Buttons (Must): performed via `addItem()` and `buyNow()`
+// - Quantity (High): stored per item in `items[].quantity`
+// - Pre-order logic (Mid): flagged in `items[].isPreOrder`
+// - Wishlist (Mid): handled using `wishlist`, `toggleWishlist()`
+// - Cart icon summary (Low): shown using `totalQuantity()` and `itemCount()`
 // 🧩 Covers the following widget elements:
 // - Action Buttons
 // - Quantity
@@ -143,18 +142,18 @@ export const currentCartServiceDefinition = defineService<{
 
   // --- Actions ---
   addItem: (productId: string, variantId: string, quantity: number) => void;
+  buyNow: (productId: string, variantId: string, quantity: number) => void;
   removeItem: (productId: string, variantId: string) => void;
   clearCart: () => void;
-  buyNow: (productId: string, variantId: string, quantity: number) => void;
   toggleWishlist: (productId: string, variantId: string) => void;
 }>("currentCart");
 
 // ❌ Not Covered (out of scope for headless state logic):
-// - Related Products → should be handled by ProductContext or external fetch
-// - Navigation (prev/next) → should be handled by routing/navigation context
-// - Custom Text (promotional) → CMS or layout-bound concern
-// - Currency Converter → external pricing or currency service
-// - Reviews & Ratings → requires async data and dedicated review service
+// - Related Products (High) → should be handled by ProductContext or external fetch
+// - Navigation (prev/next) (Mid) → should be handled by routing/navigation context
+// - Custom Text (promotional) (Low) → CMS or layout-bound concern
+// - Currency Converter (High) → external pricing or currency service
+// - Reviews & Ratings (High) → requires async data and dedicated review service
 // 🚫 Missing Widget Elements:
 // - Related Products
 // - Previous/Next Product Navigation
