@@ -21,17 +21,16 @@ const mgr = createServicesManager(map);
 
   class ContextProvider extends HTMLElement {
     service: ReturnType<typeof buynowService>;
-    contextId: string;
     constructor() {
       super();
-      this.contextId = this.getAttribute("data-context-id")!;
-      console.log("ContextProvider::constructor", this.contextId);
+      console.log("BuyNowServiceProvider ContextProvider::constructor", this.getAttribute("data-intial-data"));
 
       const map = createServicesMap().addService(buynowserviceDefinition, buynowService, JSON.parse(this.getAttribute("data-intial-data")!));
       const mgr = createServicesManager(map);
       const service = mgr.getService(buynowserviceDefinition);
 
       this.service = service;
+      (globalThis as any).runDirectivePendingTaks && (globalThis as any).runDirectivePendingTaks();
     }
 
   }
