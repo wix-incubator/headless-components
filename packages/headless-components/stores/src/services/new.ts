@@ -1,15 +1,25 @@
+// Signal-based service definitions with detailed logic and widget coverage from spec sheet
 import { defineService, Signal } from "@wix/services-definitions";
 
 // VariantSelectorService
-// 🔗 Covers:
-// - Product Options: via `options`, `setOption`, `selectedOptions`
-// - Product Variants: via `variants`, `selectVariantById`, `selectedVariant`
-// - Product discount: via `finalPrice`, `discountPrice`, `isOnSale`
-// - SKU: via `sku`
-// - Ribbons: via `ribbonLabel` and `variant.ribbon`
-// - Low stock message: via `isLowStock()`
-// - Pre-order logic: via `variant.isPreOrder`
+// 📄 Covers the following logic from the spec sheet:
+// - Product Options: stored in `options`, selected via `setOption`, tracked in `selectedOptions`
+// - Product Variants: available in `variants`, current one selected via `selectedVariantId` and `selectVariantById`, accessed using `selectedVariant()`
+// - Product discount: calculated using `basePrice`, `discountPrice`, `isOnSale`, and derived `finalPrice()`
+// - SKU: managed in `sku`
+// - Ribbons: exposed via `ribbonLabel` and also `selectedVariant().ribbon`
+// - Low stock message: derived from `selectedVariant().stock` using `isLowStock()`
+// - Pre-order logic: indicated by `selectedVariant().isPreOrder`
+// 🧩 Covers the following widget elements:
+// - Product Options
+// - Product Variants
+// - Price
+// - SKU
+// - Ribbon
+// - Discount
+// - Low Stock Message
 export const variantSelectorServiceDefinition = defineService<{
+  // --- State ---
   productId: Signal<string>;
   sku: Signal<string>;
   basePrice: Signal<number>;
@@ -30,6 +40,7 @@ export const variantSelectorServiceDefinition = defineService<{
   selectedVariantId: Signal<string>;
   quantityAvailable: Signal<number>;
 
+  // --- Getters ---
   selectedVariant: () => {
     id: string;
     label: string;
@@ -40,6 +51,7 @@ export const variantSelectorServiceDefinition = defineService<{
   finalPrice: () => number;
   isLowStock: (threshold?: number) => boolean;
 
+  // --- Actions ---
   setOption: (group: string, value: string) => void;
   selectVariantById: (id: string) => void;
   loadProductVariants: (
@@ -55,18 +67,24 @@ export const variantSelectorServiceDefinition = defineService<{
 }>("variantSelector");
 
 // ProductGalleryService
-// 🔗 Covers:
-// - Main Product Image: via `currentImage()`
-// - Image Gallery: via `images`, `selectedImageIndex`, `loadImages()`
-// - Variant display rules: handled via `variantImageMap` and `variantMappedImage()`
+// 📄 Covers the following logic from the spec sheet:
+// - Image Gallery: stored in `images`, selected with `setImageIndex()`, reset with `resetGallery()`
+// - Main Product Image: resolved using `currentImage()`
+// - Variant display rules: mapped via `variantImageMap`, resolved via `variantMappedImage()`
+// 🧩 Covers the following widget elements:
+// - Main Product Image
+// - Image Gallery
 export const productGalleryServiceDefinition = defineService<{
+  // --- State ---
   images: Signal<string[]>;
   selectedImageIndex: Signal<number>;
   variantImageMap: Signal<Record<string, number>>;
 
+  // --- Getters ---
   currentImage: () => string;
   variantMappedImage: (variantId: string) => string;
 
+  // --- Actions ---
   setImageIndex: (index: number) => void;
   resetGallery: () => void;
   mapVariantToImage: (variantId: string, index: number) => void;
@@ -74,13 +92,20 @@ export const productGalleryServiceDefinition = defineService<{
 }>("productGallery");
 
 // CurrentCartService
-// 🔗 Covers:
-// - Action Buttons: 'Add to Cart' and 'Buy Now' → `addItem()`, `buyNow()`
-// - Quantity: tracked in each cart item → `quantity`
-// - Pre-order logic: via `isPreOrder` in `items[]`
-// - Wishlist: via `wishlist`, `toggleWishlist()`
-// - Cart icon summary: via `totalQuantity()`, `itemCount()`
+// 📄 Covers the following logic from the spec sheet:
+// - Action Buttons: performed via `addItem()` and `buyNow()`
+// - Quantity: stored per item in `items[].quantity`
+// - Pre-order logic: flagged in `items[].isPreOrder`
+// - Wishlist: handled using `wishlist`, `toggleWishlist()`
+// - Cart icon summary: shown using `totalQuantity()` and `itemCount()`
+// 🧩 Covers the following widget elements:
+// - Action Buttons
+// - Quantity
+// - Pre-order
+// - Wishlist
+// - Cart Icon
 export const currentCartServiceDefinition = defineService<{
+  // --- State ---
   items: Signal<
     {
       productId: string;
@@ -91,6 +116,7 @@ export const currentCartServiceDefinition = defineService<{
   >;
   wishlist: Signal<{ productId: string; variantId: string }[]>;
 
+  // --- Getters ---
   totalQuantity: () => number;
   itemCount: () => number;
   getItem: (
@@ -105,6 +131,7 @@ export const currentCartServiceDefinition = defineService<{
       }
     | undefined;
 
+  // --- Actions ---
   addItem: (productId: string, variantId: string, quantity: number) => void;
   removeItem: (productId: string, variantId: string) => void;
   clearCart: () => void;
@@ -112,9 +139,15 @@ export const currentCartServiceDefinition = defineService<{
   toggleWishlist: (productId: string, variantId: string) => void;
 }>("currentCart");
 
-// ❌ External logic not covered by these services:
-// - Navigation (prev/next product): should be handled via router or page-level service
-// - Custom text (e.g., promotional banner): usually CMS or layout-specific state
-// - Currency converter: should be implemented as a pricing/currency context service
-// - Reviews & Ratings: typically requires async data and its own ReviewsStore
-// - Related Products: fetched externally or provided via ProductProvider context
+// ❌ Not Covered (out of scope for headless state logic):
+// - Related Products → should be handled by ProductContext or external fetch
+// - Navigation (prev/next) → should be handled by routing/navigation context
+// - Custom Text (promotional) → CMS or layout-bound concern
+// - Currency Converter → external pricing or currency service
+// - Reviews & Ratings → requires async data and dedicated review service
+// 🚫 Missing Widget Elements:
+// - Related Products
+// - Previous/Next Product Navigation
+// - Promotional Banner
+// - Currency Switcher
+// - Reviews Section
