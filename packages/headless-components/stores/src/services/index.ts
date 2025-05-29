@@ -42,134 +42,102 @@ export const buynowService = implementService.withConfig<{
   };
 });
 
+
 export const variantSelectorServiceDefinition = defineService<{
+  // State
+  productId: string;
+  sku: string;
+  basePrice: number;
+  discountPrice?: number;
+  isOnSale?: boolean;
+  ribbonLabel?: string;
+  options: Record<string, string[]>;
+  selectedOptions: Record<string, string>;
+  variants: Array<{
+    id: string;
+    label: string;
+    stock: number;
+    ribbon?: string;
+    isPreOrder?: boolean;
+  }>;
+  selectedVariantId: string;
+  quantityAvailable: number;
+
+  // Getters
+  selectedVariant: () => {
+    id: string;
+    label: string;
+    stock: number;
+    ribbon?: string;
+    isPreOrder?: boolean;
+  };
+  finalPrice: () => number;
+  isLowStock: (threshold?: number) => boolean;
+
+  // Actions
   setOption: (group: string, value: string) => void;
   selectVariantById: (id: string) => void;
-  loadProductVariants: (variants: any[]) => void;
+  loadProductVariants: (
+    data: Array<{
+      id: string;
+      label: string;
+      stock: number;
+      ribbon?: string;
+      isPreOrder?: boolean;
+    }>
+  ) => void;
   resetSelections: () => void;
-  selectedVariant: Signal<any>;
-  finalPrice: Signal<number>;
-  isLowStock: Signal<boolean>;
-  loading: Signal<boolean>;
-  error: Signal<string | null>;
 }>("variantSelector");
 
-export const variantSelectorService = implementService.withConfig<{
-  productId: string;
-  initialOptions?: Record<string, string[]>;
-  initialVariants?: any[];
-}>()(variantSelectorServiceDefinition, ({ getService, config }) => {
-  const signalsService = getService(SignalsServiceDefinition);
-  const loadingSignal = signalsService.signal(false) as Signal<boolean>;
-  const errorSignal = signalsService.signal<string | null>(null) as Signal<
-    string | null
-  >;
-  const selectedVariantSignal = signalsService.signal(null) as Signal<any>;
-  const finalPriceSignal = signalsService.signal(0) as Signal<number>;
-  const isLowStockSignal = signalsService.signal(false) as Signal<boolean>;
-
-  return {
-    setOption: (group: string, value: string) => {
-      // TODO: Implement option selection logic
-    },
-    selectVariantById: (id: string) => {
-      // TODO: Implement variant selection logic
-    },
-    loadProductVariants: (variants: any[]) => {
-      // TODO: Implement variant loading logic
-    },
-    resetSelections: () => {
-      // TODO: Implement reset logic
-    },
-    selectedVariant: selectedVariantSignal,
-    finalPrice: finalPriceSignal,
-    isLowStock: isLowStockSignal,
-    loading: loadingSignal,
-    error: errorSignal,
-  };
-});
-
 export const productGalleryServiceDefinition = defineService<{
+  // State
+  images: string[];
+  selectedImageIndex: number;
+  variantImageMap: Record<string, number>;
+
+  // Getters
+  currentImage: () => string;
+  variantMappedImage: (variantId: string) => string;
+
+  // Actions
   setImageIndex: (index: number) => void;
   resetGallery: () => void;
   mapVariantToImage: (variantId: string, index: number) => void;
   loadImages: (images: string[]) => void;
-  currentImage: Signal<string>;
-  loading: Signal<boolean>;
-  error: Signal<string | null>;
 }>("productGallery");
 
-export const productGalleryService = implementService.withConfig<{
-  initialImages?: string[];
-}>()(productGalleryServiceDefinition, ({ getService, config }) => {
-  const signalsService = getService(SignalsServiceDefinition);
-  const loadingSignal = signalsService.signal(false) as Signal<boolean>;
-  const errorSignal = signalsService.signal<string | null>(null) as Signal<
-    string | null
-  >;
-  const currentImageSignal = signalsService.signal("") as Signal<string>;
-
-  return {
-    setImageIndex: (index: number) => {
-      // TODO: Implement image index selection logic
-    },
-    resetGallery: () => {
-      // TODO: Implement gallery reset logic
-    },
-    mapVariantToImage: (variantId: string, index: number) => {
-      // TODO: Implement variant to image mapping logic
-    },
-    loadImages: (images: string[]) => {
-      // TODO: Implement image loading logic
-    },
-    currentImage: currentImageSignal,
-    loading: loadingSignal,
-    error: errorSignal,
-  };
-});
-
 export const cartServiceDefinition = defineService<{
+  // State
+  items: Array<{
+    productId: string;
+    variantId: string;
+    quantity: number;
+    isPreOrder?: boolean;
+  }>;
+  wishlist: Array<{
+    productId: string;
+    variantId: string;
+  }>;
+
+  // Getters
+  totalQuantity: () => number;
+  itemCount: () => number;
+  getItem: (
+    productId: string,
+    variantId: string
+  ) =>
+    | {
+        productId: string;
+        variantId: string;
+        quantity: number;
+        isPreOrder?: boolean;
+      }
+    | undefined;
+
+  // Actions
   addItem: (productId: string, variantId: string, quantity: number) => void;
   removeItem: (productId: string, variantId: string) => void;
   clearCart: () => void;
   buyNow: (productId: string, variantId: string, quantity: number) => void;
   toggleWishlist: (productId: string, variantId: string) => void;
-  totalQuantity: Signal<number>;
-  itemCount: Signal<number>;
-  loading: Signal<boolean>;
-  error: Signal<string | null>;
 }>("cart");
-
-export const cartService = implementService.withConfig<{
-  initialItems?: any[];
-}>()(cartServiceDefinition, ({ getService, config }) => {
-  const signalsService = getService(SignalsServiceDefinition);
-  const loadingSignal = signalsService.signal(false) as Signal<boolean>;
-  const errorSignal = signalsService.signal<string | null>(null) as Signal<
-    string | null
-  >;
-  const totalQuantitySignal = signalsService.signal(0) as Signal<number>;
-  const itemCountSignal = signalsService.signal(0) as Signal<number>;
-
-  return {
-    addItem: (productId: string, variantId: string, quantity: number) => {
-      // TODO: Implement add item logic
-    },
-    removeItem: (productId: string, variantId: string) => {
-      // TODO: Implement remove item logic
-    },
-    clearCart: () => {
-      // TODO: Implement clear cart logic
-    },
-    buyNow: (productId: string, variantId: string, quantity: number) => {
-      // TODO: Implement buy now logic
-    },
-    toggleWishlist: (productId: string, variantId: string) => {
-      // TODO: Implement wishlist toggle logic
-    },
-    totalQuantity: totalQuantitySignal,
-    itemCount: itemCountSignal,
-    loading: loadingSignal,
-    error: errorSignal,
-  };
-});
