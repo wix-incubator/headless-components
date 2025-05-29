@@ -1,11 +1,6 @@
-import {
-  defineService,
-  implementService,
-  Signal,
-} from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import { defineService, Signal } from "@wix/services-definitions";
 
-// VariantSelectorStore
+// VariantSelectorService
 // 🔗 Covers:
 // - Product Options: via `options`, `setOption`, `selectedOptions`
 // - Product Variants: via `variants`, `selectVariantById`, `selectedVariant`
@@ -14,44 +9,60 @@ import { SignalsServiceDefinition } from "@wix/services-definitions/core-service
 // - Ribbons: via `ribbonLabel` and `variant.ribbon`
 // - Low stock message: via `isLowStock()`
 // - Pre-order logic: via `variant.isPreOrder`
-export interface VariantSelectorStore {
-  productId: string;
-  sku: string;
-  basePrice: number;
-  discountPrice?: number;
-  isOnSale?: boolean;
-  ribbonLabel?: string;
-  options: Record<string, string[]>;
-  selectedOptions: Record<string, string>;
-  variants: {
+export const variantSelectorServiceDefinition = defineService<{
+  productId: Signal<string>;
+  sku: Signal<string>;
+  basePrice: Signal<number>;
+  discountPrice: Signal<number | null>;
+  isOnSale: Signal<boolean | null>;
+  ribbonLabel: Signal<string | null>;
+  options: Signal<Record<string, string[]>>;
+  selectedOptions: Signal<Record<string, string>>;
+  variants: Signal<
+    {
+      id: string;
+      label: string;
+      stock: number;
+      ribbon: string | null;
+      isPreOrder: boolean | null;
+    }[]
+  >;
+  selectedVariantId: Signal<string>;
+  quantityAvailable: Signal<number>;
+
+  selectedVariant: () => {
     id: string;
     label: string;
     stock: number;
-    ribbon?: string;
-    isPreOrder?: boolean;
-  }[];
-  selectedVariantId: string;
-  quantityAvailable: number;
-
-  selectedVariant: () => VariantSelectorStore["variants"][0];
+    ribbon: string | null;
+    isPreOrder: boolean | null;
+  };
   finalPrice: () => number;
   isLowStock: (threshold?: number) => boolean;
 
   setOption: (group: string, value: string) => void;
   selectVariantById: (id: string) => void;
-  loadProductVariants: (data: VariantSelectorStore["variants"]) => void;
+  loadProductVariants: (
+    data: {
+      id: string;
+      label: string;
+      stock: number;
+      ribbon: string | null;
+      isPreOrder: boolean | null;
+    }[]
+  ) => void;
   resetSelections: () => void;
-}
+}>("variantSelector");
 
-// ProductGalleryStore
+// ProductGalleryService
 // 🔗 Covers:
 // - Main Product Image: via `currentImage()`
 // - Image Gallery: via `images`, `selectedImageIndex`, `loadImages()`
 // - Variant display rules: handled via `variantImageMap` and `variantMappedImage()`
-export interface ProductGalleryStore {
-  images: string[];
-  selectedImageIndex: number;
-  variantImageMap: Record<string, number>;
+export const productGalleryServiceDefinition = defineService<{
+  images: Signal<string[]>;
+  selectedImageIndex: Signal<number>;
+  variantImageMap: Signal<Record<string, number>>;
 
   currentImage: () => string;
   variantMappedImage: (variantId: string) => string;
@@ -60,36 +71,46 @@ export interface ProductGalleryStore {
   resetGallery: () => void;
   mapVariantToImage: (variantId: string, index: number) => void;
   loadImages: (images: string[]) => void;
-}
+}>("productGallery");
 
-// CurrentCartStore
+// CurrentCartService
 // 🔗 Covers:
 // - Action Buttons: 'Add to Cart' and 'Buy Now' → `addItem()`, `buyNow()`
 // - Quantity: tracked in each cart item → `quantity`
 // - Pre-order logic: via `isPreOrder` in `items[]`
 // - Wishlist: via `wishlist`, `toggleWishlist()`
 // - Cart icon summary: via `totalQuantity()`, `itemCount()`
-export interface CartItem {
-  productId: string;
-  variantId: string;
-  quantity: number;
-  isPreOrder?: boolean;
-}
-
-export interface CurrentCartStore {
-  items: CartItem[];
-  wishlist: { productId: string; variantId: string }[];
+export const currentCartServiceDefinition = defineService<{
+  items: Signal<
+    {
+      productId: string;
+      variantId: string;
+      quantity: number;
+      isPreOrder: boolean | null;
+    }[]
+  >;
+  wishlist: Signal<{ productId: string; variantId: string }[]>;
 
   totalQuantity: () => number;
   itemCount: () => number;
-  getItem: (productId: string, variantId: string) => CartItem | undefined;
+  getItem: (
+    productId: string,
+    variantId: string
+  ) =>
+    | {
+        productId: string;
+        variantId: string;
+        quantity: number;
+        isPreOrder: boolean | null;
+      }
+    | undefined;
 
   addItem: (productId: string, variantId: string, quantity: number) => void;
   removeItem: (productId: string, variantId: string) => void;
   clearCart: () => void;
   buyNow: (productId: string, variantId: string, quantity: number) => void;
   toggleWishlist: (productId: string, variantId: string) => void;
-}
+}>("currentCart");
 
 // ❌ External logic not covered by these services:
 // - Navigation (prev/next product): should be handled via router or page-level service
