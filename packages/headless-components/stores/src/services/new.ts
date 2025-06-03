@@ -1,3 +1,4 @@
+// Signal-based service definitions with detailed logic and widget coverage from spec sheet
 import { defineService, Signal } from "@wix/services-definitions";
 
 // VariantSelectorService
@@ -150,13 +151,23 @@ export const currentCartServiceDefinition = defineService<{
 
 // ❌ Not Covered (out of scope for headless state logic):
 // - Related Products (High) → should be handled by ProductContext or external fetch
-// - Navigation (prev/next) (Mid) → should be handled by routing/navigation context
+// - Navigation (Mid) → should be handled by routing/navigation context
 // - Custom Text (promotional) (Low) → CMS or layout-bound concern
 // - Currency Converter (High) → external pricing or currency service
 // - Reviews & Ratings (High) → requires async data and dedicated review service
+// - Modifiers (Mid) → may require dedicated ModifiersService
+// - Category (Low) → layout-bound or metadata-driven
+// - Additional Info (Low) → typically CMS or static layout section
+// - and stock availability. (uncategorized/likely duplicate)
+// - price (uncategorized/likely duplicate)
+
 // 🚫 Missing Widget Elements:
 // - Related Products
 // - Previous/Next Product Navigation
 // - Promotional Banner
-// - Currency Switcher
+// - Currency Converter
 // - Reviews Section
+// - Modifier
+// - Category
+// - Additional Info
+// - Product Variants (duplicated entry)
