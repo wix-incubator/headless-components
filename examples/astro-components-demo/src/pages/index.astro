@@ -3,13 +3,26 @@ import React from "react";
 import App from "../components/App.jsx";
 import Layout from "../layouts/Layout.astro";
 import { BuyNow } from "../components/ui/buy-now";
-import BuyNowService from "@wix/headless-stores/astro/BuyNowService.astro";
+//import BuyNowService from "@wix/headless-stores/astro/BuyNowService.astro";
+import ManagerProvider from "@wix/headless-stores/astro/ManagerProvider.astro";
+import { BuyNowServiceDefinition, BuyNowServiceImplementation } from "@wix/headless-stores/services";
 
 ---
 
 <Layout>
   <App />
-  <BuyNowService productId="0488859d-6cc6-4edc-9f97-13bb06a74aed" variantId="08efa314-a7fe-48d5-944c-942a1a0e57a6">
+  <ManagerProvider servicesToAdd={
+    [
+      {
+        definition: BuyNowServiceDefinition,
+        service: BuyNowServiceImplementation,
+        initialState: { productId: "0488859d-6cc6-4edc-9f97-13bb06a74aed", variantId: "08efa314-a7fe-48d5-944c-942a1a0e57a6" },
+      },
+    ]
+  }>
+    <script>
+      import "@wix/headless-stores/services";
+    </script>
     <BuyNow client:context-provider />
-  </BuyNowService>
+  </ManagerProvider>
 </Layout>

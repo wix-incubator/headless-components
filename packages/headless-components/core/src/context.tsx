@@ -69,13 +69,12 @@ export function withContext<T, P>(
     const returnedContext = useMemo(() => {
 			// @ts-expect-error
       if (import.meta.env.SSR) {
-        console.log("withContext::ssr");
 				// @ts-expect-error
-        const store = getContext().service;
-        console.log("withContext::store", store);
+        const store = getContext().manager;
+        console.log("withContext::store (ssr)", store);
         return store;
       } else {
-        console.log("withContext::client", (globalThis as any).contexts);
+        console.log("withContext::store (client)", (globalThis as any).contexts);
         return (globalThis as any).contexts[contextId];
       }
     }, []);

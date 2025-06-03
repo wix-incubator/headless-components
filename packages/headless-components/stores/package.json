@@ -11,7 +11,9 @@
     "./services": "./dist/services/index.js",
     "./astro/BuyNowService.astro": "./src/astro/BuyNowService.astro",
     "./astro/BuyNowServiceContext": "./dist/astro/BuyNowServiceContext.js",
-    "./astro/withBuyButtonService": "./dist/astro/withBuyButtonService.js"
+    "./astro/withBuyButtonService": "./dist/astro/withBuyButtonService.js",
+    "./astro/ManagerProvider.astro": "./src/astro/ManagerProvider.astro",
+    "./astro/ManagerProviderContext": "./src/astro/ManagerProviderContext.ts"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",

@@ -2,16 +2,16 @@ import { defineService, implementService, Signal } from "@wix/services-definitio
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import { getCheckoutUrlForProduct } from "../utils";
 
-export const buynowserviceDefinition = defineService<{
+export const BuyNowServiceDefinition = defineService<{
   redirectToCheckout: () => Promise<void>,
-  loading: Signal<boolean>,
-  error: Signal<string | null>,
-}>("buynow")
+  loadingSignal: Signal<boolean>,
+  errorSignal: Signal<string | null>,
+}>("BuyNow")
 
-export const buynowService = implementService.withConfig<{
+export const BuyNowServiceImplementation = implementService.withConfig<{
   productId: string,
   variantId: string,
-}>()(buynowserviceDefinition, ({ getService, config }) => {
+}>()(BuyNowServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
   const errorSignal = signalsService.signal<string | null>(null) as Signal<string | null>;
@@ -28,7 +28,10 @@ export const buynowService = implementService.withConfig<{
         loadingSignal.set(false);
       }
     },
-    loading: loadingSignal,
-    error: errorSignal,
+    loadingSignal,
+    errorSignal,
   }
-})
+});
+
+(globalThis as any).ServicesRepository ||= {};
+(globalThis as any).ServicesRepository[BuyNowServiceDefinition] = BuyNowServiceImplementation;

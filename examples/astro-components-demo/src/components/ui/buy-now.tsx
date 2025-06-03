@@ -1,13 +1,14 @@
 
 import type { Signal } from "@wix/services-definitions";
-import { withBuyButtonService } from "@wix/headless-stores/astro/BuyNowServiceContext";
+import { withManagerProvider } from "@wix/headless-stores/astro/ManagerProviderContext";
+import { BuyNowServiceDefinition } from "@wix/headless-stores/services";
 
-export const BuyNow = withBuyButtonService(({ context }) => {
-  console.log("context", context);
-  const { loading, error, redirectToCheckout } = context;
+export const BuyNow = withManagerProvider(({ context }) => {
+  console.log("BuyNow servicesManager", context);
+  const { loadingSignal, errorSignal, redirectToCheckout } = context.getService(BuyNowServiceDefinition)
 
-  if ((loading as Signal<boolean>).get()) return <>Preparing checkout...</>;
-  if ((error as Signal<string | null>).get()) return <>Error: {(error as Signal<string | null>).get()}</>;
+  if (loadingSignal.get()) return <>Preparing checkout...</>;
+  if (errorSignal.get()) return <>Error: {errorSignal.get()}</>;
 
   return <button onClick={redirectToCheckout} className="bg-blue-500 text-white p-2 rounded-md">
     Yalla, Buy!

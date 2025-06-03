@@ -44,20 +44,20 @@ async function processPendingTasks() {
 }
 
 async function processTask(task: Task) {
-  const service = getServiceFromElement(task.el);
-  if (!service) {
-    console.log("ClientDirective - Service not found on closest service provider");
+  const manager = getManagerFromElement(task.el);
+  if (!manager) {
+    console.log("ClientDirective - Manager not found on closest manager provider");
     return;
   }
-  console.log("ClientDirective - assigning service to element", service);
-  assignServiceToElement(task.el, service);
+  console.log("ClientDirective - assigning manager to element", manager);
+  assignManagerToElement(task.el, manager);
   const [hydrate] = await Promise.all([task.load()]);
   await hydrate();
   task.promiseHandle.resolve();
   pendingTasks.delete(task);
 }
 
-function assignServiceToElement(el: Element, service: any) {
+function assignManagerToElement(el: Element, service: any) {
   const contextId = crypto.randomUUID();
   (globalThis as any).contexts = (globalThis as any).contexts || {};
   (globalThis as any).contexts[contextId] = service;
@@ -65,16 +65,16 @@ function assignServiceToElement(el: Element, service: any) {
 }
 
 
-function getServiceFromElement(el: Element) {
+function getManagerFromElement(el: Element) {
   const ctxProvider = el.closest("context-provider");
   if (!ctxProvider) {
     return null;
   }
-  const service = (ctxProvider as any).service;
-  if (!service) {
+  const manager = (ctxProvider as any).manager;
+  if (!manager) {
     return null;
   }
-  return service;
+  return manager;
 }
 
 function setContextIdOnProps(el: Element, contextId: string) {

@@ -1,7 +1,7 @@
 import { createContext, withContext } from "@wix/headless-components-core";
-import { buynowService } from "../services";
+import { BuyNowServiceImplementation } from "../services";
 
-(globalThis as any).BuyNowServiceContext ||= createContext<{service: ReturnType<typeof buynowService>}>();
+(globalThis as any).BuyNowServiceContext ||= createContext<{service: ReturnType<typeof BuyNowServiceImplementation>}>();
 
 export const [BuyNowServiceProvider, getBuyNowServiceProvider] = (globalThis as any).BuyNowServiceContext;
 
