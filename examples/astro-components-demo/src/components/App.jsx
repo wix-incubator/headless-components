@@ -5,7 +5,7 @@ import {
   variantSelectorServiceDefinition,
   productGalleryServiceDefinition,
   currentCartServiceDefinition,
-} from "@wix/headless-components/stores/src/services";
+} from "@wix/headless-stores/services";
 
 // --- MOCK DATA (replace with real data/fetch in production) ---
 const MOCK_PRODUCT = {
