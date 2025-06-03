@@ -3,7 +3,7 @@ import type { Signal } from "@wix/services-definitions";
 import { withBuyButtonService } from "@wix/headless-stores/astro/BuyNowServiceContext";
 
 export const BuyNow = withBuyButtonService(({ context }) => {
-  console.log("context", context);
+
   const { loading, error, redirectToCheckout } = context;
 
   if ((loading as Signal<boolean>).get()) return <>Preparing checkout...</>;

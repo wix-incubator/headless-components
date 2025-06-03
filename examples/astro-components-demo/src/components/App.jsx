@@ -5,7 +5,14 @@ import {
   variantSelectorServiceDefinition,
   productGalleryServiceDefinition,
   currentCartServiceDefinition,
+  variantSelectorService,
+  productGalleryService,
+  currentCartService,
 } from "@wix/headless-stores/services";
+import {
+  createServicesMap,
+  createServicesManager,
+} from "@wix/services-manager";
 
 // --- MOCK DATA (replace with real data/fetch in production) ---
 const MOCK_PRODUCT = {
@@ -42,9 +49,18 @@ const MOCK_VARIANT_IMAGE_MAP = {
 };
 
 // --- Service Instances (in real app, use context/provider pattern) ---
-const variantSelector = variantSelectorServiceDefinition.create();
-const productGallery = productGalleryServiceDefinition.create();
-const currentCart = currentCartServiceDefinition.create();
+const servicesMap = createServicesMap()
+  .addService(variantSelectorServiceDefinition, variantSelectorService)
+  .addService(productGalleryServiceDefinition, productGalleryService)
+  .addService(currentCartServiceDefinition, currentCartService);
+const servicesManager = createServicesManager(servicesMap);
+const variantSelector = servicesManager.getService(
+  variantSelectorServiceDefinition
+);
+const productGallery = servicesManager.getService(
+  productGalleryServiceDefinition
+);
+const currentCart = servicesManager.getService(currentCartServiceDefinition);
 
 // Load initial data
 variantSelector.loadProductVariants(MOCK_VARIANTS);
