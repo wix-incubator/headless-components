@@ -109,7 +109,7 @@ export const variantSelectorService = implementService.withConfig<{
 // --- ProductGalleryService (stub) ---
 export const productGalleryService = implementService.withConfig<{
   productId: string;
-}>()(productGalleryServiceDefinition, ({ getService, config }) => {
+}>()(productGalleryServiceDefinition, ({ getService }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const images = signalsService.signal<string[]>([]);
   const selectedImageIndex = signalsService.signal(0) as Signal<number>;
@@ -130,7 +130,7 @@ export const productGalleryService = implementService.withConfig<{
 // --- CurrentCartService (stub) ---
 export const currentCartService = implementService.withConfig<{
   userId?: string;
-}>()(currentCartServiceDefinition, ({ getService, config }) => {
+}>()(currentCartServiceDefinition, ({ getService }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const items = signalsService.signal<
     {
