@@ -26,21 +26,28 @@ import {
 } from "@wix/services-definitions";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 
+// Add types for Variant and Option
+interface OptionChoiceNames {
+  optionName: string;
+  choiceName: string;
+}
+interface Variant {
+  _id: string;
+  visible: boolean;
+  sku: string;
+  choices: { optionChoiceNames: OptionChoiceNames }[];
+  price: { actualPrice: { amount: string; formattedAmount: string } };
+  inventoryStatus: { inStock: boolean; preorderEnabled: boolean };
+}
+interface Option {
+  name: string;
+  choicesSettings: { choices: { name: string; choiceId: string }[] };
+}
+
 export const variantSelectorServiceDefinition = defineService<{
   selectedOptions: Signal<Record<string, string>>;
   selectedVariantId: Signal<string>;
-  variants: Signal<
-    {
-      _id: string;
-      visible: boolean;
-      sku: string;
-      choices: {
-        optionChoiceNames: { optionName: string; choiceName: string };
-      }[];
-      price: { actualPrice: { amount: string; formattedAmount: string } };
-      inventoryStatus: { inStock: boolean; preorderEnabled: boolean };
-    }[]
-  >;
+  variants: Signal<Variant[]>;
   options: Signal<Record<string, string[]>>;
   basePrice: Signal<number>;
   discountPrice: Signal<number | null>;
@@ -49,12 +56,12 @@ export const variantSelectorServiceDefinition = defineService<{
   productId: Signal<string>;
   sku: Signal<string>;
   ribbonLabel: Signal<string | null>;
-  selectedVariant: () => any;
+  selectedVariant: () => Variant | undefined;
   finalPrice: () => number;
   isLowStock: (threshold?: number) => boolean;
   setOption: (group: string, value: string) => void;
   selectVariantById: (id: string) => void;
-  loadProductVariants: (data: any[]) => void;
+  loadProductVariants: (data: Variant[]) => void;
   resetSelections: () => void;
 }>("variantSelector");
 
@@ -62,15 +69,9 @@ export const variantSelectorService = implementService.withConfig<{
   productId: string;
 }>()(variantSelectorServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
-  const options = signalsService.signal<Record<string, string[]>>({
-    color: ["blue", "red"],
-    size: ["S", "M", "L"],
-  });
-  const variants = signalsService.signal<any[]>([]);
-  const selectedOptions = signalsService.signal<Record<string, string>>({
-    color: "blue",
-    size: "S",
-  });
+  const options = signalsService.signal<Record<string, string[]>>({});
+  const variants = signalsService.signal<Variant[]>([]);
+  const selectedOptions = signalsService.signal<Record<string, string>>({});
   const selectedVariantId = signalsService.signal<string>("");
   const basePrice = signalsService.signal<number>(100);
   const discountPrice = signalsService.signal<number | null>(80);
@@ -80,14 +81,13 @@ export const variantSelectorService = implementService.withConfig<{
   const sku = signalsService.signal<string>("SKU123");
   const ribbonLabel = signalsService.signal<string | null>("Sale");
 
-  // Helper to match variant by selected options
   function findVariantByOptions(opts: Record<string, string>) {
     return variants
       .get()
       .find((variant) =>
         Object.entries(opts).every(([group, value]) =>
           variant.choices.some(
-            (c) =>
+            (c: { optionChoiceNames: OptionChoiceNames }) =>
               c.optionChoiceNames.optionName === group &&
               c.optionChoiceNames.choiceName === value
           )
@@ -98,10 +98,9 @@ export const variantSelectorService = implementService.withConfig<{
   const selectedVariant = () => {
     const found = variants.get().find((v) => v._id === selectedVariantId.get());
     if (found) return found;
-    // fallback: try to match by selectedOptions
     const fallback = findVariantByOptions(selectedOptions.get());
     if (fallback) return fallback;
-    return variants.get()[0] || {};
+    return variants.get()[0];
   };
 
   return {
@@ -139,12 +138,17 @@ export const variantSelectorService = implementService.withConfig<{
     selectVariantById: (id) => selectedVariantId.set(id),
     loadProductVariants: (data) => {
       variants.set(data);
-      // Set default selected variant
       if (data.length > 0) selectedVariantId.set(data[0]._id);
     },
     resetSelections: () => {
-      selectedOptions.set({ color: "blue", size: "S" });
-      const match = findVariantByOptions({ color: "blue", size: "S" });
+      // Try to set defaults from options
+      const opts = options.get();
+      const defaultOptions: Record<string, string> = {};
+      Object.keys(opts).forEach((key) => {
+        defaultOptions[key] = opts[key][0];
+      });
+      selectedOptions.set(defaultOptions);
+      const match = findVariantByOptions(defaultOptions);
       if (match) selectedVariantId.set(match._id);
     },
   };

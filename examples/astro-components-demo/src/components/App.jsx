@@ -20,92 +20,165 @@ import {
 
 // --- MOCK DATA (replace with real data/fetch in production) ---
 const MOCK_PRODUCT = {
-  title: "I'm a product",
+  _id: "p1",
+  name: "I'm a product",
   sku: "364215376135191",
-  price: 85,
-  description:
+  handle: "im-a-product",
+  slug: "im-a-product",
+  visible: true,
+  productType: "PHYSICAL",
+  plainDescription:
     "I'm a product description. I'm a great place to add more details about your product such as sizing, material, care instructions and cleaning instructions.",
+  description: { nodes: [], metadata: {}, documentStyle: {} },
+  options: [
+    {
+      name: "color",
+      choicesSettings: {
+        choices: [
+          { name: "blue", choiceId: "c1" },
+          { name: "red", choiceId: "c2" },
+        ],
+      },
+    },
+    {
+      name: "size",
+      choicesSettings: {
+        choices: [
+          { name: "S", choiceId: "s1" },
+          { name: "M", choiceId: "s2" },
+          { name: "L", choiceId: "s3" },
+        ],
+      },
+    },
+  ],
+  variantsInfo: {
+    variants: [
+      {
+        _id: "v1",
+        visible: true,
+        sku: "364215376135191",
+        choices: [
+          { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
+          { optionChoiceNames: { optionName: "size", choiceName: "S" } },
+        ],
+        price: { actualPrice: { amount: "100", formattedAmount: "$100" } },
+        inventoryStatus: { inStock: true, preorderEnabled: false },
+      },
+      {
+        _id: "v2",
+        visible: true,
+        sku: "364215376135191",
+        choices: [
+          { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
+          { optionChoiceNames: { optionName: "size", choiceName: "M" } },
+        ],
+        price: { actualPrice: { amount: "105", formattedAmount: "$105" } },
+        inventoryStatus: { inStock: true, preorderEnabled: false },
+      },
+      {
+        _id: "v3",
+        visible: false,
+        sku: "364215376135191",
+        choices: [
+          { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
+          { optionChoiceNames: { optionName: "size", choiceName: "L" } },
+        ],
+        price: { actualPrice: { amount: "110", formattedAmount: "$110" } },
+        inventoryStatus: { inStock: false, preorderEnabled: true },
+      },
+      {
+        _id: "v4",
+        visible: true,
+        sku: "364215376135191",
+        choices: [
+          { optionChoiceNames: { optionName: "color", choiceName: "red" } },
+          { optionChoiceNames: { optionName: "size", choiceName: "S" } },
+        ],
+        price: { actualPrice: { amount: "100", formattedAmount: "$100" } },
+        inventoryStatus: { inStock: true, preorderEnabled: false },
+      },
+      {
+        _id: "v5",
+        visible: true,
+        sku: "364215376135191",
+        choices: [
+          { optionChoiceNames: { optionName: "color", choiceName: "red" } },
+          { optionChoiceNames: { optionName: "size", choiceName: "M" } },
+        ],
+        price: { actualPrice: { amount: "105", formattedAmount: "$105" } },
+        inventoryStatus: { inStock: true, preorderEnabled: false },
+      },
+      {
+        _id: "v6",
+        visible: true,
+        sku: "364215376135191",
+        choices: [
+          { optionChoiceNames: { optionName: "color", choiceName: "red" } },
+          { optionChoiceNames: { optionName: "size", choiceName: "L" } },
+        ],
+        price: { actualPrice: { amount: "110", formattedAmount: "$110" } },
+        inventoryStatus: { inStock: true, preorderEnabled: false },
+      },
+    ],
+  },
+  media: {
+    itemsInfo: {
+      items: [
+        {
+          url: "https://dummyimage.com/600x600/0000ff/fff&text=Blue+S",
+          image: "https://dummyimage.com/600x600/0000ff/fff&text=Blue+S",
+        },
+        {
+          url: "https://dummyimage.com/600x600/0000ff/fff&text=Blue+M",
+          image: "https://dummyimage.com/600x600/0000ff/fff&text=Blue+M",
+        },
+        {
+          url: "https://dummyimage.com/600x600/0000ff/fff&text=Blue+L",
+          image: "https://dummyimage.com/600x600/0000ff/fff&text=Blue+L",
+        },
+        {
+          url: "https://dummyimage.com/600x600/ff4444/fff&text=Red+S",
+          image: "https://dummyimage.com/600x600/ff4444/fff&text=Red+S",
+        },
+        {
+          url: "https://dummyimage.com/600x600/ff4444/fff&text=Red+M",
+          image: "https://dummyimage.com/600x600/ff4444/fff&text=Red+M",
+        },
+        {
+          url: "https://dummyimage.com/600x600/ff4444/fff&text=Red+L",
+          image: "https://dummyimage.com/600x600/ff4444/fff&text=Red+L",
+        },
+      ],
+    },
+  },
 };
-const MOCK_VARIANTS = [
-  {
-    _id: "v1",
-    visible: true,
-    sku: "364215376135191",
-    choices: [
-      { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
-      { optionChoiceNames: { optionName: "size", choiceName: "S" } },
-    ],
-    price: { actualPrice: { amount: "100", formattedAmount: "$100" } },
-    inventoryStatus: { inStock: true, preorderEnabled: false },
-  },
-  {
-    _id: "v2",
-    visible: true,
-    sku: "364215376135191",
-    choices: [
-      { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
-      { optionChoiceNames: { optionName: "size", choiceName: "M" } },
-    ],
-    price: { actualPrice: { amount: "105", formattedAmount: "$105" } },
-    inventoryStatus: { inStock: true, preorderEnabled: false },
-  },
-  {
-    _id: "v3",
-    visible: false,
-    sku: "364215376135191",
-    choices: [
-      { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
-      { optionChoiceNames: { optionName: "size", choiceName: "L" } },
-    ],
-    price: { actualPrice: { amount: "110", formattedAmount: "$110" } },
-    inventoryStatus: { inStock: false, preorderEnabled: true },
-  },
-  {
-    _id: "v4",
-    visible: true,
-    sku: "364215376135191",
-    choices: [
-      { optionChoiceNames: { optionName: "color", choiceName: "red" } },
-      { optionChoiceNames: { optionName: "size", choiceName: "S" } },
-    ],
-    price: { actualPrice: { amount: "100", formattedAmount: "$100" } },
-    inventoryStatus: { inStock: true, preorderEnabled: false },
-  },
-  {
-    _id: "v5",
-    visible: true,
-    sku: "364215376135191",
-    choices: [
-      { optionChoiceNames: { optionName: "color", choiceName: "red" } },
-      { optionChoiceNames: { optionName: "size", choiceName: "M" } },
-    ],
-    price: { actualPrice: { amount: "105", formattedAmount: "$105" } },
-    inventoryStatus: { inStock: true, preorderEnabled: false },
-  },
-  {
-    _id: "v6",
-    visible: true,
-    sku: "364215376135191",
-    choices: [
-      { optionChoiceNames: { optionName: "color", choiceName: "red" } },
-      { optionChoiceNames: { optionName: "size", choiceName: "L" } },
-    ],
-    price: { actualPrice: { amount: "110", formattedAmount: "$110" } },
-    inventoryStatus: { inStock: true, preorderEnabled: false },
-  },
-];
-const MOCK_OPTIONS = {
-  color: ["blue", "red"],
-  size: ["S", "M", "L"],
-};
-const MOCK_IMAGES = [
-  "https://dummyimage.com/600x600/0000ff/fff&text=Blue+S", // v1
-  "https://dummyimage.com/600x600/0000ff/fff&text=Blue+M", // v2
-  "https://dummyimage.com/600x600/0000ff/fff&text=Blue+L", // v3
-  "https://dummyimage.com/600x600/ff4444/fff&text=Red+S", // v4
-  "https://dummyimage.com/600x600/ff4444/fff&text=Red+M", // v5
-  "https://dummyimage.com/600x600/ff4444/fff&text=Red+L", // v6
-];
+
+// Use types for Option and Variant
+/**
+ * @typedef {Object} Option
+ * @property {string} name
+ * @property {{choices: {name: string, choiceId: string}[]}} choicesSettings
+ */
+/**
+ * @typedef {Object} Variant
+ * @property {string} _id
+ * @property {boolean} visible
+ * @property {string} sku
+ * @property {{optionChoiceNames: {optionName: string, choiceName: string}}[]} choices
+ * @property {{actualPrice: {amount: string, formattedAmount: string}}} price
+ * @property {{inStock: boolean, preorderEnabled: boolean}} inventoryStatus
+ */
+
+const MOCK_VARIANTS = MOCK_PRODUCT.variantsInfo.variants;
+const MOCK_OPTIONS = Object.fromEntries(
+  (MOCK_PRODUCT.options || []).map((opt) => [
+    opt.name,
+    (opt.choicesSettings?.choices || []).map((c) => c.name),
+  ])
+);
+const MOCK_IMAGES = MOCK_PRODUCT.media.itemsInfo.items.map(
+  (item) => item.image
+);
 const MOCK_VARIANT_IMAGE_MAP = {
   v1: 0,
   v2: 1,
@@ -235,13 +308,13 @@ function ProductPage() {
                     if (variantId) {
                       variantSelector.selectVariantById(variantId);
                       // Update selected options (color, size) to match the variant
-                      const variant = variants.find((v) => v.id === variantId);
-                      if (variant && variant.attributes) {
-                        Object.entries(variant.attributes).forEach(
-                          ([group, value]) => {
-                            variantSelector.setOption(group, value);
-                          }
-                        );
+                      const variant = variants.find((v) => v._id === variantId);
+                      if (variant && variant.choices) {
+                        variant.choices.forEach((choiceObj) => {
+                          const { optionName, choiceName } =
+                            choiceObj.optionChoiceNames;
+                          variantSelector.setOption(optionName, choiceName);
+                        });
                       }
                     }
                   }}
@@ -251,7 +324,7 @@ function ProductPage() {
           </div>
         </div>
         <div className="details-section">
-          <h1 className="product-title">{MOCK_PRODUCT.title}</h1>
+          <h1 className="product-title">{MOCK_PRODUCT.name}</h1>
           <div className="sku">SKU: {MOCK_PRODUCT.sku}</div>
           <div className="price">
             {isOnSale && discountPrice ? (
@@ -274,7 +347,7 @@ function ProductPage() {
             )}
           </div>
           {ribbon && <span className="ribbon">{ribbon}</span>}
-          <div className="desc">{MOCK_PRODUCT.description}</div>
+          <div className="desc">{MOCK_PRODUCT.plainDescription}</div>
           <div className="options">
             {Object.entries(options).map(([group, values]) => {
               console.log({ selectedOptions });
