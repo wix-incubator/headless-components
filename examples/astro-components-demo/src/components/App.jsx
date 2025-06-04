@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
@@ -110,13 +110,10 @@ function ProductPage() {
 
   // --- Gallery ---
   const images = productGallery.images.get();
-  const selectedImageIndex = productGallery.selectedImageIndex.get();
-  const currentImage = productGallery.currentImage();
-  // Map variant to image
-  const handleVariantImage = (variantId) => {
-    const idx = productGallery.variantMappedImage(variantId);
-    productGallery.setImageIndex(idx);
-  };
+  const variantImageMap = productGallery.variantImageMap.get();
+  const mappedIdx = variantImageMap[selectedVariant.id];
+  const currentImage =
+    typeof mappedIdx === "number" ? images[mappedIdx] : images[0];
 
   // --- Cart & Wishlist ---
   const cartItems = currentCart.items.get();
@@ -129,8 +126,13 @@ function ProductPage() {
   // --- Handlers ---
   const handleOptionChange = (group, value) => {
     variantSelector.setOption(group, value);
-    // Optionally sync image
-    handleVariantImage(variantSelector.selectedVariant().id);
+    // After the variant is updated, update the gallery image to match the new selected variant
+    const newSelectedVariant = variantSelector.selectedVariant();
+    const newMappedIdx =
+      productGallery.variantImageMap.get()[newSelectedVariant.id];
+    if (typeof newMappedIdx === "number") {
+      productGallery.setImageIndex(newMappedIdx);
+    }
   };
   const handleAddToCart = () => {
     currentCart.addItem(
@@ -174,10 +176,8 @@ function ProductPage() {
                 key={img}
                 src={img}
                 alt={`thumb-${idx}`}
-                className={`thumb ${
-                  idx === selectedImageIndex ? "selected" : ""
-                }`}
-                onClick={() => productGallery.setImageIndex(idx)}
+                className={`thumb ${idx === mappedIdx ? "selected" : ""}`}
+                style={{ cursor: "default" }}
               />
             ))}
           </div>
