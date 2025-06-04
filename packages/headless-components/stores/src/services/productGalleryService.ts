@@ -25,7 +25,7 @@ export const productGalleryServiceDefinition = defineService<{
   // --- Getters ---
   currentImage: () => string;
   variantMappedImage: (variantId: string) => string;
-  
+
   // --- Actions ---
   loadImages: (images: string[]) => void;
   setImageIndex: (index: number) => void;
