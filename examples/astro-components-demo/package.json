@@ -15,16 +15,17 @@
   "dependencies": {
     "@astrojs/react": "^4.3.0",
     "@playwright/test": "^1.51.1",
-    "@types/react": "^19.1.5",
-    "@types/react-dom": "^19.1.5",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "@wix/astro": "workspace:*",
     "@wix/headless-bookings": "workspace:*",
     "@wix/headless-ecom": "workspace:*",
     "@wix/headless-stores": "workspace:*",
     "@wix/services-manager-react": "^0.1.9",
+    "@wix/stores": "^1.0.461",
     "astro": "^5.8.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
     "@wix/cli-edge": "^1.1.74"

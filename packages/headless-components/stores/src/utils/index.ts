@@ -3,18 +3,23 @@ import { redirects } from "@wix/redirects";
 
 const CATLOG_APP_ID_V3 = "215238eb-22a5-4c36-9e7b-e7c08025e04e";
 
-export async function getCheckoutUrlForProduct(productId: string, variantId: string) {
+export async function getCheckoutUrlForProduct(
+  productId: string,
+  variantId?: string
+) {
   const checkoutResult = await checkout.createCheckout({
-    lineItems: [{
-      catalogReference: {
-        catalogItemId: productId,
-        appId: CATLOG_APP_ID_V3,
-        options: {
-            variantId
+    lineItems: [
+      {
+        catalogReference: {
+          catalogItemId: productId,
+          appId: CATLOG_APP_ID_V3,
+          options: {
+            variantId,
+          },
         },
+        quantity: 1,
       },
-      quantity: 1
-    }],
+    ],
     channelType: checkout.ChannelType.WEB,
   });
 
