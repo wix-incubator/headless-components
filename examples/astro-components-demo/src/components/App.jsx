@@ -107,7 +107,7 @@ function ProductPage() {
 
   // --- Handlers ---
   const handleOptionChange = (group, value) => {
-    variantSelector.setOption(group, value);
+    variantSelector.setOption(group.toLowerCase(), value);
     // Optionally sync image
     handleVariantImage(variantSelector.selectedVariant().id);
   };

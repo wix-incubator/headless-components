@@ -218,33 +218,16 @@ export const currentCartServiceDefinition = defineService<{
 // - Additional Info
 // - Product Variants (duplicated entry)
 
-// --- VariantSelectorService (stub) ---
+// --- VariantSelectorService (minimal working logic, type-correct) ---
 export const variantSelectorService = implementService.withConfig<{
   productId: string;
 }>()(variantSelectorServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
-  // Mock product options and variants
-  const mockOptions = {
+  const options = signalsService.signal<Record<string, string[]>>({
     color: ["blue", "red"],
     size: ["S", "M", "L"],
-  } as unknown as Record<string, string[]>;
-  const mockVariants: {
-    id: string;
-    label: string;
-    stock: number;
-    ribbon: string | null;
-    isPreOrder: boolean | null;
-  }[] = [
-    { id: "v1", label: "Blue S", stock: 10, ribbon: null, isPreOrder: false },
-    { id: "v2", label: "Red M", stock: 5, ribbon: "Sale", isPreOrder: false },
-    { id: "v3", label: "Blue L", stock: 0, ribbon: null, isPreOrder: true },
-  ];
-  const selectedOptions = signalsService.signal({
-    color: "blue",
-    size: "S",
-  } as unknown as Record<string, string>) as Signal<Record<string, string>>;
-  const selectedVariantId = signalsService.signal("v1") as Signal<string>;
-  const variants = signalsService.signal(mockVariants) as Signal<
+  });
+  const variants = signalsService.signal<
     {
       id: string;
       label: string;
@@ -252,31 +235,28 @@ export const variantSelectorService = implementService.withConfig<{
       ribbon: string | null;
       isPreOrder: boolean | null;
     }[]
-  >;
-  const options = signalsService.signal(mockOptions) as Signal<
-    Record<string, string[]>
-  >;
-  const basePrice = signalsService.signal(100) as Signal<number>;
-  const discountPrice = signalsService.signal(80) as Signal<number | null>;
-  const isOnSale = signalsService.signal(true) as Signal<boolean | null>;
-  const quantityAvailable = signalsService.signal(10) as Signal<number>;
-  const productId = signalsService.signal(config.productId) as Signal<string>;
-  const sku = signalsService.signal("SKU123") as Signal<string>;
-  const ribbonLabel = signalsService.signal("Sale") as Signal<string | null>;
-  // Return the selected variant based on selectedVariantId
+  >([
+    { id: "v1", label: "Blue S", stock: 10, ribbon: null, isPreOrder: false },
+    { id: "v2", label: "Red M", stock: 5, ribbon: "Sale", isPreOrder: false },
+    { id: "v3", label: "Blue L", stock: 0, ribbon: null, isPreOrder: true },
+  ]);
+  const selectedOptions = signalsService.signal<Record<string, string>>({
+    color: "blue",
+    size: "S",
+  });
+  const selectedVariantId = signalsService.signal<string>("v1");
+  const basePrice = signalsService.signal<number>(100);
+  const discountPrice = signalsService.signal<number | null>(80);
+  const isOnSale = signalsService.signal<boolean | null>(true);
+  const quantityAvailable = signalsService.signal<number>(10);
+  const productId = signalsService.signal<string>(config.productId);
+  const sku = signalsService.signal<string>("SKU123");
+  const ribbonLabel = signalsService.signal<string | null>("Sale");
   const selectedVariant = () => {
-    const vs = variants.get();
-    if (!vs || vs.length === 0)
-      return { id: "", label: "", stock: 0, ribbon: null, isPreOrder: null };
-    return (
-      vs.find((v) => v.id === selectedVariantId.get()) || {
-        id: "",
-        label: "",
-        stock: 0,
-        ribbon: null,
-        isPreOrder: null,
-      }
-    );
+    const found = variants.get().find((v) => v.id === selectedVariantId.get());
+    if (found) return found;
+    // fallback: return a default variant object
+    return { id: "", label: "", stock: 0, ribbon: null, isPreOrder: null };
   };
   return {
     selectedOptions,
@@ -293,15 +273,12 @@ export const variantSelectorService = implementService.withConfig<{
     selectedVariant,
     finalPrice: () => discountPrice.get() || basePrice.get(),
     isLowStock: (threshold = 5) => selectedVariant().stock <= threshold,
-    setOption: (group: string, value: string) => {
-      selectedOptions.set({ ...selectedOptions.get(), [group]: value });
+    setOption: (group, value) => {
+      const newOptions = { ...selectedOptions.get(), [group]: value };
+      selectedOptions.set(newOptions);
     },
-    selectVariantById: (id: string) => {
-      selectedVariantId.set(id);
-    },
-    loadProductVariants: (data) => {
-      variants.set(data);
-    },
+    selectVariantById: (id) => selectedVariantId.set(id),
+    loadProductVariants: (data) => variants.set(data),
     resetSelections: () => {
       selectedOptions.set({ color: "blue", size: "S" });
       selectedVariantId.set("v1");
@@ -309,28 +286,41 @@ export const variantSelectorService = implementService.withConfig<{
   };
 });
 
-// --- ProductGalleryService (stub) ---
+// --- ProductGalleryService (minimal working logic, type-correct) ---
 export const productGalleryService = implementService.withConfig<{
   productId: string;
 }>()(productGalleryServiceDefinition, ({ getService }) => {
   const signalsService = getService(SignalsServiceDefinition);
-  const images = signalsService.signal<string[]>([]);
-  const selectedImageIndex = signalsService.signal(0) as Signal<number>;
-  const variantImageMap = signalsService.signal<Record<string, number>>({});
+  const images = signalsService.signal<string[]>([
+    "https://dummyimage.com/600x400/000/fff&text=Blue+S",
+    "https://dummyimage.com/600x400/ff0000/fff&text=Red+M",
+    "https://dummyimage.com/600x400/0000ff/fff&text=Blue+L",
+  ]);
+  const selectedImageIndex = signalsService.signal<number>(0);
+  const variantImageMap = signalsService.signal<Record<string, number>>({
+    v1: 0,
+    v2: 1,
+    v3: 2,
+  });
   return {
     images,
     selectedImageIndex,
     variantImageMap,
-    currentImage: () => "",
-    variantMappedImage: () => "",
-    loadImages: () => {},
-    setImageIndex: () => {},
-    resetGallery: () => {},
-    mapVariantToImage: () => {},
+    currentImage: () => images.get()[selectedImageIndex.get()] || "",
+    variantMappedImage: (variantId) => {
+      const map = variantImageMap.get();
+      const idx = map[variantId as keyof typeof map];
+      return typeof idx === "number" ? images.get()[idx] || "" : "";
+    },
+    loadImages: (imgs) => images.set(imgs),
+    setImageIndex: (index) => selectedImageIndex.set(index),
+    resetGallery: () => selectedImageIndex.set(0),
+    mapVariantToImage: (variantId, index) =>
+      variantImageMap.set({ ...variantImageMap.get(), [variantId]: index }),
   };
 });
 
-// --- CurrentCartService (stub) ---
+// --- CurrentCartService (minimal working logic, type-correct) ---
 export const currentCartService = implementService.withConfig<{
   userId?: string;
 }>()(currentCartServiceDefinition, ({ getService }) => {
@@ -349,13 +339,61 @@ export const currentCartService = implementService.withConfig<{
   return {
     items,
     wishlist,
-    totalQuantity: () => 0,
-    itemCount: () => 0,
-    getItem: () => undefined,
-    addItem: () => {},
-    buyNow: () => {},
-    removeItem: () => {},
-    clearCart: () => {},
-    toggleWishlist: () => {},
+    totalQuantity: () =>
+      items.get().reduce((sum, item) => sum + item.quantity, 0),
+    itemCount: () => items.get().length,
+    getItem: (productId, variantId) =>
+      items
+        .get()
+        .find(
+          (item) => item.productId === productId && item.variantId === variantId
+        ),
+    addItem: (productId, variantId, quantity) => {
+      const current = items.get();
+      const idx = current.findIndex(
+        (item) => item.productId === productId && item.variantId === variantId
+      );
+      if (idx !== -1) {
+        const updated = [...current];
+        updated[idx] = {
+          productId: updated[idx]!.productId,
+          variantId: updated[idx]!.variantId,
+          quantity: updated[idx]!.quantity + quantity,
+          isPreOrder: updated[idx]!.isPreOrder ?? false,
+        };
+        items.set(updated);
+      } else {
+        items.set([
+          ...current,
+          { productId, variantId, quantity, isPreOrder: false },
+        ]);
+      }
+    },
+    buyNow: (productId, variantId, quantity) =>
+      items.set([{ productId, variantId, quantity, isPreOrder: false }]),
+    removeItem: (productId, variantId) =>
+      items.set(
+        items
+          .get()
+          .filter(
+            (item) =>
+              !(item.productId === productId && item.variantId === variantId)
+          )
+      ),
+    clearCart: () => items.set([]),
+    toggleWishlist: (productId, variantId) => {
+      const current = wishlist.get();
+      const idx = current.findIndex(
+        (item) => item.productId === productId && item.variantId === variantId
+      );
+      if (idx !== -1)
+        wishlist.set(
+          current.filter(
+            (item) =>
+              !(item.productId === productId && item.variantId === variantId)
+          )
+        );
+      else wishlist.set([...current, { productId, variantId }]);
+    },
   };
 });
