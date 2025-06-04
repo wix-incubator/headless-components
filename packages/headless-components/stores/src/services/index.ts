@@ -12,3 +12,4 @@ export {
   currentCartService,
 } from "./currentCartService";
 export { wishlistService, wishlistServiceDefinition } from "./wishlistService";
+export { productService, productServiceDefinition } from "./productService";
