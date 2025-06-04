@@ -1,9 +1,12 @@
 ---
-import React from "react";
-import App from "../components/App.jsx";
 import Layout from "../layouts/Layout.astro";
+import { loadBuyNowServiceInitialData } from "@wix/headless-stores/services";
+import { ProductPage } from "../islands/ProductPage";
+
+const buyNowInitialData = await loadBuyNowServiceInitialData("im-a-product-2");
+console.log(buyNowInitialData);
 ---
 
 <Layout>
-  <App />
+  <ProductPage client:load servicesConfigs={{ ...buyNowInitialData }} />
 </Layout>
