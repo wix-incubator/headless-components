@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css";
 import { useSignals } from "@preact/signals-react/runtime";
+import { signal } from "@preact/signals-react";
 // Import the headless service definitions
 import {
   variantSelectorServiceDefinition,
@@ -69,9 +70,9 @@ variantSelector.options.set(MOCK_OPTIONS);
 productGallery.loadImages(MOCK_IMAGES);
 productGallery.variantImageMap.set(MOCK_VARIANT_IMAGE_MAP);
 
+const quantity = signal(1);
+
 function ProductPage() {
-  // Local state for quantity
-  const [quantity, setQuantity] = useState(1);
   useSignals();
 
   // --- Variant Selection ---
@@ -117,14 +118,14 @@ function ProductPage() {
     currentCart.addItem(
       variantSelector.productId.get(),
       selectedVariant.id,
-      quantity
+      quantity.value
     );
   };
   const handleBuyNow = () => {
     currentCart.buyNow(
       variantSelector.productId.get(),
       selectedVariant.id,
-      quantity
+      quantity.value
     );
   };
   const handleWishlistToggle = () => {
@@ -138,7 +139,7 @@ function ProductPage() {
       1,
       Math.min(Number(e.target.value), selectedVariant.stock)
     );
-    setQuantity(val);
+    quantity.value = val;
   };
 
   // --- UI ---
@@ -213,7 +214,7 @@ function ProductPage() {
               type="number"
               min={1}
               max={selectedVariant.stock}
-              value={quantity}
+              value={quantity.value}
               onChange={handleQuantityChange}
               className="qty-input"
             />
