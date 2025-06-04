@@ -1,19 +1,12 @@
 {
   "name": "@wix/headless-stores",
-  "private": true,
   "scripts": {
     "build": "tsc",
     "test": "vitest"
   },
   "exports": {
     "./react": "./dist/react/index.js",
-    "./react/hookim": "./dist/react/hookim/index.js",
-    "./services": "./dist/services/index.js",
-    "./astro/BuyNowService.astro": "./src/astro/BuyNowService.astro",
-    "./astro/BuyNowServiceContext": "./dist/astro/BuyNowServiceContext.js",
-    "./astro/withBuyButtonService": "./dist/astro/withBuyButtonService.js",
-    "./astro/ManagerProvider.astro": "./src/astro/ManagerProvider.astro",
-    "./astro/ManagerProviderContext": "./src/astro/ManagerProviderContext.ts"
+    "./services": "./dist/services/index.js"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -27,10 +20,8 @@
   },
   "dependencies": {
     "@wix/ecom": "^1.0.1169",
-    "@wix/headless-components-core": "workspace:*",
     "@wix/redirects": "^1.0.79",
     "@wix/services-definitions": "^0.1.2",
-    "@wix/services-manager": "^0.2.6",
     "@wix/services-manager-react": "^0.1.9"
   }
 }

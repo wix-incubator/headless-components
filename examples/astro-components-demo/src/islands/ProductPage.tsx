@@ -16,9 +16,23 @@ export function ProductPage(props: { servicesConfigs: any }) {
       )}
     >
       <BuyNow>
-        {({ isLoading, redirectToCheckout, productName }) => (
-          <button onClick={redirectToCheckout}>
-            {isLoading ? "Loading..." : `Buy Now ${productName}`}
+        {({
+          isLoading,
+          redirectToCheckout,
+          productName,
+          price,
+          currency,
+          error,
+        }) => (
+          <button
+            onClick={() => redirectToCheckout()}
+            disabled={isLoading || Boolean(error)}
+          >
+            {error
+              ? error
+              : isLoading
+              ? "Loading..."
+              : `Buy Now ${productName} ${price} ${currency}`}
           </button>
         )}
       </BuyNow>

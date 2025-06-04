@@ -1,82 +1,76 @@
 import { useService } from "@wix/services-manager-react";
-import { BuyNowServiceDefinition } from "../services";
-
-// const CATALOG_APP_ID = "1380b703-ce81-ff05-f115-39571d94dfcd";
-// const CATLOG_APP_ID_V3 = "215238eb-22a5-4c36-9e7b-e7c08025e04e";
+import { BuyNowServiceDefinition } from "../services/buy-now-service";
 
 /**
- * @typedef {object} BuyNowRenderProps
- * @property {boolean} isLoading - Indicates if the checkout process is currently in progress.
- * @property {() => Promise<void>} redirectToCheckout - A function to initiate the checkout process.
- *                                                    When called, it creates a checkout for the specified product
- *                                                    and then redirects the user to the Wix checkout page.
- *                                                    It handles setting the loading state internally.
+ * Props passed to the render function of the BuyNow component
  */
+export type BuyNowRenderProps = {
+  /** Whether the buy now operation is currently loading */
+  isLoading: boolean;
+  /** The name of the product being purchased */
+  productName: string;
+  /** Function to redirect the user to the checkout page */
+  redirectToCheckout: () => void;
+  /** The error message if the buy now operation fails */
+  error: string | null;
+  /** The price of the product being purchased */
+  price: string;
+  /** The currency of the product being purchased */
+  currency: string;
+};
 
 /**
- * @typedef {object} BuyNowProps
- * @property {string} productId - The unique identifier of the product to be purchased.
- * @property {Record<string, string>} [variant] - An optional record of product variants (e.g., color, size).
- *                                                The keys are variant identifiers and values are the selected options.
- * @property {(props: BuyNowRenderProps) => React.ReactNode} children - A render prop function that receives the loading state
- *                                                                    and the checkout initiation function.
- *                                                                    This allows for custom rendering of the UI.
+ * Props for the BuyNow component
  */
+export type BuyNowProps = {
+  /** Render function that receives buy now state and actions */
+  children: (props: BuyNowRenderProps) => React.ReactNode;
+};
 
 /**
- * The `BuyNow` component provides a mechanism to initiate a direct purchase for a single product.
- * It encapsulates the logic for creating an e-commerce checkout and redirecting the user to the
- * Wix checkout page.
+ * A headless component that provides buy now functionality using the render props pattern.
  *
- * This component uses a render prop pattern (`children`) to provide flexibility in how the UI
- * (e.g., a buy button, loading indicator) is rendered. The render prop receives `isLoading` state
- * and a `redirectToCheckout` function.
+ * This component manages the state and actions for a "buy now" flow, allowing consumers
+ * to render their own UI while accessing the underlying buy now functionality.
  *
- * The `redirectToCheckout` function is asynchronous. It first sets `isLoading` to true, then calls
- * the Wix Ecom SDK to create a checkout with the specified `productId` and `variant`.
- * If successful, it uses the Wix Redirects SDK to generate a redirect session and then navigates
- * the user to the checkout URL by setting `window.location.href`.
- * The `isLoading` state is set to false when the process completes (either successfully or on error).
- *
- * @param {BuyNowProps} props - The props for the BuyNow component.
- * @returns {React.ReactNode} The output of the children render prop.
+ * @param props - The component props
+ * @returns The rendered children with buy now state and actions
  *
  * @example
  * ```tsx
- * import { BuyNow } from '@wix/headless-stores/react';
- *
- * const MyProductPage = ({ productId, productVariant }) => {
- *   return (
- *     <BuyNow productId={productId} variant={productVariant}>
- *       {({ isLoading, redirectToCheckout }) => {
- *         if (isLoading) {
- *           return <p>Preparing your order...</p>;
- *         }
- *         return (
- *           <button onClick={redirectToCheckout} style={{ padding: '10px', background: 'blue', color: 'white' }}>
- *             Buy This Product Now!
- *           </button>
- *         );
- *       }}
- *     </BuyNow>
- *   );
- * };
+ * <BuyNow>
+ *   {({ isLoading, productName, redirectToCheckout, error, price, currency }) => (
+ *     <div>
+ *       <h2>{productName}</h2>
+ *       <p>{price} {currency}</p>
+ *       {error && <div className="error">{error}</div>}
+ *       <button
+ *         onClick={redirectToCheckout}
+ *         disabled={isLoading}
+ *       >
+ *         {isLoading ? 'Processing...' : 'Buy Now'}
+ *       </button>
+ *     </div>
+ *   )}
+ * </BuyNow>
  * ```
  */
-export function BuyNow(props: {
-  children: (props: {
-    isLoading: boolean;
-    productName: string;
-    redirectToCheckout: () => void; // Note: internally it's async, JSDoc reflects the exposed type
-  }) => React.ReactNode;
-}) {
-  const { redirectToCheckout, loadingSignal, productName } = useService(
-    BuyNowServiceDefinition
-  );
+export function BuyNow(props: BuyNowProps) {
+  const {
+    redirectToCheckout,
+    loadingSignal,
+    productName,
+    errorSignal,
+    price,
+    currency,
+  } = useService(BuyNowServiceDefinition);
 
   return props.children({
     isLoading: loadingSignal.get(),
+    error: errorSignal.get(),
     productName: productName,
     redirectToCheckout,
+    price,
+    currency,
   });
 }

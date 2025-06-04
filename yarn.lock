@@ -1354,7 +1354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@preact/signals-react@npm:^3.0.1, @preact/signals-react@npm:^3.1.1":
+"@preact/signals-react@npm:^3.0.1":
   version: 3.1.1
   resolution: "@preact/signals-react@npm:3.1.1"
   dependencies:
@@ -3737,16 +3737,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-components-core@workspace:*, @wix/headless-components-core@workspace:packages/headless-components/core":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-components-core@workspace:packages/headless-components/core"
-  dependencies:
-    "@preact/signals-react": "npm:^3.1.1"
-    "@types/node": "npm:^20.9.0"
-    typescript: "npm:^5.7.3"
-  languageName: unknown
-  linkType: soft
-
 "@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
@@ -3780,10 +3770,8 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/ecom": "npm:^1.0.1169"
-    "@wix/headless-components-core": "workspace:*"
     "@wix/redirects": "npm:^1.0.79"
     "@wix/services-definitions": "npm:^0.1.2"
-    "@wix/services-manager": "npm:^0.2.6"
     "@wix/services-manager-react": "npm:^0.1.9"
     jsdom: "npm:^26.1.0"
     typescript: "npm:^5.7.3"
@@ -4110,7 +4098,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/services-manager@npm:0.2.6, @wix/services-manager@npm:^0.2.6":
+"@wix/services-manager@npm:0.2.6":
   version: 0.2.6
   resolution: "@wix/services-manager@npm:0.2.6"
   dependencies:
