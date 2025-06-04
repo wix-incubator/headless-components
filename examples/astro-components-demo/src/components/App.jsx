@@ -216,6 +216,15 @@ function ProductPage() {
                   onClick={() => {
                     if (variantId) {
                       variantSelector.selectVariantById(variantId);
+                      // Update selected options (color, size) to match the variant
+                      const variant = variants.find((v) => v.id === variantId);
+                      if (variant && variant.attributes) {
+                        Object.entries(variant.attributes).forEach(
+                          ([group, value]) => {
+                            variantSelector.setOption(group, value);
+                          }
+                        );
+                      }
                     }
                   }}
                 />
