@@ -4,7 +4,6 @@ import {
   Signal,
 } from "@wix/services-definitions";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import { getCheckoutUrlForProduct } from "../utils";
 
 export const buynowserviceDefinition = defineService<{
   redirectToCheckout: () => Promise<void>;
@@ -15,24 +14,30 @@ export const buynowserviceDefinition = defineService<{
 export const buynowService = implementService.withConfig<{
   productId: string;
   variantId: string;
-}>()(buynowserviceDefinition, ({ getService, config }) => {
+}>()(buynowserviceDefinition, ({ getService }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
   const errorSignal = signalsService.signal<string | null>(null) as Signal<
     string | null
   >;
 
+  // Mock checkout and redirect logic
+
   return {
     redirectToCheckout: async () => {
       loadingSignal.set(true);
       try {
-        const checkoutUrl = await getCheckoutUrlForProduct(
-          config.productId,
-          config.variantId
-        );
-        window.location.href = checkoutUrl;
-      } catch (error) {
-        errorSignal.set(error as string);
+        // Mock checkout creation
+        const checkoutResult = { _id: "test-checkout-id" };
+        if (!checkoutResult._id) {
+          throw new Error("Failed to create checkout");
+        }
+        // Mock redirect session creation
+        const redirectSession = { fullUrl: "http://mocked-redirect-url.com" };
+        window.location.href = redirectSession.fullUrl;
+      } catch (error: any) {
+        errorSignal.set(error?.message || String(error));
+        throw error;
       } finally {
         loadingSignal.set(false);
       }
@@ -218,12 +223,28 @@ export const variantSelectorService = implementService.withConfig<{
   productId: string;
 }>()(variantSelectorServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
-  // Use correct types for signals and return a valid variant object
-  const selectedOptions = signalsService.signal({}) as Signal<
-    Record<string, string>
-  >;
-  const selectedVariantId = signalsService.signal("") as Signal<string>;
-  const variants = signalsService.signal<
+  // Mock product options and variants
+  const mockOptions = {
+    color: ["blue", "red"],
+    size: ["S", "M", "L"],
+  } as unknown as Record<string, string[]>;
+  const mockVariants: {
+    id: string;
+    label: string;
+    stock: number;
+    ribbon: string | null;
+    isPreOrder: boolean | null;
+  }[] = [
+    { id: "v1", label: "Blue S", stock: 10, ribbon: null, isPreOrder: false },
+    { id: "v2", label: "Red M", stock: 5, ribbon: "Sale", isPreOrder: false },
+    { id: "v3", label: "Blue L", stock: 0, ribbon: null, isPreOrder: true },
+  ];
+  const selectedOptions = signalsService.signal({
+    color: "blue",
+    size: "S",
+  } as unknown as Record<string, string>) as Signal<Record<string, string>>;
+  const selectedVariantId = signalsService.signal("v1") as Signal<string>;
+  const variants = signalsService.signal(mockVariants) as Signal<
     {
       id: string;
       label: string;
@@ -231,22 +252,31 @@ export const variantSelectorService = implementService.withConfig<{
       ribbon: string | null;
       isPreOrder: boolean | null;
     }[]
-  >([]);
-  const options = signalsService.signal({}) as Signal<Record<string, string[]>>;
-  const basePrice = signalsService.signal(0) as Signal<number>;
-  const discountPrice = signalsService.signal(null) as Signal<number | null>;
-  const isOnSale = signalsService.signal(false) as Signal<boolean | null>;
-  const quantityAvailable = signalsService.signal(0) as Signal<number>;
+  >;
+  const options = signalsService.signal(mockOptions) as Signal<
+    Record<string, string[]>
+  >;
+  const basePrice = signalsService.signal(100) as Signal<number>;
+  const discountPrice = signalsService.signal(80) as Signal<number | null>;
+  const isOnSale = signalsService.signal(true) as Signal<boolean | null>;
+  const quantityAvailable = signalsService.signal(10) as Signal<number>;
   const productId = signalsService.signal(config.productId) as Signal<string>;
-  const sku = signalsService.signal("") as Signal<string>;
-  const ribbonLabel = signalsService.signal(null) as Signal<string | null>;
-  // Return a valid variant object for selectedVariant
-  const defaultVariant = {
-    id: "",
-    label: "",
-    stock: 0,
-    ribbon: null,
-    isPreOrder: null,
+  const sku = signalsService.signal("SKU123") as Signal<string>;
+  const ribbonLabel = signalsService.signal("Sale") as Signal<string | null>;
+  // Return the selected variant based on selectedVariantId
+  const selectedVariant = () => {
+    const vs = variants.get();
+    if (!vs || vs.length === 0)
+      return { id: "", label: "", stock: 0, ribbon: null, isPreOrder: null };
+    return (
+      vs.find((v) => v.id === selectedVariantId.get()) || {
+        id: "",
+        label: "",
+        stock: 0,
+        ribbon: null,
+        isPreOrder: null,
+      }
+    );
   };
   return {
     selectedOptions,
@@ -260,13 +290,22 @@ export const variantSelectorService = implementService.withConfig<{
     productId,
     sku,
     ribbonLabel,
-    selectedVariant: () => defaultVariant,
-    finalPrice: () => 0,
-    isLowStock: () => false,
-    setOption: () => {},
-    selectVariantById: () => {},
-    loadProductVariants: () => {},
-    resetSelections: () => {},
+    selectedVariant,
+    finalPrice: () => discountPrice.get() || basePrice.get(),
+    isLowStock: (threshold = 5) => selectedVariant().stock <= threshold,
+    setOption: (group: string, value: string) => {
+      selectedOptions.set({ ...selectedOptions.get(), [group]: value });
+    },
+    selectVariantById: (id: string) => {
+      selectedVariantId.set(id);
+    },
+    loadProductVariants: (data) => {
+      variants.set(data);
+    },
+    resetSelections: () => {
+      selectedOptions.set({ color: "blue", size: "S" });
+      selectedVariantId.set("v1");
+    },
   };
 });
 
