@@ -170,7 +170,6 @@ export const currentCartServiceDefinition = defineService<{
       isPreOrder: boolean | null;
     }[]
   >;
-  wishlist: Signal<{ productId: string; variantId: string }[]>;
 
   // --- Getters ---
   totalQuantity: () => number;
@@ -192,7 +191,6 @@ export const currentCartServiceDefinition = defineService<{
   buyNow: (productId: string, variantId: string, quantity: number) => void;
   removeItem: (productId: string, variantId: string) => void;
   clearCart: () => void;
-  toggleWishlist: (productId: string, variantId: string) => void;
 }>("currentCart");
 
 // ❌ Not Covered (out of scope for headless state logic):
@@ -333,12 +331,8 @@ export const currentCartService = implementService.withConfig<{
       isPreOrder: boolean | null;
     }[]
   >([]);
-  const wishlist = signalsService.signal<
-    { productId: string; variantId: string }[]
-  >([]);
   return {
     items,
-    wishlist,
     totalQuantity: () =>
       items.get().reduce((sum, item) => sum + item.quantity, 0),
     itemCount: () => items.get().length,
@@ -381,19 +375,7 @@ export const currentCartService = implementService.withConfig<{
           )
       ),
     clearCart: () => items.set([]),
-    toggleWishlist: (productId, variantId) => {
-      const current = wishlist.get();
-      const idx = current.findIndex(
-        (item) => item.productId === productId && item.variantId === variantId
-      );
-      if (idx !== -1)
-        wishlist.set(
-          current.filter(
-            (item) =>
-              !(item.productId === productId && item.variantId === variantId)
-          )
-        );
-      else wishlist.set([...current, { productId, variantId }]);
-    },
   };
 });
+
+export { wishlistService, wishlistServiceDefinition } from "./wishlistService";

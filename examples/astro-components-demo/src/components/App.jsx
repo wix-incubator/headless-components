@@ -10,6 +10,8 @@ import {
   variantSelectorService,
   productGalleryService,
   currentCartService,
+  wishlistServiceDefinition,
+  wishlistService,
 } from "@wix/headless-stores/services";
 import {
   createServicesMap,
@@ -54,7 +56,8 @@ const MOCK_VARIANT_IMAGE_MAP = {
 const servicesMap = createServicesMap()
   .addService(variantSelectorServiceDefinition, variantSelectorService)
   .addService(productGalleryServiceDefinition, productGalleryService)
-  .addService(currentCartServiceDefinition, currentCartService);
+  .addService(currentCartServiceDefinition, currentCartService)
+  .addService(wishlistServiceDefinition, wishlistService);
 const servicesManager = createServicesManager(servicesMap);
 const variantSelector = servicesManager.getService(
   variantSelectorServiceDefinition
@@ -63,6 +66,7 @@ const productGallery = servicesManager.getService(
   productGalleryServiceDefinition
 );
 const currentCart = servicesManager.getService(currentCartServiceDefinition);
+const wishlist = servicesManager.getService(wishlistServiceDefinition);
 
 // Load initial data
 variantSelector.loadProductVariants(MOCK_VARIANTS);
@@ -101,11 +105,10 @@ function ProductPage() {
 
   // --- Cart & Wishlist ---
   const cartItems = currentCart.items.get();
-  const wishlist = currentCart.wishlist.get();
-  const inWishlist = wishlist.some(
-    (w) =>
-      w.productId === variantSelector.productId.get() &&
-      w.variantId === selectedVariant.id
+  const wishlistItems = wishlist.wishlist.get();
+  const inWishlist = wishlist.isInWishlist(
+    variantSelector.productId.get(),
+    selectedVariant.id
   );
 
   // --- Handlers ---
@@ -120,6 +123,8 @@ function ProductPage() {
       selectedVariant.id,
       quantity.value
     );
+    // Print current items in cart
+    console.log("Current cart items:", currentCart.items.get());
   };
   const handleBuyNow = () => {
     currentCart.buyNow(
@@ -129,7 +134,7 @@ function ProductPage() {
     );
   };
   const handleWishlistToggle = () => {
-    currentCart.toggleWishlist(
+    wishlist.toggleWishlist(
       variantSelector.productId.get(),
       selectedVariant.id
     );
