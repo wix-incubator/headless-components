@@ -201,15 +201,26 @@ function ProductPage() {
         <div className="image-section">
           <img src={currentImage} alt="Product" className="main-image" />
           <div className="thumbnails">
-            {images.map((img, idx) => (
-              <img
-                key={img}
-                src={img}
-                alt={`thumb-${idx}`}
-                className={`thumb ${idx === mappedIdx ? "selected" : ""}`}
-                style={{ cursor: "default" }}
-              />
-            ))}
+            {images.map((img, idx) => {
+              // Find the variant id mapped to this image index
+              const variantId = Object.keys(variantImageMap).find(
+                (vid) => variantImageMap[vid] === idx
+              );
+              return (
+                <img
+                  key={img}
+                  src={img}
+                  alt={`thumb-${idx}`}
+                  className={`thumb ${idx === mappedIdx ? "selected" : ""}`}
+                  style={{ cursor: variantId ? "pointer" : "default" }}
+                  onClick={() => {
+                    if (variantId) {
+                      variantSelector.selectVariantById(variantId);
+                    }
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
         <div className="details-section">
