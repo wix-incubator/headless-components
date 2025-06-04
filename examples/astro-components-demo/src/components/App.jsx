@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import { useSignals } from "@preact/signals-react/runtime";
 // Import the headless service definitions
 import {
   variantSelectorServiceDefinition,
@@ -34,8 +35,8 @@ const MOCK_VARIANTS = [
   { id: "v3", label: "Blue / S", stock: 0, ribbon: null, isPreOrder: true },
 ];
 const MOCK_OPTIONS = {
-  Color: ["Red", "Blue"],
-  Size: ["S", "M"],
+  color: ["Red", "Blue"],
+  size: ["S", "M"],
 };
 const MOCK_IMAGES = [
   "https://dummyimage.com/600x600/ff4444/fff&text=Red+S",
@@ -71,6 +72,7 @@ productGallery.variantImageMap.set(MOCK_VARIANT_IMAGE_MAP);
 function ProductPage() {
   // Local state for quantity
   const [quantity, setQuantity] = useState(1);
+  useSignals();
 
   // --- Variant Selection ---
   const options = variantSelector.options.get();
@@ -107,7 +109,7 @@ function ProductPage() {
 
   // --- Handlers ---
   const handleOptionChange = (group, value) => {
-    variantSelector.setOption(group.toLowerCase(), value);
+    variantSelector.setOption(group, value);
     // Optionally sync image
     handleVariantImage(variantSelector.selectedVariant().id);
   };
@@ -185,22 +187,25 @@ function ProductPage() {
           {ribbon && <span className="ribbon">{ribbon}</span>}
           <div className="desc">{MOCK_PRODUCT.description}</div>
           <div className="options">
-            {Object.entries(options).map(([group, values]) => (
-              <div key={group} className="option-group">
-                <label>{group}:</label>
-                <select
-                  value={selectedOptions[group] || ""}
-                  onChange={(e) => handleOptionChange(group, e.target.value)}
-                >
-                  <option value="">Select {group}</option>
-                  {values.map((val) => (
-                    <option key={val} value={val}>
-                      {val}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
+            {Object.entries(options).map(([group, values]) => {
+              console.log({ selectedOptions });
+              return (
+                <div key={group} className="option-group">
+                  <label>{group}:</label>
+                  <select
+                    value={selectedOptions[group] || ""}
+                    onChange={(e) => handleOptionChange(group, e.target.value)}
+                  >
+                    <option value="">Select {group}</option>
+                    {values.map((val) => (
+                      <option key={val} value={val}>
+                        {val}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            })}
           </div>
           <div className="quantity-row">
             <label>Quantity</label>
