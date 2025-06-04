@@ -22,6 +22,7 @@ import {
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 
 export const currentCartServiceDefinition = defineService<{
+  // --- State ---
   items: Signal<
     {
       productId: string;
@@ -30,6 +31,8 @@ export const currentCartServiceDefinition = defineService<{
       isPreOrder: boolean | null;
     }[]
   >;
+
+  // --- Getters ---
   totalQuantity: () => number;
   itemCount: () => number;
   getItem: (
@@ -43,6 +46,8 @@ export const currentCartServiceDefinition = defineService<{
         isPreOrder: boolean | null;
       }
     | undefined;
+
+  // --- Actions ---
   addItem: (productId: string, variantId: string, quantity: number) => void;
   buyNow: (productId: string, variantId: string, quantity: number) => void;
   removeItem: (productId: string, variantId: string) => void;

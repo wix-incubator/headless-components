@@ -17,11 +17,16 @@ import {
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 
 export const productGalleryServiceDefinition = defineService<{
+  // --- State ---
   images: Signal<string[]>;
   selectedImageIndex: Signal<number>;
   variantImageMap: Signal<Record<string, number>>;
+
+  // --- Getters ---
   currentImage: () => string;
   variantMappedImage: (variantId: string) => string;
+
+  // --- Actions ---
   loadImages: (images: string[]) => void;
   setImageIndex: (index: number) => void;
   resetGallery: () => void;

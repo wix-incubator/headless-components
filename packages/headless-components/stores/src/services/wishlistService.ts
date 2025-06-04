@@ -6,8 +6,13 @@ import {
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 
 export const wishlistServiceDefinition = defineService<{
+  // --- State ---
   wishlist: Signal<{ productId: string; variantId: string }[]>;
+
+  // --- Getters ---
   isInWishlist: (productId: string, variantId: string) => boolean;
+
+  // --- Actions ---
   addToWishlist: (productId: string, variantId: string) => void;
   removeFromWishlist: (productId: string, variantId: string) => void;
   toggleWishlist: (productId: string, variantId: string) => void;
