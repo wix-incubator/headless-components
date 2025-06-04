@@ -32,8 +32,9 @@ export const variantSelectorServiceDefinition = defineService<{
   variants: Signal<
     {
       id: string;
-      label: string;
+      attributes: Record<string, string>;
       stock: number;
+      price: number;
       ribbon: string | null;
       isPreOrder: boolean | null;
     }[]
@@ -48,8 +49,9 @@ export const variantSelectorServiceDefinition = defineService<{
   ribbonLabel: Signal<string | null>;
   selectedVariant: () => {
     id: string;
-    label: string;
+    attributes: Record<string, string>;
     stock: number;
+    price: number;
     ribbon: string | null;
     isPreOrder: boolean | null;
   };
@@ -60,8 +62,9 @@ export const variantSelectorServiceDefinition = defineService<{
   loadProductVariants: (
     data: {
       id: string;
-      label: string;
+      attributes: Record<string, string>;
       stock: number;
+      price: number;
       ribbon: string | null;
       isPreOrder: boolean | null;
     }[]
@@ -80,15 +83,37 @@ export const variantSelectorService = implementService.withConfig<{
   const variants = signalsService.signal<
     {
       id: string;
-      label: string;
+      attributes: Record<string, string>;
       stock: number;
+      price: number;
       ribbon: string | null;
       isPreOrder: boolean | null;
     }[]
   >([
-    { id: "v1", label: "Blue S", stock: 10, ribbon: null, isPreOrder: false },
-    { id: "v2", label: "Red M", stock: 5, ribbon: "Sale", isPreOrder: false },
-    { id: "v3", label: "Blue L", stock: 0, ribbon: null, isPreOrder: true },
+    {
+      id: "v1",
+      attributes: { color: "blue", size: "S" },
+      stock: 10,
+      price: 100,
+      ribbon: null,
+      isPreOrder: false,
+    },
+    {
+      id: "v2",
+      attributes: { color: "red", size: "M" },
+      stock: 5,
+      price: 110,
+      ribbon: "Sale",
+      isPreOrder: false,
+    },
+    {
+      id: "v3",
+      attributes: { color: "blue", size: "L" },
+      stock: 0,
+      price: 120,
+      ribbon: null,
+      isPreOrder: true,
+    },
   ]);
   const selectedOptions = signalsService.signal<Record<string, string>>({
     color: "blue",
@@ -105,7 +130,14 @@ export const variantSelectorService = implementService.withConfig<{
   const selectedVariant = () => {
     const found = variants.get().find((v) => v.id === selectedVariantId.get());
     if (found) return found;
-    return { id: "", label: "", stock: 0, ribbon: null, isPreOrder: null };
+    return {
+      id: "",
+      attributes: {},
+      stock: 0,
+      price: 0,
+      ribbon: null,
+      isPreOrder: null,
+    };
   };
   return {
     selectedOptions,
@@ -125,6 +157,14 @@ export const variantSelectorService = implementService.withConfig<{
     setOption: (group, value) => {
       const newOptions = { ...selectedOptions.get(), [group]: value };
       selectedOptions.set(newOptions);
+      const match = variants
+        .get()
+        .find((v) =>
+          Object.entries(newOptions).every(
+            ([key, val]) => v.attributes[key] === val
+          )
+        );
+      if (match) selectedVariantId.set(match.id);
     },
     selectVariantById: (id) => selectedVariantId.set(id),
     loadProductVariants: (data) => variants.set(data),

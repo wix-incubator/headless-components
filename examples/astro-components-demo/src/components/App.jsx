@@ -29,17 +29,32 @@ const MOCK_PRODUCT = {
 const MOCK_VARIANTS = [
   {
     id: "v1",
-    label: "Red / S",
+    attributes: { color: "blue", size: "S" },
     stock: 5,
+    price: 100,
     ribbon: "Best Seller",
     isPreOrder: false,
   },
-  { id: "v2", label: "Red / M", stock: 2, ribbon: null, isPreOrder: false },
-  { id: "v3", label: "Blue / S", stock: 0, ribbon: null, isPreOrder: true },
+  {
+    id: "v2",
+    attributes: { color: "red", size: "M" },
+    stock: 2,
+    price: 110,
+    ribbon: null,
+    isPreOrder: false,
+  },
+  {
+    id: "v3",
+    attributes: { color: "blue", size: "L" },
+    stock: 0,
+    price: 120,
+    ribbon: null,
+    isPreOrder: true,
+  },
 ];
 const MOCK_OPTIONS = {
-  color: ["Red", "Blue"],
-  size: ["S", "M"],
+  color: ["blue", "red"],
+  size: ["S", "M", "L"],
 };
 const MOCK_IMAGES = [
   "https://dummyimage.com/600x600/ff4444/fff&text=Red+S",
