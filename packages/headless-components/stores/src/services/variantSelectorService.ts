@@ -45,6 +45,7 @@ interface Option {
 }
 
 export const variantSelectorServiceDefinition = defineService<{
+  // --- State ---
   selectedOptions: Signal<Record<string, string>>;
   selectedVariantId: Signal<string>;
   variants: Signal<Variant[]>;
@@ -56,9 +57,11 @@ export const variantSelectorServiceDefinition = defineService<{
   productId: Signal<string>;
   sku: Signal<string>;
   ribbonLabel: Signal<string | null>;
+  // --- Getters ---
   selectedVariant: () => Variant | undefined;
   finalPrice: () => number;
   isLowStock: (threshold?: number) => boolean;
+  // --- Actions ---
   setOption: (group: string, value: string) => void;
   selectVariantById: (id: string) => void;
   loadProductVariants: (data: Variant[]) => void;
