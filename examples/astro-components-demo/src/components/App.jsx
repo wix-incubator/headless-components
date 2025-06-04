@@ -37,9 +37,9 @@ const MOCK_VARIANTS = [
   },
   {
     id: "v2",
-    attributes: { color: "red", size: "M" },
-    stock: 2,
-    price: 110,
+    attributes: { color: "blue", size: "M" },
+    stock: 3,
+    price: 105,
     ribbon: null,
     isPreOrder: false,
   },
@@ -47,9 +47,33 @@ const MOCK_VARIANTS = [
     id: "v3",
     attributes: { color: "blue", size: "L" },
     stock: 0,
-    price: 120,
+    price: 110,
     ribbon: null,
     isPreOrder: true,
+  },
+  {
+    id: "v4",
+    attributes: { color: "red", size: "S" },
+    stock: 4,
+    price: 100,
+    ribbon: null,
+    isPreOrder: false,
+  },
+  {
+    id: "v5",
+    attributes: { color: "red", size: "M" },
+    stock: 2,
+    price: 105,
+    ribbon: null,
+    isPreOrder: false,
+  },
+  {
+    id: "v6",
+    attributes: { color: "red", size: "L" },
+    stock: 1,
+    price: 110,
+    ribbon: null,
+    isPreOrder: false,
   },
 ];
 const MOCK_OPTIONS = {
@@ -57,14 +81,20 @@ const MOCK_OPTIONS = {
   size: ["S", "M", "L"],
 };
 const MOCK_IMAGES = [
-  "https://dummyimage.com/600x600/ff4444/fff&text=Red+S",
-  "https://dummyimage.com/600x600/ff4444/fff&text=Red+M",
-  "https://dummyimage.com/600x600/4444ff/fff&text=Blue+S",
+  "https://dummyimage.com/600x600/0000ff/fff&text=Blue+S", // v1
+  "https://dummyimage.com/600x600/0000ff/fff&text=Blue+M", // v2
+  "https://dummyimage.com/600x600/0000ff/fff&text=Blue+L", // v3
+  "https://dummyimage.com/600x600/ff4444/fff&text=Red+S", // v4
+  "https://dummyimage.com/600x600/ff4444/fff&text=Red+M", // v5
+  "https://dummyimage.com/600x600/ff4444/fff&text=Red+L", // v6
 ];
 const MOCK_VARIANT_IMAGE_MAP = {
   v1: 0,
   v2: 1,
   v3: 2,
+  v4: 3,
+  v5: 4,
+  v6: 5,
 };
 
 // --- Service Instances (in real app, use context/provider pattern) ---
