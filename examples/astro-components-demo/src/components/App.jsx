@@ -28,52 +28,70 @@ const MOCK_PRODUCT = {
 };
 const MOCK_VARIANTS = [
   {
-    id: "v1",
-    attributes: { color: "blue", size: "S" },
-    stock: 5,
-    price: 100,
-    ribbon: "Best Seller",
-    isPreOrder: false,
+    _id: "v1",
+    visible: true,
+    sku: "364215376135191",
+    choices: [
+      { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
+      { optionChoiceNames: { optionName: "size", choiceName: "S" } },
+    ],
+    price: { actualPrice: { amount: "100", formattedAmount: "$100" } },
+    inventoryStatus: { inStock: true, preorderEnabled: false },
   },
   {
-    id: "v2",
-    attributes: { color: "blue", size: "M" },
-    stock: 3,
-    price: 105,
-    ribbon: null,
-    isPreOrder: false,
+    _id: "v2",
+    visible: true,
+    sku: "364215376135191",
+    choices: [
+      { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
+      { optionChoiceNames: { optionName: "size", choiceName: "M" } },
+    ],
+    price: { actualPrice: { amount: "105", formattedAmount: "$105" } },
+    inventoryStatus: { inStock: true, preorderEnabled: false },
   },
   {
-    id: "v3",
-    attributes: { color: "blue", size: "L" },
-    stock: 0,
-    price: 110,
-    ribbon: null,
-    isPreOrder: true,
+    _id: "v3",
+    visible: false,
+    sku: "364215376135191",
+    choices: [
+      { optionChoiceNames: { optionName: "color", choiceName: "blue" } },
+      { optionChoiceNames: { optionName: "size", choiceName: "L" } },
+    ],
+    price: { actualPrice: { amount: "110", formattedAmount: "$110" } },
+    inventoryStatus: { inStock: false, preorderEnabled: true },
   },
   {
-    id: "v4",
-    attributes: { color: "red", size: "S" },
-    stock: 4,
-    price: 100,
-    ribbon: null,
-    isPreOrder: false,
+    _id: "v4",
+    visible: true,
+    sku: "364215376135191",
+    choices: [
+      { optionChoiceNames: { optionName: "color", choiceName: "red" } },
+      { optionChoiceNames: { optionName: "size", choiceName: "S" } },
+    ],
+    price: { actualPrice: { amount: "100", formattedAmount: "$100" } },
+    inventoryStatus: { inStock: true, preorderEnabled: false },
   },
   {
-    id: "v5",
-    attributes: { color: "red", size: "M" },
-    stock: 2,
-    price: 105,
-    ribbon: null,
-    isPreOrder: false,
+    _id: "v5",
+    visible: true,
+    sku: "364215376135191",
+    choices: [
+      { optionChoiceNames: { optionName: "color", choiceName: "red" } },
+      { optionChoiceNames: { optionName: "size", choiceName: "M" } },
+    ],
+    price: { actualPrice: { amount: "105", formattedAmount: "$105" } },
+    inventoryStatus: { inStock: true, preorderEnabled: false },
   },
   {
-    id: "v6",
-    attributes: { color: "red", size: "L" },
-    stock: 1,
-    price: 110,
-    ribbon: null,
-    isPreOrder: false,
+    _id: "v6",
+    visible: true,
+    sku: "364215376135191",
+    choices: [
+      { optionChoiceNames: { optionName: "color", choiceName: "red" } },
+      { optionChoiceNames: { optionName: "size", choiceName: "L" } },
+    ],
+    price: { actualPrice: { amount: "110", formattedAmount: "$110" } },
+    inventoryStatus: { inStock: true, preorderEnabled: false },
   },
 ];
 const MOCK_OPTIONS = {
@@ -134,14 +152,14 @@ function ProductPage() {
   const basePrice = variantSelector.basePrice.get();
   const discountPrice = variantSelector.discountPrice.get();
   const isOnSale = variantSelector.isOnSale.get();
-  const sku = variantSelector.sku.get();
-  const ribbon = variantSelector.ribbonLabel.get() || selectedVariant.ribbon;
-  const isPreOrder = selectedVariant.isPreOrder;
+  const sku = selectedVariant.sku;
+  const ribbon = variantSelector.ribbonLabel.get();
+  const isPreOrder = selectedVariant.inventoryStatus?.preorderEnabled;
 
   // --- Gallery ---
   const images = productGallery.images.get();
   const variantImageMap = productGallery.variantImageMap.get();
-  const mappedIdx = variantImageMap[selectedVariant.id];
+  const mappedIdx = variantImageMap[selectedVariant._id];
   const currentImage =
     typeof mappedIdx === "number" ? images[mappedIdx] : images[0];
 
@@ -150,7 +168,7 @@ function ProductPage() {
   const wishlistItems = wishlist.wishlist.get();
   const inWishlist = wishlist.isInWishlist(
     variantSelector.productId.get(),
-    selectedVariant.id
+    selectedVariant._id
   );
 
   // --- Handlers ---
@@ -159,7 +177,7 @@ function ProductPage() {
     // After the variant is updated, update the gallery image to match the new selected variant
     const newSelectedVariant = variantSelector.selectedVariant();
     const newMappedIdx =
-      productGallery.variantImageMap.get()[newSelectedVariant.id];
+      productGallery.variantImageMap.get()[newSelectedVariant._id];
     if (typeof newMappedIdx === "number") {
       productGallery.setImageIndex(newMappedIdx);
     }
@@ -167,7 +185,7 @@ function ProductPage() {
   const handleAddToCart = () => {
     currentCart.addItem(
       variantSelector.productId.get(),
-      selectedVariant.id,
+      selectedVariant._id,
       quantity.value
     );
     // Print current items in cart
@@ -176,21 +194,21 @@ function ProductPage() {
   const handleBuyNow = () => {
     currentCart.buyNow(
       variantSelector.productId.get(),
-      selectedVariant.id,
+      selectedVariant._id,
       quantity.value
     );
   };
   const handleWishlistToggle = () => {
     wishlist.toggleWishlist(
       variantSelector.productId.get(),
-      selectedVariant.id
+      selectedVariant._id
     );
   };
   const handleQuantityChange = (e) => {
-    const val = Math.max(
-      1,
-      Math.min(Number(e.target.value), selectedVariant.stock)
-    );
+    // Find the selected option's stock (if available)
+    // For demo, fallback to 99 if not found
+    const maxQty = selectedVariant.inventoryStatus?.inStock ? 99 : 0;
+    const val = Math.max(1, Math.min(Number(e.target.value), maxQty));
     quantity.value = val;
   };
 
@@ -283,7 +301,7 @@ function ProductPage() {
             <input
               type="number"
               min={1}
-              max={selectedVariant.stock}
+              max={selectedVariant.inventoryStatus?.inStock ? 99 : 0}
               value={quantity.value}
               onChange={handleQuantityChange}
               className="qty-input"
@@ -292,14 +310,14 @@ function ProductPage() {
           <div className="actions-row">
             <button
               onClick={handleAddToCart}
-              disabled={selectedVariant.stock < 1}
+              disabled={selectedVariant.inventoryStatus?.inStock < 1}
               className="primary-btn"
             >
               Add to Cart
             </button>
             <button
               onClick={handleBuyNow}
-              disabled={selectedVariant.stock < 1}
+              disabled={selectedVariant.inventoryStatus?.inStock < 1}
               className="primary-btn"
             >
               Buy Now
