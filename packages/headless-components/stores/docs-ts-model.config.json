@@ -1,16 +1,6 @@
 {
-  "entryPoints": [
-    "src/react/index.tsx"
-  ],
-  "tsConfigPath": "tsconfig.json",
-  "modelName": "docs-ts-model.json",
-  "basePath": "",
-  "outDir": "docs",
-  "disableSources": true,
-  "appendices": {},
-  "standaloneTypes": {},
+  "entryPoint": "src/react/index.tsx",
   "metadata": {
-    "fqdn": "",
     "headlessComponent": true
   }
 }
