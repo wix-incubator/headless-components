@@ -10,7 +10,8 @@
   ],
   "exports": {
     "./react": "./dist/react/index.js",
-    "./services": "./dist/services/index.js"
+    "./services": "./dist/services/index.js",
+    "./docs-types": "./dist/react/index-typings.js"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
