@@ -1,6 +1,0 @@
-{
-  "entryPoint": "src/react/index.tsx",
-  "metadata": {
-    "headlessComponent": true
-  }
-}
