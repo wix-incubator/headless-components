@@ -1,9 +1,13 @@
 {
   "name": "@wix/headless-stores",
+  "version": "0.0.3",
   "scripts": {
     "build": "tsc",
     "test": "vitest"
   },
+  "files": [
+    "dist"
+  ],
   "exports": {
     "./react": "./dist/react/index.js",
     "./services": "./dist/services/index.js"
