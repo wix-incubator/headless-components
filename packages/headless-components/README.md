@@ -7,6 +7,7 @@ This document outlines the patterns and best practices for creating headless com
 Headless components in our ecosystem follow a service + React component pattern:
 
 1. **Service Layer**: Handles business logic, state management, and API calls
+
    - Each service consists of these parts:
      - **a. Service Definition** (the interface) - Defines what the service exposes
      - **b. Service Implementation** (the factory that creates the service) - The actual business logic
@@ -33,6 +34,7 @@ export const BuyNowServiceDefinition = defineService<{
 ```
 
 **Key Rules:**
+
 - Always include `loadingSignal` and `errorSignal` for async operations
 - Signals must end with "Signal" suffix
 - Use descriptive action names
@@ -80,6 +82,7 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
 ```
 
 **Key Rules:**
+
 - Set `loadingSignal.set(true)` before async operations
 - Always handle errors with try/catch
 - Clear loading state in catch block for failed operations
@@ -100,9 +103,12 @@ export const loadBuyNowServiceInitialData = async (
   });
   const product = res.product!;
 
-  const selectedVariantId = variantId ?? product.variantsInfo?.variants?.[0]?._id;
-  const price = product.variantsInfo?.variants?.find((v) => v._id === selectedVariantId)
-    ?.price?.actualPrice?.amount ?? product.actualPriceRange?.minValue?.amount;
+  const selectedVariantId =
+    variantId ?? product.variantsInfo?.variants?.[0]?._id;
+  const price =
+    product.variantsInfo?.variants?.find((v) => v._id === selectedVariantId)
+      ?.price?.actualPrice?.amount ??
+    product.actualPriceRange?.minValue?.amount;
 
   // Return config object keyed by service definition
   return {
@@ -111,13 +117,16 @@ export const loadBuyNowServiceInitialData = async (
       productName: product.name!,
       price: price!,
       currency: product.currency!,
-      ...(typeof selectedVariantId !== "undefined" ? { variantId: selectedVariantId } : {}),
+      ...(typeof selectedVariantId !== "undefined"
+        ? { variantId: selectedVariantId }
+        : {}),
     },
   };
 };
 ```
 
 **Key Rules:**
+
 - Function name: `load[ServiceName]ServiceInitialData`
 - Return object with service definition as key
 - Handle optional parameters with fallbacks
@@ -130,18 +139,25 @@ Helper function that bundles everything together for the service manager.
 ```typescript
 export const buyNowServiceBinding = <
   T extends {
-    [key: string]: Awaited<ReturnType<typeof loadBuyNowServiceInitialData>>[typeof BuyNowServiceDefinition];
+    [key: string]: Awaited<
+      ReturnType<typeof loadBuyNowServiceInitialData>
+    >[typeof BuyNowServiceDefinition];
   }
->(servicesConfigs: T) => {
+>(
+  servicesConfigs: T
+) => {
   return [
     BuyNowServiceDefinition,
     BuyNowServiceImplementation,
-    servicesConfigs[BuyNowServiceDefinition] as ServiceFactoryConfig<typeof BuyNowServiceImplementation>,
+    servicesConfigs[BuyNowServiceDefinition] as ServiceFactoryConfig<
+      typeof BuyNowServiceImplementation
+    >,
   ] as const;
 };
 ```
 
 **Key Rules:**
+
 - Function name: `[serviceName]ServiceBinding`
 - Returns tuple of [Definition, Implementation, Config]
 - Use generic type constraints for type safety
@@ -186,6 +202,7 @@ export type BuyNowRenderProps = {
 ```
 
 **Key Rules:**
+
 - Transform signal names: `loadingSignal` → `isLoading`, `errorSignal` → `error`
 - Document each property with JSDoc comments
 - Include all service actions and data
@@ -204,13 +221,14 @@ export type BuyNowProps = {
 ```
 
 **Key Rules:**
+
 - MUST use `children` as the render prop function
 - `children` function receives the render props type
 - Returns `React.ReactNode`
 
 ### 3. Component Implementation
 
-```typescript
+````typescript
 /**
  * A headless component that provides buy now functionality using the render props pattern.
  *
@@ -258,13 +276,14 @@ export function BuyNow(props: BuyNowProps) {
     currency,
   });
 }
-```
+````
 
 ### JSDoc Documentation Requirements
 
 **MANDATORY:** Every headless component must include:
 
 1. **Component Description**:
+
    - Start with "A headless component that provides [functionality] using the render props pattern"
    - Explain what the component manages
    - Emphasize that consumers control the UI
@@ -281,14 +300,17 @@ export function BuyNow(props: BuyNowProps) {
 ### Component Implementation Rules
 
 1. **Service Integration**:
+
    - Use `useService(ServiceDefinition)` to access the service
    - Destructure all needed properties from the service
 
 2. **Signal Transformation**:
+
    - Call `.get()` on all signals before passing to render props
    - Transform names: `loadingSignal` → `isLoading`, `errorSignal` → `error`
 
 3. **Data Passing**:
+
    - Pass service actions directly without modification
    - Pass service data properties as-is
    - Transform signal values appropriately
@@ -356,4 +378,138 @@ export function BuyNow(props: BuyNowProps) {
 3. **Optional Config**: Use conditional spread for optional configuration properties
 4. **API Integration**: Transform API responses to match service configuration needs
 
+## Server Actions and Their Relationship to Services
 
+### Overview
+
+In this architecture, **services** are pure business logic and state containers. They are completely agnostic to the implementation details of server actions, and are not bound to any specific server framework (such as Astro). Instead, services receive server actions as plain functions via their configuration object. This enables maximum portability, testability, and separation of concerns.
+
+### Key Principles
+
+- **Decoupling**: Services do not import or reference Astro (or any server framework) directly. They only receive functions (actions) via their config.
+- **Dependency Injection**: Server actions are injected into the service config at the point of usage (typically in the Astro project), not inside the service implementation.
+- **Testability**: Because services only depend on function signatures, they can be tested in isolation with mock actions.
+- **Portability**: The same service can be used in different environments (Astro, Next.js, Node, etc.) as long as the required actions are provided in the config.
+
+### Pattern: How Service Actions Work
+
+1. **Define the Service to Accept Actions in Config**
+
+```typescript
+// photo-upload-service.ts
+export interface PhotoUploadServiceAPI {
+  uploadPhoto: () => Promise<void>;
+  // ... other API methods and signals
+}
+
+export const PhotoUploadService = implementService.withConfig<{
+  photoUploadAstroActions: {
+    uploadPhoto: (formData: FormData) => Promise<any>;
+  };
+  // ... other config
+}>()(PhotoUploadServiceDefinition, ({ getService, config }) => {
+  // Service uses the action from config
+  const uploadPhoto = async (): Promise<void> => {
+    // ... prepare formData ...
+    await config.photoUploadAstroActions.uploadPhoto(formData);
+    // ... handle result ...
+  };
+  return { uploadPhoto /* ... */ };
+});
+```
+
+2. **Define Server Actions Next to the Service**
+
+```typescript
+// src/headless/members/photo-upload-service-actions.ts
+import { defineAction } from "astro:actions";
+
+export const photoUploadAstroActions = {
+  uploadPhoto: defineAction({
+    accept: "form",
+    input: z.object({ photo: z.instanceof(File) }),
+    handler: async ({ photo }) => {
+      // Server-only logic
+      return { success: true };
+    },
+  }),
+};
+```
+
+3. **Register Actions in the Astro Actions Entry Point**
+
+In Astro, actions must be registered in a special entry point (typically `src/actions/index.ts`) that Astro recognizes. You should export a `server` object containing your service-related actions as properties. This makes it easy to later import all actions as a single object and pass them to your service config without needing to know the internal structure.
+
+```typescript
+// src/actions/index.ts
+import { photoUploadAstroActions } from "../headless/members/photo-upload-service-actions";
+
+export const server = {
+  photoUploadAstroActions, // Add each service's actions as a prop
+  // ...other service actions
+};
+```
+
+Later, in your Astro project, you can import all actions using:
+
+```typescript
+import { actions } from "astro:actions";
+// actions.photoUploadAstroActions.uploadPhoto(...)
+```
+
+The structure of `actions` will match the structure of the `server` export from your `src/actions/index.ts` file, making it straightforward to inject the correct actions into your service config.
+
+4. **Inject Actions into the Service Config in the Astro Project**
+
+```typescript
+// In your React/Astro component
+import { actions } from "astro:actions";
+import { loadPhotoUploadServiceConfig } from "../headless/members/photo-upload-service";
+
+export default function PhotoUploadDialog({ photoUploadConfig }) {
+  const fullConfig = {
+    ...photoUploadConfig,
+    photoUploadAstroActions,
+  };
+  return (
+    <ServicesManagerProvider
+      servicesManager={createServicesManager(
+        createServicesMap().addService(
+          PhotoUploadServiceDefinition,
+          PhotoUploadService,
+          fullConfig
+        )
+      )}
+    >
+      {/* UI components */}
+    </ServicesManagerProvider>
+  );
+}
+```
+
+5. **Server Loads Only Serializable Config**
+
+```typescript
+// loadPhotoUploadServiceConfig.ts
+export async function loadPhotoUploadServiceConfig() {
+  return {
+    // ... serializable config only, no actions here
+  };
+}
+```
+
+6. **Astro Page Usage**
+
+```astro
+---
+import { loadPhotoUploadServiceConfig } from '../headless/members/photo-upload-service';
+const photoUploadConfig = await loadPhotoUploadServiceConfig();
+---
+<PhotoUploadDialog client:load photoUploadConfig={photoUploadConfig} />
+```
+
+### Summary
+
+- **Services** are agnostic to how server actions are implemented or where they come from.
+- **Server actions** are defined and exported in the headless domain, then injected at runtime by the Astro project.
+- This pattern ensures clean separation, testability, and portability of your business logic.
