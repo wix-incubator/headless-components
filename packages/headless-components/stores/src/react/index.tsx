@@ -1,1 +1,1 @@
-export { BuyNow } from "./BuyNow";
+export * from "./BuyNow";
