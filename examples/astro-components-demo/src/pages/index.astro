@@ -1,12 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { loadBuyNowServiceInitialData } from "@wix/headless-stores/services";
+import { loadPayNowServiceInitialData } from "@wix/headless-stores/services";
 import { ProductPage } from "../islands/ProductPage";
 
-const buyNowInitialData = await loadBuyNowServiceInitialData("im-a-product-2");
-console.log(buyNowInitialData);
+const payNowInitialData = await loadPayNowServiceInitialData("Sveder Mechoar", "123");
 ---
 
 <Layout>
-  <ProductPage client:load servicesConfigs={{ ...buyNowInitialData }} />
+  <ProductPage client:load servicesConfigs={{ ...payNowInitialData }} />
 </Layout>
