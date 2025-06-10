@@ -30,14 +30,9 @@ export interface CustomLineItemCheckoutOptions {
    * @default 1
    */
   quantity?: number;
-}
-
-/**
- * Factory options for creating a custom line item checkout function.
- * The price is fixed for all checkouts created by the returned function.
- */
-export interface CustomLineItemCheckoutFactoryOptions {
-  /** The price of the custom line item. */
+  /**
+   * The price of the product.
+   */
   price: string;
 }
 
@@ -49,43 +44,43 @@ export interface CustomLineItemCheckoutFactoryOptions {
  * @param factoryOpts - The options for the factory, including the price.
  * @returns A function that takes `CustomLineItemCheckoutOptions` and returns a checkout URL.
  */
-export function getCustomLineItemCheckoutURLFactory(factoryOpts: CustomLineItemCheckoutFactoryOptions) {
+export function getCustomLineItemCheckoutURLFactory(factoryOpts: CustomLineItemCheckoutOptions) {
   /**
    * Generates a checkout URL for a custom line item.
    * @param opts - The options for the custom line item checkout.
    * @returns A promise that resolves to the full URL for the redirect session to the checkout.
    * @throws Will throw an error if the checkout creation or redirect session fails.
    */
-   return async function getCustomLineItemCheckoutURL(opts: CustomLineItemCheckoutOptions) {
+   return async function getCustomLineItemCheckoutURL() {
     try {
       const checkoutResult = await auth.elevate(checkout.createCheckout)({
         customLineItems: [
           {
             productName: {
-              original: opts.productName,
+              original: factoryOpts.productName,
             },
             price: factoryOpts.price,
-            quantity: opts.quantity || 1,
+            quantity: factoryOpts.quantity || 1,
             itemType: {
               preset: checkout.ItemTypeItemType.PHYSICAL,
             },
             priceDescription: {
-              original: opts.priceDescription
+              original: factoryOpts.priceDescription
             },
-            policies: opts.policies || [],
+            policies: factoryOpts.policies || [],
           }
         ],
         channelType: checkout.ChannelType.WEB,
       });
 
       if (!checkoutResult._id) {
-        throw new Error(`Failed to create checkout for custom line item ${opts.productName}`);
+        throw new Error(`Failed to create checkout for custom line item ${factoryOpts.productName}`);
       }
 
       const { redirectSession } = await redirects.createRedirectSession({
         ecomCheckout: { checkoutId: checkoutResult._id },
         callbacks: {
-          ...(opts.postFlowUrl ? {postFlowUrl: opts.postFlowUrl} : {})
+          ...(factoryOpts.postFlowUrl ? {postFlowUrl: factoryOpts.postFlowUrl} : {})
         },
       });
 
