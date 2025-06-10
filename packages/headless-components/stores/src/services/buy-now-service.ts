@@ -20,7 +20,7 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
   productName: string;
   price: string;
   currency: string;
-  customCheckoutAction?: () => Promise<{ data: string, error: unknown }>
+  customCheckoutAction?: () => Promise<{ data: string | undefined, error: unknown }>
 }>()(BuyNowServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
