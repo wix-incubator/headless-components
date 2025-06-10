@@ -20,6 +20,7 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
   productName: string;
   price: string;
   currency: string;
+  customCheckoutAction?: () => Promise<{ data: string, error: unknown }>
 }>()(BuyNowServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
@@ -31,13 +32,22 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
     redirectToCheckout: async () => {
       loadingSignal.set(true);
       try {
+        if (config.customCheckoutAction) {
+          const result = await config.customCheckoutAction();
+          if (result && result.data) {
+            window.location.href = result.data;
+          } else {
+            throw new Error("Failed to create checkout" + result?.error);
+          }
+          return;
+        }
         const checkoutUrl = await getCheckoutUrlForProduct(
           config.productId,
           config.variantId
         );
         window.location.href = checkoutUrl;
       } catch (error) {
-        errorSignal.set(error as string);
+        errorSignal.set((error as Error).toString());
         loadingSignal.set(false);
       }
     },
@@ -88,13 +98,15 @@ export const buyNowServiceBinding = <
     >[typeof BuyNowServiceDefinition];
   }
 >(
-  servicesConfigs: T
+  servicesConfigs: T,
+  additionalConfig: Partial<ServiceFactoryConfig<typeof BuyNowServiceImplementation>>
 ) => {
   return [
     BuyNowServiceDefinition,
     BuyNowServiceImplementation,
-    servicesConfigs[BuyNowServiceDefinition] as ServiceFactoryConfig<
-      typeof BuyNowServiceImplementation
-    >,
+    {
+      ...servicesConfigs[BuyNowServiceDefinition] as ServiceFactoryConfig<typeof BuyNowServiceImplementation>,
+      ...additionalConfig,
+    },
   ] as const;
 };
