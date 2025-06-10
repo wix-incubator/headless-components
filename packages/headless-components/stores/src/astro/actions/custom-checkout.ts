@@ -17,8 +17,7 @@ import { getCustomLineItemCheckoutURLFactory, type CustomLineItemCheckoutOptions
  * @param {number} [factoryOpts.quantity=1] - The quantity of the product
  * @param {string} factoryOpts.price - The price of the product
  *
- * @returns {import('astro:actions').ActionAPIContext} An Astro action that when called,
- *   returns a Promise resolving to the custom checkout URL
+ * @returns {ReturnType<typeof defineAction>} An Astro action that when invoked returns checkout URL
  *
  * @example
  * ```typescript
@@ -37,25 +36,15 @@ import { getCustomLineItemCheckoutURLFactory, type CustomLineItemCheckoutOptions
  *   ]
  * });
  *
- * // Use in your Astro component or API route
- * const checkoutUrl = await customCheckoutAction();
- * ```
- *
- * @example
- * ```typescript
- * // In your Astro actions file (src/actions/index.ts)
- * import { customCheckoutActionFactory } from '@wix/headless-components/stores/astro';
- *
  * export const server = {
- *   checkout: customCheckoutActionFactory({
- *     productName: "Custom Service",
- *     price: "99.00",
- *     quantity: 1
- *   })
+ *   checkout: customCheckoutAction
  * };
+ *
+ * // Use in your Astro component or API route
+ * import { actions } from "astro:actions";
+ * const checkoutUrl = await actions.customCheckoutAction();
  * ```
  *
- * @since 1.0.0
  * @see {@link https://docs.astro.build/en/guides/actions/} Astro Actions Documentation
  * @see {@link https://dev.wix.com/docs/sdk/headless/api-reference/stores/checkout} Wix Stores Checkout API
  */
