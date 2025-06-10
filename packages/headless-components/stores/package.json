@@ -11,7 +11,8 @@
   "exports": {
     "./react": "./dist/react/index.js",
     "./services": "./dist/services/index.js",
-    "./server-actions": "./dist/server-actions/index.js"
+    "./server-actions": "./dist/server-actions/index.js",
+    "./astro/actions": "./dist/astro/actions/index.js"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",

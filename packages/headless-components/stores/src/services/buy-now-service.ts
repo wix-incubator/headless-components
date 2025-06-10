@@ -7,6 +7,7 @@ import {
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import { productsV3 } from "@wix/stores";
 import { getCheckoutUrlForProduct } from "../utils";
+import { CustomLineItemCheckoutOptions } from "../server-actions";
 
 export const BuyNowServiceDefinition = defineService<{
   redirectToCheckout: () => Promise<void>;
@@ -20,7 +21,7 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
   productName: string;
   price: string;
   currency: string;
-  customCheckoutAction?: () => Promise<{ data: string, error: unknown }>
+  customCheckoutAction?: (input: CustomLineItemCheckoutOptions) => Promise<{ data: string, error: unknown }>
 }>()(BuyNowServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
@@ -33,7 +34,10 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
       loadingSignal.set(true);
       try {
         if (config.customCheckoutAction) {
-          const result = await config.customCheckoutAction();
+          const result = await config.customCheckoutAction({
+            productName: config.productName,
+            priceDescription: "Very special price",
+          });
           if (result && result.data) {
             window.location.href = result.data;
           } else {

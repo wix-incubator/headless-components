@@ -1,5 +1,5 @@
-import { customCheckoutAction } from "./custom-checkout";
+import { customCheckoutActionFactory } from "@wix/headless-stores/astro/actions";
 
 export const server = {
-  customCheckoutAction,
+  customCheckoutAction: customCheckoutActionFactory("321"),
 };
