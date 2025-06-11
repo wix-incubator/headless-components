@@ -384,6 +384,8 @@ export function BuyNow(props: BuyNowProps) {
 
 In this architecture, **services** are pure business logic and state containers. They are completely agnostic to the implementation details of server actions, and are not bound to any specific server framework (such as Astro). Instead, services receive server actions as plain functions via their configuration object. This enables maximum portability, testability, and separation of concerns.
 
+Server actions will be typically used when we need to call some API that requires elevation or data we don't want to share with the client.
+
 ### Key Principles
 
 - **Decoupling**: Services do not import or reference Astro (or any server framework) directly. They only receive functions (actions) via their config.
@@ -391,62 +393,90 @@ In this architecture, **services** are pure business logic and state containers.
 - **Testability**: Because services only depend on function signatures, they can be tested in isolation with mock actions.
 - **Portability**: The same service can be used in different environments (Astro, Next.js, Node, etc.) as long as the required actions are provided in the config.
 
-### Pattern: How Service Actions Work
+### Pattern: How Server Actions Work
 
-1. **Define the Service to Accept Actions in Config**
+1. **The entry point in our headless package is @wix/headless-stores/astro/actions**
+
+There we'll define a factory that'll return an action.
 
 ```typescript
-// photo-upload-service.ts
-export interface PhotoUploadServiceAPI {
-  uploadPhoto: () => Promise<void>;
-  // ... other API methods and signals
+// src/astro/actions/custom-checkout.ts
+export const customCheckoutActionFactory = (factoryOpts: CustomLineItemCheckoutOptions) => defineAction({
+  handler: () => getCustomLineItemCheckoutURLFactory(factoryOpts)(),
+});
+
+```
+
+In this example we have additional layer of the actual action, defined elsewhere, so we'll be able to re-use it in a different framework, lets say Next.js.
+
+```typescript
+// src/server-actions/custom-checkout-action.ts
+
+export function getCustomLineItemCheckoutURLFactory(factoryOpts: CustomLineItemCheckoutOptions) {
+  /**
+   * Generates a checkout URL for a custom line item.
+   * @param opts - The options for the custom line item checkout.
+   * @returns A promise that resolves to the full URL for the redirect session to the checkout.
+   * @throws Will throw an error if the checkout creation or redirect session fails.
+   */
+   return async function getCustomLineItemCheckoutURL() {
+    try {
+      const checkoutResult = await auth.elevate(checkout.createCheckout)({
+        customLineItems: [
+          {
+            productName: {
+              original: factoryOpts.productName,
+            },
+            price: factoryOpts.price,
+            quantity: factoryOpts.quantity || 1,
+            itemType: {
+              preset: checkout.ItemTypeItemType.PHYSICAL,
+            },
+            priceDescription: {
+              original: factoryOpts.priceDescription
+            },
+            policies: factoryOpts.policies || [],
+          }
+        ],
+        channelType: checkout.ChannelType.WEB,
+      });
+
+      if (!checkoutResult._id) {
+        throw new Error(`Failed to create checkout for custom line item ${factoryOpts.productName}`);
+      }
+
+      const { redirectSession } = await redirects.createRedirectSession({
+        ecomCheckout: { checkoutId: checkoutResult._id },
+        callbacks: {
+          ...(factoryOpts.postFlowUrl ? {postFlowUrl: factoryOpts.postFlowUrl} : {})
+        },
+      });
+
+      return redirectSession?.fullUrl!;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-export const PhotoUploadService = implementService.withConfig<{
-  photoUploadAstroActions: {
-    uploadPhoto: (formData: FormData) => Promise<any>;
-  };
-  // ... other config
-}>()(PhotoUploadServiceDefinition, ({ getService, config }) => {
-  // Service uses the action from config
-  const uploadPhoto = async (): Promise<void> => {
-    // ... prepare formData ...
-    await config.photoUploadAstroActions.uploadPhoto(formData);
-    // ... handle result ...
-  };
-  return { uploadPhoto /* ... */ };
-});
 ```
 
-2. **Define Server Actions Next to the Service**
+**NOTE:** In this example we don't have input parameters to the action, but if we did, we should also export the proper Zod schema from here and the action factory.
 
-```typescript
-// src/headless/members/photo-upload-service-actions.ts
-import { defineAction } from "astro:actions";
-
-export const photoUploadAstroActions = {
-  uploadPhoto: defineAction({
-    accept: "form",
-    input: z.object({ photo: z.instanceof(File) }),
-    handler: async ({ photo }) => {
-      // Server-only logic
-      return { success: true };
-    },
-  }),
-};
-```
-
-3. **Register Actions in the Astro Actions Entry Point**
+2. **Register Actions in the Astro Actions Entry Point**
 
 In Astro, actions must be registered in a special entry point (typically `src/actions/index.ts`) that Astro recognizes. You should export a `server` object containing your service-related actions as properties. This makes it easy to later import all actions as a single object and pass them to your service config without needing to know the internal structure.
 
 ```typescript
 // src/actions/index.ts
-import { photoUploadAstroActions } from "../headless/members/photo-upload-service-actions";
+import { customCheckoutActionFactory } from "@wix/headless-stores/astro/actions";
 
 export const server = {
-  photoUploadAstroActions, // Add each service's actions as a prop
-  // ...other service actions
+  customCheckoutAction: customCheckoutActionFactory({
+    price: "321",
+    productName: "test",
+    priceDescription: "Very special price",
+  }),
 };
 ```
 
@@ -454,58 +484,53 @@ Later, in your Astro project, you can import all actions using:
 
 ```typescript
 import { actions } from "astro:actions";
-// actions.photoUploadAstroActions.uploadPhoto(...)
+// actions.customCheckoutAction()
 ```
 
 The structure of `actions` will match the structure of the `server` export from your `src/actions/index.ts` file, making it straightforward to inject the correct actions into your service config.
 
-4. **Inject Actions into the Service Config in the Astro Project**
+3. **Inject Actions into the Service Config in the Astro Project**
 
 ```typescript
 // In your React/Astro component
 import { actions } from "astro:actions";
-import { loadPhotoUploadServiceConfig } from "../headless/members/photo-upload-service";
+import { buyNowServiceBinding } from "@wix/headless-stores/services";
 
 export default function PhotoUploadDialog({ photoUploadConfig }) {
-  const fullConfig = {
-    ...photoUploadConfig,
-    photoUploadAstroActions,
-  };
   return (
     <ServicesManagerProvider
       servicesManager={createServicesManager(
         createServicesMap().addService(
-          PhotoUploadServiceDefinition,
-          PhotoUploadService,
-          fullConfig
+          ...buyNowServiceBinding(props.servicesConfigs, { customCheckoutAction: actions.customCheckoutAction })
         )
       )}
-    >
       {/* UI components */}
     </ServicesManagerProvider>
   );
 }
 ```
 
-5. **Server Loads Only Serializable Config**
+4. **Server Loads Only Serializable Config**
 
 ```typescript
-// loadPhotoUploadServiceConfig.ts
-export async function loadPhotoUploadServiceConfig() {
+// src/services/buy-now-service.ts
+export async function loadBuyNowServiceInitialData() {
   return {
     // ... serializable config only, no actions here
   };
 }
 ```
 
-6. **Astro Page Usage**
+5. **Astro Page Usage**
 
 ```astro
 ---
-import { loadPhotoUploadServiceConfig } from '../headless/members/photo-upload-service';
-const photoUploadConfig = await loadPhotoUploadServiceConfig();
+import { loadBuyNowServiceInitialData } from "@wix/headless-stores/services";
+import { ProductPage } from "../islands/ProductPage";
+
+const buyNowInitialData = await loadBuyNowServiceInitialData("im-a-product-2");
 ---
-<PhotoUploadDialog client:load photoUploadConfig={photoUploadConfig} />
+<ProductPage client:load servicesConfigs={{ ...buyNowInitialData }} />
 ```
 
 ### Summary
