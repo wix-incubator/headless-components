@@ -15,7 +15,7 @@ export interface CustomLineItemCheckoutOptions {
    * A description for the price, which will be displayed to the customer.
    * @example "per month"
    */
-  priceDescription?: string;
+  priceDescription: string;
   /**
    * An array of policies related to this custom item.
    * Each policy should have a title and content.

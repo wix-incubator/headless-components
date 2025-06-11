@@ -1,5 +1,5 @@
-import { BuyNow } from "@wix/headless-stores/react";
-import { buyNowServiceBinding } from "@wix/headless-stores/services";
+import { BuyNow, PayNow } from "@wix/headless-stores/react";
+import { buyNowServiceBinding, payNowServiceBinding } from "@wix/headless-stores/services";
 import {
   createServicesManager,
   createServicesMap,
@@ -12,7 +12,9 @@ export function ProductPage(props: { servicesConfigs: any }) {
     <ServicesManagerProvider
       servicesManager={createServicesManager(
         createServicesMap().addService(
-          ...buyNowServiceBinding(props.servicesConfigs, { customCheckoutAction: actions.customCheckoutAction })
+          ...buyNowServiceBinding(props.servicesConfigs),
+        ).addService(
+          ...payNowServiceBinding(props.servicesConfigs, { customCheckoutAction: actions.buyTestProduct })
         )
       )}
     >
@@ -37,6 +39,20 @@ export function ProductPage(props: { servicesConfigs: any }) {
           </button>
         )}
       </BuyNow>
+      <PayNow>
+        {({
+          isLoading,
+          redirectToCheckout,
+          error,
+        }) => (
+          <button
+            onClick={() => redirectToCheckout()}
+            disabled={isLoading || Boolean(error)}
+          >
+            {error ? error : isLoading ? "Loading..." : "Pay Now"}
+          </button>
+        )}
+      </PayNow>
     </ServicesManagerProvider>
   );
 }
