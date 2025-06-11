@@ -51,7 +51,7 @@ export const loadPayNowServiceInitialData = async (
   };
 };
 
-export const PayNowServiceBinding = <
+export const payNowServiceBinding = <
   T extends {
     [key: string]: Awaited<
       ReturnType<typeof loadPayNowServiceInitialData>
@@ -59,7 +59,7 @@ export const PayNowServiceBinding = <
   }
 >(
   servicesConfigs: T,
-  additionalConfig: Partial<ServiceFactoryConfig<typeof PayNowServiceImplementation>>
+  additionalConfig: Partial<ServiceFactoryConfig<typeof PayNowServiceImplementation>> = {}
 ) => {
   return [
     PayNowServiceDefinition,

@@ -16,11 +16,36 @@ export interface PayNowRenderProps {
 };
 
 export type PayNowChildren = (props: PayNowRenderProps) => React.ReactNode
+/**
+ * Props for the PayNow component
+ */
 export interface PayNowProps {
   /** Render function that receives buy now state and actions */
   children: PayNowChildren;
 };
 
+/**
+ * A headless component that provides pay now functionality using the render props pattern.
+ *
+ * This component manages the state and actions for a "pay now" flow, allowing consumers
+ * to render their own UI while accessing the underlying payment functionality.
+ * @example
+ * ```tsx
+ * <PayNow>
+ *   {({ isLoading, redirectToCheckout, error }) => (
+ *     <div>
+ *       {error && <div className="error">{error}</div>}
+ *       <button
+ *         onClick={redirectToCheckout}
+ *         disabled={isLoading}
+ *       >
+ *         {isLoading ? 'Processing...' : 'Pay Now'}
+ *       </button>
+ *     </div>
+ *   )}
+ * </PayNow>
+ * ```
+ */
 export function PayNow(props: PayNowProps) {
   const {
     redirectToCheckout,
