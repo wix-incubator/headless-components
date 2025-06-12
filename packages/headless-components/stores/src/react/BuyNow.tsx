@@ -19,6 +19,10 @@ export interface BuyNowRenderProps {
   price: string;
   /** The currency of the product being purchased */
   currency: string;
+  /** Whether the product is in stock */
+  inStock: boolean;
+  /** Whether the product is available for pre-order */
+  preOrderAvailable: boolean;
 };
 
 export type BuyNowChildren = (props: BuyNowRenderProps) => React.ReactNode
@@ -38,11 +42,13 @@ export interface BuyNowProps {
  * @example
  * ```tsx
  * <BuyNow>
- *   {({ isLoading, productName, redirectToCheckout, error, price, currency }) => (
+ *   {({ isLoading, productName, redirectToCheckout, error, price, currency, inStock, preOrderAvailable }) => (
  *     <div>
  *       <h2>{productName}</h2>
  *       <p>{price} {currency}</p>
  *       {error && <div className="error">{error}</div>}
+ *       {inStock && <div>In stock</div>}
+ *       {preOrderAvailable && <div>Pre-order available</div>}
  *       <button
  *         onClick={redirectToCheckout}
  *         disabled={isLoading}
@@ -62,6 +68,8 @@ export function BuyNow(props: BuyNowProps) {
     errorSignal,
     price,
     currency,
+    inStock,
+    preOrderAvailable,
   } = useService(BuyNowServiceDefinition);
 
   return props.children({
@@ -71,5 +79,7 @@ export function BuyNow(props: BuyNowProps) {
     redirectToCheckout,
     price,
     currency,
+    inStock,
+    preOrderAvailable,
   });
 }

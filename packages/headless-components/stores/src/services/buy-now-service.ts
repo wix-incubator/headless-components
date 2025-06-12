@@ -20,12 +20,16 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
   productName: string;
   price: string;
   currency: string;
+  inStock: boolean;
+  preOrderAvailable: boolean;
 }>()(BuyNowServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
   const errorSignal = signalsService.signal<string | null>(null) as Signal<
     string | null
   >;
+  const inStockSignal = signalsService.signal(config.inStock) as Signal<boolean>;
+  const preOrderAvailableSignal = signalsService.signal(config.preOrderAvailable) as Signal<boolean>;
 
   return {
     redirectToCheckout: async () => {
@@ -43,6 +47,8 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
     },
     loadingSignal,
     errorSignal,
+    inStockSignal,
+    preOrderAvailableSignal,
     productName: config.productName,
     price: config.price,
     currency: config.currency,
@@ -58,13 +64,11 @@ export const loadBuyNowServiceInitialData = async (
   });
   const product = res.product!;
 
-  const selectedVariantId =
-    variantId ?? product.variantsInfo?.variants?.[0]?._id;
+  const selectedVariant = variantId ? product.variantsInfo?.variants?.find((v) => v._id === variantId) : product.variantsInfo?.variants?.[0];
 
-  const price =
-    product.variantsInfo?.variants?.find((v) => v._id === selectedVariantId)
-      ?.price?.actualPrice?.amount ??
-    product.actualPriceRange?.minValue?.amount;
+  const price =selectedVariant?.price?.actualPrice?.amount ?? product.actualPriceRange?.minValue?.amount;
+  const inStock = selectedVariant?.inventoryStatus?.inStock;
+  const preOrderAvailable = selectedVariant?.inventoryStatus?.preorderEnabled;
 
   return {
     [BuyNowServiceDefinition]: {
@@ -72,11 +76,9 @@ export const loadBuyNowServiceInitialData = async (
       productName: product.name!,
       price: price!,
       currency: product.currency!,
-      ...(typeof selectedVariantId !== "undefined"
-        ? {
-            variantId: selectedVariantId!,
-          }
-        : {}),
+      variantId: selectedVariant?._id,
+      inStock,
+      preOrderAvailable,
     },
   };
 };
