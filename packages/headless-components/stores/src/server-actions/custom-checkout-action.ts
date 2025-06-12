@@ -34,6 +34,10 @@ export interface CustomLineItemCheckoutOptions {
    * The price of the product.
    */
   price: string;
+  /**
+   * The currency of the product. It will only take effect after configuring the payment provider to accept this currency.
+   */
+  currency: string;
 }
 
 /**
@@ -71,6 +75,11 @@ export function getCustomLineItemCheckoutURLFactory(factoryOpts: CustomLineItemC
           }
         ],
         channelType: checkout.ChannelType.WEB,
+        ...(factoryOpts.currency ? {
+          checkoutInfo: {
+            currency: factoryOpts.currency,
+          }
+        } : {})
       });
 
       if (!checkoutResult._id) {
