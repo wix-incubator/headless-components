@@ -1,8 +1,9 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "outDir": "./dist",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "outDir": "./cjs/dist",
     "rootDir": "./src"
   }
 }

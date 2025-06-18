@@ -1,6 +1,10 @@
-/// <reference types="astro/client" />
-import { defineAction } from 'astro:actions';
-import { getCustomLineItemCheckoutURLFactory, type CustomLineItemCheckoutOptions } from '@wix/headless-stores/server-actions';
+/// <reference types="astro/env" />
+// @ts-ignore
+import { defineAction } from "astro:actions";
+import {
+  getCustomLineItemCheckoutURLFactory,
+  type CustomLineItemCheckoutOptions,
+} from "@wix/headless-stores/server-actions";
 
 /**
  * Creates an Astro action factory for custom checkout functionality with line items.
@@ -48,6 +52,9 @@ import { getCustomLineItemCheckoutURLFactory, type CustomLineItemCheckoutOptions
  * @see {@link https://docs.astro.build/en/guides/actions/} Astro Actions Documentation
  * @see {@link https://dev.wix.com/docs/sdk/headless/api-reference/stores/checkout} Wix Stores Checkout API
  */
-export const customCheckoutActionFactory = (factoryOpts: CustomLineItemCheckoutOptions) => defineAction({
-  handler: () => getCustomLineItemCheckoutURLFactory(factoryOpts)(),
-});
+export const customCheckoutActionFactory = (
+  factoryOpts: CustomLineItemCheckoutOptions
+) =>
+  defineAction({
+    handler: () => getCustomLineItemCheckoutURLFactory(factoryOpts)(),
+  });
