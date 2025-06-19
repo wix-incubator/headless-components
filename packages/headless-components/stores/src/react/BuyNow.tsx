@@ -60,7 +60,7 @@ export interface BuyNowProps {
  * </BuyNow>
  * ```
  */
-export function BuyNow(props: BuyNowProps) {
+export function BuyNow(props: BuyNowProps): React.ReactNode {
   const {
     redirectToCheckout,
     loadingSignal,
