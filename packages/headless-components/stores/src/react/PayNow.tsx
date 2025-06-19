@@ -46,7 +46,7 @@ export interface PayNowProps {
  * </PayNow>
  * ```
  */
-export function PayNow(props: PayNowProps) {
+export function PayNow(props: PayNowProps): React.ReactNode {
   const {
     redirectToCheckout,
     loadingSignal,
