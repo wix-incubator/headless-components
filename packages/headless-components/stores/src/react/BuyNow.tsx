@@ -59,6 +59,7 @@ export interface BuyNowProps {
  *   )}
  * </BuyNow>
  * ```
+ * @component
  */
 export function BuyNow(props: BuyNowProps): React.ReactNode {
   const {
