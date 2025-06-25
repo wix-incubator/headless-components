@@ -45,6 +45,7 @@ export interface PayNowProps {
  *   )}
  * </PayNow>
  * ```
+ * @component
  */
 export function PayNow(props: PayNowProps): React.ReactNode {
   const {
