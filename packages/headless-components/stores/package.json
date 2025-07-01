@@ -49,6 +49,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@wix/categories": "^1.0.137",
     "@wix/ecom": "^1.0.1169",
     "@wix/essentials": "^0.1.22",
     "@wix/redirects": "^1.0.79",
