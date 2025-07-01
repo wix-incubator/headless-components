@@ -2865,6 +2865,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/auto_sdk_categories_categories@npm:1.0.59":
+  version: 1.0.59
+  resolution: "@wix/auto_sdk_categories_categories@npm:1.0.59"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.49"
+    "@wix/sdk-types": "npm:^1.13.28"
+  checksum: 10c0/b6984832081b0def2bcc4beb0d3de5eaf52a036326152b67b2a36f18dbfa017e7eaa2fb8104d0df626a37951e91e7ff509fba016689ff2f0518d9115642aa650
+  languageName: node
+  linkType: hard
+
 "@wix/auto_sdk_data_backups@npm:1.0.5":
   version: 1.0.5
   resolution: "@wix/auto_sdk_data_backups@npm:1.0.5"
@@ -3820,6 +3830,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/categories@npm:^1.0.137":
+  version: 1.0.137
+  resolution: "@wix/categories@npm:1.0.137"
+  dependencies:
+    "@wix/auto_sdk_categories_categories": "npm:1.0.59"
+  checksum: 10c0/87483ac67decd447e09d8953f5cd2c5b8728fbbce6a14c95a2de70c4094feb84423a5551781cc4d8115577e91f1c86b377bee60bc8fbbd0de42bdc495b923728
+  languageName: node
+  linkType: hard
+
 "@wix/cli-edge@npm:^1.1.74":
   version: 1.1.78
   resolution: "@wix/cli-edge@npm:1.1.78"
@@ -4130,6 +4149,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
+    "@wix/categories": "npm:^1.0.137"
     "@wix/ecom": "npm:^1.0.1169"
     "@wix/essentials": "npm:^0.1.22"
     "@wix/redirects": "npm:^1.0.79"
