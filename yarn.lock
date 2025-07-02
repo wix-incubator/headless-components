@@ -3655,6 +3655,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/auto_sdk_seo_robots-txt@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@wix/auto_sdk_seo_robots-txt@npm:1.0.2"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.28"
+  checksum: 10c0/b85916dc3402884729c57d29270cefb149723564db41e83d88eb833728e5ac04a41192cbdc60809a1cee150f51fb51d4f3a35464b98d11e4c8b23c526b7cb469
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_seo_seo-tags@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@wix/auto_sdk_seo_seo-tags@npm:1.0.4"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.28"
+  checksum: 10c0/0fd97655ddfa7a2f212c345b7c2465b611820ee4632a93e022b395ec10a6325c0085a0be1366fd7c115666ba8f97066a1dc20b7af23ec0b32283abeec5878a7e
+  languageName: node
+  linkType: hard
+
 "@wix/auto_sdk_stores_abandoned-carts@npm:1.0.12":
   version: 1.0.12
   resolution: "@wix/auto_sdk_stores_abandoned-carts@npm:1.0.12"
@@ -4064,6 +4084,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/error-handler-types@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "@wix/error-handler-types@npm:1.10.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.27.6"
+  checksum: 10c0/d02cc8adc3ee0a21b1f44d7743220cacfa6e82a7bcf4e5f4af5b297ab8c4e9ac338985ea08f63b109519264359f826f917ac955d21339ae3d89a1c4069056e98
+  languageName: node
+  linkType: hard
+
 "@wix/error-handler-types@npm:^1.8.0":
   version: 1.9.0
   resolution: "@wix/error-handler-types@npm:1.9.0"
@@ -4137,6 +4166,24 @@ __metadata:
     syncpack: "npm:^13.0.0"
     turbo: "npm:^2.3.4"
     typescript: "npm:^5.7.3"
+  languageName: unknown
+  linkType: soft
+
+"@wix/headless-seo@workspace:packages/headless-components/seo":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-seo@workspace:packages/headless-components/seo"
+  dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/seo": "npm:^1.0.5"
+    "@wix/services-definitions": "npm:^0.1.2"
+    "@wix/services-manager-react": "npm:^0.1.9"
+    jsdom: "npm:^26.1.0"
+    typescript: "npm:^5.7.3"
+    vitest: "npm:^3.1.4"
   languageName: unknown
   linkType: soft
 
@@ -4442,6 +4489,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/sdk-runtime@npm:^0.3.55":
+  version: 0.3.57
+  resolution: "@wix/sdk-runtime@npm:0.3.57"
+  dependencies:
+    "@wix/sdk-context": "npm:0.0.1"
+    "@wix/sdk-types": "npm:^1.13.32"
+  checksum: 10c0/8b92368bd45c80304535b3eb064a1e8c446440df98f48b5a94ea114facac4807a916a75415afef26bb658cb58c8716727196db62c1974e75a7f309be3c70e6dd
+  languageName: node
+  linkType: hard
+
 "@wix/sdk-types@npm:^1.13.14, @wix/sdk-types@npm:^1.13.23, @wix/sdk-types@npm:^1.13.25, @wix/sdk-types@npm:^1.13.28, @wix/sdk-types@npm:^1.13.29, @wix/sdk-types@npm:^1.13.8, @wix/sdk-types@npm:^1.13.9":
   version: 1.13.29
   resolution: "@wix/sdk-types@npm:1.13.29"
@@ -4450,6 +4507,17 @@ __metadata:
     "@wix/monitoring-types": "npm:^0.12.0"
     type-fest: "npm:^4.41.0"
   checksum: 10c0/2682e5bb1a8b9396e769e0ee3ecb78a5ea533ebdeb74a27eec0b276d37dbf2ad250b070a47a85c6e1756c6904bb6970d2229c0cc193c8e1d91fc88cf70c69c59
+  languageName: node
+  linkType: hard
+
+"@wix/sdk-types@npm:^1.13.32":
+  version: 1.13.32
+  resolution: "@wix/sdk-types@npm:1.13.32"
+  dependencies:
+    "@wix/error-handler-types": "npm:^1.10.0"
+    "@wix/monitoring-types": "npm:^0.12.0"
+    type-fest: "npm:^4.41.0"
+  checksum: 10c0/c4c66dac45a86f13f003ffe4fa3e7d76844f6ade5bb080a63e493129099f73ebbb225ad8b1892071f123908325d899d6c5a0abd27dd4762577c5e227a37a4a82
   languageName: node
   linkType: hard
 
@@ -4470,6 +4538,16 @@ __metadata:
     graphql:
       optional: true
   checksum: 10c0/848a1f8e1e399db578113f6e6fb1da7007aed7933753d939981fa73fec7de4d18744025d563a7f8ecaf5e4cd1cf102e7d3997118dafb81e3a914c050c7e96c1a
+  languageName: node
+  linkType: hard
+
+"@wix/seo@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "@wix/seo@npm:1.0.5"
+  dependencies:
+    "@wix/auto_sdk_seo_robots-txt": "npm:1.0.2"
+    "@wix/auto_sdk_seo_seo-tags": "npm:1.0.4"
+  checksum: 10c0/4407cb0eaa6e3e1384cf6ea56ad7fe53cc91c673d512ba99c7425647125bf480f96ef77c9ede7b78980ef05a840f6277b0a757c09af64cc4ca595e44284a58eb
   languageName: node
   linkType: hard
 

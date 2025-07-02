@@ -1,0 +1,44 @@
+{
+  "name": "@wix/headless-seo",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "test": "vitest"
+  },
+  "files": [
+    "dist",
+    "cjs",
+    "react",
+    "services"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./cjs/dist/react/index.js"
+    },
+    "./services": {
+      "types": "./dist/services/index.d.ts",
+      "import": "./dist/services/index.js",
+      "require": "./cjs/dist/services/index.js"
+    }
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^20.9.0",
+    "@vitest/ui": "^3.1.4",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.1.4"
+  },
+  "dependencies": {
+    "@wix/seo": "^1.0.5",
+    "@wix/services-definitions": "^0.1.2",
+    "@wix/services-manager-react": "^0.1.9"
+  }
+}
