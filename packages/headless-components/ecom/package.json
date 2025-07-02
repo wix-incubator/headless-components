@@ -1,6 +1,5 @@
 {
   "name": "@wix/headless-ecom",
-  "private": true,
   "scripts": {
     "build": "tsc"
   },

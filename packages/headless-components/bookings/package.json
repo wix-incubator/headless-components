@@ -1,6 +1,5 @@
 {
  "name": "@wix/headless-bookings",
- "private": true,
  "scripts": {
   "build": "tsc"
  },
