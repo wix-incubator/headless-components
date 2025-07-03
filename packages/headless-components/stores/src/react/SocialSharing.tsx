@@ -17,17 +17,6 @@ export interface RootProps {
   children: RootChildren;
 }
 
-export type ShareFacebook = (url: string, title: string, description?: string) => void;
-export type ShareTwitter = (url: string, text: string, hashtags?: string[]) => void;
-export type ShareLinkedIn = (url: string, title: string, summary?: string) => void;
-export type ShareWhatsApp = (url: string, text: string) => void;
-export type ShareEmail = (url: string, subject: string, body: string) => void;
-export type CopyLink = (url: string) => Promise<boolean>;
-export type ShareNative = (data: {
-  title: string;
-  text: string;
-  url: string;
-}) => Promise<boolean>;
 
 /**
  * Render props for Root component
@@ -40,23 +29,28 @@ export interface RootRenderProps {
   /** Last shared platform */
   lastShared: string | null;
   /** Share to Facebook */
-  shareFacebook: ShareFacebook;
+  shareFacebook: (url: string, title: string, description?: string) => void;
   /** Share to Twitter */
-  shareTwitter: ShareTwitter;
+  shareTwitter: (url: string, text: string, hashtags?: string[]) => void;
   /** Share to LinkedIn */
-  shareLinkedIn: ShareLinkedIn;
+  shareLinkedIn: (url: string, title: string, summary?: string) => void;
   /** Share to WhatsApp */
-  shareWhatsApp: ShareWhatsApp;
+  shareWhatsApp: (url: string, text: string) => void;
   /** Share via Email */
-  shareEmail: ShareEmail;
+  shareEmail: (url: string, subject: string, body: string) => void;
   /** Copy to clipboard */
-  copyLink: CopyLink;
+  copyLink: (url: string) => Promise<boolean>;
   /** Native share API */
-  shareNative: ShareNative;
+  shareNative: (data: {
+    title: string;
+    text: string;
+    url: string;
+  }) => Promise<boolean>;
 }
 
 /**
  * Headless component for social sharing root
+ * @component
  */
 export const Root = (props: RootProps): React.ReactNode => {
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
@@ -118,6 +112,7 @@ export interface PlatformRenderProps {
 
 /**
  * Headless component for individual social platform
+ * @component
  */
 export const Platform = (props: PlatformProps): React.ReactNode => {
   const { platform, onClick } = props;
@@ -170,6 +165,7 @@ export interface PlatformsRenderProps {
 
 /**
  * Headless component for social sharing platforms with logic
+ * @component
  */
 export const Platforms = (props: PlatformsProps): React.ReactNode => {
   const { url, title, description = "", hashtags = [] } = props;

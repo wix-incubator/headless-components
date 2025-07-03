@@ -13,10 +13,13 @@ import { categories } from "@wix/categories";
 
 const CategoryContext = createContext<CategoryServiceAPI | null>(null);
 
-interface CategoryProviderProps {
+export interface CategoryProviderProps {
   children: ReactNode;
 }
 
+/**
+ * @component
+ */
 export const Provider: React.FC<CategoryProviderProps> = ({
   children,
 }) => {
@@ -29,6 +32,9 @@ export const Provider: React.FC<CategoryProviderProps> = ({
   );
 };
 
+/**
+ * @component
+ */
 export const useCategory = () => {
   const context = useContext(CategoryContext);
   if (!context) {
@@ -38,7 +44,7 @@ export const useCategory = () => {
 };
 
 // Grid component for displaying filtered products
-interface CategoryListProps {
+export interface CategoryListProps {
   children: (data: {
     categories: categories.Category[];
     selectedCategory: string | null;
@@ -46,6 +52,9 @@ interface CategoryListProps {
   }) => ReactNode;
 }
 
+/**
+ * @component
+ */
 export const List: React.FC<CategoryListProps> = ({ children }) => {
   const service = useCategory();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(

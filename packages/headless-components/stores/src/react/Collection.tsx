@@ -31,6 +31,7 @@ export interface GridRenderProps {
 
 /**
  * Headless component for product grid
+ * @component
  */
 export const Grid = (props: GridProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -115,6 +116,7 @@ export interface ItemRenderProps {
 
 /**
  * Headless component for individual product item
+ * @component
  */
 export const Item = (props: ItemProps) => {
   const { product } = props;
@@ -180,6 +182,7 @@ export interface LoadMoreRenderProps {
 /**
  * Headless component for load more products functionality
  * Note: V3 API uses simplified loading without traditional pagination
+ * @component
  */
 export const LoadMore = (props: LoadMoreProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -248,6 +251,7 @@ export interface HeaderRenderProps {
 
 /**
  * Headless component for collection header with product count
+ * @component
  */
 export const Header = (props: HeaderProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -309,6 +313,7 @@ export interface ActionsRenderProps {
 /**
  * Headless component for collection actions (refresh, load more)
  * Replaces traditional pagination for V3 API
+ * @component
  */
 export const Actions = (props: ActionsProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<

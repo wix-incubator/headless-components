@@ -26,6 +26,7 @@ export interface OptionsRenderProps {
 
 /**
  * Headless component for all product options
+ * @component
  */
 export const Options = (props: OptionsProps) => {
   const variantService = useService(
@@ -70,6 +71,7 @@ export interface OptionRenderProps {
 
 /**
  * Headless component for choices within a specific product option
+ * @component
  */
 export const Option = (props: OptionProps) => {
   const variantService = useService(
@@ -126,6 +128,7 @@ export interface ChoiceRenderProps {
 
 /**
  * Headless component for individual choice selection
+ * @component
  */
 export const Choice = (props: ChoiceProps) => {
   const variantService = useService(
@@ -196,12 +199,13 @@ export interface TriggerRenderProps {
 
 /**
  * Headless component for add to cart trigger
+ * @component
  */
 export const Trigger = (props: TriggerProps) => {
   const variantService = useService(
     SelectedVariantServiceDefinition
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
-  
+
   // Try to get modifiers service - it may not exist for all products
   let modifiersService: ServiceAPI<typeof ProductModifiersServiceDefinition> | null = null;
   try {
@@ -218,12 +222,12 @@ export const Trigger = (props: TriggerProps) => {
   const error = variantService.error.get();
 
   const quantity = props.quantity || 1;
-  
+
   // Check if all required modifiers are filled
-  const areAllRequiredModifiersFilled = modifiersService 
+  const areAllRequiredModifiersFilled = modifiersService
     ? modifiersService.areAllRequiredModifiersFilled()
     : true; // If no modifiers service, assume no required modifiers
-  
+
   const canAddToCart = (inStock || isPreOrderEnabled) && !isLoading && areAllRequiredModifiersFilled;
 
   const onAddToCart = async () => {
@@ -235,7 +239,7 @@ export const Trigger = (props: TriggerProps) => {
         modifiersData = selectedModifiers;
       }
     }
-    
+
     await variantService.addToCart(quantity, modifiersData);
   };
 
@@ -274,6 +278,7 @@ export interface PriceRenderProps {
 
 /**
  * Headless component for product price display
+ * @component
  */
 export const Price = (props: PriceProps) => {
   const variantService = useService(
@@ -319,11 +324,12 @@ export interface StockRenderProps {
   trackInventory: boolean;
   /** Current variant id */
   currentVariantId: string | null;
-  
+
 }
 
 /**
  * Headless component for product stock status
+ * @component
  */
 export const Stock = (props: StockProps) => {
   const variantService = useService(

@@ -23,6 +23,7 @@ export interface ProductNameRenderProps {
 
 /**
  * Headless component for product name display
+ * @component
  */
 export const Name = (props: ProductNameProps) => {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
@@ -60,6 +61,7 @@ export interface ProductDescriptionRenderProps {
 
 /**
  * Headless component for product description display
+ * @component
  */
 export const Description = (props: ProductDescriptionProps) => {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
@@ -109,6 +111,7 @@ export interface ProductDetailsRenderProps {
 
 /**
  * Headless component for product details display
+ * @component
  */
 export const Details = (props: ProductDetailsProps) => {
   const selectedVariantService = useService(SelectedVariantServiceDefinition) as ServiceAPI<

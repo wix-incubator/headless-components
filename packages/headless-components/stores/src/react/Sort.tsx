@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { SortServiceDefinition, type SortBy } from "../services/sort-service";
 import { useService } from "@wix/services-manager-react";
 
-interface SortContextValue {
+export interface SortContextValue {
   currentSort: SortBy;
   setSortBy: (sortBy: SortBy) => void;
 }
@@ -21,6 +21,9 @@ export interface ProviderProps {
   children: React.ReactNode;
 }
 
+/**
+ * @component
+ */
 export function Provider({ children }: ProviderProps) {
   const sortService = useService(SortServiceDefinition);
   const [currentSort, setCurrentSort] = useState<SortBy>("");
@@ -56,6 +59,9 @@ export interface ControllerProps {
   children: SortControllerChildren;
 }
 
+/**
+ * @component
+ */
 export function Controller({ children }: ControllerProps) {
   const context = useSortContext();
   return <>{children(context)}</>;

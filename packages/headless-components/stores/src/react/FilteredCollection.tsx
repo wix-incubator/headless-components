@@ -17,10 +17,13 @@ const FilteredCollectionContext = createContext<{
   collection: CollectionServiceAPI | null;
 }>({ filter: null, collection: null });
 
-interface FilteredCollectionProviderProps {
+export interface FilteredCollectionProviderProps {
   children: ReactNode;
 }
 
+/**
+ * @component
+ */
 export const Provider: React.FC<FilteredCollectionProviderProps> = ({ children }) => {
   const filter = useService(FilterServiceDefinition);
   const collection = useService(CollectionServiceDefinition);
@@ -32,6 +35,9 @@ export const Provider: React.FC<FilteredCollectionProviderProps> = ({ children }
   );
 };
 
+/**
+ * @component
+ */
 export const useFilteredCollection = () => {
   const context = useContext(FilteredCollectionContext);
   if (!context) {
@@ -43,17 +49,20 @@ export const useFilteredCollection = () => {
 };
 
 // Filters Loading component with pulse animation
-interface FiltersLoadingProps {
+export interface FiltersLoadingProps {
   children: (data: {
     isFullyLoaded: boolean;
   }) => ReactNode;
 }
 
+/**
+ * @component
+ */
 export const FiltersLoading: React.FC<FiltersLoadingProps> = ({ children }) => {
   const { filter } = useFilteredCollection();
-  
+
   const isFullyLoaded = filter!.isFullyLoaded.get();
-  
+
   return (
     <>
       {children({ isFullyLoaded })}
@@ -62,7 +71,7 @@ export const FiltersLoading: React.FC<FiltersLoadingProps> = ({ children }) => {
 };
 
 // Grid component for displaying filtered products
-interface FilteredGridProps {
+export interface FilteredGridProps {
   children: (data: {
     products: productsV3.V3Product[];
     totalProducts: number;
@@ -73,6 +82,9 @@ interface FilteredGridProps {
   }) => ReactNode;
 }
 
+/**
+ * @component
+ */
 export const Grid: React.FC<FilteredGridProps> = ({ children }) => {
   const { collection } = useFilteredCollection();
 
@@ -98,7 +110,7 @@ export const Grid: React.FC<FilteredGridProps> = ({ children }) => {
 };
 
 // Item component for individual product rendering
-interface FilteredItemProps {
+export interface FilteredItemProps {
   product: productsV3.V3Product;
   children: (data: {
     title: string;
@@ -111,6 +123,9 @@ interface FilteredItemProps {
   }) => ReactNode;
 }
 
+/**
+ * @component
+ */
 export const Item: React.FC<FilteredItemProps> = ({
   product,
   children,
@@ -157,7 +172,7 @@ export const Item: React.FC<FilteredItemProps> = ({
 };
 
 // Load More component for pagination
-interface FilteredLoadMoreProps {
+export interface FilteredLoadMoreProps {
   children: (data: {
     loadMore: () => Promise<void>;
     refresh: () => Promise<void>;
@@ -168,6 +183,9 @@ interface FilteredLoadMoreProps {
   }) => ReactNode;
 }
 
+/**
+ * @component
+ */
 export const LoadMore: React.FC<FilteredLoadMoreProps> = ({
   children,
 }) => {
@@ -195,7 +213,7 @@ export const LoadMore: React.FC<FilteredLoadMoreProps> = ({
 };
 
 // Filters component for managing filters
-interface FilteredFiltersProps {
+export interface FilteredFiltersProps {
   children: (data: {
     applyFilters: (filters: Filter) => void;
     clearFilters: () => void;
@@ -206,6 +224,9 @@ interface FilteredFiltersProps {
   }) => ReactNode;
 }
 
+/**
+ * @component
+ */
 export const Filters: React.FC<FilteredFiltersProps> = ({
   children,
 }) => {

@@ -30,6 +30,7 @@ export interface ListRenderProps {
 
 /**
  * Headless component for displaying related products list
+ * @component
  */
 export const List = (props: ListProps) => {
   const service = useService(RelatedProductsServiceDefinition) as ServiceAPI<
@@ -93,6 +94,7 @@ export interface ItemRenderProps {
 
 /**
  * Headless component for individual related product item
+ * @component
  */
 export const Item = (props: ItemProps) => {
   const { product } = props;

@@ -30,12 +30,13 @@ export interface ViewportRenderProps {
 
 /**
  * Headless component for displaying the main viewport image
+ * @component
  */
 export const Viewport = (props: ViewportProps) => {
   const mediaService = useService(
     ProductMediaGalleryServiceDefinition
   ) as ServiceAPI<typeof ProductMediaGalleryServiceDefinition>;
-  
+
   const currentIndex = mediaService.selectedImageIndex.get();
   const isLoading = mediaService.isLoading.get();
   const totalImages = mediaService.totalImages.get();
@@ -86,6 +87,7 @@ export interface ThumbnailRenderProps {
 
 /**
  * Headless component for individual media thumbnail
+ * @component
  */
 export const Thumbnail = (props: ThumbnailProps) => {
   const mediaService = useService(
@@ -99,7 +101,7 @@ export const Thumbnail = (props: ThumbnailProps) => {
 
   // Get the image source from the centralized relevant images
   const src = relevantImages[props.index] || null;
-  
+
   const isActive = currentIndex === props.index;
   const alt = `${productName || "Product"} image ${props.index + 1}`;
 
@@ -141,6 +143,7 @@ export interface NextRenderProps {
 
 /**
  * Headless component for next image navigation
+ * @component
  */
 export const Next = (props: NextProps) => {
   const mediaService = useService(
@@ -183,6 +186,7 @@ export interface PreviousRenderProps {
 
 /**
  * Headless component for previous image navigation
+ * @component
  */
 export const Previous = (props: PreviousProps) => {
   const mediaService = useService(
@@ -223,6 +227,7 @@ export interface IndicatorRenderProps {
 
 /**
  * Headless component for media gallery indicator/counter
+ * @component
  */
 export const Indicator = (props: IndicatorProps) => {
   const mediaService = useService(
