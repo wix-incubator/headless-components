@@ -4,7 +4,7 @@ import type { Signal, ReadOnlySignal } from "../../Signal";
 import { productsV3, inventoryItemsV3 } from "@wix/stores";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 import { ProductServiceDefinition } from "./product-service";
-import { MediaGalleryServiceDefinition } from "../../media/services/media-gallery-service";
+import { MediaGalleryServiceDefinition } from "./media-gallery-service";
 
 type V3Product = productsV3.V3Product;
 type Variant = productsV3.Variant;

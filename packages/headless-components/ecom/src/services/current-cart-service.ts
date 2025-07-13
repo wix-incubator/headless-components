@@ -5,7 +5,8 @@ import {
 } from "@wix/services-definitions";
 import type { Signal, ReadOnlySignal } from "../../Signal";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import { currentCart, checkout } from "@wix/ecom";
+import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
+import * as checkout from "@wix/auto_sdk_ecom_checkout";
 import { redirects } from "@wix/redirects";
 
 export interface CurrentCartServiceAPI {
