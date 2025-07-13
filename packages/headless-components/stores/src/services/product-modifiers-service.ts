@@ -8,7 +8,7 @@ import {
   type Signal,
   type ReadOnlySignal,
 } from "@wix/services-definitions/core-services/signals";
-import { productsV3 } from "@wix/stores";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 import { ProductServiceDefinition } from "./product-service";
 
 export interface ModifierValue {

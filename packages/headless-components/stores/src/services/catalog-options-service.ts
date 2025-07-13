@@ -7,7 +7,8 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { productsV3, customizationsV3 } from "@wix/stores";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
+import * as customizationsV3 from "@wix/auto_sdk_stores_customizations-v-3";
 
 const { SortDirection, SortType: SDKSortType } = productsV3;
 

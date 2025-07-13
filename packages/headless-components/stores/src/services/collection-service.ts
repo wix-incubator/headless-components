@@ -7,8 +7,8 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-
-import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
+import * as readOnlyVariantsV3 from "@wix/auto_sdk_stores_read-only-variants-v-3";
 import { FilterServiceDefinition, type Filter } from "./filter-service";
 import { CategoryServiceDefinition } from "./category-service";
 import { SortServiceDefinition, type SortBy } from "./sort-service";

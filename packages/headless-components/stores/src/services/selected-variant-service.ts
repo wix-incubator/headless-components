@@ -4,7 +4,8 @@ import {
   type Signal,
   type ReadOnlySignal,
 } from "@wix/services-definitions/core-services/signals";
-import { productsV3, inventoryItemsV3 } from "@wix/stores";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
+import * as inventoryItemsV3 from "@wix/auto_sdk_stores_inventory-items-v-3";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 import { ProductServiceDefinition } from "./product-service";
 import { MediaGalleryServiceDefinition } from "@wix/headless-media/services";

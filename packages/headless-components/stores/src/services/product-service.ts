@@ -7,7 +7,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { productsV3 } from "@wix/stores";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 
 export interface ProductServiceAPI {
   product: Signal<productsV3.V3Product>;
