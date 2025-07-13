@@ -2726,7 +2726,7 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.0.13"
     "@types/react": "npm:^18.0.8"
     "@types/react-dom": "npm:^18.0.3"
-    "@wix/astro": "workspace:*"
+    "@wix/astro": "npm:^1.0.0"
     "@wix/cli": "npm:^1.1.93"
     "@wix/cli-edge": "npm:^1.1.74"
     "@wix/dashboard": "npm:^1.3.37"
@@ -2766,6 +2766,18 @@ __metadata:
     astro: ^5.1.8
   languageName: unknown
   linkType: soft
+
+"@wix/astro@npm:^1.0.0":
+  version: 1.0.25
+  resolution: "@wix/astro@npm:1.0.25"
+  peerDependencies:
+    "@wix/dashboard": ^1.3.35
+    "@wix/essentials": ^0.1.23
+    "@wix/sdk": ^1.15.23
+    astro: ^5.0.0
+  checksum: 10c0/52fbb87b83d9920ee95a366a96a17381796b4948ce16ef8a43cccf46172cde94756044835fdc4e80484497bdc147084e4ac8c5e748ae9e72ea5756c394c350f3
+  languageName: node
+  linkType: hard
 
 "@wix/astro@workspace:*, @wix/astro@workspace:packages/@wix-astro":
   version: 0.0.0-use.local
@@ -3651,7 +3663,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@npm:^0.0.2, @wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -3684,7 +3696,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-media@workspace:*, @wix/headless-media@workspace:packages/headless-components/media":
+"@wix/headless-media@npm:^0.0.1, @wix/headless-media@workspace:packages/headless-components/media":
   version: 0.0.0-use.local
   resolution: "@wix/headless-media@workspace:packages/headless-components/media"
   dependencies:
@@ -3735,8 +3747,8 @@ __metadata:
     "@wix/auto_sdk_stores_products-v-3": "npm:^1.0.53"
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/essentials": "npm:^0.1.22"
-    "@wix/headless-ecom": "workspace:*"
-    "@wix/headless-media": "workspace:*"
+    "@wix/headless-ecom": "npm:^0.0.2"
+    "@wix/headless-media": "npm:^0.0.1"
     "@wix/redirects": "npm:^1.0.79"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
