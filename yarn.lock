@@ -4190,7 +4190,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-ecom@npm:^0.0.2, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@wix/headless-ecom@npm:0.0.2"
+  dependencies:
+    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
+    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/eb1a4e36dc5380514c7da7c9eb620f2277577ed1dcb6b1f1e7f30c38717e013c1ec89f3ff2df400416782727828ff249ee08ea44fc3a0ef39669b0dd848002cc
+  languageName: node
+  linkType: hard
+
+"@wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -4223,7 +4235,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-media@npm:^0.0.1, @wix/headless-media@workspace:packages/headless-components/media":
+"@wix/headless-media@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@wix/headless-media@npm:0.0.1"
+  dependencies:
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/76b7fa3bca57389c4922836704fdf4df36a4c52fe969225e365ed6a9d194cf84ae16d0e0f47aa87cde75feef828dcf7c328406380ff58e7d8ab3289dbddde7e3
+  languageName: node
+  linkType: hard
+
+"@wix/headless-media@workspace:packages/headless-components/media":
   version: 0.0.0-use.local
   resolution: "@wix/headless-media@workspace:packages/headless-components/media"
   dependencies:
