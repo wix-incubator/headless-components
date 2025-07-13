@@ -2,9 +2,11 @@ import {
   defineService,
   implementService,
   ServiceFactoryConfig,
-  Signal,
 } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+} from "@wix/services-definitions/core-services/signals";
 
 export const PayNowServiceDefinition = defineService<{
   redirectToCheckout: () => Promise<void>;
@@ -13,7 +15,10 @@ export const PayNowServiceDefinition = defineService<{
 }>("PayNow");
 
 export const PayNowServiceImplementation = implementService.withConfig<{
-  customCheckoutAction?: () => Promise<{ data: string | undefined, error: unknown }>
+  customCheckoutAction?: () => Promise<{
+    data: string | undefined;
+    error: unknown;
+  }>;
 }>()(PayNowServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
@@ -43,11 +48,9 @@ export const PayNowServiceImplementation = implementService.withConfig<{
   };
 });
 
-export const loadPayNowServiceInitialData = async (
-) => {
+export const loadPayNowServiceInitialData = async () => {
   return {
-    [PayNowServiceDefinition]: {
-    },
+    [PayNowServiceDefinition]: {},
   };
 };
 
@@ -59,13 +62,17 @@ export const payNowServiceBinding = <
   }
 >(
   servicesConfigs: T,
-  additionalConfig: Partial<ServiceFactoryConfig<typeof PayNowServiceImplementation>> = {}
+  additionalConfig: Partial<
+    ServiceFactoryConfig<typeof PayNowServiceImplementation>
+  > = {}
 ) => {
   return [
     PayNowServiceDefinition,
     PayNowServiceImplementation,
     {
-      ...servicesConfigs[PayNowServiceDefinition] as ServiceFactoryConfig<typeof PayNowServiceImplementation>,
+      ...(servicesConfigs[PayNowServiceDefinition] as ServiceFactoryConfig<
+        typeof PayNowServiceImplementation
+      >),
       ...additionalConfig,
     },
   ] as const;

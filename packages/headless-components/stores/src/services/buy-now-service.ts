@@ -2,9 +2,11 @@ import {
   defineService,
   implementService,
   ServiceFactoryConfig,
-  Signal,
 } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+} from "@wix/services-definitions/core-services/signals";
 import { getCheckoutUrlForProduct } from "../utils";
 import { getProductBySlug } from "@wix/auto_sdk_stores_products-v-3";
 
@@ -28,8 +30,12 @@ export const BuyNowServiceImplementation = implementService.withConfig<{
   const errorSignal = signalsService.signal<string | null>(null) as Signal<
     string | null
   >;
-  const inStockSignal = signalsService.signal(config.inStock) as Signal<boolean>;
-  const preOrderAvailableSignal = signalsService.signal(config.preOrderAvailable) as Signal<boolean>;
+  const inStockSignal = signalsService.signal(
+    config.inStock
+  ) as Signal<boolean>;
+  const preOrderAvailableSignal = signalsService.signal(
+    config.preOrderAvailable
+  ) as Signal<boolean>;
 
   return {
     redirectToCheckout: async () => {
@@ -64,9 +70,13 @@ export const loadBuyNowServiceInitialData = async (
   });
   const product = res.product!;
 
-  const selectedVariant = variantId ? product.variantsInfo?.variants?.find((v) => v._id === variantId) : product.variantsInfo?.variants?.[0];
+  const selectedVariant = variantId
+    ? product.variantsInfo?.variants?.find((v) => v._id === variantId)
+    : product.variantsInfo?.variants?.[0];
 
-  const price =selectedVariant?.price?.actualPrice?.amount ?? product.actualPriceRange?.minValue?.amount;
+  const price =
+    selectedVariant?.price?.actualPrice?.amount ??
+    product.actualPriceRange?.minValue?.amount;
   const inStock = selectedVariant?.inventoryStatus?.inStock;
   const preOrderAvailable = selectedVariant?.inventoryStatus?.preorderEnabled;
 
@@ -91,13 +101,17 @@ export const buyNowServiceBinding = <
   }
 >(
   servicesConfigs: T,
-  additionalConfig: Partial<ServiceFactoryConfig<typeof BuyNowServiceImplementation>> = {}
+  additionalConfig: Partial<
+    ServiceFactoryConfig<typeof BuyNowServiceImplementation>
+  > = {}
 ) => {
   return [
     BuyNowServiceDefinition,
     BuyNowServiceImplementation,
     {
-      ...servicesConfigs[BuyNowServiceDefinition] as ServiceFactoryConfig<typeof BuyNowServiceImplementation>,
+      ...(servicesConfigs[BuyNowServiceDefinition] as ServiceFactoryConfig<
+        typeof BuyNowServiceImplementation
+      >),
       ...additionalConfig,
     },
   ] as const;

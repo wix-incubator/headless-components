@@ -1,11 +1,11 @@
-import type { ServiceAPI } from '@wix/services-definitions';
-import { useService } from '@wix/services-manager-react';
-import { SelectedVariantServiceDefinition } from '../services/selected-variant-service';
+import type { ServiceAPI } from "@wix/services-definitions";
+import { useService } from "@wix/services-manager-react";
+import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
 import {
   type ConnectedOption,
   type ConnectedOptionChoice,
   InventoryAvailabilityStatus,
-} from '@wix/auto_sdk_stores_products-v-3';
+} from "@wix/auto_sdk_stores_products-v-3";
 
 /**
  * Props for Options headless component
@@ -86,7 +86,7 @@ export const Option = (props: OptionProps) => {
   const selectedChoices = variantService.selectedChoices.get();
   const { option } = props;
 
-  const name = option.name || '';
+  const name = option.name || "";
   const choices = option.choicesSettings?.choices || [];
   const selectedValue = selectedChoices[name] || null;
 
@@ -148,8 +148,8 @@ export const Choice = (props: ChoiceProps) => {
   const selectedChoices = variantService.selectedChoices.get();
   const { option, choice } = props;
 
-  const optionName = option.name || '';
-  const choiceValue = choice.name || '';
+  const optionName = option.name || "";
+  const choiceValue = choice.name || "";
 
   const isSelected = selectedChoices[optionName] === choiceValue;
 
@@ -236,9 +236,6 @@ export const Stock = (props: StockProps) => {
   const currentVariantId = variantService.selectedVariantId.get();
   const availableQuantity = variantService.quantityAvailable.get();
   const selectedQuantity = variantService.selectedQuantity.get();
-
-  // const currentVariant = variantService.currentVariant.get();
-  // const allVariantsAreOutOfStock = variantService.IsAllVariantsAreOutOfStock();
 
   // Return raw availability status - UI components will handle display conversion
   const availabilityStatus = inStock

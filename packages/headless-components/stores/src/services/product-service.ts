@@ -2,30 +2,29 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-} from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '../../Signal';
+} from "@wix/services-definitions";
 import {
-  type V3Product,
-  getProductBySlug,
-} from '@wix/auto_sdk_stores_products-v-3';
+  SignalsServiceDefinition,
+  type Signal,
+} from "@wix/services-definitions/core-services/signals";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 
 export interface ProductServiceAPI {
-  product: Signal<V3Product>;
+  product: Signal<productsV3.V3Product>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
   loadProduct: (slug: string) => Promise<void>;
 }
 
 export const ProductServiceDefinition =
-  defineService<ProductServiceAPI>('product');
+  defineService<ProductServiceAPI>("product");
 
 export const ProductService = implementService.withConfig<{
-  product: V3Product;
+  product: productsV3.V3Product;
 }>()(ProductServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
 
-  const product: Signal<V3Product> = signalsService.signal(
+  const product: Signal<productsV3.V3Product> = signalsService.signal(
     config.product as any
   );
   const isLoading: Signal<boolean> = signalsService.signal(false as any);
@@ -35,7 +34,7 @@ export const ProductService = implementService.withConfig<{
     isLoading.set(true);
     const productResponse = await loadProductBySlug(slug);
     if (!productResponse.product) {
-      error.set('Product not found');
+      error.set("Product not found");
     } else {
       product.set(productResponse.product!);
       error.set(null);
@@ -52,22 +51,22 @@ export const ProductService = implementService.withConfig<{
 });
 
 export type ProductServiceConfigResult =
-  | { type: 'success'; config: ServiceFactoryConfig<typeof ProductService> }
-  | { type: 'notFound' };
+  | { type: "success"; config: ServiceFactoryConfig<typeof ProductService> }
+  | { type: "notFound" };
 
 const loadProductBySlug = async (slug: string) => {
-  const productResponse = await getProductBySlug(slug, {
+  const productResponse = await productsV3.getProductBySlug(slug, {
     fields: [
-      'DESCRIPTION' as any,
-      'DIRECT_CATEGORIES_INFO' as any,
-      'BREADCRUMBS_INFO' as any,
-      'INFO_SECTION' as any,
-      'MEDIA_ITEMS_INFO' as any,
-      'PLAIN_DESCRIPTION' as any,
-      'THUMBNAIL' as any,
-      'URL' as any,
-      'VARIANT_OPTION_CHOICE_NAMES' as any,
-      'WEIGHT_MEASUREMENT_UNIT_INFO' as any,
+      "DESCRIPTION" as any,
+      "DIRECT_CATEGORIES_INFO" as any,
+      "BREADCRUMBS_INFO" as any,
+      "INFO_SECTION" as any,
+      "MEDIA_ITEMS_INFO" as any,
+      "PLAIN_DESCRIPTION" as any,
+      "THUMBNAIL" as any,
+      "URL" as any,
+      "VARIANT_OPTION_CHOICE_NAMES" as any,
+      "WEIGHT_MEASUREMENT_UNIT_INFO" as any,
     ],
   });
 
@@ -82,17 +81,17 @@ export async function loadProductServiceConfig(
     const productResponse = await loadProductBySlug(productSlug);
 
     if (!productResponse.product) {
-      return { type: 'notFound' };
+      return { type: "notFound" };
     }
 
     return {
-      type: 'success',
+      type: "success",
       config: {
         product: productResponse.product!,
       },
     };
   } catch (error) {
     console.error(`Failed to load product for slug "${productSlug}":`, error);
-    return { type: 'notFound' };
+    return { type: "notFound" };
   }
 }

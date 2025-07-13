@@ -2,15 +2,14 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-} from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal, ReadOnlySignal } from '../../Signal';
+} from "@wix/services-definitions";
 import {
-  ModifierRenderType,
-  type ConnectedModifier,
-  type V3Product,
-} from '@wix/auto_sdk_stores_products-v-3';
-import { ProductServiceDefinition } from './product-service';
+  SignalsServiceDefinition,
+  type Signal,
+  type ReadOnlySignal,
+} from "@wix/services-definitions/core-services/signals";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
+import { ProductServiceDefinition } from "./product-service";
 
 export interface ModifierValue {
   modifierName: string;
@@ -19,7 +18,7 @@ export interface ModifierValue {
 }
 
 export interface ProductModifiersServiceAPI {
-  modifiers: ReadOnlySignal<ConnectedModifier[]>;
+  modifiers: ReadOnlySignal<productsV3.ConnectedModifier[]>;
   selectedModifiers: Signal<Record<string, ModifierValue>>;
   hasModifiers: ReadOnlySignal<boolean>;
   isLoading: Signal<boolean>;
@@ -36,7 +35,7 @@ export interface ProductModifiersServiceAPI {
 }
 
 export const ProductModifiersServiceDefinition =
-  defineService<ProductModifiersServiceAPI>('productModifiers');
+  defineService<ProductModifiersServiceAPI>("productModifiers");
 
 export const ProductModifiersService = implementService.withConfig()(
   ProductModifiersServiceDefinition,
@@ -53,7 +52,7 @@ export const ProductModifiersService = implementService.withConfig()(
     const modifiers = signalsService.computed(() => {
       const configProduct = productService.product.get();
       return (configProduct?.modifiers || []) as any;
-    }) as unknown as ReadOnlySignal<ConnectedModifier[]>;
+    }) as unknown as ReadOnlySignal<productsV3.ConnectedModifier[]>;
 
     const hasModifiers: ReadOnlySignal<boolean> = signalsService.computed(
       () => {
@@ -105,23 +104,23 @@ export const ProductModifiersService = implementService.withConfig()(
 
     const isModifierRequired = (modifierName: string): boolean => {
       const mods = modifiers.get();
-      const modifier = mods.find(m => m.name === modifierName);
+      const modifier = mods.find((m) => m.name === modifierName);
       return modifier?.mandatory || false;
     };
 
     const hasRequiredModifiers = (): boolean => {
       const mods = modifiers.get();
-      return mods.some(m => m.mandatory);
+      return mods.some((m) => m.mandatory);
     };
 
     const areAllRequiredModifiersFilled = (): boolean => {
       const mods = modifiers.get();
       const current = selectedModifiers.get();
 
-      return mods.every(modifier => {
+      return mods.every((modifier) => {
         if (!modifier.mandatory) return true;
 
-        const selectedValue = current[modifier.name || ''];
+        const selectedValue = current[modifier.name || ""];
         if (!selectedValue) return false;
 
         // Check based on modifier type
@@ -129,14 +128,14 @@ export const ProductModifiersService = implementService.withConfig()(
         if (!renderType) return false;
 
         if (
-          renderType === ModifierRenderType.SWATCH_CHOICES ||
-          renderType === ModifierRenderType.TEXT_CHOICES
+          renderType === productsV3.ModifierRenderType.SWATCH_CHOICES ||
+          renderType === productsV3.ModifierRenderType.TEXT_CHOICES
         ) {
           return !!selectedValue.choiceValue;
-        } else if (renderType === ModifierRenderType.FREE_TEXT) {
+        } else if (renderType === productsV3.ModifierRenderType.FREE_TEXT) {
           return (
             !!selectedValue.freeTextValue &&
-            selectedValue.freeTextValue.trim() !== ''
+            selectedValue.freeTextValue.trim() !== ""
           );
         }
 
@@ -164,7 +163,7 @@ export const ProductModifiersService = implementService.withConfig()(
 );
 
 export function createProductModifiersServiceConfig(
-  product: V3Product
+  product: productsV3.V3Product
 ): ServiceFactoryConfig<typeof ProductModifiersService> {
   return {
     product,

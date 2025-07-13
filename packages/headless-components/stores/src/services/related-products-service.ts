@@ -2,16 +2,15 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-} from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '../../Signal';
+} from "@wix/services-definitions";
 import {
-  type V3Product,
-  queryProducts,
-} from '@wix/auto_sdk_stores_products-v-3';
+  SignalsServiceDefinition,
+  type Signal,
+} from "@wix/services-definitions/core-services/signals";
+import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 
 export interface RelatedProductsServiceAPI {
-  relatedProducts: Signal<V3Product[]>;
+  relatedProducts: Signal<productsV3.V3Product[]>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
   hasRelatedProducts: Signal<boolean>;
@@ -21,7 +20,7 @@ export interface RelatedProductsServiceAPI {
 }
 
 export const RelatedProductsServiceDefinition =
-  defineService<RelatedProductsServiceAPI>('relatedProducts');
+  defineService<RelatedProductsServiceAPI>("relatedProducts");
 
 export const RelatedProductsService = implementService.withConfig<{
   productId: string;
@@ -29,7 +28,9 @@ export const RelatedProductsService = implementService.withConfig<{
 }>()(RelatedProductsServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
 
-  const relatedProducts: Signal<V3Product[]> = signalsService.signal([] as any);
+  const relatedProducts: Signal<productsV3.V3Product[]> = signalsService.signal(
+    [] as any
+  );
   const isLoading: Signal<boolean> = signalsService.signal(false as any);
   const error: Signal<string | null> = signalsService.signal(null as any);
   const hasRelatedProducts: Signal<boolean> = signalsService.signal(
@@ -41,7 +42,7 @@ export const RelatedProductsService = implementService.withConfig<{
     error.set(null);
 
     try {
-      let relatedQuery = queryProducts().ne('_id', productId);
+      let relatedQuery = productsV3.queryProducts().ne("_id", productId);
 
       const relatedResult = await relatedQuery.limit(limit).find();
 
@@ -49,7 +50,7 @@ export const RelatedProductsService = implementService.withConfig<{
       hasRelatedProducts.set((relatedResult.items || []).length > 0);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'Failed to load related products';
+        err instanceof Error ? err.message : "Failed to load related products";
       error.set(errorMessage);
       relatedProducts.set([]);
       hasRelatedProducts.set(false);

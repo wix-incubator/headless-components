@@ -1,8 +1,8 @@
-import type { ServiceAPI } from '@wix/services-definitions';
-import { useService } from '@wix/services-manager-react';
-import { SelectedVariantServiceDefinition } from '../services/selected-variant-service';
-import { ProductModifiersServiceDefinition } from '../services/product-modifiers-service';
-// import { CurrentCartServiceDefinition } from '../../ecom/services/current-cart-service';
+import type { ServiceAPI } from "@wix/services-definitions";
+import { useService } from "@wix/services-manager-react";
+import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
+import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service";
+import { CurrentCartServiceDefinition } from "../../ecom/services/current-cart-service";
 
 /**
  * Props for Actions headless component
@@ -52,9 +52,9 @@ export const Actions = (props: ActionsProps) => {
     SelectedVariantServiceDefinition
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
-  // const cartService = useService(CurrentCartServiceDefinition) as ServiceAPI<
-  //   typeof CurrentCartServiceDefinition
-  // >;
+  const cartService = useService(CurrentCartServiceDefinition) as ServiceAPI<
+    typeof CurrentCartServiceDefinition
+  >;
 
   // Try to get modifiers service - it may not exist for all products
   let modifiersService: ServiceAPI<
@@ -104,21 +104,21 @@ export const Actions = (props: ActionsProps) => {
   const onBuyNow = async () => {
     try {
       // Clear the cart first
-      // await cartService.clearCart();
+      await cartService.clearCart();
 
       // Add the product to cart
       await onAddToCart();
 
       // Proceed to checkout
-      // await cartService.proceedToCheckout();
+      await cartService.proceedToCheckout();
     } catch (error) {
-      console.error('Buy now failed:', error);
+      console.error("Buy now failed:", error);
       throw error;
     }
   };
 
   const onOpenCart = () => {
-    // cartService.openCart();
+    cartService.openCart();
   };
 
   return props.children({
