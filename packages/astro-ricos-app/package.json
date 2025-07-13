@@ -8,7 +8,7 @@
     "astro": "yarn run -T astro --root ./packages/astro-ricos-app"
   },
   "dependencies": {
-    "@wix/astro-ricos": "^1.0.0"
+    "@wix/astro-ricos": "^0.0.3"
   },
   "devDependencies": {
     "@astrojs/react": "^4.3.0",
