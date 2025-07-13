@@ -1,12 +1,13 @@
 import { categories } from '@wix/categories';
+import { type Category } from '@wix/auto_sdk_categories_categories';
 import { useService } from '@wix/services-manager-react';
 import React, { type ReactNode } from 'react';
 import { CategoryServiceDefinition } from '../services/category-service';
 
 // Grid component for displaying filtered products
-interface CategoryListProps {
+export interface CategoryListProps {
   children: (data: {
-    categories: categories.Category[];
+    categories: Category[];
     selectedCategory: string | null;
     setSelectedCategory: (categoryId: string | null) => void;
   }) => ReactNode;

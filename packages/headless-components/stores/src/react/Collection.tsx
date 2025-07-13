@@ -2,6 +2,10 @@ import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
 import { CollectionServiceDefinition } from "../services/collection-service";
 import { productsV3 } from "@wix/stores";
+import {
+  InventoryAvailabilityStatus,
+  type V3Product,
+} from "@wix/auto_sdk_stores_products-v-3";
 
 /**
  * Props for Grid headless component
@@ -16,7 +20,7 @@ export interface GridProps {
  */
 export interface GridRenderProps {
   /** Array of products */
-  products: productsV3.V3Product[];
+  products: V3Product[];
   /** Whether products are loading */
   isLoading: boolean;
   /** Error message if any */
@@ -86,7 +90,7 @@ export const Grid = (props: GridProps) => {
  */
 export interface ItemProps {
   /** Product data */
-  product: productsV3.V3Product;
+  product: V3Product;
   /** Render prop function that receives product item data */
   children: (props: ItemRenderProps) => React.ReactNode;
 }

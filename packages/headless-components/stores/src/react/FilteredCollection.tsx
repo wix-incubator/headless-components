@@ -5,11 +5,18 @@ import { CollectionServiceDefinition } from "../services/collection-service";
 import {
   FilterServiceDefinition,
   type AvailableOptions,
+  type FilterServiceAPI,
   type Filter,
 } from "../services/filter-service";
+import {
+  InventoryAvailabilityStatus,
+  type V3Product,
+} from "@wix/auto_sdk_stores_products-v-3";
+
+export type { AvailableOptions, Filter, FilterServiceAPI };
 
 // Filters Loading component with pulse animation
-interface FiltersLoadingProps {
+export interface FiltersLoadingProps {
   children: (data: { isFullyLoaded: boolean }) => ReactNode;
 }
 
@@ -27,9 +34,9 @@ export const FiltersLoading: React.FC<FiltersLoadingProps> = ({ children }) => {
 };
 
 // Grid component for displaying filtered products
-interface FilteredGridProps {
+export interface FilteredGridProps {
   children: (data: {
-    products: productsV3.V3Product[];
+    products: V3Product[];
     totalProducts: number;
     isLoading: boolean;
     error: string | null;
@@ -68,8 +75,8 @@ export const Grid: React.FC<FilteredGridProps> = ({ children }) => {
 };
 
 // Item component for individual product rendering
-interface FilteredItemProps {
-  product: productsV3.V3Product;
+export interface FilteredItemProps {
+  product: V3Product;
   children: (data: {
     title: string;
     image: string | null;
@@ -133,7 +140,7 @@ export const Item: React.FC<FilteredItemProps> = ({ product, children }) => {
 };
 
 // Load More component for pagination
-interface FilteredLoadMoreProps {
+export interface FilteredLoadMoreProps {
   children: (data: {
     loadMore: () => Promise<void>;
     refresh: () => Promise<void>;
@@ -174,12 +181,12 @@ export const LoadMore: React.FC<FilteredLoadMoreProps> = ({ children }) => {
 };
 
 // Filters component for managing filters
-interface FilteredFiltersProps {
+export interface FilteredFiltersProps {
   children: (data: {
     applyFilters: (filters: Filter) => void;
     clearFilters: () => void;
     currentFilters: Filter;
-    allProducts: productsV3.V3Product[];
+    allProducts: V3Product[];
     availableOptions: AvailableOptions;
     isFiltered: boolean;
   }) => ReactNode;

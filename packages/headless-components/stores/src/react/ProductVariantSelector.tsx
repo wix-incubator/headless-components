@@ -2,6 +2,11 @@ import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
 import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
 import { productsV3 } from "@wix/stores";
+import {
+  type ConnectedOption,
+  type ConnectedOptionChoice,
+  InventoryAvailabilityStatus,
+} from "@wix/auto_sdk_stores_products-v-3";
 
 /**
  * Props for Options headless component
@@ -16,7 +21,7 @@ export interface OptionsProps {
  */
 export interface OptionsRenderProps {
   /** Array of product options */
-  options: productsV3.ConnectedOption[];
+  options: ConnectedOption[];
   /** Whether product has options */
   hasOptions: boolean;
   /** Currently selected choices */
@@ -48,7 +53,7 @@ export const Options = (props: OptionsProps) => {
  */
 export interface OptionProps {
   /** Product option data */
-  option: productsV3.ConnectedOption;
+  option: ConnectedOption;
   /** Render prop function that receives option data */
   children: (props: OptionRenderProps) => React.ReactNode;
 }
@@ -62,7 +67,7 @@ export interface OptionRenderProps {
   /** Option type */
   type: any;
   /** Array of choices for this option */
-  choices: productsV3.ConnectedOptionChoice[];
+  choices: ConnectedOptionChoice[];
   /** Currently selected value for this option */
   selectedValue: string | null;
   /** Whether this option has choices */
@@ -100,9 +105,9 @@ export const Option = (props: OptionProps) => {
  */
 export interface ChoiceProps {
   /** Product option data */
-  option: productsV3.ConnectedOption;
+  option: ConnectedOption;
   /** Choice data */
-  choice: productsV3.ConnectedOptionChoice;
+  choice: ConnectedOptionChoice;
   /** Render prop function that receives choice data */
   children: (props: ChoiceRenderProps) => React.ReactNode;
 }
@@ -201,7 +206,7 @@ export interface StockRenderProps {
   /** Whether pre-order is enabled */
   isPreOrderEnabled: boolean;
   /** Raw inventory availability status */
-  availabilityStatus: productsV3.InventoryAvailabilityStatus | string;
+  availabilityStatus: InventoryAvailabilityStatus | string;
   /** Whether stock tracking is enabled */
   trackInventory: boolean;
   /** Current variant id */
