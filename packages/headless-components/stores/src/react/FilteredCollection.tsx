@@ -15,6 +15,8 @@ import {
   type CollectionServiceAPI,
 } from '../services/collection-service';
 
+export type { AvailableOptions, Filter, FilterServiceAPI };
+
 const FilteredCollectionContext = createContext<{
   filter: FilterServiceAPI | null;
   collection: CollectionServiceAPI | null;

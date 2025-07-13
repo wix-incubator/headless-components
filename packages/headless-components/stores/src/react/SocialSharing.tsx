@@ -6,6 +6,8 @@ import {
   type SharingPlatform,
 } from '../services/social-sharing-service';
 
+export type { SharingPlatform };
+
 /**
  * Props for Root headless component
  */

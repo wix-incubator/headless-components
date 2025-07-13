@@ -14,7 +14,8 @@ export interface ControllerProps {
  *
  * @component
  */
-export function Controller({ children }: ControllerProps) {
+export function Controller(props: ControllerProps): React.ReactNode {
+  const { children } = props;
   const sortService = useService(SortServiceDefinition);
   const currentSort = sortService.currentSort.get();
   const setSortBy = sortService.setSortBy;
