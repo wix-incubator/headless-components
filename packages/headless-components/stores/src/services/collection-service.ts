@@ -441,7 +441,7 @@ function parseURLParams(
     recommended: SortType.RECOMMENDED,
   };
   const initialSort =
-    sortMap[urlParams.sort as string] || (SortType.NEWEST as SortBy);
+    sortMap[urlParams["sort"] as string] || (SortType.NEWEST as SortBy);
 
   // Check if there are any filter parameters (excluding sort)
   const filterParams = Object.keys(urlParams).filter((key) => key !== "sort");
@@ -458,12 +458,12 @@ function parseURLParams(
   };
 
   // Apply price filters from URL
-  if (urlParams.minPrice) {
-    const min = parseFloat(urlParams.minPrice as string);
+  if (urlParams["minPrice"]) {
+    const min = parseFloat(urlParams["minPrice"] as string);
     if (!isNaN(min)) initialFilters.priceRange.min = min;
   }
-  if (urlParams.maxPrice) {
-    const max = parseFloat(urlParams.maxPrice as string);
+  if (urlParams["maxPrice"]) {
+    const max = parseFloat(urlParams["maxPrice"] as string);
     if (!isNaN(max)) initialFilters.priceRange.max = max;
   }
 
@@ -472,10 +472,10 @@ function parseURLParams(
   parseOptionFilters(urlParams, optionsMap, initialFilters);
 
   // Parse inventory filter from 'availability' URL parameter
-  if (urlParams.availability) {
-    const availabilityValues = Array.isArray(urlParams.availability)
-      ? urlParams.availability
-      : [urlParams.availability];
+  if (urlParams["availability"]) {
+    const availabilityValues = Array.isArray(urlParams["availability"])
+      ? urlParams["availability"]
+      : [urlParams["availability"]];
 
     const inventoryStatusValues = availabilityValues.map((value) =>
       value.replace(/\s+/g, "_").toUpperCase()
