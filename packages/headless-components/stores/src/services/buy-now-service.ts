@@ -14,6 +14,11 @@ export const BuyNowServiceDefinition = defineService<{
   redirectToCheckout: () => Promise<void>;
   loadingSignal: Signal<boolean>;
   errorSignal: Signal<string | null>;
+  inStockSignal: Signal<boolean>;
+  preOrderAvailableSignal: Signal<boolean>;
+  productName: string;
+  price: string;
+  currency: string;
 }>("BuyNow");
 
 export const BuyNowServiceImplementation = implementService.withConfig<{

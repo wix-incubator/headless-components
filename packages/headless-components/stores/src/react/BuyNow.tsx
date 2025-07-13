@@ -21,7 +21,7 @@ export interface BuyNowRenderProps {
   inStock: boolean;
   /** Whether the product is available for pre-order */
   preOrderAvailable: boolean;
-};
+}
 
 /**
  * Props for the BuyNow component
@@ -29,7 +29,7 @@ export interface BuyNowRenderProps {
 export interface BuyNowProps {
   /** Render function that receives buy now state and actions */
   children: (props: BuyNowRenderProps) => React.ReactNode;
-};
+}
 
 /**
  * A headless component that provides buy now functionality using the render props pattern.
@@ -66,8 +66,8 @@ export function BuyNow(props: BuyNowProps): React.ReactNode {
     errorSignal,
     price,
     currency,
-    inStock,
-    preOrderAvailable,
+    inStockSignal,
+    preOrderAvailableSignal,
   } = useService(BuyNowServiceDefinition);
 
   return props.children({
@@ -77,7 +77,7 @@ export function BuyNow(props: BuyNowProps): React.ReactNode {
     redirectToCheckout,
     price,
     currency,
-    inStock,
-    preOrderAvailable,
+    inStock: inStockSignal.get(),
+    preOrderAvailable: preOrderAvailableSignal.get(),
   });
 }
