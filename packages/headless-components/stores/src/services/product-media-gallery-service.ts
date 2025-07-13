@@ -4,16 +4,16 @@ import {
   type ServiceFactoryConfig,
 } from "@wix/services-definitions";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import type { Signal, ReadOnlySignal } from "./Signal";
-import { productsV3 } from "@wix/stores";
+import type { Signal, ReadOnlySignal } from "../../Signal";
 import { SelectedVariantServiceDefinition } from "./selected-variant-service";
 import { ProductServiceDefinition } from "./product-service";
+import { V3Product } from "@wix/auto_sdk_stores_products-v-3";
 
 export interface ProductMediaGalleryServiceAPI {
   selectedImageIndex: Signal<number>;
   relevantImages: ReadOnlySignal<string[]>;
 
-  product: ReadOnlySignal<productsV3.V3Product | null>;
+  product: ReadOnlySignal<V3Product | null>;
   isLoading: ReadOnlySignal<boolean>;
   totalImages: ReadOnlySignal<number>;
   productName: ReadOnlySignal<string>;
@@ -66,7 +66,7 @@ export const ProductMediaGalleryService = implementService.withConfig<{}>()(
     });
 
 
-    const product: ReadOnlySignal<productsV3.V3Product | null> =
+    const product: ReadOnlySignal<V3Product | null> =
       productService.product;
     const isLoading: ReadOnlySignal<boolean> = productService.isLoading;
 

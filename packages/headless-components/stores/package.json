@@ -49,6 +49,12 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@wix/auto_sdk_bookings_availability-calendar": "^1.0.155",
+    "@wix/auto_sdk_categories_categories": "^1.0.62",
+    "@wix/auto_sdk_stores_customizations-v-3": "^1.0.26",
+    "@wix/auto_sdk_stores_inventory-items-v-3": "^1.0.26",
+    "@wix/auto_sdk_stores_products-v-3": "^1.0.53",
+    "@wix/auto_sdk_stores_read-only-variants-v-3": "^1.0.23",
     "@wix/categories": "^1.0.137",
     "@wix/ecom": "^1.0.1169",
     "@wix/essentials": "^0.1.22",

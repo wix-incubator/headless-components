@@ -1,62 +1,27 @@
-import React, {
-  createContext,
-  useContext,
-  type ReactNode,
-  useState,
-} from "react";
-import { useService } from "@wix/services-manager-react";
-import {
-  CategoryServiceDefinition,
-  type CategoryServiceAPI,
-} from "../services/category-service";
-import { categories } from "@wix/categories";
-
-const CategoryContext = createContext<CategoryServiceAPI | null>(null);
-
-interface CategoryProviderProps {
-  children: ReactNode;
-}
-
-export const Provider: React.FC<CategoryProviderProps> = ({
-  children,
-}) => {
-  const service = useService(CategoryServiceDefinition);
-
-  return (
-    <CategoryContext.Provider value={service}>
-      {children}
-    </CategoryContext.Provider>
-  );
-};
-
-export const useCategory = () => {
-  const context = useContext(CategoryContext);
-  if (!context) {
-    throw new Error("useCategory must be used within a CategoryProvider");
-  }
-  return context;
-};
+import { type Category } from '@wix/auto_sdk_categories_categories';
+import { useService } from '@wix/services-manager-react';
+import React, { type ReactNode } from 'react';
+import { CategoryServiceDefinition } from '../services/category-service';
 
 // Grid component for displaying filtered products
-interface CategoryListProps {
+export interface CategoryListProps {
   children: (data: {
-    categories: categories.Category[];
+    categories: Category[];
     selectedCategory: string | null;
     setSelectedCategory: (categoryId: string | null) => void;
   }) => ReactNode;
 }
 
+/**
+ * Headless component for displaying a list of categories
+ *
+ * @component
+ */
 export const List: React.FC<CategoryListProps> = ({ children }) => {
-  const service = useCategory();
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    service.selectedCategory.get()
-  );
+  const service = useService(CategoryServiceDefinition);
+
   const categories = service.categories.get();
-  service.selectedCategory.subscribe((categoryId) => {
-    if (categoryId !== selectedCategory) {
-      setSelectedCategory(categoryId);
-    }
-  });
+  const selectedCategory = service.selectedCategory.get();
 
   return (
     <>

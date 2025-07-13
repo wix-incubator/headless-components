@@ -1,7 +1,10 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { CollectionServiceDefinition } from "../services/collection-service";
-import { productsV3 } from "@wix/stores";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService } from '@wix/services-manager-react';
+import { CollectionServiceDefinition } from '../services/collection-service';
+import {
+  InventoryAvailabilityStatus,
+  type V3Product,
+} from '@wix/auto_sdk_stores_products-v-3';
 
 /**
  * Props for Grid headless component
@@ -16,7 +19,7 @@ export interface GridProps {
  */
 export interface GridRenderProps {
   /** Array of products */
-  products: productsV3.V3Product[];
+  products: V3Product[];
   /** Whether products are loading */
   isLoading: boolean;
   /** Error message if any */
@@ -31,6 +34,8 @@ export interface GridRenderProps {
 
 /**
  * Headless component for product grid
+ *
+ * @component
  */
 export const Grid = (props: GridProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -39,11 +44,11 @@ export const Grid = (props: GridProps) => {
 
   // Debug logging to help identify service issues
   if (!service) {
-    console.error("CollectionService is undefined");
+    console.error('CollectionService is undefined');
     return props.children({
       products: [],
       isLoading: false,
-      error: "Service not available",
+      error: 'Service not available',
       isEmpty: true,
       totalProducts: 0,
       hasProducts: false,
@@ -67,11 +72,11 @@ export const Grid = (props: GridProps) => {
       hasProducts,
     });
   } catch (err) {
-    console.error("Error accessing service properties:", err);
+    console.error('Error accessing service properties:', err);
     return props.children({
       products: [],
       isLoading: false,
-      error: "Failed to load products",
+      error: 'Failed to load products',
       isEmpty: true,
       totalProducts: 0,
       hasProducts: false,
@@ -84,7 +89,7 @@ export const Grid = (props: GridProps) => {
  */
 export interface ItemProps {
   /** Product data */
-  product: productsV3.V3Product;
+  product: V3Product;
   /** Render prop function that receives product item data */
   children: (props: ItemRenderProps) => React.ReactNode;
 }
@@ -115,6 +120,8 @@ export interface ItemRenderProps {
 
 /**
  * Headless component for individual product item
+ *
+ * @component
  */
 export const Item = (props: ItemProps) => {
   const { product } = props;
@@ -125,7 +132,7 @@ export const Item = (props: ItemProps) => {
 
   // Create formatted price since formattedAmount is not available
   const rawAmount = product.actualPriceRange?.minValue?.amount;
-  const price = rawAmount ? `$${rawAmount}` : "$0.00";
+  const price = rawAmount ? `$${rawAmount}` : '$0.00';
 
   // Create formatted compare-at price
   const rawCompareAmount = product.compareAtPriceRange?.minValue?.amount;
@@ -133,15 +140,15 @@ export const Item = (props: ItemProps) => {
 
   const availabilityStatus = product.inventory?.availabilityStatus;
   const available =
-    availabilityStatus === "IN_STOCK" ||
-    availabilityStatus === "PARTIALLY_OUT_OF_STOCK";
+    availabilityStatus === InventoryAvailabilityStatus.IN_STOCK ||
+    availabilityStatus === InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
   const description =
-    typeof product.description === "string" ? product.description : "";
+    typeof product.description === 'string' ? product.description : '';
 
   return props.children({
-    id: product._id || "",
-    title: product.name || "",
-    slug: product.slug || "",
+    id: product._id || '',
+    title: product.name || '',
+    slug: product.slug || '',
     image,
     price,
     compareAtPrice,
@@ -180,6 +187,8 @@ export interface LoadMoreRenderProps {
 /**
  * Headless component for load more products functionality
  * Note: V3 API uses simplified loading without traditional pagination
+ *
+ * @component
  */
 export const LoadMore = (props: LoadMoreProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -188,7 +197,7 @@ export const LoadMore = (props: LoadMoreProps) => {
 
   // Error handling for undefined service
   if (!service) {
-    console.error("CollectionService is undefined in LoadMore");
+    console.error('CollectionService is undefined in LoadMore');
     return props.children({
       loadMore: async () => {},
       refresh: async () => {},
@@ -214,7 +223,7 @@ export const LoadMore = (props: LoadMoreProps) => {
       hasMoreProducts,
     });
   } catch (err) {
-    console.error("Error in LoadMore:", err);
+    console.error('Error in LoadMore:', err);
     return props.children({
       loadMore: async () => {},
       refresh: async () => {},
@@ -248,6 +257,8 @@ export interface HeaderRenderProps {
 
 /**
  * Headless component for collection header with product count
+ *
+ * @component
  */
 export const Header = (props: HeaderProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -256,7 +267,7 @@ export const Header = (props: HeaderProps) => {
 
   // Error handling for undefined service
   if (!service) {
-    console.error("CollectionService is undefined in Header");
+    console.error('CollectionService is undefined in Header');
     return props.children({
       totalProducts: 0,
       isLoading: false,
@@ -275,7 +286,7 @@ export const Header = (props: HeaderProps) => {
       hasProducts,
     });
   } catch (err) {
-    console.error("Error in Header:", err);
+    console.error('Error in Header:', err);
     return props.children({
       totalProducts: 0,
       isLoading: false,
@@ -309,6 +320,8 @@ export interface ActionsRenderProps {
 /**
  * Headless component for collection actions (refresh, load more)
  * Replaces traditional pagination for V3 API
+ *
+ * @component
  */
 export const Actions = (props: ActionsProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -317,12 +330,12 @@ export const Actions = (props: ActionsProps) => {
 
   // Error handling for undefined service
   if (!service) {
-    console.error("CollectionService is undefined in Actions");
+    console.error('CollectionService is undefined in Actions');
     return props.children({
       refresh: async () => {},
       loadMore: async () => {},
       isLoading: false,
-      error: "Service not available",
+      error: 'Service not available',
     });
   }
 
@@ -337,12 +350,12 @@ export const Actions = (props: ActionsProps) => {
       error,
     });
   } catch (err) {
-    console.error("Error in Actions:", err);
+    console.error('Error in Actions:', err);
     return props.children({
       refresh: async () => {},
       loadMore: async () => {},
       isLoading: false,
-      error: "Failed to load actions",
+      error: 'Failed to load actions',
     });
   }
 };
