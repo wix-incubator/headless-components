@@ -1,1 +1,4 @@
-export { MediaGalleryService } from "./media-gallery-service";
+export {
+  MediaGalleryService,
+  MediaGalleryServiceDefinition,
+} from "./media-gallery-service";
