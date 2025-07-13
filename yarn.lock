@@ -3684,6 +3684,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wix/headless-media@workspace:packages/headless-components/media":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
+  dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/services-definitions": "npm:^0.1.2"
+    "@wix/services-manager-react": "npm:^0.1.9"
+    jsdom: "npm:^26.1.0"
+    typescript: "npm:^5.7.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
+
 "@wix/headless-seo@workspace:packages/headless-components/seo":
   version: 0.0.0-use.local
   resolution: "@wix/headless-seo@workspace:packages/headless-components/seo"
