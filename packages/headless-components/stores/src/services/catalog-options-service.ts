@@ -4,17 +4,10 @@ import {
   type ServiceFactoryConfig,
 } from '@wix/services-definitions';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '../../Signal';
-import {
-  ModifierRenderType,
-  searchProducts,
-  SortDirection,
-  SortType as SDKSortType,
-} from '@wix/auto_sdk_stores_products-v-3';
-import {
-  CustomizationType,
-  queryCustomizations,
-} from '@wix/auto_sdk_stores_customizations-v-3';
+import type { Signal } from '@wix/services-definitions/core-services/signals';
+import { productsV3, customizationsV3 } from '@wix/stores';
+
+const { SortDirection, SortType: SDKSortType } = productsV3;
 
 export interface ProductOption {
   id: string;
@@ -145,7 +138,7 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
           cursorPaging: { limit: 0 },
         };
 
-        const aggregationResponse = await searchProducts(
+        const aggregationResponse = await productsV3.searchProducts(
           aggregationRequest as any
         );
 
@@ -163,7 +156,9 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
         );
 
         // Step 2: Get option structure from customizations API
-        const customizationsResponse = await queryCustomizations().find();
+        const customizationsResponse = await customizationsV3
+          .queryCustomizations()
+          .find();
         const customizations = customizationsResponse.items || [];
 
         // Step 3: Build options by matching customizations with aggregation data
@@ -173,7 +168,7 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
               customization.name &&
               customization._id &&
               customization.customizationType ===
-                CustomizationType.PRODUCT_OPTION &&
+                customizationsV3.CustomizationType.PRODUCT_OPTION &&
               matchesAggregationName(customization.name, optionNames)
           )
           .map(customization => {
@@ -214,7 +209,7 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
             id: 'inventory-filter',
             name: 'Availability',
             choices: inventoryChoices,
-            optionRenderType: ModifierRenderType.TEXT_CHOICES,
+            optionRenderType: productsV3.ModifierRenderType.TEXT_CHOICES,
           });
         }
 

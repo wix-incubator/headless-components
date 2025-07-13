@@ -1,14 +1,11 @@
 import { defineService, implementService } from '@wix/services-definitions';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '../../Signal';
-import {
-  queryCategories,
-  type Category,
-} from '@wix/auto_sdk_categories_categories';
+import type { Signal } from '@wix/services-definitions/core-services/signals';
+import { categories } from '@wix/categories';
 
 export interface CategoryServiceAPI {
   selectedCategory: Signal<string | null>;
-  categories: Signal<Category[]>;
+  categories: Signal<categories.Category[]>;
   setSelectedCategory: (categoryId: string | null) => void;
   loadCategories: () => Promise<void>;
 }
@@ -17,11 +14,11 @@ export const CategoryServiceDefinition =
   defineService<CategoryServiceAPI>('category-service');
 
 export interface CategoryServiceConfig {
-  categories: Category[];
+  categories: categories.Category[];
   initialCategoryId?: string | null;
   onCategoryChange?: (
     categoryId: string | null,
-    category: Category | null
+    category: categories.Category | null
   ) => void;
 }
 
@@ -32,10 +29,10 @@ export const CategoryService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const selectedCategory: Signal<string | null> = signalsService.signal(
-        (config.initialCategoryId || null) as any
+        (config?.initialCategoryId || null) as any
       );
-      const categories: Signal<Category[]> = signalsService.signal(
-        config.categories as any
+      const categories: Signal<categories.Category[]> = signalsService.signal(
+        config?.categories as any
       );
 
       const loadCategories = async () => {
@@ -51,7 +48,8 @@ export const CategoryService =
       };
 
       // Subscribe to category changes and handle navigation as a side effect
-      selectedCategory.subscribe(categoryId => {
+      signalsService.effect(() => {
+        const categoryId = selectedCategory.get();
         // Skip navigation on initial load (when service is first created)
         if (isInitialLoad) {
           isInitialLoad = false;
@@ -59,9 +57,9 @@ export const CategoryService =
         }
 
         // If a navigation handler is provided, use it
-        if (config.onCategoryChange) {
+        if (config?.onCategoryChange) {
           const category = categoryId
-            ? config.categories.find(cat => cat._id === categoryId) || null
+            ? config?.categories.find(cat => cat._id === categoryId) || null
             : null;
 
           config.onCategoryChange(categoryId, category);
@@ -79,12 +77,13 @@ export const CategoryService =
 
 export async function loadCategoriesConfig() {
   try {
-    const categoriesResponse = await queryCategories({
-      treeReference: {
-        appNamespace: '@wix/stores',
-        treeKey: null,
-      },
-    })
+    const categoriesResponse = await categories
+      .queryCategories({
+        treeReference: {
+          appNamespace: '@wix/stores',
+          treeKey: null,
+        },
+      })
       .eq('visible', true)
       .find();
 

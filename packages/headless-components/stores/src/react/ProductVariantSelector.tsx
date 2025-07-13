@@ -1,11 +1,7 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 import { SelectedVariantServiceDefinition } from '../services/selected-variant-service';
-import {
-  type ConnectedOption,
-  type ConnectedOptionChoice,
-  InventoryAvailabilityStatus,
-} from '@wix/auto_sdk_stores_products-v-3';
+import { productsV3 } from '@wix/stores';
 
 /**
  * Props for Options headless component
@@ -20,7 +16,7 @@ export interface OptionsProps {
  */
 export interface OptionsRenderProps {
   /** Array of product options */
-  options: ConnectedOption[];
+  options: productsV3.ConnectedOption[];
   /** Whether product has options */
   hasOptions: boolean;
   /** Currently selected choices */
@@ -29,8 +25,6 @@ export interface OptionsRenderProps {
 
 /**
  * Headless component for all product options
- *
- * @component
  */
 export const Options = (props: OptionsProps) => {
   const variantService = useService(
@@ -52,7 +46,7 @@ export const Options = (props: OptionsProps) => {
  */
 export interface OptionProps {
   /** Product option data */
-  option: ConnectedOption;
+  option: productsV3.ConnectedOption;
   /** Render prop function that receives option data */
   children: (props: OptionRenderProps) => React.ReactNode;
 }
@@ -66,7 +60,7 @@ export interface OptionRenderProps {
   /** Option type */
   type: any;
   /** Array of choices for this option */
-  choices: ConnectedOptionChoice[];
+  choices: productsV3.ConnectedOptionChoice[];
   /** Currently selected value for this option */
   selectedValue: string | null;
   /** Whether this option has choices */
@@ -75,8 +69,6 @@ export interface OptionRenderProps {
 
 /**
  * Headless component for choices within a specific product option
- *
- * @component
  */
 export const Option = (props: OptionProps) => {
   const variantService = useService(
@@ -104,9 +96,9 @@ export const Option = (props: OptionProps) => {
  */
 export interface ChoiceProps {
   /** Product option data */
-  option: ConnectedOption;
+  option: productsV3.ConnectedOption;
   /** Choice data */
-  choice: ConnectedOptionChoice;
+  choice: productsV3.ConnectedOptionChoice;
   /** Render prop function that receives choice data */
   children: (props: ChoiceRenderProps) => React.ReactNode;
 }
@@ -137,8 +129,6 @@ export interface ChoiceRenderProps {
 
 /**
  * Headless component for individual choice selection
- *
- * @component
  */
 export const Choice = (props: ChoiceProps) => {
   const variantService = useService(
@@ -205,7 +195,7 @@ export interface StockRenderProps {
   /** Whether pre-order is enabled */
   isPreOrderEnabled: boolean;
   /** Raw inventory availability status */
-  availabilityStatus: InventoryAvailabilityStatus | string;
+  availabilityStatus: productsV3.InventoryAvailabilityStatus | string;
   /** Whether stock tracking is enabled */
   trackInventory: boolean;
   /** Current variant id */
@@ -222,8 +212,6 @@ export interface StockRenderProps {
 
 /**
  * Headless component for product stock status
- *
- * @component
  */
 export const Stock = (props: StockProps) => {
   const variantService = useService(
@@ -237,13 +225,10 @@ export const Stock = (props: StockProps) => {
   const availableQuantity = variantService.quantityAvailable.get();
   const selectedQuantity = variantService.selectedQuantity.get();
 
-  // const currentVariant = variantService.currentVariant.get();
-  // const allVariantsAreOutOfStock = variantService.IsAllVariantsAreOutOfStock();
-
   // Return raw availability status - UI components will handle display conversion
   const availabilityStatus = inStock
-    ? InventoryAvailabilityStatus.IN_STOCK
-    : InventoryAvailabilityStatus.OUT_OF_STOCK;
+    ? productsV3.InventoryAvailabilityStatus.IN_STOCK
+    : productsV3.InventoryAvailabilityStatus.OUT_OF_STOCK;
 
   const incrementQuantity = () => {
     variantService.incrementQuantity();
@@ -286,8 +271,6 @@ export interface ResetRenderProps {
 
 /**
  * Headless component for resetting variant selections
- *
- * @component
  */
 export const Reset = (props: ResetProps) => {
   const variantService = useService(

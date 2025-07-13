@@ -22,8 +22,6 @@ export interface ProductDetailsRenderProps {
 
 /**
  * Headless component for selected variant details display
- *
- * @component
  */
 export const Details = (props: ProductDetailsProps) => {
   const selectedVariantService = useService(
@@ -64,8 +62,6 @@ export interface PriceRenderProps {
 
 /**
  * Headless component for product price display
- *
- * @component
  */
 export const Price = (props: PriceProps) => {
   const variantService = useService(
@@ -101,8 +97,6 @@ export interface SKURenderProps {
 
 /**
  * Headless component for product SKU display
- *
- * @component
  */
 export const SKU = (props: SKUProps) => {
   const selectedVariantService = useService(

@@ -5,8 +5,7 @@ import {
   SocialSharingServiceDefinition,
   type SharingPlatform,
 } from '../services/social-sharing-service';
-
-export type { SharingPlatform };
+import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
 
 /**
  * Props for Root headless component
@@ -48,27 +47,32 @@ export interface RootRenderProps {
 
 /**
  * Headless component for social sharing root
- *
- * @component
  */
 export const Root = (props: RootProps) => {
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
     typeof SocialSharingServiceDefinition
   >;
+  const signalsService = useService(SignalsServiceDefinition);
 
   const [platforms, setPlatforms] = React.useState<SharingPlatform[]>([]);
   const [shareCount, setShareCount] = React.useState(0);
   const [lastShared, setLastShared] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const unsubscribes = [
-      service.availablePlatforms.subscribe(setPlatforms),
-      service.shareCount.subscribe(setShareCount),
-      service.lastSharedPlatform.subscribe(setLastShared),
+    const effects = [
+      signalsService.effect(() => {
+        setPlatforms(service.availablePlatforms.get());
+      }),
+      signalsService.effect(() => {
+        setShareCount(service.shareCount.get());
+      }),
+      signalsService.effect(() => {
+        setLastShared(service.lastSharedPlatform.get());
+      }),
     ];
 
-    return () => unsubscribes.forEach(fn => fn());
-  }, [service]);
+    return () => effects.forEach(dispose => dispose());
+  }, [service, signalsService]);
 
   return props.children({
     platforms,
@@ -108,8 +112,6 @@ export interface PlatformRenderProps {
 
 /**
  * Headless component for individual social platform
- *
- * @component
  */
 export const Platform = (props: PlatformProps) => {
   const { platform, onClick } = props;
@@ -160,8 +162,6 @@ export interface PlatformsRenderProps {
 
 /**
  * Headless component for social sharing platforms with logic
- *
- * @component
  */
 export const Platforms = (props: PlatformsProps) => {
   const { url, title, description = '', hashtags = [] } = props;
@@ -169,13 +169,16 @@ export const Platforms = (props: PlatformsProps) => {
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
     typeof SocialSharingServiceDefinition
   >;
+  const signalsService = useService(SignalsServiceDefinition);
 
   const [platforms, setPlatforms] = React.useState<SharingPlatform[]>([]);
 
   React.useEffect(() => {
-    const unsubscribe = service.availablePlatforms.subscribe(setPlatforms);
-    return unsubscribe;
-  }, [service]);
+    const dispose = signalsService.effect(() => {
+      setPlatforms(service.availablePlatforms.get());
+    });
+    return dispose;
+  }, [service, signalsService]);
 
   const shareFacebook = () => service.shareToFacebook(url, title, description);
   const shareTwitter = () => service.shareToTwitter(url, title, hashtags);

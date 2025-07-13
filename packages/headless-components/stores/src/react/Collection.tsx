@@ -1,10 +1,7 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 import { CollectionServiceDefinition } from '../services/collection-service';
-import {
-  InventoryAvailabilityStatus,
-  type V3Product,
-} from '@wix/auto_sdk_stores_products-v-3';
+import { productsV3 } from '@wix/stores';
 
 /**
  * Props for Grid headless component
@@ -19,7 +16,7 @@ export interface GridProps {
  */
 export interface GridRenderProps {
   /** Array of products */
-  products: V3Product[];
+  products: productsV3.V3Product[];
   /** Whether products are loading */
   isLoading: boolean;
   /** Error message if any */
@@ -34,8 +31,6 @@ export interface GridRenderProps {
 
 /**
  * Headless component for product grid
- *
- * @component
  */
 export const Grid = (props: GridProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -89,7 +84,7 @@ export const Grid = (props: GridProps) => {
  */
 export interface ItemProps {
   /** Product data */
-  product: V3Product;
+  product: productsV3.V3Product;
   /** Render prop function that receives product item data */
   children: (props: ItemRenderProps) => React.ReactNode;
 }
@@ -120,8 +115,6 @@ export interface ItemRenderProps {
 
 /**
  * Headless component for individual product item
- *
- * @component
  */
 export const Item = (props: ItemProps) => {
   const { product } = props;
@@ -140,8 +133,9 @@ export const Item = (props: ItemProps) => {
 
   const availabilityStatus = product.inventory?.availabilityStatus;
   const available =
-    availabilityStatus === InventoryAvailabilityStatus.IN_STOCK ||
-    availabilityStatus === InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
+    availabilityStatus === productsV3.InventoryAvailabilityStatus.IN_STOCK ||
+    availabilityStatus ===
+      productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
   const description =
     typeof product.description === 'string' ? product.description : '';
 
@@ -187,8 +181,6 @@ export interface LoadMoreRenderProps {
 /**
  * Headless component for load more products functionality
  * Note: V3 API uses simplified loading without traditional pagination
- *
- * @component
  */
 export const LoadMore = (props: LoadMoreProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -257,8 +249,6 @@ export interface HeaderRenderProps {
 
 /**
  * Headless component for collection header with product count
- *
- * @component
  */
 export const Header = (props: HeaderProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -320,8 +310,6 @@ export interface ActionsRenderProps {
 /**
  * Headless component for collection actions (refresh, load more)
  * Replaces traditional pagination for V3 API
- *
- * @component
  */
 export const Actions = (props: ActionsProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<

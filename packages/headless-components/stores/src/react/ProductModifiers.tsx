@@ -2,11 +2,7 @@ import { useState } from 'react';
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 import { ProductModifiersServiceDefinition } from '../services/product-modifiers-service';
-import {
-  ModifierRenderType,
-  type ConnectedModifier,
-  type ConnectedModifierChoice,
-} from '@wix/auto_sdk_stores_products-v-3';
+import { productsV3 } from '@wix/stores';
 
 /**
  * Custom hook to safely get the modifiers service
@@ -34,7 +30,7 @@ export interface ModifiersProps {
  */
 export interface ModifiersRenderProps {
   /** Array of product modifiers */
-  modifiers: ConnectedModifier[];
+  modifiers: productsV3.ConnectedModifier[];
   /** Whether product has modifiers */
   hasModifiers: boolean;
   /** Currently selected modifier values */
@@ -77,7 +73,7 @@ export const Modifiers = (props: ModifiersProps) => {
  */
 export interface ModifierProps {
   /** Product modifier data */
-  modifier: ConnectedModifier;
+  modifier: productsV3.ConnectedModifier;
   /** Render prop function that receives modifier data */
   children: (props: ModifierRenderProps) => React.ReactNode;
 }
@@ -93,7 +89,7 @@ export interface ModifierRenderProps {
   /** Whether this modifier is mandatory */
   mandatory: boolean;
   /** Array of choices for this modifier (for choice-based modifiers) */
-  choices: ConnectedModifierChoice[];
+  choices: productsV3.ConnectedModifierChoice[];
   /** Currently selected value for this modifier */
   selectedValue: any;
   /** Whether this modifier has choices */
@@ -108,8 +104,6 @@ export interface ModifierRenderProps {
 
 /**
  * Headless component for a specific product modifier
- *
- * @component
  */
 export const Modifier = (props: ModifierProps) => {
   const modifiersService = useModifiersService();
@@ -120,7 +114,7 @@ export const Modifier = (props: ModifierProps) => {
   const mandatory = modifier.mandatory || false;
   const choices = modifier.choicesSettings?.choices || [];
   const hasChoices = choices.length > 0;
-  const isFreeText = type === ModifierRenderType.FREE_TEXT;
+  const isFreeText = type === productsV3.ModifierRenderType.FREE_TEXT;
   const freeTextSettings = modifier.freeTextSettings;
   const maxChars = (freeTextSettings as any)?.maxLength;
   const placeholder = (freeTextSettings as any)?.placeholder;
@@ -145,9 +139,9 @@ export const Modifier = (props: ModifierProps) => {
  */
 export interface ChoiceProps {
   /** Product modifier data */
-  modifier: ConnectedModifier;
+  modifier: productsV3.ConnectedModifier;
   /** Choice data */
-  choice: ConnectedModifierChoice;
+  choice: productsV3.ConnectedModifierChoice;
   /** Render prop function that receives choice data */
   children: (props: ChoiceRenderProps) => React.ReactNode;
 }
@@ -174,8 +168,6 @@ export interface ChoiceRenderProps {
 
 /**
  * Headless component for individual modifier choice selection
- *
- * @component
  */
 export const Choice = (props: ChoiceProps) => {
   const modifiersService = useModifiersService();
@@ -186,7 +178,7 @@ export const Choice = (props: ChoiceProps) => {
 
   // For TEXT_CHOICES, use choice.key; for SWATCH_CHOICES, use choice.name
   const choiceValue =
-    renderType === ModifierRenderType.TEXT_CHOICES
+    renderType === productsV3.ModifierRenderType.TEXT_CHOICES
       ? (choice as any).key || choice.name || ''
       : choice.name || '';
 
@@ -217,7 +209,7 @@ export const Choice = (props: ChoiceProps) => {
  */
 export interface FreeTextProps {
   /** Product modifier data */
-  modifier: ConnectedModifier;
+  modifier: productsV3.ConnectedModifier;
   /** Render prop function that receives free text data */
   children: (props: FreeTextRenderProps) => React.ReactNode;
 }
@@ -246,8 +238,6 @@ export interface FreeTextRenderProps {
 
 /**
  * Headless component for free text modifier input
- *
- * @component
  */
 export const FreeText = (props: FreeTextProps) => {
   const modifiersService = useModifiersService();
@@ -286,7 +276,7 @@ export const FreeText = (props: FreeTextProps) => {
  */
 export interface ToggleFreeTextProps {
   /** Product modifier data */
-  modifier: ConnectedModifier;
+  modifier: productsV3.ConnectedModifier;
   /** Render prop function that receives toggle data */
   children: (props: ToggleFreeTextRenderProps) => React.ReactNode;
 }
@@ -308,8 +298,6 @@ export interface ToggleFreeTextRenderProps {
 /**
  * Headless component for toggling free text modifier input
  * Used for optional free text modifiers where a checkbox shows/hides the input
- *
- * @component
  */
 export const ToggleFreeText = (props: ToggleFreeTextProps) => {
   const modifiersService = useModifiersService();

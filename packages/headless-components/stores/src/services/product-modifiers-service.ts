@@ -4,12 +4,11 @@ import {
   type ServiceFactoryConfig,
 } from '@wix/services-definitions';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal, ReadOnlySignal } from '../../Signal';
-import {
-  ModifierRenderType,
-  type ConnectedModifier,
-  type V3Product,
-} from '@wix/auto_sdk_stores_products-v-3';
+import type {
+  Signal,
+  ReadOnlySignal,
+} from '@wix/services-definitions/core-services/signals';
+import { productsV3 } from '@wix/stores';
 import { ProductServiceDefinition } from './product-service';
 
 export interface ModifierValue {
@@ -19,7 +18,7 @@ export interface ModifierValue {
 }
 
 export interface ProductModifiersServiceAPI {
-  modifiers: ReadOnlySignal<ConnectedModifier[]>;
+  modifiers: ReadOnlySignal<productsV3.ConnectedModifier[]>;
   selectedModifiers: Signal<Record<string, ModifierValue>>;
   hasModifiers: ReadOnlySignal<boolean>;
   isLoading: Signal<boolean>;
@@ -53,7 +52,7 @@ export const ProductModifiersService = implementService.withConfig()(
     const modifiers = signalsService.computed(() => {
       const configProduct = productService.product.get();
       return (configProduct?.modifiers || []) as any;
-    }) as unknown as ReadOnlySignal<ConnectedModifier[]>;
+    }) as unknown as ReadOnlySignal<productsV3.ConnectedModifier[]>;
 
     const hasModifiers: ReadOnlySignal<boolean> = signalsService.computed(
       () => {
@@ -129,11 +128,11 @@ export const ProductModifiersService = implementService.withConfig()(
         if (!renderType) return false;
 
         if (
-          renderType === ModifierRenderType.SWATCH_CHOICES ||
-          renderType === ModifierRenderType.TEXT_CHOICES
+          renderType === productsV3.ModifierRenderType.SWATCH_CHOICES ||
+          renderType === productsV3.ModifierRenderType.TEXT_CHOICES
         ) {
           return !!selectedValue.choiceValue;
-        } else if (renderType === ModifierRenderType.FREE_TEXT) {
+        } else if (renderType === productsV3.ModifierRenderType.FREE_TEXT) {
           return (
             !!selectedValue.freeTextValue &&
             selectedValue.freeTextValue.trim() !== ''
@@ -164,7 +163,7 @@ export const ProductModifiersService = implementService.withConfig()(
 );
 
 export function createProductModifiersServiceConfig(
-  product: V3Product
+  product: productsV3.V3Product
 ): ServiceFactoryConfig<typeof ProductModifiersService> {
   return {
     product,

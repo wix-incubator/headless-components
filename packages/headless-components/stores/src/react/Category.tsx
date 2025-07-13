@@ -1,22 +1,17 @@
-import { type Category } from '@wix/auto_sdk_categories_categories';
+import { categories } from '@wix/categories';
 import { useService } from '@wix/services-manager-react';
 import React, { type ReactNode } from 'react';
 import { CategoryServiceDefinition } from '../services/category-service';
 
 // Grid component for displaying filtered products
-export interface CategoryListProps {
+interface CategoryListProps {
   children: (data: {
-    categories: Category[];
+    categories: categories.Category[];
     selectedCategory: string | null;
     setSelectedCategory: (categoryId: string | null) => void;
   }) => ReactNode;
 }
 
-/**
- * Headless component for displaying a list of categories
- *
- * @component
- */
 export const List: React.FC<CategoryListProps> = ({ children }) => {
   const service = useService(CategoryServiceDefinition);
 

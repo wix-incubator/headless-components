@@ -4,20 +4,16 @@ import {
   type ServiceFactoryConfig,
 } from '@wix/services-definitions';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '../../Signal';
+import type { Signal } from '@wix/services-definitions/core-services/signals';
 
-import {
-  searchProducts as searchProductsSDK,
-  type V3Product,
-  type Variant,
-  SortDirection,
-} from '@wix/auto_sdk_stores_products-v-3';
-import { queryVariants } from '@wix/auto_sdk_stores_read-only-variants-v-3';
+import { productsV3, readOnlyVariantsV3 } from '@wix/stores';
 import { FilterServiceDefinition, type Filter } from './filter-service';
 import { CategoryServiceDefinition } from './category-service';
 import { SortServiceDefinition, type SortBy } from './sort-service';
 import { URLParamsUtils } from '../utils/url-params';
 import { SortType } from '../enums/sort-enums';
+
+const { SortDirection } = productsV3;
 
 const searchProducts = async (searchOptions: any) => {
   const searchParams = {
@@ -30,7 +26,7 @@ const searchProducts = async (searchOptions: any) => {
     fields: searchOptions.fields || [],
   };
 
-  const result = await searchProductsSDK(searchParams, options);
+  const result = await productsV3.searchProducts(searchParams, options);
 
   // Fetch missing variants for all products in one batch request
   if (result.products) {
@@ -41,7 +37,7 @@ const searchProducts = async (searchOptions: any) => {
 };
 
 export interface CollectionServiceAPI {
-  products: Signal<V3Product[]>;
+  products: Signal<productsV3.V3Product[]>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
   totalProducts: Signal<number>;
@@ -198,7 +194,7 @@ export const CollectionServiceDefinition =
   defineService<CollectionServiceAPI>('collection');
 
 export const CollectionService = implementService.withConfig<{
-  initialProducts?: V3Product[];
+  initialProducts?: productsV3.V3Product[];
   pageSize?: number;
   initialCursor?: string;
   initialHasMore?: boolean;
@@ -217,7 +213,7 @@ export const CollectionService = implementService.withConfig<{
   const initialProducts = config.initialProducts || [];
 
   // Signal declarations
-  const productsList: Signal<V3Product[]> = signalsService.signal(
+  const productsList: Signal<productsV3.V3Product[]> = signalsService.signal(
     initialProducts as any
   );
   const isLoading: Signal<boolean> = signalsService.signal(false as any);
@@ -230,7 +226,7 @@ export const CollectionService = implementService.withConfig<{
   );
 
   const pageSize = config.pageSize || 12;
-  let allProducts: V3Product[] = initialProducts;
+  let allProducts: productsV3.V3Product[] = initialProducts;
 
   // Debouncing mechanism to prevent multiple simultaneous refreshes
   let refreshTimeout: NodeJS.Timeout | null = null;
@@ -368,7 +364,8 @@ export const CollectionService = implementService.withConfig<{
   };
 
   // Refresh with server-side filtering when any filters change
-  collectionFilters.currentFilters.subscribe(() => {
+  signalsService.effect(() => {
+    collectionFilters.currentFilters.get();
     // Skip refresh during catalog data initialization to prevent double API calls
     if (isInitializingCatalogData) {
       return;
@@ -379,6 +376,7 @@ export const CollectionService = implementService.withConfig<{
 
   // Initialize catalog data when the service starts
   const initializeCatalogData = async () => {
+    isInitializingCatalogData = true; // Set flag BEFORE loading
     const selectedCategory = categoryService.selectedCategory.get();
     await collectionFilters.loadCatalogPriceRange(
       selectedCategory || undefined
@@ -391,13 +389,15 @@ export const CollectionService = implementService.withConfig<{
   // Load catalog data on initialization
   void initializeCatalogData();
 
-  sortService.currentSort.subscribe(() => {
+  signalsService.effect(() => {
+    sortService.currentSort.get();
     debouncedRefresh(false);
   });
 
-  categoryService.selectedCategory.subscribe(() => {
-    debouncedRefresh(true).then(() => {
-      initializeCatalogData();
+  signalsService.effect(() => {
+    categoryService.selectedCategory.get();
+    debouncedRefresh(true).then(async () => {
+      await initializeCatalogData();
     });
   });
 
@@ -416,7 +416,7 @@ export const CollectionService = implementService.withConfig<{
 // Helper function to parse URL parameters
 function parseURLParams(
   searchParams?: URLSearchParams,
-  products: V3Product[] = []
+  products: productsV3.V3Product[] = []
 ) {
   const defaultFilters: Filter = {
     priceRange: { min: 0, max: 0 },
@@ -441,7 +441,7 @@ function parseURLParams(
     recommended: SortType.RECOMMENDED,
   };
   const initialSort =
-    sortMap[urlParams['sort'] as string] || (SortType.NEWEST as SortBy);
+    sortMap[urlParams.sort as string] || (SortType.NEWEST as SortBy);
 
   // Check if there are any filter parameters (excluding sort)
   const filterParams = Object.keys(urlParams).filter(key => key !== 'sort');
@@ -458,12 +458,12 @@ function parseURLParams(
   };
 
   // Apply price filters from URL
-  if (urlParams['minPrice']) {
-    const min = parseFloat(urlParams['minPrice'] as string);
+  if (urlParams.minPrice) {
+    const min = parseFloat(urlParams.minPrice as string);
     if (!isNaN(min)) initialFilters.priceRange.min = min;
   }
-  if (urlParams['maxPrice']) {
-    const max = parseFloat(urlParams['maxPrice'] as string);
+  if (urlParams.maxPrice) {
+    const max = parseFloat(urlParams.maxPrice as string);
     if (!isNaN(max)) initialFilters.priceRange.max = max;
   }
 
@@ -472,10 +472,10 @@ function parseURLParams(
   parseOptionFilters(urlParams, optionsMap, initialFilters);
 
   // Parse inventory filter from 'availability' URL parameter
-  if (urlParams['availability']) {
-    const availabilityValues = Array.isArray(urlParams['availability'])
-      ? urlParams['availability']
-      : [urlParams['availability']];
+  if (urlParams.availability) {
+    const availabilityValues = Array.isArray(urlParams.availability)
+      ? urlParams.availability
+      : [urlParams.availability];
 
     const inventoryStatusValues = availabilityValues.map(value =>
       value.replace(/\s+/g, '_').toUpperCase()
@@ -488,7 +488,7 @@ function parseURLParams(
 }
 
 // Helper function to calculate price range from products
-function calculatePriceRange(products: V3Product[]): {
+function calculatePriceRange(products: productsV3.V3Product[]): {
   min: number;
   max: number;
 } {
@@ -516,7 +516,7 @@ function calculatePriceRange(products: V3Product[]): {
 }
 
 // Helper function to build options map from products
-function buildOptionsMap(products: V3Product[]) {
+function buildOptionsMap(products: productsV3.V3Product[]) {
   const optionsMap = new Map<
     string,
     { id: string; choices: { id: string; name: string }[] }
@@ -637,8 +637,8 @@ export async function loadCollectionServiceConfig(
 
 // Add function to fetch missing variants for all products in one request
 const fetchMissingVariants = async (
-  products: V3Product[]
-): Promise<V3Product[]> => {
+  products: productsV3.V3Product[]
+): Promise<productsV3.V3Product[]> => {
   // Find products that need variants (both single and multi-variant products)
   const productsNeedingVariants = products.filter(
     product =>
@@ -662,7 +662,8 @@ const fetchMissingVariants = async (
 
     const items = [];
 
-    const res = await queryVariants({})
+    const res = await readOnlyVariantsV3
+      .queryVariants({})
       .in('productData.productId', productIds)
       .limit(100)
       .find();
@@ -675,7 +676,7 @@ const fetchMissingVariants = async (
       items.push(...nextRes.items);
     }
 
-    const variantsByProductId = new Map<string, Variant[]>();
+    const variantsByProductId = new Map<string, productsV3.Variant[]>();
 
     items.forEach(item => {
       const productId = item.productData?.productId;
@@ -685,7 +686,7 @@ const fetchMissingVariants = async (
         }
         variantsByProductId.get(productId)!.push({
           ...item,
-          choices: item.optionChoices as Variant['choices'],
+          choices: item.optionChoices as productsV3.Variant['choices'],
         });
       }
     });

@@ -2,10 +2,8 @@ import React from 'react';
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 import { RelatedProductsServiceDefinition } from '../services/related-products-service';
-import {
-  InventoryAvailabilityStatus,
-  type V3Product,
-} from '@wix/auto_sdk_stores_products-v-3';
+import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
+import { productsV3 } from '@wix/stores';
 
 /**
  * Props for List headless component
@@ -20,7 +18,7 @@ export interface ListProps {
  */
 export interface ListRenderProps {
   /** Array of related products */
-  products: V3Product[];
+  products: productsV3.V3Product[];
   /** Whether products are loading */
   isLoading: boolean;
   /** Error message if any */
@@ -33,29 +31,36 @@ export interface ListRenderProps {
 
 /**
  * Headless component for displaying related products list
- *
- * @component
  */
 export const List = (props: ListProps) => {
   const service = useService(RelatedProductsServiceDefinition) as ServiceAPI<
     typeof RelatedProductsServiceDefinition
   >;
+  const signalsService = useService(SignalsServiceDefinition);
 
-  const [products, setProducts] = React.useState<V3Product[]>([]);
+  const [products, setProducts] = React.useState<productsV3.V3Product[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [hasProducts, setHasProducts] = React.useState(false);
 
   React.useEffect(() => {
-    const unsubscribes = [
-      service.relatedProducts.subscribe(setProducts),
-      service.isLoading.subscribe(setIsLoading),
-      service.error.subscribe(setError),
-      service.hasRelatedProducts.subscribe(setHasProducts),
+    const effects = [
+      signalsService.effect(() => {
+        setProducts(service.relatedProducts.get());
+      }),
+      signalsService.effect(() => {
+        setIsLoading(service.isLoading.get());
+      }),
+      signalsService.effect(() => {
+        setError(service.error.get());
+      }),
+      signalsService.effect(() => {
+        setHasProducts(service.hasRelatedProducts.get());
+      }),
     ];
 
-    return () => unsubscribes.forEach(fn => fn());
-  }, [service]);
+    return () => effects.forEach(dispose => dispose());
+  }, [service, signalsService]);
 
   return props.children({
     products,
@@ -71,7 +76,7 @@ export const List = (props: ListProps) => {
  */
 export interface ItemProps {
   /** Product data */
-  product: V3Product;
+  product: productsV3.V3Product;
   /** Render prop function that receives item data */
   children: (props: ItemRenderProps) => React.ReactNode;
 }
@@ -98,8 +103,6 @@ export interface ItemRenderProps {
 
 /**
  * Headless component for individual related product item
- *
- * @component
  */
 export const Item = (props: ItemProps) => {
   const { product } = props;
@@ -112,8 +115,9 @@ export const Item = (props: ItemProps) => {
   const price = rawPrice ? `$${rawPrice}` : 'Price unavailable';
   const availabilityStatus = product.inventory?.availabilityStatus;
   const available =
-    availabilityStatus === InventoryAvailabilityStatus.IN_STOCK ||
-    availabilityStatus === InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
+    availabilityStatus === productsV3.InventoryAvailabilityStatus.IN_STOCK ||
+    availabilityStatus ===
+      productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
   const href = `/store/example-2/${product.slug}`;
   const description =
     typeof product.description === 'string' ? product.description : '';
