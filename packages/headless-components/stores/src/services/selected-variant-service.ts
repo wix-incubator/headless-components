@@ -1,13 +1,10 @@
-import { defineService, implementService } from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type {
-  Signal,
-  ReadOnlySignal,
-} from '@wix/services-definitions/core-services/signals';
-import { productsV3, inventoryItemsV3 } from '@wix/stores';
-import { CurrentCartServiceDefinition } from '../../ecom/services/current-cart-service';
-import { ProductServiceDefinition } from './product-service';
-import { MediaGalleryServiceDefinition } from '../../media/services/media-gallery-service';
+import { defineService, implementService } from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal, ReadOnlySignal } from "../../Signal";
+import { productsV3, inventoryItemsV3 } from "@wix/stores";
+import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
+import { ProductServiceDefinition } from "./product-service";
+import { MediaGalleryServiceDefinition } from "../../media/services/media-gallery-service";
 
 type V3Product = productsV3.V3Product;
 type Variant = productsV3.Variant;
@@ -74,7 +71,7 @@ export interface SelectedVariantServiceConfig {
 }
 
 export const SelectedVariantServiceDefinition =
-  defineService<SelectedVariantServiceAPI>('selectedVariant');
+  defineService<SelectedVariantServiceAPI>("selectedVariant");
 
 export const SelectedVariantService =
   implementService.withConfig<SelectedVariantServiceConfig>()(
@@ -99,8 +96,9 @@ export const SelectedVariantService =
         let mediaToDisplay: productsV3.ProductMedia[] = [];
 
         const productItemsImages =
-          product?.media?.itemsInfo?.items?.map(item => item).filter(Boolean) ??
-          [];
+          product?.media?.itemsInfo?.items
+            ?.map((item) => item)
+            .filter(Boolean) ?? [];
 
         if (productItemsImages.length) {
           mediaToDisplay = productItemsImages;
@@ -111,7 +109,7 @@ export const SelectedVariantService =
         // Get images based on selected choices if available
         let selectedChoicesImages: productsV3.ProductMedia[] = [];
 
-        Object.keys(selectedChoicesValue).forEach(choiceKey => {
+        Object.keys(selectedChoicesValue).forEach((choiceKey) => {
           const productOption = product?.options
             ?.find((option: any) => option.name === choiceKey)
             ?.choicesSettings?.choices?.find(
@@ -160,11 +158,11 @@ export const SelectedVariantService =
         selectedChoices: Record<string, string>
       ): productsV3.Variant | null => {
         return (
-          variants.find(variant => {
+          variants.find((variant) => {
             const variantChoices = processVariantChoices(variant);
             const choiceKeys = Object.keys(selectedChoices);
             return choiceKeys.every(
-              key => variantChoices[key] === selectedChoices[key]
+              (key) => variantChoices[key] === selectedChoices[key]
             );
           }) || null
         );
@@ -184,7 +182,7 @@ export const SelectedVariantService =
           // Use the correct Wix inventoryItemsV3.queryInventoryItems() API
           const queryResult = await inventoryItemsV3
             .queryInventoryItems()
-            .eq('variantId', variantId)
+            .eq("variantId", variantId)
             .find();
 
           const inventoryItem = queryResult.items?.[0];
@@ -206,7 +204,7 @@ export const SelectedVariantService =
             quantityAvailable.set(null);
           }
         } catch (error) {
-          console.error('Failed to fetch inventory quantity:', error);
+          console.error("Failed to fetch inventory quantity:", error);
           // Fallback on error
           quantityAvailable.set(null);
           trackQuantity.set(false);
@@ -259,7 +257,7 @@ export const SelectedVariantService =
         false as any
       );
       const selectedQuantity: Signal<number> = signalsService.signal(1 as any);
-      const productId: Signal<string> = signalsService.signal('' as any);
+      const productId: Signal<string> = signalsService.signal("" as any);
       const ribbonLabel: Signal<string | null> = signalsService.signal(
         null as any
       );
@@ -271,7 +269,7 @@ export const SelectedVariantService =
       const init = (currentProduct: V3Product | null) => {
         if (currentProduct) {
           v3Product.set(currentProduct);
-          productId.set(currentProduct._id || '');
+          productId.set(currentProduct._id || "");
           ribbonLabel.set(currentProduct.ribbon?.name || null);
 
           const actualPrice = currentProduct.actualPriceRange?.minValue?.amount;
@@ -290,7 +288,7 @@ export const SelectedVariantService =
             currentProduct.options.forEach((option: any) => {
               if (option.name && option.choicesSettings?.choices) {
                 optionsMap[option.name] = option.choicesSettings.choices.map(
-                  (choice: any) => choice.name || ''
+                  (choice: any) => choice.name || ""
                 );
               }
             });
@@ -305,7 +303,7 @@ export const SelectedVariantService =
             }
           } else {
             const singleVariant: productsV3.Variant = {
-              _id: 'default',
+              _id: "default",
               visible: true,
               choices: [],
               price: {
@@ -320,7 +318,7 @@ export const SelectedVariantService =
                     productsV3.InventoryAvailabilityStatus
                       .PARTIALLY_OUT_OF_STOCK,
                 preorderEnabled:
-                  currentProduct.inventory?.preorderStatus === 'ENABLED',
+                  currentProduct.inventory?.preorderStatus === "ENABLED",
               },
             };
             variants.set([singleVariant]);
@@ -388,7 +386,7 @@ export const SelectedVariantService =
             rawAmount = prod.actualPriceRange.minValue.amount;
           }
 
-          return rawAmount ? `$${rawAmount}` : '';
+          return rawAmount ? `$${rawAmount}` : "";
         }
       );
 
@@ -444,13 +442,13 @@ export const SelectedVariantService =
 
       const currency: ReadOnlySignal<string> = signalsService.computed(() => {
         const prod = v3Product.get();
-        return prod?.currency || 'USD';
+        return prod?.currency || "USD";
       });
 
       const selectedVariant = (): productsV3.Variant | null => {
         const variantId = selectedVariantId.get();
         const variantsList = variants.get();
-        return variantsList.find(v => v._id === variantId) || null;
+        return variantsList.find((v) => v._id === variantId) || null;
       };
 
       const finalPrice = (): number => {
@@ -484,15 +482,15 @@ export const SelectedVariantService =
           const variant = currentVariant.get();
 
           if (!prod?._id) {
-            throw new Error('Product not found');
+            throw new Error("Product not found");
           }
 
           // Build catalog reference with modifiers if provided
           const catalogReference: any = {
             catalogItemId: prod._id,
-            appId: '215238eb-22a5-4c36-9e7b-e7c08025e04e',
+            appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e",
             options:
-              variant?._id && variant._id !== 'default'
+              variant?._id && variant._id !== "default"
                 ? {
                     variantId: variant._id,
                     preOrderRequested:
@@ -512,7 +510,7 @@ export const SelectedVariantService =
             Object.values(modifiers).forEach((modifierValue: any) => {
               const modifierName = modifierValue.modifierName;
               const productModifier = productModifiers.find(
-                m => m.name === modifierName
+                (m) => m.name === modifierName
               );
 
               if (!productModifier) return;
@@ -568,7 +566,7 @@ export const SelectedVariantService =
           await cartService.addToCart(lineItems);
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : 'Failed to add to cart'
+            err instanceof Error ? err.message : "Failed to add to cart"
           );
         } finally {
           isLoading.set(false);
@@ -583,7 +581,7 @@ export const SelectedVariantService =
 
       const selectVariantById = (id: string) => {
         const variantsList = variants.get();
-        const variant = variantsList.find(v => v._id === id);
+        const variant = variantsList.find((v) => v._id === id);
         if (variant) {
           const variantChoices = processVariantChoices(variant);
           selectedChoices.set(variantChoices);
@@ -627,7 +625,7 @@ export const SelectedVariantService =
         // Get all possible choices for this option that result in valid variants
         const availableChoices = new Set<string>();
 
-        variantsList.forEach(variant => {
+        variantsList.forEach((variant) => {
           const variantChoices = processVariantChoices(variant);
 
           // Check if this variant matches all currently selected choices (except for the option we're checking)
@@ -661,7 +659,7 @@ export const SelectedVariantService =
 
         // Get all variants and find one that matches these choices
         const variantsList = variants.get();
-        const matchingVariants = variantsList.filter(variant => {
+        const matchingVariants = variantsList.filter((variant) => {
           if (!variant.choices) return false;
 
           const variantChoices: Record<string, string> = {};
@@ -684,11 +682,11 @@ export const SelectedVariantService =
         const isAvailable = matchingVariants.length > 0;
         // Check if ANY of the matching variants are in stock
         const isInStock = matchingVariants.some(
-          variant => variant.inventoryStatus?.inStock === true
+          (variant) => variant.inventoryStatus?.inStock === true
         );
         // Check if ANY of the matching variants have pre-order enabled
         const isPreOrderEnabled = matchingVariants.some(
-          variant => variant.inventoryStatus?.preorderEnabled === true
+          (variant) => variant.inventoryStatus?.preorderEnabled === true
         );
 
         return { isAvailable, isInStock, isPreOrderEnabled };
@@ -727,7 +725,7 @@ export const SelectedVariantService =
         // All variants must be out of stock AND none should have preorder enabled
         return (
           variantsList?.every(
-            variant =>
+            (variant) =>
               !variant.inventoryStatus?.inStock &&
               !variant.inventoryStatus?.preorderEnabled
           ) ?? true

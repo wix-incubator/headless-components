@@ -1,12 +1,9 @@
-import { defineService, implementService } from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type {
-  Signal,
-  ReadOnlySignal,
-} from '@wix/services-definitions/core-services/signals';
-import { URLParamsUtils } from '../utils/url-params';
-import { CatalogPriceRangeServiceDefinition } from './catalog-price-range-service';
-import { CatalogOptionsServiceDefinition } from './catalog-options-service';
+import { defineService, implementService } from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal, ReadOnlySignal } from "../../Signal";
+import { URLParamsUtils } from "../utils/url-params";
+import { CatalogPriceRangeServiceDefinition } from "./catalog-price-range-service";
+import { CatalogOptionsServiceDefinition } from "./catalog-options-service";
 
 export interface ProductOption {
   id: string;
@@ -44,7 +41,7 @@ export interface FilterServiceAPI {
 }
 
 export const FilterServiceDefinition = defineService<FilterServiceAPI>(
-  'filtered-collection'
+  "filtered-collection"
 );
 
 export const defaultFilter: Filter = {
@@ -150,17 +147,19 @@ export const FilterService = implementService.withConfig<{
       Object.entries(filters.selectedOptions).forEach(
         ([optionId, choiceIds]) => {
           const option = availableOpts.productOptions.find(
-            opt => opt.id === optionId
+            (opt) => opt.id === optionId
           );
           if (option && choiceIds.length > 0) {
-            const selectedChoices = option.choices.filter(choice =>
+            const selectedChoices = option.choices.filter((choice) =>
               choiceIds.includes(choice.id)
             );
             if (selectedChoices.length > 0) {
               // Use 'availability' as URL param for inventory filter
               const paramName =
-                optionId === 'inventory-filter' ? 'availability' : option.name;
-              urlParams[paramName] = selectedChoices.map(choice => choice.name);
+                optionId === "inventory-filter" ? "availability" : option.name;
+              urlParams[paramName] = selectedChoices.map(
+                (choice) => choice.name
+              );
             }
           }
         }

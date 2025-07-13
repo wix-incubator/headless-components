@@ -1,14 +1,10 @@
-import {
-  defineService,
-  implementService,
-  type ServiceFactoryConfig,
-} from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '@wix/services-definitions/core-services/signals';
+import { defineService, implementService } from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal } from "../../Signal";
 import {
   SocialPlatform,
   SocialPlatformShareUrl,
-} from '../enums/social-platform-enums';
+} from "../enums/social-platform-enums";
 
 export interface SharingPlatform {
   name: string;
@@ -37,7 +33,7 @@ export interface SocialSharingServiceAPI {
 }
 
 export const SocialSharingServiceDefinition =
-  defineService<SocialSharingServiceAPI>('socialSharing');
+  defineService<SocialSharingServiceAPI>("socialSharing");
 
 export const SocialSharingService = implementService.withConfig<{}>()(
   SocialSharingServiceDefinition,
@@ -48,33 +44,33 @@ export const SocialSharingService = implementService.withConfig<{}>()(
     const availablePlatforms: Signal<SharingPlatform[]> = signalsService.signal(
       [
         {
-          name: 'Facebook',
-          icon: 'facebook',
-          color: '#1877F2',
+          name: "Facebook",
+          icon: "facebook",
+          color: "#1877F2",
           shareUrl: SocialPlatformShareUrl.FACEBOOK as string,
         },
         {
-          name: 'Twitter',
-          icon: 'twitter',
-          color: '#1DA1F2',
+          name: "Twitter",
+          icon: "twitter",
+          color: "#1DA1F2",
           shareUrl: SocialPlatformShareUrl.TWITTER as string,
         },
         {
-          name: 'LinkedIn',
-          icon: 'linkedin',
-          color: '#0A66C2',
+          name: "LinkedIn",
+          icon: "linkedin",
+          color: "#0A66C2",
           shareUrl: SocialPlatformShareUrl.LINKEDIN as string,
         },
         {
-          name: 'WhatsApp',
-          icon: 'whatsapp',
-          color: '#25D366',
+          name: "WhatsApp",
+          icon: "whatsapp",
+          color: "#25D366",
           shareUrl: SocialPlatformShareUrl.WHATSAPP as string,
         },
         {
-          name: 'Email',
-          icon: 'mail',
-          color: '#EA4335',
+          name: "Email",
+          icon: "mail",
+          color: "#EA4335",
           shareUrl: SocialPlatformShareUrl.EMAIL as string,
         },
       ]
@@ -106,10 +102,10 @@ export const SocialSharingService = implementService.withConfig<{}>()(
       description?: string
     ) => {
       const shareUrl = new URL(SocialPlatformShareUrl.FACEBOOK);
-      shareUrl.searchParams.set('u', url);
+      shareUrl.searchParams.set("u", url);
       shareUrl.searchParams.set(
-        'quote',
-        `${title}${description ? ` - ${description}` : ''}`
+        "quote",
+        `${title}${description ? ` - ${description}` : ""}`
       );
 
       openShareWindow(shareUrl.toString(), SocialPlatform.FACEBOOK);
@@ -117,10 +113,10 @@ export const SocialSharingService = implementService.withConfig<{}>()(
 
     const shareToTwitter = (url: string, text: string, hashtags?: string[]) => {
       const shareUrl = new URL(SocialPlatformShareUrl.TWITTER);
-      shareUrl.searchParams.set('url', url);
-      shareUrl.searchParams.set('text', text);
+      shareUrl.searchParams.set("url", url);
+      shareUrl.searchParams.set("text", text);
       if (hashtags && hashtags.length > 0) {
-        shareUrl.searchParams.set('hashtags', hashtags.join(','));
+        shareUrl.searchParams.set("hashtags", hashtags.join(","));
       }
 
       openShareWindow(shareUrl.toString(), SocialPlatform.TWITTER);
@@ -128,10 +124,10 @@ export const SocialSharingService = implementService.withConfig<{}>()(
 
     const shareToLinkedIn = (url: string, title: string, summary?: string) => {
       const shareUrl = new URL(SocialPlatformShareUrl.LINKEDIN);
-      shareUrl.searchParams.set('url', url);
-      shareUrl.searchParams.set('title', title);
+      shareUrl.searchParams.set("url", url);
+      shareUrl.searchParams.set("title", title);
       if (summary) {
-        shareUrl.searchParams.set('summary', summary);
+        shareUrl.searchParams.set("summary", summary);
       }
 
       openShareWindow(shareUrl.toString(), SocialPlatform.LINKEDIN);
@@ -139,16 +135,20 @@ export const SocialSharingService = implementService.withConfig<{}>()(
 
     const shareToWhatsApp = (url: string, text: string) => {
       const message = `${text} ${url}`;
-      const shareUrl = `${SocialPlatformShareUrl.WHATSAPP}?text=${encodeURIComponent(message)}`;
+      const shareUrl = `${
+        SocialPlatformShareUrl.WHATSAPP
+      }?text=${encodeURIComponent(message)}`;
 
       openShareWindow(shareUrl, SocialPlatform.WHATSAPP);
     };
 
     const shareToEmail = (url: string, subject: string, body: string) => {
       const emailBody = `${body}\n\n${url}`;
-      const mailtoUrl = `${SocialPlatformShareUrl.EMAIL}?subject=${encodeURIComponent(
-        subject
-      )}&body=${encodeURIComponent(emailBody)}`;
+      const mailtoUrl = `${
+        SocialPlatformShareUrl.EMAIL
+      }?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+        emailBody
+      )}`;
 
       window.location.href = mailtoUrl;
       trackShare(SocialPlatform.EMAIL);
@@ -160,7 +160,7 @@ export const SocialSharingService = implementService.withConfig<{}>()(
         trackShare(SocialPlatform.CLIPBOARD);
         return true;
       } catch (err) {
-        console.error('Failed to copy to clipboard:', err);
+        console.error("Failed to copy to clipboard:", err);
         return false;
       }
     };
@@ -178,7 +178,7 @@ export const SocialSharingService = implementService.withConfig<{}>()(
         }
         return false;
       } catch (err) {
-        console.error('Failed to share natively:', err);
+        console.error("Failed to share natively:", err);
         return false;
       }
     };

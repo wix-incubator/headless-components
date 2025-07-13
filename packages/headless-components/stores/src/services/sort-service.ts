@@ -1,8 +1,8 @@
-import { defineService, implementService } from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '@wix/services-definitions/core-services/signals';
-import { URLParamsUtils } from '../utils/url-params';
-import { SortType, DEFAULT_SORT_TYPE } from '../enums/sort-enums';
+import { defineService, implementService } from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal } from "../../Signal";
+import { URLParamsUtils } from "../utils/url-params";
+import { SortType, DEFAULT_SORT_TYPE } from "../enums/sort-enums";
 
 export type SortBy = SortType;
 
@@ -11,7 +11,7 @@ export interface SortServiceAPI {
   setSortBy: (sortBy: SortBy) => Promise<void>;
 }
 
-export const SortServiceDefinition = defineService<SortServiceAPI>('sort');
+export const SortServiceDefinition = defineService<SortServiceAPI>("sort");
 
 export const defaultSort: SortBy = DEFAULT_SORT_TYPE;
 

@@ -2,10 +2,10 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-} from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '@wix/services-definitions/core-services/signals';
-import { productsV3, customizationsV3 } from '@wix/stores';
+} from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal } from "../../Signal";
+import { productsV3, customizationsV3 } from "@wix/stores";
 
 const { SortDirection, SortType: SDKSortType } = productsV3;
 
@@ -47,7 +47,7 @@ const matchesAggregationName = (
   aggregationNames: string[]
 ): boolean => {
   return aggregationNames.some(
-    aggName => aggName.toLowerCase() === name.toLowerCase()
+    (aggName) => aggName.toLowerCase() === name.toLowerCase()
   );
 };
 
@@ -75,14 +75,14 @@ const buildCategoryFilter = (categoryId?: string) => {
 
   return {
     visible: true,
-    'allCategoriesInfo.categories': {
+    "allCategoriesInfo.categories": {
       $matchItems: [{ _id: { $in: [categoryId] } }],
     },
   };
 };
 
 export const CatalogOptionsServiceDefinition =
-  defineService<CatalogOptionsServiceAPI>('catalogOptions');
+  defineService<CatalogOptionsServiceAPI>("catalogOptions");
 
 export const CatalogOptionsService = implementService.withConfig<{}>()(
   CatalogOptionsServiceDefinition,
@@ -103,8 +103,8 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
         const aggregationRequest = {
           aggregations: [
             {
-              name: 'optionNames',
-              fieldPath: 'options.name',
+              name: "optionNames",
+              fieldPath: "options.name",
               type: SDKSortType.VALUE,
               value: {
                 limit: 20,
@@ -113,8 +113,8 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
               },
             },
             {
-              name: 'choiceNames',
-              fieldPath: 'options.choicesSettings.choices.name',
+              name: "choiceNames",
+              fieldPath: "options.choicesSettings.choices.name",
               type: SDKSortType.VALUE,
               value: {
                 limit: 50,
@@ -123,8 +123,8 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
               },
             },
             {
-              name: 'inventoryStatus',
-              fieldPath: 'inventory.availabilityStatus',
+              name: "inventoryStatus",
+              fieldPath: "inventory.availabilityStatus",
               type: SDKSortType.VALUE,
               value: {
                 limit: 10,
@@ -144,15 +144,15 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
 
         const optionNames = extractAggregationValues(
           aggregationResponse,
-          'optionNames'
+          "optionNames"
         );
         const choiceNames = extractAggregationValues(
           aggregationResponse,
-          'choiceNames'
+          "choiceNames"
         );
         const inventoryStatuses = extractAggregationValues(
           aggregationResponse,
-          'inventoryStatus'
+          "inventoryStatus"
         );
 
         // Step 2: Get option structure from customizations API
@@ -164,24 +164,24 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
         // Step 3: Build options by matching customizations with aggregation data
         const options: ProductOption[] = customizations
           .filter(
-            customization =>
+            (customization) =>
               customization.name &&
               customization._id &&
               customization.customizationType ===
                 customizationsV3.CustomizationType.PRODUCT_OPTION &&
               matchesAggregationName(customization.name, optionNames)
           )
-          .map(customization => {
+          .map((customization) => {
             const choices: ProductChoice[] = (
               customization.choicesSettings?.choices || []
             )
               .filter(
-                choice =>
+                (choice) =>
                   choice._id &&
                   choice.name &&
                   matchesAggregationName(choice.name, choiceNames)
               )
-              .map(choice => ({
+              .map((choice) => ({
                 id: choice._id!,
                 name: choice.name!,
                 colorCode: choice.colorCode,
@@ -194,20 +194,20 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
               optionRenderType: customization.customizationRenderType,
             };
           })
-          .filter(option => option.choices.length > 0);
+          .filter((option) => option.choices.length > 0);
 
         // Step 4: Add inventory filter if there are multiple inventory statuses
         if (inventoryStatuses.length > 1) {
           const inventoryChoices: ProductChoice[] = inventoryStatuses.map(
-            status => ({
+            (status) => ({
               id: status.toUpperCase(), // Use uppercase to match actual availabilityStatus values
               name: status.toUpperCase(), // Use raw status value - UI components will handle display conversion
             })
           );
 
           options.push({
-            id: 'inventory-filter',
-            name: 'Availability',
+            id: "inventory-filter",
+            name: "Availability",
             choices: inventoryChoices,
             optionRenderType: productsV3.ModifierRenderType.TEXT_CHOICES,
           });
@@ -215,9 +215,9 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
 
         catalogOptions.set(options);
       } catch (err) {
-        console.error('Failed to load catalog options:', err);
+        console.error("Failed to load catalog options:", err);
         error.set(
-          err instanceof Error ? err.message : 'Failed to load catalog options'
+          err instanceof Error ? err.message : "Failed to load catalog options"
         );
         catalogOptions.set([]);
       } finally {

@@ -2,14 +2,11 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-} from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type {
-  Signal,
-  ReadOnlySignal,
-} from '@wix/services-definitions/core-services/signals';
-import { productsV3 } from '@wix/stores';
-import { ProductServiceDefinition } from './product-service';
+} from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal, ReadOnlySignal } from "../../Signal";
+import { productsV3 } from "@wix/stores";
+import { ProductServiceDefinition } from "./product-service";
 
 export interface ModifierValue {
   modifierName: string;
@@ -35,7 +32,7 @@ export interface ProductModifiersServiceAPI {
 }
 
 export const ProductModifiersServiceDefinition =
-  defineService<ProductModifiersServiceAPI>('productModifiers');
+  defineService<ProductModifiersServiceAPI>("productModifiers");
 
 export const ProductModifiersService = implementService.withConfig()(
   ProductModifiersServiceDefinition,
@@ -104,23 +101,23 @@ export const ProductModifiersService = implementService.withConfig()(
 
     const isModifierRequired = (modifierName: string): boolean => {
       const mods = modifiers.get();
-      const modifier = mods.find(m => m.name === modifierName);
+      const modifier = mods.find((m) => m.name === modifierName);
       return modifier?.mandatory || false;
     };
 
     const hasRequiredModifiers = (): boolean => {
       const mods = modifiers.get();
-      return mods.some(m => m.mandatory);
+      return mods.some((m) => m.mandatory);
     };
 
     const areAllRequiredModifiersFilled = (): boolean => {
       const mods = modifiers.get();
       const current = selectedModifiers.get();
 
-      return mods.every(modifier => {
+      return mods.every((modifier) => {
         if (!modifier.mandatory) return true;
 
-        const selectedValue = current[modifier.name || ''];
+        const selectedValue = current[modifier.name || ""];
         if (!selectedValue) return false;
 
         // Check based on modifier type
@@ -135,7 +132,7 @@ export const ProductModifiersService = implementService.withConfig()(
         } else if (renderType === productsV3.ModifierRenderType.FREE_TEXT) {
           return (
             !!selectedValue.freeTextValue &&
-            selectedValue.freeTextValue.trim() !== ''
+            selectedValue.freeTextValue.trim() !== ""
           );
         }
 

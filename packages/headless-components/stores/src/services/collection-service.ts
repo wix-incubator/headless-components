@@ -2,16 +2,16 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-} from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import type { Signal } from '@wix/services-definitions/core-services/signals';
+} from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal } from "../../Signal";
 
-import { productsV3, readOnlyVariantsV3 } from '@wix/stores';
-import { FilterServiceDefinition, type Filter } from './filter-service';
-import { CategoryServiceDefinition } from './category-service';
-import { SortServiceDefinition, type SortBy } from './sort-service';
-import { URLParamsUtils } from '../utils/url-params';
-import { SortType } from '../enums/sort-enums';
+import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
+import { FilterServiceDefinition, type Filter } from "./filter-service";
+import { CategoryServiceDefinition } from "./category-service";
+import { SortServiceDefinition, type SortBy } from "./sort-service";
+import { URLParamsUtils } from "../utils/url-params";
+import { SortType } from "../enums/sort-enums";
 
 const { SortDirection } = productsV3;
 
@@ -56,16 +56,16 @@ const buildSearchOptions = (
   const searchOptions: any = {
     search: {},
     fields: [
-      'DESCRIPTION' as any,
-      'DIRECT_CATEGORIES_INFO' as any,
-      'BREADCRUMBS_INFO' as any,
-      'INFO_SECTION' as any,
-      'MEDIA_ITEMS_INFO' as any,
-      'PLAIN_DESCRIPTION' as any,
-      'THUMBNAIL' as any,
-      'URL' as any,
-      'VARIANT_OPTION_CHOICE_NAMES' as any,
-      'WEIGHT_MEASUREMENT_UNIT_INFO' as any,
+      "DESCRIPTION" as any,
+      "DIRECT_CATEGORIES_INFO" as any,
+      "BREADCRUMBS_INFO" as any,
+      "INFO_SECTION" as any,
+      "MEDIA_ITEMS_INFO" as any,
+      "PLAIN_DESCRIPTION" as any,
+      "THUMBNAIL" as any,
+      "URL" as any,
+      "VARIANT_OPTION_CHOICE_NAMES" as any,
+      "WEIGHT_MEASUREMENT_UNIT_INFO" as any,
     ],
   };
 
@@ -75,7 +75,7 @@ const buildSearchOptions = (
   // Add category filter if selected
   if (selectedCategory) {
     filterConditions.push({
-      'allCategoriesInfo.categories': {
+      "allCategoriesInfo.categories": {
         $matchItems: [
           {
             id: {
@@ -92,12 +92,12 @@ const buildSearchOptions = (
     const { min, max } = filters.priceRange;
     if (min > 0) {
       filterConditions.push({
-        'actualPriceRange.minValue.amount': { $gte: min.toString() },
+        "actualPriceRange.minValue.amount": { $gte: min.toString() },
       });
     }
     if (max > 0 && max < 999999) {
       filterConditions.push({
-        'actualPriceRange.maxValue.amount': { $lte: max.toString() },
+        "actualPriceRange.maxValue.amount": { $lte: max.toString() },
       });
     }
   }
@@ -112,16 +112,16 @@ const buildSearchOptions = (
     )) {
       if (choiceIds.length > 0) {
         // Handle inventory filter separately
-        if (optionId === 'inventory-filter') {
+        if (optionId === "inventory-filter") {
           filterConditions.push({
-            'inventory.availabilityStatus': {
+            "inventory.availabilityStatus": {
               $in: choiceIds,
             },
           });
         } else {
           // Regular product options filter
           filterConditions.push({
-            'options.choicesSettings.choices.choiceId': {
+            "options.choicesSettings.choices.choiceId": {
               $hasSome: choiceIds,
             },
           });
@@ -148,18 +148,18 @@ const buildSearchOptions = (
     switch (sortBy) {
       case SortType.NAME_ASC:
         searchOptions.search.sort = [
-          { fieldName: 'name', order: SortDirection.ASC },
+          { fieldName: "name", order: SortDirection.ASC },
         ];
         break;
       case SortType.NAME_DESC:
         searchOptions.search.sort = [
-          { fieldName: 'name', order: SortDirection.DESC },
+          { fieldName: "name", order: SortDirection.DESC },
         ];
         break;
       case SortType.PRICE_ASC:
         searchOptions.search.sort = [
           {
-            fieldName: 'actualPriceRange.minValue.amount',
+            fieldName: "actualPriceRange.minValue.amount",
             order: SortDirection.ASC,
           },
         ];
@@ -167,7 +167,7 @@ const buildSearchOptions = (
       case SortType.PRICE_DESC:
         searchOptions.search.sort = [
           {
-            fieldName: 'actualPriceRange.minValue.amount',
+            fieldName: "actualPriceRange.minValue.amount",
             order: SortDirection.DESC,
           },
         ];
@@ -175,10 +175,10 @@ const buildSearchOptions = (
       case SortType.RECOMMENDED:
         searchOptions.search.sort = [
           {
-            fieldName: 'allCategoriesInfo.categories.index',
+            fieldName: "allCategoriesInfo.categories.index",
             selectItemsBy: [
               {
-                'allCategoriesInfo.categories.id': selectedCategory,
+                "allCategoriesInfo.categories.id": selectedCategory,
               },
             ],
           },
@@ -191,7 +191,7 @@ const buildSearchOptions = (
 };
 
 export const CollectionServiceDefinition =
-  defineService<CollectionServiceAPI>('collection');
+  defineService<CollectionServiceAPI>("collection");
 
 export const CollectionService = implementService.withConfig<{
   initialProducts?: productsV3.V3Product[];
@@ -276,7 +276,7 @@ export const CollectionService = implementService.withConfig<{
       hasProducts.set(currentProducts.length + additionalProducts.length > 0);
     } catch (err) {
       error.set(
-        err instanceof Error ? err.message : 'Failed to load more products'
+        err instanceof Error ? err.message : "Failed to load more products"
       );
     } finally {
       isLoading.set(false);
@@ -339,7 +339,7 @@ export const CollectionService = implementService.withConfig<{
       hasProducts.set(allProducts.length > 0);
     } catch (err) {
       error.set(
-        err instanceof Error ? err.message : 'Failed to refresh products'
+        err instanceof Error ? err.message : "Failed to refresh products"
       );
     } finally {
       isLoading.set(false);
@@ -355,7 +355,7 @@ export const CollectionService = implementService.withConfig<{
       clearTimeout(refreshTimeout);
     }
 
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       refreshTimeout = setTimeout(async () => {
         await refresh(setTotalProducts);
         resolve();
@@ -444,7 +444,7 @@ function parseURLParams(
     sortMap[urlParams.sort as string] || (SortType.NEWEST as SortBy);
 
   // Check if there are any filter parameters (excluding sort)
-  const filterParams = Object.keys(urlParams).filter(key => key !== 'sort');
+  const filterParams = Object.keys(urlParams).filter((key) => key !== "sort");
 
   if (filterParams.length === 0 || products.length === 0) {
     return { initialSort, initialFilters: defaultFilters };
@@ -477,11 +477,11 @@ function parseURLParams(
       ? urlParams.availability
       : [urlParams.availability];
 
-    const inventoryStatusValues = availabilityValues.map(value =>
-      value.replace(/\s+/g, '_').toUpperCase()
+    const inventoryStatusValues = availabilityValues.map((value) =>
+      value.replace(/\s+/g, "_").toUpperCase()
     );
 
-    initialFilters.selectedOptions['inventory-filter'] = inventoryStatusValues;
+    initialFilters.selectedOptions["inventory-filter"] = inventoryStatusValues;
   }
 
   return { initialSort, initialFilters };
@@ -499,9 +499,9 @@ function calculatePriceRange(products: productsV3.V3Product[]): {
   let minPrice = Infinity;
   let maxPrice = 0;
 
-  products.forEach(product => {
-    const min = parseFloat(product.actualPriceRange?.minValue?.amount || '0');
-    const max = parseFloat(product.actualPriceRange?.maxValue?.amount || '0');
+  products.forEach((product) => {
+    const min = parseFloat(product.actualPriceRange?.minValue?.amount || "0");
+    const max = parseFloat(product.actualPriceRange?.maxValue?.amount || "0");
     if (min > 0) minPrice = Math.min(minPrice, min);
     if (max > 0) maxPrice = Math.max(maxPrice, max);
   });
@@ -522,8 +522,8 @@ function buildOptionsMap(products: productsV3.V3Product[]) {
     { id: string; choices: { id: string; name: string }[] }
   >();
 
-  products.forEach(product => {
-    product.options?.forEach(option => {
+  products.forEach((product) => {
+    product.options?.forEach((option) => {
       if (!option._id || !option.name) return;
 
       if (!optionsMap.has(option.name)) {
@@ -531,11 +531,11 @@ function buildOptionsMap(products: productsV3.V3Product[]) {
       }
 
       const optionData = optionsMap.get(option.name)!;
-      option.choicesSettings?.choices?.forEach(choice => {
+      option.choicesSettings?.choices?.forEach((choice) => {
         if (
           choice.choiceId &&
           choice.name &&
-          !optionData.choices.find(c => c.id === choice.choiceId)
+          !optionData.choices.find((c) => c.id === choice.choiceId)
         ) {
           optionData.choices.push({ id: choice.choiceId, name: choice.name });
         }
@@ -556,17 +556,17 @@ function parseOptionFilters(
   filters: Filter
 ) {
   Object.entries(urlParams).forEach(([key, value]) => {
-    if (['sort', 'minPrice', 'maxPrice'].includes(key)) return;
+    if (["sort", "minPrice", "maxPrice"].includes(key)) return;
 
     const option = optionsMap.get(key);
     if (option) {
       const values = Array.isArray(value) ? value : [value];
-      const matchingChoices = option.choices.filter(choice =>
+      const matchingChoices = option.choices.filter((choice) =>
         values.includes(choice.name)
       );
 
       if (matchingChoices.length > 0) {
-        filters.selectedOptions[option.id] = matchingChoices.map(c => c.id);
+        filters.selectedOptions[option.id] = matchingChoices.map((c) => c.id);
       }
     }
   });
@@ -590,7 +590,7 @@ export async function loadCollectionServiceConfig(
     if (preloadedCategories) {
       categories = preloadedCategories;
     } else {
-      const { loadCategoriesConfig } = await import('./category-service');
+      const { loadCategoriesConfig } = await import("./category-service");
       const categoriesConfig = await loadCategoriesConfig();
       categories = categoriesConfig.categories;
     }
@@ -622,7 +622,7 @@ export async function loadCollectionServiceConfig(
       categories,
     };
   } catch (error) {
-    console.warn('Failed to load initial products:', error);
+    console.warn("Failed to load initial products:", error);
     const { initialSort, initialFilters } = parseURLParams(searchParams);
     return {
       initialProducts: [],
@@ -641,7 +641,7 @@ const fetchMissingVariants = async (
 ): Promise<productsV3.V3Product[]> => {
   // Find products that need variants (both single and multi-variant products)
   const productsNeedingVariants = products.filter(
-    product =>
+    (product) =>
       !product.variantsInfo?.variants &&
       product.variantSummary?.variantCount &&
       product.variantSummary.variantCount > 0
@@ -653,7 +653,7 @@ const fetchMissingVariants = async (
 
   try {
     const productIds = productsNeedingVariants
-      .map(p => p._id)
+      .map((p) => p._id)
       .filter(Boolean) as string[];
 
     if (productIds.length === 0) {
@@ -664,7 +664,7 @@ const fetchMissingVariants = async (
 
     const res = await readOnlyVariantsV3
       .queryVariants({})
-      .in('productData.productId', productIds)
+      .in("productData.productId", productIds)
       .limit(100)
       .find();
 
@@ -678,7 +678,7 @@ const fetchMissingVariants = async (
 
     const variantsByProductId = new Map<string, productsV3.Variant[]>();
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const productId = item.productData?.productId;
       if (productId) {
         if (!variantsByProductId.has(productId)) {
@@ -686,14 +686,14 @@ const fetchMissingVariants = async (
         }
         variantsByProductId.get(productId)!.push({
           ...item,
-          choices: item.optionChoices as productsV3.Variant['choices'],
+          choices: item.optionChoices as productsV3.Variant["choices"],
         });
       }
     });
 
     // Update products with their variants
-    return products.map(product => {
-      const variants = variantsByProductId.get(product._id || '');
+    return products.map((product) => {
+      const variants = variantsByProductId.get(product._id || "");
       if (variants && variants.length > 0) {
         return {
           ...product,
@@ -706,7 +706,7 @@ const fetchMissingVariants = async (
       return product;
     });
   } catch (error) {
-    console.error('Failed to fetch missing variants:', error);
+    console.error("Failed to fetch missing variants:", error);
     return products;
   }
 };

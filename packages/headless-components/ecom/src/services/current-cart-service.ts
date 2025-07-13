@@ -2,16 +2,13 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-  type Signal,
-  type ReadOnlySignal,
 } from "@wix/services-definitions";
-
+import type { Signal, ReadOnlySignal } from "../../Signal";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import { currentCart, checkout } from "@wix/ecom";
 import { redirects } from "@wix/redirects";
 
 export interface CurrentCartServiceAPI {
-  // @ts-ignore
   cart: Signal<currentCart.Cart | null>;
   isOpen: Signal<boolean>;
   isLoading: Signal<boolean>;
