@@ -1,6 +1,6 @@
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
-import { CollectionServiceDefinition } from "../services/collection-service";
+import { CollectionServiceDefinition } from "../services/collection-service.js";
 import {
   InventoryAvailabilityStatus,
   type V3Product,

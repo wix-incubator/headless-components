@@ -7,13 +7,18 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { getCheckoutUrlForProduct } from "../utils";
+import { getCheckoutUrlForProduct } from "../utils/index.js";
 import { getProductBySlug } from "@wix/auto_sdk_stores_products-v-3";
 
 export const BuyNowServiceDefinition = defineService<{
   redirectToCheckout: () => Promise<void>;
   loadingSignal: Signal<boolean>;
   errorSignal: Signal<string | null>;
+  inStockSignal: Signal<boolean>;
+  preOrderAvailableSignal: Signal<boolean>;
+  productName: string;
+  price: string;
+  currency: string;
 }>("BuyNow");
 
 export const BuyNowServiceImplementation = implementService.withConfig<{

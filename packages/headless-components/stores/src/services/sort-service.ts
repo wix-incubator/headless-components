@@ -3,8 +3,8 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { URLParamsUtils } from "../utils/url-params";
-import { SortType, DEFAULT_SORT_TYPE } from "../enums/sort-enums";
+import { URLParamsUtils } from "../utils/url-params.js";
+import { SortType, DEFAULT_SORT_TYPE } from "../enums/sort-enums.js";
 
 export type SortBy = SortType;
 

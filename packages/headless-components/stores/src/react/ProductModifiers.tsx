@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
-import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service";
+import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
 import {
   ModifierRenderType,
   type ConnectedModifier,

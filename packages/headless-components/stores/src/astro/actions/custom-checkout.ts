@@ -4,7 +4,7 @@ import { defineAction } from "astro:actions";
 import {
   getCustomLineItemCheckoutURLFactory,
   type CustomLineItemCheckoutOptions,
-} from "@wix/headless-stores/server-actions";
+} from "../../server-actions/index.js";
 
 /**
  * Creates an Astro action factory for custom checkout functionality with line items.

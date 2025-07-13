@@ -1,6 +1,5 @@
 import { useService } from "@wix/services-manager-react";
-import { PayNowServiceDefinition } from "../services/pay-now-service";
-
+import { PayNowServiceDefinition } from "../services/pay-now-service.js";
 
 /**
  * Props passed to the render function of the PayNow component
@@ -12,7 +11,7 @@ export interface PayNowRenderProps {
   redirectToCheckout: () => void;
   /** The error message if the buy now operation fails */
   error: string | null;
-};
+}
 
 /**
  * Props for the PayNow component
@@ -20,7 +19,7 @@ export interface PayNowRenderProps {
 export interface PayNowProps {
   /** Render function that receives buy now state and actions */
   children: (props: PayNowRenderProps) => React.ReactNode;
-};
+}
 
 /**
  * A headless component that provides pay now functionality using the render props pattern.
@@ -46,11 +45,9 @@ export interface PayNowProps {
  * @component
  */
 export function PayNow(props: PayNowProps): React.ReactNode {
-  const {
-    redirectToCheckout,
-    loadingSignal,
-    errorSignal,
-  } = useService(PayNowServiceDefinition);
+  const { redirectToCheckout, loadingSignal, errorSignal } = useService(
+    PayNowServiceDefinition
+  );
 
   return props.children({
     isLoading: loadingSignal.get(),

@@ -4,7 +4,7 @@ import { useService } from "@wix/services-manager-react";
 import {
   SocialSharingServiceDefinition,
   type SharingPlatform,
-} from "../services/social-sharing-service";
+} from "../services/social-sharing-service.js";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 
 /**

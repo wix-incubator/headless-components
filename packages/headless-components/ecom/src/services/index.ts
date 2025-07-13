@@ -2,4 +2,4 @@ export {
   CurrentCartService,
   CurrentCartServiceDefinition,
   loadCurrentCartServiceConfig,
-} from "./current-cart-service";
+} from "./current-cart-service.js";

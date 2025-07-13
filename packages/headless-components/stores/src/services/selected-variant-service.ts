@@ -7,7 +7,7 @@ import {
 import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 import * as inventoryItemsV3 from "@wix/auto_sdk_stores_inventory-items-v-3";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
-import { ProductServiceDefinition } from "./product-service";
+import { ProductServiceDefinition } from "./product-service.js";
 import { MediaGalleryServiceDefinition } from "@wix/headless-media/services";
 
 type V3Product = productsV3.V3Product;
@@ -101,7 +101,7 @@ export const SelectedVariantService =
 
         const productItemsImages =
           product?.media?.itemsInfo?.items
-            ?.map((item) => item)
+            ?.map((item: any) => item)
             .filter(Boolean) ?? [];
 
         if (productItemsImages.length) {
