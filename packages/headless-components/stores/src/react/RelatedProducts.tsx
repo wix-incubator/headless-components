@@ -1,7 +1,7 @@
 import React from "react";
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
-import { RelatedProductsServiceDefinition } from "../services/related-products-service";
+import { RelatedProductsServiceDefinition } from "../services/related-products-service.js";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import {
   InventoryAvailabilityStatus,

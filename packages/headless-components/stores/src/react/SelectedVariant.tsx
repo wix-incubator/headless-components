@@ -1,6 +1,6 @@
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
-import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
+import { SelectedVariantServiceDefinition } from "../services/selected-variant-service.js";
 
 /**
  * Props for ProductDetails headless component

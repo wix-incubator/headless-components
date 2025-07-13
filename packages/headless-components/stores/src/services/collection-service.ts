@@ -9,11 +9,11 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 import * as readOnlyVariantsV3 from "@wix/auto_sdk_stores_read-only-variants-v-3";
-import { FilterServiceDefinition, type Filter } from "./filter-service";
-import { CategoryServiceDefinition } from "./category-service";
-import { SortServiceDefinition, type SortBy } from "./sort-service";
-import { URLParamsUtils } from "../utils/url-params";
-import { SortType } from "../enums/sort-enums";
+import { FilterServiceDefinition, type Filter } from "./filter-service.js";
+import { CategoryServiceDefinition } from "./category-service.js";
+import { SortServiceDefinition, type SortBy } from "./sort-service.js";
+import { URLParamsUtils } from "../utils/url-params.js";
+import { SortType } from "../enums/sort-enums.js";
 
 const { SortDirection } = productsV3;
 
@@ -112,7 +112,7 @@ const buildSearchOptions = (
     for (const [optionId, choiceIds] of Object.entries(
       filters.selectedOptions
     )) {
-      if (choiceIds.length > 0) {
+      if (choiceIds && choiceIds.length > 0) {
         // Handle inventory filter separately
         if (optionId === "inventory-filter") {
           filterConditions.push({
@@ -592,7 +592,7 @@ export async function loadCollectionServiceConfig(
     if (preloadedCategories) {
       categories = preloadedCategories;
     } else {
-      const { loadCategoriesConfig } = await import("./category-service");
+      const { loadCategoriesConfig } = await import("./category-service.js");
       const categoriesConfig = await loadCategoriesConfig();
       categories = categoriesConfig.categories;
     }

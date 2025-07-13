@@ -1,7 +1,7 @@
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
-import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
-import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service";
+import { SelectedVariantServiceDefinition } from "../services/selected-variant-service.js";
+import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 
 /**

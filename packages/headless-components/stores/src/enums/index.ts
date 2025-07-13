@@ -1,2 +1,2 @@
-export * from './sort-enums';
-export * from './social-platform-enums';
+export * from "./sort-enums.js";
+export * from "./social-platform-enums.js";

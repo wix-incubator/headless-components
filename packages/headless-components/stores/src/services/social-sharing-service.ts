@@ -6,7 +6,7 @@ import {
 import {
   SocialPlatform,
   SocialPlatformShareUrl,
-} from "../enums/social-platform-enums";
+} from "../enums/social-platform-enums.js";
 
 export interface SharingPlatform {
   name: string;

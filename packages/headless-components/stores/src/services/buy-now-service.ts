@@ -7,7 +7,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { getCheckoutUrlForProduct } from "../utils";
+import { getCheckoutUrlForProduct } from "../utils/index.js";
 import { getProductBySlug } from "@wix/auto_sdk_stores_products-v-3";
 
 export const BuyNowServiceDefinition = defineService<{

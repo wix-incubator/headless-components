@@ -1,12 +1,12 @@
 import { useService } from "@wix/services-manager-react";
 import React, { type ReactNode } from "react";
-import { CollectionServiceDefinition } from "../services/collection-service";
+import { CollectionServiceDefinition } from "../services/collection-service.js";
 import {
   FilterServiceDefinition,
   type AvailableOptions,
   type FilterServiceAPI,
   type Filter,
-} from "../services/filter-service";
+} from "../services/filter-service.js";
 import {
   InventoryAvailabilityStatus,
   type V3Product,

@@ -4,9 +4,9 @@ import {
   type Signal,
   type ReadOnlySignal,
 } from "@wix/services-definitions/core-services/signals";
-import { URLParamsUtils } from "../utils/url-params";
-import { CatalogPriceRangeServiceDefinition } from "./catalog-price-range-service";
-import { CatalogOptionsServiceDefinition } from "./catalog-options-service";
+import { URLParamsUtils } from "../utils/url-params.js";
+import { CatalogPriceRangeServiceDefinition } from "./catalog-price-range-service.js";
+import { CatalogOptionsServiceDefinition } from "./catalog-options-service.js";
 
 export interface ProductOption {
   id: string;
