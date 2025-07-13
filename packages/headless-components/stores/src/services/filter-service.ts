@@ -168,8 +168,8 @@ export const FilterService = implementService.withConfig<{
 
     // Preserve existing sort parameter
     const currentParams = URLParamsUtils.getURLParams();
-    if (currentParams.sort) {
-      urlParams.sort = currentParams.sort;
+    if (currentParams["sort"]) {
+      urlParams["sort"] = currentParams["sort"];
     }
 
     URLParamsUtils.updateURL(urlParams);
@@ -186,8 +186,8 @@ export const FilterService = implementService.withConfig<{
     // Clear filter parameters from URL, keeping only sort parameter
     const currentParams = URLParamsUtils.getURLParams();
     const urlParams: Record<string, string | string[]> = {};
-    if (currentParams.sort) {
-      urlParams.sort = currentParams.sort;
+    if (currentParams["sort"]) {
+      urlParams["sort"] = currentParams["sort"];
     }
     URLParamsUtils.updateURL(urlParams);
   };

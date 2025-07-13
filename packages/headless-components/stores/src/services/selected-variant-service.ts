@@ -299,7 +299,9 @@ export const SelectedVariantService =
             variants.set(currentProduct.variantsInfo?.variants || []);
 
             if (currentProduct.variantsInfo?.variants?.length) {
-              updateDataFromVariant(currentProduct.variantsInfo?.variants[0]);
+              updateDataFromVariant(
+                currentProduct.variantsInfo?.variants[0] || null
+              );
             }
           } else {
             const singleVariant: productsV3.Variant = {

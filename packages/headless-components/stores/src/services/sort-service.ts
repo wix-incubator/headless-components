@@ -32,9 +32,9 @@ export const SortService = implementService.withConfig<{
     const urlParams = { ...currentParams };
 
     if (sortBy !== SortType.NEWEST) {
-      urlParams.sort = sortBy;
+      urlParams["sort"] = sortBy;
     } else {
-      delete urlParams.sort;
+      delete urlParams["sort"];
     }
 
     URLParamsUtils.updateURL(urlParams);
