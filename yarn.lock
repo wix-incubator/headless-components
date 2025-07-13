@@ -110,7 +110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/react@npm:^4.2.1, @astrojs/react@npm:^4.3.0":
+"@astrojs/react@npm:^4.3.0":
   version: 4.3.0
   resolution: "@astrojs/react@npm:4.3.0"
   dependencies:
@@ -2443,7 +2443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.0.3":
+"@types/react-dom@npm:^18.0.3":
   version: 18.3.7
   resolution: "@types/react-dom@npm:18.3.7"
   peerDependencies:
@@ -2471,7 +2471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.0.0, @types/react@npm:^18.0.8":
+"@types/react@npm:^18.0.8":
   version: 18.3.23
   resolution: "@types/react@npm:18.3.23"
   dependencies:
@@ -2724,9 +2724,9 @@ __metadata:
     "@astrojs/react": "npm:^4.3.0"
     "@playwright/test": "npm:^1.51.1"
     "@tailwindcss/vite": "npm:^4.0.13"
-    "@types/react": "npm:^18.0.0"
-    "@types/react-dom": "npm:^18.0.0"
-    "@wix/astro": "npm:^1.0.0"
+    "@types/react": "npm:^18.0.8"
+    "@types/react-dom": "npm:^18.0.3"
+    "@wix/astro": "workspace:*"
     "@wix/cli": "npm:^1.1.93"
     "@wix/cli-edge": "npm:^1.1.74"
     "@wix/dashboard": "npm:^1.3.37"
@@ -2736,8 +2736,8 @@ __metadata:
     "@wix/services-manager-react": "npm:^0.1.9"
     "@wix/stores": "npm:^1.0.461"
     astro: "npm:^5.8.0"
-    react: "npm:^18.0.0"
-    react-dom: "npm:^18.0.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     tailwindcss: "npm:^4.1.7"
   languageName: unknown
   linkType: soft
@@ -2746,7 +2746,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/astro-ricos-app@workspace:packages/astro-ricos-app"
   dependencies:
-    "@astrojs/react": "npm:^4.2.1"
+    "@astrojs/react": "npm:^4.3.0"
     "@types/react": "npm:^18.0.8"
     "@types/react-dom": "npm:^18.0.3"
     "@wix/astro-ricos": "workspace:*"
@@ -2766,17 +2766,6 @@ __metadata:
     astro: ^5.1.8
   languageName: unknown
   linkType: soft
-
-"@wix/astro@npm:^1.0.0":
-  version: 1.0.15
-  resolution: "@wix/astro@npm:1.0.15"
-  peerDependencies:
-    "@wix/dashboard": ^1.3.35
-    "@wix/sdk": ^1.15.17
-    astro: ^5.0.0
-  checksum: 10c0/e6fb1b20ffa5f4992de9ba6a06e45a95ca9e4b6388a3e04576b58f3cdca43fcaa04b9a26c5ed17085379b330f88fa1df84c5e4e49db4ef5edcaf088f543825ed
-  languageName: node
-  linkType: hard
 
 "@wix/astro@workspace:*, @wix/astro@workspace:packages/@wix-astro":
   version: 0.0.0-use.local
@@ -4153,15 +4142,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/error-handler-types@npm:^1.8.0":
-  version: 1.9.0
-  resolution: "@wix/error-handler-types@npm:1.9.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.27.6"
-  checksum: 10c0/585db0a0a836925a18383e453a100a05800f8933cf857d0f2ecd74eb2415e62d1884a31c3df90ca667eeccddb910344a4de1dce6afa30416dec7b56a834139fa
-  languageName: node
-  linkType: hard
-
 "@wix/essentials@npm:^0.1.22":
   version: 0.1.22
   resolution: "@wix/essentials@npm:0.1.22"
@@ -4210,8 +4190,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/ecom": "npm:^1.0.1169"
+    "@wix/services-definitions": "npm:^0.1.2"
+    "@wix/services-manager-react": "npm:^0.1.9"
+    jsdom: "npm:^26.1.0"
     typescript: "npm:^5.7.3"
+    vitest: "npm:^3.1.4"
   languageName: unknown
   linkType: soft
 
@@ -4219,7 +4208,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-integrations@workspace:."
   dependencies:
-    astro: "npm:^5.5.4"
+    astro: "npm:^5.8.0"
     knip: "npm:^5.43.6"
     lefthook: "npm:^1.1.1"
     lint-staged: "npm:^15.4.3"
@@ -4545,17 +4534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk-runtime@npm:^0.3.41, @wix/sdk-runtime@npm:^0.3.42, @wix/sdk-runtime@npm:^0.3.49, @wix/sdk-runtime@npm:^0.3.52, @wix/sdk-runtime@npm:^0.3.53":
-  version: 0.3.53
-  resolution: "@wix/sdk-runtime@npm:0.3.53"
-  dependencies:
-    "@wix/sdk-context": "npm:0.0.1"
-    "@wix/sdk-types": "npm:^1.13.29"
-  checksum: 10c0/929c1c808414350cec5baeed009c8acad6db081a802d4220c712ae49f4c154755e20b653a682b0a8ac83168189fa3b14ff0b479fc6a0e63723b0e940922772c1
-  languageName: node
-  linkType: hard
-
-"@wix/sdk-runtime@npm:^0.3.55":
+"@wix/sdk-runtime@npm:^0.3.41, @wix/sdk-runtime@npm:^0.3.42, @wix/sdk-runtime@npm:^0.3.49, @wix/sdk-runtime@npm:^0.3.52, @wix/sdk-runtime@npm:^0.3.53, @wix/sdk-runtime@npm:^0.3.55":
   version: 0.3.57
   resolution: "@wix/sdk-runtime@npm:0.3.57"
   dependencies:
@@ -4565,18 +4544,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk-types@npm:^1.13.14, @wix/sdk-types@npm:^1.13.23, @wix/sdk-types@npm:^1.13.25, @wix/sdk-types@npm:^1.13.28, @wix/sdk-types@npm:^1.13.29, @wix/sdk-types@npm:^1.13.8, @wix/sdk-types@npm:^1.13.9":
-  version: 1.13.29
-  resolution: "@wix/sdk-types@npm:1.13.29"
-  dependencies:
-    "@wix/error-handler-types": "npm:^1.8.0"
-    "@wix/monitoring-types": "npm:^0.12.0"
-    type-fest: "npm:^4.41.0"
-  checksum: 10c0/2682e5bb1a8b9396e769e0ee3ecb78a5ea533ebdeb74a27eec0b276d37dbf2ad250b070a47a85c6e1756c6904bb6970d2229c0cc193c8e1d91fc88cf70c69c59
-  languageName: node
-  linkType: hard
-
-"@wix/sdk-types@npm:^1.13.32":
+"@wix/sdk-types@npm:^1.13.14, @wix/sdk-types@npm:^1.13.23, @wix/sdk-types@npm:^1.13.25, @wix/sdk-types@npm:^1.13.28, @wix/sdk-types@npm:^1.13.29, @wix/sdk-types@npm:^1.13.32, @wix/sdk-types@npm:^1.13.8, @wix/sdk-types@npm:^1.13.9":
   version: 1.13.32
   resolution: "@wix/sdk-types@npm:1.13.32"
   dependencies:
@@ -4810,11 +4778,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/wixstro-react-demo@workspace:examples/wixstro-react-demo"
   dependencies:
-    "@astrojs/react": "npm:^4.2.1"
+    "@astrojs/react": "npm:^4.3.0"
     "@playwright/test": "npm:^1.51.1"
     "@wix/astro": "workspace:*"
     "@wix/cli-edge": "npm:^1.1.74"
-    astro: "npm:^5.5.4"
+    astro: "npm:^5.8.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
   languageName: unknown
@@ -5052,7 +5020,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"astro@npm:^5.5.4, astro@npm:^5.8.0":
+"astro@npm:^5.8.0":
   version: 5.8.0
   resolution: "astro@npm:5.8.0"
   dependencies:
@@ -11174,7 +11142,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.0.0, react-dom@npm:^18.2.0, react-dom@npm:^18.3.1":
+"react-dom@npm:^18.2.0, react-dom@npm:^18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -11490,7 +11458,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.0.0, react@npm:^18.2.0, react@npm:^18.3.1":
+"react@npm:^18.2.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:

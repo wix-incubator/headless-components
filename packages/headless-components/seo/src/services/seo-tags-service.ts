@@ -97,9 +97,9 @@ async function resolveStaticPageSeoTags(
  * // Static page configuration
  * const config = await loadSEOTagsServiceConfig({
  *   pageUrl: "https://mysite.com/store",
- *   itemData: { 
- *     pageName: "Store Home", 
- *     seoData: { tags: [] } 
+ *   itemData: {
+ *     pageName: "Store Home",
+ *     seoData: { tags: [] }
  *   }
  * });
  * ```
