@@ -1,33 +1,18 @@
-import React from "react";
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
+import React from 'react';
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService } from '@wix/services-manager-react';
 import {
   SocialSharingServiceDefinition,
-  SharingPlatform,
-} from "../services/social-sharing-service";
+  type SharingPlatform,
+} from '../services/social-sharing-service';
 
-export type { SharingPlatform };
-
-export type RootChildren = (props: RootRenderProps) => React.ReactNode;
 /**
  * Props for Root headless component
  */
 export interface RootProps {
   /** Render prop function that receives sharing data */
-  children: RootChildren;
+  children: (props: RootRenderProps) => React.ReactNode;
 }
-
-export type ShareFacebook = (url: string, title: string, description?: string) => void;
-export type ShareTwitter = (url: string, text: string, hashtags?: string[]) => void;
-export type ShareLinkedIn = (url: string, title: string, summary?: string) => void;
-export type ShareWhatsApp = (url: string, text: string) => void;
-export type ShareEmail = (url: string, subject: string, body: string) => void;
-export type CopyLink = (url: string) => Promise<boolean>;
-export type ShareNative = (data: {
-  title: string;
-  text: string;
-  url: string;
-}) => Promise<boolean>;
 
 /**
  * Render props for Root component
@@ -40,25 +25,31 @@ export interface RootRenderProps {
   /** Last shared platform */
   lastShared: string | null;
   /** Share to Facebook */
-  shareFacebook: ShareFacebook;
+  shareFacebook: (url: string, title: string, description?: string) => void;
   /** Share to Twitter */
-  shareTwitter: ShareTwitter;
+  shareTwitter: (url: string, text: string, hashtags?: string[]) => void;
   /** Share to LinkedIn */
-  shareLinkedIn: ShareLinkedIn;
+  shareLinkedIn: (url: string, title: string, summary?: string) => void;
   /** Share to WhatsApp */
-  shareWhatsApp: ShareWhatsApp;
+  shareWhatsApp: (url: string, text: string) => void;
   /** Share via Email */
-  shareEmail: ShareEmail;
+  shareEmail: (url: string, subject: string, body: string) => void;
   /** Copy to clipboard */
-  copyLink: CopyLink;
+  copyLink: (url: string) => Promise<boolean>;
   /** Native share API */
-  shareNative: ShareNative;
+  shareNative: (data: {
+    title: string;
+    text: string;
+    url: string;
+  }) => Promise<boolean>;
 }
 
 /**
  * Headless component for social sharing root
+ *
+ * @component
  */
-export const Root = (props: RootProps): React.ReactNode => {
+export const Root = (props: RootProps) => {
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
     typeof SocialSharingServiceDefinition
   >;
@@ -74,7 +65,7 @@ export const Root = (props: RootProps): React.ReactNode => {
       service.lastSharedPlatform.subscribe(setLastShared),
     ];
 
-    return () => unsubscribes.forEach((fn) => fn());
+    return () => unsubscribes.forEach(fn => fn());
   }, [service]);
 
   return props.children({
@@ -91,8 +82,6 @@ export const Root = (props: RootProps): React.ReactNode => {
   });
 };
 
-export type OnClick = () => void;
-export type PlatformChildren = (props: PlatformRenderProps) => React.ReactNode;
 /**
  * Props for Platform headless component
  */
@@ -100,12 +89,11 @@ export interface PlatformProps {
   /** Platform data */
   platform: SharingPlatform;
   /** Click handler */
-  onClick: OnClick;
+  onClick: () => void;
   /** Render prop function that receives platform data */
-  children: PlatformChildren;
+  children: (props: PlatformRenderProps) => React.ReactNode;
 }
 
-export type OnSelect = () => void;
 /**
  * Render props for Platform component
  */
@@ -113,13 +101,15 @@ export interface PlatformRenderProps {
   /** Platform data */
   platform: SharingPlatform;
   /** Platform click handler */
-  onSelect: OnSelect;
+  onSelect: () => void;
 }
 
 /**
  * Headless component for individual social platform
+ *
+ * @component
  */
-export const Platform = (props: PlatformProps): React.ReactNode => {
+export const Platform = (props: PlatformProps) => {
   const { platform, onClick } = props;
 
   return props.children({
@@ -127,8 +117,6 @@ export const Platform = (props: PlatformProps): React.ReactNode => {
     onSelect: onClick,
   });
 };
-
-export type PlatformsChildren = (props: PlatformsRenderProps) => React.ReactNode;
 
 /**
  * Props for Platforms headless component
@@ -143,7 +131,7 @@ export interface PlatformsProps {
   /** Hashtags for sharing */
   hashtags?: string[];
   /** Render prop function that receives platforms data */
-  children: PlatformsChildren;
+  children: (props: PlatformsRenderProps) => React.ReactNode;
 }
 
 /**
@@ -170,9 +158,11 @@ export interface PlatformsRenderProps {
 
 /**
  * Headless component for social sharing platforms with logic
+ *
+ * @component
  */
-export const Platforms = (props: PlatformsProps): React.ReactNode => {
-  const { url, title, description = "", hashtags = [] } = props;
+export const Platforms = (props: PlatformsProps) => {
+  const { url, title, description = '', hashtags = [] } = props;
 
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
     typeof SocialSharingServiceDefinition

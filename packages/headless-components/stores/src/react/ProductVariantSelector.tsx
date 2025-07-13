@@ -1,8 +1,11 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
-import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service";
-import { productsV3 } from "@wix/stores";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService } from '@wix/services-manager-react';
+import { SelectedVariantServiceDefinition } from '../services/selected-variant-service';
+import {
+  type ConnectedOption,
+  type ConnectedOptionChoice,
+  InventoryAvailabilityStatus,
+} from '@wix/auto_sdk_stores_products-v-3';
 
 /**
  * Props for Options headless component
@@ -17,7 +20,7 @@ export interface OptionsProps {
  */
 export interface OptionsRenderProps {
   /** Array of product options */
-  options: productsV3.ConnectedOption[];
+  options: ConnectedOption[];
   /** Whether product has options */
   hasOptions: boolean;
   /** Currently selected choices */
@@ -26,6 +29,8 @@ export interface OptionsRenderProps {
 
 /**
  * Headless component for all product options
+ *
+ * @component
  */
 export const Options = (props: OptionsProps) => {
   const variantService = useService(
@@ -47,7 +52,7 @@ export const Options = (props: OptionsProps) => {
  */
 export interface OptionProps {
   /** Product option data */
-  option: productsV3.ConnectedOption;
+  option: ConnectedOption;
   /** Render prop function that receives option data */
   children: (props: OptionRenderProps) => React.ReactNode;
 }
@@ -61,7 +66,7 @@ export interface OptionRenderProps {
   /** Option type */
   type: any;
   /** Array of choices for this option */
-  choices: productsV3.ConnectedOptionChoice[];
+  choices: ConnectedOptionChoice[];
   /** Currently selected value for this option */
   selectedValue: string | null;
   /** Whether this option has choices */
@@ -70,6 +75,8 @@ export interface OptionRenderProps {
 
 /**
  * Headless component for choices within a specific product option
+ *
+ * @component
  */
 export const Option = (props: OptionProps) => {
   const variantService = useService(
@@ -79,7 +86,7 @@ export const Option = (props: OptionProps) => {
   const selectedChoices = variantService.selectedChoices.get();
   const { option } = props;
 
-  const name = option.name || "";
+  const name = option.name || '';
   const choices = option.choicesSettings?.choices || [];
   const selectedValue = selectedChoices[name] || null;
 
@@ -97,9 +104,9 @@ export const Option = (props: OptionProps) => {
  */
 export interface ChoiceProps {
   /** Product option data */
-  option: productsV3.ConnectedOption;
+  option: ConnectedOption;
   /** Choice data */
-  choice: productsV3.ConnectedOptionChoice;
+  choice: ConnectedOptionChoice;
   /** Render prop function that receives choice data */
   children: (props: ChoiceRenderProps) => React.ReactNode;
 }
@@ -114,8 +121,12 @@ export interface ChoiceRenderProps {
   description: string | undefined;
   /** Whether this choice is currently selected */
   isSelected: boolean;
-  /** Whether this choice is available for selection */
-  isAvailable: boolean;
+  /** Whether this choice is visible */
+  isVisible: boolean;
+  /** Whether this choice is in stock */
+  isInStock: boolean;
+  /** Whether this choice is available for pre-order */
+  isPreOrderEnabled: boolean;
   /** Function to select this choice */
   onSelect: () => void;
   /** Option name */
@@ -126,6 +137,8 @@ export interface ChoiceRenderProps {
 
 /**
  * Headless component for individual choice selection
+ *
+ * @component
  */
 export const Choice = (props: ChoiceProps) => {
   const variantService = useService(
@@ -135,13 +148,22 @@ export const Choice = (props: ChoiceProps) => {
   const selectedChoices = variantService.selectedChoices.get();
   const { option, choice } = props;
 
-  const optionName = option.name || "";
-  const choiceValue = choice.name || "";
+  const optionName = option.name || '';
+  const choiceValue = choice.name || '';
 
   const isSelected = selectedChoices[optionName] === choiceValue;
 
   // Check if this choice is available based on current selections
-  const isAvailable = variantService.isChoiceAvailable(optionName, choiceValue);
+  const isVisible = variantService.isChoiceAvailable(optionName, choiceValue);
+
+  // Check if this choice results in an in-stock variant
+  const isInStock = variantService.isChoiceInStock(optionName, choiceValue);
+
+  // Check if this choice is available for pre-order
+  const isPreOrderEnabled = variantService.isChoicePreOrderEnabled(
+    optionName,
+    choiceValue
+  );
 
   const value = choiceValue;
 
@@ -157,141 +179,12 @@ export const Choice = (props: ChoiceProps) => {
     value,
     description: undefined, // v3 choices don't have separate description field
     isSelected,
-    isAvailable,
+    isVisible,
+    isInStock,
+    isPreOrderEnabled,
     onSelect,
     optionName,
     choiceValue,
-  });
-};
-
-/**
- * Props for Trigger headless component
- */
-export interface TriggerProps {
-  /** Quantity to add (optional) */
-  quantity?: number;
-  /** Render prop function that receives trigger data */
-  children: (props: TriggerRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for Trigger component
- */
-export interface TriggerRenderProps {
-  /** Function to add product to cart */
-  onAddToCart: () => Promise<void>;
-  /** Whether add to cart is available */
-  canAddToCart: boolean;
-  /** Whether add to cart is currently loading */
-  isLoading: boolean;
-  /** Current product price */
-  price: string;
-  /** Whether product is in stock */
-  inStock: boolean;
-  /** Whether pre-order is enabled */
-  isPreOrderEnabled: boolean;
-  /** Error message if any */
-  error: string | null;
-}
-
-/**
- * Headless component for add to cart trigger
- */
-export const Trigger = (props: TriggerProps) => {
-  const variantService = useService(
-    SelectedVariantServiceDefinition
-  ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
-  
-  // Try to get modifiers service - it may not exist for all products
-  let modifiersService: ServiceAPI<typeof ProductModifiersServiceDefinition> | null = null;
-  try {
-    modifiersService = useService(ProductModifiersServiceDefinition) as ServiceAPI<typeof ProductModifiersServiceDefinition>;
-  } catch {
-    // Modifiers service not available for this product
-    modifiersService = null;
-  }
-
-  const price = variantService.currentPrice.get();
-  const inStock = variantService.isInStock.get();
-  const isPreOrderEnabled = variantService.isPreOrderEnabled.get();
-  const isLoading = variantService.isLoading.get();
-  const error = variantService.error.get();
-
-  const quantity = props.quantity || 1;
-  
-  // Check if all required modifiers are filled
-  const areAllRequiredModifiersFilled = modifiersService 
-    ? modifiersService.areAllRequiredModifiersFilled()
-    : true; // If no modifiers service, assume no required modifiers
-  
-  const canAddToCart = (inStock || isPreOrderEnabled) && !isLoading && areAllRequiredModifiersFilled;
-
-  const onAddToCart = async () => {
-    // Get modifiers data if available
-    let modifiersData: Record<string, any> | undefined;
-    if (modifiersService) {
-      const selectedModifiers = modifiersService.selectedModifiers.get();
-      if (Object.keys(selectedModifiers).length > 0) {
-        modifiersData = selectedModifiers;
-      }
-    }
-    
-    await variantService.addToCart(quantity, modifiersData);
-  };
-
-  return props.children({
-    onAddToCart,
-    canAddToCart,
-    isLoading,
-    price,
-    inStock,
-    isPreOrderEnabled,
-    error,
-  });
-};
-
-/**
- * Props for Price headless component
- */
-export interface PriceProps {
-  /** Render prop function that receives price data */
-  children: (props: PriceRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for Price component
- */
-export interface PriceRenderProps {
-  /** Current price (formatted) */
-  price: string;
-  /** Compare at price (formatted) - null if no compare price */
-  compareAtPrice: string | null;
-  /** Whether price is for a variant */
-  isVariantPrice: boolean;
-  /** Currency code */
-  currency: string;
-}
-
-/**
- * Headless component for product price display
- */
-export const Price = (props: PriceProps) => {
-  const variantService = useService(
-    SelectedVariantServiceDefinition
-  ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
-
-  const price = variantService.currentPrice.get();
-  const compareAtPrice = variantService.currentCompareAtPrice.get();
-  const currentVariant = variantService.currentVariant.get();
-  const currency = variantService.currency.get();
-
-  const isVariantPrice = !!currentVariant;
-
-  return props.children({
-    price,
-    compareAtPrice,
-    isVariantPrice,
-    currency,
   });
 };
 
@@ -311,19 +204,26 @@ export interface StockRenderProps {
   inStock: boolean;
   /** Whether pre-order is enabled */
   isPreOrderEnabled: boolean;
-  /** Stock status message */
-  status: string;
-  /** Stock quantity (if available) */
-  quantity: number | null;
+  /** Raw inventory availability status */
+  availabilityStatus: InventoryAvailabilityStatus | string;
   /** Whether stock tracking is enabled */
   trackInventory: boolean;
   /** Current variant id */
   currentVariantId: string | null;
-  
+  /** Available quantity */
+  availableQuantity: number | null;
+  /** Currently selected quantity */
+  selectedQuantity: number;
+  /** Function to increment quantity */
+  incrementQuantity: () => void;
+  /** Function to decrement quantity */
+  decrementQuantity: () => void;
 }
 
 /**
  * Headless component for product stock status
+ *
+ * @component
  */
 export const Stock = (props: StockProps) => {
   const variantService = useService(
@@ -332,27 +232,77 @@ export const Stock = (props: StockProps) => {
 
   const inStock = variantService.isInStock.get();
   const isPreOrderEnabled = variantService.isPreOrderEnabled.get();
+  const trackInventory = variantService.trackQuantity.get();
   const currentVariantId = variantService.selectedVariantId.get();
+  const availableQuantity = variantService.quantityAvailable.get();
+  const selectedQuantity = variantService.selectedQuantity.get();
 
-  const trackInventory = false; // V3 API has different inventory structure
-  const quantity = null; // Not directly available in v3 API
+  // const currentVariant = variantService.currentVariant.get();
+  // const allVariantsAreOutOfStock = variantService.IsAllVariantsAreOutOfStock();
 
-  // Determine status based on stock and pre-order availability
-  let status: string;
-  if (inStock) {
-    status = "In Stock";
-  } else if (isPreOrderEnabled) {
-    status = "Available for Pre-Order";
-  } else {
-    status = "Out of Stock";
-  }
+  // Return raw availability status - UI components will handle display conversion
+  const availabilityStatus = inStock
+    ? InventoryAvailabilityStatus.IN_STOCK
+    : InventoryAvailabilityStatus.OUT_OF_STOCK;
+
+  const incrementQuantity = () => {
+    variantService.incrementQuantity();
+  };
+
+  const decrementQuantity = () => {
+    variantService.decrementQuantity();
+  };
 
   return props.children({
     inStock,
+    availableQuantity,
     isPreOrderEnabled,
     currentVariantId,
-    status,
-    quantity,
+    availabilityStatus,
     trackInventory,
+    selectedQuantity,
+    incrementQuantity,
+    decrementQuantity,
+  });
+};
+
+/**
+ * Props for Reset headless component
+ */
+export interface ResetProps {
+  /** Render prop function that receives reset data */
+  children: (props: ResetRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for Reset component
+ */
+export interface ResetRenderProps {
+  /** Function to reset all selections */
+  onReset: () => void;
+  /** Whether the reset button should be rendered */
+  hasSelections: boolean;
+}
+
+/**
+ * Headless component for resetting variant selections
+ *
+ * @component
+ */
+export const Reset = (props: ResetProps) => {
+  const variantService = useService(
+    SelectedVariantServiceDefinition
+  ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
+
+  const selectedChoices = variantService.selectedChoices.get();
+  const hasSelections = Object.keys(selectedChoices).length > 0;
+
+  const onReset = () => {
+    variantService.resetSelections();
+  };
+
+  return props.children({
+    onReset,
+    hasSelections,
   });
 };

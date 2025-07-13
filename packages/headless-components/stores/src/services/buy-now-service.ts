@@ -5,8 +5,8 @@ import {
   Signal,
 } from "@wix/services-definitions";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import { productsV3 } from "@wix/stores";
 import { getCheckoutUrlForProduct } from "../utils";
+import { getProductBySlug } from "@wix/auto_sdk_stores_products-v-3";
 
 export const BuyNowServiceDefinition = defineService<{
   redirectToCheckout: () => Promise<void>;
@@ -59,7 +59,7 @@ export const loadBuyNowServiceInitialData = async (
   productSlug: string,
   variantId?: string
 ) => {
-  const res = await productsV3.getProductBySlug(productSlug, {
+  const res = await getProductBySlug(productSlug, {
     fields: ["CURRENCY"],
   });
   const product = res.product!;
