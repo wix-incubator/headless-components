@@ -1,7 +1,6 @@
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
 import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
-import { productsV3 } from "@wix/stores";
 import {
   type ConnectedOption,
   type ConnectedOptionChoice,
@@ -240,8 +239,8 @@ export const Stock = (props: StockProps) => {
 
   // Return raw availability status - UI components will handle display conversion
   const availabilityStatus = inStock
-    ? productsV3.InventoryAvailabilityStatus.IN_STOCK
-    : productsV3.InventoryAvailabilityStatus.OUT_OF_STOCK;
+    ? InventoryAvailabilityStatus.IN_STOCK
+    : InventoryAvailabilityStatus.OUT_OF_STOCK;
 
   const incrementQuantity = () => {
     variantService.incrementQuantity();

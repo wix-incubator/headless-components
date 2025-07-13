@@ -1,5 +1,4 @@
 import { useService } from "@wix/services-manager-react";
-import { productsV3 } from "@wix/stores";
 import React, { type ReactNode } from "react";
 import { CollectionServiceDefinition } from "../services/collection-service";
 import {
@@ -115,9 +114,8 @@ export const Item: React.FC<FilteredItemProps> = ({ product, children }) => {
 
   const availabilityStatus = product.inventory?.availabilityStatus;
   const available =
-    availabilityStatus === productsV3.InventoryAvailabilityStatus.IN_STOCK ||
-    availabilityStatus ===
-      productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
+    availabilityStatus === InventoryAvailabilityStatus.IN_STOCK ||
+    availabilityStatus === InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
   const slug = String(product.slug || product._id || "");
   const description = product.plainDescription
     ? String(product.plainDescription)

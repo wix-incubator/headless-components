@@ -3,7 +3,10 @@ import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
 import { RelatedProductsServiceDefinition } from "../services/related-products-service";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import { productsV3 } from "@wix/stores";
+import {
+  InventoryAvailabilityStatus,
+  type V3Product,
+} from "@wix/auto_sdk_stores_products-v-3";
 
 /**
  * Props for List headless component
@@ -18,7 +21,7 @@ export interface ListProps {
  */
 export interface ListRenderProps {
   /** Array of related products */
-  products: productsV3.V3Product[];
+  products: V3Product[];
   /** Whether products are loading */
   isLoading: boolean;
   /** Error message if any */
@@ -40,7 +43,7 @@ export const List = (props: ListProps) => {
   >;
   const signalsService = useService(SignalsServiceDefinition);
 
-  const [products, setProducts] = React.useState<productsV3.V3Product[]>([]);
+  const [products, setProducts] = React.useState<V3Product[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [hasProducts, setHasProducts] = React.useState(false);
@@ -78,7 +81,7 @@ export const List = (props: ListProps) => {
  */
 export interface ItemProps {
   /** Product data */
-  product: productsV3.V3Product;
+  product: V3Product;
   /** Render prop function that receives item data */
   children: (props: ItemRenderProps) => React.ReactNode;
 }
@@ -119,9 +122,8 @@ export const Item = (props: ItemProps) => {
   const price = rawPrice ? `$${rawPrice}` : "Price unavailable";
   const availabilityStatus = product.inventory?.availabilityStatus;
   const available =
-    availabilityStatus === productsV3.InventoryAvailabilityStatus.IN_STOCK ||
-    availabilityStatus ===
-      productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
+    availabilityStatus === InventoryAvailabilityStatus.IN_STOCK ||
+    availabilityStatus === InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
   const href = `/store/example-2/${product.slug}`;
   const description =
     typeof product.description === "string" ? product.description : "";
