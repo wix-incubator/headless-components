@@ -3,8 +3,11 @@ import {
   implementService,
   type ServiceFactoryConfig,
 } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import type { Signal, ReadOnlySignal } from "../../Signal";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+  type ReadOnlySignal,
+} from "@wix/services-definitions/core-services/signals";
 import { productsV3 } from "@wix/stores";
 import { ProductServiceDefinition } from "./product-service";
 

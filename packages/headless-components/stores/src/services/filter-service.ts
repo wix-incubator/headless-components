@@ -1,6 +1,9 @@
 import { defineService, implementService } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import type { Signal, ReadOnlySignal } from "../../Signal";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+  type ReadOnlySignal,
+} from "@wix/services-definitions/core-services/signals";
 import { URLParamsUtils } from "../utils/url-params";
 import { CatalogPriceRangeServiceDefinition } from "./catalog-price-range-service";
 import { CatalogOptionsServiceDefinition } from "./catalog-options-service";

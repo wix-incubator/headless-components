@@ -59,7 +59,7 @@
     "@wix/headless-ecom": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/redirects": "^1.0.79",
-    "@wix/services-definitions": "^0.1.2",
-    "@wix/services-manager-react": "^0.1.9"
+    "@wix/services-definitions": "^0.1.4",
+    "@wix/services-manager-react": "^0.1.26"
   }
 }

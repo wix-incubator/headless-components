@@ -1,6 +1,9 @@
 import { defineService, implementService } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import type { ReadOnlySignal, Signal } from "../../Signal";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+  type ReadOnlySignal,
+} from "@wix/services-definitions/core-services/signals";
 
 export interface MediaGalleryServiceAPI {
   selectedMediaIndex: Signal<number>;

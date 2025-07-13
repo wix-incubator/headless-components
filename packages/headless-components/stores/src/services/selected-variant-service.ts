@@ -1,6 +1,9 @@
 import { defineService, implementService } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import type { Signal, ReadOnlySignal } from "../../Signal";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+  type ReadOnlySignal,
+} from "@wix/services-definitions/core-services/signals";
 import { productsV3, inventoryItemsV3 } from "@wix/stores";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 import { ProductServiceDefinition } from "./product-service";

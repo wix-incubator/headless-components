@@ -1,6 +1,8 @@
 import { defineService, implementService } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import type { Signal } from "../../Signal";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+} from "@wix/services-definitions/core-services/signals";
 import {
   SocialPlatform,
   SocialPlatformShareUrl,

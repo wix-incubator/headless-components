@@ -1,7 +1,9 @@
 import { defineService, implementService } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import type { Signal } from "../../Signal";
-import { categories } from "@wix/categories";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+} from "@wix/services-definitions/core-services/signals";
+import * as categories from "@wix/auto_sdk_categories_categories";
 
 export interface CategoryServiceAPI {
   selectedCategory: Signal<string | null>;
