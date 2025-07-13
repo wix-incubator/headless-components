@@ -138,10 +138,10 @@ export const FilterService = implementService.withConfig<{
     // Add price filters if different from defaults
     if (availableOpts?.priceRange) {
       if (filters.priceRange.min > availableOpts.priceRange.min) {
-        urlParams.minPrice = filters.priceRange.min.toString();
+        urlParams["minPrice"] = filters.priceRange.min.toString();
       }
       if (filters.priceRange.max < availableOpts.priceRange.max) {
-        urlParams.maxPrice = filters.priceRange.max.toString();
+        urlParams["maxPrice"] = filters.priceRange.max.toString();
       }
     }
 
@@ -150,18 +150,20 @@ export const FilterService = implementService.withConfig<{
       Object.entries(filters.selectedOptions).forEach(
         ([optionId, choiceIds]) => {
           const option = availableOpts.productOptions.find(
-            (opt) => opt.id === optionId
+            (opt: ProductOption) => opt.id === optionId
           );
           if (option && choiceIds.length > 0) {
-            const selectedChoices = option.choices.filter((choice) =>
-              choiceIds.includes(choice.id)
+            const selectedChoices = option.choices.filter(
+              (choice: { id: string; name: string; colorCode?: string }) =>
+                choiceIds.includes(choice.id)
             );
             if (selectedChoices.length > 0) {
               // Use 'availability' as URL param for inventory filter
               const paramName =
                 optionId === "inventory-filter" ? "availability" : option.name;
               urlParams[paramName] = selectedChoices.map(
-                (choice) => choice.name
+                (choice: { id: string; name: string; colorCode?: string }) =>
+                  choice.name
               );
             }
           }
