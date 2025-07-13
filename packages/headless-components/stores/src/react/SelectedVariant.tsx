@@ -1,6 +1,6 @@
-import type { ServiceAPI } from '@wix/services-definitions';
-import { useService } from '@wix/services-manager-react';
-import { SelectedVariantServiceDefinition } from '../services/selected-variant-service';
+import type { ServiceAPI } from "@wix/services-definitions";
+import { useService } from "@wix/services-manager-react";
+import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
 
 /**
  * Props for ProductDetails headless component
@@ -22,6 +22,8 @@ export interface ProductDetailsRenderProps {
 
 /**
  * Headless component for selected variant details display
+ *
+ * @component
  */
 export const Details = (props: ProductDetailsProps) => {
   const selectedVariantService = useService(
@@ -62,6 +64,8 @@ export interface PriceRenderProps {
 
 /**
  * Headless component for product price display
+ *
+ * @component
  */
 export const Price = (props: PriceProps) => {
   const variantService = useService(
@@ -97,6 +101,8 @@ export interface SKURenderProps {
 
 /**
  * Headless component for product SKU display
+ *
+ * @component
  */
 export const SKU = (props: SKUProps) => {
   const selectedVariantService = useService(

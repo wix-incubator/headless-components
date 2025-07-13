@@ -1,18 +1,23 @@
-import { useService } from '@wix/services-manager-react';
-import { productsV3 } from '@wix/stores';
-import React, { type ReactNode } from 'react';
-import { CollectionServiceDefinition } from '../services/collection-service';
+import { useService } from "@wix/services-manager-react";
+import { productsV3 } from "@wix/stores";
+import React, { type ReactNode } from "react";
+import { CollectionServiceDefinition } from "../services/collection-service";
 import {
   FilterServiceDefinition,
   type AvailableOptions,
   type Filter,
-} from '../services/filter-service';
+} from "../services/filter-service";
 
 // Filters Loading component with pulse animation
 interface FiltersLoadingProps {
   children: (data: { isFullyLoaded: boolean }) => ReactNode;
 }
 
+/**
+ * Headless component for displaying a loading state for filters
+ *
+ * @component
+ */
 export const FiltersLoading: React.FC<FiltersLoadingProps> = ({ children }) => {
   const filter = useService(FilterServiceDefinition);
 
@@ -33,6 +38,11 @@ interface FilteredGridProps {
   }) => ReactNode;
 }
 
+/**
+ * Headless component for displaying a grid of filtered products
+ *
+ * @component
+ */
 export const Grid: React.FC<FilteredGridProps> = ({ children }) => {
   const collection = useService(CollectionServiceDefinition);
 
@@ -72,17 +82,22 @@ interface FilteredItemProps {
   }) => ReactNode;
 }
 
+/**
+ * Headless component for displaying a filtered product item
+ *
+ * @component
+ */
 export const Item: React.FC<FilteredItemProps> = ({ product, children }) => {
   // Safe conversion of product data with type safety guards
-  const title = String(product.name || '');
+  const title = String(product.name || "");
   const image = product.media?.main?.image || null;
-  const imageAltText = product.media?.main?.altText || '';
+  const imageAltText = product.media?.main?.altText || "";
   const price =
     product.actualPriceRange?.minValue?.formattedAmount ||
     product.actualPriceRange?.maxValue?.formattedAmount ||
     (product.actualPriceRange?.minValue?.amount
       ? `$${product.actualPriceRange.minValue.amount}`
-      : '$0.00');
+      : "$0.00");
 
   // Add compare at price
   const compareAtPrice =
@@ -96,7 +111,7 @@ export const Item: React.FC<FilteredItemProps> = ({ product, children }) => {
     availabilityStatus === productsV3.InventoryAvailabilityStatus.IN_STOCK ||
     availabilityStatus ===
       productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
-  const slug = String(product.slug || product._id || '');
+  const slug = String(product.slug || product._id || "");
   const description = product.plainDescription
     ? String(product.plainDescription)
     : undefined;
@@ -129,6 +144,11 @@ interface FilteredLoadMoreProps {
   }) => ReactNode;
 }
 
+/**
+ * Headless component for load more filtered products functionality
+ *
+ * @component
+ */
 export const LoadMore: React.FC<FilteredLoadMoreProps> = ({ children }) => {
   const collection = useService(CollectionServiceDefinition);
 
@@ -165,6 +185,11 @@ interface FilteredFiltersProps {
   }) => ReactNode;
 }
 
+/**
+ * Headless component for product filters with available options
+ *
+ * @component
+ */
 export const Filters: React.FC<FilteredFiltersProps> = ({ children }) => {
   const collection = useService(CollectionServiceDefinition);
   const filter = useService(FilterServiceDefinition);

@@ -1,6 +1,6 @@
-import { useService } from '@wix/services-manager-react';
-import React from 'react';
-import { SortServiceDefinition, type SortBy } from '../services/sort-service';
+import { useService } from "@wix/services-manager-react";
+import React from "react";
+import { SortServiceDefinition, type SortBy } from "../services/sort-service";
 
 interface ControllerProps {
   children: (props: {
@@ -9,6 +9,11 @@ interface ControllerProps {
   }) => React.ReactNode;
 }
 
+/**
+ * Headless component for sorting products
+ *
+ * @component
+ */
 export function Controller({ children }: ControllerProps) {
   const sortService = useService(SortServiceDefinition);
   const currentSort = sortService.currentSort.get();

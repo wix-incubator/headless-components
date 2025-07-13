@@ -12,6 +12,11 @@ interface CategoryListProps {
   }) => ReactNode;
 }
 
+/**
+ * Headless component for displaying a list of categories
+ *
+ * @component
+ */
 export const List: React.FC<CategoryListProps> = ({ children }) => {
   const service = useService(CategoryServiceDefinition);
 

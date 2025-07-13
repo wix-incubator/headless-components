@@ -1,7 +1,7 @@
-import type { ServiceAPI } from '@wix/services-definitions';
-import { useService } from '@wix/services-manager-react';
-import { SelectedVariantServiceDefinition } from '../services/selected-variant-service';
-import { productsV3 } from '@wix/stores';
+import type { ServiceAPI } from "@wix/services-definitions";
+import { useService } from "@wix/services-manager-react";
+import { SelectedVariantServiceDefinition } from "../services/selected-variant-service";
+import { productsV3 } from "@wix/stores";
 
 /**
  * Props for Options headless component
@@ -25,6 +25,8 @@ export interface OptionsRenderProps {
 
 /**
  * Headless component for all product options
+ *
+ * @component
  */
 export const Options = (props: OptionsProps) => {
   const variantService = useService(
@@ -69,6 +71,8 @@ export interface OptionRenderProps {
 
 /**
  * Headless component for choices within a specific product option
+ *
+ * @component
  */
 export const Option = (props: OptionProps) => {
   const variantService = useService(
@@ -78,7 +82,7 @@ export const Option = (props: OptionProps) => {
   const selectedChoices = variantService.selectedChoices.get();
   const { option } = props;
 
-  const name = option.name || '';
+  const name = option.name || "";
   const choices = option.choicesSettings?.choices || [];
   const selectedValue = selectedChoices[name] || null;
 
@@ -129,6 +133,8 @@ export interface ChoiceRenderProps {
 
 /**
  * Headless component for individual choice selection
+ *
+ * @component
  */
 export const Choice = (props: ChoiceProps) => {
   const variantService = useService(
@@ -138,8 +144,8 @@ export const Choice = (props: ChoiceProps) => {
   const selectedChoices = variantService.selectedChoices.get();
   const { option, choice } = props;
 
-  const optionName = option.name || '';
-  const choiceValue = choice.name || '';
+  const optionName = option.name || "";
+  const choiceValue = choice.name || "";
 
   const isSelected = selectedChoices[optionName] === choiceValue;
 
@@ -212,6 +218,8 @@ export interface StockRenderProps {
 
 /**
  * Headless component for product stock status
+ *
+ * @component
  */
 export const Stock = (props: StockProps) => {
   const variantService = useService(
@@ -271,6 +279,8 @@ export interface ResetRenderProps {
 
 /**
  * Headless component for resetting variant selections
+ *
+ * @component
  */
 export const Reset = (props: ResetProps) => {
   const variantService = useService(

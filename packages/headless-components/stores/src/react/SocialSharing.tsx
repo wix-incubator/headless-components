@@ -1,11 +1,11 @@
-import React from 'react';
-import type { ServiceAPI } from '@wix/services-definitions';
-import { useService } from '@wix/services-manager-react';
+import React from "react";
+import type { ServiceAPI } from "@wix/services-definitions";
+import { useService } from "@wix/services-manager-react";
 import {
   SocialSharingServiceDefinition,
   type SharingPlatform,
-} from '../services/social-sharing-service';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
+} from "../services/social-sharing-service";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 
 /**
  * Props for Root headless component
@@ -47,6 +47,8 @@ export interface RootRenderProps {
 
 /**
  * Headless component for social sharing root
+ *
+ * @component
  */
 export const Root = (props: RootProps) => {
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
@@ -71,7 +73,7 @@ export const Root = (props: RootProps) => {
       }),
     ];
 
-    return () => effects.forEach(dispose => dispose());
+    return () => effects.forEach((dispose) => dispose());
   }, [service, signalsService]);
 
   return props.children({
@@ -112,6 +114,8 @@ export interface PlatformRenderProps {
 
 /**
  * Headless component for individual social platform
+ *
+ * @component
  */
 export const Platform = (props: PlatformProps) => {
   const { platform, onClick } = props;
@@ -162,9 +166,11 @@ export interface PlatformsRenderProps {
 
 /**
  * Headless component for social sharing platforms with logic
+ *
+ * @component
  */
 export const Platforms = (props: PlatformsProps) => {
-  const { url, title, description = '', hashtags = [] } = props;
+  const { url, title, description = "", hashtags = [] } = props;
 
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
     typeof SocialSharingServiceDefinition
