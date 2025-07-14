@@ -2,9 +2,11 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-  type Signal,
 } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import {
+  SignalsServiceDefinition,
+  type Signal,
+} from "@wix/services-definitions/core-services/signals";
 import { seoTags } from "@wix/seo";
 
 export interface SEOTagsServiceAPI {
@@ -45,11 +47,11 @@ export const SEOTagsService =
         const updatedConfig = await loadSEOTagsServiceConfig({
           pageUrl: pageURL,
           itemType,
-          itemData
-        })
+          itemData,
+        });
 
         tags.set(updatedConfig.tags);
-        appendNewTags(updatedConfig.tags)
+        appendNewTags(updatedConfig.tags);
       };
 
       return { seoTags: tags, updateSeoTags };
@@ -87,9 +89,10 @@ async function resolveStaticPageSeoTags(
 /**
  * Loads the SEO tags service configuration for a given page.
  *
- * @param {string} pageUrl - The full URL of the page where SEO tags will be applied.
- * @param {seoTags.ItemType} itemType - Optional. The type of item (e.g., STORES_PRODUCT, BLOG_POST) for item pages.
- * @param {seoTags.SlugData | seoTags.PageNameData} itemData - Item metadata (slug for item pages or pageName for static pages).
+ * @param {Object} params - The configuration parameters.
+ * @param {string} params.pageUrl - The full URL of the page where SEO tags will be applied.
+ * @param {seoTags.ItemType} [params.itemType] - Optional. The type of item (e.g., STORES_PRODUCT, BLOG_POST) for item pages.
+ * @param {seoTags.SlugData | seoTags.PageNameData} params.itemData - Item metadata (slug for item pages or pageName for static pages).
  * @returns {Promise<SEOTagsServiceConfig>} Promise resolving to SEO tags service configuration.
  *
  * @example
@@ -147,7 +150,7 @@ export async function loadSEOTagsServiceConfig({
 }
 
 function appendNewTags(tags: seoTags.Tag[]) {
-  if(typeof window === "undefined") return;
+  if (typeof window === "undefined") return;
 
   const newTagElements: HTMLElement[] = [];
   try {

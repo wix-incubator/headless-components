@@ -6,10 +6,6 @@ import {
 import type { seoTags } from "@wix/seo";
 import { useService } from "@wix/services-manager-react";
 
-export interface TagsProps {
-  seoTagsServiceConfig: SEOTagsServiceConfig;
-}
-
 /**
  * Renders SEO tags (title, meta, link, script) in the document head using a provided SEO service configuration.
  *
@@ -35,8 +31,11 @@ export interface TagsProps {
  * @component
  */
 
-export function Tags(props: TagsProps): React.ReactNode {
-  const { seoTagsServiceConfig } = props;
+export interface TagsProps {
+  seoTagsServiceConfig: SEOTagsServiceConfig;
+}
+
+export function Tags({ seoTagsServiceConfig }: TagsProps): React.ReactNode {
   const dataAttr = { "wix-seo-tags": "true" };
   return seoTagsServiceConfig.tags
     .filter((tag) => !tag.disabled)
@@ -63,16 +62,15 @@ export function Tags(props: TagsProps): React.ReactNode {
             {...tag.props}
             {...tag.meta}
             {...dataAttr}
-          >
-            {tag.children}
-          </script>
+            dangerouslySetInnerHTML={{ __html: tag.children || "" }}
+          />
         );
       }
       return null;
     });
 }
 
-export interface UpdateTagsTriggerProps {
+export interface UpdateTagsTrigger {
   children: (props: {
     updateSeoTags: (
       itemType: seoTags.ItemType,
@@ -109,7 +107,9 @@ export interface UpdateTagsTriggerProps {
  *
  * @component
  */
-export function UpdateTagsTrigger(props: UpdateTagsTriggerProps) {
+export const UpdateTagsTrigger = (
+  props: UpdateTagsTrigger
+): React.ReactNode => {
   const service = useService(SEOTagsServiceDefinition) as ServiceAPI<
     typeof SEOTagsServiceDefinition
   >;
@@ -117,4 +117,4 @@ export function UpdateTagsTrigger(props: UpdateTagsTriggerProps) {
   return props.children({
     updateSeoTags: service.updateSeoTags,
   });
-}
+};

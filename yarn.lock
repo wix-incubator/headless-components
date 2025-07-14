@@ -4080,13 +4080,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_seo_seo-tags@npm:1.0.4":
-  version: 1.0.4
-  resolution: "@wix/auto_sdk_seo_seo-tags@npm:1.0.4"
+"@wix/auto_sdk_seo_seo-tags@npm:1.0.5":
+  version: 1.0.5
+  resolution: "@wix/auto_sdk_seo_seo-tags@npm:1.0.5"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.3.55"
     "@wix/sdk-types": "npm:^1.13.28"
-  checksum: 10c0/0fd97655ddfa7a2f212c345b7c2465b611820ee4632a93e022b395ec10a6325c0085a0be1366fd7c115666ba8f97066a1dc20b7af23ec0b32283abeec5878a7e
+  checksum: 10c0/6a36dcf93360c88afb6a50030fe68f88ac1f9a6565c323a102343a27f046a4a85f9b93dea925cdb8889fbfc60de347482c1742cdee93f6000a2b7907b1c3cdc3
   languageName: node
   linkType: hard
 
@@ -4610,7 +4610,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/seo": "npm:^1.0.5"
+    "@wix/seo": "npm:^1.0.14"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
@@ -4957,14 +4957,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/seo@npm:^1.0.5":
-  version: 1.0.13
-  resolution: "@wix/seo@npm:1.0.13"
+"@wix/seo@npm:^1.0.14":
+  version: 1.0.14
+  resolution: "@wix/seo@npm:1.0.14"
   dependencies:
     "@wix/auto_sdk_seo_robots-txt": "npm:1.0.3"
     "@wix/auto_sdk_seo_seo-sitemap-entries": "npm:1.0.6"
-    "@wix/auto_sdk_seo_seo-tags": "npm:1.0.4"
-  checksum: 10c0/356dcb3663d1c1f2d6209f200d41ea0410ba16c9dbe933b8d6dd62c74eb83fc8ee7114379de28ce3ef28280ccd44a486ad69fc98df62a42dedc7bf36481dfa5a
+    "@wix/auto_sdk_seo_seo-tags": "npm:1.0.5"
+  checksum: 10c0/87ab14a066892e9d576b766b4669f443e4144b4553870539456de20be159d53df998d9af8aa88a1033929a1852b9f5c229511104aea9feb571e202af392d4c4a
   languageName: node
   linkType: hard
 
