@@ -1,14 +1,10 @@
-import type { ServiceAPI } from "@wix/services-manager/types";
+import type { ServiceAPI } from '@wix/services-manager/types';
 import {
   SEOTagsServiceDefinition,
   type SEOTagsServiceConfig,
-} from "../services/seo-tags-service.js";
-import type { seoTags } from "@wix/seo";
-import { useService } from "@wix/services-manager-react";
-
-export interface TagsProps {
-  seoTagsServiceConfig: SEOTagsServiceConfig;
-}
+} from '../services/seo-tags-service';
+import type { seoTags } from '@wix/seo';
+import { useService } from '@wix/services-manager-react';
 
 /**
  * Renders SEO tags (title, meta, link, script) in the document head using a provided SEO service configuration.
@@ -31,48 +27,48 @@ export interface TagsProps {
  * <head>
  *   <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
  * </head>
- *
- * @component
  */
 
-export function Tags(props: TagsProps): React.ReactNode {
-  const { seoTagsServiceConfig } = props;
-  const dataAttr = { "wix-seo-tags": "true" };
+export interface TagsProps {
+  seoTagsServiceConfig: SEOTagsServiceConfig;
+}
+
+export function Tags({ seoTagsServiceConfig }: TagsProps): React.ReactNode {
+  const dataAttr = { 'wix-seo-tags': 'true' };
   return seoTagsServiceConfig.tags
-    .filter((tag) => !tag.disabled)
+    .filter(tag => !tag.disabled)
     .map((tag, index) => {
-      if (tag.type === "title") {
+      if (tag.type === 'title') {
         return (
           <title key={`title-${index}`} {...dataAttr}>
             {tag.children}
           </title>
         );
       }
-      if (tag.type === "meta") {
+      if (tag.type === 'meta') {
         return <meta key={`meta-${index}`} {...tag.props} {...dataAttr} />;
       }
 
-      if (tag.type === "link") {
+      if (tag.type === 'link') {
         return <link key={`link-${index}`} {...tag.props} {...dataAttr} />;
       }
 
-      if (tag.type === "script") {
+      if (tag.type === 'script') {
         return (
           <script
             key={`script-${index}`}
             {...tag.props}
             {...tag.meta}
             {...dataAttr}
-          >
-            {tag.children}
-          </script>
+            dangerouslySetInnerHTML={{ __html: tag.children || '' }}
+          />
         );
       }
       return null;
     });
 }
 
-export interface UpdateTagsTriggerProps {
+export interface UpdateTagsTrigger {
   children: (props: {
     updateSeoTags: (
       itemType: seoTags.ItemType,
@@ -106,10 +102,10 @@ export interface UpdateTagsTriggerProps {
  *   )}
  * </SEO.UpdateTagsTrigger>
  * ```
- *
- * @component
  */
-export function UpdateTagsTrigger(props: UpdateTagsTriggerProps) {
+export const UpdateTagsTrigger = (
+  props: UpdateTagsTrigger
+): React.ReactNode => {
   const service = useService(SEOTagsServiceDefinition) as ServiceAPI<
     typeof SEOTagsServiceDefinition
   >;
@@ -117,4 +113,4 @@ export function UpdateTagsTrigger(props: UpdateTagsTriggerProps) {
   return props.children({
     updateSeoTags: service.updateSeoTags,
   });
-}
+};
