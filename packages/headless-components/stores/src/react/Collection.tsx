@@ -7,33 +7,38 @@ import {
 } from "@wix/auto_sdk_stores_products-v-3";
 
 /**
- * Props for Grid headless component
+ * Props for the Grid headless component.
  */
 export interface GridProps {
-  /** Render prop function that receives product grid data */
+  /** Render prop function that receives product grid data from the collection. */
   children: (props: GridRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Grid component
+ * Render props for the Grid component.
  */
 export interface GridRenderProps {
-  /** Array of products */
+  /** Array of products from the collection. Each product can have multiple variants based on different choices, such as color or size. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
   products: V3Product[];
-  /** Whether products are loading */
+  /** Whether the collection data is being fetched. */
   isLoading: boolean;
-  /** Error message if any */
+  /** Error message if loading fails. */
   error: string | null;
-  /** Whether there are no products */
+  /** Indicates if the collection is empty, meaning there are no products in the collection. */
   isEmpty: boolean;
-  /** Total number of products */
+  /** Total number of products in the collection. */
   totalProducts: number;
-  /** Whether collection has products */
+  /** Whether the collection contains any products. */
   hasProducts: boolean;
 }
 
 /**
- * Headless component for product grid
+ * <blockquote class="caution">
+ * Headless components are in Developer Preview and subject to change.
+ * </blockquote>
+ *
+ * Headless component for displaying products from a collection in a grid layout.
+ * Collections are themed groupings of products that store owners create to organize their catalog.
  *
  * @component
  */
@@ -85,42 +90,46 @@ export const Grid = (props: GridProps) => {
 };
 
 /**
- * Props for Item headless component
+ * Props for the Item headless component.
  */
 export interface ItemProps {
-  /** Product data */
+  /** Product data with all available variants and options. */
   product: V3Product;
   /** Render prop function that receives product item data */
   children: (props: ItemRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Item component
+ * Render props for the Item component.
  */
 export interface ItemRenderProps {
-  /** Product ID */
+  /** Product ID. */
   id: string;
-  /** Product title */
+  /** Display name of the product. */
   title: string;
-  /** Product slug for URL */
+  /** URL-friendly product identifier */
   slug: string;
   /** Main product image URL */
   image: string | null;
-  /** Product price */
+  /** Formatted product price that reflects the current variant pricing. */
   price: string;
-  /** Compare at price (for strikethrough) */
+  /** Original price for comparison. Indicates a discount when available. */
   compareAtPrice: string | null;
-  /** Product description */
+  /** Product description. */
   description: string;
-  /** Whether product is available */
+  /** Whether the product is currently available for purchase. */
   available: boolean;
-  /** Product URL */
+  /** Direct link to the product page. */
   href: string;
 }
 
 /**
- * Headless component for individual product item
+ * <blockquote class="caution">
+ * Headless components are in Developer Preview and subject to change.
+ * </blockquote>
  *
+ * Headless component for displaying an individual product item.
+ * Handles product variants and provides ready-to-use product information for UI components.
  * @component
  */
 export const Item = (props: ItemProps) => {
@@ -159,33 +168,38 @@ export const Item = (props: ItemProps) => {
 };
 
 /**
- * Props for LoadMore headless component
+ * Props for the LoadMore headless component.
  */
 export interface LoadMoreProps {
-  /** Render prop function that receives load more data */
+  /** Render prop function that receives pagination and loading state data */
   children: (props: LoadMoreRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for LoadMore component
+ * Render props for the LoadMore component.
  */
 export interface LoadMoreRenderProps {
-  /** Function to load more products */
+  /** Function to load additional products from the collection */
   loadMore: () => Promise<void>;
-  /** Function to refresh products */
+  /** Function to refresh the entire collection */
   refresh: () => Promise<void>;
-  /** Whether load more is currently loading */
+  /** Whether additional products are being fetched */
   isLoading: boolean;
-  /** Whether there are products */
+  /** Whether the collection contains any products */
   hasProducts: boolean;
-  /** Total number of products currently loaded */
-  totalProducts: number;
-  /** Whether there are more products to load */
+  /** Number of products currently loaded from the collection */
+  loadedCount: number;
+  /** Whether there are more products available to load */
   hasMoreProducts: boolean;
 }
 
 /**
- * Headless component for load more products functionality
+ * <blockquote class="caution">
+ * Headless components are in Developer Preview and subject to change.
+ * </blockquote>
+ *
+ * Headless component for progressive loading of collection products.
+ * Enables loading additional products from the collection without traditional pagination.
  * Note: V3 API uses simplified loading without traditional pagination
  *
  * @component
@@ -236,27 +250,32 @@ export const LoadMore = (props: LoadMoreProps) => {
 };
 
 /**
- * Props for Header headless component
+ * Props for the Header headless component.
  */
 export interface HeaderProps {
-  /** Render prop function that receives collection header data */
+  /** Render prop function that receives collection summary data */
   children: (props: HeaderRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Header component
+ * Render props for the Header component.
  */
 export interface HeaderRenderProps {
-  /** Total number of products */
+  /** Total number of products in the collection */
   totalProducts: number;
-  /** Whether collection is loading */
+  /** Whether the collection data is being fetched */
   isLoading: boolean;
-  /** Whether collection has products */
+  /** Whether the collection contains any products */
   hasProducts: boolean;
 }
 
 /**
- * Headless component for collection header with product count
+ * <blockquote class="caution">
+ * Headless components are in Developer Preview and subject to change.
+ * </blockquote>
+ *
+ * Headless component for displaying collection summary information such as product count.
+ * Useful for creating collection headers and navigation elements.
  *
  * @component
  */
@@ -296,30 +315,36 @@ export const Header = (props: HeaderProps) => {
 };
 
 /**
- * Props for Actions headless component
+ * Props for the Actions headless component.
  */
 export interface ActionsProps {
-  /** Render prop function that receives collection actions data */
+  /** Render prop function that receives collection action controls and state */
   children: (props: ActionsRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Actions component
+ * Render props for the Actions component.
  */
 export interface ActionsRenderProps {
-  /** Function to refresh the collection */
+  /** Function to refresh the collection data */
   refresh: () => Promise<void>;
-  /** Function to load more products */
+  /** Function to load additional products from the collection */
   loadMore: () => Promise<void>;
-  /** Whether actions are loading */
+  /** Whether an action is being processed */
   isLoading: boolean;
-  /** Error message if any */
+  /** Error message if an action fails */
   error: string | null;
 }
 
 /**
- * Headless component for collection actions (refresh, load more)
- * Replaces traditional pagination for V3 API
+ * <blockquote class="caution">
+ * Headless components are in Developer Preview and subject to change.
+ * </blockquote>
+ *
+ * Headless component for performing actions on collections, such as refresh and load more.
+ * Collections are themed groupings of products that store owners create to organize their catalog
+ * (for example, Spring 2019, Running shoes, etc.). Products can belong to multiple collections.
+ * This component replaces traditional pagination for V3 API.
  *
  * @component
  */
