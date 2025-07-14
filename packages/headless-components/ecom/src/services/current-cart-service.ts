@@ -41,6 +41,11 @@ export interface CurrentCartServiceAPI {
   applyCoupon: (couponCode: string) => Promise<void>;
   removeCoupon: () => Promise<void>;
   reloadCart: () => Promise<void>;
+  onAddedToCart: (
+    callback: (
+      lineItems: currentCart.AddToCurrentCartRequest['lineItems']
+    ) => void
+  ) => void;
 }
 
 export const CurrentCartServiceDefinition =
@@ -62,6 +67,9 @@ export const CurrentCartService = implementService.withConfig<{
   const error: Signal<string | null> = signalsService.signal(null as any);
   const buyerNotes: Signal<string> = signalsService.signal("" as any);
   const cartTotals: Signal<any | null> = signalsService.signal(null as any);
+  const onAddedToCartCallbaks = new Set<
+    (lineItems: currentCart.AddToCurrentCartRequest['lineItems']) => void
+  >();
 
   const cartCount: ReadOnlySignal<number> = signalsService.computed(() => {
     const currentCart = cart.get();
@@ -99,11 +107,25 @@ export const CurrentCartService = implementService.withConfig<{
       if (updatedCart?.lineItems?.length) {
         estimateTotals();
       }
+      setTimeout(() => {
+        onAddedToCartCallbaks.forEach(callback => callback(lineItems));
+      }, 0);
     } catch (err) {
       error.set(err instanceof Error ? err.message : "Failed to add to cart");
     } finally {
       isLoading.set(false);
     }
+  };
+
+  const onAddedToCart = (
+    callback: (
+      lineItems: currentCart.AddToCurrentCartRequest['lineItems']
+    ) => void
+  ) => {
+    onAddedToCartCallbaks.add(callback);
+    return () => {
+      onAddedToCartCallbaks.delete(callback);
+    };
   };
 
   const removeLineItem = async (lineItemId: string) => {
@@ -354,6 +376,7 @@ export const CurrentCartService = implementService.withConfig<{
     applyCoupon,
     removeCoupon,
     reloadCart,
+    onAddedToCart,
   };
 });
 
