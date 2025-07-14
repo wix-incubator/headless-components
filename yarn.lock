@@ -4619,7 +4619,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-stores@npm:^0.0.15, @wix/headless-stores@workspace:packages/headless-components/stores":
+"@wix/headless-stores@npm:^0.0.15":
+  version: 0.0.15
+  resolution: "@wix/headless-stores@npm:0.0.15"
+  dependencies:
+    "@wix/auto_sdk_bookings_availability-calendar": "npm:^1.0.155"
+    "@wix/auto_sdk_categories_categories": "npm:^1.0.62"
+    "@wix/auto_sdk_stores_customizations-v-3": "npm:^1.0.26"
+    "@wix/auto_sdk_stores_inventory-items-v-3": "npm:^1.0.26"
+    "@wix/auto_sdk_stores_products-v-3": "npm:^1.0.53"
+    "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
+    "@wix/ecom": "npm:^1.0.1238"
+    "@wix/essentials": "npm:^0.1.22"
+    "@wix/headless-ecom": "npm:^0.0.3"
+    "@wix/headless-media": "npm:^0.0.2"
+    "@wix/redirects": "npm:^1.0.79"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/4e888547ec15ab1b9841b7d51f82bcd9962f23fc549542cf6028bbfd2fb469f11326d95554136e18e2819963702c9da9514db36bc4cd1c84813c7f1b867fd712
+  languageName: node
+  linkType: hard
+
+"@wix/headless-stores@workspace:packages/headless-components/stores":
   version: 0.0.0-use.local
   resolution: "@wix/headless-stores@workspace:packages/headless-components/stores"
   dependencies:

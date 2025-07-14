@@ -32,7 +32,12 @@ export {
   loadCatalogPriceRangeServiceConfig,
 } from "./catalog-price-range-service.js";
 
-export { FilterService, FilterServiceDefinition } from "./filter-service.js";
+export {
+  FilterService,
+  FilterServiceDefinition,
+  Filter,
+  AvailableOptions,
+} from "./filter-service.js";
 
 export {
   ProductModifiersService,
@@ -61,4 +66,4 @@ export {
   SocialSharingServiceDefinition,
 } from "./social-sharing-service.js";
 
-export { SortService, SortServiceDefinition } from "./sort-service.js";
+export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
