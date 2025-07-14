@@ -39,6 +39,8 @@ export interface GridRenderProps {
  *
  * Headless component for displaying products from a collection in a grid layout.
  * Collections are themed groupings of products that store owners create to organize their catalog.
+ * For example, a store owner might create collections like "Spring 2019" or "Running shoes".
+ * Products can belong to multiple collections.
  *
  * @component
  */
@@ -342,8 +344,6 @@ export interface ActionsRenderProps {
  * </blockquote>
  *
  * Headless component for performing actions on collections, such as refresh and load more.
- * Collections are themed groupings of products that store owners create to organize their catalog
- * (for example, Spring 2019, Running shoes, etc.). Products can belong to multiple collections.
  * This component replaces traditional pagination for V3 API.
  *
  * @component
