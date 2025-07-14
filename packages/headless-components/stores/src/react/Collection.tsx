@@ -42,7 +42,7 @@ export interface GridRenderProps {
  * For example, a store owner might create collections like "Spring 2019" or "Running shoes".
  * Products can belong to multiple collections.
  *
- * > **Note:** This component is designed for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @component
  */
@@ -135,7 +135,7 @@ export interface ItemRenderProps {
  * Headless component for displaying an individual product item.
  * Handles product variants and provides ready-to-use product information for UI components.
  *
- * > **Note:** This component is designed for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @component
  */
@@ -209,7 +209,7 @@ export interface LoadMoreRenderProps {
  * Enables loading additional products from the collection without traditional pagination.
  * Note: V3 API uses simplified loading without traditional pagination
  *
- * > **Note:** This component is designed for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @component
  */
@@ -285,7 +285,7 @@ export interface HeaderRenderProps {
  *
  * Headless component for displaying collection metadata such as product count and loading state.
  *
- * > **Note:** This component is designed for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @component
  */
@@ -354,7 +354,7 @@ export interface ActionsRenderProps {
  * Headless component for performing actions on collections, such as refresh and load more.
  * This component replaces traditional pagination for V3 API.
  *
- * > **Note:** This component is designed for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @component
  */
