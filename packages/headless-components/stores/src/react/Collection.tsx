@@ -18,13 +18,13 @@ export interface GridProps {
  * Render props for the Grid component.
  */
 export interface GridRenderProps {
-  /** Array of products from the collection. Products can have multiple variants based on different choices, such as color or size. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
+  /** Array of products from the collection. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
   products: V3Product[];
-  /** Whether the collection data is being fetched. */
+  /** Whether the collection data is loading. */
   isLoading: boolean;
   /** Error message if loading fails. */
   error: string | null;
-  /** Indicates if the collection is empty, meaning there are no products in the collection. */
+  /** Whether the collection is empty. */
   isEmpty: boolean;
   /** Total number of products in the collection. */
   totalProducts: number;
@@ -185,7 +185,7 @@ export interface LoadMoreRenderProps {
   loadMore: () => Promise<void>;
   /** Function to refresh the entire collection data. */
   refresh: () => Promise<void>;
-  /** Whether additional products are being fetched. */
+  /** Whether additional products are loading. */
   isLoading: boolean;
   /** Whether the collection contains any products. */
   hasProducts: boolean;
@@ -255,7 +255,7 @@ export const LoadMore = (props: LoadMoreProps) => {
  * Props for the Header headless component.
  */
 export interface HeaderProps {
-  /** Function that receives collection summary data. Use this function to render your custom header UI components with collection information. */
+  /** Function that receives collection metadata such as product count and loading state. Use this function to render your custom header UI components. */
   children: (props: HeaderRenderProps) => React.ReactNode;
 }
 
@@ -265,7 +265,7 @@ export interface HeaderProps {
 export interface HeaderRenderProps {
   /** Total number of products in the collection. */
   totalProducts: number;
-  /** Whether the collection data is being fetched. */
+  /** Whether the collection data is loading. */
   isLoading: boolean;
   /** Whether the collection contains any products. */
   hasProducts: boolean;
@@ -276,8 +276,7 @@ export interface HeaderRenderProps {
  * Headless components are in Developer Preview and subject to change.
  * </blockquote>
  *
- * Headless component for displaying collection summary information such as product count.
- * Useful for creating collection headers and navigation elements.
+ * Headless component for displaying collection metadata such as product count and loading state.
  *
  * @component
  */
@@ -332,7 +331,7 @@ export interface ActionsRenderProps {
   refresh: () => Promise<void>;
   /** Function to load additional products from the collection. */
   loadMore: () => Promise<void>;
-  /** Whether an action is being processed. */
+  /** Whether an action is loading. */
   isLoading: boolean;
   /** Error message if an action fails. */
   error: string | null;
