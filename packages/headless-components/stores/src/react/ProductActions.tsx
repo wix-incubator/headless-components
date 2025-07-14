@@ -22,8 +22,6 @@ export interface ActionsRenderProps {
   onAddToCart: () => Promise<void>;
   /** Function to buy now (clear cart, add product, proceed to checkout) */
   onBuyNow: () => Promise<void>;
-  /** Function to open cart */
-  onOpenCart: () => void;
   /** Whether add to cart is available */
   canAddToCart: boolean;
   /** Whether add to cart is currently loading */
@@ -117,14 +115,9 @@ export const Actions = (props: ActionsProps) => {
     }
   };
 
-  const onOpenCart = () => {
-    cartService.openCart();
-  };
-
   return props.children({
     onAddToCart,
     onBuyNow,
-    onOpenCart,
     canAddToCart,
     isLoading,
     price,
