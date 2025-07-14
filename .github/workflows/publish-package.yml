@@ -26,6 +26,15 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Build dependencies for stores package
+        if: inputs.package_name == 'stores'
+        run: |
+          echo "Building dependencies for stores package..."
+          cd packages/headless-components/ecom
+          yarn build
+          cd ../media
+          yarn build
+
       - name: Build package
         run: |
           cd packages/headless-components/${{ inputs.package_name }}
