@@ -2,7 +2,7 @@ import type { ServiceAPI } from "@wix/services-manager/types";
 import {
   SEOTagsServiceDefinition,
   type SEOTagsServiceConfig,
-} from "../services/seo-tags-service";
+} from "../services/seo-tags-service.js";
 import type { seoTags } from "@wix/seo";
 import { useService } from "@wix/services-manager-react";
 
@@ -27,6 +27,8 @@ import { useService } from "@wix/services-manager-react";
  * <head>
  *   <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
  * </head>
+ *
+ * @component
  */
 
 export interface TagsProps {
@@ -102,6 +104,8 @@ export interface UpdateTagsTrigger {
  *   )}
  * </SEO.UpdateTagsTrigger>
  * ```
+ *
+ * @component
  */
 export const UpdateTagsTrigger = (
   props: UpdateTagsTrigger
