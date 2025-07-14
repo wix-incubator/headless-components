@@ -3,17 +3,16 @@ import {
   implementService,
   type ServiceFactoryConfig,
 } from "@wix/services-definitions";
-import {
-  SignalsServiceDefinition,
-  type Signal,
-} from "@wix/services-definitions/core-services/signals";
-import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
-import * as readOnlyVariantsV3 from "@wix/auto_sdk_stores_read-only-variants-v-3";
-import { FilterServiceDefinition, type Filter } from "./filter-service.js";
-import { CategoryServiceDefinition } from "./category-service.js";
-import { SortServiceDefinition, type SortBy } from "./sort-service.js";
-import { URLParamsUtils } from "../utils/url-params.js";
-import { SortType } from "../enums/sort-enums.js";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal } from "@wix/services-definitions/core-services/signals";
+
+import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
+import { FilterServiceDefinition, type Filter } from "./filter-service";
+import { CategoryServiceDefinition } from "./category-service";
+import { SortServiceDefinition, type SortBy } from "./sort-service";
+import { CatalogServiceDefinition } from "./catalog-service";
+import { URLParamsUtils } from "../utils/url-params";
+import { SortType } from "../enums/sort-enums";
 
 const { SortDirection } = productsV3;
 
@@ -112,7 +111,7 @@ const buildSearchOptions = (
     for (const [optionId, choiceIds] of Object.entries(
       filters.selectedOptions
     )) {
-      if (choiceIds && choiceIds.length > 0) {
+      if (choiceIds.length > 0) {
         // Handle inventory filter separately
         if (optionId === "inventory-filter") {
           filterConditions.push({
@@ -206,6 +205,7 @@ export const CollectionService = implementService.withConfig<{
   const collectionFilters = getService(FilterServiceDefinition);
   const categoryService = getService(CategoryServiceDefinition);
   const sortService = getService(SortServiceDefinition);
+  const catalogService = getService(CatalogServiceDefinition);
 
   const hasMoreProducts: Signal<boolean> = signalsService.signal(
     (config.initialHasMore ?? true) as any
@@ -380,16 +380,13 @@ export const CollectionService = implementService.withConfig<{
   const initializeCatalogData = async () => {
     isInitializingCatalogData = true; // Set flag BEFORE loading
     const selectedCategory = categoryService.selectedCategory.get();
-    await collectionFilters.loadCatalogPriceRange(
-      selectedCategory || undefined
-    );
-    await collectionFilters.loadCatalogOptions(selectedCategory || undefined);
+
+    // Load catalog data from the combined catalog service
+    await catalogService.loadCatalogData(selectedCategory || undefined);
+
     // Reset flag to allow filter changes to trigger refreshes
     isInitializingCatalogData = false;
   };
-
-  // Load catalog data on initialization
-  void initializeCatalogData();
 
   signalsService.effect(() => {
     sortService.currentSort.get();
@@ -443,7 +440,7 @@ function parseURLParams(
     recommended: SortType.RECOMMENDED,
   };
   const initialSort =
-    sortMap[urlParams["sort"] as string] || (SortType.NEWEST as SortBy);
+    sortMap[urlParams.sort as string] || (SortType.NEWEST as SortBy);
 
   // Check if there are any filter parameters (excluding sort)
   const filterParams = Object.keys(urlParams).filter((key) => key !== "sort");
@@ -460,12 +457,12 @@ function parseURLParams(
   };
 
   // Apply price filters from URL
-  if (urlParams["minPrice"]) {
-    const min = parseFloat(urlParams["minPrice"] as string);
+  if (urlParams.minPrice) {
+    const min = parseFloat(urlParams.minPrice as string);
     if (!isNaN(min)) initialFilters.priceRange.min = min;
   }
-  if (urlParams["maxPrice"]) {
-    const max = parseFloat(urlParams["maxPrice"] as string);
+  if (urlParams.maxPrice) {
+    const max = parseFloat(urlParams.maxPrice as string);
     if (!isNaN(max)) initialFilters.priceRange.max = max;
   }
 
@@ -474,10 +471,10 @@ function parseURLParams(
   parseOptionFilters(urlParams, optionsMap, initialFilters);
 
   // Parse inventory filter from 'availability' URL parameter
-  if (urlParams["availability"]) {
-    const availabilityValues = Array.isArray(urlParams["availability"])
-      ? urlParams["availability"]
-      : [urlParams["availability"]];
+  if (urlParams.availability) {
+    const availabilityValues = Array.isArray(urlParams.availability)
+      ? urlParams.availability
+      : [urlParams.availability];
 
     const inventoryStatusValues = availabilityValues.map((value) =>
       value.replace(/\s+/g, "_").toUpperCase()
@@ -592,7 +589,7 @@ export async function loadCollectionServiceConfig(
     if (preloadedCategories) {
       categories = preloadedCategories;
     } else {
-      const { loadCategoriesConfig } = await import("./category-service.js");
+      const { loadCategoriesConfig } = await import("./category-service");
       const categoriesConfig = await loadCategoriesConfig();
       categories = categoriesConfig.categories;
     }
