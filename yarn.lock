@@ -4551,7 +4551,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-ecom@npm:^0.0.3, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@wix/headless-ecom@npm:0.0.3"
+  dependencies:
+    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
+    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/099c595444f44cf444f0621d813b28aa7b3510026810939cf3ca4a6ef757dd6b5b5daccd337c834e16db9797e1622ba10ef314d80def88aa395f1251e23d801e
+  languageName: node
+  linkType: hard
+
+"@wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
