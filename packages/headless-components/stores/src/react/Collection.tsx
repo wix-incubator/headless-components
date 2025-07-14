@@ -37,10 +37,8 @@ export interface GridRenderProps {
  * Headless components are in Developer Preview and subject to change.
  * </blockquote>
  *
- * Headless component for displaying products from a collection in a grid layout.
- * Collections are themed groupings of products that store owners create to organize their catalog.
- * For example, a store owner might create collections like "Spring 2019" or "Running shoes".
- * Products can belong to multiple collections.
+ * Headless component for displaying products in a grid layout.
+ * Handles the display of product collections with loading states and error handling.
  *
  * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
@@ -186,15 +184,15 @@ export interface LoadMoreProps {
  * Render props for the LoadMore component.
  */
 export interface LoadMoreRenderProps {
-  /** Function to load additional products from the collection. */
+  /** Function to load additional products. */
   loadMore: () => Promise<void>;
-  /** Function to refresh the entire collection data. */
+  /** Function to refresh the collection data. */
   refresh: () => Promise<void>;
   /** Whether additional products are loading. */
   isLoading: boolean;
   /** Whether the collection contains any products. */
   hasProducts: boolean;
-  /** Number of products loaded from the collection. */
+  /** Number of products currently loaded. */
   loadedCount: number;
   /** Whether there are more products available to load. */
   hasMoreProducts: boolean;
@@ -205,8 +203,8 @@ export interface LoadMoreRenderProps {
  * Headless components are in Developer Preview and subject to change.
  * </blockquote>
  *
- * Headless component for progressive loading of collection products.
- * Enables loading additional products from the collection without traditional pagination.
+ * Headless component for progressive loading of products.
+ * Enables loading additional products without traditional pagination.
  * Note: V3 API uses simplified loading without traditional pagination
  *
  * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
@@ -338,7 +336,7 @@ export interface ActionsProps {
 export interface ActionsRenderProps {
   /** Function to refresh the collection data. */
   refresh: () => Promise<void>;
-  /** Function to load additional products from the collection. */
+  /** Function to load additional products. */
   loadMore: () => Promise<void>;
   /** Whether an action is loading. */
   isLoading: boolean;
