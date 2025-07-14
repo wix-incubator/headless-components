@@ -55,6 +55,7 @@
     "@wix/auto_sdk_stores_inventory-items-v-3": "^1.0.26",
     "@wix/auto_sdk_stores_products-v-3": "^1.0.53",
     "@wix/auto_sdk_stores_read-only-variants-v-3": "^1.0.23",
+    "@wix/ecom": "^1.0.1238",
     "@wix/essentials": "^0.1.22",
     "@wix/headless-ecom": "^0.0.3",
     "@wix/headless-media": "^0.0.2",
