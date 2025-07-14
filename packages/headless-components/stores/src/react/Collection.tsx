@@ -10,15 +10,15 @@ import {
  * Props for the Grid headless component.
  */
 export interface GridProps {
-  /** Render prop function that receives product grid data from the collection. */
-  children: (props: GridRenderProps) => React.ReactNode;
+  /** Function that receives product grid data and loading states. Use this function to render your custom UI components with the provided data. */
+  children: (props: GridRenderProps) => JSX.Element;
 }
 
 /**
  * Render props for the Grid component.
  */
 export interface GridRenderProps {
-  /** Array of products from the collection. Each product can have multiple variants based on different choices, such as color or size. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
+  /** Array of products from the collection. Products can have multiple variants based on different choices, such as color or size. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
   products: V3Product[];
   /** Whether the collection data is being fetched. */
   isLoading: boolean;
@@ -95,7 +95,7 @@ export const Grid = (props: GridProps) => {
 export interface ItemProps {
   /** Product data with all available variants and options. */
   product: V3Product;
-  /** Render prop function that receives product item data */
+  /** Function that receives product item data. Use this function to render your custom UI components with the provided product information. */
   children: (props: ItemRenderProps) => React.ReactNode;
 }
 
@@ -107,17 +107,17 @@ export interface ItemRenderProps {
   id: string;
   /** Display name of the product. */
   title: string;
-  /** URL-friendly product identifier */
+  /** URL-friendly product identifier used in product page URLs. */
   slug: string;
-  /** Main product image URL */
+  /** Main product image URL. */
   image: string | null;
-  /** Formatted product price that reflects the current variant pricing. */
+  /** Formatted product price that reflects the variant pricing. */
   price: string;
   /** Original price for comparison. Indicates a discount when available. */
   compareAtPrice: string | null;
   /** Product description. */
   description: string;
-  /** Whether the product is currently available for purchase. */
+  /** Whether the product is available for purchase based on inventory status. */
   available: boolean;
   /** Direct link to the product page. */
   href: string;
@@ -171,7 +171,7 @@ export const Item = (props: ItemProps) => {
  * Props for the LoadMore headless component.
  */
 export interface LoadMoreProps {
-  /** Render prop function that receives pagination and loading state data */
+  /** Function that receives pagination and loading state data. Use this function to render your custom loading and pagination UI components. */
   children: (props: LoadMoreRenderProps) => React.ReactNode;
 }
 
@@ -179,17 +179,17 @@ export interface LoadMoreProps {
  * Render props for the LoadMore component.
  */
 export interface LoadMoreRenderProps {
-  /** Function to load additional products from the collection */
+  /** Function to load additional products from the collection. */
   loadMore: () => Promise<void>;
-  /** Function to refresh the entire collection */
+  /** Function to refresh the entire collection data. */
   refresh: () => Promise<void>;
-  /** Whether additional products are being fetched */
+  /** Whether additional products are being fetched. */
   isLoading: boolean;
-  /** Whether the collection contains any products */
+  /** Whether the collection contains any products. */
   hasProducts: boolean;
-  /** Number of products currently loaded from the collection */
+  /** Number of products loaded from the collection. */
   loadedCount: number;
-  /** Whether there are more products available to load */
+  /** Whether there are more products available to load. */
   hasMoreProducts: boolean;
 }
 
@@ -253,7 +253,7 @@ export const LoadMore = (props: LoadMoreProps) => {
  * Props for the Header headless component.
  */
 export interface HeaderProps {
-  /** Render prop function that receives collection summary data */
+  /** Function that receives collection summary data. Use this function to render your custom header UI components with collection information. */
   children: (props: HeaderRenderProps) => React.ReactNode;
 }
 
@@ -261,11 +261,11 @@ export interface HeaderProps {
  * Render props for the Header component.
  */
 export interface HeaderRenderProps {
-  /** Total number of products in the collection */
+  /** Total number of products in the collection. */
   totalProducts: number;
-  /** Whether the collection data is being fetched */
+  /** Whether the collection data is being fetched. */
   isLoading: boolean;
-  /** Whether the collection contains any products */
+  /** Whether the collection contains any products. */
   hasProducts: boolean;
 }
 
@@ -318,7 +318,7 @@ export const Header = (props: HeaderProps) => {
  * Props for the Actions headless component.
  */
 export interface ActionsProps {
-  /** Render prop function that receives collection action controls and state */
+  /** Function that receives collection action controls and state. Use this function to render your custom action UI components. */
   children: (props: ActionsRenderProps) => React.ReactNode;
 }
 
@@ -326,13 +326,13 @@ export interface ActionsProps {
  * Render props for the Actions component.
  */
 export interface ActionsRenderProps {
-  /** Function to refresh the collection data */
+  /** Function to refresh the collection data. */
   refresh: () => Promise<void>;
-  /** Function to load additional products from the collection */
+  /** Function to load additional products from the collection. */
   loadMore: () => Promise<void>;
-  /** Whether an action is being processed */
+  /** Whether an action is being processed. */
   isLoading: boolean;
-  /** Error message if an action fails */
+  /** Error message if an action fails. */
   error: string | null;
 }
 
