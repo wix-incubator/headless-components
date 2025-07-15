@@ -72,7 +72,7 @@ export const FiltersLoading: React.FC<FiltersLoadingProps> = ({ children }) => {
 export interface FilteredGridProps {
   /** Function that receives filtered product grid data and loading states. Use this function to render your custom UI components with the provided filtered product data. */
   children: (data: {
-    /** Array of filtered products from the collection. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
+    /** Array of filtered products. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
     products: V3Product[];
     /** Total number of products matching the current filters. */
     totalProducts: number;

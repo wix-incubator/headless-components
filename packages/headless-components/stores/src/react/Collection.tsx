@@ -18,7 +18,7 @@ export interface GridProps {
  * Render props for the Grid component.
  */
 export interface GridRenderProps {
-  /** Array of products from the collection. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
+  /** Array of products. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
   products: V3Product[];
   /** Whether the collection data is loading. */
   isLoading: boolean;
