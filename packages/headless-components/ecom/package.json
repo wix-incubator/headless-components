@@ -41,6 +41,7 @@
   "dependencies": {
     "@wix/auto_sdk_ecom_checkout": "^1.0.52",
     "@wix/auto_sdk_ecom_current-cart": "^1.0.48",
+    "@wix/sdk": "^1.15.24",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
   }
