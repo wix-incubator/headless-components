@@ -34,12 +34,12 @@ export interface FiltersLoadingProps {
  *
  * </blockquote>
  *
- * Headless component for displaying a loading state while filters are being prepared.
- * Provides real-time loading state to show appropriate UI during filter initialization.
+ * A headless component that provides filter initialization status.
+ * Tracks whether all filter options have been fully loaded and are ready for user interaction.
  *
  * > **Notes:**
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
- * > * Headless components provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
  * @example
  * import { FiltersLoading } from "@wix/stores/components";
@@ -96,13 +96,12 @@ export interface FilteredGridProps {
  *
  * </blockquote>
  *
- * Headless component for displaying filtered products in a grid layout.
- * Handles the display of product collections with applied filters, loading states and error handling.
- * Automatically updates when filters are applied or removed.
+ * A headless component for displaying filtered products in a grid layout.
+ * Handles product collection display with applied filters and automatically updates when filters change.
  *
  * > **Notes:**
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
- * > * Headless components provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
  * @example
  * import { Grid } from "@wix/stores/components";
@@ -190,13 +189,12 @@ export interface FilteredItemProps {
  *
  * </blockquote>
  *
- * Headless component for displaying an individual filtered product item.
- * Handles product variants and provides ready-to-use product information for UI components.
- * Works seamlessly with filtered collections to display products that match applied filters.
+ * A headless component for displaying individual filtered product items.
+ * Provides structured product details including pricing, availability, images, and navigation links for filtered results.
  *
  * > **Notes:**
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
- * > * Headless components provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
  * @example
  * import { Item } from "@wix/stores/components";
@@ -300,13 +298,12 @@ export interface FilteredLoadMoreProps {
  *
  * </blockquote>
  *
- * Headless component for progressive loading of filtered products.
- * Enables loading additional products that match the applied filters without traditional pagination.
- * Automatically respects current filter settings when loading more products.
+ * A headless component that enables progressive loading of filtered products.
+ * Loads additional products that match applied filters without traditional pagination.
  *
  * > **Notes:**
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
- * > * Headless components provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
  * @example
  * import { LoadMore } from "@wix/stores/components";
@@ -385,15 +382,14 @@ export interface FilteredFiltersProps {
  *
  * </blockquote>
  *
- * Headless component for managing product filters with available options.
- * Provides comprehensive filter functionality including price ranges, product attributes, and custom options.
- * Handles filter state management and automatically updates the product collection when filters are applied.
+ * A headless component for managing product filters with available options.
+ * Provides comprehensive filter functionality including price ranges, product attributes, and custom options, and automatically updates the product collection when filters are applied.
  *
  * > **Notes:**
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
- * > * Headless components provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
-  * @example
+ * @example
  * import { Filters } from "@wix/stores/components";
  *
  * <Filters>

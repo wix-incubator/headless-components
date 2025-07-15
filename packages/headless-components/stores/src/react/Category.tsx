@@ -27,13 +27,12 @@ export interface CategoryListProps {
  *
  * </blockquote>
  *
- * Headless component for displaying and managing product categories.
- * Provides category selection functionality with real-time state management for filtering products by category.
- * Handles category data retrieval and maintains the current selection state.
+ * A headless component for displaying and managing product categories.
+ * Manages category data retrieval and maintains selection state for filtering products by category.
  *
  * > **Notes:**
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
- * > * Headless components provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
  * @example
  * import { List } from "@wix/stores/components";
