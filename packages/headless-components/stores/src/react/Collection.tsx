@@ -38,8 +38,9 @@ export interface GridRenderProps {
  * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
  * </blockquote>
  *
- * Headless component for displaying products in a grid layout.
- * Handles the display of product collections with loading states and error handling.
+ * Headless component for displaying products in a grid layout. Handles the display of product collections with loading states and error handling.
+ *
+ * Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  *
  * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
@@ -156,6 +157,8 @@ export interface ItemRenderProps {
  * Headless component for displaying an individual product item.
  * Handles product variants and provides ready-to-use product information for UI components.
  *
+ * Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ *
  * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @example
@@ -256,6 +259,8 @@ export interface LoadMoreRenderProps {
  * Enables loading additional products without traditional pagination.
  * Note: V3 API uses simplified loading without traditional pagination
  *
+ * Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ *
  * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @example
@@ -348,6 +353,8 @@ export interface HeaderRenderProps {
  *
  * Headless component for displaying collection metadata such as product count and loading state.
  *
+ * Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ *
  * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
  * @example
@@ -432,6 +439,8 @@ export interface ActionsRenderProps {
  *
  * Headless component for performing actions on collections, such as refresh and load more.
  * This component replaces traditional pagination for V3 API.
+ *
+ * Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  *
  * > **Note:** This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  *
