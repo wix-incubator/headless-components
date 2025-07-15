@@ -1,8 +1,8 @@
-// import type { services } from '@wix/bookings';
 import { Image, type FittingType, initCustomElement } from "@wix/image";
 
-// type MediaItem = services.MediaItem;
-type MediaItem = any;
+type MediaItem = {
+  image?: string;
+};
 
 initCustomElement();
 
@@ -13,7 +13,7 @@ const parseMediaFromUrl = (url: string) => {
   const wixImagePrefix = "wix:image://v1/";
 
   if (url.startsWith(wixImagePrefix)) {
-    const uri = url.replace(wixImagePrefix, "").split("#")[0].split("/")[0];
+    const uri = url.replace(wixImagePrefix, "").split("#")[0]!.split("/")[0];
 
     const params = new URLSearchParams(url.split("#")[1] || "");
     const originalWidth = params.get("originWidth");
@@ -57,7 +57,7 @@ export function WixMediaImage({
   return (
     <Image
       key={uri}
-      uri={uri}
+      uri={uri!}
       width={width || originalWidth}
       height={height || originalHeight}
       containerWidth={width}
