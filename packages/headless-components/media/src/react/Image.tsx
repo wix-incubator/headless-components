@@ -1,7 +1,8 @@
-import type { services } from '@wix/bookings';
-import { Image, type FittingType, initCustomElement } from '@wix/image';
+// import type { services } from '@wix/bookings';
+import { Image, type FittingType, initCustomElement } from "@wix/image";
 
-type MediaItem = services.MediaItem;
+// type MediaItem = services.MediaItem;
+type MediaItem = any;
 
 initCustomElement();
 
@@ -9,14 +10,14 @@ const parseMediaFromUrl = (url: string) => {
   if (!url)
     return { uri: url, originalWidth: undefined, originalHeight: undefined };
 
-  const wixImagePrefix = 'wix:image://v1/';
+  const wixImagePrefix = "wix:image://v1/";
 
   if (url.startsWith(wixImagePrefix)) {
-    const uri = url.replace(wixImagePrefix, '').split('#')[0].split('/')[0];
+    const uri = url.replace(wixImagePrefix, "").split("#")[0].split("/")[0];
 
-    const params = new URLSearchParams(url.split('#')[1] || '');
-    const originalWidth = params.get('originWidth');
-    const originalHeight = params.get('originHeight');
+    const params = new URLSearchParams(url.split("#")[1] || "");
+    const originalWidth = params.get("originWidth");
+    const originalHeight = params.get("originHeight");
 
     return {
       uri,
@@ -35,9 +36,9 @@ export function WixMediaImage({
   width,
   height,
   className,
-  alt = '',
+  alt = "",
   showPlaceholder = true,
-  displayMode = 'fill',
+  displayMode = "fill",
 }: {
   media?: MediaItem;
   width?: number;
