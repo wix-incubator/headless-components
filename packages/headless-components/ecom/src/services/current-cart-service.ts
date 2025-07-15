@@ -12,6 +12,10 @@ import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
 import * as checkout from "@wix/auto_sdk_ecom_checkout";
 import { redirects } from "@wix/redirects";
 
+export type LineItem = NonNullable<
+  currentCart.AddToCurrentCartRequest["lineItems"]
+>[number];
+
 export interface CurrentCartServiceAPI {
   cart: Signal<currentCart.Cart | null>;
   isOpen: Signal<boolean>;
@@ -43,7 +47,7 @@ export interface CurrentCartServiceAPI {
   reloadCart: () => Promise<void>;
   onAddedToCart: (
     callback: (
-      lineItems: currentCart.AddToCurrentCartRequest['lineItems']
+      lineItems: currentCart.AddToCurrentCartRequest["lineItems"]
     ) => void
   ) => void;
 }
@@ -68,7 +72,7 @@ export const CurrentCartService = implementService.withConfig<{
   const buyerNotes: Signal<string> = signalsService.signal("" as any);
   const cartTotals: Signal<any | null> = signalsService.signal(null as any);
   const onAddedToCartCallbaks = new Set<
-    (lineItems: currentCart.AddToCurrentCartRequest['lineItems']) => void
+    (lineItems: currentCart.AddToCurrentCartRequest["lineItems"]) => void
   >();
 
   const cartCount: ReadOnlySignal<number> = signalsService.computed(() => {
@@ -108,7 +112,7 @@ export const CurrentCartService = implementService.withConfig<{
         estimateTotals();
       }
       setTimeout(() => {
-        onAddedToCartCallbaks.forEach(callback => callback(lineItems));
+        onAddedToCartCallbaks.forEach((callback) => callback(lineItems));
       }, 0);
     } catch (err) {
       error.set(err instanceof Error ? err.message : "Failed to add to cart");
@@ -119,7 +123,7 @@ export const CurrentCartService = implementService.withConfig<{
 
   const onAddedToCart = (
     callback: (
-      lineItems: currentCart.AddToCurrentCartRequest['lineItems']
+      lineItems: currentCart.AddToCurrentCartRequest["lineItems"]
     ) => void
   ) => {
     onAddedToCartCallbaks.add(callback);

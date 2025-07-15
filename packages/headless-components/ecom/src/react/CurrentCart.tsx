@@ -1,6 +1,9 @@
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
-import { CurrentCartServiceDefinition } from "../services/current-cart-service.js";
+import {
+  CurrentCartServiceDefinition,
+  type LineItem,
+} from "../services/current-cart-service.js";
 import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
 import { media } from "@wix/sdk";
 
@@ -559,9 +562,7 @@ export interface LineItemAddedRenderProps {
    */
   onAddedToCart: (callback: LineItemAddedCallback) => void;
 }
-export type LineItem = NonNullable<
-  currentCart.AddToCurrentCartRequest["lineItems"]
->[number];
+
 /**
  * Callback function type for line item added events
  *
