@@ -128,10 +128,10 @@ export const FilterService = implementService.withConfig<{
     // Add price filters if different from defaults
     if (availableOpts?.priceRange) {
       if (filters.priceRange.min > availableOpts.priceRange.min) {
-        urlParams.minPrice = filters.priceRange.min.toString();
+        urlParams["minPrice"] = filters.priceRange.min.toString();
       }
       if (filters.priceRange.max < availableOpts.priceRange.max) {
-        urlParams.maxPrice = filters.priceRange.max.toString();
+        urlParams["maxPrice"] = filters.priceRange.max.toString();
       }
     }
 
@@ -161,8 +161,8 @@ export const FilterService = implementService.withConfig<{
 
     // Preserve existing sort parameter
     const currentParams = URLParamsUtils.getURLParams();
-    if (currentParams.sort) {
-      urlParams.sort = currentParams.sort;
+    if (currentParams["sort"]) {
+      urlParams["sort"] = currentParams["sort"];
     }
 
     URLParamsUtils.updateURL(urlParams);
