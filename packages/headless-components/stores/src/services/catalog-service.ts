@@ -25,11 +25,17 @@ export interface ProductChoice {
   colorCode?: string;
 }
 
-export interface CatalogOptionsServiceAPI {
+export interface CatalogPriceRange {
+  minPrice: number;
+  maxPrice: number;
+}
+
+export interface CatalogServiceAPI {
   catalogOptions: Signal<ProductOption[] | null>;
+  catalogPriceRange: Signal<CatalogPriceRange | null>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
-  loadCatalogOptions: (categoryId?: string) => Promise<void>;
+  loadCatalogData: (categoryId?: string) => Promise<void>;
 }
 
 // Helper functions
@@ -43,6 +49,19 @@ const extractAggregationValues = (
       (r: any) => r.name === name
     );
   return aggregation?.values?.results?.map((item: any) => item.value) || [];
+};
+
+const extractScalarAggregationValue = (
+  aggregationResponse: any,
+  name: string
+): number | null => {
+  const aggregation =
+    aggregationResponse.aggregations?.[name] ||
+    aggregationResponse.aggregationData?.results?.find(
+      (r: any) => r.name === name
+    );
+  const value = aggregation?.scalar?.value;
+  return value !== undefined && value !== null ? parseFloat(value) : null;
 };
 
 const matchesAggregationName = (
@@ -84,27 +103,43 @@ const buildCategoryFilter = (categoryId?: string) => {
   };
 };
 
-export const CatalogOptionsServiceDefinition =
-  defineService<CatalogOptionsServiceAPI>("catalogOptions");
+export const CatalogServiceDefinition =
+  defineService<CatalogServiceAPI>("catalog");
 
-export const CatalogOptionsService = implementService.withConfig<{}>()(
-  CatalogOptionsServiceDefinition,
+export const CatalogService = implementService.withConfig<{}>()(
+  CatalogServiceDefinition,
   ({ getService }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
     const catalogOptions: Signal<ProductOption[] | null> =
       signalsService.signal(null as any);
+    const catalogPriceRange: Signal<CatalogPriceRange | null> =
+      signalsService.signal(null as any);
     const isLoading: Signal<boolean> = signalsService.signal(false as any);
     const error: Signal<string | null> = signalsService.signal(null as any);
 
-    const loadCatalogOptions = async (categoryId?: string): Promise<void> => {
+    const loadCatalogData = async (categoryId?: string): Promise<void> => {
       isLoading.set(true);
       error.set(null);
 
       try {
-        // Step 1: Get unique option and choice names from catalog via aggregation (no products returned)
+        // Single aggregation request to get ALL catalog data at once
         const aggregationRequest = {
           aggregations: [
+            // Price range aggregations
+            {
+              name: "minPrice",
+              fieldPath: "actualPriceRange.minValue.amount",
+              type: "SCALAR" as const,
+              scalar: { type: "MIN" as const },
+            },
+            {
+              name: "maxPrice",
+              fieldPath: "actualPriceRange.maxValue.amount",
+              type: "SCALAR" as const,
+              scalar: { type: "MAX" as const },
+            },
+            // Options aggregations
             {
               name: "optionNames",
               fieldPath: "options.name",
@@ -141,10 +176,38 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
           cursorPaging: { limit: 0 },
         };
 
-        const aggregationResponse = await productsV3.searchProducts(
-          aggregationRequest as any
+        // Make the single aggregation request
+        const [aggregationResponse, customizationsResponse] = await Promise.all(
+          [
+            productsV3.searchProducts(aggregationRequest as any),
+            customizationsV3.queryCustomizations().find(),
+          ]
         );
 
+        // Process price range data
+        const minPrice = extractScalarAggregationValue(
+          aggregationResponse,
+          "minPrice"
+        );
+        const maxPrice = extractScalarAggregationValue(
+          aggregationResponse,
+          "maxPrice"
+        );
+
+        if (
+          minPrice !== null &&
+          maxPrice !== null &&
+          (minPrice > 0 || maxPrice > 0)
+        ) {
+          catalogPriceRange.set({
+            minPrice,
+            maxPrice,
+          });
+        } else {
+          catalogPriceRange.set(null);
+        }
+
+        // Process options data
         const optionNames = extractAggregationValues(
           aggregationResponse,
           "optionNames"
@@ -158,13 +221,9 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
           "inventoryStatus"
         );
 
-        // Step 2: Get option structure from customizations API
-        const customizationsResponse = await customizationsV3
-          .queryCustomizations()
-          .find();
         const customizations = customizationsResponse.items || [];
 
-        // Step 3: Build options by matching customizations with aggregation data
+        // Build options by matching customizations with aggregation data
         const options: ProductOption[] = customizations
           .filter(
             (customization) =>
@@ -199,12 +258,12 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
           })
           .filter((option) => option.choices.length > 0);
 
-        // Step 4: Add inventory filter if there are multiple inventory statuses
+        // Add inventory filter if there are multiple inventory statuses
         if (inventoryStatuses.length > 1) {
           const inventoryChoices: ProductChoice[] = inventoryStatuses.map(
             (status) => ({
-              id: status.toUpperCase(), // Use uppercase to match actual availabilityStatus values
-              name: status.toUpperCase(), // Use raw status value - UI components will handle display conversion
+              id: status.toUpperCase(),
+              name: status.toUpperCase(),
             })
           );
 
@@ -218,11 +277,12 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
 
         catalogOptions.set(options);
       } catch (err) {
-        console.error("Failed to load catalog options:", err);
+        console.error("Failed to load catalog data:", err);
         error.set(
-          err instanceof Error ? err.message : "Failed to load catalog options"
+          err instanceof Error ? err.message : "Failed to load catalog data"
         );
         catalogOptions.set([]);
+        catalogPriceRange.set(null);
       } finally {
         isLoading.set(false);
       }
@@ -230,15 +290,16 @@ export const CatalogOptionsService = implementService.withConfig<{}>()(
 
     return {
       catalogOptions,
+      catalogPriceRange,
       isLoading,
       error,
-      loadCatalogOptions,
+      loadCatalogData,
     };
   }
 );
 
-export async function loadCatalogOptionsServiceConfig(): Promise<
-  ServiceFactoryConfig<typeof CatalogOptionsService>
+export async function loadCatalogServiceConfig(): Promise<
+  ServiceFactoryConfig<typeof CatalogService>
 > {
   return {};
 }

@@ -1,19 +1,14 @@
 import { defineService, implementService } from "@wix/services-definitions";
-import {
-  SignalsServiceDefinition,
-  type Signal,
-  type ReadOnlySignal,
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type {
+  Signal,
+  ReadOnlySignal,
 } from "@wix/services-definitions/core-services/signals";
-import { URLParamsUtils } from "../utils/url-params.js";
-import { CatalogPriceRangeServiceDefinition } from "./catalog-price-range-service.js";
-import { CatalogOptionsServiceDefinition } from "./catalog-options-service.js";
-
-export interface ProductOption {
-  id: string;
-  name: string;
-  choices: { id: string; name: string; colorCode?: string }[];
-  optionRenderType?: string;
-}
+import { URLParamsUtils } from "../utils/url-params";
+import {
+  CatalogServiceDefinition,
+  type ProductOption,
+} from "./catalog-service";
 
 export interface PriceRange {
   min: number;
@@ -38,8 +33,6 @@ export interface FilterServiceAPI {
     productOptions: ProductOption[];
     priceRange: { min: number; max: number };
   }>;
-  loadCatalogPriceRange: (categoryId?: string) => Promise<void>;
-  loadCatalogOptions: (categoryId?: string) => Promise<void>;
   isFullyLoaded: ReadOnlySignal<boolean>;
 }
 
@@ -56,10 +49,7 @@ export const FilterService = implementService.withConfig<{
   initialFilters?: Filter;
 }>()(FilterServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
-  const catalogPriceRangeService = getService(
-    CatalogPriceRangeServiceDefinition
-  );
-  const catalogOptionsService = getService(CatalogOptionsServiceDefinition);
+  const catalogService = getService(CatalogServiceDefinition);
 
   const currentFilters: Signal<Filter> = signalsService.signal(
     (config?.initialFilters || defaultFilter) as any
@@ -67,8 +57,8 @@ export const FilterService = implementService.withConfig<{
 
   // Use computed signal for availableOptions to automatically track dependencies
   const availableOptions = signalsService.computed(() => {
-    const catalogPriceRange = catalogPriceRangeService.catalogPriceRange.get();
-    const catalogOptions = catalogOptionsService.catalogOptions.get();
+    const catalogPriceRange = catalogService.catalogPriceRange.get();
+    const catalogOptions = catalogService.catalogOptions.get();
 
     const priceRange =
       catalogPriceRange &&
@@ -87,8 +77,8 @@ export const FilterService = implementService.withConfig<{
 
   // Use computed signal for isFullyLoaded to automatically track dependencies
   const isFullyLoaded = signalsService.computed(() => {
-    const catalogPriceRange = catalogPriceRangeService.catalogPriceRange.get();
-    const catalogOptions = catalogOptionsService.catalogOptions.get();
+    const catalogPriceRange = catalogService.catalogPriceRange.get();
+    const catalogOptions = catalogService.catalogOptions.get();
 
     // Price range data is considered loaded whether it's null (no prices) or has valid data
     const hasPriceRangeData = catalogPriceRange !== undefined; // includes null case
@@ -99,7 +89,7 @@ export const FilterService = implementService.withConfig<{
 
   // Effect to update currentFilters when catalog data loads (only if filters are at defaults)
   signalsService.effect(() => {
-    const catalogPriceRange = catalogPriceRangeService.catalogPriceRange.get();
+    const catalogPriceRange = catalogService.catalogPriceRange.get();
     if (
       catalogPriceRange &&
       catalogPriceRange.minPrice < catalogPriceRange.maxPrice
@@ -138,10 +128,10 @@ export const FilterService = implementService.withConfig<{
     // Add price filters if different from defaults
     if (availableOpts?.priceRange) {
       if (filters.priceRange.min > availableOpts.priceRange.min) {
-        urlParams["minPrice"] = filters.priceRange.min.toString();
+        urlParams.minPrice = filters.priceRange.min.toString();
       }
       if (filters.priceRange.max < availableOpts.priceRange.max) {
-        urlParams["maxPrice"] = filters.priceRange.max.toString();
+        urlParams.maxPrice = filters.priceRange.max.toString();
       }
     }
 
@@ -150,20 +140,18 @@ export const FilterService = implementService.withConfig<{
       Object.entries(filters.selectedOptions).forEach(
         ([optionId, choiceIds]) => {
           const option = availableOpts.productOptions.find(
-            (opt: ProductOption) => opt.id === optionId
+            (opt) => opt.id === optionId
           );
           if (option && choiceIds.length > 0) {
-            const selectedChoices = option.choices.filter(
-              (choice: { id: string; name: string; colorCode?: string }) =>
-                choiceIds.includes(choice.id)
+            const selectedChoices = option.choices.filter((choice) =>
+              choiceIds.includes(choice.id)
             );
             if (selectedChoices.length > 0) {
               // Use 'availability' as URL param for inventory filter
               const paramName =
                 optionId === "inventory-filter" ? "availability" : option.name;
               urlParams[paramName] = selectedChoices.map(
-                (choice: { id: string; name: string; colorCode?: string }) =>
-                  choice.name
+                (choice) => choice.name
               );
             }
           }
@@ -173,8 +161,8 @@ export const FilterService = implementService.withConfig<{
 
     // Preserve existing sort parameter
     const currentParams = URLParamsUtils.getURLParams();
-    if (currentParams["sort"]) {
-      urlParams["sort"] = currentParams["sort"];
+    if (currentParams.sort) {
+      urlParams.sort = currentParams.sort;
     }
 
     URLParamsUtils.updateURL(urlParams);
@@ -197,26 +185,11 @@ export const FilterService = implementService.withConfig<{
     URLParamsUtils.updateURL(urlParams);
   };
 
-  // Note: calculateAvailableOptions was removed as it's no longer needed
-  // Options are now loaded from the catalog-wide service via loadCatalogOptions
-
-  const loadCatalogPriceRange = async (categoryId?: string) => {
-    // Just call the catalog service - subscriptions will handle signal updates
-    await catalogPriceRangeService.loadCatalogPriceRange(categoryId);
-  };
-
-  const loadCatalogOptions = async (categoryId?: string) => {
-    // Just call the catalog service - subscriptions will handle signal updates
-    await catalogOptionsService.loadCatalogOptions(categoryId);
-  };
-
   return {
     currentFilters,
     applyFilters,
     clearFilters,
     availableOptions,
-    loadCatalogPriceRange,
-    loadCatalogOptions,
     isFullyLoaded,
   };
 });

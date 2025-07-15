@@ -3,17 +3,16 @@ import {
   implementService,
   type ServiceFactoryConfig,
 } from "@wix/services-definitions";
-import {
-  SignalsServiceDefinition,
-  type Signal,
-} from "@wix/services-definitions/core-services/signals";
-import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
-import * as readOnlyVariantsV3 from "@wix/auto_sdk_stores_read-only-variants-v-3";
-import { FilterServiceDefinition, type Filter } from "./filter-service.js";
-import { CategoryServiceDefinition } from "./category-service.js";
-import { SortServiceDefinition, type SortBy } from "./sort-service.js";
-import { URLParamsUtils } from "../utils/url-params.js";
-import { SortType } from "../enums/sort-enums.js";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal } from "@wix/services-definitions/core-services/signals";
+
+import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
+import { FilterServiceDefinition, type Filter } from "./filter-service";
+import { CategoryServiceDefinition } from "./category-service";
+import { SortServiceDefinition, type SortBy } from "./sort-service";
+import { CatalogServiceDefinition } from "./catalog-service";
+import { URLParamsUtils } from "../utils/url-params";
+import { SortType } from "../enums/sort-enums";
 
 const { SortDirection } = productsV3;
 
@@ -206,6 +205,7 @@ export const CollectionService = implementService.withConfig<{
   const collectionFilters = getService(FilterServiceDefinition);
   const categoryService = getService(CategoryServiceDefinition);
   const sortService = getService(SortServiceDefinition);
+  const catalogService = getService(CatalogServiceDefinition);
 
   const hasMoreProducts: Signal<boolean> = signalsService.signal(
     (config.initialHasMore ?? true) as any
@@ -380,16 +380,13 @@ export const CollectionService = implementService.withConfig<{
   const initializeCatalogData = async () => {
     isInitializingCatalogData = true; // Set flag BEFORE loading
     const selectedCategory = categoryService.selectedCategory.get();
-    await collectionFilters.loadCatalogPriceRange(
-      selectedCategory || undefined
-    );
-    await collectionFilters.loadCatalogOptions(selectedCategory || undefined);
+
+    // Load catalog data from the combined catalog service
+    await catalogService.loadCatalogData(selectedCategory || undefined);
+
     // Reset flag to allow filter changes to trigger refreshes
     isInitializingCatalogData = false;
   };
-
-  // Load catalog data on initialization
-  void initializeCatalogData();
 
   signalsService.effect(() => {
     sortService.currentSort.get();
