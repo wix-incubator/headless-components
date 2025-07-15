@@ -4,11 +4,12 @@ import type {
   Signal,
   ReadOnlySignal,
 } from "@wix/services-definitions/core-services/signals";
-import { URLParamsUtils } from "../utils/url-params";
+import { URLParamsUtils } from "../utils/url-params.js";
 import {
   CatalogServiceDefinition,
+  ProductChoice,
   type ProductOption,
-} from "./catalog-service";
+} from "./catalog-service.js";
 
 export interface PriceRange {
   min: number;
@@ -143,8 +144,8 @@ export const FilterService = implementService.withConfig<{
             (opt) => opt.id === optionId
           );
           if (option && choiceIds.length > 0) {
-            const selectedChoices = option.choices.filter((choice) =>
-              choiceIds.includes(choice.id)
+            const selectedChoices = option.choices.filter(
+              (choice: ProductChoice) => choiceIds.includes(choice.id)
             );
             if (selectedChoices.length > 0) {
               // Use 'availability' as URL param for inventory filter

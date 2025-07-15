@@ -9,10 +9,10 @@ export {
 } from "./pay-now-service.js";
 
 export {
-  CatalogOptionsService,
-  CatalogOptionsServiceDefinition,
-  loadCatalogOptionsServiceConfig,
-} from "./catalog-options-service.js";
+  CatalogService,
+  CatalogServiceDefinition,
+  loadCatalogServiceConfig,
+} from "./catalog-service.js";
 
 export {
   CategoryService,
@@ -25,12 +25,6 @@ export {
   CollectionServiceDefinition,
   loadCollectionServiceConfig,
 } from "./collection-service.js";
-
-export {
-  CatalogPriceRangeService,
-  CatalogPriceRangeServiceDefinition,
-  loadCatalogPriceRangeServiceConfig,
-} from "./catalog-price-range-service.js";
 
 export {
   FilterService,
