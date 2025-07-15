@@ -34,8 +34,11 @@ export interface GridRenderProps {
 
 /**
  * <blockquote class="caution">
+ *
  * **Developer Preview**
+ *
  * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
  * </blockquote>
  *
  * Headless component for displaying products in a grid layout. Handles the display of product collections with loading states and error handling.
@@ -150,8 +153,11 @@ export interface ItemRenderProps {
 
 /**
  * <blockquote class="caution">
+ *
  * **Developer Preview**
+ *
  * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
  * </blockquote>
  *
  * Headless component for displaying an individual product item.
@@ -251,8 +257,11 @@ export interface LoadMoreRenderProps {
 
 /**
  * <blockquote class="caution">
+ *
  * **Developer Preview**
+ *
  * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
  * </blockquote>
  *
  * Headless component for progressive loading of products.
@@ -347,8 +356,11 @@ export interface HeaderRenderProps {
 
 /**
  * <blockquote class="caution">
+ *
  * **Developer Preview**
+ *
  * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
  * </blockquote>
  *
  * Headless component for displaying collection metadata such as product count and loading state.
@@ -433,8 +445,11 @@ export interface ActionsRenderProps {
 
 /**
  * <blockquote class="caution">
+ *
  * **Developer Preview**
+ *
  * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
  * </blockquote>
  *
  * Headless component for performing actions on collections, such as refresh and load more.

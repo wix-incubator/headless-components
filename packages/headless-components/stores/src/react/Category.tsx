@@ -20,8 +20,11 @@ export interface CategoryListProps {
 
 /**
  * <blockquote class="caution">
+ *
  * **Developer Preview**
+ *
  * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
  * </blockquote>
  *
  * Headless component for displaying and managing product categories.
