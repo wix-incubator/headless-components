@@ -3169,7 +3169,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@npm:^0.0.5, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -3275,7 +3275,7 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1238"
     "@wix/essentials": "npm:^0.1.22"
-    "@wix/headless-ecom": "npm:^0.0.5"
+    "@wix/headless-ecom": "npm:^0.0.3"
     "@wix/headless-media": "npm:^0.0.2"
     "@wix/redirects": "npm:^1.0.79"
     "@wix/services-definitions": "npm:^0.1.4"
