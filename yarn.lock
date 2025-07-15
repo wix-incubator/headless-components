@@ -3209,7 +3209,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@npm:^0.0.5, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "@wix/headless-ecom@npm:0.0.5"
+  dependencies:
+    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
+    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
+    "@wix/sdk": "npm:^1.15.24"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/253deb435baa85bb2ea0ec056cbc3637b6192d6b93011d50e401889adfa1bf4f89178066366b7b8cf0df7829350792b07953f5105271e38ae01eea69eed3bc1a
+  languageName: node
+  linkType: hard
+
+"@wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:

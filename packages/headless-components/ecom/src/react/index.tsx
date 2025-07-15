@@ -1,1 +1,1 @@
-export * from "./CurrentCart.js";
+export * as CurrentCart from "./CurrentCart.js";
