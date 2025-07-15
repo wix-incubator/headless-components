@@ -2238,7 +2238,7 @@ __metadata:
     "@wix/cli-edge": "npm:^1.1.74"
     "@wix/dashboard": "npm:^1.3.37"
     "@wix/headless-bookings": "npm:^0.0.1"
-    "@wix/headless-ecom": "npm:^0.0.3"
+    "@wix/headless-ecom": "npm:^0.0.5"
     "@wix/headless-stores": "npm:^0.0.15"
     "@wix/services-manager-react": "npm:^0.1.26"
     "@wix/stores": "npm:^1.0.461"
@@ -3209,7 +3209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@npm:^0.0.5, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -3316,7 +3316,7 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1238"
     "@wix/essentials": "npm:^0.1.22"
-    "@wix/headless-ecom": "npm:^0.0.3"
+    "@wix/headless-ecom": "npm:^0.0.5"
     "@wix/headless-media": "npm:^0.0.2"
     "@wix/redirects": "npm:^1.0.79"
     "@wix/services-definitions": "npm:^0.1.4"
