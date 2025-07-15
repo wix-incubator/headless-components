@@ -27,7 +27,9 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build all packages
-        run: yarn build:all
+        run: |
+          cd packages/headless-components
+          yarn build:all
 
       - name: Publish to npm
         run: |
