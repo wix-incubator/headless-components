@@ -1,3 +1,1 @@
-export function Ecom() {
-  return <div>Ecom</div>;
-}
+export * from "./CurrentCart.js";
