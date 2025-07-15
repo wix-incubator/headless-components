@@ -36,8 +36,8 @@ export const Viewport = (props: ViewportProps) => {
   }
 
   // Get the current media from the relevant media array
-  const src = mediaToDisplay[currentIndex].image!;
-  const alt = mediaToDisplay[currentIndex].altText!;
+  const src = mediaToDisplay[currentIndex]!.image!;
+  const alt = mediaToDisplay[currentIndex]!.altText!;
 
   return props.children({
     src,
@@ -124,8 +124,8 @@ export const ThumbnailItem = (props: ThumbnailItemProps) => {
   }
 
   // Get the image source from the centralized relevant images
-  const src = mediaToDisplay[props.index].image!;
-  const alt = mediaToDisplay[props.index].altText!;
+  const src = mediaToDisplay[props.index]!.image!;
+  const alt = mediaToDisplay[props.index]!.altText!;
 
   const isActive = currentIndex === props.index;
 

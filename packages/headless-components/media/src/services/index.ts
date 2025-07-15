@@ -6,4 +6,5 @@ export {
 export {
   FileUploadService,
   FileUploadServiceDefinition,
+  type UploadState,
 } from "./file-upload-service.js";
