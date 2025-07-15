@@ -26,10 +26,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build all packages
-        run: |
-          cd packages/headless-components
-          yarn build:all
+      - name: Build headless components
+        run: yarn build:headless-components
 
       - name: Publish to npm
         run: |
