@@ -34,7 +34,8 @@ export interface GridRenderProps {
 
 /**
  * <blockquote class="caution">
- * Headless components are in Developer Preview and subject to change.
+ * **Developer Preview**
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
  * </blockquote>
  *
  * Headless component for displaying products in a grid layout.
@@ -148,7 +149,8 @@ export interface ItemRenderProps {
 
 /**
  * <blockquote class="caution">
- * Headless components are in Developer Preview and subject to change.
+ * **Developer Preview**
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
  * </blockquote>
  *
  * Headless component for displaying an individual product item.
@@ -246,7 +248,8 @@ export interface LoadMoreRenderProps {
 
 /**
  * <blockquote class="caution">
- * Headless components are in Developer Preview and subject to change.
+ * **Developer Preview**
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
  * </blockquote>
  *
  * Headless component for progressive loading of products.
@@ -339,7 +342,8 @@ export interface HeaderRenderProps {
 
 /**
  * <blockquote class="caution">
- * Headless components are in Developer Preview and subject to change.
+ * **Developer Preview**
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
  * </blockquote>
  *
  * Headless component for displaying collection metadata such as product count and loading state.
@@ -422,7 +426,8 @@ export interface ActionsRenderProps {
 
 /**
  * <blockquote class="caution">
- * Headless components are in Developer Preview and subject to change.
+ * **Developer Preview**
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
  * </blockquote>
  *
  * Headless component for performing actions on collections, such as refresh and load more.
