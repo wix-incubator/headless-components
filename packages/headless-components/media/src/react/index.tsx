@@ -1,3 +1,3 @@
-export function Media() {
-  return <div>Media</div>;
-}
+export * as FileUpload from './FileUpload';
+export { WixMediaImage } from './Image';
+export * as MediaGallery from './MediaGallery';
