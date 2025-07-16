@@ -114,8 +114,6 @@ export interface ItemRenderProps {
   description: string;
   /** Whether product is available */
   available: boolean;
-  /** Product URL */
-  href: string;
 }
 
 /**
@@ -154,7 +152,6 @@ export const Item = (props: ItemProps) => {
     compareAtPrice,
     description,
     available,
-    href: `/store/products/${product.slug}`,
   });
 };
 
