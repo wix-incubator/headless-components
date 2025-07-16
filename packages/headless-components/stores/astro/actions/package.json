@@ -1,4 +1,0 @@
-{
-  "main": "../../cjs/dist/astro/actions/index.js",
-  "types": "../../dist/astro/actions/index.d.ts"
-}
