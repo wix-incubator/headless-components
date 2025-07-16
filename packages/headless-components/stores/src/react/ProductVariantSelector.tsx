@@ -8,28 +8,69 @@ import {
 } from "@wix/auto_sdk_stores_products-v-3";
 
 /**
- * Props for Options headless component
+ * Props for the Options headless component.
  */
 export interface OptionsProps {
-  /** Render prop function that receives options data */
+  /** Function that receives product options and selected choice data. 
+   * Use this function to render product options in your custom product UI components. */
   children: (props: OptionsRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Options component
+ * Render props for the Options component.
  */
 export interface OptionsRenderProps {
-  /** Array of product options */
+  /** Array of product options. */
   options: ConnectedOption[];
-  /** Whether product has options */
+  /** Whether the product has options. */
   hasOptions: boolean;
-  /** Currently selected choices */
+  /** Currently selected choices. */
   selectedChoices: Record<string, string>;
 }
 
 /**
- * Headless component for all product options
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component for displaying product options. The component allows you to display and manage selected choices for each option.
  *
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * 
+ * @example
+ * import { Options } from "@wix/stores/components";
+ * 
+ * function ProductOptionsDisplay() {
+ *  return (
+ *    <Options>
+ *      {({ options, hasOptions, selectedChoices }) => (
+ *       <div className="product-options">
+ *         {hasOptions ? (
+ *           <ul>
+ *             {options.map(option => (
+ *               <li key={option._id}>
+ *                 <strong>{option.name}:</strong>{" "}
+ *                 {selectedChoices[option._id] || "Not selected"}
+ *               </li>
+ *             ))}
+ *           </ul>
+ *         ) : (
+ *           <div>No product options available.</div>
+ *         )}
+ *       </div>
+ *     )}
+ *   </Options>
+ *  );
+ * }
+ * 
  * @component
  */
 export const Options = (props: OptionsProps) => {
@@ -48,34 +89,84 @@ export const Options = (props: OptionsProps) => {
 };
 
 /**
- * Props for Option headless component
+ * Props for the Option headless component.
  */
 export interface OptionProps {
-  /** Product option data */
+  /** Product option data. */
   option: ConnectedOption;
-  /** Render prop function that receives option data */
+  /** Function that receives data for a single product option.
+   * Use this function to render individual product options in custom UI components. */
   children: (props: OptionRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Option component
+ * Render props for the Option component.
  */
 export interface OptionRenderProps {
-  /** Option name */
+  /** Option name. */
   name: string;
-  /** Option type */
+  /** Option type. */
   type: any;
-  /** Array of choices for this option */
+  /** Array of choices for the option. */
   choices: ConnectedOptionChoice[];
-  /** Currently selected value for this option */
+  /** Currently selected value for the option. */
   selectedValue: string | null;
-  /** Whether this option has choices */
+  /** Whether this option has choices. */
   hasChoices: boolean;
 }
 
 /**
- * Headless component for choices within a specific product option
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component to display and manage choices for a specific product option.
  *
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * 
+ * @example
+ * import { Option } from "@wix/stores/components";
+ * 
+ * function ProductOptionDisplay({ option }) {
+ *  return (
+ *   <Option option={option}>
+ *     {({ name, choices, selectedValue, hasChoices }) => (
+ *       <div className="product-option">
+ *         <div>
+ *           <strong>{name}</strong>
+ *         </div>
+ *         {hasChoices ? (
+ *           <ul>
+ *             {choices.map(choice => (
+ *               <li
+ *                 key={choice.choiceId}
+ *                 style={{
+ *                   fontWeight:
+ *                     selectedValue === choice.name ? "bold" : "normal",
+ *                 }}
+ *               >
+ *                 {choice.name}
+ *                 {selectedValue === choice.name && " (selected)"}
+ *               </li>
+ *             ))}
+ *           </ul>
+ *         ) : (
+ *           <div>No choices available.</div>
+ *         )}
+ *       </div>
+ *     )}
+ *   </Option>
+ *  );
+ * }
+ * 
  * @component
  */
 export const Option = (props: OptionProps) => {
@@ -100,43 +191,89 @@ export const Option = (props: OptionProps) => {
 };
 
 /**
- * Props for Choice headless component
+ * Props for the Choice headless component.
  */
 export interface ChoiceProps {
-  /** Product option data */
+  /** Data for the product option that the choice belongs to. */
   option: ConnectedOption;
-  /** Choice data */
+  /** Choice data. */
   choice: ConnectedOptionChoice;
-  /** Render prop function that receives choice data */
+  /** Function that receives choice data. Use this function to render and select option choices in your custom product UI components. */
   children: (props: ChoiceRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Choice component
+ * Render props for the Choice component.
  */
 export interface ChoiceRenderProps {
-  /** Choice value to display */
+  /** Choice value to display. */
   value: string;
-  /** Choice description (for color options) */
+  /** Choice description. */
   description: string | undefined;
-  /** Whether this choice is currently selected */
+  /** Whether the choice is currently selected. */
   isSelected: boolean;
-  /** Whether this choice is visible */
+  /** Whether the choice is visible. */
   isVisible: boolean;
-  /** Whether this choice is in stock */
+  /** Whether the choice is in stock. */
   isInStock: boolean;
-  /** Whether this choice is available for pre-order */
+  /** Whether the choice is available for pre-order. */
   isPreOrderEnabled: boolean;
-  /** Function to select this choice */
+  /** Function to select the choice. */
   onSelect: () => void;
-  /** Option name */
+  /** Name of the product option the choice belongs to. */
   optionName: string;
-  /** Choice value */
+  /** Choice value. */
   choiceValue: string;
 }
 
 /**
- * Headless component for individual choice selection
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component to display and manage choice selection for product options.
+ * 
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * 
+ * @example
+ * import { Choice } from "@wix/stores/components";
+ * 
+ * function ChoiceDisplay() {
+ *  return (
+ *    <Choice option={option} choice={choice}>
+ *      {({ value, description, isSelected, isVisible, isInStock, isPreOrderEnabled, onSelect }) =>
+ *        isVisible && (
+ *          <button
+ *            onClick={onSelect}
+ *            disabled={!isInStock && !isPreOrderEnabled}
+ *            style={{
+ *              background: isSelected ? '#E7F0FF' : '#FFF',
+ *              color: isInStock ? '#222' : '#AAA',
+ *              border: isSelected ? '2px solid #A8CAFF' : '1px solid #CCC',
+ *              marginRight: 8,
+ *              padding: 8,
+ *              cursor: isInStock || isPreOrderEnabled ? 'pointer' : 'not-allowed'
+ *            }}
+ *            title={description}
+ *          >
+ *            {value}
+ *            {isSelected && " Available"}
+ *            {!isInStock && isPreOrderEnabled && " (Pre-order)"}
+ *            {!isInStock && !isPreOrderEnabled && " (Out of stock)"}
+ *          </button>
+ *        )
+ *      }
+ *    </Choice>
+ *  );
+ * }
  *
  * @component
  */
@@ -189,40 +326,95 @@ export const Choice = (props: ChoiceProps) => {
 };
 
 /**
- * Props for Stock headless component
+ * Props for the Stock headless component.
  */
 export interface StockProps {
-  /** Render prop function that receives stock data */
+  /** Function that receives stock and inventory data for a product.
+   * Use this function to render a product inventory status in your custom product UI components. */
   children: (props: StockRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Stock component
+ * Render props for the Stock component.
  */
 export interface StockRenderProps {
-  /** Whether product is in stock */
+  /** Whether the product is in stock. */
   inStock: boolean;
-  /** Whether pre-order is enabled */
+  /** Whether pre-order is enabled for the product. */
   isPreOrderEnabled: boolean;
-  /** Raw inventory availability status */
+  /** The product's raw inventory availability status. */
   availabilityStatus: InventoryAvailabilityStatus | string;
-  /** Whether stock tracking is enabled */
+  /** Whether inventory tracking is enabled for the product. */
   trackInventory: boolean;
-  /** Current variant id */
+  /** Current variant ID. */
   currentVariantId: string | null;
-  /** Available quantity */
+  /** Available quantity. */
   availableQuantity: number | null;
-  /** Currently selected quantity */
+  /** Currently selected quantity. */
   selectedQuantity: number;
-  /** Function to increment quantity */
+  /** Function to increment quantity. */
   incrementQuantity: () => void;
-  /** Function to decrement quantity */
+  /** Function to decrement quantity. */
   decrementQuantity: () => void;
 }
 
 /**
- * Headless component for product stock status
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component to display product stock status.
  *
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * 
+ * @example
+ * import { Stock } from "@wix/stores/components";
+ * 
+ * function StockStatus() {
+ *  return (
+ *    <Stock>
+ *      {({
+ *        inStock,
+ *        isPreOrderEnabled,
+ *        availableQuantity,
+ *        selectedQuantity,
+ *        incrementQuantity,
+ *        decrementQuantity
+ *      }) => (
+ *        <div className="product-stock">
+ *          {inStock ? (
+ *            <div>
+ *              <span>In stock</span>
+ *              <div>
+ *                <button onClick={decrementQuantity} disabled={selectedQuantity <= 1}>-</button>
+ *                <span style={{ margin: '0 8px' }}>{selectedQuantity}</span>
+ *                <button onClick={incrementQuantity} disabled={availableQuantity !== null && selectedQuantity >= availableQuantity}>
+ *                   +
+ *                </button>
+ *                {availableQuantity !== null && (
+ *                  <span style={{ marginLeft: 8 }}>(Only {availableQuantity} left!)</span>
+ *                )}
+ *              </div>
+ *            </div>
+ *          ) : isPreOrderEnabled ? (
+ *            <div>Available for pre-order</div>
+ *          ) : (
+ *            <div>Out of stock</div>
+ *          )}
+ *        </div>
+ *      )}
+ *    </Stock>
+ *  );
+ * }
+ * 
  * @component
  */
 export const Stock = (props: StockProps) => {
@@ -264,26 +456,70 @@ export const Stock = (props: StockProps) => {
 };
 
 /**
- * Props for Reset headless component
+ * Props for the Reset headless component.
  */
 export interface ResetProps {
-  /** Render prop function that receives reset data */
+  /** Function that receives variant reset data.
+   * Use this function to render the reset button and reset variant selections in your custom product UI components. */
   children: (props: ResetRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Reset component
+ * Render props for the Reset component.
  */
 export interface ResetRenderProps {
-  /** Function to reset all selections */
+  /** Function to reset all selections. */
   onReset: () => void;
-  /** Whether the reset button should be rendered */
+  /** Whether the reset button should be rendered. */
   hasSelections: boolean;
 }
 
 /**
- * Headless component for resetting variant selections
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component that allows variant selections to be reset.
  *
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * 
+ * @example
+ * import { Reset } from "@wix/stores/components";
+ * 
+ * function ProductSelectionReset() {
+ *  return (
+ *    <Reset>
+ *      {({ onReset, hasSelections }) =>
+ *        hasSelections ? (
+ *        <button
+ *         type="button"
+ *         onClick={onReset}
+ *         style={{
+ *           margin: '12px 0',
+ *           background: '#E7F0FF',
+ *           border: '1px solid #A8CAFF',
+ *           color: '#1a1a1a',
+ *           borderRadius: 4,
+ *           padding: '8px 16px',
+ *           cursor: 'pointer'
+ *         }}
+ *        >
+ *         Reset selections
+ *        </button>
+ *      ) : null
+ *     }
+ *    </Reset>
+ *  );
+ * }
+ * 
  * @component
  */
 export const Reset = (props: ResetProps) => {
