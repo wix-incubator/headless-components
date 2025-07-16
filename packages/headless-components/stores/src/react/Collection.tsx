@@ -7,33 +7,67 @@ import {
 } from "@wix/auto_sdk_stores_products-v-3";
 
 /**
- * Props for Grid headless component
+ * Props for the Grid headless component.
  */
 export interface GridProps {
-  /** Render prop function that receives product grid data */
-  children: (props: GridRenderProps) => React.ReactNode;
+  /** Function that receives product grid data and loading states. Use this function to render your custom UI components with the provided data. */
+  children: (props: GridRenderProps) => JSX.Element;
 }
 
 /**
- * Render props for Grid component
+ * Render props for the Grid component.
  */
 export interface GridRenderProps {
-  /** Array of products */
+  /** Array of products. Learn about [managing products and categories](https://support.wix.com/en/managing-products-and-categories). */
   products: V3Product[];
-  /** Whether products are loading */
+  /** Whether the collection data is loading. */
   isLoading: boolean;
-  /** Error message if any */
+  /** Error message if loading fails. */
   error: string | null;
-  /** Whether there are no products */
+  /** Whether the collection is empty. */
   isEmpty: boolean;
-  /** Total number of products */
+  /** Total number of products in the collection. */
   totalProducts: number;
-  /** Whether collection has products */
+  /** Whether the collection contains any products. */
   hasProducts: boolean;
 }
 
 /**
- * Headless component for product grid
+ * <blockquote class="caution">
+ *
+ * **Developer Preview**
+ *
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
+ * </blockquote>
+ *
+ * A headless component for displaying products in a grid layout.
+ * Handles product collection display with loading states and error handling.
+ *
+ * > **Notes:**
+ * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > * Headless components use the render props pattern. They provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ *
+ * @example
+ * import { Grid } from "@wix/stores/components";
+ *
+ * <Grid>
+ *   {({ products, isLoading, error, isEmpty }) => (
+ *     <div className="product-grid">
+ *       {isLoading && <div>Loading products...</div>}
+ *       {error && <div>Error: {error}</div>}
+ *       {isEmpty && <div>No products found</div>}
+ *       <div className="grid">
+ *         {products.map(product => (
+ *           <div key={product._id} className="product-card">
+ *             <img src={product.media?.main?.image} alt={product.name} />
+ *             <h3>{product.name}</h3>
+ *           </div>
+ *         ))}
+ *       </div>
+ *     </div>
+ *   )}
+ * </Grid>
  *
  * @component
  */
@@ -85,41 +119,79 @@ export const Grid = (props: GridProps) => {
 };
 
 /**
- * Props for Item headless component
+ * Props for the Item headless component.
  */
 export interface ItemProps {
-  /** Product data */
+  /** Product data with all available variants and options. */
   product: V3Product;
-  /** Render prop function that receives product item data */
+  /** Function that receives product item data. Use this function to render your custom UI components with the provided product information. */
   children: (props: ItemRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Item component
+ * Render props for the Item component.
  */
 export interface ItemRenderProps {
-  /** Product ID */
+  /** Product ID. */
   id: string;
-  /** Product title */
+  /** Display name of the product. */
   title: string;
-  /** Product slug for URL */
+  /** URL-friendly product identifier used in product page URLs. */
   slug: string;
-  /** Main product image URL */
+  /** Main product image URL. */
   image: string | null;
-  /** Product price */
+  /** Formatted product price that reflects the variant pricing. */
   price: string;
-  /** Compare at price (for strikethrough) */
+  /** Original price for comparison. Indicates a discount when available. */
   compareAtPrice: string | null;
-  /** Product description */
+  /** Product description. */
   description: string;
-  /** Whether product is available */
+  /** Whether the product is available for purchase based on inventory status. */
   available: boolean;
-  /** Product URL */
+  /** Direct link to the product page. */
   href: string;
 }
 
 /**
- * Headless component for individual product item
+ * <blockquote class="caution">
+ *
+ * **Developer Preview**
+ *
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
+ * </blockquote>
+ *
+ * A headless component for displaying individual product items.
+ * Provides structured product details including pricing, availability, images, and navigation links.
+ *
+ * > **Notes:**
+ * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
+ *
+ * @example
+ * import { Item } from "@wix/stores/components";
+ *
+ * <Item product={product}>
+ *   {({ title, price, compareAtPrice, image, available, href }) => (
+ *     <div className="product-item">
+ *       {image && <img src={image} alt={title} />}
+ *       <h3>{title}</h3>
+ *       <div className="price">
+ *         <span className="current-price">{price}</span>
+ *         {compareAtPrice && (
+ *           <span className="compare-price">{compareAtPrice}</span>
+ *         )}
+ *       </div>
+ *       {available ? (
+ *         <a href={href} className="product-link">
+ *           View Product
+ *         </a>
+ *       ) : (
+ *         <span className="out-of-stock">Out of Stock</span>
+ *       )}
+ *     </div>
+ *   )}
+ * </Item>
  *
  * @component
  */
@@ -159,34 +231,61 @@ export const Item = (props: ItemProps) => {
 };
 
 /**
- * Props for LoadMore headless component
+ * Props for the LoadMore headless component.
  */
 export interface LoadMoreProps {
-  /** Render prop function that receives load more data */
+  /** Function that receives pagination and loading state data. Use this function to render your custom loading and pagination UI components. */
   children: (props: LoadMoreRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for LoadMore component
+ * Render props for the LoadMore component.
  */
 export interface LoadMoreRenderProps {
-  /** Function to load more products */
+  /** Function to load additional products. */
   loadMore: () => Promise<void>;
-  /** Function to refresh products */
+  /** Function to refresh the collection data. */
   refresh: () => Promise<void>;
-  /** Whether load more is currently loading */
+  /** Whether additional products are loading. */
   isLoading: boolean;
-  /** Whether there are products */
+  /** Whether the collection contains any products. */
   hasProducts: boolean;
-  /** Total number of products currently loaded */
-  totalProducts: number;
-  /** Whether there are more products to load */
+  /** Number of products currently loaded. */
+  loadedCount: number;
+  /** Whether there are more products available to load. */
   hasMoreProducts: boolean;
 }
 
 /**
- * Headless component for load more products functionality
- * Note: V3 API uses simplified loading without traditional pagination
+ * <blockquote class="caution">
+ *
+ * **Developer Preview**
+ *
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
+ * </blockquote>
+ *
+ * A headless component that enables progressive loading of products.
+ * Loads additional products without traditional pagination for infinite scroll functionality.
+ *
+ * > **Notes:**
+ * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
+ *
+ * @example
+ * import { LoadMore } from "@wix/stores/components";
+ *
+ * <LoadMore>
+ *   {({ loadMore, isLoading, hasMoreProducts }) => (
+ *     <div className="load-more">
+ *       {hasMoreProducts && (
+ *         <button onClick={loadMore} disabled={isLoading}>
+ *           {isLoading ? 'Loading...' : 'Load More Products'}
+ *         </button>
+ *       )}
+ *     </div>
+ *   )}
+ * </LoadMore>
  *
  * @component
  */
@@ -236,27 +335,55 @@ export const LoadMore = (props: LoadMoreProps) => {
 };
 
 /**
- * Props for Header headless component
+ * Props for the Header headless component.
  */
 export interface HeaderProps {
-  /** Render prop function that receives collection header data */
+  /** Function that receives collection metadata such as product count and loading state. Use this function to render your custom header UI components. */
   children: (props: HeaderRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Header component
+ * Render props for the Header component.
  */
 export interface HeaderRenderProps {
-  /** Total number of products */
+  /** Total number of products in the collection. */
   totalProducts: number;
-  /** Whether collection is loading */
+  /** Whether the collection data is loading. */
   isLoading: boolean;
-  /** Whether collection has products */
+  /** Whether the collection contains any products. */
   hasProducts: boolean;
 }
 
 /**
- * Headless component for collection header with product count
+ * <blockquote class="caution">
+ *
+ * **Developer Preview**
+ *
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
+ * </blockquote>
+ *
+ * A headless component for displaying collection metadata.
+ * Provides product count and loading state information for use in collection headers.
+ *
+ * > **Notes:**
+ * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
+ *
+ * @example
+ * import { Header } from "@wix/stores/components";
+ *
+ * <Header>
+ *   {({ totalProducts, isLoading }) => (
+ *     <div className="collection-header">
+ *       {isLoading ? (
+ *         <p>Loading...</p>
+ *       ) : (
+ *         <h2>{totalProducts} Products</h2>
+ *       )}
+ *     </div>
+ *   )}
+ * </Header>
  *
  * @component
  */
@@ -296,30 +423,59 @@ export const Header = (props: HeaderProps) => {
 };
 
 /**
- * Props for Actions headless component
+ * Props for the Actions headless component.
  */
 export interface ActionsProps {
-  /** Render prop function that receives collection actions data */
+  /** Function that receives collection action controls and state. Use this function to render your custom action UI components. */
   children: (props: ActionsRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Actions component
+ * Render props for the Actions component.
  */
 export interface ActionsRenderProps {
-  /** Function to refresh the collection */
+  /** Function to refresh the collection data. */
   refresh: () => Promise<void>;
-  /** Function to load more products */
+  /** Function to load additional products. */
   loadMore: () => Promise<void>;
-  /** Whether actions are loading */
+  /** Whether an action is loading. */
   isLoading: boolean;
-  /** Error message if any */
+  /** Error message if an action fails. */
   error: string | null;
 }
 
 /**
- * Headless component for collection actions (refresh, load more)
- * Replaces traditional pagination for V3 API
+ * <blockquote class="caution">
+ *
+ * **Developer Preview**
+ *
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
+ * </blockquote>
+ *
+ * A headless component that provides collection action controls.
+ * Manages refresh and load more functionality, and replaces the need for traditional pagination.
+ *
+ * > **Notes:**
+ * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
+ *
+ * @example
+ * import { Actions } from "@wix/stores/components";
+ *
+ * <Actions>
+ *   {({ refresh, loadMore, isLoading, error }) => (
+ *     <div className="collection-actions">
+ *       {error && <p>Error: {error}</p>}
+ *       <button onClick={refresh} disabled={isLoading}>
+ *         Refresh
+ *       </button>
+ *       <button onClick={loadMore} disabled={isLoading}>
+ *         Load More
+ *       </button>
+ *     </div>
+ *   )}
+ * </Actions>
  *
  * @component
  */
