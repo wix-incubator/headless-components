@@ -98,8 +98,6 @@ export interface ItemRenderProps {
   price: string;
   /** Whether product is available */
   available: boolean;
-  /** Product page URL */
-  href: string;
   /** Product description */
   description: string;
   /** Function to add product to cart quickly */
@@ -124,7 +122,6 @@ export const Item = (props: ItemProps) => {
   const available =
     availabilityStatus === InventoryAvailabilityStatus.IN_STOCK ||
     availabilityStatus === InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
-  const href = `/store/example-2/${product.slug}`;
   const description =
     typeof product.description === "string" ? product.description : "";
 
@@ -139,7 +136,6 @@ export const Item = (props: ItemProps) => {
     image,
     price,
     available,
-    href,
     description,
     onQuickAdd: handleQuickAdd,
   });
