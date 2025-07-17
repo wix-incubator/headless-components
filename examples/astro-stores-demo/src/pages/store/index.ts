@@ -16,6 +16,6 @@ export const GET: APIRoute = async ({ url, redirect }) => {
   }
 
   const categorySlug = firstCategory.slug;
-  const redirectUrl = `/store/example-1/category/${categorySlug}${url.search}`;
+  const redirectUrl = `/store/category/${categorySlug}${url.search}`;
   return redirect(redirectUrl);
 };
