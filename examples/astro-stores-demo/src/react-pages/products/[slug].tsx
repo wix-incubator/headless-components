@@ -5,7 +5,7 @@ import { StoreLayout } from '../../layouts/StoreLayout';
 import '../../../styles/theme-1.css';
 import type { ServiceFactoryConfig } from '@wix/services-definitions';
 
-import ProductDetailsPage from '../../components/store/ProductDetails';
+import ProductDetailsPage from '../../components/store/ProductDeatilsPage';
 
 interface ProductDetailPageProps {
   productServiceConfig: ServiceFactoryConfig<typeof ProductService>;
