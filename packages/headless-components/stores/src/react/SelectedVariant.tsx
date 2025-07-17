@@ -3,25 +3,39 @@ import { useService } from "@wix/services-manager-react";
 import { SelectedVariantServiceDefinition } from "../services/selected-variant-service.js";
 
 /**
- * Props for ProductDetails headless component
+ * Props for the ProductDetails headless component.
  */
 export interface ProductDetailsProps {
-  /** Render prop function that receives product details data */
+  /** Function that receives the product details data. Use this function to render product details in a custom UI component. */
   children: (props: ProductDetailsRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for ProductDetails component
+ * Render props for the ProductDetails component.
  */
 export interface ProductDetailsRenderProps {
-  /** Product SKU */
+  /** Product SKU. */
   sku: string | null;
   /** Product weight */
   weight: string | null;
 }
 
 /**
- * Headless component for selected variant details display
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component to display the details of the selected variant.
+ * 
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  *
  * @component
  */
@@ -43,27 +57,41 @@ export const Details = (props: ProductDetailsProps) => {
 };
 
 /**
- * Props for Price headless component
+ * Props for the Price headless component.
  */
 export interface PriceProps {
-  /** Render prop function that receives price data */
+  /** Function that receives price data. Use this function to render product pricing in a custom UI component. */
   children: (props: PriceRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for Price component
+ * Render props for the Price component.
  */
 export interface PriceRenderProps {
-  /** Current price (formatted) */
+  /** Current price. */
   price: string;
-  /** Compare at price (formatted) - null if no compare price */
+  /** The original product price, before any discounts are applied. If no discount exists, the value is null. */
   compareAtPrice: string | null;
-  /** Currency code */
+  /** Currency code. */
   currency: string;
 }
 
 /**
- * Headless component for product price display
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component to display the product price.
+ * 
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  *
  * @component
  */
@@ -84,24 +112,38 @@ export const Price = (props: PriceProps) => {
 };
 
 /**
- * Props for SKU headless component
+ * Props for the SKU headless component.
  */
 export interface SKUProps {
-  /** Render prop function that receives SKU data */
+  /** Function that receives product SKU data. Use this function to render the SKU in custom UI components. */
   children: (props: SKURenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for SKU component
+ * Render props for the SKU component.
  */
 export interface SKURenderProps {
-  /** Product SKU */
+  /** Product SKU (stock keeping unit). */
   sku: string | null;
 }
 
 /**
- * Headless component for product SKU display
+ * <blockquote class="caution">
+ * 
+ * **Developer Preview**
+ * 
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ * 
+ * </blockquote>
+ * 
+ * Headless component to display the product SKU.
  *
+ * > **Notes:** 
+ * - This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and 
+ * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
+ * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
+ * 
  * @component
  */
 export const SKU = (props: SKUProps) => {
