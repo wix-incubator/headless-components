@@ -30,7 +30,7 @@ export interface CatalogPriceRange {
   maxPrice: number;
 }
 
-export interface CatalogServiceAPI {
+export interface ProductsQueryBuilderServiceAPI {
   catalogOptions: Signal<ProductOption[] | null>;
   catalogPriceRange: Signal<CatalogPriceRange | null>;
   isLoading: Signal<boolean>;
@@ -103,11 +103,11 @@ const buildCategoryFilter = (categoryId?: string) => {
   };
 };
 
-export const CatalogServiceDefinition =
-  defineService<CatalogServiceAPI>("catalog");
+export const ProductsQueryBuilderServiceDefinition =
+  defineService<ProductsQueryBuilderServiceAPI>("productsQueryBuilder");
 
-export const CatalogService = implementService.withConfig<{}>()(
-  CatalogServiceDefinition,
+export const ProductsQueryBuilderService = implementService.withConfig<{}>()(
+  ProductsQueryBuilderServiceDefinition,
   ({ getService }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
@@ -298,8 +298,8 @@ export const CatalogService = implementService.withConfig<{}>()(
   }
 );
 
-export async function loadCatalogServiceConfig(): Promise<
-  ServiceFactoryConfig<typeof CatalogService>
+export async function loadProductsQueryBuilderServiceConfig(): Promise<
+  ServiceFactoryConfig<typeof ProductsQueryBuilderService>
 > {
   return {};
 }
