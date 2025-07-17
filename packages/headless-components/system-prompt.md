@@ -31,6 +31,11 @@ FilteredCollection.Grid    // Provides: products, totalProducts, isLoading, erro
 FilteredCollection.Item    // Provides: title, image, imageAltText, price, compareAtPrice, available, slug, description
 FilteredCollection.FiltersLoading // Provides: isFullyLoaded
 ProductActions.Actions     // Provides: onAddToCart, onBuyNow, canAddToCart, isLoading, price, inStock, isPreOrderEnabled, preOrderMessage, error, availableQuantity
+ProductVariantSelector.Stock // Provides: inStock, isPreOrderEnabled, availabilityStatus, trackInventory, currentVariantId, availableQuantity, selectedQuantity, incrementQuantity, decrementQuantity
+ProductVariantSelector.Options // Provides: options, hasOptions, selectedChoices
+ProductVariantSelector.Option // Provides: name, type, choices, selectedValue, hasChoices
+ProductVariantSelector.Choice // Provides: value, description, isSelected, isVisible, isInStock, isPreOrderEnabled, onSelect, optionName, choiceValue
+ProductVariantSelector.Reset // Provides: onReset, hasSelections
 Product.Name               // Component exists, check render props
 Product.Description        // Component exists, check render props
 RelatedProducts.List       // Provides: products, isLoading, error, hasProducts, refresh
@@ -40,7 +45,12 @@ CurrentCart.Content        // Provides: isOpen, onClose, cart, isLoading, error
 CurrentCart.Items          // Provides: items, hasItems, totalItems
 CurrentCart.Item           // Provides: item, quantity, title, image, price, selectedOptions, onIncrease, onDecrease, onRemove, isLoading
 CurrentCart.Summary        // Provides: subtotal, discount, appliedCoupon, shipping, tax, total, currency, itemCount, canCheckout, isTotalsLoading
-SEO.Tags                   // Takes seoTagsServiceConfig prop
+CurrentCart.Clear          // Provides: onClear, hasItems, isLoading
+CurrentCart.Notes          // Provides: notes, onNotesChange
+CurrentCart.Coupon         // Provides: appliedCoupon, onApply, onRemove, isLoading, error
+CurrentCart.Checkout       // Provides: onProceed, canCheckout, isLoading, error
+CurrentCart.LineItemAdded  // Provides: onAddedToCart (subscription to cart addition events)
+SEO.Tags                   // CRITICAL: Must be in Layout's <head> with seoTagsServiceConfig prop
 SEO.UpdateTagsTrigger      // Provides: updateSeoTags function
 MediaGallery.Gallery       // Available in @wix/headless-media/react
 FileUpload.FileUpload      // Available in @wix/headless-media/react
@@ -55,6 +65,9 @@ Sort.Option                // Use Sort.Controller instead
 - `Category.Item` - Does not exist, use manual mapping in Category.List
 - `Sort.Options`, `Sort.Option` - Do not exist, only Sort.Controller available
 - Individual filter components - Use FilteredCollection.Filters instead
+
+**✅ VERIFIED COMPONENT RENDER PROPS (Updated from TypeScript definitions):**
+All ProductVariantSelector render props have been verified against the actual TypeScript definitions in `node_modules/@wix/headless-stores/dist/react/ProductVariantSelector.d.ts`. The system prompt includes accurate property names and types.
 
 **MANDATORY RENDER PROPS VERIFICATION:**
 Before using any component, check its ACTUAL render props interface:
@@ -81,7 +94,7 @@ const collectionFilters = getService(FilterServiceDefinition);  // needs FilterS
 
 **If you attempt to write custom logic instead of using the provided headless components, STOP IMMEDIATELY and re-examine the packages for the appropriate component.**
 
-## CRITICAL: Two Essential Fixes for Common Service Errors
+## CRITICAL: Three Essential Fixes for Common Service Errors
 
 ### 🚨 FIX #1: loadProductServiceConfig Returns ProductServiceConfigResult (MUST Unwrap)
 
@@ -112,6 +125,8 @@ const productConfig = productServiceResult.config;
 
 **Return Type:**
 ```typescript
+import type { ServiceFactoryConfig } from '@wix/services-definitions';
+...
 type ProductServiceConfigResult = {
     type: "success";
     config: ServiceFactoryConfig<typeof ProductService>;
@@ -179,6 +194,224 @@ ProductActions.Actions → SelectedVariantService → {
 
 **🚨 CRITICAL RULE:** If you use ProductActions.Actions, you MUST include both SelectedVariantService AND MediaGalleryService with proper configurations, not empty objects.
 
+### 🚨 FIX #3: loadSEOTagsServiceConfig Correct Usage Pattern
+
+**Problem:** The `loadSEOTagsServiceConfig` function requires specific parameters and imports to work correctly with product pages.
+
+**WRONG Pattern (Will Cause API Errors):**
+```tsx
+// ❌ WRONG - Missing itemType and incorrect pageUrl format
+const seoConfig = await loadSEOTagsServiceConfig({ 
+  pageUrl: `products/${slug}`,
+  itemData: {
+    slug: slug
+  }
+});
+```
+
+**✅ CORRECT Pattern (MANDATORY for Product Pages):**
+```tsx
+// ✅ CORRECT - Include proper imports and parameters
+import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
+import { seoTags } from '@wix/seo';
+
+// For product pages - use itemType and correct pageUrl
+const seoConfig = await loadSEOTagsServiceConfig({
+  pageUrl: Astro.url.href,
+  itemType: seoTags.ItemType.STORES_PRODUCT,
+  itemData: { slug }
+});
+```
+
+**✅ CORRECT Pattern for Static Pages:**
+```tsx
+// ✅ CORRECT - For static pages like homepage/catalog
+const seoConfig = await loadSEOTagsServiceConfig({
+  pageUrl: Astro.url.href,
+  itemData: {
+    pageName: "Store Home",
+    seoData: {
+      tags: [
+        {
+          type: 'title',
+          children: 'Store Example - Premium Wellness Products',
+        },
+        {
+          type: 'meta',
+          props: {
+            content: 'Browse our wellness products with modern layout',
+            name: 'description',
+          },
+        },
+      ],
+    },
+  },
+});
+```
+
+**Required Imports:**
+```tsx
+import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
+import { seoTags } from '@wix/seo';
+```
+
+**Available ItemType Values:**
+```typescript
+seoTags.ItemType.STORES_PRODUCT    // For e-commerce product pages
+seoTags.ItemType.BOOKINGS_SERVICE  // For service booking pages
+seoTags.ItemType.UNKNOWN_ITEM_TYPE // Unknown/default type
+```
+
+**Error Handling Pattern:**
+```tsx
+// ✅ CORRECT - Handle API errors with fallback
+let seoConfig;
+try {
+  seoConfig = await loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemType: seoTags.ItemType.STORES_PRODUCT,
+    itemData: { slug }
+  });
+} catch (error) {
+  console.error('Error loading SEO tags:', error);
+  // Fallback to static page configuration
+  seoConfig = await loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      pageName: `Product: ${slug}`,
+      seoData: {
+        tags: [
+          {
+            type: 'title',
+            children: `Product: ${slug} | Your Store`,
+          },
+          {
+            type: 'meta',
+            props: {
+              name: 'description',
+              content: `Discover our ${slug} product.`,
+            },
+          }
+        ]
+      }
+    }
+  });
+}
+```
+
+**When This Error Happens:**
+- 400 "UNKNOWN" errors when missing itemType for product pages
+- "Cannot read properties of undefined (reading 'tags')" when service returns null
+- Import errors when trying to use '@wix/seo' incorrectly
+
+**🚨 CRITICAL RULES:**
+1. **ALWAYS use `Astro.url.href`** for pageUrl, never construct paths manually
+2. **ALWAYS include `itemType`** for product/service pages 
+3. **ALWAYS import `seoTags` from '@wix/seo'** to access ItemType constants
+4. **ALWAYS handle API errors** with proper fallback configuration
+5. **Use `itemData: { slug }`** for products, **NOT** `itemData: { slug: slug }`
+
+## CRITICAL: SEO.Tags Component Correct Usage
+
+**🚨 MANDATORY: SEO.Tags MUST be in Layout's `<head>` section using Astro Slots 🚨**
+
+Based on the JSDoc documentation from `@wix/headless-seo/dist/react/SEO.d.ts`:
+
+**✅ CORRECT Pattern - Layout.astro (Using Astro Slots):**
+```astro
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Tags Slot - SEO.Tags component renders here -->
+    <slot name="seo-tags" />
+    
+    <!-- Fallback title when no SEO tags provided -->
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+```
+
+**✅ CORRECT Pattern - Page Usage (Using Slots):**
+```astro
+---
+import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
+import { seoTags } from '@wix/seo';
+import { SEO } from '@wix/headless-seo/react';
+import Layout from '../layouts/Layout.astro';
+
+const seoConfig = await loadSEOTagsServiceConfig({
+  pageUrl: Astro.url.href,
+  itemType: seoTags.ItemType.STORES_PRODUCT,
+  itemData: { slug }
+});
+---
+
+<Layout title="Product Page">
+  <SEO.Tags seoTagsServiceConfig={seoConfig} slot="seo-tags" />
+  <ProductComponent client:load />
+</Layout>
+```
+
+**❌ WRONG Patterns - NEVER DO THIS:**
+```tsx
+// ❌ WRONG - SEO.Tags in React component
+function ProductDetail({ seoConfig }) {
+  return (
+    <div>
+      <SEO.Tags seoTagsServiceConfig={seoConfig} /> {/* WRONG - Not in head */}
+      <ProductContent />
+    </div>
+  );
+}
+
+// ❌ WRONG - Adding SEO.Tags to service map
+const servicesMap = createServicesMap()
+  .addService(SEOTagsServiceDefinition, SEOTagsService, seoConfig); // WRONG - No service needed
+
+// ❌ WRONG - Using SEO.Tags without seoTagsServiceConfig prop
+<SEO.Tags /> {/* WRONG - Missing required prop */}
+
+// ❌ WRONG - Passing seoConfig as Layout prop (old pattern)
+<Layout title="Product Page" seoConfig={seoConfig}>
+  <ProductComponent client:load />
+</Layout>
+
+// ❌ WRONG - Not using slot attribute
+<SEO.Tags seoTagsServiceConfig={seoConfig} /> {/* WRONG - Missing slot="seo-tags" */}
+```
+
+**Key Points from JSDoc:**
+- "Renders SEO tags (title, meta, link, script) in the document head"
+- Takes `seoTagsServiceConfig` as required prop
+- Must be in `<head>` section for proper HTML injection
+- Does NOT require service manager or WixServices wrapper
+- React components should NOT include SEO.Tags
+
+**Implementation Steps:**
+1. Load `seoConfig` server-side in Astro page
+2. Import `{ SEO } from '@wix/headless-seo/react'` in the page
+3. Use `<SEO.Tags seoTagsServiceConfig={seoConfig} slot="seo-tags" />` in the page near the container
+4. Add `<slot name="seo-tags" />` in Layout's head section
+5. Remove SEO.Tags from all React components
+6. Remove SEOTagsService from service maps
+7. Remove seoConfig prop from Layout interface
+
 ## CRITICAL: Service Configuration Consistency
 
 **🚨 MANDATORY RULE: EMPTY OBJECTS `{}` ARE CONDITIONALLY ALLOWED 🚨**
@@ -229,6 +462,9 @@ import {
 import { 
   loadSEOTagsServiceConfig      // ✅ USE: await loadSEOTagsServiceConfig(options)
 } from '@wix/headless-seo/services';
+
+// Required for SEO ItemType constants
+import { seoTags } from '@wix/seo';
 
 // From @wix/headless-media/services (no loader functions available)
 import {
@@ -294,18 +530,81 @@ SelectedVariantService: { fetchInventoryData: true }
 // ✅ CORRECT: Use all available loader functions
 import { loadCollectionServiceConfig, loadCatalogServiceConfig, loadCategoriesConfig } from '@wix/headless-stores/services';
 import { loadCurrentCartServiceConfig } from '@wix/headless-ecom/services';
+import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
+import { seoTags } from '@wix/seo';
 
 const collectionConfig = await loadCollectionServiceConfig();
 const catalogConfig = await loadCatalogServiceConfig();
 const categoriesConfig = await loadCategoriesConfig();  // ✅ NOT {}
 const cartConfig = await loadCurrentCartServiceConfig();
 
+// ✅ CORRECT: SEO configuration for static pages
+const seoConfig = await loadSEOTagsServiceConfig({
+  pageUrl: Astro.url.href,
+  itemData: {
+    pageName: "Store Home",
+    seoData: {
+      tags: [
+        {
+          type: 'title',
+          children: 'Store Home - Premium Wellness Products',
+        },
+        {
+          type: 'meta',
+          props: {
+            content: 'Browse our wellness products collection',
+            name: 'description',
+          },
+        },
+      ],
+    },
+  },
+});
+
 const config = {
   collectionConfig,
   catalogConfig, 
   categoriesConfig,  // ✅ Proper loader used
-  cartConfig
+  cartConfig,
+  seoConfig  // ✅ SEO configuration included
 };
+---
+```
+
+**CORRECT Product Page SEO Configuration:**
+```astro
+---
+// ✅ CORRECT: SEO configuration for product pages
+import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
+import { seoTags } from '@wix/seo';
+
+const { slug } = Astro.params;
+
+let seoConfig;
+try {
+  seoConfig = await loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemType: seoTags.ItemType.STORES_PRODUCT,
+    itemData: { slug }
+  });
+} catch (error) {
+  console.error('Error loading SEO tags:', error);
+  // Fallback configuration
+  seoConfig = await loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      pageName: `Product: ${slug}`,
+      seoData: {
+        tags: [
+          {
+            type: 'title',
+            children: `Product: ${slug} | Your Store`,
+          }
+        ]
+      }
+    }
+  });
+}
 ---
 ```
 
@@ -402,6 +701,14 @@ const servicesMap = createServicesMap()
 - Using `Collection.LoadMore` component
 - Using `Collection.Actions` component
 
+**When ProductVariantSelector Components are Required:**
+- Using `ProductVariantSelector.Stock` for inventory status and quantity management
+- Using `ProductVariantSelector.Options` for displaying all product variant options
+- Using `ProductVariantSelector.Option` for individual option groups (size, color, etc.)
+- Using `ProductVariantSelector.Choice` for individual choice selection within options
+- Using `ProductVariantSelector.Reset` for resetting all variant selections
+- **Note:** These require `SelectedVariantService` + `ProductService` + `MediaGalleryService`
+
 **✅ Alternative: Don't use CollectionService if you can't provide all dependencies**
 ```tsx
 // If you only have ProductService and can't get categories/catalog data:
@@ -435,7 +742,7 @@ import {
 
 **React Component Imports (CORRECT):**
 ```tsx
-import { Collection, Product, ProductActions } from '@wix/headless-stores/react';
+import { Collection, Product, ProductActions, ProductVariantSelector } from '@wix/headless-stores/react';
 import { CurrentCart } from '@wix/headless-ecom/react';
 import { SEO } from '@wix/headless-seo/react';
 ```
@@ -457,6 +764,7 @@ import { createServicesMap } from '@wix/services-manager-react';
 3. ✅ React components MUST use named imports from main package paths
 4. ✅ NO subpath imports (e.g., `/react/Collection`) are allowed
 5. ✅ Services MUST come from `/services` exports
+6. ✅ **JSDoc Examples**: ALWAYS check official JSDoc examples in TypeScript definition files for complete component usage patterns
 
 **If you see these errors:**
 - `Missing "./react/Collection" specifier` → Use `import { Collection } from '@wix/headless-stores/react'`
@@ -484,7 +792,7 @@ import { CurrentCart } from '@wix/headless-ecom/react';
 
 **Product Detail Container:**
 ```tsx
-import { Product, ProductActions, RelatedProducts } from '@wix/headless-stores/react';
+import { Product, ProductActions, ProductVariantSelector, RelatedProducts } from '@wix/headless-stores/react';
 import { CurrentCart } from '@wix/headless-ecom/react';
 ```
 
@@ -529,6 +837,7 @@ SelectedVariantService - Variant selection - requires CurrentCartService + Produ
 
 **✅ CORRECT Per-Page Pattern:**
 ```tsx
+import type { ServiceFactoryConfig } from '@wix/services-definitions';
 interface ProductDetailPageProps {
   productServiceConfig: ServiceFactoryConfig<typeof ProductService>;
   cartConfig: ServiceFactoryConfig<typeof CurrentCartService>;
@@ -572,6 +881,7 @@ const config = { productConfig, cartConfig, relatedProductsConfig };
 
 **✅ CORRECT Homepage Pattern:**
 ```tsx
+import type { ServiceFactoryConfig } from '@wix/services-definitions';
 interface HomepageProps {
   collectionConfig: ServiceFactoryConfig<typeof CollectionService>;
   catalogConfig: ServiceFactoryConfig<typeof CatalogService>;
@@ -601,6 +911,7 @@ function Homepage({ collectionConfig, catalogConfig, categoriesConfig, cartConfi
 
 **✅ CORRECT Products Catalog Pattern:**
 ```tsx
+import type { ServiceFactoryConfig } from '@wix/services-definitions';
 interface ProductsPageProps {
   collectionConfig: ServiceFactoryConfig<typeof CollectionService>;
   catalogConfig: ServiceFactoryConfig<typeof CatalogService>;
@@ -793,7 +1104,12 @@ export const ProductDetailContainer: React.FC<Props> = ({ config }) => {
 
 - **ProductActions Components** (`ProductActions.Actions`)
   - Uses: `ProductService` + `CurrentCartService`
-  - Dependencies: None
+  - Dependencies: `SelectedVariantService` + `MediaGalleryService` (REQUIRED)
+
+- **ProductVariantSelector Components** (`ProductVariantSelector.Stock`, `ProductVariantSelector.Options`, `ProductVariantSelector.Option`, `ProductVariantSelector.Choice`, `ProductVariantSelector.Reset`)
+  - Primary: `SelectedVariantService`
+  - Dependencies: `ProductService` + `MediaGalleryService` (REQUIRED)
+  - Note: These components handle product variant selection, stock status, and quantity management
 
 - **Related Products** (`RelatedProducts.List`, `RelatedProducts.Item`)
   - Primary: `RelatedProductsService`
@@ -812,7 +1128,7 @@ export const ProductDetailContainer: React.FC<Props> = ({ config }) => {
   - Dependencies: `CatalogService` (for price ranges and options)
 
 ### @wix/headless-ecom/react
-- **Cart Components** (`CurrentCart.Trigger`, `CurrentCart.Content`, `CurrentCart.Items`, `CurrentCart.Item`, `CurrentCart.Summary`)
+- **Cart Components** (`CurrentCart.Trigger`, `CurrentCart.Content`, `CurrentCart.Items`, `CurrentCart.Item`, `CurrentCart.Summary`, `CurrentCart.Clear`, `CurrentCart.Notes`, `CurrentCart.Coupon`, `CurrentCart.Checkout`, `CurrentCart.LineItemAdded`)
   - Primary: `CurrentCartService`
   - Dependencies: None
 
@@ -820,6 +1136,9 @@ export const ProductDetailContainer: React.FC<Props> = ({ config }) => {
 - **SEO Components** (`SEO.Tags`, `SEO.UpdateTagsTrigger`)
   - Primary: `SEOTagsService` (use `loadSEOTagsServiceConfig()`)
   - Dependencies: None
+  - **CRITICAL**: `SEO.Tags` must be placed in Layout.astro's `<head>` section with `seoTagsServiceConfig` prop
+  - **USAGE**: `<SEO.Tags seoTagsServiceConfig={seoConfig} />` - renders title, meta, link, script tags
+  - **NOT** in React components - only in Layout's head for proper HTML injection
 
 ## Per-Page Service Map Setup
 
@@ -982,40 +1301,298 @@ import {
 </div>
 ```
 
-### Shopping Cart
+### Product Variant Selector (Stock Status & Options)
+```tsx
+// Stock Status Display with Quantity Management
+<ProductVariantSelector.Stock>
+  {({ 
+    inStock, 
+    isPreOrderEnabled, 
+    availabilityStatus, 
+    trackInventory, 
+    availableQuantity, 
+    selectedQuantity, 
+    incrementQuantity, 
+    decrementQuantity,
+    currentVariantId 
+  }) => (
+    <div className="stock-status">
+      <div className={`status-indicator ${inStock ? 'in-stock' : 'out-of-stock'}`}>
+        {isPreOrderEnabled && !inStock ? 'Available for Pre-order' : 
+         inStock ? 'In Stock' : 'Out of Stock'}
+      </div>
+      {trackInventory && availableQuantity !== null && (
+        <span>({availableQuantity} available)</span>
+      )}
+      {currentVariantId && (
+        <div className="quantity-selector">
+          <button onClick={decrementQuantity} disabled={selectedQuantity <= 1}>-</button>
+          <span>{selectedQuantity}</span>
+          <button onClick={incrementQuantity}>+</button>
+        </div>
+      )}
+    </div>
+  )}
+</ProductVariantSelector.Stock>
+
+// Product Options Selection (Size, Color, etc.)
+<ProductVariantSelector.Options>
+  {({ options, hasOptions, selectedChoices }) => hasOptions ? (
+    <div className="product-options">
+      {options.map((option) => (
+        <ProductVariantSelector.Option key={option.name} option={option}>
+          {({ name, type, choices, selectedValue, hasChoices }) => hasChoices ? (
+            <div className="option-group">
+              <h4>{name} {selectedValue && <span>({selectedValue})</span>}</h4>
+              <div className="choices">
+                {choices.map((choice, index) => (
+                  <ProductVariantSelector.Choice key={index} option={option} choice={choice}>
+                    {({ 
+                      value, 
+                      description, 
+                      isSelected, 
+                      isVisible, 
+                      isInStock, 
+                      isPreOrderEnabled, 
+                      onSelect,
+                      optionName,
+                      choiceValue 
+                    }) => isVisible ? (
+                      <button
+                        onClick={onSelect}
+                        disabled={!isInStock && !isPreOrderEnabled}
+                        title={description || value}
+                        className={`choice-button ${isSelected ? 'selected' : ''} ${
+                          (!isInStock && !isPreOrderEnabled) ? 'disabled' : ''
+                        }`}
+                      >
+                        {value}
+                      </button>
+                    ) : null}
+                  </ProductVariantSelector.Choice>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </ProductVariantSelector.Option>
+      ))}
+      <ProductVariantSelector.Reset>
+        {({ onReset, hasSelections }) => hasSelections && (
+          <button onClick={onReset} className="reset-button">
+            Reset Selections
+          </button>
+        )}
+      </ProductVariantSelector.Reset>
+    </div>
+  ) : null}
+</ProductVariantSelector.Options>
+
+// Color Swatch Pattern (based on option type)
+<ProductVariantSelector.Choice option={option} choice={choice}>
+  {({ 
+    value, 
+    description, 
+    isSelected, 
+    isVisible, 
+    isInStock, 
+    isPreOrderEnabled, 
+    onSelect,
+    optionName,
+    choiceValue 
+  }) => {
+    const isColorOption = option.type === 'SWATCH_CHOICES' || optionName.toLowerCase().includes('color');
+    
+    return isVisible ? (
+      isColorOption ? (
+        <button
+          onClick={onSelect}
+          disabled={!isInStock && !isPreOrderEnabled}
+          title={description || value}
+          className={`color-swatch ${isSelected ? 'selected' : ''}`}
+          style={{ backgroundColor: choiceValue }}
+        />
+      ) : (
+        <button
+          onClick={onSelect}
+          disabled={!isInStock && !isPreOrderEnabled}
+          className={`text-choice ${isSelected ? 'selected' : ''}`}
+        >
+          {value}
+        </button>
+      )
+    ) : null;
+  }}
+</ProductVariantSelector.Choice>
+```
+
+### Shopping Cart (Complete Implementation with All Components)
 ```tsx
 <CurrentCart.Trigger>
-  {({ itemCount, onOpen }) => (
-    <button onClick={onOpen}>
-      Cart ({itemCount})
+  {({ itemCount, hasItems, onOpen, isLoading }) => (
+    <button onClick={onOpen} disabled={isLoading}>
+      Cart ({itemCount} items)
     </button>
   )}
 </CurrentCart.Trigger>
 
 <CurrentCart.Content>
-  {({ isOpen, onClose }) => isOpen && (
+  {({ isOpen, onClose, cart, isLoading, error }) => isOpen && (
     <div className="cart-modal">
+      <button onClick={onClose}>Close Cart</button>
+      
+      {isLoading && <div>Loading cart...</div>}
+      {error && <div className="error">Error: {error}</div>}
+      
       <CurrentCart.Items>
-        {({ items }) => items.map(item => (
-          <CurrentCart.Item key={item.id} item={item}>
-            {({ title, price, quantity, onIncrease, onDecrease, onRemove }) => (
-              <div className="cart-item">
-                <h4>{title}</h4>
-                <p>{price}</p>
-                <div>
-                  <button onClick={onDecrease}>-</button>
-                  <span>{quantity}</span>
-                  <button onClick={onIncrease}>+</button>
-                  <button onClick={onRemove}>Remove</button>
-                </div>
-              </div>
+        {({ items, hasItems, totalItems }) => (
+          <>
+            {!hasItems ? (
+              <p>Your cart is empty</p>
+            ) : (
+              <>
+                {/* Clear Cart Button */}
+                <CurrentCart.Clear>
+                  {({ onClear, hasItems, isLoading }) => (
+                    hasItems && (
+                      <button onClick={onClear} disabled={isLoading}>
+                        {isLoading ? 'Clearing...' : 'Clear Cart'}
+                      </button>
+                    )
+                  )}
+                </CurrentCart.Clear>
+
+                {/* Cart Items */}
+                {items.map(item => (
+                  <CurrentCart.Item key={item._id} item={item}>
+                    {({ 
+                      title, 
+                      image, 
+                      price, 
+                      quantity, 
+                      selectedOptions,
+                      onIncrease, 
+                      onDecrease, 
+                      onRemove,
+                      isLoading: itemLoading 
+                    }) => (
+                      <div className="cart-item">
+                        <img src={image || '/placeholder.svg'} alt={title} />
+                        <h4>{title}</h4>
+                        <p>{price}</p>
+                        
+                        {/* Selected Options (variants) */}
+                        {selectedOptions.map((option, index) => (
+                          <span key={index}>
+                            {option.name}: {typeof option.value === 'object' ? option.value.name : option.value}
+                          </span>
+                        ))}
+                        
+                        {/* Quantity Controls */}
+                        <div className="quantity-controls">
+                          <button onClick={onDecrease} disabled={itemLoading || quantity <= 1}>-</button>
+                          <span>{quantity}</span>
+                          <button onClick={onIncrease} disabled={itemLoading}>+</button>
+                        </div>
+                        
+                        <button onClick={onRemove} disabled={itemLoading}>
+                          {itemLoading ? 'Removing...' : 'Remove'}
+                        </button>
+                      </div>
+                    )}
+                  </CurrentCart.Item>
+                ))}
+
+                {/* Order Notes */}
+                <CurrentCart.Notes>
+                  {({ notes, onNotesChange }) => (
+                    <textarea
+                      value={notes}
+                      onChange={e => onNotesChange(e.target.value)}
+                      placeholder="Special instructions for your order"
+                    />
+                  )}
+                </CurrentCart.Notes>
+
+                {/* Coupon Code */}
+                <CurrentCart.Coupon>
+                  {({ appliedCoupon, onApply, onRemove, isLoading, error }) => (
+                    <div>
+                      {error && <div className="error">Coupon error: {error}</div>}
+                      {appliedCoupon ? (
+                        <div>
+                          <span>Coupon: {appliedCoupon}</span>
+                          <button onClick={onRemove} disabled={isLoading}>
+                            {isLoading ? 'Removing...' : 'Remove'}
+                          </button>
+                        </div>
+                      ) : (
+                        <form onSubmit={e => {
+                          e.preventDefault();
+                          const code = new FormData(e.currentTarget).get('couponCode');
+                          if (code?.trim()) onApply(code.trim());
+                        }}>
+                          <input name="couponCode" placeholder="Enter promo code" disabled={isLoading} />
+                          <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Applying...' : 'Apply'}
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  )}
+                </CurrentCart.Coupon>
+
+                {/* Cart Summary */}
+                <CurrentCart.Summary>
+                  {({ subtotal, discount, shipping, tax, total, itemCount, isTotalsLoading }) => (
+                    <div className="cart-summary">
+                      <div>Subtotal ({itemCount} items): {isTotalsLoading ? 'Calculating...' : subtotal}</div>
+                      {discount && <div>Discount: -{discount}</div>}
+                      <div>Shipping: {isTotalsLoading ? 'Calculating...' : shipping}</div>
+                      <div>Tax: {isTotalsLoading ? 'Calculating...' : tax}</div>
+                      <div><strong>Total: {isTotalsLoading ? 'Calculating...' : total}</strong></div>
+                    </div>
+                  )}
+                </CurrentCart.Summary>
+
+                {/* Checkout Button */}
+                <CurrentCart.Checkout>
+                  {({ onProceed, canCheckout, isLoading: checkoutLoading, error }) => (
+                    <div>
+                      {error && <p className="error">Checkout error: {error}</p>}
+                      <button 
+                        onClick={onProceed} 
+                        disabled={!canCheckout || checkoutLoading}
+                        className="checkout-button"
+                      >
+                        {checkoutLoading ? 'Processing...' : 'Proceed to Checkout'}
+                      </button>
+                    </div>
+                  )}
+                </CurrentCart.Checkout>
+              </>
             )}
-          </CurrentCart.Item>
-        ))}
+          </>
+        )}
       </CurrentCart.Items>
     </div>
   )}
 </CurrentCart.Content>
+
+{/* Cart Addition Notifications */}
+<CurrentCart.LineItemAdded>
+  {({ onAddedToCart }) => {
+    useEffect(() => {
+      return onAddedToCart((lineItems) => {
+        if (lineItems) {
+          // Show success notification
+          console.log('Items added to cart:', lineItems);
+          // You can show toast notifications, open cart, etc.
+        }
+      });
+    }, [onAddedToCart]);
+    return null;
+  }}
+</CurrentCart.LineItemAdded>
 ```
 
 ### Filtering & Sorting
@@ -1122,6 +1699,17 @@ const servicesMap = createServicesMap()
    .addService(SortServiceDefinition, SortService, { initialSort: collectionConfig.initialSort })
    ```
 
+4. **✅ MUST use correct SEO configuration with proper imports:**
+   ```tsx
+   import { seoTags } from '@wix/seo';
+   
+   const seoConfig = await loadSEOTagsServiceConfig({
+     pageUrl: Astro.url.href,
+     itemType: seoTags.ItemType.STORES_PRODUCT,
+     itemData: { slug }
+   });
+   ```
+
 **🚨 These are the MOST COMMON errors - follow these patterns exactly!**
 
 ## Key Rules
@@ -1166,4 +1754,6 @@ cat node_modules/@wix/headless-stores/dist/react/Collection.d.ts
 4. **SIMPLIFY** to working components first
 5. **TEST** incrementally before adding complexity
 
-**Never assume components exist - ALWAYS verify first!** 
+**Never assume components exist - ALWAYS verify first!**
+
+**🚨 MANDATORY: Always check official JSDoc examples in `node_modules/@wix/headless-*` libraries
