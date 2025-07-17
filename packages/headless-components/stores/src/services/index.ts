@@ -9,10 +9,10 @@ export {
 } from "./pay-now-service.js";
 
 export {
-  CatalogService,
-  CatalogServiceDefinition,
-  loadCatalogServiceConfig,
-} from "./catalog-service.js";
+  ProductsQueryBuilderService,
+  ProductsQueryBuilderServiceDefinition,
+  loadProductsQueryBuilderServiceConfig,
+} from "./products-query-builder-service.js";
 
 export {
   CategoryService,
