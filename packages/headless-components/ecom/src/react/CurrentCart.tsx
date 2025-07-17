@@ -32,6 +32,7 @@ export interface TriggerProps {
 
 /**
  * Render props for Trigger component
+
  */
 export interface TriggerRenderProps {
   /** Number of items in cart */
@@ -46,6 +47,18 @@ export interface TriggerRenderProps {
 
 /**
  * Headless component for cart trigger with item count
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Trigger>
+ *   {({ itemCount, hasItems, onOpen, isLoading }) => (
+ *     <div>
+ *       <h1>Cart ({itemCount} items)</h1>
+ *       <button onClick={onOpen} disabled={isLoading}>Open Cart</button>
+ *     </div>
+ *   )}
+ * </CurrentCart.Trigger>
+ * ```
  */
 export const Trigger = (props: TriggerProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
@@ -261,6 +274,19 @@ export interface ItemsRenderProps {
 
 /**
  * Headless component for cart items collection
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Items>
+ *   {({ items, hasItems, totalItems }) => (
+ *     <div>
+ *       <h1>Cart ({totalItems} items)</h1>
+ *       <p>Items: {items.length}</p>
+ *       <p>Has items: {hasItems ? 'Yes' : 'No'}</p>
+ *     </div>
+ *   )}
+ * </CurrentCart.Items>
+ * ```
  */
 export const Items = (props: ItemsProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
@@ -319,6 +345,24 @@ export interface ItemRenderProps {
 
 /**
  * Headless component for individual cart item
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Item item={item}>
+ *   {({ item, quantity, title, image, price, selectedOptions, onIncrease, onDecrease, onRemove, isLoading }) => (
+ *     <div>
+ *       <h3>{title}</h3>
+ *       <p>{price}</p>
+ *       <p>{quantity}</p>
+ *       <p>{image}</p>
+ *       <p>{selectedOptions}</p>
+ *       <button onClick={onIncrease}>Increase</button>
+ *       <button onClick={onDecrease}>Decrease</button>
+ *       <button onClick={onRemove}>Remove</button>
+ *     </div>
+ *   )}
+ * </CurrentCart.Item>
+ * ```
  */
 export const Item = (props: ItemProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
@@ -338,9 +382,9 @@ export const Item = (props: ItemProps) => {
       image: null,
       price: formatCurrency(0, currency),
       selectedOptions: [],
-      onIncrease: async () => {},
-      onDecrease: async () => {},
-      onRemove: async () => {},
+      onIncrease: async () => { },
+      onDecrease: async () => { },
+      onRemove: async () => { },
       isLoading: false,
     });
   }
@@ -446,6 +490,24 @@ export interface SummaryRenderProps {
 
 /**
  * Headless component for cart summary/totals
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Summary>
+ *   {({ subtotal, discount, shipping, tax, total, itemCount, isTotalsLoading }) => (
+ *     <div>
+ *       <h1>Cart Summary</h1>
+ *       <p>Subtotal: {subtotal}</p>
+ *       <p>Discount: {discount}</p>
+ *       <p>Shipping: {shipping}</p>
+ *       <p>Tax: {tax}</p>
+ *       <p>Total: {total}</p>
+ *       <p>Item Count: {itemCount}</p>
+ *       <p>Is Totals Loading: {isTotalsLoading ? 'Yes' : 'No'}</p>
+ *     </div>
+ *   )}
+ * </CurrentCart.Summary>
+ * ```
  */
 export const Summary = (props: SummaryProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
@@ -519,7 +581,21 @@ export interface ClearRenderProps {
 
 /**
  * Headless component for clearing the cart
- */
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Clear>
+ *   {({ onClear, hasItems, isLoading }) => (
+ *     <div>
+ *       <h1>Cart Clear</h1>
+ *       <p>Has items: {hasItems ? 'Yes' : 'No'}</p>
+ *       <p>Is loading: {isLoading ? 'Yes' : 'No'}</p>
+ *       <button onClick={onClear} disabled={isLoading}>Clear Cart</button>
+ *     </div>
+ *   )}
+ * </CurrentCart.Clear>
+ * ```
+  */
 export const Clear = (props: ClearProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
@@ -559,7 +635,22 @@ export interface CheckoutRenderProps {
 
 /**
  * Headless component for checkout action
- */
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Checkout>
+ *   {({ onProceed, canCheckout, isLoading, error }) => (
+ *     <div>
+ *       <h1>Checkout</h1>
+ *       <p>Can checkout: {canCheckout ? 'Yes' : 'No'}</p>
+ *       <p>Is loading: {isLoading ? 'Yes' : 'No'}</p>
+ *       <p>Error: {error}</p>
+ *       <button onClick={onProceed} disabled={!canCheckout || isLoading}>Proceed to Checkout</button>
+ *     </div>
+ *   )}
+ * </CurrentCart.Checkout>
+ * ```
+*/
 export const Checkout = (props: CheckoutProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
@@ -597,7 +688,20 @@ export interface NotesRenderProps {
 
 /**
  * Headless component for notes
- */
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Notes>
+ *   {({ notes, onNotesChange }) => (
+ *     <textarea
+ *       value={notes}
+ *       onChange={e => onNotesChange(e.target.value)}
+ *       placeholder="Special instructions for your order"
+ *     />
+ *   )}
+ * </CurrentCart.Notes>
+ * ```
+  */
 export const Notes = (props: NotesProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
@@ -637,6 +741,35 @@ export interface CouponRenderProps {
 
 /**
  * Headless component for coupon functionality
+ *
+ * @example
+ * ```tsx
+ * <CurrentCart.Coupon>
+ *   {({ appliedCoupon, onApply, onRemove, isLoading }) => (
+ *     <div>
+ *       {appliedCoupon ? (
+ *         <div>
+ *           <span>Coupon: {appliedCoupon}</span>
+ *           <button onClick={onRemove} disabled={isLoading}>
+ *             {isLoading ? 'Removing...' : 'Remove'}
+ *           </button>
+ *         </div>
+ *       ) : (
+ *         <form onSubmit={e => {
+ *           e.preventDefault();
+ *           const code = new FormData(e.currentTarget).get('couponCode');
+ *           if (code?.trim()) onApply(code.trim());
+ *         }}>
+ *           <input name="couponCode" placeholder="Enter promo code" disabled={isLoading} />
+ *           <button type="submit" disabled={isLoading}>
+ *             {isLoading ? 'Applying...' : 'Apply'}
+ *           </button>
+ *         </form>
+ *       )}
+ *     </div>
+ *   )}
+ * </CurrentCart.Coupon>
+ * ```
  */
 export const Coupon = (props: CouponProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
