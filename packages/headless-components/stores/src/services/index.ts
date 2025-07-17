@@ -12,6 +12,21 @@ export {
   ProductsQueryBuilderService,
   ProductsQueryBuilderServiceDefinition,
   loadProductsQueryBuilderServiceConfig,
+  // Legacy exports for backward compatibility
+  FilterService,
+  FilterServiceDefinition,
+  SortService,
+  SortServiceDefinition,
+  CatalogService,
+  CatalogServiceDefinition,
+  // Types
+  Filter,
+  AvailableOptions,
+  SortBy,
+  ProductOption,
+  ProductChoice,
+  CatalogPriceRange,
+  PriceRange,
 } from "./products-query-builder-service.js";
 
 export {
@@ -25,13 +40,6 @@ export {
   ProductsListServiceDefinition,
   loadProductsListServiceConfig,
 } from "./products-list-service.js";
-
-export {
-  FilterService,
-  FilterServiceDefinition,
-  Filter,
-  AvailableOptions,
-} from "./filter-service.js";
 
 export {
   ProductModifiersService,
@@ -59,5 +67,3 @@ export {
   SocialSharingService,
   SocialSharingServiceDefinition,
 } from "./social-sharing-service.js";
-
-export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
