@@ -49,17 +49,40 @@ export interface ProductDescriptionProps {
  * Render props for ProductDescription component
  */
 export interface ProductDescriptionRenderProps {
-  /** Product description (may contain HTML) */
+  /** Product description using the RICOS (Rich Content Object) format. See https://dev.wix.com/docs/ricos/api-reference/ricos-document */
   description: NonNullable<V3Product["description"]>;
-  /** Product plain description */
+  /** Product description with plain html */
   plainDescription: NonNullable<V3Product["plainDescription"]>;
 }
 
 /**
- * Headless component for product description display
- *
- * @component
+ * Render props for ProductDescription component
  */
+export interface ProductDescriptionRenderProps {
+  /** Product description using the RICOS (Rich Content Object) format. See https://dev.wix.com/docs/ricos/api-reference/ricos-document */
+  description: NonNullable<V3Product["description"]>;
+  /** Product description with plain html */
+  plainDescription: NonNullable<V3Product["plainDescription"]>;
+}
+/**
+* Headless component for product description display
+*
+* @example
+* <Product.Description>
+*   {({ plainDescription }) => (
+*     <>
+*       {plainDescription && (
+*         <p
+*           dangerouslySetInnerHTML={{
+*             __html: plainDescription,
+*           }}
+*         />
+*       )}
+*     </>
+*   )}
+* </Product.Description>
+* @component
+*/
 export const Description = (props: ProductDescriptionProps) => {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
     typeof ProductServiceDefinition
