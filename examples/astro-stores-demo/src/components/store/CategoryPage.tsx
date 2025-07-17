@@ -20,7 +20,7 @@ import {
   SortService,
   SortServiceDefinition,
 } from '@wix/headless-stores/services';
-import ProductList from '../../../components/store/ProductList';
+import ProductList from './ProductList';
 import { WixServices } from '@wix/services-manager-react';
 
 interface StoreCollectionPageProps {

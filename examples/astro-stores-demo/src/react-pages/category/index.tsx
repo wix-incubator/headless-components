@@ -1,7 +1,7 @@
 import { StoreLayout } from '../../layouts/StoreLayout';
 import '../../styles/theme-1.css';
 import { KitchensinkLayout } from '../../layouts/KitchensinkLayout';
-import CategoryPage from './main-components/categoryPage';
+import CategoryPage from '../../components/store/CategoryPage';
 
 interface StoreCollectionPageProps {
   filteredCollectionServiceConfig: any;
