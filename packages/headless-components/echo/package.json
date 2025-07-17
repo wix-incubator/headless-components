@@ -27,13 +27,13 @@
     "@types/node": "^20.9.0",
     "@vitest/ui": "^3.1.4",
     "jsdom": "^26.1.0",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "dependencies": {
     "@wix/echo": "^1.0.0",
-    "@wix/essentials": "^0.1.22",
-    "@wix/redirects": "^1.0.79",
+    "@wix/essentials": "^0.1.24",
+    "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
   }
