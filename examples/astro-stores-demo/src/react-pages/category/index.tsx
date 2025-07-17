@@ -11,8 +11,8 @@ import {
   CategoryServiceDefinition,
 } from '@wix/headless-stores/services';
 import {
-  CollectionService,
-  CollectionServiceDefinition,
+  ProductsListService,
+  ProductsListServiceDefinition,
 } from '@wix/headless-stores/services';
 import {
   FilterService,
@@ -64,8 +64,8 @@ export default function StoreCollectionPage({
   const [servicesMap] = useState(() =>
     createServicesMap()
       .addService(
-        CollectionServiceDefinition,
-        CollectionService,
+        ProductsListServiceDefinition,
+        ProductsListService,
         filteredCollectionServiceConfig
       )
       .addService(

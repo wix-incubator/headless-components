@@ -3,7 +3,7 @@ import React from "react";
 import {
   SortServiceDefinition,
   type SortBy,
-} from "../services/sort-service.js";
+} from "../services/products-query-builder-service.js";
 
 export type { SortBy };
 

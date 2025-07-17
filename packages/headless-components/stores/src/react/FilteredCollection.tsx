@@ -1,18 +1,17 @@
 import { useService } from "@wix/services-manager-react";
 import React, { type ReactNode } from "react";
-import { CollectionServiceDefinition } from "../services/collection-service.js";
+import { ProductsListServiceDefinition } from "../services/products-list-service.js";
 import {
   FilterServiceDefinition,
   type AvailableOptions,
-  type FilterServiceAPI,
   type Filter,
-} from "../services/filter-service.js";
+} from "../services/products-query-builder-service.js";
 import {
   InventoryAvailabilityStatus,
   type V3Product,
 } from "@wix/auto_sdk_stores_products-v-3";
 
-export type { AvailableOptions, Filter, FilterServiceAPI };
+export type { AvailableOptions, Filter };
 
 // Filters Loading component with pulse animation
 export interface FiltersLoadingProps {
@@ -50,7 +49,7 @@ export interface FilteredGridProps {
  * @component
  */
 export const Grid: React.FC<FilteredGridProps> = ({ children }) => {
-  const collection = useService(CollectionServiceDefinition);
+  const collection = useService(ProductsListServiceDefinition);
 
   const products = collection!.products.get() || [];
   const totalProducts = collection!.totalProducts.get();
@@ -155,7 +154,7 @@ export interface FilteredLoadMoreProps {
  * @component
  */
 export const LoadMore: React.FC<FilteredLoadMoreProps> = ({ children }) => {
-  const collection = useService(CollectionServiceDefinition);
+  const collection = useService(ProductsListServiceDefinition);
 
   const loadMore = collection!.loadMore;
   const refresh = collection!.refresh;
@@ -196,7 +195,7 @@ export interface FilteredFiltersProps {
  * @component
  */
 export const Filters: React.FC<FilteredFiltersProps> = ({ children }) => {
-  const collection = useService(CollectionServiceDefinition);
+  const collection = useService(ProductsListServiceDefinition);
   const filter = useService(FilterServiceDefinition);
 
   const applyFilters = filter!.applyFilters;
