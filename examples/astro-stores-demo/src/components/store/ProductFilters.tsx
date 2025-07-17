@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { getStockStatusMessage } from './enums/product-status-enums';
+import { getStockStatusMessage } from './product-status-enums';
 
 interface ProductFiltersProps {
   onFiltersChange: (filters: {
@@ -402,7 +402,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         .range-slider {
           pointer-events: none;
         }
-        
+
         .range-slider::-webkit-slider-thumb {
           pointer-events: all;
           appearance: none;
@@ -442,15 +442,15 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
         .range-slider-min::-webkit-slider-thumb {
           background: var(--theme-gradient-primary);
         }
-        
+
         .range-slider-min::-moz-range-thumb {
           background: var(--theme-gradient-primary);
         }
-        
+
         .range-slider-max::-webkit-slider-thumb {
           background: var(--theme-gradient-primary);
         }
-        
+
         .range-slider-max::-moz-range-thumb {
           background: var(--theme-gradient-primary);
         }

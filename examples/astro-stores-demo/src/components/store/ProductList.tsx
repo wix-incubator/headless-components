@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { productsV3 } from '@wix/stores';
 import ProductFilters from './ProductFilters';
-import StoreHeader from './StoreHeader';
+import CategoryPicker from './CategoryPicker';
+import SortDropdown from './SortDropdown';
+
 import { WixMediaImage } from '../media';
 import {
   FilteredCollection,
@@ -477,7 +479,13 @@ export const ProductGridContent = ({
           }) => {
             return (
               <div className="min-h-screen">
-                <StoreHeader className="mb-6" />
+                {/* Store Header - Category Filter & Sort */}
+        <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
+          <div className="flex items-top justify-between">
+                                      <CategoryPicker />
+            <SortDropdown />
+          </div>
+        </div>
 
                 {/* Main Layout with Sidebar and Content */}
                 <div className="flex gap-8">
@@ -715,7 +723,7 @@ export default function ProductList({
 }) {
   return (
     <div>
-      <ProductGridContent productPageRoute={productPageRoute} />
+            <ProductGridContent productPageRoute={productPageRoute} />
       <LoadMoreSection />
     </div>
   );

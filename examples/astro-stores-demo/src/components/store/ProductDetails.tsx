@@ -10,7 +10,7 @@ import {
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
 
-import { getStockStatusMessage } from './enums/product-status-enums';
+import { getStockStatusMessage } from './product-status-enums';
 
 // Reusable FreeText Input Component
 const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
