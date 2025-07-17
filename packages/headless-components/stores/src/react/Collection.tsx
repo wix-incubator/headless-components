@@ -48,27 +48,7 @@ export interface GridRenderProps {
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * > * Headless components use the render props pattern. They provide ready-to-use business logic and state management, while giving you complete control over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  *
- * @example
- * import { Grid } from "@wix/stores/components";
- *
- * <Grid>
- *   {({ products, isLoading, error, isEmpty }) => (
- *     <div className="product-grid">
- *       {isLoading && <div>Loading products...</div>}
- *       {error && <div>Error: {error}</div>}
- *       {isEmpty && <div>No products found</div>}
- *       <div className="grid">
- *         {products.map(product => (
- *           <div key={product._id} className="product-card">
- *             <img src={product.media?.main?.image} alt={product.name} />
- *             <h3>{product.name}</h3>
- *           </div>
- *         ))}
- *       </div>
- *     </div>
- *   )}
- * </Grid>
- *
+
  * @component
  */
 export const Grid = (props: GridProps) => {
@@ -168,31 +148,7 @@ export interface ItemRenderProps {
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
- * @example
- * import { Item } from "@wix/stores/components";
- *
- * <Item product={product}>
- *   {({ title, price, compareAtPrice, image, available, href }) => (
- *     <div className="product-item">
- *       {image && <img src={image} alt={title} />}
- *       <h3>{title}</h3>
- *       <div className="price">
- *         <span className="current-price">{price}</span>
- *         {compareAtPrice && (
- *           <span className="compare-price">{compareAtPrice}</span>
- *         )}
- *       </div>
- *       {available ? (
- *         <a href={href} className="product-link">
- *           View Product
- *         </a>
- *       ) : (
- *         <span className="out-of-stock">Out of Stock</span>
- *       )}
- *     </div>
- *   )}
- * </Item>
- *
+
  * @component
  */
 export const Item = (props: ItemProps) => {
@@ -250,8 +206,8 @@ export interface LoadMoreRenderProps {
   isLoading: boolean;
   /** Whether the collection contains any products. */
   hasProducts: boolean;
-  /** Number of products currently loaded. */
-  loadedCount: number;
+  /** Total number of products in the collection. */
+  totalProducts: number;
   /** Whether there are more products available to load. */
   hasMoreProducts: boolean;
 }
@@ -272,21 +228,7 @@ export interface LoadMoreRenderProps {
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
- * @example
- * import { LoadMore } from "@wix/stores/components";
- *
- * <LoadMore>
- *   {({ loadMore, isLoading, hasMoreProducts }) => (
- *     <div className="load-more">
- *       {hasMoreProducts && (
- *         <button onClick={loadMore} disabled={isLoading}>
- *           {isLoading ? 'Loading...' : 'Load More Products'}
- *         </button>
- *       )}
- *     </div>
- *   )}
- * </LoadMore>
- *
+
  * @component
  */
 export const LoadMore = (props: LoadMoreProps) => {
@@ -370,21 +312,7 @@ export interface HeaderRenderProps {
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
- * @example
- * import { Header } from "@wix/stores/components";
- *
- * <Header>
- *   {({ totalProducts, isLoading }) => (
- *     <div className="collection-header">
- *       {isLoading ? (
- *         <p>Loading...</p>
- *       ) : (
- *         <h2>{totalProducts} Products</h2>
- *       )}
- *     </div>
- *   )}
- * </Header>
- *
+
  * @component
  */
 export const Header = (props: HeaderProps) => {
@@ -460,23 +388,7 @@ export interface ActionsRenderProps {
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
- * @example
- * import { Actions } from "@wix/stores/components";
- *
- * <Actions>
- *   {({ refresh, loadMore, isLoading, error }) => (
- *     <div className="collection-actions">
- *       {error && <p>Error: {error}</p>}
- *       <button onClick={refresh} disabled={isLoading}>
- *         Refresh
- *       </button>
- *       <button onClick={loadMore} disabled={isLoading}>
- *         Load More
- *       </button>
- *     </div>
- *   )}
- * </Actions>
- *
+
  * @component
  */
 export const Actions = (props: ActionsProps) => {

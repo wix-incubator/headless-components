@@ -34,34 +34,7 @@ export interface CategoryListProps {
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
- * @example
- * import { List } from "@wix/stores/components";
- *
- * <List>
- *   {({ categories, selectedCategory, setSelectedCategory }) => (
- *     <div className="category-filter">
- *       <h3>Shop by Category</h3>
- *       <div className="category-list">
- *         <button
- *           className={selectedCategory === null ? 'active' : ''}
- *           onClick={() => setSelectedCategory(null)}
- *         >
- *           All Products
- *         </button>
- *         {categories.map(category => (
- *           <button
- *             key={category._id}
- *             className={selectedCategory === category._id ? 'active' : ''}
- *             onClick={() => setSelectedCategory(category._id)}
- *           >
- *             {category.name}
- *           </button>
- *         ))}
- *       </div>
- *     </div>
- *   )}
- * </List>
- *
+
  * @component
  */
 export const List: React.FC<CategoryListProps> = ({ children }) => {
