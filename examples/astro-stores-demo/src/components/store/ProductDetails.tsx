@@ -1,5 +1,5 @@
 import { MediaGallery } from '@wix/headless-media/react';
-import { WixMediaImage } from '../../headless/media/components';
+import { WixMediaImage } from '../media';
 import {
   Product,
   ProductModifiers,

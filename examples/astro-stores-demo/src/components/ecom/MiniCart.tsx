@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CurrentCart } from '@wix/headless-ecom/react';
-import { WixMediaImage } from '../../headless/media/components';
+import { WixMediaImage } from '../media';
 
 // Mini coupon form for the cart sidebar
 const CouponFormMini = ({

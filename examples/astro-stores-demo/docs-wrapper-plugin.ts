@@ -92,7 +92,7 @@ export function headlessDocsWrapper(): Plugin {
       if (
         !id.endsWith(".tsx") ||
         id.includes("node_modules") ||
-        id.includes("src/headless/")
+        false
       ) {
         return null;
       }

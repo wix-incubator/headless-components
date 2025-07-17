@@ -1,5 +1,5 @@
 import { CurrentCart } from '@wix/headless-ecom/react';
-import { WixMediaImage } from '../../headless/media/components';
+import { WixMediaImage } from '../media';
 
 export default function CartContent() {
 

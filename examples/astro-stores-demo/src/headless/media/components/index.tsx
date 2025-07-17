@@ -1,1 +1,0 @@
-export { WixMediaImage } from './Image';

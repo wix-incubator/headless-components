@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { productsV3 } from '@wix/stores';
 import ProductFilters from './ProductFilters';
 import StoreHeader from './StoreHeader';
-import { WixMediaImage } from '../../headless/media/components';
+import { WixMediaImage } from '../media';
 import {
   FilteredCollection,
   Product,
