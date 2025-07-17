@@ -25,7 +25,7 @@ export default function ProductDetailPage({
               {/* Back to Store */}
               <div className="mb-8">
                 <a
-                  href="/store"
+                  href="/"
                   className="inline-flex items-center gap-2 text-[var(--theme-text-content-60)] hover:text-[var(--theme-text-content)] transition-colors"
                 >
                   <svg

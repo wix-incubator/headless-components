@@ -82,7 +82,7 @@ export default function CartContent() {
                           Start shopping to add items to your cart
                         </p>
                         <a
-                          href="/store"
+                          href="/"
                           className="inline-flex items-center gap-2 text-content-primary font-semibold py-3 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 btn-primary"
                           onMouseEnter={(e: any) => {
                             e.currentTarget.classList.remove('btn-primary');
@@ -552,7 +552,7 @@ export default function CartContent() {
 
                                     <div className="text-center pt-4">
                                       <a
-                                        href="/store"
+                                        href="/"
                                         className="text-brand-primary hover:text-brand-light font-medium transition-colors duration-200 flex items-center justify-center gap-2"
                                       >
                                         <svg

@@ -34,7 +34,7 @@ export const KitchensinkLayout = ({ children }: KitchensinkLayoutProps) => {
             <nav className="space-y-2">
               {/* Store Link */}
               <a
-                href="/store"
+                href="/"
                 className="flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl px-3 py-2 transition-all duration-200 group/item"
               >
                 <div className="w-8 h-8 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-lg flex items-center justify-center group-hover/item:from-orange-500/30 group-hover/item:to-red-500/30 transition-all duration-200">

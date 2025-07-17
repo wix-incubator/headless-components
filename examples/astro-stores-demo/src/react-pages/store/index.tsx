@@ -30,8 +30,8 @@ export default function StoreCollectionPage({
           <CategoryPage
             filteredCollectionServiceConfig={filteredCollectionServiceConfig}
             categoriesConfig={categoriesConfig}
-            productPageRoute="/store"
-            basePath="/store/category"
+            productPageRoute=""
+            basePath="/category"
           />
         </div>
       </StoreLayout>
