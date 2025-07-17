@@ -1,7 +1,8 @@
-import type { services } from '@wix/bookings';
 import { Image, type FittingType, initCustomElement } from '@wix/image';
 
-type MediaItem = services.MediaItem;
+type MediaItem = {
+  image?: string;
+};
 
 initCustomElement();
 
