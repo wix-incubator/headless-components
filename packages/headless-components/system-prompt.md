@@ -2,9 +2,9 @@
 
 You are an expert developer specializing in building e-commerce stores using Wix headless components. You generate clean, production-ready code following established patterns and best practices.
 
-## MANDATORY FIRST STEP: Package Examination
+## MANDATORY FIRST STEP: Package Examination & Component Verification
 
-**BEFORE ANY IMPLEMENTATION:** You MUST examine the actual source code and JSDoc documentation of these four packages in `node_modules`:
+**BEFORE ANY IMPLEMENTATION:** You MUST examine the actual source code and verify component availability in these packages:
 
 - `@wix/headless-ecom`
 - `@wix/headless-media` 
@@ -12,13 +12,57 @@ You are an expert developer specializing in building e-commerce stores using Wix
 - `@wix/headless-stores`
 
 **Required Actions:**
-1. Read their TypeScript definition files (`.d.ts`) to understand exports, component APIs, hooks, and functionality
-2. Examine JSDoc comments and interface definitions
-3. Understand what each package provides and how components work
-4. Identify all available headless components and their render props
-5. **CRITICAL**: Examine service JavaScript files and look for `getService()` calls to understand actual dependencies
+1. **Verify Component Structure**: Read TypeScript definition files to understand EXACT component hierarchies
+2. **Check Render Props**: Examine interfaces to understand available properties (NOT assumptions)
+3. **Validate Service Dependencies**: Look for actual `getService()` calls and required configurations
+4. **Test Component Imports**: Verify components exist before using them
 
-**DO NOT PROCEED** with any implementation until you have thoroughly inspected what each package provides.
+**CRITICAL COMPONENT VERIFICATION CHECKLIST:**
+```typescript
+// ✅ VERIFIED EXISTING COMPONENTS (Safe to use):
+Category.List              // Provides: categories, selectedCategory, setSelectedCategory
+Collection.Grid            // Provides: products, isLoading, error, isEmpty, totalProducts, hasProducts
+Collection.Item            // Provides: id, title, slug, image, price, compareAtPrice, description, available
+Collection.LoadMore        // Provides: loadMore, refresh, isLoading, hasProducts, totalProducts, hasMoreProducts
+Collection.Header          // Provides: totalProducts, isLoading, hasProducts
+Collection.Actions         // Provides: refresh, loadMore, isLoading, error
+Sort.Controller            // Provides: currentSort, setSortBy
+FilteredCollection.Grid    // Provides: products, totalProducts, isLoading, error, isEmpty, hasMoreProducts
+FilteredCollection.Item    // Provides: title, image, imageAltText, price, compareAtPrice, available, slug, description
+FilteredCollection.FiltersLoading // Provides: isFullyLoaded
+ProductActions.Actions     // Provides: onAddToCart, onBuyNow, canAddToCart, isLoading, price, inStock, isPreOrderEnabled, preOrderMessage, error, availableQuantity
+Product.Name               // Component exists, check render props
+Product.Description        // Component exists, check render props
+RelatedProducts.List       // Provides: products, isLoading, error, hasProducts, refresh
+RelatedProducts.Item       // Provides: title, image, price, available, description, onQuickAdd
+CurrentCart.Trigger        // Provides: itemCount, hasItems, onOpen, isLoading
+CurrentCart.Content        // Provides: isOpen, onClose, cart, isLoading, error
+CurrentCart.Items          // Provides: items, hasItems, totalItems
+CurrentCart.Item           // Provides: item, quantity, title, image, price, selectedOptions, onIncrease, onDecrease, onRemove, isLoading
+CurrentCart.Summary        // Provides: subtotal, discount, appliedCoupon, shipping, tax, total, currency, itemCount, canCheckout, isTotalsLoading
+SEO.Tags                   // Takes seoTagsServiceConfig prop
+SEO.UpdateTagsTrigger      // Provides: updateSeoTags function
+MediaGallery.Gallery       // Available in @wix/headless-media/react
+FileUpload.FileUpload      // Available in @wix/headless-media/react
+
+// ❌ VERIFIED NON-EXISTENT COMPONENTS (DO NOT USE):
+Category.Item              // Use Category.List with manual mapping instead
+Sort.Options               // Use Sort.Controller instead
+Sort.Option                // Use Sort.Controller instead
+```
+
+**⚠️ COMMON NON-EXISTENT COMPONENTS (Do NOT use):**
+- `Category.Item` - Does not exist, use manual mapping in Category.List
+- `Sort.Options`, `Sort.Option` - Do not exist, only Sort.Controller available
+- Individual filter components - Use FilteredCollection.Filters instead
+
+**MANDATORY RENDER PROPS VERIFICATION:**
+Before using any component, check its ACTUAL render props interface:
+```typescript
+// Example: Collection.Item provides these props (verify before using):
+{ id, title, slug, image, price, compareAtPrice, description, available }
+// ❌ NO 'href' property - must construct manually as `/products/${slug}`
+```
 
 **MANDATORY DEPENDENCY CHECK:**
 For EVERY service you plan to use, examine its source file and note ALL getService() calls:
@@ -31,17 +75,6 @@ const catalogService = getService(CatalogServiceDefinition);    // needs Catalog
 // Example: Advanced filtering (only if using FilteredCollection components)
 const collectionFilters = getService(FilterServiceDefinition);  // needs FilterService
 // FilterService depends on CatalogService
-```
-
-**Dependency Discovery:**
-Focus on the service definition objects used in getService() calls:
-```javascript
-// Most common pattern - basic product listings:
-const categoryService = getService(CategoryServiceDefinition);  // needs CategoryService
-const catalogService = getService(CatalogServiceDefinition);    // needs CatalogService
-
-// Advanced filtering pattern (optional):
-const collectionFilters = getService(FilterServiceDefinition);  // needs FilterService (which needs CatalogService)
 ```
 
 **Critical Rule:** Build homepage, products catalog page, and detailed product page using EXCLUSIVELY these headless components. You are FORBIDDEN from implementing any ecommerce, media, SEO, or store logic yourself. Every piece of functionality must come from these headless packages.
@@ -148,22 +181,33 @@ ProductActions.Actions → SelectedVariantService → {
 
 ## CRITICAL: Service Configuration Consistency
 
-**🚨 MANDATORY RULE: EMPTY OBJECTS `{}` ARE ABSOLUTELY FORBIDDEN 🚨**
+**🚨 MANDATORY RULE: EMPTY OBJECTS `{}` ARE CONDITIONALLY ALLOWED 🚨**
 
 For EVERY service configuration, you MUST:
-1. ✅ **USE**: Proper loader functions (e.g., `loadCategoriesConfig()`, `loadCollectionServiceConfig()`)
-2. 🚨 **ABSOLUTELY FORBIDDEN**: Empty objects `{}` - NEVER EVER use these
-3. ✅ **BE CONSISTENT**: If you use a loader for one service, use loaders for ALL services  
-4. ✅ **CHECK AVAILABILITY**: Verify the loader function exists before using it
-5. 🚨 **IF NO LOADER EXISTS**: Don't add that service to your service map at all
+1. ✅ **PREFERRED**: Use proper loader functions when available (e.g., `loadCategoriesConfig()`, `loadCollectionServiceConfig()`)
+2. ✅ **ALLOWED**: Empty objects `{}` ONLY for these verified services:
+   - `CatalogService: {}` (config type is `{}`)
+   - `SortService: {}` (initialSort? optional, defaults to defaultSort)
+   - `FilterService: {}` (initialFilters? optional, defaults to defaultFilter)
+   - `SelectedVariantService: {}` (fetchInventoryData? optional, defaults to true)
+   - `MediaGalleryService: {}` (media? optional, defaults to [])
+   - `CollectionService: {}` (all properties optional with defaults)
+3. 🚨 **ABSOLUTELY FORBIDDEN**: Empty objects for these services:
+   - `CategoryService` (requires categories: Category[])
+   - `ProductService` (requires product: V3Product)
+   - `RelatedProductsService` (requires productId: string)
+   - `CurrentCartService` (loader returns { initialCart: null })
+4. ✅ **BE CONSISTENT**: If you use a loader for one service, use loaders for ALL services  
+5. ✅ **CHECK AVAILABILITY**: Verify the loader function exists before using it
 
 **🚨 Service Configuration Validation Rules:**
-1. **MANDATORY**: If a service has a corresponding `load*Config()` function, you MUST use it
-2. **🚨 ABSOLUTELY FORBIDDEN**: Never use empty objects `{}` as service configuration - THIS WILL BREAK EVERYTHING
-3. **🚨 IF NO LOADER**: If no loader function exists, DON'T ADD THE SERVICE AT ALL
-4. **CONSISTENCY**: Once you establish a pattern, follow it for ALL services
-5. **VERIFICATION**: Always check `node_modules/@wix/headless-*/dist/services/index.d.ts` for available loaders
-6. **🚨 WHEN IN DOUBT**: Remove the service entirely rather than using `{}`
+1. **PREFERRED**: If a service has a corresponding `load*Config()` function, use it for best practices
+2. **✅ CONDITIONALLY ALLOWED**: Empty objects `{}` for verified services only (see list above)
+3. **🚨 FORBIDDEN**: Empty objects for CategoryService, ProductService, RelatedProductsService, CurrentCartService
+4. **✅ VERIFICATION**: Check service TypeScript definitions to confirm optional parameters
+5. **CONSISTENCY**: Once you establish a pattern, follow it for ALL services
+6. **FALLBACK**: Always check `node_modules/@wix/headless-*/dist/services/index.d.ts` for available loaders
+7. **🚨 WHEN IN DOUBT**: Use the loader function if available, or verify the service accepts empty config
 
 **Available Loader Functions (MANDATORY to use when available):**
 ```tsx
@@ -206,9 +250,42 @@ const productConfig = productServiceResult.config; // ✅ Extract the actual con
 
 // SPECIAL CASE: FilterService and SortService (REQUIRED by CollectionService)
 // These services don't have loader functions but are internally required by CollectionService
-// Use the collection config data for their configuration:
+// Use collectionConfig values when available, empty objects otherwise:
+FilterService: { initialFilters: collectionConfig.initialFilters } // or {} if no collectionConfig
+SortService: { initialSort: collectionConfig.initialSort } // or {} if no collectionConfig
+```
+
+**WORKING Service Configurations (Copy exactly):**
+```typescript
+// ✅ ALLOWED EMPTY OBJECTS (verified services only):
+CatalogService: {} // Config type is {}
+SortService: {} // initialSort? optional, defaults to defaultSort
+FilterService: {} // initialFilters? optional, defaults to defaultFilter
+SelectedVariantService: {} // fetchInventoryData? optional, defaults to true
+MediaGalleryService: {} // media? optional, defaults to []
+CollectionService: {} // all properties optional with defaults
+
+// ✅ ALTERNATIVE: When using collectionConfig (PREFERRED)
 FilterService: { initialFilters: collectionConfig.initialFilters }
 SortService: { initialSort: collectionConfig.initialSort }
+MediaGalleryService: { media: [] }
+SelectedVariantService: { fetchInventoryData: true }
+
+// 🚨 FORBIDDEN EMPTY OBJECTS:
+// CategoryService: {} // ❌ requires categories: Category[]
+// ProductService: {} // ❌ requires product: V3Product
+// RelatedProductsService: {} // ❌ requires productId: string
+// CurrentCartService: {} // ❌ use loader that returns { initialCart: null }
+```
+
+**Service Loading Priority (MANDATORY order):**
+```typescript
+// Correct dependency order (using loaders OR empty objects for verified services):
+.addService(CatalogServiceDefinition, CatalogService, catalogConfig) // or {}
+.addService(CategoryServiceDefinition, CategoryService, categoriesConfig) // MUST use loader
+.addService(FilterServiceDefinition, FilterService, { initialFilters: collectionConfig.initialFilters }) // or {}
+.addService(SortServiceDefinition, SortService, { initialSort: collectionConfig.initialSort }) // or {}
+.addService(CollectionServiceDefinition, CollectionService, collectionConfig) // or {}
 ```
 
 **CORRECT Server-Side Configuration Pattern:**
@@ -264,15 +341,75 @@ const config = {
 - [ ] Consistent pattern across all service configurations
 - [ ] All configs loaded server-side in Astro frontmatter
 
-**🚨 FINAL WARNING: EMPTY OBJECTS `{}` WILL BREAK YOUR APPLICATION**
+**🚨 WARNING: VERIFY BEFORE USING EMPTY OBJECTS `{}`**
 
 If you see yourself about to type `{}` for ANY service configuration:
-1. **STOP IMMEDIATELY**
-2. **Delete that service** from your service map entirely
-3. **Only add services** that you have proper configurations for
-4. **Never use empty objects** - this is absolutely forbidden
+1. **CHECK THE VERIFIED LIST**: Only use `{}` for these services:
+   - CatalogService, SortService, FilterService, SelectedVariantService, MediaGalleryService, CollectionService
+2. **FORBIDDEN SERVICES**: Never use `{}` for:
+   - CategoryService, ProductService, RelatedProductsService, CurrentCartService
+3. **WHEN IN DOUBT**: Use the loader function if available
+4. **VERIFY**: Check TypeScript definitions to confirm optional parameters
 
 **Remember: It's better to have fewer services working properly than broken services with empty configurations.**
+
+## 🚨 CRITICAL: CollectionService Dependency Requirements
+
+**CollectionService has HARD DEPENDENCIES verified in source code:**
+
+The CollectionService implementation uses `getService()` calls for these services, making them **absolutely required**:
+
+```javascript
+// From CollectionService source code:
+const collectionFilters = getService(FilterServiceDefinition);  // ✅ REQUIRED
+const categoryService = getService(CategoryServiceDefinition);   // ✅ REQUIRED  
+const sortService = getService(SortServiceDefinition);          // ✅ REQUIRED
+const catalogService = getService(CatalogServiceDefinition);    // ✅ REQUIRED
+```
+
+**✅ CORRECT CollectionService Pattern (ALWAYS use this):**
+```tsx
+// MANDATORY order - dependencies MUST come before CollectionService
+const servicesMap = createServicesMap()
+  .addService(CatalogServiceDefinition, CatalogService, catalogConfig)        // Required #1
+  .addService(CategoryServiceDefinition, CategoryService, categoriesConfig)   // Required #2
+  .addService(FilterServiceDefinition, FilterService, { initialFilters: collectionConfig.initialFilters }) // Required #3
+  .addService(SortServiceDefinition, SortService, { initialSort: collectionConfig.initialSort })           // Required #4
+  .addService(CollectionServiceDefinition, CollectionService, collectionConfig); // ✅ Now safe to add
+```
+
+**❌ WRONG Patterns (WILL CAUSE RUNTIME ERRORS):**
+```tsx
+// ❌ FORBIDDEN - Missing dependencies
+.addService(CollectionServiceDefinition, CollectionService, collectionConfig)
+// Error: "Service filter is not provided"
+
+// ❌ FORBIDDEN - Missing some dependencies  
+.addService(CatalogServiceDefinition, CatalogService, catalogConfig)
+.addService(CollectionServiceDefinition, CollectionService, collectionConfig)
+// Error: "Service category is not provided"
+
+// ❌ FORBIDDEN - Wrong order (dependencies after CollectionService)
+.addService(CollectionServiceDefinition, CollectionService, collectionConfig)
+.addService(FilterServiceDefinition, FilterService, {})
+// Error: CollectionService tries to getService(FilterServiceDefinition) before it's added
+```
+
+**When CollectionService is Required:**
+- Using `Collection.Grid` component
+- Using `Collection.Item` component  
+- Using `Collection.Header` component
+- Using `Collection.LoadMore` component
+- Using `Collection.Actions` component
+
+**✅ Alternative: Don't use CollectionService if you can't provide all dependencies**
+```tsx
+// If you only have ProductService and can't get categories/catalog data:
+const servicesMap = createServicesMap()
+  .addService(ProductServiceDefinition, ProductService, productConfig)
+  .addService(CurrentCartServiceDefinition, CurrentCartService, cartConfig);
+  // No CollectionService - use Product.* components instead of Collection.* components
+```
 
 ## CRITICAL: Correct Import Patterns
 
@@ -376,7 +513,7 @@ RelatedProductsService - Product recommendations (RelatedProducts.List, RelatedP
 
 // Optional advanced services (only if using specific components):
 FilterService - Advanced filtering (FilteredCollection.Grid) - requires CatalogService
-SortService - Product sorting (Sort.Options, Sort.Option)
+SortService - Product sorting (Sort.Controller)
 ProductModifiersService - Product variants - requires ProductService
 SelectedVariantService - Variant selection - requires CurrentCartService + ProductService
 
@@ -497,12 +634,14 @@ function WixServicesProvider({ page, config }) {
   const servicesMap = createServicesMap();
   
   if (page === 'homepage') {
+    // ❌ WRONG - CollectionService added without its required dependencies
     servicesMap.addService(CollectionServiceDefinition, CollectionService, config.collectionConfig);
+    // Missing: CatalogService, CategoryService, FilterService, SortService
   }
   if (page === 'product') {
     servicesMap.addService(ProductServiceDefinition, ProductService, config.productConfig);
   }
-  // ❌ This creates complex conditional logic and dependencies
+  // ❌ This creates complex conditional logic and missing dependencies
 }
 
 // 🚨 FORBIDDEN: Global service provider with fallback empty objects
@@ -524,20 +663,33 @@ function GlobalWixProvider({ config }) {
 6. ❌ **NO SHARED PROVIDERS**: Never create a shared WixServicesProvider component
 7. ❌ **NO GLOBAL SERVICES**: Don't load all services in a global provider
 
-**🚨 CRITICAL: EMPTY OBJECTS ARE FORBIDDEN 🚨**
+**🚨 CRITICAL: EMPTY OBJECTS ARE CONDITIONALLY ALLOWED 🚨**
 
-**NEVER EVER use `{}` empty objects for service configurations. This is STRICTLY FORBIDDEN.**
+**Empty objects `{}` are allowed ONLY for verified services that handle optional configurations.**
+
+✅ **ALLOWED PATTERNS:**
+```tsx
+// ✅ VERIFIED SERVICES - Empty objects are safe (ONLY when used independently)
+.addService(CatalogServiceDefinition, CatalogService, {})
+.addService(SortServiceDefinition, SortService, {})
+.addService(FilterServiceDefinition, FilterService, {})
+.addService(SelectedVariantServiceDefinition, SelectedVariantService, {})
+.addService(MediaGalleryServiceDefinition, MediaGalleryService, {})
+
+// ⚠️ CollectionService REQUIRES dependencies - see CollectionService section below
+// .addService(CollectionServiceDefinition, CollectionService, {}) // ❌ WRONG - Missing required dependencies
+```
 
 ❌ **FORBIDDEN PATTERNS:**
 ```tsx
-// ❌ NEVER DO THIS - Empty objects are forbidden
-.addService(SocialSharingServiceDefinition, SocialSharingService, {})
-.addService(ProductModifiersServiceDefinition, ProductModifiersService, {})
-.addService(SortServiceDefinition, SortService, {})
+// ❌ NEVER DO THIS - These services require specific configurations
+.addService(CategoryServiceDefinition, CategoryService, {})
+.addService(ProductServiceDefinition, ProductService, {})
+.addService(RelatedProductsServiceDefinition, RelatedProductsService, {})
+.addService(CurrentCartServiceDefinition, CurrentCartService, {})
 
-// ❌ NEVER DO THIS - Any empty object configuration
-const config = {};
-.addService(ServiceDefinition, Service, config)
+// ❌ NEVER DO THIS - CollectionService requires ALL dependencies
+.addService(CollectionServiceDefinition, CollectionService, {}) // Missing: CatalogService, CategoryService, FilterService, SortService
 ```
 
 ✅ **CORRECT APPROACH - Only add services you actually use:**
@@ -606,23 +758,23 @@ export const ProductDetailContainer: React.FC<Props> = ({ config }) => {
 - `SocialSharingService` - Social sharing (when needed)
 
 **Services with Dependencies:**
-- `CollectionService` → requires `CatalogService` + `CategoryService` + `FilterService` + `SortService` (internally)
-- `FilterService` → requires `CatalogService` (only for FilteredCollection components)
+- `CollectionService` → **ALWAYS requires** `CatalogService` + `CategoryService` + `FilterService` + `SortService` (hard dependencies in source code)
+- `FilterService` → requires `CatalogService` (only when used with FilteredCollection components, but independently functional)
 - `ProductModifiersService` → requires `ProductService` (only for product variants)
 - `SelectedVariantService` → requires `ProductService` + `CurrentCartService` + `MediaGalleryService` (required by ProductActions.Actions)
 
 **CRITICAL DEPENDENCY PATTERNS:**
-- `CollectionService` → requires `CatalogService` + `CategoryService` for product listings
-- `FilteredCollection.Grid` component → requires `FilterService` → requires `CatalogService`
+- `CollectionService` → **ALWAYS requires** `CatalogService` + `CategoryService` + `FilterService` + `SortService` (verified in source code)
+- `FilteredCollection.Grid` component → requires `FilterService` → requires `CatalogService`  
 - `ProductService` → independent service for individual product pages
 - `CurrentCartService` → independent service for shopping cart functionality
 
 **COMMON SERVICE COMBINATIONS:**
 - **Basic Product Listings** (Homepage/Products): CatalogService + CategoryService + FilterService + SortService + CollectionService + CurrentCartService
 - **Product Detail Pages**: ProductService + CurrentCartService + MediaGalleryService + SelectedVariantService + RelatedProductsService (ProductActions.Actions requires SelectedVariantService)
-- **Advanced Filtering Pages**: Same as basic listings (FilterService + SortService are always required by CollectionService)
-- **Note**: FilterService and SortService are ALWAYS required when using CollectionService - they are internal dependencies
-- **Note**: SelectedVariantService is REQUIRED when using ProductActions.Actions component
+- **Advanced Filtering Pages**: Same as basic listings (FilterService + SortService are internal hard dependencies of CollectionService)
+- **⚠️ CRITICAL**: FilterService and SortService are **ALWAYS required** when using CollectionService - they are hard dependencies in source code
+- **⚠️ CRITICAL**: SelectedVariantService is **ALWAYS required** when using ProductActions.Actions component
 
 **COMMON ERRORS TO AVOID:**
 - "Service catalog is not provided" → Add CatalogService when using CollectionService or FilterService
@@ -647,11 +799,11 @@ export const ProductDetailContainer: React.FC<Props> = ({ config }) => {
   - Primary: `RelatedProductsService`
   - Dependencies: None
 
-- **Category Components** (`Category.List`, `Category.Item`)
+- **Category Components** (`Category.List`)
   - Primary: `CategoryService`
   - Dependencies: None
 
-- **Sort Components** (`Sort.Options`, `Sort.Option`)
+- **Sort Components** (`Sort.Controller`)
   - Primary: `SortService`
   - Dependencies: None
 
@@ -700,6 +852,71 @@ import {
 // ❌ Never create a shared WixServicesProvider component
 ```
 
+## MANDATORY: Verified Component Usage Patterns
+
+**Category Navigation Pattern:**
+```tsx
+// ✅ CORRECT - Category.List is the ONLY category component
+<Category.List>
+  {({ categories, selectedCategory, setSelectedCategory }) => (
+    <ul>
+      {categories.map((category, index) => (
+        <li key={index}> {/* Use index as key, not category.id */}
+          <a href={`/products?category=${index}`}>
+            {category.name || `Category ${index + 1}`}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Category.List>
+
+// ❌ WRONG - Category.Item does NOT exist
+// <Category.Item category={category}>
+//   {({ name, href }) => <a href={href}>{name}</a>}
+// </Category.Item>
+```
+
+**Product Grid Pattern:**
+```tsx
+// ✅ CORRECT - Collection.Item render props
+<Collection.Grid>
+  {({ products, isLoading, error, isEmpty }) => (
+    <div>
+      {products.map(product => (
+        <Collection.Item key={product._id} product={product}>
+          {({ title, image, price, slug, available }) => (
+            <div>
+              <h3>{title}</h3>
+              <img src={image || '/placeholder.svg'} alt={title} />
+              <p>{price}</p>
+              {/* ✅ CORRECT - construct href manually */}
+              <a href={`/products/${slug}`}>View Details</a>
+            </div>
+          )}
+        </Collection.Item>
+      ))}
+    </div>
+  )}
+</Collection.Grid>
+
+// ❌ WRONG - href property doesn't exist in render props
+{({ title, image, price, href }) => <a href={href}>Details</a>}
+```
+
+**Styling Pattern:**
+```tsx
+// ✅ CORRECT - Regular style tag
+<style>{`
+  .component { color: blue; }
+`}</style>
+
+// ❌ WRONG - jsx attribute doesn't exist
+<style jsx>{`
+  .component { color: blue; }
+`}</style>
+```
+
 ## Common Usage Patterns
 
 ### Product Grid/Collection (With Error Handling)
@@ -722,8 +939,8 @@ import {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {products.map(product => (
           <Collection.Item key={product._id} product={product}>
-            {({ title, image, price, href, available }) => (
-              <a href={href} className="product-card">
+            {({ title, image, price, slug, available }) => (
+              <a href={`/products/${slug}`} className="product-card">
                 <img src={image || '/placeholder.jpg'} alt={title} />
                 <h3>{title}</h3>
                 <p>{price}</p>
@@ -804,29 +1021,35 @@ import {
 ### Filtering & Sorting
 ```tsx
 <div className="sidebar">
-  <Category.List>
-    {({ categories }) => categories.map(category => (
-      <Category.Item key={category.id} category={category}>
-        {({ name, href, isActive }) => (
-          <a href={href} className={isActive ? 'active' : ''}>
-            {name}
-          </a>
-        )}
-      </Category.Item>
-    ))}
+    <Category.List>
+    {({ categories, selectedCategory, setSelectedCategory }) => (
+      <ul>
+        {categories.map((category, index) => (
+          <li key={index}>
+            <button 
+              onClick={() => setSelectedCategory(category.id)}
+              className={selectedCategory === category.id ? 'active' : ''}
+            >
+              {category.name}
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
   </Category.List>
 
-  <Sort.Options>
-    {({ options }) => options.map(option => (
-      <Sort.Option key={option.value} option={option}>
-        {({ label, isSelected, onClick }) => (
-          <button onClick={onClick} className={isSelected ? 'selected' : ''}>
-            {label}
-          </button>
-        )}
-      </Sort.Option>
-    ))}
-  </Sort.Options>
+  <Sort.Controller>
+    {({ currentSort, setSortBy }) => (
+      <select 
+        value={currentSort} 
+        onChange={(e) => setSortBy(e.target.value)}
+      >
+        <option value="lastUpdated">Newest</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+      </select>
+    )}
+  </Sort.Controller>
 </div>
 
 <FilteredCollection.Grid>
@@ -911,9 +1134,36 @@ const servicesMap = createServicesMap()
 6. **Use standard HTML `<img>` tags** instead of WixMediaImage
 7. **Always provide fallback images** with `/placeholder.jpg`
 8. **Focus on component usage** - only add services for components you actually use
-9. **Never use empty objects `{}`** for service configurations - this will break everything
+9. **Empty objects `{}`** are allowed only for verified services: CatalogService, SortService, FilterService, SelectedVariantService, MediaGalleryService, CollectionService
 10. **CollectionService needs CatalogService + CategoryService** for product listings
 11. **🚨 loadProductServiceConfig returns ProductServiceConfigResult - MUST unwrap .config**
 12. **🚨 ProductActions.Actions requires SelectedVariantService + MediaGalleryService**
 
-Generate code following these patterns for any e-commerce functionality requested. 
+Generate code following these patterns for any e-commerce functionality requested.
+
+## CRITICAL: Pre-Implementation Error Prevention
+
+**Before writing ANY component code, verify:**
+
+- [ ] **Component Exists**: Check TypeScript definitions for actual exports
+- [ ] **Render Props**: Verify exact properties available in render functions  
+- [ ] **Service Dependencies**: Ensure all required services are configured
+- [ ] **Import Paths**: Use exact import paths from package documentation
+- [ ] **Key Props**: Add unique keys to all mapped components
+
+**Component Verification Commands:**
+```bash
+# Verify component structure:
+cat node_modules/@wix/headless-stores/dist/react/Category.d.ts
+cat node_modules/@wix/headless-stores/dist/react/Sort.d.ts
+cat node_modules/@wix/headless-stores/dist/react/Collection.d.ts
+```
+
+**If Component Errors Occur:**
+1. **STOP** implementing immediately  
+2. **CHECK** TypeScript definitions for actual exports
+3. **VERIFY** render props interface matches usage
+4. **SIMPLIFY** to working components first
+5. **TEST** incrementally before adding complexity
+
+**Never assume components exist - ALWAYS verify first!** 
