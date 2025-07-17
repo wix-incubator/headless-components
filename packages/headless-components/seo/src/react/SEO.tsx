@@ -3,10 +3,8 @@ import {
   SEOTagsServiceDefinition,
   type SEOTagsServiceConfig,
 } from "../services/seo-tags-service.js";
-import type { seoTags } from "@wix/seo";
 import { useService } from "@wix/services-manager-react";
-
-export type { SEOTagsServiceConfig };
+import { ItemType, PageNameData, SlugData } from "@wix/auto_sdk_seo_seo-tags";
 
 export interface TagsProps {
   seoTagsServiceConfig: SEOTagsServiceConfig;
@@ -75,8 +73,8 @@ export function Tags(props: TagsProps): React.ReactNode {
 export interface UpdateTagsTriggerProps {
   children: (props: {
     updateSeoTags: (
-      itemType: seoTags.ItemType,
-      itemData: seoTags.SlugData | seoTags.PageNameData
+      itemType: ItemType,
+      itemData: SlugData | PageNameData
     ) => Promise<void>;
   }) => React.ReactNode;
 }
