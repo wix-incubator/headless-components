@@ -46,7 +46,7 @@
     "@types/node": "^20.9.0",
     "@vitest/ui": "^3.1.4",
     "jsdom": "^26.1.0",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "dependencies": {
@@ -57,10 +57,10 @@
     "@wix/auto_sdk_stores_products-v-3": "^1.0.53",
     "@wix/auto_sdk_stores_read-only-variants-v-3": "^1.0.23",
     "@wix/ecom": "^1.0.1238",
-    "@wix/essentials": "^0.1.22",
+    "@wix/essentials": "^0.1.24",
     "@wix/headless-ecom": "^0.0.8",
     "@wix/headless-media": "^0.0.5",
-    "@wix/redirects": "^1.0.79",
+    "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
   }
