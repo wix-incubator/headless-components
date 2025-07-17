@@ -35,7 +35,7 @@
     "@types/node": "^20.9.0",
     "@vitest/ui": "^3.1.4",
     "jsdom": "^26.1.0",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "dependencies": {
