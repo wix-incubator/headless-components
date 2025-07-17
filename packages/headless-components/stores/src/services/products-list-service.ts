@@ -37,7 +37,7 @@ const searchProducts = async (searchOptions: any) => {
   return result;
 };
 
-export interface CollectionServiceAPI {
+export interface ProductsListServiceAPI {
   products: Signal<productsV3.V3Product[]>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
@@ -191,16 +191,16 @@ const buildSearchOptions = (
   return searchOptions;
 };
 
-export const CollectionServiceDefinition =
-  defineService<CollectionServiceAPI>("collection");
+export const ProductsListServiceDefinition =
+  defineService<ProductsListServiceAPI>("productsList");
 
-export const CollectionService = implementService.withConfig<{
+export const ProductsListService = implementService.withConfig<{
   initialProducts?: productsV3.V3Product[];
   pageSize?: number;
   initialCursor?: string;
   initialHasMore?: boolean;
   categories?: any[];
-}>()(CollectionServiceDefinition, ({ getService, config }) => {
+}>()(ProductsListServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const collectionFilters = getService(FilterServiceDefinition);
   const categoryService = getService(CategoryServiceDefinition);
@@ -571,12 +571,12 @@ function parseOptionFilters(
   });
 }
 
-export async function loadCollectionServiceConfig(
+export async function loadProductsListServiceConfig(
   categoryId?: string,
   searchParams?: URLSearchParams,
   preloadedCategories?: any[]
 ): Promise<
-  ServiceFactoryConfig<typeof CollectionService> & {
+  ServiceFactoryConfig<typeof ProductsListService> & {
     initialCursor?: string;
     initialHasMore?: boolean;
     initialSort?: SortBy;

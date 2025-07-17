@@ -21,10 +21,10 @@ export {
 } from "./category-service.js";
 
 export {
-  CollectionService,
-  CollectionServiceDefinition,
-  loadCollectionServiceConfig,
-} from "./collection-service.js";
+  ProductsListService,
+  ProductsListServiceDefinition,
+  loadProductsListServiceConfig,
+} from "./products-list-service.js";
 
 export {
   FilterService,
