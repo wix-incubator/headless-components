@@ -7,10 +7,10 @@ import { SignalsServiceDefinition } from "@wix/services-definitions/core-service
 import type { Signal } from "@wix/services-definitions/core-services/signals";
 
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
-import { FilterServiceDefinition, type Filter } from "./filter-service.js";
+import { FilterServiceDefinition, type Filter } from "./products-query-builder-service.js";
 import { CategoryServiceDefinition } from "./category-service.js";
-import { SortServiceDefinition, type SortBy } from "./sort-service.js";
-import { CatalogServiceDefinition } from "./catalog-service.js";
+import { SortServiceDefinition, type SortBy } from "./products-query-builder-service.js";
+import { CatalogServiceDefinition } from "./products-query-builder-service.js";
 import { URLParamsUtils } from "../utils/url-params.js";
 import { SortType } from "../enums/sort-enums.js";
 

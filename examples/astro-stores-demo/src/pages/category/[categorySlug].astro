@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoreCollectionPage from '../../react-pages/category/index';
-import { loadCollectionServiceConfig } from '@wix/headless-stores/services';
+import { loadProductsListServiceConfig } from '@wix/headless-stores/services';
 import { loadCurrentCartServiceConfig } from '@wix/headless-ecom/services';
 import { loadCategoriesConfig } from '@wix/headless-stores/services';
 import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
@@ -22,7 +22,7 @@ const selectedCategory = categoriesConfig.categories.find(
 );
 
 // Load collection config with selected category (pass pre-loaded categories)
-const filteredCollectionServiceConfig = await loadCollectionServiceConfig(
+const filteredCollectionServiceConfig = await loadProductsListServiceConfig(
   selectedCategory?._id || undefined,
   Astro.url.searchParams,
   categoriesConfig.categories

@@ -1,6 +1,6 @@
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
-import { CollectionServiceDefinition } from "../services/collection-service.js";
+import { ProductsListServiceDefinition } from "../services/products-list-service.js";
 import {
   InventoryAvailabilityStatus,
   type V3Product,
@@ -38,8 +38,8 @@ export interface GridRenderProps {
  * @component
  */
 export const Grid = (props: GridProps) => {
-  const service = useService(CollectionServiceDefinition) as ServiceAPI<
-    typeof CollectionServiceDefinition
+  const service = useService(ProductsListServiceDefinition) as ServiceAPI<
+    typeof ProductsListServiceDefinition
   >;
 
   // Debug logging to help identify service issues
@@ -188,8 +188,8 @@ export interface LoadMoreRenderProps {
  * @component
  */
 export const LoadMore = (props: LoadMoreProps) => {
-  const service = useService(CollectionServiceDefinition) as ServiceAPI<
-    typeof CollectionServiceDefinition
+  const service = useService(ProductsListServiceDefinition) as ServiceAPI<
+    typeof ProductsListServiceDefinition
   >;
 
   // Error handling for undefined service
@@ -258,8 +258,8 @@ export interface HeaderRenderProps {
  * @component
  */
 export const Header = (props: HeaderProps) => {
-  const service = useService(CollectionServiceDefinition) as ServiceAPI<
-    typeof CollectionServiceDefinition
+  const service = useService(ProductsListServiceDefinition) as ServiceAPI<
+    typeof ProductsListServiceDefinition
   >;
 
   // Error handling for undefined service
@@ -321,8 +321,8 @@ export interface ActionsRenderProps {
  * @component
  */
 export const Actions = (props: ActionsProps) => {
-  const service = useService(CollectionServiceDefinition) as ServiceAPI<
-    typeof CollectionServiceDefinition
+  const service = useService(ProductsListServiceDefinition) as ServiceAPI<
+    typeof ProductsListServiceDefinition
   >;
 
   // Error handling for undefined service
