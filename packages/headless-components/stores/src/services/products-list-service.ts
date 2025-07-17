@@ -6,36 +6,15 @@ import {
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import type { Signal } from "@wix/services-definitions/core-services/signals";
 
-import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
-import { FilterServiceDefinition, type Filter } from "./products-query-builder-service.js";
+import { productsV3 } from "@wix/stores";
+import {
+  ProductsQueryBuilderServiceDefinition,
+  type Filter,
+  type SortBy,
+} from "./products-query-builder-service.js";
 import { CategoryServiceDefinition } from "./category-service.js";
-import { SortServiceDefinition, type SortBy } from "./products-query-builder-service.js";
-import { CatalogServiceDefinition } from "./products-query-builder-service.js";
 import { URLParamsUtils } from "../utils/url-params.js";
 import { SortType } from "../enums/sort-enums.js";
-
-const { SortDirection } = productsV3;
-
-const searchProducts = async (searchOptions: any) => {
-  const searchParams = {
-    filter: searchOptions.search?.filter,
-    sort: searchOptions.search?.sort,
-    ...(searchOptions.paging && { cursorPaging: searchOptions.paging }),
-  };
-
-  const options = {
-    fields: searchOptions.fields || [],
-  };
-
-  const result = await productsV3.searchProducts(searchParams, options);
-
-  // Fetch missing variants for all products in one batch request
-  if (result.products) {
-    result.products = await fetchMissingVariants(result.products);
-  }
-
-  return result;
-};
 
 export interface ProductsListServiceAPI {
   products: Signal<productsV3.V3Product[]>;
@@ -48,149 +27,6 @@ export interface ProductsListServiceAPI {
   refresh: () => Promise<void>;
 }
 
-// Helper to build search options with supported filters
-const buildSearchOptions = (
-  filters?: Filter,
-  selectedCategory?: string | null,
-  sortBy?: SortBy
-) => {
-  const searchOptions: any = {
-    search: {},
-    fields: [
-      "DESCRIPTION" as any,
-      "DIRECT_CATEGORIES_INFO" as any,
-      "BREADCRUMBS_INFO" as any,
-      "INFO_SECTION" as any,
-      "MEDIA_ITEMS_INFO" as any,
-      "PLAIN_DESCRIPTION" as any,
-      "THUMBNAIL" as any,
-      "URL" as any,
-      "VARIANT_OPTION_CHOICE_NAMES" as any,
-      "WEIGHT_MEASUREMENT_UNIT_INFO" as any,
-    ],
-  };
-
-  // Build filter conditions array
-  const filterConditions: any[] = [];
-
-  // Add category filter if selected
-  if (selectedCategory) {
-    filterConditions.push({
-      "allCategoriesInfo.categories": {
-        $matchItems: [
-          {
-            id: {
-              $in: [selectedCategory],
-            },
-          },
-        ],
-      },
-    });
-  }
-
-  // Add price range filter if provided
-  if (filters?.priceRange) {
-    const { min, max } = filters.priceRange;
-    if (min > 0) {
-      filterConditions.push({
-        "actualPriceRange.minValue.amount": { $gte: min.toString() },
-      });
-    }
-    if (max > 0 && max < 999999) {
-      filterConditions.push({
-        "actualPriceRange.maxValue.amount": { $lte: max.toString() },
-      });
-    }
-  }
-
-  // Add product options filter if provided
-  if (
-    filters?.selectedOptions &&
-    Object.keys(filters.selectedOptions).length > 0
-  ) {
-    for (const [optionId, choiceIds] of Object.entries(
-      filters.selectedOptions
-    )) {
-      if (choiceIds && choiceIds.length > 0) {
-        // Handle inventory filter separately
-        if (optionId === "inventory-filter") {
-          filterConditions.push({
-            "inventory.availabilityStatus": {
-              $in: choiceIds,
-            },
-          });
-        } else {
-          // Regular product options filter
-          filterConditions.push({
-            "options.choicesSettings.choices.choiceId": {
-              $hasSome: choiceIds,
-            },
-          });
-        }
-      }
-    }
-  }
-
-  // Apply filters
-  if (filterConditions.length > 0) {
-    if (filterConditions.length === 1) {
-      // Single condition - no need for $and wrapper
-      searchOptions.search.filter = filterConditions[0];
-    } else {
-      // Multiple conditions - use $and
-      searchOptions.search.filter = {
-        $and: filterConditions,
-      };
-    }
-  }
-
-  // Add sort if provided
-  if (sortBy) {
-    switch (sortBy) {
-      case SortType.NAME_ASC:
-        searchOptions.search.sort = [
-          { fieldName: "name", order: SortDirection.ASC },
-        ];
-        break;
-      case SortType.NAME_DESC:
-        searchOptions.search.sort = [
-          { fieldName: "name", order: SortDirection.DESC },
-        ];
-        break;
-      case SortType.PRICE_ASC:
-        searchOptions.search.sort = [
-          {
-            fieldName: "actualPriceRange.minValue.amount",
-            order: SortDirection.ASC,
-          },
-        ];
-        break;
-      case SortType.PRICE_DESC:
-        searchOptions.search.sort = [
-          {
-            fieldName: "actualPriceRange.minValue.amount",
-            order: SortDirection.DESC,
-          },
-        ];
-        break;
-      case SortType.RECOMMENDED:
-        searchOptions.search.sort = [
-          {
-            fieldName: "allCategoriesInfo.categories.index",
-            selectItemsBy: [
-              {
-                "allCategoriesInfo.categories.id": selectedCategory,
-              },
-            ],
-          },
-        ];
-        break;
-    }
-  }
-
-  return searchOptions;
-};
-
 export const ProductsListServiceDefinition =
   defineService<ProductsListServiceAPI>("productsList");
 
@@ -202,13 +38,11 @@ export const ProductsListService = implementService.withConfig<{
   categories?: any[];
 }>()(ProductsListServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
-  const collectionFilters = getService(FilterServiceDefinition);
+  const queryBuilderService = getService(ProductsQueryBuilderServiceDefinition);
   const categoryService = getService(CategoryServiceDefinition);
-  const sortService = getService(SortServiceDefinition);
-  const catalogService = getService(CatalogServiceDefinition);
 
   const hasMoreProducts: Signal<boolean> = signalsService.signal(
-    (config.initialHasMore ?? true) as any
+    (config.initialHasMore ?? true) as any,
   );
   let nextCursor: string | undefined = config.initialCursor;
 
@@ -216,15 +50,15 @@ export const ProductsListService = implementService.withConfig<{
 
   // Signal declarations
   const productsList: Signal<productsV3.V3Product[]> = signalsService.signal(
-    initialProducts as any
+    initialProducts as any,
   );
   const isLoading: Signal<boolean> = signalsService.signal(false as any);
   const error: Signal<string | null> = signalsService.signal(null as any);
   const totalProducts: Signal<number> = signalsService.signal(
-    initialProducts.length as any
+    initialProducts.length as any,
   );
   const hasProducts: Signal<boolean> = signalsService.signal(
-    (initialProducts.length > 0) as any
+    (initialProducts.length > 0) as any,
   );
 
   const pageSize = config.pageSize || 12;
@@ -246,16 +80,16 @@ export const ProductsListService = implementService.withConfig<{
       error.set(null);
 
       // For loadMore, use no filters or sorting to work with cursor pagination
-      const searchOptions = buildSearchOptions(undefined, undefined, undefined);
-
-      // Add pagination
-      searchOptions.paging = { limit: pageSize };
-      if (nextCursor) {
-        searchOptions.paging.cursor = nextCursor;
-      }
+      const searchOptions = queryBuilderService.buildSearchOptions(
+        undefined,
+        undefined,
+        undefined,
+        { limit: pageSize, cursor: nextCursor },
+      );
 
       const currentProducts = productsList.get();
-      const productResults = await searchProducts(searchOptions);
+      const productResults =
+        await queryBuilderService.searchProducts(searchOptions);
 
       // Update cursor for next pagination
       nextCursor = productResults.pagingMetadata?.cursors?.next || undefined;
@@ -264,7 +98,7 @@ export const ProductsListService = implementService.withConfig<{
       const hasMore = Boolean(
         nextCursor &&
           productResults.products &&
-          productResults.products.length === pageSize
+          productResults.products.length === pageSize,
       );
       hasMoreProducts.set(hasMore);
 
@@ -278,7 +112,7 @@ export const ProductsListService = implementService.withConfig<{
       hasProducts.set(currentProducts.length + additionalProducts.length > 0);
     } catch (err) {
       error.set(
-        err instanceof Error ? err.message : "Failed to load more products"
+        err instanceof Error ? err.message : "Failed to load more products",
       );
     } finally {
       isLoading.set(false);
@@ -293,31 +127,34 @@ export const ProductsListService = implementService.withConfig<{
       isLoading.set(true);
       error.set(null);
 
-      const filters = collectionFilters.currentFilters.get();
+      const filters = queryBuilderService.currentFilters.get();
       const selectedCategory = categoryService.selectedCategory.get();
-      const sortBy = sortService.currentSort.get();
+      const sortBy = queryBuilderService.currentSort.get();
 
-      // Use regular search for all sorting options including recommended
-      const searchOptions = buildSearchOptions(
+      // Use the query builder service to build search options
+      const searchOptions = queryBuilderService.buildSearchOptions(
         filters,
         selectedCategory,
-        sortBy
+        sortBy,
+        { limit: pageSize },
       );
 
-      // Add pagination
-      searchOptions.paging = { limit: pageSize };
+      const productResults =
+        await queryBuilderService.searchProducts(searchOptions);
 
-      const productResults = await searchProducts(searchOptions);
+      // Handle client-side price sorting if needed
       const isPriceSort =
         sortBy === SortType.PRICE_ASC || sortBy === SortType.PRICE_DESC;
       if (isPriceSort) {
-        productResults.products = productResults.products?.sort((a, b) => {
-          const aPrice = Number(a.actualPriceRange?.minValue?.amount) || 0;
-          const bPrice = Number(b.actualPriceRange?.minValue?.amount) || 0;
-          return sortBy === SortType.PRICE_ASC
-            ? aPrice - bPrice
-            : bPrice - aPrice;
-        });
+        productResults.products = productResults.products?.sort(
+          (a: productsV3.V3Product, b: productsV3.V3Product) => {
+            const aPrice = Number(a.actualPriceRange?.minValue?.amount) || 0;
+            const bPrice = Number(b.actualPriceRange?.minValue?.amount) || 0;
+            return sortBy === SortType.PRICE_ASC
+              ? aPrice - bPrice
+              : bPrice - aPrice;
+          },
+        );
       }
 
       // Reset pagination state
@@ -325,7 +162,7 @@ export const ProductsListService = implementService.withConfig<{
       const hasMore = Boolean(
         productResults.pagingMetadata?.cursors?.next &&
           productResults.products &&
-          productResults.products.length === pageSize
+          productResults.products.length === pageSize,
       );
       hasMoreProducts.set(hasMore);
 
@@ -341,7 +178,7 @@ export const ProductsListService = implementService.withConfig<{
       hasProducts.set(allProducts.length > 0);
     } catch (err) {
       error.set(
-        err instanceof Error ? err.message : "Failed to refresh products"
+        err instanceof Error ? err.message : "Failed to refresh products",
       );
     } finally {
       isLoading.set(false);
@@ -351,7 +188,7 @@ export const ProductsListService = implementService.withConfig<{
 
   // Debounced refresh function
   const debouncedRefresh = async (
-    setTotalProducts: boolean = true
+    setTotalProducts: boolean = true,
   ): Promise<void> => {
     if (refreshTimeout) {
       clearTimeout(refreshTimeout);
@@ -367,7 +204,7 @@ export const ProductsListService = implementService.withConfig<{
 
   // Refresh with server-side filtering when any filters change
   signalsService.effect(() => {
-    collectionFilters.currentFilters.get();
+    queryBuilderService.currentFilters.get();
     // Skip refresh during catalog data initialization to prevent double API calls
     if (isInitializingCatalogData) {
       return;
@@ -382,14 +219,14 @@ export const ProductsListService = implementService.withConfig<{
     const selectedCategory = categoryService.selectedCategory.get();
 
     // Load catalog data from the combined catalog service
-    await catalogService.loadCatalogData(selectedCategory || undefined);
+    await queryBuilderService.loadCatalogData(selectedCategory || undefined);
 
     // Reset flag to allow filter changes to trigger refreshes
     isInitializingCatalogData = false;
   };
 
   signalsService.effect(() => {
-    sortService.currentSort.get();
+    queryBuilderService.currentSort.get();
     debouncedRefresh(false);
   });
 
@@ -415,7 +252,7 @@ export const ProductsListService = implementService.withConfig<{
 // Helper function to parse URL parameters
 function parseURLParams(
   searchParams?: URLSearchParams,
-  products: productsV3.V3Product[] = []
+  products: productsV3.V3Product[] = [],
 ) {
   const defaultFilters: Filter = {
     priceRange: { min: 0, max: 0 },
@@ -477,7 +314,7 @@ function parseURLParams(
       : [urlParams["availability"]];
 
     const inventoryStatusValues = availabilityValues.map((value) =>
-      value.replace(/\s+/g, "_").toUpperCase()
+      value.replace(/\s+/g, "_").toUpperCase(),
     );
 
     initialFilters.selectedOptions["inventory-filter"] = inventoryStatusValues;
@@ -552,7 +389,7 @@ function parseOptionFilters(
     string,
     { id: string; choices: { id: string; name: string }[] }
   >,
-  filters: Filter
+  filters: Filter,
 ) {
   Object.entries(urlParams).forEach(([key, value]) => {
     if (["sort", "minPrice", "maxPrice"].includes(key)) return;
@@ -561,7 +398,7 @@ function parseOptionFilters(
     if (option) {
       const values = Array.isArray(value) ? value : [value];
       const matchingChoices = option.choices.filter((choice) =>
-        values.includes(choice.name)
+        values.includes(choice.name),
       );
 
       if (matchingChoices.length > 0) {
@@ -574,7 +411,7 @@ function parseOptionFilters(
 export async function loadProductsListServiceConfig(
   categoryId?: string,
   searchParams?: URLSearchParams,
-  preloadedCategories?: any[]
+  preloadedCategories?: any[],
 ): Promise<
   ServiceFactoryConfig<typeof ProductsListService> & {
     initialCursor?: string;
@@ -594,27 +431,83 @@ export async function loadProductsListServiceConfig(
       categories = categoriesConfig.categories;
     }
 
-    // Build search options with category filter
-    const searchOptions = buildSearchOptions(undefined, categoryId, undefined);
-    const pageSize = 12;
-    searchOptions.paging = { limit: pageSize };
+    // We need to create a temporary query builder service instance to get search options
+    // This is a bit hacky but necessary for the initial load
+    const tempQueryBuilder = {
+      buildSearchOptions: (selectedCategory?: string | null, paging?: any) => {
+        const searchOptions: any = {
+          search: {},
+          fields: [
+            "DESCRIPTION" as any,
+            "DIRECT_CATEGORIES_INFO" as any,
+            "BREADCRUMBS_INFO" as any,
+            "INFO_SECTION" as any,
+            "MEDIA_ITEMS_INFO" as any,
+            "PLAIN_DESCRIPTION" as any,
+            "THUMBNAIL" as any,
+            "URL" as any,
+            "VARIANT_OPTION_CHOICE_NAMES" as any,
+            "WEIGHT_MEASUREMENT_UNIT_INFO" as any,
+          ],
+        };
 
-    const productResults = await searchProducts(searchOptions);
+        // Add category filter if selected
+        if (selectedCategory) {
+          searchOptions.search.filter = {
+            "allCategoriesInfo.categories": {
+              $matchItems: [
+                {
+                  id: {
+                    $in: [selectedCategory],
+                  },
+                },
+              ],
+            },
+          };
+        }
+
+        // Add paging if provided
+        if (paging) {
+          searchOptions.paging = paging;
+        }
+
+        return searchOptions;
+      },
+      searchProducts: async (searchOptions: any) => {
+        const searchParams = {
+          filter: searchOptions.search?.filter,
+          sort: searchOptions.search?.sort,
+          ...(searchOptions.paging && { cursorPaging: searchOptions.paging }),
+        };
+
+        const options = {
+          fields: searchOptions.fields || [],
+        };
+
+        return await productsV3.searchProducts(searchParams, options);
+      },
+    };
+
+    // Build search options with category filter
+    const searchOptions = tempQueryBuilder.buildSearchOptions(categoryId, {
+      limit: 12,
+    });
+    const productResults = await tempQueryBuilder.searchProducts(searchOptions);
 
     // Parse URL parameters for initial state
     const { initialSort, initialFilters } = parseURLParams(
       searchParams,
-      productResults.products || []
+      productResults.products || [],
     );
 
     return {
       initialProducts: productResults.products || [],
-      pageSize,
+      pageSize: 12,
       initialCursor: productResults.pagingMetadata?.cursors?.next || undefined,
       initialHasMore: Boolean(
         productResults.pagingMetadata?.cursors?.next &&
           productResults.products &&
-          productResults.products.length === pageSize
+          productResults.products.length === 12,
       ),
       initialSort,
       initialFilters,
@@ -633,79 +526,3 @@ export async function loadProductsListServiceConfig(
     };
   }
 }
-
-// Add function to fetch missing variants for all products in one request
-const fetchMissingVariants = async (
-  products: productsV3.V3Product[]
-): Promise<productsV3.V3Product[]> => {
-  // Find products that need variants (both single and multi-variant products)
-  const productsNeedingVariants = products.filter(
-    (product) =>
-      !product.variantsInfo?.variants &&
-      product.variantSummary?.variantCount &&
-      product.variantSummary.variantCount > 0
-  );
-
-  if (productsNeedingVariants.length === 0) {
-    return products;
-  }
-
-  try {
-    const productIds = productsNeedingVariants
-      .map((p) => p._id)
-      .filter(Boolean) as string[];
-
-    if (productIds.length === 0) {
-      return products;
-    }
-
-    const items = [];
-
-    const res = await readOnlyVariantsV3
-      .queryVariants({})
-      .in("productData.productId", productIds)
-      .limit(100)
-      .find();
-
-    items.push(...res.items);
-
-    let nextRes = res;
-    while (nextRes.hasNext()) {
-      nextRes = await nextRes.next();
-      items.push(...nextRes.items);
-    }
-
-    const variantsByProductId = new Map<string, productsV3.Variant[]>();
-
-    items.forEach((item) => {
-      const productId = item.productData?.productId;
-      if (productId) {
-        if (!variantsByProductId.has(productId)) {
-          variantsByProductId.set(productId, []);
-        }
-        variantsByProductId.get(productId)!.push({
-          ...item,
-          choices: item.optionChoices as productsV3.Variant["choices"],
-        });
-      }
-    });
-
-    // Update products with their variants
-    return products.map((product) => {
-      const variants = variantsByProductId.get(product._id || "");
-      if (variants && variants.length > 0) {
-        return {
-          ...product,
-          variantsInfo: {
-            ...product.variantsInfo,
-            variants,
-          },
-        };
-      }
-      return product;
-    });
-  } catch (error) {
-    console.error("Failed to fetch missing variants:", error);
-    return products;
-  }
-};
