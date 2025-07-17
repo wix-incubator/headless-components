@@ -89,6 +89,136 @@ export interface ContentRenderProps {
 
 /**
  * Headless component for cart content/modal
+ *
+ * @example
+ * // Complete cart implementation with essential headless features
+ * <CurrentCart.Content>
+ *   {({ cart, isLoading }) => (
+ *     <div>
+ *       <CurrentCart.Trigger>
+ *         {({ itemCount }) => <h1>Cart ({itemCount} items)</h1>}
+ *       </CurrentCart.Trigger>
+ *
+ *       {isLoading && <p>Loading cart...</p>}
+ *
+ *       <CurrentCart.Items>
+ *         {({ hasItems, items }) => (
+ *           <>
+ *             {!hasItems ? (
+ *               <p>Your cart is empty</p>
+ *             ) : (
+ *               <>
+ *                 <CurrentCart.Clear>
+ *                   {({ onClear, hasItems, isLoading }) => (
+ *                     hasItems && (
+ *                       <button onClick={onClear} disabled={isLoading}>
+ *                         {isLoading ? 'Clearing...' : 'Clear Cart'}
+ *                       </button>
+ *                     )
+ *                   )}
+ *                 </CurrentCart.Clear>
+ *
+ *                 {items.map((item) => (
+ *                   <CurrentCart.Item key={item._id} item={item}>
+ *                     {({
+ *                       title,
+ *                       image,
+ *                       price,
+ *                       quantity,
+ *                       selectedOptions,
+ *                       onIncrease,
+ *                       onDecrease,
+ *                       onRemove,
+ *                       isLoading: itemLoading
+ *                     }) => (
+ *                       <div>
+ *                         <h3>{title}</h3>
+ *                         <p>{price}</p>
+ *
+ *                         {selectedOptions.map((option, index) => (
+ *                           <span key={index}>
+ *                             {option.name}: {typeof option.value === 'object' ? option.value.name : option.value}
+ *                           </span>
+ *                         ))}
+ *
+ *                         <button onClick={onDecrease} disabled={itemLoading || quantity <= 1}>-</button>
+ *                         <span>{quantity}</span>
+ *                         <button onClick={onIncrease} disabled={itemLoading}>+</button>
+ *
+ *                         <button onClick={onRemove} disabled={itemLoading}>
+ *                           {itemLoading ? 'Removing...' : 'Remove'}
+ *                         </button>
+ *                       </div>
+ *                     )}
+ *                   </CurrentCart.Item>
+ *                 ))}
+ *
+ *                 <CurrentCart.Notes>
+ *                   {({ notes, onNotesChange }) => (
+ *                     <textarea
+ *                       value={notes}
+ *                       onChange={e => onNotesChange(e.target.value)}
+ *                       placeholder="Special instructions for your order"
+ *                     />
+ *                   )}
+ *                 </CurrentCart.Notes>
+ *
+ *                 <CurrentCart.Coupon>
+ *                   {({ appliedCoupon, onApply, onRemove, isLoading }) => (
+ *                     <div>
+ *                       {appliedCoupon ? (
+ *                         <div>
+ *                           <span>Coupon: {appliedCoupon}</span>
+ *                           <button onClick={onRemove} disabled={isLoading}>
+ *                             {isLoading ? 'Removing...' : 'Remove'}
+ *                           </button>
+ *                         </div>
+ *                       ) : (
+ *                         <form onSubmit={e => {
+ *                           e.preventDefault();
+ *                           const code = new FormData(e.currentTarget).get('couponCode');
+ *                           if (code?.trim()) onApply(code.trim());
+ *                         }}>
+ *                           <input name="couponCode" placeholder="Enter promo code" disabled={isLoading} />
+ *                           <button type="submit" disabled={isLoading}>
+ *                             {isLoading ? 'Applying...' : 'Apply'}
+ *                           </button>
+ *                         </form>
+ *                       )}
+ *                     </div>
+ *                   )}
+ *                 </CurrentCart.Coupon>
+ *
+ *                 <CurrentCart.Summary>
+ *                   {({ subtotal, discount, shipping, tax, total, itemCount, isTotalsLoading }) => (
+ *                     <div>
+ *                       <div>Subtotal ({itemCount} items): {isTotalsLoading ? 'Calculating...' : subtotal}</div>
+ *                       {discount && <div>Discount: -{discount}</div>}
+ *                       <div>Shipping: {isTotalsLoading ? 'Calculating...' : shipping}</div>
+ *                       <div>Tax: {isTotalsLoading ? 'Calculating...' : tax}</div>
+ *                       <div>Total: {isTotalsLoading ? 'Calculating...' : total}</div>
+ *                     </div>
+ *                   )}
+ *                 </CurrentCart.Summary>
+ *
+ *                 <CurrentCart.Checkout>
+ *                   {({ onProceed, canCheckout, isLoading: checkoutLoading, error }) => (
+ *                     <div>
+ *                       {error && <p>Error: {error}</p>}
+ *                       <button onClick={onProceed} disabled={!canCheckout || checkoutLoading}>
+ *                         {checkoutLoading ? 'Processing...' : 'Proceed to Checkout'}
+ *                       </button>
+ *                     </div>
+ *                   )}
+ *                 </CurrentCart.Checkout>
+ *               </>
+ *             )}
+ *           </>
+ *         )}
+ *       </CurrentCart.Items>
+ *     </div>
+ *   )}
+ * </CurrentCart.Content>
  */
 export const Content = (props: ContentProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
