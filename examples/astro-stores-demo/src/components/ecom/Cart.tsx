@@ -1,9 +1,8 @@
 import { CurrentCart } from '@wix/headless-ecom/react';
 import { WixMediaImage } from '../../headless/media/components';
-import { useNavigation } from '../NavigationContext';
 
 export default function CartContent() {
-  const Navigation = useNavigation();
+
   return (
     <div className="min-h-screen" data-testid="cart-summary">
       <div className="container mx-auto px-4 py-8">
@@ -82,8 +81,8 @@ export default function CartContent() {
                         <p className="text-content-light text-lg mb-8">
                           Start shopping to add items to your cart
                         </p>
-                        <Navigation
-                          route="/store"
+                        <a
+                          href="/store"
                           className="inline-flex items-center gap-2 text-content-primary font-semibold py-3 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 btn-primary"
                           onMouseEnter={(e: any) => {
                             e.currentTarget.classList.remove('btn-primary');
@@ -110,7 +109,7 @@ export default function CartContent() {
                               d="M9 5l7 7-7 7"
                             />
                           </svg>
-                        </Navigation>
+                        </a>
                       </div>
                     )}
 
@@ -552,8 +551,8 @@ export default function CartContent() {
                                     </CurrentCart.Checkout>
 
                                     <div className="text-center pt-4">
-                                      <Navigation
-                                        route="/store"
+                                      <a
+                                        href="/store"
                                         className="text-brand-primary hover:text-brand-light font-medium transition-colors duration-200 flex items-center justify-center gap-2"
                                       >
                                         <svg
@@ -570,7 +569,7 @@ export default function CartContent() {
                                           />
                                         </svg>
                                         Continue Shopping
-                                      </Navigation>
+                                      </a>
                                     </div>
                                   </div>
                                 );

@@ -9,8 +9,7 @@ import {
 } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
-import { SocialSharingButtons } from '../social/SocialSharingButtons';
-import { useNavigation } from '../NavigationContext';
+
 import { getStockStatusMessage } from './enums/product-status-enums';
 
 // Reusable FreeText Input Component
@@ -55,7 +54,7 @@ export default function ProductDetails({
 }: {
   isQuickView?: boolean;
 }) {
-  const Navigation = useNavigation();
+
 
   return (
     <>
@@ -631,7 +630,7 @@ export default function ProductDetails({
             </ProductVariantSelector.Stock>
           </div>
 
-          <SocialSharingButtons />
+
 
           {/* Add to Cart */}
           <div className="space-y-4">
@@ -753,9 +752,9 @@ export default function ProductDetails({
                         {subtotal}
                       </span>
                     </div>
-                    <Navigation
+                    <a
                       data-testid="view-cart-button"
-                      route="/cart"
+                      href="/cart"
                       className="mt-4 w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
                     >
                       View Cart
@@ -772,7 +771,7 @@ export default function ProductDetails({
                           d="M9 5l7 7-7 7"
                         />
                       </svg>
-                    </Navigation>
+                    </a>
                   </div>
                 )}
               </>

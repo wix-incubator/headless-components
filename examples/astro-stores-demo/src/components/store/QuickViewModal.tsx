@@ -3,7 +3,6 @@ import { productsV3 } from '@wix/stores';
 import { WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import ProductDetails from './ProductDetails';
-import { useNavigation } from '../NavigationContext';
 import {
   ProductService,
   ProductServiceDefinition,
@@ -40,7 +39,7 @@ export default function QuickViewModal({
   onClose,
   productPageRoute,
 }: QuickViewModalProps) {
-  const Navigation = useNavigation();
+
   const [isLoading, setIsLoading] = useState(false);
   const [fullProduct, setFullProduct] = useState<productsV3.V3Product | null>(
     null
@@ -206,8 +205,8 @@ export default function QuickViewModal({
 
               {/* View Full Product Page Link */}
               <div className="mt-6 pt-6 border-t border-brand-subtle">
-                <Navigation
-                  route={`${productPageRoute}/${product.slug}`}
+                <a
+                  href={`${productPageRoute}/${product.slug}`}
                   className="w-full text-content-primary font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-primary"
                 >
                   View Full Product Page
@@ -224,7 +223,7 @@ export default function QuickViewModal({
                       d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                     />
                   </svg>
-                </Navigation>
+                </a>
               </div>
             </>
           )}

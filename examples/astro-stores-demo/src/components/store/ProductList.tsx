@@ -10,7 +10,6 @@ import {
   SelectedVariant,
   ProductActions,
 } from '@wix/headless-stores/react';
-import { useNavigation } from '../NavigationContext';
 import QuickViewModal from './QuickViewModal';
 import { ProductActionButtons } from './ProductActionButtons';
 import { createServicesMap } from '@wix/services-manager';
@@ -35,7 +34,7 @@ export const ProductGridContent = ({
 }: {
   productPageRoute: string;
 }) => {
-  const Navigation = useNavigation();
+
   const [quickViewProduct, setQuickViewProduct] =
     useState<productsV3.V3Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
@@ -176,14 +175,14 @@ export const ProductGridContent = ({
                 </div>
               )}
 
-              <Navigation
+              <a
                 data-testid="title-navigation"
-                route={`${productPageRoute}/${slug}`}
+                href={`${productPageRoute}/${slug}`}
               >
                 <h3 className="text-content-primary font-semibold mb-2 line-clamp-2">
                   {title}
                 </h3>
-              </Navigation>
+              </a>
 
               {/* Product Options */}
               <ProductVariantSelector.Options>
@@ -417,9 +416,9 @@ export const ProductGridContent = ({
                 </ProductActions.Actions>
 
                 {/* View Product Button */}
-                <Navigation
+                <a
                   data-testid="view-product-button"
-                  route={`${productPageRoute}/${slug}`}
+                  href={`${productPageRoute}/${slug}`}
                   className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
                 >
                   View Product
@@ -436,7 +435,7 @@ export const ProductGridContent = ({
                       d="M9 5l7 7-7 7"
                     />
                   </svg>
-                </Navigation>
+                </a>
               </div>
             </div>
           )}
