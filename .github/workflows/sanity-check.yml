@@ -24,6 +24,3 @@ jobs:
 
       - name: Build headless components
         run: yarn build:headless-components
-
-      - name: Build astro stores demo
-        run: yarn build:astro-stores
