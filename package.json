@@ -10,6 +10,7 @@
   "scripts": {
     "build:all": "turbo run build",
     "build:headless-components": "yarn build:all --filter=\"./packages/headless-components/*\"",
+    "build:astro-stores": "cd examples/astro-stores-demo && yarn build",
     "astro": "astro",
     "tsc": "tsc",
     "syncpack": "syncpack"
