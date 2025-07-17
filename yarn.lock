@@ -3585,25 +3585,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-ecom@npm:0.0.8, @wix/headless-ecom@npm:^0.0.8, @wix/headless-ecom@workspace:packages/headless-components/ecom":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
+"@wix/headless-ecom@npm:0.0.8, @wix/headless-ecom@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@wix/headless-ecom@npm:0.0.8"
   dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@types/node": "npm:^20.9.0"
-    "@vitest/ui": "npm:^3.1.4"
     "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
     "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
     "@wix/sdk": "npm:^1.15.24"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
-    jsdom: "npm:^26.1.0"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/39bc70fce58ae6590072e24288037e79168c5897cc63e4d5a5cb94658a5ea1b2b00fa9b5edf5c4375fca5283acce2386b5353b162e7b745eaf45c06be1df8ed0
+  languageName: node
+  linkType: hard
 
 "@wix/headless-ecom@npm:^0.0.5":
   version: 0.0.5
@@ -3630,6 +3623,26 @@ __metadata:
   checksum: 10c0/b599015eb2667a6ec0cef3ff0ef98976f84f474414b84492f0681ef0c3b457fffa5e3d3d8ef3980b026eaa101128f5a9e73fd518ec97a37f9b4c580d09029e34
   languageName: node
   linkType: hard
+
+"@wix/headless-ecom@workspace:packages/headless-components/ecom":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
+  dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
+    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
+    "@wix/sdk": "npm:^1.15.24"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
 
 "@wix/headless-integrations@workspace:.":
   version: 0.0.0-use.local
