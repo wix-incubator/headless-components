@@ -1,0 +1,4 @@
+{
+  "main": "../cjs/dist/server-actions/index.js",
+  "types": "../dist/server-actions/index.d.ts"
+}
