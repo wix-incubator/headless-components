@@ -36,22 +36,6 @@ export interface ProductDetailsRenderProps {
  * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
- * 
- * @example
- * import { Details } from "@wix/stores/components";
- * 
- * function ProductDetailsDisplay() {
- *   return (
- *     <Details>
- *       {({ sku, weight }) => (
- *        <div className="product-details">
- *         <div><strong>SKU:</strong> {sku || 'N/A'}</div>
- *         <div><strong>Weight:</strong> {weight ? `${weight} kg` : 'N/A'}</div>
- *        </div>
- *       )}
- *     </Details>
- *   );
- *  }
  *
  * @component
  */
@@ -108,36 +92,6 @@ export interface PriceRenderProps {
  * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
- * 
- * @example
- * import { Price } from "@wix/stores/components";
- * 
- * function ProductPriceDisplay() {
- *   return (
- *     <Price>
- *       {({ price, compareAtPrice, currency }) => (
- *         <div className="product-price">
- *           <span style={{
- *             fontSize: "1.1em",
- *             fontWeight: "bold",
- *             color: "#222",
- *             marginRight: compareAtPrice ? 8 : 0
- *           }}>
- *             {currency} {price}
- *           </span>
- *           {compareAtPrice && (
- *             <span style={{
- *               textDecoration: "line-through",
- *               color: "#AAA"
- *             }}>
- *               {currency} {compareAtPrice}
- *             </span>
- *           )}
- *         </div>
- *       )}
- *     </Price>
- *   );
- *  }
  *
  * @component
  */
@@ -189,21 +143,6 @@ export interface SKURenderProps {
  * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
- * 
- * @example
- * import { SKU } from "@wix/stores/components";
- * 
- * function ProductSKUDisplay() {
- *   return (
- *     <SKU>
- *      {({ sku }) => (
- *       <div className="product-sku">
- *         <strong>SKU:</strong> {sku ? sku : 'N/A'}
- *       </div>
- *     )}
- *   </SKU>
- *  );
- * }
  * 
  * @component
  */

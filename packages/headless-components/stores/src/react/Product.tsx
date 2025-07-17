@@ -36,16 +36,6 @@ export interface ProductNameRenderProps {
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  * 
- * @example
- * import { Name } from "@wix/stores/components";
- * 
- * <Name>
- * {({ name }) => (
- *  <h2 style={{ color: "#1a1a1a" }}>
- *    Product Name: {name}
- *  </h2>
- * )}
- * </Name>
  * 
  * @component
  */
@@ -97,16 +87,6 @@ export interface ProductDescriptionRenderProps {
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  * 
- * @example
- * import { Description } from "@wix/stores/components";
- * 
- * <Description>
- * {({ plainDescription }) => (
- *  <div className="product-description">
- *    <strong>Summary:</strong> {plainDescription}
- *  </div>
- * )}
- * </Description>
  * 
  * @component
  */

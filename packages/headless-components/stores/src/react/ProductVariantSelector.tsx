@@ -45,32 +45,6 @@ export interface OptionsRenderProps {
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  * 
- * @example
- * import { Options } from "@wix/stores/components";
- * 
- * function ProductOptionsDisplay() {
- *  return (
- *    <Options>
- *      {({ options, hasOptions, selectedChoices }) => (
- *       <div className="product-options">
- *         {hasOptions ? (
- *           <ul>
- *             {options.map(option => (
- *               <li key={option._id}>
- *                 <strong>{option.name}:</strong>{" "}
- *                 {selectedChoices[option._id] || "Not selected"}
- *               </li>
- *             ))}
- *           </ul>
- *         ) : (
- *           <div>No product options available.</div>
- *         )}
- *       </div>
- *     )}
- *   </Options>
- *  );
- * }
- * 
  * @component
  */
 export const Options = (props: OptionsProps) => {
@@ -131,41 +105,6 @@ export interface OptionRenderProps {
  * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
- * 
- * @example
- * import { Option } from "@wix/stores/components";
- * 
- * function ProductOptionDisplay({ option }) {
- *  return (
- *   <Option option={option}>
- *     {({ name, choices, selectedValue, hasChoices }) => (
- *       <div className="product-option">
- *         <div>
- *           <strong>{name}</strong>
- *         </div>
- *         {hasChoices ? (
- *           <ul>
- *             {choices.map(choice => (
- *               <li
- *                 key={choice.choiceId}
- *                 style={{
- *                   fontWeight:
- *                     selectedValue === choice.name ? "bold" : "normal",
- *                 }}
- *               >
- *                 {choice.name}
- *                 {selectedValue === choice.name && " (selected)"}
- *               </li>
- *             ))}
- *           </ul>
- *         ) : (
- *           <div>No choices available.</div>
- *         )}
- *       </div>
- *     )}
- *   </Option>
- *  );
- * }
  * 
  * @component
  */
@@ -242,38 +181,6 @@ export interface ChoiceRenderProps {
  * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
- * 
- * @example
- * import { Choice } from "@wix/stores/components";
- * 
- * function ChoiceDisplay() {
- *  return (
- *    <Choice option={option} choice={choice}>
- *      {({ value, description, isSelected, isVisible, isInStock, isPreOrderEnabled, onSelect }) =>
- *        isVisible && (
- *          <button
- *            onClick={onSelect}
- *            disabled={!isInStock && !isPreOrderEnabled}
- *            style={{
- *              background: isSelected ? '#E7F0FF' : '#FFF',
- *              color: isInStock ? '#222' : '#AAA',
- *              border: isSelected ? '2px solid #A8CAFF' : '1px solid #CCC',
- *              marginRight: 8,
- *              padding: 8,
- *              cursor: isInStock || isPreOrderEnabled ? 'pointer' : 'not-allowed'
- *            }}
- *            title={description}
- *          >
- *            {value}
- *            {isSelected && " Available"}
- *            {!isInStock && isPreOrderEnabled && " (Pre-order)"}
- *            {!isInStock && !isPreOrderEnabled && " (Out of stock)"}
- *          </button>
- *        )
- *      }
- *    </Choice>
- *  );
- * }
  *
  * @component
  */
@@ -375,45 +282,6 @@ export interface StockRenderProps {
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
  * 
- * @example
- * import { Stock } from "@wix/stores/components";
- * 
- * function StockStatus() {
- *  return (
- *    <Stock>
- *      {({
- *        inStock,
- *        isPreOrderEnabled,
- *        availableQuantity,
- *        selectedQuantity,
- *        incrementQuantity,
- *        decrementQuantity
- *      }) => (
- *        <div className="product-stock">
- *          {inStock ? (
- *            <div>
- *              <span>In stock</span>
- *              <div>
- *                <button onClick={decrementQuantity} disabled={selectedQuantity <= 1}>-</button>
- *                <span style={{ margin: '0 8px' }}>{selectedQuantity}</span>
- *                <button onClick={incrementQuantity} disabled={availableQuantity !== null && selectedQuantity >= availableQuantity}>
- *                   +
- *                </button>
- *                {availableQuantity !== null && (
- *                  <span style={{ marginLeft: 8 }}>(Only {availableQuantity} left!)</span>
- *                )}
- *              </div>
- *            </div>
- *          ) : isPreOrderEnabled ? (
- *            <div>Available for pre-order</div>
- *          ) : (
- *            <div>Out of stock</div>
- *          )}
- *        </div>
- *      )}
- *    </Stock>
- *  );
- * }
  * 
  * @component
  */
@@ -490,36 +358,6 @@ export interface ResetRenderProps {
  * [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
  * - Headless components provide ready-to-use business logic and state management for common scenarios, while giving you complete control 
  * over the UI, so you can build custom experiences faster without maintaining the underlying logic yourself.
- * 
- * @example
- * import { Reset } from "@wix/stores/components";
- * 
- * function ProductSelectionReset() {
- *  return (
- *    <Reset>
- *      {({ onReset, hasSelections }) =>
- *        hasSelections ? (
- *        <button
- *         type="button"
- *         onClick={onReset}
- *         style={{
- *           margin: '12px 0',
- *           background: '#E7F0FF',
- *           border: '1px solid #A8CAFF',
- *           color: '#1a1a1a',
- *           borderRadius: 4,
- *           padding: '8px 16px',
- *           cursor: 'pointer'
- *         }}
- *        >
- *         Reset selections
- *        </button>
- *      ) : null
- *     }
- *    </Reset>
- *  );
- * }
- * 
  * @component
  */
 export const Reset = (props: ResetProps) => {
