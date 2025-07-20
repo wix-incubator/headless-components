@@ -11,6 +11,14 @@ export interface TagsProps {
 }
 
 /**
+ * <blockquote class="caution">
+ *
+ * **Developer Preview**
+ *
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
+ * </blockquote>
+ *
  * Renders SEO tags (title, meta, link, script) in the document head using a provided SEO service configuration.
  *
  * Integrates with the Wix services manager and a custom SEO tags service to inject SEO-relevant tags.
@@ -80,6 +88,14 @@ export interface UpdateTagsTriggerProps {
 }
 
 /**
+ * <blockquote class="caution">
+ *
+ * **Developer Preview**
+ *
+ * This API is subject to change. Bug fixes and new features will be released based on developer feedback throughout the preview period.
+ *
+ * </blockquote>
+ *
  * UpdateTagsTrigger - Handles updating SEO tags dynamically
  *
  * This component provides a way to update SEO tags on the client side without
