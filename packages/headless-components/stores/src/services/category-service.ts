@@ -20,7 +20,7 @@ export interface CategoryServiceConfig {
   initialCategoryId?: string | null;
   onCategoryChange?: (
     categoryId: string | null,
-    category: categories.Category | null
+    category: categories.Category | null,
   ) => void;
 }
 
@@ -31,10 +31,10 @@ export const CategoryService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const selectedCategory: Signal<string | null> = signalsService.signal(
-        (config?.initialCategoryId || null) as any
+        (config?.initialCategoryId || null) as any,
       );
       const categories: Signal<categories.Category[]> = signalsService.signal(
-        config?.categories as any
+        config?.categories as any,
       );
 
       const loadCategories = async () => {
@@ -74,7 +74,7 @@ export const CategoryService =
         setSelectedCategory,
         loadCategories,
       };
-    }
+    },
   );
 
 export async function loadCategoriesConfig() {
@@ -93,10 +93,10 @@ export async function loadCategoriesConfig() {
 
     // Sort categories to put "all-products" first, keep the rest in original order
     const allProductsCategory = fetchedCategories.find(
-      (cat) => cat.slug === "all-products"
+      (cat) => cat.slug === "all-products",
     );
     const otherCategories = fetchedCategories.filter(
-      (cat) => cat.slug !== "all-products"
+      (cat) => cat.slug !== "all-products",
     );
 
     const allCategories = allProductsCategory

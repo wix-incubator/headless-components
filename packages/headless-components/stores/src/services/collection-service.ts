@@ -1,7 +1,6 @@
 import {
   defineService,
   implementService,
-  type ServiceFactoryConfig,
 } from "@wix/services-definitions";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import type { Signal } from "@wix/services-definitions/core-services/signals";
@@ -52,7 +51,7 @@ export interface CollectionServiceAPI {
 const buildSearchOptions = (
   filters?: Filter,
   selectedCategory?: string | null,
-  sortBy?: SortBy
+  sortBy?: SortBy,
 ) => {
   const searchOptions: any = {
     search: {},
@@ -109,7 +108,7 @@ const buildSearchOptions = (
     Object.keys(filters.selectedOptions).length > 0
   ) {
     for (const [optionId, choiceIds] of Object.entries(
-      filters.selectedOptions
+      filters.selectedOptions,
     )) {
       if (choiceIds && choiceIds.length > 0) {
         // Handle inventory filter separately
@@ -194,228 +193,241 @@ const buildSearchOptions = (
 export const CollectionServiceDefinition =
   defineService<CollectionServiceAPI>("collection");
 
-export const CollectionService = implementService.withConfig<{
+export interface CollectionServiceConfig {
   initialProducts?: productsV3.V3Product[];
   pageSize?: number;
   initialCursor?: string;
   initialHasMore?: boolean;
   categories?: any[];
-}>()(CollectionServiceDefinition, ({ getService, config }) => {
-  const signalsService = getService(SignalsServiceDefinition);
-  const collectionFilters = getService(FilterServiceDefinition);
-  const categoryService = getService(CategoryServiceDefinition);
-  const sortService = getService(SortServiceDefinition);
-  const catalogService = getService(CatalogServiceDefinition);
+}
 
-  const hasMoreProducts: Signal<boolean> = signalsService.signal(
-    (config.initialHasMore ?? true) as any
-  );
-  let nextCursor: string | undefined = config.initialCursor;
+export const CollectionService =
+  implementService.withConfig<CollectionServiceConfig>()(
+    CollectionServiceDefinition,
+    ({ getService, config }) => {
+      const signalsService = getService(SignalsServiceDefinition);
+      const collectionFilters = getService(FilterServiceDefinition);
+      const categoryService = getService(CategoryServiceDefinition);
+      const sortService = getService(SortServiceDefinition);
+      const catalogService = getService(CatalogServiceDefinition);
 
-  const initialProducts = config.initialProducts || [];
-
-  // Signal declarations
-  const productsList: Signal<productsV3.V3Product[]> = signalsService.signal(
-    initialProducts as any
-  );
-  const isLoading: Signal<boolean> = signalsService.signal(false as any);
-  const error: Signal<string | null> = signalsService.signal(null as any);
-  const totalProducts: Signal<number> = signalsService.signal(
-    initialProducts.length as any
-  );
-  const hasProducts: Signal<boolean> = signalsService.signal(
-    (initialProducts.length > 0) as any
-  );
-
-  const pageSize = config.pageSize || 12;
-  let allProducts: productsV3.V3Product[] = initialProducts;
-
-  // Debouncing mechanism to prevent multiple simultaneous refreshes
-  let refreshTimeout: NodeJS.Timeout | null = null;
-  let isRefreshing = false;
-  let isInitializingCatalogData = true;
-
-  const loadMore = async () => {
-    // Don't load more if there are no more products available
-    if (!hasMoreProducts.get()) {
-      return;
-    }
-
-    try {
-      isLoading.set(true);
-      error.set(null);
-
-      // For loadMore, use no filters or sorting to work with cursor pagination
-      const searchOptions = buildSearchOptions(undefined, undefined, undefined);
-
-      // Add pagination
-      searchOptions.paging = { limit: pageSize };
-      if (nextCursor) {
-        searchOptions.paging.cursor = nextCursor;
-      }
-
-      const currentProducts = productsList.get();
-      const productResults = await searchProducts(searchOptions);
-
-      // Update cursor for next pagination
-      nextCursor = productResults.pagingMetadata?.cursors?.next || undefined;
-
-      // Check if there are more products to load
-      const hasMore = Boolean(
-        nextCursor &&
-          productResults.products &&
-          productResults.products.length === pageSize
+      const hasMoreProducts: Signal<boolean> = signalsService.signal(
+        (config.initialHasMore ?? true) as any,
       );
-      hasMoreProducts.set(hasMore);
+      let nextCursor: string | undefined = config.initialCursor;
 
-      // Update allProducts with the new data
-      allProducts = [...allProducts, ...(productResults.products || [])];
+      const initialProducts = config.initialProducts || [];
 
-      // Add new products to the list
-      const additionalProducts = productResults.products || [];
-      productsList.set([...currentProducts, ...additionalProducts]);
-      totalProducts.set(currentProducts.length + additionalProducts.length);
-      hasProducts.set(currentProducts.length + additionalProducts.length > 0);
-    } catch (err) {
-      error.set(
-        err instanceof Error ? err.message : "Failed to load more products"
+      // Signal declarations
+      const productsList: Signal<productsV3.V3Product[]> =
+        signalsService.signal(initialProducts as any);
+      const isLoading: Signal<boolean> = signalsService.signal(false as any);
+      const error: Signal<string | null> = signalsService.signal(null as any);
+      const totalProducts: Signal<number> = signalsService.signal(
+        initialProducts.length as any,
       );
-    } finally {
-      isLoading.set(false);
-    }
-  };
-
-  const refresh = async (setTotalProducts: boolean = true) => {
-    if (isRefreshing) return;
-
-    try {
-      isRefreshing = true;
-      isLoading.set(true);
-      error.set(null);
-
-      const filters = collectionFilters.currentFilters.get();
-      const selectedCategory = categoryService.selectedCategory.get();
-      const sortBy = sortService.currentSort.get();
-
-      // Use regular search for all sorting options including recommended
-      const searchOptions = buildSearchOptions(
-        filters,
-        selectedCategory,
-        sortBy
+      const hasProducts: Signal<boolean> = signalsService.signal(
+        (initialProducts.length > 0) as any,
       );
 
-      // Add pagination
-      searchOptions.paging = { limit: pageSize };
+      const pageSize = config.pageSize || 12;
+      let allProducts: productsV3.V3Product[] = initialProducts;
 
-      const productResults = await searchProducts(searchOptions);
-      const isPriceSort =
-        sortBy === SortType.PRICE_ASC || sortBy === SortType.PRICE_DESC;
-      if (isPriceSort) {
-        productResults.products = productResults.products?.sort((a, b) => {
-          const aPrice = Number(a.actualPriceRange?.minValue?.amount) || 0;
-          const bPrice = Number(b.actualPriceRange?.minValue?.amount) || 0;
-          return sortBy === SortType.PRICE_ASC
-            ? aPrice - bPrice
-            : bPrice - aPrice;
+      // Debouncing mechanism to prevent multiple simultaneous refreshes
+      let refreshTimeout: NodeJS.Timeout | null = null;
+      let isRefreshing = false;
+      let isInitializingCatalogData = true;
+
+      const loadMore = async () => {
+        // Don't load more if there are no more products available
+        if (!hasMoreProducts.get()) {
+          return;
+        }
+
+        try {
+          isLoading.set(true);
+          error.set(null);
+
+          // For loadMore, use no filters or sorting to work with cursor pagination
+          const searchOptions = buildSearchOptions(
+            undefined,
+            undefined,
+            undefined,
+          );
+
+          // Add pagination
+          searchOptions.paging = { limit: pageSize };
+          if (nextCursor) {
+            searchOptions.paging.cursor = nextCursor;
+          }
+
+          const currentProducts = productsList.get();
+          const productResults = await searchProducts(searchOptions);
+
+          // Update cursor for next pagination
+          nextCursor =
+            productResults.pagingMetadata?.cursors?.next || undefined;
+
+          // Check if there are more products to load
+          const hasMore = Boolean(
+            nextCursor &&
+              productResults.products &&
+              productResults.products.length === pageSize,
+          );
+          hasMoreProducts.set(hasMore);
+
+          // Update allProducts with the new data
+          allProducts = [...allProducts, ...(productResults.products || [])];
+
+          // Add new products to the list
+          const additionalProducts = productResults.products || [];
+          productsList.set([...currentProducts, ...additionalProducts]);
+          totalProducts.set(currentProducts.length + additionalProducts.length);
+          hasProducts.set(
+            currentProducts.length + additionalProducts.length > 0,
+          );
+        } catch (err) {
+          error.set(
+            err instanceof Error ? err.message : "Failed to load more products",
+          );
+        } finally {
+          isLoading.set(false);
+        }
+      };
+
+      const refresh = async (setTotalProducts: boolean = true) => {
+        if (isRefreshing) return;
+
+        try {
+          isRefreshing = true;
+          isLoading.set(true);
+          error.set(null);
+
+          const filters = collectionFilters.currentFilters.get();
+          const selectedCategory = categoryService.selectedCategory.get();
+          const sortBy = sortService.currentSort.get();
+
+          // Use regular search for all sorting options including recommended
+          const searchOptions = buildSearchOptions(
+            filters,
+            selectedCategory,
+            sortBy,
+          );
+
+          // Add pagination
+          searchOptions.paging = { limit: pageSize };
+
+          const productResults = await searchProducts(searchOptions);
+          const isPriceSort =
+            sortBy === SortType.PRICE_ASC || sortBy === SortType.PRICE_DESC;
+          if (isPriceSort) {
+            productResults.products = productResults.products?.sort((a, b) => {
+              const aPrice = Number(a.actualPriceRange?.minValue?.amount) || 0;
+              const bPrice = Number(b.actualPriceRange?.minValue?.amount) || 0;
+              return sortBy === SortType.PRICE_ASC
+                ? aPrice - bPrice
+                : bPrice - aPrice;
+            });
+          }
+
+          // Reset pagination state
+          nextCursor =
+            productResults.pagingMetadata?.cursors?.next || undefined;
+          const hasMore = Boolean(
+            productResults.pagingMetadata?.cursors?.next &&
+              productResults.products &&
+              productResults.products.length === pageSize,
+          );
+          hasMoreProducts.set(hasMore);
+
+          // Update allProducts with the new data
+          allProducts = productResults.products || [];
+
+          // All filtering is handled server-side
+          productsList.set(allProducts);
+          if (setTotalProducts) {
+            totalProducts.set(allProducts.length);
+          }
+
+          hasProducts.set(allProducts.length > 0);
+        } catch (err) {
+          error.set(
+            err instanceof Error ? err.message : "Failed to refresh products",
+          );
+        } finally {
+          isLoading.set(false);
+          isRefreshing = false;
+        }
+      };
+
+      // Debounced refresh function
+      const debouncedRefresh = async (
+        setTotalProducts: boolean = true,
+      ): Promise<void> => {
+        if (refreshTimeout) {
+          clearTimeout(refreshTimeout);
+        }
+
+        return new Promise<void>((resolve) => {
+          refreshTimeout = setTimeout(async () => {
+            await refresh(setTotalProducts);
+            resolve();
+          }, 50); // 50ms debounce delay
         });
-      }
+      };
 
-      // Reset pagination state
-      nextCursor = productResults.pagingMetadata?.cursors?.next || undefined;
-      const hasMore = Boolean(
-        productResults.pagingMetadata?.cursors?.next &&
-          productResults.products &&
-          productResults.products.length === pageSize
-      );
-      hasMoreProducts.set(hasMore);
+      // Refresh with server-side filtering when any filters change
+      signalsService.effect(() => {
+        collectionFilters.currentFilters.get();
+        // Skip refresh during catalog data initialization to prevent double API calls
+        if (isInitializingCatalogData) {
+          return;
+        }
+        // All filtering (categories, price, options) is now handled server-side
+        debouncedRefresh(false);
+      });
 
-      // Update allProducts with the new data
-      allProducts = productResults.products || [];
+      // Initialize catalog data when the service starts
+      const initializeCatalogData = async () => {
+        isInitializingCatalogData = true; // Set flag BEFORE loading
+        const selectedCategory = categoryService.selectedCategory.get();
 
-      // All filtering is handled server-side
-      productsList.set(allProducts);
-      if (setTotalProducts) {
-        totalProducts.set(allProducts.length);
-      }
+        // Load catalog data from the combined catalog service
+        await catalogService.loadCatalogData(selectedCategory || undefined);
 
-      hasProducts.set(allProducts.length > 0);
-    } catch (err) {
-      error.set(
-        err instanceof Error ? err.message : "Failed to refresh products"
-      );
-    } finally {
-      isLoading.set(false);
-      isRefreshing = false;
-    }
-  };
+        // Reset flag to allow filter changes to trigger refreshes
+        isInitializingCatalogData = false;
+      };
 
-  // Debounced refresh function
-  const debouncedRefresh = async (
-    setTotalProducts: boolean = true
-  ): Promise<void> => {
-    if (refreshTimeout) {
-      clearTimeout(refreshTimeout);
-    }
+      signalsService.effect(() => {
+        sortService.currentSort.get();
+        debouncedRefresh(false);
+      });
 
-    return new Promise<void>((resolve) => {
-      refreshTimeout = setTimeout(async () => {
-        await refresh(setTotalProducts);
-        resolve();
-      }, 50); // 50ms debounce delay
-    });
-  };
+      signalsService.effect(() => {
+        categoryService.selectedCategory.get();
+        debouncedRefresh(true).then(async () => {
+          await initializeCatalogData();
+        });
+      });
 
-  // Refresh with server-side filtering when any filters change
-  signalsService.effect(() => {
-    collectionFilters.currentFilters.get();
-    // Skip refresh during catalog data initialization to prevent double API calls
-    if (isInitializingCatalogData) {
-      return;
-    }
-    // All filtering (categories, price, options) is now handled server-side
-    debouncedRefresh(false);
-  });
-
-  // Initialize catalog data when the service starts
-  const initializeCatalogData = async () => {
-    isInitializingCatalogData = true; // Set flag BEFORE loading
-    const selectedCategory = categoryService.selectedCategory.get();
-
-    // Load catalog data from the combined catalog service
-    await catalogService.loadCatalogData(selectedCategory || undefined);
-
-    // Reset flag to allow filter changes to trigger refreshes
-    isInitializingCatalogData = false;
-  };
-
-  signalsService.effect(() => {
-    sortService.currentSort.get();
-    debouncedRefresh(false);
-  });
-
-  signalsService.effect(() => {
-    categoryService.selectedCategory.get();
-    debouncedRefresh(true).then(async () => {
-      await initializeCatalogData();
-    });
-  });
-
-  return {
-    products: productsList,
-    isLoading,
-    error,
-    totalProducts,
-    hasProducts,
-    hasMoreProducts,
-    loadMore,
-    refresh: debouncedRefresh,
-  };
-});
+      return {
+        products: productsList,
+        isLoading,
+        error,
+        totalProducts,
+        hasProducts,
+        hasMoreProducts,
+        loadMore,
+        refresh: debouncedRefresh,
+      };
+    },
+  );
 
 // Helper function to parse URL parameters
 function parseURLParams(
   searchParams?: URLSearchParams,
-  products: productsV3.V3Product[] = []
+  products: productsV3.V3Product[] = [],
 ) {
   const defaultFilters: Filter = {
     priceRange: { min: 0, max: 0 },
@@ -477,7 +489,7 @@ function parseURLParams(
       : [urlParams["availability"]];
 
     const inventoryStatusValues = availabilityValues.map((value) =>
-      value.replace(/\s+/g, "_").toUpperCase()
+      value.replace(/\s+/g, "_").toUpperCase(),
     );
 
     initialFilters.selectedOptions["inventory-filter"] = inventoryStatusValues;
@@ -552,7 +564,7 @@ function parseOptionFilters(
     string,
     { id: string; choices: { id: string; name: string }[] }
   >,
-  filters: Filter
+  filters: Filter,
 ) {
   Object.entries(urlParams).forEach(([key, value]) => {
     if (["sort", "minPrice", "maxPrice"].includes(key)) return;
@@ -561,7 +573,7 @@ function parseOptionFilters(
     if (option) {
       const values = Array.isArray(value) ? value : [value];
       const matchingChoices = option.choices.filter((choice) =>
-        values.includes(choice.name)
+        values.includes(choice.name),
       );
 
       if (matchingChoices.length > 0) {
@@ -574,11 +586,9 @@ function parseOptionFilters(
 export async function loadCollectionServiceConfig(
   categoryId?: string,
   searchParams?: URLSearchParams,
-  preloadedCategories?: any[]
+  preloadedCategories?: any[],
 ): Promise<
-  ServiceFactoryConfig<typeof CollectionService> & {
-    initialCursor?: string;
-    initialHasMore?: boolean;
+  CollectionServiceConfig & {
     initialSort?: SortBy;
     initialFilters?: Filter;
   }
@@ -604,7 +614,7 @@ export async function loadCollectionServiceConfig(
     // Parse URL parameters for initial state
     const { initialSort, initialFilters } = parseURLParams(
       searchParams,
-      productResults.products || []
+      productResults.products || [],
     );
 
     return {
@@ -614,7 +624,7 @@ export async function loadCollectionServiceConfig(
       initialHasMore: Boolean(
         productResults.pagingMetadata?.cursors?.next &&
           productResults.products &&
-          productResults.products.length === pageSize
+          productResults.products.length === pageSize,
       ),
       initialSort,
       initialFilters,
@@ -636,14 +646,14 @@ export async function loadCollectionServiceConfig(
 
 // Add function to fetch missing variants for all products in one request
 const fetchMissingVariants = async (
-  products: productsV3.V3Product[]
+  products: productsV3.V3Product[],
 ): Promise<productsV3.V3Product[]> => {
   // Find products that need variants (both single and multi-variant products)
   const productsNeedingVariants = products.filter(
     (product) =>
       !product.variantsInfo?.variants &&
       product.variantSummary?.variantCount &&
-      product.variantSummary.variantCount > 0
+      product.variantSummary.variantCount > 0,
   );
 
   if (productsNeedingVariants.length === 0) {
