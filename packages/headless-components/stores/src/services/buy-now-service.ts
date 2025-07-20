@@ -1,7 +1,6 @@
 import {
   defineService,
   implementService,
-  ServiceFactoryConfig,
 } from "@wix/services-definitions";
 import {
   SignalsServiceDefinition,
@@ -21,6 +20,15 @@ export const BuyNowServiceDefinition = defineService<{
   currency: string;
 }>("BuyNow");
 
+export interface BuyNowServiceConfig {
+  productId: string;
+  variantId?: string;
+  productName: string;
+  price: string;
+  currency: string;
+  inStock: boolean;
+  preOrderAvailable: boolean;
+}
 export const BuyNowServiceImplementation = implementService.withConfig<{
   productId: string;
   variantId?: string;
@@ -106,17 +114,13 @@ export const buyNowServiceBinding = <
   }
 >(
   servicesConfigs: T,
-  additionalConfig: Partial<
-    ServiceFactoryConfig<typeof BuyNowServiceImplementation>
-  > = {}
+  additionalConfig: Partial<BuyNowServiceConfig> = {}
 ) => {
   return [
     BuyNowServiceDefinition,
     BuyNowServiceImplementation,
     {
-      ...(servicesConfigs[BuyNowServiceDefinition] as ServiceFactoryConfig<
-        typeof BuyNowServiceImplementation
-      >),
+      ...(servicesConfigs[BuyNowServiceDefinition] as BuyNowServiceConfig),
       ...additionalConfig,
     },
   ] as const;

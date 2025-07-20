@@ -1,7 +1,6 @@
 import {
   defineService,
   implementService,
-  type ServiceFactoryConfig,
 } from "@wix/services-definitions";
 import {
   SignalsServiceDefinition,
@@ -130,7 +129,7 @@ export async function loadSEOTagsServiceConfig({
   itemType?: ItemType;
   pageUrl: string;
   itemData: PageNameData | SlugData;
-}): Promise<ServiceFactoryConfig<typeof SEOTagsService>> {
+}): Promise<SEOTagsServiceConfig> {
   const isStaticPage = !itemType || itemType === ItemType.UNKNOWN_ITEM_TYPE;
 
   let tags: Tag[] = [];

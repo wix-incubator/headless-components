@@ -1,8 +1,4 @@
-import {
-  defineService,
-  implementService,
-  type ServiceFactoryConfig,
-} from "@wix/services-definitions";
+import { defineService, implementService } from "@wix/services-definitions";
 import {
   SignalsServiceDefinition,
   type Signal,

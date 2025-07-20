@@ -1,7 +1,6 @@
 import {
   defineService,
   implementService,
-  ServiceFactoryConfig,
 } from "@wix/services-definitions";
 import {
   SignalsServiceDefinition,
@@ -14,12 +13,14 @@ export const PayNowServiceDefinition = defineService<{
   errorSignal: Signal<string | null>;
 }>("PayNow");
 
-export const PayNowServiceImplementation = implementService.withConfig<{
+export interface PayNowServiceConfig {
   customCheckoutAction?: () => Promise<{
     data: string | undefined;
     error: unknown;
   }>;
-}>()(PayNowServiceDefinition, ({ getService, config }) => {
+}
+
+export const PayNowServiceImplementation = implementService.withConfig<PayNowServiceConfig>()(PayNowServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
   const loadingSignal = signalsService.signal(false) as Signal<boolean>;
   const errorSignal = signalsService.signal<string | null>(null) as Signal<
@@ -62,17 +63,13 @@ export const payNowServiceBinding = <
   }
 >(
   servicesConfigs: T,
-  additionalConfig: Partial<
-    ServiceFactoryConfig<typeof PayNowServiceImplementation>
-  > = {}
+  additionalConfig: Partial<PayNowServiceConfig> = {}
 ) => {
   return [
     PayNowServiceDefinition,
     PayNowServiceImplementation,
     {
-      ...(servicesConfigs[PayNowServiceDefinition] as ServiceFactoryConfig<
-        typeof PayNowServiceImplementation
-      >),
+      ...(servicesConfigs[PayNowServiceDefinition] as PayNowServiceConfig),
       ...additionalConfig,
     },
   ] as const;
