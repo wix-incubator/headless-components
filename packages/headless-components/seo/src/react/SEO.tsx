@@ -20,7 +20,6 @@ export interface TagsProps {
  * </blockquote>
  *
  * A headless component for rendering SEO tags based on the provided service configuration.
- *
  * Injects title, meta, link, and script tags into the document head using the Wix services manager and SEO tags service.
  *
  * > **Notes:**
@@ -101,9 +100,7 @@ export interface UpdateTagsTriggerProps {
  * </blockquote>
  *
  * A headless component for updating SEO tags dynamically on the client side.
- *
- * This component uses the render props pattern to expose an `updateSeoTags` function
- * that allows you to update SEO tags without requiring a full page reload.
+ * Exposes an `updateSeoTags` function that allows you to update SEO tags without requiring a full page reload.
  *
  * > **Notes:**
  * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
