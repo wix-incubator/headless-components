@@ -1,8 +1,4 @@
-import {
-  defineService,
-  implementService,
-  type ServiceFactoryConfig,
-} from "@wix/services-definitions";
+import { defineService, implementService } from "@wix/services-definitions";
 import {
   SignalsServiceDefinition,
   type Signal,
@@ -19,39 +15,45 @@ export interface ProductServiceAPI {
 export const ProductServiceDefinition =
   defineService<ProductServiceAPI>("product");
 
-export const ProductService = implementService.withConfig<{
+export interface ProductServiceConfig {
   product: productsV3.V3Product;
-}>()(ProductServiceDefinition, ({ getService, config }) => {
-  const signalsService = getService(SignalsServiceDefinition);
+}
 
-  const product: Signal<productsV3.V3Product> = signalsService.signal(
-    config.product as any
+export const ProductService =
+  implementService.withConfig<ProductServiceConfig>()(
+    ProductServiceDefinition,
+    ({ getService, config }) => {
+      const signalsService = getService(SignalsServiceDefinition);
+
+      const product: Signal<productsV3.V3Product> = signalsService.signal(
+        config.product as any,
+      );
+      const isLoading: Signal<boolean> = signalsService.signal(false as any);
+      const error: Signal<string | null> = signalsService.signal(null as any);
+
+      const loadProduct = async (slug: string) => {
+        isLoading.set(true);
+        const productResponse = await loadProductBySlug(slug);
+        if (!productResponse.product) {
+          error.set("Product not found");
+        } else {
+          product.set(productResponse.product!);
+          error.set(null);
+        }
+        isLoading.set(false);
+      };
+
+      return {
+        product,
+        isLoading,
+        error,
+        loadProduct,
+      };
+    },
   );
-  const isLoading: Signal<boolean> = signalsService.signal(false as any);
-  const error: Signal<string | null> = signalsService.signal(null as any);
-
-  const loadProduct = async (slug: string) => {
-    isLoading.set(true);
-    const productResponse = await loadProductBySlug(slug);
-    if (!productResponse.product) {
-      error.set("Product not found");
-    } else {
-      product.set(productResponse.product!);
-      error.set(null);
-    }
-    isLoading.set(false);
-  };
-
-  return {
-    product,
-    isLoading,
-    error,
-    loadProduct,
-  };
-});
 
 export type ProductServiceConfigResult =
-  | { type: "success"; config: ServiceFactoryConfig<typeof ProductService> }
+  | { type: "success"; config: ProductServiceConfig }
   | { type: "notFound" };
 
 const loadProductBySlug = async (slug: string) => {
@@ -74,7 +76,7 @@ const loadProductBySlug = async (slug: string) => {
 };
 
 export async function loadProductServiceConfig(
-  productSlug: string
+  productSlug: string,
 ): Promise<ProductServiceConfigResult> {
   try {
     // Use getProductBySlug directly - single API call with comprehensive fields
