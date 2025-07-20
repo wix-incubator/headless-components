@@ -6,7 +6,11 @@ import {
 import { useService } from "@wix/services-manager-react";
 import { ItemType, PageNameData, SlugData } from "@wix/auto_sdk_seo_seo-tags";
 
+/**
+ * Props for the SEO Tags component.
+ */
 export interface TagsProps {
+  /** Configuration object containing SEO tags and metadata. */
   seoTagsServiceConfig: SEOTagsServiceConfig;
 }
 
@@ -19,9 +23,12 @@ export interface TagsProps {
  *
  * </blockquote>
  *
- * Renders SEO tags (title, meta, link, script) in the document head using a provided SEO service configuration.
+  * A headless component for rendering SEO tags based on the provided service configuration.
+ * Integrates with the Wix services manager and a custom SEO tags service to inject SEO-relevant tags to the document head.
  *
- * Integrates with the Wix services manager and a custom SEO tags service to inject SEO-relevant tags.
+ * > **Notes:**
+ * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
  * @param {SEOTagsServiceConfig} props.seoTagsServiceConfig - Configuration for the SEO tags service.
  *
@@ -78,6 +85,9 @@ export function Tags(props: TagsProps): React.ReactNode {
     });
 }
 
+/**
+ * Props for the UpdateTagsTrigger component.
+ */
 export interface UpdateTagsTriggerProps {
   children: (props: {
     updateSeoTags: (
@@ -96,11 +106,14 @@ export interface UpdateTagsTriggerProps {
  *
  * </blockquote>
  *
- * UpdateTagsTrigger - Handles updating SEO tags dynamically
+ * A headless component that provides dynamic SEO tag updates without page reloads.
  *
- * This component provides a way to update SEO tags on the client side without
- * requiring a full page reload. It wraps content with the ability to trigger
- * SEO tag updates.
+ * Exposes an `updateSeoTags` method that allows client-side updates to SEO metadata
+ * when navigating between different items or pages programmatically.
+ *
+ * > **Notes:**
+ * > * This component is only relevant for [Wix Vibe](https://support.wix.com/en/article/wix-vibe-an-overview) and [Wix Headless](https://dev.wix.com/docs/go-headless/get-started/about-headless/about-wix-headless) developers.
+ * > * Headless components use the render props pattern. They provide business logic and state management, while giving you full control over the UI so you can build custom experiences faster.
  *
  * @example
  * ```tsx
