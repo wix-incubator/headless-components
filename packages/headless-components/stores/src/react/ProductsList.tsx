@@ -13,7 +13,9 @@ import {
 
 
 export interface RootProps {
+  /** Child components that will have access to the ProductsList service */
   children: React.ReactNode;
+  /** Configuration for the ProductsList service */
   productsListConfig: ProductsListServiceConfig;
 }
 /**
@@ -21,10 +23,6 @@ export interface RootProps {
  * This component sets up the necessary services for managing products list state.
  *
  * @component
- * @param props - Component props
- * @param props.children - Child components that will have access to the ProductsList service
- * @param props.productsListConfig - Configuration for the ProductsList service
- * @returns JSX element wrapping children with ProductsList service context
  */
 export function Root(props: RootProps): React.ReactNode {
   return (
@@ -41,6 +39,7 @@ export function Root(props: RootProps): React.ReactNode {
 }
 
 export interface EmptyStateProps {
+  /** Content to display when products list is empty (can be a render function or ReactNode) */
   children: (props: EmptyStateRenderProps) => React.ReactNode;
 }
 
@@ -51,9 +50,6 @@ export interface EmptyStateRenderProps {}
  * Only displays its children when there are no products, no loading state, and no errors.
  *
  * @component
- * @param props - Component props
- * @param props.children - Content to display when products list is empty (can be a render function or ReactNode)
- * @returns JSX element or null based on products list state
  */
 export function EmptyState(props: EmptyStateProps): React.ReactNode {
   const { isLoading, error, products } = useService(
@@ -73,6 +69,7 @@ export function EmptyState(props: EmptyStateProps): React.ReactNode {
 }
 
 export interface LoadingProps {
+  /** Content to display during loading (can be a render function or ReactNode) */
   children: (props: LoadingRenderProps) => React.ReactNode;
 }
 
@@ -83,9 +80,6 @@ export interface LoadingRenderProps {}
  * Only displays its children when the products list is currently loading.
  *
  * @component
- * @param props - Component props
- * @param props.children - Content to display during loading (can be a render function or ReactNode)
- * @returns JSX element or null based on loading state
  */
 export function Loading(props: LoadingProps): React.ReactNode {
   const { isLoading } = useService(ProductsListServiceDefinition);
@@ -103,6 +97,7 @@ export function Loading(props: LoadingProps): React.ReactNode {
 export interface ErrorRenderProps { error: string | null };
 
 export interface ErrorProps {
+  /** Content to display during error state (can be a render function or ReactNode) */
   children: (props: ErrorRenderProps) => React.ReactNode;
 }
 
@@ -112,9 +107,6 @@ export interface ErrorProps {
  * Only displays its children when an error has occurred.
  *
  * @component
- * @param props - Component props
- * @param props.children - Content to display during error state (can be a render function or ReactNode)
- * @returns JSX element or null based on error state
  */
 export function Error(props: ErrorProps): React.ReactNode {
   const { error } = useService(ProductsListServiceDefinition);
@@ -134,6 +126,7 @@ export interface ItemContentRenderProps {
 }
 
 export interface ItemContentProps {
+  /** Content to display for each product (can be a render function receiving product data or ReactNode) */
   children: (props: ItemContentRenderProps) => React.ReactNode;
 }
 
@@ -143,9 +136,6 @@ export interface ItemContentProps {
  * Only renders when products are successfully loaded (not loading, no error, and has products).
  *
  * @component
- * @param props - Component props
- * @param props.children - Content to display for each product (can be a render function receiving product data or ReactNode)
- * @returns Array of JSX elements for each product or null if no products to display
  */
 export function ItemContent(props: ItemContentProps): React.ReactNode {
   const { products, isLoading, error } = useService(

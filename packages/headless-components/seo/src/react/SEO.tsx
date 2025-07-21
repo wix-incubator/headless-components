@@ -7,6 +7,7 @@ import { useService } from "@wix/services-manager-react";
 import { ItemType, PageNameData, SlugData } from "@wix/auto_sdk_seo_seo-tags";
 
 export interface TagsProps {
+  /** Configuration for the SEO tags service */
   seoTagsServiceConfig: SEOTagsServiceConfig;
 }
 
@@ -14,8 +15,6 @@ export interface TagsProps {
  * Renders SEO tags (title, meta, link, script) in the document head using a provided SEO service configuration.
  *
  * Integrates with the Wix services manager and a custom SEO tags service to inject SEO-relevant tags.
- *
- * @param {SEOTagsServiceConfig} props.seoTagsServiceConfig - Configuration for the SEO tags service.
  *
  * @example
  * import { loadSEOTagsServiceConfig } from "@wix/seo/server-actions";
