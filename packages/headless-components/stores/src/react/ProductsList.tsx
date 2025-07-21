@@ -4,7 +4,7 @@ import {
   ProductListService,
   ProductsListServiceDefinition,
   type ProductsListServiceConfig,
-} from "../services/products-list-service";
+} from "../services/products-list-service.js";
 import type { PropsWithChildren, ReactNode } from "react";
 import { productsV3 } from "@wix/stores";
 import {
@@ -107,7 +107,7 @@ function ItemContent(props: ItemContentProps) {
     return null;
   }
 
-  return productsValue.map((product) => (
+  return productsValue.map((product: productsV3.V3Product) => (
     <WixServices
       key={product._id}
       servicesMap={createServicesMap().addService(
