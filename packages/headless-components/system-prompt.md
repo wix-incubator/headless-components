@@ -66,6 +66,75 @@ Sort.Option                // Use Sort.Controller instead
 - `Sort.Options`, `Sort.Option` - Do not exist, only Sort.Controller available
 - Individual filter components - Use FilteredCollection.Filters instead
 
+**🚨 CRITICAL: Product.Description RICOS vs plainDescription**
+
+The `Product.Description` component provides two different formats for product descriptions:
+
+**✅ CORRECT - Use `plainDescription` for HTML injection:**
+```tsx
+<Product.Description>
+  {({ plainDescription }) => (
+    <div dangerouslySetInnerHTML={{ __html: plainDescription || "Fallback description" }} />
+  )}
+</Product.Description>
+```
+
+**❌ WRONG - Do NOT use `description` directly:**
+```tsx
+<Product.Description>
+  {({ description }) => (
+    <div dangerouslySetInnerHTML={{ __html: description }} /> {/* WRONG - description is RICOS format */}
+  )}
+</Product.Description>
+```
+
+**Key Differences:**
+- `description`: Contains RICOS (Rich Content) format - a structured document format with nodes (see https://dev.wix.com/docs/ricos/api-reference/ricos-document)
+- `plainDescription`: Contains plain HTML string that can be safely injected with `dangerouslySetInnerHTML`
+
+**When to use each:**
+- **Use `plainDescription`**: For simple HTML injection in most cases (recommended)
+- **Use `description`**: Only if you want to render RICOS content with proper RICOS components (advanced use case)
+
+**❌ NEVER do this:**
+```tsx
+{description.replace(/<[^>]*>/g, '')} // WRONG - description is not HTML, it's RICOS format
+```
+
+**🚨 CRITICAL: Use _id NOT id for Wix Objects**
+
+Wix headless components use `_id` (with underscore) as the primary identifier, NOT `id`:
+
+**✅ CORRECT:**
+```tsx
+// Products
+{products.map(product => (
+  <Collection.Item key={product._id} product={product}>
+    {/* ... */}
+  </Collection.Item>
+))}
+
+// Categories  
+{categories.map((category, index) => (
+  <button key={index} onClick={() => setSelectedCategory(category._id)}>
+    {/* Use index as key, not category._id for React keys */}
+  </button>
+))}
+```
+
+**❌ WRONG:**
+```tsx
+// Don't use .id - it doesn't exist on Wix objects
+onClick={() => setSelectedCategory(category.id)} // WRONG - use category._id
+key={product.id} // WRONG - use product._id
+```
+
+**Key Points:**
+- **Products**: Use `product._id` for identifiers
+- **Categories**: Use `category._id` for identifiers  
+- **React Keys**: Use `index` for categories, `product._id` for products
+- **Type Safety**: Handle potential undefined with `category._id || null`
+
 **✅ VERIFIED COMPONENT RENDER PROPS (Updated from TypeScript definitions):**
 All ProductVariantSelector render props have been verified against the actual TypeScript definitions in `node_modules/@wix/headless-stores/dist/react/ProductVariantSelector.d.ts`. The system prompt includes accurate property names and types.
 
@@ -1180,7 +1249,7 @@ import {
   {({ categories, selectedCategory, setSelectedCategory }) => (
     <ul>
       {categories.map((category, index) => (
-        <li key={index}> {/* Use index as key, not category.id */}
+        <li key={index}> {/* Use index as key, not category._id */}
           <a href={`/products?category=${index}`}>
             {category.name || `Category ${index + 1}`}
           </a>
@@ -1282,7 +1351,7 @@ import {
   </Product.Name>
   
   <Product.Description>
-    {({ description }) => <div dangerouslySetInnerHTML={{ __html: description }} />}
+    {({ plainDescription }) => <div dangerouslySetInnerHTML={{ __html: plainDescription }} />}
   </Product.Description>
   
   <ProductActions.Actions>
@@ -1604,8 +1673,8 @@ import {
         {categories.map((category, index) => (
           <li key={index}>
             <button 
-              onClick={() => setSelectedCategory(category.id)}
-              className={selectedCategory === category.id ? 'active' : ''}
+              onClick={() => setSelectedCategory(category._id)}
+              className={selectedCategory === category._id ? 'active' : ''}
             >
               {category.name}
             </button>
