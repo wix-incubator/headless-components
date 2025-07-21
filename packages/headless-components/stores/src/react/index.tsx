@@ -11,3 +11,4 @@ export * as Product from "./Product.js";
 export * as ProductModifiers from "./ProductModifiers.js";
 export * as SelectedVariant from "./SelectedVariant.js";
 export * as ProductActions from "./ProductActions.js";
+export * as ProductsList from "./ProductsList.js";

@@ -1,17 +1,17 @@
-export {
-  buyNowServiceBinding,
-  loadBuyNowServiceInitialData,
-} from "./buy-now-service.js";
+// export {
+//   buyNowServiceBinding,
+//   loadBuyNowServiceInitialData,
+// } from "./buy-now-service.js";
 
-export {
-  payNowServiceBinding,
-  loadPayNowServiceInitialData,
-} from "./pay-now-service.js";
+// export {
+//   payNowServiceBinding,
+//   loadPayNowServiceInitialData,
+// } from "./pay-now-service.js";
 
 export {
   CatalogService,
   CatalogServiceDefinition,
-  loadCatalogServiceConfig,
+  // loadCatalogServiceConfig,
 } from "./catalog-service.js";
 
 export {
@@ -59,5 +59,11 @@ export {
   SocialSharingService,
   SocialSharingServiceDefinition,
 } from "./social-sharing-service.js";
+
+export {
+  ProductListService,
+  ProductsListServiceDefinition,
+  loadProductsListServiceConfig
+} from "./products-list-service.js";
 
 export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
