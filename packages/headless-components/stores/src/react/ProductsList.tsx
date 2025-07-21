@@ -5,13 +5,17 @@ import {
   ProductsListServiceDefinition,
   type ProductsListServiceConfig,
 } from "../services/products-list-service.js";
-import type { PropsWithChildren, ReactNode } from "react";
 import { productsV3 } from "@wix/stores";
 import {
   ProductService,
   ProductServiceDefinition,
 } from "@wix/headless-stores/services";
 
+
+export interface RootProps {
+  children: React.ReactNode;
+  productsListConfig: ProductsListServiceConfig;
+}
 /**
  * Root component that provides the ProductsList service context to its children.
  * This component sets up the necessary services for managing products list state.
@@ -22,9 +26,7 @@ import {
  * @param props.productsListConfig - Configuration for the ProductsList service
  * @returns JSX element wrapping children with ProductsList service context
  */
-export function Root(
-  props: PropsWithChildren<{ productsListConfig: ProductsListServiceConfig }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -38,11 +40,11 @@ export function Root(
   );
 }
 
-export type EmptyStateProps = {
-  children: ((props: EmptyStateRenderProps) => ReactNode) | ReactNode;
-};
+export interface EmptyStateProps {
+  children: (props: EmptyStateRenderProps) => React.ReactNode;
+}
 
-export type EmptyStateRenderProps = {};
+export interface EmptyStateRenderProps {}
 
 /**
  * Component that renders content when the products list is empty.
@@ -53,7 +55,7 @@ export type EmptyStateRenderProps = {};
  * @param props.children - Content to display when products list is empty (can be a render function or ReactNode)
  * @returns JSX element or null based on products list state
  */
-export function EmptyState(props: EmptyStateProps) {
+export function EmptyState(props: EmptyStateProps): React.ReactNode {
   const { isLoading, error, products } = useService(
     ProductsListServiceDefinition,
   );
@@ -70,11 +72,11 @@ export function EmptyState(props: EmptyStateProps) {
   return null;
 }
 
-export type LoadingProps = {
-  children: ((props: LoadingRenderProps) => ReactNode) | ReactNode;
-};
+export interface LoadingProps {
+  children: (props: LoadingRenderProps) => React.ReactNode;
+}
 
-export type LoadingRenderProps = {};
+export interface LoadingRenderProps {}
 
 /**
  * Component that renders content during loading state.
@@ -85,7 +87,7 @@ export type LoadingRenderProps = {};
  * @param props.children - Content to display during loading (can be a render function or ReactNode)
  * @returns JSX element or null based on loading state
  */
-export function Loading(props: LoadingProps) {
+export function Loading(props: LoadingProps): React.ReactNode {
   const { isLoading } = useService(ProductsListServiceDefinition);
   const isLoadingValue = isLoading.get();
 
@@ -98,11 +100,12 @@ export function Loading(props: LoadingProps) {
   return null;
 }
 
-export type ErrorProps = {
-  children: ((props: ErrorRenderProps) => ReactNode) | ReactNode;
-};
+export interface ErrorRenderProps { error: string | null };
 
-export type ErrorRenderProps = { error: string | null };
+export interface ErrorProps {
+  children: (props: ErrorRenderProps) => React.ReactNode;
+}
+
 
 /**
  * Component that renders content when there's an error loading products.
@@ -113,7 +116,7 @@ export type ErrorRenderProps = { error: string | null };
  * @param props.children - Content to display during error state (can be a render function or ReactNode)
  * @returns JSX element or null based on error state
  */
-export function Error(props: ErrorProps) {
+export function Error(props: ErrorProps): React.ReactNode {
   const { error } = useService(ProductsListServiceDefinition);
   const errorValue = error.get();
 
@@ -126,13 +129,13 @@ export function Error(props: ErrorProps) {
   return null;
 }
 
-export type ItemContentRenderProps = {
+export interface ItemContentRenderProps {
   product: productsV3.V3Product;
-};
+}
 
-export type ItemContentProps = {
-  children: ((props: ItemContentRenderProps) => ReactNode) | ReactNode;
-};
+export interface ItemContentProps {
+  children: (props: ItemContentRenderProps) => React.ReactNode;
+}
 
 /**
  * Component that renders content for each product in the list.
@@ -144,7 +147,7 @@ export type ItemContentProps = {
  * @param props.children - Content to display for each product (can be a render function receiving product data or ReactNode)
  * @returns Array of JSX elements for each product or null if no products to display
  */
-export function ItemContent(props: ItemContentProps) {
+export function ItemContent(props: ItemContentProps): React.ReactNode {
   const { products, isLoading, error } = useService(
     ProductsListServiceDefinition,
   );
@@ -169,4 +172,3 @@ export function ItemContent(props: ItemContentProps) {
     </WixServices>
   ));
 }
-

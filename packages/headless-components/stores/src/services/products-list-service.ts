@@ -5,7 +5,7 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3 } from "@wix/stores";
 
-export type ProductsListServiceConfig = {
+export interface ProductsListServiceConfig{
   products: productsV3.V3Product[];
   searchOptions: Parameters<typeof productsV3.searchProducts>[0];
   pagingMetadata: productsV3.CommonCursorPagingMetadata;
