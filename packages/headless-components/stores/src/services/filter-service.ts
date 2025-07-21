@@ -21,22 +21,23 @@ export interface AvailableOptions {
   priceRange: PriceRange;
 }
 
+/*
+  Record of optionId to choiceIds
+*/
+export type FilterSelectedOptions = Record<string, string[]>;
+
 export interface Filter {
-  priceRange: { min: number; max: number };
-  selectedOptions: { [optionId: string]: string[] };
+  priceRange: PriceRange;
+  selectedOptions: FilterSelectedOptions;
 }
 
 export interface FilterServiceAPI {
   currentFilters: Signal<Filter>;
   applyFilters: (filters: Filter) => Promise<void>;
   clearFilters: () => Promise<void>;
-  availableOptions: ReadOnlySignal<{
-    productOptions: ProductOption[];
-    priceRange: { min: number; max: number };
-  }>;
+  availableOptions: ReadOnlySignal<AvailableOptions>;
   isFullyLoaded: ReadOnlySignal<boolean>;
 }
-
 export const FilterServiceDefinition = defineService<FilterServiceAPI>(
   "filtered-collection"
 );
