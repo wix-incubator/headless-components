@@ -22,6 +22,26 @@ export interface ViewportRenderProps {
 
 /**
  * Headless component for displaying the main viewport media
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { MediaGallery } from '@wix/media/components';
+ *
+ * function MediaViewer() {
+ *   return (
+ *     <MediaGallery.Viewport>
+ *       {({ src, alt }) => (
+ *         <img
+ *           src={src || '/placeholder.jpg'}
+ *           alt={alt}
+ *           className="main-media"
+ *         />
+ *       )}
+ *     </MediaGallery.Viewport>
+ *   );
+ * }
+ * ```
  */
 export const Viewport = (props: ViewportProps) => {
   const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
@@ -63,6 +83,35 @@ export interface ThumbnailListRenderProps {
 
 /**
  * Headless component for managing a list of thumbnails
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { MediaGallery } from '@wix/media/components';
+ *
+ * function ThumbnailGrid() {
+ *   return (
+ *     <MediaGallery.ThumbnailList>
+ *       {({ items }) => (
+ *         <div className="thumbnail-grid">
+ *           {items.map((item, index) => (
+ *             <MediaGallery.ThumbnailItem key={index} index={index}>
+ *               {({ src, isActive, onSelect, alt }) => (
+ *                 <button
+ *                   onClick={onSelect}
+ *                   className={`thumbnail ${isActive ? 'active' : ''}`}
+ *                 >
+ *                   <img src={src} alt={alt} />
+ *                 </button>
+ *               )}
+ *             </MediaGallery.ThumbnailItem>
+ *           ))}
+ *         </div>
+ *       )}
+ *     </MediaGallery.ThumbnailList>
+ *   );
+ * }
+ * ```
  */
 export const ThumbnailList = (props: ThumbnailListProps) => {
   const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
@@ -110,6 +159,28 @@ export interface ThumbnailItemRenderProps {
 
 /**
  * Headless component for individual media thumbnail
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { MediaGallery } from '@wix/media/components';
+ *
+ * function ThumbnailButton({ index }) {
+ *   return (
+ *     <MediaGallery.ThumbnailItem index={index}>
+ *       {({ src, isActive, onSelect, alt }) => (
+ *         <button
+ *           onClick={onSelect}
+ *           className={`thumbnail-btn ${isActive ? 'active' : ''}`}
+ *         >
+ *           <img src={src} alt={alt} />
+ *           {isActive && <div className="active-indicator" />}
+ *         </button>
+ *       )}
+ *     </MediaGallery.ThumbnailItem>
+ *   );
+ * }
+ * ```
  */
 export const ThumbnailItem = (props: ThumbnailItemProps) => {
   const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
@@ -163,6 +234,28 @@ export interface NextRenderProps {
 
 /**
  * Headless component for next media navigation
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { MediaGallery } from '@wix/media/components';
+ *
+ * function NextButton() {
+ *   return (
+ *     <MediaGallery.Next>
+ *       {({ onNext, canGoNext }) => (
+ *         <button
+ *           onClick={onNext}
+ *           disabled={!canGoNext}
+ *           className="nav-btn next-btn"
+ *         >
+ *           Next →
+ *         </button>
+ *       )}
+ *     </MediaGallery.Next>
+ *   );
+ * }
+ * ```
  */
 export const Next = (props: NextProps) => {
   const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
@@ -203,6 +296,28 @@ export interface PreviousRenderProps {
 
 /**
  * Headless component for previous media navigation
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { MediaGallery } from '@wix/media/components';
+ *
+ * function PreviousButton() {
+ *   return (
+ *     <MediaGallery.Previous>
+ *       {({ onPrevious, canGoPrevious }) => (
+ *         <button
+ *           onClick={onPrevious}
+ *           disabled={!canGoPrevious}
+ *           className="nav-btn prev-btn"
+ *         >
+ *           ← Previous
+ *         </button>
+ *       )}
+ *     </MediaGallery.Previous>
+ *   );
+ * }
+ * ```
  */
 export const Previous = (props: PreviousProps) => {
   const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
@@ -243,6 +358,24 @@ export interface IndicatorRenderProps {
 
 /**
  * Headless component for media gallery indicator/counter
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { MediaGallery } from '@wix/media/components';
+ *
+ * function MediaCounter() {
+ *   return (
+ *     <MediaGallery.Indicator>
+ *       {({ current, total }) => (
+ *         <div className="media-indicator">
+ *           {current} of {total}
+ *         </div>
+ *       )}
+ *     </MediaGallery.Indicator>
+ *   );
+ * }
+ * ```
  */
 export const Indicator = (props: IndicatorProps) => {
   const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<

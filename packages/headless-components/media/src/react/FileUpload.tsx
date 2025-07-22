@@ -42,6 +42,45 @@ export interface FileSelectorRenderProps {
 
 /**
  * FileSelector - Handles file selection via drag & drop or file input
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { FileUpload } from '@wix/media/components';
+ *
+ * function FileDropZone() {
+ *   return (
+ *     <FileUpload.FileSelector>
+ *       {({ dragOver, handleDragOver, handleDragLeave, handleDrop, handleFileSelect, selectedFile, clearFile }) => (
+ *         <div
+ *           className={`drop-zone ${dragOver ? 'drag-over' : ''}`}
+ *           onDragOver={handleDragOver}
+ *           onDragLeave={handleDragLeave}
+ *           onDrop={handleDrop}
+ *         >
+ *           {selectedFile ? (
+ *             <div>
+ *               Selected: {selectedFile.name}
+ *               <button onClick={clearFile}>Remove</button>
+ *             </div>
+ *           ) : (
+ *             <div>
+ *               <p>Drag & drop a file here, or click to select</p>
+ *               <input
+ *                 type="file"
+ *                 onChange={handleFileSelect}
+ *                 style={{ display: 'none' }}
+ *                 id="file-input"
+ *               />
+ *               <label htmlFor="file-input">Choose File</label>
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </FileUpload.FileSelector>
+ *   );
+ * }
+ * ```
  */
 export const FileSelector = (props: FileSelectorProps) => {
   const service = useService(FileUploadServiceDefinition) as ServiceAPI<
@@ -122,6 +161,40 @@ export interface UploadProgressRenderProps {
 
 /**
  * UploadProgress - Shows upload status and progress
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { FileUpload } from '@wix/media/components';
+ *
+ * function UploadStatusIndicator() {
+ *   return (
+ *     <FileUpload.UploadProgress>
+ *       {({ uploadState, isLoading, isSuccess, isError, hasMessage }) => (
+ *         <div className="upload-status">
+ *           {isLoading && (
+ *             <div className="loading">
+ *               <div className="spinner" />
+ *               Uploading...
+ *             </div>
+ *           )}
+ *           {isSuccess && (
+ *             <div className="success">
+ *               ✅ Upload completed successfully!
+ *             </div>
+ *           )}
+ *           {isError && (
+ *             <div className="error">
+ *               ❌ Upload failed
+ *               {hasMessage && <p>{uploadState.message}</p>}
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </FileUpload.UploadProgress>
+ *   );
+ * }
+ * ```
  */
 export const UploadProgress = (props: UploadProgressProps) => {
   const service = useService(FileUploadServiceDefinition) as ServiceAPI<
@@ -162,6 +235,28 @@ export interface UploadTriggerRenderProps {
 
 /**
  * UploadTrigger - Handles file upload action
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { FileUpload } from '@wix/media/components';
+ *
+ * function UploadButton() {
+ *   return (
+ *     <FileUpload.UploadTrigger>
+ *       {({ uploadFile, canUpload, isUploading }) => (
+ *         <button
+ *           onClick={uploadFile}
+ *           disabled={!canUpload}
+ *           className="upload-btn"
+ *         >
+ *           {isUploading ? 'Uploading...' : 'Upload File'}
+ *         </button>
+ *       )}
+ *     </FileUpload.UploadTrigger>
+ *   );
+ * }
+ * ```
  */
 export const UploadTrigger = (props: UploadTriggerProps) => {
   const service = useService(FileUploadServiceDefinition) as ServiceAPI<
@@ -213,6 +308,35 @@ export interface FilePreviewRenderProps {
 
 /**
  * FilePreview - Displays preview information for the selected file
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { FileUpload } from '@wix/media/components';
+ *
+ * function FilePreviewCard() {
+ *   return (
+ *     <FileUpload.FilePreview>
+ *       {({ selectedFile, previewUrl, hasPreview, canPreview, fileName, formattedFileSize, fileType }) => (
+ *         selectedFile && (
+ *           <div className="file-preview">
+ *             <div className="file-info">
+ *               <h3>{fileName}</h3>
+ *               <p>Size: {formattedFileSize}</p>
+ *               <p>Type: {fileType}</p>
+ *             </div>
+ *             {canPreview && hasPreview && (
+ *               <div className="preview">
+ *                 <img src={previewUrl} alt="File preview" />
+ *               </div>
+ *             )}
+ *           </div>
+ *         )
+ *       )}
+ *     </FileUpload.FilePreview>
+ *   );
+ * }
+ * ```
  */
 export const FilePreview = (props: FilePreviewProps) => {
   const service = useService(FileUploadServiceDefinition) as ServiceAPI<
@@ -273,6 +397,37 @@ export interface ValidationStatusRenderProps {
 
 /**
  * ValidationStatus - Shows file validation status and rules
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { FileUpload } from '@wix/media/components';
+ *
+ * function FileValidationMessage() {
+ *   return (
+ *     <FileUpload.ValidationStatus>
+ *       {({ isValid, error, validationRules }) => (
+ *         <div className="validation-status">
+ *           {!isValid && error && (
+ *             <div className="error-message">
+ *               ⚠️ {error}
+ *             </div>
+ *           )}
+ *           <div className="rules">
+ *             <h4>Upload Requirements:</h4>
+ *             {validationRules.maxFileSize && (
+ *               <p>Max size: {validationRules.maxFileSize / 1024 / 1024}MB</p>
+ *             )}
+ *             {validationRules.allowedTypes && (
+ *               <p>Allowed types: {validationRules.allowedTypes.join(', ')}</p>
+ *             )}
+ *           </div>
+ *         </div>
+ *       )}
+ *     </FileUpload.ValidationStatus>
+ *   );
+ * }
+ * ```
  */
 export const ValidationStatus = (props: ValidationStatusProps) => {
   const service = useService(FileUploadServiceDefinition) as ServiceAPI<
