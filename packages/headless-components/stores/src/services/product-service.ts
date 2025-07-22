@@ -52,9 +52,17 @@ export const ProductService =
     },
   );
 
-export type ProductServiceConfigResult =
-  | { type: "success"; config: ProductServiceConfig }
-  | { type: "notFound" };
+export interface SuccessProductServiceConfigResult {
+  /* Type "success" means that the product was found and the config is valid */
+  type: "success";
+  /* The product config */
+  config: ProductServiceConfig;
+}
+export interface NotFoundProductServiceConfigResult {
+  /* Type "notFound" means that the product was not found */
+  type: "notFound";
+}
+
 
 const loadProductBySlug = async (slug: string) => {
   const productResponse = await productsV3.getProductBySlug(slug, {
@@ -153,7 +161,7 @@ const loadProductBySlug = async (slug: string) => {
  */
 export async function loadProductServiceConfig(
   productSlug: string,
-): Promise<ProductServiceConfigResult> {
+): Promise<SuccessProductServiceConfigResult | NotFoundProductServiceConfigResult> {
   try {
     // Use getProductBySlug directly - single API call with comprehensive fields
     const productResponse = await loadProductBySlug(productSlug);
