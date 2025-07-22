@@ -70,7 +70,7 @@ export default function ProductDetailPage({
               </div>
 
               <WixServices servicesMap={servicesMap}>
-                <ProductDetails />
+                <ProductDetails product={productServiceConfig.product} />
               </WixServices>
             </div>
           </div>

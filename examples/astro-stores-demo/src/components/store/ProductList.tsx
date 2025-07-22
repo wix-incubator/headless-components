@@ -36,7 +36,6 @@ export const ProductGridContent = ({
 }: {
   productPageRoute: string;
 }) => {
-
   const [quickViewProduct, setQuickViewProduct] =
     useState<productsV3.V3Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
@@ -480,12 +479,12 @@ export const ProductGridContent = ({
             return (
               <div className="min-h-screen">
                 {/* Store Header - Category Filter & Sort */}
-        <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
-          <div className="flex items-top justify-between">
-                                      <CategoryPicker />
-            <SortDropdown />
-          </div>
-        </div>
+                <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
+                  <div className="flex items-top justify-between">
+                    <CategoryPicker />
+                    <SortDropdown />
+                  </div>
+                </div>
 
                 {/* Main Layout with Sidebar and Content */}
                 <div className="flex gap-8">
@@ -723,7 +722,7 @@ export default function ProductList({
 }) {
   return (
     <div>
-            <ProductGridContent productPageRoute={productPageRoute} />
+      <ProductGridContent productPageRoute={productPageRoute} />
       <LoadMoreSection />
     </div>
   );

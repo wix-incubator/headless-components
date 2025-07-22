@@ -1,7 +1,64 @@
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { ProductServiceDefinition } from "../services/product-service.js";
-import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
+import { useService, WixServices } from "@wix/services-manager-react";
+import {
+  ProductServiceDefinition,
+  ProductServiceConfig,
+  ProductService,
+} from "../services/product-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import type {
+  V3Product,
+  ProductMedia,
+} from "@wix/auto_sdk_stores_products-v-3";
+import type { PropsWithChildren } from "react";
+
+/**
+ * Root component that provides the Product service context to its children.
+ * This component sets up the necessary services for rendering and managing a single product's data.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductPage() {
+ *   return (
+ *     <Product.Root productId="my-product-id">
+ *       <div>
+ *         <Product.Name>
+ *           {({ name }) => (
+ *             <h1
+ *               className="text-4xl font-bold text-content-primary mb-4"
+ *               data-testid="product-name"
+ *             >
+ *               {name}
+ *             </h1>
+ *           )}
+ *         </Product.Name>
+ *       </div>
+ *     </Product.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
+  props: PropsWithChildren<{
+    productServiceConfig: ProductServiceConfig;
+  }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        ProductServiceDefinition,
+        ProductService,
+        props.productServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Props for ProductName headless component
@@ -121,5 +178,26 @@ export const Description = (props: ProductDescriptionProps) => {
   return props.children({
     description: descriptionRichContent,
     plainDescription: plainDescription,
+  });
+};
+
+export interface ProductMediaProps {
+  children: (props: ProductMediaRenderProps) => React.ReactNode;
+}
+
+export interface ProductMediaRenderProps {
+  media: ProductMedia[];
+}
+
+export const Media = (props: ProductMediaProps) => {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const product = service.product.get();
+  const media = product.media?.itemsInfo?.items ?? [];
+
+  return props.children({
+    media,
   });
 };

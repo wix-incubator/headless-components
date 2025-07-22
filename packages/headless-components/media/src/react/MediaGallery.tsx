@@ -1,6 +1,77 @@
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { MediaGalleryServiceDefinition } from "../services/index.js";
+import { useService, WixServices } from "@wix/services-manager-react";
+import {
+  MediaGalleryServiceDefinition,
+  MediaGalleryService,
+} from "../services/index.js";
+import { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
+
+/**
+ * Root component that provides the MediaGallery service context to its children.
+ * This component sets up the necessary services for rendering and managing media gallery functionality.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { MediaGallery } from '@wix/media/components';
+ *
+ * function ProductMediaGallery({ productMedia }) {
+ *   return (
+ *     <MediaGallery.Root mediaGalleryServiceConfig={{ media: productMedia }}>
+ *       <div className="media-gallery">
+ *         <MediaGallery.Viewport>
+ *           {({ src, alt }) => (
+ *             <img
+ *               src={src || '/placeholder.jpg'}
+ *               alt={alt}
+ *               className="main-media"
+ *             />
+ *           )}
+ *         </MediaGallery.Viewport>
+ *         <MediaGallery.ThumbnailList>
+ *           {({ items }) => (
+ *             <div className="thumbnail-grid">
+ *               {items.map((item, index) => (
+ *                 <MediaGallery.ThumbnailItem key={index} index={index}>
+ *                   {({ src, isActive, onSelect, alt }) => (
+ *                     <button
+ *                       onClick={onSelect}
+ *                       className={`thumbnail ${isActive ? 'active' : ''}`}
+ *                     >
+ *                       <img src={src} alt={alt} />
+ *                     </button>
+ *                   )}
+ *                 </MediaGallery.ThumbnailItem>
+ *               ))}
+ *             </div>
+ *           )}
+ *         </MediaGallery.ThumbnailList>
+ *       </div>
+ *     </MediaGallery.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
+  props: PropsWithChildren<{
+    mediaGalleryServiceConfig: MediaGalleryServiceConfig;
+  }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        MediaGalleryServiceDefinition,
+        MediaGalleryService,
+        props.mediaGalleryServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Props for Viewport headless component
