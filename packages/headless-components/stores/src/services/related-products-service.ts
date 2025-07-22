@@ -87,6 +87,81 @@ export const RelatedProductsService =
     },
   );
 
+/**
+ * Loads related products service configuration for SSR initialization.
+ * This function is designed to be used during Server-Side Rendering (SSR) to create
+ * configuration that tells the RelatedProductsService which product to load related products for.
+ * Unlike other loaders, this creates configuration rather than fetching data during SSR.
+ *
+ * @param productId The ID of the product to find related products for
+ * @param limit Optional number of related products to load (default: 4)
+ * @returns Promise that resolves to RelatedProductsServiceConfig
+ *
+ * @example
+ * ```astro
+ * ---
+ * // Astro page example - pages/product/[slug].astro
+ * import { loadRelatedProductsServiceConfig } from '@wix/stores/services';
+ * import { RelatedProducts } from '@wix/stores/components';
+ *
+ * // Create related products config for a specific product
+ * const relatedProductsConfig = await loadRelatedProductsServiceConfig(
+ *   'product-id-123',
+ *   6
+ * );
+ * ---
+ *
+ * <RelatedProducts.Root relatedProductsConfig={relatedProductsConfig}>
+ *   <RelatedProducts.List>
+ *     {({ products, isLoading }) => (
+ *       <div>
+ *         {isLoading ? 'Loading...' : `${products.length} related products`}
+ *       </div>
+ *     )}
+ *   </RelatedProducts.List>
+ * </RelatedProducts.Root>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Next.js page example - pages/product/[slug].tsx
+ * import { GetServerSideProps } from 'next';
+ * import { loadRelatedProductsServiceConfig } from '@wix/stores/services';
+ * import { RelatedProducts } from '@wix/stores/components';
+ *
+ * interface ProductPageProps {
+ *   relatedProductsConfig: Awaited<ReturnType<typeof loadRelatedProductsServiceConfig>>;
+ * }
+ *
+ * export const getServerSideProps: GetServerSideProps<ProductPageProps> = async () => {
+ *   // Create related products config for a specific product
+ *   const relatedProductsConfig = await loadRelatedProductsServiceConfig(
+ *     'product-id-123',
+ *     6
+ *   );
+ *
+ *   return {
+ *     props: {
+ *       relatedProductsConfig,
+ *     },
+ *   };
+ * };
+ *
+ * export default function ProductPage({ relatedProductsConfig }: ProductPageProps) {
+ *   return (
+ *     <RelatedProducts.Root relatedProductsConfig={relatedProductsConfig}>
+ *       <RelatedProducts.List>
+ *         {({ products, isLoading }) => (
+ *           <div>
+ *             {isLoading ? 'Loading...' : `${products.length} related products`}
+ *           </div>
+ *         )}
+ *       </RelatedProducts.List>
+ *     </RelatedProducts.Root>
+ *   );
+ * }
+ * ```
+ */
 export async function loadRelatedProductsServiceConfig(
   productId: string,
   limit: number = 4,

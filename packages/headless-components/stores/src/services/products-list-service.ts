@@ -12,6 +12,99 @@ export interface ProductsListServiceConfig{
   aggregations: productsV3.AggregationData;
 };
 
+/**
+ * Loads products list service configuration from the Wix Products API for SSR initialization.
+ * This function is designed to be used during Server-Side Rendering (SSR) to preload
+ * products based on search criteria that will be used to configure the ProductsListService.
+ *
+ * @param searchOptions Search options for filtering and querying products
+ * @returns Promise that resolves to ProductsListServiceConfig with products, metadata, and aggregations
+ *
+ * @example
+ * ```astro
+ * ---
+ * // Astro page example - pages/search.astro
+ * import { loadProductsListServiceConfig } from '@wix/stores/services';
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * // Get search query from URL params
+ * const searchQuery = Astro.url.searchParams.get('q') || '';
+ * const category = Astro.url.searchParams.get('category');
+ *
+ * // Build search options
+ * const searchOptions = {
+ *   query: { search: searchQuery },
+ *   filter: category ? { categories: [category] } : undefined,
+ *   paging: { limit: 12 }
+ * };
+ *
+ * // Load products during SSR
+ * const productsListConfig = await loadProductsListServiceConfig(searchOptions);
+ * ---
+ *
+ * <ProductsList.Root productsListConfig={productsListConfig}>
+ *   <ProductsList.ItemContent>
+ *     {({ product }) => (
+ *       <div class="product-item">
+ *         <h3>{product.name}</h3>
+ *       </div>
+ *     )}
+ *   </ProductsList.ItemContent>
+ * </ProductsList.Root>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Next.js page example - pages/search.tsx
+ * import { GetServerSideProps } from 'next';
+ * import { loadProductsListServiceConfig } from '@wix/stores/services';
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * interface SearchPageProps {
+ *   productsListConfig: Awaited<ReturnType<typeof loadProductsListServiceConfig>>;
+ *   searchQuery: string;
+ * }
+ *
+ * export const getServerSideProps: GetServerSideProps<SearchPageProps> = async ({ query }) => {
+ *   const searchQuery = (query.q as string) || '';
+ *   const category = query.category as string;
+ *
+ *   // Build search options
+ *   const searchOptions = {
+ *     query: { search: searchQuery },
+ *     filter: category ? { categories: [category] } : undefined,
+ *     paging: { limit: 12 }
+ *   };
+ *
+ *   // Load products during SSR
+ *   const productsListConfig = await loadProductsListServiceConfig(searchOptions);
+ *
+ *   return {
+ *     props: {
+ *       productsListConfig,
+ *       searchQuery,
+ *     },
+ *   };
+ * };
+ *
+ * export default function SearchPage({ productsListConfig, searchQuery }: SearchPageProps) {
+ *   return (
+ *     <div>
+ *       <h1>Search Results for "{searchQuery}"</h1>
+ *       <ProductsList.Root productsListConfig={productsListConfig}>
+ *         <ProductsList.ItemContent>
+ *           {({ product }) => (
+ *             <div className="product-item">
+ *               <h3>{product.name}</h3>
+ *             </div>
+ *           )}
+ *         </ProductsList.ItemContent>
+ *       </ProductsList.Root>
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
 export async function loadProductsListServiceConfig(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
 ): Promise<ProductsListServiceConfig> {

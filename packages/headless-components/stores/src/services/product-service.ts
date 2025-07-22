@@ -75,6 +75,82 @@ const loadProductBySlug = async (slug: string) => {
   return productResponse;
 };
 
+/**
+ * Loads product service configuration from the Wix Products API for SSR initialization.
+ * This function is designed to be used during Server-Side Rendering (SSR) to preload
+ * a specific product by slug that will be used to configure the ProductService.
+ *
+ * @param productSlug The product slug to load
+ * @returns Promise that resolves to ProductServiceConfigResult (success with config or notFound)
+ *
+ * @example
+ * ```astro
+ * ---
+ * // Astro page example - pages/product/[slug].astro
+ * import { loadProductServiceConfig } from '@wix/stores/services';
+ * import { Product } from '@wix/stores/components';
+ *
+ * // Get product slug from URL params
+ * const { slug } = Astro.params;
+ *
+ * // Load product data during SSR
+ * const productResult = await loadProductServiceConfig(slug);
+ *
+ * // Handle not found case
+ * if (productResult.type === 'notFound') {
+ *   return Astro.redirect('/404');
+ * }
+ * ---
+ *
+ * <Product.Root productConfig={productResult.config}>
+ *   <Product.Name>
+ *     {({ name }) => <h1>{name}</h1>}
+ *   </Product.Name>
+ * </Product.Root>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Next.js page example - pages/product/[slug].tsx
+ * import { GetServerSideProps } from 'next';
+ * import { loadProductServiceConfig } from '@wix/stores/services';
+ * import { Product } from '@wix/stores/components';
+ *
+ * interface ProductPageProps {
+ *   productConfig: Awaited<ReturnType<typeof loadProductServiceConfig>>['config'];
+ * }
+ *
+ * export const getServerSideProps: GetServerSideProps<ProductPageProps> = async ({ params }) => {
+ *   const slug = params?.slug as string;
+ *
+ *   // Load product data during SSR
+ *   const productResult = await loadProductServiceConfig(slug);
+ *
+ *   // Handle not found case
+ *   if (productResult.type === 'notFound') {
+ *     return {
+ *       notFound: true,
+ *     };
+ *   }
+ *
+ *   return {
+ *     props: {
+ *       productConfig: productResult.config,
+ *     },
+ *   };
+ * };
+ *
+ * export default function ProductPage({ productConfig }: ProductPageProps) {
+ *   return (
+ *     <Product.Root productConfig={productConfig}>
+ *       <Product.Name>
+ *         {({ name }) => <h1>{name}</h1>}
+ *       </Product.Name>
+ *     </Product.Root>
+ *   );
+ * }
+ * ```
+ */
 export async function loadProductServiceConfig(
   productSlug: string,
 ): Promise<ProductServiceConfigResult> {

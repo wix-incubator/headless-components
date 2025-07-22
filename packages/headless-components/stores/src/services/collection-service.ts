@@ -583,6 +583,95 @@ function parseOptionFilters(
   });
 }
 
+/**
+ * Loads collection service configuration from the Wix Products API for SSR initialization.
+ * This function is designed to be used during Server-Side Rendering (SSR) to preload
+ * initial products data, categories, filters, and sorting that will be used to configure the CollectionService.
+ * Fetches products for a specific category, parses URL parameters for filters and sorting, and returns initial state.
+ *
+ * @param categoryId Optional category ID to filter products by
+ * @param searchParams Optional URLSearchParams for initial filters and sorting
+ * @param preloadedCategories Optional pre-loaded categories to avoid redundant API calls
+ * @returns Promise that resolves to CollectionServiceConfig with initial data
+ *
+ * @example
+ * ```astro
+ * ---
+ * // Astro page example - pages/products/[categorySlug].astro
+ * import { loadCollectionServiceConfig } from '@wix/stores/services';
+ * import { Collection } from '@wix/stores/components';
+ *
+ * // Get category from URL params
+ * const { categorySlug } = Astro.params;
+ * const categoryId = categorySlug === 'all' ? undefined : categorySlug;
+ *
+ * // Load collection data during SSR
+ * const collectionConfig = await loadCollectionServiceConfig(
+ *   categoryId,
+ *   Astro.url.searchParams
+ * );
+ * ---
+ *
+ * <Collection.Root collectionConfig={collectionConfig}>
+ *   <Collection.Grid>
+ *     {({ products, isLoading }) => (
+ *       <div>
+ *         {isLoading ? 'Loading...' : `${products.length} products`}
+ *       </div>
+ *     )}
+ *   </Collection.Grid>
+ * </Collection.Root>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Next.js page example - pages/products/[categorySlug].tsx
+ * import { GetServerSideProps } from 'next';
+ * import { loadCollectionServiceConfig } from '@wix/stores/services';
+ * import { Collection } from '@wix/stores/components';
+ *
+ * interface ProductsPageProps {
+ *   collectionConfig: Awaited<ReturnType<typeof loadCollectionServiceConfig>>;
+ * }
+ *
+ * export const getServerSideProps: GetServerSideProps<ProductsPageProps> = async ({ params, query }) => {
+ *   const categorySlug = params?.categorySlug as string;
+ *   const categoryId = categorySlug === 'all' ? undefined : categorySlug;
+ *
+ *   // Convert Next.js query to URLSearchParams
+ *   const searchParams = new URLSearchParams();
+ *   Object.entries(query).forEach(([key, value]) => {
+ *     if (typeof value === 'string') searchParams.set(key, value);
+ *   });
+ *
+ *   // Load collection data during SSR
+ *   const collectionConfig = await loadCollectionServiceConfig(
+ *     categoryId,
+ *     searchParams
+ *   );
+ *
+ *   return {
+ *     props: {
+ *       collectionConfig,
+ *     },
+ *   };
+ * };
+ *
+ * export default function ProductsPage({ collectionConfig }: ProductsPageProps) {
+ *   return (
+ *     <Collection.Root collectionConfig={collectionConfig}>
+ *       <Collection.Grid>
+ *         {({ products, isLoading }) => (
+ *           <div>
+ *             {isLoading ? 'Loading...' : `${products.length} products`}
+ *           </div>
+ *         )}
+ *       </Collection.Grid>
+ *     </Collection.Root>
+ *   );
+ * }
+ * ```
+ */
 export async function loadCollectionServiceConfig(
   categoryId?: string,
   searchParams?: URLSearchParams,

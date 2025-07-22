@@ -77,6 +77,93 @@ export const CategoryService =
     },
   );
 
+/**
+ * Loads categories configuration from the Wix Categories API for SSR initialization.
+ * This function is designed to be used during Server-Side Rendering (SSR) to preload
+ * initial categories data that will be passed to the Category.Root component.
+ * Fetches all visible categories and sorts them with "all-products" category first.
+ *
+ * @returns Promise that resolves to an object containing categories array
+ *
+ * @example
+ * ```astro
+ * ---
+ * // Astro page example - pages/categories.astro
+ * import { loadCategoriesConfig } from '@wix/stores/services';
+ * import { Category } from '@wix/stores/components';
+ *
+ * // Load categories data during SSR
+ * const categoryConfig = await loadCategoriesConfig();
+ * ---
+ *
+ * <Category.Root categoryConfig={categoryConfig}>
+ *   <Category.List>
+ *     {({ categories, selectedCategory, setSelectedCategory }) => (
+ *       <nav className="category-nav">
+ *         <h2>Shop by Category</h2>
+ *         {categories.map(category => (
+ *           <button
+ *             key={category.id}
+ *             onClick={() => setSelectedCategory(category.id)}
+ *             className={selectedCategory === category.id ? 'active' : ''}
+ *           >
+ *             {category.name}
+ *           </button>
+ *         ))}
+ *       </nav>
+ *     )}
+ *   </Category.List>
+ * </Category.Root>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Next.js page example - pages/categories.tsx
+ * import { GetServerSideProps } from 'next';
+ * import { loadCategoriesConfig } from '@wix/stores/services';
+ * import { Category } from '@wix/stores/components';
+ *
+ * interface CategoryPageProps {
+ *   categoryConfig: Awaited<ReturnType<typeof loadCategoriesConfig>>;
+ * }
+ *
+ * export const getServerSideProps: GetServerSideProps<CategoryPageProps> = async () => {
+ *   // Load categories data during SSR
+ *   const categoryConfig = await loadCategoriesConfig();
+ *
+ *   return {
+ *     props: {
+ *       categoryConfig,
+ *     },
+ *   };
+ * };
+ *
+ * export default function CategoryPage({ categoryConfig }: CategoryPageProps) {
+ *   return (
+ *     <div>
+ *       <h1>Product Categories</h1>
+ *       <Category.Root categoryConfig={categoryConfig}>
+ *         <Category.List>
+ *           {({ categories, selectedCategory, setSelectedCategory }) => (
+ *             <nav className="category-nav">
+ *               {categories.map(category => (
+ *                 <button
+ *                   key={category.id}
+ *                   onClick={() => setSelectedCategory(category.id)}
+ *                   className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
+ *                 >
+ *                   {category.name}
+ *                 </button>
+ *               ))}
+ *             </nav>
+ *           )}
+ *         </Category.List>
+ *       </Category.Root>
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
 export async function loadCategoriesConfig() {
   try {
     const categoriesResponse = await categories
