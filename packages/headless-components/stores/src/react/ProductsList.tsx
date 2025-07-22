@@ -22,6 +22,7 @@ export interface RootProps {
  * Root component that provides the ProductsList service context to its children.
  * This component sets up the necessary services for managing products list state.
  *
+ * @order 1
  * @component
  * @example
  * ```tsx
