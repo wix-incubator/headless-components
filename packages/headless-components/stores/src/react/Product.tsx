@@ -23,6 +23,20 @@ export interface ProductNameRenderProps {
  * Headless component for product name display
  *
  * @component
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductHeader() {
+ *   return (
+ *     <Product.Name>
+ *       {({ name }) => (
+ *         <h1>{name}</h1>
+ *       )}
+ *     </Product.Name>
+ *   );
+ * }
+ * ```
  */
 export const Name = (props: ProductNameProps) => {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
@@ -65,24 +79,35 @@ export interface ProductDescriptionRenderProps {
   plainDescription: NonNullable<V3Product["plainDescription"]>;
 }
 /**
-* Headless component for product description display
-*
-* @example
-* <Product.Description>
-*   {({ plainDescription }) => (
-*     <>
-*       {plainDescription && (
-*         <p
-*           dangerouslySetInnerHTML={{
-*             __html: plainDescription,
-*           }}
-*         />
-*       )}
-*     </>
-*   )}
-* </Product.Description>
-* @component
-*/
+ * Headless component for product description display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductDescription() {
+ *   return (
+ *     <Product.Description>
+ *       {({ plainDescription, description }) => (
+ *         <div>
+ *           {plainDescription && (
+ *             <div
+ *               dangerouslySetInnerHTML={{
+ *                 __html: plainDescription,
+ *               }}
+ *             />
+ *           )}
+ *           {description && (
+ *             <div>Rich content description available</div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </Product.Description>
+ *   );
+ * }
+ * ```
+ */
 export const Description = (props: ProductDescriptionProps) => {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
     typeof ProductServiceDefinition

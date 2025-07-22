@@ -36,6 +36,37 @@ export interface GridRenderProps {
  * Headless component for product grid
  *
  * @component
+ * @example
+ * ```tsx
+ * import { Collection } from '@wix/stores/components';
+ *
+ * function ProductGrid() {
+ *   return (
+ *     <Collection.Grid>
+ *       {({ products, isLoading, error, isEmpty, totalProducts, hasProducts }) => (
+ *         <div>
+ *           {isLoading && <div>Loading products...</div>}
+ *           {error && <div>Error: {error}</div>}
+ *           {isEmpty && <div>No products found</div>}
+ *           {hasProducts && (
+ *             <div>
+ *               <p>Showing {products.length} of {totalProducts} products</p>
+ *               <div className="product-grid">
+ *                 {products.map(product => (
+ *                   <div key={product.id} className="product-card">
+ *                     <h3>{product.name}</h3>
+ *                     <p>{product.price?.price} {product.price?.currency}</p>
+ *                   </div>
+ *                 ))}
+ *               </div>
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </Collection.Grid>
+ *   );
+ * }
+ * ```
  */
 export const Grid = (props: GridProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -120,6 +151,32 @@ export interface ItemRenderProps {
  * Headless component for individual product item
  *
  * @component
+ * @example
+ * ```tsx
+ * import { Collection } from '@wix/stores/components';
+ *
+ * function ProductCard({ product }) {
+ *   return (
+ *     <Collection.Item product={product}>
+ *       {({ id, title, slug, image, price, compareAtPrice, description, available }) => (
+ *         <div className={`product-card ${!available ? 'unavailable' : ''}`}>
+ *           {image && <img src={image} alt={title} />}
+ *           <h3>{title}</h3>
+ *           <p>{description}</p>
+ *           <div className="pricing">
+ *             <span className="price">{price}</span>
+ *             {compareAtPrice && (
+ *               <span className="compare-price"><s>{compareAtPrice}</s></span>
+ *             )}
+ *           </div>
+ *           {!available && <div className="badge">Out of Stock</div>}
+ *           <a href={`/products/${slug}`}>View Product</a>
+ *         </div>
+ *       )}
+ *     </Collection.Item>
+ *   );
+ * }
+ * ```
  */
 export const Item = (props: ItemProps) => {
   const { product } = props;
@@ -186,6 +243,37 @@ export interface LoadMoreRenderProps {
  * Note: V3 API uses simplified loading without traditional pagination
  *
  * @component
+ * @example
+ * ```tsx
+ * import { Collection } from '@wix/stores/components';
+ *
+ * function LoadMoreButton() {
+ *   return (
+ *     <Collection.LoadMore>
+ *       {({ loadMore, refresh, isLoading, hasProducts, totalProducts, hasMoreProducts }) => (
+ *         <div className="load-more-section">
+ *           {hasProducts && (
+ *             <div>
+ *               <p>Loaded {totalProducts} products</p>
+ *               <div className="actions">
+ *                 {hasMoreProducts && (
+ *                   <button
+ *                     onClick={loadMore}
+ *                     disabled={isLoading}
+ *                   >
+ *                     {isLoading ? 'Loading...' : 'Load More Products'}
+ *                   </button>
+ *                 )}
+ *                 <button onClick={refresh}>Refresh Collection</button>
+ *               </div>
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </Collection.LoadMore>
+ *   );
+ * }
+ * ```
  */
 export const LoadMore = (props: LoadMoreProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -256,6 +344,28 @@ export interface HeaderRenderProps {
  * Headless component for collection header with product count
  *
  * @component
+ * @example
+ * ```tsx
+ * import { Collection } from '@wix/stores/components';
+ *
+ * function CollectionHeader() {
+ *   return (
+ *     <Collection.Header>
+ *       {({ totalProducts, isLoading, hasProducts }) => (
+ *         <div className="collection-header">
+ *           {isLoading && <div>Loading collection...</div>}
+ *           {hasProducts && !isLoading && (
+ *             <h2>Products ({totalProducts} items)</h2>
+ *           )}
+ *           {!hasProducts && !isLoading && (
+ *             <h2>No products found</h2>
+ *           )}
+ *         </div>
+ *       )}
+ *     </Collection.Header>
+ *   );
+ * }
+ * ```
  */
 export const Header = (props: HeaderProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<
@@ -319,6 +429,41 @@ export interface ActionsRenderProps {
  * Replaces traditional pagination for V3 API
  *
  * @component
+ * @example
+ * ```tsx
+ * import { Collection } from '@wix/stores/components';
+ *
+ * function CollectionActions() {
+ *   return (
+ *     <Collection.Actions>
+ *       {({ refresh, loadMore, isLoading, error }) => (
+ *         <div className="collection-actions">
+ *           {error && (
+ *             <div className="error">
+ *               Error: {error}
+ *               <button onClick={refresh}>Retry</button>
+ *             </div>
+ *           )}
+ *           <div className="action-buttons">
+ *             <button
+ *               onClick={refresh}
+ *               disabled={isLoading}
+ *             >
+ *               {isLoading ? 'Refreshing...' : 'Refresh'}
+ *             </button>
+ *             <button
+ *               onClick={loadMore}
+ *               disabled={isLoading}
+ *             >
+ *               Load More
+ *             </button>
+ *           </div>
+ *         </div>
+ *       )}
+ *     </Collection.Actions>
+ *   );
+ * }
+ * ```
  */
 export const Actions = (props: ActionsProps) => {
   const service = useService(CollectionServiceDefinition) as ServiceAPI<

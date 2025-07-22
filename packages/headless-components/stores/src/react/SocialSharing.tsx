@@ -49,6 +49,43 @@ export interface RootRenderProps {
  * Headless component for social sharing root
  *
  * @component
+ * @example
+ * ```tsx
+ * import { SocialSharing } from '@wix/stores/components';
+ *
+ * function ShareProduct() {
+ *   const productUrl = 'https://example.com/product/123';
+ *   const productTitle = 'Amazing Product';
+ *
+ *   return (
+ *     <SocialSharing.Root>
+ *       {({ platforms, shareCount, shareFacebook, shareTwitter, copyLink, shareNative }) => (
+ *         <div>
+ *           <p>Share this product ({shareCount} shares)</p>
+ *           <div className="share-buttons">
+ *             <button onClick={() => shareFacebook(productUrl, productTitle)}>
+ *               Share on Facebook
+ *             </button>
+ *             <button onClick={() => shareTwitter(productUrl, `Check out ${productTitle}!`)}>
+ *               Share on Twitter
+ *             </button>
+ *             <button onClick={() => copyLink(productUrl)}>
+ *               Copy Link
+ *             </button>
+ *             <button onClick={() => shareNative({
+ *               title: productTitle,
+ *               text: 'Check this out!',
+ *               url: productUrl
+ *             })}>
+ *               Share
+ *             </button>
+ *           </div>
+ *         </div>
+ *       )}
+ *     </SocialSharing.Root>
+ *   );
+ * }
+ * ```
  */
 export const Root = (props: RootProps) => {
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
@@ -116,6 +153,26 @@ export interface PlatformRenderProps {
  * Headless component for individual social platform
  *
  * @component
+ * @example
+ * ```tsx
+ * import { SocialSharing } from '@wix/stores/components';
+ *
+ * function SocialButton({ platform, onClick }) {
+ *   return (
+ *     <SocialSharing.Platform platform={platform} onClick={onClick}>
+ *       {({ platform, onSelect }) => (
+ *         <button
+ *           onClick={onSelect}
+ *           className={`social-btn social-btn-${platform.name.toLowerCase()}`}
+ *         >
+ *           <span className="icon">{platform.icon}</span>
+ *           Share on {platform.name}
+ *         </button>
+ *       )}
+ *     </SocialSharing.Platform>
+ *   );
+ * }
+ * ```
  */
 export const Platform = (props: PlatformProps) => {
   const { platform, onClick } = props;
@@ -168,6 +225,31 @@ export interface PlatformsRenderProps {
  * Headless component for social sharing platforms with logic
  *
  * @component
+ * @example
+ * ```tsx
+ * import { SocialSharing } from '@wix/stores/components';
+ *
+ * function SocialShareButtons() {
+ *   return (
+ *     <SocialSharing.Platforms
+ *       url="https://example.com/product/123"
+ *       title="Amazing Product"
+ *       description="Check out this amazing product!"
+ *       hashtags={['product', 'amazing']}
+ *     >
+ *       {({ platforms, shareFacebook, shareTwitter, shareLinkedIn, copyLink, shareNative }) => (
+ *         <div className="social-platforms">
+ *           <button onClick={shareFacebook}>Share on Facebook</button>
+ *           <button onClick={shareTwitter}>Share on Twitter</button>
+ *           <button onClick={shareLinkedIn}>Share on LinkedIn</button>
+ *           <button onClick={() => copyLink()}>Copy Link</button>
+ *           <button onClick={() => shareNative()}>Share</button>
+ *         </div>
+ *       )}
+ *     </SocialSharing.Platforms>
+ *   );
+ * }
+ * ```
  */
 export const Platforms = (props: PlatformsProps) => {
   const { url, title, description = "", hashtags = [] } = props;

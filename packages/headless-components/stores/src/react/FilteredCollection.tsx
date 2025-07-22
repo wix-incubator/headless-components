@@ -23,6 +23,26 @@ export interface FiltersLoadingProps {
  * Headless component for displaying a loading state for filters
  *
  * @component
+ * @example
+ * ```tsx
+ * import { FilteredCollection } from '@wix/stores/components';
+ *
+ * function FiltersLoadingIndicator() {
+ *   return (
+ *     <FilteredCollection.FiltersLoading>
+ *       {({ isFullyLoaded }) => (
+ *         <div>
+ *           {!isFullyLoaded && (
+ *             <div className="loading-pulse">
+ *               Loading filters...
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </FilteredCollection.FiltersLoading>
+ *   );
+ * }
+ * ```
  */
 export const FiltersLoading: React.FC<FiltersLoadingProps> = ({ children }) => {
   const filter = useService(FilterServiceDefinition);
@@ -48,6 +68,35 @@ export interface FilteredGridProps {
  * Headless component for displaying a grid of filtered products
  *
  * @component
+ * @example
+ * ```tsx
+ * import { FilteredCollection } from '@wix/stores/components';
+ *
+ * function FilteredProductsGrid() {
+ *   return (
+ *     <FilteredCollection.Grid>
+ *       {({ products, isLoading, error, isEmpty, totalProducts, hasMoreProducts }) => (
+ *         <div>
+ *           {isLoading && <div>Loading filtered products...</div>}
+ *           {error && <div>Error: {error}</div>}
+ *           {isEmpty && <div>No products match your filters</div>}
+ *           {products.length > 0 && (
+ *             <div>
+ *               <p>Showing {products.length} of {totalProducts} products</p>
+ *               <div className="filtered-grid">
+ *                 {products.map(product => (
+ *                   <div key={product.id}>{product.name}</div>
+ *                 ))}
+ *               </div>
+ *               {hasMoreProducts && <button>Load More</button>}
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </FilteredCollection.Grid>
+ *   );
+ * }
+ * ```
  */
 export const Grid: React.FC<FilteredGridProps> = ({ children }) => {
   const collection = useService(CollectionServiceDefinition);
@@ -92,6 +141,30 @@ export interface FilteredItemProps {
  * Headless component for displaying a filtered product item
  *
  * @component
+ * @example
+ * ```tsx
+ * import { FilteredCollection } from '@wix/stores/components';
+ *
+ * function FilteredProductItem({ product }) {
+ *   return (
+ *     <FilteredCollection.Item product={product}>
+ *       {({ title, image, price, compareAtPrice, available, slug, description }) => (
+ *         <div className={`product-item ${!available ? 'unavailable' : ''}`}>
+ *           {image && <img src={image} alt={title} />}
+ *           <h3>{title}</h3>
+ *           {description && <p>{description}</p>}
+ *           <div className="price">
+ *             <span className="current">{price}</span>
+ *             {compareAtPrice && <span className="compare"><s>{compareAtPrice}</s></span>}
+ *           </div>
+ *           {!available && <div className="out-of-stock">Out of Stock</div>}
+ *           <a href={`/product/${slug}`}>View Details</a>
+ *         </div>
+ *       )}
+ *     </FilteredCollection.Item>
+ *   );
+ * }
+ * ```
  */
 export const Item: React.FC<FilteredItemProps> = ({ product, children }) => {
   // Safe conversion of product data with type safety guards
@@ -153,6 +226,35 @@ export interface FilteredLoadMoreProps {
  * Headless component for load more filtered products functionality
  *
  * @component
+ * @example
+ * ```tsx
+ * import { FilteredCollection } from '@wix/stores/components';
+ *
+ * function LoadMoreProducts() {
+ *   return (
+ *     <FilteredCollection.LoadMore>
+ *       {({ loadMore, refresh, isLoading, hasProducts, totalProducts, hasMoreProducts }) => (
+ *         <div>
+ *           {hasProducts && (
+ *             <div>
+ *               <p>Showing products ({totalProducts} total)</p>
+ *               {hasMoreProducts && (
+ *                 <button
+ *                   onClick={loadMore}
+ *                   disabled={isLoading}
+ *                 >
+ *                   {isLoading ? 'Loading...' : 'Load More'}
+ *                 </button>
+ *               )}
+ *               <button onClick={refresh}>Refresh</button>
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </FilteredCollection.LoadMore>
+ *   );
+ * }
+ * ```
  */
 export const LoadMore: React.FC<FilteredLoadMoreProps> = ({ children }) => {
   const collection = useService(CollectionServiceDefinition);
@@ -194,6 +296,38 @@ export interface FilteredFiltersProps {
  * Headless component for product filters with available options
  *
  * @component
+ * @example
+ * ```tsx
+ * import { FilteredCollection } from '@wix/stores/components';
+ *
+ * function ProductFilters() {
+ *   return (
+ *     <FilteredCollection.Filters>
+ *       {({ applyFilters, clearFilters, currentFilters, availableOptions, isFiltered }) => (
+ *         <div className="filters">
+ *           <h3>Filters</h3>
+ *           <div className="price-filter">
+ *             <label>Price Range</label>
+ *             <input
+ *               type="range"
+ *               min={availableOptions.priceRange.min}
+ *               max={availableOptions.priceRange.max}
+ *               value={currentFilters.priceRange.min}
+ *               onChange={(e) => applyFilters({
+ *                 ...currentFilters,
+ *                 priceRange: { ...currentFilters.priceRange, min: Number(e.target.value) }
+ *               })}
+ *             />
+ *           </div>
+ *           {isFiltered && (
+ *             <button onClick={clearFilters}>Clear All Filters</button>
+ *           )}
+ *         </div>
+ *       )}
+ *     </FilteredCollection.Filters>
+ *   );
+ * }
+ * ```
  */
 export const Filters: React.FC<FilteredFiltersProps> = ({ children }) => {
   const collection = useService(CollectionServiceDefinition);

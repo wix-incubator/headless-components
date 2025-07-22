@@ -23,6 +23,33 @@ export interface RootProps {
  * This component sets up the necessary services for managing products list state.
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * function ProductsListPage() {
+ *   return (
+ *     <ProductsList.Root
+ *       productsListConfig={{
+ *         collectionId: 'my-collection-id',
+ *         filters: { price: { min: 10, max: 100 } }
+ *       }}
+ *     >
+ *       <ProductsList.Grid>
+ *         {({ products, isLoading, error }) => (
+ *           <div>
+ *             {isLoading && <div>Loading products...</div>}
+ *             {error && <div>Error: {error}</div>}
+ *             {products.map(product => (
+ *               <div key={product.id}>{product.name}</div>
+ *             ))}
+ *           </div>
+ *         )}
+ *       </ProductsList.Grid>
+ *     </ProductsList.Root>
+ *   );
+ * }
+ * ```
  */
 export function Root(props: RootProps): React.ReactNode {
   return (
@@ -50,6 +77,24 @@ export interface EmptyStateRenderProps {}
  * Only displays its children when there are no products, no loading state, and no errors.
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * function EmptyProductsMessage() {
+ *   return (
+ *     <ProductsList.EmptyState>
+ *       {() => (
+ *         <div className="empty-state">
+ *           <h3>No products found</h3>
+ *           <p>Try adjusting your search or filter criteria</p>
+ *           <button>Clear Filters</button>
+ *         </div>
+ *       )}
+ *     </ProductsList.EmptyState>
+ *   );
+ * }
+ * ```
  */
 export function EmptyState(props: EmptyStateProps): React.ReactNode {
   const { isLoading, error, products } = useService(
@@ -80,6 +125,23 @@ export interface LoadingRenderProps {}
  * Only displays its children when the products list is currently loading.
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * function ProductsLoading() {
+ *   return (
+ *     <ProductsList.Loading>
+ *       {() => (
+ *         <div className="loading-spinner">
+ *           <div>Loading products...</div>
+ *           <div className="spinner"></div>
+ *         </div>
+ *       )}
+ *     </ProductsList.Loading>
+ *   );
+ * }
+ * ```
  */
 export function Loading(props: LoadingProps): React.ReactNode {
   const { isLoading } = useService(ProductsListServiceDefinition);
@@ -107,6 +169,26 @@ export interface ErrorProps {
  * Only displays its children when an error has occurred.
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * function ProductsError() {
+ *   return (
+ *     <ProductsList.Error>
+ *       {({ error }) => (
+ *         <div className="error-state">
+ *           <h3>Error loading products</h3>
+ *           <p>{error}</p>
+ *           <button onClick={() => window.location.reload()}>
+ *             Try Again
+ *           </button>
+ *         </div>
+ *       )}
+ *     </ProductsList.Error>
+ *   );
+ * }
+ * ```
  */
 export function Error(props: ErrorProps): React.ReactNode {
   const { error } = useService(ProductsListServiceDefinition);
@@ -136,6 +218,25 @@ export interface ItemContentProps {
  * Only renders when products are successfully loaded (not loading, no error, and has products).
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * function ProductsGrid() {
+ *   return (
+ *     <ProductsList.ItemContent>
+ *       {({ product }) => (
+ *         <div className="product-card">
+ *           <img src={product.media?.main?.image} alt={product.name} />
+ *           <h3>{product.name}</h3>
+ *           <p>{product.actualPriceRange?.minValue?.formattedAmount}</p>
+ *           <button>View Details</button>
+ *         </div>
+ *       )}
+ *     </ProductsList.ItemContent>
+ *   );
+ * }
+ * ```
  */
 export function ItemContent(props: ItemContentProps): React.ReactNode {
   const { products, isLoading, error } = useService(

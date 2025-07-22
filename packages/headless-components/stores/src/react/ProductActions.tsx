@@ -44,6 +44,36 @@ export interface ActionsRenderProps {
  * Headless component for product actions (add to cart, buy now)
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductActions } from '@wix/stores/components';
+ *
+ * function AddToCartButton() {
+ *   return (
+ *     <ProductActions.Actions quantity={1}>
+ *       {({ onAddToCart, onBuyNow, canAddToCart, isLoading, price, inStock, error }) => (
+ *         <div>
+ *           <div>Price: {price}</div>
+ *           {error && <div className="error">{error}</div>}
+ *           {!inStock && <div>Out of stock</div>}
+ *           <button
+ *             onClick={onAddToCart}
+ *             disabled={!canAddToCart || isLoading}
+ *           >
+ *             {isLoading ? 'Adding...' : 'Add to Cart'}
+ *           </button>
+ *           <button
+ *             onClick={onBuyNow}
+ *             disabled={!canAddToCart || isLoading}
+ *           >
+ *             Buy Now
+ *           </button>
+ *         </div>
+ *       )}
+ *     </ProductActions.Actions>
+ *   );
+ * }
+ * ```
  */
 export const Actions = (props: ActionsProps) => {
   const variantService = useService(

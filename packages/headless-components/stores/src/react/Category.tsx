@@ -16,6 +16,36 @@ export interface CategoryListProps {
  * Headless component for displaying a list of categories
  *
  * @component
+ * @example
+ * ```tsx
+ * import { Category } from '@wix/stores/components';
+ *
+ * function CategoryNavigation() {
+ *   return (
+ *     <Category.List>
+ *       {({ categories, selectedCategory, setSelectedCategory }) => (
+ *         <nav>
+ *           <button
+ *             onClick={() => setSelectedCategory(null)}
+ *             className={selectedCategory === null ? 'active' : ''}
+ *           >
+ *             All Categories
+ *           </button>
+ *           {categories.map(category => (
+ *             <button
+ *               key={category.id}
+ *               onClick={() => setSelectedCategory(category.id)}
+ *               className={selectedCategory === category.id ? 'active' : ''}
+ *             >
+ *               {category.name}
+ *             </button>
+ *           ))}
+ *         </nav>
+ *       )}
+ *     </Category.List>
+ *   );
+ * }
+ * ```
  */
 export const List: React.FC<CategoryListProps> = ({ children }) => {
   const service = useService(CategoryServiceDefinition);

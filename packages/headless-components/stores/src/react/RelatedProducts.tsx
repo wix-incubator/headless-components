@@ -36,6 +36,35 @@ export interface ListRenderProps {
  * Headless component for displaying related products list
  *
  * @component
+ * @example
+ * ```tsx
+ * import { RelatedProducts } from '@wix/stores/components';
+ *
+ * function RecommendedProducts() {
+ *   return (
+ *     <RelatedProducts.List>
+ *       {({ products, isLoading, error, hasProducts, refresh }) => (
+ *         <div>
+ *           <h3>You might also like</h3>
+ *           {isLoading && <div>Loading related products...</div>}
+ *           {error && <div>Error: {error}</div>}
+ *           {hasProducts && (
+ *             <div className="products-grid">
+ *               {products.map(product => (
+ *                 <div key={product.id}>
+ *                   <h4>{product.name}</h4>
+ *                   <p>{product.price?.price} {product.price?.currency}</p>
+ *                 </div>
+ *               ))}
+ *             </div>
+ *           )}
+ *           <button onClick={refresh}>Refresh Recommendations</button>
+ *         </div>
+ *       )}
+ *     </RelatedProducts.List>
+ *   );
+ * }
+ * ```
  */
 export const List = (props: ListProps) => {
   const service = useService(RelatedProductsServiceDefinition) as ServiceAPI<
@@ -108,6 +137,32 @@ export interface ItemRenderProps {
  * Headless component for individual related product item
  *
  * @component
+ * @example
+ * ```tsx
+ * import { RelatedProducts } from '@wix/stores/components';
+ *
+ * function RelatedProductCard({ product }) {
+ *   return (
+ *     <RelatedProducts.Item product={product}>
+ *       {({ title, image, price, available, description, onQuickAdd }) => (
+ *         <div className={`related-product ${!available ? 'unavailable' : ''}`}>
+ *           {image && <img src={image} alt={title} />}
+ *           <h4>{title}</h4>
+ *           {description && <p>{description}</p>}
+ *           <div className="price">{price}</div>
+ *           {!available && <div className="badge">Out of Stock</div>}
+ *           <div className="actions">
+ *             <button onClick={onQuickAdd} disabled={!available}>
+ *               Quick Add
+ *             </button>
+ *             <a href={`/product/${product.slug}`}>View Details</a>
+ *           </div>
+ *         </div>
+ *       )}
+ *     </RelatedProducts.Item>
+ *   );
+ * }
+ * ```
  */
 export const Item = (props: ItemProps) => {
   const { product } = props;

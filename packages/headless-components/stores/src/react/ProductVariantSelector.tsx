@@ -31,6 +31,33 @@ export interface OptionsRenderProps {
  * Headless component for all product options
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductVariantSelector } from '@wix/stores/components';
+ *
+ * function VariantPicker() {
+ *   return (
+ *     <ProductVariantSelector.Options>
+ *       {({ options, hasOptions, selectedChoices }) => (
+ *         <div>
+ *           {hasOptions && options.map(option => (
+ *             <div key={option.id}>
+ *               <label>{option.name}</label>
+ *               <select value={selectedChoices[option.id] || ''}>
+ *                 {option.choices?.map(choice => (
+ *                   <option key={choice.id} value={choice.id}>
+ *                     {choice.description}
+ *                   </option>
+ *                 ))}
+ *               </select>
+ *             </div>
+ *           ))}
+ *         </div>
+ *       )}
+ *     </ProductVariantSelector.Options>
+ *   );
+ * }
+ * ```
  */
 export const Options = (props: OptionsProps) => {
   const variantService = useService(
@@ -77,6 +104,32 @@ export interface OptionRenderProps {
  * Headless component for choices within a specific product option
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductVariantSelector } from '@wix/stores/components';
+ *
+ * function OptionSelector({ option }) {
+ *   return (
+ *     <ProductVariantSelector.Option option={option}>
+ *       {({ name, choices, selectedValue, hasChoices }) => (
+ *         <div>
+ *           <label>{name}</label>
+ *           {hasChoices && (
+ *             <select value={selectedValue || ''}>
+ *               <option value="">Select {name}</option>
+ *               {choices.map(choice => (
+ *                 <option key={choice.id} value={choice.name}>
+ *                   {choice.description}
+ *                 </option>
+ *               ))}
+ *             </select>
+ *           )}
+ *         </div>
+ *       )}
+ *     </ProductVariantSelector.Option>
+ *   );
+ * }
+ * ```
  */
 export const Option = (props: OptionProps) => {
   const variantService = useService(
@@ -139,6 +192,27 @@ export interface ChoiceRenderProps {
  * Headless component for individual choice selection
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductVariantSelector } from '@wix/stores/components';
+ *
+ * function ChoiceButton({ option, choice }) {
+ *   return (
+ *     <ProductVariantSelector.Choice option={option} choice={choice}>
+ *       {({ value, isSelected, isVisible, isInStock, onSelect }) => (
+ *         <button
+ *           onClick={onSelect}
+ *           disabled={!isVisible || !isInStock}
+ *           className={`choice-btn ${isSelected ? 'selected' : ''} ${!isInStock ? 'out-of-stock' : ''}`}
+ *         >
+ *           {value}
+ *           {!isInStock && ' (Out of Stock)'}
+ *         </button>
+ *       )}
+ *     </ProductVariantSelector.Choice>
+ *   );
+ * }
+ * ```
  */
 export const Choice = (props: ChoiceProps) => {
   const variantService = useService(
@@ -224,6 +298,32 @@ export interface StockRenderProps {
  * Headless component for product stock status
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductVariantSelector } from '@wix/stores/components';
+ *
+ * function StockIndicator() {
+ *   return (
+ *     <ProductVariantSelector.Stock>
+ *       {({ inStock, isPreOrderEnabled, selectedQuantity, availableQuantity, incrementQuantity, decrementQuantity }) => (
+ *         <div>
+ *           <div className={`stock-status ${inStock ? 'in-stock' : 'out-of-stock'}`}>
+ *             {inStock ? 'In Stock' : isPreOrderEnabled ? 'Pre-order Available' : 'Out of Stock'}
+ *           </div>
+ *           {availableQuantity && (
+ *             <div>Only {availableQuantity} left!</div>
+ *           )}
+ *           <div className="quantity-selector">
+ *             <button onClick={decrementQuantity}>-</button>
+ *             <span>{selectedQuantity}</span>
+ *             <button onClick={incrementQuantity}>+</button>
+ *           </div>
+ *         </div>
+ *       )}
+ *     </ProductVariantSelector.Stock>
+ *   );
+ * }
+ * ```
  */
 export const Stock = (props: StockProps) => {
   const variantService = useService(
@@ -285,6 +385,24 @@ export interface ResetRenderProps {
  * Headless component for resetting variant selections
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductVariantSelector } from '@wix/stores/components';
+ *
+ * function ResetButton() {
+ *   return (
+ *     <ProductVariantSelector.Reset>
+ *       {({ onReset, hasSelections }) => (
+ *         hasSelections && (
+ *           <button onClick={onReset} className="reset-button">
+ *             Clear All Selections
+ *           </button>
+ *         )
+ *       )}
+ *     </ProductVariantSelector.Reset>
+ *   );
+ * }
+ * ```
  */
 export const Reset = (props: ResetProps) => {
   const variantService = useService(

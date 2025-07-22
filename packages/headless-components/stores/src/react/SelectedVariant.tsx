@@ -24,6 +24,23 @@ export interface ProductDetailsRenderProps {
  * Headless component for selected variant details display
  *
  * @component
+ * @example
+ * ```tsx
+ * import { SelectedVariant } from '@wix/stores/components';
+ *
+ * function VariantDetails() {
+ *   return (
+ *     <SelectedVariant.Details>
+ *       {({ sku, weight }) => (
+ *         <div>
+ *           {sku && <div>SKU: {sku}</div>}
+ *           {weight && <div>Weight: {weight}</div>}
+ *         </div>
+ *       )}
+ *     </SelectedVariant.Details>
+ *   );
+ * }
+ * ```
  */
 export const Details = (props: ProductDetailsProps) => {
   const selectedVariantService = useService(
@@ -66,6 +83,28 @@ export interface PriceRenderProps {
  * Headless component for product price display
  *
  * @component
+ * @example
+ * ```tsx
+ * import { SelectedVariant } from '@wix/stores/components';
+ *
+ * function ProductPrice() {
+ *   return (
+ *     <SelectedVariant.Price>
+ *       {({ price, compareAtPrice, currency }) => (
+ *         <div className="price-display">
+ *           <span className="current-price">{price}</span>
+ *           {compareAtPrice && (
+ *             <span className="compare-price">
+ *               <s>{compareAtPrice}</s>
+ *             </span>
+ *           )}
+ *           <span className="currency">{currency}</span>
+ *         </div>
+ *       )}
+ *     </SelectedVariant.Price>
+ *   );
+ * }
+ * ```
  */
 export const Price = (props: PriceProps) => {
   const variantService = useService(
@@ -103,6 +142,26 @@ export interface SKURenderProps {
  * Headless component for product SKU display
  *
  * @component
+ * @example
+ * ```tsx
+ * import { SelectedVariant } from '@wix/stores/components';
+ *
+ * function ProductSKU() {
+ *   return (
+ *     <SelectedVariant.SKU>
+ *       {({ sku }) => (
+ *         <div>
+ *           {sku && (
+ *             <div className="product-sku">
+ *               <strong>SKU:</strong> {sku}
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </SelectedVariant.SKU>
+ *   );
+ * }
+ * ```
  */
 export const SKU = (props: SKUProps) => {
   const selectedVariantService = useService(

@@ -47,6 +47,46 @@ export interface ModifiersRenderProps {
  * Headless component for all product modifiers
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductModifiers } from '@wix/stores/components';
+ *
+ * function ModifiersSelector() {
+ *   return (
+ *     <ProductModifiers.Modifiers>
+ *       {({ modifiers, hasModifiers, selectedModifiers, areAllRequiredModifiersFilled }) => (
+ *         <div>
+ *           {hasModifiers && (
+ *             <div>
+ *               <h3>Customize your product</h3>
+ *               {modifiers.map(modifier => (
+ *                 <div key={modifier.id}>
+ *                   <label>{modifier.name}</label>
+ *                   {modifier.required && <span>*</span>}
+ *                   {modifier.choices?.map(choice => (
+ *                     <label key={choice.id}>
+ *                       <input
+ *                         type={modifier.multiple ? 'checkbox' : 'radio'}
+ *                         name={modifier.id}
+ *                         value={choice.id}
+ *                         checked={selectedModifiers[modifier.id] === choice.id}
+ *                       />
+ *                       {choice.description} (+{choice.priceChange?.price})
+ *                     </label>
+ *                   ))}
+ *                 </div>
+ *               ))}
+ *               {!areAllRequiredModifiersFilled && (
+ *                 <div className="warning">Please fill all required options</div>
+ *               )}
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </ProductModifiers.Modifiers>
+ *   );
+ * }
+ * ```
  */
 export const Modifiers = (props: ModifiersProps) => {
   const modifiersService = useModifiersService();
@@ -112,6 +152,47 @@ export interface ModifierRenderProps {
  * Headless component for a specific product modifier
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductModifiers } from '@wix/stores/components';
+ *
+ * function ModifierField({ modifier }) {
+ *   return (
+ *     <ProductModifiers.Modifier modifier={modifier}>
+ *       {({ name, mandatory, hasChoices, choices, selectedValue, isFreeText, placeholder, maxChars }) => (
+ *         <div className="modifier-field">
+ *           <label>
+ *             {name} {mandatory && <span className="required">*</span>}
+ *           </label>
+ *           {hasChoices && (
+ *             <div className="choices">
+ *               {choices.map(choice => (
+ *                 <label key={choice.id}>
+ *                   <input
+ *                     type="radio"
+ *                     name={name}
+ *                     value={choice.name}
+ *                     checked={selectedValue?.choiceValue === choice.name}
+ *                   />
+ *                   {choice.description} (+{choice.priceChange?.price || '0'})
+ *                 </label>
+ *               ))}
+ *             </div>
+ *           )}
+ *           {isFreeText && (
+ *             <input
+ *               type="text"
+ *               placeholder={placeholder}
+ *               maxLength={maxChars}
+ *               value={selectedValue?.freeTextValue || ''}
+ *             />
+ *           )}
+ *         </div>
+ *       )}
+ *     </ProductModifiers.Modifier>
+ *   );
+ * }
+ * ```
  */
 export const Modifier = (props: ModifierProps) => {
   const modifiersService = useModifiersService();
@@ -178,6 +259,31 @@ export interface ChoiceRenderProps {
  * Headless component for individual modifier choice selection
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductModifiers } from '@wix/stores/components';
+ *
+ * function ModifierChoiceButton({ modifier, choice }) {
+ *   return (
+ *     <ProductModifiers.Choice modifier={modifier} choice={choice}>
+ *       {({ value, description, isSelected, onSelect, colorCode }) => (
+ *         <button
+ *           onClick={onSelect}
+ *           className={`choice-button ${isSelected ? 'selected' : ''}`}
+ *           style={colorCode ? { backgroundColor: colorCode } : {}}
+ *         >
+ *           {colorCode ? (
+ *             <div className="color-swatch" title={value} />
+ *           ) : (
+ *             <span>{value}</span>
+ *           )}
+ *           {description && <span className="description">{description}</span>}
+ *         </button>
+ *       )}
+ *     </ProductModifiers.Choice>
+ *   );
+ * }
+ * ```
  */
 export const Choice = (props: ChoiceProps) => {
   const modifiersService = useModifiersService();
@@ -250,6 +356,36 @@ export interface FreeTextRenderProps {
  * Headless component for free text modifier input
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductModifiers } from '@wix/stores/components';
+ *
+ * function FreeTextModifier({ modifier }) {
+ *   return (
+ *     <ProductModifiers.FreeText modifier={modifier}>
+ *       {({ value, onChange, mandatory, maxChars, placeholder, charCount, isOverLimit, modifierName }) => (
+ *         <div className="free-text-modifier">
+ *           <label>
+ *             {modifierName} {mandatory && <span className="required">*</span>}
+ *           </label>
+ *           <textarea
+ *             value={value}
+ *             onChange={(e) => onChange(e.target.value)}
+ *             placeholder={placeholder}
+ *             maxLength={maxChars}
+ *             className={isOverLimit ? 'over-limit' : ''}
+ *           />
+ *           {maxChars && (
+ *             <div className={`char-count ${isOverLimit ? 'over-limit' : ''}`}>
+ *               {charCount}/{maxChars}
+ *             </div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </ProductModifiers.FreeText>
+ *   );
+ * }
+ * ```
  */
 export const FreeText = (props: FreeTextProps) => {
   const modifiersService = useModifiersService();
@@ -312,6 +448,42 @@ export interface ToggleFreeTextRenderProps {
  * Used for optional free text modifiers where a checkbox shows/hides the input
  *
  * @component
+ * @example
+ * ```tsx
+ * import { ProductModifiers } from '@wix/stores/components';
+ *
+ * function ToggleFreeTextModifier({ modifier }) {
+ *   return (
+ *     <ProductModifiers.ToggleFreeText modifier={modifier}>
+ *       {({ isTextInputShown, onToggle, mandatory, modifierName }) => (
+ *         <div className="toggle-free-text">
+ *           {!mandatory && (
+ *             <label>
+ *               <input
+ *                 type="checkbox"
+ *                 checked={isTextInputShown}
+ *                 onChange={onToggle}
+ *               />
+ *               Add {modifierName}
+ *             </label>
+ *           )}
+ *           {isTextInputShown && (
+ *             <ProductModifiers.FreeText modifier={modifier}>
+ *               {(props) => (
+ *                 <textarea
+ *                   value={props.value}
+ *                   onChange={(e) => props.onChange(e.target.value)}
+ *                   placeholder={props.placeholder}
+ *                 />
+ *               )}
+ *             </ProductModifiers.FreeText>
+ *           )}
+ *         </div>
+ *       )}
+ *     </ProductModifiers.ToggleFreeText>
+ *   );
+ * }
+ * ```
  */
 export const ToggleFreeText = (props: ToggleFreeTextProps) => {
   const modifiersService = useModifiersService();
