@@ -17,8 +17,8 @@ export {
 export {
   CategoryService,
   CategoryServiceDefinition,
-  loadCategoriesConfig,
-} from "./category-service.js";
+  loadCategoryServiceConfig,
+} from "./category-service-new.js";
 
 export {
   CollectionService,
@@ -63,7 +63,7 @@ export {
 export {
   ProductListService,
   ProductsListServiceDefinition,
-  loadProductsListServiceConfig
+  loadProductsListServiceConfig,
 } from "./products-list-service.js";
 
 export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
