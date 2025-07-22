@@ -3679,7 +3679,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@npm:^0.0.5, @wix/headless-media@workspace:packages/headless-components/media":
+"@wix/headless-media@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "@wix/headless-media@npm:0.0.5"
+  dependencies:
+    "@wix/image": "npm:^1.403.0"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/08ee3caafb24a18f7bf40ed7d57b3db9d667a3eb9509fd35bd3c05edab6528d43505bc0d2786cea145f4d7f3727adfc47e63c1bd0d08d5914a78c6afb7d3773c
+  languageName: node
+  linkType: hard
+
+"@wix/headless-media@workspace:packages/headless-components/media":
   version: 0.0.0-use.local
   resolution: "@wix/headless-media@workspace:packages/headless-components/media"
   dependencies:
