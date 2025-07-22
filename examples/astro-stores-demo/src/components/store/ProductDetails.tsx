@@ -13,8 +13,6 @@ import {
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
 
-import type { MediaItem } from '@wix/headless-media/services';
-
 import { getStockStatusMessage } from './product-status-enums';
 
 // Reusable FreeText Input Component
