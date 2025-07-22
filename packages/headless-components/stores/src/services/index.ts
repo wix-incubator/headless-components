@@ -17,8 +17,8 @@ export {
 export {
   CategoryService,
   CategoryServiceDefinition,
-  loadCategoriesConfig,
-} from "./category-service.js";
+  loadCategoryServiceConfig,
+} from "./category-service-new.js";
 
 export {
   CollectionService,

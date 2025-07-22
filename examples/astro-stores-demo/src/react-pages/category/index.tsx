@@ -27,14 +27,66 @@ import { WixServices } from '@wix/services-manager-react';
 import '../../styles/theme-1.css';
 
 interface StoreCollectionPageProps {
-  filteredCollectionServiceConfig: any;
   currentCartServiceConfig: any;
-  categoriesConfig: any;
+  categoryServiceConfig: any;
+  categoriesListConfig: any;
+  productsListConfig: any;
+  slug?: string;
 }
 
 export default function StoreCollectionPage({
   currentCartServiceConfig,
+  categoryServiceConfig,
+  categoriesListConfig,
+  productsListConfig,
+  slug,
 }: StoreCollectionPageProps) {
+  // Create navigation handler for category URLs
+  const handleCategoryChange = (categoryId: string | null, category: any) => {
+    if (typeof window !== 'undefined') {
+      let newPath: string = '/category';
+
+      if (categoryId !== null) {
+        // Use category slug for URL
+        if (!category?.slug) {
+          console.warn(
+            `Category ${categoryId} has no slug, using category ID as fallback`
+          );
+        }
+        const categorySlug = category?.slug || categoryId;
+        newPath = `/category/${categorySlug}`;
+      }
+
+      window.history.pushState(
+        null,
+        'Showing Category ' + category?.name,
+        newPath
+      );
+    }
+  };
+
+  // const [servicesMap] = useState(() =>
+  //   createServicesMap()
+  //     .addService(
+  //       CollectionServiceDefinition,
+  //       CollectionService,
+  //       filteredCollectionServiceConfig
+  //     )
+  //     .addService(
+  //       FilterServiceDefinition,
+  //       FilterService,
+  //       filteredCollectionServiceConfig
+  //     )
+  //     .addService(CategoryServiceDefinition, CategoryService, {
+  //       ...categoriesConfig,
+  //       onCategoryChange: handleCategoryChange,
+  //     })
+  //     .addService(SortServiceDefinition, SortService, {
+  //       initialSort: filteredCollectionServiceConfig.initialSort,
+  //     })
+  //     .addService(CatalogServiceDefinition, CatalogService, {})
+  // );
+
   return (
     <KitchensinkLayout>
       <StoreLayout currentCartServiceConfig={currentCartServiceConfig}>
@@ -48,7 +100,9 @@ export default function StoreCollectionPage({
             </p>
           </div>
 
+          {/* <WixServices servicesMap={servicesMap}> */}
           <ProductList productPageRoute="" />
+          {/* </WixServices> */}
         </div>
       </StoreLayout>
     </KitchensinkLayout>
