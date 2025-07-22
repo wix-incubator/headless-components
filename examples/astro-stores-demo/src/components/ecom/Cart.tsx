@@ -2,7 +2,6 @@ import { CurrentCart } from '@wix/headless-ecom/react';
 import { WixMediaImage } from '../media';
 
 export default function CartContent() {
-
   return (
     <div className="min-h-screen" data-testid="cart-summary">
       <div className="container mx-auto px-4 py-8">

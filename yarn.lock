@@ -2539,10 +2539,10 @@ __metadata:
     "@wix/categories": "npm:^1.0.133"
     "@wix/cli": "npm:^1.1.95"
     "@wix/ecom": "npm:^1.0.1238"
-    "@wix/headless-ecom": "npm:^0.0.8"
-    "@wix/headless-media": "npm:^0.0.5"
-    "@wix/headless-seo": "npm:^0.0.5"
-    "@wix/headless-stores": "npm:^0.0.20"
+    "@wix/headless-ecom": "workspace:*"
+    "@wix/headless-media": "workspace:*"
+    "@wix/headless-seo": "workspace:*"
+    "@wix/headless-stores": "workspace:*"
     "@wix/image": "npm:^1.403.0"
     "@wix/media": "npm:^1.0.170"
     "@wix/sdk": "npm:^1.15.24"
@@ -3624,7 +3624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -3690,7 +3690,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@workspace:packages/headless-components/media":
+"@wix/headless-media@workspace:*, @wix/headless-media@workspace:packages/headless-components/media":
   version: 0.0.0-use.local
   resolution: "@wix/headless-media@workspace:packages/headless-components/media"
   dependencies:
@@ -3708,7 +3708,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-seo@npm:0.0.5, @wix/headless-seo@npm:^0.0.5":
+"@wix/headless-seo@npm:0.0.5":
   version: 0.0.5
   resolution: "@wix/headless-seo@npm:0.0.5"
   dependencies:
@@ -3730,7 +3730,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-seo@workspace:packages/headless-components/seo":
+"@wix/headless-seo@workspace:*, @wix/headless-seo@workspace:packages/headless-components/seo":
   version: 0.0.0-use.local
   resolution: "@wix/headless-seo@workspace:packages/headless-components/seo"
   dependencies:
@@ -3810,7 +3810,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-stores@workspace:packages/headless-components/stores":
+"@wix/headless-stores@workspace:*, @wix/headless-stores@workspace:packages/headless-components/stores":
   version: 0.0.0-use.local
   resolution: "@wix/headless-stores@workspace:packages/headless-components/stores"
   dependencies:

@@ -39,7 +39,6 @@ export default function QuickViewModal({
   onClose,
   productPageRoute,
 }: QuickViewModalProps) {
-
   const [isLoading, setIsLoading] = useState(false);
   const [fullProduct, setFullProduct] = useState<productsV3.V3Product | null>(
     null
@@ -200,7 +199,7 @@ export default function QuickViewModal({
           ) : (
             <>
               <WixServices servicesMap={servicesMap}>
-                <ProductDetails isQuickView={true} />
+                <ProductDetails isQuickView={true} product={product} />
               </WixServices>
 
               {/* View Full Product Page Link */}
