@@ -7,7 +7,31 @@ import {
   type CategoryServiceConfig,
 } from "../services/category-service-new.js";
 
-function Root(
+/**
+ * Root component that provides the Category service context to its children.
+ * This component sets up the necessary services for managing category state.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { Category } from '@wix/stores/components';
+ *
+ * function CategoryPage() {
+ *   return (
+ *     <Category.Root categoryServiceConfig={{ category: myCategory }}>
+ *       <Category.Name>
+ *         {({ name }) => <h1>{name}</h1>}
+ *       </Category.Name>
+ *       <Category.Slug>
+ *         {({ slug }) => <p>Slug: {slug}</p>}
+ *       </Category.Slug>
+ *     </Category.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
   props: PropsWithChildren<{ categoryServiceConfig: CategoryServiceConfig }>,
 ) {
   return (
@@ -23,40 +47,88 @@ function Root(
   );
 }
 
-type NameProps = {
+/**
+ * Props for Name headless component
+ */
+export interface NameProps {
+  /** Content to display (can be a render function receiving name data or ReactNode) */
   children: ((props: NameRenderProps) => ReactNode) | ReactNode;
-};
+}
 
-type NameRenderProps = {
+/**
+ * Render props for Name component
+ */
+export interface NameRenderProps {
+  /** Category name */
   name: string;
-};
+}
 
-function Name(props: NameProps) {
+/**
+ * Headless component for category name display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Category } from '@wix/stores/components';
+ *
+ * function CategoryHeader() {
+ *   return (
+ *     <Category.Name>
+ *       {({ name }) => (
+ *         <h1 className="category-title">{name}</h1>
+ *       )}
+ *     </Category.Name>
+ *   );
+ * }
+ * ```
+ */
+export const Name = (props: NameProps) => {
   const categoryService = useService(CategoryServiceDefinition);
 
   return typeof props.children === "function"
     ? props.children({ name: categoryService.category.get().name! })
     : props.children;
+};
+
+/**
+ * Props for Slug headless component
+ */
+export interface SlugProps {
+  /** Content to display (can be a render function receiving slug data or ReactNode) */
+  children: ((props: SlugRenderProps) => ReactNode) | ReactNode;
 }
 
-type SlugProps = {
-  children: ((props: SlugRenderProps) => ReactNode) | ReactNode;
-};
-
-type SlugRenderProps = {
+/**
+ * Render props for Slug component
+ */
+export interface SlugRenderProps {
+  /** Category slug */
   slug: string;
-};
+}
 
-function Slug(props: SlugProps) {
+/**
+ * Headless component for category slug display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Category } from '@wix/stores/components';
+ *
+ * function CategoryInfo() {
+ *   return (
+ *     <Category.Slug>
+ *       {({ slug }) => (
+ *         <p className="category-slug">Category slug: {slug}</p>
+ *       )}
+ *     </Category.Slug>
+ *   );
+ * }
+ * ```
+ */
+export const Slug = (props: SlugProps) => {
   const categoryService = useService(CategoryServiceDefinition);
 
   return typeof props.children === "function"
     ? props.children({ slug: categoryService.category.get().slug! })
     : props.children;
-}
-
-export const Category = {
-  Root,
-  Name,
-  Slug,
 };

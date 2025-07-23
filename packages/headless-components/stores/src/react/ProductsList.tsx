@@ -11,13 +11,16 @@ import {
   ProductServiceDefinition,
 } from "@wix/headless-stores/services";
 
-
+/**
+ * Props for Root headless component
+ */
 export interface RootProps {
   /** Child components that will have access to the ProductsList service */
   children: React.ReactNode;
   /** Configuration for the ProductsList service */
   productsListConfig: ProductsListServiceConfig;
 }
+
 /**
  * Root component that provides the ProductsList service context to its children.
  * This component sets up the necessary services for managing products list state.
@@ -36,17 +39,14 @@ export interface RootProps {
  *         filters: { price: { min: 10, max: 100 } }
  *       }}
  *     >
- *       <ProductsList.Grid>
- *         {({ products, isLoading, error }) => (
- *           <div>
- *             {isLoading && <div>Loading products...</div>}
- *             {error && <div>Error: {error}</div>}
- *             {products.map(product => (
- *               <div key={product.id}>{product.name}</div>
- *             ))}
+ *       <ProductsList.ItemContent>
+ *         {({ product }) => (
+ *           <div key={product._id}>
+ *             <h3>{product.name}</h3>
+ *             <p>{product.actualPriceRange?.minValue?.formattedAmount}</p>
  *           </div>
  *         )}
- *       </ProductsList.Grid>
+ *       </ProductsList.ItemContent>
  *     </ProductsList.Root>
  *   );
  * }
@@ -66,11 +66,19 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
+/**
+ * Props for EmptyState headless component
+ */
 export interface EmptyStateProps {
   /** Content to display when products list is empty (can be a render function or ReactNode) */
-  children: (props: EmptyStateRenderProps) => React.ReactNode;
+  children:
+    | ((props: EmptyStateRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
+/**
+ * Render props for EmptyState component
+ */
 export interface EmptyStateRenderProps {}
 
 /**
@@ -97,7 +105,7 @@ export interface EmptyStateRenderProps {}
  * }
  * ```
  */
-export function EmptyState(props: EmptyStateProps): React.ReactNode {
+export const EmptyState = (props: EmptyStateProps): React.ReactNode => {
   const { isLoading, error, products } = useService(
     ProductsListServiceDefinition,
   );
@@ -112,13 +120,19 @@ export function EmptyState(props: EmptyStateProps): React.ReactNode {
   }
 
   return null;
-}
+};
 
+/**
+ * Props for Loading headless component
+ */
 export interface LoadingProps {
   /** Content to display during loading (can be a render function or ReactNode) */
-  children: (props: LoadingRenderProps) => React.ReactNode;
+  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
+/**
+ * Render props for Loading component
+ */
 export interface LoadingRenderProps {}
 
 /**
@@ -144,7 +158,7 @@ export interface LoadingRenderProps {}
  * }
  * ```
  */
-export function Loading(props: LoadingProps): React.ReactNode {
+export const Loading = (props: LoadingProps): React.ReactNode => {
   const { isLoading } = useService(ProductsListServiceDefinition);
   const isLoadingValue = isLoading.get();
 
@@ -155,15 +169,23 @@ export function Loading(props: LoadingProps): React.ReactNode {
   }
 
   return null;
-}
+};
 
-export interface ErrorRenderProps { error: string | null };
-
+/**
+ * Props for Error headless component
+ */
 export interface ErrorProps {
   /** Content to display during error state (can be a render function or ReactNode) */
-  children: (props: ErrorRenderProps) => React.ReactNode;
+  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
+/**
+ * Render props for Error component
+ */
+export interface ErrorRenderProps {
+  /** Error message */
+  error: string | null;
+}
 
 /**
  * Component that renders content when there's an error loading products.
@@ -191,7 +213,7 @@ export interface ErrorProps {
  * }
  * ```
  */
-export function Error(props: ErrorProps): React.ReactNode {
+export const Error = (props: ErrorProps): React.ReactNode => {
   const { error } = useService(ProductsListServiceDefinition);
   const errorValue = error.get();
 
@@ -202,15 +224,24 @@ export function Error(props: ErrorProps): React.ReactNode {
   }
 
   return null;
-}
+};
 
-export interface ItemContentRenderProps {
-  product: productsV3.V3Product;
-}
-
+/**
+ * Props for ItemContent headless component
+ */
 export interface ItemContentProps {
   /** Content to display for each product (can be a render function receiving product data or ReactNode) */
-  children: (props: ItemContentRenderProps) => React.ReactNode;
+  children:
+    | ((props: ItemContentRenderProps) => React.ReactNode)
+    | React.ReactNode;
+}
+
+/**
+ * Render props for ItemContent component
+ */
+export interface ItemContentRenderProps {
+  /** Product data */
+  product: productsV3.V3Product;
 }
 
 /**
@@ -239,7 +270,7 @@ export interface ItemContentProps {
  * }
  * ```
  */
-export function ItemContent(props: ItemContentProps): React.ReactNode {
+export const ItemContent = (props: ItemContentProps): React.ReactNode => {
   const { products, isLoading, error } = useService(
     ProductsListServiceDefinition,
   );
@@ -263,4 +294,4 @@ export function ItemContent(props: ItemContentProps): React.ReactNode {
         : props.children}
     </WixServices>
   ));
-}
+};

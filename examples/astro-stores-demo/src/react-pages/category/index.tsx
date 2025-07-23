@@ -101,7 +101,7 @@ export default function StoreCollectionPage({
           </div>
 
           {/* <WixServices servicesMap={servicesMap}> */}
-          <ProductList productPageRoute="" />
+          {/* <ProductList productPageRoute="" /> */}
           {/* </WixServices> */}
         </div>
       </StoreLayout>

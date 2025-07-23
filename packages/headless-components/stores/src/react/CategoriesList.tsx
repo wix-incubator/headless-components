@@ -7,9 +7,34 @@ import {
 } from "../services/categories-list-service.js";
 import type { PropsWithChildren, ReactNode } from "react";
 import { categories } from "@wix/categories";
-import { Category } from "./Category.js";
+import { Root as CategoryRoot } from "./Category.js";
 
-function Root(
+/**
+ * Root component that provides the CategoriesList service context to its children.
+ * This component sets up the necessary services for managing categories list state.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { CategoriesList } from '@wix/stores/components';
+ *
+ * function CategoriesPage() {
+ *   return (
+ *     <CategoriesList.Root categoriesListConfig={{ collectionId: 'my-collection' }}>
+ *       <CategoriesList.ItemContent>
+ *         {({ category }) => (
+ *           <div key={category._id}>
+ *             <h2>{category.name}</h2>
+ *           </div>
+ *         )}
+ *       </CategoriesList.ItemContent>
+ *     </CategoriesList.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
   props: PropsWithChildren<{
     categoriesListConfig: CategoriesListServiceConfig;
   }>,
@@ -27,13 +52,43 @@ function Root(
   );
 }
 
-export type EmptyStateProps = {
+/**
+ * Props for EmptyState headless component
+ */
+export interface EmptyStateProps {
+  /** Content to display when categories list is empty (can be a render function or ReactNode) */
   children: ((props: EmptyStateRenderProps) => ReactNode) | ReactNode;
-};
+}
 
-export type EmptyStateRenderProps = {};
+/**
+ * Render props for EmptyState component
+ */
+export interface EmptyStateRenderProps {}
 
-function EmptyState(props: EmptyStateProps) {
+/**
+ * Component that renders content when the categories list is empty.
+ * Only displays its children when there are no categories, no loading state, and no errors.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CategoriesList } from '@wix/stores/components';
+ *
+ * function EmptyCategoriesMessage() {
+ *   return (
+ *     <CategoriesList.EmptyState>
+ *       {() => (
+ *         <div className="empty-state">
+ *           <h3>No categories found</h3>
+ *           <p>Categories will appear here once they are created</p>
+ *         </div>
+ *       )}
+ *     </CategoriesList.EmptyState>
+ *   );
+ * }
+ * ```
+ */
+export const EmptyState = (props: EmptyStateProps) => {
   const { isLoading, error, categories } = useService(
     CategoriesListServiceDefinition,
   );
@@ -48,15 +103,45 @@ function EmptyState(props: EmptyStateProps) {
   }
 
   return null;
-}
-
-export type LoadingProps = {
-  children: ((props: LoadingRenderProps) => ReactNode) | ReactNode;
 };
 
-export type LoadingRenderProps = {};
+/**
+ * Props for Loading headless component
+ */
+export interface LoadingProps {
+  /** Content to display during loading (can be a render function or ReactNode) */
+  children: ((props: LoadingRenderProps) => ReactNode) | ReactNode;
+}
 
-function Loading(props: LoadingProps) {
+/**
+ * Render props for Loading component
+ */
+export interface LoadingRenderProps {}
+
+/**
+ * Component that renders content during loading state.
+ * Only displays its children when the categories list is currently loading.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CategoriesList } from '@wix/stores/components';
+ *
+ * function CategoriesLoading() {
+ *   return (
+ *     <CategoriesList.Loading>
+ *       {() => (
+ *         <div className="loading-spinner">
+ *           <div>Loading categories...</div>
+ *           <div className="spinner"></div>
+ *         </div>
+ *       )}
+ *     </CategoriesList.Loading>
+ *   );
+ * }
+ * ```
+ */
+export const Loading = (props: LoadingProps) => {
   const { isLoading } = useService(CategoriesListServiceDefinition);
   const isLoadingValue = isLoading.get();
 
@@ -67,15 +152,51 @@ function Loading(props: LoadingProps) {
   }
 
   return null;
-}
-
-export type ErrorProps = {
-  children: ((props: ErrorRenderProps) => ReactNode) | ReactNode;
 };
 
-export type ErrorRenderProps = { error: string | null };
+/**
+ * Props for Error headless component
+ */
+export interface ErrorProps {
+  /** Content to display during error state (can be a render function or ReactNode) */
+  children: ((props: ErrorRenderProps) => ReactNode) | ReactNode;
+}
 
-function Error(props: ErrorProps) {
+/**
+ * Render props for Error component
+ */
+export interface ErrorRenderProps {
+  /** Error message */
+  error: string | null;
+}
+
+/**
+ * Component that renders content when there's an error loading categories.
+ * Only displays its children when an error has occurred.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CategoriesList } from '@wix/stores/components';
+ *
+ * function CategoriesError() {
+ *   return (
+ *     <CategoriesList.Error>
+ *       {({ error }) => (
+ *         <div className="error-state">
+ *           <h3>Error loading categories</h3>
+ *           <p>{error}</p>
+ *           <button onClick={() => window.location.reload()}>
+ *             Try Again
+ *           </button>
+ *         </div>
+ *       )}
+ *     </CategoriesList.Error>
+ *   );
+ * }
+ * ```
+ */
+export const Error = (props: ErrorProps) => {
   const { error } = useService(CategoriesListServiceDefinition);
   const errorValue = error.get();
 
@@ -86,17 +207,50 @@ function Error(props: ErrorProps) {
   }
 
   return null;
+};
+
+/**
+ * Props for ItemContent headless component
+ */
+export interface ItemContentProps {
+  /** Content to display for each category (can be a render function receiving category data or ReactNode) */
+  children: ((props: ItemContentRenderProps) => ReactNode) | ReactNode;
 }
 
-export type ItemContentRenderProps = {
+/**
+ * Render props for ItemContent component
+ */
+export interface ItemContentRenderProps {
+  /** Category data */
   category: categories.Category;
-};
+}
 
-export type ItemContentProps = {
-  children: ((props: ItemContentRenderProps) => ReactNode) | ReactNode;
-};
-
-function ItemContent(props: ItemContentProps) {
+/**
+ * Component that renders content for each category in the list.
+ * Maps over all categories and provides each category through a service context.
+ * Only renders when categories are successfully loaded (not loading, no error, and has categories).
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CategoriesList } from '@wix/stores/components';
+ *
+ * function CategoriesGrid() {
+ *   return (
+ *     <CategoriesList.ItemContent>
+ *       {({ category }) => (
+ *         <div className="category-card">
+ *           <h3>{category.name}</h3>
+ *           <p>{category.description}</p>
+ *           <a href={`/categories/${category.slug}`}>View Category</a>
+ *         </div>
+ *       )}
+ *     </CategoriesList.ItemContent>
+ *   );
+ * }
+ * ```
+ */
+export const ItemContent = (props: ItemContentProps) => {
   const { categories, isLoading, error } = useService(
     CategoriesListServiceDefinition,
   );
@@ -107,20 +261,12 @@ function ItemContent(props: ItemContentProps) {
   }
 
   return categoriesValue.map((category: categories.Category) => (
-    <Category.Root key={category._id} categoryServiceConfig={{ category }}>
+    <CategoryRoot key={category._id} categoryServiceConfig={{ category }}>
       {typeof props.children === "function"
         ? props.children({
             category,
           })
         : props.children}
-    </Category.Root>
+    </CategoryRoot>
   ));
-}
-
-export const CategoriesList = {
-  Root,
-  EmptyState,
-  Loading,
-  Error,
-  ItemContent,
 };
