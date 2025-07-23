@@ -12,13 +12,15 @@
     "build:headless-components": "yarn build:all --filter=\"./packages/headless-components/*\"",
     "astro": "astro",
     "tsc": "tsc",
-    "syncpack": "syncpack"
+    "syncpack": "syncpack",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "astro": "^5.9.0",
     "knip": "^5.43.6",
     "lefthook": "^1.1.1",
     "lint-staged": "^15.4.3",
+    "patch-package": "^8.0.0",
     "syncpack": "^13.0.0",
     "turbo": "^2.3.4",
     "typescript": "^5.8.3"

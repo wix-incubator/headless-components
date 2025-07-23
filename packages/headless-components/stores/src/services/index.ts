@@ -18,7 +18,15 @@ export {
   CategoryService,
   CategoryServiceDefinition,
   loadCategoryServiceConfig,
+  CategoryServiceConfig,
 } from "./category-service-new.js";
+
+export {
+  CategoriesListService,
+  CategoriesListServiceDefinition,
+  loadCategoriesListServiceConfig,
+  CategoriesListServiceConfig,
+} from "./categories-list-service.js";
 
 export {
   CollectionService,
@@ -55,10 +63,34 @@ export {
   SelectedVariantServiceDefinition,
 } from "./selected-variant-service.js";
 
+// export {
+//   ProductListService,
+//   ProductsListServiceDefinition,
+//   loadProductsListServiceConfig,
+// } from "./products-list-service.js";
+
+export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
+
+export {
+  SortType,
+  ProductsListSortService,
+  ProductsListSortServiceDefinition,
+} from "./products-list-sort-service.js";
+
+export {
+  InventoryStatusType,
+  ProductsListFiltersService,
+  ProductsListFiltersServiceDefinition,
+} from "./products-list-filters-service.js";
+
+export {
+  ProductsListPaginationService,
+  ProductsListPaginationServiceDefinition,
+} from "./products-list-pagination-service.js";
+
 export {
   ProductListService,
   ProductsListServiceDefinition,
   loadProductsListServiceConfig,
-} from "./products-list-service.js";
-
-export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
+  ProductsListServiceConfig,
+} from "./products-list-service-new.js";

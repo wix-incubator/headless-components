@@ -11,3 +11,7 @@ export * as ProductModifiers from "./ProductModifiers.js";
 export * as SelectedVariant from "./SelectedVariant.js";
 export * as ProductActions from "./ProductActions.js";
 export * as ProductsList from "./ProductsList.js";
+export * as CategoriesList from "./CategoriesList.js";
+export * as ProductsListFilters from "./ProductsListFilters.js";
+export * as ProductsListPagination from "./ProductsListPagination.js";
+export * as ProductsListSort from "./ProductsListSort.js";
