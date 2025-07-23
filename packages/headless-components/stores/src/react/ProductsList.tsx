@@ -297,3 +297,20 @@ export const ItemContent = (props: ItemContentProps): React.ReactNode => {
     </WixServices>
   ));
 };
+
+export type ItemsProps = {
+  children: ((props: ItemsRenderProps) => React.ReactNode) | React.ReactNode;
+};
+
+export type ItemsRenderProps = {
+  products: productsV3.V3Product[];
+};
+
+export const Items = (props: ItemsProps) => {
+  const { products } = useService(ProductsListServiceDefinition);
+  const productsValue = products.get();
+
+  return typeof props.children === "function"
+    ? props.children({ products: productsValue })
+    : props.children;
+};

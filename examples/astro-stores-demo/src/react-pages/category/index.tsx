@@ -22,16 +22,16 @@ import {
   SortService,
   SortServiceDefinition,
 } from '@wix/headless-stores/services';
-import ProductList from '../../components/store/ProductList';
 import { WixServices } from '@wix/services-manager-react';
 import '../../styles/theme-1.css';
+import { CategoryPage } from '../../components/store/CategoryPage';
 
 interface StoreCollectionPageProps {
   currentCartServiceConfig: any;
   categoryServiceConfig: any;
   categoriesListConfig: any;
   productsListConfig: any;
-  slug?: string;
+  slug: string;
 }
 
 export default function StoreCollectionPage({
@@ -100,9 +100,12 @@ export default function StoreCollectionPage({
             </p>
           </div>
 
-          {/* <WixServices servicesMap={servicesMap}> */}
-          {/* <ProductList productPageRoute="" /> */}
-          {/* </WixServices> */}
+          <CategoryPage
+            productsListConfig={productsListConfig}
+            categoriesListConfig={categoriesListConfig}
+            currentCategorySlug={slug}
+            productPageRoute=""
+          />
         </div>
       </StoreLayout>
     </KitchensinkLayout>
