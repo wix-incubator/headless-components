@@ -5,6 +5,7 @@ import {
   ProductsListFiltersService,
   ProductsListFiltersServiceDefinition,
   InventoryStatusType,
+  type ProductOption,
 } from "../services/products-list-filters-service.js";
 
 /**
@@ -345,4 +346,85 @@ export const PriceRange = (props: PriceRangeProps) => {
   return typeof props.children === "function"
     ? props.children({ minPrice, maxPrice, setMinPrice, setMaxPrice })
     : props.children;
+};
+
+/**
+ * Props for ProductOptions headless component
+ */
+export interface ProductOptionsProps {
+  /** Content to display (can be a render function receiving product option data or ReactNode) */
+  children: ((props: ProductOptionRenderProps) => ReactNode) | ReactNode;
+}
+
+/**
+ * Render props for ProductOption component
+ */
+export interface ProductOptionRenderProps {
+  /** Product option data */
+  option: ProductOption;
+  /** Currently selected choice IDs for this option */
+  selectedChoices: string[];
+  /** Function to toggle a choice selection */
+  toggleChoice: (choiceId: string) => void;
+}
+
+/**
+ * Headless component that renders content for each product option in the list.
+ * Maps over all available product options and provides each option through a render prop.
+ * Only renders when options are available (not loading, no error, and has options).
+ * This follows the same collection pattern as ProductsList.ItemContent and CategoriesList.ItemContent.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { ProductsListFilters } from '@wix/stores/components';
+ *
+ * function ProductOptionsFilter() {
+ *   return (
+ *     <ProductsListFilters.ProductOptions>
+ *       {({ option, selectedChoices, toggleChoice }) => (
+ *         <div key={option.id}>
+ *           <h4>{option.name}</h4>
+ *           {option.choices.map(choice => (
+ *             <label key={choice.id}>
+ *               <input
+ *                 type="checkbox"
+ *                 checked={selectedChoices.includes(choice.id)}
+ *                 onChange={() => toggleChoice(choice.id)}
+ *               />
+ *               {choice.name}
+ *             </label>
+ *           ))}
+ *         </div>
+ *       )}
+ *     </ProductsListFilters.ProductOptions>
+ *   );
+ * }
+ * ```
+ */
+export const ProductOptions = (props: ProductOptionsProps) => {
+  const service = useService(ProductsListFiltersServiceDefinition);
+  const availableOptions = service.availableProductOptions.get();
+  const selectedProductOptions = service.selectedProductOptions.get();
+
+  // Don't render if no options are available
+  if (availableOptions.length === 0) {
+    return null;
+  }
+
+  // Map over options and create render prop for each
+  return (
+    <>
+      {availableOptions.map((option) => {
+        const selectedChoices = selectedProductOptions[option.id] || [];
+        const toggleChoice = (choiceId: string) => {
+          service.toggleProductOption(option.id, choiceId);
+        };
+
+        return typeof props.children === "function"
+          ? props.children({ option, selectedChoices, toggleChoice })
+          : props.children;
+      })}
+    </>
+  );
 };

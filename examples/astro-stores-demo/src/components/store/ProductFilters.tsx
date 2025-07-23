@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState } from 'react';
 import { getStockStatusMessage } from './product-status-enums';
 import { ProductsListFilters } from '@wix/headless-stores/react';
 
@@ -11,102 +11,19 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // // Helper function to format choice display names
-  // const formatChoiceName = (
-  //   choice: { id: string; name: string },
-  //   optionId: string
-  // ): string => {
-  //   // For inventory filter, convert raw status to display message
-  //   if (optionId === 'inventory-filter') {
-  //     // choice.name contains raw status like "IN_STOCK", "OUT_OF_STOCK"
-  //     return getStockStatusMessage(choice.name as any, false);
-  //   }
-  //   // For all other choices, use the name as-is
-  //   return String(choice.name);
-  // };
-
-  // // Handle price range change
-  // const handlePriceRangeChange = useCallback(
-  //   (newRange: { min: number; max: number }) => {
-  //     setTempPriceRange(newRange);
-  //   },
-  //   []
-  // );
-
-  // useEffect(() => {
-  //   setTempPriceRange(priceRange);
-  // }, [priceRange]);
-
-  // useEffect(() => {
-  //   setTempPriceRange(currentFilters.priceRange);
-  //   setSelectedOptions(currentFilters.selectedOptions);
-  // }, [currentFilters.selectedOptions, currentFilters.priceRange]);
-
-  // // Handle price range commit (when user releases slider)
-  // const handlePriceRangeCommit = useCallback(() => {
-  //   if (
-  //     tempPriceRange.min !== currentFilters.priceRange.min ||
-  //     tempPriceRange.max !== currentFilters.priceRange.max
-  //   ) {
-  //     onFiltersChange({
-  //       priceRange: tempPriceRange,
-  //       selectedOptions,
-  //     });
-  //   }
-  // }, [
-  //   tempPriceRange,
-  //   selectedOptions,
-  //   onFiltersChange,
-  //   currentFilters.priceRange,
-  // ]);
-
-  // // Setup document-level event listeners for proper drag handling
-  // useEffect(() => {
-  //   const handleMouseUp = () => handlePriceRangeCommit();
-  //   const handleTouchEnd = () => handlePriceRangeCommit();
-
-  //   document.addEventListener('mouseup', handleMouseUp);
-  //   document.addEventListener('touchend', handleTouchEnd);
-
-  //   return () => {
-  //     document.removeEventListener('mouseup', handleMouseUp);
-  //     document.removeEventListener('touchend', handleTouchEnd);
-  //   };
-  // }, [handlePriceRangeCommit]);
-
-  // // Handle option selection
-  // const handleOptionChange = useCallback(
-  //   (optionId: string, choiceId: string, checked: boolean) => {
-  //     setSelectedOptions(prev => {
-  //       const newOptions = { ...prev };
-  //       if (!newOptions[optionId]) {
-  //         newOptions[optionId] = [];
-  //       }
-
-  //       if (checked) {
-  //         if (!newOptions[optionId].includes(choiceId)) {
-  //           newOptions[optionId] = [...newOptions[optionId], choiceId];
-  //         }
-  //       } else {
-  //         newOptions[optionId] = newOptions[optionId].filter(
-  //           id => id !== choiceId
-  //         );
-  //         if (newOptions[optionId].length === 0) {
-  //           delete newOptions[optionId];
-  //         }
-  //       }
-
-  //       // Trigger filter change
-  //       onFiltersChange({
-  //         priceRange: tempPriceRange,
-  //         selectedOptions: newOptions,
-  //       });
-
-  //       return newOptions;
-  //     });
-  //   },
-  //   [tempPriceRange, onFiltersChange]
-  // );
+  // Helper function to format choice display names
+  const formatChoiceName = (
+    choice: { id: string; name: string },
+    optionId: string
+  ): string => {
+    // For inventory filter, convert raw status to display message
+    if (optionId === 'inventory-filter') {
+      // choice.name contains raw status like "IN_STOCK", "OUT_OF_STOCK"
+      return getStockStatusMessage(choice.name as any, false);
+    }
+    // For all other choices, use the name as-is
+    return String(choice.name);
+  };
 
   return (
     <div
@@ -270,6 +187,71 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             </div>
           )}
         </ProductsListFilters.PriceRange>
+
+        {/* Product Options Filters */}
+        <ProductsListFilters.ProductOptions>
+          {({ option, selectedChoices, toggleChoice }) => (
+            <div key={option.id}>
+              <h4 className="text-content-primary font-medium mb-3">
+                {String(option.name)}
+              </h4>
+
+              {/* Color Swatch Options */}
+              {option.optionRenderType === 'SWATCH_CHOICES' ? (
+                <div className="flex flex-wrap gap-4 mb-8">
+                  {option.choices.map(choice => (
+                    <label
+                      key={choice.id}
+                      className="cursor-pointer group relative mb-6"
+                      title={formatChoiceName(choice, option.id)}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedChoices.includes(choice.id)}
+                        onChange={() => toggleChoice(choice.id)}
+                        className="sr-only"
+                      />
+                      <div
+                        className={`w-5 h-5 rounded-full border-2 transition-all duration-200 ${
+                          selectedChoices.includes(choice.id)
+                            ? 'border-content-primary shadow-lg scale-110 ring-2 ring-brand-primary'
+                            : 'border-color-swatch hover:border-color-swatch-hover hover:scale-105'
+                        }`}
+                        style={{
+                          backgroundColor:
+                            choice.colorCode || 'var(--theme-text-content-40)',
+                        }}
+                      />
+                      <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-content-light opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        {formatChoiceName(choice, option.id)}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                /* Regular Text Options */
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {option.choices.map(choice => (
+                    <label
+                      key={choice.id}
+                      className="flex items-center gap-3 cursor-pointer group"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedChoices.includes(choice.id)}
+                        onChange={() => toggleChoice(choice.id)}
+                        className="w-4 h-4 bg-surface-primary border border-brand-medium rounded text-brand-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-0"
+                      />
+                      <span className="text-content-secondary group-hover:text-content-primary transition-colors text-sm">
+                        {formatChoiceName(choice, option.id)}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </ProductsListFilters.ProductOptions>
       </div>
 
       <style>{`
