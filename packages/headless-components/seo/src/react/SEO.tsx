@@ -50,7 +50,7 @@ export interface RootProps {
  * </SEO.Root>
  * ```
  */
-export function Root(props: RootProps) {
+export function Root(props: RootProps): React.ReactNode {
   const { children, seoTagsServiceConfig } = props;
   return (
     <WixServices
@@ -138,11 +138,10 @@ export interface UpdateTagsTriggerProps {
 }
 
 /**
- * UpdateTagsTrigger - Handles updating SEO tags dynamically
+ * UpdateTagsTrigger - Handles updating SEO tags dynamically.
  *
- * This component provides a way to update SEO tags on the client side without
- * requiring a full page reload. It wraps content with the ability to trigger
- * SEO tag updates.
+ * This component enables client-side updates of SEO tags without requiring a full page reload.
+ * It wraps content and provides a function to trigger SEO tag updates.
  *
  * @example
  * ```tsx
@@ -150,7 +149,7 @@ export interface UpdateTagsTriggerProps {
  * import { loadSEOTagsServiceConfig } from "@wix/seo/services";
  * import { seoTags } from "@wix/seo";
  *
- * // This should be done in the server-side
+ * // This should be done on the server side
  * const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
  *   pageURL: url,
  *   itemData: { slug: "<YOUR_ITEM_SLUG>" },
@@ -163,7 +162,10 @@ export interface UpdateTagsTriggerProps {
  *       <a
  *         href="https://your-domain.com/items/different-item"
  *         onClick={() =>
- *           updateSeoTags(seoTags.ItemType.STORES_PRODUCT, { slug: "different-product-slug" })
+ *           updateSeoTags(
+ *             seoTags.ItemType.STORES_PRODUCT,
+ *             { slug: "different-product-slug" }
+ *           )
  *         }
  *       >
  *         Go to a different item
@@ -171,7 +173,6 @@ export interface UpdateTagsTriggerProps {
  *     )}
  *   </SEO.UpdateTagsTrigger>
  * </SEO.Root>
- * ```.Root>
  * ```
  *
  * @component
