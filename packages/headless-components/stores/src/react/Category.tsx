@@ -1,65 +1,62 @@
-import { type Category } from "@wix/auto_sdk_categories_categories";
-import { useService } from "@wix/services-manager-react";
-import React, { type ReactNode } from "react";
-import { CategoryServiceDefinition } from "../services/category-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import { useService, WixServices } from "@wix/services-manager-react";
+import type { PropsWithChildren, ReactNode } from "react";
+import {
+  CategoryService,
+  CategoryServiceDefinition,
+  type CategoryServiceConfig,
+} from "../services/category-service-new.js";
 
-// Grid component for displaying filtered products
-export interface CategoryListProps {
-  children: (data: {
-    categories: Category[];
-    selectedCategory: string | null;
-    setSelectedCategory: (categoryId: string | null) => void;
-  }) => ReactNode;
+function Root(
+  props: PropsWithChildren<{ categoryServiceConfig: CategoryServiceConfig }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        CategoryServiceDefinition,
+        CategoryService,
+        props.categoryServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
 }
 
-/**
- * Headless component for displaying a list of categories
- *
- * @component
- * @example
- * ```tsx
- * import { Category } from '@wix/stores/components';
- *
- * function CategoryNavigation() {
- *   return (
- *     <Category.List>
- *       {({ categories, selectedCategory, setSelectedCategory }) => (
- *         <nav>
- *           <button
- *             onClick={() => setSelectedCategory(null)}
- *             className={selectedCategory === null ? 'active' : ''}
- *           >
- *             All Categories
- *           </button>
- *           {categories.map(category => (
- *             <button
- *               key={category.id}
- *               onClick={() => setSelectedCategory(category.id)}
- *               className={selectedCategory === category.id ? 'active' : ''}
- *             >
- *               {category.name}
- *             </button>
- *           ))}
- *         </nav>
- *       )}
- *     </Category.List>
- *   );
- * }
- * ```
- */
-export const List: React.FC<CategoryListProps> = ({ children }) => {
-  const service = useService(CategoryServiceDefinition);
+type NameProps = {
+  children: ((props: NameRenderProps) => ReactNode) | ReactNode;
+};
 
-  const categories = service.categories.get();
-  const selectedCategory = service.selectedCategory.get();
+type NameRenderProps = {
+  name: string;
+};
 
-  return (
-    <>
-      {children({
-        selectedCategory,
-        categories,
-        setSelectedCategory: service.setSelectedCategory,
-      })}
-    </>
-  );
+function Name(props: NameProps) {
+  const categoryService = useService(CategoryServiceDefinition);
+
+  return typeof props.children === "function"
+    ? props.children({ name: categoryService.category.get().name! })
+    : props.children;
+}
+
+type SlugProps = {
+  children: ((props: SlugRenderProps) => ReactNode) | ReactNode;
+};
+
+type SlugRenderProps = {
+  slug: string;
+};
+
+function Slug(props: SlugProps) {
+  const categoryService = useService(CategoryServiceDefinition);
+
+  return typeof props.children === "function"
+    ? props.children({ slug: categoryService.category.get().slug! })
+    : props.children;
+}
+
+export const Category = {
+  Root,
+  Name,
+  Slug,
 };
