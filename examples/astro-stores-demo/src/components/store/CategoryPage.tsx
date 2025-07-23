@@ -33,6 +33,7 @@ import QuickViewModal from './QuickViewModal';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CategoryPicker } from './CategoryPicker';
 import { SortDropdown } from './SortDropdown';
+import ProductFilters from './ProductFilters';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
@@ -472,7 +473,9 @@ export const ProductGridContent = ({
           {/* Filters Sidebar */}
           <div className="w-full lg:w-80 lg:flex-shrink-0">
             <div className="lg:sticky lg:top-6">
-              <div className="relative">{/* <ProductFilters /> */}</div>
+              <div className="relative">
+                <ProductFilters />
+              </div>
             </div>
           </div>
 
