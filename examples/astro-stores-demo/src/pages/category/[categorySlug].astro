@@ -33,6 +33,15 @@ if (!selectedCategory) {
   return Astro.redirect('/404');
 }
 
+// TODO: check why the API returns a 400 for STORES_CATEGORY item (working in fireconsole)
+// const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
+//   pageUrl: Astro.url.href,
+//   itemType: seoTags.ItemType.STORES_CATEGORY,
+//   itemData: {
+//     slug: categorySlug,
+//   },
+// });
+
 const categoryName = selectedCategory?.name || '';
 const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
   pageUrl: Astro.url.href,

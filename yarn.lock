@@ -2546,7 +2546,7 @@ __metadata:
     "@wix/image": "npm:^1.403.0"
     "@wix/media": "npm:^1.0.170"
     "@wix/sdk": "npm:^1.15.24"
-    "@wix/seo": "npm:^1.0.14"
+    "@wix/seo": "npm:^1.0.20"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager": "npm:^0.2.19"
     "@wix/services-manager-react": "npm:^0.1.26"
@@ -3196,6 +3196,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/auto_sdk_seo_robots-txt@npm:1.0.5":
+  version: 1.0.5
+  resolution: "@wix/auto_sdk_seo_robots-txt@npm:1.0.5"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/656d2c5de8bb43625dd14dbdfb18a41b0098fb35b717c2f9f60aaf918e71fa98f356091eeefd207fd80be64f710a63afd1b5ac77c3705a00880886499e93d61f
+  languageName: node
+  linkType: hard
+
 "@wix/auto_sdk_seo_seo-sitemap-entries@npm:1.0.6":
   version: 1.0.6
   resolution: "@wix/auto_sdk_seo_seo-sitemap-entries@npm:1.0.6"
@@ -3206,6 +3216,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/auto_sdk_seo_seo-sitemap-entries@npm:1.0.8":
+  version: 1.0.8
+  resolution: "@wix/auto_sdk_seo_seo-sitemap-entries@npm:1.0.8"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/873c5162324d9ca95866a20f5eacde157dfa90c5664f70f26042ee0e30c9ef71e6a2fefe940348159a1cfaf14c13a5a7f41b5b7fc6edbdb815600579ba249f26
+  languageName: node
+  linkType: hard
+
 "@wix/auto_sdk_seo_seo-tags@npm:1.0.5":
   version: 1.0.5
   resolution: "@wix/auto_sdk_seo_seo-tags@npm:1.0.5"
@@ -3213,6 +3233,16 @@ __metadata:
     "@wix/sdk-runtime": "npm:^0.3.55"
     "@wix/sdk-types": "npm:^1.13.28"
   checksum: 10c0/6a36dcf93360c88afb6a50030fe68f88ac1f9a6565c323a102343a27f046a4a85f9b93dea925cdb8889fbfc60de347482c1742cdee93f6000a2b7907b1c3cdc3
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_seo_seo-tags@npm:1.0.8":
+  version: 1.0.8
+  resolution: "@wix/auto_sdk_seo_seo-tags@npm:1.0.8"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/291b9621d325509729216025fef5397a97487c871f30c4dddd6cff732e4f22c27f994301a37d21242e2983e6de5d701af1cac2d3aa57b52185a804476677f792
   languageName: node
   linkType: hard
 
@@ -3532,6 +3562,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/error-handler-types@npm:^1.12.0":
+  version: 1.13.0
+  resolution: "@wix/error-handler-types@npm:1.13.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.27.6"
+  checksum: 10c0/ecc273d069956ec25fff20604034c70e2cb9ec602e41d72bca9de0ddbaa168bac0efb1ba858b83408032136d96b65c0519a446f4c9d8a65d4c87c98c8a7c3b59
+  languageName: node
+  linkType: hard
+
 "@wix/essentials@npm:^0.1.22, @wix/essentials@npm:^0.1.24":
   version: 0.1.24
   resolution: "@wix/essentials@npm:0.1.24"
@@ -3730,7 +3769,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-seo@workspace:*, @wix/headless-seo@workspace:packages/headless-components/seo":
+"@wix/headless-seo@npm:0.0.8, @wix/headless-seo@workspace:*, @wix/headless-seo@workspace:packages/headless-components/seo":
   version: 0.0.0-use.local
   resolution: "@wix/headless-seo@workspace:packages/headless-components/seo"
   dependencies:
@@ -4002,6 +4041,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/sdk-types@npm:^1.13.35":
+  version: 1.13.35
+  resolution: "@wix/sdk-types@npm:1.13.35"
+  dependencies:
+    "@wix/error-handler-types": "npm:^1.12.0"
+    "@wix/monitoring-types": "npm:^0.12.0"
+    type-fest: "npm:^4.41.0"
+  checksum: 10c0/b3e7425adcd28c38c00f57eaae2d3de115b083665bd69094a5da07ed81f0a70b7e8251ea67fdffa0afea0dd7ff0caf330e072dc904d3df960a568b4c90824d9e
+  languageName: node
+  linkType: hard
+
 "@wix/sdk@npm:^1.15.24":
   version: 1.15.24
   resolution: "@wix/sdk@npm:1.15.24"
@@ -4036,6 +4086,23 @@ __metadata:
     react:
       optional: true
   checksum: 10c0/1414780c3c9880c06d4a72aaa415e6a42107285a3f30028a025768b5b93e97483cf8aac59bbce940967b50e2d9175b80dc9f6dd8ea8f02db00e7cae362e7dc2d
+  languageName: node
+  linkType: hard
+
+"@wix/seo@npm:^1.0.20":
+  version: 1.0.21
+  resolution: "@wix/seo@npm:1.0.21"
+  dependencies:
+    "@wix/auto_sdk_seo_robots-txt": "npm:1.0.5"
+    "@wix/auto_sdk_seo_seo-sitemap-entries": "npm:1.0.8"
+    "@wix/auto_sdk_seo_seo-tags": "npm:1.0.8"
+    "@wix/headless-seo": "npm:0.0.8"
+  peerDependencies:
+    react: ^19.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 10c0/c73e8580b780a200442c949c5b885db9fc66117d6a5bf4f8665e58b73feacf97c0a6fb75155778c43dab69af2d92ed3ea2392f8ac5439480a4bfab86462976c6
   languageName: node
   linkType: hard
 

@@ -1,7 +1,4 @@
-import {
-  defineService,
-  implementService,
-} from "@wix/services-definitions";
+import { defineService, implementService } from "@wix/services-definitions";
 import {
   SignalsServiceDefinition,
   type Signal,
@@ -16,19 +13,18 @@ import {
 } from "@wix/auto_sdk_seo_seo-tags";
 
 export interface SEOTagsServiceAPI {
-  // @ts-ignore
   seoTags: Signal<Tag[]>;
-  updateSeoTags: (itemType?: ItemType, itemData?: PageNameData | SlugData) => Promise<void>;
+  updateSeoTags: (
+    itemType?: ItemType,
+    itemData?: StaticPageData | DynamicPageData,
+  ) => Promise<void>;
 }
 
 export const SEOTagsServiceDefinition =
   defineService<SEOTagsServiceAPI>("seoTagsService");
 
-
 export interface SEOTagsServiceConfig {
   tags: Tag[];
-  itemType?: ItemType;
-  itemData: PageNameData | SlugData;
 }
 
 export const SEOTagsService =
@@ -38,33 +34,35 @@ export const SEOTagsService =
       const signalsService = getService(SignalsServiceDefinition);
       const { tags: initialTags } = config;
 
-      // @ts-ignore
       const tags: Signal<Tag[]> = signalsService.signal(initialTags);
 
       const updateSeoTags = async (
-        itemType: ItemType = config.itemType ?? ItemType.UNKNOWN_ITEM_TYPE,
-        itemData: PageNameData | SlugData = config.itemData
+        itemType: ItemType = ItemType.UNKNOWN_ITEM_TYPE,
+        itemData: StaticPageData | DynamicPageData = {
+          pageName: "",
+          seoData: { tags: [] },
+        },
       ) => {
         const pageURL = window.location.href;
 
-        const updatedConfig = await loadSEOTagsServiceConfig({
+        const { tags: updatedTags } = await loadSEOTagsServiceConfig({
           pageUrl: pageURL,
           itemType,
           itemData,
         });
 
-        tags.set(updatedConfig.tags);
-        appendNewTags(updatedConfig.tags);
+        tags.set(updatedTags);
+        appendNewTags(updatedTags);
       };
 
       return { seoTags: tags, updateSeoTags };
-    }
+    },
   );
 
 async function resolveDynamicSeoTags(
   pageUrl: string,
   itemType: ItemType,
-  itemData: SlugData
+  itemData: DynamicPageData,
 ): Promise<Tag[]> {
   const res = await resolveItemSeoTags({
     pageUrl,
@@ -77,7 +75,7 @@ async function resolveDynamicSeoTags(
 
 async function resolveStaticSeoTags(
   pageUrl: string,
-  itemData: PageNameData
+  itemData: StaticPageData,
 ): Promise<Tag[]> {
   const { pageName, seoData } = itemData;
   const res = await resolveStaticPageSeoTags({
@@ -95,7 +93,7 @@ async function resolveStaticSeoTags(
  * @param {Object} params - The configuration parameters.
  * @param {string} params.pageUrl - The full URL of the page where SEO tags will be applied.
  * @param {ItemType} [params.itemType] - Optional. The type of item (e.g., STORES_PRODUCT, BLOG_POST) for item pages.
- * @param {SlugData | PageNameData} params.itemData - Item metadata (slug for item pages or pageName for static pages).
+ * @param {DynamicPageData | StaticPageData} params.itemData - Item metadata (slug for item pages or pageName for static pages).
  * @returns {Promise<SEOTagsServiceConfig>} Promise resolving to SEO tags service configuration.
  *
  * @example
@@ -121,27 +119,28 @@ async function resolveStaticSeoTags(
  * ```
  */
 
-export async function loadSEOTagsServiceConfig({
-  itemType,
-  pageUrl,
-  itemData,
-}: {
+export interface StaticPageData extends PageNameData {}
+
+export interface DynamicPageData extends SlugData {}
+
+export interface LoadSEOTagsServiceConfigParams {
   itemType?: ItemType;
   pageUrl: string;
-  itemData: PageNameData | SlugData;
-}): Promise<SEOTagsServiceConfig> {
+  itemData: StaticPageData | DynamicPageData;
+}
+
+export async function loadSEOTagsServiceConfig(params: LoadSEOTagsServiceConfigParams): Promise<SEOTagsServiceConfig> {
+  const { itemType, pageUrl, itemData } = params;
   const isStaticPage = !itemType || itemType === ItemType.UNKNOWN_ITEM_TYPE;
 
   let tags: Tag[] = [];
   if (isStaticPage) {
-    tags = await resolveStaticSeoTags(pageUrl, itemData as PageNameData);
+    tags = await resolveStaticSeoTags(pageUrl, itemData as StaticPageData);
   } else {
-    tags = await resolveDynamicSeoTags(pageUrl, itemType, itemData as SlugData);
+    tags = await resolveDynamicSeoTags(pageUrl, itemType, itemData as DynamicPageData);
   }
   return {
     tags,
-    itemType,
-    itemData,
   };
 }
 

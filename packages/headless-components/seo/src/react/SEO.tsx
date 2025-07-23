@@ -1,10 +1,69 @@
 import type { ServiceAPI } from "@wix/services-manager/types";
 import {
+  DynamicPageData,
+  SEOTagsService,
   SEOTagsServiceDefinition,
+  StaticPageData,
   type SEOTagsServiceConfig,
 } from "../services/seo-tags-service.js";
-import { useService } from "@wix/services-manager-react";
-import { ItemType, PageNameData, SlugData } from "@wix/auto_sdk_seo_seo-tags";
+import { useService, WixServices } from "@wix/services-manager-react";
+import { ItemType } from "@wix/auto_sdk_seo_seo-tags";
+import { createServicesMap } from "@wix/services-manager";
+
+export interface RootProps {
+  children: React.ReactNode;
+  seoTagsServiceConfig: SEOTagsServiceConfig;
+}
+
+/**
+ * Root component that provides the SEO service context to its children.
+ * This component sets up the necessary services for rendering and managing SEO tags for a page or item.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { SEO } from "@wix/seo/components";
+ * import { loadSEOTagsServiceConfig } from "@wix/seo/services";
+ * import { seoTags } from "@wix/seo";
+ *
+ * // This should be done in the server-side
+ * const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
+ *   pageURL: url,
+ *   itemData: { slug: "<YOUR_ITEM_SLUG>" },
+ *   itemType: seoTags.ItemType.<YOUR_ITEM_TYPE>,
+ * });
+ *
+ * <SEO.Root seoTagsServiceConfig={seoTagsServiceConfig}>
+ *   <SEO.UpdateTagsTrigger>
+ *     {({ updateSeoTags }) => (
+ *       <a
+ *         href="https://your-domain.com/items/different-item"
+ *         onClick={() =>
+ *           updateSeoTags(seoTags.ItemType.STORES_PRODUCT, { slug: "different-product-slug" })
+ *         }
+ *       >
+ *         Go to a different item
+ *       </a>
+ *     )}
+ *   </SEO.UpdateTagsTrigger>
+ * </SEO.Root>
+ * ```
+ */
+export function Root(props: RootProps) {
+  const { children, seoTagsServiceConfig } = props;
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        SEOTagsServiceDefinition,
+        SEOTagsService,
+        seoTagsServiceConfig
+      )}
+    >
+      {children}
+    </WixServices>
+  );
+}
 
 export interface TagsProps {
   /** Configuration for the SEO tags service */
@@ -73,7 +132,7 @@ export interface UpdateTagsTriggerProps {
   children: (props: {
     updateSeoTags: (
       itemType: ItemType,
-      itemData: SlugData | PageNameData
+      itemData: DynamicPageData | StaticPageData
     ) => Promise<void>;
   }) => React.ReactNode;
 }
@@ -88,20 +147,31 @@ export interface UpdateTagsTriggerProps {
  * @example
  * ```tsx
  * import { SEO } from "@wix/seo/components";
+ * import { loadSEOTagsServiceConfig } from "@wix/seo/services";
  * import { seoTags } from "@wix/seo";
  *
- * <SEO.UpdateTagsTrigger>
- *   {({ updateSeoTags }) => (
- *     <a
- *       href="https://your-domain.com/items/different-item"
- *       onClick={() =>
- *         updateSeoTags(seoTags.ItemType.STORES_PRODUCT, { slug: "product-slug" })
- *       }
- *     >
- *       Go to a different item
- *     </a>
- *   )}
- * </SEO.UpdateTagsTrigger>
+ * // This should be done in the server-side
+ * const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
+ *   pageURL: url,
+ *   itemData: { slug: "<YOUR_ITEM_SLUG>" },
+ *   itemType: seoTags.ItemType.<YOUR_ITEM_TYPE>,
+ * });
+ *
+ * <SEO.Root seoTagsServiceConfig={seoTagsServiceConfig}>
+ *   <SEO.UpdateTagsTrigger>
+ *     {({ updateSeoTags }) => (
+ *       <a
+ *         href="https://your-domain.com/items/different-item"
+ *         onClick={() =>
+ *           updateSeoTags(seoTags.ItemType.STORES_PRODUCT, { slug: "different-product-slug" })
+ *         }
+ *       >
+ *         Go to a different item
+ *       </a>
+ *     )}
+ *   </SEO.UpdateTagsTrigger>
+ * </SEO.Root>
+ * ```.Root>
  * ```
  *
  * @component

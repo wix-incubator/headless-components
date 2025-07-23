@@ -30,7 +30,7 @@
     "@wix/image": "^1.403.0",
     "@wix/media": "^1.0.170",
     "@wix/sdk": "^1.15.24",
-    "@wix/seo": "^1.0.14",
+    "@wix/seo": "^1.0.20",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager": "^0.2.19",
     "@wix/services-manager-react": "^0.1.26",
