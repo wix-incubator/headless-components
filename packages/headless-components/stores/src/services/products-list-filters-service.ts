@@ -7,6 +7,19 @@ import {
 import { productsV3 } from "@wix/stores";
 import { ProductsListServiceDefinition } from "./products-list-service-new.js";
 
+export interface ProductOption {
+  id: string;
+  name: string;
+  choices: ProductChoice[];
+  optionRenderType?: string;
+}
+
+export interface ProductChoice {
+  id: string;
+  name: string;
+  colorCode?: string;
+}
+
 export enum InventoryStatusType {
   IN_STOCK = productsV3.InventoryAvailabilityStatus.IN_STOCK,
   OUT_OF_STOCK = productsV3.InventoryAvailabilityStatus.OUT_OF_STOCK,
@@ -19,9 +32,12 @@ export const ProductsListFiltersServiceDefinition = defineService<{
   maxPrice: Signal<number>;
   availableInventoryStatuses: Signal<InventoryStatusType[]>;
   selectedInventoryStatuses: Signal<InventoryStatusType[]>;
+  availableProductOptions: Signal<ProductOption[]>;
+  selectedProductOptions: Signal<Record<string, string[]>>;
   setMinPrice: (minPrice: number) => void;
   setMaxPrice: (maxPrice: number) => void;
   toggleInventoryStatus: (status: InventoryStatusType) => void;
+  toggleProductOption: (optionId: string, choiceId: string) => void;
   isFiltered: Signal<boolean>;
   reset: () => void;
 }>("products-list-filters");
@@ -57,6 +73,14 @@ export const ProductsListFiltersService =
         getSelectedInventoryStatuses(productsListService.searchOptions.get()),
       );
 
+      // TODO: Get product options from aggregations data
+      const availableProductOptionsSignal = signalsService.signal(
+        [] as ProductOption[],
+      );
+      const selectedProductOptionsSignal = signalsService.signal(
+        getSelectedProductOptions(productsListService.searchOptions.get()),
+      );
+
       const isFilteredSignal = signalsService.signal(false);
 
       if (typeof window !== "undefined") {
@@ -66,6 +90,7 @@ export const ProductsListFiltersService =
           const maxPrice = maxPriceSignal.get();
           const selectedInventoryStatuses =
             selectedInventoryStatusesSignal.get();
+          const selectedProductOptions = selectedProductOptionsSignal.get();
 
           if (firstRun) {
             firstRun = false;
@@ -104,6 +129,14 @@ export const ProductsListFiltersService =
             "inventory.availabilityStatus"
           ];
 
+          // Remove existing product option filters
+          // First, find and remove any existing option filters
+          Object.keys(newSearchOptions.filter).forEach((key) => {
+            if (key.startsWith("options.")) {
+              delete (newSearchOptions.filter as any)[key];
+            }
+          });
+
           // Add new price filters if they have valid values
           if (minPrice > 0) {
             (newSearchOptions.filter as any)[
@@ -129,6 +162,25 @@ export const ProductsListFiltersService =
             }
           }
 
+          // Add new product option filters if there are selected options
+          Object.entries(selectedProductOptions).forEach(
+            ([optionId, choiceIds]) => {
+              if (choiceIds.length > 0) {
+                if (choiceIds.length === 1) {
+                  (newSearchOptions.filter as any)[
+                    `options.${optionId}.choice`
+                  ] = choiceIds[0];
+                } else {
+                  (newSearchOptions.filter as any)[
+                    `options.${optionId}.choice`
+                  ] = {
+                    $in: choiceIds,
+                  };
+                }
+              }
+            },
+          );
+
           // Use callback to update search options
           productsListService.setSearchOptions(newSearchOptions);
         });
@@ -139,6 +191,8 @@ export const ProductsListFiltersService =
         maxPrice: maxPriceSignal,
         availableInventoryStatuses: availableInventoryStatusesSignal,
         selectedInventoryStatuses: selectedInventoryStatusesSignal,
+        availableProductOptions: availableProductOptionsSignal,
+        selectedProductOptions: selectedProductOptionsSignal,
         setMinPrice: (minPrice: number) => {
           minPriceSignal.set(minPrice);
         },
@@ -156,12 +210,39 @@ export const ProductsListFiltersService =
             selectedInventoryStatusesSignal.set([...current, status]);
           }
         },
+        toggleProductOption: (optionId: string, choiceId: string) => {
+          const current = selectedProductOptionsSignal.get();
+          const currentChoices = current[optionId] || [];
+          const isSelected = currentChoices.includes(choiceId);
+
+          if (isSelected) {
+            // Remove the choice
+            const newChoices = currentChoices.filter((id) => id !== choiceId);
+            if (newChoices.length === 0) {
+              const newOptions = { ...current };
+              delete newOptions[optionId];
+              selectedProductOptionsSignal.set(newOptions);
+            } else {
+              selectedProductOptionsSignal.set({
+                ...current,
+                [optionId]: newChoices,
+              });
+            }
+          } else {
+            // Add the choice
+            selectedProductOptionsSignal.set({
+              ...current,
+              [optionId]: [...currentChoices, choiceId],
+            });
+          }
+        },
         isFiltered: isFilteredSignal,
         reset: () => {
           // TODO: reset the filters to the original values from the aggregation data
           minPriceSignal.set(0);
           maxPriceSignal.set(0);
           selectedInventoryStatusesSignal.set([]);
+          selectedProductOptionsSignal.set({});
           isFilteredSignal.set(false);
         },
       };
@@ -225,4 +306,34 @@ function getSelectedInventoryStatuses(
   }
 
   return [];
+}
+
+function getSelectedProductOptions(
+  searchOptions: Parameters<typeof productsV3.searchProducts>[0],
+): Record<string, string[]> {
+  const filter = searchOptions.filter;
+  if (!filter) return {};
+
+  const selectedOptions: Record<string, string[]> = {};
+
+  // Look for options.{optionId}.choice filters
+  Object.keys(filter).forEach((key) => {
+    if (key.startsWith("options.") && key.endsWith(".choice")) {
+      const optionId = key.slice(8, -7); // Remove "options." and ".choice"
+      const optionFilter = (filter as any)[key];
+
+      if (typeof optionFilter === "string" && optionFilter.length > 0) {
+        selectedOptions[optionId] = [optionFilter];
+      } else if (
+        typeof optionFilter === "object" &&
+        optionFilter !== null &&
+        "$in" in optionFilter &&
+        Array.isArray(optionFilter.$in)
+      ) {
+        selectedOptions[optionId] = optionFilter.$in;
+      }
+    }
+  });
+
+  return selectedOptions;
 }

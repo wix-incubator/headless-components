@@ -5,11 +5,11 @@ import type {
   ReadOnlySignal,
 } from "@wix/services-definitions/core-services/signals";
 import { URLParamsUtils } from "../utils/url-params.js";
+import { CatalogServiceDefinition } from "./catalog-service.js";
 import {
-  CatalogServiceDefinition,
+  ProductOption,
   ProductChoice,
-  type ProductOption,
-} from "./catalog-service.js";
+} from "./products-list-filters-service.js";
 
 export interface PriceRange {
   min: number;
@@ -39,7 +39,7 @@ export interface FilterServiceAPI {
   isFullyLoaded: ReadOnlySignal<boolean>;
 }
 export const FilterServiceDefinition = defineService<FilterServiceAPI>(
-  "filtered-collection"
+  "filtered-collection",
 );
 
 export const defaultFilter: Filter = {
@@ -54,7 +54,7 @@ export const FilterService = implementService.withConfig<{
   const catalogService = getService(CatalogServiceDefinition);
 
   const currentFilters: Signal<Filter> = signalsService.signal(
-    (config?.initialFilters || defaultFilter) as any
+    (config?.initialFilters || defaultFilter) as any,
   );
 
   // Use computed signal for availableOptions to automatically track dependencies
@@ -142,22 +142,22 @@ export const FilterService = implementService.withConfig<{
       Object.entries(filters.selectedOptions).forEach(
         ([optionId, choiceIds]) => {
           const option = availableOpts.productOptions.find(
-            (opt) => opt.id === optionId
+            (opt) => opt.id === optionId,
           );
           if (option && choiceIds.length > 0) {
             const selectedChoices = option.choices.filter(
-              (choice: ProductChoice) => choiceIds.includes(choice.id)
+              (choice: ProductChoice) => choiceIds.includes(choice.id),
             );
             if (selectedChoices.length > 0) {
               // Use 'availability' as URL param for inventory filter
               const paramName =
                 optionId === "inventory-filter" ? "availability" : option.name;
               urlParams[paramName] = selectedChoices.map(
-                (choice) => choice.name
+                (choice) => choice.name,
               );
             }
           }
-        }
+        },
       );
     }
 

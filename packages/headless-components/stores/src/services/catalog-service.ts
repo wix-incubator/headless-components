@@ -5,21 +5,12 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 import * as customizationsV3 from "@wix/auto_sdk_stores_customizations-v-3";
+import {
+  ProductOption,
+  ProductChoice,
+} from "./products-list-filters-service.js";
 
 const { SortDirection, SortType: SDKSortType } = productsV3;
-
-export interface ProductOption {
-  id: string;
-  name: string;
-  choices: ProductChoice[];
-  optionRenderType?: string;
-}
-
-export interface ProductChoice {
-  id: string;
-  name: string;
-  colorCode?: string;
-}
 
 export interface CatalogPriceRange {
   minPrice: number;
