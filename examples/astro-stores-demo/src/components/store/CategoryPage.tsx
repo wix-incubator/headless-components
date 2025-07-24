@@ -1,9 +1,3 @@
-import { productsV3 } from '@wix/stores';
-import { useEffect, useState } from 'react';
-import CategoryPicker from './CategoryPicker';
-import ProductFilters from './ProductFilters';
-import SortDropdown from './SortDropdown';
-
 import { CurrentCart } from '@wix/headless-ecom/react';
 import type { LineItem } from '@wix/headless-ecom/services';
 import {
@@ -11,29 +5,37 @@ import {
   MediaGalleryServiceDefinition,
 } from '@wix/headless-media/services';
 import {
-  FilteredCollection,
   Product,
   ProductActions,
   ProductsList,
+  ProductsListFilters,
   ProductsListPagination,
   ProductVariantSelector,
   SelectedVariant,
-  ProductsListFilters,
 } from '@wix/headless-stores/react';
+import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import {
-  ProductService,
-  ProductServiceDefinition,
   SelectedVariantService,
   SelectedVariantServiceDefinition,
-  type AvailableOptions,
-  type CategoriesListServiceConfig,
-  type Filter,
+  type ProductsListServiceConfig,
 } from '@wix/headless-stores/services';
 import { createServicesMap } from '@wix/services-manager';
 import { WixServices } from '@wix/services-manager-react';
+import { productsV3 } from '@wix/stores';
+import { useEffect, useState } from 'react';
 import { WixMediaImage } from '../media';
+import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
+import ProductFilters from './ProductFilters';
 import QuickViewModal from './QuickViewModal';
+import { SortDropdown } from './SortDropdown';
+
+interface StoreCollectionPageProps {
+  productsListConfig: ProductsListServiceConfig;
+  categoriesListConfig: CategoriesListServiceConfig;
+  currentCategorySlug: string;
+  productPageRoute: string;
+}
 
 export const ProductGridContent = ({
   productPageRoute,
@@ -449,7 +451,13 @@ export const ProductGridContent = ({
     <div className="min-h-screen">
       <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
         <div className="flex items-top justify-between">
-          <CategoryPicker />
+          <CategoryPicker
+            categoriesListConfig={categoriesListConfig}
+            currentCategorySlug={currentCategorySlug}
+            onCategorySelect={slug => {
+              window.location.href = `/category/${slug}`;
+            }}
+          />
           <SortDropdown />
         </div>
       </div>
@@ -460,7 +468,9 @@ export const ProductGridContent = ({
           {/* Filters Sidebar */}
           <div className="w-full lg:w-80 lg:flex-shrink-0">
             <div className="lg:sticky lg:top-6">
-              <div className="relative">{/* <ProductFilters /> */}</div>
+              <div className="relative">
+                <ProductFilters />
+              </div>
             </div>
           </div>
 
@@ -647,23 +657,24 @@ export const LoadMoreSection = () => {
   );
 };
 
-export default function ProductList({
-  productPageRoute,
+export function CategoryPage({
+  productsListConfig,
   categoriesListConfig,
   currentCategorySlug,
-}: {
-  productPageRoute: string;
-  categoriesListConfig: CategoriesListServiceConfig;
-  currentCategorySlug: string;
-}) {
+  productPageRoute,
+}: StoreCollectionPageProps) {
   return (
-    <div>
-      {/* <ProductGridContent
-        productPageRoute={productPageRoute}
-        categoriesListConfig={categoriesListConfig}
-        currentCategorySlug={currentCategorySlug}
-      />
-      <LoadMoreSection /> */}
-    </div>
+    <ProductsList.Root productsListConfig={productsListConfig}>
+      <ProductsListPagination.Root>
+        <div>
+          <ProductGridContent
+            productPageRoute={productPageRoute}
+            categoriesListConfig={categoriesListConfig}
+            currentCategorySlug={currentCategorySlug}
+          />
+          <LoadMoreSection />
+        </div>
+      </ProductsListPagination.Root>
+    </ProductsList.Root>
   );
 }

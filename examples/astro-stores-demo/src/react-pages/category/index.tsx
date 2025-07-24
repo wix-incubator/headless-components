@@ -3,39 +3,27 @@ import { KitchensinkLayout } from '../../layouts/KitchensinkLayout';
 import { createServicesMap } from '@wix/services-manager';
 import { useState } from 'react';
 import {
-  CatalogService,
-  CatalogServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
   CategoryService,
   CategoryServiceDefinition,
 } from '@wix/headless-stores/services';
-import {
-  CollectionService,
-  CollectionServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  FilterService,
-  FilterServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  SortService,
-  SortServiceDefinition,
-} from '@wix/headless-stores/services';
-import ProductList from '../../components/store/ProductList';
 import { WixServices } from '@wix/services-manager-react';
 import '../../styles/theme-1.css';
+import { CategoryPage } from '../../components/store/CategoryPage';
 
 interface StoreCollectionPageProps {
-  filteredCollectionServiceConfig: any;
   currentCartServiceConfig: any;
-  categoriesConfig: any;
+  categoryServiceConfig: any;
+  categoriesListConfig: any;
+  productsListConfig: any;
+  slug: string;
 }
 
 export default function StoreCollectionPage({
-  filteredCollectionServiceConfig,
   currentCartServiceConfig,
-  categoriesConfig,
+  categoryServiceConfig,
+  categoriesListConfig,
+  productsListConfig,
+  slug,
 }: StoreCollectionPageProps) {
   // Create navigation handler for category URLs
   const handleCategoryChange = (categoryId: string | null, category: any) => {
@@ -61,27 +49,27 @@ export default function StoreCollectionPage({
     }
   };
 
-  const [servicesMap] = useState(() =>
-    createServicesMap()
-      .addService(
-        CollectionServiceDefinition,
-        CollectionService,
-        filteredCollectionServiceConfig
-      )
-      .addService(
-        FilterServiceDefinition,
-        FilterService,
-        filteredCollectionServiceConfig
-      )
-      .addService(CategoryServiceDefinition, CategoryService, {
-        ...categoriesConfig,
-        onCategoryChange: handleCategoryChange,
-      })
-      .addService(SortServiceDefinition, SortService, {
-        initialSort: filteredCollectionServiceConfig.initialSort,
-      })
-      .addService(CatalogServiceDefinition, CatalogService, {})
-  );
+  // const [servicesMap] = useState(() =>
+  //   createServicesMap()
+  //     .addService(
+  //       CollectionServiceDefinition,
+  //       CollectionService,
+  //       filteredCollectionServiceConfig
+  //     )
+  //     .addService(
+  //       FilterServiceDefinition,
+  //       FilterService,
+  //       filteredCollectionServiceConfig
+  //     )
+  //     .addService(CategoryServiceDefinition, CategoryService, {
+  //       ...categoriesConfig,
+  //       onCategoryChange: handleCategoryChange,
+  //     })
+  //     .addService(SortServiceDefinition, SortService, {
+  //       initialSort: filteredCollectionServiceConfig.initialSort,
+  //     })
+  //     .addService(CatalogServiceDefinition, CatalogService, {})
+  // );
 
   return (
     <KitchensinkLayout>
@@ -96,9 +84,12 @@ export default function StoreCollectionPage({
             </p>
           </div>
 
-          <WixServices servicesMap={servicesMap}>
-            <ProductList productPageRoute="" />
-          </WixServices>
+          <CategoryPage
+            productsListConfig={productsListConfig}
+            categoriesListConfig={categoriesListConfig}
+            currentCategorySlug={slug}
+            productPageRoute=""
+          />
         </div>
       </StoreLayout>
     </KitchensinkLayout>

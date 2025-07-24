@@ -87,7 +87,7 @@ export interface RootRenderProps {
  * }
  * ```
  */
-export const Root = (props: RootProps) => {
+export function Root(props: RootProps) {
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
     typeof SocialSharingServiceDefinition
   >;
@@ -125,7 +125,7 @@ export const Root = (props: RootProps) => {
     copyLink: service.copyToClipboard,
     shareNative: service.shareNative,
   });
-};
+}
 
 /**
  * Props for Platform headless component
@@ -174,14 +174,14 @@ export interface PlatformRenderProps {
  * }
  * ```
  */
-export const Platform = (props: PlatformProps) => {
+export function Platform(props: PlatformProps) {
   const { platform, onClick } = props;
 
   return props.children({
     platform,
     onSelect: onClick,
   });
-};
+}
 
 /**
  * Props for Platforms headless component
@@ -251,7 +251,7 @@ export interface PlatformsRenderProps {
  * }
  * ```
  */
-export const Platforms = (props: PlatformsProps) => {
+export function Platforms(props: PlatformsProps) {
   const { url, title, description = "", hashtags = [] } = props;
 
   const service = useService(SocialSharingServiceDefinition) as ServiceAPI<
@@ -288,4 +288,4 @@ export const Platforms = (props: PlatformsProps) => {
     copyLink,
     shareNative,
   });
-};
+}

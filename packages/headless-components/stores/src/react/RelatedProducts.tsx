@@ -66,7 +66,7 @@ export interface ListRenderProps {
  * }
  * ```
  */
-export const List = (props: ListProps) => {
+export function List(props: ListProps) {
   const service = useService(RelatedProductsServiceDefinition) as ServiceAPI<
     typeof RelatedProductsServiceDefinition
   >;
@@ -103,7 +103,7 @@ export const List = (props: ListProps) => {
     hasProducts,
     refresh: service.refreshRelatedProducts,
   });
-};
+}
 
 /**
  * Props for Item headless component
@@ -164,7 +164,7 @@ export interface ItemRenderProps {
  * }
  * ```
  */
-export const Item = (props: ItemProps) => {
+export function Item(props: ItemProps) {
   const { product } = props;
 
   const title = product.name || "Unknown Product";
@@ -194,4 +194,4 @@ export const Item = (props: ItemProps) => {
     description,
     onQuickAdd: handleQuickAdd,
   });
-};
+}
