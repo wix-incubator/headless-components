@@ -186,7 +186,9 @@ export const ProductGridContent = ({
               </a>
 
               {/* Product Options */}
-              <ProductVariantSelector.Root selectedVariantServiceConfig={{}}>
+              <ProductVariantSelector.Root
+                selectedVariantServiceConfig={{ fetchInventoryData: false }}
+              >
                 <ProductVariantSelector.Options>
                   {({ options, hasOptions }) => (
                     <>
@@ -332,73 +334,81 @@ export const ProductGridContent = ({
                     )
                   }
                 </ProductVariantSelector.Reset>
-              </ProductVariantSelector.Root>
 
-              <Product.Description>
-                {({ plainDescription }) => (
-                  <>
-                    {plainDescription && (
-                      <p
-                        className="text-content-muted text-sm mb-3 line-clamp-2"
-                        dangerouslySetInnerHTML={{
-                          __html: plainDescription,
-                        }}
-                      />
+                <Product.Root productServiceConfig={{ product }}>
+                  <Product.Description>
+                    {({ plainDescription }) => (
+                      <>
+                        {plainDescription && (
+                          <p
+                            className="text-content-muted text-sm mb-3 line-clamp-2"
+                            dangerouslySetInnerHTML={{
+                              __html: plainDescription,
+                            }}
+                          />
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </Product.Description>
+                  </Product.Description>
+                </Product.Root>
 
-              <div className="mt-auto mb-3">
-                <div className="space-y-1">
-                  <SelectedVariant.Price>
-                    {({ price, compareAtPrice }) => {
-                      return compareAtPrice &&
-                        parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) >
-                          0 ? (
-                        <>
-                          <div className="text-xl font-bold text-content-primary">
-                            {price}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="text-sm font-medium text-content-faded line-through">
-                              {compareAtPrice}
+                <div className="mt-auto mb-3">
+                  <div className="space-y-1">
+                    <SelectedVariant.Root
+                      selectedVariantServiceConfig={{
+                        fetchInventoryData: false,
+                      }}
+                    >
+                      <SelectedVariant.Price>
+                        {({ price, compareAtPrice }) => {
+                          return compareAtPrice &&
+                            parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) >
+                              0 ? (
+                            <>
+                              <div className="text-xl font-bold text-content-primary">
+                                {price}
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className="text-sm font-medium text-content-faded line-through">
+                                  {compareAtPrice}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {available ? (
+                                    <span className="text-status-success text-sm">
+                                      In Stock
+                                    </span>
+                                  ) : (
+                                    <span className="text-status-error text-sm">
+                                      Out of Stock
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="flex items-center justify-between">
+                              <div className="text-xl font-bold text-content-primary">
+                                {price}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {available ? (
+                                  <span className="text-status-success text-sm">
+                                    In Stock
+                                  </span>
+                                ) : (
+                                  <span className="text-status-error text-sm">
+                                    Out of Stock
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                              {available ? (
-                                <span className="text-status-success text-sm">
-                                  In Stock
-                                </span>
-                              ) : (
-                                <span className="text-status-error text-sm">
-                                  Out of Stock
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          <div className="text-xl font-bold text-content-primary">
-                            {price}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {available ? (
-                              <span className="text-status-success text-sm">
-                                In Stock
-                              </span>
-                            ) : (
-                              <span className="text-status-error text-sm">
-                                Out of Stock
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </SelectedVariant.Price>
+                          );
+                        }}
+                      </SelectedVariant.Price>
+                    </SelectedVariant.Root>
+                  </div>
                 </div>
-              </div>
+              </ProductVariantSelector.Root>
 
               {/* Action Buttons */}
               <div className="space-y-2">
