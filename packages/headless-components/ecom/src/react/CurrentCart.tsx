@@ -1,11 +1,68 @@
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
+import { useService, WixServices } from "@wix/services-manager-react";
 import {
   CurrentCartServiceDefinition,
+  CurrentCartService,
+  CurrentCartServiceConfig,
   type LineItem,
 } from "../services/current-cart-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
 import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
 import { media } from "@wix/sdk";
+
+/**
+ * Root component that provides the CurrentCart service context to its children.
+ * This component sets up the necessary services for managing current cart functionality.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { CurrentCart } from '@wix/ecom/components';
+ *
+ * function CartProvider() {
+ *   return (
+ *     <CurrentCart.Root>
+ *       <div>
+ *         <CurrentCart.Trigger>
+ *           {({ itemCount, onOpen }) => (
+ *             <button onClick={onOpen}>
+ *               Cart ({itemCount})
+ *             </button>
+ *           )}
+ *         </CurrentCart.Trigger>
+ *
+ *         <CurrentCart.Content>
+ *           {({ cart, isLoading }) => (
+ *             <div>
+ *               {isLoading ? 'Loading...' : 'Cart loaded'}
+ *             </div>
+ *           )}
+ *         </CurrentCart.Content>
+ *       </div>
+ *     </CurrentCart.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
+  props: PropsWithChildren<{
+    currentCartServiceConfig?: CurrentCartServiceConfig;
+  }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        CurrentCartServiceDefinition,
+        CurrentCartService,
+        props.currentCartServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Helper function to format currency properly
@@ -382,9 +439,9 @@ export const Item = (props: ItemProps) => {
       image: null,
       price: formatCurrency(0, currency),
       selectedOptions: [],
-      onIncrease: async () => { },
-      onDecrease: async () => { },
-      onRemove: async () => { },
+      onIncrease: async () => {},
+      onDecrease: async () => {},
+      onRemove: async () => {},
       isLoading: false,
     });
   }
@@ -524,16 +581,16 @@ export const Summary = (props: SummaryProps) => {
   const totals = cartTotals?.priceSummary || {};
   const subtotal = formatCurrency(
     parseFloat(totals.subtotal?.amount || "0"),
-    currency
+    currency,
   );
   const shipping = formatCurrency(
     parseFloat(totals.shipping?.amount || "0"),
-    currency
+    currency,
   );
   const tax = formatCurrency(parseFloat(totals.tax?.amount || "0"), currency);
   const total = formatCurrency(
     parseFloat(totals.total?.amount || "0"),
-    currency
+    currency,
   );
 
   const appliedCoupon =
@@ -595,7 +652,7 @@ export interface ClearRenderProps {
  *   )}
  * </CurrentCart.Clear>
  * ```
-  */
+ */
 export const Clear = (props: ClearProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
@@ -650,7 +707,7 @@ export interface CheckoutRenderProps {
  *   )}
  * </CurrentCart.Checkout>
  * ```
-*/
+ */
 export const Checkout = (props: CheckoutProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
@@ -701,7 +758,7 @@ export interface NotesRenderProps {
  *   )}
  * </CurrentCart.Notes>
  * ```
-  */
+ */
 export const Notes = (props: NotesProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition

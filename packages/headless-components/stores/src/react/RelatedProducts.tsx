@@ -1,12 +1,83 @@
 import React from "react";
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { RelatedProductsServiceDefinition } from "../services/related-products-service.js";
+import { useService, WixServices } from "@wix/services-manager-react";
+import {
+  RelatedProductsServiceDefinition,
+  RelatedProductsService,
+  RelatedProductsServiceConfig,
+} from "../services/related-products-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import {
   InventoryAvailabilityStatus,
   type V3Product,
 } from "@wix/auto_sdk_stores_products-v-3";
+
+/**
+ * Root component that provides the RelatedProducts service context to its children.
+ * This component sets up the necessary services for rendering and managing related products functionality.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { RelatedProducts } from '@wix/stores/components';
+ *
+ * function RecommendedSection({ currentProductId }) {
+ *   return (
+ *     <RelatedProducts.Root relatedProductsServiceConfig={{ productId: currentProductId }}>
+ *       <div>
+ *         <h3>You might also like</h3>
+ *         <RelatedProducts.List>
+ *           {({ products, isLoading, error, hasProducts, refresh }) => (
+ *             <div>
+ *               {isLoading && <div>Loading related products...</div>}
+ *               {error && <div>Error: {error}</div>}
+ *               {hasProducts && (
+ *                 <div className="products-grid">
+ *                   {products.map(product => (
+ *                     <RelatedProducts.Item key={product.id} product={product}>
+ *                       {({ title, image, price, available, description, onQuickAdd }) => (
+ *                         <div className={`related-product ${!available ? 'unavailable' : ''}`}>
+ *                           {image && <img src={image} alt={title} />}
+ *                           <h4>{title}</h4>
+ *                           <div className="price">{price}</div>
+ *                           <button onClick={onQuickAdd} disabled={!available}>
+ *                             Quick Add
+ *                           </button>
+ *                         </div>
+ *                       )}
+ *                     </RelatedProducts.Item>
+ *                   ))}
+ *                 </div>
+ *               )}
+ *             </div>
+ *           )}
+ *         </RelatedProducts.List>
+ *       </div>
+ *     </RelatedProducts.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
+  props: PropsWithChildren<{
+    relatedProductsServiceConfig: RelatedProductsServiceConfig;
+  }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        RelatedProductsServiceDefinition,
+        RelatedProductsService,
+        props.relatedProductsServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Props for List headless component

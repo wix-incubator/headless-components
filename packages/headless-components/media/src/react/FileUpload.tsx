@@ -1,10 +1,78 @@
 import React from "react";
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
+import { useService, WixServices } from "@wix/services-manager-react";
 import {
   FileUploadServiceDefinition,
+  FileUploadService,
   type UploadState,
 } from "../services/index.js";
+import { FileUploadServiceConfig } from "../services/file-upload-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
+
+/**
+ * Root component that provides the FileUpload service context to its children.
+ * This component sets up the necessary services for managing file upload functionality.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { FileUpload } from '@wix/media/components';
+ *
+ * function FileUploadForm() {
+ *   const uploadAction = async (file: File) => {
+ *     // Your upload implementation
+ *     return { url: 'uploaded-file-url' };
+ *   };
+ *
+ *   return (
+ *     <FileUpload.Root fileUploadServiceConfig={{
+ *       maxFileSize: 10 * 1024 * 1024, // 10MB
+ *       allowedTypes: ['image/*'],
+ *       allowedExtensions: ['.jpg', '.png', '.gif'],
+ *       uploadAction,
+ *       onUploadSuccess: (result) => console.log('Upload success:', result),
+ *       onUploadError: (error) => console.error('Upload error:', error)
+ *     }}>
+ *       <div>
+ *         <FileUpload.FileSelector>
+ *           {({ selectedFile, selectFile, clearFile, handleFileSelect }) => (
+ *             <div>
+ *               <input
+ *                 type="file"
+ *                 onChange={handleFileSelect}
+ *                 accept="image/*"
+ *               />
+ *               {selectedFile && (
+ *                 <p>Selected: {selectedFile.name}</p>
+ *               )}
+ *             </div>
+ *           )}
+ *         </FileUpload.FileSelector>
+ *       </div>
+ *     </FileUpload.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
+  props: PropsWithChildren<{
+    fileUploadServiceConfig: FileUploadServiceConfig;
+  }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        FileUploadServiceDefinition,
+        FileUploadService,
+        props.fileUploadServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Props for FileSelector headless component

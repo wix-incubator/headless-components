@@ -186,216 +186,229 @@ export const ProductGridContent = ({
               </a>
 
               {/* Product Options */}
-              <ProductVariantSelector.Options>
-                {({ options, hasOptions }) => (
-                  <>
-                    {hasOptions && (
-                      <div className="mb-3 space-y-2">
-                        {options.map((option: any) => (
-                          <ProductVariantSelector.Option
-                            key={option._id}
-                            option={option}
-                          >
-                            {({ name, choices }) => (
-                              <div className="space-y-1">
-                                <span className="text-content-secondary text-xs font-medium">
-                                  {String(name)}:
-                                </span>
-                                <div className="flex flex-wrap gap-1">
-                                  {choices?.slice(0, 3).map((choice: any) => (
-                                    <ProductVariantSelector.Choice
-                                      key={choice.choiceId}
-                                      option={option}
-                                      choice={choice}
-                                    >
-                                      {({
-                                        value,
-                                        isSelected,
-                                        isVisible,
-                                        isInStock,
-                                        isPreOrderEnabled,
-                                        onSelect,
-                                      }) => {
-                                        // Check if this is a color option and if choice has color data
-                                        const isColorOption = String(name)
-                                          .toLowerCase()
-                                          .includes('color');
-                                        const hasColorCode =
-                                          choice.colorCode ||
-                                          choice.media?.image;
+              <ProductVariantSelector.Root
+                selectedVariantServiceConfig={{ fetchInventoryData: false }}
+              >
+                <ProductVariantSelector.Options>
+                  {({ options, hasOptions }) => (
+                    <>
+                      {hasOptions && (
+                        <div className="mb-3 space-y-2">
+                          {options.map((option: any) => (
+                            <ProductVariantSelector.Option
+                              key={option._id}
+                              option={option}
+                            >
+                              {({ name, choices }) => (
+                                <div className="space-y-1">
+                                  <span className="text-content-secondary text-xs font-medium">
+                                    {String(name)}:
+                                  </span>
+                                  <div className="flex flex-wrap gap-1">
+                                    {choices?.slice(0, 3).map((choice: any) => (
+                                      <ProductVariantSelector.Choice
+                                        key={choice.choiceId}
+                                        option={option}
+                                        choice={choice}
+                                      >
+                                        {({
+                                          value,
+                                          isSelected,
+                                          isVisible,
+                                          isInStock,
+                                          isPreOrderEnabled,
+                                          onSelect,
+                                        }) => {
+                                          // Check if this is a color option and if choice has color data
+                                          const isColorOption = String(name)
+                                            .toLowerCase()
+                                            .includes('color');
+                                          const hasColorCode =
+                                            choice.colorCode ||
+                                            choice.media?.image;
 
-                                        // Only render if visible
-                                        if (!isVisible) return null;
+                                          // Only render if visible
+                                          if (!isVisible) return null;
 
-                                        if (
-                                          isColorOption &&
-                                          (choice.colorCode || hasColorCode)
-                                        ) {
-                                          return (
-                                            <div className="relative group/color">
-                                              <div
-                                                className={`w-6 h-6 rounded-full border-2 transition-colors cursor-pointer ${
+                                          if (
+                                            isColorOption &&
+                                            (choice.colorCode || hasColorCode)
+                                          ) {
+                                            return (
+                                              <div className="relative group/color">
+                                                <div
+                                                  className={`w-6 h-6 rounded-full border-2 transition-colors cursor-pointer ${
+                                                    isSelected
+                                                      ? 'border-brand-primary shadow-md ring-1 ring-brand-primary/30'
+                                                      : 'border-color-swatch hover:border-color-swatch-hover'
+                                                  } ${
+                                                    !isInStock &&
+                                                    !isPreOrderEnabled
+                                                      ? 'grayscale opacity-50'
+                                                      : ''
+                                                  }`}
+                                                  style={{
+                                                    backgroundColor:
+                                                      choice.colorCode ||
+                                                      'var(--theme-fallback-color)',
+                                                  }}
+                                                  onClick={onSelect}
+                                                />
+                                                {/* Stock indicator for color swatches */}
+                                                {!isInStock &&
+                                                  !isPreOrderEnabled && (
+                                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                      <svg
+                                                        className="w-3 h-3 text-status-error"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                      >
+                                                        <path
+                                                          strokeLinecap="round"
+                                                          strokeLinejoin="round"
+                                                          strokeWidth="2"
+                                                          d="M6 18L18 6M6 6l12 12"
+                                                        />
+                                                      </svg>
+                                                    </div>
+                                                  )}
+                                                {/* Tooltip */}
+                                                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-surface-tooltip text-content-primary text-xs px-2 py-1 rounded opacity-0 group-hover/color:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                                                  {String(value)}
+                                                  {!isInStock &&
+                                                    !isPreOrderEnabled &&
+                                                    ' (Out of Stock)'}
+                                                </div>
+                                              </div>
+                                            );
+                                          } else {
+                                            return (
+                                              <span
+                                                className={`inline-flex items-center px-2 py-1 text-xs rounded border transition-colors cursor-pointer ${
                                                   isSelected
-                                                    ? 'border-brand-primary shadow-md ring-1 ring-brand-primary/30'
-                                                    : 'border-color-swatch hover:border-color-swatch-hover'
+                                                    ? 'bg-brand-primary text-content-primary border-brand-primary'
+                                                    : 'bg-surface-primary text-content-secondary border-brand-medium hover:border-brand-primary'
                                                 } ${
                                                   !isInStock &&
                                                   !isPreOrderEnabled
-                                                    ? 'grayscale opacity-50'
+                                                    ? 'opacity-50 line-through'
                                                     : ''
                                                 }`}
-                                                style={{
-                                                  backgroundColor:
-                                                    choice.colorCode ||
-                                                    'var(--theme-fallback-color)',
-                                                }}
                                                 onClick={onSelect}
-                                              />
-                                              {/* Stock indicator for color swatches */}
-                                              {!isInStock &&
-                                                !isPreOrderEnabled && (
-                                                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                    <svg
-                                                      className="w-3 h-3 text-status-error"
-                                                      fill="none"
-                                                      viewBox="0 0 24 24"
-                                                      stroke="currentColor"
-                                                    >
-                                                      <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M6 18L18 6M6 6l12 12"
-                                                      />
-                                                    </svg>
-                                                  </div>
-                                                )}
-                                              {/* Tooltip */}
-                                              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-surface-tooltip text-content-primary text-xs px-2 py-1 rounded opacity-0 group-hover/color:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                                              >
                                                 {String(value)}
-                                                {!isInStock &&
-                                                  !isPreOrderEnabled &&
-                                                  ' (Out of Stock)'}
-                                              </div>
-                                            </div>
-                                          );
-                                        } else {
-                                          return (
-                                            <span
-                                              className={`inline-flex items-center px-2 py-1 text-xs rounded border transition-colors cursor-pointer ${
-                                                isSelected
-                                                  ? 'bg-brand-primary text-content-primary border-brand-primary'
-                                                  : 'bg-surface-primary text-content-secondary border-brand-medium hover:border-brand-primary'
-                                              } ${
-                                                !isInStock && !isPreOrderEnabled
-                                                  ? 'opacity-50 line-through'
-                                                  : ''
-                                              }`}
-                                              onClick={onSelect}
-                                            >
-                                              {String(value)}
-                                            </span>
-                                          );
-                                        }
-                                      }}
-                                    </ProductVariantSelector.Choice>
-                                  ))}
-                                  {choices?.length > 3 && (
-                                    <span className="text-content-muted text-xs">
-                                      +{choices.length - 3} more
+                                              </span>
+                                            );
+                                          }
+                                        }}
+                                      </ProductVariantSelector.Choice>
+                                    ))}
+                                    {choices?.length > 3 && (
+                                      <span className="text-content-muted text-xs">
+                                        +{choices.length - 3} more
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </ProductVariantSelector.Option>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </ProductVariantSelector.Options>
+
+                <ProductVariantSelector.Reset>
+                  {({ onReset, hasSelections }) =>
+                    hasSelections && (
+                      <div className="pt-4">
+                        <button
+                          onClick={onReset}
+                          className="text-sm text-brand-primary hover:text-brand-light transition-colors"
+                        >
+                          Reset Selections
+                        </button>
+                      </div>
+                    )
+                  }
+                </ProductVariantSelector.Reset>
+
+                <Product.Root productServiceConfig={{ product }}>
+                  <Product.Description>
+                    {({ plainDescription }) => (
+                      <>
+                        {plainDescription && (
+                          <p
+                            className="text-content-muted text-sm mb-3 line-clamp-2"
+                            dangerouslySetInnerHTML={{
+                              __html: plainDescription,
+                            }}
+                          />
+                        )}
+                      </>
+                    )}
+                  </Product.Description>
+                </Product.Root>
+
+                <div className="mt-auto mb-3">
+                  <div className="space-y-1">
+                    <SelectedVariant.Root
+                      selectedVariantServiceConfig={{
+                        fetchInventoryData: false,
+                      }}
+                    >
+                      <SelectedVariant.Price>
+                        {({ price, compareAtPrice }) => {
+                          return compareAtPrice &&
+                            parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) >
+                              0 ? (
+                            <>
+                              <div className="text-xl font-bold text-content-primary">
+                                {price}
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className="text-sm font-medium text-content-faded line-through">
+                                  {compareAtPrice}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {available ? (
+                                    <span className="text-status-success text-sm">
+                                      In Stock
+                                    </span>
+                                  ) : (
+                                    <span className="text-status-error text-sm">
+                                      Out of Stock
                                     </span>
                                   )}
                                 </div>
                               </div>
-                            )}
-                          </ProductVariantSelector.Option>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                )}
-              </ProductVariantSelector.Options>
-
-              <ProductVariantSelector.Reset>
-                {({ onReset, hasSelections }) =>
-                  hasSelections && (
-                    <div className="pt-4">
-                      <button
-                        onClick={onReset}
-                        className="text-sm text-brand-primary hover:text-brand-light transition-colors"
-                      >
-                        Reset Selections
-                      </button>
-                    </div>
-                  )
-                }
-              </ProductVariantSelector.Reset>
-
-              <Product.Description>
-                {({ plainDescription }) => (
-                  <>
-                    {plainDescription && (
-                      <p
-                        className="text-content-muted text-sm mb-3 line-clamp-2"
-                        dangerouslySetInnerHTML={{
-                          __html: plainDescription,
+                            </>
+                          ) : (
+                            <div className="flex items-center justify-between">
+                              <div className="text-xl font-bold text-content-primary">
+                                {price}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {available ? (
+                                  <span className="text-status-success text-sm">
+                                    In Stock
+                                  </span>
+                                ) : (
+                                  <span className="text-status-error text-sm">
+                                    Out of Stock
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
                         }}
-                      />
-                    )}
-                  </>
-                )}
-              </Product.Description>
-
-              <div className="mt-auto mb-3">
-                <div className="space-y-1">
-                  <SelectedVariant.Price>
-                    {({ price, compareAtPrice }) => {
-                      return compareAtPrice &&
-                        parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) >
-                          0 ? (
-                        <>
-                          <div className="text-xl font-bold text-content-primary">
-                            {price}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="text-sm font-medium text-content-faded line-through">
-                              {compareAtPrice}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              {available ? (
-                                <span className="text-status-success text-sm">
-                                  In Stock
-                                </span>
-                              ) : (
-                                <span className="text-status-error text-sm">
-                                  Out of Stock
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex items-center justify-between">
-                          <div className="text-xl font-bold text-content-primary">
-                            {price}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {available ? (
-                              <span className="text-status-success text-sm">
-                                In Stock
-                              </span>
-                            ) : (
-                              <span className="text-status-error text-sm">
-                                Out of Stock
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  </SelectedVariant.Price>
+                      </SelectedVariant.Price>
+                    </SelectedVariant.Root>
+                  </div>
                 </div>
-              </div>
+              </ProductVariantSelector.Root>
 
               {/* Action Buttons */}
               <div className="space-y-2">

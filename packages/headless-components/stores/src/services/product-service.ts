@@ -63,7 +63,6 @@ export interface NotFoundProductServiceConfigResult {
   type: "notFound";
 }
 
-
 const loadProductBySlug = async (slug: string) => {
   const productResponse = await productsV3.getProductBySlug(slug, {
     fields: [
@@ -161,7 +160,9 @@ const loadProductBySlug = async (slug: string) => {
  */
 export async function loadProductServiceConfig(
   productSlug: string,
-): Promise<SuccessProductServiceConfigResult | NotFoundProductServiceConfigResult> {
+): Promise<
+  SuccessProductServiceConfigResult | NotFoundProductServiceConfigResult
+> {
   try {
     // Use getProductBySlug directly - single API call with comprehensive fields
     const productResponse = await loadProductBySlug(productSlug);

@@ -11,7 +11,6 @@ import {
   ProductServiceDefinition,
 } from "@wix/headless-stores/services";
 
-
 export interface RootProps {
   /** Child components that will have access to the ProductsList service */
   children: React.ReactNode;
@@ -32,8 +31,10 @@ export interface RootProps {
  *   return (
  *     <ProductsList.Root
  *       productsListConfig={{
- *         collectionId: 'my-collection-id',
- *         filters: { price: { min: 10, max: 100 } }
+ *         products: myProducts,
+ *         searchOptions: { query: { search: 'searchTerm' } },
+ *         pagingMetadata: { count: 10, hasNext: true },
+ *         aggregations: {}
  *       }}
  *     >
  *       <ProductsList.Grid>
@@ -157,13 +158,14 @@ export function Loading(props: LoadingProps): React.ReactNode {
   return null;
 }
 
-export interface ErrorRenderProps { error: string | null };
+export interface ErrorRenderProps {
+  error: string | null;
+}
 
 export interface ErrorProps {
   /** Content to display during error state (can be a render function or ReactNode) */
   children: (props: ErrorRenderProps) => React.ReactNode;
 }
-
 
 /**
  * Component that renders content when there's an error loading products.

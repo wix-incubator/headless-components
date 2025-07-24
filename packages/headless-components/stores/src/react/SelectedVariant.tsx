@@ -1,6 +1,63 @@
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { SelectedVariantServiceDefinition } from "../services/selected-variant-service.js";
+import { useService, WixServices } from "@wix/services-manager-react";
+import {
+  SelectedVariantServiceDefinition,
+  SelectedVariantService,
+  SelectedVariantServiceConfig,
+} from "../services/selected-variant-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
+
+/**
+ * Root component that provides the SelectedVariant service context to its children.
+ * This component sets up the necessary services for rendering and managing selected variant data.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { SelectedVariant } from '@wix/stores/components';
+ *
+ * function ProductVariantDisplay() {
+ *   return (
+ *     <SelectedVariant.Root selectedVariantServiceConfig={{ fetchInventoryData: true }}>
+ *       <div>
+ *         <SelectedVariant.Price>
+ *           {({ price, compareAtPrice, currency }) => (
+ *             <div className="price-display">
+ *               <span className="current-price">{price}</span>
+ *               {compareAtPrice && (
+ *                 <span className="compare-price">
+ *                   <s>{compareAtPrice}</s>
+ *                 </span>
+ *               )}
+ *               <span className="currency">{currency}</span>
+ *             </div>
+ *           )}
+ *         </SelectedVariant.Price>
+ *       </div>
+ *     </SelectedVariant.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
+  props: PropsWithChildren<{
+    selectedVariantServiceConfig?: SelectedVariantServiceConfig;
+  }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        SelectedVariantServiceDefinition,
+        SelectedVariantService,
+        props.selectedVariantServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Props for ProductDetails headless component
@@ -44,7 +101,7 @@ export interface ProductDetailsRenderProps {
  */
 export const Details = (props: ProductDetailsProps) => {
   const selectedVariantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedVariant = selectedVariantService.currentVariant?.get();
@@ -108,7 +165,7 @@ export interface PriceRenderProps {
  */
 export const Price = (props: PriceProps) => {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const price = variantService.currentPrice.get();
@@ -165,7 +222,7 @@ export interface SKURenderProps {
  */
 export const SKU = (props: SKUProps) => {
   const selectedVariantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedVariant = selectedVariantService.currentVariant?.get();

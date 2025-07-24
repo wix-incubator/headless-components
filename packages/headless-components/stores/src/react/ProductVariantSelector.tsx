@@ -1,11 +1,73 @@
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { SelectedVariantServiceDefinition } from "../services/selected-variant-service.js";
+import { useService, WixServices } from "@wix/services-manager-react";
+import {
+  SelectedVariantServiceDefinition,
+  SelectedVariantService,
+  SelectedVariantServiceConfig,
+} from "../services/selected-variant-service.js";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
 import {
   type ConnectedOption,
   type ConnectedOptionChoice,
   InventoryAvailabilityStatus,
 } from "@wix/auto_sdk_stores_products-v-3";
+
+/**
+ * Root component that provides the ProductVariantSelector service context to its children.
+ * This component sets up the necessary services for rendering and managing product variant selection.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { ProductVariantSelector } from '@wix/stores/components';
+ *
+ * function VariantSelector() {
+ *   return (
+ *     <ProductVariantSelector.Root selectedVariantServiceConfig={{ fetchInventoryData: true }}>
+ *       <div>
+ *         <ProductVariantSelector.Options>
+ *           {({ options, hasOptions, selectedChoices }) => (
+ *             <div>
+ *               {hasOptions && options.map(option => (
+ *                 <div key={option.id}>
+ *                   <label>{option.name}</label>
+ *                   <select value={selectedChoices[option.id] || ''}>
+ *                     {option.choices?.map(choice => (
+ *                       <option key={choice.id} value={choice.id}>
+ *                         {choice.description}
+ *                       </option>
+ *                     ))}
+ *                   </select>
+ *                 </div>
+ *               ))}
+ *             </div>
+ *           )}
+ *         </ProductVariantSelector.Options>
+ *       </div>
+ *     </ProductVariantSelector.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(
+  props: PropsWithChildren<{
+    selectedVariantServiceConfig?: SelectedVariantServiceConfig;
+  }>,
+) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        SelectedVariantServiceDefinition,
+        SelectedVariantService,
+        props.selectedVariantServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Props for Options headless component
@@ -61,7 +123,7 @@ export interface OptionsRenderProps {
  */
 export const Options = (props: OptionsProps) => {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();
@@ -133,7 +195,7 @@ export interface OptionRenderProps {
  */
 export const Option = (props: OptionProps) => {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();
@@ -216,7 +278,7 @@ export interface ChoiceRenderProps {
  */
 export const Choice = (props: ChoiceProps) => {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();
@@ -236,7 +298,7 @@ export const Choice = (props: ChoiceProps) => {
   // Check if this choice is available for pre-order
   const isPreOrderEnabled = variantService.isChoicePreOrderEnabled(
     optionName,
-    choiceValue
+    choiceValue,
   );
 
   const value = choiceValue;
@@ -327,7 +389,7 @@ export interface StockRenderProps {
  */
 export const Stock = (props: StockProps) => {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const inStock = variantService.isInStock.get();
@@ -406,7 +468,7 @@ export interface ResetRenderProps {
  */
 export const Reset = (props: ResetProps) => {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();

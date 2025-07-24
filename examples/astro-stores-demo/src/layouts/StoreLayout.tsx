@@ -1,10 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import {
-  CurrentCartServiceDefinition,
-  CurrentCartService,
-} from '@wix/headless-ecom/services';
 import { MiniCartContent, MiniCartIcon } from '../components/ecom/MiniCart';
 import { CurrentCart } from '@wix/headless-ecom/react';
 
@@ -19,21 +15,31 @@ interface StoreLayoutProps {
 export function StoreLayout({
   children,
   currentCartServiceConfig,
-  servicesMap: externalServicesMap,
 }: StoreLayoutProps) {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  // Create services map with cart service
-  const interrnalServicesMap = createServicesMap().addService(
-    CurrentCartServiceDefinition,
-    CurrentCartService,
-    currentCartServiceConfig
-  );
-
-  const servicesMap = externalServicesMap || interrnalServicesMap;
-
   return (
-    <WixServices servicesMap={servicesMap}>
+    <CurrentCart.Root currentCartServiceConfig={currentCartServiceConfig}>
+      <StoreLayoutContent
+        children={children}
+        showSuccessMessage={showSuccessMessage}
+        setShowSuccessMessage={setShowSuccessMessage}
+      />
+    </CurrentCart.Root>
+  );
+}
+
+function StoreLayoutContent({
+  children,
+  showSuccessMessage,
+  setShowSuccessMessage,
+}: {
+  children: ReactNode;
+  showSuccessMessage: boolean;
+  setShowSuccessMessage: (show: boolean) => void;
+}) {
+  return (
+    <>
       <CurrentCart.Trigger>
         {({ onOpen }) => (
           <CurrentCart.LineItemAdded>
@@ -55,6 +61,7 @@ export function StoreLayout({
           </CurrentCart.LineItemAdded>
         )}
       </CurrentCart.Trigger>
+
       {/* Success Message */}
       {showSuccessMessage && (
         <div className="fixed top-4 right-4 z-50 bg-status-success-medium backdrop-blur-sm text-content-primary px-6 py-3 rounded-xl shadow-lg border border-status-success animate-pulse">
@@ -83,6 +90,6 @@ export function StoreLayout({
       {children}
 
       <MiniCartContent />
-    </WixServices>
+    </>
   );
 }
