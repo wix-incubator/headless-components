@@ -107,7 +107,7 @@ export interface EmptyStateRenderProps {}
  * }
  * ```
  */
-export const EmptyState = (props: EmptyStateProps): React.ReactNode => {
+export function EmptyState(props: EmptyStateProps): React.ReactNode {
   const { isLoading, error, products } = useService(
     ProductsListServiceDefinition,
   );
@@ -122,7 +122,7 @@ export const EmptyState = (props: EmptyStateProps): React.ReactNode => {
   }
 
   return null;
-};
+}
 
 /**
  * Props for Loading headless component
@@ -160,7 +160,7 @@ export interface LoadingRenderProps {}
  * }
  * ```
  */
-export const Loading = (props: LoadingProps): React.ReactNode => {
+export function Loading(props: LoadingProps): React.ReactNode {
   const { isLoading } = useService(ProductsListServiceDefinition);
   const isLoadingValue = isLoading.get();
 
@@ -171,7 +171,7 @@ export const Loading = (props: LoadingProps): React.ReactNode => {
   }
 
   return null;
-};
+}
 
 /**
  * Props for Error headless component
@@ -215,7 +215,7 @@ export interface ErrorRenderProps {
  * }
  * ```
  */
-export const Error = (props: ErrorProps): React.ReactNode => {
+export function Error(props: ErrorProps): React.ReactNode {
   const { error } = useService(ProductsListServiceDefinition);
   const errorValue = error.get();
 
@@ -226,7 +226,7 @@ export const Error = (props: ErrorProps): React.ReactNode => {
   }
 
   return null;
-};
+}
 
 /**
  * Props for ItemContent headless component
@@ -272,7 +272,7 @@ export interface ItemContentRenderProps {
  * }
  * ```
  */
-export const ItemContent = (props: ItemContentProps): React.ReactNode => {
+export function ItemContent(props: ItemContentProps): React.ReactNode {
   const { products, isLoading, error } = useService(
     ProductsListServiceDefinition,
   );
@@ -296,7 +296,7 @@ export const ItemContent = (props: ItemContentProps): React.ReactNode => {
         : props.children}
     </WixServices>
   ));
-};
+}
 
 export type ItemsProps = {
   children: ((props: ItemsRenderProps) => React.ReactNode) | React.ReactNode;
@@ -306,11 +306,11 @@ export type ItemsRenderProps = {
   products: productsV3.V3Product[];
 };
 
-export const Items = (props: ItemsProps) => {
+export function Items(props: ItemsProps) {
   const { products } = useService(ProductsListServiceDefinition);
   const productsValue = products.get();
 
   return typeof props.children === "function"
     ? props.children({ products: productsValue })
     : props.children;
-};
+}

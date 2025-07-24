@@ -95,7 +95,7 @@ export interface PageSizeRenderProps {
  * }
  * ```
  */
-export const PageSize = (props: PageSizeProps) => {
+export function PageSize(props: PageSizeProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const currentLimit = service.currentLimit.get();
   const setLimit = service.setLimit;
@@ -103,7 +103,7 @@ export const PageSize = (props: PageSizeProps) => {
   return typeof props.children === "function"
     ? props.children({ currentLimit, setLimit })
     : props.children;
-};
+}
 
 /**
  * Props for NextPage headless component
@@ -148,14 +148,14 @@ export interface NextPageRenderProps {
  * }
  * ```
  */
-export const NextPage = (props: NextPageProps) => {
+export function NextPage(props: NextPageProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const nextPage = service.nextPage;
   const hasNextPage = service.hasNextPage.get();
   return typeof props.children === "function"
     ? props.children({ nextPage, hasNextPage })
     : props.children;
-};
+}
 
 /**
  * Props for PrevPage headless component
@@ -200,14 +200,14 @@ export interface PrevPageRenderProps {
  * }
  * ```
  */
-export const PrevPage = (props: PrevPageProps) => {
+export function PrevPage(props: PrevPageProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const prevPage = service.prevPage;
   const hasPrevPage = service.hasPrevPage.get();
   return typeof props.children === "function"
     ? props.children({ prevPage, hasPrevPage })
     : props.children;
-};
+}
 
 /**
  * Props for FirstPage headless component
@@ -252,7 +252,7 @@ export interface FirstPageRenderProps {
  * }
  * ```
  */
-export const FirstPage = (props: FirstPageProps) => {
+export function FirstPage(props: FirstPageProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const goToFirstPage = service.goToFirstPage;
   const hasPrevPage = service.hasPrevPage.get();
@@ -260,7 +260,7 @@ export const FirstPage = (props: FirstPageProps) => {
   return typeof props.children === "function"
     ? props.children({ goToFirstPage, hasPrevPage })
     : props.children;
-};
+}
 
 /**
  * Props for LoadMore headless component
@@ -307,7 +307,7 @@ export interface LoadMoreRenderProps {
  * }
  * ```
  */
-export const LoadMore = (props: LoadMoreProps) => {
+export function LoadMore(props: LoadMoreProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const productsListService = useService(ProductsListServiceDefinition);
 
@@ -318,4 +318,4 @@ export const LoadMore = (props: LoadMoreProps) => {
   return typeof props.children === "function"
     ? props.children({ loadMore, hasMoreProducts, isLoading })
     : props.children;
-};
+}

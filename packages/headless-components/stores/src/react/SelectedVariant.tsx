@@ -99,7 +99,7 @@ export interface ProductDetailsRenderProps {
  * }
  * ```
  */
-export const Details = (props: ProductDetailsProps) => {
+export function Details(props: ProductDetailsProps) {
   const selectedVariantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -114,7 +114,7 @@ export const Details = (props: ProductDetailsProps) => {
     sku,
     weight,
   });
-};
+}
 
 /**
  * Props for Price headless component
@@ -163,7 +163,7 @@ export interface PriceRenderProps {
  * }
  * ```
  */
-export const Price = (props: PriceProps) => {
+export function Price(props: PriceProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -177,7 +177,7 @@ export const Price = (props: PriceProps) => {
     compareAtPrice,
     currency,
   });
-};
+}
 
 /**
  * Props for SKU headless component
@@ -220,7 +220,7 @@ export interface SKURenderProps {
  * }
  * ```
  */
-export const SKU = (props: SKUProps) => {
+export function SKU(props: SKUProps) {
   const selectedVariantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -231,4 +231,4 @@ export const SKU = (props: SKUProps) => {
   return props.children({
     sku,
   });
-};
+}

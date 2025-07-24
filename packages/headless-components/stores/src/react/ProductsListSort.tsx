@@ -106,7 +106,7 @@ export interface OptionsRenderProps {
  * }
  * ```
  */
-export const Options = (props: OptionsProps) => {
+export function Options(props: OptionsProps) {
   const service = useService(ProductsListSortServiceDefinition);
   const selectedSortOption = service.selectedSortOption.get();
   const sortOptions = service.sortOptions;
@@ -119,4 +119,4 @@ export const Options = (props: OptionsProps) => {
         sortOptions,
       })
     : props.children;
-};
+}

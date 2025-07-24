@@ -82,13 +82,13 @@ export interface NameRenderProps {
  * }
  * ```
  */
-export const Name = (props: NameProps) => {
+export function Name(props: NameProps) {
   const categoryService = useService(CategoryServiceDefinition);
 
   return typeof props.children === "function"
     ? props.children({ name: categoryService.category.get().name! })
     : props.children;
-};
+}
 
 /**
  * Props for Slug headless component
@@ -125,10 +125,10 @@ export interface SlugRenderProps {
  * }
  * ```
  */
-export const Slug = (props: SlugProps) => {
+export function Slug(props: SlugProps) {
   const categoryService = useService(CategoryServiceDefinition);
 
   return typeof props.children === "function"
     ? props.children({ slug: categoryService.category.get().slug! })
     : props.children;
-};
+}

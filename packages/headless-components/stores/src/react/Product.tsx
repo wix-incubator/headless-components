@@ -95,7 +95,7 @@ export interface ProductNameRenderProps {
  * }
  * ```
  */
-export const Name = (props: ProductNameProps) => {
+export function Name(props: ProductNameProps) {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
     typeof ProductServiceDefinition
   >;
@@ -106,7 +106,7 @@ export const Name = (props: ProductNameProps) => {
   return props.children({
     name,
   });
-};
+}
 
 /**
  * Props for ProductDescription headless component
@@ -165,7 +165,7 @@ export interface ProductDescriptionRenderProps {
  * }
  * ```
  */
-export const Description = (props: ProductDescriptionProps) => {
+export function Description(props: ProductDescriptionProps) {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
     typeof ProductServiceDefinition
   >;
@@ -179,7 +179,7 @@ export const Description = (props: ProductDescriptionProps) => {
     description: descriptionRichContent,
     plainDescription: plainDescription,
   });
-};
+}
 
 export interface ProductMediaProps {
   children: (props: ProductMediaRenderProps) => React.ReactNode;
@@ -189,7 +189,7 @@ export interface ProductMediaRenderProps {
   media: ProductMedia[];
 }
 
-export const Media = (props: ProductMediaProps) => {
+export function Media(props: ProductMediaProps) {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
     typeof ProductServiceDefinition
   >;
@@ -200,4 +200,4 @@ export const Media = (props: ProductMediaProps) => {
   return props.children({
     media,
   });
-};
+}

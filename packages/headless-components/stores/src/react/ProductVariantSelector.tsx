@@ -121,7 +121,7 @@ export interface OptionsRenderProps {
  * }
  * ```
  */
-export const Options = (props: OptionsProps) => {
+export function Options(props: OptionsProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -134,7 +134,7 @@ export const Options = (props: OptionsProps) => {
     hasOptions: options.length > 0,
     selectedChoices,
   });
-};
+}
 
 /**
  * Props for Option headless component
@@ -193,7 +193,7 @@ export interface OptionRenderProps {
  * }
  * ```
  */
-export const Option = (props: OptionProps) => {
+export function Option(props: OptionProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -212,7 +212,7 @@ export const Option = (props: OptionProps) => {
     selectedValue,
     hasChoices: choices.length > 0,
   });
-};
+}
 
 /**
  * Props for Choice headless component
@@ -276,7 +276,7 @@ export interface ChoiceRenderProps {
  * }
  * ```
  */
-export const Choice = (props: ChoiceProps) => {
+export function Choice(props: ChoiceProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -387,7 +387,7 @@ export interface StockRenderProps {
  * }
  * ```
  */
-export const Stock = (props: StockProps) => {
+export function Stock(props: StockProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -466,7 +466,7 @@ export interface ResetRenderProps {
  * }
  * ```
  */
-export const Reset = (props: ResetProps) => {
+export function Reset(props: ResetProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
