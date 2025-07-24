@@ -13,7 +13,10 @@ import {
   ProductVariantSelector,
   SelectedVariant,
 } from '@wix/headless-stores/react';
-import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
+import type {
+  CategoriesListServiceConfig,
+  ProductsListFiltersServiceConfig,
+} from '@wix/headless-stores/services';
 import {
   SelectedVariantService,
   SelectedVariantServiceDefinition,
@@ -32,6 +35,7 @@ import { SortDropdown } from './SortDropdown';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
+  productsListFiltersConfig: ProductsListFiltersServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
   currentCategorySlug: string;
   productPageRoute: string;
@@ -41,10 +45,12 @@ export const ProductGridContent = ({
   productPageRoute,
   categoriesListConfig,
   currentCategorySlug,
+  productsListFiltersConfig,
 }: {
   productPageRoute: string;
   categoriesListConfig: CategoriesListServiceConfig;
   currentCategorySlug: string;
+  productsListFiltersConfig: ProductsListFiltersServiceConfig;
 }) => {
   const [quickViewProduct, setQuickViewProduct] =
     useState<productsV3.V3Product | null>(null);
@@ -463,7 +469,9 @@ export const ProductGridContent = ({
       </div>
 
       {/* Main Layout with Sidebar and Content */}
-      <ProductsListFilters.Root>
+      <ProductsListFilters.Root
+        productsListFiltersConfig={productsListFiltersConfig}
+      >
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Filters Sidebar */}
           <div className="w-full lg:w-80 lg:flex-shrink-0">
@@ -659,6 +667,7 @@ export const LoadMoreSection = () => {
 
 export function CategoryPage({
   productsListConfig,
+  productsListFiltersConfig,
   categoriesListConfig,
   currentCategorySlug,
   productPageRoute,
@@ -669,6 +678,7 @@ export function CategoryPage({
         <div>
           <ProductGridContent
             productPageRoute={productPageRoute}
+            productsListFiltersConfig={productsListFiltersConfig}
             categoriesListConfig={categoriesListConfig}
             currentCategorySlug={currentCategorySlug}
           />

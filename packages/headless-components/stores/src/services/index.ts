@@ -66,6 +66,8 @@ export {
   InventoryStatusType,
   ProductsListFiltersService,
   ProductsListFiltersServiceDefinition,
+  loadProductsListFiltersServiceConfig,
+  ProductsListFiltersServiceConfig,
 } from "./products-list-filters-service.js";
 
 export {

@@ -1,12 +1,20 @@
 import { createServicesMap } from "@wix/services-manager";
 import { useService, WixServices } from "@wix/services-manager-react";
-import type { PropsWithChildren, ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   ProductsListFiltersService,
   ProductsListFiltersServiceDefinition,
   InventoryStatusType,
   type ProductOption,
+  ProductsListFiltersServiceConfig,
 } from "../services/products-list-filters-service.js";
+
+export interface RootProps {
+  /** Child components that will have access to the ProductsListFilters service */
+  children: React.ReactNode;
+  /** Configuration for the ProductsListFilters service */
+  productsListFiltersConfig: ProductsListFiltersServiceConfig;
+}
 
 /**
  * Root component that provides the ProductsListFilters service context to its children.
@@ -20,7 +28,12 @@ import {
  *
  * function FiltersSection() {
  *   return (
- *     <ProductsListFilters.Root>
+ *     <ProductsListFilters.Root
+ *       productsListFiltersConfig={{
+ *         minPrice: 0,
+ *         maxPrice: 1000
+ *       }}
+ *     >
  *       <ProductsListFilters.MinPrice>
  *         {({ minPrice, setMinPrice }) => (
  *           <input
@@ -36,12 +49,13 @@ import {
  * }
  * ```
  */
-export function Root(props: PropsWithChildren) {
+export function Root(props: RootProps) {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         ProductsListFiltersServiceDefinition,
         ProductsListFiltersService,
+        props.productsListFiltersConfig,
       )}
     >
       {props.children}
