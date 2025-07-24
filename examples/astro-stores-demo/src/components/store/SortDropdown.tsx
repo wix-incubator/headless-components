@@ -1,5 +1,3 @@
-import { Sort } from '@wix/headless-stores/react';
-import { type SortBy } from '@wix/headless-stores/services';
 import { ProductsListSort } from '@wix/headless-stores/react';
 import { SortType } from '@wix/headless-stores/services';
 

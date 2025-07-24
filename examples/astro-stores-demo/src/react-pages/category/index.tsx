@@ -3,24 +3,8 @@ import { KitchensinkLayout } from '../../layouts/KitchensinkLayout';
 import { createServicesMap } from '@wix/services-manager';
 import { useState } from 'react';
 import {
-  CatalogService,
-  CatalogServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
   CategoryService,
   CategoryServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  CollectionService,
-  CollectionServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  FilterService,
-  FilterServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  SortService,
-  SortServiceDefinition,
 } from '@wix/headless-stores/services';
 import { WixServices } from '@wix/services-manager-react';
 import '../../styles/theme-1.css';

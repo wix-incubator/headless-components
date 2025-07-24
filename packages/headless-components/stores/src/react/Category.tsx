@@ -5,7 +5,7 @@ import {
   CategoryService,
   CategoryServiceDefinition,
   type CategoryServiceConfig,
-} from "../services/category-service-new.js";
+} from "../services/category-service.js";
 
 /**
  * Root component that provides the Category service context to its children.

@@ -14,24 +14,8 @@ import {
 import type { ReactNode } from 'react';
 import { WixServices } from '@wix/services-manager-react';
 import {
-  FilterService,
-  FilterServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
   CategoryService,
   CategoryServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  SortService,
-  SortServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  CollectionService,
-  CollectionServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  CatalogService,
-  CatalogServiceDefinition,
 } from '@wix/headless-stores/services';
 import { StoreLayout } from '../layouts/StoreLayout';
 import {
@@ -63,12 +47,8 @@ export default function WixServicesProvider({
     .addService(CurrentCartServiceDefinition, CurrentCartService)
     .addService(SelectedVariantServiceDefinition, SelectedVariantService)
     .addService(MediaGalleryServiceDefinition, MediaGalleryService)
-    .addService(CollectionServiceDefinition, CollectionService)
-    .addService(FilterServiceDefinition, FilterService)
     .addService(CategoryServiceDefinition, CategoryService)
-    .addService(SortServiceDefinition, SortService)
-    .addService(ProductModifiersServiceDefinition, ProductModifiersService)
-    .addService(CatalogServiceDefinition, CatalogService);
+    .addService(ProductModifiersServiceDefinition, ProductModifiersService);
 
   return (
     <>
