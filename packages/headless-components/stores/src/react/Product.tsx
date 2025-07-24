@@ -24,7 +24,7 @@ import type { PropsWithChildren } from "react";
  *
  * function ProductPage() {
  *   return (
- *     <Product.Root productId="my-product-id">
+ *     <Product.Root productServiceConfig={{ product: myProduct }}>
  *       <div>
  *         <Product.Name>
  *           {({ name }) => (
