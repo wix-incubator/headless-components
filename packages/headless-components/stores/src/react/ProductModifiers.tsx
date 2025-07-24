@@ -1,12 +1,105 @@
 import { useState } from "react";
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
+import { useService, WixServices } from "@wix/services-manager-react";
+import {
+  ProductModifiersServiceDefinition,
+  ProductModifiersService,
+} from "../services/product-modifiers-service.js";
 import {
   ModifierRenderType,
   type ConnectedModifier,
   type ConnectedModifierChoice,
 } from "@wix/auto_sdk_stores_products-v-3";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
+
+/**
+ * Root component that provides the ProductModifiers service context to its children.
+ * This component sets up the necessary services for managing product modifier functionality.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { ProductModifiers } from '@wix/stores/components';
+ *
+ * function ProductCustomization() {
+ *   return (
+ *     <ProductModifiers.Root>
+ *       <div>
+ *         <ProductModifiers.Modifiers>
+ *           {({ modifiers, hasModifiers, selectedModifiers, areAllRequiredModifiersFilled }) => (
+ *             <div>
+ *               {hasModifiers && (
+ *                 <div>
+ *                   <h3>Customize your product</h3>
+ *                   {modifiers.map(modifier => (
+ *                     <ProductModifiers.Modifier key={modifier.id} modifier={modifier}>
+ *                       {({ name, mandatory, hasChoices, choices, isFreeText }) => (
+ *                         <div className="modifier-field">
+ *                           <label>
+ *                             {name} {mandatory && <span className="required">*</span>}
+ *                           </label>
+ *                           {hasChoices && (
+ *                             <div className="choices">
+ *                               {choices.map(choice => (
+ *                                 <ProductModifiers.Choice key={choice.id} modifier={modifier} choice={choice}>
+ *                                   {({ value, isSelected, onSelect }) => (
+ *                                     <button
+ *                                       onClick={onSelect}
+ *                                       className={isSelected ? 'selected' : ''}
+ *                                     >
+ *                                       {value}
+ *                                     </button>
+ *                                   )}
+ *                                 </ProductModifiers.Choice>
+ *                               ))}
+ *                             </div>
+ *                           )}
+ *                           {isFreeText && (
+ *                             <ProductModifiers.FreeText modifier={modifier}>
+ *                               {({ value, onChange, placeholder, maxChars }) => (
+ *                                 <input
+ *                                   type="text"
+ *                                   value={value}
+ *                                   onChange={(e) => onChange(e.target.value)}
+ *                                   placeholder={placeholder}
+ *                                   maxLength={maxChars}
+ *                                 />
+ *                               )}
+ *                             </ProductModifiers.FreeText>
+ *                           )}
+ *                         </div>
+ *                       )}
+ *                     </ProductModifiers.Modifier>
+ *                   ))}
+ *                   {!areAllRequiredModifiersFilled && (
+ *                     <div className="warning">Please fill all required options</div>
+ *                   )}
+ *                 </div>
+ *               )}
+ *             </div>
+ *           )}
+ *         </ProductModifiers.Modifiers>
+ *       </div>
+ *     </ProductModifiers.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(props: PropsWithChildren<{}>) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        ProductModifiersServiceDefinition,
+        ProductModifiersService,
+        {},
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 /**
  * Custom hook to safely get the modifiers service

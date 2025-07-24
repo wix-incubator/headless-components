@@ -454,151 +454,157 @@ export default function ProductDetails({
                 </ProductVariantSelector.Options>
 
                 {/* Product Modifiers */}
-                <ProductModifiers.Modifiers>
-                  {({ modifiers, hasModifiers }) => (
-                    <>
-                      {hasModifiers && (
-                        <div className="space-y-6">
-                          <h3 className="text-lg font-semibold text-content-primary">
-                            Product Modifiers
-                          </h3>
+                <ProductModifiers.Root>
+                  <ProductModifiers.Modifiers>
+                    {({ modifiers, hasModifiers }) => (
+                      <>
+                        {hasModifiers && (
+                          <div className="space-y-6">
+                            <h3 className="text-lg font-semibold text-content-primary">
+                              Product Modifiers
+                            </h3>
 
-                          {modifiers.map((modifier: any) => (
-                            <ProductModifiers.Modifier
-                              key={modifier.name}
-                              modifier={modifier}
-                            >
-                              {({
-                                name,
-                                type,
-                                choices,
-                                hasChoices,
-                                mandatory,
-                              }) => (
-                                <div
-                                  className="space-y-3"
-                                  data-testid="product-modifiers"
-                                >
-                                  <h4 className="text-md font-medium text-content-primary">
-                                    {name}{' '}
-                                    {mandatory && (
-                                      <span className="text-status-error">
-                                        *
-                                      </span>
-                                    )}
-                                  </h4>
+                            {modifiers.map((modifier: any) => (
+                              <ProductModifiers.Modifier
+                                key={modifier.name}
+                                modifier={modifier}
+                              >
+                                {({
+                                  name,
+                                  type,
+                                  choices,
+                                  hasChoices,
+                                  mandatory,
+                                }) => (
+                                  <div
+                                    className="space-y-3"
+                                    data-testid="product-modifiers"
+                                  >
+                                    <h4 className="text-md font-medium text-content-primary">
+                                      {name}{' '}
+                                      {mandatory && (
+                                        <span className="text-status-error">
+                                          *
+                                        </span>
+                                      )}
+                                    </h4>
 
-                                  {type === 'SWATCH_CHOICES' && hasChoices && (
-                                    <div className="flex flex-wrap gap-2">
-                                      {choices.map((choice: any) => (
-                                        <ProductModifiers.Choice
-                                          key={choice.value}
-                                          modifier={modifier}
-                                          choice={choice}
-                                        >
-                                          {({
-                                            value,
-                                            isSelected,
-                                            colorCode,
-                                            onSelect,
-                                          }) => (
-                                            <button
-                                              data-testid="product-modifier-choice-button"
-                                              onClick={onSelect}
-                                              className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-                                                isSelected
-                                                  ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
-                                                  : 'border-brand-light hover:border-brand-medium hover:scale-105'
-                                              }`}
-                                              style={{
-                                                backgroundColor:
-                                                  colorCode ||
-                                                  'var(--theme-text-content-40)',
-                                              }}
-                                              title={value}
-                                            />
-                                          )}
-                                        </ProductModifiers.Choice>
-                                      ))}
-                                    </div>
-                                  )}
-
-                                  {type === 'TEXT_CHOICES' && hasChoices && (
-                                    <div className="flex flex-wrap gap-2">
-                                      {choices.map((choice: any) => (
-                                        <ProductModifiers.Choice
-                                          key={choice.value}
-                                          modifier={modifier}
-                                          choice={choice}
-                                        >
-                                          {({
-                                            value,
-                                            isSelected,
-                                            onSelect,
-                                          }) => (
-                                            <button
-                                              data-testid="product-modifier-choice-button"
-                                              onClick={onSelect}
-                                              className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
-                                                isSelected
-                                                  ? 'product-option-active'
-                                                  : 'product-option-inactive'
-                                              }`}
+                                    {type === 'SWATCH_CHOICES' &&
+                                      hasChoices && (
+                                        <div className="flex flex-wrap gap-2">
+                                          {choices.map((choice: any) => (
+                                            <ProductModifiers.Choice
+                                              key={choice.value}
+                                              modifier={modifier}
+                                              choice={choice}
                                             >
-                                              {value}
-                                            </button>
-                                          )}
-                                        </ProductModifiers.Choice>
-                                      ))}
-                                    </div>
-                                  )}
-
-                                  {type === 'FREE_TEXT' && (
-                                    <>
-                                      {mandatory ? (
-                                        <FreeTextInput
-                                          data-testid="product-modifier-free-text"
-                                          modifier={modifier}
-                                          name={name}
-                                        />
-                                      ) : (
-                                        <ProductModifiers.ToggleFreeText
-                                          modifier={modifier}
-                                        >
-                                          {({ isTextInputShown, onToggle }) => (
-                                            <div className="space-y-3">
-                                              <label className="flex items-center gap-2">
-                                                <input
-                                                  type="checkbox"
-                                                  checked={isTextInputShown}
-                                                  onChange={onToggle}
-                                                  className="w-4 h-4 text-brand-primary rounded border-brand-light focus:ring-brand-primary"
-                                                />
-                                                <span className="text-content-primary">
-                                                  Enable
-                                                </span>
-                                              </label>
-                                              {isTextInputShown && (
-                                                <FreeTextInput
-                                                  modifier={modifier}
-                                                  name={name}
+                                              {({
+                                                value,
+                                                isSelected,
+                                                colorCode,
+                                                onSelect,
+                                              }) => (
+                                                <button
+                                                  data-testid="product-modifier-choice-button"
+                                                  onClick={onSelect}
+                                                  className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
+                                                    isSelected
+                                                      ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
+                                                      : 'border-brand-light hover:border-brand-medium hover:scale-105'
+                                                  }`}
+                                                  style={{
+                                                    backgroundColor:
+                                                      colorCode ||
+                                                      'var(--theme-text-content-40)',
+                                                  }}
+                                                  title={value}
                                                 />
                                               )}
-                                            </div>
-                                          )}
-                                        </ProductModifiers.ToggleFreeText>
+                                            </ProductModifiers.Choice>
+                                          ))}
+                                        </div>
                                       )}
-                                    </>
-                                  )}
-                                </div>
-                              )}
-                            </ProductModifiers.Modifier>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </ProductModifiers.Modifiers>
+
+                                    {type === 'TEXT_CHOICES' && hasChoices && (
+                                      <div className="flex flex-wrap gap-2">
+                                        {choices.map((choice: any) => (
+                                          <ProductModifiers.Choice
+                                            key={choice.value}
+                                            modifier={modifier}
+                                            choice={choice}
+                                          >
+                                            {({
+                                              value,
+                                              isSelected,
+                                              onSelect,
+                                            }) => (
+                                              <button
+                                                data-testid="product-modifier-choice-button"
+                                                onClick={onSelect}
+                                                className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                                                  isSelected
+                                                    ? 'product-option-active'
+                                                    : 'product-option-inactive'
+                                                }`}
+                                              >
+                                                {value}
+                                              </button>
+                                            )}
+                                          </ProductModifiers.Choice>
+                                        ))}
+                                      </div>
+                                    )}
+
+                                    {type === 'FREE_TEXT' && (
+                                      <>
+                                        {mandatory ? (
+                                          <FreeTextInput
+                                            data-testid="product-modifier-free-text"
+                                            modifier={modifier}
+                                            name={name}
+                                          />
+                                        ) : (
+                                          <ProductModifiers.ToggleFreeText
+                                            modifier={modifier}
+                                          >
+                                            {({
+                                              isTextInputShown,
+                                              onToggle,
+                                            }) => (
+                                              <div className="space-y-3">
+                                                <label className="flex items-center gap-2">
+                                                  <input
+                                                    type="checkbox"
+                                                    checked={isTextInputShown}
+                                                    onChange={onToggle}
+                                                    className="w-4 h-4 text-brand-primary rounded border-brand-light focus:ring-brand-primary"
+                                                  />
+                                                  <span className="text-content-primary">
+                                                    Enable
+                                                  </span>
+                                                </label>
+                                                {isTextInputShown && (
+                                                  <FreeTextInput
+                                                    modifier={modifier}
+                                                    name={name}
+                                                  />
+                                                )}
+                                              </div>
+                                            )}
+                                          </ProductModifiers.ToggleFreeText>
+                                        )}
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+                              </ProductModifiers.Modifier>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </ProductModifiers.Modifiers>
+                </ProductModifiers.Root>
 
                 {/* Quantity Selector */}
                 <div className="space-y-3">
