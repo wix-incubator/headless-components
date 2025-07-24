@@ -6,14 +6,22 @@ import { loadCurrentCartServiceConfig } from '@wix/headless-ecom/services';
 import { loadCategoriesConfig } from '@wix/headless-stores/services';
 import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
 import { SEO } from '@wix/headless-seo/react';
+import { seoTags } from '@wix/seo';
 
 // Get category slug from URL params
 const { categorySlug } = Astro.params;
 
 // Load categories and cart config in parallel (cart is independent)
-const [categoriesConfig, currentCartServiceConfig] = await Promise.all([
+const [categoriesConfig, currentCartServiceConfig, seoTagsServiceConfig] = await Promise.all([
   loadCategoriesConfig(),
   loadCurrentCartServiceConfig(),
+  loadSEOTagsServiceConfig({
+  pageUrl: Astro.url.href,
+  itemType: seoTags.ItemType.STORES_CATEGORY,
+  itemData: {
+    slug: categorySlug,
+  },
+})
 ]);
 
 // Find category by its real slug
@@ -32,38 +40,6 @@ const filteredCollectionServiceConfig = await loadCollectionServiceConfig(
 if (!selectedCategory) {
   return Astro.redirect('/404');
 }
-
-// TODO: check why the API returns a 400 for STORES_CATEGORY item (working in fireconsole)
-// const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
-//   pageUrl: Astro.url.href,
-//   itemType: seoTags.ItemType.STORES_CATEGORY,
-//   itemData: {
-//     slug: categorySlug,
-//   },
-// });
-
-const categoryName = selectedCategory?.name || '';
-const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
-  pageUrl: Astro.url.href,
-  itemData: {
-    pageName: categoryName,
-    seoData: {
-      tags: [
-        {
-          type: 'title',
-          children: `${categoryName} - Store`,
-        },
-        {
-          type: 'meta',
-          props: {
-            content: `Browse our ${categoryName} products`,
-            name: 'description',
-          },
-        },
-      ],
-    },
-  },
-});
 ---
 
 <BaseLayout>
