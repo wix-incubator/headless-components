@@ -1,13 +1,16 @@
 ---
+import { loadCurrentCartServiceConfig } from '@wix/headless-ecom/services';
+import { SEO } from '@wix/headless-seo/react';
+import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
+import {
+  loadCategoriesListServiceConfig,
+  loadCategoryServiceConfig,
+  loadProductsListFiltersServiceConfig,
+  loadProductsListServiceConfig,
+} from '@wix/headless-stores/services';
+import { seoTags } from '@wix/seo';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoreCollectionPage from '../../react-pages/category/index';
-import { loadCurrentCartServiceConfig } from '@wix/headless-ecom/services';
-import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
-import { SEO } from '@wix/headless-seo/react';
-import { seoTags } from '@wix/seo';
-import { loadCategoryServiceConfig } from '@wix/headless-stores/services';
-import { loadProductsListServiceConfig } from '@wix/headless-stores/services';
-import { loadCategoriesListServiceConfig } from '@wix/headless-stores/services';
 import { buildSearchOptionsFromUrl } from './parseSearchOptionsFromUrl.js';
 
 // Get category slug from URL params
@@ -41,12 +44,17 @@ const searchOptions = buildSearchOptionsFromUrl(Astro.url.href, {
   },
 });
 
-const [productsListConfig, categoriesListConfig, currentCartServiceConfig] =
-  await Promise.all([
-    loadProductsListServiceConfig(searchOptions),
-    loadCategoriesListServiceConfig(),
-    loadCurrentCartServiceConfig(),
-  ]);
+const [
+  productsListConfig,
+  categoriesListConfig,
+  currentCartServiceConfig,
+  productsListFiltersConfig,
+] = await Promise.all([
+  loadProductsListServiceConfig(searchOptions),
+  loadCategoriesListServiceConfig(),
+  loadCurrentCartServiceConfig(),
+  loadProductsListFiltersServiceConfig(),
+]);
 
 const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
   pageUrl: Astro.url.href,
@@ -79,6 +87,7 @@ const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
     categoryServiceConfig={categoryLoadResult.config}
     categoriesListConfig={categoriesListConfig}
     productsListConfig={productsListConfig}
+    productsListFiltersConfig={productsListFiltersConfig}
     slug={categorySlug}
     slot="body"
   />

@@ -6,6 +6,7 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3 } from "@wix/stores";
 import { ProductsListServiceDefinition } from "./products-list-service.js";
+import { customizationsV3 } from "@wix/stores";
 
 export interface ProductOption {
   id: string;
@@ -27,6 +28,20 @@ export enum InventoryStatusType {
     .PARTIALLY_OUT_OF_STOCK,
 }
 
+export type ProductsListFiltersServiceConfig = {
+  customizations: customizationsV3.Customization[];
+};
+
+export async function loadProductsListFiltersServiceConfig(): Promise<ProductsListFiltersServiceConfig> {
+  const { items: customizations = [] } = await customizationsV3
+    .queryCustomizations()
+    .find();
+
+  return {
+    customizations,
+  };
+}
+
 export const ProductsListFiltersServiceDefinition = defineService<{
   minPrice: Signal<number>;
   maxPrice: Signal<number>;
@@ -41,8 +56,6 @@ export const ProductsListFiltersServiceDefinition = defineService<{
   isFiltered: Signal<boolean>;
   reset: () => void;
 }>("products-list-filters");
-
-export type ProductsListFiltersServiceConfig = {};
 
 export const ProductsListFiltersService =
   implementService.withConfig<ProductsListFiltersServiceConfig>()(
