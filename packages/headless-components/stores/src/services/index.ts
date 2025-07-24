@@ -56,14 +56,9 @@ export {
 } from "./selected-variant-service.js";
 
 export {
-  SocialSharingService,
-  SocialSharingServiceDefinition,
-} from "./social-sharing-service.js";
-
-export {
   ProductListService,
   ProductsListServiceDefinition,
-  loadProductsListServiceConfig
+  loadProductsListServiceConfig,
 } from "./products-list-service.js";
 
 export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
