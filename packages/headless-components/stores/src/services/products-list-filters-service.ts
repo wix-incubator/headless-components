@@ -60,12 +60,13 @@ export const ProductsListFiltersServiceDefinition = defineService<{
 export const ProductsListFiltersService =
   implementService.withConfig<ProductsListFiltersServiceConfig>()(
     ProductsListFiltersServiceDefinition,
-    ({ getService }) => {
+    ({ getService, config }) => {
       let firstRun = true;
       const signalsService = getService(SignalsServiceDefinition);
       const productsListService = getService(ProductsListServiceDefinition);
+      const { customizations } = config;
 
-      // const aggregationData = productsListService.aggregations.get();
+      const aggregationData = productsListService.aggregations.get()?.results;
       // TODO: use the aggregations to get the available inventory statuses
       // and the available price ranges
       // and the available product options
@@ -88,7 +89,7 @@ export const ProductsListFiltersService =
 
       // TODO: Get product options from aggregations data
       const availableProductOptionsSignal = signalsService.signal(
-        [] as ProductOption[],
+        getAvailableProductOptions(aggregationData, customizations),
       );
       const selectedProductOptionsSignal = signalsService.signal(
         getSelectedProductOptions(productsListService.searchOptions.get()),
@@ -176,23 +177,32 @@ export const ProductsListFiltersService =
           }
 
           // Add new product option filters if there are selected options
-          Object.entries(selectedProductOptions).forEach(
-            ([optionId, choiceIds]) => {
-              if (choiceIds.length > 0) {
-                if (choiceIds.length === 1) {
+          if (
+            selectedProductOptions &&
+            Object.keys(selectedProductOptions).length > 0
+          ) {
+            for (const [optionId, choiceIds] of Object.entries(
+              selectedProductOptions,
+            )) {
+              if (choiceIds && choiceIds.length > 0) {
+                // Handle inventory filter separately
+                if (optionId === "inventory-filter") {
                   (newSearchOptions.filter as any)[
-                    `options.${optionId}.choice`
-                  ] = choiceIds[0];
-                } else {
-                  (newSearchOptions.filter as any)[
-                    `options.${optionId}.choice`
+                    "inventory.availabilityStatus"
                   ] = {
                     $in: choiceIds,
                   };
+                } else {
+                  // Regular product options filter
+                  (newSearchOptions.filter as any)[
+                    "options.choicesSettings.choices.choiceId"
+                  ] = {
+                    $hasSome: choiceIds,
+                  };
                 }
               }
-            },
-          );
+            }
+          }
 
           // Use callback to update search options
           productsListService.setSearchOptions(newSearchOptions);
@@ -349,4 +359,98 @@ function getSelectedProductOptions(
   });
 
   return selectedOptions;
+}
+
+function getAvailableProductOptions(
+  aggregationData: productsV3.AggregationResults[] = [],
+  customizations: customizationsV3.Customization[] = [],
+): ProductOption[] {
+  // Helper function to match aggregation names case-insensitively
+  const matchesAggregationName = (
+    name: string,
+    aggregationNames: string[],
+  ): boolean => {
+    return aggregationNames.some(
+      (aggName) => aggName.toLowerCase() === name.toLowerCase(),
+    );
+  };
+
+  // Helper function to sort choices intelligently (numbers first, then alphabetically)
+  const sortChoicesIntelligently = (
+    choices: ProductChoice[],
+  ): ProductChoice[] => {
+    return [...choices].sort((a, b) => {
+      const aIsNumber = /^\d+$/.test(a.name);
+      const bIsNumber = /^\d+$/.test(b.name);
+
+      if (aIsNumber && bIsNumber) {
+        return parseInt(b.name) - parseInt(a.name);
+      }
+      if (aIsNumber && !bIsNumber) return -1;
+      if (!aIsNumber && bIsNumber) return 1;
+
+      return a.name.localeCompare(b.name);
+    });
+  };
+
+  // Extract option names from aggregation data
+  const optionNames: string[] = [];
+  const choiceNames: string[] = [];
+
+  // Process aggregation results to extract available option and choice names
+  aggregationData.forEach((result) => {
+    if (result.name === "optionNames" && result.values?.results) {
+      optionNames.push(
+        ...result.values.results
+          .map((item) => item.value)
+          .filter((value): value is string => typeof value === "string"),
+      );
+    }
+    if (result.name === "choiceNames" && result.values?.results) {
+      choiceNames.push(
+        ...result.values.results
+          .map((item) => item.value)
+          .filter((value): value is string => typeof value === "string"),
+      );
+    }
+  });
+
+  // Build options by matching customizations with aggregation data
+  const options: ProductOption[] = customizations
+    .filter(
+      (customization) =>
+        customization.name &&
+        customization._id &&
+        customization.customizationType ===
+          customizationsV3.CustomizationType.PRODUCT_OPTION &&
+        (optionNames.length === 0 ||
+          matchesAggregationName(customization.name, optionNames)),
+    )
+    .map((customization) => {
+      const choices: ProductChoice[] = (
+        customization.choicesSettings?.choices || []
+      )
+        .filter(
+          (choice) =>
+            choice._id &&
+            choice.name &&
+            (choiceNames.length === 0 ||
+              matchesAggregationName(choice.name, choiceNames)),
+        )
+        .map((choice) => ({
+          id: choice._id!,
+          name: choice.name!,
+          colorCode: choice.colorCode,
+        }));
+
+      return {
+        id: customization._id!,
+        name: customization.name!,
+        choices: sortChoicesIntelligently(choices),
+        optionRenderType: customization.customizationRenderType,
+      };
+    })
+    .filter((option) => option.choices.length > 0);
+
+  return options;
 }

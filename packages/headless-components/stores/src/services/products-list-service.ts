@@ -1,9 +1,9 @@
-import { defineService, implementService } from '@wix/services-definitions';
+import { defineService, implementService } from "@wix/services-definitions";
 import {
   SignalsServiceDefinition,
   type Signal,
-} from '@wix/services-definitions/core-services/signals';
-import { productsV3 } from '@wix/stores';
+} from "@wix/services-definitions/core-services/signals";
+import { productsV3 } from "@wix/stores";
 
 export type ProductsListServiceConfig = {
   products: productsV3.V3Product[];
@@ -13,7 +13,7 @@ export type ProductsListServiceConfig = {
 };
 
 export async function loadProductsListServiceConfig(
-  searchOptions: Parameters<typeof productsV3.searchProducts>[0]
+  searchOptions: Parameters<typeof productsV3.searchProducts>[0],
 ): Promise<ProductsListServiceConfig> {
   const result = await productsV3.searchProducts(searchOptions);
   return {
@@ -33,11 +33,11 @@ export const ProductsListServiceDefinition = defineService<
     isLoading: Signal<boolean>;
     error: Signal<string | null>;
     setSearchOptions: (
-      searchOptions: Parameters<typeof productsV3.searchProducts>[0]
+      searchOptions: Parameters<typeof productsV3.searchProducts>[0],
     ) => void;
   },
   ProductsListServiceConfig
->('products-list');
+>("products-list");
 
 export const ProductListService =
   implementService.withConfig<ProductsListServiceConfig>()(
@@ -47,14 +47,14 @@ export const ProductListService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const productsSignal = signalsService.signal<productsV3.V3Product[]>(
-        config.products
+        config.products,
       );
       const searchOptionsSignal = signalsService.signal<
         Parameters<typeof productsV3.searchProducts>[0]
       >(config.searchOptions);
       const pagingMetadataSignal =
         signalsService.signal<productsV3.CommonCursorPagingMetadata>(
-          config.pagingMetadata
+          config.pagingMetadata,
         );
 
       const aggregationsSignal =
@@ -63,7 +63,7 @@ export const ProductListService =
       const isLoadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
 
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         signalsService.effect(async () => {
           // CRITICAL: Read the signals FIRST to establish dependencies, even on first run
           const searchOptions = searchOptionsSignal.get();
@@ -88,14 +88,14 @@ export const ProductListService =
               : searchOptions;
 
             const result = await productsV3.searchProducts(
-              affectiveSearchOptions
+              affectiveSearchOptions,
             );
 
             productsSignal.set(result.products ?? []);
             pagingMetadataSignal.set(result.pagingMetadata!);
           } catch (error) {
             errorSignal.set(
-              error instanceof Error ? error.message : 'Unknown error'
+              error instanceof Error ? error.message : "Unknown error",
             );
           } finally {
             isLoadingSignal.set(false);
@@ -111,10 +111,10 @@ export const ProductListService =
         pagingMetadata: pagingMetadataSignal,
         aggregations: aggregationsSignal,
         setSearchOptions: (
-          searchOptions: Parameters<typeof productsV3.searchProducts>[0]
+          searchOptions: Parameters<typeof productsV3.searchProducts>[0],
         ) => searchOptionsSignal.set(searchOptions),
         isLoading: isLoadingSignal,
         error: errorSignal,
       };
-    }
+    },
   );
