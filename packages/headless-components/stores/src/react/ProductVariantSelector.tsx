@@ -53,7 +53,7 @@ import {
  */
 export function Root(
   props: PropsWithChildren<{
-    selectedVariantServiceConfig: SelectedVariantServiceConfig;
+    selectedVariantServiceConfig?: SelectedVariantServiceConfig;
   }>,
 ) {
   return (

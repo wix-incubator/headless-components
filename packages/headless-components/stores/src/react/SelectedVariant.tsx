@@ -43,7 +43,7 @@ import type { PropsWithChildren } from "react";
  */
 export function Root(
   props: PropsWithChildren<{
-    selectedVariantServiceConfig: SelectedVariantServiceConfig;
+    selectedVariantServiceConfig?: SelectedVariantServiceConfig;
   }>,
 ) {
   return (
