@@ -5,7 +5,7 @@ import {
   SignalsServiceDefinition,
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3 } from "@wix/stores";
-import { ProductsListServiceDefinition } from "./products-list-service-new.js";
+import { ProductsListServiceDefinition } from "./products-list-service.js";
 
 export interface ProductOption {
   id: string;

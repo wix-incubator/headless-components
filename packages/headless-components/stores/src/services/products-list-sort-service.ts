@@ -1,7 +1,7 @@
 import type { Signal } from "@wix/services-definitions/core-services/signals";
 import { defineService, implementService } from "@wix/services-definitions";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import { ProductsListServiceDefinition } from "./products-list-service-new.js";
+import { ProductsListServiceDefinition } from "./products-list-service.js";
 import { productsV3 } from "@wix/stores";
 
 export const ProductsListSortServiceDefinition = defineService<{
