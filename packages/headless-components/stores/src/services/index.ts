@@ -49,7 +49,7 @@ export {
   ProductsListServiceDefinition,
   loadProductsListServiceConfig,
   ProductsListServiceConfig,
-} from "./products-list-service-new.js";
+} from "./products-list-service.js";
 
 export {
   SortType,
