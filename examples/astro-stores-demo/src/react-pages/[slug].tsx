@@ -6,8 +6,6 @@ import {
   ProductModifiersServiceDefinition,
   SelectedVariantService,
   SelectedVariantServiceDefinition,
-  SocialSharingService,
-  SocialSharingServiceDefinition,
 } from '@wix/headless-stores/services';
 import {
   MediaGalleryService,
@@ -33,7 +31,6 @@ export default function ProductDetailPage({
   // Create services manager with all required services
   const servicesMap = createServicesMap()
     .addService(ProductServiceDefinition, ProductService, productServiceConfig)
-    .addService(SocialSharingServiceDefinition, SocialSharingService)
     .addService(SelectedVariantServiceDefinition, SelectedVariantService)
     .addService(ProductModifiersServiceDefinition, ProductModifiersService)
     .addService(MediaGalleryServiceDefinition, MediaGalleryService, {

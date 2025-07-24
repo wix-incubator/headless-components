@@ -5,7 +5,6 @@ export * as Category from "./Category.js";
 export * as FilteredCollection from "./FilteredCollection.js";
 export * as ProductVariantSelector from "./ProductVariantSelector.js";
 export * as RelatedProducts from "./RelatedProducts.js";
-export * as SocialSharing from "./SocialSharing.js";
 export * as Collection from "./Collection.js";
 export * as Product from "./Product.js";
 export * as ProductModifiers from "./ProductModifiers.js";
