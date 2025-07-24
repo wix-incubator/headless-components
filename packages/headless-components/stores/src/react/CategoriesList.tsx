@@ -88,7 +88,7 @@ export interface EmptyStateRenderProps {}
  * }
  * ```
  */
-export const EmptyState = (props: EmptyStateProps) => {
+export function EmptyState(props: EmptyStateProps) {
   const { isLoading, error, categories } = useService(
     CategoriesListServiceDefinition,
   );
@@ -103,7 +103,7 @@ export const EmptyState = (props: EmptyStateProps) => {
   }
 
   return null;
-};
+}
 
 /**
  * Props for Loading headless component
@@ -141,7 +141,7 @@ export interface LoadingRenderProps {}
  * }
  * ```
  */
-export const Loading = (props: LoadingProps) => {
+export function Loading(props: LoadingProps) {
   const { isLoading } = useService(CategoriesListServiceDefinition);
   const isLoadingValue = isLoading.get();
 
@@ -152,7 +152,7 @@ export const Loading = (props: LoadingProps) => {
   }
 
   return null;
-};
+}
 
 /**
  * Props for Error headless component
@@ -196,7 +196,7 @@ export interface ErrorRenderProps {
  * }
  * ```
  */
-export const Error = (props: ErrorProps) => {
+export function Error(props: ErrorProps) {
   const { error } = useService(CategoriesListServiceDefinition);
   const errorValue = error.get();
 
@@ -207,7 +207,7 @@ export const Error = (props: ErrorProps) => {
   }
 
   return null;
-};
+}
 
 /**
  * Props for ItemContent headless component
@@ -250,7 +250,7 @@ export interface ItemContentRenderProps {
  * }
  * ```
  */
-export const ItemContent = (props: ItemContentProps) => {
+export function ItemContent(props: ItemContentProps) {
   const { categories, isLoading, error } = useService(
     CategoriesListServiceDefinition,
   );
@@ -269,4 +269,4 @@ export const ItemContent = (props: ItemContentProps) => {
         : props.children}
     </CategoryRoot>
   ));
-};
+}

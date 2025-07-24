@@ -94,7 +94,7 @@ export interface MinPriceRenderProps {
  * }
  * ```
  */
-export const MinPrice = (props: MinPriceProps) => {
+export function MinPrice(props: MinPriceProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
   const minPrice = service.minPrice.get();
   const setMinPrice = service.setMinPrice;
@@ -102,7 +102,7 @@ export const MinPrice = (props: MinPriceProps) => {
   return typeof props.children === "function"
     ? props.children({ minPrice, setMinPrice })
     : props.children;
-};
+}
 
 /**
  * Props for MaxPrice headless component
@@ -149,7 +149,7 @@ export interface MaxPriceRenderProps {
  * }
  * ```
  */
-export const MaxPrice = (props: MaxPriceProps) => {
+export function MaxPrice(props: MaxPriceProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
   const maxPrice = service.maxPrice.get();
   const setMaxPrice = service.setMaxPrice;
@@ -157,7 +157,7 @@ export const MaxPrice = (props: MaxPriceProps) => {
   return typeof props.children === "function"
     ? props.children({ maxPrice, setMaxPrice })
     : props.children;
-};
+}
 
 /**
  * Props for InventoryStatus headless component
@@ -210,7 +210,7 @@ export interface InventoryStatusRenderProps {
  * }
  * ```
  */
-export const InventoryStatus = (props: InventoryStatusProps) => {
+export function InventoryStatus(props: InventoryStatusProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
   const availableInventoryStatuses = service.availableInventoryStatuses.get();
   const selectedInventoryStatuses = service.selectedInventoryStatuses.get();
@@ -223,7 +223,7 @@ export const InventoryStatus = (props: InventoryStatusProps) => {
         toggleInventoryStatus,
       })
     : props.children;
-};
+}
 
 /**
  * Props for ResetTrigger headless component
@@ -268,7 +268,7 @@ export interface ResetTriggerRenderProps {
  * }
  * ```
  */
-export const ResetTrigger = (props: ResetTriggerProps) => {
+export function ResetTrigger(props: ResetTriggerProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
   const resetFilters = service.reset;
   const isFiltered = service.isFiltered.get();
@@ -276,7 +276,7 @@ export const ResetTrigger = (props: ResetTriggerProps) => {
   return typeof props.children === "function"
     ? props.children({ resetFilters, isFiltered })
     : props.children;
-};
+}
 
 /**
  * Props for PriceRange headless component
@@ -336,7 +336,7 @@ export interface PriceRangeRenderProps {
  * }
  * ```
  */
-export const PriceRange = (props: PriceRangeProps) => {
+export function PriceRange(props: PriceRangeProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
   const minPrice = service.minPrice.get();
   const maxPrice = service.maxPrice.get();
@@ -346,7 +346,7 @@ export const PriceRange = (props: PriceRangeProps) => {
   return typeof props.children === "function"
     ? props.children({ minPrice, maxPrice, setMinPrice, setMaxPrice })
     : props.children;
-};
+}
 
 /**
  * Props for ProductOptions headless component
@@ -402,7 +402,7 @@ export interface ProductOptionRenderProps {
  * }
  * ```
  */
-export const ProductOptions = (props: ProductOptionsProps) => {
+export function ProductOptions(props: ProductOptionsProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
   const availableOptions = service.availableProductOptions.get();
   const selectedProductOptions = service.selectedProductOptions.get();
@@ -427,4 +427,4 @@ export const ProductOptions = (props: ProductOptionsProps) => {
       })}
     </>
   );
-};
+}

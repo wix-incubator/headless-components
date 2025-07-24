@@ -59,9 +59,9 @@ export interface OptionsRenderProps {
  * }
  * ```
  */
-export const Options = (props: OptionsProps) => {
+export function Options(props: OptionsProps) {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();
@@ -72,7 +72,7 @@ export const Options = (props: OptionsProps) => {
     hasOptions: options.length > 0,
     selectedChoices,
   });
-};
+}
 
 /**
  * Props for Option headless component
@@ -131,9 +131,9 @@ export interface OptionRenderProps {
  * }
  * ```
  */
-export const Option = (props: OptionProps) => {
+export function Option(props: OptionProps) {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();
@@ -150,7 +150,7 @@ export const Option = (props: OptionProps) => {
     selectedValue,
     hasChoices: choices.length > 0,
   });
-};
+}
 
 /**
  * Props for Choice headless component
@@ -214,9 +214,9 @@ export interface ChoiceRenderProps {
  * }
  * ```
  */
-export const Choice = (props: ChoiceProps) => {
+export function Choice(props: ChoiceProps) {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();
@@ -236,7 +236,7 @@ export const Choice = (props: ChoiceProps) => {
   // Check if this choice is available for pre-order
   const isPreOrderEnabled = variantService.isChoicePreOrderEnabled(
     optionName,
-    choiceValue
+    choiceValue,
   );
 
   const value = choiceValue;
@@ -325,9 +325,9 @@ export interface StockRenderProps {
  * }
  * ```
  */
-export const Stock = (props: StockProps) => {
+export function Stock(props: StockProps) {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const inStock = variantService.isInStock.get();
@@ -404,9 +404,9 @@ export interface ResetRenderProps {
  * }
  * ```
  */
-export const Reset = (props: ResetProps) => {
+export function Reset(props: ResetProps) {
   const variantService = useService(
-    SelectedVariantServiceDefinition
+    SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
   const selectedChoices = variantService.selectedChoices.get();
