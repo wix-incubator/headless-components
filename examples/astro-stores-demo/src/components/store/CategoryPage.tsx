@@ -1,39 +1,34 @@
-import { Product } from '@wix/headless-stores/react';
-import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
-import { ProductsList } from '@wix/headless-stores/react';
-import { ProductsListFilters } from '@wix/headless-stores/react';
-import { ProductsListPagination } from '@wix/headless-stores/react';
-import { ProductsListSort } from '@wix/headless-stores/react';
-import { SortType } from '@wix/headless-stores/services';
-import { InventoryStatusType } from '@wix/headless-stores/services';
-import { CategoriesList } from '@wix/headless-stores/react';
-import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
-import type { CategoryServiceConfig } from '@wix/headless-stores/services';
-import { Category } from '@wix/headless-stores/react';
-import { useState } from 'react';
-import { productsV3 } from '@wix/stores';
-import { useEffect } from 'react';
+import { CurrentCart } from '@wix/headless-ecom/react';
+import type { LineItem } from '@wix/headless-ecom/services';
 import {
   MediaGalleryService,
   MediaGalleryServiceDefinition,
 } from '@wix/headless-media/services';
-import { createServicesMap } from '@wix/services-manager';
+import {
+  Product,
+  ProductActions,
+  ProductsList,
+  ProductsListFilters,
+  ProductsListPagination,
+  ProductVariantSelector,
+  SelectedVariant,
+} from '@wix/headless-stores/react';
+import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import {
   SelectedVariantService,
   SelectedVariantServiceDefinition,
+  type ProductsListServiceConfig,
 } from '@wix/headless-stores/services';
+import { createServicesMap } from '@wix/services-manager';
 import { WixServices } from '@wix/services-manager-react';
+import { productsV3 } from '@wix/stores';
+import { useEffect, useState } from 'react';
 import { WixMediaImage } from '../media';
-import { CurrentCart } from '@wix/headless-ecom/react';
-import type { LineItem } from '@wix/headless-ecom/services';
-import { ProductVariantSelector } from '@wix/headless-stores/react';
-import { SelectedVariant } from '@wix/headless-stores/react';
-import { ProductActions } from '@wix/headless-stores/react';
-import QuickViewModal from './QuickViewModal';
-import { ProductActionButtons } from './ProductActionButtons';
 import { CategoryPicker } from './CategoryPicker';
-import { SortDropdown } from './SortDropdown';
+import { ProductActionButtons } from './ProductActionButtons';
 import ProductFilters from './ProductFilters';
+import QuickViewModal from './QuickViewModal';
+import { SortDropdown } from './SortDropdown';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
