@@ -8,7 +8,6 @@ import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 import * as inventoryItemsV3 from "@wix/auto_sdk_stores_inventory-items-v-3";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 import { ProductServiceDefinition } from "./product-service.js";
-// import { MediaGalleryServiceDefinition } from "@wix/headless-media/services";
 
 type V3Product = productsV3.V3Product;
 type Variant = productsV3.Variant;
@@ -47,7 +46,7 @@ export interface SelectedVariantServiceAPI {
   setSelectedChoices: (choices: Record<string, string>) => void;
   addToCart: (
     quantity?: number,
-    modifiers?: Record<string, any>
+    modifiers?: Record<string, any>,
   ) => Promise<void>;
   setOption: (group: string, value: string) => void;
   // Quantity management methods
@@ -61,7 +60,7 @@ export interface SelectedVariantServiceAPI {
   getAvailableChoicesForOption: (optionName: string) => string[];
   getChoiceInfo: (
     optionName: string,
-    choiceValue: string
+    choiceValue: string,
   ) => { isAvailable: boolean; isInStock: boolean; isPreOrderEnabled: boolean };
   isChoiceAvailable: (optionName: string, choiceValue: string) => boolean;
   isChoiceInStock: (optionName: string, choiceValue: string) => boolean;
@@ -84,12 +83,11 @@ export const SelectedVariantService =
       const signalsService = getService(SignalsServiceDefinition);
       const cartService = getService(CurrentCartServiceDefinition);
       const productService = getService(ProductServiceDefinition);
-      // const mediaService = getService(MediaGalleryServiceDefinition);
 
       const selectedChoices: Signal<Record<string, string>> =
         signalsService.signal({} as any);
       const preOrderMessage: Signal<string | null> = signalsService.signal(
-        null as any
+        null as any,
       );
 
       const initialProduct = productService.product.get();
@@ -117,7 +115,7 @@ export const SelectedVariantService =
           const productOption = product?.options
             ?.find((option: any) => option.name === choiceKey)
             ?.choicesSettings?.choices?.find(
-              (choice: any) => choice.name === selectedChoicesValue[choiceKey]
+              (choice: any) => choice.name === selectedChoicesValue[choiceKey],
             );
           if (productOption) {
             selectedChoicesImages.push(...(productOption.linkedMedia ?? []));
@@ -138,7 +136,7 @@ export const SelectedVariantService =
       };
 
       const processVariantChoices = (
-        variant: Variant
+        variant: Variant,
       ): Record<string, string> => {
         const choices: Record<string, string> = {};
 
@@ -159,14 +157,14 @@ export const SelectedVariantService =
 
       const findVariantByChoices = (
         variants: productsV3.Variant[],
-        selectedChoices: Record<string, string>
+        selectedChoices: Record<string, string>,
       ): productsV3.Variant | null => {
         return (
           variants.find((variant) => {
             const variantChoices = processVariantChoices(variant);
             const choiceKeys = Object.keys(selectedChoices);
             return choiceKeys.every(
-              (key) => variantChoices[key] === selectedChoices[key]
+              (key) => variantChoices[key] === selectedChoices[key],
             );
           }) || null
         );
@@ -175,7 +173,7 @@ export const SelectedVariantService =
       const updateInventoryItemData = async (
         variantId: string | null | undefined,
         inStock: boolean,
-        preOrderEnabled: boolean
+        preOrderEnabled: boolean,
       ) => {
         if (!variantId) {
           preOrderMessage.set(null);
@@ -242,32 +240,32 @@ export const SelectedVariantService =
       const error: Signal<string | null> = signalsService.signal(null as any);
 
       const variants: Signal<productsV3.Variant[]> = signalsService.signal(
-        [] as any
+        [] as any,
       );
       const options: Signal<Record<string, string[]>> = signalsService.signal(
-        {} as any
+        {} as any,
       );
       const basePrice: Signal<number> = signalsService.signal(0 as any);
       const discountPrice: Signal<number | null> = signalsService.signal(
-        null as any
+        null as any,
       );
       const isOnSale: Signal<boolean | null> = signalsService.signal(
-        null as any
+        null as any,
       );
       const quantityAvailable: Signal<number | null> = signalsService.signal(
-        null as any
+        null as any,
       );
       const trackQuantity: Signal<boolean> = signalsService.signal(
-        false as any
+        false as any,
       );
       const selectedQuantity: Signal<number> = signalsService.signal(1 as any);
       const productId: Signal<string> = signalsService.signal("" as any);
       const ribbonLabel: Signal<string | null> = signalsService.signal(
-        null as any
+        null as any,
       );
 
       const v3Product: Signal<V3Product | null> = signalsService.signal(
-        initialProduct as any
+        initialProduct as any,
       );
 
       const init = (currentProduct: V3Product | null) => {
@@ -284,7 +282,7 @@ export const SelectedVariantService =
           discountPrice.set(compareAtPrice ? parsePrice(compareAtPrice) : null);
           isOnSale.set(
             !!compareAtPrice &&
-              parsePrice(compareAtPrice) > parsePrice(actualPrice)
+              parsePrice(compareAtPrice) > parsePrice(actualPrice),
           );
 
           if (currentProduct.options) {
@@ -292,7 +290,7 @@ export const SelectedVariantService =
             currentProduct.options.forEach((option: any) => {
               if (option.name && option.choicesSettings?.choices) {
                 optionsMap[option.name] = option.choicesSettings.choices.map(
-                  (choice: any) => choice.name || ""
+                  (choice: any) => choice.name || "",
                 );
               }
             });
@@ -304,7 +302,7 @@ export const SelectedVariantService =
 
             if (currentProduct.variantsInfo?.variants?.length) {
               updateDataFromVariant(
-                currentProduct.variantsInfo?.variants[0] || null
+                currentProduct.variantsInfo?.variants[0] || null,
               );
             }
           } else {
@@ -357,7 +355,7 @@ export const SelectedVariantService =
               return Object.entries(choices).every(
                 ([optionName, optionValue]) => {
                   return variantChoices[optionName] === optionValue;
-                }
+                },
               );
             }) || null
           );
@@ -393,7 +391,7 @@ export const SelectedVariantService =
           }
 
           return rawAmount ? `$${rawAmount}` : "";
-        }
+        },
       );
 
       const currentCompareAtPrice: ReadOnlySignal<string | null> =
@@ -478,7 +476,7 @@ export const SelectedVariantService =
 
       const addToCart = async (
         quantity: number = 1,
-        modifiers?: Record<string, any>
+        modifiers?: Record<string, any>,
       ) => {
         try {
           isLoading.set(true);
@@ -516,7 +514,7 @@ export const SelectedVariantService =
             Object.values(modifiers).forEach((modifierValue: any) => {
               const modifierName = modifierValue.modifierName;
               const productModifier = productModifiers.find(
-                (m) => m.name === modifierName
+                (m) => m.name === modifierName,
               );
 
               if (!productModifier) return;
@@ -572,7 +570,7 @@ export const SelectedVariantService =
           await cartService.addToCart(lineItems);
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to add to cart"
+            err instanceof Error ? err.message : "Failed to add to cart",
           );
         } finally {
           isLoading.set(false);
@@ -605,7 +603,7 @@ export const SelectedVariantService =
         const maxQuantity = quantityAvailable.get();
         const validQuantity = Math.max(
           1,
-          Math.min(quantity, maxQuantity || 999)
+          Math.min(quantity, maxQuantity || 999),
         );
         selectedQuantity.set(validQuantity);
       };
@@ -650,7 +648,7 @@ export const SelectedVariantService =
       // Core method that provides both availability and stock info efficiently
       const getChoiceInfo = (
         optionName: string,
-        choiceValue: string
+        choiceValue: string,
       ): {
         isAvailable: boolean;
         isInStock: boolean;
@@ -681,18 +679,18 @@ export const SelectedVariantService =
 
           // Check if this variant matches our hypothetical choices
           return Object.entries(hypotheticalChoices).every(
-            ([key, value]) => variantChoices[key] === value
+            ([key, value]) => variantChoices[key] === value,
           );
         });
 
         const isAvailable = matchingVariants.length > 0;
         // Check if ANY of the matching variants are in stock
         const isInStock = matchingVariants.some(
-          (variant) => variant.inventoryStatus?.inStock === true
+          (variant) => variant.inventoryStatus?.inStock === true,
         );
         // Check if ANY of the matching variants have pre-order enabled
         const isPreOrderEnabled = matchingVariants.some(
-          (variant) => variant.inventoryStatus?.preorderEnabled === true
+          (variant) => variant.inventoryStatus?.preorderEnabled === true,
         );
 
         return { isAvailable, isInStock, isPreOrderEnabled };
@@ -701,21 +699,21 @@ export const SelectedVariantService =
       // Simplified methods using the core getChoiceInfo
       const isChoiceAvailable = (
         optionName: string,
-        choiceValue: string
+        choiceValue: string,
       ): boolean => {
         return getChoiceInfo(optionName, choiceValue).isAvailable;
       };
 
       const isChoiceInStock = (
         optionName: string,
-        choiceValue: string
+        choiceValue: string,
       ): boolean => {
         return getChoiceInfo(optionName, choiceValue).isInStock;
       };
 
       const isChoicePreOrderEnabled = (
         optionName: string,
-        choiceValue: string
+        choiceValue: string,
       ): boolean => {
         return getChoiceInfo(optionName, choiceValue).isPreOrderEnabled;
       };
@@ -733,7 +731,7 @@ export const SelectedVariantService =
           variantsList?.every(
             (variant) =>
               !variant.inventoryStatus?.inStock &&
-              !variant.inventoryStatus?.preorderEnabled
+              !variant.inventoryStatus?.preorderEnabled,
           ) ?? true
         );
       };
@@ -791,5 +789,5 @@ export const SelectedVariantService =
 
         IsAllVariantsAreOutOfStock,
       };
-    }
+    },
   );

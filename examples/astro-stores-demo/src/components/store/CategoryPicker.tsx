@@ -10,6 +10,22 @@ interface CategoryPickerProps {
   categories: categories.Category[];
 }
 
+export default function CategoryPickerWithContext() {
+  return (
+    <Category.Root>
+      <Category.List>
+        {({ categories, selectedCategory, setSelectedCategory }) => (
+          <CategoryPicker
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategorySelect={setSelectedCategory}
+          />
+        )}
+      </Category.List>
+    </Category.Root>
+  );
+}
+
 function CategoryPicker({
   onCategorySelect,
   selectedCategory,
@@ -48,19 +64,5 @@ function CategoryPicker({
         ))}
       </div>
     </div>
-  );
-}
-
-export default function CategoryPickerWithContext() {
-  return (
-    <Category.List>
-      {({ categories, selectedCategory, setSelectedCategory }) => (
-        <CategoryPicker
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategorySelect={setSelectedCategory}
-        />
-      )}
-    </Category.List>
   );
 }
