@@ -6,7 +6,6 @@ import {
 } from '@wix/headless-media/services';
 import {
   Product,
-  ProductActions,
   ProductList,
   ProductListFilters,
   ProductListPagination,
@@ -410,7 +409,7 @@ export const ProductGridContent = ({
           {/* Action Buttons */}
           <div className="space-y-2">
             {/* Add to Cart Button */}
-            <ProductActions.Actions>
+            <SelectedVariant.Actions>
               {({ error }) => (
                 <div className="space-y-2">
                   {error && (
@@ -424,7 +423,7 @@ export const ProductGridContent = ({
                   />
                 </div>
               )}
-            </ProductActions.Actions>
+            </SelectedVariant.Actions>
 
             {/* View Product Button */}
             <a

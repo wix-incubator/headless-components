@@ -1,7 +1,6 @@
 export * as CategoryList from "./CategoryList.js";
 export * as Category from "./Category.js";
 export * as Product from "./Product.js";
-export * as ProductActions from "./ProductActions.js";
 export * as ProductModifiers from "./ProductModifiers.js";
 export * as ProductList from "./ProductList.js";
 export * as ProductListFilters from "./ProductListFilters.js";

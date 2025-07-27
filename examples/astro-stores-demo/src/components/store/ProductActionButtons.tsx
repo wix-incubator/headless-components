@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProductActions } from '@wix/headless-stores/react';
+import { SelectedVariant } from '@wix/headless-stores/react';
 
 interface BaseButtonProps {
   disabled: boolean;
@@ -116,7 +116,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
   isQuickView = false,
 }) => {
   return (
-    <ProductActions.Actions>
+    <SelectedVariant.Actions>
       {({
         onAddToCart,
         onBuyNow,
@@ -162,7 +162,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
           </div>
         );
       }}
-    </ProductActions.Actions>
+    </SelectedVariant.Actions>
   );
 };
 
