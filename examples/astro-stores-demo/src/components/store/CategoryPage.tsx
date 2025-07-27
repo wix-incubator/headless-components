@@ -29,7 +29,7 @@ import { useEffect, useState } from 'react';
 import { WixMediaImage } from '../media';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
-import ProductFilters from './ProductFilters';
+import { ProductFilters } from './ProductFilters';
 import QuickViewModal from './QuickViewModal';
 import { SortDropdown } from './SortDropdown';
 

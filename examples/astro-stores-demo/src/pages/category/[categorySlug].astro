@@ -16,23 +16,12 @@ import { buildSearchOptionsFromUrl } from './parseSearchOptionsFromUrl.js';
 // Get category slug from URL params
 const { categorySlug = '' } = Astro.params;
 
-const [categoriesConfig, currentCartServiceConfig, seoTagsServiceConfig] =
-  await Promise.all([
-    loadCategoriesConfig(),
-    loadCurrentCartServiceConfig(),
-    loadSEOTagsServiceConfig({
-      pageUrl: Astro.url.href,
-      itemType: seoTags.ItemType.STORES_CATEGORY,
-      itemData: {
-        slug: categorySlug,
-      },
-    }),
-  ]);
 const categoryLoadResult = await loadCategoryServiceConfig(categorySlug);
 
 if (categoryLoadResult.type === 'not-found') {
   return Astro.rewrite('/404');
 }
+
 const category = categoryLoadResult.config.category;
 const categoryName = category?.name || '';
 
@@ -54,6 +43,13 @@ const [
   loadCategoriesListServiceConfig(),
   loadCurrentCartServiceConfig(),
   loadProductsListFiltersServiceConfig(),
+  loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemType: seoTags.ItemType.STORES_CATEGORY,
+    itemData: {
+      slug: categorySlug,
+    },
+  }),
 ]);
 
 const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
