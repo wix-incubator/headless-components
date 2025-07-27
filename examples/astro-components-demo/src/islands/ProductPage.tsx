@@ -1,5 +1,8 @@
 import { BuyNow, PayNow } from "@wix/headless-stores/react";
-import { buyNowServiceBinding, payNowServiceBinding } from "@wix/headless-stores/services";
+import {
+  buyNowServiceBinding,
+  payNowServiceBinding,
+} from "@wix/headless-stores/services";
 import {
   createServicesManager,
   createServicesMap,
@@ -7,15 +10,18 @@ import {
 import { ServicesManagerProvider } from "@wix/services-manager-react";
 import { actions } from "astro:actions";
 
+// BuyNow And PayNow still dont have Root component
 export function ProductPage(props: { servicesConfigs: any }) {
   return (
     <ServicesManagerProvider
       servicesManager={createServicesManager(
-        createServicesMap().addService(
-          ...buyNowServiceBinding(props.servicesConfigs),
-        ).addService(
-          ...payNowServiceBinding(props.servicesConfigs, { customCheckoutAction: actions.buyTestProduct })
-        )
+        createServicesMap()
+          .addService(...buyNowServiceBinding(props.servicesConfigs))
+          .addService(
+            ...payNowServiceBinding(props.servicesConfigs, {
+              customCheckoutAction: actions.buyTestProduct,
+            }),
+          ),
       )}
     >
       <BuyNow>
@@ -34,17 +40,13 @@ export function ProductPage(props: { servicesConfigs: any }) {
             {error
               ? error
               : isLoading
-              ? "Loading..."
-              : `Buy Now ${productName} ${price} ${currency}`}
+                ? "Loading..."
+                : `Buy Now ${productName} ${price} ${currency}`}
           </button>
         )}
       </BuyNow>
       <PayNow>
-        {({
-          isLoading,
-          redirectToCheckout,
-          error,
-        }) => (
+        {({ isLoading, redirectToCheckout, error }) => (
           <button
             onClick={() => redirectToCheckout()}
             disabled={isLoading || Boolean(error)}

@@ -1,24 +1,6 @@
 import { useEffect, useState } from 'react';
 import { productsV3 } from '@wix/stores';
-import { WixServices } from '@wix/services-manager-react';
-import { createServicesMap } from '@wix/services-manager';
 import ProductDetails from './ProductDetails';
-import {
-  ProductService,
-  ProductServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  SelectedVariantService,
-  SelectedVariantServiceDefinition,
-} from '@wix/headless-stores/services';
-import {
-  MediaGalleryService,
-  MediaGalleryServiceDefinition,
-} from '@wix/headless-media/services';
-import {
-  ProductModifiersService,
-  ProductModifiersServiceDefinition,
-} from '@wix/headless-stores/services';
 
 import { CurrentCart } from '@wix/headless-ecom/react';
 import type { LineItem } from '@wix/headless-ecom/services';
@@ -81,25 +63,6 @@ export default function QuickViewModal({
       loadFullProduct();
     }
   }, [isOpen, product.slug]);
-
-  // Create services map with all required services EXCEPT cart service - recreate when fullProduct changes
-  const [servicesMap, setServicesMap] = useState<any>(null);
-
-  useEffect(() => {
-    if (fullProduct) {
-      const servicesMap = createServicesMap()
-        .addService(ProductServiceDefinition, ProductService, {
-          product: fullProduct,
-        })
-        .addService(SelectedVariantServiceDefinition, SelectedVariantService)
-        .addService(ProductModifiersServiceDefinition, ProductModifiersService)
-        .addService(MediaGalleryServiceDefinition, MediaGalleryService, {
-          media: fullProduct.media?.itemsInfo?.items ?? [],
-        });
-
-      setServicesMap(servicesMap);
-    }
-  }, [fullProduct]);
 
   if (!isOpen) return null;
 
@@ -182,7 +145,7 @@ export default function QuickViewModal({
 
         {/* Scrollable Content */}
         <div className="overflow-y-auto max-h-[90vh] p-6">
-          {isLoading || !servicesMap ? (
+          {isLoading ? (
             // Loading state while fetching full product data
             <div className="flex items-center justify-center py-16">
               <div className="text-center">
@@ -194,9 +157,7 @@ export default function QuickViewModal({
             </div>
           ) : (
             <>
-              <WixServices servicesMap={servicesMap}>
-                <ProductDetails isQuickView={true} product={product} />
-              </WixServices>
+              <ProductDetails isQuickView={true} product={product} />
 
               {/* View Full Product Page Link */}
               <div className="mt-6 pt-6 border-t border-brand-subtle">

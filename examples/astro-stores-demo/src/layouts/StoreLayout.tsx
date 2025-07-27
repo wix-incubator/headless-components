@@ -7,7 +7,6 @@ import { CurrentCart } from '@wix/headless-ecom/react';
 interface StoreLayoutProps {
   children: ReactNode;
   currentCartServiceConfig: any;
-  servicesMap?: any;
   showSuccessMessage?: boolean;
   onSuccessMessageChange?: (show: boolean) => void;
 }

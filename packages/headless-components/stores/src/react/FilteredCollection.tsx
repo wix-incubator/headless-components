@@ -1,18 +1,136 @@
-import { useService } from "@wix/services-manager-react";
+import { useService, WixServices } from "@wix/services-manager-react";
 import React, { type ReactNode } from "react";
-import { CollectionServiceDefinition } from "../services/collection-service.js";
+import {
+  CollectionServiceDefinition,
+  CollectionService,
+} from "../services/collection-service.js";
 import {
   FilterServiceDefinition,
+  FilterService,
   type AvailableOptions,
   type FilterServiceAPI,
   type Filter,
 } from "../services/filter-service.js";
 import {
+  CategoryServiceDefinition,
+  CategoryService,
+} from "../services/category-service.js";
+import {
+  SortServiceDefinition,
+  SortService,
+} from "../services/sort-service.js";
+import {
+  CatalogServiceDefinition,
+  CatalogService,
+} from "../services/catalog-service.js";
+
+import {
   InventoryAvailabilityStatus,
   type V3Product,
 } from "@wix/auto_sdk_stores_products-v-3";
+import { createServicesMap } from "@wix/services-manager";
+import type { PropsWithChildren } from "react";
 
 export type { AvailableOptions, Filter, FilterServiceAPI };
+
+/**
+ * Root component that provides the FilteredCollection service context to its children.
+ * This component sets up the necessary services for managing filtered collection functionality.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { FilteredCollection } from '@wix/stores/components';
+ *
+ * function FilteredProductsPage() {
+ *   return (
+ *     <FilteredCollection.Root>
+ *       <div>
+ *         <FilteredCollection.Filters>
+ *           {({ applyFilters, clearFilters, currentFilters, availableOptions, isFiltered }) => (
+ *             <div className="filters">
+ *               <h3>Filters</h3>
+ *               <div className="price-filter">
+ *                 <label>Price Range</label>
+ *                 <input
+ *                   type="range"
+ *                   min={availableOptions.priceRange.min}
+ *                   max={availableOptions.priceRange.max}
+ *                   value={currentFilters.priceRange.min}
+ *                   onChange={(e) => applyFilters({
+ *                     ...currentFilters,
+ *                     priceRange: { ...currentFilters.priceRange, min: Number(e.target.value) }
+ *                   })}
+ *                 />
+ *               </div>
+ *               {isFiltered && (
+ *                 <button onClick={clearFilters}>Clear All Filters</button>
+ *               )}
+ *             </div>
+ *           )}
+ *         </FilteredCollection.Filters>
+ *
+ *         <FilteredCollection.Grid>
+ *           {({ products, isLoading, error, isEmpty, totalProducts, hasMoreProducts }) => (
+ *             <div>
+ *               {isLoading && <div>Loading filtered products...</div>}
+ *               {error && <div>Error: {error}</div>}
+ *               {isEmpty && <div>No products match your filters</div>}
+ *               {products.length > 0 && (
+ *                 <div>
+ *                   <p>Showing {products.length} of {totalProducts} products</p>
+ *                   <div className="filtered-grid">
+ *                     {products.map(product => (
+ *                       <FilteredCollection.Item key={product.id} product={product}>
+ *                         {({ title, image, price, available, slug }) => (
+ *                           <div className={`product-item ${!available ? 'unavailable' : ''}`}>
+ *                             {image && <img src={image} alt={title} />}
+ *                             <h3>{title}</h3>
+ *                             <div className="price">{price}</div>
+ *                             <a href={`/product/${slug}`}>View Details</a>
+ *                           </div>
+ *                         )}
+ *                       </FilteredCollection.Item>
+ *                     ))}
+ *                   </div>
+ *                   {hasMoreProducts && (
+ *                     <FilteredCollection.LoadMore>
+ *                       {({ loadMore, isLoading }) => (
+ *                         <button onClick={loadMore} disabled={isLoading}>
+ *                           {isLoading ? 'Loading...' : 'Load More'}
+ *                         </button>
+ *                       )}
+ *                     </FilteredCollection.LoadMore>
+ *                   )}
+ *                 </div>
+ *               )}
+ *             </div>
+ *           )}
+ *         </FilteredCollection.Grid>
+ *       </div>
+ *     </FilteredCollection.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(props: PropsWithChildren<{}>) {
+  return (
+    <WixServices
+      servicesMap={createServicesMap()
+        .addService(CatalogServiceDefinition, CatalogService, {})
+        .addService(CategoryServiceDefinition, CategoryService, {
+          categories: [],
+          initialCategoryId: null,
+        })
+        .addService(SortServiceDefinition, SortService, {})
+        .addService(FilterServiceDefinition, FilterService, {})
+        .addService(CollectionServiceDefinition, CollectionService, {})}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
 
 // Filters Loading component with pulse animation
 export interface FiltersLoadingProps {
