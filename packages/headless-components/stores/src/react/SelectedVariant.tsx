@@ -6,7 +6,10 @@ import {
   SelectedVariantServiceConfig,
 } from "../services/selected-variant-service.js";
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
-import { CurrentCartService, CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
+import {
+  CurrentCartService,
+  CurrentCartServiceDefinition,
+} from "@wix/headless-ecom/services";
 import { createServicesMap } from "@wix/services-manager";
 import type { PropsWithChildren } from "react";
 
@@ -50,11 +53,13 @@ export function Root(
 ) {
   return (
     <WixServices
-      servicesMap={createServicesMap().addService(
-        SelectedVariantServiceDefinition,
-        SelectedVariantService,
-        props.selectedVariantServiceConfig,
-      ).addService(CurrentCartServiceDefinition, CurrentCartService, {})}
+      servicesMap={createServicesMap()
+        .addService(
+          SelectedVariantServiceDefinition,
+          SelectedVariantService,
+          props.selectedVariantServiceConfig,
+        )
+        .addService(CurrentCartServiceDefinition, CurrentCartService, {})}
     >
       {props.children}
     </WixServices>
@@ -239,8 +244,6 @@ export function SKU(props: SKUProps) {
  * Props for Actions headless component
  */
 export interface ActionsProps {
-  /** Quantity to add (optional) */
-  quantity?: number;
   /** Render prop function that receives actions data */
   children: (props: ActionsRenderProps) => React.ReactNode;
 }
@@ -257,8 +260,6 @@ export interface ActionsRenderProps {
   canAddToCart: boolean;
   /** Whether add to cart is currently loading */
   isLoading: boolean;
-  /** Current variant price */
-  price: string;
   /** Whether variant is in stock */
   inStock: boolean;
   /** Whether pre-order is enabled */
@@ -267,8 +268,6 @@ export interface ActionsRenderProps {
   preOrderMessage: string | null;
   /** Error message if any */
   error: string | null;
-  /** Available quantity */
-  availableQuantity: number | null;
 }
 
 /**
@@ -281,10 +280,9 @@ export interface ActionsRenderProps {
  *
  * function AddToCartButton() {
  *   return (
- *     <SelectedVariant.Actions quantity={1}>
- *       {({ onAddToCart, onBuyNow, canAddToCart, isLoading, price, inStock, error }) => (
+ *     <SelectedVariant.Actions>
+ *       {({ onAddToCart, onBuyNow, canAddToCart, isLoading, inStock, error }) => (
  *         <div>
- *           <div>Price: {price}</div>
  *           {error && <div className="error">{error}</div>}
  *           {!inStock && <div>Out of stock</div>}
  *           <button
@@ -328,13 +326,11 @@ export function Actions(props: ActionsProps) {
     modifiersService = null;
   }
 
-  const price = variantService.currentPrice.get();
   const inStock = variantService.isInStock.get();
   const isPreOrderEnabled = variantService.isPreOrderEnabled.get();
   const preOrderMessage = variantService.preOrderMessage.get();
   const isLoading = variantService.isLoading.get();
   const error = variantService.error.get();
-  const availableQuantity = variantService.quantityAvailable.get();
   const quantity = variantService.selectedQuantity.get();
 
   // Check if all required modifiers are filled
@@ -381,11 +377,9 @@ export function Actions(props: ActionsProps) {
     onBuyNow,
     canAddToCart,
     isLoading,
-    price,
     inStock,
     isPreOrderEnabled,
     preOrderMessage,
     error,
-    availableQuantity,
   });
 }
