@@ -1,13 +1,3 @@
-// export {
-//   buyNowServiceBinding,
-//   loadBuyNowServiceInitialData,
-// } from "./buy-now-service";
-
-// export {
-//   payNowServiceBinding,
-//   loadPayNowServiceInitialData,
-// } from "./pay-now-service";
-
 export {
   CategoryService,
   CategoryServiceDefinition,
@@ -32,12 +22,6 @@ export {
   ProductServiceDefinition,
   loadProductServiceConfig,
 } from "./product-service.js";
-
-export {
-  RelatedProductsService,
-  RelatedProductsServiceDefinition,
-  loadRelatedProductsServiceConfig,
-} from "./related-products-service.js";
 
 export {
   SelectedVariantService,

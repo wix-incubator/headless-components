@@ -1,14 +1,7 @@
-import { StoreLayout } from '../../layouts/StoreLayout';
-import { KitchensinkLayout } from '../../layouts/KitchensinkLayout';
-import { createServicesMap } from '@wix/services-manager';
-import { useState } from 'react';
-import {
-  CategoryService,
-  CategoryServiceDefinition,
-} from '@wix/headless-stores/services';
-import { WixServices } from '@wix/services-manager-react';
-import '../../styles/theme-1.css';
 import { CategoryPage } from '../../components/store/CategoryPage';
+import { KitchensinkLayout } from '../../layouts/KitchensinkLayout';
+import { StoreLayout } from '../../layouts/StoreLayout';
+import '../../styles/theme-1.css';
 
 interface StoreCollectionPageProps {
   currentCartServiceConfig: any;
@@ -21,7 +14,6 @@ interface StoreCollectionPageProps {
 
 export default function StoreCollectionPage({
   currentCartServiceConfig,
-  categoryServiceConfig,
   categoriesListConfig,
   productsListConfig,
   productsListFiltersConfig,
@@ -50,28 +42,6 @@ export default function StoreCollectionPage({
       );
     }
   };
-
-  // const [servicesMap] = useState(() =>
-  //   createServicesMap()
-  //     .addService(
-  //       CollectionServiceDefinition,
-  //       CollectionService,
-  //       filteredCollectionServiceConfig
-  //     )
-  //     .addService(
-  //       FilterServiceDefinition,
-  //       FilterService,
-  //       filteredCollectionServiceConfig
-  //     )
-  //     .addService(CategoryServiceDefinition, CategoryService, {
-  //       ...categoriesConfig,
-  //       onCategoryChange: handleCategoryChange,
-  //     })
-  //     .addService(SortServiceDefinition, SortService, {
-  //       initialSort: filteredCollectionServiceConfig.initialSort,
-  //     })
-  //     .addService(CatalogServiceDefinition, CatalogService, {})
-  // );
 
   return (
     <KitchensinkLayout>

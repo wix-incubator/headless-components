@@ -675,15 +675,13 @@ export function CategoryPage({
   return (
     <ProductsList.Root productsListConfig={productsListConfig}>
       <ProductsListPagination.Root>
-        <div>
-          <ProductGridContent
-            productPageRoute={productPageRoute}
-            productsListFiltersConfig={productsListFiltersConfig}
-            categoriesListConfig={categoriesListConfig}
-            currentCategorySlug={currentCategorySlug}
-          />
-          <LoadMoreSection />
-        </div>
+        <ProductGridContent
+          productPageRoute={productPageRoute}
+          productsListFiltersConfig={productsListFiltersConfig}
+          categoriesListConfig={categoriesListConfig}
+          currentCategorySlug={currentCategorySlug}
+        />
+        <LoadMoreSection />
       </ProductsListPagination.Root>
     </ProductsList.Root>
   );
