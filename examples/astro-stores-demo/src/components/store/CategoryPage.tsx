@@ -7,9 +7,9 @@ import {
 import {
   Product,
   ProductActions,
-  ProductsList,
-  ProductsListFilters,
-  ProductsListPagination,
+  ProductList,
+  ProductListFilters,
+  ProductListPagination,
   ProductVariantSelector,
   SelectedVariant,
 } from '@wix/headless-stores/react';
@@ -469,7 +469,7 @@ export const ProductGridContent = ({
       </div>
 
       {/* Main Layout with Sidebar and Content */}
-      <ProductsListFilters.Root
+      <ProductListFilters.Root
         productsListFiltersConfig={productsListFiltersConfig}
       >
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
@@ -484,7 +484,7 @@ export const ProductGridContent = ({
 
           {/* Main Content Area */}
           <div className="flex-1 min-w-0">
-            <ProductsList.Error>
+            <ProductList.Error>
               {({ error }) => (
                 <div className="bg-surface-error border border-status-error rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
                   <p className="text-status-error text-sm sm:text-base">
@@ -492,10 +492,10 @@ export const ProductGridContent = ({
                   </p>
                 </div>
               )}
-            </ProductsList.Error>
+            </ProductList.Error>
 
             {/* Filter Status Bar */}
-            <ProductsListFilters.ResetTrigger>
+            <ProductListFilters.ResetTrigger>
               {({ resetFilters, isFiltered }) =>
                 isFiltered && (
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 filter-status-bar rounded-xl p-4 mb-6">
@@ -514,11 +514,11 @@ export const ProductGridContent = ({
                         />
                       </svg>
                       <span className="text-brand-light text-sm sm:text-base">
-                        <ProductsList.Items>
+                        <ProductList.Items>
                           {({ products }) =>
                             `Showing ${String(products.length)}`
                           }
-                        </ProductsList.Items>
+                        </ProductList.Items>
                       </span>
                     </div>
                     <button
@@ -530,9 +530,9 @@ export const ProductGridContent = ({
                   </div>
                 )
               }
-            </ProductsListFilters.ResetTrigger>
+            </ProductListFilters.ResetTrigger>
 
-            <ProductsList.Loading>
+            <ProductList.Loading>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
@@ -545,9 +545,9 @@ export const ProductGridContent = ({
                   </div>
                 ))}
               </div>
-            </ProductsList.Loading>
+            </ProductList.Loading>
 
-            <ProductsList.EmptyState>
+            <ProductList.EmptyState>
               <div className="text-center py-12 sm:py-16">
                 <div className="w-16 h-16 sm:w-24 sm:h-24 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
                   <svg
@@ -564,7 +564,7 @@ export const ProductGridContent = ({
                     />
                   </svg>
                 </div>
-                <ProductsListFilters.ResetTrigger>
+                <ProductListFilters.ResetTrigger>
                   {({ isFiltered }) => (
                     <>
                       <h2 className="text-xl sm:text-2xl font-bold text-content-primary mb-3 sm:mb-4">
@@ -579,18 +579,18 @@ export const ProductGridContent = ({
                       </p>
                     </>
                   )}
-                </ProductsListFilters.ResetTrigger>
+                </ProductListFilters.ResetTrigger>
               </div>
-            </ProductsList.EmptyState>
+            </ProductList.EmptyState>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-              <ProductsList.ItemContent>
+              <ProductList.ItemContent>
                 {({ product }) => <ProductItem product={product} />}
-              </ProductsList.ItemContent>
+              </ProductList.ItemContent>
             </div>
           </div>
         </div>
-      </ProductsListFilters.Root>
+      </ProductListFilters.Root>
 
       {/* Quick View Modal */}
       {quickViewProduct && (
@@ -607,9 +607,9 @@ export const ProductGridContent = ({
 
 export const LoadMoreSection = () => {
   return (
-    <ProductsListPagination.LoadMore>
+    <ProductListPagination.LoadMoreTrigger>
       {({ loadMore, hasMoreProducts, isLoading }) => (
-        <ProductsList.Items>
+        <ProductList.Items>
           {({ products }) =>
             hasMoreProducts ? (
               <>
@@ -659,9 +659,9 @@ export const LoadMoreSection = () => {
               </>
             ) : null
           }
-        </ProductsList.Items>
+        </ProductList.Items>
       )}
-    </ProductsListPagination.LoadMore>
+    </ProductListPagination.LoadMoreTrigger>
   );
 };
 
@@ -673,18 +673,16 @@ export function CategoryPage({
   productPageRoute,
 }: StoreCollectionPageProps) {
   return (
-    <ProductsList.Root productsListConfig={productsListConfig}>
-      <ProductsListPagination.Root>
-        <div>
-          <ProductGridContent
-            productPageRoute={productPageRoute}
-            productsListFiltersConfig={productsListFiltersConfig}
-            categoriesListConfig={categoriesListConfig}
-            currentCategorySlug={currentCategorySlug}
-          />
-          <LoadMoreSection />
-        </div>
-      </ProductsListPagination.Root>
-    </ProductsList.Root>
+    <ProductList.Root productsListConfig={productsListConfig}>
+      <ProductListPagination.Root>
+        <ProductGridContent
+          productPageRoute={productPageRoute}
+          productsListFiltersConfig={productsListFiltersConfig}
+          categoriesListConfig={categoriesListConfig}
+          currentCategorySlug={currentCategorySlug}
+        />
+        <LoadMoreSection />
+      </ProductListPagination.Root>
+    </ProductList.Root>
   );
 }

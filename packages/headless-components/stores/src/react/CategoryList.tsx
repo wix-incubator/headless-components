@@ -10,26 +10,26 @@ import { categories } from "@wix/categories";
 import { Root as CategoryRoot } from "./Category.js";
 
 /**
- * Root component that provides the CategoriesList service context to its children.
+ * Root component that provides the CategoryList service context to its children.
  * This component sets up the necessary services for managing categories list state.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { CategoriesList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components';
  *
  * function CategoriesPage() {
  *   return (
- *     <CategoriesList.Root categoriesListConfig={{ collectionId: 'my-collection' }}>
- *       <CategoriesList.ItemContent>
+ *     <CategoryList.Root categoriesListConfig={{ collectionId: 'my-collection' }}>
+ *       <CategoryList.ItemContent>
  *         {({ category }) => (
  *           <div key={category._id}>
  *             <h2>{category.name}</h2>
  *           </div>
  *         )}
- *       </CategoriesList.ItemContent>
- *     </CategoriesList.Root>
+ *       </CategoryList.ItemContent>
+ *     </CategoryList.Root>
  *   );
  * }
  * ```
@@ -72,18 +72,18 @@ export interface EmptyStateRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { CategoriesList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components';
  *
  * function EmptyCategoriesMessage() {
  *   return (
- *     <CategoriesList.EmptyState>
+ *     <CategoryList.EmptyState>
  *       {() => (
  *         <div className="empty-state">
  *           <h3>No categories found</h3>
  *           <p>Categories will appear here once they are created</p>
  *         </div>
  *       )}
- *     </CategoriesList.EmptyState>
+ *     </CategoryList.EmptyState>
  *   );
  * }
  * ```
@@ -125,18 +125,18 @@ export interface LoadingRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { CategoriesList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components';
  *
  * function CategoriesLoading() {
  *   return (
- *     <CategoriesList.Loading>
+ *     <CategoryList.Loading>
  *       {() => (
  *         <div className="loading-spinner">
  *           <div>Loading categories...</div>
  *           <div className="spinner"></div>
  *         </div>
  *       )}
- *     </CategoriesList.Loading>
+ *     </CategoryList.Loading>
  *   );
  * }
  * ```
@@ -177,11 +177,11 @@ export interface ErrorRenderProps {
  * @component
  * @example
  * ```tsx
- * import { CategoriesList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components';
  *
  * function CategoriesError() {
  *   return (
- *     <CategoriesList.Error>
+ *     <CategoryList.Error>
  *       {({ error }) => (
  *         <div className="error-state">
  *           <h3>Error loading categories</h3>
@@ -191,7 +191,7 @@ export interface ErrorRenderProps {
  *           </button>
  *         </div>
  *       )}
- *     </CategoriesList.Error>
+ *     </CategoryList.Error>
  *   );
  * }
  * ```
@@ -233,11 +233,11 @@ export interface ItemContentRenderProps {
  * @component
  * @example
  * ```tsx
- * import { CategoriesList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components';
  *
  * function CategoriesGrid() {
  *   return (
- *     <CategoriesList.ItemContent>
+ *     <CategoryList.ItemContent>
  *       {({ category }) => (
  *         <div className="category-card">
  *           <h3>{category.name}</h3>
@@ -245,7 +245,7 @@ export interface ItemContentRenderProps {
  *           <a href={`/categories/${category.slug}`}>View Category</a>
  *         </div>
  *       )}
- *     </CategoriesList.ItemContent>
+ *     </CategoryList.ItemContent>
  *   );
  * }
  * ```

@@ -5,13 +5,104 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3 } from "@wix/stores";
 
+/**
+ * Configuration interface for the Products List service.
+ * Contains the initial products data, search options, and metadata.
+ *
+ * @interface ProductsListServiceConfig
+ */
 export type ProductsListServiceConfig = {
+  /** Array of product objects to initialize the service with */
   products: productsV3.V3Product[];
+  /** Search options used to fetch the products */
   searchOptions: Parameters<typeof productsV3.searchProducts>[0];
+  /** Pagination metadata from the search response */
   pagingMetadata: productsV3.CommonCursorPagingMetadata;
+  /** Aggregation data containing filters, facets, and counts */
   aggregations: productsV3.AggregationData;
 };
 
+/**
+ * Loads products list service configuration from the Wix Stores API for SSR initialization.
+ * This function is designed to be used during Server-Side Rendering (SSR) to preload
+ * a list of products based on search criteria.
+ *
+ * @param {Parameters<typeof productsV3.searchProducts>[0]} searchOptions - The search options for querying products
+ * @returns {Promise<ProductsListServiceConfig>} Promise that resolves to the products list configuration
+ *
+ * @example
+ * ```astro
+ * ---
+ * // Astro page example - pages/products.astro
+ * import { loadProductsListServiceConfig } from '@wix/stores/services';
+ * import { ProductList } from '@wix/stores/components';
+ *
+ * // Define search options
+ * const searchOptions = {
+ *   cursorPaging: { limit: 12 },
+ *   filter: {},
+ *   sort: [{ fieldName: 'name', order: 'ASC' }]
+ * };
+ *
+ * // Load products data during SSR
+ * const productsConfig = await loadProductsListServiceConfig(searchOptions);
+ * ---
+ *
+ * <ProductList.Root productsConfig={productsConfig}>
+ *   <ProductList.ItemContent>
+ *     {({ product }) => (
+ *       <div>
+ *         <h3>{product.name}</h3>
+ *         <p>{product.description}</p>
+ *       </div>
+ *     )}
+ *   </ProductList.ItemContent>
+ * </ProductList.Root>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Next.js page example - pages/products.tsx
+ * import { GetServerSideProps } from 'next';
+ * import { loadProductsListServiceConfig } from '@wix/stores/services';
+ * import { ProductsList } from '@wix/stores/components';
+ *
+ * interface ProductsPageProps {
+ *   productsConfig: Awaited<ReturnType<typeof loadProductsListServiceConfig>>;
+ * }
+ *
+ * export const getServerSideProps: GetServerSideProps<ProductsPageProps> = async () => {
+ *   const searchOptions = {
+ *     cursorPaging: { limit: 12 },
+ *     filter: {},
+ *     sort: [{ fieldName: 'name', order: 'ASC' }]
+ *   };
+ *
+ *   const productsConfig = await loadProductsListServiceConfig(searchOptions);
+ *
+ *   return {
+ *     props: {
+ *       productsConfig,
+ *     },
+ *   };
+ * };
+ *
+ * export default function ProductsPage({ productsConfig }: ProductsPageProps) {
+ *   return (
+ *     <ProductList.Root productsConfig={productsConfig}>
+ *       <ProductList.ItemContent>
+ *         {({ product }) => (
+ *           <div>
+ *             <h3>{product.name}</h3>
+ *             <p>{product.description}</p>
+ *           </div>
+ *         )}
+ *       </ProductList.ItemContent>
+ *     </ProductList.Root>
+ *   );
+ * }
+ * ```
+ */
 export async function loadProductsListServiceConfig(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
 ): Promise<ProductsListServiceConfig> {
@@ -24,14 +115,27 @@ export async function loadProductsListServiceConfig(
   };
 }
 
+/**
+ * Service definition for the Products List service.
+ * This defines the reactive API contract for managing a list of products with search, pagination, and filtering capabilities.
+ *
+ * @constant
+ */
 export const ProductsListServiceDefinition = defineService<
   {
+    /** Reactive signal containing the list of products */
     products: Signal<productsV3.V3Product[]>;
+    /** Reactive signal containing aggregation data for filters and facets */
     aggregations: Signal<productsV3.AggregationData>;
+    /** Reactive signal containing pagination metadata */
     pagingMetadata: Signal<productsV3.CommonCursorPagingMetadata>;
+    /** Reactive signal containing current search options */
     searchOptions: Signal<Parameters<typeof productsV3.searchProducts>[0]>;
+    /** Reactive signal indicating if products are currently being loaded */
     isLoading: Signal<boolean>;
+    /** Reactive signal containing any error message, or null if no error */
     error: Signal<string | null>;
+    /** Function to update search options and trigger a new search */
     setSearchOptions: (
       searchOptions: Parameters<typeof productsV3.searchProducts>[0],
     ) => void;
@@ -39,6 +143,60 @@ export const ProductsListServiceDefinition = defineService<
   ProductsListServiceConfig
 >("products-list");
 
+/**
+ * Implementation of the Products List service that manages reactive products data.
+ * This service provides signals for products data, search options, pagination, aggregations,
+ * loading state, and error handling. It automatically re-fetches products when search options change.
+ *
+ * @example
+ * ```tsx
+ * import { ProductListService, ProductsListServiceDefinition } from '@wix/stores/services';
+ * import { useService } from '@wix/services-manager-react';
+ *
+ * function ProductsComponent({ productsConfig }) {
+ *   return (
+ *     <ServiceProvider services={createServicesMap([
+ *       [ProductsListServiceDefinition, ProductListService.withConfig(productsConfig)]
+ *     ])}>
+ *       <ProductsDisplay />
+ *     </ServiceProvider>
+ *   );
+ * }
+ *
+ * function ProductsDisplay() {
+ *   const productsService = useService(ProductsListServiceDefinition);
+ *   const products = productsService.products.get();
+ *   const isLoading = productsService.isLoading.get();
+ *   const error = productsService.error.get();
+ *
+ *   // Update search options to filter by category
+ *   const filterByCategory = (categoryId: string) => {
+ *     const currentOptions = productsService.searchOptions.get();
+ *     productsService.setSearchOptions({
+ *       ...currentOptions,
+ *       filter: {
+ *         ...currentOptions.filter,
+ *         categoryIds: [categoryId]
+ *       }
+ *     });
+ *   };
+ *
+ *   if (isLoading) return <div>Loading products...</div>;
+ *   if (error) return <div>Error: {error}</div>;
+ *
+ *   return (
+ *     <div>
+ *       {products.map(product => (
+ *         <div key={product._id}>
+ *           <h3>{product.name}</h3>
+ *           <p>{product.description}</p>
+ *         </div>
+ *       ))}
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
 export const ProductListService =
   implementService.withConfig<ProductsListServiceConfig>()(
     ProductsListServiceDefinition,

@@ -7,20 +7,111 @@ import {
 import { productsV3 } from "@wix/stores";
 import { ProductsListServiceDefinition } from "./products-list-service.js";
 
+/**
+ * Service definition for the Products List Pagination service.
+ * This defines the reactive API contract for managing product list pagination state and navigation.
+ *
+ * @constant
+ */
 export const ProductsListPaginationServiceDefinition = defineService<{
+  /** Reactive signal containing the current page size limit */
   currentLimit: Signal<number>;
+  /** Reactive signal containing the current cursor for pagination */
   currentCursor: Signal<string | null>;
+  /** Computed signal indicating if there's a next page available */
   hasNextPage: { get: () => boolean };
+  /** Computed signal indicating if there's a previous page available */
   hasPrevPage: { get: () => boolean };
+  /** Function to set the page size limit */
   setLimit: (limit: number) => void;
+  /** Function to navigate to the next page */
   nextPage: () => void;
+  /** Function to navigate to the previous page */
   prevPage: () => void;
+  /** Function to navigate to the first page */
   goToFirstPage: () => void;
+  /** Function to load more items (increase the limit) */
   loadMore: (count: number) => void;
 }>("products-list-pagination");
 
+/**
+ * Configuration interface for the Products List Pagination service.
+ * Currently empty as this service doesn't require initial configuration.
+ *
+ * @interface ProductsListPaginationServiceConfig
+ */
 export type ProductsListPaginationServiceConfig = {};
 
+/**
+ * Implementation of the Products List Pagination service that manages reactive pagination state.
+ * This service provides signals for pagination state and automatically updates the products list
+ * search options when pagination settings change. It supports both cursor-based pagination
+ * and load-more functionality.
+ *
+ * @example
+ * ```tsx
+ * import { ProductsListPaginationService, ProductsListPaginationServiceDefinition } from '@wix/stores/services';
+ * import { useService } from '@wix/services-manager-react';
+ *
+ * function PaginationComponent() {
+ *   return (
+ *     <ServiceProvider services={createServicesMap([
+ *       [ProductsListPaginationServiceDefinition, ProductsListPaginationService.withConfig({})]
+ *     ])}>
+ *       <PaginationControls />
+ *     </ServiceProvider>
+ *   );
+ * }
+ *
+ * function PaginationControls() {
+ *   const paginationService = useService(ProductsListPaginationServiceDefinition);
+ *   const currentLimit = paginationService.currentLimit.get();
+ *   const hasNextPage = paginationService.hasNextPage.get();
+ *   const hasPrevPage = paginationService.hasPrevPage.get();
+ *
+ *   return (
+ *     <div>
+ *       <div>
+ *         Items per page:
+ *         <select
+ *           value={currentLimit}
+ *           onChange={(e) => paginationService.setLimit(parseInt(e.target.value))}
+ *         >
+ *           <option value={12}>12</option>
+ *           <option value={24}>24</option>
+ *           <option value={48}>48</option>
+ *         </select>
+ *       </div>
+ *
+ *       <div>
+ *         <button
+ *           onClick={() => paginationService.goToFirstPage()}
+ *           disabled={!hasPrevPage}
+ *         >
+ *           First
+ *         </button>
+ *         <button
+ *           onClick={() => paginationService.prevPage()}
+ *           disabled={!hasPrevPage}
+ *         >
+ *           Previous
+ *         </button>
+ *         <button
+ *           onClick={() => paginationService.nextPage()}
+ *           disabled={!hasNextPage}
+ *         >
+ *           Next
+ *         </button>
+ *       </div>
+ *
+ *       <button onClick={() => paginationService.loadMore(12)}>
+ *         Load More
+ *       </button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
 export const ProductsListPaginationService =
   implementService.withConfig<ProductsListPaginationServiceConfig>()(
     ProductsListPaginationServiceDefinition,
@@ -122,12 +213,28 @@ export const ProductsListPaginationService =
     },
   );
 
+/**
+ * Helper function to extract the current limit from search options.
+ * Returns the pagination limit or a default value of 100 if not specified.
+ *
+ * @private
+ * @param {Parameters<typeof productsV3.searchProducts>[0]} searchOptions - The search options object
+ * @returns {number} The current limit value
+ */
 function getCurrentLimit(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
 ): number {
   return searchOptions.cursorPaging?.limit || 100;
 }
 
+/**
+ * Helper function to extract the current cursor from search options.
+ * Returns the cursor string or null if not specified.
+ *
+ * @private
+ * @param {Parameters<typeof productsV3.searchProducts>[0]} searchOptions - The search options object
+ * @returns {string | null} The current cursor value or null
+ */
 function getCurrentCursor(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
 ): string | null {

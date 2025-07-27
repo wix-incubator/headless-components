@@ -1,6 +1,6 @@
 import { categories } from '@wix/categories';
 
-import { CategoriesList } from '@wix/headless-stores/react';
+import { CategoryList } from '@wix/headless-stores/react';
 import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import { Category } from '@wix/headless-stores/react';
 
@@ -19,7 +19,7 @@ export function CategoryPicker({
   currentCategorySlug,
 }: CategoryPickerProps) {
   return (
-    <CategoriesList.Root categoriesListConfig={categoriesListConfig}>
+    <CategoryList.Root categoriesListConfig={categoriesListConfig}>
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-content-primary font-semibold text-sm uppercase tracking-wide">
@@ -29,7 +29,7 @@ export function CategoryPicker({
 
         {/* Category Navigation - Horizontal scrollable for mobile */}
         <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
-          <CategoriesList.ItemContent>
+          <CategoryList.ItemContent>
             <Category.Slug>
               {({ slug }) => (
                 <button
@@ -44,9 +44,9 @@ export function CategoryPicker({
                 </button>
               )}
             </Category.Slug>
-          </CategoriesList.ItemContent>
+          </CategoryList.ItemContent>
         </div>
       </div>
-    </CategoriesList.Root>
+    </CategoryList.Root>
   );
 }

@@ -1,16 +1,16 @@
-import { ProductsListSort } from '@wix/headless-stores/react';
+import { ProductListSort } from '@wix/headless-stores/react';
 import { SortType } from '@wix/headless-stores/services';
 
 export function SortDropdown() {
   return (
-    <ProductsListSort.Root>
+    <ProductListSort.Root>
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-content-primary font-semibold text-sm uppercase tracking-wide">
             Sort by
           </h3>
         </div>
-        <ProductsListSort.Options>
+        <ProductListSort.Options>
           {({ selectedSortOption, setSelectedSortOption, sortOptions }) => (
             <select
               value={selectedSortOption}
@@ -51,8 +51,8 @@ export function SortDropdown() {
               ))}
             </select>
           )}
-        </ProductsListSort.Options>
+        </ProductListSort.Options>
       </div>
-    </ProductsListSort.Root>
+    </ProductListSort.Root>
   );
 }

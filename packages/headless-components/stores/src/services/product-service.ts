@@ -5,20 +5,76 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 
+/**
+ * API interface for the Product service, providing reactive product data management.
+ * This service handles loading and managing a single product's data, loading state, and errors.
+ *
+ * @interface ProductServiceAPI
+ */
 export interface ProductServiceAPI {
+  /** Reactive signal containing the current product data */
   product: Signal<productsV3.V3Product>;
+  /** Reactive signal indicating if a product is currently being loaded */
   isLoading: Signal<boolean>;
+  /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
+  /** Function to load a product by its slug */
   loadProduct: (slug: string) => Promise<void>;
 }
 
+/**
+ * Service definition for the Product service.
+ * This defines the contract that the ProductService must implement.
+ *
+ * @constant
+ */
 export const ProductServiceDefinition =
   defineService<ProductServiceAPI>("product");
 
+/**
+ * Configuration interface required to initialize the ProductService.
+ * Contains the initial product data that will be loaded into the service.
+ *
+ * @interface ProductServiceConfig
+ */
 export interface ProductServiceConfig {
+  /** The initial product data to configure the service with */
   product: productsV3.V3Product;
 }
 
+/**
+ * Implementation of the Product service that manages reactive product data.
+ * This service provides signals for product data, loading state, and error handling,
+ * along with methods to dynamically load products.
+ *
+ * @example
+ * ```tsx
+ * import { ProductService, ProductServiceDefinition } from '@wix/stores/services';
+ * import { useService } from '@wix/services-manager-react';
+ *
+ * function ProductComponent({ productConfig }) {
+ *   return (
+ *     <ServiceProvider services={createServicesMap([
+ *       [ProductServiceDefinition, ProductService.withConfig(productConfig)]
+ *     ])}>
+ *       <ProductDisplay />
+ *     </ServiceProvider>
+ *   );
+ * }
+ *
+ * function ProductDisplay() {
+ *   const productService = useService(ProductServiceDefinition);
+ *   const product = productService.product.get();
+ *   const isLoading = productService.isLoading.get();
+ *   const error = productService.error.get();
+ *
+ *   if (isLoading) return <div>Loading...</div>;
+ *   if (error) return <div>Error: {error}</div>;
+ *
+ *   return <h1>{product.name}</h1>;
+ * }
+ * ```
+ */
 export const ProductService =
   implementService.withConfig<ProductServiceConfig>()(
     ProductServiceDefinition,
@@ -52,17 +108,38 @@ export const ProductService =
     },
   );
 
+/**
+ * Success result interface for product service configuration loading.
+ * Returned when a product is successfully found and loaded.
+ *
+ * @interface SuccessProductServiceConfigResult
+ */
 export interface SuccessProductServiceConfigResult {
-  /* Type "success" means that the product was found and the config is valid */
+  /** Type "success" means that the product was found and the config is valid */
   type: "success";
-  /* The product config */
+  /** The product config containing the loaded product data */
   config: ProductServiceConfig;
 }
+
+/**
+ * Not found result interface for product service configuration loading.
+ * Returned when a product with the given slug cannot be found.
+ *
+ * @interface NotFoundProductServiceConfigResult
+ */
 export interface NotFoundProductServiceConfigResult {
-  /* Type "notFound" means that the product was not found */
+  /** Type "notFound" means that the product was not found */
   type: "notFound";
 }
 
+/**
+ * Internal helper function to load a product by its slug from the Wix Products API.
+ * Fetches comprehensive product data including description, categories, media, etc.
+ *
+ * @private
+ * @param {string} slug - The product slug to load
+ * @returns {Promise} Product response from the API
+ */
 const loadProductBySlug = async (slug: string) => {
   const productResponse = await productsV3.getProductBySlug(slug, {
     fields: [

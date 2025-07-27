@@ -10,31 +10,31 @@ import {
 } from "../services/products-list-filters-service.js";
 
 export interface RootProps {
-  /** Child components that will have access to the ProductsListFilters service */
+  /** Child components that will have access to the ProductListFilters service */
   children: React.ReactNode;
-  /** Configuration for the ProductsListFilters service */
+  /** Configuration for the ProductListFilters service */
   productsListFiltersConfig: ProductsListFiltersServiceConfig;
 }
 
 /**
- * Root component that provides the ProductsListFilters service context to its children.
+ * Root component that provides the ProductListFilters service context to its children.
  * This component sets up the necessary services for managing products list filters.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function FiltersSection() {
  *   return (
- *     <ProductsListFilters.Root
+ *     <ProductListFilters.Root
  *       productsListFiltersConfig={{
  *         minPrice: 0,
  *         maxPrice: 1000
  *       }}
  *     >
- *       <ProductsListFilters.MinPrice>
+ *       <ProductListFilters.MinPrice>
  *         {({ minPrice, setMinPrice }) => (
  *           <input
  *             type="number"
@@ -43,8 +43,8 @@ export interface RootProps {
  *             placeholder="Min price"
  *           />
  *         )}
- *       </ProductsListFilters.MinPrice>
- *     </ProductsListFilters.Root>
+ *       </ProductListFilters.MinPrice>
+ *     </ProductListFilters.Root>
  *   );
  * }
  * ```
@@ -61,116 +61,6 @@ export function Root(props: RootProps) {
       {props.children}
     </WixServices>
   );
-}
-
-/**
- * Props for MinPrice headless component
- */
-export interface MinPriceProps {
-  /** Content to display (can be a render function receiving min price controls or ReactNode) */
-  children: ((props: MinPriceRenderProps) => ReactNode) | ReactNode;
-}
-
-/**
- * Render props for MinPrice component
- */
-export interface MinPriceRenderProps {
-  /** Current minimum price filter value */
-  minPrice: number;
-  /** Function to update the minimum price filter */
-  setMinPrice: (minPrice: number) => void;
-}
-
-/**
- * Headless component for managing minimum price filter
- *
- * @component
- * @example
- * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
- *
- * function MinPriceFilter() {
- *   return (
- *     <ProductsListFilters.MinPrice>
- *       {({ minPrice, setMinPrice }) => (
- *         <div>
- *           <label>Minimum Price:</label>
- *           <input
- *             type="number"
- *             value={minPrice}
- *             onChange={(e) => setMinPrice(Number(e.target.value))}
- *             placeholder="0"
- *           />
- *         </div>
- *       )}
- *     </ProductsListFilters.MinPrice>
- *   );
- * }
- * ```
- */
-export function MinPrice(props: MinPriceProps) {
-  const service = useService(ProductsListFiltersServiceDefinition);
-  const minPrice = service.minPrice.get();
-  const setMinPrice = service.setMinPrice;
-
-  return typeof props.children === "function"
-    ? props.children({ minPrice, setMinPrice })
-    : props.children;
-}
-
-/**
- * Props for MaxPrice headless component
- */
-export interface MaxPriceProps {
-  /** Content to display (can be a render function receiving max price controls or ReactNode) */
-  children: ((props: MaxPriceRenderProps) => ReactNode) | ReactNode;
-}
-
-/**
- * Render props for MaxPrice component
- */
-export interface MaxPriceRenderProps {
-  /** Current maximum price filter value */
-  maxPrice: number;
-  /** Function to update the maximum price filter */
-  setMaxPrice: (maxPrice: number) => void;
-}
-
-/**
- * Headless component for managing maximum price filter
- *
- * @component
- * @example
- * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
- *
- * function MaxPriceFilter() {
- *   return (
- *     <ProductsListFilters.MaxPrice>
- *       {({ maxPrice, setMaxPrice }) => (
- *         <div>
- *           <label>Maximum Price:</label>
- *           <input
- *             type="number"
- *             value={maxPrice}
- *             onChange={(e) => setMaxPrice(Number(e.target.value))}
- *             placeholder="1000"
- *           />
- *         </div>
- *       )}
- *     </ProductsListFilters.MaxPrice>
- *   );
- * }
- * ```
- */
-export function MaxPrice(props: MaxPriceProps) {
-  const service = useService(ProductsListFiltersServiceDefinition);
-  const maxPrice = service.maxPrice.get();
-  const setMaxPrice = service.setMaxPrice;
-
-  return typeof props.children === "function"
-    ? props.children({ maxPrice, setMaxPrice })
-    : props.children;
 }
 
 /**
@@ -199,11 +89,11 @@ export interface InventoryStatusRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function InventoryStatusFilter() {
  *   return (
- *     <ProductsListFilters.InventoryStatus>
+ *     <ProductListFilters.InventoryStatus>
  *       {({ availableInventoryStatuses, selectedInventoryStatuses, toggleInventoryStatus }) => (
  *         <div>
  *           <h4>Inventory Status:</h4>
@@ -219,7 +109,7 @@ export interface InventoryStatusRenderProps {
  *           ))}
  *         </div>
  *       )}
- *     </ProductsListFilters.InventoryStatus>
+ *     </ProductListFilters.InventoryStatus>
  *   );
  * }
  * ```
@@ -263,11 +153,11 @@ export interface ResetTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function ResetFiltersButton() {
  *   return (
- *     <ProductsListFilters.ResetTrigger>
+ *     <ProductListFilters.ResetTrigger>
  *       {({ resetFilters, isFiltered }) => (
  *         <button
  *           onClick={resetFilters}
@@ -277,7 +167,7 @@ export interface ResetTriggerRenderProps {
  *           {isFiltered ? 'Clear Filters' : 'No Filters Applied'}
  *         </button>
  *       )}
- *     </ProductsListFilters.ResetTrigger>
+ *     </ProductListFilters.ResetTrigger>
  *   );
  * }
  * ```
@@ -320,11 +210,11 @@ export interface PriceRangeRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function PriceRangeFilter() {
  *   return (
- *     <ProductsListFilters.PriceRange>
+ *     <ProductListFilters.PriceRange>
  *       {({ minPrice, maxPrice, setMinPrice, setMaxPrice }) => (
  *         <div className="price-range">
  *           <h4>Price Range:</h4>
@@ -345,7 +235,7 @@ export interface PriceRangeRenderProps {
  *           </div>
  *         </div>
  *       )}
- *     </ProductsListFilters.PriceRange>
+ *     </ProductListFilters.PriceRange>
  *   );
  * }
  * ```
@@ -386,16 +276,16 @@ export interface ProductOptionRenderProps {
  * Headless component that renders content for each product option in the list.
  * Maps over all available product options and provides each option through a render prop.
  * Only renders when options are available (not loading, no error, and has options).
- * This follows the same collection pattern as ProductsList.ItemContent and CategoriesList.ItemContent.
+ * This follows the same collection pattern as ProductList.ItemContent and CategoryList.ItemContent.
  *
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function ProductOptionsFilter() {
  *   return (
- *     <ProductsListFilters.ProductOptions>
+ *     <ProductListFilters.ProductOptions>
  *       {({ option, selectedChoices, toggleChoice }) => (
  *         <div key={option.id}>
  *           <h4>{option.name}</h4>
@@ -411,7 +301,7 @@ export interface ProductOptionRenderProps {
  *           ))}
  *         </div>
  *       )}
- *     </ProductsListFilters.ProductOptions>
+ *     </ProductListFilters.ProductOptions>
  *   );
  * }
  * ```

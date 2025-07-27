@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getStockStatusMessage } from './product-status-enums';
-import { ProductsListFilters } from '@wix/headless-stores/react';
+import { ProductListFilters } from '@wix/headless-stores/react';
 import type { ProductsListFiltersServiceConfig } from '@wix/headless-stores/services';
 
 interface ProductFiltersProps {
@@ -48,7 +48,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
           Filters
         </h3>
         <div className="flex items-center gap-2">
-          <ProductsListFilters.ResetTrigger>
+          <ProductListFilters.ResetTrigger>
             {({ resetFilters, isFiltered }) =>
               isFiltered && (
                 <button
@@ -59,7 +59,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 </button>
               )
             }
-          </ProductsListFilters.ResetTrigger>
+          </ProductListFilters.ResetTrigger>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="lg:hidden text-content-muted hover:text-content-primary transition-colors"
@@ -84,7 +84,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       </div>
 
       <div className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}>
-        <ProductsListFilters.PriceRange>
+        <ProductListFilters.PriceRange>
           {({ minPrice, maxPrice, setMinPrice, setMaxPrice }) => (
             <div
               className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}
@@ -187,10 +187,10 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               </div>
             </div>
           )}
-        </ProductsListFilters.PriceRange>
+        </ProductListFilters.PriceRange>
 
         {/* Product Options Filters */}
-        <ProductsListFilters.ProductOptions>
+        <ProductListFilters.ProductOptions>
           {({ option, selectedChoices, toggleChoice }) => (
             <div key={option.id}>
               <h4 className="text-content-primary font-medium mb-3">
@@ -252,9 +252,9 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               )}
             </div>
           )}
-        </ProductsListFilters.ProductOptions>
+        </ProductListFilters.ProductOptions>
 
-        <ProductsListFilters.InventoryStatus>
+        <ProductListFilters.InventoryStatus>
           {({
             availableInventoryStatuses,
             selectedInventoryStatuses,
@@ -295,7 +295,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
               </div>
             </div>
           )}
-        </ProductsListFilters.InventoryStatus>
+        </ProductListFilters.InventoryStatus>
       </div>
 
       <style>{`
