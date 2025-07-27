@@ -6,7 +6,6 @@ import {
 } from '@wix/headless-media/services';
 import {
   Product,
-  ProductActions,
   ProductList,
   ProductListFilters,
   ProductListPagination,
@@ -67,15 +66,6 @@ export const ProductGridContent = ({
   };
 
   const ProductItem = ({ product }: { product: productsV3.V3Product }) => {
-    // Create services for each product - reuse the parent's CurrentCartService instance
-    const servicesMap = createServicesMap()
-      .addService(SelectedVariantServiceDefinition, SelectedVariantService, {
-        fetchInventoryData: false,
-      })
-      .addService(MediaGalleryServiceDefinition, MediaGalleryService, {
-        media: product?.media?.itemsInfo?.items ?? [],
-      });
-
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const availabilityStatus = product.inventory?.availabilityStatus;
@@ -85,7 +75,7 @@ export const ProductGridContent = ({
         productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
 
     return (
-      <WixServices servicesMap={servicesMap}>
+      <SelectedVariant.Root>
         <div
           data-testid="product-item"
           data-product-id={product._id}
@@ -410,7 +400,7 @@ export const ProductGridContent = ({
           {/* Action Buttons */}
           <div className="space-y-2">
             {/* Add to Cart Button */}
-            <ProductActions.Actions>
+            <SelectedVariant.Actions>
               {({ error }) => (
                 <div className="space-y-2">
                   {error && (
@@ -424,7 +414,7 @@ export const ProductGridContent = ({
                   />
                 </div>
               )}
-            </ProductActions.Actions>
+            </SelectedVariant.Actions>
 
             {/* View Product Button */}
             <a
@@ -449,7 +439,7 @@ export const ProductGridContent = ({
             </a>
           </div>
         </div>
-      </WixServices>
+      </SelectedVariant.Root>
     );
   };
 
