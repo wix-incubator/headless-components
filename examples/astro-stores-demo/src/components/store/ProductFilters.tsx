@@ -253,6 +253,49 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             </div>
           )}
         </ProductsListFilters.ProductOptions>
+
+        <ProductsListFilters.InventoryStatus>
+          {({
+            availableInventoryStatuses,
+            selectedInventoryStatuses,
+            toggleInventoryStatus,
+          }) => (
+            <div>
+              <h4 className="text-content-primary font-medium mb-3">
+                Availability
+              </h4>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {availableInventoryStatuses.map(status => (
+                  <label
+                    key={status}
+                    className="flex items-center gap-3 cursor-pointer group"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedInventoryStatuses.includes(status)}
+                      onChange={() => toggleInventoryStatus(status)}
+                      className="w-4 h-4 bg-surface-primary border border-brand-medium rounded text-brand-primary focus:ring-2 focus:ring-brand-primary focus:ring-offset-0"
+                    />
+                    <span className="text-content-secondary group-hover:text-content-primary transition-colors text-sm">
+                      {(() => {
+                        switch (status) {
+                          case 'IN_STOCK':
+                            return 'In Stock';
+                          case 'OUT_OF_STOCK':
+                            return 'Out of Stock';
+                          case 'PARTIALLY_OUT_OF_STOCK':
+                            return 'Partially Out of Stock';
+                          default:
+                            return status;
+                        }
+                      })()}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+        </ProductsListFilters.InventoryStatus>
       </div>
 
       <style>{`
