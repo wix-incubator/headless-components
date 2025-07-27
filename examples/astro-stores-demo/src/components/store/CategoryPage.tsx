@@ -66,15 +66,6 @@ export const ProductGridContent = ({
   };
 
   const ProductItem = ({ product }: { product: productsV3.V3Product }) => {
-    // Create services for each product - reuse the parent's CurrentCartService instance
-    const servicesMap = createServicesMap()
-      .addService(SelectedVariantServiceDefinition, SelectedVariantService, {
-        fetchInventoryData: false,
-      })
-      .addService(MediaGalleryServiceDefinition, MediaGalleryService, {
-        media: product?.media?.itemsInfo?.items ?? [],
-      });
-
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const availabilityStatus = product.inventory?.availabilityStatus;
@@ -84,7 +75,7 @@ export const ProductGridContent = ({
         productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
 
     return (
-      <WixServices servicesMap={servicesMap}>
+      <SelectedVariant.Root>
         <div
           data-testid="product-item"
           data-product-id={product._id}
@@ -448,7 +439,7 @@ export const ProductGridContent = ({
             </a>
           </div>
         </div>
-      </WixServices>
+      </SelectedVariant.Root>
     );
   };
 
