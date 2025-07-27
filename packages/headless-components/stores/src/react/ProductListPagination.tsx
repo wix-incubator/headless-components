@@ -20,7 +20,7 @@ import { ProductsListServiceDefinition } from "../services/products-list-service
  * function PaginationSection() {
  *   return (
  *     <ProductListPagination.Root>
- *       <ProductListPagination.NextPage>
+ *       <ProductListPagination.NextPageTrigger>
  *         {({ nextPage, hasNextPage }) => (
  *           <button
  *             onClick={nextPage}
@@ -29,7 +29,7 @@ import { ProductsListServiceDefinition } from "../services/products-list-service
  *             Next Page
  *           </button>
  *         )}
- *       </ProductListPagination.NextPage>
+ *       </ProductListPagination.NextPageTrigger>
  *     </ProductListPagination.Root>
  *   );
  * }
@@ -106,17 +106,17 @@ export function PageSize(props: PageSizeProps) {
 }
 
 /**
- * Props for NextPage headless component
+ * Props for NextPageTrigger headless component
  */
-export interface NextPageProps {
+export interface NextPageTriggerProps {
   /** Content to display (can be a render function receiving next page controls or ReactNode) */
-  children: ((props: NextPageRenderProps) => ReactNode) | ReactNode;
+  children: ((props: NextPageTriggerRenderProps) => ReactNode) | ReactNode;
 }
 
 /**
- * Render props for NextPage component
+ * Render props for NextPageTrigger component
  */
-export interface NextPageRenderProps {
+export interface NextPageTriggerRenderProps {
   /** Function to navigate to the next page */
   nextPage: () => void;
   /** Whether there is a next page available */
@@ -133,7 +133,7 @@ export interface NextPageRenderProps {
  *
  * function NextPageButton() {
  *   return (
- *     <ProductListPagination.NextPage>
+ *     <ProductListPagination.NextPageTrigger>
  *       {({ nextPage, hasNextPage }) => (
  *         <button
  *           onClick={nextPage}
@@ -143,12 +143,12 @@ export interface NextPageRenderProps {
  *           Next →
  *         </button>
  *       )}
- *     </ProductListPagination.NextPage>
+ *     </ProductListPagination.NextPageTrigger>
  *   );
  * }
  * ```
  */
-export function NextPage(props: NextPageProps) {
+export function NextPageTrigger(props: NextPageTriggerProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const nextPage = service.nextPage;
   const hasNextPage = service.hasNextPage.get();
@@ -158,17 +158,17 @@ export function NextPage(props: NextPageProps) {
 }
 
 /**
- * Props for PrevPage headless component
+ * Props for PreviousPageTrigger headless component
  */
-export interface PrevPageProps {
+export interface PreviousPageTriggerProps {
   /** Content to display (can be a render function receiving previous page controls or ReactNode) */
-  children: ((props: PrevPageRenderProps) => ReactNode) | ReactNode;
+  children: ((props: PreviousPageTriggerRenderProps) => ReactNode) | ReactNode;
 }
 
 /**
- * Render props for PrevPage component
+ * Render props for PreviousPageTrigger component
  */
-export interface PrevPageRenderProps {
+export interface PreviousPageTriggerRenderProps {
   /** Function to navigate to the previous page */
   prevPage: () => void;
   /** Whether there is a previous page available */
@@ -185,7 +185,7 @@ export interface PrevPageRenderProps {
  *
  * function PrevPageButton() {
  *   return (
- *     <ProductListPagination.PrevPage>
+ *     <ProductListPagination.PreviousPageTrigger>
  *       {({ prevPage, hasPrevPage }) => (
  *         <button
  *           onClick={prevPage}
@@ -195,12 +195,12 @@ export interface PrevPageRenderProps {
  *           ← Previous
  *         </button>
  *       )}
- *     </ProductListPagination.PrevPage>
+ *     </ProductListPagination.PreviousPageTrigger>
  *   );
  * }
  * ```
  */
-export function PrevPage(props: PrevPageProps) {
+export function PreviousPageTrigger(props: PreviousPageTriggerProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const prevPage = service.prevPage;
   const hasPrevPage = service.hasPrevPage.get();
@@ -210,17 +210,17 @@ export function PrevPage(props: PrevPageProps) {
 }
 
 /**
- * Props for FirstPage headless component
+ * Props for FirstPageTrigger headless component
  */
-export interface FirstPageProps {
+export interface FirstPageTriggerProps {
   /** Content to display (can be a render function receiving first page controls or ReactNode) */
-  children: ((props: FirstPageRenderProps) => ReactNode) | ReactNode;
+  children: ((props: FirstPageTriggerRenderProps) => ReactNode) | ReactNode;
 }
 
 /**
- * Render props for FirstPage component
+ * Render props for FirstPageTrigger component
  */
-export interface FirstPageRenderProps {
+export interface FirstPageTriggerRenderProps {
   /** Function to navigate to the first page */
   goToFirstPage: () => void;
   /** Whether there is a previous page (indicating not on first page) */
@@ -237,7 +237,7 @@ export interface FirstPageRenderProps {
  *
  * function FirstPageButton() {
  *   return (
- *     <ProductListPagination.FirstPage>
+ *     <ProductListPagination.FirstPageTrigger>
  *       {({ goToFirstPage, hasPrevPage }) => (
  *         <button
  *           onClick={goToFirstPage}
@@ -247,12 +247,12 @@ export interface FirstPageRenderProps {
  *           ⏮ First
  *         </button>
  *       )}
- *     </ProductListPagination.FirstPage>
+ *     </ProductListPagination.FirstPageTrigger>
  *   );
  * }
  * ```
  */
-export function FirstPage(props: FirstPageProps) {
+export function FirstPageTrigger(props: FirstPageTriggerProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const goToFirstPage = service.goToFirstPage;
   const hasPrevPage = service.hasPrevPage.get();
@@ -263,17 +263,17 @@ export function FirstPage(props: FirstPageProps) {
 }
 
 /**
- * Props for LoadMore headless component
+ * Props for LoadMoreTrigger headless component
  */
-export interface LoadMoreProps {
+export interface LoadMoreTriggerProps {
   /** Content to display (can be a render function receiving load more controls or ReactNode) */
-  children: ((props: LoadMoreRenderProps) => ReactNode) | ReactNode;
+  children: ((props: LoadMoreTriggerRenderProps) => ReactNode) | ReactNode;
 }
 
 /**
- * Render props for LoadMore component
+ * Render props for LoadMoreTrigger component
  */
-export interface LoadMoreRenderProps {
+export interface LoadMoreTriggerRenderProps {
   /** Function to load more products */
   loadMore: (count: number) => void;
   /** Whether there are more products to load */
@@ -292,7 +292,7 @@ export interface LoadMoreRenderProps {
  *
  * function LoadMoreButton() {
  *   return (
- *     <ProductListPagination.LoadMore>
+ *     <ProductListPagination.LoadMoreTrigger>
  *       {({ loadMore, hasMoreProducts, isLoading }) => (
  *         <button
  *           onClick={() => loadMore(10)}
@@ -302,12 +302,12 @@ export interface LoadMoreRenderProps {
  *           {isLoading ? 'Loading...' : hasMoreProducts ? 'Load More' : 'No More Products'}
  *         </button>
  *       )}
- *     </ProductListPagination.LoadMore>
+ *     </ProductListPagination.LoadMoreTrigger>
  *   );
  * }
  * ```
  */
-export function LoadMore(props: LoadMoreProps) {
+export function LoadMoreTrigger(props: LoadMoreTriggerProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
   const productsListService = useService(ProductsListServiceDefinition);
 

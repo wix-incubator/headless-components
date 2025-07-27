@@ -607,7 +607,7 @@ export const ProductGridContent = ({
 
 export const LoadMoreSection = () => {
   return (
-    <ProductListPagination.LoadMore>
+    <ProductListPagination.LoadMoreTrigger>
       {({ loadMore, hasMoreProducts, isLoading }) => (
         <ProductList.Items>
           {({ products }) =>
@@ -661,7 +661,7 @@ export const LoadMoreSection = () => {
           }
         </ProductList.Items>
       )}
-    </ProductListPagination.LoadMore>
+    </ProductListPagination.LoadMoreTrigger>
   );
 };
 
