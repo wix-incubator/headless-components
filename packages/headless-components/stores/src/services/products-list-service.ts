@@ -35,7 +35,7 @@ export type ProductsListServiceConfig = {
  * ---
  * // Astro page example - pages/products.astro
  * import { loadProductsListServiceConfig } from '@wix/stores/services';
- * import { ProductsList } from '@wix/stores/components';
+ * import { ProductList } from '@wix/stores/components';
  *
  * // Define search options
  * const searchOptions = {
@@ -48,16 +48,16 @@ export type ProductsListServiceConfig = {
  * const productsConfig = await loadProductsListServiceConfig(searchOptions);
  * ---
  *
- * <ProductsList.Root productsConfig={productsConfig}>
- *   <ProductsList.ItemContent>
+ * <ProductList.Root productsConfig={productsConfig}>
+ *   <ProductList.ItemContent>
  *     {({ product }) => (
  *       <div>
  *         <h3>{product.name}</h3>
  *         <p>{product.description}</p>
  *       </div>
  *     )}
- *   </ProductsList.ItemContent>
- * </ProductsList.Root>
+ *   </ProductList.ItemContent>
+ * </ProductList.Root>
  * ```
  *
  * @example
@@ -89,16 +89,16 @@ export type ProductsListServiceConfig = {
  *
  * export default function ProductsPage({ productsConfig }: ProductsPageProps) {
  *   return (
- *     <ProductsList.Root productsConfig={productsConfig}>
- *       <ProductsList.ItemContent>
+ *     <ProductList.Root productsConfig={productsConfig}>
+ *       <ProductList.ItemContent>
  *         {({ product }) => (
  *           <div>
  *             <h3>{product.name}</h3>
  *             <p>{product.description}</p>
  *           </div>
  *         )}
- *       </ProductsList.ItemContent>
- *     </ProductsList.Root>
+ *       </ProductList.ItemContent>
+ *     </ProductList.Root>
  *   );
  * }
  * ```

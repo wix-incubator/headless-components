@@ -8,19 +8,19 @@ import {
 } from "../services/products-list-sort-service.js";
 
 /**
- * Root component that provides the ProductsListSort service context to its children.
+ * Root component that provides the ProductListSort service context to its children.
  * This component sets up the necessary services for managing products list sorting.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { ProductsListSort } from '@wix/stores/components';
+ * import { ProductListSort } from '@wix/stores/components';
  *
  * function SortSection() {
  *   return (
- *     <ProductsListSort.Root>
- *       <ProductsListSort.Options>
+ *     <ProductListSort.Root>
+ *       <ProductListSort.Options>
  *         {({ selectedSortOption, setSelectedSortOption, sortOptions }) => (
  *           <select
  *             value={selectedSortOption}
@@ -33,8 +33,8 @@ import {
  *             ))}
  *           </select>
  *         )}
- *       </ProductsListSort.Options>
- *     </ProductsListSort.Root>
+ *       </ProductListSort.Options>
+ *     </ProductListSort.Root>
  *   );
  * }
  * ```
@@ -79,11 +79,11 @@ export interface OptionsRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListSort } from '@wix/stores/components';
+ * import { ProductListSort } from '@wix/stores/components';
  *
  * function ProductSortDropdown() {
  *   return (
- *     <ProductsListSort.Options>
+ *     <ProductListSort.Options>
  *       {({ selectedSortOption, setSelectedSortOption, sortOptions }) => (
  *         <div className="sort-container">
  *           <label htmlFor="sort-select">Sort by:</label>
@@ -101,7 +101,7 @@ export interface OptionsRenderProps {
  *           </select>
  *         </div>
  *       )}
- *     </ProductsListSort.Options>
+ *     </ProductListSort.Options>
  *   );
  * }
  * ```

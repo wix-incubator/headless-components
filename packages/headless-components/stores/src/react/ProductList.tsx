@@ -15,25 +15,25 @@ import {
  * Props for Root headless component
  */
 export interface RootProps {
-  /** Child components that will have access to the ProductsList service */
+  /** Child components that will have access to the ProductList service */
   children: React.ReactNode;
-  /** Configuration for the ProductsList service */
+  /** Configuration for the ProductList service */
   productsListConfig: ProductsListServiceConfig;
 }
 
 /**
- * Root component that provides the ProductsList service context to its children.
+ * Root component that provides the ProductList service context to its children.
  * This component sets up the necessary services for managing products list state.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { ProductsList } from '@wix/stores/components';
+ * import { ProductList } from '@wix/stores/components';
  *
- * function ProductsListPage() {
+ * function ProductListPage() {
  *   return (
- *     <ProductsList.Root
+ *     <ProductList.Root
  *       productsListConfig={{
  *         products: myProducts,
  *         searchOptions: { query: { search: 'searchTerm' } },
@@ -41,15 +41,15 @@ export interface RootProps {
  *         aggregations: {}
  *       }}
  *     >
- *       <ProductsList.ItemContent>
+ *       <ProductList.ItemContent>
  *         {({ product }) => (
  *           <div key={product._id}>
  *             <h3>{product.name}</h3>
  *             <p>{product.actualPriceRange?.minValue?.formattedAmount}</p>
  *           </div>
  *         )}
- *       </ProductsList.ItemContent>
- *     </ProductsList.Root>
+ *       </ProductList.ItemContent>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -90,11 +90,11 @@ export interface EmptyStateRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { ProductsList } from '@wix/stores/components';
+ * import { ProductList } from '@wix/stores/components';
  *
  * function EmptyProductsMessage() {
  *   return (
- *     <ProductsList.EmptyState>
+ *     <ProductList.EmptyState>
  *       {() => (
  *         <div className="empty-state">
  *           <h3>No products found</h3>
@@ -102,7 +102,7 @@ export interface EmptyStateRenderProps {}
  *           <button>Clear Filters</button>
  *         </div>
  *       )}
- *     </ProductsList.EmptyState>
+ *     </ProductList.EmptyState>
  *   );
  * }
  * ```
@@ -144,18 +144,18 @@ export interface LoadingRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { ProductsList } from '@wix/stores/components';
+ * import { ProductList } from '@wix/stores/components';
  *
  * function ProductsLoading() {
  *   return (
- *     <ProductsList.Loading>
+ *     <ProductList.Loading>
  *       {() => (
  *         <div className="loading-spinner">
  *           <div>Loading products...</div>
  *           <div className="spinner"></div>
  *         </div>
  *       )}
- *     </ProductsList.Loading>
+ *     </ProductList.Loading>
  *   );
  * }
  * ```
@@ -196,11 +196,11 @@ export interface ErrorRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsList } from '@wix/stores/components';
+ * import { ProductList } from '@wix/stores/components';
  *
  * function ProductsError() {
  *   return (
- *     <ProductsList.Error>
+ *     <ProductList.Error>
  *       {({ error }) => (
  *         <div className="error-state">
  *           <h3>Error loading products</h3>
@@ -210,7 +210,7 @@ export interface ErrorRenderProps {
  *           </button>
  *         </div>
  *       )}
- *     </ProductsList.Error>
+ *     </ProductList.Error>
  *   );
  * }
  * ```
@@ -254,11 +254,11 @@ export interface ItemContentRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsList } from '@wix/stores/components';
+ * import { ProductList } from '@wix/stores/components';
  *
  * function ProductsGrid() {
  *   return (
- *     <ProductsList.ItemContent>
+ *     <ProductList.ItemContent>
  *       {({ product }) => (
  *         <div className="product-card">
  *           <img src={product.media?.main?.image} alt={product.name} />
@@ -267,7 +267,7 @@ export interface ItemContentRenderProps {
  *           <button>View Details</button>
  *         </div>
  *       )}
- *     </ProductsList.ItemContent>
+ *     </ProductList.ItemContent>
  *   );
  * }
  * ```

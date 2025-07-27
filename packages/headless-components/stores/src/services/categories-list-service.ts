@@ -105,22 +105,22 @@ export const CategoriesListService =
  * ---
  * // Astro page example - pages/categories.astro
  * import { loadCategoriesListServiceConfig } from '@wix/stores/services';
- * import { CategoriesList } from '@wix/stores/components';
+  * import { CategoryList } from '@wix/stores/components';
  *
  * // Load categories data during SSR
  * const categoriesConfig = await loadCategoriesListServiceConfig();
  * ---
  *
- * <CategoriesList.Root categoriesConfig={categoriesConfig}>
- *   <CategoriesList.ItemContent>
+ * <CategoryList.Root categoriesConfig={categoriesConfig}>
+ *   <CategoryList.ItemContent>
  *     {({ category }) => (
  *       <div>
  *         <h3>{category.name}</h3>
  *         <p>{category.description}</p>
  *       </div>
  *     )}
- *   </CategoriesList.ItemContent>
- * </CategoriesList.Root>
+ *   </CategoryList.ItemContent>
+ * </CategoryList.Root>
  * ```
  *
  * @example
@@ -128,7 +128,7 @@ export const CategoriesListService =
  * // Next.js page example - pages/categories.tsx
  * import { GetServerSideProps } from 'next';
  * import { loadCategoriesListServiceConfig } from '@wix/stores/services';
- * import { CategoriesList } from '@wix/stores/components';
+  * import { CategoryList } from '@wix/stores/components';
  *
  * interface CategoriesPageProps {
  *   categoriesConfig: Awaited<ReturnType<typeof loadCategoriesListServiceConfig>>;
@@ -146,16 +146,16 @@ export const CategoriesListService =
  *
  * export default function CategoriesPage({ categoriesConfig }: CategoriesPageProps) {
  *   return (
- *     <CategoriesList.Root categoriesConfig={categoriesConfig}>
- *       <CategoriesList.ItemContent>
+ *     <CategoryList.Root categoriesConfig={categoriesConfig}>
+ *       <CategoryList.ItemContent>
  *         {({ category }) => (
  *           <div>
  *             <h3>{category.name}</h3>
  *             <p>{category.description}</p>
  *           </div>
  *         )}
- *       </CategoriesList.ItemContent>
- *     </CategoriesList.Root>
+ *       </CategoryList.ItemContent>
+ *     </CategoryList.Root>
  *   );
  * }
  * ```

@@ -10,31 +10,31 @@ import {
 } from "../services/products-list-filters-service.js";
 
 export interface RootProps {
-  /** Child components that will have access to the ProductsListFilters service */
+  /** Child components that will have access to the ProductListFilters service */
   children: React.ReactNode;
-  /** Configuration for the ProductsListFilters service */
+  /** Configuration for the ProductListFilters service */
   productsListFiltersConfig: ProductsListFiltersServiceConfig;
 }
 
 /**
- * Root component that provides the ProductsListFilters service context to its children.
+ * Root component that provides the ProductListFilters service context to its children.
  * This component sets up the necessary services for managing products list filters.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function FiltersSection() {
  *   return (
- *     <ProductsListFilters.Root
+ *     <ProductListFilters.Root
  *       productsListFiltersConfig={{
  *         minPrice: 0,
  *         maxPrice: 1000
  *       }}
  *     >
- *       <ProductsListFilters.MinPrice>
+ *       <ProductListFilters.MinPrice>
  *         {({ minPrice, setMinPrice }) => (
  *           <input
  *             type="number"
@@ -43,8 +43,8 @@ export interface RootProps {
  *             placeholder="Min price"
  *           />
  *         )}
- *       </ProductsListFilters.MinPrice>
- *     </ProductsListFilters.Root>
+ *       </ProductListFilters.MinPrice>
+ *     </ProductListFilters.Root>
  *   );
  * }
  * ```
@@ -87,11 +87,11 @@ export interface MinPriceRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function MinPriceFilter() {
  *   return (
- *     <ProductsListFilters.MinPrice>
+ *     <ProductListFilters.MinPrice>
  *       {({ minPrice, setMinPrice }) => (
  *         <div>
  *           <label>Minimum Price:</label>
@@ -103,7 +103,7 @@ export interface MinPriceRenderProps {
  *           />
  *         </div>
  *       )}
- *     </ProductsListFilters.MinPrice>
+ *     </ProductListFilters.MinPrice>
  *   );
  * }
  * ```
@@ -142,11 +142,11 @@ export interface MaxPriceRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function MaxPriceFilter() {
  *   return (
- *     <ProductsListFilters.MaxPrice>
+ *     <ProductListFilters.MaxPrice>
  *       {({ maxPrice, setMaxPrice }) => (
  *         <div>
  *           <label>Maximum Price:</label>
@@ -158,7 +158,7 @@ export interface MaxPriceRenderProps {
  *           />
  *         </div>
  *       )}
- *     </ProductsListFilters.MaxPrice>
+ *     </ProductListFilters.MaxPrice>
  *   );
  * }
  * ```
@@ -199,11 +199,11 @@ export interface InventoryStatusRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function InventoryStatusFilter() {
  *   return (
- *     <ProductsListFilters.InventoryStatus>
+ *     <ProductListFilters.InventoryStatus>
  *       {({ availableInventoryStatuses, selectedInventoryStatuses, toggleInventoryStatus }) => (
  *         <div>
  *           <h4>Inventory Status:</h4>
@@ -219,7 +219,7 @@ export interface InventoryStatusRenderProps {
  *           ))}
  *         </div>
  *       )}
- *     </ProductsListFilters.InventoryStatus>
+ *     </ProductListFilters.InventoryStatus>
  *   );
  * }
  * ```
@@ -263,11 +263,11 @@ export interface ResetTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function ResetFiltersButton() {
  *   return (
- *     <ProductsListFilters.ResetTrigger>
+ *     <ProductListFilters.ResetTrigger>
  *       {({ resetFilters, isFiltered }) => (
  *         <button
  *           onClick={resetFilters}
@@ -277,7 +277,7 @@ export interface ResetTriggerRenderProps {
  *           {isFiltered ? 'Clear Filters' : 'No Filters Applied'}
  *         </button>
  *       )}
- *     </ProductsListFilters.ResetTrigger>
+ *     </ProductListFilters.ResetTrigger>
  *   );
  * }
  * ```
@@ -320,11 +320,11 @@ export interface PriceRangeRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function PriceRangeFilter() {
  *   return (
- *     <ProductsListFilters.PriceRange>
+ *     <ProductListFilters.PriceRange>
  *       {({ minPrice, maxPrice, setMinPrice, setMaxPrice }) => (
  *         <div className="price-range">
  *           <h4>Price Range:</h4>
@@ -345,7 +345,7 @@ export interface PriceRangeRenderProps {
  *           </div>
  *         </div>
  *       )}
- *     </ProductsListFilters.PriceRange>
+ *     </ProductListFilters.PriceRange>
  *   );
  * }
  * ```
@@ -386,16 +386,16 @@ export interface ProductOptionRenderProps {
  * Headless component that renders content for each product option in the list.
  * Maps over all available product options and provides each option through a render prop.
  * Only renders when options are available (not loading, no error, and has options).
- * This follows the same collection pattern as ProductsList.ItemContent and CategoriesList.ItemContent.
+ * This follows the same collection pattern as ProductList.ItemContent and CategoryList.ItemContent.
  *
  * @component
  * @example
  * ```tsx
- * import { ProductsListFilters } from '@wix/stores/components';
+ * import { ProductListFilters } from '@wix/stores/components';
  *
  * function ProductOptionsFilter() {
  *   return (
- *     <ProductsListFilters.ProductOptions>
+ *     <ProductListFilters.ProductOptions>
  *       {({ option, selectedChoices, toggleChoice }) => (
  *         <div key={option.id}>
  *           <h4>{option.name}</h4>
@@ -411,7 +411,7 @@ export interface ProductOptionRenderProps {
  *           ))}
  *         </div>
  *       )}
- *     </ProductsListFilters.ProductOptions>
+ *     </ProductListFilters.ProductOptions>
  *   );
  * }
  * ```

@@ -8,19 +8,19 @@ import {
 import { ProductsListServiceDefinition } from "../services/products-list-service.js";
 
 /**
- * Root component that provides the ProductsListPagination service context to its children.
+ * Root component that provides the ProductListPagination service context to its children.
  * This component sets up the necessary services for managing products list pagination.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { ProductsListPagination } from '@wix/stores/components';
+ * import { ProductListPagination } from '@wix/stores/components';
  *
  * function PaginationSection() {
  *   return (
- *     <ProductsListPagination.Root>
- *       <ProductsListPagination.NextPage>
+ *     <ProductListPagination.Root>
+ *       <ProductListPagination.NextPage>
  *         {({ nextPage, hasNextPage }) => (
  *           <button
  *             onClick={nextPage}
@@ -29,8 +29,8 @@ import { ProductsListServiceDefinition } from "../services/products-list-service
  *             Next Page
  *           </button>
  *         )}
- *       </ProductsListPagination.NextPage>
- *     </ProductsListPagination.Root>
+ *       </ProductListPagination.NextPage>
+ *     </ProductListPagination.Root>
  *   );
  * }
  * ```
@@ -72,11 +72,11 @@ export interface PageSizeRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListPagination } from '@wix/stores/components';
+ * import { ProductListPagination } from '@wix/stores/components';
  *
  * function PageSizeSelector() {
  *   return (
- *     <ProductsListPagination.PageSize>
+ *     <ProductListPagination.PageSize>
  *       {({ currentLimit, setLimit }) => (
  *         <div>
  *           <label>Items per page:</label>
@@ -90,7 +90,7 @@ export interface PageSizeRenderProps {
  *           </select>
  *         </div>
  *       )}
- *     </ProductsListPagination.PageSize>
+ *     </ProductListPagination.PageSize>
  *   );
  * }
  * ```
@@ -129,11 +129,11 @@ export interface NextPageRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListPagination } from '@wix/stores/components';
+ * import { ProductListPagination } from '@wix/stores/components';
  *
  * function NextPageButton() {
  *   return (
- *     <ProductsListPagination.NextPage>
+ *     <ProductListPagination.NextPage>
  *       {({ nextPage, hasNextPage }) => (
  *         <button
  *           onClick={nextPage}
@@ -143,7 +143,7 @@ export interface NextPageRenderProps {
  *           Next →
  *         </button>
  *       )}
- *     </ProductsListPagination.NextPage>
+ *     </ProductListPagination.NextPage>
  *   );
  * }
  * ```
@@ -181,11 +181,11 @@ export interface PrevPageRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListPagination } from '@wix/stores/components';
+ * import { ProductListPagination } from '@wix/stores/components';
  *
  * function PrevPageButton() {
  *   return (
- *     <ProductsListPagination.PrevPage>
+ *     <ProductListPagination.PrevPage>
  *       {({ prevPage, hasPrevPage }) => (
  *         <button
  *           onClick={prevPage}
@@ -195,7 +195,7 @@ export interface PrevPageRenderProps {
  *           ← Previous
  *         </button>
  *       )}
- *     </ProductsListPagination.PrevPage>
+ *     </ProductListPagination.PrevPage>
  *   );
  * }
  * ```
@@ -233,11 +233,11 @@ export interface FirstPageRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListPagination } from '@wix/stores/components';
+ * import { ProductListPagination } from '@wix/stores/components';
  *
  * function FirstPageButton() {
  *   return (
- *     <ProductsListPagination.FirstPage>
+ *     <ProductListPagination.FirstPage>
  *       {({ goToFirstPage, hasPrevPage }) => (
  *         <button
  *           onClick={goToFirstPage}
@@ -247,7 +247,7 @@ export interface FirstPageRenderProps {
  *           ⏮ First
  *         </button>
  *       )}
- *     </ProductsListPagination.FirstPage>
+ *     </ProductListPagination.FirstPage>
  *   );
  * }
  * ```
@@ -288,11 +288,11 @@ export interface LoadMoreRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductsListPagination } from '@wix/stores/components';
+ * import { ProductListPagination } from '@wix/stores/components';
  *
  * function LoadMoreButton() {
  *   return (
- *     <ProductsListPagination.LoadMore>
+ *     <ProductListPagination.LoadMore>
  *       {({ loadMore, hasMoreProducts, isLoading }) => (
  *         <button
  *           onClick={() => loadMore(10)}
@@ -302,7 +302,7 @@ export interface LoadMoreRenderProps {
  *           {isLoading ? 'Loading...' : hasMoreProducts ? 'Load More' : 'No More Products'}
  *         </button>
  *       )}
- *     </ProductsListPagination.LoadMore>
+ *     </ProductListPagination.LoadMore>
  *   );
  * }
  * ```
