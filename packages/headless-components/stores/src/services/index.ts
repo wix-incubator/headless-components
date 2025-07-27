@@ -1,37 +1,26 @@
 // export {
 //   buyNowServiceBinding,
 //   loadBuyNowServiceInitialData,
-// } from "./buy-now-service.js";
+// } from "./buy-now-service";
 
 // export {
 //   payNowServiceBinding,
 //   loadPayNowServiceInitialData,
-// } from "./pay-now-service.js";
-
-export {
-  CatalogService,
-  CatalogServiceDefinition,
-  // loadCatalogServiceConfig,
-} from "./catalog-service.js";
+// } from "./pay-now-service";
 
 export {
   CategoryService,
   CategoryServiceDefinition,
-  loadCategoriesConfig,
+  loadCategoryServiceConfig,
+  CategoryServiceConfig,
 } from "./category-service.js";
 
 export {
-  CollectionService,
-  CollectionServiceDefinition,
-  loadCollectionServiceConfig,
-} from "./collection-service.js";
-
-export {
-  FilterService,
-  FilterServiceDefinition,
-  Filter,
-  AvailableOptions,
-} from "./filter-service.js";
+  CategoriesListService,
+  CategoriesListServiceDefinition,
+  loadCategoriesListServiceConfig,
+  CategoriesListServiceConfig,
+} from "./categories-list-service.js";
 
 export {
   ProductModifiersService,
@@ -59,6 +48,24 @@ export {
   ProductListService,
   ProductsListServiceDefinition,
   loadProductsListServiceConfig,
+  ProductsListServiceConfig,
 } from "./products-list-service.js";
 
-export { SortService, SortServiceDefinition, SortBy } from "./sort-service.js";
+export {
+  SortType,
+  ProductsListSortService,
+  ProductsListSortServiceDefinition,
+} from "./products-list-sort-service.js";
+
+export {
+  InventoryStatusType,
+  ProductsListFiltersService,
+  ProductsListFiltersServiceDefinition,
+  loadProductsListFiltersServiceConfig,
+  ProductsListFiltersServiceConfig,
+} from "./products-list-filters-service.js";
+
+export {
+  ProductsListPaginationService,
+  ProductsListPaginationServiceDefinition,
+} from "./products-list-pagination-service.js";

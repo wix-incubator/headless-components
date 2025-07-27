@@ -181,7 +181,7 @@ export interface ModifiersRenderProps {
  * }
  * ```
  */
-export const Modifiers = (props: ModifiersProps) => {
+export function Modifiers(props: ModifiersProps) {
   const modifiersService = useModifiersService();
 
   if (!modifiersService) {
@@ -205,7 +205,7 @@ export const Modifiers = (props: ModifiersProps) => {
     selectedModifiers,
     areAllRequiredModifiersFilled,
   });
-};
+}
 
 /**
  * Props for Modifier headless component
@@ -287,7 +287,7 @@ export interface ModifierRenderProps {
  * }
  * ```
  */
-export const Modifier = (props: ModifierProps) => {
+export function Modifier(props: ModifierProps) {
   const modifiersService = useModifiersService();
   const { modifier } = props;
 
@@ -314,7 +314,7 @@ export const Modifier = (props: ModifierProps) => {
     maxChars,
     placeholder,
   });
-};
+}
 
 /**
  * Props for ModifierChoice headless component
@@ -378,7 +378,7 @@ export interface ChoiceRenderProps {
  * }
  * ```
  */
-export const Choice = (props: ChoiceProps) => {
+export function Choice(props: ChoiceProps) {
   const modifiersService = useModifiersService();
   const { modifier, choice } = props;
 
@@ -411,7 +411,7 @@ export const Choice = (props: ChoiceProps) => {
     choiceValue,
     colorCode,
   });
-};
+}
 
 /**
  * Props for ModifierFreeText headless component
@@ -480,7 +480,7 @@ export interface FreeTextRenderProps {
  * }
  * ```
  */
-export const FreeText = (props: FreeTextProps) => {
+export function FreeText(props: FreeTextProps) {
   const modifiersService = useModifiersService();
   const { modifier } = props;
 
@@ -510,7 +510,7 @@ export const FreeText = (props: FreeTextProps) => {
     isOverLimit,
     modifierName,
   });
-};
+}
 
 /**
  * Props for ModifierToggleFreeText headless component
@@ -578,7 +578,7 @@ export interface ToggleFreeTextRenderProps {
  * }
  * ```
  */
-export const ToggleFreeText = (props: ToggleFreeTextProps) => {
+export function ToggleFreeText(props: ToggleFreeTextProps) {
   const modifiersService = useModifiersService();
   const { modifier } = props;
 
@@ -601,4 +601,4 @@ export const ToggleFreeText = (props: ToggleFreeTextProps) => {
     mandatory,
     modifierName,
   });
-};
+}

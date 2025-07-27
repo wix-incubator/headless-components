@@ -75,7 +75,7 @@ export interface ActionsRenderProps {
  * }
  * ```
  */
-export const Actions = (props: ActionsProps) => {
+export function Actions(props: ActionsProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
@@ -157,4 +157,4 @@ export const Actions = (props: ActionsProps) => {
     error,
     availableQuantity,
   });
-};
+}
