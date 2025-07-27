@@ -3,7 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { productsV3 } from "@wix/stores";
+import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
 
 /**
  * Configuration interface for the Products List service.
@@ -106,7 +106,7 @@ export type ProductsListServiceConfig = {
 export async function loadProductsListServiceConfig(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
 ): Promise<ProductsListServiceConfig> {
-  const result = await productsV3.searchProducts(searchOptions);
+  const result = await fetchProducts(searchOptions);
   return {
     products: result.products ?? [],
     searchOptions,
@@ -114,6 +114,110 @@ export async function loadProductsListServiceConfig(
     aggregations: result.aggregationData!,
   };
 }
+
+/**
+ * Fetches products and their missing variants in one optimized request.
+ * This function wraps the standard searchProducts call and automatically
+ * fetches missing variant data for all products that need it.
+ *
+ * @param searchOptions - The search options for querying products
+ * @returns Promise that resolves to the search result with complete variant data
+ */
+const fetchProducts = async (
+  searchOptions: Parameters<typeof productsV3.searchProducts>[0],
+) => {
+  const result = await productsV3.searchProducts(searchOptions);
+
+  // Fetch missing variants for all products in one batch request
+  if (result.products) {
+    result.products = await fetchMissingVariants(result.products);
+  }
+
+  return result;
+};
+
+/**
+ * Fetches missing variants for all products in one batch request.
+ * This function identifies products that need variant data and fetches
+ * all variants efficiently using the readOnlyVariantsV3 API.
+ *
+ * @param products - Array of products that may need variant data
+ * @returns Promise that resolves to products with complete variant information
+ */
+const fetchMissingVariants = async (
+  products: productsV3.V3Product[],
+): Promise<productsV3.V3Product[]> => {
+  // Find products that need variants (both single and multi-variant products)
+  const productsNeedingVariants = products.filter(
+    (product) =>
+      !product.variantsInfo?.variants &&
+      product.variantSummary?.variantCount &&
+      product.variantSummary.variantCount > 0,
+  );
+
+  if (productsNeedingVariants.length === 0) {
+    return products;
+  }
+
+  try {
+    const productIds = productsNeedingVariants
+      .map((p) => p._id)
+      .filter(Boolean) as string[];
+
+    if (productIds.length === 0) {
+      return products;
+    }
+
+    const items = [];
+
+    const res = await readOnlyVariantsV3
+      .queryVariants({})
+      .in("productData.productId", productIds)
+      .limit(100)
+      .find();
+
+    items.push(...res.items);
+
+    let nextRes = res;
+    while (nextRes.hasNext()) {
+      nextRes = await nextRes.next();
+      items.push(...nextRes.items);
+    }
+
+    const variantsByProductId = new Map<string, productsV3.Variant[]>();
+
+    items.forEach((item) => {
+      const productId = item.productData?.productId;
+      if (productId) {
+        if (!variantsByProductId.has(productId)) {
+          variantsByProductId.set(productId, []);
+        }
+        variantsByProductId.get(productId)!.push({
+          ...item,
+          choices: item.optionChoices as productsV3.Variant["choices"],
+        });
+      }
+    });
+
+    // Update products with their variants
+    return products.map((product) => {
+      const variants = variantsByProductId.get(product._id || "");
+      if (variants && variants.length > 0) {
+        return {
+          ...product,
+          variantsInfo: {
+            ...product.variantsInfo,
+            variants,
+          },
+        };
+      }
+      return product;
+    });
+  } catch (error) {
+    console.error("Failed to fetch missing variants:", error);
+    return products;
+  }
+};
 
 /**
  * Service definition for the Products List service.
@@ -245,7 +349,7 @@ export const ProductListService =
                 }
               : searchOptions;
 
-            const result = await productsV3.searchProducts(
+            const result = await fetchProducts(
               affectiveSearchOptions,
             );
 
