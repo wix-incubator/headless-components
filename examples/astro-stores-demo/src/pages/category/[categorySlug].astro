@@ -26,6 +26,9 @@ const category = categoryLoadResult.config.category;
 const categoryName = category?.name || '';
 
 const searchOptions = buildSearchOptionsFromUrl(Astro.url.href, {
+  cursorPaging: {
+    limit: 10,
+  },
   filter: {
     'allCategoriesInfo.categories': {
       $matchItems: [{ _id: category._id! }],
