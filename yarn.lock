@@ -3703,7 +3703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@npm:^0.0.7, @wix/headless-media@workspace:*, @wix/headless-media@workspace:packages/headless-components/media":
+"@wix/headless-media@npm:^0.0.8, @wix/headless-media@workspace:*, @wix/headless-media@workspace:packages/headless-components/media":
   version: 0.0.0-use.local
   resolution: "@wix/headless-media@workspace:packages/headless-components/media"
   dependencies:
@@ -3799,7 +3799,7 @@ __metadata:
     "@wix/ecom": "npm:^1.0.1238"
     "@wix/essentials": "npm:^0.1.24"
     "@wix/headless-ecom": "npm:^0.0.11"
-    "@wix/headless-media": "npm:^0.0.7"
+    "@wix/headless-media": "npm:^0.0.8"
     "@wix/redirects": "npm:^1.0.83"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
