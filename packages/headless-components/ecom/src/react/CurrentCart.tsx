@@ -434,8 +434,6 @@ export interface SelectedOption {
  * Render props for Item component
  */
 export interface ItemRenderProps {
-  /** Line item data */
-  item: LineItem | null;
   /** Current quantity */
   quantity: number;
   /** Product title */
@@ -462,7 +460,7 @@ export interface ItemRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Item item={item}>
- *   {({ item, quantity, title, image, price, selectedOptions, increaseQuantity, decreaseQuantity, remove, isLoading }) => (
+ *   {({ quantity, title, image, price, selectedOptions, increaseQuantity, decreaseQuantity, remove, isLoading }) => (
  *     <div>
  *       <h3>{title}</h3>
  *       <p>{price}</p>
@@ -489,7 +487,6 @@ export const Item = (props: ItemProps) => {
   if (!item) {
     const currency = cart?.currency || "USD";
     return props.children({
-      item: null,
       quantity: 0,
       title: "",
       image: null,
@@ -554,7 +551,6 @@ export const Item = (props: ItemProps) => {
   const lineItemId = item._id || "";
 
   return props.children({
-    item,
     quantity,
     title: item.productName?.original || "",
     image,
@@ -595,8 +591,6 @@ export interface SummaryRenderProps {
   currency: string;
   /** Total number of items */
   itemCount: number;
-  /** Whether checkout is available */
-  canCheckout: boolean;
   /** Whether totals are being calculated */
   isTotalsLoading: boolean;
 }
@@ -618,7 +612,6 @@ export interface SummaryRenderProps {
  *       <p>Total: {total}</p>
  *       <p>Currency: {currency}</p>
  *       <p>Item Count: {itemCount}</p>
- *       <p>Can Checkout: {canCheckout ? 'Yes' : 'No'}</p>
  *       <p>Is Totals Loading: {isTotalsLoading ? 'Yes' : 'No'}</p>
  *     </div>
  *   )}
@@ -670,7 +663,6 @@ export const Summary = (props: SummaryProps) => {
     total,
     currency,
     itemCount,
-    canCheckout: itemCount > 0,
     isTotalsLoading,
   });
 };
