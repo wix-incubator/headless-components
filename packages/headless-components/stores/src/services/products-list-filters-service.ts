@@ -8,6 +8,8 @@ import { productsV3 } from "@wix/stores";
 import { ProductsListServiceDefinition } from "./products-list-service.js";
 import { customizationsV3 } from "@wix/stores";
 
+const PRICE_FILTER_DEBOUNCE_TIME = 300;
+
 /**
  * Interface representing a product option (like Size, Color, etc.).
  * Contains the option metadata and available choices.
@@ -283,6 +285,10 @@ export const ProductsListFiltersService =
 
       const isFilteredSignal = signalsService.signal(false);
 
+      // Debounce timeout IDs for price filters
+      let minPriceTimeoutId: NodeJS.Timeout | null = null;
+      let maxPriceTimeoutId: NodeJS.Timeout | null = null;
+
       if (typeof window !== "undefined") {
         signalsService.effect(() => {
           // CRITICAL: Read the signals FIRST to establish dependencies, even on first run
@@ -318,10 +324,28 @@ export const ProductsListFiltersService =
         availableProductOptions: availableProductOptionsSignal,
         selectedProductOptions: selectedProductOptionsSignal,
         setUserFilterMinPrice: (minPrice: number) => {
-          userFilterMinPriceSignal.set(minPrice);
+          // Clear any existing timeout
+          if (minPriceTimeoutId) {
+            clearTimeout(minPriceTimeoutId);
+          }
+
+          // Set new debounced timeout
+          minPriceTimeoutId = setTimeout(() => {
+            userFilterMinPriceSignal.set(minPrice);
+            minPriceTimeoutId = null;
+          }, PRICE_FILTER_DEBOUNCE_TIME);
         },
         setUserFilterMaxPrice: (maxPrice: number) => {
-          userFilterMaxPriceSignal.set(maxPrice);
+          // Clear any existing timeout
+          if (maxPriceTimeoutId) {
+            clearTimeout(maxPriceTimeoutId);
+          }
+
+          // Set new debounced timeout
+          maxPriceTimeoutId = setTimeout(() => {
+            userFilterMaxPriceSignal.set(maxPrice);
+            maxPriceTimeoutId = null;
+          }, PRICE_FILTER_DEBOUNCE_TIME);
         },
         toggleInventoryStatus: (status: InventoryStatusType) => {
           const current = selectedInventoryStatusesSignal.get();

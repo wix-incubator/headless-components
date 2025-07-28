@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getStockStatusMessage } from './product-status-enums';
 import { ProductListFilters } from '@wix/headless-stores/react';
 import type { ProductsListFiltersServiceConfig } from '@wix/headless-stores/services';
-import { DualRangeSlider } from './DualRangeSlider';
+import { PriceRangeSelector } from './PriceRangeSelector';
 
 interface ProductFiltersProps {
   className?: string;
@@ -94,64 +94,14 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             setUserFilterMinPrice,
             setUserFilterMaxPrice,
           }) => (
-            <div
-              className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}
-            >
-              <div>
-                <h4 className="text-content-primary font-medium mb-4">
-                  Price Range
-                </h4>
-                <div className="space-y-4">
-                  {/* Price Range Display */}
-                  <div className="flex items-center justify-between text-sm text-content-light">
-                    <span>${String(catalogMinPrice)}</span>
-                    <span>${String(catalogMaxPrice)}</span>
-                  </div>
-
-                  {/* Dual Range Slider */}
-                  <DualRangeSlider
-                    sliderMinValue={catalogMinPrice}
-                    sliderMaxValue={catalogMaxPrice}
-                    userFilterMinPrice={userFilterMinPrice}
-                    userFilterMaxPrice={userFilterMaxPrice}
-                    setUserFilterMinPrice={setUserFilterMinPrice}
-                    setUserFilterMaxPrice={setUserFilterMaxPrice}
-                  />
-
-                  {/* Manual Price Input */}
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <label className="block text-xs text-content-muted mb-1">
-                        Min
-                      </label>
-
-                      <input
-                        type="number"
-                        value={userFilterMinPrice}
-                        onChange={e => {
-                          setUserFilterMinPrice(Number(e.target.value));
-                        }}
-                        className="w-full px-3 py-2 bg-surface-primary border border-brand-light rounded-lg text-content-primary text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-xs text-content-muted mb-1">
-                        Max
-                      </label>
-
-                      <input
-                        type="number"
-                        value={userFilterMaxPrice}
-                        onChange={e => {
-                          setUserFilterMaxPrice(Number(e.target.value));
-                        }}
-                        className="w-full px-3 py-2 bg-surface-primary border border-brand-light rounded-lg text-content-primary text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <PriceRangeSelector
+              min={catalogMinPrice}
+              max={catalogMaxPrice}
+              selectedMin={userFilterMinPrice}
+              selectedMax={userFilterMaxPrice}
+              setSelectedMin={setUserFilterMinPrice}
+              setSelectedMax={setUserFilterMaxPrice}
+            />
           )}
         </ProductListFilters.PriceRange>
 
