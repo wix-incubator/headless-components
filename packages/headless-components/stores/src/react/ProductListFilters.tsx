@@ -195,17 +195,17 @@ export interface PriceRangeProps {
  */
 export interface PriceRangeRenderProps {
   /** Current minimum price filter value */
-  userFilterMinPrice: number;
+  selectedMinPrice: number;
   /** Current maximum price filter value */
-  userFilterMaxPrice: number;
+  selectedMaxPrice: number;
   /** Catalog minimum price */
-  catalogMinPrice: number;
+  availableMinPrice: number;
   /** Catalog maximum price */
-  catalogMaxPrice: number;
+  availableMaxPrice: number;
   /** Function to update the minimum price filter */
-  setUserFilterMinPrice: (minPrice: number) => void;
+  setSelectedMinPrice: (minPrice: number) => void;
   /** Function to update the maximum price filter */
-  setUserFilterMaxPrice: (maxPrice: number) => void;
+  setSelectedMaxPrice: (maxPrice: number) => void;
 }
 
 /**
@@ -246,21 +246,21 @@ export interface PriceRangeRenderProps {
  */
 export function PriceRange(props: PriceRangeProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
-  const userFilterMinPrice = service.userFilterMinPrice.get();
-  const catalogMinPrice = service.catalogMinPrice.get();
-  const userFilterMaxPrice = service.userFilterMaxPrice.get();
-  const catalogMaxPrice = service.catalogMaxPrice.get();
-  const setUserFilterMinPrice = service.setUserFilterMinPrice;
-  const setUserFilterMaxPrice = service.setUserFilterMaxPrice;
+  const selectedMinPrice = service.selectedMinPrice.get();
+  const availableMinPrice = service.availableMinPrice.get();
+  const selectedMaxPrice = service.selectedMaxPrice.get();
+  const availableMaxPrice = service.availableMaxPrice.get();
+  const setSelectedMinPrice = service.setSelectedMinPrice;
+  const setSelectedMaxPrice = service.setSelectedMaxPrice;
 
   return typeof props.children === "function"
     ? props.children({
-        userFilterMinPrice,
-        catalogMinPrice,
-        userFilterMaxPrice,
-        setUserFilterMinPrice,
-        setUserFilterMaxPrice,
-        catalogMaxPrice,
+        availableMinPrice,
+        selectedMinPrice,
+        selectedMaxPrice,
+        availableMaxPrice,
+        setSelectedMinPrice,
+        setSelectedMaxPrice,
       })
     : props.children;
 }

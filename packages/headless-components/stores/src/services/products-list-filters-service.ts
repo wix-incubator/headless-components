@@ -136,13 +136,13 @@ export async function loadProductsListFiltersServiceConfig(): Promise<ProductsLi
  */
 export const ProductsListFiltersServiceDefinition = defineService<{
   /** Reactive signal containing the user's selected minimum price filter value */
-  userFilterMinPrice: Signal<number>;
+  selectedMinPrice: Signal<number>;
   /** Reactive signal containing the user's selected maximum price filter value */
-  userFilterMaxPrice: Signal<number>;
+  selectedMaxPrice: Signal<number>;
   /** Reactive signal containing the catalog minimum price (for UI bounds) */
-  catalogMinPrice: Signal<number>;
+  availableMinPrice: Signal<number>;
   /** Reactive signal containing the catalog maximum price (for UI bounds) */
-  catalogMaxPrice: Signal<number>;
+  availableMaxPrice: Signal<number>;
   /** Reactive signal containing available inventory status options */
   availableInventoryStatuses: Signal<InventoryStatusType[]>;
   /** Reactive signal containing selected inventory status filters */
@@ -152,9 +152,9 @@ export const ProductsListFiltersServiceDefinition = defineService<{
   /** Reactive signal containing selected product option filters */
   selectedProductOptions: Signal<Record<string, string[]>>;
   /** Function to set the minimum price filter */
-  setUserFilterMinPrice: (minPrice: number) => void;
+  setSelectedMinPrice: (minPrice: number) => void;
   /** Function to set the maximum price filter */
-  setUserFilterMaxPrice: (maxPrice: number) => void;
+  setSelectedMaxPrice: (maxPrice: number) => void;
   /** Function to toggle an inventory status filter */
   toggleInventoryStatus: (status: InventoryStatusType) => void;
   /** Function to toggle a product option choice filter */
@@ -315,15 +315,15 @@ export const ProductsListFiltersService =
       }
 
       return {
-        userFilterMinPrice: userFilterMinPriceSignal,
-        userFilterMaxPrice: userFilterMaxPriceSignal,
-        catalogMinPrice: catalogMinPriceSignal,
-        catalogMaxPrice: catalogMaxPriceSignal,
+        selectedMinPrice: userFilterMinPriceSignal,
+        selectedMaxPrice: userFilterMaxPriceSignal,
+        availableMinPrice: catalogMinPriceSignal,
+        availableMaxPrice: catalogMaxPriceSignal,
         availableInventoryStatuses: availableInventoryStatusesSignal,
         selectedInventoryStatuses: selectedInventoryStatusesSignal,
         availableProductOptions: availableProductOptionsSignal,
         selectedProductOptions: selectedProductOptionsSignal,
-        setUserFilterMinPrice: (minPrice: number) => {
+        setSelectedMinPrice: (minPrice: number) => {
           // Clear any existing timeout
           if (minPriceTimeoutId) {
             clearTimeout(minPriceTimeoutId);
@@ -335,7 +335,7 @@ export const ProductsListFiltersService =
             minPriceTimeoutId = null;
           }, PRICE_FILTER_DEBOUNCE_TIME);
         },
-        setUserFilterMaxPrice: (maxPrice: number) => {
+        setSelectedMaxPrice: (maxPrice: number) => {
           // Clear any existing timeout
           if (maxPriceTimeoutId) {
             clearTimeout(maxPriceTimeoutId);
@@ -510,7 +510,6 @@ function getCatalogPriceRange(
   const minPrice = getMinPrice(aggregationData);
   const maxPrice = getMaxPrice(aggregationData);
 
-  console.log("Extracted catalog price range:", { minPrice, maxPrice });
   return { minPrice, maxPrice };
 }
 

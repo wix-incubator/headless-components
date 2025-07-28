@@ -87,20 +87,20 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
       <div className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}>
         <ProductListFilters.PriceRange>
           {({
-            catalogMinPrice,
-            catalogMaxPrice,
-            userFilterMinPrice,
-            userFilterMaxPrice,
-            setUserFilterMinPrice,
-            setUserFilterMaxPrice,
+            availableMinPrice,
+            availableMaxPrice,
+            selectedMinPrice,
+            selectedMaxPrice,
+            setSelectedMinPrice,
+            setSelectedMaxPrice,
           }) => (
             <PriceRangeSelector
-              min={catalogMinPrice}
-              max={catalogMaxPrice}
-              selectedMin={userFilterMinPrice}
-              selectedMax={userFilterMaxPrice}
-              setSelectedMin={setUserFilterMinPrice}
-              setSelectedMax={setUserFilterMaxPrice}
+              min={availableMinPrice}
+              max={availableMaxPrice}
+              selectedMin={selectedMinPrice}
+              selectedMax={selectedMaxPrice}
+              setSelectedMin={setSelectedMinPrice}
+              setSelectedMax={setSelectedMaxPrice}
             />
           )}
         </ProductListFilters.PriceRange>
