@@ -6,10 +6,7 @@ import {
   SelectedVariantServiceConfig,
 } from "../services/selected-variant-service.js";
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
-import {
-  CurrentCartService,
-  CurrentCartServiceDefinition,
-} from "@wix/headless-ecom/services";
+import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 import { createServicesMap } from "@wix/services-manager";
 import type { PropsWithChildren } from "react";
 
@@ -53,13 +50,11 @@ export function Root(
 ) {
   return (
     <WixServices
-      servicesMap={createServicesMap()
-        .addService(
-          SelectedVariantServiceDefinition,
-          SelectedVariantService,
-          props.selectedVariantServiceConfig,
-        )
-        .addService(CurrentCartServiceDefinition, CurrentCartService, {})}
+      servicesMap={createServicesMap().addService(
+        SelectedVariantServiceDefinition,
+        SelectedVariantService,
+        props.selectedVariantServiceConfig,
+      )}
     >
       {props.children}
     </WixServices>
