@@ -1,6 +1,4 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { WixServices } from '@wix/services-manager-react';
-import { createServicesMap } from '@wix/services-manager';
 import { MiniCartContent, MiniCartIcon } from '../components/ecom/MiniCart';
 import { CurrentCart } from '@wix/headless-ecom/react';
 
@@ -39,8 +37,8 @@ function StoreLayoutContent({
 }) {
   return (
     <>
-      <CurrentCart.Trigger>
-        {({ onOpen }) => (
+      <CurrentCart.OpenTrigger>
+        {({ open }) => (
           <CurrentCart.LineItemAdded>
             {({ onAddedToCart }) => {
               useEffect(
@@ -49,7 +47,7 @@ function StoreLayoutContent({
                     setShowSuccessMessage(true);
                     setTimeout(() => {
                       setShowSuccessMessage(false);
-                      onOpen();
+                      open();
                     }, 3000);
                   }),
                 [onAddedToCart]
@@ -59,7 +57,7 @@ function StoreLayoutContent({
             }}
           </CurrentCart.LineItemAdded>
         )}
-      </CurrentCart.Trigger>
+      </CurrentCart.OpenTrigger>
 
       {/* Success Message */}
       {showSuccessMessage && (

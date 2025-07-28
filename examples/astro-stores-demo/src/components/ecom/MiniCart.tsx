@@ -4,10 +4,10 @@ import { WixMediaImage } from '../media';
 
 // Mini coupon form for the cart sidebar
 const CouponFormMini = ({
-  onApply,
+  apply,
   isLoading,
 }: {
-  onApply: (code: string) => void;
+  apply: (code: string) => void;
   isLoading: boolean;
 }) => {
   const [code, setCode] = useState('');
@@ -16,7 +16,7 @@ const CouponFormMini = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (code.trim()) {
-      onApply(code.trim());
+      apply(code.trim());
       setCode('');
     }
   };
@@ -67,10 +67,10 @@ export function MiniCartIcon() {
     <>
       {/* Fixed Cart Icon */}
       <div className="fixed top-6 right-6 z-50">
-        <CurrentCart.Trigger>
-          {({ onOpen, itemCount }) => (
+        <CurrentCart.OpenTrigger>
+          {({ open, totalItems }) => (
             <button
-              onClick={onOpen}
+              onClick={open}
               className="relative p-2 text-content-primary hover:text-brand-light transition-colors"
             >
               <svg
@@ -86,14 +86,14 @@ export function MiniCartIcon() {
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h12"
                 />
               </svg>
-              {itemCount > 0 && (
+              {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-accent-medium text-content-primary text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {itemCount}
+                  {totalItems}
                 </span>
               )}
             </button>
           )}
-        </CurrentCart.Trigger>
+        </CurrentCart.OpenTrigger>
       </div>
     </>
   );
@@ -104,7 +104,7 @@ export function MiniCartContent() {
     <>
       {/* Cart Modal */}
       <CurrentCart.Content>
-        {({ isOpen, onClose }) => {
+        {({ isOpen, close }) => {
           // Lock body scroll when modal is open
           if (typeof document !== 'undefined') {
             if (isOpen) {
@@ -119,7 +119,7 @@ export function MiniCartContent() {
               {isOpen && (
                 <div
                   className="fixed inset-0 z-50 bg-surface-overlay backdrop-blur-sm"
-                  onClick={onClose}
+                  onClick={close}
                 >
                   <div
                     className="fixed right-0 top-0 h-full w-full max-w-md bg-surface-modal shadow-xl flex flex-col"
@@ -132,7 +132,7 @@ export function MiniCartContent() {
                             Shopping Cart ({itemCount})
                           </h2>
                           <button
-                            onClick={onClose}
+                            onClick={close}
                             className="p-2 text-content-primary hover:text-brand-light transition-colors"
                           >
                             <svg
@@ -154,10 +154,10 @@ export function MiniCartContent() {
                     </CurrentCart.Summary>
 
                     <div className="flex-1 overflow-y-auto p-6 min-h-0">
-                      <CurrentCart.Items>
-                        {({ hasItems, items }) => (
+                      <CurrentCart.LineItemsList>
+                        {({ items, totalItems }) => (
                           <>
-                            {hasItems ? (
+                            {totalItems > 0 ? (
                               <div className="space-y-4">
                                 {items.map(item => (
                                   <CurrentCart.Item key={item._id} item={item}>
@@ -167,9 +167,9 @@ export function MiniCartContent() {
                                       price,
                                       quantity,
                                       selectedOptions,
-                                      onIncrease,
-                                      onDecrease,
-                                      onRemove,
+                                      increaseQuantity,
+                                      decreaseQuantity,
+                                      remove,
                                     }) => (
                                       <div className="flex gap-4 p-4 bg-surface-card rounded-xl border border-surface-subtle">
                                         <div className="w-16 h-16 bg-surface-interactive rounded-lg overflow-hidden flex-shrink-0">
@@ -247,7 +247,7 @@ export function MiniCartContent() {
                                           <div className="flex items-center justify-between mt-3">
                                             <div className="flex items-center gap-2">
                                               <button
-                                                onClick={onDecrease}
+                                                onClick={decreaseQuantity}
                                                 className="w-6 h-6 rounded bg-surface-interactive text-content-primary text-sm hover:bg-surface-interactive-hover transition-colors"
                                               >
                                                 -
@@ -256,7 +256,7 @@ export function MiniCartContent() {
                                                 {quantity}
                                               </span>
                                               <button
-                                                onClick={onIncrease}
+                                                onClick={increaseQuantity}
                                                 className="w-6 h-6 rounded bg-surface-interactive text-content-primary text-sm hover:bg-surface-interactive-hover transition-colors"
                                               >
                                                 +
@@ -264,7 +264,7 @@ export function MiniCartContent() {
                                             </div>
 
                                             <button
-                                              onClick={onRemove}
+                                              onClick={remove}
                                               className="text-status-danger hover:text-status-error text-xs transition-colors"
                                             >
                                               Remove
@@ -300,19 +300,19 @@ export function MiniCartContent() {
                             )}
                           </>
                         )}
-                      </CurrentCart.Items>
+                      </CurrentCart.LineItemsList>
                     </div>
 
                     <div className="border-t border-surface-subtle p-6 flex-shrink-0">
                       <CurrentCart.Notes>
-                        {({ notes, onNotesChange }) => (
+                        {({ notes, updateNotes }) => (
                           <div>
                             <label className="block text-xs font-medium text-content-secondary mb-2">
                               Notes:
                             </label>
                             <textarea
                               value={notes}
-                              onChange={e => onNotesChange(e.target.value)}
+                              onChange={e => updateNotes(e.target.value)}
                               placeholder="Special instructions for your order (e.g., gift wrap, delivery notes)"
                               rows={2}
                               className="w-full px-2 py-1 text-xs bg-surface-interactive border border-surface-interactive rounded text-content-primary placeholder:text-content-muted focus:border-brand-light focus:outline-none transition-colors duration-200 resize-vertical mb-4"
@@ -325,8 +325,8 @@ export function MiniCartContent() {
                       <CurrentCart.Coupon>
                         {({
                           appliedCoupon,
-                          onApply,
-                          onRemove,
+                          apply,
+                          remove,
                           isLoading,
                           error,
                         }) => (
@@ -337,7 +337,7 @@ export function MiniCartContent() {
                                   Coupon: {appliedCoupon}
                                 </span>
                                 <button
-                                  onClick={onRemove}
+                                  onClick={remove}
                                   disabled={isLoading}
                                   className="text-status-danger hover:text-status-error text-xs disabled:opacity-50"
                                 >
@@ -346,7 +346,7 @@ export function MiniCartContent() {
                               </div>
                             ) : (
                               <CouponFormMini
-                                onApply={onApply}
+                                apply={apply}
                                 isLoading={isLoading}
                               />
                             )}
@@ -441,9 +441,9 @@ export function MiniCartContent() {
                               </div>
 
                               <CurrentCart.Checkout>
-                                {({ onProceed, canCheckout }) => (
+                                {({ proceedToCheckout, canCheckout }) => (
                                   <button
-                                    onClick={onProceed}
+                                    onClick={proceedToCheckout}
                                     disabled={!canCheckout}
                                     className="w-full bg-gradient-primary bg-gradient-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-content-primary font-semibold py-3 px-6 rounded-lg transition-all duration-200"
                                   >

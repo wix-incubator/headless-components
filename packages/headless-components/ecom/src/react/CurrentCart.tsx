@@ -7,9 +7,13 @@ import {
   type LineItem,
 } from "../services/current-cart-service.js";
 import { createServicesMap } from "@wix/services-manager";
-import type { PropsWithChildren } from "react";
 import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
 import { media } from "@wix/sdk";
+
+export interface RootProps {
+  children: React.ReactNode;
+  currentCartServiceConfig: CurrentCartServiceConfig;
+}
 
 /**
  * Root component that provides the CurrentCart service context to its children.
@@ -25,13 +29,13 @@ import { media } from "@wix/sdk";
  *   return (
  *     <CurrentCart.Root>
  *       <div>
- *         <CurrentCart.Trigger>
- *           {({ itemCount, onOpen }) => (
- *             <button onClick={onOpen}>
- *               Cart ({itemCount})
+ *         <CurrentCart.OpenTrigger>
+ *           {({ totalItems, open }) => (
+ *             <button onClick={open}>
+ *               Cart ({totalItems})
  *             </button>
  *           )}
- *         </CurrentCart.Trigger>
+ *         </CurrentCart.OpenTrigger>
  *
  *         <CurrentCart.Content>
  *           {({ cart, isLoading }) => (
@@ -46,11 +50,7 @@ import { media } from "@wix/sdk";
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{
-    currentCartServiceConfig?: CurrentCartServiceConfig;
-  }>,
-) {
+export function Root(props: RootProps) {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -63,6 +63,60 @@ export function Root(
     </WixServices>
   );
 }
+
+/**
+ * Props for EmptyState headless component
+ */
+export interface EmptyStateProps {
+  /** Content to display when cart is empty (can be a render function or ReactNode) */
+  children: ((props: EmptyStateRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for EmptyState component
+ */
+export interface EmptyStateRenderProps {}
+
+/**
+ * Component that renders content when the cart is empty.
+ * Only displays its children when there are no items in cart, no loading state, and no errors.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CurrentCart } from '@wix/ecom/components';
+ *
+ * function EmptyCartMessage() {
+ *   return (
+ *     <CurrentCart.EmptyState>
+ *       {() => (
+ *         <div className="empty-state">
+ *           <h3>No items in cart</h3>
+ *           <p>Items will appear here once they are added</p>
+ *         </div>
+ *       )}
+ *     </CurrentCart.EmptyState>
+ *   );
+ * }
+ * ```
+ */
+export function EmptyState(props: EmptyStateProps) {
+  const { isLoading, error, cart } = useService(
+    CurrentCartServiceDefinition,
+  );
+  const isLoadingValue = isLoading.get();
+  const errorValue = error.get();
+  const cartValue = cart.get();
+
+  if (!isLoadingValue && !errorValue && cartValue?.lineItems?.length === 0) {
+    return typeof props.children === "function"
+      ? props.children({})
+      : props.children;
+  }
+
+  return null;
+}
+
 
 /**
  * Helper function to format currency properly
@@ -82,22 +136,19 @@ function formatCurrency(amount: number, currencyCode: string): string {
 /**
  * Props for Trigger headless component
  */
-export interface TriggerProps {
+export interface OpenTriggerProps {
   /** Render prop function that receives trigger data */
-  children: (props: TriggerRenderProps) => React.ReactNode;
+  children: (props: OpenTriggerRenderProps) => React.ReactNode;
 }
 
 /**
  * Render props for Trigger component
-
  */
-export interface TriggerRenderProps {
+export interface OpenTriggerRenderProps {
   /** Number of items in cart */
-  itemCount: number;
-  /** Whether cart has items */
-  hasItems: boolean;
+  totalItems: number;
   /** Function to open cart */
-  onOpen: () => void;
+  open: () => void;
   /** Whether cart is currently loading */
   isLoading: boolean;
 }
@@ -107,28 +158,31 @@ export interface TriggerRenderProps {
  *
  * @example
  * ```tsx
- * <CurrentCart.Trigger>
- *   {({ itemCount, hasItems, onOpen, isLoading }) => (
- *     <div>
- *       <h1>Cart ({itemCount} items)</h1>
- *       <button onClick={onOpen} disabled={isLoading}>Open Cart</button>
- *     </div>
- *   )}
- * </CurrentCart.Trigger>
+ * <CurrentCart.OpenTrigger>
+ *   {({ totalItems, open, isLoading }) =>
+ *     isLoading ? (
+ *       <div>Loading Cart...</div>
+ *     ) : (
+ *       <div>
+ *         <h1>Cart ({totalItems} items)</h1>
+ *         <button onClick={open}>Open Cart</button>
+ *       </div>
+ *     )
+ *   }
+ * </CurrentCart.OpenTrigger>
  * ```
  */
-export const Trigger = (props: TriggerProps) => {
+export const OpenTrigger = (props: OpenTriggerProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
   >;
 
-  const itemCount = service.cartCount.get();
+  const totalItems = service.cartCount.get();
   const isLoading = service.isLoading.get();
 
   return props.children({
-    itemCount,
-    hasItems: itemCount > 0,
-    onOpen: service.openCart,
+    totalItems,
+    open: service.openCart,
     isLoading,
   });
 };
@@ -148,7 +202,7 @@ export interface ContentRenderProps {
   /** Whether cart content is open */
   isOpen: boolean;
   /** Function to close cart */
-  onClose: () => void;
+  close: () => void;
   /** Cart data */
   cart: currentCart.Cart | null;
   /** Whether cart is loading */
@@ -165,23 +219,23 @@ export interface ContentRenderProps {
  * <CurrentCart.Content>
  *   {({ cart, isLoading }) => (
  *     <div>
- *       <CurrentCart.Trigger>
- *         {({ itemCount }) => <h1>Cart ({itemCount} items)</h1>}
- *       </CurrentCart.Trigger>
+ *       <CurrentCart.OpenTrigger>
+ *         {({ totalItems }) => <h1>Cart ({totalItems} items)</h1>}
+ *       </CurrentCart.OpenTrigger>
  *
  *       {isLoading && <p>Loading cart...</p>}
  *
- *       <CurrentCart.Items>
- *         {({ hasItems, items }) => (
+ *       <CurrentCart.LineItemsList>
+ *         {({ items, totalItems }) => (
  *           <>
- *             {!hasItems ? (
+ *             {items.length === 0 ? (
  *               <p>Your cart is empty</p>
  *             ) : (
  *               <>
  *                 <CurrentCart.Clear>
- *                   {({ onClear, hasItems, isLoading }) => (
- *                     hasItems && (
- *                       <button onClick={onClear} disabled={isLoading}>
+ *                   {({ clear, totalItems, isLoading }) => (
+ *                     totalItems > 0 && (
+ *                       <button onClick={clear} disabled={isLoading}>
  *                         {isLoading ? 'Clearing...' : 'Clear Cart'}
  *                       </button>
  *                     )
@@ -196,9 +250,9 @@ export interface ContentRenderProps {
  *                       price,
  *                       quantity,
  *                       selectedOptions,
- *                       onIncrease,
- *                       onDecrease,
- *                       onRemove,
+ *                       increaseQuantity,
+ *                       decreaseQuantity,
+ *                       remove,
  *                       isLoading: itemLoading
  *                     }) => (
  *                       <div>
@@ -211,11 +265,11 @@ export interface ContentRenderProps {
  *                           </span>
  *                         ))}
  *
- *                         <button onClick={onDecrease} disabled={itemLoading || quantity <= 1}>-</button>
+ *                         <button onClick={decreaseQuantity} disabled={itemLoading || quantity <= 1}>-</button>
  *                         <span>{quantity}</span>
- *                         <button onClick={onIncrease} disabled={itemLoading}>+</button>
+ *                         <button onClick={increaseQuantity} disabled={itemLoading}>+</button>
  *
- *                         <button onClick={onRemove} disabled={itemLoading}>
+ *                         <button onClick={remove} disabled={itemLoading}>
  *                           {itemLoading ? 'Removing...' : 'Remove'}
  *                         </button>
  *                       </div>
@@ -224,22 +278,22 @@ export interface ContentRenderProps {
  *                 ))}
  *
  *                 <CurrentCart.Notes>
- *                   {({ notes, onNotesChange }) => (
+ *                   {({ notes, updateNotes }) => (
  *                     <textarea
  *                       value={notes}
- *                       onChange={e => onNotesChange(e.target.value)}
+ *                       onChange={e => updateNotes(e.target.value)}
  *                       placeholder="Special instructions for your order"
  *                     />
  *                   )}
  *                 </CurrentCart.Notes>
  *
  *                 <CurrentCart.Coupon>
- *                   {({ appliedCoupon, onApply, onRemove, isLoading }) => (
+ *                   {({ appliedCoupon, apply, remove, isLoading }) => (
  *                     <div>
  *                       {appliedCoupon ? (
  *                         <div>
  *                           <span>Coupon: {appliedCoupon}</span>
- *                           <button onClick={onRemove} disabled={isLoading}>
+ *                           <button onClick={remove} disabled={isLoading}>
  *                             {isLoading ? 'Removing...' : 'Remove'}
  *                           </button>
  *                         </div>
@@ -247,7 +301,7 @@ export interface ContentRenderProps {
  *                         <form onSubmit={e => {
  *                           e.preventDefault();
  *                           const code = new FormData(e.currentTarget).get('couponCode');
- *                           if (code?.trim()) onApply(code.trim());
+ *                           if (code?.trim()) apply(code.trim());
  *                         }}>
  *                           <input name="couponCode" placeholder="Enter promo code" disabled={isLoading} />
  *                           <button type="submit" disabled={isLoading}>
@@ -260,22 +314,25 @@ export interface ContentRenderProps {
  *                 </CurrentCart.Coupon>
  *
  *                 <CurrentCart.Summary>
- *                   {({ subtotal, discount, shipping, tax, total, itemCount, isTotalsLoading }) => (
+ *                   {({ subtotal, discount, appliedCoupon, shipping, tax, total, currency, itemCount, canCheckout, isTotalsLoading }) => (
  *                     <div>
  *                       <div>Subtotal ({itemCount} items): {isTotalsLoading ? 'Calculating...' : subtotal}</div>
  *                       {discount && <div>Discount: -{discount}</div>}
+ *                       {appliedCoupon && <div>Applied Coupon: {appliedCoupon}</div>}
  *                       <div>Shipping: {isTotalsLoading ? 'Calculating...' : shipping}</div>
  *                       <div>Tax: {isTotalsLoading ? 'Calculating...' : tax}</div>
  *                       <div>Total: {isTotalsLoading ? 'Calculating...' : total}</div>
+ *                       <div>Currency: {currency}</div>
+ *                       <div>Can Checkout: {canCheckout ? 'Yes' : 'No'}</div>
  *                     </div>
  *                   )}
  *                 </CurrentCart.Summary>
  *
  *                 <CurrentCart.Checkout>
- *                   {({ onProceed, canCheckout, isLoading: checkoutLoading, error }) => (
+ *                   {({ proceedToCheckout, canCheckout, isLoading: checkoutLoading, error }) => (
  *                     <div>
  *                       {error && <p>Error: {error}</p>}
- *                       <button onClick={onProceed} disabled={!canCheckout || checkoutLoading}>
+ *                       <button onClick={proceedToCheckout} disabled={!canCheckout || checkoutLoading}>
  *                         {checkoutLoading ? 'Processing...' : 'Proceed to Checkout'}
  *                       </button>
  *                     </div>
@@ -285,7 +342,7 @@ export interface ContentRenderProps {
  *             )}
  *           </>
  *         )}
- *       </CurrentCart.Items>
+ *       </CurrentCart.LineItemsList>
  *     </div>
  *   )}
  * </CurrentCart.Content>
@@ -302,7 +359,7 @@ export const Content = (props: ContentProps) => {
 
   return props.children({
     isOpen,
-    onClose: service.closeCart,
+    close: service.closeCart,
     cart,
     isLoading,
     error,
@@ -312,19 +369,17 @@ export const Content = (props: ContentProps) => {
 /**
  * Props for Items headless component
  */
-export interface ItemsProps {
+export interface LineItemsListProps {
   /** Render prop function that receives items data */
-  children: (props: ItemsRenderProps) => React.ReactNode;
+  children: (props: LineItemsListRenderProps) => React.ReactNode;
 }
 
 /**
  * Render props for Items component
  */
-export interface ItemsRenderProps {
+export interface LineItemsListRenderProps {
   /** Array of line items in cart */
-  items: any[];
-  /** Whether cart has items */
-  hasItems: boolean;
+  items: LineItem[];
   /** Total number of items */
   totalItems: number;
 }
@@ -334,18 +389,18 @@ export interface ItemsRenderProps {
  *
  * @example
  * ```tsx
- * <CurrentCart.Items>
- *   {({ items, hasItems, totalItems }) => (
+ * <CurrentCart.LineItemsList>
+ *   {({ items, totalItems }) => (
  *     <div>
  *       <h1>Cart ({totalItems} items)</h1>
  *       <p>Items: {items.length}</p>
- *       <p>Has items: {hasItems ? 'Yes' : 'No'}</p>
+ *       <p>Has items: {items.length > 0 ? 'Yes' : 'No'}</p>
  *     </div>
  *   )}
- * </CurrentCart.Items>
+ * </CurrentCart.LineItemsList>
  * ```
  */
-export const Items = (props: ItemsProps) => {
+export const LineItemsList = (props: LineItemsListProps) => {
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
   >;
@@ -356,7 +411,6 @@ export const Items = (props: ItemsProps) => {
 
   return props.children({
     items,
-    hasItems: items.length > 0,
     totalItems,
   });
 };
@@ -366,17 +420,20 @@ export const Items = (props: ItemsProps) => {
  */
 export interface ItemProps {
   /** Line item data */
-  item: any;
+  item: LineItem;
   /** Render prop function that receives item data */
   children: (props: ItemRenderProps) => React.ReactNode;
+}
+
+export interface SelectedOption {
+  name: string;
+  value: string | { name: string; code: string };
 }
 
 /**
  * Render props for Item component
  */
 export interface ItemRenderProps {
-  /** Line item data */
-  item: any | null;
   /** Current quantity */
   quantity: number;
   /** Product title */
@@ -386,16 +443,13 @@ export interface ItemRenderProps {
   /** Line item price */
   price: string;
   /** Selected product options */
-  selectedOptions: Array<{
-    name: string;
-    value: string | { name: string; code: string };
-  }>;
+  selectedOptions: Array<SelectedOption>;
   /** Function to increase quantity */
-  onIncrease: () => Promise<void>;
+  increaseQuantity: () => Promise<void>;
   /** Function to decrease quantity */
-  onDecrease: () => Promise<void>;
+  decreaseQuantity: () => Promise<void>;
   /** Function to remove item */
-  onRemove: () => Promise<void>;
+  remove: () => Promise<void>;
   /** Whether item is loading */
   isLoading: boolean;
 }
@@ -406,16 +460,16 @@ export interface ItemRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Item item={item}>
- *   {({ item, quantity, title, image, price, selectedOptions, onIncrease, onDecrease, onRemove, isLoading }) => (
+ *   {({ quantity, title, image, price, selectedOptions, increaseQuantity, decreaseQuantity, remove, isLoading }) => (
  *     <div>
  *       <h3>{title}</h3>
  *       <p>{price}</p>
  *       <p>{quantity}</p>
  *       <p>{image}</p>
  *       <p>{selectedOptions}</p>
- *       <button onClick={onIncrease}>Increase</button>
- *       <button onClick={onDecrease}>Decrease</button>
- *       <button onClick={onRemove}>Remove</button>
+ *       <button onClick={increaseQuantity}>Increase</button>
+ *       <button onClick={decreaseQuantity}>Decrease</button>
+  *      <button onClick={remove}>Remove</button>
  *     </div>
  *   )}
  * </CurrentCart.Item>
@@ -433,15 +487,14 @@ export const Item = (props: ItemProps) => {
   if (!item) {
     const currency = cart?.currency || "USD";
     return props.children({
-      item: null,
       quantity: 0,
       title: "",
       image: null,
       price: formatCurrency(0, currency),
       selectedOptions: [],
-      onIncrease: async () => {},
-      onDecrease: async () => {},
-      onRemove: async () => {},
+      increaseQuantity: async () => {},
+      decreaseQuantity: async () => {},
+      remove: async () => {},
       isLoading: false,
     });
   }
@@ -498,15 +551,14 @@ export const Item = (props: ItemProps) => {
   const lineItemId = item._id || "";
 
   return props.children({
-    item,
     quantity,
     title: item.productName?.original || "",
     image,
     price: formattedPrice,
     selectedOptions,
-    onIncrease: () => service.increaseLineItemQuantity(lineItemId),
-    onDecrease: () => service.decreaseLineItemQuantity(lineItemId),
-    onRemove: () => service.removeLineItem(lineItemId),
+    increaseQuantity: () => service.increaseLineItemQuantity(lineItemId),
+    decreaseQuantity: () => service.decreaseLineItemQuantity(lineItemId),
+    remove: () => service.removeLineItem(lineItemId),
     isLoading,
   });
 };
@@ -539,8 +591,6 @@ export interface SummaryRenderProps {
   currency: string;
   /** Total number of items */
   itemCount: number;
-  /** Whether checkout is available */
-  canCheckout: boolean;
   /** Whether totals are being calculated */
   isTotalsLoading: boolean;
 }
@@ -551,14 +601,16 @@ export interface SummaryRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Summary>
- *   {({ subtotal, discount, shipping, tax, total, itemCount, isTotalsLoading }) => (
+ *   {({ subtotal, discount, appliedCoupon, shipping, tax, total, currency, itemCount, canCheckout, isTotalsLoading }) => (
  *     <div>
  *       <h1>Cart Summary</h1>
  *       <p>Subtotal: {subtotal}</p>
  *       <p>Discount: {discount}</p>
+ *       <p>Applied Coupon: {appliedCoupon}</p>
  *       <p>Shipping: {shipping}</p>
  *       <p>Tax: {tax}</p>
  *       <p>Total: {total}</p>
+ *       <p>Currency: {currency}</p>
  *       <p>Item Count: {itemCount}</p>
  *       <p>Is Totals Loading: {isTotalsLoading ? 'Yes' : 'No'}</p>
  *     </div>
@@ -611,7 +663,6 @@ export const Summary = (props: SummaryProps) => {
     total,
     currency,
     itemCount,
-    canCheckout: itemCount > 0,
     isTotalsLoading,
   });
 };
@@ -629,9 +680,9 @@ export interface ClearProps {
  */
 export interface ClearRenderProps {
   /** Function to clear all items from cart */
-  onClear: () => Promise<void>;
-  /** Whether cart has items to clear */
-  hasItems: boolean;
+  clear: () => Promise<void>;
+  /** Total number of items in cart */
+  totalItems: number;
   /** Whether clear action is loading */
   isLoading: boolean;
 }
@@ -642,12 +693,12 @@ export interface ClearRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Clear>
- *   {({ onClear, hasItems, isLoading }) => (
+ *   {({ clear, totalItems, isLoading }) => (
  *     <div>
  *       <h1>Cart Clear</h1>
- *       <p>Has items: {hasItems ? 'Yes' : 'No'}</p>
+ *       <p>Total items: {totalItems}</p>
  *       <p>Is loading: {isLoading ? 'Yes' : 'No'}</p>
- *       <button onClick={onClear} disabled={isLoading}>Clear Cart</button>
+ *       <button onClick={clear} disabled={isLoading}>Clear Cart</button>
  *     </div>
  *   )}
  * </CurrentCart.Clear>
@@ -662,8 +713,8 @@ export const Clear = (props: ClearProps) => {
   const isLoading = service.isLoading.get();
 
   return props.children({
-    onClear: service.clearCart,
-    hasItems: itemCount > 0,
+    clear: service.clearCart,
+    totalItems: itemCount,
     isLoading,
   });
 };
@@ -681,7 +732,7 @@ export interface CheckoutProps {
  */
 export interface CheckoutRenderProps {
   /** Function to proceed to checkout */
-  onProceed: () => Promise<void>;
+  proceedToCheckout: () => Promise<void>;
   /** Whether checkout is available */
   canCheckout: boolean;
   /** Whether checkout action is loading */
@@ -696,13 +747,13 @@ export interface CheckoutRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Checkout>
- *   {({ onProceed, canCheckout, isLoading, error }) => (
+ *   {({ proceedToCheckout, canCheckout, isLoading, error }) => (
  *     <div>
  *       <h1>Checkout</h1>
  *       <p>Can checkout: {canCheckout ? 'Yes' : 'No'}</p>
  *       <p>Is loading: {isLoading ? 'Yes' : 'No'}</p>
  *       <p>Error: {error}</p>
- *       <button onClick={onProceed} disabled={!canCheckout || isLoading}>Proceed to Checkout</button>
+ *       <button onClick={proceedToCheckout} disabled={!canCheckout || isLoading}>Proceed to Checkout</button>
  *     </div>
  *   )}
  * </CurrentCart.Checkout>
@@ -718,7 +769,7 @@ export const Checkout = (props: CheckoutProps) => {
   const error = service.error.get();
 
   return props.children({
-    onProceed: service.proceedToCheckout,
+    proceedToCheckout: service.proceedToCheckout,
     canCheckout: itemCount > 0,
     isLoading,
     error,
@@ -740,7 +791,7 @@ export interface NotesRenderProps {
   /** Current notes value */
   notes: string;
   /** Function to update notes */
-  onNotesChange: (notes: string) => Promise<void>;
+  updateNotes: (notes: string) => Promise<void>;
 }
 
 /**
@@ -749,10 +800,10 @@ export interface NotesRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Notes>
- *   {({ notes, onNotesChange }) => (
+ *   {({ notes, updateNotes }) => (
  *     <textarea
  *       value={notes}
- *       onChange={e => onNotesChange(e.target.value)}
+ *       onChange={e => updateNotes(e.target.value)}
  *       placeholder="Special instructions for your order"
  *     />
  *   )}
@@ -768,7 +819,7 @@ export const Notes = (props: NotesProps) => {
 
   return props.children({
     notes,
-    onNotesChange: service.setBuyerNotes,
+    updateNotes: service.setBuyerNotes,
   });
 };
 
@@ -787,9 +838,9 @@ export interface CouponRenderProps {
   /** Applied coupon code if any */
   appliedCoupon: string | null;
   /** Function to apply coupon */
-  onApply: (code: string) => Promise<void>;
+  apply: (code: string) => Promise<void>;
   /** Function to remove coupon */
-  onRemove: () => Promise<void>;
+  remove: () => Promise<void>;
   /** Whether coupon action is loading */
   isLoading: boolean;
   /** Error message if coupon operation fails */
@@ -802,12 +853,13 @@ export interface CouponRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Coupon>
- *   {({ appliedCoupon, onApply, onRemove, isLoading }) => (
+ *   {({ appliedCoupon, apply, remove, isLoading, error }) => (
  *     <div>
+ *       {error && <p>Error: {error}</p>}
  *       {appliedCoupon ? (
  *         <div>
  *           <span>Coupon: {appliedCoupon}</span>
- *           <button onClick={onRemove} disabled={isLoading}>
+ *           <button onClick={remove} disabled={isLoading}>
  *             {isLoading ? 'Removing...' : 'Remove'}
  *           </button>
  *         </div>
@@ -815,7 +867,7 @@ export interface CouponRenderProps {
  *         <form onSubmit={e => {
  *           e.preventDefault();
  *           const code = new FormData(e.currentTarget).get('couponCode');
- *           if (code?.trim()) onApply(code.trim());
+ *           if (code?.trim()) apply(code.trim());
  *         }}>
  *           <input name="couponCode" placeholder="Enter promo code" disabled={isLoading} />
  *           <button type="submit" disabled={isLoading}>
@@ -843,8 +895,8 @@ export const Coupon = (props: CouponProps) => {
 
   return props.children({
     appliedCoupon,
-    onApply: service.applyCoupon,
-    onRemove: service.removeCoupon,
+    apply: service.applyCoupon,
+    remove: service.removeCoupon,
     isLoading,
     error,
   });
@@ -939,8 +991,8 @@ export type LineItemAddedCallback = (lineItems: LineItem[] | undefined) => void;
  * @example
  * ```tsx
  * // Combined with cart opening - show notification then open cart
- * <CurrentCart.Trigger>
- *   {({ onOpen }) => (
+ * <CurrentCart.OpenTrigger>
+ *   {({ open }) => (
  *     <CurrentCart.LineItemAdded>
  *       {({ onAddedToCart }) => {
  *         useEffect(() => {
@@ -948,7 +1000,7 @@ export type LineItemAddedCallback = (lineItems: LineItem[] | undefined) => void;
  *             setShowSuccessMessage(true);
  *             setTimeout(() => {
  *               setShowSuccessMessage(false);
- *               onOpen(); // Open cart after notification
+ *               open(); // Open cart after notification
  *             }, 3000);
  *           });
  *         }, [onAddedToCart]);
@@ -956,7 +1008,7 @@ export type LineItemAddedCallback = (lineItems: LineItem[] | undefined) => void;
  *       }}
  *     </CurrentCart.LineItemAdded>
  *   )}
- * </CurrentCart.Trigger>
+ * </CurrentCart.OpenTrigger>
  * ```
  */
 export const LineItemAdded = (props: LineItemAddedProps) => {

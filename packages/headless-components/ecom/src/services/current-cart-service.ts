@@ -61,21 +61,20 @@ export const CurrentCartService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      // @ts-ignore
       const cart: Signal<currentCart.Cart | null> = signalsService.signal(
-        config.initialCart || (null as any),
+        config.initialCart || null,
       );
-      const isOpen: Signal<boolean> = signalsService.signal(false as any);
-      const isLoading: Signal<boolean> = signalsService.signal(false as any);
+      const isOpen: Signal<boolean> = signalsService.signal(false);
+      const isLoading: Signal<boolean> = signalsService.signal(false);
       const isTotalsLoading: Signal<boolean> = signalsService.signal(
-        false as any,
+        false,
       );
       const isCouponLoading: Signal<boolean> = signalsService.signal(
-        false as any,
+        false,
       );
       const error: Signal<string | null> = signalsService.signal(null as any);
-      const buyerNotes: Signal<string> = signalsService.signal("" as any);
-      const cartTotals: Signal<any | null> = signalsService.signal(null as any);
+      const buyerNotes: Signal<string> = signalsService.signal("");
+      const cartTotals: Signal<any | null> = signalsService.signal(null);
       const onAddedToCartCallbaks = new Set<
         (lineItems: currentCart.AddToCurrentCartRequest["lineItems"]) => void
       >();

@@ -1,15 +1,16 @@
 import '../styles/theme-1.css';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import CartContent from '../components/ecom/Cart';
+import { type CurrentCartServiceConfig } from '@wix/headless-ecom/services';
 
 interface CartPageProps {
-  data?: any;
+  currentCartServiceConfig: CurrentCartServiceConfig;
 }
 
-export default function CartPage({ data }: CartPageProps) {
+export default function CartPage({ currentCartServiceConfig }: CartPageProps) {
   return (
     <KitchensinkLayout>
-      <CartContent />
+      <CartContent currentCartServiceConfig={currentCartServiceConfig} />
     </KitchensinkLayout>
   );
 }
