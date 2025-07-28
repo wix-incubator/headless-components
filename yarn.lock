@@ -3610,7 +3610,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@npm:^0.0.11, @wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@npm:^0.0.11":
+  version: 0.0.11
+  resolution: "@wix/headless-ecom@npm:0.0.11"
+  dependencies:
+    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
+    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
+    "@wix/sdk": "npm:^1.15.24"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/c42bc79b5a9082abb8bcd6e3e4b43e44bce4bc824fbed601be594b361588f70a3a04f608259b1b2008f0b34c29524f647a6cf3cd1a42176b4c39617862b8ff76
+  languageName: node
+  linkType: hard
+
+"@wix/headless-ecom@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@wix/headless-ecom@npm:0.0.7"
+  dependencies:
+    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
+    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
+    "@wix/sdk": "npm:^1.15.24"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/b599015eb2667a6ec0cef3ff0ef98976f84f474414b84492f0681ef0c3b457fffa5e3d3d8ef3980b026eaa101128f5a9e73fd518ec97a37f9b4c580d09029e34
+  languageName: node
+  linkType: hard
+
+"@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -3629,19 +3655,6 @@ __metadata:
     vitest: "npm:^3.1.4"
   languageName: unknown
   linkType: soft
-
-"@wix/headless-ecom@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@wix/headless-ecom@npm:0.0.7"
-  dependencies:
-    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
-    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
-    "@wix/sdk": "npm:^1.15.24"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-  checksum: 10c0/b599015eb2667a6ec0cef3ff0ef98976f84f474414b84492f0681ef0c3b457fffa5e3d3d8ef3980b026eaa101128f5a9e73fd518ec97a37f9b4c580d09029e34
-  languageName: node
-  linkType: hard
 
 "@wix/headless-integrations@workspace:.":
   version: 0.0.0-use.local
