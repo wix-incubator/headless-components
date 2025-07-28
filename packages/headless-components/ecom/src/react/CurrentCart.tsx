@@ -314,16 +314,15 @@ export interface ContentRenderProps {
  *                 </CurrentCart.Coupon>
  *
  *                 <CurrentCart.Summary>
- *                   {({ subtotal, discount, appliedCoupon, shipping, tax, total, currency, itemCount, canCheckout, isTotalsLoading }) => (
+ *                   {({ subtotal, discount, appliedCoupon, shipping, tax, total, currency, totalItems, isTotalsLoading }) => (
  *                     <div>
- *                       <div>Subtotal ({itemCount} items): {isTotalsLoading ? 'Calculating...' : subtotal}</div>
+ *                       <div>Subtotal ({totalItems} items): {isTotalsLoading ? 'Calculating...' : subtotal}</div>
  *                       {discount && <div>Discount: -{discount}</div>}
  *                       {appliedCoupon && <div>Applied Coupon: {appliedCoupon}</div>}
  *                       <div>Shipping: {isTotalsLoading ? 'Calculating...' : shipping}</div>
  *                       <div>Tax: {isTotalsLoading ? 'Calculating...' : tax}</div>
  *                       <div>Total: {isTotalsLoading ? 'Calculating...' : total}</div>
  *                       <div>Currency: {currency}</div>
- *                       <div>Can Checkout: {canCheckout ? 'Yes' : 'No'}</div>
  *                     </div>
  *                   )}
  *                 </CurrentCart.Summary>
@@ -590,7 +589,7 @@ export interface SummaryRenderProps {
   /** Currency code */
   currency: string;
   /** Total number of items */
-  itemCount: number;
+  totalItems: number;
   /** Whether totals are being calculated */
   isTotalsLoading: boolean;
 }
@@ -601,7 +600,7 @@ export interface SummaryRenderProps {
  * @example
  * ```tsx
  * <CurrentCart.Summary>
- *   {({ subtotal, discount, appliedCoupon, shipping, tax, total, currency, itemCount, canCheckout, isTotalsLoading }) => (
+ *   {({ subtotal, discount, appliedCoupon, shipping, tax, total, currency, totalItems, isTotalsLoading }) => (
  *     <div>
  *       <h1>Cart Summary</h1>
  *       <p>Subtotal: {subtotal}</p>
@@ -611,7 +610,7 @@ export interface SummaryRenderProps {
  *       <p>Tax: {tax}</p>
  *       <p>Total: {total}</p>
  *       <p>Currency: {currency}</p>
- *       <p>Item Count: {itemCount}</p>
+ *       <p>Item Count: {totalItems}</p>
  *       <p>Is Totals Loading: {isTotalsLoading ? 'Yes' : 'No'}</p>
  *     </div>
  *   )}
@@ -624,7 +623,7 @@ export const Summary = (props: SummaryProps) => {
   >;
 
   const cart = service.cart.get();
-  const itemCount = service.cartCount.get();
+  const totalItems = service.cartCount.get();
   const cartTotals = service.cartTotals.get();
   const isTotalsLoading = service.isTotalsLoading.get();
   const currency = cart?.currency || cartTotals?.currency || "USD";
@@ -662,7 +661,7 @@ export const Summary = (props: SummaryProps) => {
     tax,
     total,
     currency,
-    itemCount,
+    totalItems,
     isTotalsLoading,
   });
 };
@@ -709,12 +708,12 @@ export const Clear = (props: ClearProps) => {
     typeof CurrentCartServiceDefinition
   >;
 
-  const itemCount = service.cartCount.get();
+  const totalItems = service.cartCount.get();
   const isLoading = service.isLoading.get();
 
   return props.children({
     clear: service.clearCart,
-    totalItems: itemCount,
+    totalItems,
     isLoading,
   });
 };
@@ -764,13 +763,13 @@ export const Checkout = (props: CheckoutProps) => {
     typeof CurrentCartServiceDefinition
   >;
 
-  const itemCount = service.cartCount.get();
+  const totalItems = service.cartCount.get();
   const isLoading = service.isLoading.get();
   const error = service.error.get();
 
   return props.children({
     proceedToCheckout: service.proceedToCheckout,
-    canCheckout: itemCount > 0,
+    canCheckout: totalItems > 0,
     isLoading,
     error,
   });
