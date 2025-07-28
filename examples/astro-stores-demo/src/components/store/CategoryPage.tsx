@@ -5,12 +5,14 @@ import {
   ProductList,
   ProductListFilters,
   ProductListPagination,
+  ProductListSort,
   ProductVariantSelector,
   SelectedVariant,
 } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
   ProductsListFiltersServiceConfig,
+  ProductsListSortServiceConfig,
 } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
@@ -25,6 +27,7 @@ import { SortDropdown } from './SortDropdown';
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
   productsListFiltersConfig: ProductsListFiltersServiceConfig;
+  productsListSortConfig: ProductsListSortServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
   currentCategorySlug: string;
   productPageRoute: string;
@@ -34,12 +37,10 @@ export const ProductGridContent = ({
   productPageRoute,
   categoriesListConfig,
   currentCategorySlug,
-  productsListFiltersConfig,
 }: {
   productPageRoute: string;
   categoriesListConfig: CategoriesListServiceConfig;
   currentCategorySlug: string;
-  productsListFiltersConfig: ProductsListFiltersServiceConfig;
 }) => {
   const [quickViewProduct, setQuickViewProduct] =
     useState<productsV3.V3Product | null>(null);
@@ -65,7 +66,9 @@ export const ProductGridContent = ({
         productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
 
     return (
-      <SelectedVariant.Root>
+      <SelectedVariant.Root
+        selectedVariantServiceConfig={{ fetchInventoryData: false }}
+      >
         <div
           data-testid="product-item"
           data-product-id={product._id}
@@ -450,128 +453,123 @@ export const ProductGridContent = ({
       </div>
 
       {/* Main Layout with Sidebar and Content */}
-      <ProductListFilters.Root
-        productsListFiltersConfig={productsListFiltersConfig}
-      >
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          {/* Filters Sidebar */}
-          <div className="w-full lg:w-80 lg:flex-shrink-0">
-            <div className="lg:sticky lg:top-6">
-              <div className="relative">
-                <ProductFilters />
-              </div>
-            </div>
-          </div>
 
-          {/* Main Content Area */}
-          <div className="flex-1 min-w-0">
-            <ProductList.Error>
-              {({ error }) => (
-                <div className="bg-surface-error border border-status-error rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
-                  <p className="text-status-error text-sm sm:text-base">
-                    {error}
-                  </p>
-                </div>
-              )}
-            </ProductList.Error>
-
-            {/* Filter Status Bar */}
-            <ProductListFilters.ResetTrigger>
-              {({ resetFilters, isFiltered }) =>
-                isFiltered && (
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 filter-status-bar rounded-xl p-4 mb-6">
-                    <div className="flex items-center gap-2">
-                      <svg
-                        className="w-5 h-5 text-brand-primary flex-shrink-0"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                        />
-                      </svg>
-                      <span className="text-brand-light text-sm sm:text-base">
-                        <ProductList.Items>
-                          {({ products }) =>
-                            `Showing ${String(products.length)}`
-                          }
-                        </ProductList.Items>
-                      </span>
-                    </div>
-                    <button
-                      onClick={resetFilters}
-                      className="text-brand-primary hover:text-brand-light transition-colors text-sm self-start sm:self-auto"
-                    >
-                      Clear Filters
-                    </button>
-                  </div>
-                )
-              }
-            </ProductListFilters.ResetTrigger>
-
-            <ProductList.Loading>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-surface-card rounded-xl p-4 animate-pulse"
-                  >
-                    <div className="aspect-square bg-surface-primary rounded-lg mb-4"></div>
-                    <div className="h-4 bg-surface-primary rounded mb-2"></div>
-                    <div className="h-3 bg-surface-primary rounded w-2/3"></div>
-                  </div>
-                ))}
-              </div>
-            </ProductList.Loading>
-
-            <ProductList.EmptyState>
-              <div className="text-center py-12 sm:py-16">
-                <div className="w-16 h-16 sm:w-24 sm:h-24 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <svg
-                    className="w-8 h-8 sm:w-12 sm:h-12 text-content-muted"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                  </svg>
-                </div>
-                <ProductListFilters.ResetTrigger>
-                  {({ isFiltered }) => (
-                    <>
-                      <h2 className="text-xl sm:text-2xl font-bold text-content-primary mb-3 sm:mb-4">
-                        {isFiltered
-                          ? 'No Products Match Your Filters'
-                          : 'No Products Found'}
-                      </h2>
-                      <p className="text-content-light text-sm sm:text-base">
-                        {isFiltered
-                          ? 'Try adjusting your filters to see more products.'
-                          : "We couldn't find any products to display."}
-                      </p>
-                    </>
-                  )}
-                </ProductListFilters.ResetTrigger>
-              </div>
-            </ProductList.EmptyState>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-              <ProductList.ItemContent>
-                {({ product }) => <ProductItem product={product} />}
-              </ProductList.ItemContent>
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        {/* Filters Sidebar */}
+        <div className="w-full lg:w-80 lg:flex-shrink-0">
+          <div className="lg:sticky lg:top-6">
+            <div className="relative">
+              <ProductFilters />
             </div>
           </div>
         </div>
-      </ProductListFilters.Root>
+
+        {/* Main Content Area */}
+        <div className="flex-1 min-w-0">
+          <ProductList.Error>
+            {({ error }) => (
+              <div className="bg-surface-error border border-status-error rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+                <p className="text-status-error text-sm sm:text-base">
+                  {error}
+                </p>
+              </div>
+            )}
+          </ProductList.Error>
+
+          {/* Filter Status Bar */}
+          <ProductListFilters.ResetTrigger>
+            {({ resetFilters, isFiltered }) =>
+              isFiltered && (
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 filter-status-bar rounded-xl p-4 mb-6">
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-brand-primary flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                      />
+                    </svg>
+                    <span className="text-brand-light text-sm sm:text-base">
+                      <ProductList.Items>
+                        {({ products }) => `Showing ${String(products.length)}`}
+                      </ProductList.Items>
+                    </span>
+                  </div>
+                  <button
+                    onClick={resetFilters}
+                    className="text-brand-primary hover:text-brand-light transition-colors text-sm self-start sm:self-auto"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              )
+            }
+          </ProductListFilters.ResetTrigger>
+
+          <ProductList.Loading>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-surface-card rounded-xl p-4 animate-pulse"
+                >
+                  <div className="aspect-square bg-surface-primary rounded-lg mb-4"></div>
+                  <div className="h-4 bg-surface-primary rounded mb-2"></div>
+                  <div className="h-3 bg-surface-primary rounded w-2/3"></div>
+                </div>
+              ))}
+            </div>
+          </ProductList.Loading>
+
+          <ProductList.EmptyState>
+            <div className="text-center py-12 sm:py-16">
+              <div className="w-16 h-16 sm:w-24 sm:h-24 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <svg
+                  className="w-8 h-8 sm:w-12 sm:h-12 text-content-muted"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  />
+                </svg>
+              </div>
+              <ProductListFilters.ResetTrigger>
+                {({ isFiltered }) => (
+                  <>
+                    <h2 className="text-xl sm:text-2xl font-bold text-content-primary mb-3 sm:mb-4">
+                      {isFiltered
+                        ? 'No Products Match Your Filters'
+                        : 'No Products Found'}
+                    </h2>
+                    <p className="text-content-light text-sm sm:text-base">
+                      {isFiltered
+                        ? 'Try adjusting your filters to see more products.'
+                        : "We couldn't find any products to display."}
+                    </p>
+                  </>
+                )}
+              </ProductListFilters.ResetTrigger>
+            </div>
+          </ProductList.EmptyState>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+            <ProductList.ItemContent>
+              {({ product }) => <ProductItem product={product} />}
+            </ProductList.ItemContent>
+          </div>
+        </div>
+      </div>
 
       {/* Quick View Modal */}
       {quickViewProduct && (
@@ -649,21 +647,27 @@ export const LoadMoreSection = () => {
 export function CategoryPage({
   productsListConfig,
   productsListFiltersConfig,
+  productsListSortConfig,
   categoriesListConfig,
   currentCategorySlug,
   productPageRoute,
 }: StoreCollectionPageProps) {
   return (
     <ProductList.Root productsListConfig={productsListConfig}>
-      <ProductListPagination.Root>
-        <ProductGridContent
-          productPageRoute={productPageRoute}
-          productsListFiltersConfig={productsListFiltersConfig}
-          categoriesListConfig={categoriesListConfig}
-          currentCategorySlug={currentCategorySlug}
-        />
-        <LoadMoreSection />
-      </ProductListPagination.Root>
+      <ProductListFilters.Root
+        productsListFiltersConfig={productsListFiltersConfig}
+      >
+        <ProductListSort.Root productsListSortConfig={productsListSortConfig}>
+          <ProductListPagination.Root>
+            <ProductGridContent
+              productPageRoute={productPageRoute}
+              categoriesListConfig={categoriesListConfig}
+              currentCategorySlug={currentCategorySlug}
+            />
+            <LoadMoreSection />
+          </ProductListPagination.Root>
+        </ProductListSort.Root>
+      </ProductListFilters.Root>
     </ProductList.Root>
   );
 }

@@ -40,6 +40,9 @@ export {
   SortType,
   ProductsListSortService,
   ProductsListSortServiceDefinition,
+  ProductsListSortServiceConfig,
+  loadProductsListSortServiceConfig,
+  convertUrlSortToSortType,
 } from "./products-list-sort-service.js";
 
 export {
@@ -48,6 +51,7 @@ export {
   ProductsListFiltersServiceDefinition,
   loadProductsListFiltersServiceConfig,
   ProductsListFiltersServiceConfig,
+  parseUrlForProductsAndFilters,
 } from "./products-list-filters-service.js";
 
 export {

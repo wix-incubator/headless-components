@@ -245,6 +245,14 @@ export const ProductsListServiceDefinition = defineService<
     setSearchOptions: (
       searchOptions: Parameters<typeof productsV3.searchProducts>[0],
     ) => void;
+    /** Function to update only the sort part of search options */
+    setSort: (
+      sort: Parameters<typeof productsV3.searchProducts>[0]["sort"],
+    ) => void;
+    /** Function to update only the filter part of search options */
+    setFilter: (
+      filter: Parameters<typeof productsV3.searchProducts>[0]["filter"],
+    ) => void;
   },
   ProductsListServiceConfig
 >("products-list");
@@ -351,9 +359,7 @@ export const ProductListService =
                 }
               : searchOptions;
 
-            const result = await fetchProducts(
-              affectiveSearchOptions,
-            );
+            const result = await fetchProducts(affectiveSearchOptions);
 
             productsSignal.set(result.products ?? []);
             pagingMetadataSignal.set(result.pagingMetadata!);
@@ -377,6 +383,24 @@ export const ProductListService =
         setSearchOptions: (
           searchOptions: Parameters<typeof productsV3.searchProducts>[0],
         ) => searchOptionsSignal.set(searchOptions),
+        setSort: (
+          sort: Parameters<typeof productsV3.searchProducts>[0]["sort"],
+        ) => {
+          const currentOptions = searchOptionsSignal.peek();
+          searchOptionsSignal.set({
+            ...currentOptions,
+            sort,
+          });
+        },
+        setFilter: (
+          filter: Parameters<typeof productsV3.searchProducts>[0]["filter"],
+        ) => {
+          const currentOptions = searchOptionsSignal.peek();
+          searchOptionsSignal.set({
+            ...currentOptions,
+            filter,
+          });
+        },
         isLoading: isLoadingSignal,
         error: errorSignal,
       };

@@ -7,11 +7,11 @@ import {
   loadCategoryServiceConfig,
   loadProductsListFiltersServiceConfig,
   loadProductsListServiceConfig,
+  loadProductsListSortServiceConfig,
+  parseUrlForProductsAndFilters,
 } from '@wix/headless-stores/services';
-import { seoTags } from '@wix/seo';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoreCollectionPage from '../../react-pages/category/index';
-import { buildSearchOptionsFromUrl } from './parseSearchOptionsFromUrl.js';
 
 // Get category slug from URL params
 const { categorySlug = '' } = Astro.params;
@@ -25,7 +25,7 @@ if (categoryLoadResult.type === 'not-found') {
 const category = categoryLoadResult.config.category;
 const categoryName = category?.name || '';
 
-const searchOptions = buildSearchOptionsFromUrl(Astro.url.href, {
+const searchOptions = await parseUrlForProductsAndFilters(Astro.url.href, {
   cursorPaging: {
     limit: 10,
   },
@@ -41,41 +41,36 @@ const [
   categoriesListConfig,
   currentCartServiceConfig,
   productsListFiltersConfig,
+  productsListSortConfig,
+  seoTagsServiceConfig,
 ] = await Promise.all([
   loadProductsListServiceConfig(searchOptions),
   loadCategoriesListServiceConfig(),
   loadCurrentCartServiceConfig(),
-  loadProductsListFiltersServiceConfig(),
+  loadProductsListFiltersServiceConfig(searchOptions),
+  loadProductsListSortServiceConfig(Astro.url.href),
   loadSEOTagsServiceConfig({
     pageUrl: Astro.url.href,
-    itemType: seoTags.ItemType.STORES_CATEGORY,
     itemData: {
-      slug: categorySlug,
+      pageName: categoryName,
+      seoData: {
+        tags: [
+          {
+            type: 'title',
+            children: `${categoryName} - Store`,
+          },
+          {
+            type: 'meta',
+            props: {
+              content: `Browse our ${categoryName} products`,
+              name: 'description',
+            },
+          },
+        ],
+      },
     },
   }),
 ]);
-
-const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
-  pageUrl: Astro.url.href,
-  itemData: {
-    pageName: categoryName,
-    seoData: {
-      tags: [
-        {
-          type: 'title',
-          children: `${categoryName} - Store`,
-        },
-        {
-          type: 'meta',
-          props: {
-            content: `Browse our ${categoryName} products`,
-            name: 'description',
-          },
-        },
-      ],
-    },
-  },
-});
 ---
 
 <BaseLayout>
@@ -87,6 +82,7 @@ const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
     categoriesListConfig={categoriesListConfig}
     productsListConfig={productsListConfig}
     productsListFiltersConfig={productsListFiltersConfig}
+    productsListSortConfig={productsListSortConfig}
     slug={categorySlug}
     slot="body"
   />

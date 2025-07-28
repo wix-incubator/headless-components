@@ -21,11 +21,14 @@ export const ProductsListSortServiceDefinition = defineService<{
 
 /**
  * Configuration interface for the Products List Sort service.
- * Currently empty as this service doesn't require initial configuration.
+ * Allows setting initial sort option from URL parameters.
  *
  * @interface ProductsListSortServiceConfig
  */
-export type ProductsListSortServiceConfig = {};
+export type ProductsListSortServiceConfig = {
+  /** Initial sort option from URL parameters */
+  initialSort?: SortType;
+};
 
 /**
  * Enumeration of available product sort types.
@@ -46,6 +49,90 @@ export enum SortType {
   PRICE_DESC = "price_desc",
   /** Sort by recommended products (algorithm-based) */
   RECOMMENDED = "recommended",
+}
+
+/**
+ * Convert SortType enum to URL format
+ */
+function convertSortTypeToUrl(sortType: SortType): string {
+  switch (sortType) {
+    case SortType.NAME_ASC:
+      return "name";
+    case SortType.NAME_DESC:
+      return "name:desc";
+    case SortType.PRICE_ASC:
+      return "price";
+    case SortType.PRICE_DESC:
+      return "price:desc";
+    case SortType.NEWEST:
+      return "newest";
+    case SortType.RECOMMENDED:
+      return "recommended";
+    default:
+      return "name"; // Default fallback
+  }
+}
+
+/**
+ * Convert URL sort format to SortType enum
+ */
+export function convertUrlSortToSortType(urlSort: string): SortType | null {
+  const sortParts = urlSort.split(":");
+  const field = sortParts[0]?.toLowerCase();
+  const order = sortParts[1]?.toLowerCase() === "desc" ? "desc" : "asc";
+
+  switch (field) {
+    case "name":
+      return order === "desc" ? SortType.NAME_DESC : SortType.NAME_ASC;
+    case "price":
+      return order === "desc" ? SortType.PRICE_DESC : SortType.PRICE_ASC;
+    case "newest":
+    case "created":
+      return SortType.NEWEST;
+    case "recommended":
+      return SortType.RECOMMENDED;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Update URL with sort parameter
+ */
+function updateUrlWithSort(sortType: string): void {
+  if (typeof window === "undefined") return;
+
+  const url = new URL(window.location.href);
+  const urlSort = convertSortTypeToUrl(sortType as SortType);
+
+  // Only add sort parameter if it's not the default (name ascending)
+  if (sortType === SortType.NAME_ASC) {
+    url.searchParams.delete("sort");
+  } else {
+    url.searchParams.set("sort", urlSort);
+  }
+
+  // Update URL without page reload
+  window.history.pushState({}, "", url.toString());
+}
+
+/**
+ * Load sort service configuration from URL parameters
+ */
+export function loadProductsListSortServiceConfig(
+  url: string,
+): ProductsListSortServiceConfig {
+  const urlObj = new URL(url);
+  const sortParam = urlObj.searchParams.get("sort");
+
+  if (sortParam) {
+    const sortType = convertUrlSortToSortType(sortParam);
+    if (sortType) {
+      return { initialSort: sortType };
+    }
+  }
+
+  return {}; // Default configuration
 }
 
 /**
@@ -96,12 +183,15 @@ export enum SortType {
 export const ProductsListSortService =
   implementService.withConfig<ProductsListSortServiceConfig>()(
     ProductsListSortServiceDefinition,
-    ({ getService }) => {
+    ({ getService, config }) => {
       let firstRun = true;
       const signalsService = getService(SignalsServiceDefinition);
       const productsListService = getService(ProductsListServiceDefinition);
 
-      const selectedSortOptionSignal = signalsService.signal<string>("name");
+      // Initialize with URL sort if provided, otherwise default to name ascending
+      const initialSort = config.initialSort || SortType.NAME_ASC;
+      const selectedSortOptionSignal =
+        signalsService.signal<string>(initialSort);
 
       if (typeof window !== "undefined") {
         signalsService.effect(() => {
@@ -162,7 +252,19 @@ export const ProductsListSortService =
               break;
           }
 
-          productsListService.setSearchOptions(newSearchOptions);
+          productsListService.setSort(newSearchOptions.sort);
+        });
+
+        // URL synchronization effect
+        signalsService.effect(() => {
+          const sort = selectedSortOptionSignal.get();
+
+          if (firstRun) {
+            return;
+          }
+
+          // Update URL with current sort
+          updateUrlWithSort(sort);
         });
       }
 
