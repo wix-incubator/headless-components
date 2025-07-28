@@ -60,67 +60,63 @@ export default function CartContent({
                 )}
 
                 {/* Empty Cart */}
+                <CurrentCart.EmptyState>
+                  <div className="text-center py-16">
+                    <div className="w-32 h-32 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-8">
+                      <svg
+                        className="w-16 h-16 text-content-muted"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6h9M7 13l-1.5 6m0 0h9m-9 0a1 1 0 100 2 1 1 0 000-2zm9 0a1 1 0 100 2 1 1 0 000-2z"
+                        />
+                      </svg>
+                    </div>
+                    <h2 className="text-3xl font-bold text-content-primary mb-4">
+                      Your cart is empty
+                    </h2>
+                    <p className="text-content-light text-lg mb-8">
+                      Start shopping to add items to your cart
+                    </p>
+                    <a
+                      href="/"
+                      className="inline-flex items-center gap-2 text-content-primary font-semibold py-3 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 btn-primary"
+                      onMouseEnter={(e: any) => {
+                        e.currentTarget.classList.remove('btn-primary');
+                        e.currentTarget.classList.add('btn-primary:hover');
+                      }}
+                      onMouseLeave={(e: any) => {
+                        e.currentTarget.classList.remove('btn-primary:hover');
+                        e.currentTarget.classList.add('btn-primary');
+                      }}
+                    >
+                      Continue Shopping
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </a>
+                  </div>
+                </CurrentCart.EmptyState>
+
+                {/* Cart with Items */}
                 <CurrentCart.LineItemsList>
                   {({ items, totalItems }) => (
                     <>
-                      {totalItems === 0 && !isLoading && (
-                        <div className="text-center py-16">
-                          <div className="w-32 h-32 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-8">
-                            <svg
-                              className="w-16 h-16 text-content-muted"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6h9M7 13l-1.5 6m0 0h9m-9 0a1 1 0 100 2 1 1 0 000-2zm9 0a1 1 0 100 2 1 1 0 000-2z"
-                              />
-                            </svg>
-                          </div>
-                          <h2 className="text-3xl font-bold text-content-primary mb-4">
-                            Your cart is empty
-                          </h2>
-                          <p className="text-content-light text-lg mb-8">
-                            Start shopping to add items to your cart
-                          </p>
-                          <a
-                            href="/"
-                            className="inline-flex items-center gap-2 text-content-primary font-semibold py-3 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 btn-primary"
-                            onMouseEnter={(e: any) => {
-                              e.currentTarget.classList.remove('btn-primary');
-                              e.currentTarget.classList.add(
-                                'btn-primary:hover'
-                              );
-                            }}
-                            onMouseLeave={(e: any) => {
-                              e.currentTarget.classList.remove(
-                                'btn-primary:hover'
-                              );
-                              e.currentTarget.classList.add('btn-primary');
-                            }}
-                          >
-                            Continue Shopping
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </a>
-                        </div>
-                      )}
-
-                      {/* Cart with Items */}
                       {totalItems > 0 && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                           {/* Cart Items */}
