@@ -11,7 +11,10 @@ import {
   type ConnectedModifierChoice,
 } from "@wix/auto_sdk_stores_products-v-3";
 import { createServicesMap } from "@wix/services-manager";
-import type { PropsWithChildren } from "react";
+
+export interface RootProps {
+  children: React.ReactNode;
+}
 
 /**
  * Root component that provides the ProductModifiers service context to its children.
@@ -87,7 +90,7 @@ import type { PropsWithChildren } from "react";
  * }
  * ```
  */
-export function Root(props: PropsWithChildren<{}>) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(

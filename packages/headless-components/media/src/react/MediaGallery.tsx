@@ -6,7 +6,11 @@ import {
 } from "../services/index.js";
 import { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
 import { createServicesMap } from "@wix/services-manager";
-import type { PropsWithChildren } from "react";
+
+export interface RootProps {
+  children: React.ReactNode;
+  mediaGalleryServiceConfig: MediaGalleryServiceConfig;
+}
 
 /**
  * Root component that provides the MediaGallery service context to its children.
@@ -55,11 +59,7 @@ import type { PropsWithChildren } from "react";
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{
-    mediaGalleryServiceConfig: MediaGalleryServiceConfig;
-  }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(

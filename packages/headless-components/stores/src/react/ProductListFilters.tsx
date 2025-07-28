@@ -49,7 +49,7 @@ export interface RootProps {
  * }
  * ```
  */
-export function Root(props: RootProps) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(

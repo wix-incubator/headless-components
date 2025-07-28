@@ -6,12 +6,16 @@ import {
   SelectedVariantServiceConfig,
 } from "../services/selected-variant-service.js";
 import { createServicesMap } from "@wix/services-manager";
-import type { PropsWithChildren } from "react";
 import {
   type ConnectedOption,
   type ConnectedOptionChoice,
   InventoryAvailabilityStatus,
 } from "@wix/auto_sdk_stores_products-v-3";
+
+export interface RootProps {
+  children: React.ReactNode;
+  selectedVariantServiceConfig: SelectedVariantServiceConfig;
+}
 
 /**
  * Root component that provides the ProductVariantSelector service context to its children.
@@ -51,11 +55,7 @@ import {
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{
-    selectedVariantServiceConfig?: SelectedVariantServiceConfig;
-  }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(

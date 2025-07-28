@@ -8,7 +8,11 @@ import {
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 import { createServicesMap } from "@wix/services-manager";
-import type { PropsWithChildren } from "react";
+
+export interface RootProps {
+  children: React.ReactNode;
+  selectedVariantServiceConfig: SelectedVariantServiceConfig;
+}
 
 /**
  * Root component that provides the SelectedVariant service context to its children.
@@ -43,11 +47,7 @@ import type { PropsWithChildren } from "react";
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{
-    selectedVariantServiceConfig?: SelectedVariantServiceConfig;
-  }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(

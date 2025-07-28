@@ -1,11 +1,14 @@
 import { createServicesMap } from "@wix/services-manager";
 import { useService, WixServices } from "@wix/services-manager-react";
-import type { PropsWithChildren, ReactNode } from "react";
 import {
   ProductsListPaginationService,
   ProductsListPaginationServiceDefinition,
 } from "../services/products-list-pagination-service.js";
 import { ProductsListServiceDefinition } from "../services/products-list-service.js";
+
+export interface RootProps {
+  children: React.ReactNode;
+}
 
 /**
  * Root component that provides the ProductListPagination service context to its children.
@@ -35,7 +38,7 @@ import { ProductsListServiceDefinition } from "../services/products-list-service
  * }
  * ```
  */
-export function Root(props: PropsWithChildren) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -53,7 +56,7 @@ export function Root(props: PropsWithChildren) {
  */
 export interface PageSizeProps {
   /** Content to display (can be a render function receiving page size controls or ReactNode) */
-  children: ((props: PageSizeRenderProps) => ReactNode) | ReactNode;
+  children: ((props: PageSizeRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -110,7 +113,7 @@ export function PageSize(props: PageSizeProps) {
  */
 export interface NextPageTriggerProps {
   /** Content to display (can be a render function receiving next page controls or ReactNode) */
-  children: ((props: NextPageTriggerRenderProps) => ReactNode) | ReactNode;
+  children: ((props: NextPageTriggerRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -162,7 +165,7 @@ export function NextPageTrigger(props: NextPageTriggerProps) {
  */
 export interface PreviousPageTriggerProps {
   /** Content to display (can be a render function receiving previous page controls or ReactNode) */
-  children: ((props: PreviousPageTriggerRenderProps) => ReactNode) | ReactNode;
+  children: ((props: PreviousPageTriggerRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -214,7 +217,7 @@ export function PreviousPageTrigger(props: PreviousPageTriggerProps) {
  */
 export interface FirstPageTriggerProps {
   /** Content to display (can be a render function receiving first page controls or ReactNode) */
-  children: ((props: FirstPageTriggerRenderProps) => ReactNode) | ReactNode;
+  children: ((props: FirstPageTriggerRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -267,7 +270,7 @@ export function FirstPageTrigger(props: FirstPageTriggerProps) {
  */
 export interface LoadMoreTriggerProps {
   /** Content to display (can be a render function receiving load more controls or ReactNode) */
-  children: ((props: LoadMoreTriggerRenderProps) => ReactNode) | ReactNode;
+  children: ((props: LoadMoreTriggerRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**

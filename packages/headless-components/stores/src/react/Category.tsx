@@ -1,11 +1,15 @@
 import { createServicesMap } from "@wix/services-manager";
 import { useService, WixServices } from "@wix/services-manager-react";
-import type { PropsWithChildren, ReactNode } from "react";
 import {
   CategoryService,
   CategoryServiceDefinition,
   type CategoryServiceConfig,
 } from "../services/category-service.js";
+
+export interface RootProps {
+  children: React.ReactNode;
+  categoryServiceConfig: CategoryServiceConfig;
+}
 
 /**
  * Root component that provides the Category service context to its children.
@@ -31,9 +35,7 @@ import {
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{ categoryServiceConfig: CategoryServiceConfig }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -52,7 +54,7 @@ export function Root(
  */
 export interface NameProps {
   /** Content to display (can be a render function receiving name data or ReactNode) */
-  children: ((props: NameRenderProps) => ReactNode) | ReactNode;
+  children: ((props: NameRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -95,7 +97,7 @@ export function Name(props: NameProps) {
  */
 export interface SlugProps {
   /** Content to display (can be a render function receiving slug data or ReactNode) */
-  children: ((props: SlugRenderProps) => ReactNode) | ReactNode;
+  children: ((props: SlugRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**

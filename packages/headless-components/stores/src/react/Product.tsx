@@ -10,7 +10,11 @@ import type {
   V3Product,
   ProductMedia,
 } from "@wix/auto_sdk_stores_products-v-3";
-import type { PropsWithChildren } from "react";
+
+export interface RootProps {
+  children: React.ReactNode;
+  productServiceConfig: ProductServiceConfig;
+}
 
 /**
  * Root component that provides the Product service context to its children.
@@ -42,11 +46,7 @@ import type { PropsWithChildren } from "react";
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{
-    productServiceConfig: ProductServiceConfig;
-  }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(

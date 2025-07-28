@@ -8,7 +8,12 @@ import {
 } from "../services/index.js";
 import { FileUploadServiceConfig } from "../services/file-upload-service.js";
 import { createServicesMap } from "@wix/services-manager";
-import type { PropsWithChildren } from "react";
+
+export interface RootProps {
+  children: React.ReactNode;
+  fileUploadServiceConfig: FileUploadServiceConfig;
+}
+
 
 /**
  * Root component that provides the FileUpload service context to its children.
@@ -56,11 +61,7 @@ import type { PropsWithChildren } from "react";
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{
-    fileUploadServiceConfig: FileUploadServiceConfig;
-  }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(

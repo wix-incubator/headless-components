@@ -5,9 +5,13 @@ import {
   CategoriesListServiceDefinition,
   type CategoriesListServiceConfig,
 } from "../services/categories-list-service.js";
-import type { PropsWithChildren, ReactNode } from "react";
 import { categories } from "@wix/categories";
 import { Root as CategoryRoot } from "./Category.js";
+
+export interface RootProps {
+  children: React.ReactNode;
+  categoriesListConfig: CategoriesListServiceConfig;
+}
 
 /**
  * Root component that provides the CategoryList service context to its children.
@@ -34,11 +38,7 @@ import { Root as CategoryRoot } from "./Category.js";
  * }
  * ```
  */
-export function Root(
-  props: PropsWithChildren<{
-    categoriesListConfig: CategoriesListServiceConfig;
-  }>,
-) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -57,7 +57,7 @@ export function Root(
  */
 export interface EmptyStateProps {
   /** Content to display when categories list is empty (can be a render function or ReactNode) */
-  children: ((props: EmptyStateRenderProps) => ReactNode) | ReactNode;
+  children: ((props: EmptyStateRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -110,7 +110,7 @@ export function EmptyState(props: EmptyStateProps) {
  */
 export interface LoadingProps {
   /** Content to display during loading (can be a render function or ReactNode) */
-  children: ((props: LoadingRenderProps) => ReactNode) | ReactNode;
+  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -159,7 +159,7 @@ export function Loading(props: LoadingProps) {
  */
 export interface ErrorProps {
   /** Content to display during error state (can be a render function or ReactNode) */
-  children: ((props: ErrorRenderProps) => ReactNode) | ReactNode;
+  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
 }
 
 /**
@@ -214,7 +214,7 @@ export function Error(props: ErrorProps) {
  */
 export interface ItemContentProps {
   /** Content to display for each category (can be a render function receiving category data or ReactNode) */
-  children: ((props: ItemContentRenderProps) => ReactNode) | ReactNode;
+  children: ((props: ItemContentRenderProps) => React.ReactNode) | React. ReactNode;
 }
 
 /**

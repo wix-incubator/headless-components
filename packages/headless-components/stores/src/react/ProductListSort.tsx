@@ -1,11 +1,14 @@
 import { createServicesMap } from "@wix/services-manager";
 import { useService, WixServices } from "@wix/services-manager-react";
-import type { PropsWithChildren, ReactNode } from "react";
 import {
   ProductsListSortService,
   ProductsListSortServiceDefinition,
   SortType,
 } from "../services/products-list-sort-service.js";
+
+export interface RootProps {
+  children: React.ReactNode;
+}
 
 /**
  * Root component that provides the ProductListSort service context to its children.
@@ -39,7 +42,7 @@ import {
  * }
  * ```
  */
-export function Root(props: PropsWithChildren) {
+export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -58,7 +61,7 @@ export function Root(props: PropsWithChildren) {
  */
 export interface OptionsProps {
   /** Content to display (can be a render function receiving sort controls or ReactNode) */
-  children: ((props: OptionsRenderProps) => ReactNode) | ReactNode;
+  children: ((props: OptionsRenderProps) => React.ReactNode) | React. ReactNode;
 }
 
 /**
