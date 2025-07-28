@@ -195,13 +195,17 @@ export interface PriceRangeProps {
  */
 export interface PriceRangeRenderProps {
   /** Current minimum price filter value */
-  minPrice: number;
+  userFilterMinPrice: number;
   /** Current maximum price filter value */
-  maxPrice: number;
+  userFilterMaxPrice: number;
+  /** Catalog minimum price */
+  catalogMinPrice: number;
+  /** Catalog maximum price */
+  catalogMaxPrice: number;
   /** Function to update the minimum price filter */
-  setMinPrice: (minPrice: number) => void;
+  setUserFilterMinPrice: (minPrice: number) => void;
   /** Function to update the maximum price filter */
-  setMaxPrice: (maxPrice: number) => void;
+  setUserFilterMaxPrice: (maxPrice: number) => void;
 }
 
 /**
@@ -242,13 +246,22 @@ export interface PriceRangeRenderProps {
  */
 export function PriceRange(props: PriceRangeProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
-  const minPrice = service.minPrice.get();
-  const maxPrice = service.maxPrice.get();
-  const setMinPrice = service.setMinPrice;
-  const setMaxPrice = service.setMaxPrice;
+  const userFilterMinPrice = service.userFilterMinPrice.get();
+  const catalogMinPrice = service.catalogMinPrice.get();
+  const userFilterMaxPrice = service.userFilterMaxPrice.get();
+  const catalogMaxPrice = service.catalogMaxPrice.get();
+  const setUserFilterMinPrice = service.setUserFilterMinPrice;
+  const setUserFilterMaxPrice = service.setUserFilterMaxPrice;
 
   return typeof props.children === "function"
-    ? props.children({ minPrice, maxPrice, setMinPrice, setMaxPrice })
+    ? props.children({
+        userFilterMinPrice,
+        catalogMinPrice,
+        userFilterMaxPrice,
+        setUserFilterMinPrice,
+        setUserFilterMaxPrice,
+        catalogMaxPrice,
+      })
     : props.children;
 }
 

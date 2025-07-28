@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { getStockStatusMessage } from './product-status-enums';
 import { ProductListFilters } from '@wix/headless-stores/react';
 import type { ProductsListFiltersServiceConfig } from '@wix/headless-stores/services';
+import { DualRangeSlider } from './DualRangeSlider';
 
 interface ProductFiltersProps {
   className?: string;
@@ -85,7 +86,14 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
 
       <div className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}>
         <ProductListFilters.PriceRange>
-          {({ minPrice, maxPrice, setMinPrice, setMaxPrice }) => (
+          {({
+            catalogMinPrice,
+            catalogMaxPrice,
+            userFilterMinPrice,
+            userFilterMaxPrice,
+            setUserFilterMinPrice,
+            setUserFilterMaxPrice,
+          }) => (
             <div
               className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}
             >
@@ -96,61 +104,19 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 <div className="space-y-4">
                   {/* Price Range Display */}
                   <div className="flex items-center justify-between text-sm text-content-light">
-                    <span>${String(minPrice)}</span>
-                    <span>${String(maxPrice)}</span>
+                    <span>${String(catalogMinPrice)}</span>
+                    <span>${String(catalogMaxPrice)}</span>
                   </div>
 
                   {/* Dual Range Slider */}
-                  <div className="relative h-6">
-                    <div className="absolute top-2 left-0 right-0 h-2 bg-brand-medium rounded-full">
-                      <div
-                        className="absolute h-2 rounded-full bg-gradient-primary"
-                        style={{
-                          left: `${
-                            ((minPrice - minPrice) / (maxPrice - minPrice)) *
-                            100
-                          }%`,
-                          width: `${
-                            ((maxPrice - minPrice) / (maxPrice - minPrice)) *
-                            100
-                          }%`,
-                        }}
-                      />
-                    </div>
-
-                    {/* Min Range Input */}
-
-                    <input
-                      type="range"
-                      min={minPrice}
-                      max={maxPrice}
-                      value={minPrice}
-                      onChange={e => setMinPrice(Number(e.target.value))}
-                      className="absolute top-0 left-0 w-full h-6 bg-transparent appearance-none cursor-pointer range-slider range-slider-min"
-                      style={{
-                        zIndex:
-                          minPrice > minPrice + (maxPrice - minPrice) * 0.5
-                            ? 2
-                            : 1,
-                      }}
-                    />
-
-                    {/* Max Range Input */}
-                    <input
-                      type="range"
-                      min={minPrice}
-                      max={maxPrice}
-                      value={maxPrice}
-                      onChange={e => setMaxPrice(Number(e.target.value))}
-                      className="absolute top-0 left-0 w-full h-6 bg-transparent appearance-none cursor-pointer range-slider range-slider-max"
-                      style={{
-                        zIndex:
-                          maxPrice < minPrice + (maxPrice - minPrice) * 0.5
-                            ? 2
-                            : 1,
-                      }}
-                    />
-                  </div>
+                  <DualRangeSlider
+                    sliderMinValue={catalogMinPrice}
+                    sliderMaxValue={catalogMaxPrice}
+                    userFilterMinPrice={userFilterMinPrice}
+                    userFilterMaxPrice={userFilterMaxPrice}
+                    setUserFilterMinPrice={setUserFilterMinPrice}
+                    setUserFilterMaxPrice={setUserFilterMaxPrice}
+                  />
 
                   {/* Manual Price Input */}
                   <div className="flex items-center gap-4">
@@ -161,9 +127,9 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
 
                       <input
                         type="number"
-                        value={minPrice}
+                        value={userFilterMinPrice}
                         onChange={e => {
-                          setMinPrice(Number(e.target.value));
+                          setUserFilterMinPrice(Number(e.target.value));
                         }}
                         className="w-full px-3 py-2 bg-surface-primary border border-brand-light rounded-lg text-content-primary text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
                       />
@@ -175,9 +141,9 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
 
                       <input
                         type="number"
-                        value={maxPrice}
+                        value={userFilterMaxPrice}
                         onChange={e => {
-                          setMaxPrice(Number(e.target.value));
+                          setUserFilterMaxPrice(Number(e.target.value));
                         }}
                         className="w-full px-3 py-2 bg-surface-primary border border-brand-light rounded-lg text-content-primary text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary"
                       />

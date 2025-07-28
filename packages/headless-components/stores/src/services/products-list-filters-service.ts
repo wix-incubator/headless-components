@@ -133,10 +133,14 @@ export async function loadProductsListFiltersServiceConfig(): Promise<ProductsLi
  * @constant
  */
 export const ProductsListFiltersServiceDefinition = defineService<{
-  /** Reactive signal containing the minimum price filter value */
-  minPrice: Signal<number>;
-  /** Reactive signal containing the maximum price filter value */
-  maxPrice: Signal<number>;
+  /** Reactive signal containing the user's selected minimum price filter value */
+  userFilterMinPrice: Signal<number>;
+  /** Reactive signal containing the user's selected maximum price filter value */
+  userFilterMaxPrice: Signal<number>;
+  /** Reactive signal containing the catalog minimum price (for UI bounds) */
+  catalogMinPrice: Signal<number>;
+  /** Reactive signal containing the catalog maximum price (for UI bounds) */
+  catalogMaxPrice: Signal<number>;
   /** Reactive signal containing available inventory status options */
   availableInventoryStatuses: Signal<InventoryStatusType[]>;
   /** Reactive signal containing selected inventory status filters */
@@ -146,9 +150,9 @@ export const ProductsListFiltersServiceDefinition = defineService<{
   /** Reactive signal containing selected product option filters */
   selectedProductOptions: Signal<Record<string, string[]>>;
   /** Function to set the minimum price filter */
-  setMinPrice: (minPrice: number) => void;
+  setUserFilterMinPrice: (minPrice: number) => void;
   /** Function to set the maximum price filter */
-  setMaxPrice: (maxPrice: number) => void;
+  setUserFilterMaxPrice: (maxPrice: number) => void;
   /** Function to toggle an inventory status filter */
   toggleInventoryStatus: (status: InventoryStatusType) => void;
   /** Function to toggle a product option choice filter */
@@ -227,6 +231,7 @@ export const ProductsListFiltersServiceDefinition = defineService<{
  *     </div>
  *   );
  * }
+ * }
  * ```
  */
 export const ProductsListFiltersService =
@@ -239,16 +244,31 @@ export const ProductsListFiltersService =
       const { customizations } = config;
 
       const aggregationData = productsListService.aggregations.get()?.results;
-      // TODO: use the aggregations to get the available inventory statuses
-      // and the available price ranges
-      // and the available product options
-      // and the available product choices
+      const currentSearchOptions = productsListService.searchOptions.get();
 
-      const minPriceSignal = signalsService.signal(
-        getMinPrice(productsListService.searchOptions.get()),
+      console.log("ProductsListFiltersService3", {
+        aggregationData,
+        searchOptions: currentSearchOptions,
+      });
+
+      // Get the full catalog price range from initial aggregation data (before any filters)
+      const catalogPriceRange = getCatalogPriceRange(aggregationData || []);
+      console.log("Catalog price range:", catalogPriceRange);
+
+      // Initialize signals with user's current filter selections (or 0 if no filters)
+      const userFilterMinPriceSignal = signalsService.signal(
+        getSelectedMinPrice(currentSearchOptions) ?? catalogPriceRange.minPrice,
       );
-      const maxPriceSignal = signalsService.signal(
-        getMaxPrice(productsListService.searchOptions.get()),
+      const userFilterMaxPriceSignal = signalsService.signal(
+        getSelectedMaxPrice(currentSearchOptions) ?? catalogPriceRange.maxPrice,
+      );
+
+      // Separate signals for the available catalog range (for UI bounds)
+      const catalogMinPriceSignal = signalsService.signal(
+        catalogPriceRange.minPrice,
+      );
+      const catalogMaxPriceSignal = signalsService.signal(
+        catalogPriceRange.maxPrice,
       );
       const availableInventoryStatusesSignal = signalsService.signal([
         InventoryStatusType.IN_STOCK,
@@ -256,7 +276,7 @@ export const ProductsListFiltersService =
         InventoryStatusType.PARTIALLY_OUT_OF_STOCK,
       ] as InventoryStatusType[]);
       const selectedInventoryStatusesSignal = signalsService.signal(
-        getSelectedInventoryStatuses(productsListService.searchOptions.get()),
+        getSelectedInventoryStatuses(currentSearchOptions),
       );
 
       // TODO: Get product options from aggregations data
@@ -264,7 +284,7 @@ export const ProductsListFiltersService =
         getAvailableProductOptions(aggregationData, customizations),
       );
       const selectedProductOptionsSignal = signalsService.signal(
-        getSelectedProductOptions(productsListService.searchOptions.get()),
+        getSelectedProductOptions(currentSearchOptions),
       );
 
       const isFilteredSignal = signalsService.signal(false);
@@ -272,8 +292,8 @@ export const ProductsListFiltersService =
       if (typeof window !== "undefined") {
         signalsService.effect(() => {
           // CRITICAL: Read the signals FIRST to establish dependencies, even on first run
-          const minPrice = minPriceSignal.get();
-          const maxPrice = maxPriceSignal.get();
+          const minPrice = userFilterMinPriceSignal.get();
+          const maxPrice = userFilterMaxPriceSignal.get();
           const selectedInventoryStatuses =
             selectedInventoryStatusesSignal.get();
           const selectedProductOptions = selectedProductOptionsSignal.get();
@@ -283,116 +303,31 @@ export const ProductsListFiltersService =
             return;
           }
 
-          isFilteredSignal.set(true);
-
-          // Build new search options with updated price filters
-          const newSearchOptions: Parameters<
-            typeof productsV3.searchProducts
-          >[0] = {
-            ...productsListService.searchOptions.peek(),
-          };
-
-          delete newSearchOptions.cursorPaging?.cursor;
-
-          // Initialize filter if it doesn't exist
-          if (!newSearchOptions.filter) {
-            newSearchOptions.filter = {};
-          } else {
-            // Copy existing filter to avoid mutation
-            newSearchOptions.filter = { ...newSearchOptions.filter };
-          }
-
-          // Remove existing price filters
-          delete (newSearchOptions.filter as any)[
-            "actualPriceRange.minValue.amount"
-          ];
-          delete (newSearchOptions.filter as any)[
-            "actualPriceRange.maxValue.amount"
-          ];
-
-          // Remove existing inventory filter
-          delete (newSearchOptions.filter as any)[
-            "inventory.availabilityStatus"
-          ];
-
-          // Remove existing product option filters
-          // First, find and remove any existing option filters
-          Object.keys(newSearchOptions.filter).forEach((key) => {
-            if (key.startsWith("options.")) {
-              delete (newSearchOptions.filter as any)[key];
-            }
-          });
-
-          // Add new price filters if they have valid values
-          if (minPrice > 0) {
-            (newSearchOptions.filter as any)[
-              "actualPriceRange.minValue.amount"
-            ] = { $gte: minPrice };
-          }
-          if (maxPrice > 0) {
-            (newSearchOptions.filter as any)[
-              "actualPriceRange.maxValue.amount"
-            ] = { $lte: maxPrice };
-          }
-
-          // Add new inventory filter if there are selected statuses
-          if (selectedInventoryStatuses.length > 0) {
-            if (selectedInventoryStatuses.length === 1) {
-              (newSearchOptions.filter as any)["inventory.availabilityStatus"] =
-                selectedInventoryStatuses[0];
-            } else {
-              (newSearchOptions.filter as any)["inventory.availabilityStatus"] =
-                {
-                  $in: selectedInventoryStatuses,
-                };
-            }
-          }
-
-          // Add new product option filters if there are selected options
-          if (
-            selectedProductOptions &&
-            Object.keys(selectedProductOptions).length > 0
-          ) {
-            for (const [optionId, choiceIds] of Object.entries(
-              selectedProductOptions,
-            )) {
-              if (choiceIds && choiceIds.length > 0) {
-                // Handle inventory filter separately
-                if (optionId === "inventory-filter") {
-                  (newSearchOptions.filter as any)[
-                    "inventory.availabilityStatus"
-                  ] = {
-                    $in: choiceIds,
-                  };
-                } else {
-                  // Regular product options filter
-                  (newSearchOptions.filter as any)[
-                    "options.choicesSettings.choices.choiceId"
-                  ] = {
-                    $hasSome: choiceIds,
-                  };
-                }
-              }
-            }
-          }
-
-          // Use callback to update search options
-          productsListService.setSearchOptions(newSearchOptions);
+          doFirstRunInit(
+            isFilteredSignal,
+            productsListService,
+            minPrice,
+            maxPrice,
+            selectedInventoryStatuses,
+            selectedProductOptions,
+          );
         });
       }
 
       return {
-        minPrice: minPriceSignal,
-        maxPrice: maxPriceSignal,
+        userFilterMinPrice: userFilterMinPriceSignal,
+        userFilterMaxPrice: userFilterMaxPriceSignal,
+        catalogMinPrice: catalogMinPriceSignal,
+        catalogMaxPrice: catalogMaxPriceSignal,
         availableInventoryStatuses: availableInventoryStatusesSignal,
         selectedInventoryStatuses: selectedInventoryStatusesSignal,
         availableProductOptions: availableProductOptionsSignal,
         selectedProductOptions: selectedProductOptionsSignal,
-        setMinPrice: (minPrice: number) => {
-          minPriceSignal.set(minPrice);
+        setUserFilterMinPrice: (minPrice: number) => {
+          userFilterMinPriceSignal.set(minPrice);
         },
-        setMaxPrice: (maxPrice: number) => {
-          maxPriceSignal.set(maxPrice);
+        setUserFilterMaxPrice: (maxPrice: number) => {
+          userFilterMaxPriceSignal.set(maxPrice);
         },
         toggleInventoryStatus: (status: InventoryStatusType) => {
           const current = selectedInventoryStatusesSignal.get();
@@ -433,9 +368,9 @@ export const ProductsListFiltersService =
         },
         isFiltered: isFilteredSignal,
         reset: () => {
-          // TODO: reset the filters to the original values from the aggregation data
-          minPriceSignal.set(0);
-          maxPriceSignal.set(0);
+          // Reset user selections but keep catalog bounds intact
+          userFilterMinPriceSignal.set(catalogMinPriceSignal.get());
+          userFilterMaxPriceSignal.set(catalogMaxPriceSignal.get());
           selectedInventoryStatusesSignal.set([]);
           selectedProductOptionsSignal.set({});
           isFilteredSignal.set(false);
@@ -444,9 +379,129 @@ export const ProductsListFiltersService =
     },
   );
 
-function getMinPrice(
+function doFirstRunInit(
+  isFilteredSignal: Signal<boolean>,
+  productsListService: {
+    products: Signal<productsV3.V3Product[]>;
+    aggregations: Signal<productsV3.AggregationData>;
+    pagingMetadata: Signal<productsV3.CommonCursorPagingMetadata>;
+    searchOptions: Signal<Parameters<typeof productsV3.searchProducts>[0]>;
+    isLoading: Signal<boolean>;
+    error: Signal<string | null>;
+    setSearchOptions: (
+      searchOptions: Parameters<typeof productsV3.searchProducts>[0],
+    ) => void;
+  },
+  minPrice: number,
+  maxPrice: number,
+  selectedInventoryStatuses: InventoryStatusType[],
+  selectedProductOptions: Record<string, string[]>,
+) {
+  isFilteredSignal.set(true);
+
+  // Build new search options with updated price filters
+  const newSearchOptions: Parameters<typeof productsV3.searchProducts>[0] = {
+    ...productsListService.searchOptions.peek(),
+  };
+
+  delete newSearchOptions.cursorPaging?.cursor;
+
+  // Initialize filter if it doesn't exist
+  if (!newSearchOptions.filter) {
+    newSearchOptions.filter = {};
+  } else {
+    // Copy existing filter to avoid mutation
+    newSearchOptions.filter = { ...newSearchOptions.filter };
+  }
+
+  // Remove existing price filters
+  delete (newSearchOptions.filter as any)["actualPriceRange.minValue.amount"];
+  delete (newSearchOptions.filter as any)["actualPriceRange.maxValue.amount"];
+
+  // Remove existing inventory filter
+  delete (newSearchOptions.filter as any)["inventory.availabilityStatus"];
+
+  // Remove existing product option filters
+  // First, find and remove any existing option filters
+  Object.keys(newSearchOptions.filter).forEach((key) => {
+    if (key.startsWith("options.")) {
+      delete (newSearchOptions.filter as any)[key];
+    }
+  });
+
+  // Add new price filters if they have valid values
+  if (minPrice > 0) {
+    (newSearchOptions.filter as any)["actualPriceRange.minValue.amount"] = {
+      $gte: minPrice,
+    };
+  }
+  if (maxPrice > 0) {
+    (newSearchOptions.filter as any)["actualPriceRange.maxValue.amount"] = {
+      $lte: maxPrice,
+    };
+  }
+
+  // Add new inventory filter if there are selected statuses
+  if (selectedInventoryStatuses.length > 0) {
+    if (selectedInventoryStatuses.length === 1) {
+      (newSearchOptions.filter as any)["inventory.availabilityStatus"] =
+        selectedInventoryStatuses[0];
+    } else {
+      (newSearchOptions.filter as any)["inventory.availabilityStatus"] = {
+        $in: selectedInventoryStatuses,
+      };
+    }
+  }
+
+  // Add new product option filters if there are selected options
+  if (
+    selectedProductOptions &&
+    Object.keys(selectedProductOptions).length > 0
+  ) {
+    for (const [optionId, choiceIds] of Object.entries(
+      selectedProductOptions,
+    )) {
+      if (choiceIds && choiceIds.length > 0) {
+        // Handle inventory filter separately
+        if (optionId === "inventory-filter") {
+          (newSearchOptions.filter as any)["inventory.availabilityStatus"] = {
+            $in: choiceIds,
+          };
+        } else {
+          // Regular product options filter
+          (newSearchOptions.filter as any)[
+            "options.choicesSettings.choices.choiceId"
+          ] = {
+            $hasSome: choiceIds,
+          };
+        }
+      }
+    }
+  }
+
+  // Use callback to update search options
+  productsListService.setSearchOptions(newSearchOptions);
+}
+
+/**
+ * Gets the full catalog price range from aggregation data (before any filters applied)
+ */
+function getCatalogPriceRange(
+  aggregationData: productsV3.AggregationResults[],
+): { minPrice: number; maxPrice: number } {
+  const minPrice = getMinPrice(aggregationData);
+  const maxPrice = getMaxPrice(aggregationData);
+
+  console.log("Extracted catalog price range:", { minPrice, maxPrice });
+  return { minPrice, maxPrice };
+}
+
+/**
+ * Gets the user's currently selected minimum price filter from search options
+ */
+function getSelectedMinPrice(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
-): number {
+): number | undefined {
   const filter = searchOptions.filter;
   if (!filter) return 0;
 
@@ -456,15 +511,16 @@ function getMinPrice(
     minPriceFilter !== null &&
     "$gte" in minPriceFilter
   ) {
-    return Number(minPriceFilter.$gte) || 0;
+    return Number(minPriceFilter.$gte);
   }
-
-  return 0;
 }
 
-function getMaxPrice(
+/**
+ * Gets the user's currently selected maximum price filter from search options
+ */
+function getSelectedMaxPrice(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
-): number {
+): number | undefined {
   const filter = searchOptions.filter;
   if (!filter) return 0;
 
@@ -474,7 +530,29 @@ function getMaxPrice(
     maxPriceFilter !== null &&
     "$lte" in maxPriceFilter
   ) {
-    return Number(maxPriceFilter.$lte) || 0;
+    return Number(maxPriceFilter.$lte);
+  }
+}
+
+function getMinPrice(aggregationData: productsV3.AggregationResults[]): number {
+  const minPriceAggregation = aggregationData.find(
+    (data) => data.fieldPath === "actualPriceRange.minValue.amount",
+  );
+
+  if (minPriceAggregation?.scalar?.value) {
+    return Number(minPriceAggregation.scalar.value) || 0;
+  }
+
+  return 0;
+}
+
+function getMaxPrice(aggregationData: productsV3.AggregationResults[]): number {
+  const maxPriceAggregation = aggregationData.find(
+    (data) => data.fieldPath === "actualPriceRange.maxValue.amount",
+  );
+
+  if (maxPriceAggregation?.scalar?.value) {
+    return Number(maxPriceAggregation.scalar.value) || 0;
   }
 
   return 0;
