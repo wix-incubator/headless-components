@@ -246,14 +246,8 @@ export const ProductsListFiltersService =
       const aggregationData = productsListService.aggregations.get()?.results;
       const currentSearchOptions = productsListService.searchOptions.get();
 
-      console.log("ProductsListFiltersService3", {
-        aggregationData,
-        searchOptions: currentSearchOptions,
-      });
-
       // Get the full catalog price range from initial aggregation data (before any filters)
       const catalogPriceRange = getCatalogPriceRange(aggregationData || []);
-      console.log("Catalog price range:", catalogPriceRange);
 
       // Initialize signals with user's current filter selections (or 0 if no filters)
       const userFilterMinPriceSignal = signalsService.signal(
