@@ -1,11 +1,16 @@
 import { CurrentCart } from '@wix/headless-ecom/react';
 import { WixMediaImage } from '../media';
+import { type CurrentCartServiceConfig } from '@wix/headless-ecom/services';
 
-export default function CartContent() {
+export default function CartContent({
+  currentCartServiceConfig,
+}: {
+  currentCartServiceConfig: CurrentCartServiceConfig;
+}) {
   return (
     <div className="min-h-screen" data-testid="cart-summary">
       <div className="container mx-auto px-4 py-8">
-        <CurrentCart.Root>
+        <CurrentCart.Root currentCartServiceConfig={currentCartServiceConfig}>
           <CurrentCart.Content>
             {({ cart, isLoading }) => (
               <>
@@ -14,14 +19,14 @@ export default function CartContent() {
                   <h1 className="text-5xl font-bold text-content-primary mb-4">
                     Shopping Cart
                   </h1>
-                  <CurrentCart.Trigger>
-                    {({ itemCount }) => (
+                  <CurrentCart.OpenTrigger>
+                    {({ totalItems }) => (
                       <p className="t`ex`t-content-secondary text-xl">
-                        {itemCount} {itemCount === 1 ? 'item' : 'items'} in your
-                        cart
+                        {totalItems} {totalItems === 1 ? 'item' : 'items'} in
+                        your cart
                       </p>
                     )}
-                  </CurrentCart.Trigger>
+                  </CurrentCart.OpenTrigger>
                 </div>
 
                 {/* Loading State */}
@@ -55,10 +60,10 @@ export default function CartContent() {
                 )}
 
                 {/* Empty Cart */}
-                <CurrentCart.Items>
-                  {({ hasItems, items }) => (
+                <CurrentCart.LineItemsList>
+                  {({ items, totalItems }) => (
                     <>
-                      {!hasItems && !isLoading && (
+                      {totalItems === 0 && !isLoading && (
                         <div className="text-center py-16">
                           <div className="w-32 h-32 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-8">
                             <svg
@@ -116,7 +121,7 @@ export default function CartContent() {
                       )}
 
                       {/* Cart with Items */}
-                      {hasItems && (
+                      {totalItems > 0 && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                           {/* Cart Items */}
                           <div className="lg:col-span-2">
@@ -126,10 +131,10 @@ export default function CartContent() {
                                   Cart Items
                                 </h2>
                                 <CurrentCart.Clear>
-                                  {({ onClear, hasItems, isLoading }) =>
-                                    hasItems && (
+                                  {({ clear, totalItems, isLoading }) =>
+                                    totalItems > 0 && (
                                       <button
-                                        onClick={onClear}
+                                        onClick={clear}
                                         disabled={isLoading}
                                         className="text-status-error hover:text-status-error/80 text-sm font-medium transition-colors duration-200 disabled:opacity-50"
                                       >
@@ -149,9 +154,9 @@ export default function CartContent() {
                                       price,
                                       quantity,
                                       selectedOptions,
-                                      onIncrease,
-                                      onDecrease,
-                                      onRemove,
+                                      increaseQuantity,
+                                      decreaseQuantity,
+                                      remove,
                                       isLoading: itemLoading,
                                     }) => (
                                       <div className="flex items-center space-x-6 p-4 bg-surface-primary rounded-lg border border-surface-subtle hover:border-surface-interactive transition-all duration-200">
@@ -249,7 +254,7 @@ export default function CartContent() {
                                         {/* Quantity Controls */}
                                         <div className="flex items-center space-x-3">
                                           <button
-                                            onClick={onDecrease}
+                                            onClick={decreaseQuantity}
                                             disabled={
                                               itemLoading || quantity <= 1
                                             }
@@ -275,7 +280,7 @@ export default function CartContent() {
                                           </span>
 
                                           <button
-                                            onClick={onIncrease}
+                                            onClick={increaseQuantity}
                                             disabled={itemLoading}
                                             className="p-2 rounded-lg bg-surface-primary hover:bg-brand-light border border-surface-interactive hover:border-brand-medium text-content-primary transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                           >
@@ -297,7 +302,7 @@ export default function CartContent() {
 
                                         {/* Remove Button */}
                                         <button
-                                          onClick={onRemove}
+                                          onClick={remove}
                                           disabled={itemLoading}
                                           className="text-status-error hover:text-status-error/80 p-2 rounded-lg hover:bg-surface-error transition-all duration-200 disabled:opacity-50"
                                         >
@@ -333,7 +338,7 @@ export default function CartContent() {
                               {/* Order Notes */}
                               <div className="mb-6">
                                 <CurrentCart.Notes>
-                                  {({ notes, onNotesChange }) => (
+                                  {({ notes, updateNotes }) => (
                                     <div>
                                       <label className="block text-sm font-medium text-content-primary mb-2">
                                         Notes:
@@ -341,7 +346,7 @@ export default function CartContent() {
                                       <textarea
                                         value={notes}
                                         onChange={e =>
-                                          onNotesChange(e.target.value)
+                                          updateNotes(e.target.value)
                                         }
                                         placeholder="Special instructions for your order (e.g., gift wrap, delivery notes)"
                                         rows={3}
@@ -357,8 +362,8 @@ export default function CartContent() {
                                 <CurrentCart.Coupon>
                                   {({
                                     appliedCoupon,
-                                    onApply,
-                                    onRemove,
+                                    apply,
+                                    remove,
                                     isLoading,
                                   }) => (
                                     <div>
@@ -368,7 +373,7 @@ export default function CartContent() {
                                             Coupon: {appliedCoupon}
                                           </span>
                                           <button
-                                            onClick={onRemove}
+                                            onClick={remove}
                                             disabled={isLoading}
                                             className="text-status-error hover:text-status-error/80 text-sm disabled:opacity-50"
                                           >
@@ -388,7 +393,7 @@ export default function CartContent() {
                                               'couponCode'
                                             ) as string;
                                             if (code?.trim()) {
-                                              onApply(code.trim());
+                                              apply(code.trim());
                                             }
                                           }}
                                           className="space-y-3"
@@ -497,7 +502,7 @@ export default function CartContent() {
 
                                       <CurrentCart.Checkout>
                                         {({
-                                          onProceed,
+                                          proceedToCheckout,
                                           canCheckout: canProceed,
                                           isLoading: checkoutLoading,
                                           error: checkoutError,
@@ -513,7 +518,7 @@ export default function CartContent() {
 
                                             <button
                                               data-testid="proceed-to-checkout-button"
-                                              onClick={onProceed}
+                                              onClick={proceedToCheckout}
                                               disabled={
                                                 !canProceed || checkoutLoading
                                               }
@@ -590,7 +595,7 @@ export default function CartContent() {
                       )}
                     </>
                   )}
-                </CurrentCart.Items>
+                </CurrentCart.LineItemsList>
               </>
             )}
           </CurrentCart.Content>

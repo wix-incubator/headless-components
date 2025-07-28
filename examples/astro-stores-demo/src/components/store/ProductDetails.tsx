@@ -65,7 +65,7 @@ export default function ProductDetails({
         data-testid="product-details"
       >
         <Product.Root productServiceConfig={{ product }}>
-          <SelectedVariant.Root>
+          <SelectedVariant.Root selectedVariantServiceConfig={{}}>
             <Product.Media>
               {({ media }) => (
                 <MediaGallery.Root mediaGalleryServiceConfig={{ media }}>
@@ -283,7 +283,7 @@ export default function ProductDetails({
               </Product.Description>
 
               {/* Product Options (if any) */}
-              <ProductVariantSelector.Root>
+              <ProductVariantSelector.Root selectedVariantServiceConfig={{}}>
                 <ProductVariantSelector.Options>
                   {({ options, hasOptions }) => (
                     <>

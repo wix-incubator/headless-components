@@ -127,7 +127,10 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
       }) => {
         const handleAddToCart = async () => {
           await onAddToCart();
+          console.log('onAddToCart');
           if (isPreOrderEnabled) {
+            console.log('isPreOrderEnabled changing the url');
+
             window.location.href = '/cart';
           }
         };

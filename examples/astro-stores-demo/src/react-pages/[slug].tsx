@@ -1,4 +1,4 @@
-import { CurrentCartService } from '@wix/headless-ecom/services';
+import { type CurrentCartServiceConfig } from '@wix/headless-ecom/services';
 import { ProductService } from '@wix/headless-stores/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { StoreLayout } from '../layouts/StoreLayout';
@@ -8,7 +8,7 @@ import type { ServiceFactoryConfig } from '@wix/services-definitions';
 
 interface ProductDetailPageProps {
   productServiceConfig: ServiceFactoryConfig<typeof ProductService>;
-  currentCartServiceConfig: ServiceFactoryConfig<typeof CurrentCartService>;
+  currentCartServiceConfig: CurrentCartServiceConfig;
 }
 
 export default function ProductDetailPage({
