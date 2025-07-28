@@ -2,5 +2,6 @@ export {
   CurrentCartService,
   CurrentCartServiceDefinition,
   loadCurrentCartServiceConfig,
-  type LineItem,
+  CurrentCartServiceConfig,
+  LineItem,
 } from "./current-cart-service.js";
