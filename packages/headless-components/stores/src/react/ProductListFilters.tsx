@@ -195,13 +195,17 @@ export interface PriceRangeProps {
  */
 export interface PriceRangeRenderProps {
   /** Current minimum price filter value */
-  minPrice: number;
+  selectedMinPrice: number;
   /** Current maximum price filter value */
-  maxPrice: number;
+  selectedMaxPrice: number;
+  /** Catalog minimum price */
+  availableMinPrice: number;
+  /** Catalog maximum price */
+  availableMaxPrice: number;
   /** Function to update the minimum price filter */
-  setMinPrice: (minPrice: number) => void;
+  setSelectedMinPrice: (minPrice: number) => void;
   /** Function to update the maximum price filter */
-  setMaxPrice: (maxPrice: number) => void;
+  setSelectedMaxPrice: (maxPrice: number) => void;
 }
 
 /**
@@ -242,13 +246,22 @@ export interface PriceRangeRenderProps {
  */
 export function PriceRange(props: PriceRangeProps) {
   const service = useService(ProductsListFiltersServiceDefinition);
-  const minPrice = service.minPrice.get();
-  const maxPrice = service.maxPrice.get();
-  const setMinPrice = service.setMinPrice;
-  const setMaxPrice = service.setMaxPrice;
+  const selectedMinPrice = service.selectedMinPrice.get();
+  const availableMinPrice = service.availableMinPrice.get();
+  const selectedMaxPrice = service.selectedMaxPrice.get();
+  const availableMaxPrice = service.availableMaxPrice.get();
+  const setSelectedMinPrice = service.setSelectedMinPrice;
+  const setSelectedMaxPrice = service.setSelectedMaxPrice;
 
   return typeof props.children === "function"
-    ? props.children({ minPrice, maxPrice, setMinPrice, setMaxPrice })
+    ? props.children({
+        availableMinPrice,
+        selectedMinPrice,
+        selectedMaxPrice,
+        availableMaxPrice,
+        setSelectedMinPrice,
+        setSelectedMaxPrice,
+      })
     : props.children;
 }
 
