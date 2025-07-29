@@ -126,10 +126,10 @@ export function MiniCartContent() {
                     onClick={e => e.stopPropagation()}
                   >
                     <CurrentCart.Summary>
-                      {({ itemCount }) => (
+                      {({ totalItems }) => (
                         <div className="flex items-center justify-between p-6 border-b border-surface-subtle flex-shrink-0">
                           <h2 className="text-xl font-bold text-content-primary">
-                            Shopping Cart ({itemCount})
+                            Shopping Cart ({totalItems})
                           </h2>
                           <button
                             onClick={close}
@@ -368,7 +368,7 @@ export function MiniCartContent() {
                           shipping,
                           tax,
                           total,
-                          itemCount,
+                          totalItems,
                           isTotalsLoading,
                         }) => {
                           const LoadingOrValue = ({
@@ -389,8 +389,8 @@ export function MiniCartContent() {
                               <div className="space-y-2">
                                 <div className="flex justify-between">
                                   <span className="text-content-secondary">
-                                    Subtotal ({itemCount}{' '}
-                                    {itemCount === 1 ? 'item' : 'items'})
+                                    Subtotal ({totalItems}{' '}
+                                    {totalItems === 1 ? 'item' : 'items'})
                                   </span>
                                   <span className="text-content-primary font-semibold">
                                     <LoadingOrValue>{subtotal}</LoadingOrValue>

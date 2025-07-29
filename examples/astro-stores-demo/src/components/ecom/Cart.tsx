@@ -425,7 +425,7 @@ export default function CartContent({
                                   shipping,
                                   tax,
                                   total,
-                                  itemCount,
+                                  totalItems,
                                   isTotalsLoading,
                                 }) => {
                                   const LoadingOrValue = ({
@@ -446,8 +446,8 @@ export default function CartContent({
                                       <div className="space-y-3">
                                         <div className="flex justify-between text-lg text-content-primary">
                                           <span>
-                                            Subtotal ({itemCount}{' '}
-                                            {itemCount === 1 ? 'item' : 'items'}
+                                            Subtotal ({totalItems}{' '}
+                                            {totalItems === 1 ? 'item' : 'items'}
                                             )
                                           </span>
                                           <span className="font-semibold">
