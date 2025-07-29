@@ -329,7 +329,7 @@ export default function ProductDetails({
                                                 isVisible,
                                                 isInStock,
                                                 isPreOrderEnabled,
-                                                onSelect,
+                                                select,
                                               }) => (
                                                 <>
                                                   {isColorOption &&
@@ -341,7 +341,7 @@ export default function ProductDetails({
                                                     <div className="relative">
                                                       <button
                                                         data-testid="product-modifier-choice-button"
-                                                        onClick={onSelect}
+                                                        onClick={select}
                                                         title={value}
                                                         className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
                                                           isSelected
@@ -388,7 +388,7 @@ export default function ProductDetails({
                                                       <div className="relative">
                                                         <button
                                                           data-testid="product-modifier-choice-button"
-                                                          onClick={onSelect}
+                                                          onClick={select}
                                                           className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
                                                             isSelected
                                                               ? 'product-option-active'
@@ -433,11 +433,11 @@ export default function ProductDetails({
                           ))}
 
                           <ProductVariantSelector.Reset>
-                            {({ onReset, hasSelections }) =>
+                            {({ reset, hasSelections }) =>
                               hasSelections && (
                                 <div className="pt-4">
                                   <button
-                                    onClick={onReset}
+                                    onClick={reset}
                                     className="text-sm text-brand-primary hover:text-brand-light transition-colors"
                                   >
                                     Reset Selections

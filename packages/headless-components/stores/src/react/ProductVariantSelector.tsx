@@ -152,8 +152,6 @@ export interface OptionProps {
 export interface OptionRenderProps {
   /** Option name */
   name: string;
-  /** Option type */
-  type: any;
   /** Array of choices for this option */
   choices: ConnectedOptionChoice[];
   /** Currently selected value for this option */
@@ -207,7 +205,6 @@ export function Option(props: OptionProps) {
 
   return props.children({
     name,
-    type: option.optionRenderType,
     choices,
     selectedValue,
     hasChoices: choices.length > 0,
@@ -232,8 +229,6 @@ export interface ChoiceProps {
 export interface ChoiceRenderProps {
   /** Choice value to display */
   value: string;
-  /** Choice description (for color options) */
-  description: string | undefined;
   /** Whether this choice is currently selected */
   isSelected: boolean;
   /** Whether this choice is visible */
@@ -243,7 +238,7 @@ export interface ChoiceRenderProps {
   /** Whether this choice is available for pre-order */
   isPreOrderEnabled: boolean;
   /** Function to select this choice */
-  onSelect: () => void;
+  select: () => void;
   /** Option name */
   optionName: string;
   /** Choice value */
@@ -261,9 +256,9 @@ export interface ChoiceRenderProps {
  * function ChoiceButton({ option, choice }) {
  *   return (
  *     <ProductVariantSelector.Choice option={option} choice={choice}>
- *       {({ value, isSelected, isVisible, isInStock, onSelect }) => (
+ *       {({ value, isSelected, isVisible, isInStock, select }) => (
  *         <button
- *           onClick={onSelect}
+ *           onClick={select}
  *           disabled={!isVisible || !isInStock}
  *           className={`choice-btn ${isSelected ? 'selected' : ''} ${!isInStock ? 'out-of-stock' : ''}`}
  *         >
@@ -313,12 +308,11 @@ export function Choice(props: ChoiceProps) {
 
   return props.children({
     value,
-    description: undefined, // v3 choices don't have separate description field
     isSelected,
     isVisible,
     isInStock,
     isPreOrderEnabled,
-    onSelect,
+    select: onSelect,
     optionName,
     choiceValue,
   });
@@ -438,7 +432,7 @@ export interface ResetProps {
  */
 export interface ResetRenderProps {
   /** Function to reset all selections */
-  onReset: () => void;
+  reset: () => void;
   /** Whether the reset button should be rendered */
   hasSelections: boolean;
 }
@@ -454,9 +448,9 @@ export interface ResetRenderProps {
  * function ResetButton() {
  *   return (
  *     <ProductVariantSelector.Reset>
- *       {({ onReset, hasSelections }) => (
+ *       {({ reset, hasSelections }) => (
  *         hasSelections && (
- *           <button onClick={onReset} className="reset-button">
+ *           <button onClick={reset} className="reset-button">
  *             Clear All Selections
  *           </button>
  *         )
@@ -479,7 +473,7 @@ export function Reset(props: ResetProps) {
   };
 
   return props.children({
-    onReset,
+    reset: onReset,
     hasSelections,
   });
 };
