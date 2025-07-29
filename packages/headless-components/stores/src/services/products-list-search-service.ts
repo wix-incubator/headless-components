@@ -287,9 +287,9 @@ function updateUrlWithSearchState(searchState: {
  */
 export async function parseUrlForProductsListSearch(
   url: string,
-  defaultSearchOptions?: Parameters<typeof productsV3.searchProducts>[0],
+  defaultSearchOptions?: productsV3.V3ProductSearch,
 ): Promise<{
-  searchOptions: Parameters<typeof productsV3.searchProducts>[0];
+  searchOptions: productsV3.V3ProductSearch;
   initialSearchState: InitialSearchState;
 }> {
   const urlObj = new URL(url);
@@ -301,7 +301,7 @@ export async function parseUrlForProductsListSearch(
     .find();
 
   // Build search options
-  const searchOptions: Parameters<typeof productsV3.searchProducts>[0] = {
+  const searchOptions: productsV3.V3ProductSearch = {
     cursorPaging: {
       limit: 100,
     },
@@ -958,14 +958,12 @@ export const ProductsListSearchService =
 
 // Helper functions (copied from the original services)
 
-function getCurrentLimit(
-  searchOptions: Parameters<typeof productsV3.searchProducts>[0],
-): number {
+function getCurrentLimit(searchOptions: productsV3.V3ProductSearch): number {
   return searchOptions.cursorPaging?.limit || 100;
 }
 
 function getCurrentCursor(
-  searchOptions: Parameters<typeof productsV3.searchProducts>[0],
+  searchOptions: productsV3.V3ProductSearch,
 ): string | null {
   return searchOptions.cursorPaging?.cursor || null;
 }
