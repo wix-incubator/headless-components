@@ -1,67 +1,10 @@
-import { createServicesMap } from "@wix/services-manager";
-import { useService, WixServices } from "@wix/services-manager-react";
+import { useService } from "@wix/services-manager-react";
 import type { ReactNode } from "react";
 import {
-  ProductsListFiltersService,
-  ProductsListFiltersServiceDefinition,
+  ProductsListSearchServiceDefinition,
   InventoryStatusType,
   type ProductOption,
-  ProductsListFiltersServiceConfig,
-} from "../services/products-list-filters-service.js";
-
-export interface RootProps {
-  /** Child components that will have access to the ProductListFilters service */
-  children: React.ReactNode;
-  /** Configuration for the ProductListFilters service */
-  productsListFiltersConfig: ProductsListFiltersServiceConfig;
-}
-
-/**
- * Root component that provides the ProductListFilters service context to its children.
- * This component sets up the necessary services for managing products list filters.
- *
- * @order 1
- * @component
- * @example
- * ```tsx
- * import { ProductListFilters } from '@wix/stores/components';
- *
- * function FiltersSection() {
- *   return (
- *     <ProductListFilters.Root
- *       productsListFiltersConfig={{
- *         minPrice: 0,
- *         maxPrice: 1000
- *       }}
- *     >
- *       <ProductListFilters.MinPrice>
- *         {({ minPrice, setSelectedMinPrice }) => (
- *           <input
- *             type="number"
- *             value={minPrice}
- *             onChange={(e) => setSelectedMinPrice(Number(e.target.value))}
- *             placeholder="Min price"
- *           />
- *         )}
- *       </ProductListFilters.MinPrice>
- *     </ProductListFilters.Root>
- *   );
- * }
- * ```
- */
-export function Root(props: RootProps): React.ReactNode {
-  return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        ProductsListFiltersServiceDefinition,
-        ProductsListFiltersService,
-        props.productsListFiltersConfig,
-      )}
-    >
-      {props.children}
-    </WixServices>
-  );
-}
+} from "../services/products-list-search-service.js";
 
 /**
  * Props for InventoryStatus headless component
@@ -89,33 +32,35 @@ export interface InventoryStatusRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListFilters } from '@wix/stores/components';
+ * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
  *
  * function InventoryStatusFilter() {
  *   return (
- *     <ProductListFilters.InventoryStatus>
- *       {({ availableInventoryStatuses, selectedInventoryStatuses, toggleInventoryStatus }) => (
- *         <div>
- *           <h4>Inventory Status:</h4>
- *           {availableInventoryStatuses.map(status => (
- *             <label key={status}>
- *               <input
- *                 type="checkbox"
- *                 checked={selectedInventoryStatuses.includes(status)}
- *                 onChange={() => toggleInventoryStatus(status)}
- *               />
- *               {status}
- *             </label>
- *           ))}
- *         </div>
- *       )}
- *     </ProductListFilters.InventoryStatus>
+ *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *       <ProductListFilters.InventoryStatus>
+ *         {({ availableInventoryStatuses, selectedInventoryStatuses, toggleInventoryStatus }) => (
+ *           <div>
+ *             <h4>Inventory Status:</h4>
+ *             {availableInventoryStatuses.map(status => (
+ *               <label key={status}>
+ *                 <input
+ *                   type="checkbox"
+ *                   checked={selectedInventoryStatuses.includes(status)}
+ *                   onChange={() => toggleInventoryStatus(status)}
+ *                 />
+ *                 {status}
+ *               </label>
+ *             ))}
+ *           </div>
+ *         )}
+ *       </ProductListFilters.InventoryStatus>
+ *     </ProductListSearch.Root>
  *   );
  * }
  * ```
  */
 export function InventoryStatus(props: InventoryStatusProps) {
-  const service = useService(ProductsListFiltersServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const availableInventoryStatuses = service.availableInventoryStatuses.get();
   const selectedInventoryStatuses = service.selectedInventoryStatuses.get();
   const toggleInventoryStatus = service.toggleInventoryStatus;
@@ -153,27 +98,29 @@ export interface ResetTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListFilters } from '@wix/stores/components';
+ * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
  *
  * function ResetFiltersButton() {
  *   return (
- *     <ProductListFilters.ResetTrigger>
- *       {({ resetFilters, isFiltered }) => (
- *         <button
- *           onClick={resetFilters}
- *           disabled={!isFiltered}
- *           className={isFiltered ? 'active' : 'disabled'}
- *         >
- *           {isFiltered ? 'Clear Filters' : 'No Filters Applied'}
- *         </button>
- *       )}
- *     </ProductListFilters.ResetTrigger>
+ *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *       <ProductListFilters.ResetTrigger>
+ *         {({ resetFilters, isFiltered }) => (
+ *           <button
+ *             onClick={resetFilters}
+ *             disabled={!isFiltered}
+ *             className={isFiltered ? 'active' : 'disabled'}
+ *           >
+ *             {isFiltered ? 'Clear Filters' : 'No Filters Applied'}
+ *           </button>
+ *         )}
+ *       </ProductListFilters.ResetTrigger>
+ *     </ProductListSearch.Root>
  *   );
  * }
  * ```
  */
 export function ResetTrigger(props: ResetTriggerProps) {
-  const service = useService(ProductsListFiltersServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const resetFilters = service.reset;
   const isFiltered = service.isFiltered.get();
 
@@ -214,42 +161,47 @@ export interface PriceRangeRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListFilters } from '@wix/stores/components';
+ * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
  *
  * function PriceRangeFilter() {
  *   return (
- *     <ProductListFilters.PriceRange>
- *       {({ minPrice, maxPrice, setSelectedMinPrice, setSelectedMaxPrice }) => (
- *         <div className="price-range">
- *           <h4>Price Range:</h4>
- *           <div className="price-inputs">
- *             <input
- *               type="number"
- *               value={minPrice}
- *               onChange={(e) => setSelectedMinPrice(Number(e.target.value))}
- *               placeholder="Min"
- *             />
- *             <span>to</span>
- *             <input
- *               type="number"
- *               value={maxPrice}
- *               onChange={(e) => setSelectedMaxPrice(Number(e.target.value))}
- *               placeholder="Max"
- *             />
+ *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *       <ProductListFilters.PriceRange>
+ *         {({ minPrice, maxPrice, setSelectedMinPrice, setSelectedMaxPrice }) => (
+ *           <div className="price-range">
+ *             <h4>Price Range:</h4>
+ *             <div className="price-inputs">
+ *               <input
+ *                 type="number"
+ *                 value={minPrice}
+ *                 onChange={(e) => setSelectedMinPrice(Number(e.target.value))}
+ *                 placeholder="Min"
+ *               />
+ *               <span>to</span>
+ *               <input
+ *                 type="number"
+ *                 value={maxPrice}
+ *                 onChange={(e) => setSelectedMaxPrice(Number(e.target.value))}
+ *                 placeholder="Max"
+ *               />
+ *             </div>
  *           </div>
- *         </div>
- *       )}
- *     </ProductListFilters.PriceRange>
+ *         )}
+ *       </ProductListFilters.PriceRange>
+ *     </ProductListSearch.Root>
  *   );
  * }
  * ```
  */
 export function PriceRange(props: PriceRangeProps) {
-  const service = useService(ProductsListFiltersServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
+
   const selectedMinPrice = service.selectedMinPrice.get();
-  const availableMinPrice = service.availableMinPrice.get();
   const selectedMaxPrice = service.selectedMaxPrice.get();
+
+  const availableMinPrice = service.availableMinPrice.get();
   const availableMaxPrice = service.availableMaxPrice.get();
+
   const setSelectedMinPrice = service.setSelectedMinPrice;
   const setSelectedMaxPrice = service.setSelectedMaxPrice;
 
@@ -294,33 +246,35 @@ export interface ProductOptionRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListFilters } from '@wix/stores/components';
+ * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
  *
  * function ProductOptionsFilter() {
  *   return (
- *     <ProductListFilters.ProductOptions>
- *       {({ option, selectedChoices, toggleChoice }) => (
- *         <div key={option.id}>
- *           <h4>{option.name}</h4>
- *           {option.choices.map(choice => (
- *             <label key={choice.id}>
- *               <input
- *                 type="checkbox"
- *                 checked={selectedChoices.includes(choice.id)}
- *                 onChange={() => toggleChoice(choice.id)}
- *               />
- *               {choice.name}
- *             </label>
- *           ))}
- *         </div>
- *       )}
- *     </ProductListFilters.ProductOptions>
+ *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *       <ProductListFilters.ProductOptions>
+ *         {({ option, selectedChoices, toggleChoice }) => (
+ *           <div key={option.id}>
+ *             <h4>{option.name}</h4>
+ *             {option.choices.map(choice => (
+ *               <label key={choice.id}>
+ *                 <input
+ *                   type="checkbox"
+ *                   checked={selectedChoices.includes(choice.id)}
+ *                   onChange={() => toggleChoice(choice.id)}
+ *                 />
+ *                 {choice.name}
+ *               </label>
+ *             ))}
+ *           </div>
+ *         )}
+ *       </ProductListFilters.ProductOptions>
+ *     </ProductListSearch.Root>
  *   );
  * }
  * ```
  */
 export function ProductOptions(props: ProductOptionsProps) {
-  const service = useService(ProductsListFiltersServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const availableOptions = service.availableProductOptions.get();
   const selectedProductOptions = service.selectedProductOptions.get();
 

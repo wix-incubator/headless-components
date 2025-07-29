@@ -108,12 +108,21 @@ export type ProductsListServiceConfig = {
 export async function loadProductsListServiceConfig(
   searchOptions: Parameters<typeof productsV3.searchProducts>[0],
 ): Promise<ProductsListServiceConfig> {
-  const result = await fetchProducts(searchOptions);
+  const searchWithoutFilter = { ...searchOptions, filter: {} };
+
+  const [resultWithoutFilter, resultWithFilter] = await Promise.all([
+    fetchProducts(searchWithoutFilter),
+    fetchProducts(searchOptions),
+  ]);
+
+  const products =
+    resultWithFilter?.products ?? resultWithoutFilter?.products ?? [];
+
   return {
-    products: result.products ?? [],
+    products,
     searchOptions,
-    pagingMetadata: result.pagingMetadata!,
-    aggregations: result.aggregationData!,
+    pagingMetadata: resultWithFilter.pagingMetadata!,
+    aggregations: resultWithoutFilter.aggregationData ?? {},
   };
 }
 

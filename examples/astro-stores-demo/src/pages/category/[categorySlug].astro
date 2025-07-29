@@ -5,10 +5,9 @@ import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
 import {
   loadCategoriesListServiceConfig,
   loadCategoryServiceConfig,
-  loadProductsListFiltersServiceConfig,
+  loadProductsListSearchServiceConfig,
   loadProductsListServiceConfig,
-  loadProductsListSortServiceConfig,
-  parseUrlForProductsAndFilters,
+  parseUrlForProductsListSearch,
 } from '@wix/headless-stores/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoreCollectionPage from '../../react-pages/category/index';
@@ -25,30 +24,29 @@ if (categoryLoadResult.type === 'not-found') {
 const category = categoryLoadResult.config.category;
 const categoryName = category?.name || '';
 
-const searchOptions = await parseUrlForProductsAndFilters(Astro.url.href, {
-  cursorPaging: {
-    limit: 10,
-  },
-  filter: {
-    'allCategoriesInfo.categories': {
-      $matchItems: [{ _id: category._id! }],
+const { searchOptions, initialSearchState } =
+  await parseUrlForProductsListSearch(Astro.url.href, {
+    cursorPaging: {
+      limit: 10,
     },
-  },
-});
+    filter: {
+      'allCategoriesInfo.categories': {
+        $matchItems: [{ _id: category._id! }],
+      },
+    },
+  });
 
 const [
   productsListConfig,
   categoriesListConfig,
   currentCartServiceConfig,
-  productsListFiltersConfig,
-  productsListSortConfig,
+  productsListSearchConfig,
   seoTagsServiceConfig,
 ] = await Promise.all([
   loadProductsListServiceConfig(searchOptions),
   loadCategoriesListServiceConfig(),
   loadCurrentCartServiceConfig(),
-  loadProductsListFiltersServiceConfig(searchOptions),
-  loadProductsListSortServiceConfig(Astro.url.href),
+  loadProductsListSearchServiceConfig(Astro.url.href),
   loadSEOTagsServiceConfig({
     pageUrl: Astro.url.href,
     itemData: {
@@ -81,8 +79,7 @@ const [
     categoryServiceConfig={categoryLoadResult.config}
     categoriesListConfig={categoriesListConfig}
     productsListConfig={productsListConfig}
-    productsListFiltersConfig={productsListFiltersConfig}
-    productsListSortConfig={productsListSortConfig}
+    productsListSearchConfig={productsListSearchConfig}
     slug={categorySlug}
     slot="body"
   />

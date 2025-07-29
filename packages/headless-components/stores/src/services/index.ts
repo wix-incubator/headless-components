@@ -36,25 +36,16 @@ export {
   ProductsListServiceConfig,
 } from "./products-list-service.js";
 
+// New consolidated search service
 export {
   SortType,
-  ProductsListSortService,
-  ProductsListSortServiceDefinition,
-  ProductsListSortServiceConfig,
-  loadProductsListSortServiceConfig,
-  convertUrlSortToSortType,
-} from "./products-list-sort-service.js";
-
-export {
   InventoryStatusType,
-  ProductsListFiltersService,
-  ProductsListFiltersServiceDefinition,
-  loadProductsListFiltersServiceConfig,
-  ProductsListFiltersServiceConfig,
-  parseUrlForProductsAndFilters,
-} from "./products-list-filters-service.js";
-
-export {
-  ProductsListPaginationService,
-  ProductsListPaginationServiceDefinition,
-} from "./products-list-pagination-service.js";
+  ProductOption,
+  ProductChoice,
+  ProductsListSearchService,
+  ProductsListSearchServiceDefinition,
+  ProductsListSearchServiceConfig,
+  loadProductsListSearchServiceConfig,
+  parseUrlForProductsListSearch,
+  convertUrlSortToSortType,
+} from "./products-list-search-service.js";

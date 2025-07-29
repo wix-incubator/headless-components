@@ -5,14 +5,12 @@ import {
   ProductList,
   ProductListFilters,
   ProductListPagination,
-  ProductListSort,
   ProductVariantSelector,
   SelectedVariant,
 } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
-  ProductsListFiltersServiceConfig,
-  ProductsListSortServiceConfig,
+  ProductsListSearchServiceConfig,
 } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
@@ -26,8 +24,7 @@ import { SortDropdown } from './SortDropdown';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
-  productsListFiltersConfig: ProductsListFiltersServiceConfig;
-  productsListSortConfig: ProductsListSortServiceConfig;
+  productsListSearchConfig: ProductsListSearchServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
   currentCategorySlug: string;
   productPageRoute: string;
@@ -646,28 +643,22 @@ export const LoadMoreSection = () => {
 
 export function CategoryPage({
   productsListConfig,
-  productsListFiltersConfig,
-  productsListSortConfig,
+  productsListSearchConfig,
   categoriesListConfig,
   currentCategorySlug,
   productPageRoute,
 }: StoreCollectionPageProps) {
   return (
-    <ProductList.Root productsListConfig={productsListConfig}>
-      <ProductListFilters.Root
-        productsListFiltersConfig={productsListFiltersConfig}
-      >
-        <ProductListSort.Root productsListSortConfig={productsListSortConfig}>
-          <ProductListPagination.Root>
-            <ProductGridContent
-              productPageRoute={productPageRoute}
-              categoriesListConfig={categoriesListConfig}
-              currentCategorySlug={currentCategorySlug}
-            />
-            <LoadMoreSection />
-          </ProductListPagination.Root>
-        </ProductListSort.Root>
-      </ProductListFilters.Root>
+    <ProductList.Root
+      productsListConfig={productsListConfig}
+      productsListSearchConfig={productsListSearchConfig}
+    >
+      <ProductGridContent
+        productPageRoute={productPageRoute}
+        categoriesListConfig={categoriesListConfig}
+        currentCategorySlug={currentCategorySlug}
+      />
+      <LoadMoreSection />
     </ProductList.Root>
   );
 }
