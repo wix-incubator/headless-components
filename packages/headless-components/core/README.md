@@ -29,9 +29,9 @@ When using headless components with SSR, data is often loaded server-side and pa
 The `hydratedEffect` utility:
 
 1. Only runs effects on the client-side (checks for `window` object)
-2. Skips the first run to prevent duplicate requests during hydration
-3. Ensures proper signal dependency tracking
-4. Executes the effect only on subsequent reactive updates
+2. Ensures signals are read to establish dependencies on first run
+3. Allows the effect function to handle firstRun logic internally
+4. Executes the effect normally on subsequent reactive updates
 
 #### API
 
@@ -47,7 +47,7 @@ function hydratedEffect(
 **Parameters:**
 
 - `signalsService` - The signals service instance for creating effects
-- `effectFn` - The effect function to run after hydration is complete
+- `effectFn` - The effect function that reads signals and contains the effect logic
 - `getFirstRun` - Function that returns the current firstRun state
 - `setFirstRun` - Function to update the firstRun state
 
@@ -69,8 +69,14 @@ export const MyService = implementService.withConfig()(
     hydratedEffect(
       signalsService,
       async () => {
-        // Read signals first to establish dependencies
+        // CRITICAL: Read signals FIRST to establish dependencies, even on first run
         const searchOptions = searchOptionsSignal.get();
+
+        // Check firstRun AFTER reading signals
+        if (firstRun) {
+          firstRun = false;
+          return; // Skip execution but dependencies are established
+        }
 
         // This won't run on first load when data is already available from SSR
         try {
@@ -95,13 +101,50 @@ export const MyService = implementService.withConfig()(
 );
 ```
 
+#### Key Pattern
+
+The critical pattern is:
+
+1. **Read signals FIRST** - This establishes dependencies even on first run
+2. **Check firstRun AFTER** - This prevents duplicate execution while maintaining reactivity
+3. **Return early if firstRun** - Skip the effect logic but keep the dependencies
+
+```typescript
+hydratedEffect(
+  signalsService,
+  async () => {
+    // STEP 1: Read signals to establish dependencies
+    const searchOptions = searchOptionsSignal.get();
+    const filters = filtersSignal.get();
+
+    // STEP 2: Check firstRun after reading signals
+    if (firstRun) {
+      firstRun = false;
+      return; // Exit early but dependencies are established
+    }
+
+    // STEP 3: Execute effect logic on subsequent runs
+    try {
+      isLoadingSignal.set(true);
+      const result = await fetchData(searchOptions, filters);
+      dataSignal.set(result);
+    } finally {
+      isLoadingSignal.set(false);
+    }
+  },
+  () => firstRun,
+  (value) => (firstRun = value),
+);
+```
+
 #### Before vs After
 
-**Before (with boilerplate):**
+**Before (with manual boilerplate):**
 
 ```typescript
 if (typeof window !== "undefined") {
   signalsService.effect(async () => {
+    // CRITICAL: Read signals first
     const searchOptions = searchOptionsSignal.get();
 
     if (firstRun) {
@@ -122,7 +165,14 @@ firstRun = false;
 hydratedEffect(
   signalsService,
   async () => {
+    // CRITICAL: Read signals first
     const searchOptions = searchOptionsSignal.get();
+
+    if (firstRun) {
+      firstRun = false;
+      return;
+    }
+
     // Effect logic here...
   },
   () => firstRun,
@@ -138,6 +188,23 @@ This utility is used internally by:
 - `@wix/headless-ecom` - Cart and checkout services
 - Other headless packages that need hydration-aware effects
 
+## Testing
+
+Run tests with:
+
+```bash
+yarn test
+```
+
+The tests cover:
+
+- Client-side behavior (with window)
+- Server-side behavior (without window)
+- FirstRun state management
+- Signal dependency establishment
+- Error handling
+- Edge cases
+
 ## Contributing
 
 When adding new utilities to this package:
@@ -146,4 +213,5 @@ When adding new utilities to this package:
 2. Export them from `src/utils/index.ts`
 3. Add comprehensive documentation with examples
 4. Include TypeScript types for all parameters
-5. Test with both SSR and client-side rendering scenarios
+5. Add comprehensive tests in `*.test.ts` files
+6. Test with both SSR and client-side rendering scenarios
