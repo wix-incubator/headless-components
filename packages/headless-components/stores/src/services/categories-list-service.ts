@@ -4,6 +4,7 @@ import {
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
 import { categories } from "@wix/categories";
+import { type Category } from "./category-service.js";
 
 /**
  * Configuration interface for the Categories List service.
@@ -13,7 +14,7 @@ import { categories } from "@wix/categories";
  */
 export type CategoriesListServiceConfig = {
   /** Array of category objects to initialize the service with */
-  categories: categories.Category[];
+  categories: Category[];
 };
 
 /**
@@ -25,7 +26,7 @@ export type CategoriesListServiceConfig = {
 export const CategoriesListServiceDefinition = defineService<
   {
     /** Reactive signal containing the list of categories */
-    categories: Signal<categories.Category[]>;
+    categories: Signal<Category[]>;
     /** Reactive signal indicating if categories are currently being loaded */
     isLoading: Signal<boolean>;
     /** Reactive signal containing any error message, or null if no error */
@@ -79,7 +80,7 @@ export const CategoriesListService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const categoriesSignal = signalsService.signal<categories.Category[]>(
+      const categoriesSignal = signalsService.signal<Category[]>(
         config.categories,
       );
       const isLoadingSignal = signalsService.signal<boolean>(false);
@@ -105,7 +106,7 @@ export const CategoriesListService =
  * ---
  * // Astro page example - pages/categories.astro
  * import { loadCategoriesListServiceConfig } from '@wix/stores/services';
-  * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components';
  *
  * // Load categories data during SSR
  * const categoriesConfig = await loadCategoriesListServiceConfig();
@@ -128,7 +129,7 @@ export const CategoriesListService =
  * // Next.js page example - pages/categories.tsx
  * import { GetServerSideProps } from 'next';
  * import { loadCategoriesListServiceConfig } from '@wix/stores/services';
-  * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components';
  *
  * interface CategoriesPageProps {
  *   categoriesConfig: Awaited<ReturnType<typeof loadCategoriesListServiceConfig>>;

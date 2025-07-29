@@ -5,8 +5,8 @@ import {
   CategoriesListServiceDefinition,
   type CategoriesListServiceConfig,
 } from "../services/categories-list-service.js";
-import { categories } from "@wix/categories";
 import { Root as CategoryRoot } from "./Category.js";
+import { type Category } from "../services/category-service.js";
 
 export interface RootProps {
   children: React.ReactNode;
@@ -57,7 +57,9 @@ export function Root(props: RootProps): React.ReactNode {
  */
 export interface EmptyStateProps {
   /** Content to display when categories list is empty (can be a render function or ReactNode) */
-  children: ((props: EmptyStateRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: EmptyStateRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -214,7 +216,9 @@ export function Error(props: ErrorProps) {
  */
 export interface ItemContentProps {
   /** Content to display for each category (can be a render function receiving category data or ReactNode) */
-  children: ((props: ItemContentRenderProps) => React.ReactNode) | React. ReactNode;
+  children:
+    | ((props: ItemContentRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -222,7 +226,7 @@ export interface ItemContentProps {
  */
 export interface ItemContentRenderProps {
   /** Category data */
-  category: categories.Category;
+  category: Category;
 }
 
 /**
@@ -260,7 +264,7 @@ export function ItemContent(props: ItemContentProps) {
     return null;
   }
 
-  return categoriesValue.map((category: categories.Category) => (
+  return categoriesValue.map((category: Category) => (
     <CategoryRoot key={category._id} categoryServiceConfig={{ category }}>
       {typeof props.children === "function"
         ? props.children({
