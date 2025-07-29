@@ -47,9 +47,9 @@ export interface RootProps {
  *                             <div className="choices">
  *                               {choices.map(choice => (
  *                                 <ProductModifiers.Choice key={choice.id} modifier={modifier} choice={choice}>
- *                                   {({ value, isSelected, onSelect }) => (
+ *                                   {({ value, isSelected, select }) => (
  *                                     <button
- *                                       onClick={onSelect}
+ *                                       onClick={select}
  *                                       className={isSelected ? 'selected' : ''}
  *                                     >
  *                                       {value}
@@ -342,7 +342,7 @@ export interface ChoiceRenderProps {
   /** Whether this choice is currently selected */
   isSelected: boolean;
   /** Function to select this choice */
-  onSelect: () => void;
+  select: () => void;
   /** Modifier name */
   modifierName: string;
   /** Choice value */
@@ -362,9 +362,9 @@ export interface ChoiceRenderProps {
  * function ModifierChoiceButton({ modifier, choice }) {
  *   return (
  *     <ProductModifiers.Choice modifier={modifier} choice={choice}>
- *       {({ value, description, isSelected, onSelect, colorCode }) => (
+ *       {({ value, description, isSelected, select, colorCode }) => (
  *         <button
- *           onClick={onSelect}
+ *           onClick={select}
  *           className={`choice-button ${isSelected ? 'selected' : ''}`}
  *           style={colorCode ? { backgroundColor: colorCode } : {}}
  *         >
@@ -401,7 +401,7 @@ export function Choice(props: ChoiceProps) {
   const selectedValue = modifiersService?.getModifierValue(modifierName);
   const isSelected = selectedValue?.choiceValue === choiceValue;
 
-  const onSelect = () => {
+  const select = () => {
     modifiersService?.setModifierChoice(modifierName, choiceValue);
   };
 
@@ -409,7 +409,7 @@ export function Choice(props: ChoiceProps) {
     value,
     description,
     isSelected,
-    onSelect,
+    select,
     modifierName,
     choiceValue,
     colorCode,
@@ -433,7 +433,7 @@ export interface FreeTextRenderProps {
   /** Current text value */
   value: string;
   /** Function to update text value */
-  onChange: (value: string) => void;
+  setText: (value: string) => void;
   /** Whether this modifier is mandatory */
   mandatory: boolean;
   /** Maximum characters allowed */
@@ -459,14 +459,14 @@ export interface FreeTextRenderProps {
  * function FreeTextModifier({ modifier }) {
  *   return (
  *     <ProductModifiers.FreeText modifier={modifier}>
- *       {({ value, onChange, mandatory, maxChars, placeholder, charCount, isOverLimit, modifierName }) => (
+ *       {({ value, setText, mandatory, maxChars, placeholder, charCount, isOverLimit, modifierName }) => (
  *         <div className="free-text-modifier">
  *           <label>
  *             {modifierName} {mandatory && <span className="required">*</span>}
  *           </label>
  *           <textarea
  *             value={value}
- *             onChange={(e) => onChange(e.target.value)}
+ *             setText={(e) => setText(e.target.value)}
  *             placeholder={placeholder}
  *             maxLength={maxChars}
  *             className={isOverLimit ? 'over-limit' : ''}
@@ -498,14 +498,14 @@ export function FreeText(props: FreeTextProps) {
   const charCount = value.length;
   const isOverLimit = maxChars ? charCount > maxChars : false;
 
-  const onChange = (newValue: string) => {
+  const setText = (newValue: string) => {
     if (maxChars && newValue.length > maxChars) return;
     modifiersService?.setModifierFreeText(modifierName, newValue);
   };
 
   return props.children({
     value,
-    onChange,
+    setText,
     mandatory,
     maxChars,
     placeholder,
@@ -532,7 +532,7 @@ export interface ToggleFreeTextRenderProps {
   /** Whether the text input is shown */
   isTextInputShown: boolean;
   /** Function to toggle text input visibility */
-  onToggle: () => void;
+  toggle: () => void;
   /** Whether this modifier is mandatory */
   mandatory: boolean;
   /** Modifier name */
@@ -551,14 +551,14 @@ export interface ToggleFreeTextRenderProps {
  * function ToggleFreeTextModifier({ modifier }) {
  *   return (
  *     <ProductModifiers.ToggleFreeText modifier={modifier}>
- *       {({ isTextInputShown, onToggle, mandatory, modifierName }) => (
+ *       {({ isTextInputShown, toggle, mandatory, modifierName }) => (
  *         <div className="toggle-free-text">
  *           {!mandatory && (
  *             <label>
  *               <input
  *                 type="checkbox"
  *                 checked={isTextInputShown}
- *                 onChange={onToggle}
+ *                 onChange={toggle}
  *               />
  *               Add {modifierName}
  *             </label>
@@ -589,7 +589,7 @@ export function ToggleFreeText(props: ToggleFreeTextProps) {
   const mandatory = modifier.mandatory || false;
   const [isTextInputShown, setIsTextInputShown] = useState(mandatory);
 
-  const onToggle = () => {
+  const toggle = () => {
     const newState = !isTextInputShown;
     setIsTextInputShown(newState);
 
@@ -600,7 +600,7 @@ export function ToggleFreeText(props: ToggleFreeTextProps) {
 
   return props.children({
     isTextInputShown,
-    onToggle,
+    toggle,
     mandatory,
     modifierName,
   });

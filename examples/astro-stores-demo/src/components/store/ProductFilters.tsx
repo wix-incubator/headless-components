@@ -91,16 +91,16 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             availableMaxPrice,
             selectedMinPrice,
             selectedMaxPrice,
-            setSelectedMinPrice,
-            setSelectedMaxPrice,
+            setMinPrice,
+            setMaxPrice,
           }) => (
             <PriceRangeSelector
               min={availableMinPrice}
               max={availableMaxPrice}
               selectedMin={selectedMinPrice}
               selectedMax={selectedMaxPrice}
-              setSelectedMin={setSelectedMinPrice}
-              setSelectedMax={setSelectedMaxPrice}
+              setSelectedMin={setMinPrice}
+              setSelectedMax={setMaxPrice}
             />
           )}
         </ProductListFilters.PriceRange>

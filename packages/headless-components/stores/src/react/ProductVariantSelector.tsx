@@ -298,7 +298,7 @@ export function Choice(props: ChoiceProps) {
 
   const value = choiceValue;
 
-  const onSelect = () => {
+  const select = () => {
     const newChoices = {
       ...selectedChoices,
       [optionName]: choiceValue,
@@ -312,7 +312,7 @@ export function Choice(props: ChoiceProps) {
     isVisible,
     isInStock,
     isPreOrderEnabled,
-    select: onSelect,
+    select,
     optionName,
     choiceValue,
   });
@@ -468,12 +468,12 @@ export function Reset(props: ResetProps) {
   const selectedChoices = variantService.selectedChoices.get();
   const hasSelections = Object.keys(selectedChoices).length > 0;
 
-  const onReset = () => {
+  const reset = () => {
     variantService.resetSelections();
   };
 
   return props.children({
-    reset: onReset,
+    reset,
     hasSelections,
   });
 };

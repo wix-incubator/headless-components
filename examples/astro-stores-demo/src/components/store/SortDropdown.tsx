@@ -11,10 +11,10 @@ export function SortDropdown() {
           </h3>
         </div>
         <ProductListSort.Options>
-          {({ selectedSortOption, setSelectedSortOption, sortOptions }) => (
+          {({ selectedSortOption, updateSortOption, sortOptions }) => (
             <select
               value={selectedSortOption}
-              onChange={e => setSelectedSortOption(e.target.value as SortType)}
+              onChange={e => updateSortOption(e.target.value as SortType)}
               className="px-3 py-2 bg-surface-primary border border-brand-light rounded-lg text-content-primary text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary appearance-none min-w-[160px]"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='${encodeURIComponent(

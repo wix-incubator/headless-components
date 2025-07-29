@@ -221,7 +221,7 @@ export interface ThumbnailItemRenderProps {
   /** Whether this thumbnail is currently active */
   isActive: boolean;
   /** Function to select this media */
-  onSelect: () => void;
+  select: () => void;
   /** Index of this thumbnail */
   index: number;
   /** Alt text for thumbnail */
@@ -239,9 +239,9 @@ export interface ThumbnailItemRenderProps {
  * function ThumbnailButton({ index }) {
  *   return (
  *     <MediaGallery.ThumbnailItem index={index}>
- *       {({ src, isActive, onSelect, alt }) => (
+ *       {({ src, isActive, select, alt }) => (
  *         <button
- *           onClick={onSelect}
+ *           onClick={select}
  *           className={`thumbnail-btn ${isActive ? 'active' : ''}`}
  *         >
  *           <img src={src} alt={alt} />
@@ -271,7 +271,7 @@ export const ThumbnailItem = (props: ThumbnailItemProps) => {
 
   const isActive = currentIndex === props.index;
 
-  const onSelect = () => {
+  const select = () => {
     mediaService.setSelectedMediaIndex(props.index);
   };
 
@@ -279,7 +279,7 @@ export const ThumbnailItem = (props: ThumbnailItemProps) => {
     item: mediaToDisplay[props.index],
     src,
     isActive,
-    onSelect,
+    select,
     index: props.index,
     alt,
   });
@@ -298,7 +298,7 @@ export interface NextProps {
  */
 export interface NextRenderProps {
   /** Function to go to next media */
-  onNext: () => void;
+  next: () => void;
   /** Whether there is a next media available */
   canGoNext: boolean;
 }
@@ -314,9 +314,9 @@ export interface NextRenderProps {
  * function NextButton() {
  *   return (
  *     <MediaGallery.Next>
- *       {({ onNext, canGoNext }) => (
+ *       {({ next, canGoNext }) => (
  *         <button
- *           onClick={onNext}
+ *           onClick={next}
  *           disabled={!canGoNext}
  *           className="nav-btn next-btn"
  *         >
@@ -342,7 +342,7 @@ export const Next = (props: NextProps) => {
   }
 
   return props.children({
-    onNext: mediaService.nextMedia,
+    next: mediaService.nextMedia,
     canGoNext,
   });
 };
@@ -360,7 +360,7 @@ export interface PreviousProps {
  */
 export interface PreviousRenderProps {
   /** Function to go to previous media */
-  onPrevious: () => void;
+  previous: () => void;
   /** Whether there is a previous media available */
   canGoPrevious: boolean;
 }
@@ -376,9 +376,9 @@ export interface PreviousRenderProps {
  * function PreviousButton() {
  *   return (
  *     <MediaGallery.Previous>
- *       {({ onPrevious, canGoPrevious }) => (
+ *       {({ previous, canGoPrevious }) => (
  *         <button
- *           onClick={onPrevious}
+ *           onClick={previous}
  *           disabled={!canGoPrevious}
  *           className="nav-btn prev-btn"
  *         >
@@ -404,7 +404,7 @@ export const Previous = (props: PreviousProps) => {
   }
 
   return props.children({
-    onPrevious: mediaService.previousMedia,
+    previous: mediaService.previousMedia,
     canGoPrevious,
   });
 };

@@ -203,9 +203,9 @@ export interface PriceRangeRenderProps {
   /** Catalog maximum price */
   availableMaxPrice: number;
   /** Function to update the minimum price filter */
-  setSelectedMinPrice: (minPrice: number) => void;
+  setMinPrice: (minPrice: number) => void;
   /** Function to update the maximum price filter */
-  setSelectedMaxPrice: (maxPrice: number) => void;
+  setMaxPrice: (maxPrice: number) => void;
 }
 
 /**
@@ -250,8 +250,8 @@ export function PriceRange(props: PriceRangeProps) {
   const availableMinPrice = service.availableMinPrice.get();
   const selectedMaxPrice = service.selectedMaxPrice.get();
   const availableMaxPrice = service.availableMaxPrice.get();
-  const setSelectedMinPrice = service.setSelectedMinPrice;
-  const setSelectedMaxPrice = service.setSelectedMaxPrice;
+  const setMinPrice = service.setSelectedMinPrice;
+  const setMaxPrice = service.setSelectedMaxPrice;
 
   return typeof props.children === "function"
     ? props.children({
@@ -259,8 +259,8 @@ export function PriceRange(props: PriceRangeProps) {
         selectedMinPrice,
         selectedMaxPrice,
         availableMaxPrice,
-        setSelectedMinPrice,
-        setSelectedMaxPrice,
+        setMinPrice,
+        setMaxPrice,
       })
     : props.children;
 }
