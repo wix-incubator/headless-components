@@ -65,7 +65,7 @@ export const ProductGridContent = ({
         productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
 
     return (
-      <SelectedVariant.Root selectedVariantServiceConfig={{}}>
+      <SelectedVariant.Root>
         <div
           data-testid="product-item"
           data-product-id={product._id}
