@@ -19,7 +19,7 @@ const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
   <ProductModifiers.FreeText modifier={modifier}>
     {({
       value,
-      onChange,
+      setText,
       placeholder: freeTextPlaceholder,
       charCount,
       isOverLimit,
@@ -29,7 +29,7 @@ const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
         <textarea
           data-testid="product-modifier-free-text-input"
           value={value}
-          onChange={e => onChange(e.target.value)}
+          onChange={e => setText(e.target.value)}
           placeholder={
             freeTextPlaceholder || `Enter custom ${name.toLowerCase()}...`
           }
@@ -65,7 +65,7 @@ export default function ProductDetails({
         data-testid="product-details"
       >
         <Product.Root productServiceConfig={{ product }}>
-          <SelectedVariant.Root selectedVariantServiceConfig={{}}>
+          <SelectedVariant.Root>
             <Product.Media>
               {({ media }) => (
                 <MediaGallery.Root mediaGalleryServiceConfig={{ media }}>
@@ -101,9 +101,9 @@ export default function ProductDetails({
                             )}
 
                             <MediaGallery.Previous>
-                              {({ onPrevious, canGoPrevious }) => (
+                              {({ previous, canGoPrevious }) => (
                                 <button
-                                  onClick={onPrevious}
+                                  onClick={previous}
                                   disabled={!canGoPrevious}
                                   className="absolute left-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all"
                                 >
@@ -125,9 +125,9 @@ export default function ProductDetails({
                             </MediaGallery.Previous>
 
                             <MediaGallery.Next>
-                              {({ onNext, canGoNext }) => (
+                              {({ next, canGoNext }) => (
                                 <button
-                                  onClick={onNext}
+                                  onClick={next}
                                   disabled={!canGoNext}
                                   className="absolute right-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all"
                                 >
@@ -169,9 +169,9 @@ export default function ProductDetails({
                         <div className="grid grid-cols-4 gap-4">
                           {items.map((_, i) => (
                             <MediaGallery.ThumbnailItem key={i} index={i}>
-                              {({ src, isActive, onSelect, alt }) => (
+                              {({ src, isActive, select, alt }) => (
                                 <div
-                                  onClick={onSelect}
+                                  onClick={select}
                                   className={`aspect-square bg-surface-primary rounded-lg border cursor-pointer transition-all ${
                                     isActive
                                       ? 'border-brand-medium ring-2 ring-brand-light'
@@ -283,7 +283,7 @@ export default function ProductDetails({
               </Product.Description>
 
               {/* Product Options (if any) */}
-              <ProductVariantSelector.Root selectedVariantServiceConfig={{}}>
+              <ProductVariantSelector.Root>
                 <ProductVariantSelector.Options>
                   {({ options, hasOptions }) => (
                     <>
@@ -329,7 +329,7 @@ export default function ProductDetails({
                                                 isVisible,
                                                 isInStock,
                                                 isPreOrderEnabled,
-                                                onSelect,
+                                                select,
                                               }) => (
                                                 <>
                                                   {isColorOption &&
@@ -341,7 +341,7 @@ export default function ProductDetails({
                                                     <div className="relative">
                                                       <button
                                                         data-testid="product-modifier-choice-button"
-                                                        onClick={onSelect}
+                                                        onClick={select}
                                                         title={value}
                                                         className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
                                                           isSelected
@@ -388,7 +388,7 @@ export default function ProductDetails({
                                                       <div className="relative">
                                                         <button
                                                           data-testid="product-modifier-choice-button"
-                                                          onClick={onSelect}
+                                                          onClick={select}
                                                           className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
                                                             isSelected
                                                               ? 'product-option-active'
@@ -433,11 +433,11 @@ export default function ProductDetails({
                           ))}
 
                           <ProductVariantSelector.Reset>
-                            {({ onReset, hasSelections }) =>
+                            {({ reset, hasSelections }) =>
                               hasSelections && (
                                 <div className="pt-4">
                                   <button
-                                    onClick={onReset}
+                                    onClick={reset}
                                     className="text-sm text-brand-primary hover:text-brand-light transition-colors"
                                   >
                                     Reset Selections
@@ -501,11 +501,11 @@ export default function ProductDetails({
                                                 value,
                                                 isSelected,
                                                 colorCode,
-                                                onSelect,
+                                                select,
                                               }) => (
                                                 <button
                                                   data-testid="product-modifier-choice-button"
-                                                  onClick={onSelect}
+                                                  onClick={select}
                                                   className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
                                                     isSelected
                                                       ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
@@ -535,11 +535,11 @@ export default function ProductDetails({
                                             {({
                                               value,
                                               isSelected,
-                                              onSelect,
+                                              select,
                                             }) => (
                                               <button
                                                 data-testid="product-modifier-choice-button"
-                                                onClick={onSelect}
+                                                onClick={select}
                                                 className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
                                                   isSelected
                                                     ? 'product-option-active'
@@ -566,16 +566,13 @@ export default function ProductDetails({
                                           <ProductModifiers.ToggleFreeText
                                             modifier={modifier}
                                           >
-                                            {({
-                                              isTextInputShown,
-                                              onToggle,
-                                            }) => (
+                                            {({ isTextInputShown, toggle }) => (
                                               <div className="space-y-3">
                                                 <label className="flex items-center gap-2">
                                                   <input
                                                     type="checkbox"
                                                     checked={isTextInputShown}
-                                                    onChange={onToggle}
+                                                    onChange={toggle}
                                                     className="w-4 h-4 text-brand-primary rounded border-brand-light focus:ring-brand-primary"
                                                   />
                                                   <span className="text-content-primary">

@@ -24,10 +24,10 @@ export interface RootProps {
  *   return (
  *     <ProductListSort.Root>
  *       <ProductListSort.Options>
- *         {({ selectedSortOption, setSelectedSortOption, sortOptions }) => (
+ *         {({ selectedSortOption, updateSortOption, sortOptions }) => (
  *           <select
  *             value={selectedSortOption}
- *             onChange={(e) => setSelectedSortOption(e.target.value)}
+ *             onChange={(e) => updateSortOption(e.target.value)}
  *           >
  *             {sortOptions.map(option => (
  *               <option key={option.value} value={option.value}>
@@ -71,7 +71,7 @@ export interface OptionsRenderProps {
   /** Currently selected sort option value */
   selectedSortOption: string;
   /** Function to update the selected sort option */
-  setSelectedSortOption: (sort: string) => void;
+  updateSortOption: (sort: string) => void;
   /** Available sort options */
   sortOptions: SortType[];
 }
@@ -87,13 +87,13 @@ export interface OptionsRenderProps {
  * function ProductSortDropdown() {
  *   return (
  *     <ProductListSort.Options>
- *       {({ selectedSortOption, setSelectedSortOption, sortOptions }) => (
+ *       {({ selectedSortOption, updateSortOption, sortOptions }) => (
  *         <div className="sort-container">
  *           <label htmlFor="sort-select">Sort by:</label>
  *           <select
  *             id="sort-select"
  *             value={selectedSortOption}
- *             onChange={(e) => setSelectedSortOption(e.target.value)}
+ *             onChange={(e) => updateSortOption(e.target.value)}
  *             className="sort-dropdown"
  *           >
  *             {sortOptions.map(option => (
@@ -113,12 +113,12 @@ export function Options(props: OptionsProps) {
   const service = useService(ProductsListSortServiceDefinition);
   const selectedSortOption = service.selectedSortOption.get();
   const sortOptions = service.sortOptions;
-  const setSelectedSortOption = service.setSelectedSortOption;
+  const updateSortOption = service.setSelectedSortOption;
 
   return typeof props.children === "function"
     ? props.children({
         selectedSortOption,
-        setSelectedSortOption,
+        updateSortOption,
         sortOptions,
       })
     : props.children;

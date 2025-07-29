@@ -14,5 +14,9 @@ const currentCartServiceConfig = await loadCurrentCartServiceConfig();
     content="Review and manage items in your Shopping Cart"
   />
 
-  <CartPage client:load currentCartServiceConfig={currentCartServiceConfig} slot="body" />
+  <CartPage
+    client:load
+    currentCartServiceConfig={currentCartServiceConfig}
+    slot="body"
+  />
 </BaseLayout>

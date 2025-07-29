@@ -29,7 +29,7 @@ export const ProductsListPaginationServiceDefinition = defineService<{
   /** Function to navigate to the previous page */
   prevPage: () => void;
   /** Function to navigate to the first page */
-  goToFirstPage: () => void;
+  navigateToFirstPage: () => void;
   /** Function to load more items (increase the limit) */
   loadMore: (count: number) => void;
 }>("products-list-pagination");
@@ -85,7 +85,7 @@ export type ProductsListPaginationServiceConfig = {};
  *
  *       <div>
  *         <button
- *           onClick={() => paginationService.goToFirstPage()}
+ *           onClick={() => paginationService.navigateToFirstPage()}
  *           disabled={!hasPrevPage}
  *         >
  *           First
@@ -206,7 +206,7 @@ export const ProductsListPaginationService =
           }
         },
 
-        goToFirstPage: () => {
+        navigateToFirstPage: () => {
           currentCursorSignal.set(null);
         },
       };

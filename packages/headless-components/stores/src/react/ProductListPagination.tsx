@@ -225,7 +225,7 @@ export interface FirstPageTriggerProps {
  */
 export interface FirstPageTriggerRenderProps {
   /** Function to navigate to the first page */
-  goToFirstPage: () => void;
+  navigateToFirstPage: () => void;
   /** Whether there is a previous page (indicating not on first page) */
   hasPrevPage: boolean;
 }
@@ -241,9 +241,9 @@ export interface FirstPageTriggerRenderProps {
  * function FirstPageButton() {
  *   return (
  *     <ProductListPagination.FirstPageTrigger>
- *       {({ goToFirstPage, hasPrevPage }) => (
+ *       {({ navigateToFirstPage, hasPrevPage }) => (
  *         <button
- *           onClick={goToFirstPage}
+ *           onClick={navigateToFirstPage}
  *           disabled={!hasPrevPage}
  *           title="Go to first page"
  *         >
@@ -257,11 +257,11 @@ export interface FirstPageTriggerRenderProps {
  */
 export function FirstPageTrigger(props: FirstPageTriggerProps) {
   const service = useService(ProductsListPaginationServiceDefinition);
-  const goToFirstPage = service.goToFirstPage;
+  const navigateToFirstPage = service.navigateToFirstPage;
   const hasPrevPage = service.hasPrevPage.get();
 
   return typeof props.children === "function"
-    ? props.children({ goToFirstPage, hasPrevPage })
+    ? props.children({ navigateToFirstPage, hasPrevPage })
     : props.children;
 }
 

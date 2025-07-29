@@ -11,7 +11,7 @@ import { createServicesMap } from "@wix/services-manager";
 
 export interface RootProps {
   children: React.ReactNode;
-  selectedVariantServiceConfig: SelectedVariantServiceConfig;
+  selectedVariantServiceConfig?: SelectedVariantServiceConfig;
 }
 
 /**
@@ -248,9 +248,9 @@ export interface ActionsProps {
  */
 export interface ActionsRenderProps {
   /** Function to add product to cart */
-  onAddToCart: () => Promise<void>;
+  addToCart: () => Promise<void>;
   /** Function to buy now (clear cart, add product, proceed to checkout) */
-  onBuyNow: () => Promise<void>;
+  buyNow: () => Promise<void>;
   /** Whether add to cart is available */
   canAddToCart: boolean;
   /** Whether add to cart is currently loading */
@@ -276,18 +276,18 @@ export interface ActionsRenderProps {
  * function AddToCartButton() {
  *   return (
  *     <SelectedVariant.Actions>
- *       {({ onAddToCart, onBuyNow, canAddToCart, isLoading, inStock, error }) => (
+ *       {({ addToCart, buyNow, canAddToCart, isLoading, inStock, error }) => (
  *         <div>
  *           {error && <div className="error">{error}</div>}
  *           {!inStock && <div>Out of stock</div>}
  *           <button
- *             onClick={onAddToCart}
+ *             onClick={addToCart}
  *             disabled={!canAddToCart || isLoading}
  *           >
  *             {isLoading ? 'Adding...' : 'Add to Cart'}
  *           </button>
  *           <button
- *             onClick={onBuyNow}
+ *             onClick={buyNow}
  *             disabled={!canAddToCart || isLoading}
  *           >
  *             Buy Now
@@ -338,7 +338,7 @@ export function Actions(props: ActionsProps) {
     !isLoading &&
     areAllRequiredModifiersFilled;
 
-  const onAddToCart = async () => {
+  const addToCart = async () => {
     // Get modifiers data if available
     let modifiersData: Record<string, any> | undefined;
     if (modifiersService) {
@@ -351,13 +351,13 @@ export function Actions(props: ActionsProps) {
     await variantService.addToCart(quantity, modifiersData);
   };
 
-  const onBuyNow = async () => {
+  const buyNow = async () => {
     try {
       // Clear the cart first
       await cartService.clearCart();
 
       // Add the product to cart
-      await onAddToCart();
+      await addToCart();
 
       // Proceed to checkout
       await cartService.proceedToCheckout();
@@ -368,8 +368,8 @@ export function Actions(props: ActionsProps) {
   };
 
   return props.children({
-    onAddToCart,
-    onBuyNow,
+    addToCart,
+    buyNow,
     canAddToCart,
     isLoading,
     inStock,

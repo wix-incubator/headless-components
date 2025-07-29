@@ -118,15 +118,15 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
   return (
     <SelectedVariant.Actions>
       {({
-        onAddToCart,
-        onBuyNow,
+        addToCart,
+        buyNow,
         canAddToCart,
         isLoading,
         inStock,
         isPreOrderEnabled,
       }) => {
         const handleAddToCart = async () => {
-          await onAddToCart();
+          await addToCart();
           if (isPreOrderEnabled) {
             window.location.href = '/cart';
           }
@@ -134,7 +134,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
 
         const handleBuyNow = async () => {
           try {
-            await onBuyNow();
+            await buyNow();
           } catch (error) {
             console.error('Buy now failed:', error);
           }

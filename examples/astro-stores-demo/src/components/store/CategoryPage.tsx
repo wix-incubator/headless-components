@@ -1,10 +1,6 @@
 import { CurrentCart } from '@wix/headless-ecom/react';
 import type { LineItem } from '@wix/headless-ecom/services';
 import {
-  MediaGalleryService,
-  MediaGalleryServiceDefinition,
-} from '@wix/headless-media/services';
-import {
   Product,
   ProductList,
   ProductListFilters,
@@ -16,13 +12,7 @@ import type {
   CategoriesListServiceConfig,
   ProductsListFiltersServiceConfig,
 } from '@wix/headless-stores/services';
-import {
-  SelectedVariantService,
-  SelectedVariantServiceDefinition,
-  type ProductsListServiceConfig,
-} from '@wix/headless-stores/services';
-import { createServicesMap } from '@wix/services-manager';
-import { WixServices } from '@wix/services-manager-react';
+import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
 import { useEffect, useState } from 'react';
 import { WixMediaImage } from '../media';
@@ -218,10 +208,11 @@ export const ProductGridContent = ({
                                     isVisible,
                                     isInStock,
                                     isPreOrderEnabled,
-                                    onSelect,
+                                    select,
+                                    optionName,
                                   }) => {
                                     // Check if this is a color option and if choice has color data
-                                    const isColorOption = String(name)
+                                    const isColorOption = String(optionName)
                                       .toLowerCase()
                                       .includes('color');
                                     const hasColorCode =
@@ -251,7 +242,7 @@ export const ProductGridContent = ({
                                                 choice.colorCode ||
                                                 'var(--theme-fallback-color)',
                                             }}
-                                            onClick={onSelect}
+                                            onClick={select}
                                           />
                                           {/* Stock indicator for color swatches */}
                                           {!isInStock && !isPreOrderEnabled && (
@@ -292,7 +283,7 @@ export const ProductGridContent = ({
                                               ? 'opacity-50 line-through'
                                               : ''
                                           }`}
-                                          onClick={onSelect}
+                                          onClick={select}
                                         >
                                           {String(value)}
                                         </span>
@@ -318,11 +309,11 @@ export const ProductGridContent = ({
           </ProductVariantSelector.Options>
 
           <ProductVariantSelector.Reset>
-            {({ onReset, hasSelections }) =>
+            {({ reset, hasSelections }) =>
               hasSelections && (
                 <div className="pt-4">
                   <button
-                    onClick={onReset}
+                    onClick={reset}
                     className="text-sm text-brand-primary hover:text-brand-light transition-colors"
                   >
                     Reset Selections
