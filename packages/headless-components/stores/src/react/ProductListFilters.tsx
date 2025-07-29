@@ -35,11 +35,11 @@ export interface RootProps {
  *       }}
  *     >
  *       <ProductListFilters.MinPrice>
- *         {({ minPrice, setMinPrice }) => (
+ *         {({ minPrice, setSelectedMinPrice }) => (
  *           <input
  *             type="number"
  *             value={minPrice}
- *             onChange={(e) => setMinPrice(Number(e.target.value))}
+ *             onChange={(e) => setSelectedMinPrice(Number(e.target.value))}
  *             placeholder="Min price"
  *           />
  *         )}
@@ -203,9 +203,9 @@ export interface PriceRangeRenderProps {
   /** Catalog maximum price */
   availableMaxPrice: number;
   /** Function to update the minimum price filter */
-  setMinPrice: (minPrice: number) => void;
+  setSelectedMinPrice: (minPrice: number) => void;
   /** Function to update the maximum price filter */
-  setMaxPrice: (maxPrice: number) => void;
+  setSelectedMaxPrice: (maxPrice: number) => void;
 }
 
 /**
@@ -219,21 +219,21 @@ export interface PriceRangeRenderProps {
  * function PriceRangeFilter() {
  *   return (
  *     <ProductListFilters.PriceRange>
- *       {({ minPrice, maxPrice, setMinPrice, setMaxPrice }) => (
+ *       {({ minPrice, maxPrice, setSelectedMinPrice, setSelectedMaxPrice }) => (
  *         <div className="price-range">
  *           <h4>Price Range:</h4>
  *           <div className="price-inputs">
  *             <input
  *               type="number"
  *               value={minPrice}
- *               onChange={(e) => setMinPrice(Number(e.target.value))}
+ *               onChange={(e) => setSelectedMinPrice(Number(e.target.value))}
  *               placeholder="Min"
  *             />
  *             <span>to</span>
  *             <input
  *               type="number"
  *               value={maxPrice}
- *               onChange={(e) => setMaxPrice(Number(e.target.value))}
+ *               onChange={(e) => setSelectedMaxPrice(Number(e.target.value))}
  *               placeholder="Max"
  *             />
  *           </div>
@@ -250,8 +250,8 @@ export function PriceRange(props: PriceRangeProps) {
   const availableMinPrice = service.availableMinPrice.get();
   const selectedMaxPrice = service.selectedMaxPrice.get();
   const availableMaxPrice = service.availableMaxPrice.get();
-  const setMinPrice = service.setSelectedMinPrice;
-  const setMaxPrice = service.setSelectedMaxPrice;
+  const setSelectedMinPrice = service.setSelectedMinPrice;
+  const setSelectedMaxPrice = service.setSelectedMaxPrice;
 
   return typeof props.children === "function"
     ? props.children({
@@ -259,8 +259,8 @@ export function PriceRange(props: PriceRangeProps) {
         selectedMinPrice,
         selectedMaxPrice,
         availableMaxPrice,
-        setMinPrice,
-        setMaxPrice,
+        setSelectedMinPrice,
+        setSelectedMaxPrice,
       })
     : props.children;
 }

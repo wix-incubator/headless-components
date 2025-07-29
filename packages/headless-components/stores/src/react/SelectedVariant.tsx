@@ -11,7 +11,7 @@ import { createServicesMap } from "@wix/services-manager";
 
 export interface RootProps {
   children: React.ReactNode;
-  selectedVariantServiceConfig: SelectedVariantServiceConfig;
+  selectedVariantServiceConfig?: SelectedVariantServiceConfig;
 }
 
 /**

@@ -14,7 +14,7 @@ import {
 
 export interface RootProps {
   children: React.ReactNode;
-  selectedVariantServiceConfig: SelectedVariantServiceConfig;
+  selectedVariantServiceConfig?: SelectedVariantServiceConfig;
 }
 
 /**
