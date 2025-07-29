@@ -3,6 +3,7 @@ export {
   CategoryServiceDefinition,
   loadCategoryServiceConfig,
   CategoryServiceConfig,
+  Category,
 } from "./category-service.js";
 
 export {

@@ -6,6 +6,14 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 
 /**
+ * Type representing a category from the Wix Categories API.
+ * This type is used to define the structure of category objects in the service.
+ *
+ * @type Category
+ */
+export type Category = categories.Category;
+
+/**
  * Service definition for the Category service.
  * This defines the reactive API contract for managing a single product category.
  *
@@ -13,7 +21,7 @@ import {
  */
 export const CategoryServiceDefinition = defineService<{
   /** Reactive signal containing the current category data */
-  category: Signal<categories.Category>;
+  category: Signal<Category>;
 }>("category");
 
 /**
@@ -24,7 +32,7 @@ export const CategoryServiceDefinition = defineService<{
  */
 export type CategoryServiceConfig = {
   /** The category object to initialize the service with */
-  category: categories.Category;
+  category: Category;
 };
 
 /**

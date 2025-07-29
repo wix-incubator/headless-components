@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-stores",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "type": "module",
   "scripts": {
     "prebuild": "cd ../media && yarn build && cd ../ecom && yarn build",

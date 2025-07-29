@@ -1,11 +1,6 @@
-import { categories } from '@wix/categories';
-
 import { CategoryList } from '@wix/headless-stores/react';
 import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import { Category } from '@wix/headless-stores/react';
-
-// Use the Wix SDK category type directly
-type Category = categories.Category;
 
 interface CategoryPickerProps {
   onCategorySelect: (categorySlug: string) => void;
