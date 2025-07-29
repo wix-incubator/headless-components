@@ -5,12 +5,12 @@
  *
  * The function handles ALL the boilerplate:
  * 1. Only runs on the client-side (checks for window object)
- * 2. Establishes signal dependencies on first run without executing effect logic
- * 3. Skips effect execution on first run to prevent duplicate requests
+ * 2. Manages firstRun state automatically
+ * 3. Establishes signal dependencies on first run without executing side effects
  * 4. Executes the effect normally on subsequent reactive updates
  *
  * @param signalsService - The signals service instance for creating effects
- * @param effectFn - The effect function that receives isFirstRun flag (no window checking needed)
+ * @param effectFn - Clean effect function that receives isFirstRun parameter
  * @param getFirstRun - Function that returns the current firstRun state
  * @param setFirstRun - Function to update the firstRun state
  *
@@ -18,17 +18,17 @@
  * ```typescript
  * import { hydratedEffect } from '@wix/headless-core/utils';
  *
- * // In your service implementation
+ * // In your service implementation - minimal boilerplate!
  * let firstRun = true;
  *
  * hydratedEffect(signalsService, async (isFirstRun) => {
- *   // CRITICAL: Read signals FIRST to establish dependencies, even on first run
+ *   // Read signals to establish dependencies
  *   const searchOptions = searchOptionsSignal.get();
  *
- *   // Skip side effects on first run (data already loaded from SSR)
+ *   // Utility handles all the complexity - just skip side effects on first run
  *   if (isFirstRun) return;
  *
- *   // Effect logic runs on subsequent changes
+ *   // Clean effect logic
  *   try {
  *     isLoadingSignal.set(true);
  *     const result = await fetchData(searchOptions);
@@ -53,8 +53,9 @@ export function hydratedEffect(
         setFirstRun(false);
       }
 
-      // Always call effectFn, but pass the isFirstRun flag
-      // so it can read signals (establishing dependencies) but skip side effects on first run
+      // Always call effectFn with isFirstRun flag
+      // This ensures signal dependencies are established on first run
+      // while allowing services to skip side effects cleanly
       await effectFn(isFirstRun);
     });
   }

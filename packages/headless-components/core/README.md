@@ -68,17 +68,14 @@ export const MyService = implementService.withConfig()(
 
     hydratedEffect(
       signalsService,
-      async () => {
-        // CRITICAL: Read signals FIRST to establish dependencies, even on first run
+      async (isFirstRun) => {
+        // Read signals to establish dependencies
         const searchOptions = searchOptionsSignal.get();
 
-        // Check firstRun AFTER reading signals
-        if (firstRun) {
-          firstRun = false;
-          return; // Skip execution but dependencies are established
-        }
+        // Skip side effects on first run (data already loaded from SSR)
+        if (isFirstRun) return;
 
-        // This won't run on first load when data is already available from SSR
+        // Clean effect logic - no boilerplate!
         try {
           isLoadingSignal.set(true);
           const result = await fetchData(searchOptions);
@@ -88,7 +85,7 @@ export const MyService = implementService.withConfig()(
         }
       },
       () => firstRun,
-      (value) => (firstRun = value),
+      (value) => firstRun = value
     );
 
     return {

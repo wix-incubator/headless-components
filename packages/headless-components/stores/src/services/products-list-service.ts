@@ -341,7 +341,7 @@ export const ProductListService =
       hydratedEffect(
         signalsService,
         async (isFirstRun) => {
-          // CRITICAL: Read the signals FIRST to establish dependencies, even on first run
+          // Read signals to establish dependencies
           const searchOptions = searchOptionsSignal.get();
 
           // Skip side effects on first run (data already loaded from SSR)
