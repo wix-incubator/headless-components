@@ -1,0 +1,32 @@
+{
+  "name": "@wix/headless-core",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "test": "vitest"
+  },
+  "files": [
+    "dist",
+    "cjs",
+    "utils"
+  ],
+  "exports": {
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./cjs/dist/utils/index.js"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "dependencies": {
+    "@wix/services-definitions": "^0.1.4",
+    "@wix/services-manager-react": "^0.1.26"
+  }
+}

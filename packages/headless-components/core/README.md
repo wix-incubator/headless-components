@@ -1,0 +1,149 @@
+# @wix/headless-core
+
+Core utilities for Wix Headless Components that provide common functionality across all headless packages.
+
+## Installation
+
+```bash
+npm install @wix/headless-core
+# or
+yarn add @wix/headless-core
+```
+
+## Utilities
+
+### `hydratedEffect`
+
+A utility function that wraps signals effects to handle hydration properly in SSR (Server-Side Rendering) environments like Astro, Next.js, and other frameworks.
+
+#### Problem it Solves
+
+When using headless components with SSR, data is often loaded server-side and passed to client components. Without proper hydration handling, effects would run immediately on the client, causing:
+
+1. **Duplicate requests** - Client makes the same API calls that were already made on the server
+2. **Unnecessary loading states** - UI flickers between loading and loaded states
+3. **Performance issues** - Extra network requests and processing
+
+#### How it Works
+
+The `hydratedEffect` utility:
+
+1. Only runs effects on the client-side (checks for `window` object)
+2. Skips the first run to prevent duplicate requests during hydration
+3. Ensures proper signal dependency tracking
+4. Executes the effect only on subsequent reactive updates
+
+#### API
+
+```typescript
+function hydratedEffect(
+  signalsService: { effect: (fn: () => void | Promise<void>) => void },
+  effectFn: () => void | Promise<void>,
+  getFirstRun: () => boolean,
+  setFirstRun: (value: boolean) => void,
+): void;
+```
+
+**Parameters:**
+
+- `signalsService` - The signals service instance for creating effects
+- `effectFn` - The effect function to run after hydration is complete
+- `getFirstRun` - Function that returns the current firstRun state
+- `setFirstRun` - Function to update the firstRun state
+
+#### Usage Example
+
+```typescript
+import { hydratedEffect } from "@wix/headless-core/utils";
+
+export const MyService = implementService.withConfig()(
+  MyServiceDefinition,
+  ({ getService, config }) => {
+    let firstRun = true;
+    const signalsService = getService(SignalsServiceDefinition);
+
+    const dataSignal = signalsService.signal(config.initialData);
+    const searchOptionsSignal = signalsService.signal(config.searchOptions);
+    const isLoadingSignal = signalsService.signal(false);
+
+    hydratedEffect(
+      signalsService,
+      async () => {
+        // Read signals first to establish dependencies
+        const searchOptions = searchOptionsSignal.get();
+
+        // This won't run on first load when data is already available from SSR
+        try {
+          isLoadingSignal.set(true);
+          const result = await fetchData(searchOptions);
+          dataSignal.set(result);
+        } finally {
+          isLoadingSignal.set(false);
+        }
+      },
+      () => firstRun,
+      (value) => (firstRun = value),
+    );
+
+    return {
+      data: dataSignal,
+      searchOptions: searchOptionsSignal,
+      isLoading: isLoadingSignal,
+      setSearchOptions: (options) => searchOptionsSignal.set(options),
+    };
+  },
+);
+```
+
+#### Before vs After
+
+**Before (with boilerplate):**
+
+```typescript
+if (typeof window !== "undefined") {
+  signalsService.effect(async () => {
+    const searchOptions = searchOptionsSignal.get();
+
+    if (firstRun) {
+      firstRun = false;
+      return;
+    }
+
+    // Effect logic here...
+  });
+}
+
+firstRun = false;
+```
+
+**After (with hydratedEffect):**
+
+```typescript
+hydratedEffect(
+  signalsService,
+  async () => {
+    const searchOptions = searchOptionsSignal.get();
+    // Effect logic here...
+  },
+  () => firstRun,
+  (value) => (firstRun = value),
+);
+```
+
+#### Used By
+
+This utility is used internally by:
+
+- `@wix/headless-stores` - Product list, filters, pagination, and sort services
+- `@wix/headless-ecom` - Cart and checkout services
+- Other headless packages that need hydration-aware effects
+
+## Contributing
+
+When adding new utilities to this package:
+
+1. Place utility functions in `src/utils/`
+2. Export them from `src/utils/index.ts`
+3. Add comprehensive documentation with examples
+4. Include TypeScript types for all parameters
+5. Test with both SSR and client-side rendering scenarios

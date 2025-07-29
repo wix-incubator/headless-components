@@ -3,6 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
+import { hydratedEffect } from "@wix/headless-core/utils";
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
 
 export const DEFAULT_QUERY_LIMIT = 100;
@@ -337,15 +338,11 @@ export const ProductListService =
       const isLoadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
 
-      if (typeof window !== "undefined") {
-        signalsService.effect(async () => {
+      hydratedEffect(
+        signalsService,
+        async () => {
           // CRITICAL: Read the signals FIRST to establish dependencies, even on first run
           const searchOptions = searchOptionsSignal.get();
-
-          if (firstRun) {
-            firstRun = false;
-            return;
-          }
 
           try {
             isLoadingSignal.set(true);
@@ -372,10 +369,10 @@ export const ProductListService =
           } finally {
             isLoadingSignal.set(false);
           }
-        });
-      }
-
-      firstRun = false;
+        },
+        () => firstRun,
+        (value: boolean) => (firstRun = value),
+      );
 
       return {
         products: productsSignal,

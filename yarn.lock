@@ -3578,6 +3578,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wix/headless-core@npm:^0.0.1, @wix/headless-core@workspace:packages/headless-components/core":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-core@workspace:packages/headless-components/core"
+  dependencies:
+    "@types/node": "npm:^20.9.0"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
+
 "@wix/headless-echo@npm:0.0.1, @wix/headless-echo@workspace:packages/headless-components/echo":
   version: 0.0.0-use.local
   resolution: "@wix/headless-echo@workspace:packages/headless-components/echo"
@@ -3844,6 +3856,7 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1278"
     "@wix/essentials": "npm:^0.1.24"
+    "@wix/headless-core": "npm:^0.0.1"
     "@wix/headless-ecom": "npm:^0.0.11"
     "@wix/headless-media": "npm:^0.0.8"
     "@wix/redirects": "npm:^1.0.83"
