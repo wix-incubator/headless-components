@@ -74,8 +74,10 @@ export type ProductsListServiceConfig = {
  * export const getServerSideProps: GetServerSideProps<ProductsPageProps> = async () => {
  *   const searchOptions = {
  *     cursorPaging: { limit: 12 },
- *     filter: {},
- *     sort: [{ fieldName: 'name', order: 'ASC' }]
+ *     filter: {
+ *       'allCategoriesInfo.categories': { $matchItems: [{ _id: { $in: [category._id] } }] }
+ *     },
+ *     sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
  *   };
  *
  *   const productsConfig = await loadProductsListServiceConfig(searchOptions);
