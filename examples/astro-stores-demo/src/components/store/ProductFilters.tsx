@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { getStockStatusMessage } from './product-status-enums';
 import { ProductListFilters } from '@wix/headless-stores/react';
-import type { ProductsListSearchServiceConfig } from '@wix/headless-stores/services';
 import { PriceRangeSelector } from './PriceRangeSelector';
 
 interface ProductFiltersProps {

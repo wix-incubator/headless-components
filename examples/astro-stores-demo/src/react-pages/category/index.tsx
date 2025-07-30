@@ -1,3 +1,4 @@
+import type { CategoryServiceConfig } from '@wix/headless-stores/services';
 import { CategoryPage } from '../../components/store/CategoryPage';
 import { KitchensinkLayout } from '../../layouts/KitchensinkLayout';
 import { StoreLayout } from '../../layouts/StoreLayout';
@@ -5,11 +6,10 @@ import '../../styles/theme-1.css';
 
 interface StoreCollectionPageProps {
   currentCartServiceConfig: any;
-  categoryServiceConfig: any;
+  categoryServiceConfig: CategoryServiceConfig;
   categoriesListConfig: any;
   productsListConfig: any;
   productsListSearchConfig: any;
-  slug: string;
 }
 
 export default function StoreCollectionPage({
@@ -17,32 +17,7 @@ export default function StoreCollectionPage({
   categoriesListConfig,
   productsListConfig,
   productsListSearchConfig,
-  slug,
 }: StoreCollectionPageProps) {
-  // Create navigation handler for category URLs
-  const handleCategoryChange = (categoryId: string | null, category: any) => {
-    if (typeof window !== 'undefined') {
-      let newPath: string = '/category';
-
-      if (categoryId !== null) {
-        // Use category slug for URL
-        if (!category?.slug) {
-          console.warn(
-            `Category ${categoryId} has no slug, using category ID as fallback`
-          );
-        }
-        const categorySlug = category?.slug || categoryId;
-        newPath = `/category/${categorySlug}`;
-      }
-
-      window.history.pushState(
-        null,
-        'Showing Category ' + category?.name,
-        newPath
-      );
-    }
-  };
-
   return (
     <KitchensinkLayout>
       <StoreLayout currentCartServiceConfig={currentCartServiceConfig}>
@@ -60,7 +35,6 @@ export default function StoreCollectionPage({
             productsListConfig={productsListConfig}
             productsListSearchConfig={productsListSearchConfig}
             categoriesListConfig={categoriesListConfig}
-            currentCategorySlug={slug}
             productPageRoute=""
           />
         </div>
