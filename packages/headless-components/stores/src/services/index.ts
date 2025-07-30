@@ -36,11 +36,10 @@ export {
   ProductsListServiceConfig,
 } from "./products-list-service.js";
 
-// New consolidated search service
 export {
-  SortType,
-  InventoryStatusType,
   ProductOption,
+  InventoryStatusType,
+  SortType,
   ProductChoice,
   ProductsListSearchService,
   ProductsListSearchServiceDefinition,

@@ -2,8 +2,8 @@ import { useService } from "@wix/services-manager-react";
 import type { ReactNode } from "react";
 import {
   ProductsListSearchServiceDefinition,
-  InventoryStatusType,
   type ProductOption,
+  InventoryStatusType,
 } from "../services/products-list-search-service.js";
 
 /**

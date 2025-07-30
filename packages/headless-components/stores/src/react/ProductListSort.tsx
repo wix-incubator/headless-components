@@ -1,8 +1,6 @@
 import { useService } from "@wix/services-manager-react";
-import {
-  ProductsListSearchServiceDefinition,
-  SortType,
-} from "../services/products-list-search-service.js";
+import { ProductsListSearchServiceDefinition } from "../services/products-list-search-service.js";
+import { SortType } from "../enums/sort-enums.js";
 
 /**
  * Props for Options headless component

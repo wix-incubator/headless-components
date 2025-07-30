@@ -24,17 +24,16 @@ if (categoryLoadResult.type === 'not-found') {
 const category = categoryLoadResult.config.category;
 const categoryName = category?.name || '';
 
-const { searchOptions, initialSearchState } =
-  await parseUrlForProductsListSearch(Astro.url.href, {
-    cursorPaging: {
-      limit: 10,
+const { searchOptions } = await parseUrlForProductsListSearch(Astro.url.href, {
+  cursorPaging: {
+    limit: 10,
+  },
+  filter: {
+    'allCategoriesInfo.categories': {
+      $matchItems: [{ _id: category._id! }],
     },
-    filter: {
-      'allCategoriesInfo.categories': {
-        $matchItems: [{ _id: category._id! }],
-      },
-    },
-  });
+  },
+});
 
 const [
   productsListConfig,

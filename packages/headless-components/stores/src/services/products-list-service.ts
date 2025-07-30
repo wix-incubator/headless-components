@@ -5,6 +5,8 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
 
+export const DEFAULT_QUERY_LIMIT = 100;
+
 /**
  * Configuration interface for the Products List service.
  * Contains the initial products data, search options, and metadata.
@@ -182,7 +184,7 @@ const fetchMissingVariants = async (
     const res = await readOnlyVariantsV3
       .queryVariants({})
       .in("productData.productId", productIds)
-      .limit(100)
+      .limit(DEFAULT_QUERY_LIMIT)
       .find();
 
     items.push(...res.items);

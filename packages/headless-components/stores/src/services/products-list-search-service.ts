@@ -1,32 +1,29 @@
 import type { Signal } from "@wix/services-definitions/core-services/signals";
 import { defineService, implementService } from "@wix/services-definitions";
 import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import { ProductsListServiceDefinition } from "./products-list-service.js";
+import {
+  DEFAULT_QUERY_LIMIT,
+  ProductsListServiceDefinition,
+} from "./products-list-service.js";
 import { productsV3, customizationsV3 } from "@wix/stores";
 
 const PRICE_FILTER_DEBOUNCE_TIME = 300;
 
-/**
- * Enumeration of available product sort types.
- */
-export enum SortType {
-  NEWEST = "newest",
-  NAME_ASC = "name_asc",
-  NAME_DESC = "name_desc",
-  PRICE_ASC = "price_asc",
-  PRICE_DESC = "price_desc",
-  RECOMMENDED = "recommended",
-}
+import { SortType } from "./../enums/sort-enums.js";
+
+export { SortType } from "./../enums/sort-enums.js";
 
 /**
  * Enumeration of inventory status types available for filtering.
+ * Re-exports the Wix inventory availability status enum values.
  */
-export enum InventoryStatusType {
-  IN_STOCK = productsV3.InventoryAvailabilityStatus.IN_STOCK,
-  OUT_OF_STOCK = productsV3.InventoryAvailabilityStatus.OUT_OF_STOCK,
-  PARTIALLY_OUT_OF_STOCK = productsV3.InventoryAvailabilityStatus
-    .PARTIALLY_OUT_OF_STOCK,
-}
+export const InventoryStatusType = productsV3.InventoryAvailabilityStatus;
+
+/**
+ * Type for inventory status values.
+ * Re-exports the Wix inventory availability status enum type.
+ */
+export type InventoryStatusType = productsV3.InventoryAvailabilityStatus;
 
 /**
  * Interface representing a product option (like Size, Color, etc.).
@@ -101,13 +98,12 @@ export const ProductsListSearchServiceDefinition = defineService<{
   availableProductOptions: Signal<ProductOption[]>;
   selectedProductOptions: Signal<Record<string, string[]>>;
   selectedCategory: Signal<string | null>;
+
   setSelectedMinPrice: (minPrice: number) => void;
   setSelectedMaxPrice: (maxPrice: number) => void;
   toggleInventoryStatus: (status: InventoryStatusType) => void;
   toggleProductOption: (optionId: string, choiceId: string) => void;
   setSelectedCategory: (category: string | null) => void;
-  setSelectedVisible: (visible: boolean | null) => void;
-  setSelectedProductType: (productType: string | null) => void;
   isFiltered: Signal<boolean>;
   reset: () => void;
 }>("products-list-search");
@@ -303,7 +299,7 @@ export async function parseUrlForProductsListSearch(
   // Build search options
   const searchOptions: productsV3.V3ProductSearch = {
     cursorPaging: {
-      limit: 100,
+      limit: DEFAULT_QUERY_LIMIT,
     },
     ...defaultSearchOptions,
   };
@@ -941,7 +937,7 @@ export const ProductsListSearchService =
         isFiltered: isFilteredSignal,
         reset: () => {
           selectedSortOptionSignal.set(SortType.NAME_ASC);
-          currentLimitSignal.set(100);
+          currentLimitSignal.set(DEFAULT_QUERY_LIMIT);
           currentCursorSignal.set(null);
           userFilterMinPriceSignal.set(catalogMinPriceSignal.get());
           userFilterMaxPriceSignal.set(catalogMaxPriceSignal.get());
@@ -959,7 +955,7 @@ export const ProductsListSearchService =
 // Helper functions (copied from the original services)
 
 function getCurrentLimit(searchOptions: productsV3.V3ProductSearch): number {
-  return searchOptions.cursorPaging?.limit || 100;
+  return searchOptions.cursorPaging?.limit || DEFAULT_QUERY_LIMIT;
 }
 
 function getCurrentCursor(
@@ -1017,7 +1013,7 @@ function getAvailableProductOptions(
       const bIsNumber = /^\d+$/.test(b.name);
 
       if (aIsNumber && bIsNumber) {
-        return parseInt(b.name) - parseInt(a.name);
+        return parseInt(a.name) - parseInt(b.name);
       }
       if (aIsNumber && !bIsNumber) return -1;
       if (!aIsNumber && bIsNumber) return 1;
