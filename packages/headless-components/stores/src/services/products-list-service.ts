@@ -3,7 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { hydratedEffect } from "@wix/headless-core/utils";
+import { extendSignalsServiceWithHydratedEffect } from "@wix/headless-core/utils";
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
 
 export const DEFAULT_QUERY_LIMIT = 100;
@@ -320,7 +320,9 @@ export const ProductListService =
     ProductsListServiceDefinition,
     ({ getService, config }) => {
       let firstRun = true;
-      const signalsService = getService(SignalsServiceDefinition);
+      const signalsService = extendSignalsServiceWithHydratedEffect(
+        getService(SignalsServiceDefinition),
+      );
 
       const productsSignal = signalsService.signal<productsV3.V3Product[]>(
         config.products,
@@ -338,14 +340,10 @@ export const ProductListService =
       const isLoadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
 
-      hydratedEffect(
-        signalsService,
-        async (isFirstRun) => {
+      signalsService.hydratedEffect(
+        async () => {
           // Read signals to establish dependencies
           const searchOptions = searchOptionsSignal.get();
-
-          // Skip side effects on first run (data already loaded from SSR)
-          if (isFirstRun) return;
 
           try {
             isLoadingSignal.set(true);

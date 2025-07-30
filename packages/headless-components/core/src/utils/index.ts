@@ -1,1 +1,4 @@
-export { hydratedEffect } from "./hydrated-effect.js";
+export {
+  hydratedEffect,
+  extendSignalsServiceWithHydratedEffect,
+} from "./hydrated-effect.js";
