@@ -269,13 +269,9 @@ function updateUrlWithSearchState(searchState: {
   let baseUrl = window.location.pathname;
 
   // If categorySlug is provided, update the path
-  if (categorySlug !== undefined) {
+  if (categorySlug) {
     if (categorySlug) {
       baseUrl = `/category/${categorySlug}`;
-    } else {
-      // If categorySlug is null/empty, navigate to a default path or current path without category
-      baseUrl =
-        window.location.pathname.replace(/\/category\/[^\/]*/, "") || "/";
     }
   }
 
