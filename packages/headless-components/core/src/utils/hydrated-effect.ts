@@ -42,19 +42,7 @@ export interface SignalsServiceWithHydratedEffect {
   effect: (fn: () => void | Promise<void>) => void;
   signal: <T>(initialValue: T) => any;
   computed: <T>(computeFn: () => T) => any;
-
-  /**
-   * A hydrated effect that handles SSR hydration properly.
-   *
-   * @param effectFn - Clean effect function that will only run on subsequent updates
-   * @param getFirstRun - Function that returns the current firstRun state
-   * @param setFirstRun - Function to update the firstRun state
-   */
-  hydratedEffect: (
-    effectFn: () => void | Promise<void>,
-    getFirstRun: () => boolean,
-    setFirstRun: (value: boolean) => void,
-  ) => void;
+  hydratedEffect: any;
 }
 
 /**
@@ -64,33 +52,56 @@ export interface SignalsServiceWithHydratedEffect {
  * @returns Extended signals service with hydratedEffect method
  */
 export function extendSignalsServiceWithHydratedEffect<
-  T extends { effect: (fn: () => void | Promise<void>) => void },
+  T extends { effect: (fn: () => void) => void },
 >(signalsService: T): T & SignalsServiceWithHydratedEffect {
   const extendedService = signalsService as T &
     SignalsServiceWithHydratedEffect;
 
-  extendedService.hydratedEffect = (
-    effectFn: () => void | Promise<void>,
-    getFirstRun: () => boolean,
-    setFirstRun: (value: boolean) => void,
-  ): void => {
-    if (typeof window !== "undefined") {
-      signalsService.effect(async () => {
-        const isFirstRun = getFirstRun();
+  // extendedService.hydratedEffect = (
+  //   effectFn: () => void | Promise<void>,
+  //   getFirstRun: () => boolean,
+  //   setFirstRun: (value: boolean) => void,
+  // ): void => {
+  //   if (typeof window !== "undefined") {
+  //     signalsService.effect(async () => {
+  //       const isFirstRun = getFirstRun();
 
-        if (isFirstRun) {
-          setFirstRun(false);
-          // Skip execution on first run (data already loaded from SSR)
-          return;
-        }
+  //       if (isFirstRun) {
+  //         setFirstRun(false);
+  //         // Skip execution on first run (data already loaded from SSR)
+  //         return;
+  //       }
 
-        // Call effectFn only on subsequent reactive updates
-        await effectFn();
-      });
+  //       // Call effectFn only on subsequent reactive updates
+  //       await effectFn();
+  //     });
+  //   }
+
+  //   // Set firstRun to false immediately to prevent any race conditions
+  //   setFirstRun(false);
+  // };
+
+  extendedService.hydratedEffect = (dependenciesFn: any, effectFn: any) => {
+    if (typeof window === "undefined") {
+      return;
     }
 
-    // Set firstRun to false immediately to prevent any race conditions
-    setFirstRun(false);
+    let firstRun = true;
+
+    console.log("before");
+
+    extendedService.effect(() => {
+      const dependencies = dependenciesFn();
+
+      console.log({ firstRun });
+
+      if (firstRun) {
+        firstRun = false;
+        return;
+      }
+
+      return effectFn(dependencies);
+    });
   };
 
   return extendedService;
