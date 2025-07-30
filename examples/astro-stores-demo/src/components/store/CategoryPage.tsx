@@ -26,18 +26,15 @@ interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
   productsListSearchConfig: ProductsListSearchServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
-  currentCategorySlug: string;
   productPageRoute: string;
 }
 
 export const ProductGridContent = ({
   productPageRoute,
   categoriesListConfig,
-  currentCategorySlug,
 }: {
   productPageRoute: string;
   categoriesListConfig: CategoriesListServiceConfig;
-  currentCategorySlug: string;
 }) => {
   const [quickViewProduct, setQuickViewProduct] =
     useState<productsV3.V3Product | null>(null);
@@ -438,13 +435,15 @@ export const ProductGridContent = ({
     <div className="min-h-screen">
       <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
         <div className="flex items-top justify-between">
-          <CategoryPicker
-            categoriesListConfig={categoriesListConfig}
-            currentCategorySlug={currentCategorySlug}
-            onCategorySelect={slug => {
-              window.location.href = `/category/${slug}`;
-            }}
-          />
+          <ProductListFilters.CategoryFilter>
+            {({ selectedCategory, setSelectedCategory }) => (
+              <CategoryPicker
+                categoriesListConfig={categoriesListConfig}
+                currentCategorySlug={selectedCategory?.slug || ''}
+                onCategorySelect={setSelectedCategory}
+              />
+            )}
+          </ProductListFilters.CategoryFilter>
           <SortDropdown />
         </div>
       </div>
@@ -645,7 +644,6 @@ export function CategoryPage({
   productsListConfig,
   productsListSearchConfig,
   categoriesListConfig,
-  currentCategorySlug,
   productPageRoute,
 }: StoreCollectionPageProps) {
   return (
@@ -656,7 +654,6 @@ export function CategoryPage({
       <ProductGridContent
         productPageRoute={productPageRoute}
         categoriesListConfig={categoriesListConfig}
-        currentCategorySlug={currentCategorySlug}
       />
       <LoadMoreSection />
     </ProductList.Root>

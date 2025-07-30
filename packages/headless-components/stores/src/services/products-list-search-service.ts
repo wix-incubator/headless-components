@@ -6,6 +6,8 @@ import {
   ProductsListServiceDefinition,
 } from "./products-list-service.js";
 import { productsV3, customizationsV3 } from "@wix/stores";
+import { type Category } from "./category-service.js";
+import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
 
 const PRICE_FILTER_DEBOUNCE_TIME = 300;
 
@@ -54,7 +56,7 @@ type InitialSearchState = {
   priceRange?: { min?: number; max?: number };
   inventoryStatuses?: InventoryStatusType[];
   productOptions?: Record<string, string[]>;
-  category?: string;
+  category?: Category;
   visible?: boolean;
   productType?: string;
 };
@@ -97,13 +99,13 @@ export const ProductsListSearchServiceDefinition = defineService<{
   selectedInventoryStatuses: Signal<InventoryStatusType[]>;
   availableProductOptions: Signal<ProductOption[]>;
   selectedProductOptions: Signal<Record<string, string[]>>;
-  selectedCategory: Signal<string | null>;
+  selectedCategory: Signal<Category | null>;
 
   setSelectedMinPrice: (minPrice: number) => void;
   setSelectedMaxPrice: (maxPrice: number) => void;
   toggleInventoryStatus: (status: InventoryStatusType) => void;
   toggleProductOption: (optionId: string, choiceId: string) => void;
-  setSelectedCategory: (category: string | null) => void;
+  setSelectedCategory: (category: Category | null) => void;
   isFiltered: Signal<boolean>;
   reset: () => void;
 }>("products-list-search");
@@ -161,10 +163,12 @@ function updateUrlWithSearchState(searchState: {
   filters: InitialSearchState;
   customizations: customizationsV3.Customization[];
   catalogBounds: { minPrice: number; maxPrice: number };
+  categorySlug?: string;
 }): void {
   if (typeof window === "undefined") return;
 
-  const { sort, filters, customizations, catalogBounds } = searchState;
+  const { sort, filters, customizations, catalogBounds, categorySlug } =
+    searchState;
 
   // Convert filter IDs back to human-readable names for URL
   const humanReadableOptions: Record<string, string[]> = {};
@@ -199,10 +203,10 @@ function updateUrlWithSearchState(searchState: {
     "minPrice",
     "maxPrice",
     "inventoryStatus",
-    "category",
     "visible",
     "productType",
     // Product option names will be dynamically added below
+    // Note: category is NOT included here as it's handled in the URL path
   ];
 
   // Remove existing search parameters first
@@ -244,11 +248,6 @@ function updateUrlWithSearchState(searchState: {
     params.set("inventoryStatus", filters.inventoryStatuses.join(","));
   }
 
-  // Add category filter
-  if (filters.category) {
-    params.set("category", filters.category);
-  }
-
   // Add visibility filter (only if explicitly false, since true is default)
   if (filters.visible === false) {
     params.set("visible", "false");
@@ -266,8 +265,17 @@ function updateUrlWithSearchState(searchState: {
     }
   }
 
+  // Handle URL path construction with category
+  let baseUrl = window.location.pathname;
+
+  // If categorySlug is provided, update the path
+  if (categorySlug) {
+    if (categorySlug) {
+      baseUrl = `/category/${categorySlug}`;
+    }
+  }
+
   // Build the new URL
-  const baseUrl = window.location.pathname;
   const newUrl = params.toString()
     ? `${baseUrl}?${params.toString()}`
     : baseUrl;
@@ -283,6 +291,7 @@ function updateUrlWithSearchState(searchState: {
  */
 export async function parseUrlForProductsListSearch(
   url: string,
+  categoriesList: Category[],
   defaultSearchOptions?: productsV3.V3ProductSearch,
 ): Promise<{
   searchOptions: productsV3.V3ProductSearch;
@@ -306,6 +315,26 @@ export async function parseUrlForProductsListSearch(
 
   // Initialize search state for service
   const initialSearchState: InitialSearchState = {};
+
+  // Extract category slug from URL path (e.g., /category/category-slug)
+  const pathSegments = urlObj.pathname.split("/");
+  const categoryIndex = pathSegments.findIndex(
+    (segment) => segment === "category",
+  );
+  let categorySlug: string | null = null;
+  let category: Category | undefined = undefined;
+
+  if (categoryIndex !== -1 && categoryIndex + 1 < pathSegments.length) {
+    categorySlug = pathSegments[categoryIndex + 1] || null;
+
+    // Find the category by slug from the provided categories list
+    if (categorySlug) {
+      category = categoriesList.find((cat) => cat.slug === categorySlug);
+      if (category) {
+        initialSearchState.category = category;
+      }
+    }
+  }
 
   // Handle text search (q parameter)
   const query = searchParams.get("q");
@@ -395,12 +424,11 @@ export async function parseUrlForProductsListSearch(
     initialSearchState.productType = productType;
   }
 
-  const category = searchParams.get("category");
+  // Add category filter if found
   if (category) {
     filter["allCategoriesInfo.categories"] = {
-      $matchItems: [{ _id: { $in: [category] } }],
+      $matchItems: [{ _id: { $in: [category._id] } }],
     };
-    initialSearchState.category = category;
   }
 
   // Price range filtering
@@ -431,7 +459,6 @@ export async function parseUrlForProductsListSearch(
     "maxPrice",
     "inventory_status",
     "inventoryStatus",
-    "category",
     "visible",
     "productType",
     "q",
@@ -542,7 +569,13 @@ export async function parseUrlForProductsListSearch(
 export async function loadProductsListSearchServiceConfig(
   url: string,
 ): Promise<ProductsListSearchServiceConfig> {
-  const { initialSearchState } = await parseUrlForProductsListSearch(url);
+  // Load categories using the categories service
+  const categoriesListConfig = await loadCategoriesListServiceConfig();
+
+  const { initialSearchState } = await parseUrlForProductsListSearch(
+    url,
+    categoriesListConfig.categories,
+  );
 
   const { items: customizations = [] } = await customizationsV3
     .queryCustomizations()
@@ -786,7 +819,7 @@ export const ProductsListSearchService =
           }
           if (selectedCategory) {
             (newSearchOptions.filter as any)["allCategoriesInfo.categories"] = {
-              $matchItems: [{ _id: { $in: [selectedCategory] } }],
+              $matchItems: [{ _id: { $in: [selectedCategory._id] } }],
             };
           }
           if (selectedVisible !== null) {
@@ -810,7 +843,6 @@ export const ProductsListSearchService =
             priceRange: { min: minPrice, max: maxPrice },
             inventoryStatuses: selectedInventoryStatuses,
             productOptions: selectedProductOptions,
-            ...(selectedCategory && { category: selectedCategory }),
             ...(selectedVisible !== null && { visible: selectedVisible }),
             ...(selectedProductType && { productType: selectedProductType }),
           };
@@ -820,6 +852,7 @@ export const ProductsListSearchService =
             filters: currentFilters,
             customizations,
             catalogBounds,
+            categorySlug: selectedCategory?.slug || undefined,
           });
         });
       }
@@ -925,7 +958,7 @@ export const ProductsListSearchService =
             });
           }
         },
-        setSelectedCategory: (category: string | null) => {
+        setSelectedCategory: (category: Category | null) => {
           selectedCategorySignal.set(category);
         },
         setSelectedVisible: (visible: boolean | null) => {

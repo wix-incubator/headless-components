@@ -5,6 +5,7 @@ import {
   type ProductOption,
   InventoryStatusType,
 } from "../services/products-list-search-service.js";
+import { Category } from "@wix/auto_sdk_categories_categories";
 
 /**
  * Props for InventoryStatus headless component
@@ -223,6 +224,24 @@ export function PriceRange(props: PriceRangeProps) {
         setSelectedMinPrice,
         setSelectedMaxPrice,
       })
+    : props.children;
+}
+
+export interface CategoryFilterRenderProps {
+  selectedCategory: Category | null;
+}
+
+export interface CategoryFilterProps {
+  /** Content to display (can be a render function receiving category data or ReactNode) */
+  children: ((props: CategoryFilterRenderProps) => ReactNode) | ReactNode;
+}
+
+export function CategoryFilter(props: CategoryFilterProps) {
+  const service = useService(ProductsListSearchServiceDefinition);
+  const selectedCategory = service.selectedCategory.get();
+
+  return typeof props.children === "function"
+    ? props.children({ selectedCategory })
     : props.children;
 }
 
