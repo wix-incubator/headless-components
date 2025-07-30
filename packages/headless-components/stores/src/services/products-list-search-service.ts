@@ -106,7 +106,6 @@ export const ProductsListSearchServiceDefinition = defineService<{
   toggleInventoryStatus: (status: InventoryStatusType) => void;
   toggleProductOption: (optionId: string, choiceId: string) => void;
   setSelectedCategory: (category: Category | null) => void;
-  setCategory: (category: Category) => void;
   isFiltered: Signal<boolean>;
   reset: () => void;
 }>("products-list-search");
@@ -964,9 +963,6 @@ export const ProductsListSearchService =
           }
         },
         setSelectedCategory: (category: Category | null) => {
-          selectedCategorySignal.set(category);
-        },
-        setCategory: (category: Category) => {
           selectedCategorySignal.set(category);
         },
         setSelectedVisible: (visible: boolean | null) => {

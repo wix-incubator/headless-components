@@ -1,15 +1,21 @@
-import type { CategoryServiceConfig } from '@wix/headless-stores/services';
+import type {
+  CategoriesListServiceConfig,
+  CategoryServiceConfig,
+  ProductsListSearchServiceConfig,
+  ProductsListServiceConfig,
+} from '@wix/headless-stores/services';
 import { CategoryPage } from '../../components/store/CategoryPage';
 import { KitchensinkLayout } from '../../layouts/KitchensinkLayout';
 import { StoreLayout } from '../../layouts/StoreLayout';
 import '../../styles/theme-1.css';
+import type { CurrentCartServiceConfig } from '@wix/headless-ecom/services';
 
 interface StoreCollectionPageProps {
-  currentCartServiceConfig: any;
+  currentCartServiceConfig: CurrentCartServiceConfig;
   categoryServiceConfig: CategoryServiceConfig;
-  categoriesListConfig: any;
-  productsListConfig: any;
-  productsListSearchConfig: any;
+  categoriesListConfig: CategoriesListServiceConfig;
+  productsListConfig: ProductsListServiceConfig;
+  productsListSearchConfig: ProductsListSearchServiceConfig;
 }
 
 export default function StoreCollectionPage({

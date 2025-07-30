@@ -11,13 +11,10 @@ import {
 import type {
   CategoriesListServiceConfig,
   ProductsListSearchServiceConfig,
-  Category,
 } from '@wix/headless-stores/services';
-import { ProductsListSearchServiceDefinition } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
 import { useEffect, useState } from 'react';
-import { useService } from '@wix/services-manager-react';
 import { WixMediaImage } from '../media';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
@@ -42,9 +39,6 @@ export const ProductGridContent = ({
   const [quickViewProduct, setQuickViewProduct] =
     useState<productsV3.V3Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
-
-  // Get the search service to handle category changes
-  const searchService = useService(ProductsListSearchServiceDefinition);
 
   const openQuickView = (product: productsV3.V3Product) => {
     setQuickViewProduct(product);

@@ -1,14 +1,12 @@
 import { CategoryList } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
-  Category,
+  Category as CategoryType,
 } from '@wix/headless-stores/services';
-import { Category as CategoryComponent } from '@wix/headless-stores/react';
-import { useService } from '@wix/services-manager-react';
-import { ProductsListSearchServiceDefinition } from '@wix/headless-stores/services';
+import { Category } from '@wix/headless-stores/react';
 
 interface CategoryPickerProps {
-  onCategorySelect: (category: Category) => void;
+  onCategorySelect: (category: CategoryType) => void;
   categoriesListConfig: CategoriesListServiceConfig;
   currentCategorySlug: string;
 }
@@ -31,7 +29,7 @@ export function CategoryPicker({
         <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
           <CategoryList.ItemContent>
             {({ category }) => (
-              <CategoryComponent.Slug>
+              <Category.Slug>
                 {({ slug }) => (
                   <button
                     onClick={() => onCategorySelect(category)}
@@ -41,12 +39,10 @@ export function CategoryPicker({
                         : 'bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary'
                     }`}
                   >
-                    <CategoryComponent.Name>
-                      {({ name }) => name}
-                    </CategoryComponent.Name>
+                    <Category.Name>{({ name }) => name}</Category.Name>
                   </button>
                 )}
-              </CategoryComponent.Slug>
+              </Category.Slug>
             )}
           </CategoryList.ItemContent>
         </div>

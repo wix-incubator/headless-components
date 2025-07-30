@@ -229,7 +229,6 @@ export function PriceRange(props: PriceRangeProps) {
 
 export interface CategoryFilterRenderProps {
   selectedCategory: Category | null;
-  setSelectedCategory: (category: Category) => void;
 }
 
 export interface CategoryFilterProps {
@@ -240,10 +239,9 @@ export interface CategoryFilterProps {
 export function CategoryFilter(props: CategoryFilterProps) {
   const service = useService(ProductsListSearchServiceDefinition);
   const selectedCategory = service.selectedCategory.get();
-  const setSelectedCategory = service.setSelectedCategory;
 
   return typeof props.children === "function"
-    ? props.children({ selectedCategory, setSelectedCategory })
+    ? props.children({ selectedCategory })
     : props.children;
 }
 
