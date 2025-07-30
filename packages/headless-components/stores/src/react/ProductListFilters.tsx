@@ -32,11 +32,14 @@ export interface InventoryStatusRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
+ * import { ProductList, ProductListFilters } from '@wix/stores/components';
  *
  * function InventoryStatusFilter() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListFilters.InventoryStatus>
  *         {({ availableInventoryStatuses, selectedInventoryStatuses, toggleInventoryStatus }) => (
  *           <div>
@@ -54,7 +57,7 @@ export interface InventoryStatusRenderProps {
  *           </div>
  *         )}
  *       </ProductListFilters.InventoryStatus>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -98,11 +101,14 @@ export interface ResetTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
+ * import { ProductList, ProductListFilters } from '@wix/stores/components';
  *
  * function ResetFiltersButton() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListFilters.ResetTrigger>
  *         {({ resetFilters, isFiltered }) => (
  *           <button
@@ -114,7 +120,7 @@ export interface ResetTriggerRenderProps {
  *           </button>
  *         )}
  *       </ProductListFilters.ResetTrigger>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -161,11 +167,14 @@ export interface PriceRangeRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
+ * import { ProductList, ProductListFilters } from '@wix/stores/components';
  *
  * function PriceRangeFilter() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListFilters.PriceRange>
  *         {({ minPrice, maxPrice, setSelectedMinPrice, setSelectedMaxPrice }) => (
  *           <div className="price-range">
@@ -188,7 +197,7 @@ export interface PriceRangeRenderProps {
  *           </div>
  *         )}
  *       </ProductListFilters.PriceRange>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -246,11 +255,14 @@ export interface ProductOptionRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListFilters } from '@wix/stores/components';
+ * import { ProductList, ProductListFilters } from '@wix/stores/components';
  *
  * function ProductOptionsFilter() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListFilters.ProductOptions>
  *         {({ option, selectedChoices, toggleChoice }) => (
  *           <div key={option.id}>
@@ -268,7 +280,7 @@ export interface ProductOptionRenderProps {
  *           </div>
  *         )}
  *       </ProductListFilters.ProductOptions>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```

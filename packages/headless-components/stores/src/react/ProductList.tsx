@@ -29,14 +29,15 @@ export interface RootProps {
 }
 
 /**
- * Root component that provides the ProductList service context to its children.
- * This component sets up the necessary services for managing products list state.
+ * Root component that provides both ProductList and ProductListSearch service contexts to its children.
+ * This component sets up the necessary services for managing products list state, including search,
+ * filtering, sorting, and pagination functionality.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { ProductList } from '@wix/stores/components';
+ * import { ProductList, ProductListFilters, ProductListSort, ProductListPagination } from '@wix/stores/components';
  *
  * function ProductListPage() {
  *   return (
@@ -47,7 +48,25 @@ export interface RootProps {
  *         pagingMetadata: { count: 10, hasNext: true },
  *         aggregations: {}
  *       }}
+ *       productsListSearchConfig={{
+ *         customizations: [],
+ *         initialSearchState: { sort: 'name_asc', limit: 20 }
+ *       }}
  *     >
+ *       <ProductListSort.Options>
+ *         {({ selectedSortOption, updateSortOption, sortOptions }) => (
+ *           <select value={selectedSortOption} onChange={(e) => updateSortOption(e.target.value)}>
+ *             {sortOptions.map(option => <option key={option} value={option}>{option}</option>)}
+ *           </select>
+ *         )}
+ *       </ProductListSort.Options>
+ *
+ *       <ProductListFilters.PriceRange>
+ *         {({ selectedMinPrice, setSelectedMinPrice }) => (
+ *           <input value={selectedMinPrice} onChange={(e) => setSelectedMinPrice(Number(e.target.value))} />
+ *         )}
+ *       </ProductListFilters.PriceRange>
+ *
  *       <ProductList.ItemContent>
  *         {({ product }) => (
  *           <div key={product._id}>
@@ -56,6 +75,12 @@ export interface RootProps {
  *           </div>
  *         )}
  *       </ProductList.ItemContent>
+ *
+ *       <ProductListPagination.NextPageTrigger>
+ *         {({ nextPage, hasNextPage }) => (
+ *           <button onClick={nextPage} disabled={!hasNextPage}>Next</button>
+ *         )}
+ *       </ProductListPagination.NextPageTrigger>
  *     </ProductList.Root>
  *   );
  * }

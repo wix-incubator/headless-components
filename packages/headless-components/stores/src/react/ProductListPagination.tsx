@@ -26,11 +26,14 @@ export interface PageSizeRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function PageSizeSelector() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListPagination.PageSize>
  *         {({ currentLimit, setLimit }) => (
  *           <div>
@@ -46,7 +49,7 @@ export interface PageSizeRenderProps {
  *           </div>
  *         )}
  *       </ProductListPagination.PageSize>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -87,11 +90,14 @@ export interface NextPageTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function NextPageButton() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListPagination.NextPageTrigger>
  *         {({ nextPage, hasNextPage }) => (
  *           <button
@@ -103,7 +109,7 @@ export interface NextPageTriggerRenderProps {
  *           </button>
  *         )}
  *       </ProductListPagination.NextPageTrigger>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -143,11 +149,14 @@ export interface PreviousPageTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function PrevPageButton() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListPagination.PreviousPageTrigger>
  *         {({ prevPage, hasPrevPage }) => (
  *           <button
@@ -159,7 +168,7 @@ export interface PreviousPageTriggerRenderProps {
  *           </button>
  *         )}
  *       </ProductListPagination.PreviousPageTrigger>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -199,11 +208,14 @@ export interface FirstPageTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function FirstPageButton() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListPagination.FirstPageTrigger>
  *         {({ navigateToFirstPage, hasPrevPage }) => (
  *           <button
@@ -215,7 +227,7 @@ export interface FirstPageTriggerRenderProps {
  *           </button>
  *         )}
  *       </ProductListPagination.FirstPageTrigger>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
@@ -258,11 +270,14 @@ export interface LoadMoreTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function LoadMoreButton() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListPagination.LoadMoreTrigger>
  *         {({ loadMore, hasMoreProducts, isLoading }) => (
  *           <button
@@ -274,7 +289,7 @@ export interface LoadMoreTriggerRenderProps {
  *           </button>
  *         )}
  *       </ProductListPagination.LoadMoreTrigger>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```

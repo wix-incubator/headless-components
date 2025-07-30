@@ -180,7 +180,7 @@ function updateUrlWithSearchState(searchState: {
       const choiceNames: string[] = [];
       for (const choiceId of choiceIds) {
         const choice = option.choicesSettings?.choices?.find(
-          (c: any) => c._id === choiceId,
+          (c: customizationsV3.Choice) => c._id === choiceId,
         );
         if (choice && choice.name) {
           choiceNames.push(choice.name);

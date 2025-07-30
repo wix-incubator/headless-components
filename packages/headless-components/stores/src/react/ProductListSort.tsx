@@ -30,11 +30,14 @@ export interface OptionsRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListSearch, ProductListSort } from '@wix/stores/components';
+ * import { ProductList, ProductListSort } from '@wix/stores/components';
  *
  * function ProductSortDropdown() {
  *   return (
- *     <ProductListSearch.Root productsListSearchConfig={{ customizations: [] }}>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
  *       <ProductListSort.Options>
  *         {({ selectedSortOption, updateSortOption, sortOptions }) => (
  *           <div className="sort-container">
@@ -46,15 +49,15 @@ export interface OptionsRenderProps {
  *               className="sort-dropdown"
  *             >
  *               {sortOptions.map(option => (
- *                 <option key={option.value} value={option.value}>
- *                   {option.label}
+ *                 <option key={option} value={option}>
+ *                   {option}
  *                 </option>
  *               ))}
  *             </select>
  *           </div>
  *         )}
  *       </ProductListSort.Options>
- *     </ProductListSearch.Root>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
