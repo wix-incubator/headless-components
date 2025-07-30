@@ -20,29 +20,41 @@
  *   getService(SignalsServiceDefinition)
  * );
  *
- * let firstRun = true;
- *
- * signalsService.hydratedEffect(async () => {
- *   // Read signals to establish dependencies
- *   const searchOptions = searchOptionsSignal.get();
- *
- *   // Clean effect logic - hydratedEffect handles the firstRun logic internally
- *   try {
- *     isLoadingSignal.set(true);
- *     const result = await fetchData(searchOptions);
- *     dataSignal.set(result);
- *   } finally {
- *     isLoadingSignal.set(false);
+ * signalsService.hydratedEffect(
+ *   () => {
+ *     // Read signals to establish dependencies
+ *     return { searchOptions: searchOptionsSignal.get() };
+ *   },
+ *   async (dependencies) => {
+ *     // Clean effect logic - hydratedEffect handles the firstRun logic internally
+ *     try {
+ *       isLoadingSignal.set(true);
+ *       const result = await fetchData(dependencies.searchOptions);
+ *       dataSignal.set(result);
+ *     } finally {
+ *       isLoadingSignal.set(false);
+ *     }
  *   }
- * }, () => firstRun, (value) => firstRun = value);
+ * );
  * ```
  */
 
-export interface SignalsServiceWithHydratedEffect {
-  effect: (fn: () => void | Promise<void>) => void;
-  signal: <T>(initialValue: T) => any;
-  computed: <T>(computeFn: () => T) => any;
-  hydratedEffect: any;
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+
+// Infer the SignalsService type from the service definition
+export type SignalsService = typeof SignalsServiceDefinition.__api;
+
+export interface SignalsServiceWithHydratedEffect extends SignalsService {
+  /**
+   * A special effect that handles SSR hydration properly.
+   *
+   * @param dependenciesFn - Function that reads signals and returns dependencies object
+   * @param effectFn - Function that executes with the dependencies, called only after first run
+   */
+  hydratedEffect: <T>(
+    dependenciesFn: () => T,
+    effectFn: (dependencies: T) => void | Promise<void>,
+  ) => void;
 }
 
 /**
@@ -52,48 +64,23 @@ export interface SignalsServiceWithHydratedEffect {
  * @returns Extended signals service with hydratedEffect method
  */
 export function extendSignalsServiceWithHydratedEffect<
-  T extends { effect: (fn: () => void) => void },
+  T extends SignalsService,
 >(signalsService: T): T & SignalsServiceWithHydratedEffect {
   const extendedService = signalsService as T &
     SignalsServiceWithHydratedEffect;
 
-  // extendedService.hydratedEffect = (
-  //   effectFn: () => void | Promise<void>,
-  //   getFirstRun: () => boolean,
-  //   setFirstRun: (value: boolean) => void,
-  // ): void => {
-  //   if (typeof window !== "undefined") {
-  //     signalsService.effect(async () => {
-  //       const isFirstRun = getFirstRun();
-
-  //       if (isFirstRun) {
-  //         setFirstRun(false);
-  //         // Skip execution on first run (data already loaded from SSR)
-  //         return;
-  //       }
-
-  //       // Call effectFn only on subsequent reactive updates
-  //       await effectFn();
-  //     });
-  //   }
-
-  //   // Set firstRun to false immediately to prevent any race conditions
-  //   setFirstRun(false);
-  // };
-
-  extendedService.hydratedEffect = (dependenciesFn: any, effectFn: any) => {
+  extendedService.hydratedEffect = <TDependencies>(
+    dependenciesFn: () => TDependencies,
+    effectFn: (dependencies: TDependencies) => void | Promise<void>,
+  ) => {
     if (typeof window === "undefined") {
       return;
     }
 
     let firstRun = true;
 
-    console.log("before");
-
     extendedService.effect(() => {
       const dependencies = dependenciesFn();
-
-      console.log({ firstRun });
 
       if (firstRun) {
         firstRun = false;

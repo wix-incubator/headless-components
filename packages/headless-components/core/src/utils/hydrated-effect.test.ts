@@ -7,11 +7,11 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
     signal: ReturnType<typeof vi.fn>;
     computed: ReturnType<typeof vi.fn>;
   };
-  let extendedService: ReturnType<typeof extendSignalsServiceWithHydratedEffect>;
+  let extendedService: ReturnType<
+    typeof extendSignalsServiceWithHydratedEffect
+  >;
   let mockEffectFn: ReturnType<typeof vi.fn>;
-  let firstRun: boolean;
-  let getFirstRun: () => boolean;
-  let setFirstRun: (value: boolean) => void;
+  let mockDependenciesFn: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     // Mock signals service with all expected methods
@@ -24,15 +24,14 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
     // Mock effect function
     mockEffectFn = vi.fn();
 
-    // Initialize firstRun state management
-    firstRun = true;
-    getFirstRun = () => firstRun;
-    setFirstRun = (value: boolean) => {
-      firstRun = value;
-    };
+    // Mock dependencies function
+    mockDependenciesFn = vi
+      .fn()
+      .mockReturnValue({ searchOptions: { query: "test" } });
 
     // Create extended service
-    extendedService = extendSignalsServiceWithHydratedEffect(mockSignalsService);
+    extendedService =
+      extendSignalsServiceWithHydratedEffect(mockSignalsService);
 
     // Clear any existing window mock
     vi.clearAllMocks();
@@ -47,8 +46,8 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
 
   describe("service extension", () => {
     it("should extend the signals service with hydratedEffect method", () => {
-      expect(extendedService).toHaveProperty('hydratedEffect');
-      expect(typeof extendedService.hydratedEffect).toBe('function');
+      expect(extendedService).toHaveProperty("hydratedEffect");
+      expect(typeof extendedService.hydratedEffect).toBe("function");
     });
 
     it("should preserve all original service methods", () => {
@@ -65,11 +64,7 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
     });
 
     it("should register an effect with signalsService when window is available", () => {
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, mockEffectFn);
 
       expect(mockSignalsService.effect).toHaveBeenCalledTimes(1);
       expect(mockSignalsService.effect).toHaveBeenCalledWith(
@@ -77,80 +72,66 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
       );
     });
 
-    it("should set firstRun to false immediately", () => {
-      expect(firstRun).toBe(true);
-
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
-
-      expect(firstRun).toBe(false);
-    });
-
-    it("should skip execution on first run when effect is called", async () => {
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+    it("should call dependencies function and skip effect on first run", async () => {
+      extendedService.hydratedEffect(mockDependenciesFn, mockEffectFn);
 
       // Get the registered effect function
       const registeredEffect = mockSignalsService.effect.mock.calls[0]?.[0];
       expect(registeredEffect).toBeDefined();
 
-      // Reset firstRun to true to simulate the first run condition
-      firstRun = true;
-
-      // Call the registered effect
+      // Call the registered effect (first run)
       await registeredEffect();
 
+      // Dependencies function should have been called to establish dependencies
+      expect(mockDependenciesFn).toHaveBeenCalledTimes(1);
       // Effect function should not have been called on first run
       expect(mockEffectFn).not.toHaveBeenCalled();
-      // firstRun should be set to false after the first run
-      expect(firstRun).toBe(false);
     });
 
     it("should execute effect function on subsequent runs", async () => {
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, mockEffectFn);
 
       // Get the registered effect function
       const registeredEffect = mockSignalsService.effect.mock.calls[0]?.[0];
       expect(registeredEffect).toBeDefined();
 
-      // firstRun is already false from the initial hydratedEffect call
-      expect(firstRun).toBe(false);
+      // First call (skipped)
+      await registeredEffect();
+      expect(mockEffectFn).not.toHaveBeenCalled();
 
-      // Call the registered effect (simulating a subsequent reactive update)
+      // Clear previous calls
+      mockDependenciesFn.mockClear();
+
+      // Second call (should execute)
       await registeredEffect();
 
-      // Effect function should have been called
+      // Dependencies function should have been called
+      expect(mockDependenciesFn).toHaveBeenCalledTimes(1);
+      // Effect function should have been called with dependencies
       expect(mockEffectFn).toHaveBeenCalledTimes(1);
-      expect(mockEffectFn).toHaveBeenCalledWith();
+      expect(mockEffectFn).toHaveBeenCalledWith({
+        searchOptions: { query: "test" },
+      });
     });
 
     it("should handle async effect functions correctly", async () => {
       const asyncEffectFn = vi.fn().mockResolvedValue("async result");
 
-      extendedService.hydratedEffect(
-        asyncEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, asyncEffectFn);
 
       // Get the registered effect function
       const registeredEffect = mockSignalsService.effect.mock.calls[0]?.[0];
 
-      // Call the registered effect (firstRun is already false)
+      // First call (skipped)
       await registeredEffect();
+      expect(asyncEffectFn).not.toHaveBeenCalled();
 
+      // Second call (should execute)
+      await registeredEffect();
       expect(asyncEffectFn).toHaveBeenCalledTimes(1);
-      expect(asyncEffectFn).toHaveBeenCalledWith();
+      expect(asyncEffectFn).toHaveBeenCalledWith({
+        searchOptions: { query: "test" },
+      });
     });
 
     it("should handle effect function errors without breaking", async () => {
@@ -158,16 +139,16 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
         .fn()
         .mockRejectedValue(new Error("Effect execution error"));
 
-      extendedService.hydratedEffect(
-        errorEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, errorEffectFn);
 
       // Get the registered effect function
       const registeredEffect = mockSignalsService.effect.mock.calls[0]?.[0];
 
-      // The error should propagate from the effect function
+      // First call (skipped)
+      await registeredEffect();
+      expect(errorEffectFn).not.toHaveBeenCalled();
+
+      // Second call (should throw error)
       await expect(registeredEffect()).rejects.toThrow(
         "Effect execution error",
       );
@@ -184,100 +165,74 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
     });
 
     it("should not register an effect when window is not available", () => {
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, mockEffectFn);
 
       expect(mockSignalsService.effect).not.toHaveBeenCalled();
     });
 
-    it("should still set firstRun to false even without window", () => {
-      expect(firstRun).toBe(true);
-
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
-
-      expect(firstRun).toBe(false);
-    });
-
     it("should not execute the effect function on server-side", () => {
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, mockEffectFn);
 
       expect(mockEffectFn).not.toHaveBeenCalled();
+      expect(mockDependenciesFn).not.toHaveBeenCalled();
     });
   });
 
-  describe("firstRun state management", () => {
+  describe("dependencies handling", () => {
     beforeEach(() => {
       (globalThis as any).window = {};
     });
 
-    it("should respect custom firstRun getter and setter functions", async () => {
-      let customFirstRun = true;
-      const customGetFirstRun = vi.fn(() => customFirstRun);
-      const customSetFirstRun = vi.fn((value: boolean) => {
-        customFirstRun = value;
-      });
+    it("should pass correct dependencies to effect function", async () => {
+      const customDependencies = {
+        searchOptions: { query: "custom" },
+        filters: { category: "test" },
+      };
+      const customDependenciesFn = vi.fn().mockReturnValue(customDependencies);
 
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        customGetFirstRun,
-        customSetFirstRun,
-      );
+      extendedService.hydratedEffect(customDependenciesFn, mockEffectFn);
 
-      // Should have called setFirstRun immediately during initialization
-      expect(customSetFirstRun).toHaveBeenCalledWith(false);
-
-      // Get the registered effect function
       const registeredEffect = mockSignalsService.effect.mock.calls[0]?.[0];
 
-      // Reset to simulate first run scenario
-      customFirstRun = true;
-      customGetFirstRun.mockClear();
-      customSetFirstRun.mockClear();
-
-      // Call the registered effect
+      // First call (skipped)
       await registeredEffect();
-
-      // Should have checked firstRun state and updated it
-      expect(customGetFirstRun).toHaveBeenCalled();
-      expect(customSetFirstRun).toHaveBeenCalledWith(false);
+      expect(customDependenciesFn).toHaveBeenCalledTimes(1);
       expect(mockEffectFn).not.toHaveBeenCalled();
+
+      // Clear previous calls
+      customDependenciesFn.mockClear();
+
+      // Second call (should execute)
+      await registeredEffect();
+      expect(customDependenciesFn).toHaveBeenCalledTimes(1);
+      expect(mockEffectFn).toHaveBeenCalledWith(customDependencies);
     });
 
-    it("should handle multiple effect calls with different firstRun states", async () => {
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+    it("should handle multiple effect calls with different dependencies", async () => {
+      let callCount = 0;
+      const dynamicDependenciesFn = vi.fn().mockImplementation(() => ({
+        searchOptions: { query: `test-${++callCount}` },
+      }));
+
+      extendedService.hydratedEffect(dynamicDependenciesFn, mockEffectFn);
 
       const registeredEffect = mockSignalsService.effect.mock.calls[0]?.[0];
 
-      // First call - firstRun is false (already set by hydratedEffect)
+      // First call (skipped)
       await registeredEffect();
-      expect(mockEffectFn).toHaveBeenCalledTimes(1);
+      expect(mockEffectFn).not.toHaveBeenCalled();
 
-      // Second call - still not first run
+      // Second call
       await registeredEffect();
-      expect(mockEffectFn).toHaveBeenCalledTimes(2);
+      expect(mockEffectFn).toHaveBeenCalledWith({
+        searchOptions: { query: "test-2" },
+      });
 
-      // Manually reset firstRun to true (simulating a restart scenario)
-      firstRun = true;
-
-      // Third call - should skip because it's now "first run"
+      // Third call
       await registeredEffect();
-      expect(mockEffectFn).toHaveBeenCalledTimes(2); // Should not increment
-      expect(firstRun).toBe(false); // Should be set back to false
+      expect(mockEffectFn).toHaveBeenCalledWith({
+        searchOptions: { query: "test-3" },
+      });
     });
   });
 
@@ -289,24 +244,21 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
     it("should work with synchronous effect functions", async () => {
       const syncEffectFn = vi.fn();
 
-      extendedService.hydratedEffect(
-        syncEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, syncEffectFn);
 
       const registeredEffect = mockSignalsService.effect.mock.calls[0]?.[0];
 
+      // First call (skipped)
+      await registeredEffect();
+      expect(syncEffectFn).not.toHaveBeenCalled();
+
+      // Second call (should execute)
       await registeredEffect();
       expect(syncEffectFn).toHaveBeenCalledTimes(1);
     });
 
     it("should handle window being undefined after registration", async () => {
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
+      extendedService.hydratedEffect(mockDependenciesFn, mockEffectFn);
 
       // Remove window after effect is registered (edge case)
       delete (globalThis as any).window;
@@ -315,22 +267,8 @@ describe("extendSignalsServiceWithHydratedEffect", () => {
 
       // Effect should still work since it was registered when window existed
       await registeredEffect();
+      await registeredEffect(); // Second call should execute
       expect(mockEffectFn).toHaveBeenCalledTimes(1);
-    });
-
-    it("should prevent race conditions by setting firstRun to false immediately", () => {
-      // Verify initial state
-      expect(firstRun).toBe(true);
-
-      // Call hydratedEffect
-      extendedService.hydratedEffect(
-        mockEffectFn,
-        getFirstRun,
-        setFirstRun,
-      );
-
-      // firstRun should be immediately set to false to prevent race conditions
-      expect(firstRun).toBe(false);
     });
   });
 });
