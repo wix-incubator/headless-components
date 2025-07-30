@@ -345,10 +345,7 @@ export const ProductListService =
             searchOptions: searchOptionsSignal.get(),
           };
         },
-        async () => {
-          // CRITICAL: Read the signals FIRST to establish dependencies, even on first run
-          const searchOptions = searchOptionsSignal.get();
-
+        async ({ searchOptions }) => {
           try {
             isLoadingSignal.set(true);
 

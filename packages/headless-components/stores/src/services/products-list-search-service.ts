@@ -6,6 +6,7 @@ import {
   ProductsListServiceDefinition,
 } from "./products-list-service.js";
 import { productsV3, customizationsV3 } from "@wix/stores";
+import { extendSignalsServiceWithHydratedEffect } from "@wix/headless-core/utils";
 
 const PRICE_FILTER_DEBOUNCE_TIME = 300;
 
@@ -561,8 +562,9 @@ export const ProductsListSearchService =
   implementService.withConfig<ProductsListSearchServiceConfig>()(
     ProductsListSearchServiceDefinition,
     ({ getService, config }) => {
-      let firstRun = true;
-      const signalsService = getService(SignalsServiceDefinition);
+      const signalsService = extendSignalsServiceWithHydratedEffect(
+        getService(SignalsServiceDefinition),
+      );
       const productsListService = getService(ProductsListServiceDefinition);
       const { customizations, initialSearchState } = config;
 
@@ -644,27 +646,35 @@ export const ProductsListSearchService =
       let minPriceTimeoutId: NodeJS.Timeout | null = null;
       let maxPriceTimeoutId: NodeJS.Timeout | null = null;
 
-      if (typeof window !== "undefined") {
-        // Watch for changes in any search parameters and update search options
-        signalsService.effect(() => {
+      // Watch for changes in any search parameters and update search options
+      signalsService.hydratedEffect(
+        () => {
           // Read all signals to establish dependencies
-          const sort = selectedSortOptionSignal.get();
-          const limit = currentLimitSignal.get();
-          const cursor = currentCursorSignal.get();
-          const minPrice = userFilterMinPriceSignal.get();
-          const maxPrice = userFilterMaxPriceSignal.get();
-          const selectedInventoryStatuses =
-            selectedInventoryStatusesSignal.get();
-          const selectedProductOptions = selectedProductOptionsSignal.get();
-          const selectedCategory = selectedCategorySignal.get();
-          const selectedVisible = selectedVisibleSignal.get();
-          const selectedProductType = selectedProductTypeSignal.get();
-
-          if (firstRun) {
-            firstRun = false;
-            return;
-          }
-
+          return {
+            sort: selectedSortOptionSignal.get(),
+            limit: currentLimitSignal.get(),
+            cursor: currentCursorSignal.get(),
+            minPrice: userFilterMinPriceSignal.get(),
+            maxPrice: userFilterMaxPriceSignal.get(),
+            selectedInventoryStatuses: selectedInventoryStatusesSignal.get(),
+            selectedProductOptions: selectedProductOptionsSignal.get(),
+            selectedCategory: selectedCategorySignal.get(),
+            selectedVisible: selectedVisibleSignal.get(),
+            selectedProductType: selectedProductTypeSignal.get(),
+          };
+        },
+        ({
+          sort,
+          limit,
+          cursor,
+          minPrice,
+          maxPrice,
+          selectedInventoryStatuses,
+          selectedProductOptions,
+          selectedCategory,
+          selectedVisible,
+          selectedProductType,
+        }) => {
           // Build complete new search options
           const newSearchOptions: Parameters<
             typeof productsV3.searchProducts
@@ -821,8 +831,8 @@ export const ProductsListSearchService =
             customizations,
             catalogBounds,
           });
-        });
-      }
+        },
+      );
 
       return {
         // Sort functionality
