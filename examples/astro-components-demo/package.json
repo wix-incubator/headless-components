@@ -23,7 +23,7 @@
     "@wix/headless-ecom": "^0.0.8",
     "@wix/headless-stores": "^0.0.20",
     "@wix/services-manager-react": "^0.1.26",
-    "@wix/stores": "^1.0.471",
+    "@wix/stores": "^1.0.498",
     "astro": "^5.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

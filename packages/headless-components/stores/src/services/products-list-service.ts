@@ -5,6 +5,8 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
 
+export const DEFAULT_QUERY_LIMIT = 100;
+
 /**
  * Configuration interface for the Products List service.
  * Contains the initial products data, search options, and metadata.
@@ -15,7 +17,7 @@ export type ProductsListServiceConfig = {
   /** Array of product objects to initialize the service with */
   products: productsV3.V3Product[];
   /** Search options used to fetch the products */
-  searchOptions: Parameters<typeof productsV3.searchProducts>[0];
+  searchOptions: productsV3.V3ProductSearch;
   /** Pagination metadata from the search response */
   pagingMetadata: productsV3.CommonCursorPagingMetadata;
   /** Aggregation data containing filters, facets, and counts */
@@ -27,7 +29,7 @@ export type ProductsListServiceConfig = {
  * This function is designed to be used during Server-Side Rendering (SSR) to preload
  * a list of products based on search criteria.
  *
- * @param {Parameters<typeof productsV3.searchProducts>[0]} searchOptions - The search options for querying products
+ * @param {productsV3.V3ProductSearch} searchOptions - The search options for querying products
  * @returns {Promise<ProductsListServiceConfig>} Promise that resolves to the products list configuration
  *
  * @example
@@ -106,14 +108,23 @@ export type ProductsListServiceConfig = {
  * ```
  */
 export async function loadProductsListServiceConfig(
-  searchOptions: Parameters<typeof productsV3.searchProducts>[0],
+  searchOptions: productsV3.V3ProductSearch,
 ): Promise<ProductsListServiceConfig> {
-  const result = await fetchProducts(searchOptions);
+  const searchWithoutFilter = { ...searchOptions, filter: {} };
+
+  const [resultWithoutFilter, resultWithFilter] = await Promise.all([
+    fetchProducts(searchWithoutFilter),
+    fetchProducts(searchOptions),
+  ]);
+
+  const products =
+    resultWithFilter?.products ?? resultWithoutFilter?.products ?? [];
+
   return {
-    products: result.products ?? [],
+    products,
     searchOptions,
-    pagingMetadata: result.pagingMetadata!,
-    aggregations: result.aggregationData!,
+    pagingMetadata: resultWithFilter.pagingMetadata!,
+    aggregations: resultWithoutFilter.aggregationData ?? {},
   };
 }
 
@@ -125,9 +136,7 @@ export async function loadProductsListServiceConfig(
  * @param searchOptions - The search options for querying products
  * @returns Promise that resolves to the search result with complete variant data
  */
-const fetchProducts = async (
-  searchOptions: Parameters<typeof productsV3.searchProducts>[0],
-) => {
+const fetchProducts = async (searchOptions: productsV3.V3ProductSearch) => {
   const result = await productsV3.searchProducts(searchOptions);
 
   // Fetch missing variants for all products in one batch request
@@ -175,7 +184,7 @@ const fetchMissingVariants = async (
     const res = await readOnlyVariantsV3
       .queryVariants({})
       .in("productData.productId", productIds)
-      .limit(100)
+      .limit(DEFAULT_QUERY_LIMIT)
       .find();
 
     items.push(...res.items);
@@ -236,15 +245,17 @@ export const ProductsListServiceDefinition = defineService<
     /** Reactive signal containing pagination metadata */
     pagingMetadata: Signal<productsV3.CommonCursorPagingMetadata>;
     /** Reactive signal containing current search options */
-    searchOptions: Signal<Parameters<typeof productsV3.searchProducts>[0]>;
+    searchOptions: Signal<productsV3.V3ProductSearch>;
     /** Reactive signal indicating if products are currently being loaded */
     isLoading: Signal<boolean>;
     /** Reactive signal containing any error message, or null if no error */
     error: Signal<string | null>;
     /** Function to update search options and trigger a new search */
-    setSearchOptions: (
-      searchOptions: Parameters<typeof productsV3.searchProducts>[0],
-    ) => void;
+    setSearchOptions: (searchOptions: productsV3.V3ProductSearch) => void;
+    /** Function to update only the sort part of search options */
+    setSort: (sort: productsV3.V3ProductSearch["sort"]) => void;
+    /** Function to update only the filter part of search options */
+    setFilter: (filter: productsV3.V3ProductSearch["filter"]) => void;
   },
   ProductsListServiceConfig
 >("products-list");
@@ -313,9 +324,8 @@ export const ProductListService =
       const productsSignal = signalsService.signal<productsV3.V3Product[]>(
         config.products,
       );
-      const searchOptionsSignal = signalsService.signal<
-        Parameters<typeof productsV3.searchProducts>[0]
-      >(config.searchOptions);
+      const searchOptionsSignal =
+        signalsService.signal<productsV3.V3ProductSearch>(config.searchOptions);
       const pagingMetadataSignal =
         signalsService.signal<productsV3.CommonCursorPagingMetadata>(
           config.pagingMetadata,
@@ -351,9 +361,7 @@ export const ProductListService =
                 }
               : searchOptions;
 
-            const result = await fetchProducts(
-              affectiveSearchOptions,
-            );
+            const result = await fetchProducts(affectiveSearchOptions);
 
             productsSignal.set(result.products ?? []);
             pagingMetadataSignal.set(result.pagingMetadata!);
@@ -374,9 +382,22 @@ export const ProductListService =
         searchOptions: searchOptionsSignal,
         pagingMetadata: pagingMetadataSignal,
         aggregations: aggregationsSignal,
-        setSearchOptions: (
-          searchOptions: Parameters<typeof productsV3.searchProducts>[0],
-        ) => searchOptionsSignal.set(searchOptions),
+        setSearchOptions: (searchOptions: productsV3.V3ProductSearch) =>
+          searchOptionsSignal.set(searchOptions),
+        setSort: (sort: productsV3.V3ProductSearch["sort"]) => {
+          const currentOptions = searchOptionsSignal.peek();
+          searchOptionsSignal.set({
+            ...currentOptions,
+            sort,
+          });
+        },
+        setFilter: (filter: productsV3.V3ProductSearch["filter"]) => {
+          const currentOptions = searchOptionsSignal.peek();
+          searchOptionsSignal.set({
+            ...currentOptions,
+            filter,
+          });
+        },
         isLoading: isLoadingSignal,
         error: errorSignal,
       };

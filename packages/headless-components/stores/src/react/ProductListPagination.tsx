@@ -1,55 +1,6 @@
-import { createServicesMap } from "@wix/services-manager";
-import { useService, WixServices } from "@wix/services-manager-react";
-import {
-  ProductsListPaginationService,
-  ProductsListPaginationServiceDefinition,
-} from "../services/products-list-pagination-service.js";
+import { useService } from "@wix/services-manager-react";
+import { ProductsListSearchServiceDefinition } from "../services/products-list-search-service.js";
 import { ProductsListServiceDefinition } from "../services/products-list-service.js";
-
-export interface RootProps {
-  children: React.ReactNode;
-}
-
-/**
- * Root component that provides the ProductListPagination service context to its children.
- * This component sets up the necessary services for managing products list pagination.
- *
- * @order 1
- * @component
- * @example
- * ```tsx
- * import { ProductListPagination } from '@wix/stores/components';
- *
- * function PaginationSection() {
- *   return (
- *     <ProductListPagination.Root>
- *       <ProductListPagination.NextPageTrigger>
- *         {({ nextPage, hasNextPage }) => (
- *           <button
- *             onClick={nextPage}
- *             disabled={!hasNextPage}
- *           >
- *             Next Page
- *           </button>
- *         )}
- *       </ProductListPagination.NextPageTrigger>
- *     </ProductListPagination.Root>
- *   );
- * }
- * ```
- */
-export function Root(props: RootProps): React.ReactNode {
-  return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        ProductsListPaginationServiceDefinition,
-        ProductsListPaginationService,
-      )}
-    >
-      {props.children}
-    </WixServices>
-  );
-}
 
 /**
  * Props for PageSize headless component
@@ -75,31 +26,36 @@ export interface PageSizeRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function PageSizeSelector() {
  *   return (
- *     <ProductListPagination.PageSize>
- *       {({ currentLimit, setLimit }) => (
- *         <div>
- *           <label>Items per page:</label>
- *           <select
- *             value={currentLimit}
- *             onChange={(e) => setLimit(Number(e.target.value))}
- *           >
- *             <option value={10}>10</option>
- *             <option value={20}>20</option>
- *             <option value={50}>50</option>
- *           </select>
- *         </div>
- *       )}
- *     </ProductListPagination.PageSize>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
+ *       <ProductListPagination.PageSize>
+ *         {({ currentLimit, setLimit }) => (
+ *           <div>
+ *             <label>Items per page:</label>
+ *             <select
+ *               value={currentLimit}
+ *               onChange={(e) => setLimit(Number(e.target.value))}
+ *             >
+ *               <option value={10}>10</option>
+ *               <option value={20}>20</option>
+ *               <option value={50}>50</option>
+ *             </select>
+ *           </div>
+ *         )}
+ *       </ProductListPagination.PageSize>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
  */
 export function PageSize(props: PageSizeProps) {
-  const service = useService(ProductsListPaginationServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const currentLimit = service.currentLimit.get();
   const setLimit = service.setLimit;
 
@@ -113,7 +69,9 @@ export function PageSize(props: PageSizeProps) {
  */
 export interface NextPageTriggerProps {
   /** Content to display (can be a render function receiving next page controls or ReactNode) */
-  children: ((props: NextPageTriggerRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: NextPageTriggerRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -132,27 +90,32 @@ export interface NextPageTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function NextPageButton() {
  *   return (
- *     <ProductListPagination.NextPageTrigger>
- *       {({ nextPage, hasNextPage }) => (
- *         <button
- *           onClick={nextPage}
- *           disabled={!hasNextPage}
- *           className={hasNextPage ? 'enabled' : 'disabled'}
- *         >
- *           Next →
- *         </button>
- *       )}
- *     </ProductListPagination.NextPageTrigger>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
+ *       <ProductListPagination.NextPageTrigger>
+ *         {({ nextPage, hasNextPage }) => (
+ *           <button
+ *             onClick={nextPage}
+ *             disabled={!hasNextPage}
+ *             className={hasNextPage ? 'enabled' : 'disabled'}
+ *           >
+ *             Next →
+ *           </button>
+ *         )}
+ *       </ProductListPagination.NextPageTrigger>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
  */
 export function NextPageTrigger(props: NextPageTriggerProps) {
-  const service = useService(ProductsListPaginationServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const nextPage = service.nextPage;
   const hasNextPage = service.hasNextPage.get();
   return typeof props.children === "function"
@@ -165,7 +128,9 @@ export function NextPageTrigger(props: NextPageTriggerProps) {
  */
 export interface PreviousPageTriggerProps {
   /** Content to display (can be a render function receiving previous page controls or ReactNode) */
-  children: ((props: PreviousPageTriggerRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: PreviousPageTriggerRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -184,27 +149,32 @@ export interface PreviousPageTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function PrevPageButton() {
  *   return (
- *     <ProductListPagination.PreviousPageTrigger>
- *       {({ prevPage, hasPrevPage }) => (
- *         <button
- *           onClick={prevPage}
- *           disabled={!hasPrevPage}
- *           className={hasPrevPage ? 'enabled' : 'disabled'}
- *         >
- *           ← Previous
- *         </button>
- *       )}
- *     </ProductListPagination.PreviousPageTrigger>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
+ *       <ProductListPagination.PreviousPageTrigger>
+ *         {({ prevPage, hasPrevPage }) => (
+ *           <button
+ *             onClick={prevPage}
+ *             disabled={!hasPrevPage}
+ *             className={hasPrevPage ? 'enabled' : 'disabled'}
+ *           >
+ *             ← Previous
+ *           </button>
+ *         )}
+ *       </ProductListPagination.PreviousPageTrigger>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
  */
 export function PreviousPageTrigger(props: PreviousPageTriggerProps) {
-  const service = useService(ProductsListPaginationServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const prevPage = service.prevPage;
   const hasPrevPage = service.hasPrevPage.get();
   return typeof props.children === "function"
@@ -217,7 +187,9 @@ export function PreviousPageTrigger(props: PreviousPageTriggerProps) {
  */
 export interface FirstPageTriggerProps {
   /** Content to display (can be a render function receiving first page controls or ReactNode) */
-  children: ((props: FirstPageTriggerRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: FirstPageTriggerRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -236,27 +208,32 @@ export interface FirstPageTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function FirstPageButton() {
  *   return (
- *     <ProductListPagination.FirstPageTrigger>
- *       {({ navigateToFirstPage, hasPrevPage }) => (
- *         <button
- *           onClick={navigateToFirstPage}
- *           disabled={!hasPrevPage}
- *           title="Go to first page"
- *         >
- *           ⏮ First
- *         </button>
- *       )}
- *     </ProductListPagination.FirstPageTrigger>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
+ *       <ProductListPagination.FirstPageTrigger>
+ *         {({ navigateToFirstPage, hasPrevPage }) => (
+ *           <button
+ *             onClick={navigateToFirstPage}
+ *             disabled={!hasPrevPage}
+ *             title="Go to first page"
+ *           >
+ *             ⏮ First
+ *           </button>
+ *         )}
+ *       </ProductListPagination.FirstPageTrigger>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
  */
 export function FirstPageTrigger(props: FirstPageTriggerProps) {
-  const service = useService(ProductsListPaginationServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const navigateToFirstPage = service.navigateToFirstPage;
   const hasPrevPage = service.hasPrevPage.get();
 
@@ -270,7 +247,9 @@ export function FirstPageTrigger(props: FirstPageTriggerProps) {
  */
 export interface LoadMoreTriggerProps {
   /** Content to display (can be a render function receiving load more controls or ReactNode) */
-  children: ((props: LoadMoreTriggerRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: LoadMoreTriggerRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -291,27 +270,32 @@ export interface LoadMoreTriggerRenderProps {
  * @component
  * @example
  * ```tsx
- * import { ProductListPagination } from '@wix/stores/components';
+ * import { ProductList, ProductListPagination } from '@wix/stores/components';
  *
  * function LoadMoreButton() {
  *   return (
- *     <ProductListPagination.LoadMoreTrigger>
- *       {({ loadMore, hasMoreProducts, isLoading }) => (
- *         <button
- *           onClick={() => loadMore(10)}
- *           disabled={!hasMoreProducts || isLoading}
- *           className="load-more-btn"
- *         >
- *           {isLoading ? 'Loading...' : hasMoreProducts ? 'Load More' : 'No More Products'}
- *         </button>
- *       )}
- *     </ProductListPagination.LoadMoreTrigger>
+ *     <ProductList.Root
+ *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
+ *       productsListSearchConfig={{ customizations: [] }}
+ *     >
+ *       <ProductListPagination.LoadMoreTrigger>
+ *         {({ loadMore, hasMoreProducts, isLoading }) => (
+ *           <button
+ *             onClick={() => loadMore(10)}
+ *             disabled={!hasMoreProducts || isLoading}
+ *             className="load-more-btn"
+ *           >
+ *             {isLoading ? 'Loading...' : hasMoreProducts ? 'Load More' : 'No More Products'}
+ *           </button>
+ *         )}
+ *       </ProductListPagination.LoadMoreTrigger>
+ *     </ProductList.Root>
  *   );
  * }
  * ```
  */
 export function LoadMoreTrigger(props: LoadMoreTriggerProps) {
-  const service = useService(ProductsListPaginationServiceDefinition);
+  const service = useService(ProductsListSearchServiceDefinition);
   const productsListService = useService(ProductsListServiceDefinition);
 
   const loadMore = service.loadMore;

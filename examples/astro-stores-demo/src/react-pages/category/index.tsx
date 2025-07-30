@@ -8,7 +8,7 @@ interface StoreCollectionPageProps {
   categoryServiceConfig: any;
   categoriesListConfig: any;
   productsListConfig: any;
-  productsListFiltersConfig: any;
+  productsListSearchConfig: any;
   slug: string;
 }
 
@@ -16,7 +16,7 @@ export default function StoreCollectionPage({
   currentCartServiceConfig,
   categoriesListConfig,
   productsListConfig,
-  productsListFiltersConfig,
+  productsListSearchConfig,
   slug,
 }: StoreCollectionPageProps) {
   // Create navigation handler for category URLs
@@ -58,7 +58,7 @@ export default function StoreCollectionPage({
 
           <CategoryPage
             productsListConfig={productsListConfig}
-            productsListFiltersConfig={productsListFiltersConfig}
+            productsListSearchConfig={productsListSearchConfig}
             categoriesListConfig={categoriesListConfig}
             currentCategorySlug={slug}
             productPageRoute=""

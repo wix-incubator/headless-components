@@ -37,20 +37,14 @@ export {
 } from "./products-list-service.js";
 
 export {
-  SortType,
-  ProductsListSortService,
-  ProductsListSortServiceDefinition,
-} from "./products-list-sort-service.js";
-
-export {
+  ProductOption,
   InventoryStatusType,
-  ProductsListFiltersService,
-  ProductsListFiltersServiceDefinition,
-  loadProductsListFiltersServiceConfig,
-  ProductsListFiltersServiceConfig,
-} from "./products-list-filters-service.js";
-
-export {
-  ProductsListPaginationService,
-  ProductsListPaginationServiceDefinition,
-} from "./products-list-pagination-service.js";
+  SortType,
+  ProductChoice,
+  ProductsListSearchService,
+  ProductsListSearchServiceDefinition,
+  ProductsListSearchServiceConfig,
+  loadProductsListSearchServiceConfig,
+  parseUrlForProductsListSearch,
+  convertUrlSortToSortType,
+} from "./products-list-search-service.js";
