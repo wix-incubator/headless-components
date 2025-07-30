@@ -95,29 +95,3 @@ export function extendSignalsServiceWithHydratedEffect<
 
   return extendedService;
 }
-
-// Keep the original function for backward compatibility during transition
-export function hydratedEffect(
-  signalsService: { effect: (fn: () => void | Promise<void>) => void },
-  effectFn: () => void | Promise<void>,
-  getFirstRun: () => boolean,
-  setFirstRun: (value: boolean) => void,
-): void {
-  if (typeof window !== "undefined") {
-    signalsService.effect(async () => {
-      const isFirstRun = getFirstRun();
-
-      if (isFirstRun) {
-        setFirstRun(false);
-        // Skip execution on first run to maintain backward compatibility
-        return;
-      }
-
-      // Call effectFn only on subsequent runs
-      await effectFn();
-    });
-  }
-
-  // Set firstRun to false immediately to prevent any race conditions
-  setFirstRun(false);
-}
