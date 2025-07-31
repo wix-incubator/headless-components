@@ -106,7 +106,7 @@ export const ProductsListSearchServiceDefinition = defineService<{
   toggleInventoryStatus: (status: InventoryStatusType) => void;
   toggleProductOption: (optionId: string, choiceId: string) => void;
   setSelectedCategory: (category: Category | null) => void;
-  isFiltered: Signal<boolean>;
+  isFiltered: { get: () => boolean };
   reset: () => void;
 }>("products-list-search");
 
@@ -660,7 +660,39 @@ export const ProductsListSearchService =
         initialSearchState?.productType || null,
       );
 
-      const isFilteredSignal = signalsService.signal(false);
+      // Computed signal to check if any filters are applied
+      const isFilteredSignal = signalsService.computed(() => {
+        const catalogPriceRange = getCatalogPriceRange(
+          productsListService.aggregations.get()?.results || [],
+        );
+        const minPrice = userFilterMinPriceSignal.get();
+        const maxPrice = userFilterMaxPriceSignal.get();
+        const selectedInventoryStatuses = selectedInventoryStatusesSignal.get();
+        const selectedProductOptions = selectedProductOptionsSignal.get();
+        const selectedCategory = selectedCategorySignal.get();
+        const selectedVisible = selectedVisibleSignal.get();
+        const selectedProductType = selectedProductTypeSignal.get();
+
+        // Check if any filters are different from default values
+        const hasPriceFilter =
+          minPrice > catalogPriceRange.minPrice ||
+          maxPrice < catalogPriceRange.maxPrice;
+        const hasInventoryFilter = selectedInventoryStatuses.length > 0;
+        const hasProductOptionsFilter =
+          Object.keys(selectedProductOptions).length > 0;
+        const hasCategoryFilter = selectedCategory !== null;
+        const hasVisibilityFilter = selectedVisible !== null;
+        const hasProductTypeFilter = selectedProductType !== null;
+
+        return (
+          hasPriceFilter ||
+          hasInventoryFilter ||
+          hasProductOptionsFilter ||
+          hasCategoryFilter ||
+          hasVisibilityFilter ||
+          hasProductTypeFilter
+        );
+      });
 
       // Computed signals for pagination
       const hasNextPageSignal = signalsService.computed(() => {
@@ -979,7 +1011,6 @@ export const ProductsListSearchService =
           selectedCategorySignal.set(null);
           selectedVisibleSignal.set(null);
           selectedProductTypeSignal.set(null);
-          isFilteredSignal.set(false);
         },
       };
     },
