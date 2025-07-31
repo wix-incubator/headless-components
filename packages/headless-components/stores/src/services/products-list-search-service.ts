@@ -49,7 +49,7 @@ export interface ProductChoice {
 /**
  * Initial search state that can be loaded from URL parameters.
  */
-type InitialSearchState = {
+export type InitialSearchState = {
   sort?: SortType;
   limit?: number;
   cursor?: string | null;
@@ -588,75 +588,11 @@ export async function parseUrlToSearchOptions(
 }
 
 /**
- * Derive initial search state from search options
- */
-function deriveInitialSearchStateFromOptions(
-  searchOptions: productsV3.V3ProductSearch,
-): InitialSearchState {
-  const initialSearchState: InitialSearchState = {};
-
-  // Extract pagination
-  if (searchOptions.cursorPaging?.limit) {
-    initialSearchState.limit = searchOptions.cursorPaging.limit;
-  }
-  if (searchOptions.cursorPaging?.cursor) {
-    initialSearchState.cursor = searchOptions.cursorPaging.cursor;
-  }
-
-  // Extract sort
-  if (searchOptions.sort?.[0]) {
-    const sort = searchOptions.sort[0];
-    if (sort.fieldName === "name") {
-      initialSearchState.sort = sort.order === productsV3.SortDirection.DESC ? SortType.NAME_DESC : SortType.NAME_ASC;
-    } else if (sort.fieldName === "actualPriceRange.minValue.amount") {
-      initialSearchState.sort = sort.order === productsV3.SortDirection.DESC ? SortType.PRICE_DESC : SortType.PRICE_ASC;
-    }
-  }
-
-  // Extract filters
-  if (searchOptions.filter) {
-    const filter = searchOptions.filter as Record<string, any>;
-
-    // Price range
-    if (filter["actualPriceRange.minValue.amount"]?.$gte || filter["actualPriceRange.maxValue.amount"]?.$lte) {
-      initialSearchState.priceRange = {
-        min: filter["actualPriceRange.minValue.amount"]?.$gte,
-        max: filter["actualPriceRange.maxValue.amount"]?.$lte,
-      };
-    }
-
-    // Inventory statuses
-    if (filter["inventory.availabilityStatus"]) {
-      const status = filter["inventory.availabilityStatus"];
-      if (Array.isArray(status)) {
-        initialSearchState.inventoryStatuses = status;
-      } else if (status.$in) {
-        initialSearchState.inventoryStatuses = status.$in;
-      } else {
-        initialSearchState.inventoryStatuses = [status];
-      }
-    }
-
-    // Visibility
-    if (typeof filter["visible"] === "boolean") {
-      initialSearchState.visible = filter["visible"];
-    }
-
-    // Product type
-    if (filter["productType"]) {
-      initialSearchState.productType = filter["productType"];
-    }
-  }
-
-  return initialSearchState;
-}
-
-/**
- * Load search service configuration from URL or search options.
+ * Load search service configuration from URL or parsed URL result.
  * This function provides the configuration for the Products List Search service,
  * including customizations and initial search state.
  *
- * @param {string | productsV3.V3ProductSearch} input - Either a URL to parse for search parameters or custom search options
+ * @param {string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState }} input - Either a URL to parse or parsed URL result from parseUrlToSearchOptions
  * @returns {Promise<ProductsListSearchServiceConfig>} Promise that resolves to the search service configuration
  *
  * @example
@@ -664,22 +600,30 @@ function deriveInitialSearchStateFromOptions(
  * // Option 1: Load from URL (will parse filters, sort, pagination from URL params)
  * const searchConfig = await loadProductsListSearchServiceConfig(window.location.href);
  *
- * // Option 2: Custom search options
- * const searchOptions = {
- *   cursorPaging: { limit: 12 },
- *   filter: { 'categoryIds': ['123'] },
- *   sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
- * };
- * const searchConfig = await loadProductsListSearchServiceConfig(searchOptions);
- *
- * // Option 3: Advanced - use parseUrlToSearchOptions for custom URL parsing
+ * // Option 2: Custom parsing with defaults
  * const categories = await loadCategoriesListServiceConfig();
- * const { searchOptions, initialSearchState } = await parseUrlToSearchOptions(url, categories.categories);
- * const searchConfig = await loadProductsListSearchServiceConfig(searchOptions);
+ * const parsed = await parseUrlToSearchOptions(
+ *   window.location.href,
+ *   categories.categories,
+ *   {
+ *     cursorPaging: { limit: 12 },
+ *     filter: { 'categoryIds': ['123'] },
+ *     sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
+ *   }
+ * );
+ * const searchConfig = await loadProductsListSearchServiceConfig(parsed);
+ *
+ * // Option 3: Performance optimization - use parsed result for both services (no duplicate parsing)
+ * const categories = await loadCategoriesListServiceConfig();
+ * const parsed = await parseUrlToSearchOptions(url, categories.categories);
+ * const [productsConfig, searchConfig] = await Promise.all([
+ *   loadProductsListServiceConfig(parsed),
+ *   loadProductsListSearchServiceConfig(parsed),
+ * ]);
  * ```
  */
 export async function loadProductsListSearchServiceConfig(
-  input: string | productsV3.V3ProductSearch,
+  input: string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState },
 ): Promise<ProductsListSearchServiceConfig> {
   let initialSearchState: InitialSearchState;
 
@@ -692,8 +636,8 @@ export async function loadProductsListSearchServiceConfig(
     );
     initialSearchState = parsedState;
   } else {
-    // SearchOptions input - derive initial state
-    initialSearchState = deriveInitialSearchStateFromOptions(input);
+    // Parsed URL result - use initialSearchState directly (no duplicate work)
+    initialSearchState = input.initialSearchState;
   }
 
   const { items: customizations = [] } = await customizationsV3

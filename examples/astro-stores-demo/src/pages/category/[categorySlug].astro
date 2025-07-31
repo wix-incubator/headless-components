@@ -28,7 +28,7 @@ if (!category) {
 const categoryName = category?.name || '';
 
 // Parse URL to get search options with defaults for this category
-const { searchOptions } = await parseUrlToSearchOptions(
+const parsed = await parseUrlToSearchOptions(
   Astro.url.href,
   categoriesListConfig.categories,
   {
@@ -49,9 +49,9 @@ const [
   productsListSearchConfig,
   seoTagsServiceConfig,
 ] = await Promise.all([
-  loadProductsListServiceConfig(searchOptions),
+  loadProductsListServiceConfig(parsed), // Both services now use same parsed result
   loadCurrentCartServiceConfig(),
-  loadProductsListSearchServiceConfig(searchOptions),
+  loadProductsListSearchServiceConfig(parsed),
   loadSEOTagsServiceConfig({
     pageUrl: Astro.url.href,
     itemData: {
