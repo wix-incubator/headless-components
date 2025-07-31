@@ -201,3 +201,43 @@ export function Media(props: ProductMediaProps) {
     media,
   });
 }
+
+export interface ProductProps {
+  children: (props: ProductRenderProps) => React.ReactNode;
+}
+
+export interface ProductRenderProps {
+  product: V3Product;
+}
+
+export function Content(props: ProductProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const product = service.product.get();
+
+  return props.children({
+    product,
+  });
+}
+
+export interface LoadingProps {
+  children: (props: LoadingRenderProps) => React.ReactNode;
+}
+
+export interface LoadingRenderProps {
+  isLoading: boolean;
+}
+
+export function Loading(props: LoadingProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const isLoading = service.isLoading.get();
+
+  return props.children({
+    isLoading,
+  });
+}

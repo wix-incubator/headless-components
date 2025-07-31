@@ -39,7 +39,9 @@ export const ProductServiceDefinition =
  */
 export interface ProductServiceConfig {
   /** The initial product data to configure the service with */
-  product: productsV3.V3Product;
+  product?: productsV3.V3Product;
+
+  productSlug?: string;
 }
 
 /**
@@ -84,20 +86,28 @@ export const ProductService =
       const product: Signal<productsV3.V3Product> = signalsService.signal(
         config.product as any,
       );
-      const isLoading: Signal<boolean> = signalsService.signal(false as any);
+      const isLoading: Signal<boolean> = signalsService.signal(
+        !!config.productSlug as any,
+      );
       const error: Signal<string | null> = signalsService.signal(null as any);
 
       const loadProduct = async (slug: string) => {
         isLoading.set(true);
-        const productResponse = await loadProductBySlug(slug);
+        const productResponse = await loadProductBySlug(slug!);
+
         if (!productResponse.product) {
           error.set("Product not found");
         } else {
           product.set(productResponse.product!);
           error.set(null);
         }
+
         isLoading.set(false);
       };
+
+      if (config.productSlug) {
+        loadProduct(config.productSlug);
+      }
 
       return {
         product,

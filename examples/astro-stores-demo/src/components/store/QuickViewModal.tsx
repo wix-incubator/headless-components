@@ -4,24 +4,21 @@ import ProductDetails from './ProductDetails';
 
 import { CurrentCart } from '@wix/headless-ecom/react';
 import type { LineItem } from '@wix/headless-ecom/services';
+import { Product } from '@wix/headless-stores/react';
 
 interface QuickViewModalProps {
   product: productsV3.V3Product;
   isOpen: boolean;
+  isLoading: boolean;
   onClose: () => void;
-  productPageRoute: string;
 }
 
 export default function QuickViewModal({
   product,
+  isLoading,
   isOpen,
   onClose,
-  productPageRoute,
 }: QuickViewModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [fullProduct, setFullProduct] = useState<productsV3.V3Product | null>(
-    null
-  );
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Handle escape key to close modal
@@ -40,29 +37,6 @@ export default function QuickViewModal({
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
-
-  // Load full product data when modal opens
-  useEffect(() => {
-    if (isOpen && product.slug) {
-      setIsLoading(true);
-      // Use Wix API to load full product data
-      const loadFullProduct = async () => {
-        try {
-          // For now, use the existing product data since it should contain all necessary information
-          // If more detailed product data is needed, this would require a Wix client instance
-          setFullProduct(product);
-        } catch (error) {
-          console.error('Failed to load full product data:', error);
-          // Fallback to original product data
-          setFullProduct(product);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      loadFullProduct();
-    }
-  }, [isOpen, product.slug]);
 
   if (!isOpen) return null;
 
@@ -157,12 +131,12 @@ export default function QuickViewModal({
             </div>
           ) : (
             <>
-              <ProductDetails isQuickView={true} product={product} />
+              <ProductDetails isQuickView={true} product={product!} />
 
               {/* View Full Product Page Link */}
               <div className="mt-6 pt-6 border-t border-brand-subtle">
                 <a
-                  href={`${productPageRoute}/${product.slug}`}
+                  href={`/${product.slug}`}
                   className="w-full text-content-primary font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-primary"
                 >
                   View Full Product Page

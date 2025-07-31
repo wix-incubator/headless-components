@@ -41,7 +41,6 @@ export default function StoreCollectionPage({
             productsListConfig={productsListConfig}
             productsListSearchConfig={productsListSearchConfig}
             categoriesListConfig={categoriesListConfig}
-            productPageRoute=""
           />
         </div>
       </StoreLayout>
