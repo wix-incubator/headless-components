@@ -268,23 +268,16 @@ function updateUrlWithSearchState(searchState: {
   // Handle URL path construction with category
   let baseUrl = window.location.pathname;
 
-  // If categorySlug is provided, update the path
+  // If categorySlug is provided, replace the last path segment (which represents the category)
   if (categorySlug) {
-    // Find if there's already a /category/ segment in the current path
     const pathSegments = baseUrl.split("/").filter(Boolean);
-    const categoryIndex = pathSegments.findIndex(
-      (segment) => segment === "category",
-    );
-
-    if (categoryIndex !== -1) {
-      // Replace existing category slug
-      pathSegments[categoryIndex + 1] = categorySlug;
+    if (pathSegments.length > 0) {
+      // Replace the last segment with the new category slug
+      pathSegments[pathSegments.length - 1] = categorySlug;
       baseUrl = "/" + pathSegments.join("/");
     } else {
-      // Append category path to existing base
-      baseUrl = baseUrl.endsWith("/")
-        ? `${baseUrl}category/${categorySlug}`
-        : `${baseUrl}/category/${categorySlug}`;
+      // If no segments, just use the category slug
+      baseUrl = `/${categorySlug}`;
     }
   }
 
