@@ -7,7 +7,7 @@ import {
   loadCategoryServiceConfig,
   loadProductsListSearchServiceConfig,
   loadProductsListServiceConfig,
-  parseUrlForProductsListSearch,
+  parseUrlToSearchOptions,
 } from '@wix/headless-stores/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoreCollectionPage from '../../react-pages/category/index';
@@ -15,7 +15,7 @@ import StoreCollectionPage from '../../react-pages/category/index';
 // Get category slug from URL params
 const { categorySlug = '' } = Astro.params;
 
-// Load categories first so we can pass them to parseUrlForProductsListSearch
+// Load categories first so we can pass them to parseUrlToSearchOptions
 const categoriesListConfig = await loadCategoriesListServiceConfig();
 const category = categoriesListConfig.categories.find(
   category => category.slug === categorySlug
@@ -27,7 +27,8 @@ if (!category) {
 
 const categoryName = category?.name || '';
 
-const { searchOptions } = await parseUrlForProductsListSearch(
+// Parse URL to get search options with defaults for this category
+const { searchOptions } = await parseUrlToSearchOptions(
   Astro.url.href,
   categoriesListConfig.categories,
   {
@@ -50,7 +51,7 @@ const [
 ] = await Promise.all([
   loadProductsListServiceConfig(searchOptions),
   loadCurrentCartServiceConfig(),
-  loadProductsListSearchServiceConfig(Astro.url.href),
+  loadProductsListSearchServiceConfig(searchOptions),
   loadSEOTagsServiceConfig({
     pageUrl: Astro.url.href,
     itemData: {

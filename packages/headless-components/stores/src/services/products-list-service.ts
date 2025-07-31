@@ -4,6 +4,8 @@ import {
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
+import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
+import { parseUrlToSearchOptions } from "./products-list-search-service.js";
 
 export const DEFAULT_QUERY_LIMIT = 100;
 
@@ -27,9 +29,9 @@ export type ProductsListServiceConfig = {
 /**
  * Loads products list service configuration from the Wix Stores API for SSR initialization.
  * This function is designed to be used during Server-Side Rendering (SSR) to preload
- * a list of products based on search criteria.
+ * a list of products based on search criteria or URL parameters.
  *
- * @param {productsV3.V3ProductSearch} searchOptions - The search options for querying products
+ * @param {string | productsV3.V3ProductSearch} input - Either a URL to parse for search parameters or custom search options
  * @returns {Promise<ProductsListServiceConfig>} Promise that resolves to the products list configuration
  *
  * @example
@@ -39,14 +41,15 @@ export type ProductsListServiceConfig = {
  * import { loadProductsListServiceConfig } from '@wix/stores/services';
  * import { ProductList } from '@wix/stores/components';
  *
- * // Define search options
+ * // Option 1: Load from URL (will parse filters, sort, pagination from URL params)
+ * const productsConfig = await loadProductsListServiceConfig(Astro.url.href);
+ *
+ * // Option 2: Define custom search options
  * const searchOptions = {
  *   cursorPaging: { limit: 12 },
  *   filter: {},
- *   sort: [{ fieldName: 'name', order: 'ASC' }]
+ *   sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
  * };
- *
- * // Load products data during SSR
  * const productsConfig = await loadProductsListServiceConfig(searchOptions);
  * ---
  *
@@ -73,7 +76,11 @@ export type ProductsListServiceConfig = {
  *   productsConfig: Awaited<ReturnType<typeof loadProductsListServiceConfig>>;
  * }
  *
- * export const getServerSideProps: GetServerSideProps<ProductsPageProps> = async () => {
+ * export const getServerSideProps: GetServerSideProps<ProductsPageProps> = async ({ req }) => {
+ *   // Option 1: Parse from URL
+ *   const productsConfig = await loadProductsListServiceConfig(`${req.url}`);
+ *
+ *   // Option 2: Custom search options
  *   const searchOptions = {
  *     cursorPaging: { limit: 12 },
  *     filter: {
@@ -81,7 +88,6 @@ export type ProductsListServiceConfig = {
  *     },
  *     sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
  *   };
- *
  *   const productsConfig = await loadProductsListServiceConfig(searchOptions);
  *
  *   return {
@@ -106,10 +112,40 @@ export type ProductsListServiceConfig = {
  *   );
  * }
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Advanced: Performance optimization when using both services
+ * import { parseUrlToSearchOptions, loadProductsListServiceConfig, loadProductsListSearchServiceConfig, loadCategoriesListServiceConfig } from '@wix/stores/services';
+ *
+ * const categories = await loadCategoriesListServiceConfig();
+ * const { searchOptions } = await parseUrlToSearchOptions(url, categories.categories);
+ *
+ * // Both services use the same parsed search options
+ * const [productsConfig, searchConfig] = await Promise.all([
+ *   loadProductsListServiceConfig(searchOptions),
+ *   loadProductsListSearchServiceConfig(searchOptions)
+ * ]);
+ * ```
  */
 export async function loadProductsListServiceConfig(
-  searchOptions: productsV3.V3ProductSearch,
+  input: string | productsV3.V3ProductSearch,
 ): Promise<ProductsListServiceConfig> {
+  let searchOptions: productsV3.V3ProductSearch;
+
+    if (typeof input === 'string') {
+    // URL input - parse it
+    const categoriesListConfig = await loadCategoriesListServiceConfig();
+    const { searchOptions: parsedOptions } = await parseUrlToSearchOptions(
+      input,
+      categoriesListConfig.categories
+    );
+    searchOptions = parsedOptions;
+  } else {
+    // SearchOptions input - use directly
+    searchOptions = input;
+  }
+
   const searchWithoutFilter = { ...searchOptions, filter: {} };
 
   const [resultWithoutFilter, resultWithFilter] = await Promise.all([

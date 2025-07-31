@@ -287,9 +287,33 @@ function updateUrlWithSearchState(searchState: {
 }
 
 /**
- * Parse URL and build complete search options with all filters, sort, and pagination
+ * Parse URL and build complete search options with all filters, sort, and pagination.
+ * This function extracts search parameters, filters, sorting, and pagination from a URL
+ * and converts them into the format expected by the Wix Stores API.
+ *
+ * @param {string} url - The URL to parse search parameters from
+ * @param {Category[]} categoriesList - List of available categories for category slug resolution
+ * @param {productsV3.V3ProductSearch} [defaultSearchOptions] - Default search options to merge with parsed URL parameters
+ * @returns {Promise<{searchOptions: productsV3.V3ProductSearch, initialSearchState: InitialSearchState}>}
+ *   Object containing both API-ready search options and UI-ready initial state
+ *
+ * @example
+ * ```tsx
+ * // Parse URL with filters, sort, and pagination
+ * const categories = await loadCategoriesListServiceConfig();
+ * const { searchOptions, initialSearchState } = await parseUrlToSearchOptions(
+ *   'https://example.com/products?sort=price:desc&Color=red,blue&minPrice=50',
+ *   categories.categories
+ * );
+ *
+ * // Use searchOptions for API calls
+ * const products = await productsV3.searchProducts(searchOptions);
+ *
+ * // Use initialSearchState for UI initialization
+ * const filterState = initialSearchState.productOptions; // { colorId: ['red-id', 'blue-id'] }
+ * ```
  */
-export async function parseUrlForProductsListSearch(
+export async function parseUrlToSearchOptions(
   url: string,
   categoriesList: Category[],
   defaultSearchOptions?: productsV3.V3ProductSearch,
@@ -564,18 +588,113 @@ export async function parseUrlForProductsListSearch(
 }
 
 /**
- * Load search service configuration from URL
+ * Derive initial search state from search options
+ */
+function deriveInitialSearchStateFromOptions(
+  searchOptions: productsV3.V3ProductSearch,
+): InitialSearchState {
+  const initialSearchState: InitialSearchState = {};
+
+  // Extract pagination
+  if (searchOptions.cursorPaging?.limit) {
+    initialSearchState.limit = searchOptions.cursorPaging.limit;
+  }
+  if (searchOptions.cursorPaging?.cursor) {
+    initialSearchState.cursor = searchOptions.cursorPaging.cursor;
+  }
+
+  // Extract sort
+  if (searchOptions.sort?.[0]) {
+    const sort = searchOptions.sort[0];
+    if (sort.fieldName === "name") {
+      initialSearchState.sort = sort.order === productsV3.SortDirection.DESC ? SortType.NAME_DESC : SortType.NAME_ASC;
+    } else if (sort.fieldName === "actualPriceRange.minValue.amount") {
+      initialSearchState.sort = sort.order === productsV3.SortDirection.DESC ? SortType.PRICE_DESC : SortType.PRICE_ASC;
+    }
+  }
+
+  // Extract filters
+  if (searchOptions.filter) {
+    const filter = searchOptions.filter as Record<string, any>;
+
+    // Price range
+    if (filter["actualPriceRange.minValue.amount"]?.$gte || filter["actualPriceRange.maxValue.amount"]?.$lte) {
+      initialSearchState.priceRange = {
+        min: filter["actualPriceRange.minValue.amount"]?.$gte,
+        max: filter["actualPriceRange.maxValue.amount"]?.$lte,
+      };
+    }
+
+    // Inventory statuses
+    if (filter["inventory.availabilityStatus"]) {
+      const status = filter["inventory.availabilityStatus"];
+      if (Array.isArray(status)) {
+        initialSearchState.inventoryStatuses = status;
+      } else if (status.$in) {
+        initialSearchState.inventoryStatuses = status.$in;
+      } else {
+        initialSearchState.inventoryStatuses = [status];
+      }
+    }
+
+    // Visibility
+    if (typeof filter["visible"] === "boolean") {
+      initialSearchState.visible = filter["visible"];
+    }
+
+    // Product type
+    if (filter["productType"]) {
+      initialSearchState.productType = filter["productType"];
+    }
+  }
+
+  return initialSearchState;
+}
+
+/**
+ * Load search service configuration from URL or search options.
+ * This function provides the configuration for the Products List Search service,
+ * including customizations and initial search state.
+ *
+ * @param {string | productsV3.V3ProductSearch} input - Either a URL to parse for search parameters or custom search options
+ * @returns {Promise<ProductsListSearchServiceConfig>} Promise that resolves to the search service configuration
+ *
+ * @example
+ * ```tsx
+ * // Option 1: Load from URL (will parse filters, sort, pagination from URL params)
+ * const searchConfig = await loadProductsListSearchServiceConfig(window.location.href);
+ *
+ * // Option 2: Custom search options
+ * const searchOptions = {
+ *   cursorPaging: { limit: 12 },
+ *   filter: { 'categoryIds': ['123'] },
+ *   sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
+ * };
+ * const searchConfig = await loadProductsListSearchServiceConfig(searchOptions);
+ *
+ * // Option 3: Advanced - use parseUrlToSearchOptions for custom URL parsing
+ * const categories = await loadCategoriesListServiceConfig();
+ * const { searchOptions, initialSearchState } = await parseUrlToSearchOptions(url, categories.categories);
+ * const searchConfig = await loadProductsListSearchServiceConfig(searchOptions);
+ * ```
  */
 export async function loadProductsListSearchServiceConfig(
-  url: string,
+  input: string | productsV3.V3ProductSearch,
 ): Promise<ProductsListSearchServiceConfig> {
-  // Load categories using the categories service
-  const categoriesListConfig = await loadCategoriesListServiceConfig();
+  let initialSearchState: InitialSearchState;
 
-  const { initialSearchState } = await parseUrlForProductsListSearch(
-    url,
-    categoriesListConfig.categories,
-  );
+  if (typeof input === 'string') {
+    // URL input - parse it
+    const categoriesListConfig = await loadCategoriesListServiceConfig();
+    const { initialSearchState: parsedState } = await parseUrlToSearchOptions(
+      input,
+      categoriesListConfig.categories,
+    );
+    initialSearchState = parsedState;
+  } else {
+    // SearchOptions input - derive initial state
+    initialSearchState = deriveInitialSearchStateFromOptions(input);
+  }
 
   const { items: customizations = [] } = await customizationsV3
     .queryCustomizations()
