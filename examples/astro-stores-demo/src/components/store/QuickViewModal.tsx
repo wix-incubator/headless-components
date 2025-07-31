@@ -9,14 +9,12 @@ interface QuickViewModalProps {
   product: productsV3.V3Product;
   isOpen: boolean;
   onClose: () => void;
-  productPageRoute: string;
 }
 
 export default function QuickViewModal({
   product,
   isOpen,
   onClose,
-  productPageRoute,
 }: QuickViewModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [fullProduct, setFullProduct] = useState<productsV3.V3Product | null>(
@@ -162,7 +160,7 @@ export default function QuickViewModal({
               {/* View Full Product Page Link */}
               <div className="mt-6 pt-6 border-t border-brand-subtle">
                 <a
-                  href={`${productPageRoute}/${product.slug}`}
+                  href={`/${product.slug}`}
                   className="w-full text-content-primary font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-primary"
                 >
                   View Full Product Page

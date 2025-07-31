@@ -30,10 +30,8 @@ interface StoreCollectionPageProps {
 }
 
 export const ProductGridContent = ({
-  productPageRoute,
   categoriesListConfig,
 }: {
-  productPageRoute: string;
   categoriesListConfig: CategoriesListServiceConfig;
 }) => {
   const [quickViewProduct, setQuickViewProduct] =
@@ -167,10 +165,7 @@ export const ProductGridContent = ({
             </div>
           )}
 
-          <a
-            data-testid="title-navigation"
-            href={`${productPageRoute}/${product.slug}`}
-          >
+          <a data-testid="title-navigation" href={`/${product.slug}`}>
             <h3 className="text-content-primary font-semibold mb-2 line-clamp-2">
               {product.name}
             </h3>
@@ -407,7 +402,7 @@ export const ProductGridContent = ({
             {/* View Product Button */}
             <a
               data-testid="view-product-button"
-              href={`${productPageRoute}/${product.slug}`}
+              href={`/${product.slug}`}
               className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
             >
               View Product
@@ -573,7 +568,6 @@ export const ProductGridContent = ({
           product={quickViewProduct}
           isOpen={isQuickViewOpen}
           onClose={closeQuickView}
-          productPageRoute={productPageRoute}
         />
       )}
     </div>
@@ -644,17 +638,13 @@ export function CategoryPage({
   productsListConfig,
   productsListSearchConfig,
   categoriesListConfig,
-  productPageRoute,
 }: StoreCollectionPageProps) {
   return (
     <ProductList.Root
       productsListConfig={productsListConfig}
       productsListSearchConfig={productsListSearchConfig}
     >
-      <ProductGridContent
-        productPageRoute={productPageRoute}
-        categoriesListConfig={categoriesListConfig}
-      />
+      <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />
     </ProductList.Root>
   );
