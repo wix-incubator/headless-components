@@ -208,19 +208,36 @@ export interface ProductProps {
 
 export interface ProductRenderProps {
   product: V3Product;
-  isLoading: boolean;
 }
 
-export function Product(props: ProductProps) {
+export function Content(props: ProductProps) {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
     typeof ProductServiceDefinition
   >;
 
   const product = service.product.get();
-  const isLoading = service.isLoading.get();
 
   return props.children({
     product,
+  });
+}
+
+export interface LoadingProps {
+  children: (props: LoadingRenderProps) => React.ReactNode;
+}
+
+export interface LoadingRenderProps {
+  isLoading: boolean;
+}
+
+export function Loading(props: LoadingProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const isLoading = service.isLoading.get();
+
+  return props.children({
     isLoading,
   });
 }
