@@ -737,7 +737,6 @@ export const ProductsListSearchService =
         const maxPrice = userFilterMaxPriceSignal.get();
         const selectedInventoryStatuses = selectedInventoryStatusesSignal.get();
         const selectedProductOptions = selectedProductOptionsSignal.get();
-        const selectedCategory = selectedCategorySignal.get();
         const selectedVisible = selectedVisibleSignal.get();
         const selectedProductType = selectedProductTypeSignal.get();
 
@@ -748,7 +747,6 @@ export const ProductsListSearchService =
         const hasInventoryFilter = selectedInventoryStatuses.length > 0;
         const hasProductOptionsFilter =
           Object.keys(selectedProductOptions).length > 0;
-        const hasCategoryFilter = selectedCategory !== null;
         const hasVisibilityFilter = selectedVisible !== null;
         const hasProductTypeFilter = selectedProductType !== null;
 
@@ -756,7 +754,6 @@ export const ProductsListSearchService =
           hasPriceFilter ||
           hasInventoryFilter ||
           hasProductOptionsFilter ||
-          hasCategoryFilter ||
           hasVisibilityFilter ||
           hasProductTypeFilter
         );
@@ -1076,7 +1073,6 @@ export const ProductsListSearchService =
           userFilterMaxPriceSignal.set(catalogMaxPriceSignal.get());
           selectedInventoryStatusesSignal.set([]);
           selectedProductOptionsSignal.set({});
-          selectedCategorySignal.set(null);
           selectedVisibleSignal.set(null);
           selectedProductTypeSignal.set(null);
         },
