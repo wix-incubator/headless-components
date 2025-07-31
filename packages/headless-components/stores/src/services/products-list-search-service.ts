@@ -346,23 +346,17 @@ export async function parseUrlToSearchOptions(
   // Initialize search state for service
   const initialSearchState: InitialSearchState = {};
 
-  // Extract category slug from URL path (e.g., /category/category-slug)
-  const pathSegments = urlObj.pathname.split("/");
-  const categoryIndex = pathSegments.findIndex(
-    (segment) => segment === "category",
-  );
-  let categorySlug: string | null = null;
+  // Extract category slug from URL path
+  // The category slug is always the last segment of the path
+  const pathSegments = urlObj.pathname.split("/").filter(Boolean);
   let category: Category | undefined = undefined;
 
-  if (categoryIndex !== -1 && categoryIndex + 1 < pathSegments.length) {
-    categorySlug = pathSegments[categoryIndex + 1] || null;
-
-    // Find the category by slug from the provided categories list
-    if (categorySlug) {
-      category = categoriesList.find((cat) => cat.slug === categorySlug);
-      if (category) {
-        initialSearchState.category = category;
-      }
+  if (pathSegments.length > 0) {
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    // Check if the last segment matches any category in the categories list
+    category = categoriesList.find((cat) => cat.slug === lastSegment);
+    if (category) {
+      initialSearchState.category = category;
     }
   }
 
@@ -629,11 +623,16 @@ export async function parseUrlToSearchOptions(
  * ```
  */
 export async function loadProductsListSearchServiceConfig(
-  input: string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState },
+  input:
+    | string
+    | {
+        searchOptions: productsV3.V3ProductSearch;
+        initialSearchState: InitialSearchState;
+      },
 ): Promise<ProductsListSearchServiceConfig> {
   let initialSearchState: InitialSearchState;
 
-  if (typeof input === 'string') {
+  if (typeof input === "string") {
     // URL input - parse it
     const categoriesListConfig = await loadCategoriesListServiceConfig();
     const { initialSearchState: parsedState } = await parseUrlToSearchOptions(
