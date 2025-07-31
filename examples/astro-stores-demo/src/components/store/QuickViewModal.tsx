@@ -8,21 +8,17 @@ import { Product } from '@wix/headless-stores/react';
 
 interface QuickViewModalProps {
   product: productsV3.V3Product;
-  loadFullProduct: () => Promise<productsV3.V3Product | undefined>;
   isOpen: boolean;
+  isLoading: boolean;
   onClose: () => void;
 }
 
 export default function QuickViewModal({
   product,
-  loadFullProduct,
+  isLoading,
   isOpen,
   onClose,
 }: QuickViewModalProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [fullProduct, setFullProduct] = useState<productsV3.V3Product | null>(
-    null
-  );
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Handle escape key to close modal
@@ -41,30 +37,6 @@ export default function QuickViewModal({
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
-
-  // Load full product data when modal opens
-  useEffect(() => {
-    if (isOpen && product?.slug) {
-      setIsLoading(true);
-      // Use Wix API to load full product data
-      const updateFullProduct = async () => {
-        try {
-          // For now, use the existing product data since it should contain all necessary information
-          // If more detailed product data is needed, this would require a Wix client instance
-          const product = await loadFullProduct();
-          setFullProduct(product!);
-        } catch (error) {
-          console.error('Failed to load full product data:', error);
-          // Fallback to original product data
-          setFullProduct(product);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      updateFullProduct();
-    }
-  }, [isOpen, product?.slug]);
 
   if (!isOpen) return null;
 
@@ -159,7 +131,7 @@ export default function QuickViewModal({
             </div>
           ) : (
             <>
-              <ProductDetails isQuickView={true} product={fullProduct!} />
+              <ProductDetails isQuickView={true} product={product!} />
 
               {/* View Full Product Page Link */}
               <div className="mt-6 pt-6 border-t border-brand-subtle">

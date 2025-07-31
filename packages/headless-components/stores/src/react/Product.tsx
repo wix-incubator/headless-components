@@ -202,22 +202,25 @@ export function Media(props: ProductMediaProps) {
   });
 }
 
-export interface FullProductProps {
-  children: (props: FullProductRenderProps) => React.ReactNode;
+export interface ProductProps {
+  children: (props: ProductRenderProps) => React.ReactNode;
 }
 
-export interface FullProductRenderProps {
-  loadProduct: () => Promise<V3Product | undefined>;
+export interface ProductRenderProps {
+  product: V3Product;
+  isLoading: boolean;
 }
 
-export function FullProduct(props: FullProductProps) {
+export function Product(props: ProductProps) {
   const service = useService(ProductServiceDefinition) as ServiceAPI<
     typeof ProductServiceDefinition
   >;
 
-  const loadProduct = service.loadProduct;
+  const product = service.product.get();
+  const isLoading = service.isLoading.get();
 
   return props.children({
-    loadProduct,
+    product,
+    isLoading,
   });
 }
