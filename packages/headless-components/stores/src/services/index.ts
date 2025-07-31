@@ -45,6 +45,6 @@ export {
   ProductsListSearchServiceDefinition,
   ProductsListSearchServiceConfig,
   loadProductsListSearchServiceConfig,
-  parseUrlForProductsListSearch,
+  parseUrlToSearchOptions,
   convertUrlSortToSortType,
 } from "./products-list-search-service.js";

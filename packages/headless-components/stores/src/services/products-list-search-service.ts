@@ -49,7 +49,7 @@ export interface ProductChoice {
 /**
  * Initial search state that can be loaded from URL parameters.
  */
-type InitialSearchState = {
+export type InitialSearchState = {
   sort?: SortType;
   limit?: number;
   cursor?: string | null;
@@ -293,9 +293,33 @@ function updateUrlWithSearchState(searchState: {
 }
 
 /**
- * Parse URL and build complete search options with all filters, sort, and pagination
+ * Parse URL and build complete search options with all filters, sort, and pagination.
+ * This function extracts search parameters, filters, sorting, and pagination from a URL
+ * and converts them into the format expected by the Wix Stores API.
+ *
+ * @param {string} url - The URL to parse search parameters from
+ * @param {Category[]} categoriesList - List of available categories for category slug resolution
+ * @param {productsV3.V3ProductSearch} [defaultSearchOptions] - Default search options to merge with parsed URL parameters
+ * @returns {Promise<{searchOptions: productsV3.V3ProductSearch, initialSearchState: InitialSearchState}>}
+ *   Object containing both API-ready search options and UI-ready initial state
+ *
+ * @example
+ * ```tsx
+ * // Parse URL with filters, sort, and pagination
+ * const categories = await loadCategoriesListServiceConfig();
+ * const { searchOptions, initialSearchState } = await parseUrlToSearchOptions(
+ *   'https://example.com/products?sort=price:desc&Color=red,blue&minPrice=50',
+ *   categories.categories
+ * );
+ *
+ * // Use searchOptions for API calls
+ * const products = await productsV3.searchProducts(searchOptions);
+ *
+ * // Use initialSearchState for UI initialization
+ * const filterState = initialSearchState.productOptions; // { colorId: ['red-id', 'blue-id'] }
+ * ```
  */
-export async function parseUrlForProductsListSearch(
+export async function parseUrlToSearchOptions(
   url: string,
   categoriesList: Category[],
   defaultSearchOptions?: productsV3.V3ProductSearch,
@@ -570,18 +594,57 @@ export async function parseUrlForProductsListSearch(
 }
 
 /**
- * Load search service configuration from URL
+ * Load search service configuration from URL or parsed URL result.
+ * This function provides the configuration for the Products List Search service,
+ * including customizations and initial search state.
+ *
+ * @param {string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState }} input - Either a URL to parse or parsed URL result from parseUrlToSearchOptions
+ * @returns {Promise<ProductsListSearchServiceConfig>} Promise that resolves to the search service configuration
+ *
+ * @example
+ * ```tsx
+ * // Option 1: Load from URL (will parse filters, sort, pagination from URL params)
+ * const searchConfig = await loadProductsListSearchServiceConfig(window.location.href);
+ *
+ * // Option 2: Custom parsing with defaults
+ * const categories = await loadCategoriesListServiceConfig();
+ * const parsed = await parseUrlToSearchOptions(
+ *   window.location.href,
+ *   categories.categories,
+ *   {
+ *     cursorPaging: { limit: 12 },
+ *     filter: { 'categoryIds': ['123'] },
+ *     sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
+ *   }
+ * );
+ * const searchConfig = await loadProductsListSearchServiceConfig(parsed);
+ *
+ * // Option 3: Performance optimization - use parsed result for both services (no duplicate parsing)
+ * const categories = await loadCategoriesListServiceConfig();
+ * const parsed = await parseUrlToSearchOptions(url, categories.categories);
+ * const [productsConfig, searchConfig] = await Promise.all([
+ *   loadProductsListServiceConfig(parsed),
+ *   loadProductsListSearchServiceConfig(parsed),
+ * ]);
+ * ```
  */
 export async function loadProductsListSearchServiceConfig(
-  url: string,
+  input: string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState },
 ): Promise<ProductsListSearchServiceConfig> {
-  // Load categories using the categories service
-  const categoriesListConfig = await loadCategoriesListServiceConfig();
+  let initialSearchState: InitialSearchState;
 
-  const { initialSearchState } = await parseUrlForProductsListSearch(
-    url,
-    categoriesListConfig.categories,
-  );
+  if (typeof input === 'string') {
+    // URL input - parse it
+    const categoriesListConfig = await loadCategoriesListServiceConfig();
+    const { initialSearchState: parsedState } = await parseUrlToSearchOptions(
+      input,
+      categoriesListConfig.categories,
+    );
+    initialSearchState = parsedState;
+  } else {
+    // Parsed URL result - use initialSearchState directly (no duplicate work)
+    initialSearchState = input.initialSearchState;
+  }
 
   const { items: customizations = [] } = await customizationsV3
     .queryCustomizations()

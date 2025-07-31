@@ -4,6 +4,8 @@ import {
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
+import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
+import { parseUrlToSearchOptions, type InitialSearchState } from "./products-list-search-service.js";
 
 export const DEFAULT_QUERY_LIMIT = 100;
 
@@ -27,27 +29,33 @@ export type ProductsListServiceConfig = {
 /**
  * Loads products list service configuration from the Wix Stores API for SSR initialization.
  * This function is designed to be used during Server-Side Rendering (SSR) to preload
- * a list of products based on search criteria.
+ * a list of products based on search criteria or URL parameters.
  *
- * @param {productsV3.V3ProductSearch} searchOptions - The search options for querying products
+ * @param {string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState }} input - Either a URL to parse or parsed URL result from parseUrlToSearchOptions
  * @returns {Promise<ProductsListServiceConfig>} Promise that resolves to the products list configuration
  *
  * @example
  * ```astro
  * ---
  * // Astro page example - pages/products.astro
- * import { loadProductsListServiceConfig } from '@wix/stores/services';
+ * import { loadProductsListServiceConfig, parseUrlToSearchOptions, loadCategoriesListServiceConfig } from '@wix/stores/services';
  * import { ProductList } from '@wix/stores/components';
  *
- * // Define search options
- * const searchOptions = {
- *   cursorPaging: { limit: 12 },
- *   filter: {},
- *   sort: [{ fieldName: 'name', order: 'ASC' }]
- * };
+ * // Option 1: Load from URL (will parse filters, sort, pagination from URL params)
+ * const productsConfig = await loadProductsListServiceConfig(Astro.url.href);
  *
- * // Load products data during SSR
- * const productsConfig = await loadProductsListServiceConfig(searchOptions);
+ * // Option 2: Custom parsing with defaults
+ * const categories = await loadCategoriesListServiceConfig();
+ * const parsed = await parseUrlToSearchOptions(
+ *   Astro.url.href,
+ *   categories.categories,
+ *   {
+ *     cursorPaging: { limit: 12 },
+ *     filter: {},
+ *     sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
+ *   }
+ * );
+ * const productsConfig = await loadProductsListServiceConfig(parsed);
  * ---
  *
  * <ProductList.Root productsConfig={productsConfig}>
@@ -66,23 +74,31 @@ export type ProductsListServiceConfig = {
  * ```tsx
  * // Next.js page example - pages/products.tsx
  * import { GetServerSideProps } from 'next';
- * import { loadProductsListServiceConfig } from '@wix/stores/services';
+ * import { loadProductsListServiceConfig, parseUrlToSearchOptions, loadCategoriesListServiceConfig } from '@wix/stores/services';
  * import { ProductsList } from '@wix/stores/components';
  *
  * interface ProductsPageProps {
  *   productsConfig: Awaited<ReturnType<typeof loadProductsListServiceConfig>>;
  * }
  *
- * export const getServerSideProps: GetServerSideProps<ProductsPageProps> = async () => {
- *   const searchOptions = {
- *     cursorPaging: { limit: 12 },
- *     filter: {
- *       'allCategoriesInfo.categories': { $matchItems: [{ _id: { $in: [category._id] } }] }
- *     },
- *     sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
- *   };
+ * export const getServerSideProps: GetServerSideProps<ProductsPageProps> = async ({ req }) => {
+ *   // Option 1: Parse from URL
+ *   const productsConfig = await loadProductsListServiceConfig(`${req.url}`);
  *
- *   const productsConfig = await loadProductsListServiceConfig(searchOptions);
+ *   // Option 2: Custom parsing with filters
+ *   const categories = await loadCategoriesListServiceConfig();
+ *   const parsed = await parseUrlToSearchOptions(
+ *     `${req.url}`,
+ *     categories.categories,
+ *     {
+ *       cursorPaging: { limit: 12 },
+ *       filter: {
+ *         'allCategoriesInfo.categories': { $matchItems: [{ _id: { $in: [category._id] } }] }
+ *       },
+ *       sort: [{ fieldName: 'name' as const, order: 'ASC' as const }]
+ *     }
+ *   );
+ *   const productsConfig = await loadProductsListServiceConfig(parsed);
  *
  *   return {
  *     props: {
@@ -106,10 +122,40 @@ export type ProductsListServiceConfig = {
  *   );
  * }
  * ```
+ *
+  * @example
+ * ```tsx
+ * // Advanced: Performance optimization when using both services
+ * import { parseUrlToSearchOptions, loadProductsListServiceConfig, loadProductsListSearchServiceConfig, loadCategoriesListServiceConfig } from '@wix/stores/services';
+ *
+ * const categories = await loadCategoriesListServiceConfig();
+ * const parsed = await parseUrlToSearchOptions(url, categories.categories);
+ *
+ * // Both services use the same parsed result (no duplicate URL parsing)
+ * const [productsConfig, searchConfig] = await Promise.all([
+ *   loadProductsListServiceConfig(parsed),
+ *   loadProductsListSearchServiceConfig(parsed)
+ * ]);
+ * ```
  */
 export async function loadProductsListServiceConfig(
-  searchOptions: productsV3.V3ProductSearch,
+  input: string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState },
 ): Promise<ProductsListServiceConfig> {
+  let searchOptions: productsV3.V3ProductSearch;
+
+  if (typeof input === 'string') {
+    // URL input - parse it
+    const categoriesListConfig = await loadCategoriesListServiceConfig();
+    const { searchOptions: parsedOptions } = await parseUrlToSearchOptions(
+      input,
+      categoriesListConfig.categories
+    );
+    searchOptions = parsedOptions;
+  } else {
+    // Parsed URL result - use searchOptions directly
+    searchOptions = input.searchOptions;
+  }
+
   const searchWithoutFilter = { ...searchOptions, filter: {} };
 
   const [resultWithoutFilter, resultWithFilter] = await Promise.all([
