@@ -19,7 +19,7 @@ export interface ProductServiceAPI {
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
   /** Function to load a product by its slug */
-  loadProduct: (slug: string) => Promise<void>;
+  loadProduct: () => Promise<productsV3.V3Product | undefined>;
 }
 
 /**
@@ -87,14 +87,15 @@ export const ProductService =
       const isLoading: Signal<boolean> = signalsService.signal(false as any);
       const error: Signal<string | null> = signalsService.signal(null as any);
 
-      const loadProduct = async (slug: string) => {
+      const loadProduct = async () => {
         isLoading.set(true);
-        const productResponse = await loadProductBySlug(slug);
+        const productResponse = await loadProductBySlug(config.product.slug!);
         if (!productResponse.product) {
           error.set("Product not found");
         } else {
           product.set(productResponse.product!);
           error.set(null);
+          return productResponse.product;
         }
         isLoading.set(false);
       };

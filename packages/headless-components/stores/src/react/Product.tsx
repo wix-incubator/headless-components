@@ -201,3 +201,23 @@ export function Media(props: ProductMediaProps) {
     media,
   });
 }
+
+export interface FullProductProps {
+  children: (props: FullProductRenderProps) => React.ReactNode;
+}
+
+export interface FullProductRenderProps {
+  loadProduct: () => Promise<V3Product | undefined>;
+}
+
+export function FullProduct(props: FullProductProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const loadProduct = service.loadProduct;
+
+  return props.children({
+    loadProduct,
+  });
+}
