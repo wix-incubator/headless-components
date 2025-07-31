@@ -201,7 +201,7 @@ const loadProductBySlug = async (slug: string) => {
  * import { Product } from '@wix/stores/components';
  *
  * interface ProductPageProps {
- *   productConfig: Awaited<ReturnType<typeof loadProductServiceConfig>>['config'];
+ *   productConfig: Extract<Awaited<ReturnType<typeof loadProductServiceConfig>>, { type: 'success' }>['config'];
  * }
  *
  * export const getServerSideProps: GetServerSideProps<ProductPageProps> = async ({ params }) => {
