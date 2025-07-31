@@ -11,36 +11,9 @@ import type {
   ProductMedia,
 } from "@wix/auto_sdk_stores_products-v-3";
 
-export interface RootRenderProps {
-  product: V3Product;
-  isLoading: boolean;
-}
-
 export interface RootProps {
-  children: ((props: RootRenderProps) => React.ReactNode) | React.ReactNode;
+  children: React.ReactNode;
   productServiceConfig: ProductServiceConfig;
-}
-
-/**
- * Internal component that consumes the ProductService and renders children with render props
- */
-function ProductChildrenWrapper({
-  children,
-}: {
-  children: ((props: RootRenderProps) => React.ReactNode) | React.ReactNode;
-}): React.ReactNode {
-  if (typeof children !== "function") {
-    return children;
-  }
-
-  const service = useService(ProductServiceDefinition) as ServiceAPI<
-    typeof ProductServiceDefinition
-  >;
-
-  const product = service.product.get();
-  const isLoading = service.isLoading.get();
-
-  return children({ product, isLoading });
 }
 
 /**
@@ -82,7 +55,7 @@ export function Root(props: RootProps): React.ReactNode {
         props.productServiceConfig,
       )}
     >
-      <ProductChildrenWrapper>{props.children}</ProductChildrenWrapper>
+      {props.children}
     </WixServices>
   );
 }
@@ -226,5 +199,28 @@ export function Media(props: ProductMediaProps) {
 
   return props.children({
     media,
+  });
+}
+
+export interface ProductProps {
+  children: (props: ProductRenderProps) => React.ReactNode;
+}
+
+export interface ProductRenderProps {
+  product: V3Product;
+  isLoading: boolean;
+}
+
+export function Product(props: ProductProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const product = service.product.get();
+  const isLoading = service.isLoading.get();
+
+  return props.children({
+    product,
+    isLoading,
   });
 }

@@ -567,14 +567,16 @@ export const ProductGridContent = ({
         <Product.Root
           productServiceConfig={{ productSlug: quickViewProduct.slug! }}
         >
-          {({ product, isLoading }) => (
-            <QuickViewModal
-              product={product}
-              isLoading={isLoading}
-              isOpen={isQuickViewOpen}
-              onClose={closeQuickView}
-            />
-          )}
+          <Product.Product>
+            {({ product, isLoading }) => (
+              <QuickViewModal
+                product={product}
+                isLoading={isLoading}
+                isOpen={isQuickViewOpen}
+                onClose={closeQuickView}
+              />
+            )}
+          </Product.Product>
         </Product.Root>
       )}
     </div>
