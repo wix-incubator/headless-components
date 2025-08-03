@@ -6,6 +6,7 @@ import {
   CheckoutServiceConfig,
 } from "../services/checkout-service.js";
 import { createServicesMap } from "@wix/services-manager";
+import { type LineItem } from "../services/checkout-service.js";
 
 export interface RootProps {
   children: React.ReactNode;
@@ -66,7 +67,7 @@ export interface TriggerProps {
  */
 export interface TriggerRenderProps {
   /** Function to create checkout and redirect */
-  createCheckout: () => Promise<void>;
+  createCheckout: (lineItems: LineItem[]) => Promise<void>;
   /** Whether checkout creation is in progress */
   isLoading: boolean;
   /** Error message if checkout fails */

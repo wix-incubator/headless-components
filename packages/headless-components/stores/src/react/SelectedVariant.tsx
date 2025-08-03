@@ -8,6 +8,7 @@ import {
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import { Checkout } from "@wix/headless-ecom/react";
+import { ChannelType, type LineItem } from "@wix/headless-ecom/services";
 
 export interface RootProps {
   children: React.ReactNode;
@@ -347,24 +348,31 @@ export function Actions(props: ActionsProps) {
     await variantService.addToCart(quantity, modifiersData);
   };
 
-  // Get product and variant data for checkout configuration
-  const productId = variantService.productId.get();
-  const selectedVariantId = variantService.selectedVariantId.get();
-  const checkoutQuantity = variantService.selectedQuantity.get();
+  let modifiersData: Record<string, any> | undefined;
+  if (modifiersService) {
+    const selectedModifiers = modifiersService.selectedModifiers.get();
+    if (Object.keys(selectedModifiers).length > 0) {
+      modifiersData = selectedModifiers;
+    }
+  }
+  const lineItems = variantService.createLineItems(quantity, modifiersData);
 
   const checkoutConfig = {
-    productId,
-    ...(selectedVariantId && { variantId: selectedVariantId }),
-    quantity: checkoutQuantity,
+    channelType: ChannelType.WEB,
+    postFlowUrl: "https://www.wix.com",
   };
 
   return (
     <Checkout.Root checkoutServiceConfig={checkoutConfig}>
       <Checkout.Trigger>
-        {({ createCheckout }: { createCheckout: () => Promise<void> }) =>
+        {({
+          createCheckout,
+        }: {
+          createCheckout: (lineItems: LineItem[]) => Promise<void>;
+        }) =>
           props.children({
             addToCart,
-            buyNow: createCheckout,
+            buyNow: () => createCheckout(lineItems),
             canAddToCart,
             isLoading,
             inStock,

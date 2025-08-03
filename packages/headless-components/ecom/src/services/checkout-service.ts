@@ -6,22 +6,21 @@ import {
 import * as checkout from "@wix/auto_sdk_ecom_checkout";
 import { redirects } from "@wix/redirects";
 
-const CATALOG_APP_ID_V3 = "215238eb-22a5-4c36-9e7b-e7c08025e04e";
+export { ChannelType } from "@wix/auto_sdk_ecom_checkout";
+
+export type LineItem = checkout.LineItem;
 
 export interface CheckoutServiceAPI {
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
 
-  createCheckout: () => Promise<void>;
+  createCheckout: (lineItems: LineItem[]) => Promise<void>;
 }
 
 export const CheckoutServiceDefinition =
   defineService<CheckoutServiceAPI>("checkout");
 
 export interface CheckoutServiceConfig {
-  productId: string;
-  variantId?: string;
-  quantity?: number;
   channelType?: checkout.ChannelType;
   postFlowUrl?: string;
 }
@@ -35,26 +34,13 @@ export const CheckoutService =
       const isLoading: Signal<boolean> = signalsService.signal(false);
       const error: Signal<string | null> = signalsService.signal(null as any);
 
-      const createCheckout = async () => {
+      const createCheckout = async (lineItems: LineItem[]) => {
         try {
           isLoading.set(true);
           error.set(null);
 
           const checkoutResult = await checkout.createCheckout({
-            lineItems: [
-              {
-                catalogReference: {
-                  catalogItemId: config.productId,
-                  appId: CATALOG_APP_ID_V3,
-                  options: config.variantId
-                    ? {
-                        variantId: config.variantId,
-                      }
-                    : {},
-                },
-                quantity: config.quantity || 1,
-              },
-            ],
+            lineItems,
             channelType: config.channelType || checkout.ChannelType.WEB,
           });
 
@@ -103,25 +89,16 @@ export type CheckoutServiceConfigResult = {
  * Load initial configuration for the Checkout service.
  * This function prepares the catalog reference configuration for checkout creation.
  *
- * @param productId - The product ID to create checkout for
- * @param variantId - Optional variant ID
- * @param quantity - Optional quantity (defaults to 1)
  * @param channelType - Optional channel type (defaults to WEB)
  * @param postFlowUrl - Optional URL to redirect after checkout completion
  * @returns Promise resolving to service configuration
  */
 export const loadCheckoutServiceInitialData = async (
-  productId: string,
-  variantId?: string,
-  quantity?: number,
   channelType?: checkout.ChannelType,
   postFlowUrl?: string,
 ): Promise<CheckoutServiceConfigResult> => {
   return {
     [CheckoutServiceDefinition]: {
-      productId,
-      ...(variantId && { variantId }),
-      ...(quantity && { quantity }),
       ...(channelType && { channelType }),
       ...(postFlowUrl && { postFlowUrl }),
     },
