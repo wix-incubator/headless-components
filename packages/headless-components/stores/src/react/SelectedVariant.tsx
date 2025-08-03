@@ -6,8 +6,8 @@ import {
   SelectedVariantServiceConfig,
 } from "../services/selected-variant-service.js";
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
-import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
 import { createServicesMap } from "@wix/services-manager";
+import { Checkout } from "@wix/headless-ecom/react";
 
 export interface RootProps {
   children: React.ReactNode;
@@ -304,10 +304,6 @@ export function Actions(props: ActionsProps) {
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
-  const cartService = useService(CurrentCartServiceDefinition) as ServiceAPI<
-    typeof CurrentCartServiceDefinition
-  >;
-
   // Try to get modifiers service - it may not exist for all products
   let modifiersService: ServiceAPI<
     typeof ProductModifiersServiceDefinition
@@ -351,30 +347,33 @@ export function Actions(props: ActionsProps) {
     await variantService.addToCart(quantity, modifiersData);
   };
 
-  const buyNow = async () => {
-    try {
-      // Clear the cart first
-      await cartService.clearCart();
+  // Get product and variant data for checkout configuration
+  const productId = variantService.productId.get();
+  const selectedVariantId = variantService.selectedVariantId.get();
+  const checkoutQuantity = variantService.selectedQuantity.get();
 
-      // Add the product to cart
-      await addToCart();
-
-      // Proceed to checkout
-      await cartService.proceedToCheckout();
-    } catch (error) {
-      console.error("Buy now failed:", error);
-      throw error;
-    }
+  const checkoutConfig = {
+    productId,
+    ...(selectedVariantId && { variantId: selectedVariantId }),
+    quantity: checkoutQuantity,
   };
 
-  return props.children({
-    addToCart,
-    buyNow,
-    canAddToCart,
-    isLoading,
-    inStock,
-    isPreOrderEnabled,
-    preOrderMessage,
-    error,
-  });
+  return (
+    <Checkout.Root checkoutServiceConfig={checkoutConfig}>
+      <Checkout.Trigger>
+        {({ createCheckout }: { createCheckout: () => Promise<void> }) =>
+          props.children({
+            addToCart,
+            buyNow: createCheckout,
+            canAddToCart,
+            isLoading,
+            inStock,
+            isPreOrderEnabled,
+            preOrderMessage,
+            error,
+          })
+        }
+      </Checkout.Trigger>
+    </Checkout.Root>
+  );
 }

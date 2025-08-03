@@ -33,7 +33,7 @@ export const CheckoutService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const isLoading: Signal<boolean> = signalsService.signal(false);
-      const error: Signal<string | null> = signalsService.signal(null);
+      const error: Signal<string | null> = signalsService.signal(null as any);
 
       const createCheckout = async () => {
         try {
