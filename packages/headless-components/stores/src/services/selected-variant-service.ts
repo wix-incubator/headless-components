@@ -81,13 +81,7 @@ export const SelectedVariantService =
   implementService.withConfig<SelectedVariantServiceConfig>()(
     SelectedVariantServiceDefinition,
     ({ getService, config: { fetchInventoryData = true } }) => {
-      // MediaGalleryService is optional - only used when MediaGallery.Root is present
-      let mediaService: any = null;
-      try {
-        mediaService = getService(MediaGalleryServiceDefinition);
-      } catch {
-        // MediaGalleryService not available - media updates disabled
-      }
+      const mediaService = getService(MediaGalleryServiceDefinition);
       const signalsService = getService(SignalsServiceDefinition);
       const cartService = getService(CurrentCartServiceDefinition);
       const productService = getService(ProductServiceDefinition);
@@ -134,10 +128,7 @@ export const SelectedVariantService =
           mediaToDisplay = selectedChoicesImages;
         }
 
-        // Only update media if MediaGalleryService is available
-        if (mediaService) {
-          mediaService.setMediaToDisplay(mediaToDisplay ?? []);
-        }
+        mediaService.setMediaToDisplay(mediaToDisplay ?? []);
       });
 
       const parsePrice = (amount?: string | null): number => {
