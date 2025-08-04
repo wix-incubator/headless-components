@@ -441,14 +441,28 @@ export function MiniCartContent() {
                               </div>
 
                               <CurrentCart.Checkout>
-                                {({ proceedToCheckout, canCheckout }) => (
-                                  <button
-                                    onClick={proceedToCheckout}
-                                    disabled={!canCheckout}
-                                    className="w-full bg-gradient-primary bg-gradient-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-content-primary font-semibold py-3 px-6 rounded-lg transition-all duration-200"
-                                  >
-                                    Proceed to Checkout
-                                  </button>
+                                {({
+                                  proceedToCheckout,
+                                  canCheckout,
+                                  error,
+                                }) => (
+                                  <>
+                                    <button
+                                      onClick={proceedToCheckout}
+                                      disabled={!canCheckout}
+                                      className="w-full bg-gradient-primary bg-gradient-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-content-primary font-semibold py-3 px-6 rounded-lg transition-all duration-200"
+                                    >
+                                      Proceed to Checkout
+                                    </button>
+                                    {error && (
+                                      <div className="bg-status-danger-light border border-status-danger rounded p-2 mt-2">
+                                        <p className="text-status-danger text-xs">
+                                          Failed to checkout. Please contact
+                                          support.
+                                        </p>
+                                      </div>
+                                    )}
+                                  </>
                                 )}
                               </CurrentCart.Checkout>
                             </div>

@@ -686,7 +686,7 @@ export default function ProductDetails({
                           {error && (
                             <div className="bg-status-danger-light border border-status-danger rounded-lg p-3">
                               <p className="text-status-error text-sm">
-                                {error}
+                                Failed to checkout. Please contact support.
                               </p>
                             </div>
                           )}
