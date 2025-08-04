@@ -8,7 +8,10 @@ import {
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import { Checkout } from "@wix/headless-ecom/react";
-import { CheckoutServiceDefinition } from "@wix/headless-ecom/services";
+import {
+  CheckoutServiceDefinition,
+  CurrentCartServiceDefinition,
+} from "@wix/headless-ecom/services";
 import { type LineItem } from "@wix/headless-ecom/services";
 
 export interface RootProps {
@@ -305,10 +308,21 @@ export function Actions(props: ActionsProps) {
   const variantService = useService(
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
-
-  const checkoutService = useService(CheckoutServiceDefinition) as ServiceAPI<
-    typeof CheckoutServiceDefinition
+  const cartService = useService(CurrentCartServiceDefinition) as ServiceAPI<
+    typeof CurrentCartServiceDefinition
   >;
+
+  // Try to get checkout service - it may not be available
+  let checkoutService: ServiceAPI<typeof CheckoutServiceDefinition> | null =
+    null;
+  try {
+    checkoutService = useService(CheckoutServiceDefinition) as ServiceAPI<
+      typeof CheckoutServiceDefinition
+    >;
+  } catch {
+    // Checkout service not available
+    checkoutService = null;
+  }
 
   // Try to get modifiers service - it may not exist for all products
   let modifiersService: ServiceAPI<
@@ -327,8 +341,11 @@ export function Actions(props: ActionsProps) {
   const isPreOrderEnabled = variantService.isPreOrderEnabled.get();
   const preOrderMessage = variantService.preOrderMessage.get();
   const isLoading =
-    variantService.isLoading.get() || checkoutService.isLoading.get();
-  const error = variantService.error.get() || checkoutService.error.get();
+    variantService.isLoading.get() ||
+    (checkoutService ? checkoutService.isLoading.get() : false);
+  const error =
+    variantService.error.get() ||
+    (checkoutService ? checkoutService.error.get() : null);
   const quantity = variantService.selectedQuantity.get();
 
   // Check if all required modifiers are filled
@@ -355,29 +372,62 @@ export function Actions(props: ActionsProps) {
     await variantService.addToCart(quantity, modifiersData);
   };
 
+  const buyNowFallback = async () => {
+    try {
+      // Clear the cart first
+      await cartService.clearCart();
+
+      // Add the product to cart
+      await addToCart();
+
+      // Proceed to checkout
+      await cartService.proceedToCheckout();
+    } catch (error) {
+      console.error("Buy now failed:", error);
+      throw error;
+    }
+  };
+
   const getLineItems = () => {
     const modifiersData = getModifiersData();
     return variantService.createLineItems(quantity, modifiersData);
   };
 
-  return (
-    <Checkout.Trigger>
-      {({
-        createCheckout,
-      }: {
-        createCheckout: (lineItems: LineItem[]) => Promise<void>;
-      }) =>
-        props.children({
-          addToCart,
-          buyNow: () => createCheckout(getLineItems()),
-          canAddToCart,
-          isLoading,
-          inStock,
-          isPreOrderEnabled,
-          preOrderMessage,
-          error,
-        })
-      }
-    </Checkout.Trigger>
-  );
+  const commonProps = {
+    addToCart,
+    canAddToCart,
+    isLoading,
+    inStock,
+    isPreOrderEnabled,
+    preOrderMessage,
+    error,
+  };
+
+  if (checkoutService) {
+    return (
+      <Checkout.Trigger>
+        {({
+          createCheckout,
+          isLoading: checkoutLoading,
+          error: checkoutError,
+        }: {
+          createCheckout: (lineItems: LineItem[]) => Promise<void>;
+          isLoading: boolean;
+          error: string | null;
+        }) =>
+          props.children({
+            ...commonProps,
+            isLoading: isLoading || checkoutLoading,
+            error: error || checkoutError,
+            buyNow: () => createCheckout(getLineItems()),
+          })
+        }
+      </Checkout.Trigger>
+    );
+  }
+
+  return props.children({
+    ...commonProps,
+    buyNow: buyNowFallback,
+  });
 }
