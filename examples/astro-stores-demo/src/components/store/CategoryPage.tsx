@@ -1,6 +1,5 @@
 import { CurrentCart, Checkout } from '@wix/headless-ecom/react';
 import type { LineItem } from '@wix/headless-ecom/services';
-import { ChannelType } from '@wix/headless-ecom/services';
 import {
   Product,
   ProductList,
@@ -58,10 +57,6 @@ export const ProductGridContent = ({
       availabilityStatus === productsV3.InventoryAvailabilityStatus.IN_STOCK ||
       availabilityStatus ===
         productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
-
-    const checkoutConfig = {
-      channelType: ChannelType.WEB,
-    };
 
     return (
       <MediaGallery.Root

@@ -10,7 +10,7 @@ import { type LineItem } from "../services/checkout-service.js";
 
 export interface RootProps {
   children: React.ReactNode;
-  checkoutServiceConfig: CheckoutServiceConfig;
+  checkoutServiceConfig?: CheckoutServiceConfig;
 }
 
 /**

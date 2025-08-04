@@ -11,7 +11,6 @@ import {
 } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart, Checkout } from '@wix/headless-ecom/react';
-import { ChannelType } from '@wix/headless-ecom/services';
 
 import { getStockStatusMessage } from './product-status-enums';
 
@@ -59,10 +58,6 @@ export default function ProductDetails({
   isQuickView?: boolean;
   product: productsV3.V3Product;
 }) {
-  const checkoutConfig = {
-    channelType: ChannelType.WEB,
-  };
-
   return (
     <>
       <div
