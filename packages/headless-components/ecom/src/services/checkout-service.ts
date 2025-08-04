@@ -10,6 +10,9 @@ export { ChannelType } from "@wix/auto_sdk_ecom_checkout";
 
 export type LineItem = checkout.LineItem;
 
+/**
+ * API interface for the Checkout service
+ */
 export interface CheckoutServiceAPI {
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
@@ -20,6 +23,9 @@ export interface CheckoutServiceAPI {
 export const CheckoutServiceDefinition =
   defineService<CheckoutServiceAPI>("checkout");
 
+/**
+ * Configuration options for the Checkout service
+ */
 export interface CheckoutServiceConfig {
   channelType?: checkout.ChannelType;
   postFlowUrl?: string;
@@ -87,7 +93,7 @@ export type CheckoutServiceConfigResult = {
 
 /**
  * Load initial configuration for the Checkout service.
- * This function prepares the catalog reference configuration for checkout creation.
+ * This function prepares the configuration for checkout creation.
  *
  * @param channelType - Optional channel type (defaults to WEB)
  * @param postFlowUrl - Optional URL to redirect after checkout completion
@@ -105,6 +111,13 @@ export const loadCheckoutServiceInitialData = async (
   };
 };
 
+/**
+ * Creates a service binding for the Checkout service with the provided configuration.
+ * This utility function helps integrate the checkout service into the services manager.
+ *
+ * @param servicesConfigs - Configuration object containing checkout service settings
+ * @returns Tuple containing service definition, implementation, and configuration
+ */
 export const checkoutServiceBinding = <
   T extends {
     [key: string]: Awaited<

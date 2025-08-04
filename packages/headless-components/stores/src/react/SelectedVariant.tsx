@@ -8,6 +8,7 @@ import {
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import { Checkout } from "@wix/headless-ecom/react";
+import { CheckoutServiceDefinition } from "@wix/headless-ecom/services";
 import { type LineItem } from "@wix/headless-ecom/services";
 
 export interface RootProps {
@@ -305,6 +306,10 @@ export function Actions(props: ActionsProps) {
     SelectedVariantServiceDefinition,
   ) as ServiceAPI<typeof SelectedVariantServiceDefinition>;
 
+  const checkoutService = useService(CheckoutServiceDefinition) as ServiceAPI<
+    typeof CheckoutServiceDefinition
+  >;
+
   // Try to get modifiers service - it may not exist for all products
   let modifiersService: ServiceAPI<
     typeof ProductModifiersServiceDefinition
@@ -321,7 +326,8 @@ export function Actions(props: ActionsProps) {
   const inStock = variantService.isInStock.get();
   const isPreOrderEnabled = variantService.isPreOrderEnabled.get();
   const preOrderMessage = variantService.preOrderMessage.get();
-  const isLoading = variantService.isLoading.get();
+  const isLoading =
+    variantService.isLoading.get() || checkoutService.isLoading.get();
   const error = variantService.error.get();
   const quantity = variantService.selectedQuantity.get();
 
@@ -335,27 +341,24 @@ export function Actions(props: ActionsProps) {
     !isLoading &&
     areAllRequiredModifiersFilled;
 
-  const addToCart = async () => {
-    // Get modifiers data if available
-    let modifiersData: Record<string, any> | undefined;
+  const getModifiersData = () => {
     if (modifiersService) {
       const selectedModifiers = modifiersService.selectedModifiers.get();
       if (Object.keys(selectedModifiers).length > 0) {
-        modifiersData = selectedModifiers;
+        return selectedModifiers;
       }
     }
+  };
 
+  const addToCart = async () => {
+    const modifiersData = getModifiersData();
     await variantService.addToCart(quantity, modifiersData);
   };
 
-  let modifiersData: Record<string, any> | undefined;
-  if (modifiersService) {
-    const selectedModifiers = modifiersService.selectedModifiers.get();
-    if (Object.keys(selectedModifiers).length > 0) {
-      modifiersData = selectedModifiers;
-    }
-  }
-  const lineItems = variantService.createLineItems(quantity, modifiersData);
+  const getLineItems = () => {
+    const modifiersData = getModifiersData();
+    return variantService.createLineItems(quantity, modifiersData);
+  };
 
   return (
     <Checkout.Trigger>
@@ -366,7 +369,7 @@ export function Actions(props: ActionsProps) {
       }) =>
         props.children({
           addToCart,
-          buyNow: () => createCheckout(lineItems),
+          buyNow: () => createCheckout(getLineItems()),
           canAddToCart,
           isLoading,
           inStock,

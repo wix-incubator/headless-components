@@ -8,6 +8,9 @@ import {
 import { createServicesMap } from "@wix/services-manager";
 import { type LineItem } from "../services/checkout-service.js";
 
+/**
+ * Props for the Root component
+ */
 export interface RootProps {
   children: React.ReactNode;
   checkoutServiceConfig?: CheckoutServiceConfig;
@@ -23,13 +26,15 @@ export interface RootProps {
  * ```tsx
  * import { Checkout } from '@wix/ecom/react';
  *
- * function ProductCheckout({ productId, variantId }) {
+ * function ProductCheckout() {
+ *   const lineItems = [{ catalogReference: { productId: 'product-id', variantId: 'variant-id' }, quantity: 1 }];
+ *
  *   return (
- *     <Checkout.Root checkoutServiceConfig={{ productId, variantId }}>
+ *     <Checkout.Root checkoutServiceConfig={{ channelType: 'WEB', postFlowUrl: '/thank-you' }}>
  *       <div>
  *         <Checkout.Trigger>
  *           {({ createCheckout, isLoading, error }) => (
- *             <button onClick={createCheckout} disabled={isLoading}>
+ *             <button onClick={() => createCheckout(lineItems)} disabled={isLoading}>
  *               {isLoading ? 'Processing...' : 'Buy Now'}
  *             </button>
  *           )}
@@ -55,7 +60,7 @@ export function Root(props: RootProps): React.ReactNode {
 }
 
 /**
- * Props for Trigger headless component
+ * Props for the Trigger headless component
  */
 export interface TriggerProps {
   /** Render prop function that receives checkout trigger data */
@@ -63,7 +68,7 @@ export interface TriggerProps {
 }
 
 /**
- * Render props for Trigger component
+ * Render props for the Trigger component
  */
 export interface TriggerRenderProps {
   /** Function to create checkout and redirect */
@@ -84,12 +89,14 @@ export interface TriggerRenderProps {
  * import { Checkout } from '@wix/ecom/react';
  *
  * function BuyNowButton() {
+ *   const lineItems = [{ catalogReference: { productId: 'product-id' }, quantity: 1 }];
+ *
  *   return (
  *     <Checkout.Trigger>
  *       {({ createCheckout, isLoading, error }) => (
  *         <div>
  *           <button
- *             onClick={createCheckout}
+ *             onClick={() => createCheckout(lineItems)}
  *             disabled={isLoading}
  *             className="buy-now-btn"
  *           >
