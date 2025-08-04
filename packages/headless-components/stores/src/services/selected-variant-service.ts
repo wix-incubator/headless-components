@@ -45,6 +45,10 @@ export interface SelectedVariantServiceAPI {
   isLowStock: () => boolean;
 
   setSelectedChoices: (choices: Record<string, string>) => void;
+  createLineItems: (
+    quantity?: number,
+    modifiers?: Record<string, any>,
+  ) => Array<{ catalogReference: any; quantity: number }>;
   addToCart: (
     quantity?: number,
     modifiers?: Record<string, any>,
@@ -476,6 +480,92 @@ export const SelectedVariantService =
         updateDataFromVariant(matchingVariant);
       };
 
+      const createLineItems = (
+        quantity: number = 1,
+        modifiers?: Record<string, any>,
+      ): Array<{ catalogReference: any; quantity: number }> => {
+        const prod = v3Product.get();
+        const variant = currentVariant.get();
+
+        if (!prod?._id) {
+          throw new Error("Product not found");
+        }
+
+        // Build catalog reference with modifiers if provided
+        const catalogReference: any = {
+          catalogItemId: prod._id,
+          appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+          options:
+            variant?._id && variant._id !== "default"
+              ? {
+                  variantId: variant._id,
+                  preOrderRequested:
+                    !!variant?.inventoryStatus?.preorderEnabled,
+                }
+              : undefined,
+        };
+
+        // Transform and add modifiers to catalog reference if they exist
+        if (modifiers && Object.keys(modifiers).length > 0) {
+          const options: Record<string, string> = {};
+          const customTextFields: Record<string, string> = {};
+
+          // Get product modifiers to determine types and keys
+          const productModifiers = prod.modifiers || [];
+
+          Object.values(modifiers).forEach((modifierValue: any) => {
+            const modifierName = modifierValue.modifierName;
+            const productModifier = productModifiers.find(
+              (m) => m.name === modifierName,
+            );
+
+            if (!productModifier) return;
+
+            const renderType = productModifier.modifierRenderType;
+
+            if (
+              renderType === productsV3.ModifierRenderType.TEXT_CHOICES ||
+              renderType === productsV3.ModifierRenderType.SWATCH_CHOICES
+            ) {
+              // For choice modifiers, use the modifier key and choice value
+              const modifierKey = (productModifier as any).key || modifierName;
+              if (modifierValue.choiceValue) {
+                options[modifierKey] = modifierValue.choiceValue;
+              }
+            } else if (renderType === productsV3.ModifierRenderType.FREE_TEXT) {
+              // For free text modifiers, use the freeTextSettings key
+              const freeTextKey =
+                (productModifier.freeTextSettings as any)?.key || modifierName;
+              if (modifierValue.freeTextValue) {
+                customTextFields[freeTextKey] = modifierValue.freeTextValue;
+              }
+            }
+          });
+
+          // Add formatted modifiers to catalog reference
+          if (Object.keys(options).length > 0) {
+            catalogReference.options = {
+              ...catalogReference.options,
+              options,
+            };
+          }
+
+          if (Object.keys(customTextFields).length > 0) {
+            catalogReference.options = {
+              ...catalogReference.options,
+              customTextFields,
+            };
+          }
+        }
+
+        return [
+          {
+            catalogReference,
+            quantity,
+          },
+        ];
+      };
+
       const addToCart = async (
         quantity: number = 1,
         modifiers?: Record<string, any>,
@@ -484,91 +574,7 @@ export const SelectedVariantService =
           isLoading.set(true);
           error.set(null);
 
-          const prod = v3Product.get();
-          const variant = currentVariant.get();
-
-          if (!prod?._id) {
-            throw new Error("Product not found");
-          }
-
-          // Build catalog reference with modifiers if provided
-          const catalogReference: any = {
-            catalogItemId: prod._id,
-            appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e",
-            options:
-              variant?._id && variant._id !== "default"
-                ? {
-                    variantId: variant._id,
-                    preOrderRequested:
-                      !!variant?.inventoryStatus?.preorderEnabled,
-                  }
-                : undefined,
-          };
-
-          // Transform and add modifiers to catalog reference if they exist
-          if (modifiers && Object.keys(modifiers).length > 0) {
-            const options: Record<string, string> = {};
-            const customTextFields: Record<string, string> = {};
-
-            // Get product modifiers to determine types and keys
-            const productModifiers = prod.modifiers || [];
-
-            Object.values(modifiers).forEach((modifierValue: any) => {
-              const modifierName = modifierValue.modifierName;
-              const productModifier = productModifiers.find(
-                (m) => m.name === modifierName,
-              );
-
-              if (!productModifier) return;
-
-              const renderType = productModifier.modifierRenderType;
-
-              if (
-                renderType === productsV3.ModifierRenderType.TEXT_CHOICES ||
-                renderType === productsV3.ModifierRenderType.SWATCH_CHOICES
-              ) {
-                // For choice modifiers, use the modifier key and choice value
-                const modifierKey =
-                  (productModifier as any).key || modifierName;
-                if (modifierValue.choiceValue) {
-                  options[modifierKey] = modifierValue.choiceValue;
-                }
-              } else if (
-                renderType === productsV3.ModifierRenderType.FREE_TEXT
-              ) {
-                // For free text modifiers, use the freeTextSettings key
-                const freeTextKey =
-                  (productModifier.freeTextSettings as any)?.key ||
-                  modifierName;
-                if (modifierValue.freeTextValue) {
-                  customTextFields[freeTextKey] = modifierValue.freeTextValue;
-                }
-              }
-            });
-
-            // Add formatted modifiers to catalog reference
-            if (Object.keys(options).length > 0) {
-              catalogReference.options = {
-                ...catalogReference.options,
-                options,
-              };
-            }
-
-            if (Object.keys(customTextFields).length > 0) {
-              catalogReference.options = {
-                ...catalogReference.options,
-                customTextFields,
-              };
-            }
-          }
-
-          const lineItems = [
-            {
-              catalogReference,
-              quantity,
-            },
-          ];
-
+          const lineItems = createLineItems(quantity, modifiers);
           await cartService.addToCart(lineItems);
         } catch (err) {
           error.set(
@@ -762,6 +768,7 @@ export const SelectedVariantService =
         ribbonLabel,
 
         setSelectedChoices,
+        createLineItems,
         addToCart,
 
         setOption,
