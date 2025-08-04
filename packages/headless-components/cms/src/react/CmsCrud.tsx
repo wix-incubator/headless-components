@@ -1,6 +1,6 @@
 import React from 'react';
 import { useService } from '@wix/services-manager-react';
-import {CmsCrudServiceDefinition, WixDataItem} from '../services/cms-crud-service';
+import {CmsCrudServiceDefinition, WixDataItem} from '../services/cms-crud-service.js';
 
 /**
  * Props passed to the render function of the CmsCrud component

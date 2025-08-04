@@ -4,10 +4,10 @@
  * This file exports all React components from the CMS package.
  */
 
-import { CmsCrud } from './CmsCrud';
+import { CmsCrud } from './CmsCrud.js';
 
 export { CmsCrud };
-export * from './CmsCrud';
+export * from './CmsCrud.js';
 
 // Export as a namespace for easier consumption
 export const CmsCrudComponents = {

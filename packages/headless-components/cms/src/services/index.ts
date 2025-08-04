@@ -11,4 +11,4 @@ export {
   cmsCrudServiceBinding,
   type CmsQuery,
   type CmsCrudServiceConfig,
-} from './cms-crud-service';
+} from './cms-crud-service.js';

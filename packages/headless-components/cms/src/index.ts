@@ -5,14 +5,14 @@
  */
 
 // Export services
-export * from './services';
+export * from './services/index.js';
 
 // Export components
-export * from './react';
+export * from './react/index.js';
 
 // Export namespaces
-import * as services from './services';
-import * as components from './react';
+import * as services from './services/index.js';
+import * as components from './react/index.js';
 
 export const cms = {
   services,
