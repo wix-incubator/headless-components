@@ -1,0 +1,14 @@
+{
+ "name": "@wix/headless-bookings",
+ "version": "0.0.1",
+ "scripts": {
+  "build": "tsc"
+ },
+ "exports": {
+  "./react": "./dist/react/index.js"
+ },
+ "devDependencies": {
+  "@types/node": "^20.9.0",
+  "typescript": "^5.8.3"
+ }
+}
