@@ -3539,7 +3539,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/data@npm:^1.0.270":
+"@wix/data@npm:^1.0.0":
   version: 1.0.270
   resolution: "@wix/data@npm:1.0.270"
   dependencies:
@@ -3720,7 +3720,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/data": "npm:^1.0.270"
+    "@wix/data": "npm:^1.0.0"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"

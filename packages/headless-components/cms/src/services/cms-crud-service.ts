@@ -322,9 +322,7 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
  * </CmsCrud.CmsCrud>
  * ```
  */
-export const loadCmsCrudServiceInitialData = async (
-  collectionId: string,
-) => {
+export const loadCmsCrudServiceInitialData = async (collectionId: string) => {
   return {
     [CmsCrudServiceDefinition]: {
       collectionId,
@@ -354,11 +352,8 @@ export const loadCmsCrudServiceInitialData = async (
  * const services = createServicesMap([cmsBinding]);
  * ```
  */
-export const cmsCrudServiceBinding = <
-  T extends {
-    [key: string]: Awaited<
-      ReturnType<typeof loadCmsCrudServiceInitialData>
-    >[typeof CmsCrudServiceDefinition];
+export const cmsCrudServiceBinding = <T extends {
+    [key: string]: Awaited<ReturnType<typeof loadCmsCrudServiceInitialData>>[typeof CmsCrudServiceDefinition];
   },
 >(
   servicesConfigs: T,
