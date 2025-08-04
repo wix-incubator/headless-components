@@ -328,7 +328,7 @@ export function Actions(props: ActionsProps) {
   const preOrderMessage = variantService.preOrderMessage.get();
   const isLoading =
     variantService.isLoading.get() || checkoutService.isLoading.get();
-  const error = variantService.error.get();
+  const error = variantService.error.get() || checkoutService.error.get();
   const quantity = variantService.selectedQuantity.get();
 
   // Check if all required modifiers are filled
