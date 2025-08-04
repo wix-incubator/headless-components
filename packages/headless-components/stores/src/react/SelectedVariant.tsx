@@ -8,7 +8,7 @@ import {
 import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import { Checkout } from "@wix/headless-ecom/react";
-import { ChannelType, type LineItem } from "@wix/headless-ecom/services";
+import { type LineItem } from "@wix/headless-ecom/services";
 
 export interface RootProps {
   children: React.ReactNode;
@@ -357,31 +357,24 @@ export function Actions(props: ActionsProps) {
   }
   const lineItems = variantService.createLineItems(quantity, modifiersData);
 
-  const checkoutConfig = {
-    channelType: ChannelType.WEB,
-    postFlowUrl: "https://www.wix.com",
-  };
-
   return (
-    <Checkout.Root checkoutServiceConfig={checkoutConfig}>
-      <Checkout.Trigger>
-        {({
-          createCheckout,
-        }: {
-          createCheckout: (lineItems: LineItem[]) => Promise<void>;
-        }) =>
-          props.children({
-            addToCart,
-            buyNow: () => createCheckout(lineItems),
-            canAddToCart,
-            isLoading,
-            inStock,
-            isPreOrderEnabled,
-            preOrderMessage,
-            error,
-          })
-        }
-      </Checkout.Trigger>
-    </Checkout.Root>
+    <Checkout.Trigger>
+      {({
+        createCheckout,
+      }: {
+        createCheckout: (lineItems: LineItem[]) => Promise<void>;
+      }) =>
+        props.children({
+          addToCart,
+          buyNow: () => createCheckout(lineItems),
+          canAddToCart,
+          isLoading,
+          inStock,
+          isPreOrderEnabled,
+          preOrderMessage,
+          error,
+        })
+      }
+    </Checkout.Trigger>
   );
 }
