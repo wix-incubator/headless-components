@@ -7,6 +7,7 @@ import {
 import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
 import * as inventoryItemsV3 from "@wix/auto_sdk_stores_inventory-items-v-3";
 import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
+import { MediaGalleryServiceDefinition } from "@wix/headless-media/services";
 import { ProductServiceDefinition } from "./product-service.js";
 
 type V3Product = productsV3.V3Product;
@@ -80,6 +81,7 @@ export const SelectedVariantService =
   implementService.withConfig<SelectedVariantServiceConfig>()(
     SelectedVariantServiceDefinition,
     ({ getService, config: { fetchInventoryData = true } }) => {
+      const mediaService = getService(MediaGalleryServiceDefinition);
       const signalsService = getService(SignalsServiceDefinition);
       const cartService = getService(CurrentCartServiceDefinition);
       const productService = getService(ProductServiceDefinition);
@@ -95,7 +97,7 @@ export const SelectedVariantService =
       signalsService.effect(() => {
         const product = productService.product.get();
         const selectedChoicesValue = selectedChoices.get() || {};
-        // let mediaToDisplay: productsV3.ProductMedia[] = [];
+        let mediaToDisplay: productsV3.ProductMedia[] = [];
 
         const productItemsImages =
           product?.media?.itemsInfo?.items
@@ -103,9 +105,9 @@ export const SelectedVariantService =
             .filter(Boolean) ?? [];
 
         if (productItemsImages.length) {
-          // mediaToDisplay = productItemsImages;
+          mediaToDisplay = productItemsImages;
         } else if (product?.media?.main) {
-          // mediaToDisplay = [product.media.main];
+          mediaToDisplay = [product.media.main];
         }
 
         // Get images based on selected choices if available
@@ -123,10 +125,10 @@ export const SelectedVariantService =
         });
 
         if (selectedChoicesImages?.length) {
-          // mediaToDisplay = selectedChoicesImages;
+          mediaToDisplay = selectedChoicesImages;
         }
 
-        // mediaService.setMediaToDisplay(mediaToDisplay ?? []);
+        mediaService.setMediaToDisplay(mediaToDisplay ?? []);
       });
 
       const parsePrice = (amount?: string | null): number => {
