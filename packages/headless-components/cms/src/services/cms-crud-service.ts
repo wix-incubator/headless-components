@@ -5,23 +5,6 @@ import * as items from '@wix/wix-data-items-sdk';
 export type WixDataItem = items.WixDataItem;
 
 /**
- * Type definition for CMS query parameters
- */
-export interface CmsQuery {
-  /** Filter conditions for the query */
-  filter?: Record<string, any>;
-  /** Sort options for the query */
-  sort?: Array<{ fieldName: string; direction: 'ASC' | 'DESC' }>;
-  /** Pagination options */
-  paging?: {
-    /** Number of items to skip */
-    offset?: number;
-    /** Maximum number of items to return */
-    limit?: number;
-  };
-}
-
-/**
  * Configuration interface for the CMS CRUD service.
  * Contains the collection ID needed to initialize the CMS CRUD functionality.
  *
@@ -31,6 +14,7 @@ export interface CmsCrudServiceConfig {
   /** The collection ID to perform CRUD operations on */
   collectionId: string;
 }
+
 
 /**
  * Service definition for the CMS CRUD service.
@@ -150,133 +134,113 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
-    // Initialize signals
     const loadingSignal = signalsService.signal(false) as Signal<boolean>;
     const errorSignal = signalsService.signal<string | null>(null) as Signal<string | null>;
     const itemsSignal = signalsService.signal<WixDataItem[]>([]) as Signal<WixDataItem[]>;
     const itemSignal = signalsService.signal<WixDataItem | null>(null) as Signal<WixDataItem | null>;
     const currentCollectionSignal = signalsService.signal<string>(config.collectionId) as Signal<string>;
 
+    const withErrorHandling = async <T>(
+      crudOperation: () => Promise<T>,
+      errorMessage: string,
+    ): Promise<T | void> => {
+      loadingSignal.set(true);
+      errorSignal.set(null);
+
+      try {
+        return await crudOperation();
+      } catch (error) {
+        errorSignal.set(error instanceof Error ? error.message : errorMessage);
+      } finally {
+        loadingSignal.set(false);
+      }
+    };
+
+    const createItem = async <T extends WixDataItem>(collectionId: string, itemData: T): Promise<void> => {
+      await withErrorHandling(async () => {
+        const result = await items.insert(collectionId, itemData);
+
+        const currentItems = itemsSignal.get();
+        itemsSignal.set([...currentItems, result]);
+
+        itemSignal.set(result);
+      }, `Failed to create ${collectionId}`);
+    };
+
+    const getAllItems = async <T extends WixDataItem>(collectionId: string): Promise<void> => {
+      await withErrorHandling(async () => {
+        const result = await items.query(collectionId).find();
+        itemsSignal.set(result.items as T[]);
+      }, `Failed to fetch ${collectionId}s`);
+    };
+
+    const getItemById = async <T extends WixDataItem>(collectionId: string, itemId: string): Promise<void> => {
+      await withErrorHandling(async () => {
+        const result = await items.query(collectionId).eq("_id", itemId).find();
+
+        if (result.items.length > 0) {
+          itemSignal.set(result.items[0] as T);
+        } else {
+          itemSignal.set(null);
+        }
+      }, `Failed to fetch ${collectionId} by ID`);
+    };
+
+    const updateItem = async <T extends WixDataItem>(
+      collectionId: string,
+      itemData: T & { _id: string }
+    ): Promise<void> => {
+      await withErrorHandling(async () => {
+        if (!itemData._id) {
+          throw new Error(`${collectionId} ID is required for update`);
+        }
+
+        const result = await items.update(collectionId, itemData);
+
+        const currentItems = itemsSignal.get();
+        const updatedItems = currentItems.map(i => i._id === itemData._id ? result : i);
+        itemsSignal.set(updatedItems);
+
+        const currentItem = itemSignal.get();
+        if (currentItem && currentItem._id === itemData._id) {
+          itemSignal.set(result);
+        }
+      }, `Failed to update ${collectionId}`);
+    };
+
+    const deleteItem = async (collectionId: string, itemId: string): Promise<void> => {
+      await withErrorHandling(async () => {
+        if (!itemId) {
+          throw new Error(`${collectionId} ID is required for deletion`);
+        }
+
+        await items.remove(collectionId, itemId);
+
+        const currentItems = itemsSignal.get();
+        const updatedItems = currentItems.filter(item => item._id !== itemId);
+        itemsSignal.set(updatedItems);
+
+        const currentItem = itemSignal.get();
+        if (currentItem && currentItem._id === itemId) {
+          itemSignal.set(null);
+        }
+      }, `Failed to delete ${collectionId}`);
+    };
+
+    const setCollectionId = (collectionId: string): void => {
+      if (!collectionId) {
+        throw new Error('Collection ID is required');
+      }
+      currentCollectionSignal.set(collectionId);
+    };
 
     return {
-      create: async <T extends WixDataItem>(collectionId: string, itemData: T): Promise<void> => {
-        loadingSignal.set(true);
-        errorSignal.set(null);
-
-        try {
-          const result = await items.insert(collectionId, itemData);
-
-          // Update the items list with the new item
-          const currentItems = itemsSignal.get();
-          itemsSignal.set([...currentItems, result]);
-
-          // Set the current item to the newly created item
-          itemSignal.set(result);
-        } catch (error) {
-          errorSignal.set(error instanceof Error ? error.message : `Failed to create ${collectionId}`);
-        } finally {
-          loadingSignal.set(false);
-        }
-      },
-
-      getAll: async <T extends WixDataItem>(collectionId: string): Promise<void> => {
-        loadingSignal.set(true);
-        errorSignal.set(null);
-
-        try {
-          const result = await items.query(collectionId).find();
-          itemsSignal.set(result.items as T[]);
-        } catch (error) {
-          errorSignal.set(error instanceof Error ? error.message : `Failed to fetch ${collectionId}s`);
-        } finally {
-          loadingSignal.set(false);
-        }
-      },
-
-      getById: async <T extends WixDataItem>(collectionId: string, itemId: string): Promise<void> => {
-        loadingSignal.set(true);
-        errorSignal.set(null);
-
-        try {
-          const result = await items.query(collectionId)
-            .eq("_id", itemId)
-            .find();
-
-          if (result.items.length > 0) {
-            itemSignal.set(result.items[0] as T);
-          } else {
-            itemSignal.set(null);
-          }
-        } catch (error) {
-          errorSignal.set(error instanceof Error ? error.message : `Failed to fetch ${collectionId} by ID`);
-        } finally {
-          loadingSignal.set(false);
-        }
-      },
-
-      update: async <T extends WixDataItem>(collectionId: string, itemData: T & { _id: string }): Promise<void> => {
-        loadingSignal.set(true);
-        errorSignal.set(null);
-
-        try {
-          if (!itemData._id) {
-            throw new Error(`${collectionId} ID is required for update`);
-          }
-
-          const result = await items.update(collectionId, itemData);
-
-          // Update the item in the items list
-          const currentItems = itemsSignal.get();
-          const updatedItems = currentItems.map(i => i._id === itemData._id ? result : i);
-          itemsSignal.set(updatedItems);
-
-          // Update the current item if it's the one being edited
-          const currentItem = itemSignal.get();
-          if (currentItem && currentItem._id === itemData._id) {
-            itemSignal.set(result);
-          }
-        } catch (error) {
-          errorSignal.set(error instanceof Error ? error.message : `Failed to update ${collectionId}`);
-        } finally {
-          loadingSignal.set(false);
-        }
-      },
-
-      delete: async (collectionId: string, itemId: string): Promise<void> => {
-        loadingSignal.set(true);
-        errorSignal.set(null);
-
-        try {
-          if (!itemId) {
-            throw new Error(`${collectionId} ID is required for deletion`);
-          }
-
-          await items.remove(collectionId, itemId);
-
-          // Remove the item from the items list
-          const currentItems = itemsSignal.get();
-          const updatedItems = currentItems.filter(item => item._id !== itemId);
-          itemsSignal.set(updatedItems);
-
-          // Clear the current item if it's the one being deleted
-          const currentItem = itemSignal.get();
-          if (currentItem && currentItem._id === itemId) {
-            itemSignal.set(null);
-          }
-        } catch (error) {
-          errorSignal.set(error instanceof Error ? error.message : `Failed to delete ${collectionId}`);
-        } finally {
-          loadingSignal.set(false);
-        }
-      },
-
-      setCollection: (collectionId: string): void => {
-        if (!collectionId) {
-          throw new Error('Collection ID is required');
-        }
-        currentCollectionSignal.set(collectionId);
-      },
-
+      create: createItem,
+      getAll: getAllItems,
+      getById: getItemById,
+      update: updateItem,
+      delete: deleteItem,
+      setCollection: setCollectionId,
       loadingSignal,
       errorSignal,
       itemsSignal,
@@ -287,8 +251,8 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
 );
 
 /**
- * Loads CMS CRUD service initial data for SSR initialization.
- * This function is designed to be used during Server-Side Rendering (SSR) to preload
+ * Loads CMS CRUD service initial data for Server-Side Rendering (SSR) initialization.
+ * This function is designed to be used during SSR to preload
  * the collection ID required for the CMS CRUD functionality.
  *
  * @param {string} collectionId - The collection ID to perform CRUD operations on
@@ -305,7 +269,8 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
  * const cmsData = await loadCmsCrudServiceInitialData('MyCollection');
  * ---
  *
- * <CmsCrud.CmsCrud cmsConfig={cmsData.CmsCrud}>
+ * <CmsCrud.Root cmsCrudServiceConfig={cmsData[CmsCrudServiceDefinition]}>
+ *   <CmsCrud>
  *   {({ create, getAll, items, isLoading, error }) => (
  *     <div>
  *       {error && <div className="error">{error}</div>}
@@ -319,7 +284,8 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
  *       </ul>
  *     </div>
  *   )}
- * </CmsCrud.CmsCrud>
+ *   </CmsCrud>
+ * </CmsCrud.Root>
  * ```
  */
 export const loadCmsCrudServiceInitialData = async (collectionId: string) => {
@@ -354,10 +320,7 @@ export const loadCmsCrudServiceInitialData = async (collectionId: string) => {
  */
 export const cmsCrudServiceBinding = <T extends {
     [key: string]: Awaited<ReturnType<typeof loadCmsCrudServiceInitialData>>[typeof CmsCrudServiceDefinition];
-  },
->(
-  servicesConfigs: T,
-) => {
+  }, >(servicesConfigs: T) => {
   return [
     CmsCrudServiceDefinition,
     CmsCrudServiceImplementation,

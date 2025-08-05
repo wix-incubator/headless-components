@@ -1,6 +1,7 @@
 import React from 'react';
-import { useService } from '@wix/services-manager-react';
-import {CmsCrudServiceDefinition, WixDataItem} from '../services/cms-crud-service.js';
+import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import {CmsCrudServiceDefinition, CmsCrudServiceImplementation, WixDataItem, type CmsCrudServiceConfig} from '../services/cms-crud-service.js';
 
 /**
  * Props passed to the render function of the CmsCrud component
@@ -60,11 +61,66 @@ export type CmsCrudRenderProps = {
 };
 
 /**
+ * Props for the Root component that provides the CmsCrud service context
+ */
+export interface RootProps {
+  /** Child components that will have access to the CmsCrud service */
+  children: React.ReactNode;
+  /** Configuration for the CmsCrud service */
+  cmsCrudServiceConfig: CmsCrudServiceConfig;
+}
+
+/**
+ * Root component that provides the CmsCrud service context to its children.
+ * This component sets up the necessary services for managing CMS CRUD operations.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCrud } from '@wix/cms/components';
+ *
+ * function CmsPage() {
+ *   return (
+ *     <CmsCrud.Root cmsCrudServiceConfig={{ collectionId: 'BlogPosts' }}>
+ *       <CmsCrud>
+ *         {({
+ *           isLoading,
+ *           items,
+ *           create,
+ *           getAll,
+ *           // ... other props
+ *         }) => (
+ *           // Your UI implementation
+ *         )}
+ *       </CmsCrud>
+ *     </CmsCrud.Root>
+ *   );
+ * }
+ * ```
+ */
+export function Root(props: RootProps): React.ReactNode {
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        CmsCrudServiceDefinition,
+        CmsCrudServiceImplementation,
+        props.cmsCrudServiceConfig,
+      )}
+    >
+      {props.children}
+    </WixServices>
+  );
+}
+
+/**
  * Props for the CmsCrud component
  */
-export type CmsCrudProps = {
+export interface CmsCrudProps {
   /** Render function that receives CMS CRUD state and actions */
   children: (props: CmsCrudRenderProps) => React.ReactNode;
+  /** Whether to automatically fetch items on mount (defaults to true) */
+  autoFetch?: boolean;
 };
 
 /**
@@ -72,100 +128,112 @@ export type CmsCrudProps = {
  *
  * This component manages the state and actions for CRUD operations on a Wix Data collection,
  * allowing consumers to render their own UI while accessing the underlying CMS functionality.
+ * By default, it automatically fetches items from the collection when mounted, eliminating
+ * the need for manual data fetching in useEffect hooks.
  *
+ * @order 2
+ * @component
  * @param props - The component props
  * @returns The rendered children with CMS CRUD state and actions
  *
  * @example
  * ```tsx
- * <CmsCrud>
- *   {({
- *     isLoading,
- *     error,
- *     items,
- *     item,
- *     currentCollection,
- *     create,
- *     getAll,
- *     getById,
- *     update,
- *     delete: deleteItem,
- *     setCollection
- *   }) => (
- *     <div className="cms-manager">
- *       <h2>CMS Items</h2>
- *       <p>Current Collection: {currentCollection}</p>
+ * import { CmsCrud } from '@wix/cms/components';
  *
- *       {error && <div className="error" role="alert">{error}</div>}
+ * function CmsPage() {
+ *   return (
+ *     <CmsCrud.Root cmsCrudServiceConfig={{ collectionId: 'BlogPosts' }}>
+ *       <CmsCrud>
+ *         {({
+ *           isLoading,
+ *           error,
+ *           items,
+ *           item,
+ *           currentCollection,
+ *           create,
+ *           getAll,
+ *           getById,
+ *           update,
+ *           delete: deleteItem,
+ *           setCollection
+ *         }) => (
+ *           <div className="cms-manager">
+ *             <h2>CMS Items</h2>
+ *             <p>Current Collection: {currentCollection}</p>
  *
- *       <div className="collection-selector">
- *         <button onClick={() => setCollection('BlogPosts')}>
- *           Switch to Blog Posts
- *         </button>
- *         <button onClick={() => setCollection('Comments')}>
- *           Switch to Comments
- *         </button>
- *       </div>
+ *             {error && <div className="error" role="alert">{error}</div>}
  *
- *       <div className="actions">
- *         <button
- *           onClick={() => getAll(currentCollection)}
- *           disabled={isLoading}
- *         >
- *           {isLoading ? 'Loading...' : `Refresh Items`}
- *         </button>
+ *             <div className="collection-selector">
+ *               <button onClick={() => setCollection('BlogPosts')}>
+ *                 Switch to Blog Posts
+ *               </button>
+ *               <button onClick={() => setCollection('Comments')}>
+ *                 Switch to Comments
+ *               </button>
+ *             </div>
  *
- *         <button
- *           onClick={() => create(currentCollection, {
- *             title: 'New Item',
- *             description: `Created in ${currentCollection}`
- *           })}
- *           disabled={isLoading}
- *         >
- *           {isLoading ? 'Creating...' : 'Create New Item'}
- *         </button>
- *       </div>
+ *             <div className="actions">
+ *               <button
+ *                 onClick={() => getAll(currentCollection)}
+ *                 disabled={isLoading}
+ *               >
+ *                 {isLoading ? 'Loading...' : `Refresh Items`}
+ *               </button>
  *
- *       <div className="items-list">
- *         {items.length === 0 ? (
- *           <p>No items found in {currentCollection}. Create one to get started.</p>
- *         ) : (
- *           <ul>
- *             {items.map(item => (
- *               <li key={item._id} className="item">
- *                 <div className="item-content">
- *                   <h3>{item.title}</h3>
- *                   <p>{item.description}</p>
- *                 </div>
- *                 <div className="item-actions">
- *                   <button onClick={() => getById(currentCollection, item._id)}>
- *                     View
- *                   </button>
- *                   <button onClick={() => update(currentCollection, {
- *                     ...item,
- *                     title: `${item.title} (Updated)`
- *                   })}>
- *                     Update
- *                   </button>
- *                   <button onClick={() => deleteItem(currentCollection, item._id)}>
- *                     Delete
- *                   </button>
- *                 </div>
- *               </li>
- *             ))}
- *           </ul>
+ *               <button
+ *                 onClick={() => create(currentCollection, {
+ *                   title: 'New Item',
+ *                   description: `Created in ${currentCollection}`
+ *                 })}
+ *                 disabled={isLoading}
+ *               >
+ *                 {isLoading ? 'Creating...' : 'Create New Item'}
+ *               </button>
+ *             </div>
+ *
+ *             <div className="items-list">
+ *               {items.length === 0 ? (
+ *                 <p>No items found in {currentCollection}. Create one to get started.</p>
+ *               ) : (
+ *                 <ul>
+ *                   {items.map(item => (
+ *                     <li key={item._id} className="item">
+ *                       <div className="item-content">
+ *                         <h3>{item.title}</h3>
+ *                         <p>{item.description}</p>
+ *                       </div>
+ *                       <div className="item-actions">
+ *                         <button onClick={() => getById(currentCollection, item._id)}>
+ *                           View
+ *                         </button>
+ *                         <button onClick={() => update(currentCollection, {
+ *                           ...item,
+ *                           title: `${item.title} (Updated)`
+ *                         })}>
+ *                           Update
+ *                         </button>
+ *                         <button onClick={() => deleteItem(currentCollection, item._id)}>
+ *                           Delete
+ *                         </button>
+ *                       </div>
+ *                     </li>
+ *                   ))}
+ *                 </ul>
+ *               )}
+ *             </div>
+ *
+ *             {item && (
+ *               <div className="selected-item">
+ *                 <h3>Selected Item</h3>
+ *                 <pre>{JSON.stringify(item, null, 2)}</pre>
+ *               </div>
+ *             )}
+ *           </div>
  *         )}
- *       </div>
- *
- *       {item && (
- *         <div className="selected-item">
- *           <h3>Selected Item</h3>
- *           <pre>{JSON.stringify(item, null, 2)}</pre>
- *         </div>
- *       )}
- *     </div>
- *   )}
- * </CmsCrud>
+ *       </CmsCrud>
+ *     </CmsCrud.Root>
+ *   );
+ * }
  * ```
  */
 export function CmsCrud(props: CmsCrudProps) {
@@ -182,6 +250,14 @@ export function CmsCrud(props: CmsCrudProps) {
     delete: deleteItem,
     setCollection,
   } = useService(CmsCrudServiceDefinition);
+
+  // Auto-fetch items on mount if autoFetch is true (default)
+  React.useEffect(() => {
+    const autoFetch = props.autoFetch !== false;
+    if (autoFetch) {
+      getAll(currentCollectionSignal.get());
+    }
+  }, []);
 
   return props.children({
     isLoading: loadingSignal.get(),
