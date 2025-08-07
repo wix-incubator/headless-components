@@ -4,6 +4,7 @@ import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as SelectedVariant from "./core/SelectedVariant.js";
 import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
+import { renderAsChild, type AsChildChildren } from "../utils/index.js";
 
 /**
  * Props for the Product root component following the documented API
@@ -60,13 +61,11 @@ export function Root(props: ProductRootProps): React.ReactNode {
  * Props for Product Name component
  */
 export interface NameProps {
+  /** When true, renders as a child component instead of default h1 */
   asChild?: boolean;
-  children?:
-    | React.ReactNode
-    | ((
-        props: { name: string; className?: string },
-        ref: React.Ref<HTMLElement>,
-      ) => React.ReactNode);
+  /** Custom render function or React element when using asChild */
+  children?: AsChildChildren<{ name: string } & NameProps>;
+  /** CSS classes to apply to the default h1 element */
   className?: string;
 }
 
@@ -95,33 +94,26 @@ export interface NameProps {
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
+  const { asChild, children, className } = props;
+
   return (
     <CoreProduct.Name>
       {({ name }) => {
-        if (props.asChild && props.children) {
-          // Handle React elements (JSX like <h1>)
-          if (React.isValidElement(props.children)) {
-            const { className } = props.children.props;
-
-            return React.cloneElement(
-              props.children as React.ReactElement<any>,
-              {
-                ref,
-                className,
-                children: name,
-              },
-            );
-          }
-          // Handle render functions and React components (including forwardRef)
-          if (typeof props.children === "function") {
-            return props.children({ name, className: props.className }, ref);
-          }
+        // Handle asChild rendering
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: { name, ...props },
+            ref,
+            content: name,
+          });
+          if (rendered) return rendered;
         }
 
         return (
           <h1
             ref={ref as React.Ref<HTMLHeadingElement>}
-            className={props.className}
+            className={className}
             data-testid="product-name"
           >
             {name}
@@ -171,8 +163,14 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
                 ? JSON.stringify(description)
                 : plainDescription || "";
 
-          if (asChild && children) {
-            return children({ description: content }, ref);
+          if (asChild) {
+            const rendered = renderAsChild({
+              children,
+              props: { description: content },
+              ref,
+              content,
+            });
+            if (rendered) return rendered;
           }
 
           if (as === "html" && typeof content === "string") {

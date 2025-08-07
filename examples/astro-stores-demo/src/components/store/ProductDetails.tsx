@@ -218,23 +218,13 @@ export default function ProductDetails({
               <div className="space-y-8">
                 {/* Product Name & Price */}
                 <div>
-                  {/* <ProductPrimitive.Name>
-                    {({ name }) => (
-                      <h1
-                        className="text-4xl font-bold text-content-primary mb-4"
-                        data-testid="product-name"
-                      >
-                        {name}
-                      </h1>
-                    )}
-                  </ProductPrimitive.Name> */}
                   <Product.Root product={product}>
-                    {/* <Product.Name className="text-4xl font-bold text-content-primary mb-4" /> */}
-                    {/* <Product.Name asChild>
-                      <h1 className="text-4xl font-bold text-content-primary mb-4" />
-                    </Product.Name> */}
+                    <Product.Name className="text-4xl font-bold text-content-primary mb-4" />
                     <Product.Name asChild>
-                      {React.forwardRef(({ name, ...props }, ref) => (
+                      <h1 className="text-4xl font-bold text-content-primary mb-4" />
+                    </Product.Name>
+                    <Product.Name asChild>
+                      {React.forwardRef(({ name, ...props }: any, ref) => (
                         <h1
                           {...props}
                           className="text-4xl font-bold text-content-primary mb-4"
@@ -243,7 +233,6 @@ export default function ProductDetails({
                         </h1>
                       ))}
                     </Product.Name>
-                    {/* <Product.Name className="text-4xl font-bold text-content-primary mb-4" /> */}
                   </Product.Root>
                   <SelectedVariantPrimitive.Price>
                     {({ price, compareAtPrice }) => (
