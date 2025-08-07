@@ -1,8 +1,8 @@
 import React from "react";
-import * as ProductPrimitive from "./core/Product.js";
-import * as ProductVariantSelectorPrimitive from "./core/ProductVariantSelector.js";
-import * as ProductModifiersPrimitive from "./core/ProductModifiers.js";
-import * as SelectedVariantPrimitive from "./core/SelectedVariant.js";
+import * as CoreProduct from "./core/Product.js";
+import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as ProductModifiers from "./core/ProductModifiers.js";
+import * as SelectedVariant from "./core/SelectedVariant.js";
 import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
 
 /**
@@ -44,17 +44,15 @@ export interface ProductRootProps {
  */
 export function Root(props: ProductRootProps): React.ReactNode {
   return (
-    <ProductPrimitive.Root productServiceConfig={{ product: props.product }}>
-      <ProductVariantSelectorPrimitive.Root>
-        <ProductModifiersPrimitive.Root>
-          <SelectedVariantPrimitive.Root>
-            <div data-testid="product-details">
-              {props.children}
-            </div>
-          </SelectedVariantPrimitive.Root>
-        </ProductModifiersPrimitive.Root>
-      </ProductVariantSelectorPrimitive.Root>
-    </ProductPrimitive.Root>
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
+      <ProductVariantSelector.Root>
+        <ProductModifiers.Root>
+          <SelectedVariant.Root>
+            <div data-testid="product-details">{props.children}</div>
+          </SelectedVariant.Root>
+        </ProductModifiers.Root>
+      </ProductVariantSelector.Root>
+    </CoreProduct.Root>
   );
 }
 
@@ -93,7 +91,7 @@ export interface NameProps {
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   return (
-    <ProductPrimitive.Name>
+    <CoreProduct.Name>
       {({ name }) => {
         if (props.asChild && props.children) {
           return props.children({ name }, ref);
@@ -109,7 +107,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
           </h1>
         );
       }}
-    </ProductPrimitive.Name>
+    </CoreProduct.Name>
   );
 });
 
@@ -119,9 +117,12 @@ Name.displayName = "Product.Name";
  * Props for Product Description component
  */
 export interface DescriptionProps {
-  as?: 'plain' | 'html' | 'ricos';
+  as?: "plain" | "html" | "ricos";
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, { description: string }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    { description: string }
+  >;
   className?: string;
 }
 
@@ -135,37 +136,44 @@ export interface DescriptionProps {
  * <Product.Description as="html" className="prose" />
  * ```
  */
-export const Description = React.forwardRef<HTMLElement, DescriptionProps>((props, ref) => {
-  const { as = 'plain', asChild, children, className } = props;
+export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
+  (props, ref) => {
+    const { as = "plain", asChild, children, className } = props;
 
-  return (
-    <ProductPrimitive.Description>
-      {({ plainDescription, description }) => {
-        const content = as === 'html' ? plainDescription : (as === 'ricos' ? JSON.stringify(description) : plainDescription || '');
+    return (
+      <CoreProduct.Description>
+        {({ plainDescription, description }) => {
+          const content =
+            as === "html"
+              ? plainDescription
+              : as === "ricos"
+                ? JSON.stringify(description)
+                : plainDescription || "";
 
-        if (asChild && children) {
-          return children({ description: content }, ref);
-        }
+          if (asChild && children) {
+            return children({ description: content }, ref);
+          }
 
-        if (as === 'html' && typeof content === 'string') {
+          if (as === "html" && typeof content === "string") {
+            return (
+              <div
+                ref={ref as React.Ref<HTMLDivElement>}
+                className={className}
+                dangerouslySetInnerHTML={{ __html: content }}
+              />
+            );
+          }
+
           return (
-            <div
-              ref={ref as React.Ref<HTMLDivElement>}
-              className={className}
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
+            <div ref={ref as React.Ref<HTMLDivElement>} className={className}>
+              {typeof content === "string" ? content : ""}
+            </div>
           );
-        }
-
-        return (
-          <div ref={ref as React.Ref<HTMLDivElement>} className={className}>
-            {typeof content === 'string' ? content : ''}
-          </div>
-        );
-      }}
-    </ProductPrimitive.Description>
-  );
-});
+        }}
+      </CoreProduct.Description>
+    );
+  },
+);
 
 Description.displayName = "Product.Description";
 
@@ -174,7 +182,10 @@ Description.displayName = "Product.Description";
  */
 export interface PriceProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, { price: string; formattedPrice: string }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    { price: string; formattedPrice: string }
+  >;
   className?: string;
 }
 
@@ -189,7 +200,7 @@ export interface PriceProps {
  */
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
   return (
-    <SelectedVariantPrimitive.Price>
+    <SelectedVariant.Price>
       {({ price, compareAtPrice }) => {
         const isDiscounted = compareAtPrice !== null;
 
@@ -202,13 +213,13 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
             ref={ref as React.Ref<HTMLSpanElement>}
             className={props.className}
             data-testid="product-price"
-            data-discounted={isDiscounted ? 'true' : undefined}
+            data-discounted={isDiscounted ? "true" : undefined}
           >
             {price}
           </span>
         );
       }}
-    </SelectedVariantPrimitive.Price>
+    </SelectedVariant.Price>
   );
 });
 
@@ -219,7 +230,10 @@ Price.displayName = "Product.Price";
  */
 export interface CompareAtPriceProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, { price: string; formattedPrice: string }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    { price: string; formattedPrice: string }
+  >;
   className?: string;
 }
 
@@ -232,14 +246,20 @@ export interface CompareAtPriceProps {
  * <Product.CompareAtPrice className="text-lg text-content-faded line-through hidden data-[discounted]:inline" />
  * ```
  */
-export const CompareAtPrice = React.forwardRef<HTMLElement, CompareAtPriceProps>((props, ref) => {
+export const CompareAtPrice = React.forwardRef<
+  HTMLElement,
+  CompareAtPriceProps
+>((props, ref) => {
   return (
-    <SelectedVariantPrimitive.Price>
+    <SelectedVariant.Price>
       {({ compareAtPrice }) => {
         if (!compareAtPrice) return null;
 
         if (props.asChild && props.children) {
-          return props.children({ price: compareAtPrice, formattedPrice: compareAtPrice }, ref);
+          return props.children(
+            { price: compareAtPrice, formattedPrice: compareAtPrice },
+            ref,
+          );
         }
 
         return (
@@ -253,7 +273,7 @@ export const CompareAtPrice = React.forwardRef<HTMLElement, CompareAtPriceProps>
           </span>
         );
       }}
-    </SelectedVariantPrimitive.Price>
+    </SelectedVariant.Price>
   );
 });
 
@@ -281,17 +301,13 @@ export interface VariantsProps {
  */
 export function Variants(props: VariantsProps): React.ReactNode {
   return (
-    <ProductVariantSelectorPrimitive.Options>
+    <ProductVariantSelector.Options>
       {({ hasOptions }) => {
         if (!hasOptions) return null;
 
-        return (
-          <div data-testid="product-variants">
-            {props.children}
-          </div>
-        );
+        return <div data-testid="product-variants">{props.children}</div>;
       }}
-    </ProductVariantSelectorPrimitive.Options>
+    </ProductVariantSelector.Options>
   );
 }
 
@@ -308,7 +324,7 @@ export interface VariantOptionsProps {
  */
 export function VariantOptions(props: VariantOptionsProps): React.ReactNode {
   return (
-    <ProductVariantSelectorPrimitive.Options>
+    <ProductVariantSelector.Options>
       {({ hasOptions }) => {
         if (!hasOptions && props.emptyState) {
           return <>{props.emptyState}</>;
@@ -318,7 +334,7 @@ export function VariantOptions(props: VariantOptionsProps): React.ReactNode {
 
         return <>{props.children}</>;
       }}
-    </ProductVariantSelectorPrimitive.Options>
+    </ProductVariantSelector.Options>
   );
 }
 
@@ -332,23 +348,28 @@ export interface VariantOptionRepeaterProps {
 /**
  * Repeater component that renders individual variant options.
  */
-export function VariantOptionRepeater(props: VariantOptionRepeaterProps): React.ReactNode {
+export function VariantOptionRepeater(
+  props: VariantOptionRepeaterProps,
+): React.ReactNode {
   return (
-    <ProductVariantSelectorPrimitive.Options>
+    <ProductVariantSelector.Options>
       {({ options }) => (
         <>
           {options.map((option, index) => (
-            <ProductVariantSelectorPrimitive.Option key={option.name || index} option={option}>
+            <ProductVariantSelector.Option
+              key={option.name || index}
+              option={option}
+            >
               {() => (
                 <div data-testid="product-variant-option">
                   {props.children({ option }, React.createRef())}
                 </div>
               )}
-            </ProductVariantSelectorPrimitive.Option>
+            </ProductVariantSelector.Option>
           ))}
         </>
       )}
-    </ProductVariantSelectorPrimitive.Options>
+    </ProductVariantSelector.Options>
   );
 }
 
@@ -374,17 +395,13 @@ export interface ModifiersProps {
  */
 export function Modifiers(props: ModifiersProps): React.ReactNode {
   return (
-    <ProductModifiersPrimitive.Modifiers>
+    <ProductModifiers.Modifiers>
       {({ hasModifiers }) => {
         if (!hasModifiers) return null;
 
-        return (
-          <div data-testid="product-modifiers">
-            {props.children}
-          </div>
-        );
+        return <div data-testid="product-modifiers">{props.children}</div>;
       }}
-    </ProductModifiersPrimitive.Modifiers>
+    </ProductModifiers.Modifiers>
   );
 }
 
@@ -401,7 +418,7 @@ export interface ModifierOptionsProps {
  */
 export function ModifierOptions(props: ModifierOptionsProps): React.ReactNode {
   return (
-    <ProductModifiersPrimitive.Modifiers>
+    <ProductModifiers.Modifiers>
       {({ hasModifiers }) => {
         if (!hasModifiers && props.emptyState) {
           return <>{props.emptyState}</>;
@@ -411,7 +428,7 @@ export function ModifierOptions(props: ModifierOptionsProps): React.ReactNode {
 
         return <>{props.children}</>;
       }}
-    </ProductModifiersPrimitive.Modifiers>
+    </ProductModifiers.Modifiers>
   );
 }
 
@@ -420,29 +437,34 @@ export function ModifierOptions(props: ModifierOptionsProps): React.ReactNode {
  */
 export interface ModifierOptionRepeaterProps {
   children: React.ForwardRefRenderFunction<HTMLElement, { modifier: any }>;
-  allowedTypes?: ('color' | 'text' | 'free-text')[];
+  allowedTypes?: ("color" | "text" | "free-text")[];
 }
 
 /**
  * Repeater component that renders individual modifier options.
  */
-export function ModifierOptionRepeater(props: ModifierOptionRepeaterProps): React.ReactNode {
-  const { allowedTypes = ['color', 'text', 'free-text'] } = props;
+export function ModifierOptionRepeater(
+  props: ModifierOptionRepeaterProps,
+): React.ReactNode {
+  const { allowedTypes = ["color", "text", "free-text"] } = props;
 
   return (
-    <ProductModifiersPrimitive.Modifiers>
+    <ProductModifiers.Modifiers>
       {({ modifiers }) => (
         <>
           {modifiers.map((modifier, index) => (
-            <ProductModifiersPrimitive.Modifier key={modifier.name || index} modifier={modifier}>
+            <ProductModifiers.Modifier
+              key={modifier.name || index}
+              modifier={modifier}
+            >
               {({ isFreeText, hasChoices }) => {
                 // Determine modifier type based on its properties
-                let modifierType: 'color' | 'text' | 'free-text' = 'text';
+                let modifierType: "color" | "text" | "free-text" = "text";
                 if (isFreeText) {
-                  modifierType = 'free-text';
+                  modifierType = "free-text";
                 } else if (hasChoices) {
                   // Check if any choice has color information
-                  modifierType = 'text'; // Default to text, could be enhanced to detect color
+                  modifierType = "text"; // Default to text, could be enhanced to detect color
                 }
 
                 if (!allowedTypes.includes(modifierType)) return null;
@@ -456,11 +478,11 @@ export function ModifierOptionRepeater(props: ModifierOptionRepeaterProps): Reac
                   </div>
                 );
               }}
-            </ProductModifiersPrimitive.Modifier>
+            </ProductModifiers.Modifier>
           ))}
         </>
       )}
-    </ProductModifiersPrimitive.Modifiers>
+    </ProductModifiers.Modifiers>
   );
 }
 
@@ -487,7 +509,7 @@ export interface QuantityProps {
  */
 export function Quantity(props: QuantityProps): React.ReactNode {
   return (
-    <ProductVariantSelectorPrimitive.Stock>
+    <ProductVariantSelector.Stock>
       {({ selectedQuantity, incrementQuantity, decrementQuantity }) => (
         <div data-testid="product-quantity">
           {React.Children.map(props.children, (child) => {
@@ -503,7 +525,7 @@ export function Quantity(props: QuantityProps): React.ReactNode {
           })}
         </div>
       )}
-    </ProductVariantSelectorPrimitive.Stock>
+    </ProductVariantSelector.Stock>
   );
 }
 
@@ -522,7 +544,10 @@ export interface QuantityButtonProps {
 /**
  * Quantity increment button
  */
-export const QuantityIncrement = React.forwardRef<HTMLButtonElement, QuantityButtonProps>((props, ref) => {
+export const QuantityIncrement = React.forwardRef<
+  HTMLButtonElement,
+  QuantityButtonProps
+>((props, ref) => {
   if (props.asChild && props.children) {
     return props.children({}, ref);
   }
@@ -544,7 +569,10 @@ QuantityIncrement.displayName = "Product.Quantity.Increment";
 /**
  * Quantity decrement button
  */
-export const QuantityDecrement = React.forwardRef<HTMLButtonElement, QuantityButtonProps>((props, ref) => {
+export const QuantityDecrement = React.forwardRef<
+  HTMLButtonElement,
+  QuantityButtonProps
+>((props, ref) => {
   if (props.asChild && props.children) {
     return props.children({}, ref);
   }
@@ -578,7 +606,10 @@ export interface QuantityInputProps {
 /**
  * Quantity input field
  */
-export const QuantityInput = React.forwardRef<HTMLInputElement, QuantityInputProps>((props, ref) => {
+export const QuantityInput = React.forwardRef<
+  HTMLInputElement,
+  QuantityInputProps
+>((props, ref) => {
   if (props.asChild && props.children) {
     return props.children({}, ref);
   }
@@ -611,7 +642,7 @@ export interface MediaGalleryProps {
   infinite?: boolean;
   autoPlay?: boolean;
   autoPlayInterval?: number;
-  direction?: 'forward' | 'backward' | 'top' | 'bottom';
+  direction?: "forward" | "backward" | "top" | "bottom";
 }
 
 /**
@@ -629,13 +660,9 @@ export interface MediaGalleryProps {
  */
 export function MediaGallery(props: MediaGalleryProps): React.ReactNode {
   return (
-    <ProductPrimitive.Media>
-      {() => (
-        <div data-testid="product-media-gallery">
-          {props.children}
-        </div>
-      )}
-    </ProductPrimitive.Media>
+    <CoreProduct.Media>
+      {() => <div data-testid="product-media-gallery">{props.children}</div>}
+    </CoreProduct.Media>
   );
 }
 
@@ -646,25 +673,34 @@ export const Action = {
   /**
    * Props for action buttons
    */
-  AddToCart: React.forwardRef<HTMLButtonElement, {
-    asChild?: boolean;
-    label: string;
-    children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-      disabled: boolean;
-      isLoading: boolean;
-      onClick: () => Promise<void>;
-    }>;
-    className?: string;
-  }>((props, ref) => {
+  AddToCart: React.forwardRef<
+    HTMLButtonElement,
+    {
+      asChild?: boolean;
+      label: string;
+      children?: React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          disabled: boolean;
+          isLoading: boolean;
+          onClick: () => Promise<void>;
+        }
+      >;
+      className?: string;
+    }
+  >((props, ref) => {
     return (
-      <SelectedVariantPrimitive.Actions>
+      <SelectedVariant.Actions>
         {({ addToCart, canAddToCart, isLoading }) => {
           if (props.asChild && props.children) {
-            return props.children({
-              disabled: !canAddToCart,
-              isLoading,
-              onClick: addToCart,
-            }, ref);
+            return props.children(
+              {
+                disabled: !canAddToCart,
+                isLoading,
+                onClick: addToCart,
+              },
+              ref,
+            );
           }
 
           return (
@@ -673,35 +709,44 @@ export const Action = {
               className={props.className}
               onClick={addToCart}
               disabled={!canAddToCart || isLoading}
-              data-in-progress={isLoading ? 'true' : undefined}
+              data-in-progress={isLoading ? "true" : undefined}
             >
-              {isLoading ? 'Adding...' : props.label}
+              {isLoading ? "Adding..." : props.label}
             </button>
           );
         }}
-      </SelectedVariantPrimitive.Actions>
+      </SelectedVariant.Actions>
     );
   }),
 
-  BuyNow: React.forwardRef<HTMLButtonElement, {
-    asChild?: boolean;
-    label: string;
-    children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-      disabled: boolean;
-      isLoading: boolean;
-      onClick: () => Promise<void>;
-    }>;
-    className?: string;
-  }>((props, ref) => {
+  BuyNow: React.forwardRef<
+    HTMLButtonElement,
+    {
+      asChild?: boolean;
+      label: string;
+      children?: React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          disabled: boolean;
+          isLoading: boolean;
+          onClick: () => Promise<void>;
+        }
+      >;
+      className?: string;
+    }
+  >((props, ref) => {
     return (
-      <SelectedVariantPrimitive.Actions>
+      <SelectedVariant.Actions>
         {({ buyNow, canAddToCart, isLoading }) => {
           if (props.asChild && props.children) {
-            return props.children({
-              disabled: !canAddToCart,
-              isLoading,
-              onClick: buyNow,
-            }, ref);
+            return props.children(
+              {
+                disabled: !canAddToCart,
+                isLoading,
+                onClick: buyNow,
+              },
+              ref,
+            );
           }
 
           return (
@@ -710,37 +755,46 @@ export const Action = {
               className={props.className}
               onClick={buyNow}
               disabled={!canAddToCart || isLoading}
-              data-in-progress={isLoading ? 'true' : undefined}
+              data-in-progress={isLoading ? "true" : undefined}
             >
-              {isLoading ? 'Processing...' : props.label}
+              {isLoading ? "Processing..." : props.label}
             </button>
           );
         }}
-      </SelectedVariantPrimitive.Actions>
+      </SelectedVariant.Actions>
     );
   }),
 
-  PreOrder: React.forwardRef<HTMLButtonElement, {
-    asChild?: boolean;
-    label: string;
-    children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-      disabled: boolean;
-      isLoading: boolean;
-      onClick: () => Promise<void>;
-    }>;
-    className?: string;
-  }>((props, ref) => {
+  PreOrder: React.forwardRef<
+    HTMLButtonElement,
+    {
+      asChild?: boolean;
+      label: string;
+      children?: React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          disabled: boolean;
+          isLoading: boolean;
+          onClick: () => Promise<void>;
+        }
+      >;
+      className?: string;
+    }
+  >((props, ref) => {
     return (
-      <SelectedVariantPrimitive.Actions>
+      <SelectedVariant.Actions>
         {({ addToCart, isPreOrderEnabled, isLoading }) => {
           if (!isPreOrderEnabled) return null;
 
           if (props.asChild && props.children) {
-            return props.children({
-              disabled: !isPreOrderEnabled,
-              isLoading,
-              onClick: addToCart,
-            }, ref);
+            return props.children(
+              {
+                disabled: !isPreOrderEnabled,
+                isLoading,
+                onClick: addToCart,
+              },
+              ref,
+            );
           }
 
           return (
@@ -749,13 +803,13 @@ export const Action = {
               className={props.className}
               onClick={addToCart}
               disabled={!isPreOrderEnabled || isLoading}
-              data-in-progress={isLoading ? 'true' : undefined}
+              data-in-progress={isLoading ? "true" : undefined}
             >
-              {isLoading ? 'Processing...' : props.label}
+              {isLoading ? "Processing..." : props.label}
             </button>
           );
         }}
-      </SelectedVariantPrimitive.Actions>
+      </SelectedVariant.Actions>
     );
   }),
 };

@@ -4,10 +4,10 @@ import { WixMediaImage } from '../media';
 import { productsV3 } from '@wix/stores';
 
 import {
-  Product,
-  ProductModifiers,
-  ProductVariantSelector,
-  SelectedVariant,
+  CoreProduct as ProductPrimitive,
+  ProductModifiers as ProductModifiersPrimitive,
+  ProductVariantSelector as ProductVariantSelectorPrimitive,
+  SelectedVariant as SelectedVariantPrimitive,
 } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
@@ -16,7 +16,7 @@ import { getStockStatusMessage } from './product-status-enums';
 
 // Reusable FreeText Input Component
 const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
-  <ProductModifiers.FreeText modifier={modifier}>
+  <ProductModifiersPrimitive.FreeText modifier={modifier}>
     {({
       value,
       setText,
@@ -48,7 +48,7 @@ const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
         )}
       </div>
     )}
-  </ProductModifiers.FreeText>
+  </ProductModifiersPrimitive.FreeText>
 );
 
 export default function ProductDetails({
@@ -64,13 +64,13 @@ export default function ProductDetails({
         className="grid grid-cols-1 lg:grid-cols-2 gap-12"
         data-testid="product-details"
       >
-        <Product.Root productServiceConfig={{ product }}>
+        <ProductPrimitive.Root productServiceConfig={{ product }}>
           <MediaGallery.Root
             mediaGalleryServiceConfig={{
               media: product.media?.itemsInfo?.items ?? [],
             }}
           >
-            <SelectedVariant.Root>
+            <SelectedVariantPrimitive.Root>
               {/* Product Images */}
               <div className="space-y-4">
                 {/* Main Image */}
@@ -216,7 +216,7 @@ export default function ProductDetails({
               <div className="space-y-8">
                 {/* Product Name & Price */}
                 <div>
-                  <Product.Name>
+                  <ProductPrimitive.Name>
                     {({ name }) => (
                       <h1
                         className="text-4xl font-bold text-content-primary mb-4"
@@ -225,8 +225,8 @@ export default function ProductDetails({
                         {name}
                       </h1>
                     )}
-                  </Product.Name>
-                  <SelectedVariant.Price>
+                  </ProductPrimitive.Name>
+                  <SelectedVariantPrimitive.Price>
                     {({ price, compareAtPrice }) => (
                       <div className="space-y-1">
                         <div className="text-3xl font-bold text-content-primary">
@@ -241,9 +241,9 @@ export default function ProductDetails({
                           )}
                       </div>
                     )}
-                  </SelectedVariant.Price>
+                  </SelectedVariantPrimitive.Price>
                   {isQuickView && (
-                    <SelectedVariant.SKU>
+                    <SelectedVariantPrimitive.SKU>
                       {({ sku }) =>
                         sku && (
                           <>
@@ -254,12 +254,12 @@ export default function ProductDetails({
                           </>
                         )
                       }
-                    </SelectedVariant.SKU>
+                    </SelectedVariantPrimitive.SKU>
                   )}
                 </div>
 
                 {/* Product Description */}
-                <Product.Description>
+                <ProductPrimitive.Description>
                   {({ plainDescription }) => (
                     <>
                       {plainDescription && !isQuickView && (
@@ -279,11 +279,11 @@ export default function ProductDetails({
                       )}
                     </>
                   )}
-                </Product.Description>
+                </ProductPrimitive.Description>
 
                 {/* Product Options (if any) */}
-                <ProductVariantSelector.Root>
-                  <ProductVariantSelector.Options>
+                <ProductVariantSelectorPrimitive.Root>
+                  <ProductVariantSelectorPrimitive.Options>
                     {({ options, hasOptions }) => (
                       <>
                         {hasOptions && (
@@ -300,7 +300,9 @@ export default function ProductDetails({
                                 key={option.name}
                                 data-testid="product-option"
                               >
-                                <ProductVariantSelector.Option option={option}>
+                                <ProductVariantSelectorPrimitive.Option
+                                  option={option}
+                                >
                                   {({ name, choices, hasChoices }) => (
                                     <>
                                       <h3 className="text-lg font-semibold text-content-primary mb-3">
@@ -317,7 +319,7 @@ export default function ProductDetails({
                                               choice.colorCode;
 
                                             return (
-                                              <ProductVariantSelector.Choice
+                                              <ProductVariantSelectorPrimitive.Choice
                                                 key={
                                                   choice.value ||
                                                   choice.description ||
@@ -424,18 +426,18 @@ export default function ProductDetails({
                                                     )}
                                                   </>
                                                 )}
-                                              </ProductVariantSelector.Choice>
+                                              </ProductVariantSelectorPrimitive.Choice>
                                             );
                                           })}
                                         </div>
                                       )}
                                     </>
                                   )}
-                                </ProductVariantSelector.Option>
+                                </ProductVariantSelectorPrimitive.Option>
                               </div>
                             ))}
 
-                            <ProductVariantSelector.Reset>
+                            <ProductVariantSelectorPrimitive.Reset>
                               {({ reset, hasSelections }) =>
                                 hasSelections && (
                                   <div className="pt-4">
@@ -448,16 +450,16 @@ export default function ProductDetails({
                                   </div>
                                 )
                               }
-                            </ProductVariantSelector.Reset>
+                            </ProductVariantSelectorPrimitive.Reset>
                           </div>
                         )}
                       </>
                     )}
-                  </ProductVariantSelector.Options>
+                  </ProductVariantSelectorPrimitive.Options>
 
                   {/* Product Modifiers */}
-                  <ProductModifiers.Root>
-                    <ProductModifiers.Modifiers>
+                  <ProductModifiersPrimitive.Root>
+                    <ProductModifiersPrimitive.Modifiers>
                       {({ modifiers, hasModifiers }) => (
                         <>
                           {hasModifiers && (
@@ -467,7 +469,7 @@ export default function ProductDetails({
                               </h3>
 
                               {modifiers.map((modifier: any) => (
-                                <ProductModifiers.Modifier
+                                <ProductModifiersPrimitive.Modifier
                                   key={modifier.name}
                                   modifier={modifier}
                                 >
@@ -495,7 +497,7 @@ export default function ProductDetails({
                                         hasChoices && (
                                           <div className="flex flex-wrap gap-2">
                                             {choices.map((choice: any) => (
-                                              <ProductModifiers.Choice
+                                              <ProductModifiersPrimitive.Choice
                                                 key={choice.value}
                                                 modifier={modifier}
                                                 choice={choice}
@@ -522,7 +524,7 @@ export default function ProductDetails({
                                                     title={value}
                                                   />
                                                 )}
-                                              </ProductModifiers.Choice>
+                                              </ProductModifiersPrimitive.Choice>
                                             ))}
                                           </div>
                                         )}
@@ -531,7 +533,7 @@ export default function ProductDetails({
                                         hasChoices && (
                                           <div className="flex flex-wrap gap-2">
                                             {choices.map((choice: any) => (
-                                              <ProductModifiers.Choice
+                                              <ProductModifiersPrimitive.Choice
                                                 key={choice.value}
                                                 modifier={modifier}
                                                 choice={choice}
@@ -553,7 +555,7 @@ export default function ProductDetails({
                                                     {value}
                                                   </button>
                                                 )}
-                                              </ProductModifiers.Choice>
+                                              </ProductModifiersPrimitive.Choice>
                                             ))}
                                           </div>
                                         )}
@@ -567,7 +569,7 @@ export default function ProductDetails({
                                               name={name}
                                             />
                                           ) : (
-                                            <ProductModifiers.ToggleFreeText
+                                            <ProductModifiersPrimitive.ToggleFreeText
                                               modifier={modifier}
                                             >
                                               {({
@@ -594,27 +596,27 @@ export default function ProductDetails({
                                                   )}
                                                 </div>
                                               )}
-                                            </ProductModifiers.ToggleFreeText>
+                                            </ProductModifiersPrimitive.ToggleFreeText>
                                           )}
                                         </>
                                       )}
                                     </div>
                                   )}
-                                </ProductModifiers.Modifier>
+                                </ProductModifiersPrimitive.Modifier>
                               ))}
                             </div>
                           )}
                         </>
                       )}
-                    </ProductModifiers.Modifiers>
-                  </ProductModifiers.Root>
+                    </ProductModifiersPrimitive.Modifiers>
+                  </ProductModifiersPrimitive.Root>
 
                   {/* Quantity Selector */}
                   <div className="space-y-3">
                     <h3 className="text-lg font-semibold text-content-primary">
                       Quantity
                     </h3>
-                    <ProductVariantSelector.Stock>
+                    <ProductVariantSelectorPrimitive.Stock>
                       {({
                         inStock,
                         isPreOrderEnabled,
@@ -670,12 +672,12 @@ export default function ProductDetails({
                           </div>
                         );
                       }}
-                    </ProductVariantSelector.Stock>
+                    </ProductVariantSelectorPrimitive.Stock>
                   </div>
 
                   {/* Add to Cart */}
                   <div className="space-y-4">
-                    <SelectedVariant.Actions>
+                    <SelectedVariantPrimitive.Actions>
                       {({
                         error,
                         isPreOrderEnabled,
@@ -701,10 +703,10 @@ export default function ProductDetails({
                           <ProductActionButtons isQuickView={isQuickView} />
                         </div>
                       )}
-                    </SelectedVariant.Actions>
+                    </SelectedVariantPrimitive.Actions>
 
                     {/* Stock Status */}
-                    <ProductVariantSelector.Stock>
+                    <ProductVariantSelectorPrimitive.Stock>
                       {({
                         inStock,
                         isPreOrderEnabled,
@@ -746,13 +748,13 @@ export default function ProductDetails({
                           )
                         );
                       }}
-                    </ProductVariantSelector.Stock>
+                    </ProductVariantSelectorPrimitive.Stock>
                   </div>
-                </ProductVariantSelector.Root>
+                </ProductVariantSelectorPrimitive.Root>
 
                 {/* Product Details */}
                 {!isQuickView && (
-                  <SelectedVariant.Details>
+                  <SelectedVariantPrimitive.Details>
                     {({ sku, weight }) => (
                       <>
                         {(sku || weight) && (
@@ -778,12 +780,12 @@ export default function ProductDetails({
                         )}
                       </>
                     )}
-                  </SelectedVariant.Details>
+                  </SelectedVariantPrimitive.Details>
                 )}
               </div>
-            </SelectedVariant.Root>
+            </SelectedVariantPrimitive.Root>
           </MediaGallery.Root>
-        </Product.Root>
+        </ProductPrimitive.Root>
       </div>
 
       {/* Current Cart Summary */}
