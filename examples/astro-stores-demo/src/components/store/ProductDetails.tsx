@@ -1,5 +1,6 @@
 import { MediaGallery } from '@wix/headless-media/react';
 import { WixMediaImage } from '../media';
+import React from 'react';
 
 import { productsV3 } from '@wix/stores';
 
@@ -8,6 +9,7 @@ import {
   ProductModifiers as ProductModifiersPrimitive,
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
+  Product,
 } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
@@ -216,7 +218,7 @@ export default function ProductDetails({
               <div className="space-y-8">
                 {/* Product Name & Price */}
                 <div>
-                  <ProductPrimitive.Name>
+                  {/* <ProductPrimitive.Name>
                     {({ name }) => (
                       <h1
                         className="text-4xl font-bold text-content-primary mb-4"
@@ -225,7 +227,24 @@ export default function ProductDetails({
                         {name}
                       </h1>
                     )}
-                  </ProductPrimitive.Name>
+                  </ProductPrimitive.Name> */}
+                  <Product.Root product={product}>
+                    {/* <Product.Name className="text-4xl font-bold text-content-primary mb-4" /> */}
+                    {/* <Product.Name asChild>
+                      <h1 className="text-4xl font-bold text-content-primary mb-4" />
+                    </Product.Name> */}
+                    <Product.Name asChild>
+                      {React.forwardRef(({ name, ...props }, ref) => (
+                        <h1
+                          {...props}
+                          className="text-4xl font-bold text-content-primary mb-4"
+                        >
+                          {name}
+                        </h1>
+                      ))}
+                    </Product.Name>
+                    {/* <Product.Name className="text-4xl font-bold text-content-primary mb-4" /> */}
+                  </Product.Root>
                   <SelectedVariantPrimitive.Price>
                     {({ price, compareAtPrice }) => (
                       <div className="space-y-1">

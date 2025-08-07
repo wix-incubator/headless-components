@@ -61,7 +61,12 @@ export function Root(props: ProductRootProps): React.ReactNode {
  */
 export interface NameProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, { name: string }>;
+  children?:
+    | React.ReactNode
+    | ((
+        props: { name: string; className?: string },
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
   className?: string;
 }
 
@@ -94,7 +99,23 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
     <CoreProduct.Name>
       {({ name }) => {
         if (props.asChild && props.children) {
-          return props.children({ name }, ref);
+          // Handle React elements (JSX like <h1>)
+          if (React.isValidElement(props.children)) {
+            const { className } = props.children.props;
+
+            return React.cloneElement(
+              props.children as React.ReactElement<any>,
+              {
+                ref,
+                className,
+                children: name,
+              },
+            );
+          }
+          // Handle render functions and React components (including forwardRef)
+          if (typeof props.children === "function") {
+            return props.children({ name, className: props.className }, ref);
+          }
         }
 
         return (
