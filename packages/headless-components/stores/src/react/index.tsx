@@ -8,3 +8,4 @@ export * as ProductListPagination from "./core/ProductListPagination.js";
 export * as ProductListSort from "./core/ProductListSort.js";
 export * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 export * as SelectedVariant from "./core/SelectedVariant.js";
+export * as CompositeProduct from "./CompositeProduct.js";
