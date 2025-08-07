@@ -1,14 +1,14 @@
 import React from "react";
-import * as Product from "./core/Product.js";
-import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
-import * as SelectedVariant from "./core/SelectedVariant.js";
+import * as ProductPrimitive from "./core/Product.js";
+import * as ProductVariantSelectorPrimitive from "./core/ProductVariantSelector.js";
+import * as ProductModifiersPrimitive from "./core/ProductModifiers.js";
+import * as SelectedVariantPrimitive from "./core/SelectedVariant.js";
 import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
 
 /**
- * Props for the CompositeProduct root component following the documented API
+ * Props for the Product root component following the documented API
  */
-export interface CompositeProductRootProps {
+export interface ProductRootProps {
   children: React.ReactNode;
   product: V3Product;
   selectedVariant?: any;
@@ -24,42 +24,42 @@ export interface CompositeProductRootProps {
  * @component
  * @example
  * ```tsx
- * import { CompositeProduct } from '@wix/stores/components';
+ * import { Product } from '@wix/stores/components';
  *
  * function ProductPage({ product }) {
  *   return (
- *     <CompositeProduct.Root product={product}>
- *       <CompositeProduct.Name className="text-4xl font-bold" />
- *       <CompositeProduct.Price className="text-2xl text-brand-primary" />
- *       <CompositeProduct.Variants>
- *         <CompositeProduct.VariantOptions>
- *           <CompositeProduct.VariantOptionRepeater />
- *         </CompositeProduct.VariantOptions>
- *       </CompositeProduct.Variants>
- *       <CompositeProduct.Action.AddToCart label="Add to Cart" />
- *     </CompositeProduct.Root>
+ *     <Product.Root product={product}>
+ *       <Product.Name className="text-4xl font-bold" />
+ *       <Product.Price className="text-2xl text-brand-primary" />
+ *       <Product.Variants>
+ *         <Product.VariantOptions>
+ *           <Product.VariantOptionRepeater />
+ *         </Product.VariantOptions>
+ *       </Product.Variants>
+ *       <Product.Action.AddToCart label="Add to Cart" />
+ *     </Product.Root>
  *   );
  * }
  * ```
  */
-export function Root(props: CompositeProductRootProps): React.ReactNode {
+export function Root(props: ProductRootProps): React.ReactNode {
   return (
-    <Product.Root productServiceConfig={{ product: props.product }}>
-      <ProductVariantSelector.Root>
-        <ProductModifiers.Root>
-          <SelectedVariant.Root>
+    <ProductPrimitive.Root productServiceConfig={{ product: props.product }}>
+      <ProductVariantSelectorPrimitive.Root>
+        <ProductModifiersPrimitive.Root>
+          <SelectedVariantPrimitive.Root>
             <div data-testid="product-details">
               {props.children}
             </div>
-          </SelectedVariant.Root>
-        </ProductModifiers.Root>
-      </ProductVariantSelector.Root>
-    </Product.Root>
+          </SelectedVariantPrimitive.Root>
+        </ProductModifiersPrimitive.Root>
+      </ProductVariantSelectorPrimitive.Root>
+    </ProductPrimitive.Root>
   );
 }
 
 /**
- * Props for CompositeProduct Name component
+ * Props for Product Name component
  */
 export interface NameProps {
   asChild?: boolean;
@@ -74,26 +74,26 @@ export interface NameProps {
  * @example
  * ```tsx
  * // Default usage
- * <CompositeProduct.Name className="text-4xl font-bold" />
+ * <Product.Name className="text-4xl font-bold" />
  *
  * // asChild with primitive
- * <CompositeProduct.Name asChild>
+ * <Product.Name asChild>
  *   <h1 className="text-4xl font-bold" />
- * </CompositeProduct.Name>
+ * </Product.Name>
  *
  * // asChild with react component
- * <CompositeProduct.Name asChild>
+ * <Product.Name asChild>
  *   {React.forwardRef(({name, ...props}, ref) => (
  *     <h1 ref={ref} {...props} className="text-4xl font-bold">
  *       {name}
  *     </h1>
  *   ))}
- * </CompositeProduct.Name>
+ * </Product.Name>
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   return (
-    <Product.Name>
+    <ProductPrimitive.Name>
       {({ name }) => {
         if (props.asChild && props.children) {
           return props.children({ name }, ref);
@@ -109,14 +109,14 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
           </h1>
         );
       }}
-    </Product.Name>
+    </ProductPrimitive.Name>
   );
 });
 
-Name.displayName = "CompositeProduct.Name";
+Name.displayName = "Product.Name";
 
 /**
- * Props for CompositeProduct Description component
+ * Props for Product Description component
  */
 export interface DescriptionProps {
   as?: 'plain' | 'html' | 'ricos';
@@ -131,15 +131,15 @@ export interface DescriptionProps {
  * @component
  * @example
  * ```tsx
- * <CompositeProduct.Description as="plain" className="text-content-secondary" />
- * <CompositeProduct.Description as="html" className="prose" />
+ * <Product.Description as="plain" className="text-content-secondary" />
+ * <Product.Description as="html" className="prose" />
  * ```
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>((props, ref) => {
   const { as = 'plain', asChild, children, className } = props;
 
   return (
-    <Product.Description>
+    <ProductPrimitive.Description>
       {({ plainDescription, description }) => {
         const content = as === 'html' ? plainDescription : (as === 'ricos' ? JSON.stringify(description) : plainDescription || '');
 
@@ -163,14 +163,14 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>((prop
           </div>
         );
       }}
-    </Product.Description>
+    </ProductPrimitive.Description>
   );
 });
 
-Description.displayName = "CompositeProduct.Description";
+Description.displayName = "Product.Description";
 
 /**
- * Props for CompositeProduct Price component
+ * Props for Product Price component
  */
 export interface PriceProps {
   asChild?: boolean;
@@ -184,12 +184,12 @@ export interface PriceProps {
  * @component
  * @example
  * ```tsx
- * <CompositeProduct.Price className="text-3xl font-bold text-content-primary data-[discounted]:bold" />
+ * <Product.Price className="text-3xl font-bold text-content-primary data-[discounted]:bold" />
  * ```
  */
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
   return (
-    <SelectedVariant.Price>
+    <SelectedVariantPrimitive.Price>
       {({ price, compareAtPrice }) => {
         const isDiscounted = compareAtPrice !== null;
 
@@ -208,14 +208,14 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
           </span>
         );
       }}
-    </SelectedVariant.Price>
+    </SelectedVariantPrimitive.Price>
   );
 });
 
-Price.displayName = "CompositeProduct.Price";
+Price.displayName = "Product.Price";
 
 /**
- * Props for CompositeProduct CompareAtPrice component
+ * Props for Product CompareAtPrice component
  */
 export interface CompareAtPriceProps {
   asChild?: boolean;
@@ -229,12 +229,12 @@ export interface CompareAtPriceProps {
  * @component
  * @example
  * ```tsx
- * <CompositeProduct.CompareAtPrice className="text-lg text-content-faded line-through hidden data-[discounted]:inline" />
+ * <Product.CompareAtPrice className="text-lg text-content-faded line-through hidden data-[discounted]:inline" />
  * ```
  */
 export const CompareAtPrice = React.forwardRef<HTMLElement, CompareAtPriceProps>((props, ref) => {
   return (
-    <SelectedVariant.Price>
+    <SelectedVariantPrimitive.Price>
       {({ compareAtPrice }) => {
         if (!compareAtPrice) return null;
 
@@ -253,14 +253,14 @@ export const CompareAtPrice = React.forwardRef<HTMLElement, CompareAtPriceProps>
           </span>
         );
       }}
-    </SelectedVariant.Price>
+    </SelectedVariantPrimitive.Price>
   );
 });
 
-CompareAtPrice.displayName = "CompositeProduct.CompareAtPrice";
+CompareAtPrice.displayName = "Product.CompareAtPrice";
 
 /**
- * Props for CompositeProduct Variants container
+ * Props for Product Variants container
  */
 export interface VariantsProps {
   children: React.ReactNode;
@@ -272,16 +272,16 @@ export interface VariantsProps {
  * @component
  * @example
  * ```tsx
- * <CompositeProduct.Variants>
- *   <CompositeProduct.VariantOptions>
- *     <CompositeProduct.VariantOptionRepeater />
- *   </CompositeProduct.VariantOptions>
- * </CompositeProduct.Variants>
+ * <Product.Variants>
+ *   <Product.VariantOptions>
+ *     <Product.VariantOptionRepeater />
+ *   </Product.VariantOptions>
+ * </Product.Variants>
  * ```
  */
 export function Variants(props: VariantsProps): React.ReactNode {
   return (
-    <ProductVariantSelector.Options>
+    <ProductVariantSelectorPrimitive.Options>
       {({ hasOptions }) => {
         if (!hasOptions) return null;
 
@@ -291,12 +291,12 @@ export function Variants(props: VariantsProps): React.ReactNode {
           </div>
         );
       }}
-    </ProductVariantSelector.Options>
+    </ProductVariantSelectorPrimitive.Options>
   );
 }
 
 /**
- * Props for CompositeProduct VariantOptions container
+ * Props for Product VariantOptions container
  */
 export interface VariantOptionsProps {
   children: React.ReactNode;
@@ -308,7 +308,7 @@ export interface VariantOptionsProps {
  */
 export function VariantOptions(props: VariantOptionsProps): React.ReactNode {
   return (
-    <ProductVariantSelector.Options>
+    <ProductVariantSelectorPrimitive.Options>
       {({ hasOptions }) => {
         if (!hasOptions && props.emptyState) {
           return <>{props.emptyState}</>;
@@ -318,15 +318,15 @@ export function VariantOptions(props: VariantOptionsProps): React.ReactNode {
 
         return <>{props.children}</>;
       }}
-    </ProductVariantSelector.Options>
+    </ProductVariantSelectorPrimitive.Options>
   );
 }
 
 /**
- * Props for CompositeProduct VariantOptionRepeater
+ * Props for Product VariantOptionRepeater
  */
 export interface VariantOptionRepeaterProps {
-  children: React.ReactNode;
+  children: React.ForwardRefRenderFunction<HTMLElement, { option: any }>;
 }
 
 /**
@@ -334,26 +334,26 @@ export interface VariantOptionRepeaterProps {
  */
 export function VariantOptionRepeater(props: VariantOptionRepeaterProps): React.ReactNode {
   return (
-    <ProductVariantSelector.Options>
+    <ProductVariantSelectorPrimitive.Options>
       {({ options }) => (
         <>
           {options.map((option, index) => (
-            <ProductVariantSelector.Option key={option.name || index} option={option}>
+            <ProductVariantSelectorPrimitive.Option key={option.name || index} option={option}>
               {() => (
                 <div data-testid="product-variant-option">
-                  {props.children}
+                  {props.children({ option }, React.createRef())}
                 </div>
               )}
-            </ProductVariantSelector.Option>
+            </ProductVariantSelectorPrimitive.Option>
           ))}
         </>
       )}
-    </ProductVariantSelector.Options>
+    </ProductVariantSelectorPrimitive.Options>
   );
 }
 
 /**
- * Props for CompositeProduct Modifiers container
+ * Props for Product Modifiers container
  */
 export interface ModifiersProps {
   children: React.ReactNode;
@@ -365,16 +365,16 @@ export interface ModifiersProps {
  * @component
  * @example
  * ```tsx
- * <CompositeProduct.Modifiers>
- *   <CompositeProduct.ModifierOptions>
- *     <CompositeProduct.ModifierOptionRepeater allowedTypes={['color', 'text', 'free-text']} />
- *   </CompositeProduct.ModifierOptions>
- * </CompositeProduct.Modifiers>
+ * <Product.Modifiers>
+ *   <Product.ModifierOptions>
+ *     <Product.ModifierOptionRepeater allowedTypes={['color', 'text', 'free-text']} />
+ *   </Product.ModifierOptions>
+ * </Product.Modifiers>
  * ```
  */
 export function Modifiers(props: ModifiersProps): React.ReactNode {
   return (
-    <ProductModifiers.Modifiers>
+    <ProductModifiersPrimitive.Modifiers>
       {({ hasModifiers }) => {
         if (!hasModifiers) return null;
 
@@ -384,12 +384,12 @@ export function Modifiers(props: ModifiersProps): React.ReactNode {
           </div>
         );
       }}
-    </ProductModifiers.Modifiers>
+    </ProductModifiersPrimitive.Modifiers>
   );
 }
 
 /**
- * Props for CompositeProduct ModifierOptions container
+ * Props for Product ModifierOptions container
  */
 export interface ModifierOptionsProps {
   children: React.ReactNode;
@@ -401,7 +401,7 @@ export interface ModifierOptionsProps {
  */
 export function ModifierOptions(props: ModifierOptionsProps): React.ReactNode {
   return (
-    <ProductModifiers.Modifiers>
+    <ProductModifiersPrimitive.Modifiers>
       {({ hasModifiers }) => {
         if (!hasModifiers && props.emptyState) {
           return <>{props.emptyState}</>;
@@ -411,15 +411,15 @@ export function ModifierOptions(props: ModifierOptionsProps): React.ReactNode {
 
         return <>{props.children}</>;
       }}
-    </ProductModifiers.Modifiers>
+    </ProductModifiersPrimitive.Modifiers>
   );
 }
 
 /**
- * Props for CompositeProduct ModifierOptionRepeater
+ * Props for Product ModifierOptionRepeater
  */
 export interface ModifierOptionRepeaterProps {
-  children: React.ReactNode;
+  children: React.ForwardRefRenderFunction<HTMLElement, { modifier: any }>;
   allowedTypes?: ('color' | 'text' | 'free-text')[];
 }
 
@@ -430,11 +430,11 @@ export function ModifierOptionRepeater(props: ModifierOptionRepeaterProps): Reac
   const { allowedTypes = ['color', 'text', 'free-text'] } = props;
 
   return (
-    <ProductModifiers.Modifiers>
+    <ProductModifiersPrimitive.Modifiers>
       {({ modifiers }) => (
         <>
           {modifiers.map((modifier, index) => (
-            <ProductModifiers.Modifier key={modifier.name || index} modifier={modifier}>
+            <ProductModifiersPrimitive.Modifier key={modifier.name || index} modifier={modifier}>
               {({ isFreeText, hasChoices }) => {
                 // Determine modifier type based on its properties
                 let modifierType: 'color' | 'text' | 'free-text' = 'text';
@@ -452,20 +452,20 @@ export function ModifierOptionRepeater(props: ModifierOptionRepeaterProps): Reac
                     data-testid="product-modifier-option"
                     data-type={modifierType}
                   >
-                    {props.children}
+                    {props.children({ modifier }, React.createRef())}
                   </div>
                 );
               }}
-            </ProductModifiers.Modifier>
+            </ProductModifiersPrimitive.Modifier>
           ))}
         </>
       )}
-    </ProductModifiers.Modifiers>
+    </ProductModifiersPrimitive.Modifiers>
   );
 }
 
 /**
- * Props for CompositeProduct Quantity container
+ * Props for Product Quantity container
  */
 export interface QuantityProps {
   children: React.ReactNode;
@@ -478,16 +478,16 @@ export interface QuantityProps {
  * @component
  * @example
  * ```tsx
- * <CompositeProduct.Quantity steps={1}>
- *   <CompositeProduct.Quantity.Decrement />
- *   <CompositeProduct.Quantity.Input />
- *   <CompositeProduct.Quantity.Increment />
- * </CompositeProduct.Quantity>
+ * <Product.Quantity steps={1}>
+ *   <Product.Quantity.Decrement />
+ *   <Product.Quantity.Input />
+ *   <Product.Quantity.Increment />
+ * </Product.Quantity>
  * ```
  */
 export function Quantity(props: QuantityProps): React.ReactNode {
   return (
-    <ProductVariantSelector.Stock>
+    <ProductVariantSelectorPrimitive.Stock>
       {({ selectedQuantity, incrementQuantity, decrementQuantity }) => (
         <div data-testid="product-quantity">
           {React.Children.map(props.children, (child) => {
@@ -503,7 +503,7 @@ export function Quantity(props: QuantityProps): React.ReactNode {
           })}
         </div>
       )}
-    </ProductVariantSelector.Stock>
+    </ProductVariantSelectorPrimitive.Stock>
   );
 }
 
@@ -539,7 +539,7 @@ export const QuantityIncrement = React.forwardRef<HTMLButtonElement, QuantityBut
   );
 });
 
-QuantityIncrement.displayName = "CompositeProduct.Quantity.Increment";
+QuantityIncrement.displayName = "Product.Quantity.Increment";
 
 /**
  * Quantity decrement button
@@ -561,7 +561,7 @@ export const QuantityDecrement = React.forwardRef<HTMLButtonElement, QuantityBut
   );
 });
 
-QuantityDecrement.displayName = "CompositeProduct.Quantity.Decrement";
+QuantityDecrement.displayName = "Product.Quantity.Decrement";
 
 /**
  * Props for quantity input
@@ -596,7 +596,7 @@ export const QuantityInput = React.forwardRef<HTMLInputElement, QuantityInputPro
   );
 });
 
-QuantityInput.displayName = "CompositeProduct.Quantity.Input";
+QuantityInput.displayName = "Product.Quantity.Input";
 
 // Attach sub-components to Quantity
 (Quantity as any).Increment = QuantityIncrement;
@@ -604,7 +604,7 @@ QuantityInput.displayName = "CompositeProduct.Quantity.Input";
 (Quantity as any).Input = QuantityInput;
 
 /**
- * Props for CompositeProduct MediaGallery
+ * Props for Product MediaGallery
  */
 export interface MediaGalleryProps {
   children: React.ReactNode;
@@ -620,30 +620,22 @@ export interface MediaGalleryProps {
  * @component
  * @example
  * ```tsx
- * <CompositeProduct.MediaGallery infinite={true} autoPlay={false}>
- *   <CompositeProduct.MediaGallery.Viewport />
- *   <CompositeProduct.MediaGallery.Previous />
- *   <CompositeProduct.MediaGallery.Next />
- * </CompositeProduct.MediaGallery>
+ * <Product.MediaGallery infinite={true} autoPlay={false}>
+ *   <MediaGallery.Viewport />
+ *   <MediaGallery.Previous />
+ *   <MediaGallery.Next />
+ * </Product.MediaGallery>
  * ```
  */
 export function MediaGallery(props: MediaGalleryProps): React.ReactNode {
   return (
-    <Product.Media>
-      {({ media }) => (
+    <ProductPrimitive.Media>
+      {() => (
         <div data-testid="product-media-gallery">
-          {React.Children.map(props.children, (child) => {
-            if (React.isValidElement(child)) {
-              return React.cloneElement(child, {
-                media,
-                ...props,
-              } as any);
-            }
-            return child;
-          })}
+          {props.children}
         </div>
       )}
-    </Product.Media>
+    </ProductPrimitive.Media>
   );
 }
 
@@ -665,7 +657,7 @@ export const Action = {
     className?: string;
   }>((props, ref) => {
     return (
-      <SelectedVariant.Actions>
+      <SelectedVariantPrimitive.Actions>
         {({ addToCart, canAddToCart, isLoading }) => {
           if (props.asChild && props.children) {
             return props.children({
@@ -687,7 +679,7 @@ export const Action = {
             </button>
           );
         }}
-      </SelectedVariant.Actions>
+      </SelectedVariantPrimitive.Actions>
     );
   }),
 
@@ -702,7 +694,7 @@ export const Action = {
     className?: string;
   }>((props, ref) => {
     return (
-      <SelectedVariant.Actions>
+      <SelectedVariantPrimitive.Actions>
         {({ buyNow, canAddToCart, isLoading }) => {
           if (props.asChild && props.children) {
             return props.children({
@@ -724,7 +716,7 @@ export const Action = {
             </button>
           );
         }}
-      </SelectedVariant.Actions>
+      </SelectedVariantPrimitive.Actions>
     );
   }),
 
@@ -739,7 +731,7 @@ export const Action = {
     className?: string;
   }>((props, ref) => {
     return (
-      <SelectedVariant.Actions>
+      <SelectedVariantPrimitive.Actions>
         {({ addToCart, isPreOrderEnabled, isLoading }) => {
           if (!isPreOrderEnabled) return null;
 
@@ -763,11 +755,11 @@ export const Action = {
             </button>
           );
         }}
-      </SelectedVariant.Actions>
+      </SelectedVariantPrimitive.Actions>
     );
   }),
 };
 
-Action.AddToCart.displayName = "CompositeProduct.Action.AddToCart";
-Action.BuyNow.displayName = "CompositeProduct.Action.BuyNow";
-Action.PreOrder.displayName = "CompositeProduct.Action.PreOrder";
+Action.AddToCart.displayName = "Product.Action.AddToCart";
+Action.BuyNow.displayName = "Product.Action.BuyNow";
+Action.PreOrder.displayName = "Product.Action.PreOrder";
