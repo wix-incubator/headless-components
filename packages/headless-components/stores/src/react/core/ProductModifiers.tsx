@@ -4,7 +4,7 @@ import { useService, WixServices } from "@wix/services-manager-react";
 import {
   ProductModifiersServiceDefinition,
   ProductModifiersService,
-} from "../services/product-modifiers-service.js";
+} from "../../services/product-modifiers-service.js";
 import {
   ModifierRenderType,
   type ConnectedModifier,

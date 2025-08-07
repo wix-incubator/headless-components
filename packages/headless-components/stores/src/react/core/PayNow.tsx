@@ -1,5 +1,5 @@
 import { useService } from "@wix/services-manager-react";
-import { PayNowServiceDefinition } from "../services/pay-now-service.js";
+import { PayNowServiceDefinition } from "../../services/pay-now-service.js";
 
 /**
  * Props passed to the render function of the PayNow component

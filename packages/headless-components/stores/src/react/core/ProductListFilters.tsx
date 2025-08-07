@@ -4,7 +4,7 @@ import {
   ProductsListSearchServiceDefinition,
   type ProductOption,
   InventoryStatusType,
-} from "../services/products-list-search-service.js";
+} from "../../services/products-list-search-service.js";
 import { Category } from "@wix/auto_sdk_categories_categories";
 
 /**

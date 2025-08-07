@@ -4,17 +4,17 @@ import {
   ProductListService,
   ProductsListServiceDefinition,
   type ProductsListServiceConfig,
-} from "../services/products-list-service.js";
+} from "../../services/products-list-service.js";
 import { productsV3 } from "@wix/stores";
 import {
   ProductService,
   ProductServiceDefinition,
-} from "../services/product-service.js";
+} from "../../services/product-service.js";
 import {
   ProductsListSearchService,
   ProductsListSearchServiceConfig,
   ProductsListSearchServiceDefinition,
-} from "../services/products-list-search-service.js";
+} from "../../services/products-list-search-service.js";
 
 /**
  * Props for Root headless component

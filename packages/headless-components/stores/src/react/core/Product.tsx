@@ -4,7 +4,7 @@ import {
   ProductServiceDefinition,
   ProductServiceConfig,
   ProductService,
-} from "../services/product-service.js";
+} from "../../services/product-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import type {
   V3Product,
