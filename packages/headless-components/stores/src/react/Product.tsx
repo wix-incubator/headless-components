@@ -1,10 +1,11 @@
 import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
 import React from "react";
-import { AsContent, renderAsChild, type AsChildProps } from "../utils/index.js";
+import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as CoreProduct from "./core/Product.js";
 import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 import * as SelectedVariant from "./core/SelectedVariant.js";
+import { AsContent } from "./types.js";
 
 enum TestIds {
   productRoot = "product-root",

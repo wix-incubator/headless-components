@@ -273,7 +273,7 @@ export default function ProductDetails({
                         Description
                       </h3>
                       <Product.Description
-                        as="html"
+                        as={AsContent.Html}
                         className="text-content-secondary leading-relaxed"
                       />
                     </div>
