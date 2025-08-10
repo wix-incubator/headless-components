@@ -4,7 +4,7 @@ import {
   CategoryService,
   CategoryServiceDefinition,
   type CategoryServiceConfig,
-} from "../services/category-service.js";
+} from "../../services/category-service.js";
 
 export interface RootProps {
   children: React.ReactNode;

@@ -4,7 +4,7 @@ import {
   SelectedVariantServiceDefinition,
   SelectedVariantService,
   SelectedVariantServiceConfig,
-} from "../services/selected-variant-service.js";
+} from "../../services/selected-variant-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import {
   type ConnectedOption,

@@ -1,24 +1,24 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
-import {
-  ProductServiceDefinition,
-  ProductServiceConfig,
-  ProductService,
-} from "../services/product-service.js";
-import { createServicesMap } from "@wix/services-manager";
-import type {
-  V3Product,
-  ProductMedia,
-} from "@wix/auto_sdk_stores_products-v-3";
+import React from "react";
+import * as CoreProduct from "./core/Product.js";
+import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as ProductModifiers from "./core/ProductModifiers.js";
+import * as SelectedVariant from "./core/SelectedVariant.js";
+import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
+import { renderAsChild, type AsChildProps } from "../utils/index.js";
 
-export interface RootProps {
+/**
+ * Props for the Product root component following the documented API
+ */
+export interface ProductRootProps {
   children: React.ReactNode;
-  productServiceConfig: ProductServiceConfig;
+  product: V3Product;
+  selectedVariant?: any;
 }
 
 /**
- * Root component that provides the Product service context to its children.
- * This component sets up the necessary services for rendering and managing a single product's data.
+ * Root component that provides all necessary service contexts for a complete product experience.
+ * This composite component combines Product, ProductVariantSelector, ProductModifiers, and SelectedVariant
+ * functionality following the documented API patterns with proper data attributes.
  *
  * @order 1
  * @component
@@ -26,218 +26,80 @@ export interface RootProps {
  * ```tsx
  * import { Product } from '@wix/stores/components';
  *
- * function ProductPage() {
+ * function ProductPage({ product }) {
  *   return (
- *     <Product.Root productServiceConfig={{ product: myProduct }}>
- *       <div>
- *         <Product.Name>
- *           {({ name }) => (
- *             <h1
- *               className="text-4xl font-bold text-content-primary mb-4"
- *               data-testid="product-name"
- *             >
- *               {name}
- *             </h1>
- *           )}
- *         </Product.Name>
- *       </div>
+ *     <Product.Root product={product}>
+ *       <Product.Name className="text-4xl font-bold" />
  *     </Product.Root>
  *   );
  * }
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
+export function Root(props: ProductRootProps): React.ReactNode {
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        ProductServiceDefinition,
-        ProductService,
-        props.productServiceConfig,
-      )}
-    >
-      {props.children}
-    </WixServices>
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
+      <ProductVariantSelector.Root>
+        <ProductModifiers.Root>
+          <SelectedVariant.Root>
+            <div data-testid="product-details">{props.children}</div>
+          </SelectedVariant.Root>
+        </ProductModifiers.Root>
+      </ProductVariantSelector.Root>
+    </CoreProduct.Root>
   );
 }
 
 /**
- * Props for ProductName headless component
+ * Props for Product Name component
  */
-export interface ProductNameProps {
-  /** Render prop function that receives product name data */
-  children: (props: ProductNameRenderProps) => React.ReactNode;
-}
+export interface NameProps extends AsChildProps<{ name: string }> {}
 
 /**
- * Render props for ProductName component
- */
-export interface ProductNameRenderProps {
-  /** Product name */
-  name: string;
-}
-
-/**
- * Headless component for product name display
+ * Displays the product name with customizable rendering following the documented API.
  *
  * @component
  * @example
  * ```tsx
- * import { Product } from '@wix/stores/components';
+ * // Default usage
+ * <Product.Name className="text-4xl font-bold" />
  *
- * function ProductHeader() {
- *   return (
- *     <Product.Name>
- *       {({ name }) => (
- *         <h1>{name}</h1>
- *       )}
- *     </Product.Name>
- *   );
- * }
+ * // asChild with primitive
+ * <Product.Name asChild>
+ *   <h1 className="text-4xl font-bold" />
+ * </Product.Name>
+ *
+ * // asChild with react component
+ * <Product.Name asChild>
+ *   {React.forwardRef(({name, ...props}, ref) => (
+ *     <h1 ref={ref} {...props} className="text-4xl font-bold">
+ *       {name}
+ *     </h1>
+ *   ))}
+ * </Product.Name>
  * ```
  */
-export function Name(props: ProductNameProps) {
-  const service = useService(ProductServiceDefinition) as ServiceAPI<
-    typeof ProductServiceDefinition
-  >;
+export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
+  const { asChild, children, className } = props;
 
-  const product = service.product.get();
-  const name = product.name!;
+  return (
+    <CoreProduct.Name>
+      {({ name }) => {
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: { name, ...props },
+            ref,
+            content: name,
+          });
+          if (rendered) return rendered;
+        }
 
-  return props.children({
-    name,
-  });
-}
-
-/**
- * Props for ProductDescription headless component
- */
-export interface ProductDescriptionProps {
-  /** Render prop function that receives product description data */
-  children: (props: ProductDescriptionRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for ProductDescription component
- */
-export interface ProductDescriptionRenderProps {
-  /** Product description using the RICOS (Rich Content Object) format. See https://dev.wix.com/docs/ricos/api-reference/ricos-document */
-  description: NonNullable<V3Product["description"]>;
-  /** Product description with plain html */
-  plainDescription: NonNullable<V3Product["plainDescription"]>;
-}
-
-/**
- * Render props for ProductDescription component
- */
-export interface ProductDescriptionRenderProps {
-  /** Product description using the RICOS (Rich Content Object) format. See https://dev.wix.com/docs/ricos/api-reference/ricos-document */
-  description: NonNullable<V3Product["description"]>;
-  /** Product description with plain html */
-  plainDescription: NonNullable<V3Product["plainDescription"]>;
-}
-/**
- * Headless component for product description display
- *
- * @component
- * @example
- * ```tsx
- * import { Product } from '@wix/stores/components';
- *
- * function ProductDescription() {
- *   return (
- *     <Product.Description>
- *       {({ plainDescription, description }) => (
- *         <div>
- *           {plainDescription && (
- *             <div
- *               dangerouslySetInnerHTML={{
- *                 __html: plainDescription,
- *               }}
- *             />
- *           )}
- *           {description && (
- *             <div>Rich content description available</div>
- *           )}
- *         </div>
- *       )}
- *     </Product.Description>
- *   );
- * }
- * ```
- */
-export function Description(props: ProductDescriptionProps) {
-  const service = useService(ProductServiceDefinition) as ServiceAPI<
-    typeof ProductServiceDefinition
-  >;
-
-  const product = service.product.get();
-
-  const descriptionRichContent = product.description!;
-  const plainDescription = product.plainDescription!;
-
-  return props.children({
-    description: descriptionRichContent,
-    plainDescription: plainDescription,
-  });
-}
-
-export interface ProductMediaProps {
-  children: (props: ProductMediaRenderProps) => React.ReactNode;
-}
-
-export interface ProductMediaRenderProps {
-  media: ProductMedia[];
-}
-
-export function Media(props: ProductMediaProps) {
-  const service = useService(ProductServiceDefinition) as ServiceAPI<
-    typeof ProductServiceDefinition
-  >;
-
-  const product = service.product.get();
-  const media = product.media?.itemsInfo?.items ?? [];
-
-  return props.children({
-    media,
-  });
-}
-
-export interface ProductProps {
-  children: (props: ProductRenderProps) => React.ReactNode;
-}
-
-export interface ProductRenderProps {
-  product: V3Product;
-}
-
-export function Content(props: ProductProps) {
-  const service = useService(ProductServiceDefinition) as ServiceAPI<
-    typeof ProductServiceDefinition
-  >;
-
-  const product = service.product.get();
-
-  return props.children({
-    product,
-  });
-}
-
-export interface LoadingProps {
-  children: (props: LoadingRenderProps) => React.ReactNode;
-}
-
-export interface LoadingRenderProps {
-  isLoading: boolean;
-}
-
-export function Loading(props: LoadingProps) {
-  const service = useService(ProductServiceDefinition) as ServiceAPI<
-    typeof ProductServiceDefinition
-  >;
-
-  const isLoading = service.isLoading.get();
-
-  return props.children({
-    isLoading,
-  });
-}
+        return (
+          <h1 className={className} data-testid="product-name">
+            {name}
+          </h1>
+        );
+      }}
+    </CoreProduct.Name>
+  );
+});

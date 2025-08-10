@@ -4,8 +4,8 @@ import {
   SelectedVariantServiceDefinition,
   SelectedVariantService,
   SelectedVariantServiceConfig,
-} from "../services/selected-variant-service.js";
-import { ProductModifiersServiceDefinition } from "../services/product-modifiers-service.js";
+} from "../../services/selected-variant-service.js";
+import { ProductModifiersServiceDefinition } from "../../services/product-modifiers-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import { Checkout } from "@wix/headless-ecom/react";
 import {

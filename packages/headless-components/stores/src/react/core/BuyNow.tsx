@@ -1,5 +1,5 @@
 import { useService } from "@wix/services-manager-react";
-import { BuyNowServiceDefinition } from "../services/buy-now-service.js";
+import { BuyNowServiceDefinition } from "../../services/buy-now-service.js";
 
 /**
  * Props passed to the render function of the BuyNow component

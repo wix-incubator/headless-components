@@ -5,7 +5,7 @@ const CATLOG_APP_ID_V3 = "215238eb-22a5-4c36-9e7b-e7c08025e04e";
 
 export async function getCheckoutUrlForProduct(
   productId: string,
-  variantId?: string
+  variantId?: string,
 ) {
   const checkoutResult = await checkout.createCheckout({
     lineItems: [
@@ -36,3 +36,13 @@ export async function getCheckoutUrlForProduct(
 
   return redirectSession?.fullUrl!;
 }
+
+// Re-export renderAsChild utilities
+export {
+  renderAsChild,
+  type AsChildChildren,
+  type AsChildProps,
+  type AsChildRenderFunction,
+  type AsChildRenderObject,
+  type RenderAsChildParams,
+} from "./renderAsChild.js";

@@ -1,6 +1,6 @@
 import { useService } from "@wix/services-manager-react";
-import { ProductsListSearchServiceDefinition } from "../services/products-list-search-service.js";
-import { ProductsListServiceDefinition } from "../services/products-list-service.js";
+import { ProductsListSearchServiceDefinition } from "../../services/products-list-search-service.js";
+import { ProductsListServiceDefinition } from "../../services/products-list-service.js";
 
 /**
  * Props for PageSize headless component

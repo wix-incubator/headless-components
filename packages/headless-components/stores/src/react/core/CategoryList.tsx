@@ -4,9 +4,9 @@ import {
   CategoriesListService,
   CategoriesListServiceDefinition,
   type CategoriesListServiceConfig,
-} from "../services/categories-list-service.js";
+} from "../../services/categories-list-service.js";
 import { Root as CategoryRoot } from "./Category.js";
-import { type Category } from "../services/category-service.js";
+import { type Category } from "../../services/category-service.js";
 
 export interface RootProps {
   children: React.ReactNode;

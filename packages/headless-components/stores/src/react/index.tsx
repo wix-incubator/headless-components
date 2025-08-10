@@ -1,10 +1,12 @@
-export * as CategoryList from "./CategoryList.js";
-export * as Category from "./Category.js";
-export * as Product from "./Product.js";
-export * as ProductModifiers from "./ProductModifiers.js";
-export * as ProductList from "./ProductList.js";
-export * as ProductListFilters from "./ProductListFilters.js";
-export * as ProductListPagination from "./ProductListPagination.js";
-export * as ProductListSort from "./ProductListSort.js";
-export * as ProductVariantSelector from "./ProductVariantSelector.js";
-export * as SelectedVariant from "./SelectedVariant.js";
+export * as CategoryList from "./core/CategoryList.js";
+export * as Category from "./core/Category.js";
+export * as Product from "./core/Product.js";
+export * as ProductModifiers from "./core/ProductModifiers.js";
+export * as ProductList from "./core/ProductList.js";
+export * as ProductListFilters from "./core/ProductListFilters.js";
+export * as ProductListPagination from "./core/ProductListPagination.js";
+export * as ProductListSort from "./core/ProductListSort.js";
+export * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+export * as SelectedVariant from "./core/SelectedVariant.js";
+
+export * as ProductV2 from "./Product.js";
