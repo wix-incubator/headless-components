@@ -1,13 +1,6 @@
 import React from "react";
 
 /**
- * Props type for cloneable React elements
- */
-type CloneableElementProps = React.HTMLAttributes<HTMLElement> & {
-  ref?: React.Ref<HTMLElement>;
-};
-
-/**
  * Function signature for render function pattern
  */
 export type AsChildRenderFunction<TProps = any> = (
@@ -62,6 +55,13 @@ export interface AsChildProps<
   /** CSS classes to apply to the default element */
   className?: string;
 }
+
+/**
+ * Props type for cloneable React elements
+ */
+type CloneableElementProps = React.HTMLAttributes<HTMLElement> & {
+  ref?: React.Ref<HTMLElement>;
+};
 
 /**
  * Parameters for the renderAsChild utility function
