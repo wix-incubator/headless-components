@@ -222,22 +222,23 @@ export default function ProductDetails({
                     <Product.Name asChild>
                       <h1 className="text-4xl font-bold text-content-primary mb-4" />
                     </Product.Name>
-                    <SelectedVariantPrimitive.Price>
-                      {({ price, compareAtPrice }) => (
-                        <div className="space-y-1">
-                          <div className="text-3xl font-bold text-content-primary">
-                            {price}
+                    <div className="space-y-1">
+                      <Product.Price className="text-3xl font-bold text-content-primary" />
+                      <Product.CompareAtPrice asChild>
+                        {React.forwardRef<
+                          HTMLDivElement,
+                          { formattedPrice: string }
+                        >(({ formattedPrice, ...props }, ref) => (
+                          <div
+                            ref={ref}
+                            {...props}
+                            className="text-lg font-medium text-content-faded line-through"
+                          >
+                            {formattedPrice}
                           </div>
-                          {compareAtPrice &&
-                            parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) >
-                              0 && (
-                              <div className="text-lg font-medium text-content-faded line-through">
-                                {compareAtPrice}
-                              </div>
-                            )}
-                        </div>
-                      )}
-                    </SelectedVariantPrimitive.Price>
+                        ))}
+                      </Product.CompareAtPrice>
+                    </div>
                     {isQuickView && (
                       <SelectedVariantPrimitive.SKU>
                         {({ sku }) =>

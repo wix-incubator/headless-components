@@ -11,6 +11,8 @@ enum TestIds {
   productRoot = "product-root",
   productName = "product-name",
   productDescription = "product-description",
+  productPrice = "product-price",
+  productCompareAtPrice = "product-compare-at-price",
 }
 
 /**
@@ -88,23 +90,27 @@ export interface NameProps extends AsChildProps<{ name: string }> {}
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const testId = TestIds.productName;
 
   return (
     <CoreProduct.Name>
       {({ name }) => {
+        const attributes = {
+          "data-testid": TestIds.productName,
+        };
+
         if (asChild) {
           const rendered = renderAsChild({
             children,
             props: { name },
             ref,
             content: name,
+            attributes,
           });
           if (rendered) return rendered;
         }
 
         return (
-          <div className={className} data-testid={testId}>
+          <div className={className} {...attributes}>
             {name}
           </div>
         );
@@ -148,11 +154,14 @@ export interface DescriptionProps
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, className, as = AsContent.Plain } = props;
-    const testId = TestIds.productDescription;
 
     return (
       <CoreProduct.Description>
         {({ description: richDescription, plainDescription }) => {
+          const attributes = {
+            "data-testid": TestIds.productDescription,
+          };
+
           // Determine which description to use based on the 'as' prop
           let description: string;
 
@@ -178,6 +187,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
               props: { description },
               ref,
               content: description,
+              attributes,
             });
             if (rendered) return rendered;
           }
@@ -187,14 +197,14 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             return (
               <div
                 className={className}
-                data-testid={testId}
+                {...attributes}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             );
           }
 
           return (
-            <div className={className} data-testid={testId}>
+            <div className={className} {...attributes}>
               {description}
             </div>
           );
@@ -203,3 +213,150 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
     );
   },
 );
+
+/**
+ * Props for Product Price component
+ */
+export interface PriceProps
+  extends AsChildProps<{ price: string; formattedPrice: string }> {}
+
+/**
+ * Displays the current product price with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Price className="text-3xl font-bold text-content-primary data-[discounted]:text-brand-primary" />
+ *
+ * // asChild with primitive
+ * <Product.Price asChild>
+ *   <span className="text-3xl font-bold text-content-primary" />
+ * </Product.Price>
+ *
+ * // asChild with react component
+ * <Product.Price asChild>
+ *   {React.forwardRef(({price, formattedPrice, ...props}, ref) => (
+ *     <span ref={ref} {...props} className="text-3xl font-bold text-content-primary">
+ *       {formattedPrice}
+ *     </span>
+ *   ))}
+ * </Product.Price>
+ * ```
+ */
+export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <SelectedVariant.Price>
+      {({ price, compareAtPrice }) => {
+        const attributes = {
+          "data-testid": TestIds.productPrice,
+          "data-discounted": compareAtPrice !== null,
+        };
+
+        const priceData = {
+          price,
+          formattedPrice: price,
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: priceData,
+            ref,
+            content: price,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        return (
+          <span className={className} {...attributes} ref={ref}>
+            {price}
+          </span>
+        );
+      }}
+    </SelectedVariant.Price>
+  );
+});
+
+/**
+ * Props for Product CompareAtPrice component
+ */
+export interface CompareAtPriceProps
+  extends AsChildProps<{ price: string; formattedPrice: string }> {}
+
+/**
+ * Displays the compare-at (original) price when on sale with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage (only shows when on sale)
+ * <Product.CompareAtPrice className="text-lg text-content-faded line-through hidden data-[discounted]:inline" />
+ *
+ * // asChild with primitive
+ * <Product.CompareAtPrice asChild>
+ *   <span className="text-lg text-content-faded line-through" />
+ * </Product.CompareAtPrice>
+ *
+ * // asChild with react component
+ * <Product.CompareAtPrice asChild>
+ *   {React.forwardRef(({formattedPrice, ...props}, ref) => (
+ *     <span
+ *       ref={ref}
+ *       {...props}
+ *       className="hidden data-[discounted]:inline text-lg text-content-faded line-through"
+ *     >
+ *       Was: {formattedPrice}
+ *     </span>
+ *   ))}
+ * </Product.CompareAtPrice>
+ * ```
+ */
+export const CompareAtPrice = React.forwardRef<
+  HTMLElement,
+  CompareAtPriceProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+  const testId = TestIds.productCompareAtPrice;
+
+  return (
+    <SelectedVariant.Price>
+      {({ compareAtPrice }) => {
+        const attributes = {
+          "data-testid": testId,
+          "data-discounted": compareAtPrice !== null,
+        };
+
+        // Don't render anything if there's no compare-at price
+        if (!compareAtPrice) {
+          return null;
+        }
+
+        const priceData = {
+          price: compareAtPrice,
+          formattedPrice: compareAtPrice,
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: priceData,
+            ref,
+            content: compareAtPrice,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        return (
+          <span className={className} {...attributes} ref={ref}>
+            {compareAtPrice}
+          </span>
+        );
+      }}
+    </SelectedVariant.Price>
+  );
+});
