@@ -96,7 +96,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
         if (asChild) {
           const rendered = renderAsChild({
             children,
-            props: { name, ...props },
+            props: { name },
             ref,
             content: name,
           });
@@ -175,7 +175,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
           if (asChild) {
             const rendered = renderAsChild({
               children,
-              props: { description, ...props },
+              props: { description },
               ref,
               content: description,
             });
