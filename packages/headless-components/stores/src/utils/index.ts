@@ -38,14 +38,13 @@ export async function getCheckoutUrlForProduct(
 }
 
 // Re-export renderAsChild utilities
+export { renderAsChild, type RenderAsChildParams } from "./renderAsChild.js";
+
+// Re-export types
 export {
-  renderAsChild,
+  AsContent,
   type AsChildChildren,
   type AsChildProps,
   type AsChildRenderFunction,
   type AsChildRenderObject,
-  type RenderAsChildParams,
-} from "./renderAsChild.js";
-
-// Re-export types
-export { AsContent } from "./types.js";
+} from "./types.js";

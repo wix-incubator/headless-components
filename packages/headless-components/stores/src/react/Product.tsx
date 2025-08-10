@@ -118,7 +118,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 export interface DescriptionProps
   extends AsChildProps<{ description: string }> {
   /** Format of the description content */
-  as?: AsContent;
+  as?: AsContent.Plain | AsContent.Html | AsContent.Ricos;
 }
 
 /**
@@ -154,6 +154,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
         {({ description: richDescription, plainDescription }) => {
           // Determine which description to use based on the 'as' prop
           let description: string;
+
           switch (as) {
             case AsContent.Html:
               description = plainDescription || "";
