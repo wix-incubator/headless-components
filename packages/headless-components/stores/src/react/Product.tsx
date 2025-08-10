@@ -90,23 +90,28 @@ export interface NameProps extends AsChildProps<{ name: string }> {}
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const testId = TestIds.productName;
 
   return (
     <CoreProduct.Name>
       {({ name }) => {
+        const attributes = {
+          "data-testid": TestIds.productName,
+          "data-testid2": "product-name",
+        };
+
         if (asChild) {
           const rendered = renderAsChild({
             children,
             props: { name },
             ref,
             content: name,
+            attributes,
           });
           if (rendered) return rendered;
         }
 
         return (
-          <div className={className} data-testid={testId}>
+          <div className={className} {...attributes}>
             {name}
           </div>
         );
@@ -150,11 +155,14 @@ export interface DescriptionProps
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, className, as = AsContent.Plain } = props;
-    const testId = TestIds.productDescription;
 
     return (
       <CoreProduct.Description>
         {({ description: richDescription, plainDescription }) => {
+          const attributes = {
+            "data-testid": TestIds.productDescription,
+          };
+
           // Determine which description to use based on the 'as' prop
           let description: string;
 
@@ -180,6 +188,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
               props: { description },
               ref,
               content: description,
+              attributes,
             });
             if (rendered) return rendered;
           }
@@ -189,14 +198,14 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             return (
               <div
                 className={className}
-                data-testid={testId}
+                {...attributes}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             );
           }
 
           return (
-            <div className={className} data-testid={testId}>
+            <div className={className} {...attributes}>
               {description}
             </div>
           );
@@ -238,12 +247,15 @@ export interface PriceProps
  */
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const testId = TestIds.productPrice;
 
   return (
     <SelectedVariant.Price>
       {({ price, compareAtPrice }) => {
-        const isDiscounted = compareAtPrice !== null;
+        const attributes = {
+          "data-testid": TestIds.productPrice,
+          "data-discounted": compareAtPrice !== null,
+        };
+
         const priceData = {
           price,
           formattedPrice: price,
@@ -255,21 +267,13 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
             props: priceData,
             ref,
             content: price,
-            attributes: {
-              "data-testid": testId,
-              "data-discounted": isDiscounted ? "" : undefined,
-            },
+            attributes,
           });
           if (rendered) return rendered;
         }
 
         return (
-          <span
-            className={className}
-            data-testid={testId}
-            data-discounted={isDiscounted ? "" : undefined}
-            ref={ref}
-          >
+          <span className={className} {...attributes} ref={ref}>
             {price}
           </span>
         );
@@ -322,12 +326,16 @@ export const CompareAtPrice = React.forwardRef<
   return (
     <SelectedVariant.Price>
       {({ compareAtPrice }) => {
+        const attributes = {
+          "data-testid": testId,
+          "data-discounted": compareAtPrice !== null,
+        };
+
         // Don't render anything if there's no compare-at price
         if (!compareAtPrice) {
           return null;
         }
 
-        const isDiscounted = true; // If compareAtPrice exists, it means there's a discount
         const priceData = {
           price: compareAtPrice,
           formattedPrice: compareAtPrice,
@@ -339,21 +347,13 @@ export const CompareAtPrice = React.forwardRef<
             props: priceData,
             ref,
             content: compareAtPrice,
-            attributes: {
-              "data-testid": testId,
-              "data-discounted": isDiscounted ? "" : undefined,
-            },
+            attributes,
           });
           if (rendered) return rendered;
         }
 
         return (
-          <span
-            className={className}
-            data-testid={testId}
-            data-discounted={isDiscounted ? "" : undefined}
-            ref={ref}
-          >
+          <span className={className} {...attributes} ref={ref}>
             {compareAtPrice}
           </span>
         );
