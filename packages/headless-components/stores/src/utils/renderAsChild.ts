@@ -6,7 +6,6 @@ import React from "react";
 export type AsChildRenderFunction<TProps = any> = (
   props: TProps,
   ref: React.Ref<HTMLElement>,
-  attributes?: Record<string, any>,
 ) => React.ReactNode;
 
 /**
@@ -140,12 +139,24 @@ export function renderAsChild<TProps = any>({
 
   // Handle render function pattern
   if (typeof children === "function") {
-    return children(props, ref, attributes);
+    return children(
+      {
+        ...props,
+        ...attributes,
+      },
+      ref,
+    );
   }
 
   // Handle render object pattern
   if (children && typeof children === "object" && "render" in children) {
-    return children.render(props, ref, attributes);
+    return children.render(
+      {
+        ...props,
+        ...attributes,
+      },
+      ref,
+    );
   }
 
   // Fallback for unknown patterns
