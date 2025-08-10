@@ -219,19 +219,8 @@ export default function ProductDetails({
                 <Product.Root product={product}>
                   {/* Product Name & Price */}
                   <div>
-                    <Product.Name className="text-4xl font-bold text-content-primary mb-4" />
                     <Product.Name asChild>
                       <h1 className="text-4xl font-bold text-content-primary mb-4" />
-                    </Product.Name>
-                    <Product.Name asChild>
-                      {React.forwardRef(({ name, ...props }: any, ref) => (
-                        <h1
-                          {...props}
-                          className="text-4xl font-bold text-content-primary mb-4"
-                        >
-                          {name}
-                        </h1>
-                      ))}
                     </Product.Name>
                     <SelectedVariantPrimitive.Price>
                       {({ price, compareAtPrice }) => (
@@ -267,15 +256,19 @@ export default function ProductDetails({
 
                   {/* Product Description */}
                   {!isQuickView && (
-                    <div>
-                      <h3 className="text-xl font-semibold text-content-primary mb-3">
-                        Description
-                      </h3>
-                      <Product.Description
-                        as="html"
-                        className="text-content-secondary leading-relaxed"
-                      />
-                    </div>
+                    <Product.Description as="html" asChild>
+                      {({ description }) => (
+                        <div>
+                          <h3 className="text-xl font-semibold text-content-primary mb-3">
+                            Description
+                          </h3>
+                          <div
+                            className="text-content-secondary leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: description }}
+                          />
+                        </div>
+                      )}
+                    </Product.Description>
                   )}
 
                   {/* Product Options (if any) */}

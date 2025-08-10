@@ -104,9 +104,9 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
         }
 
         return (
-          <h1 className={className} data-testid={testId}>
+          <div className={className} data-testid={testId}>
             {name}
-          </h1>
+          </div>
         );
       }}
     </CoreProduct.Name>
