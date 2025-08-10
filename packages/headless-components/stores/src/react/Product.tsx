@@ -255,17 +255,12 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
             props: priceData,
             ref,
             content: price,
+            attributes: {
+              "data-testid": testId,
+              "data-discounted": isDiscounted ? "" : undefined,
+            },
           });
-          if (rendered) {
-            // Add data attributes to the rendered element if it's a valid React element
-            if (React.isValidElement(rendered)) {
-              return React.cloneElement(rendered as React.ReactElement<any>, {
-                "data-testid": testId,
-                "data-discounted": isDiscounted ? "" : undefined,
-              });
-            }
-            return rendered;
-          }
+          if (rendered) return rendered;
         }
 
         return (
@@ -344,17 +339,12 @@ export const CompareAtPrice = React.forwardRef<
             props: priceData,
             ref,
             content: compareAtPrice,
+            attributes: {
+              "data-testid": testId,
+              "data-discounted": isDiscounted ? "" : undefined,
+            },
           });
-          if (rendered) {
-            // Add data attributes to the rendered element if it's a valid React element
-            if (React.isValidElement(rendered)) {
-              return React.cloneElement(rendered as React.ReactElement<any>, {
-                "data-testid": testId,
-                "data-discounted": isDiscounted ? "" : undefined,
-              });
-            }
-            return rendered;
-          }
+          if (rendered) return rendered;
         }
 
         return (
