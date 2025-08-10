@@ -37,12 +37,4 @@ export async function getCheckoutUrlForProduct(
   return redirectSession?.fullUrl!;
 }
 
-// Re-export renderAsChild utilities and types
-export {
-  renderAsChild,
-  type RenderAsChildParams,
-  type AsChildChildren,
-  type AsChildProps,
-  type AsChildRenderFunction,
-  type AsChildRenderObject,
-} from "./renderAsChild.js";
+export * from "./renderAsChild.js";
