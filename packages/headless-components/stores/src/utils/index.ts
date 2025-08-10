@@ -41,6 +41,7 @@ export async function getCheckoutUrlForProduct(
 export {
   renderAsChild,
   type AsChildChildren,
+  type AsChildProps,
   type AsChildRenderFunction,
   type AsChildRenderObject,
   type RenderAsChildParams,

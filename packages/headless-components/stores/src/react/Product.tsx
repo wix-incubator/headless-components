@@ -4,7 +4,7 @@ import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as SelectedVariant from "./core/SelectedVariant.js";
 import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
-import { renderAsChild, type AsChildChildren } from "../utils/index.js";
+import { renderAsChild, type AsChildProps } from "../utils/index.js";
 
 /**
  * Props for the Product root component following the documented API
@@ -13,7 +13,6 @@ export interface ProductRootProps {
   children: React.ReactNode;
   product: V3Product;
   selectedVariant?: any;
-  asChild?: boolean;
 }
 
 /**
@@ -54,14 +53,7 @@ export function Root(props: ProductRootProps): React.ReactNode {
 /**
  * Props for Product Name component
  */
-export interface NameProps {
-  /** When true, renders as a child component instead of default h1 */
-  asChild?: boolean;
-  /** Custom render function or React element when using asChild */
-  children?: AsChildChildren<{ name: string } & NameProps>;
-  /** CSS classes to apply to the default h1 element */
-  className?: string;
-}
+export interface NameProps extends AsChildProps<{ name: string }> {}
 
 /**
  * Displays the product name with customizable rendering following the documented API.
@@ -118,19 +110,12 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   );
 });
 
-Name.displayName = "Product.Name";
-
 /**
  * Props for Product Description component
  */
-export interface DescriptionProps {
+export interface DescriptionProps
+  extends AsChildProps<{ description: string }> {
   as?: "plain" | "html" | "ricos";
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLElement,
-    { description: string }
-  >;
-  className?: string;
 }
 
 /**
@@ -187,5 +172,3 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
     );
   },
 );
-
-Description.displayName = "Product.Description";

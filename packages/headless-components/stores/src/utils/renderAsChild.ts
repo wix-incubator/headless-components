@@ -31,6 +31,39 @@ export type AsChildChildren<TProps = any> =
   | AsChildRenderObject<TProps>;
 
 /**
+ * Generic interface for components that support asChild pattern.
+ * This interface can be extended by specific components to add their own props.
+ *
+ * @template TData - The shape of the data object passed to asChild render functions
+ * @template TProps - Additional props specific to the component
+ *
+ * @example
+ * ```tsx
+ * // For a component that provides name data
+ * interface NameProps extends AsChildProps<{ name: string }> {
+ *   // className is already included from AsChildProps
+ * }
+ *
+ * // For a component that provides description data
+ * interface DescriptionProps extends AsChildProps<{ description: string }> {
+ *   as?: "plain" | "html";
+ *   // className is already included from AsChildProps
+ * }
+ * ```
+ */
+export interface AsChildProps<
+  TData extends Record<string, any> = Record<string, any>,
+  TProps = {},
+> {
+  /** When true, renders as a child component instead of default element */
+  asChild?: boolean;
+  /** Custom render function or React element when using asChild */
+  children?: AsChildChildren<TData & TProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
  * Parameters for the renderAsChild utility function
  */
 export interface RenderAsChildParams<TProps = any> {
