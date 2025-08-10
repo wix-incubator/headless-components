@@ -46,3 +46,6 @@ export {
   type AsChildRenderObject,
   type RenderAsChildParams,
 } from "./renderAsChild.js";
+
+// Re-export types
+export { AsContent } from "./types.js";

@@ -1,10 +1,16 @@
-import React from "react";
-import * as CoreProduct from "./core/Product.js";
-import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
-import * as SelectedVariant from "./core/SelectedVariant.js";
 import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
-import { renderAsChild, type AsChildProps } from "../utils/index.js";
+import React from "react";
+import { AsContent, renderAsChild, type AsChildProps } from "../utils/index.js";
+import * as CoreProduct from "./core/Product.js";
+import * as ProductModifiers from "./core/ProductModifiers.js";
+import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as SelectedVariant from "./core/SelectedVariant.js";
+
+enum TestIds {
+  productRoot = "product-root",
+  productName = "product-name",
+  productDescription = "product-description",
+}
 
 /**
  * Props for the Product root component following the documented API
@@ -36,12 +42,10 @@ export interface ProductRootProps {
  * ```
  */
 export function Root(props: ProductRootProps): React.ReactNode {
-  const testId = "product-root";
-
   return (
     <CoreProduct.Root
       productServiceConfig={{ product: props.product }}
-      data-testid={testId}
+      data-testid={TestIds.productRoot}
     >
       <ProductVariantSelector.Root>
         <ProductModifiers.Root>
@@ -83,7 +87,7 @@ export interface NameProps extends AsChildProps<{ name: string }> {}
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const testId = "product-name";
+  const testId = TestIds.productName;
 
   return (
     <CoreProduct.Name>
@@ -114,7 +118,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 export interface DescriptionProps
   extends AsChildProps<{ description: string }> {
   /** Format of the description content */
-  as?: "plain" | "html" | "ricos";
+  as?: AsContent;
 }
 
 /**
@@ -142,8 +146,8 @@ export interface DescriptionProps
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className, as = "plain" } = props;
-    const testId = "product-description";
+    const { asChild, children, className, as = AsContent.Plain } = props;
+    const testId = TestIds.productDescription;
 
     return (
       <CoreProduct.Description>
@@ -151,13 +155,13 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
           // Determine which description to use based on the 'as' prop
           let description: string;
           switch (as) {
-            case "html":
+            case AsContent.Html:
               description = plainDescription || "";
               break;
-            case "ricos":
+            case AsContent.Ricos:
               description = JSON.stringify(richDescription) || "";
               break;
-            case "plain":
+            case AsContent.Plain:
             default:
               // For plain text, we'll strip HTML tags from plainDescription
               description = plainDescription
@@ -177,7 +181,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
           }
 
           // Default rendering based on format
-          if (as === "html") {
+          if (as === AsContent.Html) {
             return (
               <div
                 className={className}
