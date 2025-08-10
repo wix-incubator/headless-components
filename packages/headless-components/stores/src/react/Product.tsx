@@ -96,7 +96,6 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
       {({ name }) => {
         const attributes = {
           "data-testid": TestIds.productName,
-          "data-testid2": "product-name",
         };
 
         if (asChild) {
