@@ -11,6 +11,8 @@ enum TestIds {
   productRoot = "product-root",
   productName = "product-name",
   productDescription = "product-description",
+  productPrice = "product-price",
+  productCompareAtPrice = "product-compare-at-price",
 }
 
 /**
@@ -203,3 +205,169 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
     );
   },
 );
+
+/**
+ * Props for Product Price component
+ */
+export interface PriceProps
+  extends AsChildProps<{ price: string; formattedPrice: string }> {}
+
+/**
+ * Displays the current product price with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Price className="text-3xl font-bold text-content-primary data-[discounted]:text-brand-primary" />
+ *
+ * // asChild with primitive
+ * <Product.Price asChild>
+ *   <span className="text-3xl font-bold text-content-primary" />
+ * </Product.Price>
+ *
+ * // asChild with react component
+ * <Product.Price asChild>
+ *   {React.forwardRef(({price, formattedPrice, ...props}, ref) => (
+ *     <span ref={ref} {...props} className="text-3xl font-bold text-content-primary">
+ *       {formattedPrice}
+ *     </span>
+ *   ))}
+ * </Product.Price>
+ * ```
+ */
+export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
+  const { asChild, children, className } = props;
+  const testId = TestIds.productPrice;
+
+  return (
+    <SelectedVariant.Price>
+      {({ price, compareAtPrice }) => {
+        const isDiscounted = compareAtPrice !== null;
+        const priceData = {
+          price,
+          formattedPrice: price,
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: priceData,
+            ref,
+            content: price,
+          });
+          if (rendered) {
+            // Add data attributes to the rendered element if it's a valid React element
+            if (React.isValidElement(rendered)) {
+              return React.cloneElement(rendered as React.ReactElement<any>, {
+                "data-testid": testId,
+                "data-discounted": isDiscounted ? "" : undefined,
+              });
+            }
+            return rendered;
+          }
+        }
+
+        return (
+          <span
+            className={className}
+            data-testid={testId}
+            data-discounted={isDiscounted ? "" : undefined}
+            ref={ref}
+          >
+            {price}
+          </span>
+        );
+      }}
+    </SelectedVariant.Price>
+  );
+});
+
+/**
+ * Props for Product CompareAtPrice component
+ */
+export interface CompareAtPriceProps
+  extends AsChildProps<{ price: string; formattedPrice: string }> {}
+
+/**
+ * Displays the compare-at (original) price when on sale with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage (only shows when on sale)
+ * <Product.CompareAtPrice className="text-lg text-content-faded line-through hidden data-[discounted]:inline" />
+ *
+ * // asChild with primitive
+ * <Product.CompareAtPrice asChild>
+ *   <span className="text-lg text-content-faded line-through" />
+ * </Product.CompareAtPrice>
+ *
+ * // asChild with react component
+ * <Product.CompareAtPrice asChild>
+ *   {React.forwardRef(({formattedPrice, ...props}, ref) => (
+ *     <span
+ *       ref={ref}
+ *       {...props}
+ *       className="hidden data-[discounted]:inline text-lg text-content-faded line-through"
+ *     >
+ *       Was: {formattedPrice}
+ *     </span>
+ *   ))}
+ * </Product.CompareAtPrice>
+ * ```
+ */
+export const CompareAtPrice = React.forwardRef<
+  HTMLElement,
+  CompareAtPriceProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+  const testId = TestIds.productCompareAtPrice;
+
+  return (
+    <SelectedVariant.Price>
+      {({ compareAtPrice }) => {
+        // Don't render anything if there's no compare-at price
+        if (!compareAtPrice) {
+          return null;
+        }
+
+        const isDiscounted = true; // If compareAtPrice exists, it means there's a discount
+        const priceData = {
+          price: compareAtPrice,
+          formattedPrice: compareAtPrice,
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: priceData,
+            ref,
+            content: compareAtPrice,
+          });
+          if (rendered) {
+            // Add data attributes to the rendered element if it's a valid React element
+            if (React.isValidElement(rendered)) {
+              return React.cloneElement(rendered as React.ReactElement<any>, {
+                "data-testid": testId,
+                "data-discounted": isDiscounted ? "" : undefined,
+              });
+            }
+            return rendered;
+          }
+        }
+
+        return (
+          <span
+            className={className}
+            data-testid={testId}
+            data-discounted={isDiscounted ? "" : undefined}
+            ref={ref}
+          >
+            {compareAtPrice}
+          </span>
+        );
+      }}
+    </SelectedVariant.Price>
+  );
+});
