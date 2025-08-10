@@ -5,11 +5,11 @@ import React from 'react';
 import { productsV3 } from '@wix/stores';
 
 import {
-  CoreProduct as ProductPrimitive,
+  Product as ProductPrimitive,
   ProductModifiers as ProductModifiersPrimitive,
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
-  Product,
+  ProductV2 as Product,
 } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
