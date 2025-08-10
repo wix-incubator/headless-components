@@ -216,9 +216,9 @@ export default function ProductDetails({
 
               {/* Product Info */}
               <div className="space-y-8">
-                {/* Product Name & Price */}
-                <div>
-                  <Product.Root product={product}>
+                <Product.Root product={product}>
+                  {/* Product Name & Price */}
+                  <div>
                     <Product.Name className="text-4xl font-bold text-content-primary mb-4" />
                     <Product.Name asChild>
                       <h1 className="text-4xl font-bold text-content-primary mb-4" />
@@ -233,183 +233,135 @@ export default function ProductDetails({
                         </h1>
                       ))}
                     </Product.Name>
-                  </Product.Root>
-                  <SelectedVariantPrimitive.Price>
-                    {({ price, compareAtPrice }) => (
-                      <div className="space-y-1">
-                        <div className="text-3xl font-bold text-content-primary">
-                          {price}
-                        </div>
-                        {compareAtPrice &&
-                          parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) >
-                            0 && (
-                            <div className="text-lg font-medium text-content-faded line-through">
-                              {compareAtPrice}
-                            </div>
-                          )}
-                      </div>
-                    )}
-                  </SelectedVariantPrimitive.Price>
-                  {isQuickView && (
-                    <SelectedVariantPrimitive.SKU>
-                      {({ sku }) =>
-                        sku && (
-                          <>
-                            <br />
-                            <div className="text-base text-content-muted">
-                              SKU: {sku}
-                            </div>
-                          </>
-                        )
-                      }
-                    </SelectedVariantPrimitive.SKU>
-                  )}
-                </div>
-
-                {/* Product Description */}
-                <ProductPrimitive.Description>
-                  {({ plainDescription }) => (
-                    <>
-                      {plainDescription && !isQuickView && (
-                        <div>
-                          <h3 className="text-xl font-semibold text-content-primary mb-3">
-                            Description
-                          </h3>
-                          {
-                            <p
-                              className="text-content-secondary leading-relaxed"
-                              dangerouslySetInnerHTML={{
-                                __html: plainDescription,
-                              }}
-                            />
-                          }
+                    <SelectedVariantPrimitive.Price>
+                      {({ price, compareAtPrice }) => (
+                        <div className="space-y-1">
+                          <div className="text-3xl font-bold text-content-primary">
+                            {price}
+                          </div>
+                          {compareAtPrice &&
+                            parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) >
+                              0 && (
+                              <div className="text-lg font-medium text-content-faded line-through">
+                                {compareAtPrice}
+                              </div>
+                            )}
                         </div>
                       )}
-                    </>
+                    </SelectedVariantPrimitive.Price>
+                    {isQuickView && (
+                      <SelectedVariantPrimitive.SKU>
+                        {({ sku }) =>
+                          sku && (
+                            <>
+                              <br />
+                              <div className="text-base text-content-muted">
+                                SKU: {sku}
+                              </div>
+                            </>
+                          )
+                        }
+                      </SelectedVariantPrimitive.SKU>
+                    )}
+                  </div>
+
+                  {/* Product Description */}
+                  {!isQuickView && (
+                    <div>
+                      <h3 className="text-xl font-semibold text-content-primary mb-3">
+                        Description
+                      </h3>
+                      <Product.Description
+                        as="html"
+                        className="text-content-secondary leading-relaxed"
+                      />
+                    </div>
                   )}
-                </ProductPrimitive.Description>
 
-                {/* Product Options (if any) */}
-                <ProductVariantSelectorPrimitive.Root>
-                  <ProductVariantSelectorPrimitive.Options>
-                    {({ options, hasOptions }) => (
-                      <>
-                        {hasOptions && (
-                          <div
-                            className="space-y-6"
-                            data-testid="product-options"
-                          >
-                            <h3 className="text-lg font-semibold text-content-primary">
-                              Product Options
-                            </h3>
+                  {/* Product Options (if any) */}
+                  <ProductVariantSelectorPrimitive.Root>
+                    <ProductVariantSelectorPrimitive.Options>
+                      {({ options, hasOptions }) => (
+                        <>
+                          {hasOptions && (
+                            <div
+                              className="space-y-6"
+                              data-testid="product-options"
+                            >
+                              <h3 className="text-lg font-semibold text-content-primary">
+                                Product Options
+                              </h3>
 
-                            {options.map((option: any) => (
-                              <div
-                                key={option.name}
-                                data-testid="product-option"
-                              >
-                                <ProductVariantSelectorPrimitive.Option
-                                  option={option}
+                              {options.map((option: any) => (
+                                <div
+                                  key={option.name}
+                                  data-testid="product-option"
                                 >
-                                  {({ name, choices, hasChoices }) => (
-                                    <>
-                                      <h3 className="text-lg font-semibold text-content-primary mb-3">
-                                        {name}
-                                      </h3>
-                                      {hasChoices && (
-                                        <div className="flex flex-wrap gap-3">
-                                          {choices.map((choice: any) => {
-                                            // Check if this is a color option
-                                            const isColorOption = String(name)
-                                              .toLowerCase()
-                                              .includes('color');
-                                            const hasColorCode =
-                                              choice.colorCode;
+                                  <ProductVariantSelectorPrimitive.Option
+                                    option={option}
+                                  >
+                                    {({ name, choices, hasChoices }) => (
+                                      <>
+                                        <h3 className="text-lg font-semibold text-content-primary mb-3">
+                                          {name}
+                                        </h3>
+                                        {hasChoices && (
+                                          <div className="flex flex-wrap gap-3">
+                                            {choices.map((choice: any) => {
+                                              // Check if this is a color option
+                                              const isColorOption = String(name)
+                                                .toLowerCase()
+                                                .includes('color');
+                                              const hasColorCode =
+                                                choice.colorCode;
 
-                                            return (
-                                              <ProductVariantSelectorPrimitive.Choice
-                                                key={
-                                                  choice.value ||
-                                                  choice.description ||
-                                                  choice.name
-                                                }
-                                                option={option}
-                                                choice={choice}
-                                              >
-                                                {({
-                                                  value,
-                                                  isSelected,
-                                                  isVisible,
-                                                  isInStock,
-                                                  isPreOrderEnabled,
-                                                  select,
-                                                }) => (
-                                                  <>
-                                                    {isColorOption &&
-                                                    isVisible &&
-                                                    hasColorCode &&
-                                                    (!isQuickView ||
-                                                      isInStock) ? (
-                                                      // Color Swatch
-                                                      <div className="relative">
-                                                        <button
-                                                          data-testid="product-modifier-choice-button"
-                                                          onClick={select}
-                                                          title={value}
-                                                          className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-                                                            isSelected
-                                                              ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
-                                                              : 'border-color-swatch hover:border-color-swatch-hover hover:scale-105'
-                                                          } ${
-                                                            !isInStock &&
-                                                            !isPreOrderEnabled &&
-                                                            !isQuickView
-                                                              ? 'grayscale'
-                                                              : ''
-                                                          }`}
-                                                          style={{
-                                                            backgroundColor:
-                                                              choice.colorCode ||
-                                                              'var(--theme-text-content-40)',
-                                                          }}
-                                                        />
-                                                        {!isInStock &&
-                                                          !isPreOrderEnabled &&
-                                                          !isQuickView && (
-                                                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                              <svg
-                                                                className="w-6 h-6 text-status-error"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke="currentColor"
-                                                              >
-                                                                <path
-                                                                  strokeLinecap="round"
-                                                                  strokeLinejoin="round"
-                                                                  strokeWidth="2"
-                                                                  d="M6 18L18 6M6 6l12 12"
-                                                                />
-                                                              </svg>
-                                                            </div>
-                                                          )}
-                                                      </div>
-                                                    ) : (
+                                              return (
+                                                <ProductVariantSelectorPrimitive.Choice
+                                                  key={
+                                                    choice.value ||
+                                                    choice.description ||
+                                                    choice.name
+                                                  }
+                                                  option={option}
+                                                  choice={choice}
+                                                >
+                                                  {({
+                                                    value,
+                                                    isSelected,
+                                                    isVisible,
+                                                    isInStock,
+                                                    isPreOrderEnabled,
+                                                    select,
+                                                  }) => (
+                                                    <>
+                                                      {isColorOption &&
                                                       isVisible &&
+                                                      hasColorCode &&
                                                       (!isQuickView ||
-                                                        isInStock) && (
-                                                        // Regular Text Button
+                                                        isInStock) ? (
+                                                        // Color Swatch
                                                         <div className="relative">
                                                           <button
                                                             data-testid="product-modifier-choice-button"
                                                             onClick={select}
-                                                            className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                                                            title={value}
+                                                            className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
                                                               isSelected
-                                                                ? 'product-option-active'
-                                                                : 'product-option-inactive'
+                                                                ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
+                                                                : 'border-color-swatch hover:border-color-swatch-hover hover:scale-105'
+                                                            } ${
+                                                              !isInStock &&
+                                                              !isPreOrderEnabled &&
+                                                              !isQuickView
+                                                                ? 'grayscale'
+                                                                : ''
                                                             }`}
-                                                          >
-                                                            {value}
-                                                          </button>
+                                                            style={{
+                                                              backgroundColor:
+                                                                choice.colorCode ||
+                                                                'var(--theme-text-content-40)',
+                                                            }}
+                                                          />
                                                           {!isInStock &&
                                                             !isPreOrderEnabled &&
                                                             !isQuickView && (
@@ -430,366 +382,408 @@ export default function ProductDetails({
                                                               </div>
                                                             )}
                                                         </div>
-                                                      )
-                                                    )}
-                                                  </>
-                                                )}
-                                              </ProductVariantSelectorPrimitive.Choice>
-                                            );
-                                          })}
-                                        </div>
-                                      )}
-                                    </>
-                                  )}
-                                </ProductVariantSelectorPrimitive.Option>
-                              </div>
-                            ))}
-
-                            <ProductVariantSelectorPrimitive.Reset>
-                              {({ reset, hasSelections }) =>
-                                hasSelections && (
-                                  <div className="pt-4">
-                                    <button
-                                      onClick={reset}
-                                      className="text-sm text-brand-primary hover:text-brand-light transition-colors"
-                                    >
-                                      Reset Selections
-                                    </button>
-                                  </div>
-                                )
-                              }
-                            </ProductVariantSelectorPrimitive.Reset>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </ProductVariantSelectorPrimitive.Options>
-
-                  {/* Product Modifiers */}
-                  <ProductModifiersPrimitive.Root>
-                    <ProductModifiersPrimitive.Modifiers>
-                      {({ modifiers, hasModifiers }) => (
-                        <>
-                          {hasModifiers && (
-                            <div className="space-y-6">
-                              <h3 className="text-lg font-semibold text-content-primary">
-                                Product Modifiers
-                              </h3>
-
-                              {modifiers.map((modifier: any) => (
-                                <ProductModifiersPrimitive.Modifier
-                                  key={modifier.name}
-                                  modifier={modifier}
-                                >
-                                  {({
-                                    name,
-                                    type,
-                                    choices,
-                                    hasChoices,
-                                    mandatory,
-                                  }) => (
-                                    <div
-                                      className="space-y-3"
-                                      data-testid="product-modifiers"
-                                    >
-                                      <h4 className="text-md font-medium text-content-primary">
-                                        {name}{' '}
-                                        {mandatory && (
-                                          <span className="text-status-error">
-                                            *
-                                          </span>
-                                        )}
-                                      </h4>
-
-                                      {type === 'SWATCH_CHOICES' &&
-                                        hasChoices && (
-                                          <div className="flex flex-wrap gap-2">
-                                            {choices.map((choice: any) => (
-                                              <ProductModifiersPrimitive.Choice
-                                                key={choice.value}
-                                                modifier={modifier}
-                                                choice={choice}
-                                              >
-                                                {({
-                                                  value,
-                                                  isSelected,
-                                                  colorCode,
-                                                  select,
-                                                }) => (
-                                                  <button
-                                                    data-testid="product-modifier-choice-button"
-                                                    onClick={select}
-                                                    className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-                                                      isSelected
-                                                        ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
-                                                        : 'border-brand-light hover:border-brand-medium hover:scale-105'
-                                                    }`}
-                                                    style={{
-                                                      backgroundColor:
-                                                        colorCode ||
-                                                        'var(--theme-text-content-40)',
-                                                    }}
-                                                    title={value}
-                                                  />
-                                                )}
-                                              </ProductModifiersPrimitive.Choice>
-                                            ))}
-                                          </div>
-                                        )}
-
-                                      {type === 'TEXT_CHOICES' &&
-                                        hasChoices && (
-                                          <div className="flex flex-wrap gap-2">
-                                            {choices.map((choice: any) => (
-                                              <ProductModifiersPrimitive.Choice
-                                                key={choice.value}
-                                                modifier={modifier}
-                                                choice={choice}
-                                              >
-                                                {({
-                                                  value,
-                                                  isSelected,
-                                                  select,
-                                                }) => (
-                                                  <button
-                                                    data-testid="product-modifier-choice-button"
-                                                    onClick={select}
-                                                    className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
-                                                      isSelected
-                                                        ? 'product-option-active'
-                                                        : 'product-option-inactive'
-                                                    }`}
-                                                  >
-                                                    {value}
-                                                  </button>
-                                                )}
-                                              </ProductModifiersPrimitive.Choice>
-                                            ))}
-                                          </div>
-                                        )}
-
-                                      {type === 'FREE_TEXT' && (
-                                        <>
-                                          {mandatory ? (
-                                            <FreeTextInput
-                                              data-testid="product-modifier-free-text"
-                                              modifier={modifier}
-                                              name={name}
-                                            />
-                                          ) : (
-                                            <ProductModifiersPrimitive.ToggleFreeText
-                                              modifier={modifier}
-                                            >
-                                              {({
-                                                isTextInputShown,
-                                                toggle,
-                                              }) => (
-                                                <div className="space-y-3">
-                                                  <label className="flex items-center gap-2">
-                                                    <input
-                                                      type="checkbox"
-                                                      checked={isTextInputShown}
-                                                      onChange={toggle}
-                                                      className="w-4 h-4 text-brand-primary rounded border-brand-light focus:ring-brand-primary"
-                                                    />
-                                                    <span className="text-content-primary">
-                                                      Enable
-                                                    </span>
-                                                  </label>
-                                                  {isTextInputShown && (
-                                                    <FreeTextInput
-                                                      modifier={modifier}
-                                                      name={name}
-                                                    />
+                                                      ) : (
+                                                        isVisible &&
+                                                        (!isQuickView ||
+                                                          isInStock) && (
+                                                          // Regular Text Button
+                                                          <div className="relative">
+                                                            <button
+                                                              data-testid="product-modifier-choice-button"
+                                                              onClick={select}
+                                                              className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                                                                isSelected
+                                                                  ? 'product-option-active'
+                                                                  : 'product-option-inactive'
+                                                              }`}
+                                                            >
+                                                              {value}
+                                                            </button>
+                                                            {!isInStock &&
+                                                              !isPreOrderEnabled &&
+                                                              !isQuickView && (
+                                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                                  <svg
+                                                                    className="w-6 h-6 text-status-error"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke="currentColor"
+                                                                  >
+                                                                    <path
+                                                                      strokeLinecap="round"
+                                                                      strokeLinejoin="round"
+                                                                      strokeWidth="2"
+                                                                      d="M6 18L18 6M6 6l12 12"
+                                                                    />
+                                                                  </svg>
+                                                                </div>
+                                                              )}
+                                                          </div>
+                                                        )
+                                                      )}
+                                                    </>
                                                   )}
-                                                </div>
-                                              )}
-                                            </ProductModifiersPrimitive.ToggleFreeText>
-                                          )}
-                                        </>
-                                      )}
-                                    </div>
-                                  )}
-                                </ProductModifiersPrimitive.Modifier>
+                                                </ProductVariantSelectorPrimitive.Choice>
+                                              );
+                                            })}
+                                          </div>
+                                        )}
+                                      </>
+                                    )}
+                                  </ProductVariantSelectorPrimitive.Option>
+                                </div>
                               ))}
+
+                              <ProductVariantSelectorPrimitive.Reset>
+                                {({ reset, hasSelections }) =>
+                                  hasSelections && (
+                                    <div className="pt-4">
+                                      <button
+                                        onClick={reset}
+                                        className="text-sm text-brand-primary hover:text-brand-light transition-colors"
+                                      >
+                                        Reset Selections
+                                      </button>
+                                    </div>
+                                  )
+                                }
+                              </ProductVariantSelectorPrimitive.Reset>
                             </div>
                           )}
                         </>
                       )}
-                    </ProductModifiersPrimitive.Modifiers>
-                  </ProductModifiersPrimitive.Root>
+                    </ProductVariantSelectorPrimitive.Options>
 
-                  {/* Quantity Selector */}
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-content-primary">
-                      Quantity
-                    </h3>
-                    <ProductVariantSelectorPrimitive.Stock>
-                      {({
-                        inStock,
-                        isPreOrderEnabled,
-                        availableQuantity,
-                        selectedQuantity,
-                        incrementQuantity,
-                        decrementQuantity,
-                      }) => {
-                        return (
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center border border-brand-light rounded-lg">
-                              <button
-                                onClick={decrementQuantity}
-                                disabled={
-                                  selectedQuantity <= 1 ||
-                                  (!inStock && !isPreOrderEnabled)
-                                }
-                                className="px-3 py-2 text-content-primary hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                              >
-                                -
-                              </button>
-                              <span className="px-4 py-2 text-content-primary border-x border-brand-light min-w-[3rem] text-center">
-                                {selectedQuantity}
-                              </span>
-                              <button
-                                onClick={incrementQuantity}
-                                disabled={
-                                  (!!availableQuantity &&
-                                    selectedQuantity >= availableQuantity) ||
-                                  (!inStock && !isPreOrderEnabled)
-                                }
-                                className="px-3 py-2 text-content-primary hover:bg-surface-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                +
-                              </button>
+                    {/* Product Modifiers */}
+                    <ProductModifiersPrimitive.Root>
+                      <ProductModifiersPrimitive.Modifiers>
+                        {({ modifiers, hasModifiers }) => (
+                          <>
+                            {hasModifiers && (
+                              <div className="space-y-6">
+                                <h3 className="text-lg font-semibold text-content-primary">
+                                  Product Modifiers
+                                </h3>
+
+                                {modifiers.map((modifier: any) => (
+                                  <ProductModifiersPrimitive.Modifier
+                                    key={modifier.name}
+                                    modifier={modifier}
+                                  >
+                                    {({
+                                      name,
+                                      type,
+                                      choices,
+                                      hasChoices,
+                                      mandatory,
+                                    }) => (
+                                      <div
+                                        className="space-y-3"
+                                        data-testid="product-modifiers"
+                                      >
+                                        <h4 className="text-md font-medium text-content-primary">
+                                          {name}{' '}
+                                          {mandatory && (
+                                            <span className="text-status-error">
+                                              *
+                                            </span>
+                                          )}
+                                        </h4>
+
+                                        {type === 'SWATCH_CHOICES' &&
+                                          hasChoices && (
+                                            <div className="flex flex-wrap gap-2">
+                                              {choices.map((choice: any) => (
+                                                <ProductModifiersPrimitive.Choice
+                                                  key={choice.value}
+                                                  modifier={modifier}
+                                                  choice={choice}
+                                                >
+                                                  {({
+                                                    value,
+                                                    isSelected,
+                                                    colorCode,
+                                                    select,
+                                                  }) => (
+                                                    <button
+                                                      data-testid="product-modifier-choice-button"
+                                                      onClick={select}
+                                                      className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
+                                                        isSelected
+                                                          ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
+                                                          : 'border-brand-light hover:border-brand-medium hover:scale-105'
+                                                      }`}
+                                                      style={{
+                                                        backgroundColor:
+                                                          colorCode ||
+                                                          'var(--theme-text-content-40)',
+                                                      }}
+                                                      title={value}
+                                                    />
+                                                  )}
+                                                </ProductModifiersPrimitive.Choice>
+                                              ))}
+                                            </div>
+                                          )}
+
+                                        {type === 'TEXT_CHOICES' &&
+                                          hasChoices && (
+                                            <div className="flex flex-wrap gap-2">
+                                              {choices.map((choice: any) => (
+                                                <ProductModifiersPrimitive.Choice
+                                                  key={choice.value}
+                                                  modifier={modifier}
+                                                  choice={choice}
+                                                >
+                                                  {({
+                                                    value,
+                                                    isSelected,
+                                                    select,
+                                                  }) => (
+                                                    <button
+                                                      data-testid="product-modifier-choice-button"
+                                                      onClick={select}
+                                                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                                                        isSelected
+                                                          ? 'product-option-active'
+                                                          : 'product-option-inactive'
+                                                      }`}
+                                                    >
+                                                      {value}
+                                                    </button>
+                                                  )}
+                                                </ProductModifiersPrimitive.Choice>
+                                              ))}
+                                            </div>
+                                          )}
+
+                                        {type === 'FREE_TEXT' && (
+                                          <>
+                                            {mandatory ? (
+                                              <FreeTextInput
+                                                data-testid="product-modifier-free-text"
+                                                modifier={modifier}
+                                                name={name}
+                                              />
+                                            ) : (
+                                              <ProductModifiersPrimitive.ToggleFreeText
+                                                modifier={modifier}
+                                              >
+                                                {({
+                                                  isTextInputShown,
+                                                  toggle,
+                                                }) => (
+                                                  <div className="space-y-3">
+                                                    <label className="flex items-center gap-2">
+                                                      <input
+                                                        type="checkbox"
+                                                        checked={
+                                                          isTextInputShown
+                                                        }
+                                                        onChange={toggle}
+                                                        className="w-4 h-4 text-brand-primary rounded border-brand-light focus:ring-brand-primary"
+                                                      />
+                                                      <span className="text-content-primary">
+                                                        Enable
+                                                      </span>
+                                                    </label>
+                                                    {isTextInputShown && (
+                                                      <FreeTextInput
+                                                        modifier={modifier}
+                                                        name={name}
+                                                      />
+                                                    )}
+                                                  </div>
+                                                )}
+                                              </ProductModifiersPrimitive.ToggleFreeText>
+                                            )}
+                                          </>
+                                        )}
+                                      </div>
+                                    )}
+                                  </ProductModifiersPrimitive.Modifier>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </ProductModifiersPrimitive.Modifiers>
+                    </ProductModifiersPrimitive.Root>
+
+                    {/* Quantity Selector */}
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold text-content-primary">
+                        Quantity
+                      </h3>
+                      <ProductVariantSelectorPrimitive.Stock>
+                        {({
+                          inStock,
+                          isPreOrderEnabled,
+                          availableQuantity,
+                          selectedQuantity,
+                          incrementQuantity,
+                          decrementQuantity,
+                        }) => {
+                          return (
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center border border-brand-light rounded-lg">
+                                <button
+                                  onClick={decrementQuantity}
+                                  disabled={
+                                    selectedQuantity <= 1 ||
+                                    (!inStock && !isPreOrderEnabled)
+                                  }
+                                  className="px-3 py-2 text-content-primary hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  -
+                                </button>
+                                <span className="px-4 py-2 text-content-primary border-x border-brand-light min-w-[3rem] text-center">
+                                  {selectedQuantity}
+                                </span>
+                                <button
+                                  onClick={incrementQuantity}
+                                  disabled={
+                                    (!!availableQuantity &&
+                                      selectedQuantity >= availableQuantity) ||
+                                    (!inStock && !isPreOrderEnabled)
+                                  }
+                                  className="px-3 py-2 text-content-primary hover:bg-surface-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  +
+                                </button>
+                              </div>
+                              {/* Show max quantity only when out of stock AND preorder enabled */}
+                              {!inStock &&
+                                isPreOrderEnabled &&
+                                availableQuantity && (
+                                  <span className="text-content-muted text-sm">
+                                    Max: {availableQuantity} Pre Order
+                                  </span>
+                                )}
+                              {/* Show stock message when in stock but available quantity < 10 */}
+                              {inStock &&
+                                availableQuantity &&
+                                availableQuantity < 10 && (
+                                  <span className="text-content-muted text-sm">
+                                    Only {availableQuantity} left in stock
+                                  </span>
+                                )}
                             </div>
-                            {/* Show max quantity only when out of stock AND preorder enabled */}
+                          );
+                        }}
+                      </ProductVariantSelectorPrimitive.Stock>
+                    </div>
+
+                    {/* Add to Cart */}
+                    <div className="space-y-4">
+                      <SelectedVariantPrimitive.Actions>
+                        {({
+                          error,
+                          isPreOrderEnabled,
+                          preOrderMessage,
+                          inStock,
+                        }) => (
+                          <div className="space-y-4">
+                            {error && (
+                              <div className="bg-status-danger-light border border-status-danger rounded-lg p-3">
+                                <p className="text-status-error text-sm">
+                                  {error}
+                                </p>
+                              </div>
+                            )}
                             {!inStock &&
-                              isPreOrderEnabled &&
-                              availableQuantity && (
-                                <span className="text-content-muted text-sm">
-                                  Max: {availableQuantity} Pre Order
-                                </span>
-                              )}
-                            {/* Show stock message when in stock but available quantity < 10 */}
-                            {inStock &&
-                              availableQuantity &&
-                              availableQuantity < 10 && (
-                                <span className="text-content-muted text-sm">
-                                  Only {availableQuantity} left in stock
-                                </span>
-                              )}
-                          </div>
-                        );
-                      }}
-                    </ProductVariantSelectorPrimitive.Stock>
-                  </div>
-
-                  {/* Add to Cart */}
-                  <div className="space-y-4">
-                    <SelectedVariantPrimitive.Actions>
-                      {({
-                        error,
-                        isPreOrderEnabled,
-                        preOrderMessage,
-                        inStock,
-                      }) => (
-                        <div className="space-y-4">
-                          {error && (
-                            <div className="bg-status-danger-light border border-status-danger rounded-lg p-3">
-                              <p className="text-status-error text-sm">
-                                {error}
-                              </p>
-                            </div>
-                          )}
-                          {!inStock && preOrderMessage && isPreOrderEnabled && (
-                            <div className="bg-status-info-light border border-status-info rounded-lg p-3">
-                              <p className="text-status-info text-sm">
-                                {preOrderMessage}
-                              </p>
-                            </div>
-                          )}
-
-                          <ProductActionButtons isQuickView={isQuickView} />
-                        </div>
-                      )}
-                    </SelectedVariantPrimitive.Actions>
-
-                    {/* Stock Status */}
-                    <ProductVariantSelectorPrimitive.Stock>
-                      {({
-                        inStock,
-                        isPreOrderEnabled,
-                        availabilityStatus,
-                        availableQuantity,
-                        trackInventory,
-                        currentVariantId,
-                      }) => {
-                        const displayMessage = getStockStatusMessage(
-                          availabilityStatus,
-                          isPreOrderEnabled
-                        );
-                        return (
-                          (!!availabilityStatus || currentVariantId) && (
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={`w-3 h-3 rounded-full ${
-                                  inStock || isPreOrderEnabled
-                                    ? 'status-dot-success'
-                                    : 'status-dot-danger'
-                                }`}
-                              ></div>
-                              <span
-                                className={`text-sm ${
-                                  inStock || isPreOrderEnabled
-                                    ? 'text-status-success'
-                                    : 'text-status-error'
-                                }`}
-                              >
-                                {displayMessage}
-                                {trackInventory &&
-                                  availableQuantity !== null && (
-                                    <span className="text-content-muted ml-1">
-                                      ({availableQuantity} available)
-                                    </span>
-                                  )}
-                              </span>
-                            </div>
-                          )
-                        );
-                      }}
-                    </ProductVariantSelectorPrimitive.Stock>
-                  </div>
-                </ProductVariantSelectorPrimitive.Root>
-
-                {/* Product Details */}
-                {!isQuickView && (
-                  <SelectedVariantPrimitive.Details>
-                    {({ sku, weight }) => (
-                      <>
-                        {(sku || weight) && (
-                          <div className="border-t border-brand-light pt-8">
-                            <h3 className="text-xl font-semibold text-content-primary mb-4">
-                              Product Details
-                            </h3>
-                            <div className="space-y-3 text-content-secondary">
-                              {sku && (
-                                <div className="flex justify-between">
-                                  <span>SKU:</span>
-                                  <span>{sku}</span>
+                              preOrderMessage &&
+                              isPreOrderEnabled && (
+                                <div className="bg-status-info-light border border-status-info rounded-lg p-3">
+                                  <p className="text-status-info text-sm">
+                                    {preOrderMessage}
+                                  </p>
                                 </div>
                               )}
-                              {weight && (
-                                <div className="flex justify-between">
-                                  <span>Weight:</span>
-                                  <span>{weight}</span>
-                                </div>
-                              )}
-                            </div>
+
+                            <ProductActionButtons isQuickView={isQuickView} />
                           </div>
                         )}
-                      </>
-                    )}
-                  </SelectedVariantPrimitive.Details>
-                )}
+                      </SelectedVariantPrimitive.Actions>
+
+                      {/* Stock Status */}
+                      <ProductVariantSelectorPrimitive.Stock>
+                        {({
+                          inStock,
+                          isPreOrderEnabled,
+                          availabilityStatus,
+                          availableQuantity,
+                          trackInventory,
+                          currentVariantId,
+                        }) => {
+                          const displayMessage = getStockStatusMessage(
+                            availabilityStatus,
+                            isPreOrderEnabled
+                          );
+                          return (
+                            (!!availabilityStatus || currentVariantId) && (
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={`w-3 h-3 rounded-full ${
+                                    inStock || isPreOrderEnabled
+                                      ? 'status-dot-success'
+                                      : 'status-dot-danger'
+                                  }`}
+                                ></div>
+                                <span
+                                  className={`text-sm ${
+                                    inStock || isPreOrderEnabled
+                                      ? 'text-status-success'
+                                      : 'text-status-error'
+                                  }`}
+                                >
+                                  {displayMessage}
+                                  {trackInventory &&
+                                    availableQuantity !== null && (
+                                      <span className="text-content-muted ml-1">
+                                        ({availableQuantity} available)
+                                      </span>
+                                    )}
+                                </span>
+                              </div>
+                            )
+                          );
+                        }}
+                      </ProductVariantSelectorPrimitive.Stock>
+                    </div>
+                  </ProductVariantSelectorPrimitive.Root>
+
+                  {/* Product Details */}
+                  {!isQuickView && (
+                    <SelectedVariantPrimitive.Details>
+                      {({ sku, weight }) => (
+                        <>
+                          {(sku || weight) && (
+                            <div className="border-t border-brand-light pt-8">
+                              <h3 className="text-xl font-semibold text-content-primary mb-4">
+                                Product Details
+                              </h3>
+                              <div className="space-y-3 text-content-secondary">
+                                {sku && (
+                                  <div className="flex justify-between">
+                                    <span>SKU:</span>
+                                    <span>{sku}</span>
+                                  </div>
+                                )}
+                                {weight && (
+                                  <div className="flex justify-between">
+                                    <span>Weight:</span>
+                                    <span>{weight}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </SelectedVariantPrimitive.Details>
+                  )}
+                </Product.Root>
               </div>
             </SelectedVariantPrimitive.Root>
           </MediaGallery.Root>
