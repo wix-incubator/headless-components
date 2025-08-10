@@ -84,7 +84,6 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   return (
     <CoreProduct.Name>
       {({ name }) => {
-        // Handle asChild rendering
         if (asChild) {
           const rendered = renderAsChild({
             children,
@@ -96,11 +95,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
         }
 
         return (
-          <h1
-            ref={ref as React.Ref<HTMLHeadingElement>}
-            className={className}
-            data-testid="product-name"
-          >
+          <h1 className={className} data-testid="product-name">
             {name}
           </h1>
         );
