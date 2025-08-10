@@ -219,10 +219,10 @@ export default function ProductDetails({
                 <Product.Root product={product}>
                   {/* Product Name & Price */}
                   <div>
-                    {/* <Product.Name className="text-4xl font-bold text-content-primary mb-4" />
+                    <Product.Name className="text-4xl font-bold text-content-primary mb-4" />
                     <Product.Name asChild>
                       <h1 className="text-4xl font-bold text-content-primary mb-4" />
-                    </Product.Name> */}
+                    </Product.Name>
                     <Product.Name asChild>
                       {React.forwardRef(({ name, ...props }: any, ref) => (
                         <h1
