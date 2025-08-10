@@ -30,7 +30,6 @@ export interface ProductRootProps {
  *   return (
  *     <Product.Root product={product}>
  *       <Product.Name className="text-4xl font-bold" />
- *       <Product.Description className="text-lg text-gray-600" />
  *     </Product.Root>
  *   );
  * }
@@ -109,66 +108,3 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
     </CoreProduct.Name>
   );
 });
-
-/**
- * Props for Product Description component
- */
-export interface DescriptionProps
-  extends AsChildProps<{ description: string }> {
-  as?: "plain" | "html" | "ricos";
-}
-
-/**
- * Renders the product description with HTML content support following the documented API.
- *
- * @component
- * @example
- * ```tsx
- * <Product.Description as="plain" className="text-content-secondary" />
- * <Product.Description as="html" className="prose" />
- * ```
- */
-export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
-  (props, ref) => {
-    const { as = "plain", asChild, children, className } = props;
-
-    return (
-      <CoreProduct.Description>
-        {({ plainDescription, description }) => {
-          const content =
-            as === "html"
-              ? plainDescription
-              : as === "ricos"
-                ? JSON.stringify(description)
-                : plainDescription || "";
-
-          if (asChild) {
-            const rendered = renderAsChild({
-              children,
-              props: { description: content },
-              ref,
-              content,
-            });
-            if (rendered) return rendered;
-          }
-
-          if (as === "html" && typeof content === "string") {
-            return (
-              <div
-                ref={ref as React.Ref<HTMLDivElement>}
-                className={className}
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
-            );
-          }
-
-          return (
-            <div ref={ref as React.Ref<HTMLDivElement>} className={className}>
-              {typeof content === "string" ? content : ""}
-            </div>
-          );
-        }}
-      </CoreProduct.Description>
-    );
-  },
-);
