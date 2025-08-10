@@ -119,7 +119,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 export interface DescriptionProps
   extends AsChildProps<{ description: string }> {
   /** Format of the description content */
-  as?: AsContent.Plain | AsContent.Html | AsContent.Ricos;
+  as?: `${AsContent}`;
 }
 
 /**

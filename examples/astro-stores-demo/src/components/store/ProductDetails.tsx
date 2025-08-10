@@ -10,7 +10,6 @@ import {
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductV2 as Product,
-  AsContent,
 } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
@@ -273,7 +272,7 @@ export default function ProductDetails({
                         Description
                       </h3>
                       <Product.Description
-                        as={AsContent.Html}
+                        as="html"
                         className="text-content-secondary leading-relaxed"
                       />
                     </div>
