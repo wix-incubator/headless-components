@@ -22,6 +22,11 @@
       "import": "./dist/react/index.js",
       "require": "./cjs/dist/react/index.js"
     },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js",
+      "require": "./cjs/dist/core/index.js"
+    },
     "./services": {
       "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.js",

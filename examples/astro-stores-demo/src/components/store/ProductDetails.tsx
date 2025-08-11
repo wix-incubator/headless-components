@@ -1,4 +1,5 @@
 import { MediaGallery } from '@wix/headless-media/react';
+import { MediaGallery as MediaGalleryCore } from '@wix/headless-media/core';
 import { WixMediaImage } from '../media';
 import React from 'react';
 
@@ -41,9 +42,8 @@ const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
         />
         {maxChars && (
           <div
-            className={`text-xs text-right ${
-              isOverLimit ? 'text-status-error' : 'text-content-muted'
-            }`}
+            className={`text-xs text-right ${isOverLimit ? 'text-status-error' : 'text-content-muted'
+              }`}
           >
             {charCount}/{maxChars} characters
           </div>
@@ -67,7 +67,7 @@ export default function ProductDetails({
         data-testid="product-details"
       >
         <ProductPrimitive.Root productServiceConfig={{ product }}>
-          <MediaGallery.Root
+          <MediaGalleryCore.Root
             mediaGalleryServiceConfig={{
               media: product.media?.itemsInfo?.items ?? [],
             }}
@@ -77,141 +77,18 @@ export default function ProductDetails({
               <div className="space-y-4">
                 {/* Main Image */}
                 <div className="aspect-square bg-surface-primary rounded-2xl overflow-hidden border border-brand-subtle relative">
-                  <MediaGallery.Viewport>
-                    {({ src, alt }) => (
-                      <>
-                        {src ? (
-                          <WixMediaImage
-                            media={{ image: src }}
-                            className="w-full h-full object-cover"
-                            alt={alt}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <svg
-                              className="w-24 h-24 text-content-subtle"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                          </div>
-                        )}
-
-                        <MediaGallery.Previous>
-                          {({ previous, canGoPrevious }) => (
-                            <button
-                              onClick={previous}
-                              disabled={!canGoPrevious}
-                              className="absolute left-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M15 19l-7-7 7-7"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                        </MediaGallery.Previous>
-
-                        <MediaGallery.Next>
-                          {({ next, canGoNext }) => (
-                            <button
-                              onClick={next}
-                              disabled={!canGoNext}
-                              className="absolute right-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M9 5l7 7-7 7"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                        </MediaGallery.Next>
-
-                        {/* Image Counter */}
-                        {
-                          <MediaGallery.Indicator>
-                            {({ current, total }) => (
-                              <div className="absolute bottom-4 right-4 bg-surface-tooltip text-nav px-3 py-1 rounded-full text-sm">
-                                {current} / {total}
-                              </div>
-                            )}
-                          </MediaGallery.Indicator>
-                        }
-                      </>
-                    )}
-                  </MediaGallery.Viewport>
+                  <MediaGallery.Viewport />
+                  <MediaGallery.Previous />
+                  <MediaGallery.Next />
+                  <MediaGallery.Indicator />
                 </div>
 
                 {/* Thumbnail Images */}
-                <MediaGallery.ThumbnailList>
-                  {({ items }) => (
-                    <div className="grid grid-cols-4 gap-4">
-                      {items.map((_, i) => (
-                        <MediaGallery.ThumbnailItem key={i} index={i}>
-                          {({ src, isActive, select, alt }) => (
-                            <div
-                              onClick={select}
-                              className={`aspect-square bg-surface-primary rounded-lg border cursor-pointer transition-all ${
-                                isActive
-                                  ? 'border-brand-medium ring-2 ring-brand-light'
-                                  : 'border-brand-subtle hover:border-brand-light'
-                              }`}
-                            >
-                              {src ? (
-                                <WixMediaImage
-                                  media={{ image: src }}
-                                  className="w-full h-full object-cover rounded-lg"
-                                  alt={alt}
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                  <svg
-                                    className="w-6 h-6 text-content-subtle"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </MediaGallery.ThumbnailItem>
-                      ))}
-                    </div>
-                  )}
-                </MediaGallery.ThumbnailList>
+                <MediaGallery.Thumbnails>
+                  <MediaGallery.ThumbnailRepeater>
+                    <MediaGallery.ThumbnailItem />
+                  </MediaGallery.ThumbnailRepeater>
+                </MediaGallery.Thumbnails>
               </div>
 
               {/* Product Info */}
@@ -329,27 +206,25 @@ export default function ProductDetails({
                                                   }) => (
                                                     <>
                                                       {isColorOption &&
-                                                      isVisible &&
-                                                      hasColorCode &&
-                                                      (!isQuickView ||
-                                                        isInStock) ? (
+                                                        isVisible &&
+                                                        hasColorCode &&
+                                                        (!isQuickView ||
+                                                          isInStock) ? (
                                                         // Color Swatch
                                                         <div className="relative">
                                                           <button
                                                             data-testid="product-modifier-choice-button"
                                                             onClick={select}
                                                             title={value}
-                                                            className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-                                                              isSelected
+                                                            className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${isSelected
                                                                 ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
                                                                 : 'border-color-swatch hover:border-color-swatch-hover hover:scale-105'
-                                                            } ${
-                                                              !isInStock &&
-                                                              !isPreOrderEnabled &&
-                                                              !isQuickView
+                                                              } ${!isInStock &&
+                                                                !isPreOrderEnabled &&
+                                                                !isQuickView
                                                                 ? 'grayscale'
                                                                 : ''
-                                                            }`}
+                                                              }`}
                                                             style={{
                                                               backgroundColor:
                                                                 choice.colorCode ||
@@ -385,11 +260,10 @@ export default function ProductDetails({
                                                             <button
                                                               data-testid="product-modifier-choice-button"
                                                               onClick={select}
-                                                              className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
-                                                                isSelected
+                                                              className={`px-4 py-2 border rounded-lg transition-all duration-200 ${isSelected
                                                                   ? 'product-option-active'
                                                                   : 'product-option-inactive'
-                                                              }`}
+                                                                }`}
                                                             >
                                                               {value}
                                                             </button>
@@ -502,11 +376,10 @@ export default function ProductDetails({
                                                     <button
                                                       data-testid="product-modifier-choice-button"
                                                       onClick={select}
-                                                      className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-                                                        isSelected
+                                                      className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${isSelected
                                                           ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
                                                           : 'border-brand-light hover:border-brand-medium hover:scale-105'
-                                                      }`}
+                                                        }`}
                                                       style={{
                                                         backgroundColor:
                                                           colorCode ||
@@ -537,11 +410,10 @@ export default function ProductDetails({
                                                     <button
                                                       data-testid="product-modifier-choice-button"
                                                       onClick={select}
-                                                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
-                                                        isSelected
+                                                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${isSelected
                                                           ? 'product-option-active'
                                                           : 'product-option-inactive'
-                                                      }`}
+                                                        }`}
                                                     >
                                                       {value}
                                                     </button>
@@ -718,18 +590,16 @@ export default function ProductDetails({
                             (!!availabilityStatus || currentVariantId) && (
                               <div className="flex items-center gap-2">
                                 <div
-                                  className={`w-3 h-3 rounded-full ${
-                                    inStock || isPreOrderEnabled
+                                  className={`w-3 h-3 rounded-full ${inStock || isPreOrderEnabled
                                       ? 'status-dot-success'
                                       : 'status-dot-danger'
-                                  }`}
+                                    }`}
                                 ></div>
                                 <span
-                                  className={`text-sm ${
-                                    inStock || isPreOrderEnabled
+                                  className={`text-sm ${inStock || isPreOrderEnabled
                                       ? 'text-status-success'
                                       : 'text-status-error'
-                                  }`}
+                                    }`}
                                 >
                                   {displayMessage}
                                   {trackInventory &&
@@ -780,7 +650,7 @@ export default function ProductDetails({
                 </Product.Root>
               </div>
             </SelectedVariantPrimitive.Root>
-          </MediaGallery.Root>
+          </MediaGalleryCore.Root>
         </ProductPrimitive.Root>
       </div>
 
