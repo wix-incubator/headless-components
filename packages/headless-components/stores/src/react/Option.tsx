@@ -117,6 +117,7 @@ export interface ChoiceRepeaterProps {
 
 /**
  * Repeater component that renders children for each choice.
+ * Automatically filters and renders the appropriate choice type.
  *
  * @component
  */
@@ -127,14 +128,32 @@ export function ChoiceRepeater(props: ChoiceRepeaterProps): React.ReactNode {
 
   return (
     <>
-      {choicesData.choices.map((choice: any) => (
-        <ChoiceContext.Provider
-          key={choice.name || choice.value || choice.id}
-          value={{ choice, optionData: choicesData }}
-        >
-          {props.children}
-        </ChoiceContext.Provider>
-      ))}
+      {choicesData.choices.map((choice: any) => {
+        // Check if this is a color option
+        const isColorOption = String(choicesData.name)
+          .toLowerCase()
+          .includes("color");
+        const hasColorCode = choice.colorCode;
+
+        // Only render if the choice matches the expected type
+        // Color choices should have colorCode, text choices should not
+        const shouldRenderAsColor = isColorOption && hasColorCode;
+        const shouldRenderAsText = !shouldRenderAsColor;
+
+        return (
+          <ChoiceContext.Provider
+            key={choice.name || choice.value || choice.id}
+            value={{
+              choice,
+              optionData: choicesData,
+              shouldRenderAsColor,
+              shouldRenderAsText,
+            }}
+          >
+            {props.children}
+          </ChoiceContext.Provider>
+        );
+      })}
     </>
   );
 }
@@ -158,23 +177,34 @@ export namespace Choice {
    * @component
    */
   export const Text = React.forwardRef<HTMLElement, TextProps>((props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...buttonProps } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) return null;
 
-    const { choice, optionData } = choiceContext;
+    const { choice, optionData, shouldRenderAsText } = choiceContext;
+
+    // Only render if this should be rendered as text
+    if (!shouldRenderAsText) return null;
 
     // Handle variant choices only
     return (
       <ProductVariantSelector.Choice option={optionData} choice={choice}>
-        {({ value, isSelected, select, isVisible }) => {
+        {({
+          value,
+          isSelected,
+          select,
+          isVisible,
+          isInStock,
+          isPreOrderEnabled,
+        }) => {
           if (!isVisible) return null;
 
           const attributes = {
             "data-testid": "choice-text",
-            "data-selected": isSelected,
+            "data-selected": isSelected ? "true" : "false",
             onClick: select,
+            ...buttonProps,
           };
 
           if (asChild) {
@@ -189,13 +219,33 @@ export namespace Choice {
           }
 
           return (
-            <button
-              className={className}
-              {...attributes}
-              ref={ref as React.Ref<HTMLButtonElement>}
-            >
-              {value}
-            </button>
+            <>
+              <button
+                className={className}
+                {...attributes}
+                ref={ref as React.Ref<HTMLButtonElement>}
+              >
+                {value}
+              </button>
+              {/* Out of stock overlay */}
+              {!isInStock && !isPreOrderEnabled && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <svg
+                    className="w-6 h-6 text-status-error"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </div>
+              )}
+            </>
           );
         }}
       </ProductVariantSelector.Choice>
@@ -215,26 +265,38 @@ export namespace Choice {
    */
   export const Color = React.forwardRef<HTMLElement, ColorProps>(
     (props, ref) => {
-      const { asChild, children, className } = props;
+      const { asChild, children, className, ...buttonProps } = props;
       const choiceContext = React.useContext(ChoiceContext);
 
       if (!choiceContext) return null;
 
-      const { choice, optionData } = choiceContext;
+      const { choice, optionData, shouldRenderAsColor } = choiceContext;
+
+      // Only render if this should be rendered as color
+      if (!shouldRenderAsColor) return null;
 
       // Handle variant choices only
       return (
         <ProductVariantSelector.Choice option={optionData} choice={choice}>
-          {({ value, isSelected, select, isVisible }) => {
+          {({
+            value,
+            isSelected,
+            select,
+            isVisible,
+            isInStock,
+            isPreOrderEnabled,
+          }) => {
             if (!isVisible) return null;
 
             const colorCode = choice.colorCode || "#ccc";
             const attributes = {
               "data-testid": "choice-color",
-              "data-selected": isSelected,
+              "data-selected": isSelected ? "true" : "false",
               onClick: select,
               style: { backgroundColor: colorCode },
               title: value,
+              className: `${className} ${!isInStock && !isPreOrderEnabled ? "grayscale" : ""}`,
+              ...buttonProps,
             };
 
             if (asChild) {
@@ -249,14 +311,85 @@ export namespace Choice {
             }
 
             return (
-              <button
-                className={className}
-                {...attributes}
-                ref={ref as React.Ref<HTMLButtonElement>}
-              />
+              <>
+                <button
+                  {...attributes}
+                  ref={ref as React.Ref<HTMLButtonElement>}
+                />
+                {/* Out of stock overlay */}
+                {!isInStock && !isPreOrderEnabled && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <svg
+                      className="w-6 h-6 text-status-error"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </>
             );
           }}
         </ProductVariantSelector.Choice>
+      );
+    },
+  );
+
+  /**
+   * Props for Choice FreeText component
+   */
+  export interface FreeTextProps
+    extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    /** Custom placeholder text */
+    placeholder?: string;
+  }
+
+  /**
+   * Free text input choice component for variant options.
+   * This component handles free text input for product variants.
+   *
+   * @component
+   */
+  export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
+    (props, ref) => {
+      const { className, placeholder, ...textareaProps } = props;
+      const choiceContext = React.useContext(ChoiceContext);
+
+      if (!choiceContext) return null;
+
+      const { optionData } = choiceContext;
+
+      // For variant options, we don't have a direct free text choice
+      // This would typically be handled by ProductModifiers for free text
+      // But we'll provide a basic implementation for consistency
+      const [value, setValue] = React.useState("");
+      const optionName = optionData.name || "";
+
+      const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setValue(e.target.value);
+        // In a real implementation, this would update the variant service
+        // For now, we'll just handle the local state
+      };
+
+      return (
+        <textarea
+          ref={ref}
+          value={value}
+          onChange={handleChange}
+          placeholder={
+            placeholder || `Enter custom ${optionName.toLowerCase()}...`
+          }
+          className={className}
+          data-testid="choice-freetext"
+          {...textareaProps}
+        />
       );
     },
   );

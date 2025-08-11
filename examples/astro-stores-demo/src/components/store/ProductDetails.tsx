@@ -273,7 +273,7 @@ export default function ProductDetails({
                     </Product.Description>
                   )}
 
-                  {/* Product Options (if any) - Using New API */}
+                  {/* Product Options (if any) - Using New Simplified API */}
                   <ProductVariantSelectorPrimitive.Root>
                     <Product.Variants>
                       <div className="space-y-6" data-testid="product-options">
@@ -282,156 +282,36 @@ export default function ProductDetails({
                         </h3>
 
                         <Product.VariantOptions>
-                          {({ options }) => (
-                            <>
-                              {options.map((option: any) => (
-                                <div
-                                  key={option.name}
-                                  data-testid="product-option"
-                                >
-                                  <Option.Root option={option}>
-                                    <Option.Name className="text-lg font-semibold text-content-primary mb-3" />
-                                    {/* Use ProductVariantSelectorPrimitive.Option to get all the original data and structure */}
-                                    <ProductVariantSelectorPrimitive.Option
-                                      option={option}
-                                    >
-                                      {({ choices, hasChoices }) =>
-                                        hasChoices && (
-                                          <div className="flex flex-wrap gap-3">
-                                            {choices.map((choice: any) => {
-                                              // Check if this is a color option
-                                              const isColorOption = String(
-                                                option.name
-                                              )
-                                                .toLowerCase()
-                                                .includes('color');
-                                              const hasColorCode =
-                                                choice.colorCode;
+                          {React.createElement(
+                            Product.VariantOptionRepeater,
+                            {},
+                            <div className="space-y-3">
+                              <Option.Name className="text-lg font-semibold text-content-primary mb-3" />
+                              <Option.Choices>
+                                <div className="flex flex-wrap gap-3">
+                                  <Option.ChoiceRepeater>
+                                    {/* Color Swatch Choice - Preserving Original Design */}
+                                    <Option.Choice.Color
+                                      className="w-10 h-10 rounded-full border-4 transition-all duration-200 data-[selected]:border-brand-primary data-[selected]:shadow-lg data-[selected]:scale-110 data-[selected]:ring-2 data-[selected]:ring-brand-primary/30 border-color-swatch hover:border-color-swatch-hover hover:scale-105"
+                                      data-testid="product-modifier-choice-button"
+                                    />
 
-                                              return (
-                                                <ProductVariantSelectorPrimitive.Choice
-                                                  key={
-                                                    choice.value ||
-                                                    choice.description ||
-                                                    choice.name
-                                                  }
-                                                  option={option}
-                                                  choice={choice}
-                                                >
-                                                  {({
-                                                    value,
-                                                    isSelected,
-                                                    isVisible,
-                                                    isInStock,
-                                                    isPreOrderEnabled,
-                                                    select,
-                                                  }) => {
-                                                    if (
-                                                      isColorOption &&
-                                                      isVisible &&
-                                                      hasColorCode &&
-                                                      (!isQuickView ||
-                                                        isInStock)
-                                                    ) {
-                                                      // Color Swatch - Original Design
-                                                      return (
-                                                        <div className="relative">
-                                                          <button
-                                                            data-testid="product-modifier-choice-button"
-                                                            onClick={select}
-                                                            title={value}
-                                                            className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-                                                              isSelected
-                                                                ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
-                                                                : 'border-color-swatch hover:border-color-swatch-hover hover:scale-105'
-                                                            } ${
-                                                              !isInStock &&
-                                                              !isPreOrderEnabled &&
-                                                              !isQuickView
-                                                                ? 'grayscale'
-                                                                : ''
-                                                            }`}
-                                                            style={{
-                                                              backgroundColor:
-                                                                choice.colorCode ||
-                                                                'var(--theme-text-content-40)',
-                                                            }}
-                                                          />
-                                                          {!isInStock &&
-                                                            !isPreOrderEnabled &&
-                                                            !isQuickView && (
-                                                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                                <svg
-                                                                  className="w-6 h-6 text-status-error"
-                                                                  fill="none"
-                                                                  viewBox="0 0 24 24"
-                                                                  stroke="currentColor"
-                                                                >
-                                                                  <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    strokeWidth="2"
-                                                                    d="M6 18L18 6M6 6l12 12"
-                                                                  />
-                                                                </svg>
-                                                              </div>
-                                                            )}
-                                                        </div>
-                                                      );
-                                                    } else if (
-                                                      isVisible &&
-                                                      (!isQuickView ||
-                                                        isInStock)
-                                                    ) {
-                                                      // Regular Text Button - Original Design
-                                                      return (
-                                                        <div className="relative">
-                                                          <button
-                                                            data-testid="product-modifier-choice-button"
-                                                            onClick={select}
-                                                            className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
-                                                              isSelected
-                                                                ? 'product-option-active'
-                                                                : 'product-option-inactive'
-                                                            }`}
-                                                          >
-                                                            {value}
-                                                          </button>
-                                                          {!isInStock &&
-                                                            !isPreOrderEnabled &&
-                                                            !isQuickView && (
-                                                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                                <svg
-                                                                  className="w-6 h-6 text-status-error"
-                                                                  fill="none"
-                                                                  viewBox="0 0 24 24"
-                                                                  stroke="currentColor"
-                                                                >
-                                                                  <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    strokeWidth="2"
-                                                                    d="M6 18L18 6M6 6l12 12"
-                                                                  />
-                                                                </svg>
-                                                              </div>
-                                                            )}
-                                                        </div>
-                                                      );
-                                                    }
-                                                    return null;
-                                                  }}
-                                                </ProductVariantSelectorPrimitive.Choice>
-                                              );
-                                            })}
-                                          </div>
-                                        )
-                                      }
-                                    </ProductVariantSelectorPrimitive.Option>
-                                  </Option.Root>
+                                    {/* Text Choice - Preserving Original Design */}
+                                    <Option.Choice.Text
+                                      className="px-4 py-2 border rounded-lg transition-all duration-200 data-[selected]:bg-brand-primary data-[selected]:text-white data-[selected]:border-brand-primary border-brand-light hover:border-brand-medium text-content-primary"
+                                      data-testid="product-modifier-choice-button"
+                                    />
+
+                                    {/* Free Text Choice (for future use) - Temporarily commented out due to export issue */}
+                                    {/* <Option.Choice.FreeText
+                                      className="w-full p-3 border border-brand-light rounded-lg bg-surface-primary text-content-primary placeholder-text-content-subtle focus:border-brand-medium focus:outline-none resize-none"
+                                      rows={3}
+                                      data-testid="product-modifier-free-text-input"
+                                    /> */}
+                                  </Option.ChoiceRepeater>
                                 </div>
-                              ))}
-                            </>
+                              </Option.Choices>
+                            </div>
                           )}
                         </Product.VariantOptions>
 

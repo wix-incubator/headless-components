@@ -404,12 +404,14 @@ export function Variants(props: VariantsProps): React.ReactNode {
  * Props for Product VariantOptions component
  */
 export interface VariantOptionsProps {
-  children?: React.ForwardRefRenderFunction<
-    HTMLElement,
-    {
-      options: any[];
-    }
-  >;
+  children?:
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          options: any[];
+        }
+      >
+    | React.ReactNode;
   emptyState?: React.ReactNode;
 }
 
