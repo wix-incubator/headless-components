@@ -282,37 +282,25 @@ export default function ProductDetails({
                         </h3>
 
                         <Product.VariantOptions>
-                          {React.createElement(
-                            Product.VariantOptionRepeater,
-                            {},
+                          <Product.VariantOptionRepeater>
                             <div className="space-y-3">
                               <Option.Name className="text-lg font-semibold text-content-primary mb-3" />
                               <Option.Choices>
                                 <div className="flex flex-wrap gap-3">
                                   <Option.ChoiceRepeater>
-                                    {/* Color Swatch Choice - Preserving Original Design */}
                                     <Option.Choice.Color
                                       className="w-10 h-10 rounded-full border-4 transition-all duration-200 data-[selected]:border-brand-primary data-[selected]:shadow-lg data-[selected]:scale-110 data-[selected]:ring-2 data-[selected]:ring-brand-primary/30 border-color-swatch hover:border-color-swatch-hover hover:scale-105"
                                       data-testid="product-modifier-choice-button"
                                     />
-
-                                    {/* Text Choice - Preserving Original Design */}
                                     <Option.Choice.Text
                                       className="px-4 py-2 border rounded-lg transition-all duration-200 data-[selected]:bg-brand-primary data-[selected]:text-white data-[selected]:border-brand-primary border-brand-light hover:border-brand-medium text-content-primary"
                                       data-testid="product-modifier-choice-button"
                                     />
-
-                                    {/* Free Text Choice (for future use) - Temporarily commented out due to export issue */}
-                                    {/* <Option.Choice.FreeText
-                                      className="w-full p-3 border border-brand-light rounded-lg bg-surface-primary text-content-primary placeholder-text-content-subtle focus:border-brand-medium focus:outline-none resize-none"
-                                      rows={3}
-                                      data-testid="product-modifier-free-text-input"
-                                    /> */}
                                   </Option.ChoiceRepeater>
                                 </div>
                               </Option.Choices>
                             </div>
-                          )}
+                          </Product.VariantOptionRepeater>
                         </Product.VariantOptions>
 
                         <ProductVariantSelectorPrimitive.Reset>
