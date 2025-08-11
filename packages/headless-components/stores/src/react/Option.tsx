@@ -84,26 +84,53 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 /**
  * Props for Option Choices component
  */
-export interface ChoicesProps {
-  children: React.ReactNode;
-}
+export interface ChoicesProps extends AsChildProps<{ choices: any[] }> {}
 
 /**
  * Container for option choices.
  *
  * @component
  */
-export function Choices(props: ChoicesProps): React.ReactNode {
-  const optionData = React.useContext(OptionContext);
+export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
+  (props, ref) => {
+    const { asChild, children } = props;
+    const optionData = React.useContext(OptionContext);
 
-  if (!optionData || !optionData.hasChoices) return null;
+    if (!optionData || !optionData.hasChoices) return null;
 
-  return (
-    <ChoicesContext.Provider value={optionData}>
-      {props.children}
-    </ChoicesContext.Provider>
-  );
-}
+    const attributes = {
+      "data-testid": "option-choices",
+      "data-type": optionData.type || "unknown",
+    };
+
+    if (asChild) {
+      const rendered = renderAsChild({
+        children,
+        props: { choices: optionData.choices || [] },
+        ref,
+        content: null,
+        attributes,
+      });
+      if (rendered) {
+        return (
+          <ChoicesContext.Provider value={optionData}>
+            {rendered}
+          </ChoicesContext.Provider>
+        );
+      }
+    }
+
+    return (
+      <ChoicesContext.Provider value={optionData}>
+        <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+          {typeof children === "function"
+            ? null
+            : (children as React.ReactNode)}
+        </div>
+      </ChoicesContext.Provider>
+    );
+  },
+);
 
 // Create a context for choices
 const ChoicesContext = React.createContext<any>(null);
@@ -111,9 +138,7 @@ const ChoicesContext = React.createContext<any>(null);
 /**
  * Props for Option ChoiceRepeater component
  */
-export interface ChoiceRepeaterProps {
-  children: React.ReactNode;
-}
+export interface ChoiceRepeaterProps extends AsChildProps<any> {}
 
 /**
  * Repeater component that renders children for each choice.
@@ -121,7 +146,11 @@ export interface ChoiceRepeaterProps {
  *
  * @component
  */
-export function ChoiceRepeater(props: ChoiceRepeaterProps): React.ReactNode {
+export const ChoiceRepeater = React.forwardRef<
+  HTMLElement,
+  ChoiceRepeaterProps
+>((props, ref) => {
+  const { asChild, children } = props;
   const choicesData = React.useContext(ChoicesContext);
 
   if (!choicesData || !choicesData.choices?.length) return null;
@@ -148,6 +177,43 @@ export function ChoiceRepeater(props: ChoiceRepeaterProps): React.ReactNode {
         const shouldRenderAsText =
           !shouldRenderAsColor && !shouldRenderAsFreeText;
 
+        const attributes = {
+          "data-testid": "choice",
+          "data-type":
+            choice.type ||
+            (shouldRenderAsColor
+              ? "color"
+              : shouldRenderAsText
+                ? "text"
+                : "free-text"),
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: choice,
+            ref,
+            content: null,
+            attributes,
+          });
+          if (rendered) {
+            return (
+              <ChoiceContext.Provider
+                key={choice.name || choice.value || choice.id}
+                value={{
+                  choice,
+                  optionData: choicesData,
+                  shouldRenderAsColor,
+                  shouldRenderAsText,
+                  shouldRenderAsFreeText,
+                }}
+              >
+                {rendered}
+              </ChoiceContext.Provider>
+            );
+          }
+        }
+
         return (
           <ChoiceContext.Provider
             key={choice.name || choice.value || choice.id}
@@ -159,13 +225,17 @@ export function ChoiceRepeater(props: ChoiceRepeaterProps): React.ReactNode {
               shouldRenderAsFreeText,
             }}
           >
-            {props.children}
+            <div {...attributes}>
+              {typeof children === "function"
+                ? null
+                : (children as React.ReactNode)}
+            </div>
           </ChoiceContext.Provider>
         );
       })}
     </>
   );
-}
+});
 
 // Create a context for individual choices
 const ChoiceContext = React.createContext<any>(null);

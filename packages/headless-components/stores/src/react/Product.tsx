@@ -403,15 +403,7 @@ export function Variants(props: VariantsProps): React.ReactNode {
 /**
  * Props for Product VariantOptions component
  */
-export interface VariantOptionsProps {
-  children?:
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          options: any[];
-        }
-      >
-    | React.ReactNode;
+export interface VariantOptionsProps extends AsChildProps<{ options: any[] }> {
   emptyState?: React.ReactNode;
 }
 
@@ -420,39 +412,62 @@ export interface VariantOptionsProps {
  *
  * @component
  */
-export function VariantOptions(props: VariantOptionsProps): React.ReactNode {
+export const VariantOptions = React.forwardRef<
+  HTMLElement,
+  VariantOptionsProps
+>((props, ref) => {
+  const { asChild, children, emptyState } = props;
+
   return (
     <ProductVariantSelector.Options>
       {({ options, hasOptions }) => {
         if (!hasOptions) {
-          return props.emptyState || null;
+          return emptyState || null;
         }
 
-        if (typeof props.children === "function") {
-          return props.children({ options }, null);
+        const attributes = {
+          "data-testid": "product-variants",
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: { options },
+            ref,
+            content: null,
+            attributes,
+          });
+          if (rendered) return rendered;
         }
 
-        return props.children;
+        return (
+          <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+            {typeof children === "function"
+              ? null
+              : (children as React.ReactNode)}
+          </div>
+        );
       }}
     </ProductVariantSelector.Options>
   );
-}
+});
 
 /**
  * Props for Product VariantOptionRepeater component
  */
-export interface VariantOptionRepeaterProps {
-  children: React.ReactNode;
-}
+export interface VariantOptionRepeaterProps extends AsChildProps<any> {}
 
 /**
  * Repeater component that renders children for each variant option.
  *
  * @component
  */
-export function VariantOptionRepeater(
-  props: VariantOptionRepeaterProps,
-): React.ReactNode {
+export const VariantOptionRepeater = React.forwardRef<
+  HTMLElement,
+  VariantOptionRepeaterProps
+>((props, ref) => {
+  const { asChild, children } = props;
+
   return (
     <ProductVariantSelector.Options>
       {({ options, hasOptions }) => {
@@ -460,14 +475,40 @@ export function VariantOptionRepeater(
 
         return (
           <>
-            {options.map((option: any) => (
-              <div key={option.name} data-testid="product-variant-option">
-                <Option.Root option={option}>{props.children}</Option.Root>
-              </div>
-            ))}
+            {options.map((option: any) => {
+              const attributes = {
+                "data-testid": "product-variant-option",
+              };
+
+              if (asChild) {
+                const rendered = renderAsChild({
+                  children,
+                  props: option,
+                  ref,
+                  content: null,
+                  attributes,
+                });
+                if (rendered)
+                  return (
+                    <Option.Root key={option.name} option={option}>
+                      {rendered}
+                    </Option.Root>
+                  );
+              }
+
+              return (
+                <div key={option.name} {...attributes}>
+                  <Option.Root option={option}>
+                    {typeof children === "function"
+                      ? null
+                      : (children as React.ReactNode)}
+                  </Option.Root>
+                </div>
+              );
+            })}
           </>
         );
       }}
     </ProductVariantSelector.Options>
   );
-}
+});
