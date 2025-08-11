@@ -82,6 +82,9 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
             "data-selected": isSelected ? "true" : "false",
             disabled: !isInStock && !isPreOrderEnabled,
             onClick: select,
+            className: `px-4 py-2 border rounded-lg transition-all duration-200 ${
+              isSelected ? "product-option-active" : "product-option-inactive"
+            } ${className || ""}`,
             ...buttonProps,
           };
 
@@ -97,15 +100,10 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
           }
 
           return (
-            <>
-              <button
-                className={className}
-                {...attributes}
-                ref={ref as React.Ref<HTMLButtonElement>}
-              >
+            <div className="relative">
+              <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
                 {value}
               </button>
-              {/* Out of stock overlay */}
               {!isInStock && !isPreOrderEnabled && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <svg
@@ -123,7 +121,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
                   </svg>
                 </div>
               )}
-            </>
+            </div>
           );
         }}
       </ProductVariantSelector.Choice>
@@ -220,7 +218,11 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
             onClick: select,
             style: { backgroundColor: colorCode },
             title: value,
-            className: `${className} ${!isInStock && !isPreOrderEnabled ? "grayscale" : ""}`,
+            className: `w-10 h-10 rounded-full border-4 transition-all duration-200 ${
+              isSelected
+                ? "border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30"
+                : "border-color-swatch hover:border-color-swatch-hover hover:scale-105"
+            } ${!isInStock && !isPreOrderEnabled ? "grayscale" : ""} ${className || ""}`,
             ...buttonProps,
           };
 
@@ -240,12 +242,11 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
           }
 
           return (
-            <>
+            <div className="relative">
               <button
                 {...attributes}
                 ref={ref as React.Ref<HTMLButtonElement>}
               />
-              {/* Out of stock overlay */}
               {!isInStock && !isPreOrderEnabled && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <svg
@@ -263,7 +264,7 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
                   </svg>
                 </div>
               )}
-            </>
+            </div>
           );
         }}
       </ProductVariantSelector.Choice>

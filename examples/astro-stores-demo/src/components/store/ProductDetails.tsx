@@ -290,8 +290,10 @@ export default function ProductDetails({
                               <Option.Choices>
                                 <div className="flex flex-wrap gap-3">
                                   <Option.ChoiceRepeater>
-                                    <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all duration-200 data-[selected]:border-brand-primary data-[selected]:shadow-lg data-[selected]:scale-110 data-[selected]:ring-2 data-[selected]:ring-brand-primary/30 border-color-swatch hover:border-color-swatch-hover hover:scale-105" />
-                                    <Choice.Text className="px-4 py-2 border rounded-lg transition-all duration-200 data-[selected]:bg-brand-primary data-[selected]:text-white data-[selected]:border-brand-primary border-brand-light hover:border-brand-medium text-content-primary" />
+                                    <>
+                                      <Choice.Color />
+                                      <Choice.Text />
+                                    </>
                                   </Option.ChoiceRepeater>
                                 </div>
                               </Option.Choices>
