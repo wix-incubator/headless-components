@@ -3,9 +3,9 @@
  */
 
 export {
-  CmsCrudServiceDefinition,
-  CmsCrudServiceImplementation,
-  loadCmsCrudServiceInitialData,
-  cmsCrudServiceBinding,
-  type CmsCrudServiceConfig,
+  CMSServiceDefinition,
+  CMSServiceImplementation,
+  loadCMSServiceInitialData,
+  CMSServiceBinding,
+  type CMSServiceConfig,
 } from './cms-crud-service.js';

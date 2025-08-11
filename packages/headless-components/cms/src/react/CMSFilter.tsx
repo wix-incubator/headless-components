@@ -1,11 +1,11 @@
 import React from 'react';
 import { useService } from '@wix/services-manager-react';
-import { CmsCrudServiceDefinition, type FilterCondition, type FilterMap, type FilterOperator } from '../services/cms-crud-service.js';
+import { CMSServiceDefinition, type FilterCondition, type FilterMap, type FilterOperator } from '../services/cms-crud-service.js';
 
 /**
- * Props for the CmsCrudFilter component
+ * Props for the CMSFilter component
  */
-export interface CmsCrudFilterProps {
+export interface CMSFilterProps {
   /** Render function that receives filter state and actions */
   children: (props: {
     /** Function to add a filter condition */
@@ -30,11 +30,11 @@ export interface CmsCrudFilterProps {
  * @component
  * @example
  * ```tsx
- * import { CmsCrudFilter } from '@wix/cms/components';
+ * import { CMSFilter } from '@wix/cms/components';
  *
  * function FilterExample() {
  *   return (
- *     <CmsCrudFilter>
+ *     <CMSFilter>
  *       {({ addFilter, removeFilter, clearFilters, currentFilters, createFilterCondition, operators }) => (
  *         <div className="filter-controls">
  *           <div className="filter-form">
@@ -85,18 +85,18 @@ export interface CmsCrudFilterProps {
  *           </div>
  *         </div>
  *       )}
- *     </CmsCrudFilter>
+ *     </CMSFilter>
  *   );
  * }
  * ```
  */
-export function CmsCrudFilter(props: CmsCrudFilterProps) {
+export function CMSFilter(props: CMSFilterProps) {
   const {
     filterSignal,
     addFilter,
     removeFilter,
     clearFilters,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   /**
    * Helper function to create a filter condition
@@ -135,7 +135,7 @@ export function CmsCrudFilter(props: CmsCrudFilterProps) {
 }
 
 /**
- * Props for the CmsCrudFilter.Field component
+ * Props for the CMSFilter.Field component
  */
 export interface FieldProps {
   /** The field name to filter on */
@@ -164,7 +164,7 @@ export interface FieldProps {
  * @component
  * @example
  * ```tsx
- * <CmsCrudFilter.Field fieldName="title">
+ * <CMSFilter.Field fieldName="title">
  *   {({ setFilterForField, removeFilterForField, isFiltered, currentCondition, createFilterCondition }) => (
  *     <div className="field-filter">
  *       <select
@@ -190,7 +190,7 @@ export interface FieldProps {
  *       )}
  *     </div>
  *   )}
- * </CmsCrudFilter.Field>
+ * </CMSFilter.Field>
  * ```
  */
 export function Field(props: FieldProps) {
@@ -198,7 +198,7 @@ export function Field(props: FieldProps) {
     filterSignal,
     addFilter,
     removeFilter,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   const currentFilters = filterSignal.get();
   const currentCondition = currentFilters[props.fieldName] || null;
@@ -256,7 +256,7 @@ export function Field(props: FieldProps) {
 }
 
 /**
- * Props for the CmsCrudFilter.Condition component
+ * Props for the CMSFilter.Condition component
  */
 export interface ConditionProps {
   /** The field name to filter on */
@@ -283,7 +283,7 @@ export interface ConditionProps {
  * @component
  * @example
  * ```tsx
- * <CmsCrudFilter.Condition fieldName="price" operator="$gt" value={100}>
+ * <CMSFilter.Condition fieldName="price" operator="$gt" value={100}>
  *   {({ applyCondition, removeCondition, isApplied }) => (
  *     <button
  *       onClick={isApplied ? removeCondition : applyCondition}
@@ -292,7 +292,7 @@ export interface ConditionProps {
  *       Price > $100
  *     </button>
  *   )}
- * </CmsCrudFilter.Condition>
+ * </CMSFilter.Condition>
  * ```
  */
 export function Condition(props: ConditionProps) {
@@ -300,7 +300,7 @@ export function Condition(props: ConditionProps) {
     filterSignal,
     addFilter,
     removeFilter,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   const currentFilters = filterSignal.get();
   const currentCondition = currentFilters[props.fieldName] || null;

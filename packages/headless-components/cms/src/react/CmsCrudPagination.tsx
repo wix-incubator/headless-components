@@ -1,25 +1,28 @@
 import React from 'react';
 import { useService } from '@wix/services-manager-react';
-import { CmsCrudServiceDefinition, type PaginationState } from '../services/cms-crud-service.js';
+import { CMSServiceDefinition, type PaginationState } from '../services/cms-crud-service.js';
 
 /**
  * Props passed to the render function of the CmsCrudPagination.Root component
  */
-export type CmsCrudPaginationRootRenderProps = {
+export type CMSPaginationRootRenderProps = {
   /** The current pagination state */
   pagination: PaginationState;
 
   /** Function to set the current page */
   setPage: (page: number) => Promise<void>;
 
-  /** Function to set the page size */
-  setPageSize: (pageSize: number) => Promise<void>;
-
   /** Function to navigate to the next page */
   nextPage: () => Promise<void>;
 
   /** Function to navigate to the previous page */
   prevPage: () => Promise<void>;
+
+  /** Function to load more items */
+  loadMore: () => Promise<void>;
+
+  /** Whether a load more operation is in progress */
+  isLoadingMore: boolean;
 };
 
 /**
@@ -27,7 +30,7 @@ export type CmsCrudPaginationRootRenderProps = {
  */
 export interface CmsCrudPaginationRootProps {
   /** Render function that receives pagination state and actions */
-  children: (props: CmsCrudPaginationRootRenderProps) => React.ReactNode;
+  children: (props: CMSPaginationRootRenderProps) => React.ReactNode;
 }
 
 /**
@@ -45,7 +48,6 @@ export interface CmsCrudPaginationRootProps {
  *       {({
  *         pagination,
  *         setPage,
- *         setPageSize,
  *         nextPage,
  *         prevPage
  *       }) => (
@@ -62,17 +64,19 @@ export function Root(props: CmsCrudPaginationRootProps) {
   const {
     paginationSignal,
     setPage,
-    setPageSize,
     nextPage,
     prevPage,
-  } = useService(CmsCrudServiceDefinition);
+    loadMore,
+    loadingMoreSignal,
+  } = useService(CMSServiceDefinition);
 
   return props.children({
     pagination: paginationSignal.get(),
     setPage,
-    setPageSize,
     nextPage,
     prevPage,
+    loadMore,
+    isLoadingMore: loadingMoreSignal.get(),
   });
 }
 
@@ -109,7 +113,7 @@ export function NextPage(props: NextPageProps) {
   const {
     paginationSignal,
     nextPage,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   const pagination = paginationSignal.get();
 
@@ -152,7 +156,7 @@ export function PreviousPage(props: PreviousPageProps) {
   const {
     paginationSignal,
     prevPage,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   const pagination = paginationSignal.get();
 
@@ -162,53 +166,6 @@ export function PreviousPage(props: PreviousPageProps) {
   });
 }
 
-/**
- * Props for the CmsCrudPagination.PageSize component
- */
-export interface PageSizeProps {
-  /** Render function that receives page size action and state */
-  children: (props: {
-    /** Function to set the page size */
-    setPageSize: (pageSize: number) => Promise<void>;
-    /** The current page size */
-    currentPageSize: number;
-  }) => React.ReactNode;
-}
-
-/**
- * Component for setting the page size.
- * This component provides the set page size action and the current page size.
- *
- * @component
- * @example
- * ```tsx
- * <CmsCrudPagination.PageSize>
- *   {({ setPageSize, currentPageSize }) => (
- *     <select
- *       value={currentPageSize}
- *       onChange={(e) => setPageSize(Number(e.target.value))}
- *     >
- *       <option value="10">10 per page</option>
- *       <option value="20">20 per page</option>
- *       <option value="50">50 per page</option>
- *     </select>
- *   )}
- * </CmsCrudPagination.PageSize>
- * ```
- */
-export function PageSize(props: PageSizeProps) {
-  const {
-    paginationSignal,
-    setPageSize,
-  } = useService(CmsCrudServiceDefinition);
-
-  const pagination = paginationSignal.get();
-
-  return props.children({
-    setPageSize,
-    currentPageSize: pagination.pageSize,
-  });
-}
 
 /**
  * Props for the CmsCrudPagination.PageInfo component
@@ -247,7 +204,7 @@ export function PageInfo(props: PageInfoProps) {
   const {
     paginationSignal,
     setPage,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   const pagination = paginationSignal.get();
 
@@ -256,5 +213,58 @@ export function PageInfo(props: PageInfoProps) {
     totalPages: pagination.totalPages,
     totalItems: pagination.totalItems,
     setPage,
+  });
+}
+
+/**
+ * Props for the CmsCrudPagination.LoadMore component
+ */
+export interface LoadMoreProps {
+  /** Render function that receives load more action and state */
+  children: (props: {
+    /** Function to load more items */
+    loadMore: () => Promise<void>;
+    /** Whether there are more items to load */
+    hasMoreItems: boolean;
+    /** Number of items currently loaded */
+    loadedItems: number;
+    /** Total number of items */
+    totalItems: number;
+    /** Whether a load more operation is in progress */
+    isLoadingMore: boolean;
+  }) => React.ReactNode;
+}
+
+/**
+ * Component for loading more items.
+ * This component provides the load more action and state information.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CmsCrudPagination.LoadMore>
+ *   {({ loadMore, hasMoreItems, loadedItems, totalItems, isLoadingMore }) => (
+ *     <button onClick={loadMore} disabled={!hasMoreItems || isLoadingMore}>
+ *       {isLoadingMore ? 'Loading...' : hasMoreItems ? `Load More (${loadedItems}/${totalItems})` : 'All items loaded'}
+ *     </button>
+ *   )}
+ * </CmsCrudPagination.LoadMore>
+ * ```
+ */
+export function LoadMore(props: LoadMoreProps) {
+  const {
+    paginationSignal,
+    loadMore,
+    loadingMoreSignal,
+  } = useService(CMSServiceDefinition);
+
+  const pagination = paginationSignal.get();
+
+  return props.children({
+    loadMore,
+    hasMoreItems: pagination.hasMoreItems,
+    loadedItems: pagination.loadedItems,
+    totalItems: pagination.totalItems,
+    isLoadingMore: loadingMoreSignal.get(),
   });
 }

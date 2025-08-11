@@ -5,7 +5,7 @@ import * as items from '@wix/wix-data-items-sdk';
 export type WixDataItem = items.WixDataItem;
 
 /**
- * Pagination state interface for the CMS CRUD service.
+ * Pagination state interface for the CMS service.
  * Contains information about the current pagination state.
  *
  * @interface PaginationState
@@ -23,16 +23,21 @@ export interface PaginationState {
   hasPrevPage: boolean;
   /** Whether there is a next page */
   hasNextPage: boolean;
+  /** Number of items loaded so far (for load more functionality) */
+  setPage?: (page: number) => Promise<void>;
+  /** Number of items currently loaded (for load more functionality) */
+  loadedItems: number;
+  /** Whether there are more items to load */
+  hasMoreItems: boolean;
 }
 
 /**
- * Sort order type for the CMS CRUD service.
- * Represents the direction of sorting.
+ * Sort order type for the CMS service.
  */
 export type SortOrder = 'ASC' | 'DESC';
 
 /**
- * Sort item interface for the CMS CRUD service.
+ * Sort interface for the CMS service.
  * Represents a single sort criterion.
  *
  * @interface SortItem
@@ -45,8 +50,7 @@ export interface SortItem {
 }
 
 /**
- * Filter operator type for the CMS CRUD service.
- * Represents the available filter operators.
+ * Filter operator type for the CMS service.
  */
 export type FilterOperator =
   | '$eq'
@@ -61,7 +65,7 @@ export type FilterOperator =
   | '$endsWith';
 
 /**
- * Filter condition type for the CMS CRUD service.
+ * Filter condition type for the CMS service.
  * Represents a filter condition using an operator and a value.
  */
 export type FilterCondition = {
@@ -69,7 +73,7 @@ export type FilterCondition = {
 };
 
 /**
- * Filter map type for the CMS CRUD service.
+ * Filter map type for the CMS service.
  * Maps field names to filter conditions.
  */
 export type FilterMap = {
@@ -77,13 +81,13 @@ export type FilterMap = {
 };
 
 /**
- * Configuration interface for the CMS CRUD service.
- * Contains the collection ID needed to initialize the CMS CRUD functionality.
+ * Configuration interface for the CMS service.
+ * Contains the collection ID needed to initialize the CMS functionality.
  *
- * @interface CmsCrudServiceConfig
+ * @interface CMSServiceConfig
  */
-export interface CmsCrudServiceConfig {
-  /** The collection ID to perform CRUD operations on */
+export interface CMSServiceConfig {
+  /** The collection ID to perform operations on */
   collectionId: string;
   /** Default page size for pagination (optional) */
   defaultPageSize?: number;
@@ -91,12 +95,12 @@ export interface CmsCrudServiceConfig {
 
 
 /**
- * Service definition for the CMS CRUD service.
- * This defines the reactive API contract for managing CMS data with CRUD operations.
+ * Service definition for the CMS service.
+ * This defines the reactive API contract for managing CMS data with operations.
  *
  * @constant
  */
-export const CmsCrudServiceDefinition = defineService<{
+export const CMSServiceDefinition = defineService<{
   /**
    * Creates a new item in the collection
    * @param collectionId - The collection ID to perform the operation on
@@ -141,17 +145,10 @@ export const CmsCrudServiceDefinition = defineService<{
 
   /**
    * Sets the current page for pagination
-   * @param page - The page number to set (1-based)
+   * @param page - The page number to set
    * @returns Promise<void> - Updates itemsSignal and paginationSignal with the result
    */
   setPage: (page: number) => Promise<void>;
-
-  /**
-   * Sets the page size for pagination
-   * @param pageSize - The number of items per page
-   * @returns Promise<void> - Updates itemsSignal and paginationSignal with the result
-   */
-  setPageSize: (pageSize: number) => Promise<void>;
 
   /**
    * Navigates to the next page
@@ -164,6 +161,12 @@ export const CmsCrudServiceDefinition = defineService<{
    * @returns Promise<void> - Updates itemsSignal and paginationSignal with the result
    */
   prevPage: () => Promise<void>;
+
+  /**
+   * Loads more items and appends them to the current list
+   * @returns Promise<void> - Appends new items to itemsSignal and updates paginationSignal
+   */
+  loadMore: () => Promise<void>;
 
   /**
    * Sets the sort criteria for the query
@@ -196,6 +199,9 @@ export const CmsCrudServiceDefinition = defineService<{
   /** Reactive signal indicating if an operation is in progress */
   loadingSignal: Signal<boolean>;
 
+  /** Reactive signal indicating if a **load more** operation is in progress */
+  loadingMoreSignal: Signal<boolean>;
+
   /** Reactive signal containing any error message, or null if no error */
   errorSignal: Signal<string | null>;
 
@@ -217,22 +223,22 @@ export const CmsCrudServiceDefinition = defineService<{
   /** Reactive signal containing the current filter conditions */
   filterSignal: Signal<FilterMap>;
 
-}>("CmsCrud");
+}>("CMSService");
 
 /**
- * Implementation of the CMS CRUD service that manages CRUD operations for Wix Data collections.
+ * Implementation of the CMS service that manages operations for Wix Data collections.
  * This service provides signals for loading state, error handling, and data management,
- * along with methods to perform CRUD operations on a specified collection.
+ * along with methods to perform operations on a specified collection.
  *
  * @example
  * ```tsx
- * import { CmsCrudServiceImplementation, CmsCrudServiceDefinition } from '@wix/cms/services';
+ * import { CMSServiceImplementation, CMSServiceDefinition } from '@wix/cms/services';
  * import { useService } from '@wix/services-manager-react';
  *
  * function CmsComponent({ cmsConfig }) {
  *   return (
  *     <ServiceProvider services={createServicesMap([
- *       [CmsCrudServiceDefinition, CmsCrudServiceImplementation.withConfig(cmsConfig)]
+ *       [CMSServiceDefinition, CMSServiceImplementation.withConfig(cmsConfig)]
  *     ])}>
  *       <CmsDataManager />
  *     </ServiceProvider>
@@ -240,7 +246,7 @@ export const CmsCrudServiceDefinition = defineService<{
  * }
  *
  * function CmsDataManager() {
- *   const cmsService = useService(CmsCrudServiceDefinition);
+ *   const cmsService = useService(CMSServiceDefinition);
  *   const isLoading = cmsService.loadingSignal.get();
  *   const error = cmsService.errorSignal.get();
  *   const items = cmsService.itemsSignal.get();
@@ -266,13 +272,14 @@ export const CmsCrudServiceDefinition = defineService<{
  * }
  * ```
  */
-export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudServiceConfig>()(
-  CmsCrudServiceDefinition,
+export const CMSServiceImplementation = implementService.withConfig<CMSServiceConfig>()(
+  CMSServiceDefinition,
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
     const defaultPageSize = config.defaultPageSize || 10;
 
     const loadingSignal = signalsService.signal(false) as Signal<boolean>;
+    const loadingMoreSignal = signalsService.signal(false) as Signal<boolean>;
     const errorSignal = signalsService.signal<string | null>(null) as Signal<string | null>;
     const itemsSignal = signalsService.signal<WixDataItem[]>([]) as Signal<WixDataItem[]>;
     const itemSignal = signalsService.signal<WixDataItem | null>(null) as Signal<WixDataItem | null>;
@@ -286,6 +293,8 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
       totalPages: 0,
       hasPrevPage: false,
       hasNextPage: false,
+      loadedItems: 0,
+      hasMoreItems: false,
     }) as Signal<PaginationState>;
 
     // Initialize sort signal with empty array
@@ -295,14 +304,14 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
     const filterSignal = signalsService.signal<FilterMap>({}) as Signal<FilterMap>;
 
     const withErrorHandling = async <T>(
-      crudOperation: () => Promise<T>,
+      CMSOperation: () => Promise<T>,
       errorMessage: string,
     ): Promise<T | void> => {
       loadingSignal.set(true);
       errorSignal.set(null);
 
       try {
-        return await crudOperation();
+        return await CMSOperation();
       } catch (error) {
         errorSignal.set(error instanceof Error ? error.message : errorMessage);
       } finally {
@@ -322,17 +331,24 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
     };
 
     /**
-     * Builds a query with pagination, sorting, and filtering applied
+     * Builds a query with optional pagination, sorting, and filtering applied
+     * This function combines the functionality of the previous buildQuery and buildBaseQuery functions
+     * to reduce code duplication and improve maintainability.
+     *
      * @param collectionId - The collection ID to query
-     * @returns A query object with pagination, sorting, and filtering applied
+     * @param options - Query options
+     * @param options.includePagination - Whether to include pagination (default: true)
+     * @returns A query object with the requested options applied
      */
-    const buildQuery = (collectionId: string) => {
+    const buildQuery = (collectionId: string, options: { includePagination?: boolean } = { includePagination: true }) => {
       let query = items.query(collectionId);
 
-      // Apply pagination
-      const pagination = paginationSignal.get();
-      const skip = (pagination.currentPage - 1) * pagination.pageSize;
-      query = query.limit(pagination.pageSize).skip(skip);
+      // Apply pagination if requested
+      if (options.includePagination) {
+        const pagination = paginationSignal.get();
+        const skip = (pagination.currentPage - 1) * pagination.pageSize;
+        query = query.limit(pagination.pageSize).skip(skip);
+      }
 
       // Apply sorting
       const sortItems = sortSignal.get();
@@ -346,6 +362,7 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
 
       // Apply filtering
       const filters = filterSignal.get();
+      // condition e.g { fieldName: { $eq: 'value' } }
       Object.entries(filters).forEach(([fieldName, condition]) => {
         const entries = Object.entries(condition);
         if (entries.length === 0) return;
@@ -386,8 +403,6 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
           case '$endsWith':
             query = query.endsWith(fieldName, value);
             break;
-          default:
-            break;
         }
       });
 
@@ -397,28 +412,48 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
     /**
      * Updates the pagination state based on the query result
      * @param result - The query result
+     * @param isLoadMore - Whether this is a load more operation (append mode)
      */
-    const updatePaginationState = (result: items.WixDataResult) => {
+    const updatePaginationState = (result: items.WixDataResult<WixDataItem>, isLoadMore = false) => {
       const pagination = paginationSignal.get();
-      const totalItems = result.totalCount;
-      const totalPages = totalItems ? Math.ceil(totalItems / pagination.pageSize): 1;
+      const totalItems = result.totalCount ?? 0;
+      const totalPages = totalItems ? Math.ceil(totalItems / pagination.pageSize) : 1;
+      const currentLoadedItems = isLoadMore ? pagination.loadedItems + result.items.length : result.items.length;
 
       paginationSignal.set({
         ...pagination,
-        totalItems: totalItems ?? 0,
+        totalItems,
         totalPages,
         hasPrevPage: pagination.currentPage > 1,
         hasNextPage: pagination.currentPage < totalPages,
+        loadedItems: currentLoadedItems,
+        hasMoreItems: currentLoadedItems < totalItems,
       });
     };
 
     const getAllItems = async <T extends WixDataItem>(collectionId: string): Promise<void> => {
       await withErrorHandling(async () => {
         const query = buildQuery(collectionId);
-        const result = await query.find();
+
+        // Get total count with same filters/sorting (no pagination)
+        const baseQuery = buildQuery(collectionId, { includePagination: false });
+        const totalCountPromise = baseQuery.count();
+
+        // Get the paginated results
+        const [result, totalCountResult] = await Promise.all([
+          query.find(),
+          totalCountPromise
+        ]);
 
         itemsSignal.set(result.items as T[]);
-        updatePaginationState(result);
+
+        // Create a modified result with the correct total count
+        const resultWithTotalCount = {
+          ...result,
+          totalCount: totalCountResult
+        };
+
+        updatePaginationState(resultWithTotalCount, false);
       }, `Failed to fetch ${collectionId}s`);
     };
 
@@ -501,25 +536,6 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
     };
 
     /**
-     * Sets the page size for pagination and refreshes the data
-     * @param pageSize - The number of items per page
-     */
-    const setPageSize = async (pageSize: number): Promise<void> => {
-      if (pageSize < 1) {
-        throw new Error('Page size must be at least 1');
-      }
-
-      const pagination = paginationSignal.get();
-      paginationSignal.set({
-        ...pagination,
-        pageSize,
-        currentPage: 1, // Reset to first page when changing page size
-      });
-
-      await getAllItems(currentCollectionSignal.get());
-    };
-
-    /**
      * Navigates to the next page if available
      */
     const nextPage = async (): Promise<void> => {
@@ -553,6 +569,7 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
      * @param fieldName - The field name to filter on
      * @param condition - The filter condition
      */
+
     const addFilter = async (fieldName: string, condition: FilterCondition): Promise<void> => {
       const filters = filterSignal.get();
       filterSignal.set({
@@ -605,6 +622,57 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
       await getAllItems(currentCollectionSignal.get());
     };
 
+    /**
+     * Loads more items and appends them to the current list
+     */
+    const loadMore = async (): Promise<void> => {
+      const pagination = paginationSignal.get();
+      if (!pagination.hasMoreItems) {
+        return;
+      }
+
+      loadingMoreSignal.set(true);
+      errorSignal.set(null);
+
+      try {
+        const nextPage = pagination.currentPage + 1;
+        const collectionId = currentCollectionSignal.get();
+
+        // Temporarily update pagination to next page for query
+        const tempPagination = { ...pagination, currentPage: nextPage };
+        paginationSignal.set(tempPagination);
+
+        const query = buildQuery(collectionId);
+
+        // Get total count with same filters/sorting (but no pagination)
+        const baseQuery = buildQuery(collectionId, { includePagination: false });
+        const totalCountPromise = baseQuery.count();
+
+        // Get the paginated results
+        const [result, totalCountResult] = await Promise.all([
+          query.find(),
+          totalCountPromise
+        ]);
+
+        // Append new items to existing ones
+        const currentItems = itemsSignal.get();
+        const allItems = [...currentItems, ...result.items];
+        itemsSignal.set(allItems);
+
+        // Create a modified result with the correct total count
+        const resultWithTotalCount = {
+          ...result,
+          totalCount: totalCountResult
+        };
+
+        updatePaginationState(resultWithTotalCount, true);
+      } catch (error) {
+        errorSignal.set(error instanceof Error ? error.message : `Failed to load more items from ${currentCollectionSignal.get()}`);
+      } finally {
+        loadingMoreSignal.set(false);
+      }
+    };
+
     return {
       create: createItem,
       getAll: getAllItems,
@@ -613,14 +681,15 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
       delete: deleteItem,
       setCollection: setCollectionId,
       setPage,
-      setPageSize,
       nextPage,
       prevPage,
+      loadMore,
       setSort,
       addFilter,
       removeFilter,
       clearFilters,
       loadingSignal,
+      loadingMoreSignal,
       errorSignal,
       itemsSignal,
       itemSignal,
@@ -633,26 +702,26 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
 );
 
 /**
- * Loads CMS CRUD service initial data for Server-Side Rendering (SSR) initialization.
+ * Loads CMS service initial data for Server-Side Rendering (SSR) initialization.
  * This function is designed to be used during SSR to preload
- * the collection ID required for the CMS CRUD functionality.
+ * the collection ID required for the CMS functionality.
  *
- * @param {string} collectionId - The collection ID to perform CRUD operations on
- * @returns {Promise<Object>} Promise that resolves to the CMS CRUD service configuration data
+ * @param {string} collectionId - The collection ID to perform operations on
+ * @returns {Promise<Object>} Promise that resolves to the CMS service configuration data
  *
  * @example
  * ```astro
  * ---
  * // Astro page example
- * import { loadCmsCrudServiceInitialData } from '@wix/cms/services';
- * import { CmsCrud } from '@wix/cms/components';
+ * import { loadCMSServiceInitialData } from '@wix/cms/services';
+ * import { CMS } from '@wix/cms/components';
  *
  * // Load CMS data during SSR
- * const cmsData = await loadCmsCrudServiceInitialData('MyCollection');
+ * const cmsData = await loadCMSServiceInitialData('MyCollection');
  * ---
  *
- * <CmsCrud.Root cmsCrudServiceConfig={cmsData[CmsCrudServiceDefinition]}>
- *   <CmsCrud>
+ * <CMS.Root cmsCrudServiceConfig={cmsData[CMSServiceDefinition]}>
+ *   <CMS>
  *   {({ create, getAll, items, isLoading, error }) => (
  *     <div>
  *       {error && <div className="error">{error}</div>}
@@ -666,21 +735,21 @@ export const CmsCrudServiceImplementation = implementService.withConfig<CmsCrudS
  *       </ul>
  *     </div>
  *   )}
- *   </CmsCrud>
- * </CmsCrud.Root>
+ *   </CMS>
+ * </CMS.Root>
  * ```
  */
-export const loadCmsCrudServiceInitialData = async (collectionId: string) => {
+export const loadCMSServiceInitialData = async (collectionId: string) => {
   return {
-    [CmsCrudServiceDefinition]: {
+    [CMSServiceDefinition]: {
       collectionId,
     },
   };
 };
 
 /**
- * Helper function to create a CMS CRUD service binding with configuration.
- * This function simplifies the process of binding the CMS CRUD service with its configuration.
+ * Helper function to create a CMS service binding with configuration.
+ * This function simplifies the process of binding the CMS service with its configuration.
  *
  * @template T - Type of the services configurations object
  * @param {T} servicesConfigs - Object containing service configurations
@@ -688,10 +757,10 @@ export const loadCmsCrudServiceInitialData = async (collectionId: string) => {
  *
  * @example
  * ```tsx
- * import { cmsCrudServiceBinding, loadCmsCrudServiceInitialData } from '@wix/cms/services';
+ * import { cmsCrudServiceBinding, loadCMSServiceInitialData } from '@wix/cms/services';
  *
  * // Load initial data
- * const initialData = await loadCmsCrudServiceInitialData('MyCollection');
+ * const initialData = await loadCMSServiceInitialData('MyCollection');
  *
  * // Create service binding
  * const cmsBinding = cmsCrudServiceBinding(initialData);
@@ -700,12 +769,13 @@ export const loadCmsCrudServiceInitialData = async (collectionId: string) => {
  * const services = createServicesMap([cmsBinding]);
  * ```
  */
-export const cmsCrudServiceBinding = <T extends {
-    [key: string]: Awaited<ReturnType<typeof loadCmsCrudServiceInitialData>>[typeof CmsCrudServiceDefinition];
+export const CMSServiceBinding = <T extends {
+    [key: string]: Awaited<ReturnType<typeof loadCMSServiceInitialData>>[typeof CMSServiceDefinition];
   }, >(servicesConfigs: T) => {
   return [
-    CmsCrudServiceDefinition,
-    CmsCrudServiceImplementation,
-    servicesConfigs[CmsCrudServiceDefinition] as CmsCrudServiceConfig,
+    CMSServiceDefinition,
+    CMSServiceImplementation,
+    servicesConfigs[CMSServiceDefinition] as CMSServiceConfig,
   ] as const;
 };
+

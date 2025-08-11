@@ -1,6 +1,6 @@
 import React from 'react';
 import { useService } from '@wix/services-manager-react';
-import { CmsCrudServiceDefinition, type SortItem, type SortOrder } from '../services/cms-crud-service.js';
+import { CMSServiceDefinition, type SortItem, type SortOrder } from '../services/cms-crud-service.js';
 
 /**
  * Props for the CmsCrudSort component
@@ -77,7 +77,7 @@ export function CmsCrudSort(props: CmsCrudSortProps) {
   const {
     sortSignal,
     setSort,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   /**
    * Helper function to create a sort item
@@ -145,7 +145,7 @@ export function Field(props: FieldProps) {
   const {
     sortSignal,
     setSort,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   const currentSort = sortSignal.get();
   const sortItem = currentSort.find(item => item.fieldName === props.fieldName);
@@ -249,7 +249,7 @@ export function MultiField(props: MultiFieldProps) {
   const {
     sortSignal,
     setSort,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   /**
    * Adds a sort field

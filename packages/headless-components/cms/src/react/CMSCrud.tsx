@@ -1,12 +1,12 @@
 import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import {CmsCrudServiceDefinition, CmsCrudServiceImplementation, WixDataItem, type CmsCrudServiceConfig} from '../services/cms-crud-service.js';
+import {CMSServiceDefinition, CMSServiceImplementation, WixDataItem, type CMSServiceConfig} from '../services/cms-crud-service.js';
 
 /**
- * Props passed to the render function of the CmsCrud component
+ * Props passed to the render function of the CMS component
  */
-export type CmsCrudRenderProps = {
+export type CMSRenderProps = {
   /** Whether any CMS operation is currently loading */
   isLoading: boolean;
 
@@ -61,29 +61,29 @@ export type CmsCrudRenderProps = {
 };
 
 /**
- * Props for the Root component that provides the CmsCrud service context
+ * Props for the Root component that provides the CMSCrud service context
  */
 export interface RootProps {
-  /** Child components that will have access to the CmsCrud service */
+  /** Child components that will have access to the CMSCrud service */
   children: React.ReactNode;
-  /** Configuration for the CmsCrud service */
-  cmsCrudServiceConfig: CmsCrudServiceConfig;
+  /** Configuration for the CMSCrud service */
+  cmsCrudServiceConfig: CMSServiceConfig;
 }
 
 /**
- * Root component that provides the CmsCrud service context to its children.
+ * Root component that provides the CMS service context to its children.
  * This component sets up the necessary services for managing CMS CRUD operations.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { CmsCrud } from '@wix/cms/components';
+ * import { CMSCrud } from '@wix/cms/components';
  *
  * function CmsPage() {
  *   return (
- *     <CmsCrud.Root cmsCrudServiceConfig={{ collectionId: 'BlogPosts' }}>
- *       <CmsCrud>
+ *     <CMSCrud.Root cmsCrudServiceConfig={{ collectionId: 'BlogPosts' }}>
+ *       <CMSCrud>
  *         {({
  *           isLoading,
  *           items,
@@ -93,8 +93,8 @@ export interface RootProps {
  *         }) => (
  *           // Your UI implementation
  *         )}
- *       </CmsCrud>
- *     </CmsCrud.Root>
+ *       </CMSCrud>
+ *     </CMSCrud.Root>
  *   );
  * }
  * ```
@@ -103,8 +103,8 @@ export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
-        CmsCrudServiceDefinition,
-        CmsCrudServiceImplementation,
+        CMSServiceDefinition,
+        CMSServiceImplementation,
         props.cmsCrudServiceConfig,
       )}
     >
@@ -114,11 +114,11 @@ export function Root(props: RootProps): React.ReactNode {
 }
 
 /**
- * Props for the CmsCrud component
+ * Props for the CMSCrud component
  */
-export interface CmsCrudProps {
+export interface CMSCrudProps {
   /** Render function that receives CMS CRUD state and actions */
-  children: (props: CmsCrudRenderProps) => React.ReactNode;
+  children: (props: CMSRenderProps) => React.ReactNode;
   /** Whether to automatically fetch items on mount (defaults to true) */
   autoFetch?: boolean;
 };
@@ -138,12 +138,12 @@ export interface CmsCrudProps {
  *
  * @example
  * ```tsx
- * import { CmsCrud } from '@wix/cms/components';
+ * import { CMSCrud } from '@wix/cms/components';
  *
  * function CmsPage() {
  *   return (
- *     <CmsCrud.Root cmsCrudServiceConfig={{ collectionId: 'BlogPosts' }}>
- *       <CmsCrud>
+ *     <CMSCrud.Root cmsCrudServiceConfig={{ collectionId: 'BlogPosts' }}>
+ *       <CMSCrud>
  *         {({
  *           isLoading,
  *           error,
@@ -230,13 +230,13 @@ export interface CmsCrudProps {
  *             )}
  *           </div>
  *         )}
- *       </CmsCrud>
- *     </CmsCrud.Root>
+ *       </CMSCrud>
+ *     </CMSCrud.Root>
  *   );
  * }
  * ```
  */
-export function CmsCrud(props: CmsCrudProps) {
+export function CMSCrud(props: CMSCrudProps) {
   const {
     loadingSignal,
     errorSignal,
@@ -249,7 +249,7 @@ export function CmsCrud(props: CmsCrudProps) {
     update,
     delete: deleteItem,
     setCollection,
-  } = useService(CmsCrudServiceDefinition);
+  } = useService(CMSServiceDefinition);
 
   // Auto-fetch items on mount if autoFetch is true (default)
   React.useEffect(() => {
