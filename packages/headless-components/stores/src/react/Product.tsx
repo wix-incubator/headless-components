@@ -5,6 +5,7 @@ import * as CoreProduct from "./core/Product.js";
 import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 import * as SelectedVariant from "./core/SelectedVariant.js";
+import * as Option from "./Option.js";
 import { AsContent } from "./types.js";
 
 enum TestIds {
@@ -360,3 +361,235 @@ export const CompareAtPrice = React.forwardRef<
     </SelectedVariant.Price>
   );
 });
+
+/**
+ * Props for Product Variants container
+ */
+export interface VariantsProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Container for product variant selection system.
+ * Does not render when there are no variants.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Variants>
+ *   <Product.VariantOptions>
+ *     <Product.VariantOptionRepeater>
+ *       <Option.Name className="text-lg font-medium mb-3" />
+ *       <Option.Choices>
+ *         <Option.ChoiceRepeater>
+ *           <Choice.Text className="px-4 py-2 border rounded-lg" />
+ *           <Choice.Color className="w-10 h-10 rounded-full border-4" />
+ *         </Option.ChoiceRepeater>
+ *       </Option.Choices>
+ *     </Product.VariantOptionRepeater>
+ *   </Product.VariantOptions>
+ * </Product.Variants>
+ * ```
+ */
+export function Variants(props: VariantsProps): React.ReactNode {
+  return (
+    <ProductVariantSelector.Options>
+      {({ hasOptions }) =>
+        hasOptions ? (
+          <div data-testid="product-variants">{props.children}</div>
+        ) : null
+      }
+    </ProductVariantSelector.Options>
+  );
+}
+
+/**
+ * Props for Product VariantOptions component
+ */
+export interface VariantOptionsProps {
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      options: any[];
+    }
+  >;
+  emptyState?: React.ReactNode;
+}
+
+/**
+ * Component that provides access to variant options.
+ *
+ * @component
+ */
+export function VariantOptions(props: VariantOptionsProps): React.ReactNode {
+  return (
+    <ProductVariantSelector.Options>
+      {({ options, hasOptions }) => {
+        if (!hasOptions) {
+          return props.emptyState || null;
+        }
+
+        if (typeof props.children === "function") {
+          return props.children({ options }, null);
+        }
+
+        return props.children;
+      }}
+    </ProductVariantSelector.Options>
+  );
+}
+
+/**
+ * Props for Product VariantOptionRepeater component
+ */
+export interface VariantOptionRepeaterProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Repeater component that renders children for each variant option.
+ *
+ * @component
+ */
+export function VariantOptionRepeater(
+  props: VariantOptionRepeaterProps,
+): React.ReactNode {
+  return (
+    <ProductVariantSelector.Options>
+      {({ options, hasOptions }) => {
+        if (!hasOptions) return null;
+
+        return (
+          <>
+            {options.map((option: any) => (
+              <div key={option.name} data-testid="product-variant-option">
+                <Option.Root option={option}>{props.children}</Option.Root>
+              </div>
+            ))}
+          </>
+        );
+      }}
+    </ProductVariantSelector.Options>
+  );
+}
+
+/**
+ * Props for Product Modifiers container
+ */
+export interface ModifiersProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Container for product modifiers system.
+ * Does not render when there are no modifiers.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Modifiers>
+ *   <Product.ModifierOptions>
+ *     <Product.ModifierOptionRepeater allowedTypes={['color', 'text', 'free-text']}>
+ *       <Option.Name/>
+ *       <Option.Choices>
+ *         <Option.ChoiceRepeater>
+ *           <Choice.Text/>
+ *           <Choice.Color/>
+ *           <Choice.FreeText/>
+ *         </Option.ChoiceRepeater>
+ *       </Option.Choices>
+ *     </Product.ModifierOptionRepeater>
+ *   </Product.ModifierOptions>
+ * </Product.Modifiers>
+ * ```
+ */
+export function Modifiers(props: ModifiersProps): React.ReactNode {
+  return (
+    <ProductModifiers.Modifiers>
+      {({ hasModifiers }) =>
+        hasModifiers ? (
+          <div data-testid="product-modifiers">{props.children}</div>
+        ) : null
+      }
+    </ProductModifiers.Modifiers>
+  );
+}
+
+/**
+ * Props for Product ModifierOptions component
+ */
+export interface ModifierOptionsProps {
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      options: any[];
+    }
+  >;
+  emptyState?: React.ReactNode;
+}
+
+/**
+ * Component that provides access to modifier options.
+ *
+ * @component
+ */
+export function ModifierOptions(props: ModifierOptionsProps): React.ReactNode {
+  return (
+    <ProductModifiers.Modifiers>
+      {({ modifiers, hasModifiers }) => {
+        if (!hasModifiers) {
+          return props.emptyState || null;
+        }
+
+        if (typeof props.children === "function") {
+          return props.children({ options: modifiers }, null);
+        }
+
+        return props.children;
+      }}
+    </ProductModifiers.Modifiers>
+  );
+}
+
+/**
+ * Props for Product ModifierOptionRepeater component
+ */
+export interface ModifierOptionRepeaterProps {
+  children: React.ReactNode;
+  allowedTypes?: string[];
+}
+
+/**
+ * Repeater component that renders children for each modifier option.
+ *
+ * @component
+ */
+export function ModifierOptionRepeater(
+  props: ModifierOptionRepeaterProps,
+): React.ReactNode {
+  return (
+    <ProductModifiers.Modifiers>
+      {({ modifiers, hasModifiers }) => {
+        if (!hasModifiers) return null;
+
+        const filteredModifiers = props.allowedTypes
+          ? modifiers.filter((modifier: any) =>
+              props.allowedTypes!.includes(
+                modifier.modifierRenderType?.toLowerCase(),
+              ),
+            )
+          : modifiers;
+
+        return (
+          <>
+            {filteredModifiers.map((modifier: any) => (
+              <div key={modifier.name} data-testid="product-modifier-option">
+                <Option.Root modifier={modifier}>{props.children}</Option.Root>
+              </div>
+            ))}
+          </>
+        );
+      }}
+    </ProductModifiers.Modifiers>
+  );
+}
