@@ -161,6 +161,9 @@ export function ChoiceRepeater(props: ChoiceRepeaterProps): React.ReactNode {
 // Create a context for individual choices
 const ChoiceContext = React.createContext<any>(null);
 
+// Export the context so it can be used by other components
+export { ChoiceContext };
+
 /**
  * Choice namespace for choice-specific components
  */

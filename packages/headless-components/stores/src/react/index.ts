@@ -11,3 +11,4 @@ export * as SelectedVariant from "./core/SelectedVariant.js";
 
 export * as ProductV2 from "./Product.js";
 export * as Option from "./Option.js";
+export * as Choice from "./Choice.js";
