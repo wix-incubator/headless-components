@@ -3682,6 +3682,7 @@ __metadata:
     syncpack: "npm:^13.0.0"
     turbo: "npm:^2.3.4"
     typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
   languageName: unknown
   linkType: soft
 
