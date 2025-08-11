@@ -2,34 +2,222 @@ import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 
+enum TestIds {
+  optionRoot = "option-root",
+  optionName = "option-name",
+  optionChoices = "option-choices",
+  choice = "choice",
+  choiceText = "choice-text",
+  choiceColor = "choice-color",
+  choiceFreetext = "choice-freetext",
+}
+
+/**
+ * Option data interface
+ */
+export interface Option {
+  name: string;
+}
+
 /**
  * Props for Option Root component
  */
-export interface RootProps {
+export interface OptionProps {
+  option: Option;
   children: React.ReactNode;
-  option?: any;
+  onValueChange?: (value: string) => void;
+  allowedTypes?: ("color" | "text" | "free-text")[]; // default - ['color', 'text', 'free-text'] - the types of the options to render
+}
+
+/**
+ * Root props with asChild support
+ */
+export interface RootProps extends AsChildProps<OptionProps> {
+  option: Option;
+  onValueChange?: (value: string) => void;
+  allowedTypes?: ("color" | "text" | "free-text")[];
 }
 
 /**
  * Root component that provides context for variant options.
+ * Automatically detects and sets the option type based on the option name and available choices.
  *
  * @component
+ *
+  * **Data Attributes**
+ * 
+ * - `data-testid="option-root"` - Applied to option container (TestIds.optionRoot)
+ * - `data-type` - The type of the option: 'color' | 'text' | 'free-text'
+ * @example
+ * ```tsx
+ * // Color option (data-type="color")
+ * <Option.Root
+ *   option={{ name: "Color" }}
+ *   onValueChange={(value) => console.log('Selected:', value)}
+ * >
+ *   <Option.Name />
+ *   <Option.Choices>
+ *     <Option.ChoiceRepeater>
+ *       <Choice.Color />
+ *     </Option.ChoiceRepeater>
+ *   </Option.Choices>
+ * </Option.Root>
+ *
+ * // Text option (data-type="text")
+ * <Option.Root
+ *   option={{ name: "Size" }}
+ *   onValueChange={(value) => console.log('Selected:', value)}
+ * >
+ *   <Option.Name />
+ *   <Option.Choices>
+ *     <Option.ChoiceRepeater>
+ *       <Choice.Text />
+ *     </Option.ChoiceRepeater>
+ *   </Option.Choices>
+ * </Option.Root>
+ *
+ * // Free text option (data-type="free-text")
+ * <Option.Root
+ *   option={{ name: "Custom Text" }}
+ *   onValueChange={(value) => console.log('Entered:', value)}
+ * >
+ *   <Option.Name />
+ *   <Option.Choices>
+ *     <Option.ChoiceRepeater>
+ *       <Choice.FreeText />
+ *     </Option.ChoiceRepeater>
+ *   </Option.Choices>
+ * </Option.Root>
+ *
+ * // With allowed types filter
+ * <Option.Root
+ *   option={{ name: "Size" }}
+ *   allowedTypes={['text']}
+ *   onValueChange={(value) => console.log('Selected size:', value)}
+ * >
+ *   <Option.Name />
+ *   <Option.Choices>
+ *     <Option.ChoiceRepeater>
+ *       <Choice.Text />
+ *     </Option.ChoiceRepeater>
+ *   </Option.Choices>
+ * </Option.Root>
+ *
+ * // asChild with react component
+ * <Option.Root
+ *   asChild
+ *   option={{ name: "Color" }}
+ *   onValueChange={(value) => console.log('Selected:', value)}
+ * >
+ *   {React.forwardRef(({option, onValueChange, allowedTypes, ...props}, ref) => (
+ *     <section ref={ref} {...props} className="option-section">
+ *       <h3>Option: {option.name}</h3>
+ *       <p>Allowed types: {allowedTypes.join(', ')}</p>
+ *       {props.children}
+ *     </section>
+ *   ))}
+ * </Option.Root>
+ * ```
  */
-export function Root(props: RootProps): React.ReactNode {
-  if (props.option) {
-    return (
-      <ProductVariantSelector.Option option={props.option}>
-        {(optionData) => (
-          <OptionContext.Provider value={{ ...optionData, type: "variant" }}>
-            {props.children}
-          </OptionContext.Provider>
-        )}
-      </ProductVariantSelector.Option>
-    );
-  }
+export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
+  const {
+    asChild,
+    children,
+    option,
+    onValueChange,
+    allowedTypes = ["color", "text", "free-text"],
+    ...otherProps
+  } = props;
 
-  return props.children;
-}
+  return (
+    <ProductVariantSelector.Option option={option}>
+      {(optionData) => {
+        // Determine the option type based on the option name and available choices
+        const getOptionType = (): "color" | "text" | "free-text" => {
+          const optionName = option.name.toLowerCase();
+          const hasChoices =
+            optionData.hasChoices && optionData.choices?.length > 0;
+
+          if (!hasChoices) {
+            return "free-text";
+          }
+
+          // Check if this is a color option by name or if choices have colorCode
+          const isColorOption =
+            optionName.includes("color") || optionName.includes("colour");
+          const hasColorChoices = optionData.choices?.some(
+            (choice: any) => choice.colorCode,
+          );
+
+          if (isColorOption || hasColorChoices) {
+            return "color";
+          }
+
+          // Check if this is a free text option
+          const isFreeTextOption =
+            optionName.includes("text") || optionName.includes("custom");
+          if (isFreeTextOption) {
+            return "free-text";
+          }
+
+          // Default to text
+          return "text";
+        };
+
+        const optionType = getOptionType();
+
+        const contextValue = {
+          ...optionData,
+          type: "variant",
+          optionType,
+          onValueChange,
+          allowedTypes,
+        };
+
+        const attributes = {
+          "data-testid": TestIds.optionRoot,
+          "data-type": optionType,
+          ...otherProps,
+        };
+
+        const content = (
+          <OptionContext.Provider value={contextValue}>
+            {typeof children === "function"
+              ? null
+              : (children as React.ReactNode)}
+          </OptionContext.Provider>
+        );
+
+        const optionProps: OptionProps = {
+          option,
+          children:
+            typeof children === "function"
+              ? null
+              : (children as React.ReactNode),
+          onValueChange,
+          allowedTypes,
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: optionProps,
+            ref,
+            content,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        return (
+          <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+            {content}
+          </div>
+        );
+      }}
+    </ProductVariantSelector.Option>
+  );
+});
 
 // Create a context to pass option data down
 const OptionContext = React.createContext<any>(null);
@@ -56,7 +244,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 
   const name = optionData.name || "";
   const attributes = {
-    "data-testid": "option-name",
+    "data-testid": TestIds.optionName,
   };
 
   if (asChild) {
@@ -84,50 +272,96 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 /**
  * Props for Option Choices component
  */
-export interface ChoicesProps extends AsChildProps<{ choices: any[] }> {}
+export interface OptionChoicesProps {
+  children: React.ReactNode;
+}
 
 /**
- * Container for option choices.
+ * Props for Option Choices component with asChild support
+ */
+export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {}
+
+/**
+ * A container for rendering the available choices for a given option (e.g., the set of color swatches, text buttons, or free text input for a variant or modifier option).
+ * It does not render any UI by itself, but is used to group the available choices for an option.
+ *
+ * It is used to render the choices for an option, and is used to render the choices for an option.
  *
  * @component
+ *
+  * **Data Attributes**
+ * 
+ * - `data-testid="option-choices"` - Applied to choices container (TestIds.optionChoices)
+ * - `data-type` - The type of the option 'color' | 'text' | 'free-text'
+ *
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Option.Choices>
+ *   <Option.ChoiceRepeater>
+ *     <Choice.Text />
+ *     <Choice.Color />
+ *   </Option.ChoiceRepeater>
+ * </Option.Choices>
+ *
+ * // asChild with primitive
+ * <Option.Choices asChild>
+ *   <div className="choices-grid">
+ *     <Option.ChoiceRepeater>
+ *       <Choice.Text />
+ *     </Option.ChoiceRepeater>
+ *   </div>
+ * </Option.Choices>
+ *
+ * // asChild with react component
+ * <Option.Choices asChild>
+ *   {React.forwardRef(({children, ...props}, ref) => (
+ *     <section ref={ref} {...props} className="choices-section">
+ *       <h4>Available Options</h4>
+ *       {children}
+ *     </section>
+ *   ))}
+ * </Option.Choices>
+ * ```
  */
 export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
   (props, ref) => {
     const { asChild, children } = props;
     const optionData = React.useContext(OptionContext);
 
-    if (!optionData || !optionData.hasChoices) return null;
+    if (!optionData) return null;
 
     const attributes = {
-      "data-testid": "option-choices",
-      "data-type": optionData.type || "unknown",
+      "data-testid": TestIds.optionChoices,
+      "data-type": optionData.optionType || "text",
+    };
+
+    const content = (
+      <ChoicesContext.Provider value={optionData}>
+        {typeof children === "function" ? null : (children as React.ReactNode)}
+      </ChoicesContext.Provider>
+    );
+
+    const choicesProps: OptionChoicesProps = {
+      children:
+        typeof children === "function" ? null : (children as React.ReactNode),
     };
 
     if (asChild) {
       const rendered = renderAsChild({
         children,
-        props: { choices: optionData.choices || [] },
+        props: choicesProps,
         ref,
-        content: null,
+        content,
         attributes,
       });
-      if (rendered) {
-        return (
-          <ChoicesContext.Provider value={optionData}>
-            {rendered}
-          </ChoicesContext.Provider>
-        );
-      }
+      if (rendered) return rendered;
     }
 
     return (
-      <ChoicesContext.Provider value={optionData}>
-        <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-          {typeof children === "function"
-            ? null
-            : (children as React.ReactNode)}
-        </div>
-      </ChoicesContext.Provider>
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+        {content}
+      </div>
     );
   },
 );
@@ -155,6 +389,12 @@ export const ChoiceRepeater = React.forwardRef<
 
   if (!choicesData || !choicesData.choices?.length) return null;
 
+  const allowedTypes = choicesData.allowedTypes || [
+    "color",
+    "text",
+    "free-text",
+  ];
+
   return (
     <>
       {choicesData.choices.map((choice: any) => {
@@ -170,15 +410,25 @@ export const ChoiceRepeater = React.forwardRef<
           String(choicesData.name).toLowerCase().includes("text") ||
           String(choicesData.name).toLowerCase().includes("custom");
 
-        // Only render if the choice matches the expected type
-        // Color choices should have colorCode, text choices should not
+        // Determine the choice type
         const shouldRenderAsColor = isColorOption && hasColorCode;
         const shouldRenderAsFreeText = isFreeTextOption;
         const shouldRenderAsText =
           !shouldRenderAsColor && !shouldRenderAsFreeText;
 
+        // Check if this choice type is allowed
+        const choiceType = shouldRenderAsColor
+          ? "color"
+          : shouldRenderAsFreeText
+            ? "free-text"
+            : "text";
+
+        if (!allowedTypes.includes(choiceType)) {
+          return null; // Skip this choice if its type is not allowed
+        }
+
         const attributes = {
-          "data-testid": "choice",
+          "data-testid": TestIds.choice,
           "data-type":
             choice.type ||
             (shouldRenderAsColor
@@ -282,10 +532,17 @@ export namespace Choice {
         }) => {
           if (!isVisible) return null;
 
+          const handleClick = () => {
+            select();
+            if (optionData.onValueChange) {
+              optionData.onValueChange(value);
+            }
+          };
+
           const attributes = {
-            "data-testid": "choice-text",
+            "data-testid": TestIds.choiceText,
             "data-selected": isSelected ? "true" : "false",
-            onClick: select,
+            onClick: handleClick,
             ...buttonProps,
           };
 
@@ -370,11 +627,18 @@ export namespace Choice {
           }) => {
             if (!isVisible) return null;
 
+            const handleClick = () => {
+              select();
+              if (optionData.onValueChange) {
+                optionData.onValueChange(value);
+              }
+            };
+
             const colorCode = choice.colorCode || "#ccc";
             const attributes = {
-              "data-testid": "choice-color",
+              "data-testid": TestIds.choiceColor,
               "data-selected": isSelected ? "true" : "false",
-              onClick: select,
+              onClick: handleClick,
               style: { backgroundColor: colorCode },
               title: value,
               className: `${className} ${!isInStock && !isPreOrderEnabled ? "grayscale" : ""}`,
@@ -428,7 +692,7 @@ export namespace Choice {
    * Props for Choice FreeText component
    */
   export interface FreeTextProps
-    extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    extends AsChildProps<{ value: string; onChange: (value: string) => void }> {
     /** Custom placeholder text */
     placeholder?: string;
   }
@@ -438,10 +702,35 @@ export namespace Choice {
    * This component handles free text input for product variants.
    *
    * @component
+   * @example
+   * ```tsx
+   * // Default usage
+   * <Choice.FreeText placeholder="Enter custom text..." />
+   *
+   * // asChild with primitive
+   * <Choice.FreeText asChild placeholder="Custom input">
+   *   <input type="text" className="custom-input" />
+   * </Choice.FreeText>
+   *
+   * // asChild with react component
+   * <Choice.FreeText asChild>
+   *   {React.forwardRef(({value, onChange, ...props}, ref) => (
+   *     <div className="custom-wrapper">
+   *       <input
+   *         ref={ref}
+   *         {...props}
+   *         value={value}
+   *         onChange={(e) => onChange(e.target.value)}
+   *         className="custom-input"
+   *       />
+   *     </div>
+   *   ))}
+   * </Choice.FreeText>
+   * ```
    */
-  export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
+  export const FreeText = React.forwardRef<HTMLElement, FreeTextProps>(
     (props, ref) => {
-      const { className, placeholder, ...textareaProps } = props;
+      const { asChild, children, placeholder } = props;
       const choiceContext = React.useContext(ChoiceContext);
 
       if (!choiceContext) return null;
@@ -454,23 +743,38 @@ export namespace Choice {
       const [value, setValue] = React.useState("");
       const optionName = optionData.name || "";
 
-      const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setValue(e.target.value);
+      const handleChange = (newValue: string) => {
+        setValue(newValue);
+        if (optionData.onValueChange) {
+          optionData.onValueChange(newValue);
+        }
         // In a real implementation, this would update the variant service
         // For now, we'll just handle the local state
       };
 
+      const attributes = {
+        "data-testid": TestIds.choiceFreetext,
+        placeholder:
+          placeholder || `Enter custom ${optionName.toLowerCase()}...`,
+      };
+
+      if (asChild) {
+        const rendered = renderAsChild({
+          children,
+          props: { value, onChange: handleChange },
+          ref,
+          content: null,
+          attributes,
+        });
+        if (rendered) return rendered;
+      }
+
       return (
         <textarea
-          ref={ref}
+          ref={ref as React.Ref<HTMLTextAreaElement>}
           value={value}
-          onChange={handleChange}
-          placeholder={
-            placeholder || `Enter custom ${optionName.toLowerCase()}...`
-          }
-          className={className}
-          data-testid="choice-freetext"
-          {...textareaProps}
+          onChange={(e) => handleChange(e.target.value)}
+          {...attributes}
         />
       );
     },
