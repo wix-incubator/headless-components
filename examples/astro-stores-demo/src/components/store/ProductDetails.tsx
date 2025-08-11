@@ -10,6 +10,7 @@ import {
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductV2 as Product,
+  Option,
 } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
@@ -272,38 +273,36 @@ export default function ProductDetails({
                     </Product.Description>
                   )}
 
-                  {/* Product Options (if any) */}
+                  {/* Product Options (if any) - Using New API */}
                   <ProductVariantSelectorPrimitive.Root>
-                    <ProductVariantSelectorPrimitive.Options>
-                      {({ options, hasOptions }) => (
-                        <>
-                          {hasOptions && (
-                            <div
-                              className="space-y-6"
-                              data-testid="product-options"
-                            >
-                              <h3 className="text-lg font-semibold text-content-primary">
-                                Product Options
-                              </h3>
+                    <Product.Variants>
+                      <div className="space-y-6" data-testid="product-options">
+                        <h3 className="text-lg font-semibold text-content-primary">
+                          Product Options
+                        </h3>
 
+                        <Product.VariantOptions>
+                          {({ options }) => (
+                            <>
                               {options.map((option: any) => (
                                 <div
                                   key={option.name}
                                   data-testid="product-option"
                                 >
-                                  <ProductVariantSelectorPrimitive.Option
-                                    option={option}
-                                  >
-                                    {({ name, choices, hasChoices }) => (
-                                      <>
-                                        <h3 className="text-lg font-semibold text-content-primary mb-3">
-                                          {name}
-                                        </h3>
-                                        {hasChoices && (
+                                  <Option.Root option={option}>
+                                    <Option.Name className="text-lg font-semibold text-content-primary mb-3" />
+                                    {/* Use ProductVariantSelectorPrimitive.Option to get all the original data and structure */}
+                                    <ProductVariantSelectorPrimitive.Option
+                                      option={option}
+                                    >
+                                      {({ choices, hasChoices }) =>
+                                        hasChoices && (
                                           <div className="flex flex-wrap gap-3">
                                             {choices.map((choice: any) => {
                                               // Check if this is a color option
-                                              const isColorOption = String(name)
+                                              const isColorOption = String(
+                                                option.name
+                                              )
                                                 .toLowerCase()
                                                 .includes('color');
                                               const hasColorCode =
@@ -326,14 +325,16 @@ export default function ProductDetails({
                                                     isInStock,
                                                     isPreOrderEnabled,
                                                     select,
-                                                  }) => (
-                                                    <>
-                                                      {isColorOption &&
+                                                  }) => {
+                                                    if (
+                                                      isColorOption &&
                                                       isVisible &&
                                                       hasColorCode &&
                                                       (!isQuickView ||
-                                                        isInStock) ? (
-                                                        // Color Swatch
+                                                        isInStock)
+                                                    ) {
+                                                      // Color Swatch - Original Design
+                                                      return (
                                                         <div className="relative">
                                                           <button
                                                             data-testid="product-modifier-choice-button"
@@ -376,77 +377,80 @@ export default function ProductDetails({
                                                               </div>
                                                             )}
                                                         </div>
-                                                      ) : (
-                                                        isVisible &&
-                                                        (!isQuickView ||
-                                                          isInStock) && (
-                                                          // Regular Text Button
-                                                          <div className="relative">
-                                                            <button
-                                                              data-testid="product-modifier-choice-button"
-                                                              onClick={select}
-                                                              className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
-                                                                isSelected
-                                                                  ? 'product-option-active'
-                                                                  : 'product-option-inactive'
-                                                              }`}
-                                                            >
-                                                              {value}
-                                                            </button>
-                                                            {!isInStock &&
-                                                              !isPreOrderEnabled &&
-                                                              !isQuickView && (
-                                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                                  <svg
-                                                                    className="w-6 h-6 text-status-error"
-                                                                    fill="none"
-                                                                    viewBox="0 0 24 24"
-                                                                    stroke="currentColor"
-                                                                  >
-                                                                    <path
-                                                                      strokeLinecap="round"
-                                                                      strokeLinejoin="round"
-                                                                      strokeWidth="2"
-                                                                      d="M6 18L18 6M6 6l12 12"
-                                                                    />
-                                                                  </svg>
-                                                                </div>
-                                                              )}
-                                                          </div>
-                                                        )
-                                                      )}
-                                                    </>
-                                                  )}
+                                                      );
+                                                    } else if (
+                                                      isVisible &&
+                                                      (!isQuickView ||
+                                                        isInStock)
+                                                    ) {
+                                                      // Regular Text Button - Original Design
+                                                      return (
+                                                        <div className="relative">
+                                                          <button
+                                                            data-testid="product-modifier-choice-button"
+                                                            onClick={select}
+                                                            className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                                                              isSelected
+                                                                ? 'product-option-active'
+                                                                : 'product-option-inactive'
+                                                            }`}
+                                                          >
+                                                            {value}
+                                                          </button>
+                                                          {!isInStock &&
+                                                            !isPreOrderEnabled &&
+                                                            !isQuickView && (
+                                                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                                <svg
+                                                                  className="w-6 h-6 text-status-error"
+                                                                  fill="none"
+                                                                  viewBox="0 0 24 24"
+                                                                  stroke="currentColor"
+                                                                >
+                                                                  <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth="2"
+                                                                    d="M6 18L18 6M6 6l12 12"
+                                                                  />
+                                                                </svg>
+                                                              </div>
+                                                            )}
+                                                        </div>
+                                                      );
+                                                    }
+                                                    return null;
+                                                  }}
                                                 </ProductVariantSelectorPrimitive.Choice>
                                               );
                                             })}
                                           </div>
-                                        )}
-                                      </>
-                                    )}
-                                  </ProductVariantSelectorPrimitive.Option>
+                                        )
+                                      }
+                                    </ProductVariantSelectorPrimitive.Option>
+                                  </Option.Root>
                                 </div>
                               ))}
-
-                              <ProductVariantSelectorPrimitive.Reset>
-                                {({ reset, hasSelections }) =>
-                                  hasSelections && (
-                                    <div className="pt-4">
-                                      <button
-                                        onClick={reset}
-                                        className="text-sm text-brand-primary hover:text-brand-light transition-colors"
-                                      >
-                                        Reset Selections
-                                      </button>
-                                    </div>
-                                  )
-                                }
-                              </ProductVariantSelectorPrimitive.Reset>
-                            </div>
+                            </>
                           )}
-                        </>
-                      )}
-                    </ProductVariantSelectorPrimitive.Options>
+                        </Product.VariantOptions>
+
+                        <ProductVariantSelectorPrimitive.Reset>
+                          {({ reset, hasSelections }) =>
+                            hasSelections && (
+                              <div className="pt-4">
+                                <button
+                                  onClick={reset}
+                                  className="text-sm text-brand-primary hover:text-brand-light transition-colors"
+                                >
+                                  Reset Selections
+                                </button>
+                              </div>
+                            )
+                          }
+                        </ProductVariantSelectorPrimitive.Reset>
+                      </div>
+                    </Product.Variants>
 
                     {/* Product Modifiers */}
                     <ProductModifiersPrimitive.Root>
