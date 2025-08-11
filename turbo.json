@@ -8,6 +8,11 @@
       "outputs": ["build/**", "schemas/**", "dist/**"],
       "inputs": ["src/**", "tsup.config.mjs", "tsconfig.json"]
     },
+    "test": {
+      "outputLogs": "new-only",
+      "outputs": [],
+      "inputs": ["src/**", "test/**", "vitest.config.ts", "vitest.setup.ts"]
+    },
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": [],
