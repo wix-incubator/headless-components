@@ -4,9 +4,9 @@ import {
   CheckoutServiceDefinition,
   CheckoutService,
   CheckoutServiceConfig,
-} from "../services/checkout-service.js";
+} from "../../services/checkout-service.js";
 import { createServicesMap } from "@wix/services-manager";
-import { type LineItem } from "../services/checkout-service.js";
+import { type LineItem } from "../../services/checkout-service.js";
 
 /**
  * Props for the Root component

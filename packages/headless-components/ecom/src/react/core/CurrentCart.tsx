@@ -5,7 +5,7 @@ import {
   CurrentCartService,
   CurrentCartServiceConfig,
   type LineItem,
-} from "../services/current-cart-service.js";
+} from "../../services/current-cart-service.js";
 import { createServicesMap } from "@wix/services-manager";
 import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
 import { media } from "@wix/sdk";

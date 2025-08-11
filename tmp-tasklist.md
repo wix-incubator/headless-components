@@ -5,15 +5,15 @@ Technical implementation checklist for ecom V1 → V2 migration following [ECOM_
 ## Foundation Setup
 
 ### Project Structure
-- [ ] Create `packages/headless-components/ecom/src/react/core/` folder
-- [ ] Move `CurrentCart.tsx` to `core/CurrentCart.tsx`
-- [ ] Move `Checkout.tsx` to `core/Checkout.tsx`
-- [ ] Update internal imports in moved files
+- [x] Create `packages/headless-components/ecom/src/react/core/` folder
+- [x] Move `CurrentCart.tsx` to `core/CurrentCart.tsx`
+- [x] Move `Checkout.tsx` to `core/Checkout.tsx`
+- [x] Update internal imports in moved files
 
 ### Dependencies & Utils
-- [ ] Add `@radix-ui/react-slot` to ecom package.json dependencies
-- [ ] Create `src/react/utils/` folder with AsChildProps interface
-- [ ] Create `src/react/constants.ts` with data-testid constants
+- [x] Add `@radix-ui/react-slot` to ecom package.json dependencies
+- [x] ~~Create `src/react/utils/` folder with AsChildProps interface~~ (using existing renderAsChild utility)
+- [x] ~~Create `src/react/constants.ts` with data-testid constants~~ (hardcoded in components per V2 pattern)
 
 ## Cart Components
 

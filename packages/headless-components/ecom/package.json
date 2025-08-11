@@ -39,6 +39,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
     "@wix/auto_sdk_ecom_checkout": "^1.0.61",
     "@wix/auto_sdk_ecom_current-cart": "^1.0.56",
     "@wix/redirects": "^1.0.0",

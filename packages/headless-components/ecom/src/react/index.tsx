@@ -1,2 +1,2 @@
-export * as CurrentCart from "./CurrentCart.js";
-export * as Checkout from "./Checkout.js";
+export * as CurrentCart from "./core/CurrentCart.js";
+export * as Checkout from "./core/Checkout.js";
