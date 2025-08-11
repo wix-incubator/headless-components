@@ -273,4 +273,115 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
 
 Color.displayName = "Choice.Color";
 
+/**
+ * Props for Choice FreeText component
+ */
+export interface FreeTextProps
+  extends AsChildProps<{
+      minCharCount?: number;
+      maxCharCount?: number;
+      defaultAddedPrice?: string | null;
+      title?: string;
+    }>,
+    Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "children"> {}
+
+/**
+ * Provides a free text input for variant selection.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Choice.FreeText className="p-3 border rounded-lg" />
+ * ```
+ *
+ * Data Attributes:
+ * - `data-testid="choice-free-text"` - Applied to free text input
+ * - `data-selected` - Is Choice selected
+ * - `disabled` - Is Choice disabled (not in stock)
+ */
+export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...textareaProps } = props;
+    const choiceContext = React.useContext(ChoiceContext);
+
+    if (!choiceContext) {
+      // Fallback when not used within Option context
+      const attributes = {
+        "data-testid": "choice-free-text",
+        "data-selected": "false",
+        ...textareaProps,
+      };
+
+      if (asChild) {
+        const rendered = renderAsChild({
+          children,
+          props: {
+            minCharCount: 0,
+            maxCharCount: 1000,
+            defaultAddedPrice: null,
+            title: "Free Text Input",
+          },
+          ref,
+          content: null,
+          attributes,
+        });
+        if (rendered) return rendered;
+      }
+
+      return (
+        <textarea
+          ref={ref}
+          className={className}
+          placeholder="Enter custom text..."
+          {...attributes}
+        />
+      );
+    }
+
+    const { choice, optionData, shouldRenderAsFreeText } = choiceContext;
+
+    // Only render if this should be rendered as free text
+    if (!shouldRenderAsFreeText) return null;
+
+    // For free text, we need to handle the input state
+    const [value, setValue] = React.useState("");
+    const optionName = optionData.name || "";
+
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setValue(e.target.value);
+      // In a real implementation, this would update the variant/modifier service
+    };
+
+    const attributes = {
+      "data-testid": "choice-free-text",
+      "data-selected": value ? "true" : "false",
+      value,
+      onChange: handleChange,
+      placeholder: `Enter custom ${optionName.toLowerCase()}...`,
+      ...textareaProps,
+    };
+
+    if (asChild) {
+      const rendered = renderAsChild({
+        children,
+        props: {
+          minCharCount: choice.minCharCount || 0,
+          maxCharCount: choice.maxCharCount || 1000,
+          defaultAddedPrice: choice.defaultAddedPrice || null,
+          title: choice.title || optionName,
+        },
+        ref,
+        content: null,
+        attributes,
+      });
+      if (rendered) return rendered;
+    }
+
+    return <textarea ref={ref} className={className} {...attributes} />;
+  },
+);
+
+FreeText.displayName = "Choice.FreeText";
+
 // Note: ChoiceContext is imported from Option.tsx and re-exported there

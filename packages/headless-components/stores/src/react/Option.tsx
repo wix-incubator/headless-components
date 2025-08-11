@@ -135,10 +135,18 @@ export function ChoiceRepeater(props: ChoiceRepeaterProps): React.ReactNode {
           .includes("color");
         const hasColorCode = choice.colorCode;
 
+        // Check if this is a free text option
+        const isFreeTextOption =
+          choice.type === "free-text" ||
+          String(choicesData.name).toLowerCase().includes("text") ||
+          String(choicesData.name).toLowerCase().includes("custom");
+
         // Only render if the choice matches the expected type
         // Color choices should have colorCode, text choices should not
         const shouldRenderAsColor = isColorOption && hasColorCode;
-        const shouldRenderAsText = !shouldRenderAsColor;
+        const shouldRenderAsFreeText = isFreeTextOption;
+        const shouldRenderAsText =
+          !shouldRenderAsColor && !shouldRenderAsFreeText;
 
         return (
           <ChoiceContext.Provider
@@ -148,6 +156,7 @@ export function ChoiceRepeater(props: ChoiceRepeaterProps): React.ReactNode {
               optionData: choicesData,
               shouldRenderAsColor,
               shouldRenderAsText,
+              shouldRenderAsFreeText,
             }}
           >
             {props.children}
