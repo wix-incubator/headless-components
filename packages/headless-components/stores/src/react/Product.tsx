@@ -2,7 +2,6 @@ import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as CoreProduct from "./core/Product.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 import * as SelectedVariant from "./core/SelectedVariant.js";
 import * as Option from "./Option.js";
@@ -52,9 +51,7 @@ export function Root(props: ProductRootProps): React.ReactNode {
       data-testid={TestIds.productRoot}
     >
       <ProductVariantSelector.Root>
-        <ProductModifiers.Root>
-          <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
-        </ProductModifiers.Root>
+        <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
       </ProductVariantSelector.Root>
     </CoreProduct.Root>
   );
@@ -470,126 +467,5 @@ export function VariantOptionRepeater(
         );
       }}
     </ProductVariantSelector.Options>
-  );
-}
-
-/**
- * Props for Product Modifiers container
- */
-export interface ModifiersProps {
-  children: React.ReactNode;
-}
-
-/**
- * Container for product modifiers system.
- * Does not render when there are no modifiers.
- *
- * @component
- * @example
- * ```tsx
- * <Product.Modifiers>
- *   <Product.ModifierOptions>
- *     <Product.ModifierOptionRepeater allowedTypes={['color', 'text', 'free-text']}>
- *       <Option.Name/>
- *       <Option.Choices>
- *         <Option.ChoiceRepeater>
- *           <Choice.Text/>
- *           <Choice.Color/>
- *           <Choice.FreeText/>
- *         </Option.ChoiceRepeater>
- *       </Option.Choices>
- *     </Product.ModifierOptionRepeater>
- *   </Product.ModifierOptions>
- * </Product.Modifiers>
- * ```
- */
-export function Modifiers(props: ModifiersProps): React.ReactNode {
-  return (
-    <ProductModifiers.Modifiers>
-      {({ hasModifiers }) =>
-        hasModifiers ? (
-          <div data-testid="product-modifiers">{props.children}</div>
-        ) : null
-      }
-    </ProductModifiers.Modifiers>
-  );
-}
-
-/**
- * Props for Product ModifierOptions component
- */
-export interface ModifierOptionsProps {
-  children?: React.ForwardRefRenderFunction<
-    HTMLElement,
-    {
-      options: any[];
-    }
-  >;
-  emptyState?: React.ReactNode;
-}
-
-/**
- * Component that provides access to modifier options.
- *
- * @component
- */
-export function ModifierOptions(props: ModifierOptionsProps): React.ReactNode {
-  return (
-    <ProductModifiers.Modifiers>
-      {({ modifiers, hasModifiers }) => {
-        if (!hasModifiers) {
-          return props.emptyState || null;
-        }
-
-        if (typeof props.children === "function") {
-          return props.children({ options: modifiers }, null);
-        }
-
-        return props.children;
-      }}
-    </ProductModifiers.Modifiers>
-  );
-}
-
-/**
- * Props for Product ModifierOptionRepeater component
- */
-export interface ModifierOptionRepeaterProps {
-  children: React.ReactNode;
-  allowedTypes?: string[];
-}
-
-/**
- * Repeater component that renders children for each modifier option.
- *
- * @component
- */
-export function ModifierOptionRepeater(
-  props: ModifierOptionRepeaterProps,
-): React.ReactNode {
-  return (
-    <ProductModifiers.Modifiers>
-      {({ modifiers, hasModifiers }) => {
-        if (!hasModifiers) return null;
-
-        const filteredModifiers = props.allowedTypes
-          ? modifiers.filter((modifier: any) =>
-              props.allowedTypes!.includes(
-                modifier.modifierRenderType?.toLowerCase(),
-              ),
-            )
-          : modifiers;
-
-        return (
-          <>
-            {filteredModifiers.map((modifier: any) => (
-              <div key={modifier.name} data-testid="product-modifier-option">
-                <Option.Root modifier={modifier}>{props.children}</Option.Root>
-              </div>
-            ))}
-          </>
-        );
-      }}
-    </ProductModifiers.Modifiers>
   );
 }

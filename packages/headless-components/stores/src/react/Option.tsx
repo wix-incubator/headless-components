@@ -1,7 +1,6 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
 
 /**
  * Props for Option Root component
@@ -9,11 +8,10 @@ import * as ProductModifiers from "./core/ProductModifiers.js";
 export interface RootProps {
   children: React.ReactNode;
   option?: any;
-  modifier?: any;
 }
 
 /**
- * Root component that provides context for either variant options or modifiers.
+ * Root component that provides context for variant options.
  *
  * @component
  */
@@ -30,22 +28,10 @@ export function Root(props: RootProps): React.ReactNode {
     );
   }
 
-  if (props.modifier) {
-    return (
-      <ProductModifiers.Modifier modifier={props.modifier}>
-        {(modifierData) => (
-          <OptionContext.Provider value={{ ...modifierData, type: "modifier" }}>
-            {props.children}
-          </OptionContext.Provider>
-        )}
-      </ProductModifiers.Modifier>
-    );
-  }
-
   return props.children;
 }
 
-// Create a context to pass option/modifier data down
+// Create a context to pass option data down
 const OptionContext = React.createContext<any>(null);
 
 /**
@@ -54,7 +40,7 @@ const OptionContext = React.createContext<any>(null);
 export interface NameProps extends AsChildProps<{ name: string }> {}
 
 /**
- * Displays the option or modifier name.
+ * Displays the option name.
  *
  * @component
  * @example
@@ -85,7 +71,11 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   }
 
   return (
-    <div className={className} {...attributes} ref={ref}>
+    <div
+      className={className}
+      {...attributes}
+      ref={ref as React.Ref<HTMLDivElement>}
+    >
       {name}
     </div>
   );
@@ -175,76 +165,41 @@ export namespace Choice {
 
     const { choice, optionData } = choiceContext;
 
-    // Handle both variant and modifier choices
-    if (optionData.type === "variant") {
-      return (
-        <ProductVariantSelector.Choice option={optionData} choice={choice}>
-          {({ value, isSelected, select, isVisible }) => {
-            if (!isVisible) return null;
+    // Handle variant choices only
+    return (
+      <ProductVariantSelector.Choice option={optionData} choice={choice}>
+        {({ value, isSelected, select, isVisible }) => {
+          if (!isVisible) return null;
 
-            const attributes = {
-              "data-testid": "choice-text",
-              "data-selected": isSelected,
-              onClick: select,
-            };
+          const attributes = {
+            "data-testid": "choice-text",
+            "data-selected": isSelected,
+            onClick: select,
+          };
 
-            if (asChild) {
-              const rendered = renderAsChild({
-                children,
-                props: { value, isSelected },
-                ref,
-                content: value,
-                attributes,
-              });
-              if (rendered) return rendered;
-            }
+          if (asChild) {
+            const rendered = renderAsChild({
+              children,
+              props: { value, isSelected },
+              ref,
+              content: value,
+              attributes,
+            });
+            if (rendered) return rendered;
+          }
 
-            return (
-              <button
-                className={className}
-                {...attributes}
-                ref={ref as React.Ref<HTMLButtonElement>}
-              >
-                {value}
-              </button>
-            );
-          }}
-        </ProductVariantSelector.Choice>
-      );
-    } else {
-      return (
-        <ProductModifiers.Choice modifier={optionData} choice={choice}>
-          {({ value, isSelected, select }) => {
-            const attributes = {
-              "data-testid": "choice-text",
-              "data-selected": isSelected,
-              onClick: select,
-            };
-
-            if (asChild) {
-              const rendered = renderAsChild({
-                children,
-                props: { value, isSelected },
-                ref,
-                content: value,
-                attributes,
-              });
-              if (rendered) return rendered;
-            }
-
-            return (
-              <button
-                className={className}
-                {...attributes}
-                ref={ref as React.Ref<HTMLButtonElement>}
-              >
-                {value}
-              </button>
-            );
-          }}
-        </ProductModifiers.Choice>
-      );
-    }
+          return (
+            <button
+              className={className}
+              {...attributes}
+              ref={ref as React.Ref<HTMLButtonElement>}
+            >
+              {value}
+            </button>
+          );
+        }}
+      </ProductVariantSelector.Choice>
+    );
   });
 
   /**
@@ -267,122 +222,25 @@ export namespace Choice {
 
       const { choice, optionData } = choiceContext;
 
-      // Handle both variant and modifier choices
-      if (optionData.type === "variant") {
-        return (
-          <ProductVariantSelector.Choice option={optionData} choice={choice}>
-            {({ value, isSelected, select, isVisible }) => {
-              if (!isVisible) return null;
-
-              const colorCode = choice.colorCode || "#ccc";
-              const attributes = {
-                "data-testid": "choice-color",
-                "data-selected": isSelected,
-                onClick: select,
-                style: { backgroundColor: colorCode },
-                title: value,
-              };
-
-              if (asChild) {
-                const rendered = renderAsChild({
-                  children,
-                  props: { colorCode, isSelected },
-                  ref,
-                  content: null,
-                  attributes,
-                });
-                if (rendered) return rendered;
-              }
-
-              return (
-                <button
-                  className={className}
-                  {...attributes}
-                  ref={ref as React.Ref<HTMLButtonElement>}
-                />
-              );
-            }}
-          </ProductVariantSelector.Choice>
-        );
-      } else {
-        return (
-          <ProductModifiers.Choice modifier={optionData} choice={choice}>
-            {({ value, isSelected, select, colorCode }) => {
-              const attributes = {
-                "data-testid": "choice-color",
-                "data-selected": isSelected,
-                onClick: select,
-                style: { backgroundColor: colorCode || "#ccc" },
-                title: value,
-              };
-
-              if (asChild) {
-                const rendered = renderAsChild({
-                  children,
-                  props: { colorCode: colorCode || "#ccc", isSelected },
-                  ref,
-                  content: null,
-                  attributes,
-                });
-                if (rendered) return rendered;
-              }
-
-              return (
-                <button
-                  className={className}
-                  {...attributes}
-                  ref={ref as React.Ref<HTMLButtonElement>}
-                />
-              );
-            }}
-          </ProductModifiers.Choice>
-        );
-      }
-    },
-  );
-
-  /**
-   * Props for Choice FreeText component
-   */
-  export interface FreeTextProps
-    extends AsChildProps<{ value: string; onChange: (value: string) => void }> {
-    rows?: number;
-  }
-
-  /**
-   * Free text choice component.
-   *
-   * @component
-   */
-  export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
-    (props, ref) => {
-      const { asChild, children, className, rows = 3 } = props;
-      const choiceContext = React.useContext(ChoiceContext);
-
-      if (!choiceContext) return null;
-
-      const { optionData } = choiceContext;
-
-      // Free text is only available for modifiers
-      if (optionData.type !== "modifier" || !optionData.isFreeText) return null;
-
+      // Handle variant choices only
       return (
-        <ProductModifiers.FreeText modifier={optionData}>
-          {({ value, setText, placeholder, maxChars }) => {
+        <ProductVariantSelector.Choice option={optionData} choice={choice}>
+          {({ value, isSelected, select, isVisible }) => {
+            if (!isVisible) return null;
+
+            const colorCode = choice.colorCode || "#ccc";
             const attributes = {
-              "data-testid": "choice-free-text",
-              value,
-              onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setText(e.target.value),
-              placeholder,
-              maxLength: maxChars,
-              rows,
+              "data-testid": "choice-color",
+              "data-selected": isSelected,
+              onClick: select,
+              style: { backgroundColor: colorCode },
+              title: value,
             };
 
             if (asChild) {
               const rendered = renderAsChild({
                 children,
-                props: { value, onChange: setText },
+                props: { colorCode, isSelected },
                 ref,
                 content: null,
                 attributes,
@@ -390,9 +248,15 @@ export namespace Choice {
               if (rendered) return rendered;
             }
 
-            return <textarea className={className} {...attributes} ref={ref} />;
+            return (
+              <button
+                className={className}
+                {...attributes}
+                ref={ref as React.Ref<HTMLButtonElement>}
+              />
+            );
           }}
-        </ProductModifiers.FreeText>
+        </ProductVariantSelector.Choice>
       );
     },
   );
