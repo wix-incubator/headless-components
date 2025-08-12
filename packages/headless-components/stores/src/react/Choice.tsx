@@ -153,9 +153,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
       "data-selected": isSelected ? "true" : "false",
       disabled: !isInStock && !isPreOrderEnabled,
       onClick: select,
-      className: `px-4 py-2 border rounded-lg transition-all duration-200 ${
-        isSelected ? "product-option-active" : "product-option-inactive"
-      } ${className || ""}`,
+      className: className || "",
       ...buttonProps,
     };
 
@@ -171,28 +169,9 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
     }
 
     return (
-      <div className="relative">
-        <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-          {value}
-        </button>
-        {!isInStock && !isPreOrderEnabled && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <svg
-              className="w-6 h-6 text-status-error"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </div>
-        )}
-      </div>
+      <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
+        {value}
+      </button>
     );
   },
 );
@@ -287,11 +266,7 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       onClick: select,
       style: { backgroundColor: colorCode },
       title: value,
-      className: `w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-        isSelected
-          ? "border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30"
-          : "border-color-swatch hover:border-color-swatch-hover hover:scale-105"
-      } ${!isInStock && !isPreOrderEnabled ? "grayscale" : ""} ${className || ""}`,
+      className: className || "",
       ...buttonProps,
     };
 
@@ -310,28 +285,7 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       if (rendered) return rendered;
     }
 
-    return (
-      <div className="relative">
-        <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>} />
-        {!isInStock && !isPreOrderEnabled && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <svg
-              className="w-6 h-6 text-status-error"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </div>
-        )}
-      </div>
-    );
+    return <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>} />;
   },
 );
 
