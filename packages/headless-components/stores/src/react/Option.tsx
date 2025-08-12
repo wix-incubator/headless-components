@@ -17,19 +17,14 @@ export interface Option {
 }
 
 /**
- * Props for Option Root component
- */
-export interface OptionProps {
-  option: Option;
-  children: React.ReactNode;
-  onValueChange?: (value: string) => void;
-  allowedTypes?: ("color" | "text" | "free-text")[]; // default - ['color', 'text', 'free-text'] - the types of the options to render
-}
-
-/**
  * Root props with asChild support
  */
-export interface RootProps extends AsChildProps<OptionProps> {
+export interface RootProps
+  extends AsChildProps<{
+    option: Option;
+    onValueChange?: (value: string) => void;
+    allowedTypes?: ("color" | "text" | "free-text")[];
+  }> {
   option: Option;
   onValueChange?: (value: string) => void;
   allowedTypes?: ("color" | "text" | "free-text")[];
@@ -185,20 +180,10 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
           </OptionContext.Provider>
         );
 
-        const optionProps: OptionProps = {
-          option,
-          children:
-            typeof children === "function"
-              ? null
-              : (children as React.ReactNode),
-          onValueChange,
-          allowedTypes,
-        };
-
         if (asChild) {
           const rendered = renderAsChild({
             children,
-            props: optionProps,
+            props: { option, onValueChange, allowedTypes },
             ref,
             content,
             attributes,
@@ -269,16 +254,9 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 /**
  * Props for Option Choices component
  */
-export interface OptionChoicesProps {
-  children: React.ReactNode;
-}
-
-/**
- * Props for Option Choices component
- */
 export interface ChoicesProps {
   children: React.ReactNode;
-  emptyState?: React.ReactNode; // ✅ Always include emptyState support
+  emptyState?: React.ReactNode;
 }
 
 /**
@@ -343,15 +321,7 @@ export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
  * Props for Option ChoiceRepeater component
  */
 export interface ChoiceRepeaterProps {
-  children:
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          choice: any; // Will be defined in Choice.tsx
-          onValueChange: (value: string) => void;
-        }
-      >
-    | React.ReactNode; // For backward compatibility
+  children: React.ReactNode;
 }
 
 /**
@@ -362,37 +332,10 @@ export interface ChoiceRepeaterProps {
  *
  * @example
  * ```tsx
- * // New API: Render function with choice data
  * <Option.ChoiceRepeater>
- *   {React.forwardRef(({ choice, onValueChange }, ref) => (
- *     <button
- *       ref={ref}
- *       onClick={() => onValueChange(choice.name || '')}
- *       className="choice-button"
- *     >
- *       {choice.name}
- *     </button>
- *   ))}
- * </Option.ChoiceRepeater>
- *
- * // Backward compatibility: Regular children (import from Choice.tsx)
- * import { Text, Color, FreeText } from './Choice.js';
- * <Option.ChoiceRepeater>
- *   <Text />
- *   <Color />
- *   <FreeText />
- * </Option.ChoiceRepeater>
- *
- * // asChild usage with render function
- * <Option.ChoiceRepeater asChild>
- *   {React.forwardRef(({ choice, onValueChange }, ref) => (
- *     <div ref={ref} className="custom-choice-wrapper">
- *       <span>{choice.name}</span>
- *       <button onClick={() => onValueChange(choice.name || '')}>
- *         Select
- *       </button>
- *     </div>
- *   ))}
+ *   <Choice.Text />
+ *   <Choice.Color />
+ *   <Choice.FreeText />
  * </Option.ChoiceRepeater>
  * ```
  */
@@ -411,18 +354,6 @@ export const ChoiceRepeater = React.forwardRef<
     <>
       {optionData.choices.map((choice: any) => {
         const choiceKey = choice.key || choice.name || choice.id;
-
-        // Handle both function children (new API) and regular children (backward compatibility)
-        if (typeof children === "function") {
-          // New API: render function with choice data - let the function handle the logic
-          return children(
-            {
-              choice,
-              onValueChange,
-            },
-            _ref,
-          );
-        }
 
         return (
           <Choice.Root

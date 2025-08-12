@@ -26,19 +26,6 @@ export interface Choice {
 // Create a context for individual choices
 const ChoiceContext = React.createContext<any>(null);
 
-/**
- * Props for Choice Root component
- */
-export interface ChoiceRootProps {
-  children: React.ForwardRefRenderFunction<
-    HTMLElement,
-    {
-      choice: Choice;
-      onValueChange: (value: string) => void;
-    }
-  >;
-}
-
 export interface RootProps {
   choice?: Choice;
   onValueChange?: (value: string) => void;
@@ -47,24 +34,10 @@ export interface RootProps {
 
 /**
  * Root component that provides context for a single choice.
- * Supports both new render function API and legacy ReactNode API.
  *
  * @component
  * @example
  * ```tsx
- * // New API - render function (recommended)
- * <Choice.Root>
- *   {React.forwardRef(({choice, onValueChange, ...props}, ref) => (
- *     <div ref={ref} {...props} className="choice-wrapper">
- *       <span>{choice.name}</span>
- *       <button onClick={() => onValueChange(choice.name || '')}>
- *         Select
- *       </button>
- *     </div>
- *   ))}
- * </Choice.Root>
- *
- * // Legacy API - ReactNode (for Option.ChoiceRepeater compatibility)
  * <Choice.Root choice={choiceData} onValueChange={handleChange}>
  *   <Choice.Text />
  *   <Choice.Color />
