@@ -328,6 +328,8 @@ export interface ChoiceRepeaterProps {
  * Repeater component that renders Choice.Root for each choice.
  * Inspired by Product.VariantOptionRepeater pattern.
  *
+ * Now handles ProductVariantSelector.Choice logic and provides ChoiceContext.
+ *
  * @component
  *
  * @example
@@ -356,13 +358,61 @@ export const ChoiceRepeater = React.forwardRef<
         const choiceKey = choice.key || choice.name || choice.id;
 
         return (
-          <Choice.Root
+          <ProductVariantSelector.Choice
             key={choiceKey}
+            option={optionData}
             choice={choice}
-            onValueChange={onValueChange}
           >
-            {children}
-          </Choice.Root>
+            {(renderProps) => {
+              const {
+                value,
+                isSelected,
+                select,
+                isVisible,
+                isInStock,
+                isPreOrderEnabled,
+              } = renderProps;
+
+              // Don't render if not visible
+              if (!isVisible) return null;
+
+              // Determine choice type
+              const getChoiceType = (): "color" | "text" | "free-text" => {
+                if (choice?.colorCode) return "color";
+                if (choice?.type === "free-text") return "free-text";
+                return "text";
+              };
+
+              const choiceType = getChoiceType();
+              const allowedTypes = ["color", "text", "free-text"];
+              if (!allowedTypes.includes(choiceType)) {
+                return null;
+              }
+
+              // Create the context value with ProductVariantSelector render props
+              const contextValue = {
+                choice,
+                onValueChange,
+                shouldRenderAsColor: choiceType === "color",
+                shouldRenderAsText: choiceType === "text",
+                shouldRenderAsFreeText: choiceType === "free-text",
+                // ProductVariantSelector render props
+                isSelected,
+                isVisible,
+                isInStock,
+                isPreOrderEnabled,
+                select,
+                value,
+                optionData,
+              };
+
+              return (
+                <Choice.ChoiceContext.Provider value={contextValue}>
+                  <Choice.Root>{children}</Choice.Root>
+                </Choice.ChoiceContext.Provider>
+              );
+            }}
+          </ProductVariantSelector.Choice>
         );
       })}
     </>

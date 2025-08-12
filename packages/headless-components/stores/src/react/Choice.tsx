@@ -1,8 +1,5 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
-import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import { OptionContext } from "./Option.js";
-import type { ChoiceProps } from "./core/ProductVariantSelector.js";
 
 enum TestIds {
   choiceRoot = "choice-root",
@@ -25,21 +22,19 @@ export interface Choice {
 }
 
 // Create a context for individual choices
-const ChoiceContext = React.createContext<any>(null);
+export const ChoiceContext = React.createContext<any>(null);
 
 export interface RootProps {
-  choice?: Choice;
-  onValueChange?: (value: string) => void;
   children?: React.ReactNode;
 }
 
 /**
- * Root component that provides context for a single choice.
+ * Root component that consumes ChoiceContext provided by Option.ChoiceRepeater.
  *
  * @component
  * @example
  * ```tsx
- * <Choice.Root choice={choiceData} onValueChange={handleChange}>
+ * <Choice.Root>
  *   <Choice.Text />
  *   <Choice.Color />
  * </Choice.Root>
@@ -47,75 +42,34 @@ export interface RootProps {
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   (props, ref) => {
-    const { children, choice, onValueChange, ...otherProps } = props;
+    const { children, ...otherProps } = props;
+    const choiceContext = React.useContext(ChoiceContext);
 
-    // Get optionData from OptionContext (provided by Option.Root)
-    const optionContext = React.useContext(OptionContext);
-    const optionData = optionContext; // The entire context contains the optionData spread
+    if (!choiceContext) {
+      return null; // Should be used within Option.ChoiceRepeater
+    }
+
+    const { choice } = choiceContext;
+
+    // Determine choice type for data-type attribute
+    const getChoiceType = (): "color" | "text" | "free-text" => {
+      if (choice?.colorCode) return "color";
+      if (choice?.type === "free-text") return "free-text";
+      return "text";
+    };
+
+    const choiceType = getChoiceType();
+
+    const attributes = {
+      "data-testid": TestIds.choiceRoot,
+      "data-type": choiceType,
+      ...otherProps,
+    };
 
     return (
-      <ProductVariantSelector.Choice
-        option={optionData}
-        choice={choice as ChoiceProps["choice"]}
-      >
-        {(renderProps) => {
-          const {
-            value,
-            isSelected,
-            select,
-            isVisible,
-            isInStock,
-            isPreOrderEnabled,
-          } = renderProps;
-
-          // Don't render if not visible
-          if (!isVisible) return null;
-
-          // Determine choice type
-          const getChoiceType = (): "color" | "text" | "free-text" => {
-            if (choice?.colorCode) return "color";
-            if (choice?.type === "free-text") return "free-text";
-            return "text";
-          };
-
-          const choiceType = getChoiceType();
-          const allowedTypes = ["color", "text", "free-text"];
-          if (!allowedTypes.includes(choiceType)) {
-            return null;
-          }
-
-          // Create the context value with ProductVariantSelector render props
-          const contextValue = {
-            choice,
-            onValueChange,
-            shouldRenderAsColor: choiceType === "color",
-            shouldRenderAsText: choiceType === "text",
-            shouldRenderAsFreeText: choiceType === "free-text",
-            // ProductVariantSelector render props
-            isSelected,
-            isVisible,
-            isInStock,
-            isPreOrderEnabled,
-            select,
-            value,
-            optionData,
-          };
-
-          const attributes = {
-            "data-testid": TestIds.choiceRoot,
-            "data-type": choiceType,
-            ...otherProps,
-          };
-
-          return (
-            <ChoiceContext.Provider value={contextValue}>
-              <div {...attributes} ref={ref}>
-                {children}
-              </div>
-            </ChoiceContext.Provider>
-          );
-        }}
-      </ProductVariantSelector.Choice>
+      <div {...attributes} ref={ref}>
+        {children}
+      </div>
     );
   },
 );
