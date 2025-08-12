@@ -280,12 +280,13 @@ export interface OptionChoicesProps {
 /**
  * Props for Option Choices component with asChild support
  */
-export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {}
+export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {
+  emptyState?: React.ReactNode; // ✅ Always include emptyState support
+}
 
 /**
- * Container for option choice selection system.
- * Does not render when there are no choices.
- * Inspired by Product.Variants pattern.
+ * Container for the list items with empty state support.
+ * Follows List Container Level pattern (inspired by Product.VariantOptions).
  *
  * @component
  *
@@ -296,8 +297,8 @@ export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {}
  *
  * @example
  * ```tsx
- * // Default usage
- * <Option.Choices>
+ * // Default usage with empty state
+ * <Option.Choices emptyState={<div>No choices available</div>}>
  *   <Option.ChoiceRepeater>
  *     <Choice.Text />
  *     <Choice.Color />
@@ -305,7 +306,7 @@ export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {}
  * </Option.Choices>
  *
  * // asChild with primitive
- * <Option.Choices asChild>
+ * <Option.Choices asChild emptyState={<div>No choices</div>}>
  *   <div className="choices-grid">
  *     <Option.ChoiceRepeater>
  *       <Choice.Text />
@@ -314,7 +315,7 @@ export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {}
  * </Option.Choices>
  *
  * // asChild with react component
- * <Option.Choices asChild>
+ * <Option.Choices asChild emptyState={<div>No choices</div>}>
  *   {React.forwardRef(({children, ...props}, ref) => (
  *     <section ref={ref} {...props} className="choices-section">
  *       <h4>Available Options</h4>
@@ -326,14 +327,17 @@ export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {}
  */
 export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, emptyState } = props;
     const optionData = React.useContext(OptionContext);
 
     if (!optionData) return null;
 
-    // Check if we have choices to render (inspired by Variants hasOptions check)
+    // Check if we have choices to render (List Container Level pattern)
     const hasChoices = optionData.choices && optionData.choices.length > 0;
-    if (!hasChoices) return null;
+
+    if (!hasChoices) {
+      return emptyState || null; // ✅ Handle empty state like VariantOptions
+    }
 
     const attributes = {
       "data-testid": TestIds.optionChoices,
