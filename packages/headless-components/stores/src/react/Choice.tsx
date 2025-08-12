@@ -2,6 +2,7 @@ import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 import { OptionContext } from "./Option.js";
+import type { ChoiceProps } from "./core/ProductVariantSelector.js";
 
 enum TestIds {
   choiceRoot = "choice-root",
@@ -52,55 +53,11 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const optionContext = React.useContext(OptionContext);
     const optionData = optionContext; // The entire context contains the optionData spread
 
-    if (!optionData) {
-      // Fallback when not used within Option context
-      const getChoiceType = (): "color" | "text" | "free-text" => {
-        if (choice?.colorCode) return "color";
-        if (choice?.type === "free-text") return "free-text";
-        return "text";
-      };
-
-      const choiceType = getChoiceType();
-      const allowedTypes = ["color", "text", "free-text"];
-      if (!allowedTypes.includes(choiceType)) {
-        return null;
-      }
-
-      const contextValue = {
-        choice,
-        onValueChange,
-        shouldRenderAsColor: choiceType === "color",
-        shouldRenderAsText: choiceType === "text",
-        shouldRenderAsFreeText: choiceType === "free-text",
-        // Fallback values when not connected to ProductVariantSelector
-        isSelected: false,
-        isVisible: true,
-        isInStock: true,
-        isPreOrderEnabled: false,
-        select: () => onValueChange?.(choice?.name || ""),
-        value: choice?.name || "",
-      };
-
-      const attributes = {
-        "data-testid": TestIds.choiceRoot,
-        "data-type": choiceType,
-        ...otherProps,
-      };
-
-      return (
-        <ChoiceContext.Provider value={contextValue}>
-          <div {...attributes} ref={ref}>
-            {children}
-          </div>
-        </ChoiceContext.Provider>
-      );
-    }
-
-    // When we have optionData, use ProductVariantSelector.Choice
-    if (!choice) return null;
-
     return (
-      <ProductVariantSelector.Choice option={optionData} choice={choice}>
+      <ProductVariantSelector.Choice
+        option={optionData}
+        choice={choice as ChoiceProps["choice"]}
+      >
         {(renderProps) => {
           const {
             value,
