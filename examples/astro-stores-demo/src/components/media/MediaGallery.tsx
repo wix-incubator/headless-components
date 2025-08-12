@@ -1,12 +1,12 @@
 import React from "react";
-import { MediaGallery as MediaGalleryRadix, WixMediaImage } from "@wix/headless-media/react";
+import { MediaGallery as MediaGalleryPrimitive } from "@wix/headless-media/react";
 
-export const Root: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Root>> = (props) => (
-  <MediaGalleryRadix.Root {...props} />
+export const Root: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Root>> = (props) => (
+  <MediaGalleryPrimitive.Root {...props} />
 );
 
-export const Viewport: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Viewport>> = ({ className, ...props }) => (
-  <MediaGalleryRadix.Viewport
+export const Viewport: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Viewport>> = ({ className, ...props }) => (
+  <MediaGalleryPrimitive.Viewport
     className={`w-full h-full ${className || ''}`}
     emptyState={(
       <div className="w-full h-full flex items-center justify-center">
@@ -29,45 +29,45 @@ export const Viewport: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Vi
   />
 );
 
-export const Indicator: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Indicator>> = ({ className, ...props }) => (
-  <MediaGalleryRadix.Indicator
+export const Indicator: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Indicator>> = ({ className, ...props }) => (
+  <MediaGalleryPrimitive.Indicator
     className={`absolute bottom-4 right-4 bg-surface-tooltip text-nav px-3 py-1 rounded-full text-sm ${className || ''}`}
     {...props}
   />
 );
 
-export const Previous: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Previous>> = ({ ...props }) => (
-  <MediaGalleryRadix.Previous asChild {...props}>
+export const Previous: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Previous>> = ({ ...props }) => (
+  <MediaGalleryPrimitive.Previous asChild {...props}>
     <button className="absolute left-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
         </svg>
     </button>
-  </MediaGalleryRadix.Previous>
+  </MediaGalleryPrimitive.Previous>
 );
 
-export const Next: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Next>> = ({ ...props }) => (
-  <MediaGalleryRadix.Next asChild {...props}>
+export const Next: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Next>> = ({ ...props }) => (
+  <MediaGalleryPrimitive.Next asChild {...props}>
     <button className="absolute right-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
         </svg>
     </button>
-  </MediaGalleryRadix.Next>
+  </MediaGalleryPrimitive.Next>
 );
 
-export const Thumbnails: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Thumbnails>> = ({ children, ...props }) => (
-  <MediaGalleryRadix.Thumbnails {...props}>{children}</MediaGalleryRadix.Thumbnails>
+export const Thumbnails: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Thumbnails>> = ({ children, ...props }) => (
+  <MediaGalleryPrimitive.Thumbnails {...props}>{children}</MediaGalleryPrimitive.Thumbnails>
 );
 
-export const ThumbnailRepeater: React.FC<React.ComponentProps<typeof MediaGalleryRadix.ThumbnailRepeater>> = ({ children, ...props }) => (
+export const ThumbnailRepeater: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.ThumbnailRepeater>> = ({ children, ...props }) => (
   <div className="grid grid-cols-4 gap-4">
-    <MediaGalleryRadix.ThumbnailRepeater {...props}>{children}</MediaGalleryRadix.ThumbnailRepeater>
+    <MediaGalleryPrimitive.ThumbnailRepeater {...props}>{children}</MediaGalleryPrimitive.ThumbnailRepeater>
   </div>
 );
 
-export const ThumbnailItem: React.FC<React.ComponentProps<typeof MediaGalleryRadix.ThumbnailItem>> = ({ className, ...props }) => (
-  <MediaGalleryRadix.ThumbnailItem
+export const ThumbnailItem: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.ThumbnailItem>> = ({ className, ...props }) => (
+  <MediaGalleryPrimitive.ThumbnailItem
     className={`aspect-square bg-surface-primary rounded-lg border cursor-pointer transition-all data-[active=true]:border-brand-medium data-[active=true]:ring-2 data-[active=true]:ring-brand-light data-[active=false]:border-brand-subtle data-[active=false]:hover:border-brand-light ${className || ''}`}
     emptyState={<div className="w-full h-full flex items-center justify-center">
       <svg className="w-6 h-6 text-content-subtle" fill="none" viewBox="0 0 24 24" stroke="currentColor">

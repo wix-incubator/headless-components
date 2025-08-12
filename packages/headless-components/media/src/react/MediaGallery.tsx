@@ -170,6 +170,7 @@ export const ThumbnailItem = React.forwardRef<HTMLDivElement, ThumbnailItemProps
               data-src={src}
               data-alt={alt}
               data-index={index}
+              data-available={true} /* TODO: need get this from variant or something */
               {...props}
             >
               {children ?? (
