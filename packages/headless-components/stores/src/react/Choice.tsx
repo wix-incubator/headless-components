@@ -1,6 +1,7 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import { OptionContext } from "./Option.js";
 
 enum TestIds {
   choiceRoot = "choice-root",
@@ -74,42 +75,117 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   (props, ref) => {
     const { children, choice, onValueChange, ...otherProps } = props;
 
-    // Determine choice type
-    const getChoiceType = (): "color" | "text" | "free-text" => {
-      if (choice?.colorCode) return "color";
-      if (choice?.type === "free-text") return "free-text";
-      return "text";
-    };
+    // Get optionData from OptionContext (provided by Option.Root)
+    const optionContext = React.useContext(OptionContext);
+    const optionData = optionContext; // The entire context contains the optionData spread
 
-    const choiceType = getChoiceType();
+    if (!optionData) {
+      // Fallback when not used within Option context
+      const getChoiceType = (): "color" | "text" | "free-text" => {
+        if (choice?.colorCode) return "color";
+        if (choice?.type === "free-text") return "free-text";
+        return "text";
+      };
 
-    // Check if this choice type is allowed (moved from ChoiceRepeater)
-    const allowedTypes = ["color", "text", "free-text"];
-    if (!allowedTypes.includes(choiceType)) {
-      return null; // Don't render if choice type is not allowed
+      const choiceType = getChoiceType();
+      const allowedTypes = ["color", "text", "free-text"];
+      if (!allowedTypes.includes(choiceType)) {
+        return null;
+      }
+
+      const contextValue = {
+        choice,
+        onValueChange,
+        shouldRenderAsColor: choiceType === "color",
+        shouldRenderAsText: choiceType === "text",
+        shouldRenderAsFreeText: choiceType === "free-text",
+        // Fallback values when not connected to ProductVariantSelector
+        isSelected: false,
+        isVisible: true,
+        isInStock: true,
+        isPreOrderEnabled: false,
+        select: () => onValueChange?.(choice?.name || ""),
+        value: choice?.name || "",
+      };
+
+      const attributes = {
+        "data-testid": TestIds.choiceRoot,
+        "data-type": choiceType,
+        ...otherProps,
+      };
+
+      return (
+        <ChoiceContext.Provider value={contextValue}>
+          <div {...attributes} ref={ref}>
+            {children}
+          </div>
+        </ChoiceContext.Provider>
+      );
     }
 
-    // Create the context value that Choice.Text/Color expect
-    const contextValue = {
-      choice,
-      onValueChange,
-      shouldRenderAsColor: choiceType === "color",
-      shouldRenderAsText: choiceType === "text",
-      shouldRenderAsFreeText: choiceType === "free-text",
-    };
-
-    const attributes = {
-      "data-testid": TestIds.choiceRoot,
-      "data-type": choiceType,
-      ...otherProps,
-    };
+    // When we have optionData, use ProductVariantSelector.Choice
+    if (!choice) return null;
 
     return (
-      <ChoiceContext.Provider value={contextValue}>
-        <div {...attributes} ref={ref}>
-          {children}
-        </div>
-      </ChoiceContext.Provider>
+      <ProductVariantSelector.Choice option={optionData} choice={choice}>
+        {(renderProps) => {
+          const {
+            value,
+            isSelected,
+            select,
+            isVisible,
+            isInStock,
+            isPreOrderEnabled,
+          } = renderProps;
+
+          // Don't render if not visible
+          if (!isVisible) return null;
+
+          // Determine choice type
+          const getChoiceType = (): "color" | "text" | "free-text" => {
+            if (choice?.colorCode) return "color";
+            if (choice?.type === "free-text") return "free-text";
+            return "text";
+          };
+
+          const choiceType = getChoiceType();
+          const allowedTypes = ["color", "text", "free-text"];
+          if (!allowedTypes.includes(choiceType)) {
+            return null;
+          }
+
+          // Create the context value with ProductVariantSelector render props
+          const contextValue = {
+            choice,
+            onValueChange,
+            shouldRenderAsColor: choiceType === "color",
+            shouldRenderAsText: choiceType === "text",
+            shouldRenderAsFreeText: choiceType === "free-text",
+            // ProductVariantSelector render props
+            isSelected,
+            isVisible,
+            isInStock,
+            isPreOrderEnabled,
+            select,
+            value,
+            optionData,
+          };
+
+          const attributes = {
+            "data-testid": TestIds.choiceRoot,
+            "data-type": choiceType,
+            ...otherProps,
+          };
+
+          return (
+            <ChoiceContext.Provider value={contextValue}>
+              <div {...attributes} ref={ref}>
+                {children}
+              </div>
+            </ChoiceContext.Provider>
+          );
+        }}
+      </ProductVariantSelector.Choice>
     );
   },
 );
@@ -169,72 +245,70 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
       );
     }
 
-    const { choice, optionData, shouldRenderAsText } = choiceContext;
+    const {
+      choice,
+      shouldRenderAsText,
+      value,
+      isSelected,
+      select,
+      isVisible,
+      isInStock,
+      isPreOrderEnabled,
+    } = choiceContext;
 
     // Only render if this should be rendered as text
     if (!shouldRenderAsText) return null;
 
-    // Handle variant choices using the existing ProductVariantSelector
+    // Don't render if not visible (handled by ProductVariantSelector in Root)
+    if (!isVisible) return null;
+
+    const choiceId = choice?.choiceId || choice?.key || choice?.name || "";
+
+    const attributes = {
+      "data-testid": TestIds.choiceText,
+      "data-selected": isSelected ? "true" : "false",
+      disabled: !isInStock && !isPreOrderEnabled,
+      onClick: select,
+      className: `px-4 py-2 border rounded-lg transition-all duration-200 ${
+        isSelected ? "product-option-active" : "product-option-inactive"
+      } ${className || ""}`,
+      ...buttonProps,
+    };
+
+    if (asChild) {
+      const rendered = renderAsChild({
+        children,
+        props: { id: choiceId, value },
+        ref,
+        content: value,
+        attributes,
+      });
+      if (rendered) return rendered;
+    }
+
     return (
-      <ProductVariantSelector.Choice option={optionData} choice={choice}>
-        {({
-          value,
-          isSelected,
-          select,
-          isVisible,
-          isInStock,
-          isPreOrderEnabled,
-        }) => {
-          if (!isVisible) return null;
-
-          const attributes = {
-            "data-testid": TestIds.choiceText,
-            "data-selected": isSelected ? "true" : "false",
-            disabled: !isInStock && !isPreOrderEnabled,
-            onClick: select,
-            className: `px-4 py-2 border rounded-lg transition-all duration-200 ${
-              isSelected ? "product-option-active" : "product-option-inactive"
-            } ${className || ""}`,
-            ...buttonProps,
-          };
-
-          if (asChild) {
-            const rendered = renderAsChild({
-              children,
-              props: { id: choice.id || choice.name || "", value },
-              ref,
-              content: value,
-              attributes,
-            });
-            if (rendered) return rendered;
-          }
-
-          return (
-            <div className="relative">
-              <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-                {value}
-              </button>
-              {!isInStock && !isPreOrderEnabled && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <svg
-                    className="w-6 h-6 text-status-error"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </div>
-              )}
-            </div>
-          );
-        }}
-      </ProductVariantSelector.Choice>
+      <div className="relative">
+        <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
+          {value}
+        </button>
+        {!isInStock && !isPreOrderEnabled && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg
+              className="w-6 h-6 text-status-error"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </div>
+        )}
+      </div>
     );
   },
 );
@@ -302,82 +376,77 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       );
     }
 
-    const { choice, optionData, shouldRenderAsColor } = choiceContext;
+    const {
+      choice,
+      shouldRenderAsColor,
+      value,
+      isSelected,
+      select,
+      isVisible,
+      isInStock,
+      isPreOrderEnabled,
+    } = choiceContext;
 
     // Only render if this should be rendered as color
     if (!shouldRenderAsColor) return null;
 
-    // Handle variant choices using the existing ProductVariantSelector
+    // Don't render if not visible (handled by ProductVariantSelector in Root)
+    if (!isVisible) return null;
+
+    const colorCode = choice?.colorCode || "#ccc";
+    const choiceId = choice?.choiceId || choice?.key || choice?.name || "";
+
+    const attributes = {
+      "data-testid": TestIds.choiceColor,
+      "data-selected": isSelected ? "true" : "false",
+      disabled: !isInStock && !isPreOrderEnabled,
+      onClick: select,
+      style: { backgroundColor: colorCode },
+      title: value,
+      className: `w-10 h-10 rounded-full border-4 transition-all duration-200 ${
+        isSelected
+          ? "border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30"
+          : "border-color-swatch hover:border-color-swatch-hover hover:scale-105"
+      } ${!isInStock && !isPreOrderEnabled ? "grayscale" : ""} ${className || ""}`,
+      ...buttonProps,
+    };
+
+    if (asChild) {
+      const rendered = renderAsChild({
+        children,
+        props: {
+          colorCode,
+          name: value,
+          id: choiceId,
+        },
+        ref,
+        content: null,
+        attributes,
+      });
+      if (rendered) return rendered;
+    }
+
     return (
-      <ProductVariantSelector.Choice option={optionData} choice={choice}>
-        {({
-          value,
-          isSelected,
-          select,
-          isVisible,
-          isInStock,
-          isPreOrderEnabled,
-        }) => {
-          if (!isVisible) return null;
-
-          const colorCode = choice.colorCode || "#ccc";
-          const attributes = {
-            "data-testid": TestIds.choiceColor,
-            "data-selected": isSelected ? "true" : "false",
-            disabled: !isInStock && !isPreOrderEnabled,
-            onClick: select,
-            style: { backgroundColor: colorCode },
-            title: value,
-            className: `w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-              isSelected
-                ? "border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30"
-                : "border-color-swatch hover:border-color-swatch-hover hover:scale-105"
-            } ${!isInStock && !isPreOrderEnabled ? "grayscale" : ""} ${className || ""}`,
-            ...buttonProps,
-          };
-
-          if (asChild) {
-            const rendered = renderAsChild({
-              children,
-              props: {
-                colorCode,
-                name: value,
-                id: choice.id || choice.name || "",
-              },
-              ref,
-              content: null,
-              attributes,
-            });
-            if (rendered) return rendered;
-          }
-
-          return (
-            <div className="relative">
-              <button
-                {...attributes}
-                ref={ref as React.Ref<HTMLButtonElement>}
+      <div className="relative">
+        <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>} />
+        {!isInStock && !isPreOrderEnabled && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg
+              className="w-6 h-6 text-status-error"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
               />
-              {!isInStock && !isPreOrderEnabled && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <svg
-                    className="w-6 h-6 text-status-error"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </div>
-              )}
-            </div>
-          );
-        }}
-      </ProductVariantSelector.Choice>
+            </svg>
+          </div>
+        )}
+      </div>
     );
   },
 );
@@ -450,23 +519,37 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
       );
     }
 
-    const { choice, optionData, shouldRenderAsFreeText } = choiceContext;
+    const {
+      choice,
+      shouldRenderAsFreeText,
+      onValueChange,
+      optionData,
+      isVisible,
+    } = choiceContext;
 
     // Only render if this should be rendered as free text
     if (!shouldRenderAsFreeText) return null;
 
+    // Don't render if not visible (handled by ProductVariantSelector in Root)
+    if (!isVisible) return null;
+
     // For free text, we need to handle the input state
     const [value, setValue] = React.useState("");
-    const optionName = optionData.name || "";
+    const optionName = optionData?.name || choice?.name || "text";
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setValue(e.target.value);
-      // In a real implementation, this would update the variant/modifier service
+      // Call the onValueChange callback to notify parent components
+      if (onValueChange) {
+        onValueChange(e.target.value);
+      }
     };
+
+    const isSelected = Boolean(value.trim());
 
     const attributes = {
       "data-testid": TestIds.choiceFreetext,
-      "data-selected": value ? "true" : "false",
+      "data-selected": isSelected ? "true" : "false",
       value,
       onChange: handleChange,
       placeholder: `Enter custom ${optionName.toLowerCase()}...`,
@@ -477,10 +560,10 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
       const rendered = renderAsChild({
         children,
         props: {
-          minCharCount: choice.minCharCount || 0,
-          maxCharCount: choice.maxCharCount || 1000,
-          defaultAddedPrice: choice.defaultAddedPrice || null,
-          title: choice.title || optionName,
+          minCharCount: choice?.minCharCount || 0,
+          maxCharCount: choice?.maxCharCount || 1000,
+          defaultAddedPrice: choice?.addedPrice || null,
+          title: choice?.name || optionName,
         },
         ref,
         content: null,

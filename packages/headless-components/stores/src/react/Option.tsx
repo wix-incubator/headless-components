@@ -217,7 +217,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 });
 
 // Create a context to pass option data down
-const OptionContext = React.createContext<any>(null);
+export const OptionContext = React.createContext<any>(null);
 
 /**
  * Props for Option Name component
