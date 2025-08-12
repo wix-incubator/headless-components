@@ -1,45 +1,54 @@
-import { Image, type FittingType, initCustomElement } from '@wix/image';
-import { media  as wixMedia } from "@wix/sdk";
+import React from "react";
+import { media as wixMedia } from "@wix/sdk";
+import { Slot } from "@radix-ui/react-slot";
 
-type MediaItem = {
-  image?: string;
-};
+type MediaItem = { image?: string };
 
-initCustomElement();
-
-export function WixMediaImage({
-  media,
-  width,
-  height,
-  className,
-  alt = '',
-  showPlaceholder = true,
-  displayMode = 'fill',
-}: {
+export interface WixMediaImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   media?: MediaItem;
-  width?: number;
-  height?: number;
-  className?: string;
-  alt?: string;
-  showPlaceholder?: boolean;
-  displayMode?: FittingType;
-}) {
-  const parsedImageDetails = wixMedia.getImageUrl(media?.image!);
+  asChild?: boolean;
+}
+
+export const WixMediaImage = React.forwardRef<
+  HTMLImageElement,
+  WixMediaImageProps
+>(({ media, width, height, className, alt = "", asChild, children, ...rest }, ref) => {
+  if (!media?.image) return null;
+
+  const parsed = wixMedia.getImageUrl(media.image);
+  const src = parsed.url;
+  const derivedWidth = width || parsed.width;
+  const derivedHeight = height || parsed.height;
+  const derivedAlt = parsed.altText ?? alt;
+
+  if (asChild) {
+    const Comp: React.ElementType = Slot;
+    return (
+      <Comp
+        // Slot doesn't accept ref typings; forwarded by child when applicable
+        src={src}
+        width={derivedWidth}
+        height={derivedHeight}
+        alt={derivedAlt}
+        className={className}
+        {...rest}
+      >
+        {children}
+      </Comp>
+    );
+  }
 
   return (
-    <Image
-      key={parsedImageDetails.url}
-      uri={parsedImageDetails.url}
-      width={width || parsedImageDetails.width}
-      height={height || parsedImageDetails.height}
-      containerWidth={width}
-      containerHeight={height}
-      displayMode={displayMode}
-      isSEOBot={false}
-      shouldUseLQIP={showPlaceholder}
-      alt={parsedImageDetails.altText ?? alt}
+    <img
+      ref={ref}
+      src={src}
+      width={derivedWidth}
+      height={derivedHeight}
+      alt={derivedAlt}
       className={className}
+      {...rest}
     />
   );
-}
+});
+
 

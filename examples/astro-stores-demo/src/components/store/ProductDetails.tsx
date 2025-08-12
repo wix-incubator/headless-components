@@ -1,6 +1,4 @@
-import { MediaGallery } from '@wix/headless-media/react';
-import { MediaGallery as MediaGalleryCore } from '@wix/headless-media/core';
-import { WixMediaImage } from '../media';
+import * as StyledMediaGallery from '../media/MediaGallery';
 import React from 'react';
 
 import { productsV3 } from '@wix/stores';
@@ -67,7 +65,7 @@ export default function ProductDetails({
         data-testid="product-details"
       >
         <ProductPrimitive.Root productServiceConfig={{ product }}>
-          <MediaGalleryCore.Root
+          <StyledMediaGallery.Root
             mediaGalleryServiceConfig={{
               media: product.media?.itemsInfo?.items ?? [],
             }}
@@ -77,20 +75,18 @@ export default function ProductDetails({
               <div className="space-y-4">
                 {/* Main Image */}
                 <div className="aspect-square bg-surface-primary rounded-2xl overflow-hidden border border-brand-subtle relative">
-                  <MediaGallery.Viewport />
-                  <MediaGallery.Previous />
-                  <MediaGallery.Next>
-                    next
-                  </MediaGallery.Next>
-                  <MediaGallery.Indicator />
+                  <StyledMediaGallery.Viewport />
+                  <StyledMediaGallery.Previous />
+                  <StyledMediaGallery.Next />
+                  <StyledMediaGallery.Indicator />
                 </div>
 
                 {/* Thumbnail Images */}
-                <MediaGallery.Thumbnails>
-                  <MediaGallery.ThumbnailRepeater>
-                    <MediaGallery.ThumbnailItem />
-                  </MediaGallery.ThumbnailRepeater>
-                </MediaGallery.Thumbnails>
+                <StyledMediaGallery.Thumbnails>
+                  <StyledMediaGallery.ThumbnailRepeater>
+                    <StyledMediaGallery.ThumbnailItem />
+                  </StyledMediaGallery.ThumbnailRepeater>
+                </StyledMediaGallery.Thumbnails>
               </div>
 
               {/* Product Info */}
@@ -652,7 +648,7 @@ export default function ProductDetails({
                 </Product.Root>
               </div>
             </SelectedVariantPrimitive.Root>
-          </MediaGalleryCore.Root>
+          </StyledMediaGallery.Root>
         </ProductPrimitive.Root>
       </div>
 
