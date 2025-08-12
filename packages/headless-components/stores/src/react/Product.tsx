@@ -483,8 +483,8 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
 /**
  * Props for Product VariantOptions component
  */
-export interface VariantOptionsProps
-  extends AsChildProps<{ hasOptions: boolean }> {
+export interface VariantOptionsProps {
+  children: React.ReactNode;
   emptyState?: React.ReactNode;
 }
 
@@ -506,23 +506,13 @@ export interface VariantOptionsProps
  *   </Product.VariantOptionRepeater>
  * </Product.VariantOptions>
  *
- * // asChild with primitive
- * <Product.VariantOptions asChild emptyState={<div>No options</div>}>
+ * // Simple container usage
+ * <Product.VariantOptions emptyState={<div>No options</div>}>
  *   <div className="options-container">
  *     <Product.VariantOptionRepeater>
  *       // option content
  *     </Product.VariantOptionRepeater>
  *   </div>
- * </Product.VariantOptions>
- *
- * // asChild with react component
- * <Product.VariantOptions asChild emptyState={<div>No options</div>}>
- *   {React.forwardRef(({hasOptions, ...props}, ref) => (
- *     <div ref={ref} {...props} className="options-container">
- *       {hasOptions && <h4>Available Options</h4>}
- *       {props.children}
- *     </div>
- *   ))}
  * </Product.VariantOptions>
  * ```
  */
@@ -530,7 +520,7 @@ export const VariantOptions = React.forwardRef<
   HTMLElement,
   VariantOptionsProps
 >((props, ref) => {
-  const { asChild, children, emptyState } = props;
+  const { children, emptyState } = props;
   const { hasOptions } = useVariantsContext();
 
   if (!hasOptions) {
@@ -541,20 +531,9 @@ export const VariantOptions = React.forwardRef<
     "data-testid": TestIds.productVariantOptions,
   };
 
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { hasOptions },
-      ref,
-      content: null,
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
-
   return (
     <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-      {typeof children === "function" ? null : (children as React.ReactNode)}
+      {children}
     </div>
   );
 });
@@ -562,7 +541,9 @@ export const VariantOptions = React.forwardRef<
 /**
  * Props for Product VariantOptionRepeater component
  */
-export interface VariantOptionRepeaterProps extends AsChildProps<any> {}
+export interface VariantOptionRepeaterProps {
+  children: React.ReactNode;
+}
 
 /**
  * Repeater component that renders children for each variant option.
@@ -573,7 +554,7 @@ export const VariantOptionRepeater = React.forwardRef<
   HTMLElement,
   VariantOptionRepeaterProps
 >((props, _ref) => {
-  const { asChild, children } = props;
+  const { children } = props;
   const { hasOptions, options } = useVariantsContext();
 
   if (!hasOptions) return null;
@@ -585,10 +566,9 @@ export const VariantOptionRepeater = React.forwardRef<
           <Option.Root
             key={option.name}
             option={option}
-            asChild={asChild}
             data-testid={TestIds.productVariantOption}
           >
-            {children}
+            {children as React.ReactElement}
           </Option.Root>
         );
       })}

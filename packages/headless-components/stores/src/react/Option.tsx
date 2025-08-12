@@ -1,7 +1,7 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import * as ChoiceComponents from "./Choice.js";
+import * as Choice from "./Choice.js";
 
 enum TestIds {
   optionRoot = "option-root",
@@ -278,9 +278,10 @@ export interface OptionChoicesProps {
 }
 
 /**
- * Props for Option Choices component with asChild support
+ * Props for Option Choices component
  */
-export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {
+export interface ChoicesProps {
+  children: React.ReactNode;
   emptyState?: React.ReactNode; // ✅ Always include emptyState support
 }
 
@@ -305,29 +306,19 @@ export interface ChoicesProps extends AsChildProps<OptionChoicesProps> {
  *   </Option.ChoiceRepeater>
  * </Option.Choices>
  *
- * // asChild with primitive
- * <Option.Choices asChild emptyState={<div>No choices</div>}>
+ * // Simple container usage
+ * <Option.Choices emptyState={<div>No choices</div>}>
  *   <div className="choices-grid">
  *     <Option.ChoiceRepeater>
  *       <Choice.Text />
  *     </Option.ChoiceRepeater>
  *   </div>
  * </Option.Choices>
- *
- * // asChild with react component
- * <Option.Choices asChild emptyState={<div>No choices</div>}>
- *   {React.forwardRef(({children, ...props}, ref) => (
- *     <section ref={ref} {...props} className="choices-section">
- *       <h4>Available Options</h4>
- *       {children}
- *     </section>
- *   ))}
- * </Option.Choices>
  * ```
  */
 export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
   (props, ref) => {
-    const { asChild, children, emptyState } = props;
+    const { children, emptyState } = props;
     const optionData = React.useContext(OptionContext);
 
     if (!optionData) return null;
@@ -344,26 +335,9 @@ export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
       "data-type": optionData.optionType || "text",
     };
 
-    const choicesProps: OptionChoicesProps = {
-      children:
-        typeof children === "function" ? null : (children as React.ReactNode),
-    };
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: choicesProps,
-        ref,
-        content:
-          typeof children === "function" ? null : (children as React.ReactNode),
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
-
     return (
       <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {typeof children === "function" ? null : (children as React.ReactNode)}
+        {children}
       </div>
     );
   },
@@ -382,7 +356,6 @@ export interface ChoiceRepeaterProps {
         }
       >
     | React.ReactNode; // For backward compatibility
-  asChild?: boolean;
 }
 
 /**
@@ -431,7 +404,7 @@ export const ChoiceRepeater = React.forwardRef<
   HTMLElement,
   ChoiceRepeaterProps
 >((props, _ref) => {
-  const { asChild, children } = props;
+  const { children } = props;
   const optionData = React.useContext(OptionContext);
 
   if (!optionData || !optionData.choices?.length) return null;
@@ -458,16 +431,15 @@ export const ChoiceRepeater = React.forwardRef<
         // Backward compatibility: render Choice.Root for each choice (like VariantOptionRepeater)
         // Let Choice.Root handle all the choice logic (type detection, filtering, etc.)
         return (
-          <ChoiceComponents.Root
+          <Choice.Root
             key={choiceKey}
             rawChoice={choice}
             optionData={optionData}
             onValueChange={onValueChange}
-            asChild={asChild}
             data-testid={TestIds.choice}
           >
             {children as React.ReactElement}
-          </ChoiceComponents.Root>
+          </Choice.Root>
         );
       })}
     </>

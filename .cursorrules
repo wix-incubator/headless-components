@@ -60,8 +60,8 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
 - **Example**: `Product.VariantOptions`, `Product.ModifierOptions`
 
 ```tsx
-export interface VariantOptionsProps
-  extends AsChildProps<{ hasOptions: boolean }> {
+export interface VariantOptionsProps {
+  children: React.ReactNode;
   emptyState?: React.ReactNode; // ✅ Always include emptyState support
 }
 
@@ -69,7 +69,7 @@ export const VariantOptions = React.forwardRef<
   HTMLElement,
   VariantOptionsProps
 >((props, ref) => {
-  const { asChild, children, emptyState } = props;
+  const { children, emptyState } = props;
   const { hasOptions } = useVariantsContext();
 
   if (!hasOptions) {
@@ -89,7 +89,7 @@ export const VariantOptions = React.forwardRef<
 - **Purpose**: Maps over items and renders `B.Root` for each
 - **Behavior**:
   - Simple repeater that delegates to the target entity's Root component
-  - Passes `asChild` and `children` directly to the Root component
+  - Passes `children` directly to the Root component (no `asChild` support)
   - Inspired by `Product.VariantOptionRepeater` pattern
 - **Example**: `Product.VariantOptionRepeater`, `Option.ChoiceRepeater`
 
@@ -98,7 +98,7 @@ export const VariantOptionRepeater = React.forwardRef<
   HTMLElement,
   VariantOptionRepeaterProps
 >((props, _ref) => {
-  const { asChild, children } = props;
+  const { children } = props;
   const { hasOptions, options } = useVariantsContext();
 
   if (!hasOptions) return null;
@@ -109,7 +109,6 @@ export const VariantOptionRepeater = React.forwardRef<
         <Option.Root
           key={option.name}
           option={option}
-          asChild={asChild} // ✅ Pass asChild through
           data-testid={TestIds.productVariantOption}
         >
           {children} {/* ✅ Pass children through */}
@@ -151,11 +150,13 @@ function useVariantsContext(): VariantsContextValue {
 
 ### AsChild Pattern Rules
 
-#### 1. **All Components Support AsChild**
+#### 1. **AsChild Support Rules**
 
-- Every public component should extend `AsChildProps<TData>`
+- **Container Level** components should support `AsChildProps<TData>`
+- **Entity Root** components should support `AsChildProps<TData>`
+- **Repeater Level** components should NOT have `asChild` (they just map and delegate)
+- **Options/List Container Level** components should NOT have `asChild` (they're simple containers)
 - Use `renderAsChild` utility for implementation
-- Pass `asChild` prop through repeaters
 
 #### 2. **AsChild Implementation**
 
