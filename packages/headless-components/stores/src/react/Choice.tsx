@@ -42,7 +42,7 @@ export interface RootProps {
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   (props, ref) => {
-    const { children, ...otherProps } = props;
+    const { children } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) {
@@ -63,7 +63,6 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const attributes = {
       "data-testid": TestIds.choiceRoot,
       "data-type": choiceType,
-      ...otherProps,
     };
 
     return (
@@ -87,6 +86,20 @@ export interface TextProps
  * ```tsx
  * // Default usage
  * <Choice.Text className="px-4 py-2 border rounded-lg" />
+ *
+ * // asChild with primitive
+ * <Choice.Text asChild>
+ *   <button className="px-4 py-2 border rounded-lg" />
+ * </Choice.Text>
+ *
+ * // asChild with react component
+ * <Choice.Text asChild>
+ *   {React.forwardRef(({id, value, ...props}, ref) => (
+ *     <button ref={ref} {...props} className="px-4 py-2 border rounded-lg">
+ *       {value}
+ *     </button>
+ *   ))}
+ * </Choice.Text>
  * ```
  *
  * Data Attributes:
@@ -96,37 +109,11 @@ export interface TextProps
  */
 export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
   (props, ref) => {
-    const { asChild, children, className, ...buttonProps } = props;
+    const { asChild, children, className } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) {
-      // Fallback when not used within Option context
-      const attributes = {
-        "data-testid": TestIds.choiceText,
-        "data-selected": "false",
-        ...buttonProps,
-      };
-
-      if (asChild) {
-        const rendered = renderAsChild({
-          children,
-          props: { id: "choice-id", value: "choice-value" },
-          ref,
-          content: "Choice Value",
-          attributes,
-        });
-        if (rendered) return rendered;
-      }
-
-      return (
-        <button
-          className={className}
-          {...attributes}
-          ref={ref as React.Ref<HTMLButtonElement>}
-        >
-          Choice Value
-        </button>
-      );
+      return null; // Should be used within Option.ChoiceRepeater
     }
 
     const {
@@ -153,8 +140,6 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
       "data-selected": isSelected ? "true" : "false",
       disabled: !isInStock && !isPreOrderEnabled,
       onClick: select,
-      className: className || "",
-      ...buttonProps,
     };
 
     if (asChild) {
@@ -169,14 +154,12 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
     }
 
     return (
-      <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
+      <button className={className} {...attributes} ref={ref}>
         {value}
       </button>
     );
   },
 );
-
-Text.displayName = "Choice.Text";
 
 /**
  * Props for Choice Color component
@@ -192,6 +175,24 @@ export interface ColorProps
  * ```tsx
  * // Default usage
  * <Choice.Color className="w-10 h-10 rounded-full border-4" />
+ *
+ * // asChild with primitive
+ * <Choice.Color asChild>
+ *   <button className="w-10 h-10 rounded-full border-4" />
+ * </Choice.Color>
+ *
+ * // asChild with react component
+ * <Choice.Color asChild>
+ *   {React.forwardRef(({colorCode, name, id, ...props}, ref) => (
+ *     <button
+ *       ref={ref}
+ *       {...props}
+ *       className="w-10 h-10 rounded-full border-4"
+ *       style={{ backgroundColor: colorCode }}
+ *       title={name}
+ *     />
+ *   ))}
+ * </Choice.Color>
  * ```
  *
  * Data Attributes:
@@ -201,42 +202,11 @@ export interface ColorProps
  */
 export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
   (props, ref) => {
-    const { asChild, children, className, ...buttonProps } = props;
+    const { asChild, children, className } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) {
-      // Fallback when not used within Option context
-      const colorCode = "#ccc";
-      const attributes = {
-        "data-testid": TestIds.choiceColor,
-        "data-selected": "false",
-        style: { backgroundColor: colorCode },
-        title: "Color Choice",
-        ...buttonProps,
-      };
-
-      if (asChild) {
-        const rendered = renderAsChild({
-          children,
-          props: {
-            colorCode,
-            name: "Color Choice",
-            id: "choice-id",
-          },
-          ref,
-          content: null,
-          attributes,
-        });
-        if (rendered) return rendered;
-      }
-
-      return (
-        <button
-          className={className}
-          {...attributes}
-          ref={ref as React.Ref<HTMLButtonElement>}
-        />
-      );
+      return null; // Should be used within Option.ChoiceRepeater
     }
 
     const {
@@ -256,18 +226,13 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    const colorCode = choice?.colorCode || "#ccc";
-    const choiceId = choice?.choiceId || choice?.key || choice?.name || "";
+    const { colorCode, choiceId } = choice;
 
     const attributes = {
       "data-testid": TestIds.choiceColor,
       "data-selected": isSelected ? "true" : "false",
       disabled: !isInStock && !isPreOrderEnabled,
       onClick: select,
-      style: { backgroundColor: colorCode },
-      title: value,
-      className: className || "",
-      ...buttonProps,
     };
 
     if (asChild) {
@@ -285,11 +250,17 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       if (rendered) return rendered;
     }
 
-    return <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>} />;
+    return (
+      <button
+        className={className}
+        {...attributes}
+        ref={ref}
+        style={{ backgroundColor: colorCode }}
+        title={value}
+      />
+    );
   },
 );
-
-Color.displayName = "Choice.Color";
 
 /**
  * Props for Choice FreeText component
@@ -300,6 +271,8 @@ export interface FreeTextProps
       maxCharCount?: number;
       defaultAddedPrice?: string | null;
       title?: string;
+      value?: string;
+      onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     }>,
     Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "children"> {}
 
@@ -311,59 +284,42 @@ export interface FreeTextProps
  * ```tsx
  * // Default usage
  * <Choice.FreeText className="p-3 border rounded-lg" />
+ *
+ * // asChild with primitive
+ * <Choice.FreeText asChild>
+ *   <textarea className="p-3 border rounded-lg" />
+ * </Choice.FreeText>
+ *
+ * // asChild with react component
+ * <Choice.FreeText asChild>
+ *   {React.forwardRef(({value, onChange, title, ...props}, ref) => (
+ *     <textarea
+ *       ref={ref}
+ *       {...props}
+ *       className="p-3 border rounded-lg"
+ *       value={value}
+ *       onChange={onChange}
+ *       placeholder={`Enter custom ${title}...`}
+ *     />
+ *   ))}
+ * </Choice.FreeText>
  * ```
  *
  * Data Attributes:
  * - `data-testid="choice-free-text"` - Applied to free text input
  * - `data-selected` - Is Choice selected
- * - `disabled` - Is Choice disabled (not in stock)
  */
 export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
   (props, ref) => {
-    const { asChild, children, className, ...textareaProps } = props;
+    const { asChild, children, className } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) {
-      // Fallback when not used within Option context
-      const attributes = {
-        "data-testid": TestIds.choiceFreetext,
-        "data-selected": "false",
-        ...textareaProps,
-      };
-
-      if (asChild) {
-        const rendered = renderAsChild({
-          children,
-          props: {
-            minCharCount: 0,
-            maxCharCount: 1000,
-            defaultAddedPrice: null,
-            title: "Free Text Input",
-          },
-          ref,
-          content: null,
-          attributes,
-        });
-        if (rendered) return rendered;
-      }
-
-      return (
-        <textarea
-          ref={ref}
-          className={className}
-          placeholder="Enter custom text..."
-          {...attributes}
-        />
-      );
+      return null; // Should be used within Option.ChoiceRepeater
     }
 
-    const {
-      choice,
-      shouldRenderAsFreeText,
-      onValueChange,
-      optionData,
-      isVisible,
-    } = choiceContext;
+    const { choice, shouldRenderAsFreeText, onValueChange, isVisible } =
+      choiceContext;
 
     // Only render if this should be rendered as free text
     if (!shouldRenderAsFreeText) return null;
@@ -373,7 +329,6 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
 
     // For free text, we need to handle the input state
     const [value, setValue] = React.useState("");
-    const optionName = optionData?.name || choice?.name || "text";
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setValue(e.target.value);
@@ -388,20 +343,18 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     const attributes = {
       "data-testid": TestIds.choiceFreetext,
       "data-selected": isSelected ? "true" : "false",
-      value,
       onChange: handleChange,
-      placeholder: `Enter custom ${optionName.toLowerCase()}...`,
-      ...textareaProps,
     };
 
     if (asChild) {
       const rendered = renderAsChild({
         children,
         props: {
-          minCharCount: choice?.minCharCount || 0,
-          maxCharCount: choice?.maxCharCount || 1000,
-          defaultAddedPrice: choice?.addedPrice || null,
-          title: choice?.name || optionName,
+          minCharCount: choice?.minCharCount,
+          maxCharCount: choice?.maxCharCount,
+          defaultAddedPrice: choice?.addedPrice,
+          title: choice?.name,
+          onChange: handleChange,
         },
         ref,
         content: null,
@@ -413,6 +366,3 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     return <textarea ref={ref} className={className} {...attributes} />;
   },
 );
-
-FreeText.displayName = "Choice.FreeText";
-// Note: ChoiceContext is imported from Option.tsx and re-exported there
