@@ -77,9 +77,9 @@ export const ThumbnailRepeater: React.FC<React.ComponentProps<typeof MediaGaller
   </div>
 );
 
-export const ThumbnailItem: React.FC<React.ComponentProps<typeof MediaGalleryRadix.ThumbnailItem>> = (props) => (
+export const ThumbnailItem: React.FC<Omit<React.ComponentProps<typeof MediaGalleryRadix.ThumbnailItem>, 'children'> & { children?: React.ComponentProps<typeof MediaGalleryRadix.ThumbnailItem>['children'] }> = ({ children, ...props }) => (
   <MediaGalleryRadix.ThumbnailItem {...props}>
-    {({ src, isActive, select, alt }: { src: string | null; isActive: boolean; select: () => void; alt: string }) => (
+    {children ?? (({ src, isActive, select, alt }: { src: string | null; isActive: boolean; select: () => void; alt: string }) => (
       <div
         onClick={select}
         className={`aspect-square bg-surface-primary rounded-lg border cursor-pointer transition-all ${isActive
@@ -97,7 +97,7 @@ export const ThumbnailItem: React.FC<React.ComponentProps<typeof MediaGalleryRad
           </div>
         )}
       </div>
-    )}
+    ))}
   </MediaGalleryRadix.ThumbnailItem>
 );
 
