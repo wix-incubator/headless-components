@@ -38,13 +38,10 @@ export interface ChoiceRootProps {
   >;
 }
 
-// Keep the legacy RootProps for backward compatibility with Option.ChoiceRepeater
 export interface RootProps {
-  choice?: Choice; // Optional - will be created from rawChoice if not provided
-  rawChoice?: any; // The raw choice data from ProductVariantSelector
-  optionData?: any; // The full option data from ProductVariantSelector
+  choice?: Choice;
   onValueChange?: (value: string) => void;
-  children?: React.ReactNode; // For backward compatibility
+  children?: React.ReactNode;
 }
 
 /**
@@ -74,59 +71,27 @@ export interface RootProps {
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const {
-    children,
-    choice: providedChoice,
-    rawChoice,
-    optionData,
-    onValueChange,
-    ...otherProps
-  } = props;
-
-  // Create Choice object from rawChoice if not provided
-  const choice: Choice = providedChoice || {
-    colorCode: rawChoice?.colorCode,
-    choiceId: rawChoice?.choiceId || rawChoice?.id,
-    linkedMedia: rawChoice?.linkedMedia,
-    type: rawChoice?.type,
-    key: rawChoice?.key || rawChoice?.name || rawChoice?.id,
-    name: rawChoice?.name,
-    addedPrice: rawChoice?.addedPrice,
-  };
+  const { children, choice, onValueChange, ...otherProps } = props;
 
   // Determine choice type
   const getChoiceType = (): "color" | "text" | "free-text" => {
-    if (choice.colorCode) return "color";
-    if (choice.type === "free-text") return "free-text";
+    if (choice?.colorCode) return "color";
+    if (choice?.type === "free-text") return "free-text";
     return "text";
   };
 
   const choiceType = getChoiceType();
 
   // Check if this choice type is allowed (moved from ChoiceRepeater)
-  const allowedTypes = optionData?.allowedTypes || [
-    "color",
-    "text",
-    "free-text",
-  ];
+  const allowedTypes = ["color", "text", "free-text"];
   if (!allowedTypes.includes(choiceType)) {
     return null; // Don't render if choice type is not allowed
   }
 
   // Create the context value that Choice.Text/Color expect
   const contextValue = {
-    choice: rawChoice || {
-      id: choice.choiceId,
-      name: choice.name,
-      colorCode: choice.colorCode,
-      type: choice.type,
-      linkedMedia: choice.linkedMedia,
-      addedPrice: choice.addedPrice,
-    },
-    optionData: optionData || {
-      onValueChange,
-      name: "option",
-    },
+    choice,
+    onValueChange,
     shouldRenderAsColor: choiceType === "color",
     shouldRenderAsText: choiceType === "text",
     shouldRenderAsFreeText: choiceType === "free-text",
@@ -138,38 +103,15 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
     ...otherProps,
   };
 
-  // Handle both new API (render function) and legacy API (ReactNode)
-  if (typeof children === "function") {
-    // New API - children is a render function
-    const renderFunction = children as React.ForwardRefRenderFunction<
-      HTMLElement,
-      {
-        choice: Choice;
-        onValueChange: (value: string) => void;
-      }
-    >;
-
-    return (
-      <ChoiceContext.Provider value={contextValue}>
-        {renderFunction(
-          {
-            choice,
-            onValueChange: onValueChange || (() => {}),
-            ...attributes,
-          },
-          ref,
-        )}
-      </ChoiceContext.Provider>
-    );
-  }
-
-  // Legacy API - children is ReactNode (for Option.ChoiceRepeater usage)
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-      <ChoiceContext.Provider value={contextValue}>
-        {children as React.ReactNode}
-      </ChoiceContext.Provider>
-    </div>
+    <ChoiceContext.Provider value={contextValue}>
+      {React.cloneElement(children as React.ReactElement, {
+        choice,
+        onValueChange,
+        ...attributes,
+        ref,
+      })}
+    </ChoiceContext.Provider>
   );
 });
 
@@ -554,5 +496,4 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
 );
 
 FreeText.displayName = "Choice.FreeText";
-
 // Note: ChoiceContext is imported from Option.tsx and re-exported there

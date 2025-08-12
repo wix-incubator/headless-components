@@ -424,16 +424,13 @@ export const ChoiceRepeater = React.forwardRef<
           );
         }
 
-        // Backward compatibility: render Choice.Root for each choice (like VariantOptionRepeater)
-        // Let Choice.Root handle all the choice logic (type detection, filtering, etc.)
         return (
           <Choice.Root
             key={choiceKey}
-            rawChoice={choice}
-            optionData={optionData}
+            choice={choice}
             onValueChange={onValueChange}
           >
-            {children as React.ReactElement}
+            {children}
           </Choice.Root>
         );
       })}
