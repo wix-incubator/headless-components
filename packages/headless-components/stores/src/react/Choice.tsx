@@ -70,51 +70,49 @@ export interface RootProps {
  * </Choice.Root>
  * ```
  */
-export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { children, choice, onValueChange, ...otherProps } = props;
+export const Root = React.forwardRef<HTMLDivElement, RootProps>(
+  (props, ref) => {
+    const { children, choice, onValueChange, ...otherProps } = props;
 
-  // Determine choice type
-  const getChoiceType = (): "color" | "text" | "free-text" => {
-    if (choice?.colorCode) return "color";
-    if (choice?.type === "free-text") return "free-text";
-    return "text";
-  };
+    // Determine choice type
+    const getChoiceType = (): "color" | "text" | "free-text" => {
+      if (choice?.colorCode) return "color";
+      if (choice?.type === "free-text") return "free-text";
+      return "text";
+    };
 
-  const choiceType = getChoiceType();
+    const choiceType = getChoiceType();
 
-  // Check if this choice type is allowed (moved from ChoiceRepeater)
-  const allowedTypes = ["color", "text", "free-text"];
-  if (!allowedTypes.includes(choiceType)) {
-    return null; // Don't render if choice type is not allowed
-  }
+    // Check if this choice type is allowed (moved from ChoiceRepeater)
+    const allowedTypes = ["color", "text", "free-text"];
+    if (!allowedTypes.includes(choiceType)) {
+      return null; // Don't render if choice type is not allowed
+    }
 
-  // Create the context value that Choice.Text/Color expect
-  const contextValue = {
-    choice,
-    onValueChange,
-    shouldRenderAsColor: choiceType === "color",
-    shouldRenderAsText: choiceType === "text",
-    shouldRenderAsFreeText: choiceType === "free-text",
-  };
+    // Create the context value that Choice.Text/Color expect
+    const contextValue = {
+      choice,
+      onValueChange,
+      shouldRenderAsColor: choiceType === "color",
+      shouldRenderAsText: choiceType === "text",
+      shouldRenderAsFreeText: choiceType === "free-text",
+    };
 
-  const attributes = {
-    "data-testid": TestIds.choiceRoot,
-    "data-type": choiceType,
-    ...otherProps,
-  };
+    const attributes = {
+      "data-testid": TestIds.choiceRoot,
+      "data-type": choiceType,
+      ...otherProps,
+    };
 
-  return (
-    <ChoiceContext.Provider value={contextValue}>
-      {React.cloneElement(children as React.ReactElement, {
-        choice,
-        onValueChange,
-        ...attributes,
-        ref,
-      })}
-    </ChoiceContext.Provider>
-  );
-});
-
+    return (
+      <ChoiceContext.Provider value={contextValue}>
+        <div {...attributes} ref={ref}>
+          {children}
+        </div>
+      </ChoiceContext.Provider>
+    );
+  },
+);
 /**
  * Props for Choice Text component
  */
