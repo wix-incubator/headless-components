@@ -1557,6 +1557,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-compose-refs@npm:1.1.2":
+  version: 1.1.2
+  resolution: "@radix-ui/react-compose-refs@npm:1.1.2"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/d36a9c589eb75d634b9b139c80f916aadaf8a68a7c1c4b8c6c6b88755af1a92f2e343457042089f04cc3f23073619d08bb65419ced1402e9d4e299576d970771
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-slot@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@radix-ui/react-slot@npm:1.2.3"
+  dependencies:
+    "@radix-ui/react-compose-refs": "npm:1.1.2"
+  peerDependencies:
+    "@types/react": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/5913aa0d760f505905779515e4b1f0f71a422350f077cc8d26d1aafe53c97f177fec0e6d7fbbb50d8b5e498aa9df9f707ca75ae3801540c283b26b0136138eef
+  languageName: node
+  linkType: hard
+
 "@rolldown/pluginutils@npm:1.0.0-beta.27":
   version: 1.0.0-beta.27
   resolution: "@rolldown/pluginutils@npm:1.0.0-beta.27"
@@ -3536,12 +3564,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/error-handler-types@npm:^1.12.0":
-  version: 1.14.0
-  resolution: "@wix/error-handler-types@npm:1.14.0"
+"@wix/error-handler-types@npm:^1.19.0":
+  version: 1.19.0
+  resolution: "@wix/error-handler-types@npm:1.19.0"
   dependencies:
     "@babel/runtime": "npm:^7.28.2"
-  checksum: 10c0/4b718e2d6ede4812e5a2d77ae232cd58fe83308292a373b9ee1efdfd069b569892b7fd7aa5035cfd1f938bdf31e6b2118213e8b4e5b3d735f779e35c3085af72
+  checksum: 10c0/15c53acad3a5add435cc737f962677004896b5b457ebeae64b0060211430d6d3ad0d2d59e8f39f49f61c827a0e72df1c3bd7b860fd7c854fd342357a03efc7eb
   languageName: node
   linkType: hard
 
@@ -3832,6 +3860,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-stores@workspace:packages/headless-components/stores"
   dependencies:
+    "@radix-ui/react-slot": "npm:^1.2.3"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
@@ -3848,6 +3877,7 @@ __metadata:
     "@wix/headless-ecom": "npm:^0.0.14"
     "@wix/headless-media": "npm:^0.0.8"
     "@wix/redirects": "npm:^1.0.83"
+    "@wix/sdk": "npm:^1.15.26"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
@@ -3868,7 +3898,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/image-kit@npm:^1.109.0, @wix/image-kit@npm:^1.111.0":
+"@wix/image-kit@npm:^1.111.0":
   version: 1.111.0
   resolution: "@wix/image-kit@npm:1.111.0"
   dependencies:
@@ -4005,44 +4035,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk-runtime@npm:0.3.57, @wix/sdk-runtime@npm:^0.3.52, @wix/sdk-runtime@npm:^0.3.55":
-  version: 0.3.57
-  resolution: "@wix/sdk-runtime@npm:0.3.57"
+"@wix/sdk-runtime@npm:0.3.59, @wix/sdk-runtime@npm:^0.3.52, @wix/sdk-runtime@npm:^0.3.55":
+  version: 0.3.59
+  resolution: "@wix/sdk-runtime@npm:0.3.59"
   dependencies:
     "@wix/sdk-context": "npm:0.0.1"
-    "@wix/sdk-types": "npm:^1.13.32"
-  checksum: 10c0/8b92368bd45c80304535b3eb064a1e8c446440df98f48b5a94ea114facac4807a916a75415afef26bb658cb58c8716727196db62c1974e75a7f309be3c70e6dd
+    "@wix/sdk-types": "npm:^1.13.38"
+  checksum: 10c0/99c08ff424696ff30bc0d04821ecf3fcae7bdb052f81628002b75a826610602217d93df4a20754b294159564f92c162ab87e1439543046d0b0802863e36ebd17
   languageName: node
   linkType: hard
 
-"@wix/sdk-types@npm:^1.13.28, @wix/sdk-types@npm:^1.13.31, @wix/sdk-types@npm:^1.13.32, @wix/sdk-types@npm:^1.13.35":
-  version: 1.13.35
-  resolution: "@wix/sdk-types@npm:1.13.35"
+"@wix/sdk-types@npm:^1.13.28, @wix/sdk-types@npm:^1.13.31, @wix/sdk-types@npm:^1.13.35, @wix/sdk-types@npm:^1.13.38":
+  version: 1.13.40
+  resolution: "@wix/sdk-types@npm:1.13.40"
   dependencies:
-    "@wix/error-handler-types": "npm:^1.12.0"
+    "@wix/error-handler-types": "npm:^1.19.0"
     "@wix/monitoring-types": "npm:^0.12.0"
     type-fest: "npm:^4.41.0"
-  checksum: 10c0/b3e7425adcd28c38c00f57eaae2d3de115b083665bd69094a5da07ed81f0a70b7e8251ea67fdffa0afea0dd7ff0caf330e072dc904d3df960a568b4c90824d9e
+  checksum: 10c0/887809166905d6b28e07436253a99b73eb4b42fdb3d9784a291e1dc20284b0d011e71856657162cb42477d44775ba55849ab1a405a567bb45515f2cc71256ab1
   languageName: node
   linkType: hard
 
-"@wix/sdk@npm:^1.15.24":
-  version: 1.15.24
-  resolution: "@wix/sdk@npm:1.15.24"
+"@wix/sdk@npm:^1.15.24, @wix/sdk@npm:^1.15.26":
+  version: 1.15.26
+  resolution: "@wix/sdk@npm:1.15.26"
   dependencies:
     "@wix/identity": "npm:^1.0.104"
-    "@wix/image-kit": "npm:^1.109.0"
+    "@wix/image-kit": "npm:^1.111.0"
     "@wix/redirects": "npm:^1.0.70"
     "@wix/sdk-context": "npm:0.0.1"
-    "@wix/sdk-runtime": "npm:0.3.57"
-    "@wix/sdk-types": "npm:^1.13.32"
+    "@wix/sdk-runtime": "npm:0.3.59"
+    "@wix/sdk-types": "npm:^1.13.38"
     graphql: "npm:^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
     jose: "npm:^5.10.0"
     type-fest: "npm:^4.41.0"
   dependenciesMeta:
     graphql:
       optional: true
-  checksum: 10c0/8336dcacf7e105ba3b8fa1a4ae2f1597bcf527dc29b88e57f441e4106ca57682340942a4d0da4ccf590ea2cd77a886c21f7121fd7b053958e2c1976cd8059c59
+  checksum: 10c0/8bda9473e66f987d82355d79d9ca681313c5651baf8b981a74c94d3801fcfc3eb774a324446a11f0e72d55027e84ed4cce23051db7ca260a1ab5af6bfd238817
   languageName: node
   linkType: hard
 

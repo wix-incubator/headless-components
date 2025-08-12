@@ -5,8 +5,8 @@ import {
   FileUploadServiceDefinition,
   FileUploadService,
   type UploadState,
-} from "../services/index.js";
-import { FileUploadServiceConfig } from "../services/file-upload-service.js";
+} from "../../services/index.js";
+import { FileUploadServiceConfig } from "../../services/file-upload-service.js";
 import { createServicesMap } from "@wix/services-manager";
 
 export interface RootProps {

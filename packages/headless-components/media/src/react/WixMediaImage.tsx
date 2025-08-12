@@ -1,30 +1,11 @@
 import { Image, type FittingType, initCustomElement } from '@wix/image';
+import { media  as wixMedia } from "@wix/sdk";
 
 type MediaItem = {
   image?: string;
 };
 
 initCustomElement();
-
-const parseMediaFromUrl = (url: string) => {
-  const wixImagePrefix = 'wix:image://v1/';
-
-  if (url.startsWith(wixImagePrefix)) {
-    const uri = url.replace(wixImagePrefix, '').split('#')![0]!.split('/')[0]!;
-
-    const params = new URLSearchParams(url.split('#')[1] || '');
-    const originalWidth = params.get('originWidth');
-    const originalHeight = params.get('originHeight');
-
-    return {
-      uri,
-      originalWidth: originalWidth ? parseInt(originalWidth, 10) : undefined,
-      originalHeight: originalHeight ? parseInt(originalHeight, 10) : undefined,
-    };
-  }
-
-  throw new Error('Invalid image URL');
-};
 
 export function WixMediaImage({
   media,
@@ -43,24 +24,20 @@ export function WixMediaImage({
   showPlaceholder?: boolean;
   displayMode?: FittingType;
 }) {
-  const {
-    uri,
-    originalWidth = 640,
-    originalHeight = 320,
-  } = parseMediaFromUrl(media?.image!);
+  const parsedImageDetails = wixMedia.getImageUrl(media?.image!);
 
   return (
     <Image
-      key={uri}
-      uri={uri}
-      width={width || originalWidth}
-      height={height || originalHeight}
+      key={parsedImageDetails.url}
+      uri={parsedImageDetails.url}
+      width={width || parsedImageDetails.width}
+      height={height || parsedImageDetails.height}
       containerWidth={width}
       containerHeight={height}
       displayMode={displayMode}
       isSEOBot={false}
       shouldUseLQIP={showPlaceholder}
-      alt={alt}
+      alt={parsedImageDetails.altText ?? alt}
       className={className}
     />
   );

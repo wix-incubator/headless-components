@@ -3,8 +3,8 @@ import { useService, WixServices } from "@wix/services-manager-react";
 import {
   MediaGalleryServiceDefinition,
   MediaGalleryService,
-} from "../services/index.js";
-import { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
+} from "../../services/index.js";
+import { MediaGalleryServiceConfig } from "../../services/media-gallery-service.js";
 import { createServicesMap } from "@wix/services-manager";
 
 export interface RootProps {

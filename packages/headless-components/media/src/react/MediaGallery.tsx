@@ -1,33 +1,30 @@
-import { Next as CoreNext, Previous as CorePrevious, Viewport as CoreViewport, Indicator as CoreIndicator, ThumbnailList as CoreThumbnailList, ThumbnailItem as CoreThumbnailItem } from "../core/MediaGallery.js";
+import { Next as CoreNext, Previous as CorePrevious, Viewport as CoreViewport, Indicator as CoreIndicator, ThumbnailList as CoreThumbnailList, ThumbnailItem as CoreThumbnailItem } from "./core/MediaGallery.js";
 import { WixMediaImage } from "./WixMediaImage.js";
 import React, { createContext, useContext } from "react";
 import type { MediaItem } from "../services/media-gallery-service.js";
+import { Slot } from "@radix-ui/react-slot";
 
-export const Next = () => {
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  asChild?: boolean
+}
+
+export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
+  const Comp = props.asChild ? Slot : "button";
+
   return <CoreNext>
     {({ next, canGoNext }) => (
-      <button
+      <Comp
+        ref={ref}
         onClick={next}
         disabled={!canGoNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all"
       >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </button>
+        {children}
+      </Comp>
     )}
   </CoreNext>
-}
+});
 
 export const Previous = () => {
   return <CorePrevious>
@@ -100,7 +97,6 @@ export const Indicator = () => {
 const ThumbnailsContext = createContext<{ items: MediaItem[] } | null>(null);
 const ThumbnailItemContext = createContext<{ index: number } | null>(null);
 
-// New API: <MediaGallery.Thumbnails>
 export const Thumbnails = ({ children }: { children: React.ReactNode }) => (
   <CoreThumbnailList>
     {({ items }) => (

@@ -79,7 +79,9 @@ export default function ProductDetails({
                 <div className="aspect-square bg-surface-primary rounded-2xl overflow-hidden border border-brand-subtle relative">
                   <MediaGallery.Viewport />
                   <MediaGallery.Previous />
-                  <MediaGallery.Next />
+                  <MediaGallery.Next>
+                    next
+                  </MediaGallery.Next>
                   <MediaGallery.Indicator />
                 </div>
 
