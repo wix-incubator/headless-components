@@ -1,0 +1,787 @@
+import { render, screen } from "@testing-library/react";
+import React from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import * as Option from "./Option";
+import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as Choice from "./Choice.js";
+
+// Mock ProductVariantSelector core component
+vi.mock("./core/ProductVariantSelector.js", () => ({
+  Option: vi.fn(({ children, option }) => {
+    // Return different choices based on option name
+    let choices;
+    if (option.name === "Color") {
+      choices = [
+        {
+          name: "Red",
+          colorCode: "#ff0000",
+          key: "red",
+          choiceId: "red-choice",
+        },
+        {
+          name: "Blue",
+          colorCode: "#0000ff",
+          key: "blue",
+          choiceId: "blue-choice",
+        },
+      ];
+    } else if (option.name === "Size") {
+      choices = [
+        { name: "Small", key: "small", choiceId: "small-choice" },
+        { name: "Large", key: "large", choiceId: "large-choice" },
+      ];
+    } else if (option.name === "Custom Text") {
+      choices = [
+        {
+          name: "Custom Text",
+          type: "free-text",
+          key: "custom",
+          choiceId: "custom-choice",
+        },
+      ];
+    } else {
+      choices = [
+        {
+          name: "Red",
+          colorCode: "#ff0000",
+          key: "red",
+          choiceId: "red-choice",
+        },
+        {
+          name: "Blue",
+          colorCode: "#0000ff",
+          key: "blue",
+          choiceId: "blue-choice",
+        },
+        { name: "Green", key: "green", choiceId: "green-choice" },
+        {
+          name: "Custom Text",
+          type: "free-text",
+          key: "custom",
+          choiceId: "custom-choice",
+        },
+      ];
+    }
+
+    return children({
+      name: option.name,
+      choices,
+      selectedValue: null,
+      hasChoices: choices.length > 0,
+    });
+  }),
+  Choice: vi.fn(({ children, option, choice }) =>
+    children({
+      value: choice.name,
+      isSelected: false,
+      isVisible: true,
+      isInStock: true,
+      isPreOrderEnabled: false,
+      select: vi.fn(),
+      optionName: option.name,
+      choiceValue: choice.name,
+    }),
+  ),
+}));
+
+// Mock Choice components
+vi.mock("./Choice.js", () => ({
+  Root: vi.fn(({ children }) => (
+    <div data-testid="choice-root">{children}</div>
+  )),
+  ChoiceContext: {
+    Provider: vi.fn(({ children, value }) => (
+      <div
+        data-testid="choice-context-provider"
+        data-context-value={JSON.stringify(value)}
+      >
+        {children}
+      </div>
+    )),
+  },
+}));
+
+const mockOption = {
+  name: "Color",
+};
+
+const mockColorOption = {
+  name: "Color",
+};
+
+const mockSizeOption = {
+  name: "Size",
+};
+
+const mockCustomTextOption = {
+  name: "Custom Text",
+};
+
+describe("Option Components", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("Option.Root", () => {
+    it("should render with proper data attributes and option context", () => {
+      render(
+        <Option.Root option={mockOption}>
+          <div data-testid="option-child">Option child content</div>
+        </Option.Root>,
+      );
+
+      const optionElement = screen.getByTestId("option-root");
+      expect(optionElement).toBeInTheDocument();
+      expect(optionElement).toHaveAttribute("data-testid", "option-root");
+      expect(optionElement).toHaveAttribute("data-type", "color");
+
+      // Verify child content is rendered
+      expect(screen.getByTestId("option-child")).toBeInTheDocument();
+    });
+
+    it("should detect color option type from name", () => {
+      render(
+        <Option.Root option={mockColorOption}>
+          <div>Content</div>
+        </Option.Root>,
+      );
+
+      const optionElement = screen.getByTestId("option-root");
+      expect(optionElement).toHaveAttribute("data-type", "color");
+    });
+
+    it("should detect text option type for size", () => {
+      render(
+        <Option.Root option={mockSizeOption}>
+          <div>Content</div>
+        </Option.Root>,
+      );
+
+      const optionElement = screen.getByTestId("option-root");
+      expect(optionElement).toHaveAttribute("data-type", "text");
+    });
+
+    it("should detect free-text option type from name", () => {
+      render(
+        <Option.Root option={mockCustomTextOption}>
+          <div>Content</div>
+        </Option.Root>,
+      );
+
+      const optionElement = screen.getByTestId("option-root");
+      expect(optionElement).toHaveAttribute("data-type", "free-text");
+    });
+
+    it("should handle onValueChange callback", () => {
+      const onValueChange = vi.fn();
+
+      render(
+        <Option.Root option={mockOption} onValueChange={onValueChange}>
+          <div>Content</div>
+        </Option.Root>,
+      );
+
+      expect(ProductVariantSelector.Option).toHaveBeenCalledWith(
+        expect.objectContaining({
+          option: mockOption,
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should handle allowedTypes prop", () => {
+      const allowedTypes = ["color", "text"];
+
+      render(
+        <Option.Root option={mockOption} allowedTypes={allowedTypes}>
+          <div>Content</div>
+        </Option.Root>,
+      );
+
+      expect(ProductVariantSelector.Option).toHaveBeenCalledWith(
+        expect.objectContaining({
+          option: mockOption,
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should render with asChild using React element", () => {
+      render(
+        <Option.Root option={mockOption} asChild>
+          <section className="custom-option">
+            <div data-testid="option-content">Custom option</div>
+          </section>
+        </Option.Root>,
+      );
+
+      const optionElement = screen.getByTestId("option-root");
+      expect(optionElement).toBeInTheDocument();
+      expect(optionElement.tagName).toBe("SECTION");
+      expect(optionElement).toHaveClass("custom-option");
+      expect(screen.getByTestId("option-content")).toBeInTheDocument();
+    });
+
+    it("should render with asChild using render function", () => {
+      const renderFunction = vi.fn((props, ref) => (
+        <article
+          ref={ref}
+          data-testid="custom-option"
+          className="function-option"
+        >
+          Option: {props.option.name}
+          {(props as any).children}
+        </article>
+      ));
+
+      render(
+        <Option.Root option={mockOption} asChild>
+          {renderFunction}
+        </Option.Root>,
+      );
+
+      expect(renderFunction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          option: mockOption,
+          onValueChange: undefined,
+          allowedTypes: undefined,
+          "data-testid": "option-root",
+          "data-type": "color",
+        }),
+        expect.any(Object),
+      );
+
+      const customElement = screen.getByTestId("custom-option");
+      expect(customElement).toBeInTheDocument();
+      expect(customElement.tagName).toBe("ARTICLE");
+      expect(customElement).toHaveClass("function-option");
+    });
+
+    it("should forward ref correctly", () => {
+      const ref = React.createRef<HTMLElement>();
+
+      render(
+        <Option.Root option={mockOption} ref={ref}>
+          <div>Content</div>
+        </Option.Root>,
+      );
+
+      expect(ref.current).toBe(screen.getByTestId("option-root"));
+    });
+
+    it("should have correct data attributes", () => {
+      render(
+        <Option.Root option={mockOption}>
+          <div>Content</div>
+        </Option.Root>,
+      );
+
+      const optionElement = screen.getByTestId("option-root");
+      expect(optionElement).toHaveAttribute("data-testid", "option-root");
+      expect(optionElement).toHaveAttribute("data-type", "color");
+    });
+  });
+
+  describe("Option.Name", () => {
+    const MockOptionContext = React.createContext({
+      name: "Test Option Name",
+    });
+
+    beforeEach(() => {
+      // Mock the OptionContext
+      vi.spyOn(Option, "OptionContext", "get").mockReturnValue(
+        MockOptionContext,
+      );
+      vi.spyOn(React, "useContext").mockReturnValue({
+        name: "Test Option Name",
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("should render option name with default styling", () => {
+      render(<Option.Name className="custom-name-class" />);
+
+      const nameElement = screen.getByTestId("option-name");
+      expect(nameElement).toBeInTheDocument();
+      expect(nameElement).toHaveClass("custom-name-class");
+      expect(nameElement).toHaveTextContent("Test Option Name");
+    });
+
+    it("should render with asChild using React element", () => {
+      render(
+        <Option.Name asChild>
+          <h3 className="title-class">Custom name</h3>
+        </Option.Name>,
+      );
+
+      const nameElement = screen.getByTestId("option-name");
+      expect(nameElement).toBeInTheDocument();
+      expect(nameElement.tagName).toBe("H3");
+      expect(nameElement).toHaveClass("title-class");
+      expect(nameElement).toHaveTextContent("Test Option Name");
+    });
+
+    it("should render with asChild using render function", () => {
+      const renderFunction = vi.fn((props, ref) => (
+        <h4 ref={ref} data-testid="custom-name" className="function-name">
+          Name: {props.name}
+        </h4>
+      ));
+
+      render(<Option.Name asChild>{renderFunction}</Option.Name>);
+
+      expect(renderFunction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "Test Option Name",
+          "data-testid": "option-name",
+        }),
+        expect.any(Object),
+      );
+
+      const customElement = screen.getByTestId("custom-name");
+      expect(customElement).toBeInTheDocument();
+      expect(customElement.tagName).toBe("H4");
+      expect(customElement).toHaveClass("function-name");
+      expect(customElement).toHaveTextContent("Name: Test Option Name");
+    });
+
+    it("should return null when no context is available", () => {
+      vi.spyOn(React, "useContext").mockReturnValue(null);
+
+      render(<Option.Name />);
+
+      expect(screen.queryByTestId("option-name")).not.toBeInTheDocument();
+    });
+
+    it("should handle empty name gracefully", () => {
+      vi.spyOn(React, "useContext").mockReturnValue({
+        name: "",
+      });
+
+      render(<Option.Name />);
+
+      const nameElement = screen.getByTestId("option-name");
+      expect(nameElement).toBeInTheDocument();
+      expect(nameElement).toHaveTextContent("");
+    });
+
+    it("should forward ref correctly", () => {
+      const ref = React.createRef<HTMLElement>();
+
+      render(<Option.Name ref={ref} />);
+
+      expect(ref.current).toBe(screen.getByTestId("option-name"));
+    });
+
+    it("should have correct data attributes", () => {
+      render(<Option.Name />);
+
+      const nameElement = screen.getByTestId("option-name");
+      expect(nameElement).toHaveAttribute("data-testid", "option-name");
+    });
+  });
+
+  describe("Option.Choices", () => {
+    const MockOptionContext = React.createContext({
+      choices: [
+        { name: "Red", colorCode: "#ff0000" },
+        { name: "Blue", colorCode: "#0000ff" },
+      ],
+      optionType: "color",
+    });
+
+    beforeEach(() => {
+      // Mock the OptionContext
+      vi.spyOn(Option, "OptionContext", "get").mockReturnValue(
+        MockOptionContext,
+      );
+      vi.spyOn(React, "useContext").mockReturnValue({
+        choices: [
+          { name: "Red", colorCode: "#ff0000" },
+          { name: "Blue", colorCode: "#0000ff" },
+        ],
+        optionType: "color",
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("should render choices container when choices are available", () => {
+      render(
+        <Option.Choices>
+          <div data-testid="choices-content">Choices content</div>
+        </Option.Choices>,
+      );
+
+      const choicesElement = screen.getByTestId("option-choices");
+      expect(choicesElement).toBeInTheDocument();
+      expect(choicesElement).toHaveAttribute("data-testid", "option-choices");
+      expect(choicesElement).toHaveAttribute("data-type", "color");
+      expect(screen.getByTestId("choices-content")).toBeInTheDocument();
+    });
+
+    it("should render empty state when no choices are available", () => {
+      vi.spyOn(React, "useContext").mockReturnValue({
+        choices: [],
+        optionType: "text",
+      });
+
+      render(
+        <Option.Choices
+          emptyState={<div data-testid="empty-state">No choices</div>}
+        >
+          <div data-testid="choices-content">Should not render</div>
+        </Option.Choices>,
+      );
+
+      expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+      expect(screen.queryByTestId("choices-content")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("option-choices")).not.toBeInTheDocument();
+    });
+
+    it("should return null when no context is available", () => {
+      vi.spyOn(React, "useContext").mockReturnValue(null);
+
+      render(
+        <Option.Choices>
+          <div data-testid="choices-content">Should not render</div>
+        </Option.Choices>,
+      );
+
+      expect(screen.queryByTestId("option-choices")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("choices-content")).not.toBeInTheDocument();
+    });
+
+    it("should render empty state when emptyState is null", () => {
+      vi.spyOn(React, "useContext").mockReturnValue({
+        choices: [],
+        optionType: "text",
+      });
+
+      render(
+        <Option.Choices emptyState={null}>
+          <div data-testid="choices-content">Should not render</div>
+        </Option.Choices>,
+      );
+
+      expect(screen.queryByTestId("choices-content")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("option-choices")).not.toBeInTheDocument();
+    });
+
+    it("should forward ref correctly", () => {
+      const ref = React.createRef<HTMLElement>();
+
+      render(
+        <Option.Choices ref={ref}>
+          <div>Content</div>
+        </Option.Choices>,
+      );
+
+      expect(ref.current).toBe(screen.getByTestId("option-choices"));
+    });
+
+    it("should have correct data attributes", () => {
+      render(
+        <Option.Choices>
+          <div>Content</div>
+        </Option.Choices>,
+      );
+
+      const choicesElement = screen.getByTestId("option-choices");
+      expect(choicesElement).toHaveAttribute("data-testid", "option-choices");
+      expect(choicesElement).toHaveAttribute("data-type", "color");
+    });
+  });
+
+  describe("Option.ChoiceRepeater", () => {
+    const mockChoices = [
+      { name: "Red", colorCode: "#ff0000", key: "red", choiceId: "red-choice" },
+      {
+        name: "Blue",
+        colorCode: "#0000ff",
+        key: "blue",
+        choiceId: "blue-choice",
+      },
+      { name: "Green", key: "green", choiceId: "green-choice" },
+    ];
+
+    const MockOptionContext = React.createContext({
+      choices: mockChoices,
+      optionType: "color",
+      onValueChange: vi.fn(),
+    });
+
+    beforeEach(() => {
+      // Mock the OptionContext
+      vi.spyOn(Option, "OptionContext", "get").mockReturnValue(
+        MockOptionContext,
+      );
+      vi.spyOn(React, "useContext").mockReturnValue({
+        choices: mockChoices,
+        optionType: "color",
+        onValueChange: vi.fn(),
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("should render choice repeater with children for each choice", () => {
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Should render ProductVariantSelector.Choice for each choice
+      expect(ProductVariantSelector.Choice).toHaveBeenCalledTimes(3);
+
+      // Should render Choice.Root for each choice
+      expect(Choice.Root).toHaveBeenCalledTimes(3);
+
+      // Should render ChoiceContext.Provider for each choice
+      expect(Choice.ChoiceContext.Provider).toHaveBeenCalledTimes(3);
+
+      // Verify choice content is rendered for each choice
+      const choiceContents = screen.getAllByTestId("choice-content");
+      expect(choiceContents).toHaveLength(3);
+    });
+
+    it("should not render when no choices exist", () => {
+      vi.spyOn(React, "useContext").mockReturnValue({
+        choices: [],
+        optionType: "text",
+        onValueChange: vi.fn(),
+      });
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Should not render</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      expect(ProductVariantSelector.Choice).not.toHaveBeenCalled();
+      expect(Choice.Root).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("choice-content")).not.toBeInTheDocument();
+    });
+
+    it("should return null when no context is available", () => {
+      vi.spyOn(React, "useContext").mockReturnValue(null);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Should not render</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      expect(ProductVariantSelector.Choice).not.toHaveBeenCalled();
+      expect(Choice.Root).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("choice-content")).not.toBeInTheDocument();
+    });
+
+    it("should pass correct choice data to ProductVariantSelector.Choice", () => {
+      render(
+        <Option.ChoiceRepeater>
+          <div>Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Verify that ProductVariantSelector.Choice is called with correct props
+      expect(ProductVariantSelector.Choice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          choice: mockChoices[0],
+          option: expect.any(Object),
+        }),
+        expect.any(Object),
+      );
+
+      expect(ProductVariantSelector.Choice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          choice: mockChoices[1],
+          option: expect.any(Object),
+        }),
+        expect.any(Object),
+      );
+
+      expect(ProductVariantSelector.Choice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          choice: mockChoices[2],
+          option: expect.any(Object),
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should provide correct context to Choice.Root", () => {
+      render(
+        <Option.ChoiceRepeater>
+          <div>Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Verify that ChoiceContext.Provider is called with correct context values
+      expect(Choice.ChoiceContext.Provider).toHaveBeenCalledWith(
+        expect.objectContaining({
+          value: expect.objectContaining({
+            choice: expect.any(Object),
+            onValueChange: expect.any(Function),
+            shouldRenderAsColor: expect.any(Boolean),
+            shouldRenderAsText: expect.any(Boolean),
+            shouldRenderAsFreeText: expect.any(Boolean),
+            isSelected: false,
+            isVisible: true,
+            isInStock: true,
+            isPreOrderEnabled: false,
+            select: expect.any(Function),
+            value: expect.any(String),
+            optionData: expect.any(Object),
+          }),
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should handle choices with different types correctly", () => {
+      const mixedChoices = [
+        { name: "Red", colorCode: "#ff0000", key: "red" },
+        { name: "Large", key: "large" },
+        { name: "Custom", type: "free-text", key: "custom" },
+      ];
+
+      vi.spyOn(React, "useContext").mockReturnValue({
+        choices: mixedChoices,
+        optionType: "text",
+        onValueChange: vi.fn(),
+      });
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      expect(ProductVariantSelector.Choice).toHaveBeenCalledTimes(3);
+      expect(Choice.Root).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe("Integration Tests", () => {
+    it("should work together in a complete option display", () => {
+      // Mock full option context
+      const mockOptionData = {
+        name: "Color",
+        choices: [
+          { name: "Red", colorCode: "#ff0000", key: "red" },
+          { name: "Blue", colorCode: "#0000ff", key: "blue" },
+        ],
+        optionType: "color",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(mockOptionData);
+
+      render(
+        <Option.Root option={mockOption}>
+          <div className="option-layout">
+            <Option.Name className="option-title" />
+            <Option.Choices>
+              <Option.ChoiceRepeater>
+                <div data-testid="choice-item">Choice content</div>
+              </Option.ChoiceRepeater>
+            </Option.Choices>
+          </div>
+        </Option.Root>,
+      );
+
+      // Verify all components render together
+      expect(screen.getByTestId("option-root")).toBeInTheDocument();
+      expect(screen.getByTestId("option-name")).toBeInTheDocument();
+      expect(screen.getByTestId("option-choices")).toBeInTheDocument();
+
+      // Verify content
+      expect(screen.getByText("Color")).toBeInTheDocument();
+      const choiceItems = screen.getAllByTestId("choice-item");
+      expect(choiceItems).toHaveLength(2);
+    });
+
+    it("should handle asChild patterns across multiple components", () => {
+      const mockOptionData = {
+        name: "Size",
+        choices: [{ name: "Large", key: "large" }],
+        optionType: "text",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(mockOptionData);
+
+      render(
+        <Option.Root option={mockSizeOption} asChild>
+          <section className="custom-option">
+            <Option.Name asChild>
+              <h3 className="custom-name" />
+            </Option.Name>
+            <Option.Choices>
+              <Option.ChoiceRepeater>
+                <div>Choice</div>
+              </Option.ChoiceRepeater>
+            </Option.Choices>
+          </section>
+        </Option.Root>,
+      );
+
+      // Verify all components use their custom elements
+      const option = screen.getByTestId("option-root");
+      const name = screen.getByTestId("option-name");
+
+      expect(option.tagName).toBe("SECTION");
+      expect(option).toHaveClass("custom-option");
+
+      expect(name.tagName).toBe("H3");
+      expect(name).toHaveClass("custom-name");
+    });
+  });
+
+  describe("Type Safety and Props", () => {
+    it("should accept correct props interfaces", () => {
+      // This test verifies TypeScript compilation - no runtime assertions needed
+      const rootProps: Option.RootProps = {
+        option: { name: "Test Option" },
+        onValueChange: (value: string) => console.log(value),
+        allowedTypes: ["color", "text"],
+        asChild: true,
+        children: React.forwardRef(({ option }, ref) => (
+          <div ref={ref}>{option.name}</div>
+        )),
+      };
+
+      const nameProps: Option.NameProps = {
+        asChild: true,
+        children: React.forwardRef(({ name }, ref) => (
+          <h1 ref={ref}>{name}</h1>
+        )),
+        className: "test-class",
+      };
+
+      const choicesProps: Option.ChoicesProps = {
+        children: <div>Choices</div>,
+        emptyState: <div>No choices</div>,
+      };
+
+      const repeaterProps: Option.ChoiceRepeaterProps = {
+        children: <div>Choice repeater</div>,
+      };
+
+      // If these compile without errors, the types are correct
+      expect(rootProps).toBeDefined();
+      expect(nameProps).toBeDefined();
+      expect(choicesProps).toBeDefined();
+      expect(repeaterProps).toBeDefined();
+    });
+  });
+});

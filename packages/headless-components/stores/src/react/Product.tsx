@@ -20,7 +20,7 @@ const VariantsContext = React.createContext<VariantsContextValue | null>(null);
 /**
  * Hook to access variants context
  */
-function useVariantsContext(): VariantsContextValue {
+export function useVariantsContext(): VariantsContextValue {
   const context = React.useContext(VariantsContext);
   if (!context) {
     throw new Error(
