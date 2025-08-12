@@ -5,42 +5,35 @@ export const Root: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Root>>
   <MediaGalleryRadix.Root {...props} />
 );
 
-export const Viewport: React.FC = () => (
-  <MediaGalleryRadix.Viewport>
-    {({ src, alt }: { src: string | null; alt: string }) => (
-      <>
-        {src ? (
-          <WixMediaImage media={{ image: src }} alt={alt} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <svg
-              className="w-24 h-24 text-content-subtle"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-        )}
-      </>
-    )}
-  </MediaGalleryRadix.Viewport>
-);
-
-export const Indicator: React.FC = () => (
-  <MediaGalleryRadix.Indicator>
-    {({ current, total }: { current: number; total: number }) => (
-      <div className="absolute bottom-4 right-4 bg-surface-tooltip text-nav px-3 py-1 rounded-full text-sm">
-        {current} / {total}
+export const Viewport: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Viewport>> = ({ className, emptyState, ...props }) => (
+  <MediaGalleryRadix.Viewport
+    className={`w-full h-full ${className || ''}`}
+    emptyState={emptyState ?? (
+      <div className="w-full h-full flex items-center justify-center">
+        <svg
+          className="w-24 h-24 text-content-subtle"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
       </div>
     )}
-  </MediaGalleryRadix.Indicator>
+    {...props}
+  />
+);
+
+export const Indicator: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Indicator>> = ({ className, ...props }) => (
+  <MediaGalleryRadix.Indicator
+    className={`absolute bottom-4 right-4 bg-surface-tooltip text-nav px-3 py-1 rounded-full text-sm ${className || ''}`}
+    {...props}
+  />
 );
 
 export const Previous: React.FC<React.ComponentProps<typeof MediaGalleryRadix.Previous>> = ({ children, ...props }) => (
@@ -77,27 +70,17 @@ export const ThumbnailRepeater: React.FC<React.ComponentProps<typeof MediaGaller
   </div>
 );
 
-export const ThumbnailItem: React.FC<Omit<React.ComponentProps<typeof MediaGalleryRadix.ThumbnailItem>, 'children'> & { children?: React.ComponentProps<typeof MediaGalleryRadix.ThumbnailItem>['children'] }> = ({ children, ...props }) => (
-  <MediaGalleryRadix.ThumbnailItem {...props}>
-    {children ?? (({ src, isActive, select, alt }: { src: string | null; isActive: boolean; select: () => void; alt: string }) => (
-      <div
-        onClick={select}
-        className={`aspect-square bg-surface-primary rounded-lg border cursor-pointer transition-all ${isActive
-          ? 'border-brand-medium ring-2 ring-brand-light'
-          : 'border-brand-subtle hover:border-brand-light'
-          }`}
-      >
-        {src ? (
-          <WixMediaImage media={{ image: src }} alt={alt} className="w-full h-full object-cover rounded-lg" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-content-subtle" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-        )}
+export const ThumbnailItem: React.FC<React.ComponentProps<typeof MediaGalleryRadix.ThumbnailItem>> = ({ className, emptyState, ...props }) => (
+  <MediaGalleryRadix.ThumbnailItem
+    className={`aspect-square bg-surface-primary rounded-lg border cursor-pointer transition-all data-[active=true]:border-brand-medium data-[active=true]:ring-2 data-[active=true]:ring-brand-light data-[active=false]:border-brand-subtle data-[active=false]:hover:border-brand-light ${className || ''}`}
+    emptyState={emptyState ?? (
+      <div className="w-full h-full flex items-center justify-center">
+        <svg className="w-6 h-6 text-content-subtle" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
       </div>
-    ))}
-  </MediaGalleryRadix.ThumbnailItem>
+    )}
+    {...props}
+  />
 );
 

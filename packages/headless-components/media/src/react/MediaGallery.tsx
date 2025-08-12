@@ -3,6 +3,7 @@ import React, { createContext, useContext } from "react";
 import type { MediaItem } from "../services/media-gallery-service.js";
 import type { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
 import { Slot } from "@radix-ui/react-slot";
+import { WixMediaImage } from "./WixMediaImage.js";
 
 
 export interface ButtonProps
@@ -56,21 +57,68 @@ export const Previous = React.forwardRef<HTMLButtonElement, ButtonProps>(({ chil
   </CorePrevious>
 });
 
-export interface ViewportProps {
-  children: (props: { src: string | null; alt: string }) => React.ReactNode;
+export interface ViewportProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: React.ReactNode;
+  asChild?: boolean;
+  emptyState?: React.ReactNode;
 }
 
-export const Viewport = (props: ViewportProps) => {
-  return <CoreViewport>{props.children}</CoreViewport>;
+export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
+  ({ children, asChild, emptyState, ...props }, ref) => {
+    return (
+      <CoreViewport>
+        {({ src, alt }) => {
+          const Comp = asChild ? Slot : "div";
+          return (
+            <Comp
+              ref={ref}
+              data-src={src}
+              data-alt={alt}
+              {...props}
+            >
+              {children ?? (
+                src ? (
+                  <WixMediaImage media={{ image: src }} alt={alt} />
+                ) : (
+                  emptyState ?? <div>No image</div>
+                )
+              )}
+            </Comp>
+          );
+        }}
+      </CoreViewport>
+    );
+  }
+);
+
+export interface IndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
+  children?: React.ReactNode;
+  asChild?: boolean;
 }
 
-export interface IndicatorProps {
-  children: (props: { current: number; total: number }) => React.ReactNode;
-}
-
-export const Indicator = (props: IndicatorProps) => {
-  return <CoreIndicator>{props.children}</CoreIndicator>
-}
+export const Indicator = React.forwardRef<HTMLDivElement, IndicatorProps>(
+  ({ children, asChild, ...props }, ref) => {
+    return (
+      <CoreIndicator>
+        {({ current, total }) => {
+          const Comp = asChild ? Slot : "div";
+          return (
+            <Comp
+              ref={ref}
+              data-current={current}
+              data-total={total}
+              {...props}
+            >
+              {children ?? (
+                <div>{current} / {total}</div>
+              )}
+            </Comp>
+          );
+        }}
+      </CoreIndicator>
+    );
+  }
+);
 
 const ThumbnailsContext = createContext<{ items: MediaItem[] } | null>(null);
 const ThumbnailItemContext = createContext<{ index: number } | null>(null);
@@ -99,14 +147,43 @@ export const ThumbnailRepeater = ({ children }: { children: React.ReactNode }) =
   );
 };
 
-export const ThumbnailItem = ({ children }: { children: (props: { src: string | null; isActive: boolean; select: () => void; alt: string }) => React.ReactNode }) => {
-  const itemCtx = useContext(ThumbnailItemContext);
-  if (!itemCtx) return null;
-  const { index } = itemCtx;
-  return (
-    <CoreThumbnailItem index={index}>
-      {children}
-    </CoreThumbnailItem>
-  );
+export interface ThumbnailItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  asChild?: boolean;
+  emptyState?: React.ReactNode;
 }
+
+export const ThumbnailItem = React.forwardRef<HTMLDivElement, ThumbnailItemProps>(
+  ({ children, asChild, emptyState, ...props }, ref) => {
+    const itemCtx = useContext(ThumbnailItemContext);
+    if (!itemCtx) return null;
+    const { index } = itemCtx;
+
+    return (
+      <CoreThumbnailItem index={index}>
+        {({ src, isActive, select, alt }) => {
+          const Comp = asChild ? Slot : "div";
+          return (
+            <Comp
+              ref={ref}
+              onClick={select}
+              data-active={isActive}
+              data-src={src}
+              data-alt={alt}
+              data-index={index}
+              {...props}
+            >
+              {children ?? (
+                src ? (
+                  <WixMediaImage media={{ image: src }} alt={alt} />
+                ) : (
+                  emptyState ?? <div>No image</div>
+                )
+              )}
+            </Comp>
+          );
+        }}
+      </CoreThumbnailItem>
+    );
+  }
+);
 
