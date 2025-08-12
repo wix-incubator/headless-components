@@ -15,7 +15,7 @@ enum TestIds {
 export interface Choice {
   colorCode?: string;
   choiceId?: string | null;
-  linkedMedia?: any[]; // ProductMedia[] - using any for now to avoid import dependencies
+  linkedMedia?: any[]; // ProductMedia[] - will be updated when ProductMedia is available
   type?: "color" | "text" | "free-text";
   key?: string;
   name?: string | null;
@@ -28,32 +28,34 @@ const ChoiceContext = React.createContext<any>(null);
 /**
  * Props for Choice Root component
  */
-export interface RootProps
-  extends AsChildProps<{
-    choice: Choice;
-    onValueChange: (value: string) => void;
-  }> {
+export interface ChoiceRootProps {
+  children: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      choice: Choice;
+      onValueChange: (value: string) => void;
+    }
+  >;
+}
+
+// Keep the legacy RootProps for backward compatibility with Option.ChoiceRepeater
+export interface RootProps {
   choice?: Choice; // Optional - will be created from rawChoice if not provided
   rawChoice?: any; // The raw choice data from ProductVariantSelector
   optionData?: any; // The full option data from ProductVariantSelector
   onValueChange?: (value: string) => void;
+  children?: React.ReactNode; // For backward compatibility
 }
 
 /**
  * Root component that provides context for a single choice.
- * Inspired by Option.Root but for individual choices.
+ * Supports both new render function API and legacy ReactNode API.
  *
  * @component
  * @example
  * ```tsx
- * // Default usage
- * <Choice.Root choice={choiceData} onValueChange={(value) => console.log('Selected:', value)}>
- *   <Choice.Text />
- *   <Choice.Color />
- * </Choice.Root>
- *
- * // asChild with react component
- * <Choice.Root asChild choice={choiceData} onValueChange={handleChange}>
+ * // New API - render function (recommended)
+ * <Choice.Root>
  *   {React.forwardRef(({choice, onValueChange, ...props}, ref) => (
  *     <div ref={ref} {...props} className="choice-wrapper">
  *       <span>{choice.name}</span>
@@ -63,11 +65,16 @@ export interface RootProps
  *     </div>
  *   ))}
  * </Choice.Root>
+ *
+ * // Legacy API - ReactNode (for Option.ChoiceRepeater compatibility)
+ * <Choice.Root choice={choiceData} onValueChange={handleChange}>
+ *   <Choice.Text />
+ *   <Choice.Color />
+ * </Choice.Root>
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const {
-    asChild,
     children,
     choice: providedChoice,
     rawChoice,
@@ -131,31 +138,37 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
     ...otherProps,
   };
 
-  const content = (
-    <ChoiceContext.Provider value={contextValue}>
-      {typeof children === "function" ? null : (children as React.ReactNode)}
-    </ChoiceContext.Provider>
-  );
+  // Handle both new API (render function) and legacy API (ReactNode)
+  if (typeof children === "function") {
+    // New API - children is a render function
+    const renderFunction = children as React.ForwardRefRenderFunction<
+      HTMLElement,
+      {
+        choice: Choice;
+        onValueChange: (value: string) => void;
+      }
+    >;
 
-  const rootProps = {
-    choice,
-    onValueChange: onValueChange || (() => {}),
-  };
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: rootProps,
-      ref,
-      content,
-      attributes,
-    });
-    if (rendered) return rendered;
+    return (
+      <ChoiceContext.Provider value={contextValue}>
+        {renderFunction(
+          {
+            choice,
+            onValueChange: onValueChange || (() => {}),
+            ...attributes,
+          },
+          ref,
+        )}
+      </ChoiceContext.Provider>
+    );
   }
 
+  // Legacy API - children is ReactNode (for Option.ChoiceRepeater usage)
   return (
     <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-      {content}
+      <ChoiceContext.Provider value={contextValue}>
+        {children as React.ReactNode}
+      </ChoiceContext.Provider>
     </div>
   );
 });

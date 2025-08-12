@@ -7,10 +7,6 @@ enum TestIds {
   optionRoot = "option-root",
   optionName = "option-name",
   optionChoices = "option-choices",
-  choice = "choice",
-  choiceText = "choice-text",
-  choiceColor = "choice-color",
-  choiceFreetext = "choice-freetext",
 }
 
 /**
@@ -436,7 +432,6 @@ export const ChoiceRepeater = React.forwardRef<
             rawChoice={choice}
             optionData={optionData}
             onValueChange={onValueChange}
-            data-testid={TestIds.choice}
           >
             {children as React.ReactElement}
           </Choice.Root>
