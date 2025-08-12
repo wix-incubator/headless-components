@@ -333,17 +333,9 @@ export const Next = (props: NextProps) => {
     typeof MediaGalleryServiceDefinition
   >;
 
-  const currentIndex = mediaService.selectedMediaIndex.get();
-  const totalMedia = mediaService.totalMedia.get();
-  const canGoNext = currentIndex < totalMedia - 1;
-
-  if (totalMedia <= 1) {
-    return null;
-  }
-
   return props.children({
     next: mediaService.nextMedia,
-    canGoNext,
+    canGoNext: mediaService.hasNextMedia(),
   });
 };
 
@@ -395,17 +387,9 @@ export const Previous = (props: PreviousProps) => {
     typeof MediaGalleryServiceDefinition
   >;
 
-  const currentIndex = mediaService.selectedMediaIndex.get();
-  const totalMedia = mediaService.totalMedia.get();
-  const canGoPrevious = currentIndex > 0;
-
-  if (totalMedia <= 1) {
-    return null;
-  }
-
   return props.children({
     previous: mediaService.previousMedia,
-    canGoPrevious,
+    canGoPrevious: mediaService.hasPreviousMedia(),
   });
 };
 

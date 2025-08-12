@@ -68,6 +68,11 @@ export default function ProductDetails({
           <StyledMediaGallery.Root
             mediaGalleryServiceConfig={{
               media: product.media?.itemsInfo?.items ?? [],
+              infinite: true,
+              autoPlay: {
+                direction: 'forward',
+                intervalMs: 5000,
+              },
             }}
           >
             <SelectedVariantPrimitive.Root>
