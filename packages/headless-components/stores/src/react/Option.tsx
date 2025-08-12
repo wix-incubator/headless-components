@@ -112,14 +112,7 @@ export interface RootProps
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const {
-    asChild,
-    children,
-    option,
-    onValueChange,
-    allowedTypes = ["color", "text", "free-text"],
-    ...otherProps
-  } = props;
+  const { asChild, children, option, onValueChange, allowedTypes } = props;
 
   return (
     <ProductVariantSelector.Option option={option}>
@@ -160,7 +153,6 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 
         const contextValue = {
           ...optionData,
-          type: "variant",
           optionType,
           onValueChange,
           allowedTypes,
@@ -169,7 +161,6 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         const attributes = {
           "data-testid": TestIds.optionRoot,
           "data-type": optionType,
-          ...otherProps,
         };
 
         const content = (
