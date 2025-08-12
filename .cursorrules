@@ -1,0 +1,255 @@
+# Headless Components Architecture Rules
+
+## List, Options, and Repeater Pattern
+
+When implementing list components that render collections of entities, always follow this 3-level architecture pattern:
+
+### Pattern Structure
+
+```
+A.ListSection (container - not rendered if empty)
+  ↓
+A.ListSection.Bs (list container with emptyState support)
+  ↓
+A.ListSection.BRepeater (renders B.Root for each item)
+```
+
+### Implementation Rules
+
+#### 1. **Container Level** (`A.ListSection`)
+
+- **Purpose**: Main container that provides context and conditional rendering
+- **Behavior**:
+  - Does NOT render if the list is empty (`hasItems` check)
+  - Provides context with list data and metadata
+  - Inspired by `Product.Variants` pattern
+- **Example**: `Product.Variants`, `Product.Modifiers`
+
+```tsx
+export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
+  (props, ref) => {
+    return (
+      <ProductVariantSelector.Options>
+        {({ hasOptions, options }) => {
+          if (!hasOptions) return null; // ✅ Don't render if empty
+
+          const contextValue = { hasOptions, options };
+
+          return (
+            <ContextProvider value={contextValue}>
+              <div {...attributes} ref={ref}>
+                {children}
+              </div>
+            </ContextProvider>
+          );
+        }}
+      </ProductVariantSelector.Options>
+    );
+  },
+);
+```
+
+#### 2. **List Container Level** (`A.ListSection.Bs`)
+
+- **Purpose**: Container for the list items with empty state support
+- **Behavior**:
+  - Simple container component
+  - Supports `emptyState?: React.ReactNode` prop
+  - Renders `emptyState` when no items, otherwise renders children
+  - Inspired by `Product.VariantOptions` pattern
+- **Example**: `Product.VariantOptions`, `Product.ModifierOptions`
+
+```tsx
+export interface VariantOptionsProps
+  extends AsChildProps<{ hasOptions: boolean }> {
+  emptyState?: React.ReactNode; // ✅ Always include emptyState support
+}
+
+export const VariantOptions = React.forwardRef<
+  HTMLElement,
+  VariantOptionsProps
+>((props, ref) => {
+  const { asChild, children, emptyState } = props;
+  const { hasOptions } = useVariantsContext();
+
+  if (!hasOptions) {
+    return emptyState || null; // ✅ Handle empty state
+  }
+
+  return (
+    <div {...attributes} ref={ref}>
+      {children}
+    </div>
+  );
+});
+```
+
+#### 3. **Repeater Level** (`A.ListSection.BRepeater`)
+
+- **Purpose**: Maps over items and renders `B.Root` for each
+- **Behavior**:
+  - Simple repeater that delegates to the target entity's Root component
+  - Passes `asChild` and `children` directly to the Root component
+  - Inspired by `Product.VariantOptionRepeater` pattern
+- **Example**: `Product.VariantOptionRepeater`, `Option.ChoiceRepeater`
+
+```tsx
+export const VariantOptionRepeater = React.forwardRef<
+  HTMLElement,
+  VariantOptionRepeaterProps
+>((props, _ref) => {
+  const { asChild, children } = props;
+  const { hasOptions, options } = useVariantsContext();
+
+  if (!hasOptions) return null;
+
+  return (
+    <>
+      {options.map((option: any) => (
+        <Option.Root
+          key={option.name}
+          option={option}
+          asChild={asChild} // ✅ Pass asChild through
+          data-testid={TestIds.productVariantOption}
+        >
+          {children} {/* ✅ Pass children through */}
+        </Option.Root>
+      ))}
+    </>
+  );
+});
+```
+
+### Context Pattern Rules
+
+#### 1. **Context Location**
+
+- Entity-specific contexts belong in their respective files
+- `ChoiceContext` → `Choice.tsx`
+- `OptionContext` → `Option.tsx`
+- `VariantsContext` → `Product.tsx`
+
+#### 2. **Context Usage**
+
+- Container level creates and provides context
+- List container level consumes context for conditional rendering
+- Repeater level consumes context for data mapping
+
+#### 3. **Hook Pattern**
+
+```tsx
+function useVariantsContext(): VariantsContextValue {
+  const context = React.useContext(VariantsContext);
+  if (!context) {
+    throw new Error(
+      "useVariantsContext must be used within a Product.Variants component",
+    );
+  }
+  return context;
+}
+```
+
+### AsChild Pattern Rules
+
+#### 1. **All Components Support AsChild**
+
+- Every public component should extend `AsChildProps<TData>`
+- Use `renderAsChild` utility for implementation
+- Pass `asChild` prop through repeaters
+
+#### 2. **AsChild Implementation**
+
+```tsx
+export interface ComponentProps extends AsChildProps<{ data: SomeType }> {
+  // component-specific props
+}
+
+export const Component = React.forwardRef<HTMLElement, ComponentProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    if (asChild) {
+      const rendered = renderAsChild({
+        children,
+        props: { data: someData },
+        ref,
+        content: defaultContent,
+        attributes: { "data-testid": "component" },
+      });
+      if (rendered) return rendered;
+    }
+
+    return (
+      <div {...attributes} ref={ref}>
+        {defaultContent}
+      </div>
+    );
+  },
+);
+```
+
+### Data Attributes Rules
+
+#### 1. **Test IDs**
+
+- Use centralized `TestIds` enum in each file
+- Apply consistent naming: `entityName-componentType`
+- Examples: `product-variants`, `option-choices`, `choice-text`
+
+```tsx
+enum TestIds {
+  productVariants = "product-variants",
+  productVariantOptions = "product-variant-options",
+  productVariantOption = "product-variant-option",
+}
+```
+
+#### 2. **Type Attributes**
+
+- Use `data-type` for styling/logic hooks
+- Examples: `data-type="color"`, `data-type="text"`, `data-type="free-text"`
+
+### Example Implementation
+
+```tsx
+// ✅ Complete example following the pattern
+<Product.Variants>
+  {" "}
+  {/* Container - provides context, conditional rendering */}
+  <Product.VariantOptions emptyState={<div>No variants available</div>}>
+    {" "}
+    {/* List container - empty state */}
+    <Product.VariantOptionRepeater>
+      {" "}
+      {/* Repeater - renders Option.Root */}
+      <Option.Name />
+      <Option.Choices>
+        <Option.ChoiceRepeater>
+          {" "}
+          {/* Nested repeater - renders Choice.Root */}
+          <Choice.Text />
+          <Choice.Color />
+        </Option.ChoiceRepeater>
+      </Option.Choices>
+    </Product.VariantOptionRepeater>
+  </Product.VariantOptions>
+</Product.Variants>
+```
+
+### Anti-Patterns to Avoid
+
+❌ **Don't**: Put business logic in repeater components
+❌ **Don't**: Create duplicate contexts for the same data
+❌ **Don't**: Handle empty states in container components
+❌ **Don't**: Skip the 3-level pattern for lists
+❌ **Don't**: Put entity-specific contexts in wrong files
+
+### Naming Conventions
+
+- **Container**: `EntityName.ListName` (e.g., `Product.Variants`)
+- **List Container**: `EntityName.ListNameItems` (e.g., `Product.VariantOptions`)
+- **Repeater**: `EntityName.ListNameItemRepeater` (e.g., `Product.VariantOptionRepeater`)
+- **Context**: `ListNameContext` (e.g., `VariantsContext`)
+- **Hook**: `useListNameContext` (e.g., `useVariantsContext`)
+
+This pattern ensures consistent, maintainable, and predictable component architecture across all list-based components.
