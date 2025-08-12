@@ -1,7 +1,157 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import { ChoiceContext } from "./Option.js";
+
+/**
+ * Choice data interface
+ */
+export interface Choice {
+  colorCode?: string;
+  choiceId?: string | null;
+  linkedMedia?: any[]; // ProductMedia[] - using any for now to avoid import dependencies
+  type?: "color" | "text" | "free-text";
+  key?: string;
+  name?: string | null;
+  addedPrice?: string | null;
+}
+
+// Create a context for individual choices
+const ChoiceContext = React.createContext<any>(null);
+
+/**
+ * Props for Choice Root component
+ */
+export interface RootProps
+  extends AsChildProps<{
+    choice: Choice;
+    onValueChange: (value: string) => void;
+  }> {
+  choice?: Choice; // Optional - will be created from rawChoice if not provided
+  rawChoice?: any; // The raw choice data from ProductVariantSelector
+  optionData?: any; // The full option data from ProductVariantSelector
+  onValueChange?: (value: string) => void;
+}
+
+/**
+ * Root component that provides context for a single choice.
+ * Inspired by Option.Root but for individual choices.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Choice.Root choice={choiceData} onValueChange={(value) => console.log('Selected:', value)}>
+ *   <Choice.Text />
+ *   <Choice.Color />
+ * </Choice.Root>
+ *
+ * // asChild with react component
+ * <Choice.Root asChild choice={choiceData} onValueChange={handleChange}>
+ *   {React.forwardRef(({choice, onValueChange, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="choice-wrapper">
+ *       <span>{choice.name}</span>
+ *       <button onClick={() => onValueChange(choice.name || '')}>
+ *         Select
+ *       </button>
+ *     </div>
+ *   ))}
+ * </Choice.Root>
+ * ```
+ */
+export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
+  const {
+    asChild,
+    children,
+    choice: providedChoice,
+    rawChoice,
+    optionData,
+    onValueChange,
+    ...otherProps
+  } = props;
+
+  // Create Choice object from rawChoice if not provided
+  const choice: Choice = providedChoice || {
+    colorCode: rawChoice?.colorCode,
+    choiceId: rawChoice?.choiceId || rawChoice?.id,
+    linkedMedia: rawChoice?.linkedMedia,
+    type: rawChoice?.type,
+    key: rawChoice?.key || rawChoice?.name || rawChoice?.id,
+    name: rawChoice?.name,
+    addedPrice: rawChoice?.addedPrice,
+  };
+
+  // Determine choice type
+  const getChoiceType = (): "color" | "text" | "free-text" => {
+    if (choice.colorCode) return "color";
+    if (choice.type === "free-text") return "free-text";
+    return "text";
+  };
+
+  const choiceType = getChoiceType();
+
+  // Check if this choice type is allowed (moved from ChoiceRepeater)
+  const allowedTypes = optionData?.allowedTypes || [
+    "color",
+    "text",
+    "free-text",
+  ];
+  if (!allowedTypes.includes(choiceType)) {
+    return null; // Don't render if choice type is not allowed
+  }
+
+  // Create the context value that Choice.Text/Color expect
+  const contextValue = {
+    choice: rawChoice || {
+      id: choice.choiceId,
+      name: choice.name,
+      colorCode: choice.colorCode,
+      type: choice.type,
+      linkedMedia: choice.linkedMedia,
+      addedPrice: choice.addedPrice,
+    },
+    optionData: optionData || {
+      onValueChange,
+      name: "option",
+    },
+    shouldRenderAsColor: choiceType === "color",
+    shouldRenderAsText: choiceType === "text",
+    shouldRenderAsFreeText: choiceType === "free-text",
+  };
+
+  const attributes = {
+    "data-testid": "choice",
+    "data-type": choiceType,
+    ...otherProps,
+  };
+
+  const content = (
+    <ChoiceContext.Provider value={contextValue}>
+      {typeof children === "function" ? null : (children as React.ReactNode)}
+    </ChoiceContext.Provider>
+  );
+
+  const rootProps = {
+    choice,
+    onValueChange: onValueChange || (() => {}),
+  };
+
+  if (asChild) {
+    const rendered = renderAsChild({
+      children,
+      props: rootProps,
+      ref,
+      content,
+      attributes,
+    });
+    if (rendered) return rendered;
+  }
+
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {content}
+    </div>
+  );
+});
 
 /**
  * Props for Choice Text component
