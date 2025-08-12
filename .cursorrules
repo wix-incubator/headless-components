@@ -191,24 +191,75 @@ export const Component = React.forwardRef<HTMLElement, ComponentProps>(
 
 ### Data Attributes Rules
 
-#### 1. **Test IDs**
+#### 1. **TestIds Enum Requirements**
 
-- Use centralized `TestIds` enum in each file
-- Apply consistent naming: `entityName-componentType`
-- Examples: `product-variants`, `option-choices`, `choice-text`
+- **MANDATORY**: Every component file must have a centralized `TestIds` enum
+- **Location**: Define at the top of each component file, after imports
+- **Naming Pattern**: `entityName-componentType` (kebab-case)
+- **Usage**: Always use enum values, never hardcoded strings
 
 ```tsx
 enum TestIds {
+  // Container Level
   productVariants = "product-variants",
+
+  // List Container Level
   productVariantOptions = "product-variant-options",
+
+  // Repeater Level (individual items)
   productVariantOption = "product-variant-option",
+
+  // Entity Root
+  optionRoot = "option-root",
+  optionName = "option-name",
+  optionChoices = "option-choices",
+
+  // Choice components
+  choiceRoot = "choice-root",
+  choiceText = "choice-text",
+  choiceColor = "choice-color",
+  choiceFreetext = "choice-freetext",
 }
 ```
 
-#### 2. **Type Attributes**
+#### 2. **TestIds Naming Conventions**
+
+| **Component Type**       | **Naming Pattern**         | **Examples**                                          |
+| ------------------------ | -------------------------- | ----------------------------------------------------- |
+| **Container Level**      | `entityName-listName`      | `product-variants`, `product-modifiers`               |
+| **List Container Level** | `entityName-listNameItems` | `product-variant-options`, `product-modifier-options` |
+| **Repeater Level**       | `entityName-listNameItem`  | `product-variant-option`, `product-modifier-option`   |
+| **Entity Root**          | `entityName-root`          | `option-root`, `choice-root`                          |
+| **Entity Components**    | `entityName-componentType` | `option-name`, `choice-text`, `choice-color`          |
+
+#### 3. **TestIds Usage Rules**
+
+```tsx
+// ✅ CORRECT - Use enum values
+const attributes = {
+  "data-testid": TestIds.productVariants,
+};
+
+// ❌ WRONG - Never use hardcoded strings
+const attributes = {
+  "data-testid": "product-variants", // Don't do this!
+};
+
+// ✅ CORRECT - Pass through as props
+<Option.Root
+  key={option.name}
+  option={option}
+  data-testid={TestIds.productVariantOption}
+>
+  {children}
+</Option.Root>;
+```
+
+#### 4. **Type Attributes**
 
 - Use `data-type` for styling/logic hooks
 - Examples: `data-type="color"`, `data-type="text"`, `data-type="free-text"`
+- Always use lowercase values
 
 ### Example Implementation
 
@@ -244,6 +295,9 @@ enum TestIds {
 ❌ **Don't**: Handle empty states in container components
 ❌ **Don't**: Skip the 3-level pattern for lists
 ❌ **Don't**: Put entity-specific contexts in wrong files
+❌ **Don't**: Use hardcoded test ID strings - always use TestIds enum
+❌ **Don't**: Mix naming patterns - stick to `entityName-componentType`
+❌ **Don't**: Forget to define TestIds enum in new component files
 
 ### Naming Conventions
 

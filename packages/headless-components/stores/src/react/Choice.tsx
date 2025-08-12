@@ -2,6 +2,13 @@ import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 
+enum TestIds {
+  choiceRoot = "choice-root",
+  choiceText = "choice-text",
+  choiceColor = "choice-color",
+  choiceFreetext = "choice-freetext",
+}
+
 /**
  * Choice data interface
  */
@@ -119,7 +126,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   };
 
   const attributes = {
-    "data-testid": "choice",
+    "data-testid": TestIds.choiceRoot,
     "data-type": choiceType,
     ...otherProps,
   };
@@ -182,7 +189,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
     if (!choiceContext) {
       // Fallback when not used within Option context
       const attributes = {
-        "data-testid": "choice-text",
+        "data-testid": TestIds.choiceText,
         "data-selected": "false",
         ...buttonProps,
       };
@@ -228,7 +235,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
           if (!isVisible) return null;
 
           const attributes = {
-            "data-testid": "choice-text",
+            "data-testid": TestIds.choiceText,
             "data-selected": isSelected ? "true" : "false",
             disabled: !isInStock && !isPreOrderEnabled,
             onClick: select,
@@ -311,7 +318,7 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       // Fallback when not used within Option context
       const colorCode = "#ccc";
       const attributes = {
-        "data-testid": "choice-color",
+        "data-testid": TestIds.choiceColor,
         "data-selected": "false",
         style: { backgroundColor: colorCode },
         title: "Color Choice",
@@ -362,7 +369,7 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
 
           const colorCode = choice.colorCode || "#ccc";
           const attributes = {
-            "data-testid": "choice-color",
+            "data-testid": TestIds.choiceColor,
             "data-selected": isSelected ? "true" : "false",
             disabled: !isInStock && !isPreOrderEnabled,
             onClick: select,
@@ -459,7 +466,7 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     if (!choiceContext) {
       // Fallback when not used within Option context
       const attributes = {
-        "data-testid": "choice-free-text",
+        "data-testid": TestIds.choiceFreetext,
         "data-selected": "false",
         ...textareaProps,
       };
@@ -505,7 +512,7 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     };
 
     const attributes = {
-      "data-testid": "choice-free-text",
+      "data-testid": TestIds.choiceFreetext,
       "data-selected": value ? "true" : "false",
       value,
       onChange: handleChange,
