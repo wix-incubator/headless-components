@@ -14,3 +14,10 @@ export {
   ChannelType,
   type LineItem,
 } from "./checkout-service.js";
+
+export {
+  LineItemService,
+  LineItemServiceDefinition,
+  type LineItemServiceAPI,
+  type LineItemServiceConfig,
+} from "./line-item-service.js";

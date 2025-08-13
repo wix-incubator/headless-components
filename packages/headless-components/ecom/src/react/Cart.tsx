@@ -5,6 +5,7 @@ import {
   CurrentCartServiceDefinition,
 } from "../services/current-cart-service.js";
 import { useAsChild, type AsChildProps } from "../utils/asChild.js";
+import * as LineItem from "./LineItem.js";
 
 export interface LineItemsProps extends AsChildProps {
   emptyState?: React.ReactNode;
@@ -54,6 +55,8 @@ export function LineItems(props: LineItemsProps): React.ReactNode {
 export interface LineItemRepeaterProps extends AsChildProps {
 }
 
+
+
 /**
  * Component that repeats its children for each line item in the cart.
  * Provides context for each line item.
@@ -86,12 +89,12 @@ export function LineItemRepeater(props: LineItemRepeaterProps): React.ReactNode 
   const cart = service.cart.get();
   const items = cart?.lineItems || [];
 
-    return (
+        return (
     <Comp className={className} {...otherProps}>
       {items.map((item, index) => (
         <LineItem.Root
           key={item._id || index}
-          data-testid="cart-line-item"
+          item={item}
         >
           {children}
         </LineItem.Root>
@@ -99,3 +102,4 @@ export function LineItemRepeater(props: LineItemRepeaterProps): React.ReactNode 
     </Comp>
   );
 }
+
