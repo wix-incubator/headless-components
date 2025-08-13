@@ -15,7 +15,10 @@ export interface MediaGalleryServiceAPI {
 
   setSelectedMediaIndex: (index: number) => void;
   nextMedia: () => void;
+  hasNextMedia: () => boolean;
+  hasPreviousMedia: () => boolean;
   previousMedia: () => void;
+  stopAutoPlay: () => void;
 }
 
 export const MediaGalleryServiceDefinition =
@@ -28,6 +31,11 @@ export type MediaItem = {
 
 export interface MediaGalleryServiceConfig {
   media?: MediaItem[];
+  infinite?: boolean; // default - false - if true, the gallery will loop back to the first item when the user reaches the end
+  autoPlay?: {
+    direction?: 'forward' | 'backward'; // default - 'forward' - the direction of the gallery (removed top/bottom, has no meaning, we call next/prev, the actual advancement is a style issue.)
+    intervalMs?: number; // default - 5000 - the interval in milliseconds between auto-advances
+ } // if falsy, no autplay
 }
 
 export const MediaGalleryService =
@@ -60,27 +68,53 @@ export const MediaGalleryService =
         const images = mediaToDisplay.get();
         const currentIndex = selectedMediaIndex.get();
 
-        if (!images.length) return;
+        if (!hasNextMedia()) return;
 
         const nextIndex =
-          currentIndex >= images.length - 1 ? 0 : currentIndex + 1;
+          (currentIndex + 1) % images.length;
         selectedMediaIndex.set(nextIndex);
+      };
+
+      const hasNextMedia = () => {
+        const images = mediaToDisplay.get();
+        const currentIndex = selectedMediaIndex.get();
+        return config?.infinite || currentIndex < images.length - 1;
       };
 
       const previousMedia = () => {
         const images = mediaToDisplay.get();
         const currentIndex = selectedMediaIndex.get();
 
-        if (!images.length) return;
+        if (!hasPreviousMedia()) return;
 
         const prevIndex =
-          currentIndex <= 0 ? images.length - 1 : currentIndex - 1;
+          currentIndex - 1 < 0 ? images.length - 1 : currentIndex - 1;
         selectedMediaIndex.set(prevIndex);
+      };
+
+      const hasPreviousMedia = () => {
+        const currentIndex = selectedMediaIndex.get();
+        return config?.infinite || currentIndex > 0;
       };
 
       const setMediaToDisplay = (media: MediaItem[]) => {
         mediaToDisplay.set(media);
         selectedMediaIndex.set(0);
+      };
+
+      let autoplayInterval: NodeJS.Timeout | null = null;
+      if (config?.autoPlay) {
+        const { direction = 'forward', intervalMs = 5000 } = config.autoPlay;
+        autoplayInterval = setInterval(() => {
+          direction === 'forward' ? nextMedia() : previousMedia();
+        }, intervalMs);
+      }
+
+      const stopAutoPlay = () => {
+        if (autoplayInterval) {
+          clearInterval(autoplayInterval);
+          autoplayInterval = null;
+        }
       };
 
       return {
@@ -91,8 +125,12 @@ export const MediaGalleryService =
         setSelectedMediaIndex,
         nextMedia,
         previousMedia,
+        hasNextMedia,
+        hasPreviousMedia,
 
         totalMedia,
+
+        stopAutoPlay,
       };
     },
   );
