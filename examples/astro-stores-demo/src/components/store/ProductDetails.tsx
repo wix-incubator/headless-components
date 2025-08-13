@@ -9,7 +9,10 @@ import {
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductV2 as Product,
+  Option,
+  Choice,
 } from '@wix/headless-stores/react';
+
 import { ProductActionButtons } from './ProductActionButtons';
 import { CurrentCart } from '@wix/headless-ecom/react';
 
@@ -40,8 +43,9 @@ const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
         />
         {maxChars && (
           <div
-            className={`text-xs text-right ${isOverLimit ? 'text-status-error' : 'text-content-muted'
-              }`}
+            className={`text-xs text-right ${
+              isOverLimit ? 'text-status-error' : 'text-content-muted'
+            }`}
           >
             {charCount}/{maxChars} characters
           </div>
@@ -152,178 +156,48 @@ export default function ProductDetails({
                     </Product.Description>
                   )}
 
-                  {/* Product Options (if any) */}
+                  {/* Product Options (if any) - Using New Simplified API */}
                   <ProductVariantSelectorPrimitive.Root>
-                    <ProductVariantSelectorPrimitive.Options>
-                      {({ options, hasOptions }) => (
-                        <>
-                          {hasOptions && (
-                            <div
-                              className="space-y-6"
-                              data-testid="product-options"
-                            >
-                              <h3 className="text-lg font-semibold text-content-primary">
-                                Product Options
-                              </h3>
+                    <Product.Variants>
+                      <div className="space-y-6" data-testid="product-options">
+                        <h3 className="text-lg font-semibold text-content-primary">
+                          Product Options
+                        </h3>
 
-                              {options.map((option: any) => (
-                                <div
-                                  key={option.name}
-                                  data-testid="product-option"
-                                >
-                                  <ProductVariantSelectorPrimitive.Option
-                                    option={option}
-                                  >
-                                    {({ name, choices, hasChoices }) => (
-                                      <>
-                                        <h3 className="text-lg font-semibold text-content-primary mb-3">
-                                          {name}
-                                        </h3>
-                                        {hasChoices && (
-                                          <div className="flex flex-wrap gap-3">
-                                            {choices.map((choice: any) => {
-                                              // Check if this is a color option
-                                              const isColorOption = String(name)
-                                                .toLowerCase()
-                                                .includes('color');
-                                              const hasColorCode =
-                                                choice.colorCode;
-
-                                              return (
-                                                <ProductVariantSelectorPrimitive.Choice
-                                                  key={
-                                                    choice.value ||
-                                                    choice.description ||
-                                                    choice.name
-                                                  }
-                                                  option={option}
-                                                  choice={choice}
-                                                >
-                                                  {({
-                                                    value,
-                                                    isSelected,
-                                                    isVisible,
-                                                    isInStock,
-                                                    isPreOrderEnabled,
-                                                    select,
-                                                  }) => (
-                                                    <>
-                                                      {isColorOption &&
-                                                        isVisible &&
-                                                        hasColorCode &&
-                                                        (!isQuickView ||
-                                                          isInStock) ? (
-                                                        // Color Swatch
-                                                        <div className="relative">
-                                                          <button
-                                                            data-testid="product-modifier-choice-button"
-                                                            onClick={select}
-                                                            title={value}
-                                                            className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${isSelected
-                                                                ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
-                                                                : 'border-color-swatch hover:border-color-swatch-hover hover:scale-105'
-                                                              } ${!isInStock &&
-                                                                !isPreOrderEnabled &&
-                                                                !isQuickView
-                                                                ? 'grayscale'
-                                                                : ''
-                                                              }`}
-                                                            style={{
-                                                              backgroundColor:
-                                                                choice.colorCode ||
-                                                                'var(--theme-text-content-40)',
-                                                            }}
-                                                          />
-                                                          {!isInStock &&
-                                                            !isPreOrderEnabled &&
-                                                            !isQuickView && (
-                                                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                                <svg
-                                                                  className="w-6 h-6 text-status-error"
-                                                                  fill="none"
-                                                                  viewBox="0 0 24 24"
-                                                                  stroke="currentColor"
-                                                                >
-                                                                  <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    strokeWidth="2"
-                                                                    d="M6 18L18 6M6 6l12 12"
-                                                                  />
-                                                                </svg>
-                                                              </div>
-                                                            )}
-                                                        </div>
-                                                      ) : (
-                                                        isVisible &&
-                                                        (!isQuickView ||
-                                                          isInStock) && (
-                                                          // Regular Text Button
-                                                          <div className="relative">
-                                                            <button
-                                                              data-testid="product-modifier-choice-button"
-                                                              onClick={select}
-                                                              className={`px-4 py-2 border rounded-lg transition-all duration-200 ${isSelected
-                                                                  ? 'product-option-active'
-                                                                  : 'product-option-inactive'
-                                                                }`}
-                                                            >
-                                                              {value}
-                                                            </button>
-                                                            {!isInStock &&
-                                                              !isPreOrderEnabled &&
-                                                              !isQuickView && (
-                                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                                  <svg
-                                                                    className="w-6 h-6 text-status-error"
-                                                                    fill="none"
-                                                                    viewBox="0 0 24 24"
-                                                                    stroke="currentColor"
-                                                                  >
-                                                                    <path
-                                                                      strokeLinecap="round"
-                                                                      strokeLinejoin="round"
-                                                                      strokeWidth="2"
-                                                                      d="M6 18L18 6M6 6l12 12"
-                                                                    />
-                                                                  </svg>
-                                                                </div>
-                                                              )}
-                                                          </div>
-                                                        )
-                                                      )}
-                                                    </>
-                                                  )}
-                                                </ProductVariantSelectorPrimitive.Choice>
-                                              );
-                                            })}
-                                          </div>
-                                        )}
-                                      </>
-                                    )}
-                                  </ProductVariantSelectorPrimitive.Option>
+                        <Product.VariantOptions>
+                          <Product.VariantOptionRepeater>
+                            <div className="space-y-3">
+                              <Option.Name className="text-lg font-semibold text-content-primary mb-3" />
+                              <Option.Choices>
+                                <div className="flex flex-wrap gap-3">
+                                  <Option.ChoiceRepeater>
+                                    <>
+                                      <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all duration-200 border-color-swatch hover:border-color-swatch-hover hover:scale-105 data-[selected='true']:border-brand-primary data-[selected='true']:shadow-lg data-[selected='true']:scale-110 data-[selected='true']:ring-2 data-[selected='true']:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
+                                      <Choice.Text className="px-4 py-2 border rounded-lg transition-all duration-200 product-option-inactive data-[selected='true']:product-option-active disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400" />
+                                    </>
+                                  </Option.ChoiceRepeater>
                                 </div>
-                              ))}
-
-                              <ProductVariantSelectorPrimitive.Reset>
-                                {({ reset, hasSelections }) =>
-                                  hasSelections && (
-                                    <div className="pt-4">
-                                      <button
-                                        onClick={reset}
-                                        className="text-sm text-brand-primary hover:text-brand-light transition-colors"
-                                      >
-                                        Reset Selections
-                                      </button>
-                                    </div>
-                                  )
-                                }
-                              </ProductVariantSelectorPrimitive.Reset>
+                              </Option.Choices>
                             </div>
-                          )}
-                        </>
-                      )}
-                    </ProductVariantSelectorPrimitive.Options>
+                          </Product.VariantOptionRepeater>
+                        </Product.VariantOptions>
+
+                        <ProductVariantSelectorPrimitive.Reset>
+                          {({ reset, hasSelections }) =>
+                            hasSelections && (
+                              <div className="pt-4">
+                                <button
+                                  onClick={reset}
+                                  className="text-sm text-brand-primary hover:text-brand-light transition-colors"
+                                >
+                                  Reset Selections
+                                </button>
+                              </div>
+                            )
+                          }
+                        </ProductVariantSelectorPrimitive.Reset>
+                      </div>
+                    </Product.Variants>
 
                     {/* Product Modifiers */}
                     <ProductModifiersPrimitive.Root>
@@ -379,10 +253,11 @@ export default function ProductDetails({
                                                     <button
                                                       data-testid="product-modifier-choice-button"
                                                       onClick={select}
-                                                      className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${isSelected
+                                                      className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
+                                                        isSelected
                                                           ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
                                                           : 'border-brand-light hover:border-brand-medium hover:scale-105'
-                                                        }`}
+                                                      }`}
                                                       style={{
                                                         backgroundColor:
                                                           colorCode ||
@@ -413,10 +288,11 @@ export default function ProductDetails({
                                                     <button
                                                       data-testid="product-modifier-choice-button"
                                                       onClick={select}
-                                                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${isSelected
+                                                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
+                                                        isSelected
                                                           ? 'product-option-active'
                                                           : 'product-option-inactive'
-                                                        }`}
+                                                      }`}
                                                     >
                                                       {value}
                                                     </button>
@@ -593,16 +469,18 @@ export default function ProductDetails({
                             (!!availabilityStatus || currentVariantId) && (
                               <div className="flex items-center gap-2">
                                 <div
-                                  className={`w-3 h-3 rounded-full ${inStock || isPreOrderEnabled
+                                  className={`w-3 h-3 rounded-full ${
+                                    inStock || isPreOrderEnabled
                                       ? 'status-dot-success'
                                       : 'status-dot-danger'
-                                    }`}
+                                  }`}
                                 ></div>
                                 <span
-                                  className={`text-sm ${inStock || isPreOrderEnabled
+                                  className={`text-sm ${
+                                    inStock || isPreOrderEnabled
                                       ? 'text-status-success'
                                       : 'text-status-error'
-                                    }`}
+                                  }`}
                                 >
                                   {displayMessage}
                                   {trackInventory &&

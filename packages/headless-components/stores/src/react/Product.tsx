@@ -2,10 +2,33 @@ import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as CoreProduct from "./core/Product.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 import * as SelectedVariant from "./core/SelectedVariant.js";
+import * as Option from "./Option.js";
 import { AsContent } from "./types.js";
+
+/**
+ * Context for sharing variant options state between components
+ */
+interface VariantsContextValue {
+  hasOptions: boolean;
+  options: any[];
+}
+
+const VariantsContext = React.createContext<VariantsContextValue | null>(null);
+
+/**
+ * Hook to access variants context
+ */
+export function useVariantsContext(): VariantsContextValue {
+  const context = React.useContext(VariantsContext);
+  if (!context) {
+    throw new Error(
+      "useVariantsContext must be used within a Product.Variants component",
+    );
+  }
+  return context;
+}
 
 enum TestIds {
   productRoot = "product-root",
@@ -13,6 +36,9 @@ enum TestIds {
   productDescription = "product-description",
   productPrice = "product-price",
   productCompareAtPrice = "product-compare-at-price",
+  productVariants = "product-variants",
+  productVariantOptions = "product-variant-options",
+  productVariantOption = "product-variant-option",
 }
 
 /**
@@ -51,9 +77,7 @@ export function Root(props: ProductRootProps): React.ReactNode {
       data-testid={TestIds.productRoot}
     >
       <ProductVariantSelector.Root>
-        <ProductModifiers.Root>
-          <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
-        </ProductModifiers.Root>
+        <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
       </ProductVariantSelector.Root>
     </CoreProduct.Root>
   );
@@ -358,5 +382,196 @@ export const CompareAtPrice = React.forwardRef<
         );
       }}
     </SelectedVariant.Price>
+  );
+});
+
+/**
+ * Props for Product Variants container
+ */
+export interface VariantsProps extends AsChildProps<{ hasOptions: boolean }> {}
+
+/**
+ * Container for product variant selection system.
+ * Does not render when there are no variants.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Variants>
+ *   <Product.VariantOptions>
+ *     <Product.VariantOptionRepeater>
+ *       <Option.Name className="text-lg font-medium mb-3" />
+ *       <Option.Choices>
+ *         <Option.ChoiceRepeater>
+ *           <Choice.Text className="px-4 py-2 border rounded-lg" />
+ *           <Choice.Color className="w-10 h-10 rounded-full border-4" />
+ *         </Option.ChoiceRepeater>
+ *       </Option.Choices>
+ *     </Product.VariantOptionRepeater>
+ *   </Product.VariantOptions>
+ * </Product.Variants>
+ *
+ * // asChild with primitive
+ * <Product.Variants asChild>
+ *   <section className="variant-section">
+ *     <Product.VariantOptions>
+ *       // variant options
+ *     </Product.VariantOptions>
+ *   </section>
+ * </Product.Variants>
+ *
+ * // asChild with react component
+ * <Product.Variants asChild>
+ *   {React.forwardRef(({hasOptions, ...props}, ref) => (
+ *     <section ref={ref} {...props} className="variant-section">
+ *       {hasOptions && <h3>Choose Options</h3>}
+ *       {props.children}
+ *     </section>
+ *   ))}
+ * </Product.Variants>
+ * ```
+ */
+export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
+  (props, ref) => {
+    const { asChild, children } = props;
+
+    return (
+      <ProductVariantSelector.Options>
+        {({ hasOptions, options }) => {
+          if (!hasOptions) return null;
+
+          const contextValue: VariantsContextValue = {
+            hasOptions,
+            options,
+          };
+
+          const attributes = {
+            "data-testid": TestIds.productVariants,
+          };
+
+          const content = (
+            <VariantsContext.Provider value={contextValue}>
+              {typeof children === "function"
+                ? null
+                : (children as React.ReactNode)}
+            </VariantsContext.Provider>
+          );
+
+          if (asChild) {
+            const rendered = renderAsChild({
+              children,
+              props: { hasOptions },
+              ref,
+              content,
+              attributes,
+            });
+            if (rendered) return rendered;
+          }
+
+          return (
+            <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+              {content}
+            </div>
+          );
+        }}
+      </ProductVariantSelector.Options>
+    );
+  },
+);
+
+/**
+ * Props for Product VariantOptions component
+ */
+export interface VariantOptionsProps {
+  children: React.ReactNode;
+  emptyState?: React.ReactNode;
+}
+
+/**
+ * Component that provides access to variant options.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.VariantOptions emptyState={<div>No options available</div>}>
+ *   <Product.VariantOptionRepeater>
+ *     <Option.Name />
+ *     <Option.Choices>
+ *       <Option.ChoiceRepeater>
+ *         <Choice.Text />
+ *       </Option.ChoiceRepeater>
+ *     </Option.Choices>
+ *   </Product.VariantOptionRepeater>
+ * </Product.VariantOptions>
+ *
+ * // Simple container usage
+ * <Product.VariantOptions emptyState={<div>No options</div>}>
+ *   <div className="options-container">
+ *     <Product.VariantOptionRepeater>
+ *       // option content
+ *     </Product.VariantOptionRepeater>
+ *   </div>
+ * </Product.VariantOptions>
+ * ```
+ */
+export const VariantOptions = React.forwardRef<
+  HTMLElement,
+  VariantOptionsProps
+>((props, ref) => {
+  const { children, emptyState } = props;
+  const { hasOptions } = useVariantsContext();
+
+  if (!hasOptions) {
+    return emptyState || null;
+  }
+
+  const attributes = {
+    "data-testid": TestIds.productVariantOptions,
+  };
+
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {children}
+    </div>
+  );
+});
+
+/**
+ * Props for Product VariantOptionRepeater component
+ */
+export interface VariantOptionRepeaterProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Repeater component that renders children for each variant option.
+ *
+ * @component
+ */
+export const VariantOptionRepeater = React.forwardRef<
+  HTMLElement,
+  VariantOptionRepeaterProps
+>((props, _ref) => {
+  const { children } = props;
+  const { hasOptions, options } = useVariantsContext();
+
+  if (!hasOptions) return null;
+
+  return (
+    <>
+      {options.map((option: any) => {
+        return (
+          <Option.Root
+            key={option.name}
+            option={option}
+            data-testid={TestIds.productVariantOption}
+          >
+            {children as React.ReactElement}
+          </Option.Root>
+        );
+      })}
+    </>
   );
 });
