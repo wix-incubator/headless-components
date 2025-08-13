@@ -1,68 +1,11 @@
 import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import { useService } from "@wix/services-manager-react";
 import {
   CurrentCartServiceDefinition,
-  CurrentCartService,
-  CurrentCartServiceConfig,
   type LineItem,
 } from "../../services/current-cart-service.js";
-import { createServicesMap } from "@wix/services-manager";
 import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
 import { media } from "@wix/sdk";
-
-export interface RootProps {
-  children: React.ReactNode;
-  currentCartServiceConfig: CurrentCartServiceConfig;
-}
-
-/**
- * Root component that provides the CurrentCart service context to its children.
- * This component sets up the necessary services for managing current cart functionality.
- *
- * @order 1
- * @component
- * @example
- * ```tsx
- * import { CurrentCart } from '@wix/ecom/components';
- *
- * function CartProvider() {
- *   return (
- *     <CurrentCart.Root>
- *       <div>
- *         <CurrentCart.OpenTrigger>
- *           {({ totalItems, open }) => (
- *             <button onClick={open}>
- *               Cart ({totalItems})
- *             </button>
- *           )}
- *         </CurrentCart.OpenTrigger>
- *
- *         <CurrentCart.Content>
- *           {({ cart, isLoading }) => (
- *             <div>
- *               {isLoading ? 'Loading...' : 'Cart loaded'}
- *             </div>
- *           )}
- *         </CurrentCart.Content>
- *       </div>
- *     </CurrentCart.Root>
- *   );
- * }
- * ```
- */
-export function Root(props: RootProps): React.ReactNode {
-  return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        CurrentCartServiceDefinition,
-        CurrentCartService,
-        props.currentCartServiceConfig,
-      )}
-    >
-      {props.children}
-    </WixServices>
-  );
-}
 
 /**
  * Props for EmptyState headless component
