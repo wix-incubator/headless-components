@@ -1,467 +1,460 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
-import {
-  MediaGalleryServiceDefinition,
-  MediaGalleryService,
-} from "../services/index.js";
-import { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
-import { createServicesMap } from "@wix/services-manager";
+/**
+ * @fileoverview MediaGallery Primitive Components
+ *
+ * This module provides unstyled, composable components for building media galleries.
+ * These components follow the Radix UI primitive pattern, offering:
+ *
+ * - **Unstyled**: No default styling, only functional behavior
+ * - **Composable**: Support for the `asChild` pattern for flexible DOM structure
+ * - **Accessible**: Built-in keyboard navigation and ARIA attributes
+ * - **Flexible**: Render props pattern for maximum customization
+ *
+ * ## Architecture
+ *
+ * These components are the **primitive layer** that sits between:
+ * 1. **Core components** (pure logic, no DOM)
+ * 2. **Styled components** (project-specific styling)
+ *
+ * ## Usage
+ *
+ * ```tsx
+ * import { MediaGallery } from '@wix/headless-media/react';
+ *
+ * function ProductGallery({ productMedia }) {
+ *   return (
+ *     <MediaGallery.Root mediaGalleryServiceConfig={{ media: productMedia }}>
+ *       <MediaGallery.Viewport />
+ *       <MediaGallery.Previous />
+ *       <MediaGallery.Next />
+ *       <MediaGallery.Indicator />
+ *       <MediaGallery.Thumbnails>
+ *         <MediaGallery.ThumbnailRepeater>
+ *           <MediaGallery.ThumbnailItem />
+ *         </MediaGallery.ThumbnailRepeater>
+ *       </MediaGallery.Thumbnails>
+ *     </MediaGallery.Root>
+ *   );
+ * }
+ * ```
+ *
+ * @module MediaGallery
+ */
 
+import { Root as CoreRoot, Next as CoreNext, Previous as CorePrevious, Viewport as CoreViewport, Indicator as CoreIndicator, ThumbnailList as CoreThumbnailList, ThumbnailItem as CoreThumbnailItem } from "./core/MediaGallery.js";
+import React, { createContext, useContext } from "react";
+import type { MediaItem } from "../services/media-gallery-service.js";
+import type { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
+import { Slot } from "@radix-ui/react-slot";
+import { WixMediaImage } from "./WixMediaImage.js";
+
+
+/**
+ * Props for button-like components that support the asChild pattern
+ */
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+}
+
+/**
+ * Props for the Root component
+ */
 export interface RootProps {
+  /** Child components that will have access to the media gallery context */
   children: React.ReactNode;
+  /** Configuration for the media gallery service */
   mediaGalleryServiceConfig: MediaGalleryServiceConfig;
 }
 
 /**
- * Root component that provides the MediaGallery service context to its children.
- * This component sets up the necessary services for rendering and managing media gallery functionality.
+ * Root component that provides media gallery service context to its children.
+ * This is a primitive wrapper around the core Root component that maintains
+ * the same API while providing a foundation for composition patterns.
  *
- * @order 1
  * @component
  * @example
  * ```tsx
- * import { MediaGallery } from '@wix/media/components';
+ * import { MediaGallery } from '@wix/headless-media/react';
  *
- * function ProductMediaGallery({ productMedia }) {
+ * function ProductGallery({ productMedia }) {
  *   return (
  *     <MediaGallery.Root mediaGalleryServiceConfig={{ media: productMedia }}>
- *       <div className="media-gallery">
- *         <MediaGallery.Viewport>
- *           {({ src, alt }) => (
- *             <img
- *               src={src || '/placeholder.jpg'}
- *               alt={alt}
- *               className="main-media"
- *             />
- *           )}
- *         </MediaGallery.Viewport>
- *         <MediaGallery.ThumbnailList>
- *           {({ items }) => (
- *             <div className="thumbnail-grid">
- *               {items.map((item, index) => (
- *                 <MediaGallery.ThumbnailItem key={index} index={index}>
- *                   {({ src, isActive, onSelect, alt }) => (
- *                     <button
- *                       onClick={onSelect}
- *                       className={`thumbnail ${isActive ? 'active' : ''}`}
- *                     >
- *                       <img src={src} alt={alt} />
- *                     </button>
- *                   )}
- *                 </MediaGallery.ThumbnailItem>
- *               ))}
- *             </div>
- *           )}
- *         </MediaGallery.ThumbnailList>
- *       </div>
+ *       <MediaGallery.Viewport className="main-viewer" />
+ *       <MediaGallery.Thumbnails>
+ *         <MediaGallery.ThumbnailRepeater>
+ *           <MediaGallery.ThumbnailItem />
+ *         </MediaGallery.ThumbnailRepeater>
+ *       </MediaGallery.Thumbnails>
  *     </MediaGallery.Root>
  *   );
  * }
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
+export const Root = ({ children, mediaGalleryServiceConfig }: RootProps) => {
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        MediaGalleryServiceDefinition,
-        MediaGalleryService,
-        props.mediaGalleryServiceConfig,
-      )}
-    >
-      {props.children}
-    </WixServices>
+    <CoreRoot mediaGalleryServiceConfig={mediaGalleryServiceConfig}>
+      {children}
+    </CoreRoot>
   );
-}
+};
 
 /**
- * Props for Viewport headless component
- */
-export interface ViewportProps {
-  /** Render prop function that receives viewport data */
-  children: (props: ViewportRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for Viewport component
- */
-export interface ViewportRenderProps {
-  /** Media URL */
-  src: string | null;
-  /** Alt text for media */
-  alt: string;
-}
-
-/**
- * Headless component for displaying the main viewport media
+ * Next button component that navigates to the next media item.
+ * Supports the asChild pattern for flexible composition.
  *
  * @component
  * @example
  * ```tsx
- * import { MediaGallery } from '@wix/media/components';
+ * // Default button
+ * <MediaGallery.Next />
  *
- * function MediaViewer() {
- *   return (
- *     <MediaGallery.Viewport>
- *       {({ src, alt }) => (
- *         <img
- *           src={src || '/placeholder.jpg'}
- *           alt={alt}
- *           className="main-media"
- *         />
- *       )}
- *     </MediaGallery.Viewport>
- *   );
- * }
+ * // Custom button with asChild
+ * <MediaGallery.Next asChild>
+ *   <button className="custom-next-btn">
+ *     <ChevronRightIcon />
+ *   </button>
+ * </MediaGallery.Next>
+ *
+ * // With custom content
+ * <MediaGallery.Next className="nav-button">
+ *   Next Image →
+ * </MediaGallery.Next>
  * ```
  */
-export const Viewport = (props: ViewportProps) => {
-  const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
-    typeof MediaGalleryServiceDefinition
-  >;
+export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
+  const Comp = props.asChild ? Slot : "button";
 
-  const currentIndex = mediaService.selectedMediaIndex.get();
-  const mediaToDisplay = mediaService.mediaToDisplay.get();
-
-  if (mediaToDisplay.length === 0) {
-    return null;
-  }
-
-  // Get the current media from the relevant media array
-  const src = mediaToDisplay[currentIndex]!.image!;
-  const alt = mediaToDisplay[currentIndex]!.altText!;
-
-  return props.children({
-    src,
-    alt,
-  });
-};
+  return <CoreNext>
+    {({ next, canGoNext }) => (
+      <Comp
+        ref={ref}
+        onClick={next}
+        disabled={!canGoNext}
+        {...props}
+      >
+        {children}
+      </Comp>
+    )}
+  </CoreNext>
+});
 
 /**
- * Props for ThumbnailList headless component
- */
-export interface ThumbnailListProps {
-  /** Render prop function that receives thumbnail list data */
-  children: (props: ThumbnailListRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for ThumbnailList component
- */
-export interface ThumbnailListRenderProps {
-  /** Array of media items */
-  items: any[];
-}
-
-/**
- * Headless component for managing a list of thumbnails
+ * Previous button component that navigates to the previous media item.
+ * Supports the asChild pattern for flexible composition.
  *
  * @component
  * @example
  * ```tsx
- * import { MediaGallery } from '@wix/media/components';
+ * // Default button
+ * <MediaGallery.Previous />
  *
- * function ThumbnailGrid() {
- *   return (
- *     <MediaGallery.ThumbnailList>
- *       {({ items }) => (
- *         <div className="thumbnail-grid">
- *           {items.map((item, index) => (
- *             <MediaGallery.ThumbnailItem key={index} index={index}>
- *               {({ src, isActive, onSelect, alt }) => (
- *                 <button
- *                   onClick={onSelect}
- *                   className={`thumbnail ${isActive ? 'active' : ''}`}
- *                 >
- *                   <img src={src} alt={alt} />
- *                 </button>
- *               )}
- *             </MediaGallery.ThumbnailItem>
- *           ))}
- *         </div>
- *       )}
- *     </MediaGallery.ThumbnailList>
- *   );
- * }
+ * // Custom button with asChild
+ * <MediaGallery.Previous asChild>
+ *   <button className="custom-prev-btn">
+ *     <ChevronLeftIcon />
+ *   </button>
+ * </MediaGallery.Previous>
+ *
+ * // With custom content
+ * <MediaGallery.Previous className="nav-button">
+ *   ← Previous Image
+ * </MediaGallery.Previous>
  * ```
  */
-export const ThumbnailList = (props: ThumbnailListProps) => {
-  const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
-    typeof MediaGalleryServiceDefinition
-  >;
-
-  const mediaToDisplay = mediaService.mediaToDisplay.get();
-
-  if (mediaToDisplay.length <= 1) {
-    return null;
-  }
-
-  return props.children({
-    items: mediaToDisplay,
-  });
-};
+export const Previous = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
+  const Comp = props.asChild ? Slot : "button";
+  return <CorePrevious>
+    {({ previous, canGoPrevious }) => (
+      <Comp
+        ref={ref}
+        onClick={previous}
+        disabled={!canGoPrevious}
+        {...props}
+      >
+        {children}
+      </Comp>
+    )}
+  </CorePrevious>
+});
 
 /**
- * Props for ThumbnailItem headless component
+ * Props for the Viewport component
  */
-export interface ThumbnailItemProps {
-  /** Index of the media item */
-  index: number;
-  /** Render prop function that receives thumbnail data */
-  children: (props: ThumbnailItemRenderProps) => React.ReactNode;
+export interface ViewportProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Optional children to render instead of the default image. Renders default media image if not provided */
+  children?: React.ReactNode;
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Custom empty state content to display when no media is available */
+  emptyState?: React.ReactNode;
 }
 
 /**
- * Render props for ThumbnailItem component
- */
-export interface ThumbnailItemRenderProps {
-  /** Media item data */
-  item: any | null; // V3 media item structure
-  /** Thumbnail image URL */
-  src: string | null;
-  /** Whether this thumbnail is currently active */
-  isActive: boolean;
-  /** Function to select this media */
-  select: () => void;
-  /** Index of this thumbnail */
-  index: number;
-  /** Alt text for thumbnail */
-  alt: string;
-}
-
-/**
- * Headless component for individual media thumbnail
+ * Viewport component that displays the currently selected media item.
+ * Automatically renders the active media using WixMediaImage for optimization.
+ * Supports the asChild pattern and custom empty states.
  *
  * @component
  * @example
  * ```tsx
- * import { MediaGallery } from '@wix/media/components';
+ * // Default viewport
+ * <MediaGallery.Viewport />
  *
- * function ThumbnailButton({ index }) {
- *   return (
- *     <MediaGallery.ThumbnailItem index={index}>
- *       {({ src, isActive, select, alt }) => (
- *         <button
- *           onClick={select}
- *           className={`thumbnail-btn ${isActive ? 'active' : ''}`}
- *         >
- *           <img src={src} alt={alt} />
- *           {isActive && <div className="active-indicator" />}
- *         </button>
- *       )}
- *     </MediaGallery.ThumbnailItem>
- *   );
- * }
+ * // With custom styling
+ * <MediaGallery.Viewport className="rounded-lg border" />
+ *
+ * // With custom empty state
+ * <MediaGallery.Viewport
+ *   emptyState={<div>No images available</div>}
+ * />
+ *
+ * // Using asChild for custom wrapper
+ * <MediaGallery.Viewport asChild>
+ *   <div className="custom-viewport-wrapper">
+ *     Content will be rendered here
+ *   </div>
+ * </MediaGallery.Viewport>
+ *
+ * // With completely custom children
+ * <MediaGallery.Viewport>
+ *   <CustomImageComponent />
+ * </MediaGallery.Viewport>
  * ```
  */
-export const ThumbnailItem = (props: ThumbnailItemProps) => {
-  const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
-    typeof MediaGalleryServiceDefinition
-  >;
-
-  const currentIndex = mediaService.selectedMediaIndex.get();
-  const mediaToDisplay = mediaService.mediaToDisplay.get();
-
-  if (mediaToDisplay.length === 0) {
-    return null;
+export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
+  ({ children, asChild, emptyState, ...props }, ref) => {
+    return (
+      <CoreViewport>
+        {({ src, alt }) => {
+          const Comp = asChild ? Slot : "div";
+          return (
+            <Comp
+              ref={ref}
+              data-src={src}
+              data-alt={alt}
+              {...props}
+            >
+              {children ?? (
+                src ? (
+                  <WixMediaImage media={{ image: src }} alt={alt} />
+                ) : (
+                  emptyState ?? <div>No image</div>
+                )
+              )}
+            </Comp>
+          );
+        }}
+      </CoreViewport>
+    );
   }
-
-  // Get the image source from the centralized relevant images
-  const src = mediaToDisplay[props.index]!.image!;
-  const alt = mediaToDisplay[props.index]!.altText!;
-
-  const isActive = currentIndex === props.index;
-
-  const select = () => {
-    mediaService.setSelectedMediaIndex(props.index);
-  };
-
-  return props.children({
-    item: mediaToDisplay[props.index],
-    src,
-    isActive,
-    select,
-    index: props.index,
-    alt,
-  });
-};
+);
 
 /**
- * Props for Next headless component
+ * Props for the Indicator component
  */
-export interface NextProps {
-  /** Render prop function that receives next navigation data */
-  children: (props: NextRenderProps) => React.ReactNode;
+export interface IndicatorProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Optional children to render instead of the default "current / total" format */
+  children?: React.ReactNode;
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
 }
 
 /**
- * Render props for Next component
- */
-export interface NextRenderProps {
-  /** Function to go to next media */
-  next: () => void;
-  /** Whether there is a next media available */
-  canGoNext: boolean;
-}
-
-/**
- * Headless component for next media navigation
+ * Indicator component that displays the current media position (e.g., "1 / 5").
+ * Automatically tracks the current and total media count.
+ * Supports the asChild pattern for flexible styling.
  *
  * @component
  * @example
  * ```tsx
- * import { MediaGallery } from '@wix/media/components';
+ * // Default indicator
+ * <MediaGallery.Indicator />
  *
- * function NextButton() {
- *   return (
- *     <MediaGallery.Next>
- *       {({ next, canGoNext }) => (
- *         <button
- *           onClick={next}
- *           disabled={!canGoNext}
- *           className="nav-btn next-btn"
- *         >
- *           Next →
- *         </button>
- *       )}
- *     </MediaGallery.Next>
- *   );
- * }
+ * // With custom styling
+ * <MediaGallery.Indicator className="text-sm opacity-80" />
+ *
+ * // Using asChild for custom wrapper
+ * <MediaGallery.Indicator asChild>
+ *   <span className="badge">
+ *    "1 / 5" will be rendered here
+ *   </span>
+ * </MediaGallery.Indicator>
+ *
+ * // With completely custom children
+ * <MediaGallery.Indicator>
+ *   <CustomIndicatorComponent />
+ * </MediaGallery.Indicator>
  * ```
  */
-export const Next = (props: NextProps) => {
-  const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
-    typeof MediaGalleryServiceDefinition
-  >;
-
-  const currentIndex = mediaService.selectedMediaIndex.get();
-  const totalMedia = mediaService.totalMedia.get();
-  const canGoNext = currentIndex < totalMedia - 1;
-
-  if (totalMedia <= 1) {
-    return null;
+export const Indicator = React.forwardRef<HTMLDivElement, IndicatorProps>(
+  ({ children, asChild, ...props }, ref) => {
+    return (
+      <CoreIndicator>
+        {({ current, total }) => {
+          const Comp = asChild ? Slot : "div";
+          return (
+            <Comp
+              ref={ref}
+              data-current={current}
+              data-total={total}
+              {...props}
+            >
+              {children ?? (
+                <div>{current} / {total}</div>
+              )}
+            </Comp>
+          );
+        }}
+      </CoreIndicator>
+    );
   }
+);
 
-  return props.children({
-    next: mediaService.nextMedia,
-    canGoNext,
-  });
-};
+const ThumbnailsContext = createContext<{ items: MediaItem[] } | null>(null);
+const ThumbnailItemContext = createContext<{ index: number } | null>(null);
 
 /**
- * Props for Previous headless component
+ * Props for the Thumbnails component
  */
-export interface PreviousProps {
-  /** Render prop function that receives previous navigation data */
-  children: (props: PreviousRenderProps) => React.ReactNode;
+export interface ThumbnailsProps {
+  /** Child components that will have access to the thumbnail context */
+  children: React.ReactNode;
 }
 
 /**
- * Render props for Previous component
- */
-export interface PreviousRenderProps {
-  /** Function to go to previous media */
-  previous: () => void;
-  /** Whether there is a previous media available */
-  canGoPrevious: boolean;
-}
-
-/**
- * Headless component for previous media navigation
+ * Thumbnails container component that provides thumbnail context to its children.
+ * Only renders when there are multiple media items to display.
  *
  * @component
  * @example
  * ```tsx
- * import { MediaGallery } from '@wix/media/components';
- *
- * function PreviousButton() {
- *   return (
- *     <MediaGallery.Previous>
- *       {({ previous, canGoPrevious }) => (
- *         <button
- *           onClick={previous}
- *           disabled={!canGoPrevious}
- *           className="nav-btn prev-btn"
- *         >
- *           ← Previous
- *         </button>
- *       )}
- *     </MediaGallery.Previous>
- *   );
- * }
+ * <MediaGallery.Thumbnails>
+ *   <MediaGallery.ThumbnailRepeater>
+ *     <MediaGallery.ThumbnailItem />
+ *   </MediaGallery.ThumbnailRepeater>
+ * </MediaGallery.Thumbnails>
  * ```
  */
-export const Previous = (props: PreviousProps) => {
-  const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
-    typeof MediaGalleryServiceDefinition
-  >;
-
-  const currentIndex = mediaService.selectedMediaIndex.get();
-  const totalMedia = mediaService.totalMedia.get();
-  const canGoPrevious = currentIndex > 0;
-
-  if (totalMedia <= 1) {
-    return null;
-  }
-
-  return props.children({
-    previous: mediaService.previousMedia,
-    canGoPrevious,
-  });
-};
+export const Thumbnails = ({ children }: ThumbnailsProps) => (
+  <CoreThumbnailList>
+    {({ items }) => (
+      <ThumbnailsContext.Provider value={{ items: items as MediaItem[] }}>
+        {children}
+      </ThumbnailsContext.Provider>
+    )}
+  </CoreThumbnailList>
+);
 
 /**
- * Props for Indicator headless component
+ * Props for the ThumbnailRepeater component
  */
-export interface IndicatorProps {
-  /** Render prop function that receives indicator data */
-  children: (props: IndicatorRenderProps) => React.ReactNode;
+export interface ThumbnailRepeaterProps {
+  /** Template to repeat for each thumbnail item */
+  children: React.ReactNode;
 }
 
 /**
- * Render props for Indicator component
- */
-export interface IndicatorRenderProps {
-  /** Current media index (1-based for display) */
-  current: number;
-  /** Total number of media */
-  total: number;
-}
-
-/**
- * Headless component for media gallery indicator/counter
+ * ThumbnailRepeater component that renders a template for each media item.
+ * Provides index context to each thumbnail item. Only renders when there are
+ * multiple media items available.
  *
  * @component
  * @example
  * ```tsx
- * import { MediaGallery } from '@wix/media/components';
- *
- * function MediaCounter() {
- *   return (
- *     <MediaGallery.Indicator>
- *       {({ current, total }) => (
- *         <div className="media-indicator">
- *           {current} of {total}
- *         </div>
- *       )}
- *     </MediaGallery.Indicator>
- *   );
- * }
+ * <MediaGallery.ThumbnailRepeater>
+ *   <MediaGallery.ThumbnailItem className="thumbnail" />
+ * </MediaGallery.ThumbnailRepeater>
  * ```
  */
-export const Indicator = (props: IndicatorProps) => {
-  const mediaService = useService(MediaGalleryServiceDefinition) as ServiceAPI<
-    typeof MediaGalleryServiceDefinition
-  >;
-
-  const currentIndex = mediaService.selectedMediaIndex.get();
-  const totalMedia = mediaService.totalMedia.get();
-
-  if (totalMedia <= 1) {
-    return null;
-  }
-
-  return props.children({
-    current: currentIndex + 1,
-    total: totalMedia,
-  });
+export const ThumbnailRepeater = ({ children }: ThumbnailRepeaterProps) => {
+  const ctx = useContext(ThumbnailsContext);
+  if (!ctx || !ctx.items || ctx.items.length <= 1) return null;
+  return (
+    <>
+      {ctx.items.map((_, i) => (
+        <ThumbnailItemContext.Provider key={i} value={{ index: i }}>
+          {children}
+        </ThumbnailItemContext.Provider>
+      ))}
+    </>
+  );
 };
+
+/**
+ * Props for the ThumbnailItem component
+ */
+export interface ThumbnailItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Custom empty state content to display when the thumbnail has no media */
+  emptyState?: React.ReactNode;
+}
+
+/**
+ * ThumbnailItem component that renders an individual thumbnail for media selection.
+ * Automatically handles selection state, click events, and renders the thumbnail image.
+ * Must be used within a ThumbnailRepeater context.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default thumbnail item
+ * <MediaGallery.ThumbnailItem />
+ *
+ * // With custom styling
+ * <MediaGallery.ThumbnailItem className="border rounded-lg hover:shadow-lg" />
+ *
+ * // With custom empty state
+ * <MediaGallery.ThumbnailItem
+ *   emptyState={<div className="placeholder">No preview</div>}
+ * />
+ *
+ * // Using asChild for custom wrapper
+ * <MediaGallery.ThumbnailItem asChild>
+ *   <button className="custom-thumbnail-button">
+ *    Thumbnail content will be rendered here
+ *   </button>
+ * </MediaGallery.ThumbnailItem>
+ *
+ * // With completely custom children
+ * <MediaGallery.ThumbnailItem>
+ *   <CustomThumbnailComponent />
+ * </MediaGallery.ThumbnailItem>
+ * ```
+ */
+export const ThumbnailItem = React.forwardRef<HTMLDivElement, ThumbnailItemProps>(
+  ({ children, asChild, emptyState, ...props }, ref) => {
+    const itemCtx = useContext(ThumbnailItemContext);
+    if (!itemCtx) return null;
+    const { index } = itemCtx;
+
+    return (
+      <CoreThumbnailItem index={index}>
+        {({ src, isActive, select, alt }) => {
+          const Comp = asChild ? Slot : "div";
+          return (
+            <Comp
+              ref={ref}
+              onClick={select}
+              data-active={isActive}
+              data-src={src}
+              data-alt={alt}
+              data-index={index}
+              data-available={true} /* TODO: need get this from variant or something */
+              {...props}
+            >
+              {children ?? (
+                src ? (
+                  <WixMediaImage media={{ image: src }} alt={alt} />
+                ) : (
+                  emptyState ?? <div>No image</div>
+                )
+              )}
+            </Comp>
+          );
+        }}
+      </CoreThumbnailItem>
+    );
+  }
+);

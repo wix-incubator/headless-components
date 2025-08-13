@@ -1,5 +1,4 @@
-import { MediaGallery } from '@wix/headless-media/react';
-import { WixMediaImage } from '../media';
+import * as StyledMediaGallery from '../media/MediaGallery';
 import React from 'react';
 
 import { productsV3 } from '@wix/stores';
@@ -70,9 +69,14 @@ export default function ProductDetails({
         data-testid="product-details"
       >
         <ProductPrimitive.Root productServiceConfig={{ product }}>
-          <MediaGallery.Root
+          <StyledMediaGallery.Root
             mediaGalleryServiceConfig={{
               media: product.media?.itemsInfo?.items ?? [],
+              infinite: true,
+              autoPlay: {
+                direction: 'forward',
+                intervalMs: 5000,
+              },
             }}
           >
             <SelectedVariantPrimitive.Root>
@@ -80,141 +84,18 @@ export default function ProductDetails({
               <div className="space-y-4">
                 {/* Main Image */}
                 <div className="aspect-square bg-surface-primary rounded-2xl overflow-hidden border border-brand-subtle relative">
-                  <MediaGallery.Viewport>
-                    {({ src, alt }) => (
-                      <>
-                        {src ? (
-                          <WixMediaImage
-                            media={{ image: src }}
-                            className="w-full h-full object-cover"
-                            alt={alt}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <svg
-                              className="w-24 h-24 text-content-subtle"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                          </div>
-                        )}
-
-                        <MediaGallery.Previous>
-                          {({ previous, canGoPrevious }) => (
-                            <button
-                              onClick={previous}
-                              disabled={!canGoPrevious}
-                              className="absolute left-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M15 19l-7-7 7-7"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                        </MediaGallery.Previous>
-
-                        <MediaGallery.Next>
-                          {({ next, canGoNext }) => (
-                            <button
-                              onClick={next}
-                              disabled={!canGoNext}
-                              className="absolute right-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M9 5l7 7-7 7"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                        </MediaGallery.Next>
-
-                        {/* Image Counter */}
-                        {
-                          <MediaGallery.Indicator>
-                            {({ current, total }) => (
-                              <div className="absolute bottom-4 right-4 bg-surface-tooltip text-nav px-3 py-1 rounded-full text-sm">
-                                {current} / {total}
-                              </div>
-                            )}
-                          </MediaGallery.Indicator>
-                        }
-                      </>
-                    )}
-                  </MediaGallery.Viewport>
+                  <StyledMediaGallery.Viewport />
+                  <StyledMediaGallery.Previous />
+                  <StyledMediaGallery.Next />
+                  <StyledMediaGallery.Indicator />
                 </div>
 
                 {/* Thumbnail Images */}
-                <MediaGallery.ThumbnailList>
-                  {({ items }) => (
-                    <div className="grid grid-cols-4 gap-4">
-                      {items.map((_, i) => (
-                        <MediaGallery.ThumbnailItem key={i} index={i}>
-                          {({ src, isActive, select, alt }) => (
-                            <div
-                              onClick={select}
-                              className={`aspect-square bg-surface-primary rounded-lg border cursor-pointer transition-all ${
-                                isActive
-                                  ? 'border-brand-medium ring-2 ring-brand-light'
-                                  : 'border-brand-subtle hover:border-brand-light'
-                              }`}
-                            >
-                              {src ? (
-                                <WixMediaImage
-                                  media={{ image: src }}
-                                  className="w-full h-full object-cover rounded-lg"
-                                  alt={alt}
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                  <svg
-                                    className="w-6 h-6 text-content-subtle"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </MediaGallery.ThumbnailItem>
-                      ))}
-                    </div>
-                  )}
-                </MediaGallery.ThumbnailList>
+                <StyledMediaGallery.Thumbnails>
+                  <StyledMediaGallery.ThumbnailRepeater>
+                    <StyledMediaGallery.ThumbnailItem />
+                  </StyledMediaGallery.ThumbnailRepeater>
+                </StyledMediaGallery.Thumbnails>
               </div>
 
               {/* Product Info */}
@@ -650,7 +531,7 @@ export default function ProductDetails({
                 </Product.Root>
               </div>
             </SelectedVariantPrimitive.Root>
-          </MediaGallery.Root>
+          </StyledMediaGallery.Root>
         </ProductPrimitive.Root>
       </div>
 
