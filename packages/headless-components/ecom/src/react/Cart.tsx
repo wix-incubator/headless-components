@@ -1,16 +1,13 @@
-import { Slot } from "@radix-ui/react-slot";
 import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
 import React from "react";
 import {
   CurrentCartServiceDefinition,
 } from "../services/current-cart-service.js";
+import { useAsChild, type AsChildProps } from "../utils/asChild.js";
 
-export interface LineItemsProps {
-  children: React.ReactNode;
+export interface LineItemsProps extends AsChildProps {
   emptyState?: React.ReactNode;
-  asChild?: boolean;
-  className?: string;
 }
 
 /**
@@ -30,8 +27,8 @@ export interface LineItemsProps {
  * ```
  */
 export function LineItems(props: LineItemsProps): React.ReactNode {
-  const { asChild, children, className, emptyState, ...otherProps } = props;
-  const Comp = asChild ? Slot : "div";
+  const { asChild, children, emptyState, ...otherProps } = props;
+  const Comp = useAsChild(asChild, "div");
 
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
@@ -46,7 +43,6 @@ export function LineItems(props: LineItemsProps): React.ReactNode {
 
   return (
     <Comp
-      className={className}
       data-testid="cart-line-items"
       {...otherProps}
     >
@@ -85,6 +81,7 @@ export function LineItemRepeater(props: LineItemRepeaterProps): React.ReactNode 
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
   >;
+  const { children } = props;
 
   const cart = service.cart.get();
   const items = cart?.lineItems || [];
@@ -92,8 +89,8 @@ export function LineItemRepeater(props: LineItemRepeaterProps): React.ReactNode 
   return (
     <>
       {items.map((item, index) => (
-        <div key={item._id || index} data-testid="cart-line-item">
-          {props.children}
+        <div key={item._id || index}>
+          {children}
         </div>
       ))}
     </>
