@@ -3669,6 +3669,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
+    "@radix-ui/react-slot": "npm:^1.0.2"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
