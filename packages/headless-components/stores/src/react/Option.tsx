@@ -10,14 +10,13 @@ enum TestIds {
   optionChoices = "option-choices",
 }
 
-/**
- * Option data interface
- */
 export interface Option {
   name: string;
-  mandatory?: boolean; // For modifiers - indicates if the option is required
+  mandatory?: boolean;
+  choices?: any[];
+  hasChoices?: boolean;
+  modifierRenderType?: string;
 }
-
 /**
  * Root props with asChild support
  */
@@ -116,83 +115,76 @@ export interface RootProps
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { asChild, children, option, onValueChange, allowedTypes } = props;
 
+  console.log({ props });
+
+  // Determine the option type based on the option name and available choices
+  const getOptionType = (): "color" | "text" | "free-text" => {
+    const optionName = option.name.toLowerCase();
+    const hasChoices =
+      option.hasChoices && option.choices && option.choices.length > 0;
+
+    if (!hasChoices) {
+      return "free-text";
+    }
+
+    // Check if this is a color option by name or if choices have colorCode
+    const isColorOption =
+      optionName.includes("color") || optionName.includes("colour");
+    const hasColorChoices = option.choices?.some(
+      (choice: any) => choice.colorCode,
+    );
+
+    if (isColorOption || hasColorChoices) {
+      return "color";
+    }
+
+    // Check if this is a free text option
+    const isFreeTextOption =
+      optionName.includes("text") || optionName.includes("custom");
+    if (isFreeTextOption) {
+      return "free-text";
+    }
+
+    // Default to text
+    return "text";
+  };
+
+  const optionType = getOptionType();
+
+  const contextValue = {
+    ...option,
+    optionType,
+    onValueChange,
+    allowedTypes,
+    mandatory: option?.mandatory || false,
+  };
+
+  const attributes = {
+    "data-testid": TestIds.optionRoot,
+    "data-type": optionType,
+  };
+
+  const content = (
+    <OptionContext.Provider value={contextValue}>
+      {typeof children === "function" ? null : (children as React.ReactNode)}
+    </OptionContext.Provider>
+  );
+
+  if (asChild) {
+    const rendered = renderAsChild({
+      children,
+      props: { option, onValueChange, allowedTypes },
+      ref,
+      content,
+      attributes,
+    });
+    if (rendered) return rendered;
+  }
+
   return (
-    <ProductVariantSelector.Option option={option}>
-      {(optionData) => {
-        // Determine the option type based on the option name and available choices
-        const getOptionType = (): "color" | "text" | "free-text" => {
-          const optionName = option.name.toLowerCase();
-          const hasChoices =
-            optionData.hasChoices && optionData.choices?.length > 0;
-
-          if (!hasChoices) {
-            return "free-text";
-          }
-
-          // Check if this is a color option by name or if choices have colorCode
-          const isColorOption =
-            optionName.includes("color") || optionName.includes("colour");
-          const hasColorChoices = optionData.choices?.some(
-            (choice: any) => choice.colorCode,
-          );
-
-          if (isColorOption || hasColorChoices) {
-            return "color";
-          }
-
-          // Check if this is a free text option
-          const isFreeTextOption =
-            optionName.includes("text") || optionName.includes("custom");
-          if (isFreeTextOption) {
-            return "free-text";
-          }
-
-          // Default to text
-          return "text";
-        };
-
-        const optionType = getOptionType();
-
-        const contextValue = {
-          ...optionData,
-          optionType,
-          onValueChange,
-          allowedTypes,
-          // Extract mandatory field from modifier (defaults to false for variants)
-          mandatory: option?.mandatory || false,
-        };
-
-        const attributes = {
-          "data-testid": TestIds.optionRoot,
-          "data-type": optionType,
-        };
-
-        const content = (
-          <OptionContext.Provider value={contextValue}>
-            {typeof children === "function"
-              ? null
-              : (children as React.ReactNode)}
-          </OptionContext.Provider>
-        );
-
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { option, onValueChange, allowedTypes },
-            ref,
-            content,
-            attributes,
-          });
-          if (rendered) return rendered;
-        }
-
-        return (
-          <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-            {content}
-          </div>
-        );
-      }}
-    </ProductVariantSelector.Option>
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {content}
+    </div>
   );
 });
 
