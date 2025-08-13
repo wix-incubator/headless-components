@@ -116,8 +116,6 @@ export interface RootProps
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { asChild, children, option, onValueChange, allowedTypes } = props;
 
-  console.log({ props });
-
   // Determine the option type based on the option name and available choices
   const getOptionType = (): "color" | "text" | "free-text" => {
     const optionName = option.name.toLowerCase();
@@ -439,8 +437,6 @@ export const ChoiceRepeater = React.forwardRef<
         }
 
         if (isModifier) {
-          console.log("optionData", { optionData });
-          console.log("choice", { choice });
           return (
             <ProductModifiers.Choice
               key={choiceKey}

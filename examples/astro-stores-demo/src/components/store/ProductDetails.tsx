@@ -182,18 +182,20 @@ export default function ProductDetails({
                               </div>
 
                               <Option.Choices>
-                                <Option.ChoiceRepeater>
-                                  <>
-                                    <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all duration-200 border-brand-light hover:border-brand-medium hover:scale-105 data-[selected='true']:border-brand-primary data-[selected='true']:shadow-lg data-[selected='true']:scale-110 data-[selected='true']:ring-2 data-[selected='true']:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
+                                <div className="flex flex-wrap gap-3">
+                                  <Option.ChoiceRepeater>
+                                    <>
+                                      <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all duration-200 border-brand-light hover:border-brand-medium hover:scale-105 data-[selected='true']:border-brand-primary data-[selected='true']:shadow-lg data-[selected='true']:scale-110 data-[selected='true']:ring-2 data-[selected='true']:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
 
-                                    <Choice.Text className="px-4 py-2 border rounded-lg transition-all duration-200 product-option-inactive data-[selected='true']:product-option-active disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400" />
+                                      <Choice.Text className="px-4 py-2 border rounded-lg transition-all duration-200 product-option-inactive data-[selected='true']:product-option-active disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400" />
 
-                                    <Choice.FreeText
-                                      className="w-full p-3 border border-brand-light rounded-lg bg-surface-primary text-content-primary placeholder-text-content-subtle focus:border-brand-medium focus:outline-none resize-none"
-                                      rows={3}
-                                    />
-                                  </>
-                                </Option.ChoiceRepeater>
+                                      <Choice.FreeText
+                                        className="w-full p-3 border border-brand-light rounded-lg bg-surface-primary text-content-primary placeholder-text-content-subtle focus:border-brand-medium focus:outline-none resize-none"
+                                        rows={3}
+                                      />
+                                    </>
+                                  </Option.ChoiceRepeater>
+                                </div>
                               </Option.Choices>
                             </div>
                           </Product.ModifierOptionRepeater>
