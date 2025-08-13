@@ -18,7 +18,7 @@ Technical implementation checklist for ecom V1 → V2 migration following [ECOM_
 ## Cart Components
 
 ### Cart.Root
-- [x] Create `src/react/Cart.tsx` file
+- [x] ~~Create `src/react/Cart.tsx` file~~ (Root is in CurrentCart.tsx, exported as Cart.Root)
 - [x] Implement `Cart.Root` with interface:
   ```tsx
   interface CartRootProps {
@@ -30,23 +30,23 @@ Technical implementation checklist for ecom V1 → V2 migration following [ECOM_
 - [x] Add `data-testid="cart"` attribute
 
 ### Cart.LineItems
-- [ ] Implement `Cart.LineItems` with interface:
+- [x] Implement `Cart.LineItems` with interface:
   ```tsx
   interface CartLineItemsProps {
     children: React.ReactNode;
     emptyState?: React.ReactNode;
   }
   ```
-- [ ] Add `data-testid="cart-line-items"` attribute
+- [x] Add `data-testid="cart-line-items"` attribute
 
 ### Cart.LineItemRepeater
-- [ ] Implement `Cart.LineItemRepeater` with interface:
+- [x] Implement `Cart.LineItemRepeater` with interface:
   ```tsx
   interface CartLineItemRepeaterProps {
     children: React.ReactNode;
   }
   ```
-- [ ] Add `data-testid="cart-line-item"` to each item
+- [x] Add `data-testid="cart-line-item"` to each item
 
 ## LineItem Components
 
