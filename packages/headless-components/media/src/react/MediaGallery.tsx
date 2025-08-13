@@ -47,6 +47,17 @@ import type { MediaGalleryServiceConfig } from "../services/media-gallery-servic
 import { Slot } from "@radix-ui/react-slot";
 import { WixMediaImage } from "./WixMediaImage.js";
 
+// Components that render actual DOM elements get test IDs on their rendered elements
+// Components that only provide context/logic don't introduce new DOM elements
+export enum TestIds {
+  mediaGalleryRoot = "media-gallery-root",
+  mediaGalleryNext = "media-gallery-next",
+  mediaGalleryPrevious = "media-gallery-previous",
+  mediaGalleryViewport = "media-gallery-viewport",
+  mediaGalleryIndicator = "media-gallery-indicator",
+  mediaGalleryThumbnailItem = "media-gallery-thumbnail-item",
+}
+
 
 /**
  * Props for button-like components that support the asChild pattern
@@ -93,7 +104,7 @@ export interface RootProps {
  */
 export const Root = ({ children, mediaGalleryServiceConfig }: RootProps) => {
   return (
-    <CoreRoot mediaGalleryServiceConfig={mediaGalleryServiceConfig}>
+    <CoreRoot mediaGalleryServiceConfig={mediaGalleryServiceConfig} data-testid={TestIds.mediaGalleryRoot}>
       {children}
     </CoreRoot>
   );
@@ -131,6 +142,7 @@ export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children
         ref={ref}
         onClick={next}
         disabled={!canGoNext}
+        data-testid={TestIds.mediaGalleryNext}
         {...props}
       >
         {children}
@@ -170,6 +182,7 @@ export const Previous = React.forwardRef<HTMLButtonElement, ButtonProps>(({ chil
         ref={ref}
         onClick={previous}
         disabled={!canGoPrevious}
+        data-testid={TestIds.mediaGalleryPrevious}
         {...props}
       >
         {children}
@@ -233,6 +246,7 @@ export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
               ref={ref}
               data-src={src}
               data-alt={alt}
+              data-testid={TestIds.mediaGalleryViewport}
               {...props}
             >
               {children ?? (
@@ -298,6 +312,7 @@ export const Indicator = React.forwardRef<HTMLDivElement, IndicatorProps>(
               ref={ref}
               data-current={current}
               data-total={total}
+              data-testid={TestIds.mediaGalleryIndicator}
               {...props}
             >
               {children ?? (
@@ -442,6 +457,7 @@ export const ThumbnailItem = React.forwardRef<HTMLDivElement, ThumbnailItemProps
               data-alt={alt}
               data-index={index}
               data-available={true} /* TODO: need get this from variant or something */
+              data-testid={TestIds.mediaGalleryThumbnailItem}
               {...props}
             >
               {children ?? (
