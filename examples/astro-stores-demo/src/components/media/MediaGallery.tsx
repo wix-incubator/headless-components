@@ -37,22 +37,19 @@ export const Indicator: React.FC<React.ComponentProps<typeof MediaGalleryPrimiti
 );
 
 export const Previous: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Previous>> = ({ ...props }) => (
-  <MediaGalleryPrimitive.Previous asChild {...props}>
-    <button className="absolute left-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all">
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-        </svg>
-    </button>
+  <MediaGalleryPrimitive.Previous className="absolute left-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all" {...props}>
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+    </svg>
   </MediaGalleryPrimitive.Previous>
 );
 
 export const Next: React.FC<React.ComponentProps<typeof MediaGalleryPrimitive.Next>> = ({ ...props }) => (
-  <MediaGalleryPrimitive.Next asChild {...props}>
-    <button className="absolute right-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all">
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-        </svg>
-    </button>
+  <MediaGalleryPrimitive.Next className="absolute right-4 top-1/2 -translate-y-1/2 btn-nav p-2 rounded-full transition-all" {...props}>
+
+    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+    </svg>
   </MediaGalleryPrimitive.Next>
 );
 
