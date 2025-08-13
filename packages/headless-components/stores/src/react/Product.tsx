@@ -594,9 +594,18 @@ export const VariantOptionRepeater = React.forwardRef<
     <>
       {options.map((option: any) => {
         return (
-          <Option.Root key={option.name} option={option}>
-            {children as React.ReactElement}
-          </Option.Root>
+          <ProductVariantSelector.Option key={option.name} option={option}>
+            {(optionData) => (
+              <Option.Root
+                option={{
+                  ...optionData,
+                  mandatory: false,
+                }}
+              >
+                {children as React.ReactElement}
+              </Option.Root>
+            )}
+          </ProductVariantSelector.Option>
         );
       })}
     </>
@@ -786,13 +795,19 @@ export const ModifierOptionRepeater = React.forwardRef<
     <>
       {modifiers.map((modifier: any) => {
         return (
-          <Option.Root
-            key={modifier.name}
-            option={modifier}
-            allowedTypes={allowedTypes}
-          >
-            {children as React.ReactElement}
-          </Option.Root>
+          <ProductModifiers.Modifier key={modifier.name} modifier={modifier}>
+            {(modifierData) => (
+              <Option.Root
+                option={{
+                  ...modifierData,
+                  modifierRenderType: modifierData.type,
+                }}
+                allowedTypes={allowedTypes}
+              >
+                {children as React.ReactElement}
+              </Option.Root>
+            )}
+          </ProductModifiers.Modifier>
         );
       })}
     </>
