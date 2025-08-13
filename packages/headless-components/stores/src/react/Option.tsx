@@ -6,6 +6,7 @@ import * as Choice from "./Choice.js";
 enum TestIds {
   optionRoot = "option-root",
   optionName = "option-name",
+  optionMandatoryIndicator = "option-mandatory-indicator",
   optionChoices = "option-choices",
 }
 
@@ -14,6 +15,7 @@ enum TestIds {
  */
 export interface Option {
   name: string;
+  mandatory?: boolean; // For modifiers - indicates if the option is required
 }
 
 /**
@@ -156,6 +158,8 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
           optionType,
           onValueChange,
           allowedTypes,
+          // Extract mandatory field from modifier (defaults to false for variants)
+          mandatory: option?.mandatory || false,
         };
 
         const attributes = {
@@ -202,11 +206,25 @@ export interface NameProps extends AsChildProps<{ name: string }> {}
 
 /**
  * Displays the option name.
+ * Follows true Radix pattern - use separate components for each styleable element.
  *
  * @component
  * @example
  * ```tsx
- * <Option.Name className="text-lg font-medium mb-3" />
+ * // True Radix pattern - separate components
+ * <div className="flex items-center gap-1">
+ *   <Option.Name className="text-lg font-medium" />
+ *   <Option.MandatoryIndicator className="text-red-500" />
+ * </div>
+ *
+ * // Custom rendering
+ * <Option.Name asChild>
+ *   {React.forwardRef<HTMLElement, { name: string }>(({ name, ...props }, ref) => (
+ *     <h4 ref={ref} {...props} className="text-lg font-medium text-content-primary">
+ *       {name}
+ *     </h4>
+ *   ))}
+ * </Option.Name>
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
@@ -216,6 +234,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   if (!optionData) return null;
 
   const name = optionData.name || "";
+
   const attributes = {
     "data-testid": TestIds.optionName,
   };
@@ -239,6 +258,70 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
     >
       {name}
     </div>
+  );
+});
+
+/**
+ * Props for Option MandatoryIndicator component
+ */
+export interface MandatoryIndicatorProps
+  extends AsChildProps<{ mandatory: boolean }> {}
+
+/**
+ * Displays the mandatory indicator (asterisk) when the option is required.
+ * Follows true Radix pattern - separate component for each styleable element.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage - only renders if mandatory
+ * <Option.MandatoryIndicator className="text-red-500 ml-1" />
+ *
+ * // Custom rendering
+ * <Option.MandatoryIndicator asChild>
+ *   {React.forwardRef<HTMLElement, { mandatory: boolean }>(({ mandatory, ...props }, ref) => (
+ *     mandatory ? <span ref={ref} {...props} className="text-red-500">*</span> : null
+ *   ))}
+ * </Option.MandatoryIndicator>
+ * ```
+ */
+export const MandatoryIndicator = React.forwardRef<
+  HTMLElement,
+  MandatoryIndicatorProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+  const optionData = React.useContext(OptionContext);
+
+  if (!optionData) return null;
+
+  const mandatory = optionData.mandatory || false;
+
+  // Don't render anything if not mandatory
+  if (!mandatory) return null;
+
+  const attributes = {
+    "data-testid": TestIds.optionMandatoryIndicator,
+  };
+
+  if (asChild) {
+    const rendered = renderAsChild({
+      children,
+      props: { mandatory },
+      ref,
+      content: "*",
+      attributes,
+    });
+    if (rendered) return rendered;
+  }
+
+  return (
+    <span
+      className={className}
+      {...attributes}
+      ref={ref as React.Ref<HTMLSpanElement>}
+    >
+      *
+    </span>
   );
 });
 

@@ -176,21 +176,10 @@ export default function ProductDetails({
                             allowedTypes={['color', 'text', 'free-text']}
                           >
                             <div className="space-y-3">
-                              <Option.Name asChild>
-                                {React.forwardRef<
-                                  HTMLHeadingElement,
-                                  { name: string }
-                                >(({ name, ...props }, ref) => (
-                                  <h4
-                                    ref={ref}
-                                    {...props}
-                                    className="text-md font-medium text-content-primary"
-                                  >
-                                    {name}
-                                    {/* Note: mandatory status needs to be handled differently in the new API */}
-                                  </h4>
-                                ))}
-                              </Option.Name>
+                              <div className="flex items-center gap-1">
+                                <Option.Name className="text-md font-medium text-content-primary" />
+                                <Option.MandatoryIndicator className="text-status-error" />
+                              </div>
 
                               <Option.Choices>
                                 <Option.ChoiceRepeater>
