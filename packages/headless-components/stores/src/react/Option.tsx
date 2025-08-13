@@ -1,6 +1,7 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as Choice from "./Choice.js";
 
 enum TestIds {
@@ -12,10 +13,10 @@ enum TestIds {
 
 export interface Option {
   name: string;
-  mandatory?: boolean;
   choices?: any[];
   hasChoices?: boolean;
-  modifierRenderType?: string;
+  type?: string;
+  mandatory?: boolean;
 }
 /**
  * Root props with asChild support
@@ -418,68 +419,122 @@ export const ChoiceRepeater = React.forwardRef<
 
   const onValueChange = optionData.onValueChange || (() => {});
 
+  const isModifier = optionData.type;
+
   return (
     <>
       {optionData.choices.map((choice: any) => {
         const choiceKey = choice.key || choice.name || choice.id;
 
-        return (
-          <ProductVariantSelector.Choice
-            key={choiceKey}
-            option={optionData}
-            choice={choice}
-          >
-            {(renderProps) => {
-              const {
-                value,
-                isSelected,
-                select,
-                isVisible,
-                isInStock,
-                isPreOrderEnabled,
-              } = renderProps;
+        const getChoiceType = (): "color" | "text" | "free-text" => {
+          if (choice?.colorCode) return "color";
+          if (choice?.type === "free-text") return "free-text";
+          return "text";
+        };
 
-              // Don't render if not visible
-              if (!isVisible) return null;
+        const choiceType = getChoiceType();
+        const allowedTypes = ["color", "text", "free-text"];
+        if (!allowedTypes.includes(choiceType)) {
+          return null;
+        }
 
-              // Determine choice type
-              const getChoiceType = (): "color" | "text" | "free-text" => {
-                if (choice?.colorCode) return "color";
-                if (choice?.type === "free-text") return "free-text";
-                return "text";
-              };
+        if (isModifier) {
+          console.log("optionData", { optionData });
+          console.log("choice", { choice });
+          return (
+            <ProductModifiers.Choice
+              key={choiceKey}
+              modifier={optionData}
+              choice={choice}
+            >
+              {(renderProps) => {
+                const {
+                  value,
+                  isSelected,
+                  select,
+                  modifierName,
+                  choiceValue,
+                  colorCode,
+                  description,
+                } = renderProps;
 
-              const choiceType = getChoiceType();
-              const allowedTypes = ["color", "text", "free-text"];
-              if (!allowedTypes.includes(choiceType)) {
-                return null;
-              }
+                // Create the context value with ProductModifiers render props
+                const contextValue = {
+                  choice,
+                  onValueChange,
+                  shouldRenderAsColor: choiceType === "color",
+                  shouldRenderAsText: choiceType === "text",
+                  shouldRenderAsFreeText: choiceType === "free-text",
+                  // ProductModifiers render props
+                  isSelected,
+                  isVisible: true, // ProductModifiers doesn't provide visibility
+                  isInStock: true, // ProductModifiers doesn't provide stock info
+                  isPreOrderEnabled: false, // ProductModifiers doesn't provide pre-order info
+                  select,
+                  value,
+                  optionData,
+                  // Additional ProductModifiers props
+                  modifierName,
+                  choiceValue,
+                  colorCode,
+                  description,
+                };
 
-              // Create the context value with ProductVariantSelector render props
-              const contextValue = {
-                choice,
-                onValueChange,
-                shouldRenderAsColor: choiceType === "color",
-                shouldRenderAsText: choiceType === "text",
-                shouldRenderAsFreeText: choiceType === "free-text",
-                // ProductVariantSelector render props
-                isSelected,
-                isVisible,
-                isInStock,
-                isPreOrderEnabled,
-                select,
-                value,
-                optionData,
-              };
+                return (
+                  <Choice.ChoiceContext.Provider value={contextValue}>
+                    <Choice.Root>{children}</Choice.Root>
+                  </Choice.ChoiceContext.Provider>
+                );
+              }}
+            </ProductModifiers.Choice>
+          );
+        } else {
+          // Render ProductVariantSelector.Choice for variants
+          return (
+            <ProductVariantSelector.Choice
+              key={choiceKey}
+              option={optionData}
+              choice={choice}
+            >
+              {(renderProps) => {
+                const {
+                  value,
+                  isSelected,
+                  select,
+                  isVisible,
+                  isInStock,
+                  isPreOrderEnabled,
+                } = renderProps;
 
-              return (
-                <Choice.ChoiceContext.Provider value={contextValue}>
-                  <Choice.Root>{children}</Choice.Root>
-                </Choice.ChoiceContext.Provider>
-              );
-            }}
-          </ProductVariantSelector.Choice>
-        );
+                // Don't render if not visible
+                if (!isVisible) return null;
+
+                // Create the context value with ProductVariantSelector render props
+                const contextValue = {
+                  choice,
+                  onValueChange,
+                  shouldRenderAsColor: choiceType === "color",
+                  shouldRenderAsText: choiceType === "text",
+                  shouldRenderAsFreeText: choiceType === "free-text",
+                  // ProductVariantSelector render props
+                  isSelected,
+                  isVisible,
+                  isInStock,
+                  isPreOrderEnabled,
+                  select,
+                  value,
+                  optionData,
+                };
+
+                return (
+                  <Choice.ChoiceContext.Provider value={contextValue}>
+                    <Choice.Root>{children}</Choice.Root>
+                  </Choice.ChoiceContext.Provider>
+                );
+              }}
+            </ProductVariantSelector.Choice>
+          );
+        }
       })}
     </>
   );

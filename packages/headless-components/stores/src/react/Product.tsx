@@ -800,7 +800,6 @@ export const ModifierOptionRepeater = React.forwardRef<
               <Option.Root
                 option={{
                   ...modifierData,
-                  modifierRenderType: modifierData.type,
                 }}
                 allowedTypes={allowedTypes}
               >

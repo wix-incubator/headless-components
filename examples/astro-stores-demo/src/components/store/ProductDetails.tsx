@@ -170,7 +170,7 @@ export default function ProductDetails({
                         <h3 className="text-lg font-semibold text-content-primary">
                           Product Modifiers
                         </h3>
-                        {/*
+
                         <Product.ModifierOptions>
                           <Product.ModifierOptionRepeater
                             allowedTypes={['color', 'text', 'free-text']}
@@ -197,7 +197,7 @@ export default function ProductDetails({
                               </Option.Choices>
                             </div>
                           </Product.ModifierOptionRepeater>
-                        </Product.ModifierOptions> */}
+                        </Product.ModifierOptions>
                       </div>
                     </Product.Modifiers>
 

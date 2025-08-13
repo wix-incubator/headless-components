@@ -133,7 +133,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    const choiceId = choice?.choiceId || choice?.key || choice?.name || "";
+    const choiceId = choice?.choiceId;
 
     const attributes = {
       "data-testid": TestIds.choiceText,
