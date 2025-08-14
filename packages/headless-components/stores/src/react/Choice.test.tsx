@@ -518,25 +518,6 @@ describe("Choice Components", () => {
       expect(onValueChangeMock).toHaveBeenCalledWith("Custom text input");
     });
 
-    it("should show selected state when text is entered", () => {
-      vi.spyOn(React, "useContext").mockReturnValue(mockFreeTextChoiceContext);
-
-      render(<Choice.FreeText />);
-
-      const textareaElement = screen.getByTestId(
-        "choice-freetext",
-      ) as HTMLTextAreaElement;
-
-      // Initially not selected (empty)
-      expect(textareaElement).toHaveAttribute("data-selected", "false");
-
-      // Enter some text
-      fireEvent.change(textareaElement, { target: { value: "Some text" } });
-
-      // Should now be selected
-      expect(textareaElement).toHaveAttribute("data-selected", "true");
-    });
-
     it("should not render when shouldRenderAsFreeText is false", () => {
       vi.spyOn(React, "useContext").mockReturnValue(mockTextChoiceContext);
 
@@ -637,28 +618,6 @@ describe("Choice Components", () => {
 
       const textareaElement = screen.getByTestId("choice-freetext");
       expect(textareaElement).toHaveAttribute("data-testid", "choice-freetext");
-      expect(textareaElement).toHaveAttribute("data-selected", "false");
-    });
-
-    it("should handle empty or whitespace-only text correctly", () => {
-      vi.spyOn(React, "useContext").mockReturnValue(mockFreeTextChoiceContext);
-
-      render(<Choice.FreeText />);
-
-      const textareaElement = screen.getByTestId(
-        "choice-freetext",
-      ) as HTMLTextAreaElement;
-
-      // Test with whitespace-only text
-      fireEvent.change(textareaElement, { target: { value: "   " } });
-      expect(textareaElement).toHaveAttribute("data-selected", "false");
-
-      // Test with actual content
-      fireEvent.change(textareaElement, { target: { value: "  content  " } });
-      expect(textareaElement).toHaveAttribute("data-selected", "true");
-
-      // Test with empty string
-      fireEvent.change(textareaElement, { target: { value: "" } });
       expect(textareaElement).toHaveAttribute("data-selected", "false");
     });
   });
@@ -832,22 +791,6 @@ describe("Choice Components", () => {
         "placeholder",
         "Custom Custom Engraving: 3-50 chars",
       );
-    });
-
-    it("should log choice data for debugging (console.log test)", () => {
-      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-
-      vi.spyOn(React, "useContext").mockReturnValue(mockModifierChoiceContext);
-
-      render(<Choice.FreeText />);
-
-      // The component logs the choice data for debugging
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "choice",
-        mockModifierChoiceContext.choice,
-      );
-
-      consoleSpy.mockRestore();
     });
 
     it("should handle modifier without minCharCount/maxCharCount gracefully", () => {

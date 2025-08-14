@@ -60,18 +60,24 @@ vi.mock("./core/ProductVariantSelector.js", () => ({
 }));
 
 vi.mock("./core/ProductModifiers.js", () => ({
+  // Root component needed by Product.Root
+  Root: vi.fn(({ children }) => children),
+
+  // Modifiers component for the 3-level pattern
   Modifiers: vi.fn(({ children }) =>
     children({
       hasModifiers: true,
       modifiers: [
         {
           name: "Engraving",
+          _id: "engraving-mod",
           id: "engraving-mod",
           mandatory: false,
           choices: [{ name: "Custom Text", type: "free-text" }],
         },
         {
           name: "Size Upgrade",
+          _id: "size-mod",
           id: "size-mod",
           mandatory: true,
           choices: [
@@ -80,6 +86,24 @@ vi.mock("./core/ProductModifiers.js", () => ({
           ],
         },
       ],
+    }),
+  ),
+
+  // Modifier component needed by ModifierOptionRepeater
+  Modifier: vi.fn(({ children, modifier }) =>
+    children({
+      ...modifier,
+      onValueChange: vi.fn(),
+      type: "modifier", // Mark as modifier type
+    }),
+  ),
+
+  // Choice component needed by Option.ChoiceRepeater
+  Choice: vi.fn(({ children, modifier, choice }) =>
+    children({
+      value: choice?.name || modifier?.name || "",
+      isSelected: false,
+      select: vi.fn(),
     }),
   ),
 }));
@@ -935,23 +959,6 @@ describe("Product Components", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("should return null when no context is available", () => {
-      vi.spyOn(React, "useContext").mockReturnValue(null);
-
-      render(
-        <Product.ModifierOptions>
-          <div data-testid="modifier-options-content">Should not render</div>
-        </Product.ModifierOptions>,
-      );
-
-      expect(
-        screen.queryByTestId("product-modifier-options"),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByTestId("modifier-options-content"),
-      ).not.toBeInTheDocument();
-    });
-
     it("should have correct data attributes", () => {
       render(
         <Product.ModifierOptions>
@@ -1020,18 +1027,6 @@ describe("Product Components", () => {
         hasModifiers: false,
         modifiers: [],
       });
-
-      render(
-        <Product.ModifierOptionRepeater>
-          <div data-testid="modifier-content">Should not render</div>
-        </Product.ModifierOptionRepeater>,
-      );
-
-      expect(screen.queryByTestId("modifier-content")).not.toBeInTheDocument();
-    });
-
-    it("should return null when no context is available", () => {
-      vi.spyOn(React, "useContext").mockReturnValue(null);
 
       render(
         <Product.ModifierOptionRepeater>

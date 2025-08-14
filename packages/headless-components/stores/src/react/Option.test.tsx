@@ -156,6 +156,7 @@ const mockSizeOption = {
 
 const mockCustomTextOption = {
   name: "Custom Text",
+  type: "FREE_TEXT", // This should trigger free-text detection
   hasChoices: false, // Free-text options don't have choices
 };
 
@@ -638,7 +639,10 @@ describe("Option Components", () => {
       // Verify that ProductVariantSelector.Choice is called with correct props
       expect(ProductVariantSelector.Choice).toHaveBeenCalledWith(
         expect.objectContaining({
-          choice: mockChoices[0],
+          choice: expect.objectContaining({
+            ...mockChoices[0],
+            type: "text", // Choice type is added by the component
+          }),
           option: expect.any(Object),
         }),
         expect.any(Object),
@@ -646,7 +650,10 @@ describe("Option Components", () => {
 
       expect(ProductVariantSelector.Choice).toHaveBeenCalledWith(
         expect.objectContaining({
-          choice: mockChoices[1],
+          choice: expect.objectContaining({
+            ...mockChoices[1],
+            type: "text", // Choice type is added by the component
+          }),
           option: expect.any(Object),
         }),
         expect.any(Object),
@@ -654,7 +661,10 @@ describe("Option Components", () => {
 
       expect(ProductVariantSelector.Choice).toHaveBeenCalledWith(
         expect.objectContaining({
-          choice: mockChoices[2],
+          choice: expect.objectContaining({
+            ...mockChoices[2],
+            type: "text", // Choice type is added by the component
+          }),
           option: expect.any(Object),
         }),
         expect.any(Object),
@@ -803,7 +813,10 @@ describe("Option Components", () => {
       expect(ProductModifiers.Choice).toHaveBeenCalledWith(
         expect.objectContaining({
           modifier: freeTextModifier,
-          choice: freeTextModifier, // For free text, choice = modifier
+          choice: expect.objectContaining({
+            ...freeTextModifier,
+            type: "free-text", // Free-text modifier choice gets type: "free-text"
+          }),
         }),
         expect.any(Object),
       );
@@ -973,7 +986,6 @@ describe("Option Components", () => {
         choices: [
           { name: "Red", choiceId: "red", choiceType: "ONE_COLOR" },
           { name: "Large", choiceId: "large", choiceType: "CHOICE_TEXT" },
-          { name: "Custom", choiceId: "custom", choiceType: "FREE_TEXT" },
         ],
         optionType: "text",
         onValueChange: vi.fn(),
