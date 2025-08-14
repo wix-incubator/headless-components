@@ -5,8 +5,8 @@ import {
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
 import * as Choice from "./Choice.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
-import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as ProductModifiersPrimitive from "./core/ProductModifiers.js";
+import * as ProductVariantSelectorPrimitive from "./core/ProductVariantSelector.js";
 
 enum TestIds {
   optionRoot = "option-root",
@@ -433,7 +433,7 @@ export const ChoiceRepeater = React.forwardRef<
     };
 
     return (
-      <ProductModifiers.Choice modifier={optionData} choice={choice}>
+      <ProductModifiersPrimitive.Choice modifier={optionData} choice={choice}>
         {(renderProps) => {
           const { value, isSelected, select } = renderProps;
 
@@ -457,7 +457,7 @@ export const ChoiceRepeater = React.forwardRef<
             </Choice.ChoiceContext.Provider>
           );
         }}
-      </ProductModifiers.Choice>
+      </ProductModifiersPrimitive.Choice>
     );
   }
 
@@ -486,7 +486,7 @@ export const ChoiceRepeater = React.forwardRef<
 
           if (isModifier) {
             return (
-              <ProductModifiers.Choice
+              <ProductModifiersPrimitive.Choice
                 key={choiceKey}
                 modifier={optionData}
                 choice={choiceData}
@@ -514,11 +514,11 @@ export const ChoiceRepeater = React.forwardRef<
                     </Choice.ChoiceContext.Provider>
                   );
                 }}
-              </ProductModifiers.Choice>
+              </ProductModifiersPrimitive.Choice>
             );
           } else {
             return (
-              <ProductVariantSelector.Choice
+              <ProductVariantSelectorPrimitive.Choice
                 key={choiceKey}
                 option={optionData}
                 choice={choiceData}
@@ -556,7 +556,7 @@ export const ChoiceRepeater = React.forwardRef<
                     </Choice.ChoiceContext.Provider>
                   );
                 }}
-              </ProductVariantSelector.Choice>
+              </ProductVariantSelectorPrimitive.Choice>
             );
           }
         },
