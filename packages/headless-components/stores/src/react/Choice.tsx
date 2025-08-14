@@ -1,5 +1,6 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
+import { FreeText as FreeTextPrimitive } from "./core/ProductModifiers.js";
 
 enum TestIds {
   choiceRoot = "choice-root",
@@ -19,10 +20,57 @@ export interface Choice {
   key?: string;
   name?: string | null;
   addedPrice?: string | null;
+  minCharCount?: number;
+  maxCharCount?: number;
+}
+
+/**
+ * Context value interface for individual choice data and behavior
+ */
+export interface ChoiceContextValue {
+  /** The choice data object */
+  choice: Choice;
+  /** Whether this choice should render as text */
+  shouldRenderAsText: boolean;
+  /** Whether this choice should render as color swatch */
+  shouldRenderAsColor: boolean;
+  /** Whether this choice should render as free text input */
+  shouldRenderAsFreeText: boolean;
+  /** Display value for the choice */
+  value: string;
+  /** Whether this choice is currently selected */
+  isSelected: boolean;
+  /** Whether this choice is visible based on current selections */
+  isVisible: boolean;
+  /** Whether this choice is in stock */
+  isInStock: boolean;
+  /** Whether this choice is available for pre-order */
+  isPreOrderEnabled: boolean;
+  /** Function to select this choice */
+  select: () => void;
+  /** Callback for free text value changes */
+  onValueChange?: (value: string) => void;
 }
 
 // Create a context for individual choices
-export const ChoiceContext = React.createContext<any>(null);
+export const ChoiceContext = React.createContext<ChoiceContextValue | null>(
+  null,
+);
+
+/**
+ * Hook to access ChoiceContext with proper error handling
+ * @throws {Error} When used outside of a Choice context provider
+ * @returns {ChoiceContextValue} The choice context value
+ */
+export function useChoiceContext(): ChoiceContextValue {
+  const context = React.useContext(ChoiceContext);
+  if (!context) {
+    throw new Error(
+      "useChoiceContext must be used within a Choice context provider (Option.ChoiceRepeater)",
+    );
+  }
+  return context;
+}
 
 export interface RootProps {
   children?: React.ReactNode;
@@ -51,18 +99,9 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     const { choice } = choiceContext;
 
-    // Determine choice type for data-type attribute
-    const getChoiceType = (): "color" | "text" | "free-text" => {
-      if (choice?.colorCode) return "color";
-      if (choice?.type === "free-text") return "free-text";
-      return "text";
-    };
-
-    const choiceType = getChoiceType();
-
     const attributes = {
       "data-testid": TestIds.choiceRoot,
-      "data-type": choiceType,
+      "data-type": choice?.type,
     };
 
     return (
@@ -133,7 +172,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    const choiceId = choice?.choiceId || choice?.key || choice?.name || "";
+    const choiceId = choice?.choiceId || "";
 
     const attributes = {
       "data-testid": TestIds.choiceText,
@@ -239,9 +278,9 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       const rendered = renderAsChild({
         children,
         props: {
-          colorCode,
+          colorCode: colorCode || "",
           name: value,
-          id: choiceId,
+          id: choiceId || "",
         },
         ref,
         content: null,
@@ -318,8 +357,13 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
       return null; // Should be used within Option.ChoiceRepeater
     }
 
-    const { choice, shouldRenderAsFreeText, onValueChange, isVisible } =
-      choiceContext;
+    const {
+      choice,
+      shouldRenderAsFreeText,
+      onValueChange,
+      isVisible,
+      isSelected,
+    } = choiceContext;
 
     // Only render if this should be rendered as free text
     if (!shouldRenderAsFreeText) return null;
@@ -327,42 +371,52 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    // For free text, we need to handle the input state
-    const [value, setValue] = React.useState("");
-
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setValue(e.target.value);
-      // Call the onValueChange callback to notify parent components
-      if (onValueChange) {
-        onValueChange(e.target.value);
-      }
-    };
-
-    const isSelected = Boolean(value.trim());
-
     const attributes = {
       "data-testid": TestIds.choiceFreetext,
       "data-selected": isSelected ? "true" : "false",
-      onChange: handleChange,
     };
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: {
-          minCharCount: choice?.minCharCount,
-          maxCharCount: choice?.maxCharCount,
-          defaultAddedPrice: choice?.addedPrice,
-          title: choice?.name,
-          onChange: handleChange,
-        },
-        ref,
-        content: null,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
+    return (
+      <FreeTextPrimitive modifier={choice}>
+        {({ value, setText, placeholder, maxChars }) => {
+          const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setText(e.target.value);
+            if (onValueChange) {
+              onValueChange(e.target.value);
+            }
+          };
 
-    return <textarea ref={ref} className={className} {...attributes} />;
+          if (asChild) {
+            const rendered = renderAsChild({
+              children,
+              props: {
+                minCharCount: choice?.minCharCount,
+                maxCharCount: choice?.maxCharCount,
+                defaultAddedPrice: choice?.addedPrice || undefined,
+                title: choice?.name || undefined,
+                onChange: handleChange,
+              },
+              ref,
+              content: null,
+              attributes,
+            });
+            if (rendered) return rendered;
+          }
+
+          return (
+            <textarea
+              ref={ref}
+              className={className}
+              placeholder={placeholder}
+              rows={3}
+              value={value}
+              maxLength={maxChars}
+              {...attributes}
+              onChange={handleChange}
+            />
+          );
+        }}
+      </FreeTextPrimitive>
+    );
   },
 );

@@ -2,6 +2,25 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as Choice from "./Choice";
+import { FreeText as FreeTextPrimitive } from "./core/ProductModifiers.js";
+
+// Mock ProductModifiers FreeText component
+vi.mock("./core/ProductModifiers.js", () => ({
+  FreeText: vi.fn(({ children, modifier }) => {
+    // Mock the render props pattern
+    const mockRenderProps = {
+      value: "",
+      setText: vi.fn(),
+      placeholder: `Enter ${modifier?.name || "text"}...`,
+      maxChars: modifier?.maxCharCount || 100,
+      mandatory: modifier?.mandatory || false,
+      charCount: 0,
+      isOverLimit: false,
+      modifierName: modifier?.name || "modifier",
+    };
+    return children(mockRenderProps);
+  }),
+}));
 
 // Mock choice context values for different test scenarios
 const mockTextChoiceContext = {
@@ -499,25 +518,6 @@ describe("Choice Components", () => {
       expect(onValueChangeMock).toHaveBeenCalledWith("Custom text input");
     });
 
-    it("should show selected state when text is entered", () => {
-      vi.spyOn(React, "useContext").mockReturnValue(mockFreeTextChoiceContext);
-
-      render(<Choice.FreeText />);
-
-      const textareaElement = screen.getByTestId(
-        "choice-freetext",
-      ) as HTMLTextAreaElement;
-
-      // Initially not selected (empty)
-      expect(textareaElement).toHaveAttribute("data-selected", "false");
-
-      // Enter some text
-      fireEvent.change(textareaElement, { target: { value: "Some text" } });
-
-      // Should now be selected
-      expect(textareaElement).toHaveAttribute("data-selected", "true");
-    });
-
     it("should not render when shouldRenderAsFreeText is false", () => {
       vi.spyOn(React, "useContext").mockReturnValue(mockTextChoiceContext);
 
@@ -620,27 +620,218 @@ describe("Choice Components", () => {
       expect(textareaElement).toHaveAttribute("data-testid", "choice-freetext");
       expect(textareaElement).toHaveAttribute("data-selected", "false");
     });
+  });
 
-    it("should handle empty or whitespace-only text correctly", () => {
-      vi.spyOn(React, "useContext").mockReturnValue(mockFreeTextChoiceContext);
+  describe("Choice.FreeText - Modifier Integration Tests", () => {
+    const mockModifierChoiceContext = {
+      choice: {
+        name: "Custom Engraving",
+        choiceId: "engraving-choice",
+        key: "engraving",
+        type: "free-text",
+        minCharCount: 3,
+        maxCharCount: 50,
+        addedPrice: "$10.00",
+      },
+      onValueChange: vi.fn(),
+      shouldRenderAsColor: false,
+      shouldRenderAsText: false,
+      shouldRenderAsFreeText: true,
+      isSelected: false,
+      isVisible: true,
+      isInStock: true,
+      isPreOrderEnabled: false,
+      select: vi.fn(),
+      value: "",
+      optionData: { name: "Custom Engraving" },
+    };
+
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it("should integrate with ProductModifiers.FreeText component", () => {
+      vi.spyOn(React, "useContext").mockReturnValue(mockModifierChoiceContext);
+
+      render(<Choice.FreeText className="modifier-textarea" />);
+
+      // Should call ProductModifiers.FreeText with correct props
+      expect(FreeTextPrimitive).toHaveBeenCalledWith(
+        expect.objectContaining({
+          modifier: mockModifierChoiceContext.choice,
+          children: expect.any(Function),
+        }),
+        expect.any(Object),
+      );
+
+      // Should render the textarea with modifier-specific attributes
+      const textareaElement = screen.getByTestId("choice-freetext");
+      expect(textareaElement).toBeInTheDocument();
+      expect(textareaElement).toHaveClass("modifier-textarea");
+    });
+
+    it("should handle modifier-specific props in FreeText primitive", () => {
+      vi.spyOn(React, "useContext").mockReturnValue(mockModifierChoiceContext);
 
       render(<Choice.FreeText />);
 
-      const textareaElement = screen.getByTestId(
-        "choice-freetext",
-      ) as HTMLTextAreaElement;
+      // Verify FreeText primitive receives the modifier as prop
+      expect(FreeTextPrimitive).toHaveBeenCalledWith(
+        expect.objectContaining({
+          modifier: expect.objectContaining({
+            name: "Custom Engraving",
+            minCharCount: 3,
+            maxCharCount: 50,
+            addedPrice: "$10.00",
+          }),
+        }),
+        expect.any(Object),
+      );
+    });
 
-      // Test with whitespace-only text
-      fireEvent.change(textareaElement, { target: { value: "   " } });
-      expect(textareaElement).toHaveAttribute("data-selected", "false");
+    it("should handle text changes through modifier primitive", () => {
+      const onValueChangeMock = vi.fn();
+      const setTextMock = vi.fn();
 
-      // Test with actual content
-      fireEvent.change(textareaElement, { target: { value: "  content  " } });
-      expect(textareaElement).toHaveAttribute("data-selected", "true");
+      // Mock FreeTextPrimitive to provide setText function
+      vi.mocked(FreeTextPrimitive).mockImplementationOnce(({ children }) => {
+        const mockRenderProps = {
+          value: "initial text",
+          setText: setTextMock,
+          placeholder: "Enter Custom Engraving...",
+          maxChars: 50,
+          mandatory: false,
+          charCount: 12,
+          isOverLimit: false,
+          modifierName: "Custom Engraving",
+        };
+        return children(mockRenderProps);
+      });
 
-      // Test with empty string
-      fireEvent.change(textareaElement, { target: { value: "" } });
-      expect(textareaElement).toHaveAttribute("data-selected", "false");
+      vi.spyOn(React, "useContext").mockReturnValue({
+        ...mockModifierChoiceContext,
+        onValueChange: onValueChangeMock,
+      });
+
+      render(<Choice.FreeText />);
+
+      const textareaElement = screen.getByTestId("choice-freetext");
+
+      // Simulate text change
+      fireEvent.change(textareaElement, {
+        target: { value: "Custom engraving text" },
+      });
+
+      // Should call setText from the primitive
+      expect(setTextMock).toHaveBeenCalledWith("Custom engraving text");
+      // Should also call onValueChange callback
+      expect(onValueChangeMock).toHaveBeenCalledWith("Custom engraving text");
+    });
+
+    it("should render with modifier placeholder and maxLength", () => {
+      // Mock FreeTextPrimitive with specific render props
+      vi.mocked(FreeTextPrimitive).mockImplementationOnce(({ children }) => {
+        const mockRenderProps = {
+          value: "",
+          setText: vi.fn(),
+          placeholder: "Enter Custom Engraving (3-50 chars)...",
+          maxChars: 50,
+          mandatory: false,
+          charCount: 0,
+          isOverLimit: false,
+          modifierName: "Custom Engraving",
+        };
+        return children(mockRenderProps);
+      });
+
+      vi.spyOn(React, "useContext").mockReturnValue(mockModifierChoiceContext);
+
+      render(<Choice.FreeText />);
+
+      const textareaElement = screen.getByTestId("choice-freetext");
+      expect(textareaElement).toHaveAttribute(
+        "placeholder",
+        "Enter Custom Engraving (3-50 chars)...",
+      );
+      expect(textareaElement).toHaveAttribute("maxLength", "50");
+    });
+
+    it("should handle asChild with modifier-specific props", () => {
+      vi.spyOn(React, "useContext").mockReturnValue(mockModifierChoiceContext);
+
+      const renderFunction = vi.fn((props, ref) => (
+        <textarea
+          ref={ref}
+          data-testid="custom-modifier-textarea"
+          className="modifier-input"
+          placeholder={`Custom ${props.title}: ${props.minCharCount}-${props.maxCharCount} chars`}
+          onChange={props.onChange}
+        />
+      ));
+
+      render(<Choice.FreeText asChild>{renderFunction}</Choice.FreeText>);
+
+      // Should pass modifier-specific props to render function
+      expect(renderFunction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          minCharCount: 3,
+          maxCharCount: 50,
+          defaultAddedPrice: "$10.00",
+          title: "Custom Engraving",
+          onChange: expect.any(Function),
+          "data-testid": "choice-freetext",
+          "data-selected": "false",
+        }),
+        expect.any(Object),
+      );
+
+      const customElement = screen.getByTestId("custom-modifier-textarea");
+      expect(customElement).toBeInTheDocument();
+      expect(customElement).toHaveAttribute(
+        "placeholder",
+        "Custom Custom Engraving: 3-50 chars",
+      );
+    });
+
+    it("should handle modifier without minCharCount/maxCharCount gracefully", () => {
+      const modifierWithoutLimits = {
+        ...mockModifierChoiceContext,
+        choice: {
+          ...mockModifierChoiceContext.choice,
+          minCharCount: undefined,
+          maxCharCount: undefined,
+        },
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(modifierWithoutLimits);
+
+      const renderFunction = vi.fn((props, ref) => (
+        <textarea ref={ref} data-testid="custom-textarea" />
+      ));
+
+      render(<Choice.FreeText asChild>{renderFunction}</Choice.FreeText>);
+
+      // Should handle undefined values gracefully
+      expect(renderFunction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          minCharCount: undefined,
+          maxCharCount: undefined,
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should not render when shouldRenderAsFreeText is false", () => {
+      vi.spyOn(React, "useContext").mockReturnValue({
+        ...mockModifierChoiceContext,
+        shouldRenderAsFreeText: false,
+        shouldRenderAsText: true,
+      });
+
+      render(<Choice.FreeText />);
+
+      expect(screen.queryByTestId("choice-freetext")).not.toBeInTheDocument();
+      expect(FreeTextPrimitive).not.toHaveBeenCalled();
     });
   });
 

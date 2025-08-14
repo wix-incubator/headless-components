@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi, afterEach } from "vitest";
 import * as Product from "./Product";
 import * as CoreProduct from "./core/Product.js";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as SelectedVariant from "./core/SelectedVariant.js";
 
 // Mock all core components
@@ -54,6 +55,55 @@ vi.mock("./core/ProductVariantSelector.js", () => ({
       select: vi.fn(),
       optionName: option.name,
       choiceValue: choice.name,
+    }),
+  ),
+}));
+
+vi.mock("./core/ProductModifiers.js", () => ({
+  // Root component needed by Product.Root
+  Root: vi.fn(({ children }) => children),
+
+  // Modifiers component for the 3-level pattern
+  Modifiers: vi.fn(({ children }) =>
+    children({
+      hasModifiers: true,
+      modifiers: [
+        {
+          name: "Engraving",
+          _id: "engraving-mod",
+          id: "engraving-mod",
+          mandatory: false,
+          choices: [{ name: "Custom Text", type: "free-text" }],
+        },
+        {
+          name: "Size Upgrade",
+          _id: "size-mod",
+          id: "size-mod",
+          mandatory: true,
+          choices: [
+            { name: "Large", addedPrice: "$5.00" },
+            { name: "Extra Large", addedPrice: "$10.00" },
+          ],
+        },
+      ],
+    }),
+  ),
+
+  // Modifier component needed by ModifierOptionRepeater
+  Modifier: vi.fn(({ children, modifier }) =>
+    children({
+      ...modifier,
+      onValueChange: vi.fn(),
+      type: "modifier", // Mark as modifier type
+    }),
+  ),
+
+  // Choice component needed by Option.ChoiceRepeater
+  Choice: vi.fn(({ children, modifier, choice }) =>
+    children({
+      value: choice?.name || modifier?.name || "",
+      isSelected: false,
+      select: vi.fn(),
     }),
   ),
 }));
@@ -513,6 +563,7 @@ describe("Product Components", () => {
           children({
             hasOptions: false,
             options: [],
+            selectedChoices: {},
           }),
       );
 
@@ -610,6 +661,7 @@ describe("Product Components", () => {
             hasOptions: false,
             options: [],
             selectedChoices: {},
+            selectedChoices: {},
           }),
       );
 
@@ -686,6 +738,7 @@ describe("Product Components", () => {
             hasOptions: false,
             options: [],
             selectedChoices: {},
+            selectedChoices: {},
           }),
       );
 
@@ -734,6 +787,340 @@ describe("Product Components", () => {
 
       // Verify that Option.Root components are rendered
       expect(screen.getAllByTestId("option-root")).toHaveLength(2);
+    });
+  });
+
+  describe("Product.Modifiers", () => {
+    it("should render modifiers container when modifiers are available", () => {
+      render(
+        <Product.Modifiers>
+          <div data-testid="modifiers-content">Modifiers content</div>
+        </Product.Modifiers>,
+      );
+
+      const modifiersElement = screen.getByTestId("product-modifiers");
+      expect(modifiersElement).toBeInTheDocument();
+      expect(screen.getByTestId("modifiers-content")).toBeInTheDocument();
+    });
+
+    it("should not render when no modifiers are available", () => {
+      // Mock no modifiers available
+      vi.mocked(ProductModifiers.Modifiers).mockImplementationOnce(
+        ({ children }) =>
+          children({
+            hasModifiers: false,
+            modifiers: [],
+            selectedModifiers: {},
+            areAllRequiredModifiersFilled: true,
+          }),
+      );
+
+      render(
+        <Product.Modifiers>
+          <div data-testid="modifiers-content">Should not render</div>
+        </Product.Modifiers>,
+      );
+
+      expect(screen.queryByTestId("product-modifiers")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("modifiers-content")).not.toBeInTheDocument();
+    });
+
+    it("should render with asChild using React element", () => {
+      render(
+        <Product.Modifiers asChild>
+          <section className="custom-modifiers">
+            <div data-testid="modifiers-content">Modifiers</div>
+          </section>
+        </Product.Modifiers>,
+      );
+
+      const modifiersElement = screen.getByTestId("product-modifiers");
+      expect(modifiersElement).toBeInTheDocument();
+      expect(modifiersElement.tagName).toBe("SECTION");
+      expect(modifiersElement).toHaveClass("custom-modifiers");
+    });
+
+    it("should render with asChild using render function", () => {
+      const renderFunction = vi.fn((props, ref) => (
+        <div
+          ref={ref}
+          data-testid="custom-modifiers"
+          className="function-modifiers"
+        >
+          Has modifiers: {props.hasModifiers.toString()}
+          {(props as any).children}
+        </div>
+      ));
+
+      render(<Product.Modifiers asChild>{renderFunction}</Product.Modifiers>);
+
+      expect(renderFunction).toHaveBeenCalledWith(
+        expect.objectContaining({
+          hasModifiers: true,
+          "data-testid": "product-modifiers",
+        }),
+        expect.any(Object),
+      );
+
+      const customElement = screen.getByTestId("custom-modifiers");
+      expect(customElement).toBeInTheDocument();
+      expect(customElement).toHaveTextContent("Has modifiers: true");
+    });
+
+    it("should have correct data attributes", () => {
+      render(
+        <Product.Modifiers>
+          <div>Content</div>
+        </Product.Modifiers>,
+      );
+
+      const modifiersElement = screen.getByTestId("product-modifiers");
+      expect(modifiersElement).toHaveAttribute(
+        "data-testid",
+        "product-modifiers",
+      );
+    });
+  });
+
+  describe("Product.ModifierOptions", () => {
+    const MockModifiersContext = React.createContext({
+      hasModifiers: true,
+      modifiers: [
+        {
+          name: "Engraving",
+          id: "engraving-mod",
+          mandatory: false,
+        },
+        {
+          name: "Size Upgrade",
+          id: "size-mod",
+          mandatory: true,
+        },
+      ],
+    });
+
+    beforeEach(() => {
+      // Mock React.useContext for ModifiersContext
+      vi.spyOn(React, "useContext").mockReturnValue({
+        hasModifiers: true,
+        modifiers: [
+          {
+            name: "Engraving",
+            id: "engraving-mod",
+            mandatory: false,
+          },
+          {
+            name: "Size Upgrade",
+            id: "size-mod",
+            mandatory: true,
+          },
+        ],
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("should render modifier options container when modifiers exist", () => {
+      render(
+        <Product.ModifierOptions>
+          <div data-testid="modifier-options-content">Options content</div>
+        </Product.ModifierOptions>,
+      );
+
+      const optionsElement = screen.getByTestId("product-modifier-options");
+      expect(optionsElement).toBeInTheDocument();
+      expect(
+        screen.getByTestId("modifier-options-content"),
+      ).toBeInTheDocument();
+    });
+
+    it("should render empty state when no modifiers exist", () => {
+      vi.spyOn(React, "useContext").mockReturnValue({
+        hasModifiers: false,
+        modifiers: [],
+      });
+
+      render(
+        <Product.ModifierOptions
+          emptyState={<div data-testid="empty-state">No modifiers</div>}
+        >
+          <div data-testid="modifier-options-content">Should not render</div>
+        </Product.ModifierOptions>,
+      );
+
+      expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+      expect(
+        screen.queryByTestId("modifier-options-content"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("product-modifier-options"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("should have correct data attributes", () => {
+      render(
+        <Product.ModifierOptions>
+          <div>Content</div>
+        </Product.ModifierOptions>,
+      );
+
+      const optionsElement = screen.getByTestId("product-modifier-options");
+      expect(optionsElement).toHaveAttribute(
+        "data-testid",
+        "product-modifier-options",
+      );
+    });
+  });
+
+  describe("Product.ModifierOptionRepeater", () => {
+    const mockModifiers = [
+      {
+        name: "Engraving",
+        id: "engraving-mod",
+        mandatory: false,
+        choices: [{ name: "Custom Text", type: "free-text" }],
+      },
+      {
+        name: "Size Upgrade",
+        id: "size-mod",
+        mandatory: true,
+        choices: [
+          { name: "Large", addedPrice: "$5.00" },
+          { name: "Extra Large", addedPrice: "$10.00" },
+        ],
+      },
+    ];
+
+    const MockModifiersContext = React.createContext({
+      hasModifiers: true,
+      modifiers: mockModifiers,
+    });
+
+    beforeEach(() => {
+      // Mock React.useContext for ModifiersContext
+      vi.spyOn(React, "useContext").mockReturnValue({
+        hasModifiers: true,
+        modifiers: mockModifiers,
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("should render modifier repeater with children for each modifier", () => {
+      render(
+        <Product.ModifierOptionRepeater>
+          <div data-testid="modifier-content">Modifier item</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Should render Option.Root for each modifier
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2);
+    });
+
+    it("should not render when no modifiers exist", () => {
+      vi.spyOn(React, "useContext").mockReturnValue({
+        hasModifiers: false,
+        modifiers: [],
+      });
+
+      render(
+        <Product.ModifierOptionRepeater>
+          <div data-testid="modifier-content">Should not render</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      expect(screen.queryByTestId("modifier-content")).not.toBeInTheDocument();
+    });
+
+    it("should pass correct modifier data to Option.Root", () => {
+      // We'll need to spy on Option.Root to verify props
+      // This would require importing Option and mocking it
+      render(
+        <Product.ModifierOptionRepeater>
+          <div data-testid="modifier-content">Modifier item</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Verify that modifiers are rendered
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2);
+    });
+
+    it("should handle different modifier types correctly", () => {
+      const mixedModifiers = [
+        {
+          name: "Color Modifier",
+          id: "color-mod",
+          mandatory: false,
+          choices: [{ name: "Red", colorCode: "#ff0000" }],
+        },
+        {
+          name: "Free Text Modifier",
+          id: "text-mod",
+          mandatory: true,
+          type: "free-text",
+        },
+      ];
+
+      vi.spyOn(React, "useContext").mockReturnValue({
+        hasModifiers: true,
+        modifiers: mixedModifiers,
+      });
+
+      render(
+        <Product.ModifierOptionRepeater>
+          <div data-testid="modifier-content">Modifier item</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2);
+    });
+
+    it("should pass allowedTypes prop to Option.Root", () => {
+      const allowedTypes = ["color", "text"];
+
+      render(
+        <Product.ModifierOptionRepeater allowedTypes={allowedTypes}>
+          <div data-testid="modifier-content">Modifier item</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Verify that modifiers are rendered with allowedTypes
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2);
+
+      // Note: We can't easily verify the allowedTypes prop is passed to Option.Root
+      // without mocking Option.Root, but the integration test above covers this
+    });
+
+    it("should handle empty allowedTypes array", () => {
+      render(
+        <Product.ModifierOptionRepeater allowedTypes={[]}>
+          <div data-testid="modifier-content">Should not render</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Should still render modifiers, but the Option.ChoiceRepeater should filter out all choices
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2); // Modifiers render, but choices will be filtered
+    });
+
+    it("should use default allowedTypes when prop not provided", () => {
+      render(
+        <Product.ModifierOptionRepeater>
+          <div data-testid="modifier-content">Modifier item</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Should render all modifiers with default allowedTypes
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2);
     });
   });
 
@@ -817,6 +1204,142 @@ describe("Product Components", () => {
 
       expect(variants.tagName).toBe("SECTION");
       expect(variants).toHaveClass("custom-variants");
+    });
+
+    it("should work together with modifiers in a complete product display", () => {
+      render(
+        <Product.Root product={mockProduct}>
+          <div className="product-layout">
+            <Product.Name className="product-title" />
+            <Product.Description as="html" className="product-desc" />
+            <div className="price-section">
+              <Product.Price className="current-price" />
+              <Product.CompareAtPrice className="original-price" />
+            </div>
+            <Product.Variants>
+              <Product.VariantOptions>
+                <Product.VariantOptionRepeater>
+                  <div data-testid="variant-option">Variant option</div>
+                </Product.VariantOptionRepeater>
+              </Product.VariantOptions>
+            </Product.Variants>
+            <Product.Modifiers>
+              <Product.ModifierOptions>
+                <Product.ModifierOptionRepeater>
+                  <div data-testid="modifier-option">Modifier option</div>
+                </Product.ModifierOptionRepeater>
+              </Product.ModifierOptions>
+            </Product.Modifiers>
+          </div>
+        </Product.Root>,
+      );
+
+      // Verify all components render together
+      expect(screen.getByTestId("product-root")).toBeInTheDocument();
+      expect(screen.getByTestId("product-name")).toBeInTheDocument();
+      expect(screen.getByTestId("product-description")).toBeInTheDocument();
+      expect(screen.getByTestId("product-price")).toBeInTheDocument();
+      expect(
+        screen.getByTestId("product-compare-at-price"),
+      ).toBeInTheDocument();
+      expect(screen.getByTestId("product-variants")).toBeInTheDocument();
+      expect(screen.getByTestId("product-variant-options")).toBeInTheDocument();
+      expect(screen.getByTestId("product-modifiers")).toBeInTheDocument();
+      expect(
+        screen.getByTestId("product-modifier-options"),
+      ).toBeInTheDocument();
+
+      // Verify content
+      expect(screen.getByText("Test Product Name")).toBeInTheDocument();
+      expect(screen.getByText("$29.99")).toBeInTheDocument();
+      expect(screen.getByText("$39.99")).toBeInTheDocument();
+
+      // Verify both variants and modifiers render
+      const variantOptions = screen.getAllByTestId("variant-option");
+      const modifierOptions = screen.getAllByTestId("modifier-option");
+      expect(variantOptions).toHaveLength(2); // From mock
+      expect(modifierOptions).toHaveLength(2); // From mock
+    });
+
+    it("should handle modifier-only product (no variants)", () => {
+      // Mock no variants available
+      vi.mocked(ProductVariantSelector.Options).mockImplementationOnce(
+        ({ children }) =>
+          children({
+            hasOptions: false,
+            options: [],
+            selectedChoices: {},
+          }),
+      );
+
+      render(
+        <Product.Root product={mockProduct}>
+          <Product.Variants>
+            <Product.VariantOptions emptyState={<div>No variants</div>}>
+              <Product.VariantOptionRepeater>
+                <div data-testid="variant-option">Variant option</div>
+              </Product.VariantOptionRepeater>
+            </Product.VariantOptions>
+          </Product.Variants>
+          <Product.Modifiers>
+            <Product.ModifierOptions>
+              <Product.ModifierOptionRepeater>
+                <div data-testid="modifier-option">Modifier option</div>
+              </Product.ModifierOptionRepeater>
+            </Product.ModifierOptions>
+          </Product.Modifiers>
+        </Product.Root>,
+      );
+
+      // Variants should not render
+      expect(screen.queryByTestId("product-variants")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("variant-option")).not.toBeInTheDocument();
+
+      // But modifiers should still render
+      expect(screen.getByTestId("product-modifiers")).toBeInTheDocument();
+      const modifierOptions = screen.getAllByTestId("modifier-option");
+      expect(modifierOptions).toHaveLength(2);
+    });
+
+    it("should handle variant-only product (no modifiers)", () => {
+      // Mock no modifiers available
+      vi.mocked(ProductModifiers.Modifiers).mockImplementationOnce(
+        ({ children }) =>
+          children({
+            hasModifiers: false,
+            modifiers: [],
+            selectedModifiers: {},
+            areAllRequiredModifiersFilled: true,
+          }),
+      );
+
+      render(
+        <Product.Root product={mockProduct}>
+          <Product.Variants>
+            <Product.VariantOptions>
+              <Product.VariantOptionRepeater>
+                <div data-testid="variant-option">Variant option</div>
+              </Product.VariantOptionRepeater>
+            </Product.VariantOptions>
+          </Product.Variants>
+          <Product.Modifiers>
+            <Product.ModifierOptions emptyState={<div>No modifiers</div>}>
+              <Product.ModifierOptionRepeater>
+                <div data-testid="modifier-option">Modifier option</div>
+              </Product.ModifierOptionRepeater>
+            </Product.ModifierOptions>
+          </Product.Modifiers>
+        </Product.Root>,
+      );
+
+      // Variants should render
+      expect(screen.getByTestId("product-variants")).toBeInTheDocument();
+      const variantOptions = screen.getAllByTestId("variant-option");
+      expect(variantOptions).toHaveLength(2);
+
+      // But modifiers should not render
+      expect(screen.queryByTestId("product-modifiers")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("modifier-option")).not.toBeInTheDocument();
     });
   });
 

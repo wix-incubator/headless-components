@@ -5,7 +5,6 @@ import { productsV3 } from '@wix/stores';
 
 import {
   Product as ProductPrimitive,
-  ProductModifiers as ProductModifiersPrimitive,
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductV2 as Product,
@@ -18,42 +17,7 @@ import { CurrentCart } from '@wix/headless-ecom/react';
 
 import { getStockStatusMessage } from './product-status-enums';
 
-// Reusable FreeText Input Component
-const FreeTextInput = ({ modifier, name }: { modifier: any; name: string }) => (
-  <ProductModifiersPrimitive.FreeText modifier={modifier}>
-    {({
-      value,
-      setText,
-      placeholder: freeTextPlaceholder,
-      charCount,
-      isOverLimit,
-      maxChars,
-    }) => (
-      <div className="space-y-2">
-        <textarea
-          data-testid="product-modifier-free-text-input"
-          value={value}
-          onChange={e => setText(e.target.value)}
-          placeholder={
-            freeTextPlaceholder || `Enter custom ${name.toLowerCase()}...`
-          }
-          maxLength={maxChars}
-          className="w-full p-3 border border-brand-light rounded-lg bg-surface-primary text-content-primary placeholder-text-content-subtle focus:border-brand-medium focus:outline-none resize-none"
-          rows={3}
-        />
-        {maxChars && (
-          <div
-            className={`text-xs text-right ${
-              isOverLimit ? 'text-status-error' : 'text-content-muted'
-            }`}
-          >
-            {charCount}/{maxChars} characters
-          </div>
-        )}
-      </div>
-    )}
-  </ProductModifiersPrimitive.FreeText>
-);
+// This component is no longer needed as we'll use Choice.FreeText directly
 
 export default function ProductDetails({
   isQuickView = false,
@@ -166,7 +130,7 @@ export default function ProductDetails({
 
                         <Product.VariantOptions>
                           <Product.VariantOptionRepeater>
-                            <div className="space-y-3">
+                            <div className="space-y-3 mb-4">
                               <Option.Name className="text-lg font-semibold text-content-primary mb-3" />
                               <Option.Choices>
                                 <div className="flex flex-wrap gap-3">
@@ -199,161 +163,40 @@ export default function ProductDetails({
                       </div>
                     </Product.Variants>
 
-                    {/* Product Modifiers */}
-                    <ProductModifiersPrimitive.Root>
-                      <ProductModifiersPrimitive.Modifiers>
-                        {({ modifiers, hasModifiers }) => (
-                          <>
-                            {hasModifiers && (
-                              <div className="space-y-6">
-                                <h3 className="text-lg font-semibold text-content-primary">
-                                  Product Modifiers
-                                </h3>
+                    <Product.Modifiers>
+                      <div className="space-y-6">
+                        <h3 className="text-lg font-semibold text-content-primary">
+                          Product Modifiers
+                        </h3>
 
-                                {modifiers.map((modifier: any) => (
-                                  <ProductModifiersPrimitive.Modifier
-                                    key={modifier.name}
-                                    modifier={modifier}
-                                  >
-                                    {({
-                                      name,
-                                      type,
-                                      choices,
-                                      hasChoices,
-                                      mandatory,
-                                    }) => (
-                                      <div
-                                        className="space-y-3"
-                                        data-testid="product-modifiers"
-                                      >
-                                        <h4 className="text-md font-medium text-content-primary">
-                                          {name}{' '}
-                                          {mandatory && (
-                                            <span className="text-status-error">
-                                              *
-                                            </span>
-                                          )}
-                                        </h4>
-
-                                        {type === 'SWATCH_CHOICES' &&
-                                          hasChoices && (
-                                            <div className="flex flex-wrap gap-2">
-                                              {choices.map((choice: any) => (
-                                                <ProductModifiersPrimitive.Choice
-                                                  key={choice.value}
-                                                  modifier={modifier}
-                                                  choice={choice}
-                                                >
-                                                  {({
-                                                    value,
-                                                    isSelected,
-                                                    colorCode,
-                                                    select,
-                                                  }) => (
-                                                    <button
-                                                      data-testid="product-modifier-choice-button"
-                                                      onClick={select}
-                                                      className={`w-10 h-10 rounded-full border-4 transition-all duration-200 ${
-                                                        isSelected
-                                                          ? 'border-brand-primary shadow-lg scale-110 ring-2 ring-brand-primary/30'
-                                                          : 'border-brand-light hover:border-brand-medium hover:scale-105'
-                                                      }`}
-                                                      style={{
-                                                        backgroundColor:
-                                                          colorCode ||
-                                                          'var(--theme-text-content-40)',
-                                                      }}
-                                                      title={value}
-                                                    />
-                                                  )}
-                                                </ProductModifiersPrimitive.Choice>
-                                              ))}
-                                            </div>
-                                          )}
-
-                                        {type === 'TEXT_CHOICES' &&
-                                          hasChoices && (
-                                            <div className="flex flex-wrap gap-2">
-                                              {choices.map((choice: any) => (
-                                                <ProductModifiersPrimitive.Choice
-                                                  key={choice.value}
-                                                  modifier={modifier}
-                                                  choice={choice}
-                                                >
-                                                  {({
-                                                    value,
-                                                    isSelected,
-                                                    select,
-                                                  }) => (
-                                                    <button
-                                                      data-testid="product-modifier-choice-button"
-                                                      onClick={select}
-                                                      className={`px-4 py-2 border rounded-lg transition-all duration-200 ${
-                                                        isSelected
-                                                          ? 'product-option-active'
-                                                          : 'product-option-inactive'
-                                                      }`}
-                                                    >
-                                                      {value}
-                                                    </button>
-                                                  )}
-                                                </ProductModifiersPrimitive.Choice>
-                                              ))}
-                                            </div>
-                                          )}
-
-                                        {type === 'FREE_TEXT' && (
-                                          <>
-                                            {mandatory ? (
-                                              <FreeTextInput
-                                                data-testid="product-modifier-free-text"
-                                                modifier={modifier}
-                                                name={name}
-                                              />
-                                            ) : (
-                                              <ProductModifiersPrimitive.ToggleFreeText
-                                                modifier={modifier}
-                                              >
-                                                {({
-                                                  isTextInputShown,
-                                                  toggle,
-                                                }) => (
-                                                  <div className="space-y-3">
-                                                    <label className="flex items-center gap-2">
-                                                      <input
-                                                        type="checkbox"
-                                                        checked={
-                                                          isTextInputShown
-                                                        }
-                                                        onChange={toggle}
-                                                        className="w-4 h-4 text-brand-primary rounded border-brand-light focus:ring-brand-primary"
-                                                      />
-                                                      <span className="text-content-primary">
-                                                        Enable
-                                                      </span>
-                                                    </label>
-                                                    {isTextInputShown && (
-                                                      <FreeTextInput
-                                                        modifier={modifier}
-                                                        name={name}
-                                                      />
-                                                    )}
-                                                  </div>
-                                                )}
-                                              </ProductModifiersPrimitive.ToggleFreeText>
-                                            )}
-                                          </>
-                                        )}
-                                      </div>
-                                    )}
-                                  </ProductModifiersPrimitive.Modifier>
-                                ))}
+                        <Product.ModifierOptions>
+                          <Product.ModifierOptionRepeater
+                            allowedTypes={['color', 'text', 'free-text']}
+                          >
+                            <div className="space-y-3 mb-4">
+                              <div className="flex items-center gap-1">
+                                <Option.Name className="text-md font-medium text-content-primary" />
+                                <Option.MandatoryIndicator className="text-status-error" />
                               </div>
-                            )}
-                          </>
-                        )}
-                      </ProductModifiersPrimitive.Modifiers>
-                    </ProductModifiersPrimitive.Root>
+
+                              <Option.Choices>
+                                <div className="flex flex-wrap gap-3">
+                                  <Option.ChoiceRepeater>
+                                    <>
+                                      <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all duration-200 border-brand-light hover:border-brand-medium hover:scale-105 data-[selected='true']:border-brand-primary data-[selected='true']:shadow-lg data-[selected='true']:scale-110 data-[selected='true']:ring-2 data-[selected='true']:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
+
+                                      <Choice.Text className="px-4 py-2 border rounded-lg transition-all duration-200 product-option-inactive data-[selected='true']:product-option-active disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400" />
+
+                                      <Choice.FreeText className="w-full p-3 border border-brand-light rounded-lg bg-surface-primary text-content-primary placeholder-text-content-subtle focus:border-brand-medium focus:outline-none resize-none" />
+                                    </>
+                                  </Option.ChoiceRepeater>
+                                </div>
+                              </Option.Choices>
+                            </div>
+                          </Product.ModifierOptionRepeater>
+                        </Product.ModifierOptions>
+                      </div>
+                    </Product.Modifiers>
 
                     {/* Quantity Selector */}
                     <div className="space-y-3">

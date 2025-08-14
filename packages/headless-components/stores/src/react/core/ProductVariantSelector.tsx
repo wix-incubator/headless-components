@@ -316,7 +316,7 @@ export function Choice(props: ChoiceProps) {
     optionName,
     choiceValue,
   });
-};
+}
 
 /**
  * Props for Stock headless component
@@ -417,7 +417,7 @@ export function Stock(props: StockProps) {
     incrementQuantity,
     decrementQuantity,
   });
-};
+}
 
 /**
  * Props for Reset headless component
@@ -476,4 +476,4 @@ export function Reset(props: ResetProps) {
     reset,
     hasSelections,
   });
-};
+}
