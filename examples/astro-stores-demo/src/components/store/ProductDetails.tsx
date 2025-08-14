@@ -5,7 +5,6 @@ import { productsV3 } from '@wix/stores';
 
 import {
   Product as ProductPrimitive,
-  ProductModifiers as ProductModifiersPrimitive,
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductV2 as Product,

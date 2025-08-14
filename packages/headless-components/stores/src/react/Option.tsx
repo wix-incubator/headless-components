@@ -367,9 +367,11 @@ export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
     if (!optionData) return null;
 
     // Check if we have choices to render (List Container Level pattern)
-    const hasChoices = optionData.choices && optionData.choices.length > 0;
+    const hasChoicesOrFreeText =
+      (optionData.choices && optionData.choices.length > 0) ||
+      optionData.optionType === "free-text";
 
-    if (!hasChoices) {
+    if (!hasChoicesOrFreeText) {
       return emptyState || null; // ✅ Handle empty state like VariantOptions
     }
 
@@ -417,11 +419,46 @@ export const ChoiceRepeater = React.forwardRef<
   const { children } = props;
   const optionData = React.useContext(OptionContext);
 
-  if (!optionData || !optionData.choices?.length) return null;
+  if (
+    !optionData ||
+    (!optionData.choices?.length && optionData.optionType !== "free-text")
+  )
+    return null;
 
   const onValueChange = optionData.onValueChange || (() => {});
-
   const isModifier = optionData.type;
+
+  if (optionData.optionType === "free-text") {
+    const choice = optionData;
+
+    return (
+      <ProductModifiers.Choice modifier={optionData} choice={choice}>
+        {(renderProps) => {
+          const { value, isSelected, select } = renderProps;
+
+          const contextValue = {
+            choice,
+            onValueChange,
+            shouldRenderAsColor: false,
+            shouldRenderAsText: false,
+            shouldRenderAsFreeText: true,
+            isSelected: isSelected,
+            isVisible: true, // ProductModifiers doesn't provide visibility
+            isInStock: true, // ProductModifiers doesn't provide stock info
+            isPreOrderEnabled: true, // ProductModifiers doesn't provide pre-order info
+            select,
+            value,
+          };
+
+          return (
+            <Choice.ChoiceContext.Provider value={contextValue}>
+              <Choice.Root>{children}</Choice.Root>
+            </Choice.ChoiceContext.Provider>
+          );
+        }}
+      </ProductModifiers.Choice>
+    );
+  }
 
   return (
     <>

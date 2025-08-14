@@ -1,5 +1,6 @@
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
+import { FreeText as FreeTextPrimitive } from "./core/ProductModifiers.js";
 
 enum TestIds {
   choiceRoot = "choice-root",
@@ -365,8 +366,13 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
       return null; // Should be used within Option.ChoiceRepeater
     }
 
-    const { choice, shouldRenderAsFreeText, onValueChange, isVisible } =
-      choiceContext;
+    const {
+      choice,
+      shouldRenderAsFreeText,
+      onValueChange,
+      isVisible,
+      isSelected,
+    } = choiceContext;
 
     // Only render if this should be rendered as free text
     if (!shouldRenderAsFreeText) return null;
@@ -374,44 +380,54 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    // For free text, we need to handle the input state
-    const [value, setValue] = React.useState("");
-
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setValue(e.target.value);
-      // Call the onValueChange callback to notify parent components
-      if (onValueChange) {
-        onValueChange(e.target.value);
-      }
-    };
-
-    const isSelected = Boolean(value.trim());
-
     const attributes = {
       "data-testid": TestIds.choiceFreetext,
       "data-selected": isSelected ? "true" : "false",
-      onChange: handleChange,
     };
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: {
-          minCharCount: choice?.minCharCount,
-          maxCharCount: choice?.maxCharCount,
-          defaultAddedPrice: choice?.addedPrice || undefined,
-          title: choice?.name || undefined,
-          onChange: handleChange,
-        },
-        ref,
-        content: null,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
+    console.log("choice", choice);
 
     return (
-      <textarea ref={ref} className={className} {...attributes} rows={3} />
+      <FreeTextPrimitive modifier={choice}>
+        {({ value, setText, placeholder, maxChars }) => {
+          const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setText(e.target.value);
+            if (onValueChange) {
+              onValueChange(e.target.value);
+            }
+          };
+
+          if (asChild) {
+            const rendered = renderAsChild({
+              children,
+              props: {
+                minCharCount: choice?.minCharCount,
+                maxCharCount: choice?.maxCharCount,
+                defaultAddedPrice: choice?.addedPrice || undefined,
+                title: choice?.name || undefined,
+                onChange: handleChange,
+              },
+              ref,
+              content: null,
+              attributes,
+            });
+            if (rendered) return rendered;
+          }
+
+          return (
+            <textarea
+              ref={ref}
+              className={className}
+              placeholder={placeholder}
+              rows={3}
+              value={value}
+              maxLength={maxChars}
+              {...attributes}
+              onChange={handleChange}
+            />
+          );
+        }}
+      </FreeTextPrimitive>
     );
   },
 );
