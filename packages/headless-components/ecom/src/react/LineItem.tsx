@@ -54,6 +54,7 @@ Root.displayName = "LineItem.Root";
 enum TestIds {
   lineItemTitle = "line-item-title",
   lineItemImage = "line-item-image",
+  lineItemSelectedOptions = "line-item-selected-options",
 }
 
 
@@ -171,3 +172,91 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref)
 });
 
 Image.displayName = "LineItem.Image";
+
+/**
+ * Props for LineItem SelectedOptions component
+ */
+export interface SelectedOptionsProps extends AsChildProps {}
+
+/**
+ * Container for selected options display. Does not render when there are no selected options.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <LineItem.SelectedOptions>
+ *   <LineItem.SelectedOptionRepeater />
+ * </LineItem.SelectedOptions>
+ *
+ * // asChild with primitive element
+ * <LineItem.SelectedOptions asChild>
+ *   <section className="selected-options-section">
+ *     <LineItem.SelectedOptionRepeater />
+ *   </section>
+ * </LineItem.SelectedOptions>
+ *
+ * // asChild with React component
+ * <LineItem.SelectedOptions asChild>
+ *   {React.forwardRef((props, ref) => (
+ *     <section ref={ref} {...props} className="selected-options-section">
+ *       {props.children}
+ *     </section>
+ *   ))}
+ * </LineItem.SelectedOptions>
+ * ```
+ */
+export const SelectedOptions = React.forwardRef<HTMLElement, SelectedOptionsProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+    const lineItemService = useService(LineItemServiceDefinition);
+    const Comp = useAsChild(asChild, "div");
+
+    const lineItem = lineItemService.lineItem.get();
+
+    const selectedOptions: Array<{
+      name: string;
+      value: string | { name: string; code: string };
+    }> = [];
+
+    if (lineItem?.descriptionLines) {
+      lineItem.descriptionLines.forEach((line: any) => {
+        if (line.name?.original) {
+          const optionName = line.name.original;
+
+          if (line.colorInfo) {
+            selectedOptions.push({
+              name: optionName,
+              value: {
+                name: line.colorInfo.original,
+                code: line.colorInfo.code,
+              },
+            });
+          } else if (line.plainText) {
+            selectedOptions.push({
+              name: optionName,
+              value: line.plainText.original,
+            });
+          }
+        }
+      });
+    }
+
+    if (selectedOptions.length === 0) {
+      return null;
+    }
+
+    const attributes = {
+      "data-testid": TestIds.lineItemSelectedOptions,
+      ...otherProps,
+    };
+
+    return (
+      <Comp ref={ref} {...attributes}>
+        {children}
+      </Comp>
+    );
+  },
+);
+
+SelectedOptions.displayName = "LineItem.SelectedOptions";

@@ -1,9 +1,6 @@
 ---
-description:
-globs:
-alwaysApply: false
+alwaysApply: true
 ---
-
 # V2 Headless Components Architecture
 
 This document outlines the core architectural patterns for headless components following the V2 API design.
