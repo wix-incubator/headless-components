@@ -130,7 +130,7 @@ export default function ProductDetails({
 
                         <Product.VariantOptions>
                           <Product.VariantOptionRepeater>
-                            <div className="space-y-3">
+                            <div className="space-y-3 mb-4">
                               <Option.Name className="text-lg font-semibold text-content-primary mb-3" />
                               <Option.Choices>
                                 <div className="flex flex-wrap gap-3">
@@ -163,7 +163,6 @@ export default function ProductDetails({
                       </div>
                     </Product.Variants>
 
-                    {/* Product Modifiers - Using New Simplified API */}
                     <Product.Modifiers>
                       <div className="space-y-6">
                         <h3 className="text-lg font-semibold text-content-primary">
@@ -174,7 +173,7 @@ export default function ProductDetails({
                           <Product.ModifierOptionRepeater
                             allowedTypes={['color', 'text', 'free-text']}
                           >
-                            <div className="space-y-3">
+                            <div className="space-y-3 mb-4">
                               <div className="flex items-center gap-1">
                                 <Option.Name className="text-md font-medium text-content-primary" />
                                 <Option.MandatoryIndicator className="text-status-error" />

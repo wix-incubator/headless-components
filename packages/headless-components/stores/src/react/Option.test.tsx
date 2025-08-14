@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi, afterEach } from "vitest";
 import * as Option from "./Option";
 import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as Choice from "./Choice.js";
 
 // Mock ProductVariantSelector core component
@@ -80,6 +81,17 @@ vi.mock("./core/ProductVariantSelector.js", () => ({
       select: vi.fn(),
       optionName: option.name,
       choiceValue: choice.name,
+    }),
+  ),
+}));
+
+// Mock ProductModifiers core component
+vi.mock("./core/ProductModifiers.js", () => ({
+  Choice: vi.fn(({ children, modifier, choice }) =>
+    children({
+      value: choice?.name || modifier?.name || "",
+      isSelected: false,
+      select: vi.fn(),
     }),
   ),
 }));
@@ -668,6 +680,251 @@ describe("Option Components", () => {
 
       expect(ProductVariantSelector.Choice).toHaveBeenCalledTimes(3);
       expect(Choice.Root).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe("Option.ChoiceRepeater - Modifier Tests", () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("should detect modifier vs variant option correctly", () => {
+      const modifierOption = {
+        name: "Engraving",
+        type: "modifier", // This makes it a modifier
+        choices: [
+          { name: "Custom Text", type: "free-text", choiceId: "custom-text" },
+        ],
+        optionType: "free-text",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(modifierOption);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Should call ProductModifiers.Choice instead of ProductVariantSelector.Choice
+      expect(ProductModifiers.Choice).toHaveBeenCalled();
+      expect(ProductVariantSelector.Choice).not.toHaveBeenCalled();
+    });
+
+    it("should render modifier choices using ProductModifiers.Choice", () => {
+      const modifierOption = {
+        name: "Size Modifier",
+        type: "modifier",
+        choices: [
+          { name: "Large", choiceId: "large-mod", choiceType: "CHOICE_TEXT" },
+          { name: "Small", choiceId: "small-mod", choiceType: "CHOICE_TEXT" },
+        ],
+        optionType: "text",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(modifierOption);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Should call ProductModifiers.Choice for each choice
+      expect(ProductModifiers.Choice).toHaveBeenCalledTimes(2);
+
+      // Verify correct props are passed to ProductModifiers.Choice
+      expect(ProductModifiers.Choice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          modifier: modifierOption,
+          choice: expect.objectContaining({
+            name: "Large",
+            choiceId: "large-mod",
+          }),
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should handle free text modifier correctly", () => {
+      const freeTextModifier = {
+        name: "Custom Engraving",
+        type: "modifier",
+        optionType: "free-text",
+        minCharCount: 1,
+        maxCharCount: 50,
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(freeTextModifier);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Free text content</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Should call ProductModifiers.Choice for free text
+      expect(ProductModifiers.Choice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          modifier: freeTextModifier,
+          choice: freeTextModifier, // For free text, choice = modifier
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should provide correct context for modifier choices", () => {
+      const modifierOption = {
+        name: "Color Modifier",
+        type: "modifier",
+        choices: [
+          { name: "Red", choiceId: "red-mod", choiceType: "ONE_COLOR" },
+        ],
+        optionType: "color",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(modifierOption);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Verify that ChoiceContext.Provider is called with modifier-specific context
+      expect(Choice.ChoiceContext.Provider).toHaveBeenCalledWith(
+        expect.objectContaining({
+          value: expect.objectContaining({
+            choice: expect.objectContaining({
+              name: "Red",
+              choiceId: "red-mod",
+            }),
+            onValueChange: expect.any(Function),
+            shouldRenderAsColor: true, // Should be true for color type
+            shouldRenderAsText: false,
+            shouldRenderAsFreeText: false,
+            isSelected: false,
+            isVisible: true, // Modifiers don't provide visibility, defaults to true
+            isInStock: true, // Modifiers don't provide stock info, defaults to true
+            isPreOrderEnabled: true, // Modifiers don't provide pre-order info, defaults to true
+            select: expect.any(Function),
+            value: expect.any(String),
+          }),
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should handle text modifier choices correctly", () => {
+      const textModifier = {
+        name: "Size Modifier",
+        type: "modifier",
+        choices: [
+          { name: "Large", choiceId: "large-mod", choiceType: "CHOICE_TEXT" },
+        ],
+        optionType: "text",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(textModifier);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Verify context has correct shouldRender flags for text
+      expect(Choice.ChoiceContext.Provider).toHaveBeenCalledWith(
+        expect.objectContaining({
+          value: expect.objectContaining({
+            shouldRenderAsColor: false,
+            shouldRenderAsText: true, // Should be true for text type
+            shouldRenderAsFreeText: false,
+          }),
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should handle free text modifier context correctly", () => {
+      const freeTextModifier = {
+        name: "Custom Text",
+        type: "modifier",
+        optionType: "free-text",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(freeTextModifier);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Free text content</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Verify context has correct shouldRender flags for free text
+      expect(Choice.ChoiceContext.Provider).toHaveBeenCalledWith(
+        expect.objectContaining({
+          value: expect.objectContaining({
+            shouldRenderAsColor: false,
+            shouldRenderAsText: false,
+            shouldRenderAsFreeText: true, // Should be true for free-text type
+          }),
+        }),
+        expect.any(Object),
+      );
+    });
+
+    it("should not render when modifier has no choices and is not free text", () => {
+      const emptyModifier = {
+        name: "Empty Modifier",
+        type: "modifier",
+        choices: [],
+        optionType: "text",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(emptyModifier);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Should not render</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      expect(ProductModifiers.Choice).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("choice-content")).not.toBeInTheDocument();
+    });
+
+    it("should prefer variant selector for non-modifier options", () => {
+      const variantOption = {
+        name: "Size",
+        // No type property means it's a variant option
+        choices: [{ name: "Large", choiceId: "large-variant" }],
+        optionType: "text",
+        onValueChange: vi.fn(),
+      };
+
+      vi.spyOn(React, "useContext").mockReturnValue(variantOption);
+
+      render(
+        <Option.ChoiceRepeater>
+          <div data-testid="choice-content">Choice item</div>
+        </Option.ChoiceRepeater>,
+      );
+
+      // Should call ProductVariantSelector.Choice, not ProductModifiers.Choice
+      expect(ProductVariantSelector.Choice).toHaveBeenCalled();
+      expect(ProductModifiers.Choice).not.toHaveBeenCalled();
     });
   });
 
