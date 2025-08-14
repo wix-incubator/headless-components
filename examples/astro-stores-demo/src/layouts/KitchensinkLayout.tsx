@@ -77,6 +77,14 @@ export const KitchensinkLayout = ({ children }: KitchensinkLayoutProps) => {
                 </div>
                 <span className="font-medium">Cart</span>
               </a>
+
+              {/* TEMP  New Cart Link */}
+              <a
+                href="/cart-new"
+                className="flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl px-3 py-2 transition-all duration-200 group/item"
+              >
+                <span className="font-medium">Cart (NEW!)</span>
+              </a>
             </nav>
           </div>
         </div>
