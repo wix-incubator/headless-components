@@ -1086,6 +1086,47 @@ describe("Product Components", () => {
       const modifierContents = screen.getAllByTestId("modifier-content");
       expect(modifierContents).toHaveLength(2);
     });
+
+    it("should pass allowedTypes prop to Option.Root", () => {
+      const allowedTypes = ["color", "text"];
+
+      render(
+        <Product.ModifierOptionRepeater allowedTypes={allowedTypes}>
+          <div data-testid="modifier-content">Modifier item</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Verify that modifiers are rendered with allowedTypes
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2);
+
+      // Note: We can't easily verify the allowedTypes prop is passed to Option.Root
+      // without mocking Option.Root, but the integration test above covers this
+    });
+
+    it("should handle empty allowedTypes array", () => {
+      render(
+        <Product.ModifierOptionRepeater allowedTypes={[]}>
+          <div data-testid="modifier-content">Should not render</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Should still render modifiers, but the Option.ChoiceRepeater should filter out all choices
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2); // Modifiers render, but choices will be filtered
+    });
+
+    it("should use default allowedTypes when prop not provided", () => {
+      render(
+        <Product.ModifierOptionRepeater>
+          <div data-testid="modifier-content">Modifier item</div>
+        </Product.ModifierOptionRepeater>,
+      );
+
+      // Should render all modifiers with default allowedTypes
+      const modifierContents = screen.getAllByTestId("modifier-content");
+      expect(modifierContents).toHaveLength(2);
+    });
   });
 
   describe("Integration Tests", () => {

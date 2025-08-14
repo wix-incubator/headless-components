@@ -427,8 +427,18 @@ export const ChoiceRepeater = React.forwardRef<
 
   const onValueChange = optionData.onValueChange || (() => {});
   const isModifier = optionData.type;
+  const allowedTypes = optionData.allowedTypes || [
+    "color",
+    "text",
+    "free-text",
+  ];
 
   if (optionData.optionType === "free-text") {
+    // Check if free-text is allowed
+    if (!allowedTypes.includes("free-text")) {
+      return null;
+    }
+
     const choice = optionData;
 
     return (
@@ -474,7 +484,6 @@ export const ChoiceRepeater = React.forwardRef<
           };
 
           const choiceType = getChoiceType();
-          const allowedTypes = ["color", "text", "free-text"];
           if (!allowedTypes.includes(choiceType)) {
             return null;
           }
