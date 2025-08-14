@@ -6,10 +6,11 @@ import {
   type LineItemServiceConfig,
 } from "../services/line-item-service.js";
 import { createServicesMap } from "@wix/services-manager";
-import { type LineItem } from "../services/current-cart-service.js";
+import { type LineItem } from "../services/common-types.js";
 import { useAsChild, type AsChildProps } from "../utils/asChild.js";
 import { media } from "@wix/sdk";
-
+import * as SelectedOption from "./SelectedOption.js";
+import { extractSelectedOptions } from "../mappers/line-item-to-selected-options.js";
 
 
 export interface LineItemRootProps {
@@ -55,6 +56,7 @@ enum TestIds {
   lineItemTitle = "line-item-title",
   lineItemImage = "line-item-image",
   lineItemSelectedOptions = "line-item-selected-options",
+  selectedOption = "selected-option",
 }
 
 
@@ -214,33 +216,9 @@ export const SelectedOptions = React.forwardRef<HTMLElement, SelectedOptionsProp
 
     const lineItem = lineItemService.lineItem.get();
 
-    const selectedOptions: Array<{
-      name: string;
-      value: string | { name: string; code: string };
-    }> = [];
-
-    if (lineItem?.descriptionLines) {
-      lineItem.descriptionLines.forEach((line: any) => {
-        if (line.name?.original) {
-          const optionName = line.name.original;
-
-          if (line.colorInfo) {
-            selectedOptions.push({
-              name: optionName,
-              value: {
-                name: line.colorInfo.original,
-                code: line.colorInfo.code,
-              },
-            });
-          } else if (line.plainText) {
-            selectedOptions.push({
-              name: optionName,
-              value: line.plainText.original,
-            });
-          }
-        }
-      });
-    }
+    const selectedOptions = lineItem?.descriptionLines
+      ? extractSelectedOptions(lineItem.descriptionLines)
+      : [];
 
     if (selectedOptions.length === 0) {
       return null;
@@ -260,3 +238,55 @@ export const SelectedOptions = React.forwardRef<HTMLElement, SelectedOptionsProp
 );
 
 SelectedOptions.displayName = "LineItem.SelectedOptions";
+
+/**
+ * Props for LineItem SelectedOptionRepeater component
+ */
+export interface SelectedOptionRepeaterProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Renders a list of selected options. Maps over selected options and renders SelectedOption.Root for each.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <LineItem.SelectedOptionRepeater>
+ *   <SelectedOption.Text />
+ *   <SelectedOption.Color />
+ * </LineItem.SelectedOptionRepeater>
+ * ```
+ */
+export function SelectedOptionRepeater(props: SelectedOptionRepeaterProps): React.ReactNode {
+  const { children } = props;
+  const lineItemService = useService(LineItemServiceDefinition);
+
+  const lineItem = lineItemService.lineItem.get();
+
+      // Extract selected options from description lines using discriminated union
+    const selectedOptions = lineItem?.descriptionLines
+      ? extractSelectedOptions(lineItem.descriptionLines)
+      : [];
+
+  if (selectedOptions.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      {selectedOptions.map((option, index) => (
+        <SelectedOption.Root
+          key={`${option.name}-${index}`}
+          option={option}
+          data-testid={TestIds.selectedOption}
+        >
+          {children}
+        </SelectedOption.Root>
+      ))}
+    </>
+  );
+}
+
+SelectedOptionRepeater.displayName = "LineItem.SelectedOptionRepeater";

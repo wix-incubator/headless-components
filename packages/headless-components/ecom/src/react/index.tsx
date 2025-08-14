@@ -6,3 +6,4 @@ export * as Checkout from "./core/Checkout.js";
 export * as CurrentCartV2 from "./CurrentCart.js";
 export * as Cart from "./Cart.js";
 export * as LineItem from "./LineItem.js";
+export * as SelectedOption from "./SelectedOption.js";

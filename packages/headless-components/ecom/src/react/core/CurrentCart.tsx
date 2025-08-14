@@ -2,10 +2,10 @@ import type { ServiceAPI } from "@wix/services-definitions";
 import { useService } from "@wix/services-manager-react";
 import {
   CurrentCartServiceDefinition,
-  type LineItem,
 } from "../../services/current-cart-service.js";
 import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
 import { media } from "@wix/sdk";
+import { type LineItem } from "../../services/common-types.js";
 
 /**
  * Props for EmptyState headless component

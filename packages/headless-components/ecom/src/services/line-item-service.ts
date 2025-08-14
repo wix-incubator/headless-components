@@ -3,7 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from "@wix/services-definitions/core-services/signals";
-import { type LineItem } from "./current-cart-service.js";
+import { type LineItem } from "./common-types.js";
 
 export interface LineItemServiceAPI {
   lineItem: Signal<LineItem>;
