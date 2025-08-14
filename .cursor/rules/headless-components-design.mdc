@@ -1,0 +1,345 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# V2 Headless Components Architecture
+
+This document outlines the core architectural patterns for headless components following the V2 API design.
+
+## Component Type Classification
+
+All components are classified into two main categories:
+
+### 1. **Logic-Only Components**
+- Handle business logic, service initialization, and data management
+- Never render DOM elements directly
+- Always use services instead of direct React context
+
+### 2. **DOM-Renderer Components**
+- Render actual DOM elements
+- Always extend their props with `AsChildProps` from `asChild.ts`
+- Use the `useAsChild` helper for flexible composition
+- Follow the asChild pattern for customizable rendering
+
+## Component Types and Patterns
+
+### Root Components (Logic-Only)
+
+**Purpose**: Initialize services and provide context for entity-specific functionality
+
+**Characteristics**:
+- Always named `Root`
+- Never render DOM elements directly
+- Initialize and configure services via `WixServices` provider
+- Take entity data as props and pass to service configuration
+
+**Example**:
+```tsx
+export function Root(props: LineItemRootProps): React.ReactNode {
+  const { children, item } = props;
+
+  const lineItemServiceConfig: LineItemServiceConfig = {
+    lineItem: item,
+  };
+
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        LineItemServiceDefinition,
+        LineItemService,
+        lineItemServiceConfig,
+      )}
+    >
+      {children}
+    </WixServices>
+  );
+}
+```
+
+### Container Components (DOM-Renderer)
+
+**Purpose**: Set the stage for collections and provide DOM structure for entity contexts
+
+**Characteristics**:
+- Can be named variably (e.g., `LineItems`, `Products`, etc.)
+- Render DOM containers
+- Support `emptyState` prop for handling empty collections
+- Use `AsChildProps` and `useAsChild` helper
+- Access services to determine rendering state
+
+**Example**:
+```tsx
+export function LineItems(props: LineItemsProps): React.ReactNode {
+  const { asChild, children, emptyState, ...otherProps } = props;
+  const Comp = useAsChild(asChild, "div");
+
+  const service = useService(CurrentCartServiceDefinition);
+  const cart = service.cart.get();
+
+  if (!cart && emptyState) {
+    return emptyState;
+  }
+
+  return (
+    <Comp data-testid="cart-line-items" {...otherProps}>
+      {children}
+    </Comp>
+  );
+}
+```
+
+### Repeater Components (DOM-Renderer)
+
+**Purpose**: Loop over collections and transition to different entity types by rendering Root components
+
+**Characteristics**:
+- Always named `{Entity}Repeater` (e.g., `LineItemRepeater`)
+- Map over collections from services
+- Render `{EntityType}.Root` for each item
+- Pass children through to Root components
+- Use `AsChildProps` and `useAsChild` helper
+
+**Example**:
+```tsx
+export function LineItemRepeater(props: LineItemRepeaterProps): React.ReactNode {
+  const { asChild, children, ...otherProps } = props;
+  const Comp = useAsChild(asChild, "div");
+
+  const service = useService(CurrentCartServiceDefinition);
+  const cart = service.cart.get();
+  const items = cart?.lineItems || [];
+
+  return (
+    <Comp {...otherProps}>
+      {items.map((item, index) => (
+        <LineItem.Root key={item._id || index} item={item}>
+          {children}
+        </LineItem.Root>
+      ))}
+    </Comp>
+  );
+}
+```
+
+### Concrete Components (DOM-Renderer)
+
+**Purpose**: Access specific data from services and render targeted content
+
+**Characteristics**:
+- Named descriptively (e.g., `Title`, `Image`, `Price`)
+- Access services to get specific data
+- Render concrete DOM elements with data
+- Use `AsChildProps` and `useAsChild` helper
+- Handle data formatting and transformation
+
+**Example**:
+```tsx
+export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+  const lineItemService = useService(LineItemServiceDefinition);
+  const Comp = useAsChild(asChild);
+
+  const lineItem = lineItemService.lineItem.get();
+  const title = lineItem?.productName?.original || "";
+
+  const attributes = {
+    "data-testid": TestIds.lineItemTitle,
+    ...otherProps,
+  };
+
+  return (
+    <Comp ref={ref} {...attributes}>
+      {asChild ? children : title}
+    </Comp>
+  );
+});
+```
+
+## Service Architecture
+
+### Service Types
+
+#### 1. **Lean Context Services**
+- Store simple data in context-like manner
+- Minimal business logic
+- Used for passing entity data down component tree
+
+**Example**: `LineItemService`
+```tsx
+export const LineItemService = implementService.withConfig<LineItemServiceConfig>()(
+  LineItemServiceDefinition,
+  ({ getService, config }) => {
+    const signalsService = getService(SignalsServiceDefinition);
+
+    const lineItem: Signal<LineItem> = signalsService.signal(
+      config.lineItem,
+    );
+
+    return {
+      lineItem,
+    };
+  },
+);
+```
+
+#### 2. **Full Business Logic Services**
+- Handle API calls and data loading
+- Manage complex state and side effects
+- Provide computed values and business operations
+
+**Example**: `CurrentCartService`
+```tsx
+export const CurrentCartService = implementService.withConfig<CurrentCartServiceConfig>()(
+  CurrentCartServiceDefinition,
+  ({ getService, config }) => {
+    const signalsService = getService(SignalsServiceDefinition);
+
+    const cart: Signal<currentCart.Cart | null> = signalsService.signal(
+      config.initialCart || null,
+    );
+    const isLoading: Signal<boolean> = signalsService.signal(false);
+    const error: Signal<string | null> = signalsService.signal(null);
+
+    const cartCount: ReadOnlySignal<number> = signalsService.computed(() => {
+      const currentCart = cart.get();
+      if (!currentCart?.lineItems) return 0;
+      return currentCart.lineItems.reduce(
+        (acc: number, item: any) => acc + (item.quantity || 0),
+        0,
+      );
+    });
+
+    const addToCart = async (
+      lineItems: currentCart.AddToCurrentCartRequest["lineItems"],
+    ) => {
+      try {
+        isLoading.set(true);
+        error.set(null);
+
+        const { cart: updatedCart } = await currentCart.addToCurrentCart({
+          lineItems,
+        });
+        cart.set(updatedCart || null);
+      } catch (err) {
+        error.set(err instanceof Error ? err.message : "Failed to add to cart");
+      } finally {
+        isLoading.set(false);
+      }
+    };
+
+    return {
+      cart,
+      cartCount,
+      isLoading,
+      error,
+      addToCart,
+      // ... other methods
+    };
+  },
+);
+```
+
+### Service Implementation Rules
+
+1. **Never use React Context directly** - always use services
+2. Services are defined using `defineService` and implemented with `implementService`
+3. Services use signals for reactive state management
+4. Services can depend on other services via `getService`
+5. Configuration is passed during service instantiation
+
+## AsChild Pattern Integration
+
+### Usage Rules
+
+1. **All DOM-renderer components** must extend `AsChildProps`
+2. Use `useAsChild(asChild, defaultElement)` helper
+3. When `asChild=true`, pass `children` through
+4. When `asChild=false`, render default content
+5. Always spread `otherProps` to the rendered component
+
+### Implementation Pattern
+
+```tsx
+export interface ComponentProps extends AsChildProps {
+  // component-specific props
+}
+
+export const Component = React.forwardRef<HTMLElement, ComponentProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+  const Comp = useAsChild(asChild, "div"); // default element
+
+  // Get data from service
+  const data = getDataFromService();
+
+  return (
+    <Comp ref={ref} {...otherProps}>
+      {asChild ? children : data}
+    </Comp>
+  );
+});
+```
+
+## Component Composition Patterns
+
+### Typical Usage Hierarchy
+
+```tsx
+// Container sets up the collection context
+<Cart.LineItems emptyState={<EmptyCart />}>
+  {/* Repeater loops and creates entity contexts */}
+  <Cart.LineItemRepeater>
+    {/* Concrete components access entity data */}
+    <LineItem.Image />
+    <LineItem.Title />
+    <LineItem.Quantity />
+  </Cart.LineItemRepeater>
+</Cart.LineItems>
+```
+
+### Service Flow
+
+1. **Root** component initializes entity service with data
+2. **Container** component accesses collection service for state
+3. **Repeater** component maps collection and renders Root for each item
+4. **Concrete** components access entity service for specific data
+
+## Testing and Data Attributes
+
+- **Only DOM-renderer components** should include `data-testid` attributes
+- Logic-only components (Root) never render DOM, so no test IDs needed
+- Use centralized `TestIds` enum for consistency
+- Follow naming convention: `{entity}-{component-type}`
+
+### TestIds Implementation
+
+```tsx
+enum TestIds {
+  lineItemTitle = "line-item-title",
+  lineItemImage = "line-item-image",
+  cartLineItems = "cart-line-items",
+}
+
+// DOM-renderer components use TestIds
+export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
+  const attributes = {
+    "data-testid": TestIds.lineItemTitle, // ✅ DOM-renderer includes testid
+    ...otherProps,
+  };
+
+  return <Comp ref={ref} {...attributes}>{content}</Comp>;
+});
+
+// Logic-only components don't use TestIds
+export function Root(props: LineItemRootProps): React.ReactNode {
+  // ✅ No data-testid - logic-only component
+  return (
+    <WixServices servicesMap={servicesMap}>
+      {children}
+    </WixServices>
+  );
+}
+```
+
+This architecture ensures consistent, maintainable, and predictable component design across all headless components.

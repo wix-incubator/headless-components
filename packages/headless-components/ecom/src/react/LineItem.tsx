@@ -8,6 +8,7 @@ import {
 import { createServicesMap } from "@wix/services-manager";
 import { type LineItem } from "../services/current-cart-service.js";
 import { useAsChild, type AsChildProps } from "../utils/asChild.js";
+import { media } from "@wix/sdk";
 
 
 
@@ -52,6 +53,7 @@ Root.displayName = "LineItem.Root";
 
 enum TestIds {
   lineItemTitle = "line-item-title",
+  lineItemImage = "line-item-image",
 }
 
 
@@ -88,7 +90,7 @@ export interface TitleProps extends AsChildProps {}
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   const { asChild, children, ...otherProps } = props;
   const lineItemService = useService(LineItemServiceDefinition);
-  const Comp = useAsChild(asChild, "span");
+  const Comp = useAsChild(asChild);
 
   const lineItem = lineItemService.lineItem.get();
   const title = lineItem?.productName?.original || "";
@@ -106,3 +108,66 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
 });
 
 Title.displayName = "LineItem.Title";
+
+/**
+ * Props for LineItem Image component
+ */
+export interface ImageProps extends AsChildProps {}
+
+/**
+ * Displays the line item product image with customizable rendering options following the V2 API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <LineItem.Image className="w-16 h-16 rounded-lg object-cover" />
+ *
+ * // Custom rendering with forwardRef
+ * <LineItem.Image asChild>
+ *   {React.forwardRef(({src, alt, ...props}, ref) => (
+ *     <img
+ *       ref={ref}
+ *       {...props}
+ *       src={src}
+ *       alt={alt}
+ *       className="w-16 h-16 rounded-lg object-cover"
+ *     />
+ *   ))}
+ * </LineItem.Image>
+ * ```
+ */
+export const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+  const lineItemService = useService(LineItemServiceDefinition);
+  const Comp = useAsChild(asChild, "img");
+
+  const lineItem = lineItemService.lineItem.get();
+
+  let src = "";
+  if (lineItem?.image) {
+    try {
+      src = media.getImageUrl(lineItem.image).url;
+    } catch (error) {
+      console.warn("Failed to get image URL:", error);
+      src = "";
+    }
+  }
+
+  const alt = lineItem?.productName?.original || "Product image";
+
+  const attributes = {
+    "data-testid": TestIds.lineItemImage,
+    src,
+    alt,
+    ...otherProps,
+  };
+
+  return (
+    <Comp ref={ref} {...attributes}>
+      {asChild ? children : null}
+    </Comp>
+  );
+});
+
+Image.displayName = "LineItem.Image";
