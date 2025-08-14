@@ -444,36 +444,20 @@ export const ChoiceRepeater = React.forwardRef<
               choice={choice}
             >
               {(renderProps) => {
-                const {
-                  value,
-                  isSelected,
-                  select,
-                  modifierName,
-                  choiceValue,
-                  colorCode,
-                  description,
-                } = renderProps;
+                const { value, isSelected, select } = renderProps;
 
-                // Create the context value with ProductModifiers render props
                 const contextValue = {
                   choice,
                   onValueChange,
                   shouldRenderAsColor: choiceType === "color",
                   shouldRenderAsText: choiceType === "text",
                   shouldRenderAsFreeText: choiceType === "free-text",
-                  // ProductModifiers render props
                   isSelected,
                   isVisible: true, // ProductModifiers doesn't provide visibility
                   isInStock: true, // ProductModifiers doesn't provide stock info
-                  isPreOrderEnabled: false, // ProductModifiers doesn't provide pre-order info
+                  isPreOrderEnabled: true, // ProductModifiers doesn't provide pre-order info
                   select,
                   value,
-                  optionData,
-                  // Additional ProductModifiers props
-                  modifierName,
-                  choiceValue,
-                  colorCode,
-                  description,
                 };
 
                 return (
@@ -485,7 +469,6 @@ export const ChoiceRepeater = React.forwardRef<
             </ProductModifiers.Choice>
           );
         } else {
-          // Render ProductVariantSelector.Choice for variants
           return (
             <ProductVariantSelector.Choice
               key={choiceKey}
@@ -505,21 +488,18 @@ export const ChoiceRepeater = React.forwardRef<
                 // Don't render if not visible
                 if (!isVisible) return null;
 
-                // Create the context value with ProductVariantSelector render props
                 const contextValue = {
                   choice,
                   onValueChange,
                   shouldRenderAsColor: choiceType === "color",
                   shouldRenderAsText: choiceType === "text",
                   shouldRenderAsFreeText: choiceType === "free-text",
-                  // ProductVariantSelector render props
                   isSelected,
                   isVisible,
                   isInStock,
                   isPreOrderEnabled,
                   select,
                   value,
-                  optionData,
                 };
 
                 return (

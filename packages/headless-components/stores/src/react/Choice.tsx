@@ -19,10 +19,57 @@ export interface Choice {
   key?: string;
   name?: string | null;
   addedPrice?: string | null;
+  minCharCount?: number;
+  maxCharCount?: number;
+}
+
+/**
+ * Context value interface for individual choice data and behavior
+ */
+export interface ChoiceContextValue {
+  /** The choice data object */
+  choice: Choice;
+  /** Whether this choice should render as text */
+  shouldRenderAsText: boolean;
+  /** Whether this choice should render as color swatch */
+  shouldRenderAsColor: boolean;
+  /** Whether this choice should render as free text input */
+  shouldRenderAsFreeText: boolean;
+  /** Display value for the choice */
+  value: string;
+  /** Whether this choice is currently selected */
+  isSelected: boolean;
+  /** Whether this choice is visible based on current selections */
+  isVisible: boolean;
+  /** Whether this choice is in stock */
+  isInStock: boolean;
+  /** Whether this choice is available for pre-order */
+  isPreOrderEnabled: boolean;
+  /** Function to select this choice */
+  select: () => void;
+  /** Callback for free text value changes */
+  onValueChange?: (value: string) => void;
 }
 
 // Create a context for individual choices
-export const ChoiceContext = React.createContext<any>(null);
+export const ChoiceContext = React.createContext<ChoiceContextValue | null>(
+  null,
+);
+
+/**
+ * Hook to access ChoiceContext with proper error handling
+ * @throws {Error} When used outside of a Choice context provider
+ * @returns {ChoiceContextValue} The choice context value
+ */
+export function useChoiceContext(): ChoiceContextValue {
+  const context = React.useContext(ChoiceContext);
+  if (!context) {
+    throw new Error(
+      "useChoiceContext must be used within a Choice context provider (Option.ChoiceRepeater)",
+    );
+  }
+  return context;
+}
 
 export interface RootProps {
   children?: React.ReactNode;
@@ -133,7 +180,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    const choiceId = choice?.choiceId;
+    const choiceId = choice?.choiceId || "";
 
     const attributes = {
       "data-testid": TestIds.choiceText,
@@ -239,9 +286,9 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       const rendered = renderAsChild({
         children,
         props: {
-          colorCode,
+          colorCode: colorCode || "",
           name: value,
-          id: choiceId,
+          id: choiceId || "",
         },
         ref,
         content: null,
@@ -352,8 +399,8 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
         props: {
           minCharCount: choice?.minCharCount,
           maxCharCount: choice?.maxCharCount,
-          defaultAddedPrice: choice?.addedPrice,
-          title: choice?.name,
+          defaultAddedPrice: choice?.addedPrice || undefined,
+          title: choice?.name || undefined,
           onChange: handleChange,
         },
         ref,
