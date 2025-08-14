@@ -99,18 +99,9 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     const { choice } = choiceContext;
 
-    // Determine choice type for data-type attribute
-    const getChoiceType = (): "color" | "text" | "free-text" => {
-      if (choice?.colorCode) return "color";
-      if (choice?.type === "free-text") return "free-text";
-      return "text";
-    };
-
-    const choiceType = getChoiceType();
-
     const attributes = {
       "data-testid": TestIds.choiceRoot,
-      "data-type": choiceType,
+      "data-type": choice?.type,
     };
 
     return (
@@ -384,8 +375,6 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
       "data-testid": TestIds.choiceFreetext,
       "data-selected": isSelected ? "true" : "false",
     };
-
-    console.log("choice", choice);
 
     return (
       <FreeTextPrimitive modifier={choice}>

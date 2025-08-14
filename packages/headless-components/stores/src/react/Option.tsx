@@ -22,6 +22,7 @@ export interface Option {
   type?: string;
   mandatory?: boolean;
 }
+
 /**
  * Root props with asChild support
  */
@@ -122,33 +123,20 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 
   // Determine the option type based on the option name and available choices
   const getOptionType = (): "color" | "text" | "free-text" => {
-    const optionName = option.name.toLowerCase();
-    const hasChoices =
-      option.hasChoices && option.choices && option.choices.length > 0;
-
-    if (!hasChoices) {
+    if (option.type === "FREE_TEXT") {
       return "free-text";
     }
 
-    // Check if this is a color option by name or if choices have colorCode
-    const isColorOption =
-      optionName.includes("color") || optionName.includes("colour");
-    const hasColorChoices = option.choices?.some(
-      (choice: any) => choice.colorCode,
-    );
-
-    if (isColorOption || hasColorChoices) {
+    if (
+      option.hasChoices &&
+      option.choices?.some(
+        (choice: ConnectedOptionChoice | ConnectedModifierChoice) =>
+          choice.colorCode,
+      )
+    ) {
       return "color";
     }
 
-    // Check if this is a free text option
-    const isFreeTextOption =
-      optionName.includes("text") || optionName.includes("custom");
-    if (isFreeTextOption) {
-      return "free-text";
-    }
-
-    // Default to text
     return "text";
   };
 
@@ -372,7 +360,7 @@ export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
       optionData.optionType === "free-text";
 
     if (!hasChoicesOrFreeText) {
-      return emptyState || null; // ✅ Handle empty state like VariantOptions
+      return emptyState || null;
     }
 
     const attributes = {
@@ -439,7 +427,10 @@ export const ChoiceRepeater = React.forwardRef<
       return null;
     }
 
-    const choice = optionData;
+    const choice = {
+      ...optionData,
+      type: "free-text",
+    };
 
     return (
       <ProductModifiers.Choice modifier={optionData} choice={choice}>
@@ -488,18 +479,23 @@ export const ChoiceRepeater = React.forwardRef<
             return null;
           }
 
+          const choiceData = {
+            ...choice,
+            type: choiceType,
+          };
+
           if (isModifier) {
             return (
               <ProductModifiers.Choice
                 key={choiceKey}
                 modifier={optionData}
-                choice={choice}
+                choice={choiceData}
               >
                 {(renderProps) => {
                   const { value, isSelected, select } = renderProps;
 
                   const contextValue = {
-                    choice,
+                    choice: choiceData,
                     onValueChange,
                     shouldRenderAsColor: choiceType === "color",
                     shouldRenderAsText: choiceType === "text",
@@ -525,7 +521,7 @@ export const ChoiceRepeater = React.forwardRef<
               <ProductVariantSelector.Choice
                 key={choiceKey}
                 option={optionData}
-                choice={choice}
+                choice={choiceData}
               >
                 {(renderProps) => {
                   const {
@@ -541,7 +537,7 @@ export const ChoiceRepeater = React.forwardRef<
                   if (!isVisible) return null;
 
                   const contextValue = {
-                    choice,
+                    choice: choiceData,
                     onValueChange,
                     shouldRenderAsColor: choiceType === "color",
                     shouldRenderAsText: choiceType === "text",

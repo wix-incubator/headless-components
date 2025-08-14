@@ -791,8 +791,6 @@ export const ModifierOptionRepeater = React.forwardRef<
 
   if (!hasModifiers) return null;
 
-  console.log("modifiers", { modifiers });
-
   return (
     <>
       {modifiers.map((modifier: any) => {
