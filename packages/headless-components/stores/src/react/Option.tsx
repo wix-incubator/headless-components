@@ -439,13 +439,13 @@ export const ChoiceRepeater = React.forwardRef<
           const contextValue = {
             choice,
             onValueChange,
+            isSelected,
+            isVisible: true,
+            isInStock: true,
+            isPreOrderEnabled: true,
             shouldRenderAsColor: false,
             shouldRenderAsText: false,
             shouldRenderAsFreeText: true,
-            isSelected: isSelected,
-            isVisible: true, // ProductModifiers doesn't provide visibility
-            isInStock: true, // ProductModifiers doesn't provide stock info
-            isPreOrderEnabled: true, // ProductModifiers doesn't provide pre-order info
             select,
             value,
           };
