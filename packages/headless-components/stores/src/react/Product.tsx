@@ -594,7 +594,7 @@ export const VariantOptionRepeater = React.forwardRef<
     <>
       {options.map((option: any) => {
         return (
-          <ProductVariantSelector.Option key={option.name} option={option}>
+          <ProductVariantSelector.Option key={option._id} option={option}>
             {(optionData) => (
               <Option.Root
                 option={{
@@ -791,11 +791,13 @@ export const ModifierOptionRepeater = React.forwardRef<
 
   if (!hasModifiers) return null;
 
+  console.log("modifiers", { modifiers });
+
   return (
     <>
       {modifiers.map((modifier: any) => {
         return (
-          <ProductModifiers.Modifier key={modifier.name} modifier={modifier}>
+          <ProductModifiers.Modifier key={modifier._id} modifier={modifier}>
             {(modifierData) => (
               <Option.Root
                 option={{

@@ -410,6 +410,8 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
       if (rendered) return rendered;
     }
 
-    return <textarea ref={ref} className={className} {...attributes} />;
+    return (
+      <textarea ref={ref} className={className} {...attributes} rows={3} />
+    );
   },
 );

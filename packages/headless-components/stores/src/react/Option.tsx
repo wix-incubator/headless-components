@@ -1,8 +1,12 @@
+import {
+  type ConnectedModifierChoice,
+  type ConnectedOptionChoice,
+} from "@wix/auto_sdk_stores_products-v-3";
 import React from "react";
 import { renderAsChild, type AsChildProps } from "../utils/index.js";
-import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
 import * as Choice from "./Choice.js";
+import * as ProductModifiers from "./core/ProductModifiers.js";
+import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 
 enum TestIds {
   optionRoot = "option-root",
@@ -421,97 +425,100 @@ export const ChoiceRepeater = React.forwardRef<
 
   return (
     <>
-      {optionData.choices.map((choice: any) => {
-        const choiceKey = choice.key || choice.name || choice.id;
+      {optionData.choices.map(
+        (choice: ConnectedOptionChoice | ConnectedModifierChoice) => {
+          const choiceKey = choice.choiceId;
 
-        const getChoiceType = (): "color" | "text" | "free-text" => {
-          if (choice?.colorCode) return "color";
-          if (choice?.type === "free-text") return "free-text";
-          return "text";
-        };
+          const getChoiceType = (): "color" | "text" | "free-text" => {
+            if (choice?.choiceType === "ONE_COLOR") return "color";
+            if (choice?.choiceType === "CHOICE_TEXT") return "text";
 
-        const choiceType = getChoiceType();
-        const allowedTypes = ["color", "text", "free-text"];
-        if (!allowedTypes.includes(choiceType)) {
-          return null;
-        }
+            return "text";
+          };
 
-        if (isModifier) {
-          return (
-            <ProductModifiers.Choice
-              key={choiceKey}
-              modifier={optionData}
-              choice={choice}
-            >
-              {(renderProps) => {
-                const { value, isSelected, select } = renderProps;
+          const choiceType = getChoiceType();
+          const allowedTypes = ["color", "text", "free-text"];
+          if (!allowedTypes.includes(choiceType)) {
+            return null;
+          }
 
-                const contextValue = {
-                  choice,
-                  onValueChange,
-                  shouldRenderAsColor: choiceType === "color",
-                  shouldRenderAsText: choiceType === "text",
-                  shouldRenderAsFreeText: choiceType === "free-text",
-                  isSelected,
-                  isVisible: true, // ProductModifiers doesn't provide visibility
-                  isInStock: true, // ProductModifiers doesn't provide stock info
-                  isPreOrderEnabled: true, // ProductModifiers doesn't provide pre-order info
-                  select,
-                  value,
-                };
+          if (isModifier) {
+            return (
+              <ProductModifiers.Choice
+                key={choiceKey}
+                modifier={optionData}
+                choice={choice}
+              >
+                {(renderProps) => {
+                  const { value, isSelected, select } = renderProps;
 
-                return (
-                  <Choice.ChoiceContext.Provider value={contextValue}>
-                    <Choice.Root>{children}</Choice.Root>
-                  </Choice.ChoiceContext.Provider>
-                );
-              }}
-            </ProductModifiers.Choice>
-          );
-        } else {
-          return (
-            <ProductVariantSelector.Choice
-              key={choiceKey}
-              option={optionData}
-              choice={choice}
-            >
-              {(renderProps) => {
-                const {
-                  value,
-                  isSelected,
-                  select,
-                  isVisible,
-                  isInStock,
-                  isPreOrderEnabled,
-                } = renderProps;
+                  const contextValue = {
+                    choice,
+                    onValueChange,
+                    shouldRenderAsColor: choiceType === "color",
+                    shouldRenderAsText: choiceType === "text",
+                    shouldRenderAsFreeText: choiceType === "free-text",
+                    isSelected,
+                    isVisible: true, // ProductModifiers doesn't provide visibility
+                    isInStock: true, // ProductModifiers doesn't provide stock info
+                    isPreOrderEnabled: true, // ProductModifiers doesn't provide pre-order info
+                    select,
+                    value,
+                  };
 
-                // Don't render if not visible
-                if (!isVisible) return null;
+                  return (
+                    <Choice.ChoiceContext.Provider value={contextValue}>
+                      <Choice.Root>{children}</Choice.Root>
+                    </Choice.ChoiceContext.Provider>
+                  );
+                }}
+              </ProductModifiers.Choice>
+            );
+          } else {
+            return (
+              <ProductVariantSelector.Choice
+                key={choiceKey}
+                option={optionData}
+                choice={choice}
+              >
+                {(renderProps) => {
+                  const {
+                    value,
+                    isSelected,
+                    select,
+                    isVisible,
+                    isInStock,
+                    isPreOrderEnabled,
+                  } = renderProps;
 
-                const contextValue = {
-                  choice,
-                  onValueChange,
-                  shouldRenderAsColor: choiceType === "color",
-                  shouldRenderAsText: choiceType === "text",
-                  shouldRenderAsFreeText: choiceType === "free-text",
-                  isSelected,
-                  isVisible,
-                  isInStock,
-                  isPreOrderEnabled,
-                  select,
-                  value,
-                };
+                  // Don't render if not visible
+                  if (!isVisible) return null;
 
-                return (
-                  <Choice.ChoiceContext.Provider value={contextValue}>
-                    <Choice.Root>{children}</Choice.Root>
-                  </Choice.ChoiceContext.Provider>
-                );
-              }}
-            </ProductVariantSelector.Choice>
-          );
-        }
-      })}
+                  const contextValue = {
+                    choice,
+                    onValueChange,
+                    shouldRenderAsColor: choiceType === "color",
+                    shouldRenderAsText: choiceType === "text",
+                    shouldRenderAsFreeText: choiceType === "free-text",
+                    isSelected,
+                    isVisible,
+                    isInStock,
+                    isPreOrderEnabled,
+                    select,
+                    value,
+                  };
+
+                  return (
+                    <Choice.ChoiceContext.Provider value={contextValue}>
+                      <Choice.Root>{children}</Choice.Root>
+                    </Choice.ChoiceContext.Provider>
+                  );
+                }}
+              </ProductVariantSelector.Choice>
+            );
+          }
+        },
+      )}
     </>
   );
 });
