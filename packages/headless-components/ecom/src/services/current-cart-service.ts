@@ -8,10 +8,6 @@ import * as currentCart from '@wix/auto_sdk_ecom_current-cart';
 import * as checkout from '@wix/auto_sdk_ecom_checkout';
 import { redirects } from '@wix/redirects';
 
-export type LineItem = NonNullable<
-  currentCart.AddToCurrentCartRequest['lineItems']
->[number];
-
 export interface CurrentCartServiceAPI {
   cart: Signal<currentCart.Cart | null>;
   isOpen: Signal<boolean>;

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { MiniCartContent, MiniCartIcon } from '../components/ecom/MiniCart';
-import { CurrentCart } from '@wix/headless-ecom/react';
+import { CurrentCart, Cart } from '@wix/headless-ecom/react';
 import type { CurrentCartServiceConfig } from '@wix/headless-ecom/services';
 
 interface StoreLayoutProps {
@@ -38,9 +38,9 @@ function StoreLayoutContent({
 }) {
   return (
     <>
-      <CurrentCart.OpenTrigger>
+      <Cart.OpenTrigger>
         {({ open }) => (
-          <CurrentCart.LineItemAdded>
+          <Cart.LineItemAdded>
             {({ onAddedToCart }) => {
               useEffect(
                 () =>
@@ -56,9 +56,9 @@ function StoreLayoutContent({
 
               return null;
             }}
-          </CurrentCart.LineItemAdded>
+          </Cart.LineItemAdded>
         )}
-      </CurrentCart.OpenTrigger>
+      </Cart.OpenTrigger>
 
       {/* Success Message */}
       {showSuccessMessage && (
