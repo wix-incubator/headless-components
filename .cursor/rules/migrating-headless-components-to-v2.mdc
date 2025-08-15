@@ -1,0 +1,549 @@
+---
+alwaysApply: false
+---
+# Migrating Headless Components to V2
+
+## Design Principles
+
+This migration follows the **V2 API Design Principles** from the [Wix Kitchensink API Documentation](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/API.md), inspired by [Radix UI](https://www.radix-ui.com/primitives/docs/overview/introduction) and [Shadcn UI](https://ui.shadcn.com/docs) component architecture.
+
+## Core Migration Pattern
+
+### 1. V2 Component Structure
+
+Each V2 component follows this hierarchical pattern:
+
+```
+Entity.Root
+├── Entity.Raw (direct data access - use sparingly)
+├── Entity.[ComponentName] (composable components)
+└── Entity.ListSection (for nested entities)
+    ├── Entity.ListSection.Entities
+    └── Entity.ListSection.EntityRepeater
+```
+
+### 2. Component Rendering Modes
+
+V2 components support **three rendering modes**:
+
+```tsx
+// 1. Default rendering with className
+<Entity.ComponentName className="text-4xl font-bold" />
+
+// 2. asChild with primitive elements
+<Entity.ComponentName asChild>
+  <h1 className="text-4xl font-bold" />
+</Entity.ComponentName>
+
+// 3. asChild with React components (using forwardRef)
+<Entity.ComponentName asChild>
+  {React.forwardRef(({data, ...props}, ref) => (
+    <h1 ref={ref} {...props} className="text-4xl font-bold">
+      {data}
+    </h1>
+  ))}
+</Entity.ComponentName>
+```
+
+### 3. Migration Implementation Strategy
+
+#### Option A: Wrapper Pattern (Recommended)
+Wrap existing V1 components within new V2 composite components:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot";
+
+// V2 Product.tsx - New composite API
+export function Root(props: ProductRootProps): React.ReactNode {
+  return (
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
+      <ProductVariantSelector.Root>
+        <ProductModifiers.Root>
+          <SelectedVariant.Root>
+            <div data-testid="product-details">{props.children}</div>
+          </SelectedVariant.Root>
+        </ProductModifiers.Root>
+      </ProductVariantSelector.Root>
+    </CoreProduct.Root>
+  );
+}
+
+export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+  const Comp = asChild ? Slot : "h1";
+
+  return (
+    <CoreProduct.Name>
+      {({ name }) => (
+        <Comp
+          ref={ref}
+          className={className}
+          data-testid="product-name"
+          {...otherProps}
+        >
+          {asChild ? children : name}
+        </Comp>
+      )}
+    </CoreProduct.Name>
+  );
+});
+```
+
+#### Option B: Full Rewrite (When Needed)
+Use Chadcn/Radix components for completely new implementations when V1 doesn't meet V2 requirements.
+
+## Migration Checklist
+
+### Pre-Migration Analysis
+- [ ] **Identify V1 component structure** - Map existing render props and service dependencies
+- [ ] **Review interface documentation** - Check [specific interface docs](https://github.com/wix-incubator/kitchensink/tree/carmelc-04-08-2025-23-16/docs/api_v2) for target component
+- [ ] **Determine migration approach** - Wrapper vs. full rewrite
+- [ ] **Plan component hierarchy** - Define Root, sub-components, and list patterns
+
+### Core V2 Implementation
+- [ ] **Create Root component** that accepts entity data directly (not config)
+- [ ] **Implement asChild pattern** using Radix UI Slot for all leaf components
+- [ ] **Add data attributes** following the documented pattern (`data-testid`, `data-selected`, etc.)
+- [ ] **Support state attributes** (`disabled`, `data-selected`, `data-loading`, etc.)
+- [ ] **Maintain service dependencies** - Ensure all V1 services remain accessible
+
+### Component Structure
+- [ ] **Move V1 components to `/core/` folder** if using wrapper pattern
+- [ ] **Export V2 from root index** using namespace pattern
+- [ ] **Create entity repeaters** for list patterns (`Entity.EntityRepeater`)
+- [ ] **Implement sub-entity transitions** (e.g., Product → Option → Choice)
+
+### Interface Compliance
+- [ ] **Follow props interface** from documentation (Entity.Name, Entity.Price, etc.)
+- [ ] **Support default rendering** with sensible defaults and className support
+- [ ] **Implement forwardRef pattern** for all interactive components
+- [ ] **Use Radix UI Slot** for proper asChild behavior
+
+### Testing & Validation
+- [ ] **Verify service compatibility** - Ensure existing services work unchanged
+- [ ] **Test all rendering modes** - Default, asChild primitive, asChild component
+- [ ] **Validate data attributes** - Check all documented data-* attributes are present
+- [ ] **Confirm accessibility** - Ensure forwardRef passes through properly
+
+## File Organization
+
+```
+packages/headless-components/domain/src/react/
+├── core/                          # V1 components (moved here)
+│   ├── Product.tsx
+│   ├── ProductVariantSelector.tsx
+│   └── ...
+├── Product.tsx                    # V2 composite component
+├── index.tsx                      # Export both V1 and V2
+└── utils/
+    └── index.ts                  # V2 utility functions
+```
+
+## Export Pattern
+
+```tsx
+// packages/headless-components/domain/src/react/index.tsx
+
+// V1 components (existing, moved to core/)
+export * as Product from "./core/Product.js";
+export * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+// ... other V1 components
+
+// V2 components (new composite API)
+export * as ProductV2 from "./Product.js";
+```
+
+## Component Interface Examples
+
+### Basic V2 Component
+
+```tsx
+import { Slot } from "@radix-ui/react-slot";
+
+// Based on documented interface patterns
+export interface NameProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+  const Comp = asChild ? Slot : "h1";
+
+  return (
+    <CoreProduct.Name>
+      {({ name }) => (
+        <Comp
+          ref={ref}
+          className={className}
+          data-testid="product-name"
+          {...otherProps}
+        >
+          {asChild ? children : name}
+        </Comp>
+      )}
+    </CoreProduct.Name>
+  );
+});
+```
+
+### List Pattern Implementation
+
+```tsx
+// For nested entities like Product.Variants
+export function Variants(props: ProductVariantsProps) {
+  return (
+    <CoreProductVariantSelector.Root>
+      <div data-testid="product-variants">
+        {props.children}
+      </div>
+    </CoreProductVariantSelector.Root>
+  );
+}
+
+export function VariantOptions(props: ProductVariantOptionsProps) {
+  return (
+    <CoreProductVariantSelector.Options>
+      {({ options, hasOptions }) =>
+        hasOptions ? props.children : props.emptyState
+      }
+    </CoreProductVariantSelector.Options>
+  );
+}
+
+export function VariantOptionRepeater(props: ProductVariantOptionRepeaterProps) {
+  return (
+    <CoreProductVariantSelector.Options>
+      {({ options }) =>
+        options.map(option => (
+          <OptionRoot key={option.name} option={option}>
+            {props.children}
+          </OptionRoot>
+        ))
+      }
+    </CoreProductVariantSelector.Options>
+  );
+}
+```
+
+## Key Differences from V1
+
+| Aspect | V1 Pattern | V2 Pattern |
+|--------|------------|------------|
+| **Data Passing** | Service configs in Root | Direct entity data in Root |
+| **Rendering** | Render props only | asChild + default rendering |
+| **Composition** | Flat service structure | Hierarchical composite structure |
+| **Styling** | No default styling | Default elements with className support |
+| **State** | Internal service state | Data attributes for styling |
+| **Lists** | Map functions in render props | Dedicated Repeater components |
+
+## Dependencies
+
+- **React.forwardRef** - Required for all interactive components
+- **@radix-ui/react-slot** - For asChild pattern implementation ([Radix Slot Documentation](https://www.radix-ui.com/primitives/docs/utilities/slot))
+- **Existing V1 services** - Remain unchanged, wrapped by V2 components
+
+## Migration Process
+
+1. **Read the interface documentation** for your target component
+2. **Identify the component hierarchy** from the documented API
+3. **Move existing V1 components** to `/core/` folder
+4. **Create V2 wrapper components** following the interface patterns
+5. **Implement asChild pattern** using Radix UI Slot
+6. **Add proper data attributes** as documented
+7. **Update exports** to include both V1 and V2
+8. **Test all rendering modes** and service compatibility
+
+## Reference Documentation
+
+- **API Design Principles**: [API.md](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/API.md)
+- **Product Interface**: [PRODUCT_INTERFACE.md](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/PRODUCT_INTERFACE.md)
+- **Cart Interface**: [ECOM_INTERFACE.md](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/ECOM_INTERFACE.md)
+- **Migration Example**: [PR #126](https://github.com/wix-incubator/headless-components/pull/126/files)
+- **Radix UI Primitives**: [Radix Documentation](https://www.radix-ui.com/primitives/docs/overview/introduction)
+- **Shadcn Components**: [Shadcn Documentation](https://ui.shadcn.com/docs)
+
+## Getting Help
+
+When migrating a specific component:
+
+1. **Specify the component name** you want to migrate
+2. **Reference the interface documentation** for that component
+3. **Identify any custom requirements** or deviations from standard patterns
+4. **Ask for clarification** on complex hierarchy or service dependencies
+
+This rule provides the foundation for systematic V2 migrations while maintaining backward compatibility and leveraging existing V1 service infrastructure.
+# Migrating Headless Components to V2
+
+## Design Principles
+
+This migration follows the **V2 API Design Principles** from the [Wix Kitchensink API Documentation](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/API.md), inspired by [Radix UI](https://www.radix-ui.com/primitives/docs/overview/introduction) and [Shadcn UI](https://ui.shadcn.com/docs) component architecture.
+
+## Core Migration Pattern
+
+### 1. V2 Component Structure
+
+Each V2 component follows this hierarchical pattern:
+
+```
+Entity.Root
+├── Entity.Raw (direct data access - use sparingly)
+├── Entity.[ComponentName] (composable components)
+└── Entity.ListSection (for nested entities)
+    ├── Entity.ListSection.Entities
+    └── Entity.ListSection.EntityRepeater
+```
+
+### 2. Component Rendering Modes
+
+V2 components support **three rendering modes**:
+
+```tsx
+// 1. Default rendering with className
+<Entity.ComponentName className="text-4xl font-bold" />
+
+// 2. asChild with primitive elements
+<Entity.ComponentName asChild>
+  <h1 className="text-4xl font-bold" />
+</Entity.ComponentName>
+
+// 3. asChild with React components (using forwardRef)
+<Entity.ComponentName asChild>
+  {React.forwardRef(({data, ...props}, ref) => (
+    <h1 ref={ref} {...props} className="text-4xl font-bold">
+      {data}
+    </h1>
+  ))}
+</Entity.ComponentName>
+```
+
+### 3. Migration Implementation Strategy
+
+#### Option A: Wrapper Pattern (Recommended)
+Wrap existing V1 components within new V2 composite components:
+
+```tsx
+import { Slot } from "@radix-ui/react-slot";
+
+// V2 Product.tsx - New composite API
+export function Root(props: ProductRootProps): React.ReactNode {
+  return (
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
+      <ProductVariantSelector.Root>
+        <ProductModifiers.Root>
+          <SelectedVariant.Root>
+            <div data-testid="product-details">{props.children}</div>
+          </SelectedVariant.Root>
+        </ProductModifiers.Root>
+      </ProductVariantSelector.Root>
+    </CoreProduct.Root>
+  );
+}
+
+export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+  const Comp = asChild ? Slot : "h1";
+
+  return (
+    <CoreProduct.Name>
+      {({ name }) => (
+        <Comp
+          ref={ref}
+          className={className}
+          data-testid="product-name"
+          {...otherProps}
+        >
+          {asChild ? children : name}
+        </Comp>
+      )}
+    </CoreProduct.Name>
+  );
+});
+```
+
+#### Option B: Full Rewrite (When Needed)
+Use Chadcn/Radix components for completely new implementations when V1 doesn't meet V2 requirements.
+
+## Migration Checklist
+
+### Pre-Migration Analysis
+- [ ] **Identify V1 component structure** - Map existing render props and service dependencies
+- [ ] **Review interface documentation** - Check [specific interface docs](https://github.com/wix-incubator/kitchensink/tree/carmelc-04-08-2025-23-16/docs/api_v2) for target component
+- [ ] **Determine migration approach** - Wrapper vs. full rewrite
+- [ ] **Plan component hierarchy** - Define Root, sub-components, and list patterns
+
+### Core V2 Implementation
+- [ ] **Create Root component** that accepts entity data directly (not config)
+- [ ] **Implement asChild pattern** using Radix UI Slot for all leaf components
+- [ ] **Add data attributes** following the documented pattern (`data-testid`, `data-selected`, etc.)
+- [ ] **Support state attributes** (`disabled`, `data-selected`, `data-loading`, etc.)
+- [ ] **Maintain service dependencies** - Ensure all V1 services remain accessible
+
+### Component Structure
+- [ ] **Move V1 components to `/core/` folder** if using wrapper pattern
+- [ ] **Export V2 from root index** using namespace pattern
+- [ ] **Create entity repeaters** for list patterns (`Entity.EntityRepeater`)
+- [ ] **Implement sub-entity transitions** (e.g., Product → Option → Choice)
+
+### Interface Compliance
+- [ ] **Follow props interface** from documentation (Entity.Name, Entity.Price, etc.)
+- [ ] **Support default rendering** with sensible defaults and className support
+- [ ] **Implement forwardRef pattern** for all interactive components
+- [ ] **Use Radix UI Slot** for proper asChild behavior
+
+### Testing & Validation
+- [ ] **Verify service compatibility** - Ensure existing services work unchanged
+- [ ] **Test all rendering modes** - Default, asChild primitive, asChild component
+- [ ] **Validate data attributes** - Check all documented data-* attributes are present
+- [ ] **Confirm accessibility** - Ensure forwardRef passes through properly
+
+## File Organization
+
+```
+packages/headless-components/domain/src/react/
+├── core/                          # V1 components (moved here)
+│   ├── Product.tsx
+│   ├── ProductVariantSelector.tsx
+│   └── ...
+├── Product.tsx                    # V2 composite component
+├── index.tsx                      # Export both V1 and V2
+└── utils/
+    └── index.ts                  # V2 utility functions
+```
+
+## Export Pattern
+
+```tsx
+// packages/headless-components/domain/src/react/index.tsx
+
+// V1 components (existing, moved to core/)
+export * as Product from "./core/Product.js";
+export * as ProductVariantSelector from "./core/ProductVariantSelector.js";
+// ... other V1 components
+
+// V2 components (new composite API)
+export * as ProductV2 from "./Product.js";
+```
+
+## Component Interface Examples
+
+### Basic V2 Component
+
+```tsx
+import { Slot } from "@radix-ui/react-slot";
+
+// Based on documented interface patterns
+export interface NameProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+  const Comp = asChild ? Slot : "h1";
+
+  return (
+    <CoreProduct.Name>
+      {({ name }) => (
+        <Comp
+          ref={ref}
+          className={className}
+          data-testid="product-name"
+          {...otherProps}
+        >
+          {asChild ? children : name}
+        </Comp>
+      )}
+    </CoreProduct.Name>
+  );
+});
+```
+
+### List Pattern Implementation
+
+```tsx
+// For nested entities like Product.Variants
+export function Variants(props: ProductVariantsProps) {
+  return (
+    <CoreProductVariantSelector.Root>
+      <div data-testid="product-variants">
+        {props.children}
+      </div>
+    </CoreProductVariantSelector.Root>
+  );
+}
+
+export function VariantOptions(props: ProductVariantOptionsProps) {
+  return (
+    <CoreProductVariantSelector.Options>
+      {({ options, hasOptions }) =>
+        hasOptions ? props.children : props.emptyState
+      }
+    </CoreProductVariantSelector.Options>
+  );
+}
+
+export function VariantOptionRepeater(props: ProductVariantOptionRepeaterProps) {
+  return (
+    <CoreProductVariantSelector.Options>
+      {({ options }) =>
+        options.map(option => (
+          <OptionRoot key={option.name} option={option}>
+            {props.children}
+          </OptionRoot>
+        ))
+      }
+    </CoreProductVariantSelector.Options>
+  );
+}
+```
+
+## Key Differences from V1
+
+| Aspect | V1 Pattern | V2 Pattern |
+|--------|------------|------------|
+| **Data Passing** | Service configs in Root | Direct entity data in Root |
+| **Rendering** | Render props only | asChild + default rendering |
+| **Composition** | Flat service structure | Hierarchical composite structure |
+| **Styling** | No default styling | Default elements with className support |
+| **State** | Internal service state | Data attributes for styling |
+| **Lists** | Map functions in render props | Dedicated Repeater components |
+
+## Dependencies
+
+- **React.forwardRef** - Required for all interactive components
+- **@radix-ui/react-slot** - For asChild pattern implementation ([Radix Slot Documentation](https://www.radix-ui.com/primitives/docs/utilities/slot))
+- **Existing V1 services** - Remain unchanged, wrapped by V2 components
+
+## Migration Process
+
+1. **Read the interface documentation** for your target component
+2. **Identify the component hierarchy** from the documented API
+3. **Move existing V1 components** to `/core/` folder
+4. **Create V2 wrapper components** following the interface patterns
+5. **Implement asChild pattern** using Radix UI Slot
+6. **Add proper data attributes** as documented
+7. **Update exports** to include both V1 and V2
+8. **Test all rendering modes** and service compatibility
+
+## Reference Documentation
+
+- **API Design Principles**: [API.md](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/API.md)
+- **Product Interface**: [PRODUCT_INTERFACE.md](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/PRODUCT_INTERFACE.md)
+- **Cart Interface**: [ECOM_INTERFACE.md](https://github.com/wix-incubator/kitchensink/blob/carmelc-04-08-2025-23-16/docs/api_v2/ECOM_INTERFACE.md)
+- **Migration Example**: [PR #126](https://github.com/wix-incubator/headless-components/pull/126/files)
+- **Radix UI Primitives**: [Radix Documentation](https://www.radix-ui.com/primitives/docs/overview/introduction)
+- **Shadcn Components**: [Shadcn Documentation](https://ui.shadcn.com/docs)
+
+## Getting Help
+
+When migrating a specific component:
+
+1. **Specify the component name** you want to migrate
+2. **Reference the interface documentation** for that component
+3. **Identify any custom requirements** or deviations from standard patterns
+4. **Ask for clarification** on complex hierarchy or service dependencies
+
+This rule provides the foundation for systematic V2 migrations while maintaining backward compatibility and leveraging existing V1 service infrastructure.

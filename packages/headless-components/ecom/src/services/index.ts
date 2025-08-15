@@ -14,3 +14,22 @@ export {
   ChannelType,
   type LineItem,
 } from "./checkout-service.js";
+
+export {
+  LineItemService,
+  LineItemServiceDefinition,
+  type LineItemServiceAPI,
+  type LineItemServiceConfig,
+} from "./line-item-service.js";
+
+export {
+  SelectedOptionService,
+  SelectedOptionServiceDefinition,
+  type SelectedOptionServiceAPI,
+  type SelectedOptionServiceConfig,
+  type SelectedOption,
+  type SelectedOptionText,
+  type SelectedOptionColor,
+  isTextOption,
+  isColorOption,
+} from "./selected-option-service.js";
