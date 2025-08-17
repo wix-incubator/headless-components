@@ -3601,15 +3601,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-bookings@workspace:packages/headless-components/bookings"
   dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
-    "@vitest/ui": "npm:^3.1.4"
-    jsdom: "npm:^26.1.0"
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
   languageName: unknown
   linkType: soft
 
