@@ -13,7 +13,8 @@
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && rm -rf .astro ./dist .turbo",
     "astro": "astro",
     "tsc": "tsc",
-    "syncpack": "syncpack"
+    "syncpack": "syncpack",
+    "test:headless-components": "turbo run test --filter=\"./packages/headless-components/*\" -- run"
   },
   "devDependencies": {
     "astro": "^5.9.0",

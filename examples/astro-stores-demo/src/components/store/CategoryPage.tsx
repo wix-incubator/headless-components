@@ -21,7 +21,7 @@ import { ProductActionButtons } from './ProductActionButtons';
 import { ProductFilters } from './ProductFilters';
 import QuickViewModal from './QuickViewModal';
 import { SortDropdown } from './SortDropdown';
-import { MediaGallery } from '@wix/headless-media/react';
+import { MediaGallery as MediaGalleryCore } from '@wix/headless-media/core';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
@@ -59,7 +59,7 @@ export const ProductGridContent = ({
         productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
 
     return (
-      <MediaGallery.Root
+      <MediaGalleryCore.Root
         mediaGalleryServiceConfig={{
           media: product.media?.itemsInfo?.items ?? [],
         }}
@@ -430,7 +430,7 @@ export const ProductGridContent = ({
             </div>
           </div>
         </SelectedVariant.Root>
-      </MediaGallery.Root>
+      </MediaGalleryCore.Root>
     );
   };
 

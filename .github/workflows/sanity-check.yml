@@ -24,3 +24,6 @@ jobs:
 
       - name: Build headless components
         run: yarn build:headless-components
+
+      - name: Run tests
+        run: yarn test:headless-components

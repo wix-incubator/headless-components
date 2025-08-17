@@ -75,13 +75,15 @@ export interface RenderAsChildParams<TProps = any> {
   ref: React.Ref<HTMLElement>;
   /** Content to pass as children to React elements */
   content?: React.ReactNode;
+  /** Additional attributes to merge into cloned React elements */
+  attributes?: Record<string, any>;
 }
 
 /**
  * Utility function to handle asChild prop with different rendering patterns.
  *
  * Supports three rendering patterns:
- * 1. **React Elements**: Clones the element and forwards the ref
+ * 1. **React Elements**: Clones the element and forwards the ref and attributes
  *    ```tsx
  *    <Component asChild><div>Content</div></Component>
  *    ```
@@ -100,7 +102,7 @@ export interface RenderAsChildParams<TProps = any> {
  *    </Component>
  *    ```
  *
- * @param params - Configuration object with children, props, and ref
+ * @param params - Configuration object with children, props, ref, content, and attributes
  * @returns Rendered React node or null if no valid children provided
  *
  * @example
@@ -109,6 +111,7 @@ export interface RenderAsChildParams<TProps = any> {
  *   children: (props, ref) => <h1 ref={ref}>{props.title}</h1>,
  *   props: { title: "Hello World" },
  *   ref: myRef,
+ *   attributes: { "data-testid": "my-component" },
  * });
  * ```
  */
@@ -117,6 +120,7 @@ export function renderAsChild<TProps = any>({
   props,
   ref,
   content,
+  attributes,
 }: RenderAsChildParams<TProps>): React.ReactNode | null {
   // Early return if no children provided
   if (!children) return null;
@@ -128,18 +132,31 @@ export function renderAsChild<TProps = any>({
       {
         ref,
         children: content,
+        ...attributes,
       },
     );
   }
 
   // Handle render function pattern
   if (typeof children === "function") {
-    return children(props, ref);
+    return children(
+      {
+        ...props,
+        ...attributes,
+      },
+      ref,
+    );
   }
 
   // Handle render object pattern
   if (children && typeof children === "object" && "render" in children) {
-    return children.render(props, ref);
+    return children.render(
+      {
+        ...props,
+        ...attributes,
+      },
+      ref,
+    );
   }
 
   // Fallback for unknown patterns
