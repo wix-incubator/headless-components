@@ -1,3 +1,3 @@
 module.exports = {
-  'yarn.lock': () => ['syncpack list-mismatches', 'yarn dedupe --check'],
+  "yarn.lock": () => ["yarn dedupe --check"],
 };

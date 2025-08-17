@@ -1,0 +1,89 @@
+---
+import { loadCurrentCartServiceConfig } from '@wix/headless-ecom/services';
+import { SEO } from '@wix/headless-seo/react';
+import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
+import {
+  loadCategoriesListServiceConfig,
+  loadProductsListSearchServiceConfig,
+  loadProductsListServiceConfig,
+  parseUrlToSearchOptions,
+} from '@wix/headless-stores/services';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoreCollectionPage from '../../react-pages/category/index';
+
+// Get category slug from URL params
+const { categorySlug = '' } = Astro.params;
+
+// Load categories first so we can pass them to parseUrlToSearchOptions
+const categoriesListConfig = await loadCategoriesListServiceConfig();
+const category = categoriesListConfig.categories.find(
+  category => category.slug === categorySlug
+);
+
+if (!category) {
+  return Astro.rewrite('/404');
+}
+
+const categoryName = category?.name || '';
+
+// Parse URL to get search options with defaults for this category
+const parsed = await parseUrlToSearchOptions(
+  Astro.url.href,
+  categoriesListConfig.categories,
+  {
+    cursorPaging: {
+      limit: 10,
+    },
+    filter: {
+      'allCategoriesInfo.categories': {
+        $matchItems: [{ _id: category._id! }],
+      },
+    },
+  }
+);
+
+const [
+  productsListConfig,
+  currentCartServiceConfig,
+  productsListSearchConfig,
+  seoTagsServiceConfig,
+] = await Promise.all([
+  loadProductsListServiceConfig(parsed), // Both services now use same parsed result
+  loadCurrentCartServiceConfig(),
+  loadProductsListSearchServiceConfig(parsed),
+  loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      pageName: categoryName,
+      seoData: {
+        tags: [
+          {
+            type: 'title',
+            children: `${categoryName} - Store`,
+          },
+          {
+            type: 'meta',
+            props: {
+              content: `Browse our ${categoryName} products`,
+              name: 'description',
+            },
+          },
+        ],
+      },
+    },
+  }),
+]);
+---
+
+<BaseLayout>
+  <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />
+  <StoreCollectionPage
+    client:load
+    currentCartServiceConfig={currentCartServiceConfig}
+    categoryServiceConfig={{ category }}
+    categoriesListConfig={categoriesListConfig}
+    productsListConfig={productsListConfig}
+    productsListSearchConfig={productsListSearchConfig}
+    slot="body"
+  />
+</BaseLayout>
