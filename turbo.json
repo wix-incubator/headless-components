@@ -1,22 +1,57 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "globalDependencies": ["tsconfig.base.json"],
+  "globalDependencies": [
+    "tsconfig.base.json"
+  ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputLogs": "new-only",
-      "outputs": ["build/**", "schemas/**", "dist/**"],
-      "inputs": ["src/**", "tsup.config.mjs", "tsconfig.json"]
+      "outputs": [
+        "build/**",
+        "schemas/**",
+        "dist/**"
+      ],
+      "inputs": [
+        "src/**",
+        "tsup.config.mjs",
+        "tsconfig.json"
+      ]
     },
     "test": {
       "outputLogs": "new-only",
       "outputs": [],
-      "inputs": ["src/**", "test/**", "vitest.config.ts", "vitest.setup.ts"]
+      "inputs": [
+        "src/**",
+        "test/**",
+        "vitest.config.ts",
+        "vitest.setup.ts"
+      ]
     },
     "typecheck": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [],
-      "inputs": ["src/**", "test/**", "tsconfig.json"]
+      "inputs": [
+        "src/**",
+        "test/**",
+        "tsconfig.json"
+      ]
+    },
+    "lint:fix": {
+      "outputs": [],
+      "inputs": [
+        "src/**",
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx",
+        "*.json",
+        "*.md"
+      ]
     }
   }
 }

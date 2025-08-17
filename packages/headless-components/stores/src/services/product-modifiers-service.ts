@@ -58,7 +58,7 @@ export const ProductModifiersService = implementService.withConfig()(
       () => {
         const mods = modifiers.get();
         return mods.length > 0;
-      }
+      },
     );
 
     const setModifierChoice = (modifierName: string, choiceValue: string) => {
@@ -74,7 +74,7 @@ export const ProductModifiersService = implementService.withConfig()(
 
     const setModifierFreeText = (
       modifierName: string,
-      freeTextValue: string
+      freeTextValue: string,
     ) => {
       const current = selectedModifiers.get();
       selectedModifiers.set({
@@ -159,11 +159,11 @@ export const ProductModifiersService = implementService.withConfig()(
       hasRequiredModifiers,
       areAllRequiredModifiersFilled,
     };
-  }
+  },
 );
 
 export function createProductModifiersServiceConfig(
-  product: productsV3.V3Product
+  product: productsV3.V3Product,
 ): ServiceFactoryConfig<typeof ProductModifiersService> {
   return {
     product,

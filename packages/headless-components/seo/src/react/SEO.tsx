@@ -57,7 +57,7 @@ export function Root(props: RootProps): React.ReactNode {
       servicesMap={createServicesMap().addService(
         SEOTagsServiceDefinition,
         SEOTagsService,
-        seoTagsServiceConfig
+        seoTagsServiceConfig,
       )}
     >
       {children}
@@ -132,7 +132,7 @@ export interface UpdateTagsTriggerProps {
   children: (props: {
     updateSeoTags: (
       itemType: ItemType,
-      itemData: DynamicPageData | StaticPageData
+      itemData: DynamicPageData | StaticPageData,
     ) => Promise<void>;
   }) => React.ReactNode;
 }
@@ -178,7 +178,7 @@ export interface UpdateTagsTriggerProps {
  * @component
  */
 export function UpdateTagsTrigger(
-  props: UpdateTagsTriggerProps
+  props: UpdateTagsTriggerProps,
 ): React.ReactNode {
   const service = useService(SEOTagsServiceDefinition) as ServiceAPI<
     typeof SEOTagsServiceDefinition

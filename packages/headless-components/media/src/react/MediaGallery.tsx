@@ -40,7 +40,15 @@
  * @module MediaGallery
  */
 
-import { Root as CoreRoot, Next as CoreNext, Previous as CorePrevious, Viewport as CoreViewport, Indicator as CoreIndicator, ThumbnailList as CoreThumbnailList, ThumbnailItem as CoreThumbnailItem } from "./core/MediaGallery.js";
+import {
+  Root as CoreRoot,
+  Next as CoreNext,
+  Previous as CorePrevious,
+  Viewport as CoreViewport,
+  Indicator as CoreIndicator,
+  ThumbnailList as CoreThumbnailList,
+  ThumbnailItem as CoreThumbnailItem,
+} from "./core/MediaGallery.js";
 import React, { createContext, useContext } from "react";
 import type { MediaItem } from "../services/media-gallery-service.js";
 import type { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
@@ -57,7 +65,6 @@ export enum TestIds {
   mediaGalleryIndicator = "media-gallery-indicator",
   mediaGalleryThumbnailItem = "media-gallery-thumbnail-item",
 }
-
 
 /**
  * Props for button-like components that support the asChild pattern
@@ -104,7 +111,10 @@ export interface RootProps {
  */
 export const Root = ({ children, mediaGalleryServiceConfig }: RootProps) => {
   return (
-    <CoreRoot mediaGalleryServiceConfig={mediaGalleryServiceConfig} data-testid={TestIds.mediaGalleryRoot}>
+    <CoreRoot
+      mediaGalleryServiceConfig={mediaGalleryServiceConfig}
+      data-testid={TestIds.mediaGalleryRoot}
+    >
       {children}
     </CoreRoot>
   );
@@ -133,23 +143,27 @@ export const Root = ({ children, mediaGalleryServiceConfig }: RootProps) => {
  * </MediaGallery.Next>
  * ```
  */
-export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const Comp = props.asChild ? Slot : "button";
+export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, ...props }, ref) => {
+    const Comp = props.asChild ? Slot : "button";
 
-  return <CoreNext>
-    {({ next, canGoNext }) => (
-      <Comp
-        ref={ref}
-        onClick={next}
-        disabled={!canGoNext}
-        data-testid={TestIds.mediaGalleryNext}
-        {...props}
-      >
-        {children}
-      </Comp>
-    )}
-  </CoreNext>
-});
+    return (
+      <CoreNext>
+        {({ next, canGoNext }) => (
+          <Comp
+            ref={ref}
+            onClick={next}
+            disabled={!canGoNext}
+            data-testid={TestIds.mediaGalleryNext}
+            {...props}
+          >
+            {children}
+          </Comp>
+        )}
+      </CoreNext>
+    );
+  },
+);
 
 /**
  * Previous button component that navigates to the previous media item.
@@ -174,22 +188,26 @@ export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children
  * </MediaGallery.Previous>
  * ```
  */
-export const Previous = React.forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const Comp = props.asChild ? Slot : "button";
-  return <CorePrevious>
-    {({ previous, canGoPrevious }) => (
-      <Comp
-        ref={ref}
-        onClick={previous}
-        disabled={!canGoPrevious}
-        data-testid={TestIds.mediaGalleryPrevious}
-        {...props}
-      >
-        {children}
-      </Comp>
-    )}
-  </CorePrevious>
-});
+export const Previous = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, ...props }, ref) => {
+    const Comp = props.asChild ? Slot : "button";
+    return (
+      <CorePrevious>
+        {({ previous, canGoPrevious }) => (
+          <Comp
+            ref={ref}
+            onClick={previous}
+            disabled={!canGoPrevious}
+            data-testid={TestIds.mediaGalleryPrevious}
+            {...props}
+          >
+            {children}
+          </Comp>
+        )}
+      </CorePrevious>
+    );
+  },
+);
 
 /**
  * Props for the Viewport component
@@ -249,19 +267,18 @@ export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
               data-testid={TestIds.mediaGalleryViewport}
               {...props}
             >
-              {children ?? (
-                src ? (
+              {children ??
+                (src ? (
                   <WixMediaImage media={{ image: src }} alt={alt} />
                 ) : (
-                  emptyState ?? <div>No image</div>
-                )
-              )}
+                  (emptyState ?? <div>No image</div>)
+                ))}
             </Comp>
           );
         }}
       </CoreViewport>
     );
-  }
+  },
 );
 
 /**
@@ -316,14 +333,16 @@ export const Indicator = React.forwardRef<HTMLDivElement, IndicatorProps>(
               {...props}
             >
               {children ?? (
-                <div>{current} / {total}</div>
+                <div>
+                  {current} / {total}
+                </div>
               )}
             </Comp>
           );
         }}
       </CoreIndicator>
     );
-  }
+  },
 );
 
 const ThumbnailsContext = createContext<{ items: MediaItem[] } | null>(null);
@@ -399,7 +418,8 @@ export const ThumbnailRepeater = ({ children }: ThumbnailRepeaterProps) => {
 /**
  * Props for the ThumbnailItem component
  */
-export interface ThumbnailItemProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ThumbnailItemProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Custom empty state content to display when the thumbnail has no media */
@@ -438,39 +458,41 @@ export interface ThumbnailItemProps extends React.HTMLAttributes<HTMLDivElement>
  * </MediaGallery.ThumbnailItem>
  * ```
  */
-export const ThumbnailItem = React.forwardRef<HTMLDivElement, ThumbnailItemProps>(
-  ({ children, asChild, emptyState, ...props }, ref) => {
-    const itemCtx = useContext(ThumbnailItemContext);
-    if (!itemCtx) return null;
-    const { index } = itemCtx;
+export const ThumbnailItem = React.forwardRef<
+  HTMLDivElement,
+  ThumbnailItemProps
+>(({ children, asChild, emptyState, ...props }, ref) => {
+  const itemCtx = useContext(ThumbnailItemContext);
+  if (!itemCtx) return null;
+  const { index } = itemCtx;
 
-    return (
-      <CoreThumbnailItem index={index}>
-        {({ src, isActive, select, alt }) => {
-          const Comp = asChild ? Slot : "div";
-          return (
-            <Comp
-              ref={ref}
-              onClick={select}
-              data-active={isActive}
-              data-src={src}
-              data-alt={alt}
-              data-index={index}
-              data-available={true} /* TODO: need get this from variant or something */
-              data-testid={TestIds.mediaGalleryThumbnailItem}
-              {...props}
-            >
-              {children ?? (
-                src ? (
-                  <WixMediaImage media={{ image: src }} alt={alt} />
-                ) : (
-                  emptyState ?? <div>No image</div>
-                )
-              )}
-            </Comp>
-          );
-        }}
-      </CoreThumbnailItem>
-    );
-  }
-);
+  return (
+    <CoreThumbnailItem index={index}>
+      {({ src, isActive, select, alt }) => {
+        const Comp = asChild ? Slot : "div";
+        return (
+          <Comp
+            ref={ref}
+            onClick={select}
+            data-active={isActive}
+            data-src={src}
+            data-alt={alt}
+            data-index={index}
+            data-available={
+              true
+            } /* TODO: need get this from variant or something */
+            data-testid={TestIds.mediaGalleryThumbnailItem}
+            {...props}
+          >
+            {children ??
+              (src ? (
+                <WixMediaImage media={{ image: src }} alt={alt} />
+              ) : (
+                (emptyState ?? <div>No image</div>)
+              ))}
+          </Comp>
+        );
+      }}
+    </CoreThumbnailItem>
+  );
+});

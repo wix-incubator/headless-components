@@ -14,7 +14,8 @@
     "astro": "astro",
     "tsc": "tsc",
     "syncpack": "syncpack",
-    "test:headless-components": "turbo run test --filter=\"./packages/headless-components/*\" -- run"
+    "test:headless-components": "turbo run test --filter=\"./packages/headless-components/*\" -- run",
+    "lint:headless-components": "turbo run lint:fix --filter=\"./packages/headless-components/*\""
   },
   "devDependencies": {
     "astro": "^5.9.0",

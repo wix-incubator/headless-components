@@ -33,9 +33,9 @@ export interface MediaGalleryServiceConfig {
   media?: MediaItem[];
   infinite?: boolean; // default - false - if true, the gallery will loop back to the first item when the user reaches the end
   autoPlay?: {
-    direction?: 'forward' | 'backward'; // default - 'forward' - the direction of the gallery (removed top/bottom, has no meaning, we call next/prev, the actual advancement is a style issue.)
+    direction?: "forward" | "backward"; // default - 'forward' - the direction of the gallery (removed top/bottom, has no meaning, we call next/prev, the actual advancement is a style issue.)
     intervalMs?: number; // default - 5000 - the interval in milliseconds between auto-advances
- } // if falsy, no autplay
+  }; // if falsy, no autplay
 }
 
 export const MediaGalleryService =
@@ -70,8 +70,7 @@ export const MediaGalleryService =
 
         if (!hasNextMedia()) return;
 
-        const nextIndex =
-          (currentIndex + 1) % images.length;
+        const nextIndex = (currentIndex + 1) % images.length;
         selectedMediaIndex.set(nextIndex);
       };
 
@@ -104,9 +103,9 @@ export const MediaGalleryService =
 
       let autoplayInterval: NodeJS.Timeout | null = null;
       if (config?.autoPlay) {
-        const { direction = 'forward', intervalMs = 5000 } = config.autoPlay;
+        const { direction = "forward", intervalMs = 5000 } = config.autoPlay;
         autoplayInterval = setInterval(() => {
-          direction === 'forward' ? nextMedia() : previousMedia();
+          direction === "forward" ? nextMedia() : previousMedia();
         }, intervalMs);
       }
 

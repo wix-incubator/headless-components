@@ -5,7 +5,10 @@ import {
 } from "@wix/services-definitions/core-services/signals";
 import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
 import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
-import { parseUrlToSearchOptions, type InitialSearchState } from "./products-list-search-service.js";
+import {
+  parseUrlToSearchOptions,
+  type InitialSearchState,
+} from "./products-list-search-service.js";
 
 export const DEFAULT_QUERY_LIMIT = 100;
 
@@ -123,7 +126,7 @@ export type ProductsListServiceConfig = {
  * }
  * ```
  *
-  * @example
+ * @example
  * ```tsx
  * // Advanced: Performance optimization when using both services
  * import { parseUrlToSearchOptions, loadProductsListServiceConfig, loadProductsListSearchServiceConfig, loadCategoriesListServiceConfig } from '@wix/stores/services';
@@ -139,16 +142,21 @@ export type ProductsListServiceConfig = {
  * ```
  */
 export async function loadProductsListServiceConfig(
-  input: string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState },
+  input:
+    | string
+    | {
+        searchOptions: productsV3.V3ProductSearch;
+        initialSearchState: InitialSearchState;
+      },
 ): Promise<ProductsListServiceConfig> {
   let searchOptions: productsV3.V3ProductSearch;
 
-  if (typeof input === 'string') {
+  if (typeof input === "string") {
     // URL input - parse it
     const categoriesListConfig = await loadCategoriesListServiceConfig();
     const { searchOptions: parsedOptions } = await parseUrlToSearchOptions(
       input,
-      categoriesListConfig.categories
+      categoriesListConfig.categories,
     );
     searchOptions = parsedOptions;
   } else {

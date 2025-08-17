@@ -46,7 +46,7 @@ export interface PayNowProps {
  */
 export function PayNow(props: PayNowProps): React.ReactNode {
   const { redirectToCheckout, loadingSignal, errorSignal } = useService(
-    PayNowServiceDefinition
+    PayNowServiceDefinition,
   );
 
   return props.children({

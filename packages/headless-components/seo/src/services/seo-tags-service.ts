@@ -129,7 +129,9 @@ export interface LoadSEOTagsServiceConfigParams {
   itemData: StaticPageData | DynamicPageData;
 }
 
-export async function loadSEOTagsServiceConfig(params: LoadSEOTagsServiceConfigParams): Promise<SEOTagsServiceConfig> {
+export async function loadSEOTagsServiceConfig(
+  params: LoadSEOTagsServiceConfigParams,
+): Promise<SEOTagsServiceConfig> {
   const { itemType, pageUrl, itemData } = params;
   const isStaticPage = !itemType || itemType === ItemType.UNKNOWN_ITEM_TYPE;
 
@@ -137,7 +139,11 @@ export async function loadSEOTagsServiceConfig(params: LoadSEOTagsServiceConfigP
   if (isStaticPage) {
     tags = await resolveStaticSeoTags(pageUrl, itemData as StaticPageData);
   } else {
-    tags = await resolveDynamicSeoTags(pageUrl, itemType, itemData as DynamicPageData);
+    tags = await resolveDynamicSeoTags(
+      pageUrl,
+      itemType,
+      itemData as DynamicPageData,
+    );
   }
   return {
     tags,

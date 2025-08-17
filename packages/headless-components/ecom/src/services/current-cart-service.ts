@@ -66,12 +66,8 @@ export const CurrentCartService =
       );
       const isOpen: Signal<boolean> = signalsService.signal(false);
       const isLoading: Signal<boolean> = signalsService.signal(false);
-      const isTotalsLoading: Signal<boolean> = signalsService.signal(
-        false,
-      );
-      const isCouponLoading: Signal<boolean> = signalsService.signal(
-        false,
-      );
+      const isTotalsLoading: Signal<boolean> = signalsService.signal(false);
+      const isCouponLoading: Signal<boolean> = signalsService.signal(false);
       const error: Signal<string | null> = signalsService.signal(null as any);
       const buyerNotes: Signal<string> = signalsService.signal("");
       const cartTotals: Signal<any | null> = signalsService.signal(null);
@@ -408,9 +404,7 @@ export const CurrentCartService =
     },
   );
 
-export async function loadCurrentCartServiceConfig(): Promise<
-CurrentCartServiceConfig
-> {
+export async function loadCurrentCartServiceConfig(): Promise<CurrentCartServiceConfig> {
   try {
     const cartData = await currentCart.getCurrentCart();
     return {

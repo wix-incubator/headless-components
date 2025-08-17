@@ -53,7 +53,7 @@ import {
  * @see {@link https://dev.wix.com/docs/sdk/headless/api-reference/stores/checkout} Wix Stores Checkout API
  */
 export const customCheckoutActionFactory = (
-  factoryOpts: CustomLineItemCheckoutOptions
+  factoryOpts: CustomLineItemCheckoutOptions,
 ) =>
   defineAction({
     handler: () => getCustomLineItemCheckoutURLFactory(factoryOpts)(),

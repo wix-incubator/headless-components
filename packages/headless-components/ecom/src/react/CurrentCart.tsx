@@ -69,7 +69,9 @@ export function Root(props: RootProps): React.ReactNode {
  */
 export interface EmptyStateProps {
   /** Content to display when cart is empty (can be a render function or ReactNode) */
-  children: ((props: EmptyStateRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: EmptyStateRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -101,9 +103,7 @@ export interface EmptyStateRenderProps {}
  * ```
  */
 export function EmptyState(props: EmptyStateProps) {
-  const { isLoading, error, cart } = useService(
-    CurrentCartServiceDefinition,
-  );
+  const { isLoading, error, cart } = useService(CurrentCartServiceDefinition);
   const isLoadingValue = isLoading.get();
   const errorValue = error.get();
   const cartValue = cart.get();
@@ -116,7 +116,6 @@ export function EmptyState(props: EmptyStateProps) {
 
   return null;
 }
-
 
 /**
  * Helper function to format currency properly
@@ -468,7 +467,7 @@ export interface ItemRenderProps {
  *       <p>{selectedOptions}</p>
  *       <button onClick={increaseQuantity}>Increase</button>
  *       <button onClick={decreaseQuantity}>Decrease</button>
-  *      <button onClick={remove}>Remove</button>
+ *      <button onClick={remove}>Remove</button>
  *     </div>
  *   )}
  * </CurrentCart.Item>

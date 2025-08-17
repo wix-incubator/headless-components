@@ -14,7 +14,6 @@ export interface RootProps {
   fileUploadServiceConfig: FileUploadServiceConfig;
 }
 
-
 /**
  * Root component that provides the FileUpload service context to its children.
  * This component sets up the necessary services for managing file upload functionality.
