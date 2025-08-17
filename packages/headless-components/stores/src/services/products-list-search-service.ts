@@ -1,17 +1,13 @@
-import type { Signal } from '@wix/services-definitions/core-services/signals';
-import { defineService, implementService } from '@wix/services-definitions';
-import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
+import { defineService, implementService } from "@wix/services-definitions";
+import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
 import {
   DEFAULT_QUERY_LIMIT,
-  ProductsListServiceDefinition,
-} from './products-list-service.js';
-import { productsV3, customizationsV3 } from '@wix/stores';
-import { type Category } from './category-service.js';
-import { loadCategoriesListServiceConfig } from './categories-list-service.js';
+} from "./products-list-service.js";
+import { productsV3, customizationsV3 } from "@wix/stores";
+import { type Category } from "./category-service.js";
+import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
 
-const PRICE_FILTER_DEBOUNCE_TIME = 300;
-
-import { SortType } from './../enums/sort-enums.js';
+import { SortType } from "./../enums/sort-enums.js";
 
 export { SortType } from './../enums/sort-enums.js';
 
@@ -27,24 +23,7 @@ export const InventoryStatusType = productsV3.InventoryAvailabilityStatus;
  */
 export type InventoryStatusType = productsV3.InventoryAvailabilityStatus;
 
-/**
- * Interface representing a product option (like Size, Color, etc.).
- */
-export interface ProductOption {
-  id: string;
-  name: string;
-  choices: ProductChoice[];
-  optionRenderType?: string;
-}
 
-/**
- * Interface representing a choice within a product option.
- */
-export interface ProductChoice {
-  id: string;
-  name: string;
-  colorCode?: string;
-}
 
 /**
  * Initial search state that can be loaded from URL parameters.
@@ -65,7 +44,6 @@ export type InitialSearchState = {
  * Configuration interface for the Products List Search service.
  */
 export type ProductsListSearchServiceConfig = {
-  customizations: customizationsV3.Customization[];
   initialSearchState?: InitialSearchState;
 };
 
@@ -74,41 +52,7 @@ export type ProductsListSearchServiceConfig = {
  * This consolidates sort, pagination, and filtering functionality.
  */
 export const ProductsListSearchServiceDefinition = defineService<{
-  // Sort functionality
-  selectedSortOption: Signal<string>;
-  sortOptions: SortType[];
-  setSelectedSortOption: (sort: string) => void;
-
-  // Pagination functionality
-  currentLimit: Signal<number>;
-  currentCursor: Signal<string | null>;
-  hasNextPage: { get: () => boolean };
-  hasPrevPage: { get: () => boolean };
-  setLimit: (limit: number) => void;
-  nextPage: () => void;
-  prevPage: () => void;
-  navigateToFirstPage: () => void;
-  loadMore: (count: number) => void;
-
-  // Filter functionality
-  selectedMinPrice: Signal<number>;
-  selectedMaxPrice: Signal<number>;
-  availableMinPrice: Signal<number>;
-  availableMaxPrice: Signal<number>;
-  availableInventoryStatuses: Signal<InventoryStatusType[]>;
-  selectedInventoryStatuses: Signal<InventoryStatusType[]>;
-  availableProductOptions: Signal<ProductOption[]>;
-  selectedProductOptions: Signal<Record<string, string[]>>;
-  selectedCategory: Signal<Category | null>;
-
-  setSelectedMinPrice: (minPrice: number) => void;
-  setSelectedMaxPrice: (maxPrice: number) => void;
-  toggleInventoryStatus: (status: InventoryStatusType) => void;
-  toggleProductOption: (optionId: string, choiceId: string) => void;
-  setSelectedCategory: (category: Category | null) => void;
-  isFiltered: { get: () => boolean };
-  reset: () => void;
-}>('products-list-search');
+}>("products-list-search");
 
 /**
  * Convert SortType enum to URL format
@@ -158,6 +102,7 @@ export function convertUrlSortToSortType(urlSort: string): SortType | null {
 /**
  * Update URL with current search state (sort, filters, pagination)
  */
+//@ts-expect-error
 function updateUrlWithSearchState(searchState: {
   sort: string;
   filters: InitialSearchState;
@@ -322,6 +267,7 @@ function updateUrlWithSearchState(searchState: {
 export async function parseUrlToSearchOptions(
   url: string,
   categoriesList: Category[],
+  customizations: customizationsV3.Customization[],
   defaultSearchOptions?: productsV3.V3ProductSearch,
 ): Promise<{
   searchOptions: productsV3.V3ProductSearch;
@@ -329,11 +275,6 @@ export async function parseUrlToSearchOptions(
 }> {
   const urlObj = new URL(url);
   const searchParams = urlObj.searchParams;
-
-  // Get customizations for product option parsing
-  const { items: customizations = [] } = await customizationsV3
-    .queryCustomizations()
-    .find();
 
   // Build search options
   const searchOptions: productsV3.V3ProductSearch = {
@@ -477,6 +418,11 @@ export async function parseUrlToSearchOptions(
     }
   }
 
+  const inventoryStatus = searchParams.get("inventoryStatus");
+  if (inventoryStatus) {
+    filter["inventory.availabilityStatus"] = { $in: inventoryStatus.split(",") as InventoryStatusType[] };
+  }
+
   // Parse product options from URL parameters
   const reservedParams = [
     'minPrice',
@@ -505,7 +451,8 @@ export async function parseUrlToSearchOptions(
     );
 
     if (option && option._id) {
-      const choiceValues = optionValues.split(',').filter(Boolean);
+      const choiceValues = optionValues.split(",").filter(Boolean);
+      console.log('option ->', JSON.stringify(option, null, 2), choiceValues);
       const choiceIds: string[] = [];
 
       // Convert choice names to IDs
@@ -513,6 +460,7 @@ export async function parseUrlToSearchOptions(
         const choice = option.choicesSettings?.choices?.find(
           (c) => c.name === choiceName,
         );
+
         if (choice && choice._id) {
           choiceIds.push(choice._id);
         }
@@ -520,17 +468,17 @@ export async function parseUrlToSearchOptions(
 
       if (choiceIds.length > 0) {
         productOptionsById[option._id] = choiceIds;
-
-        // Add product option filter to search options
-        filter[`options.choicesSettings.choices.choiceId`] = {
-          $hasSome: choiceIds,
-        };
       }
     }
   }
 
   if (Object.keys(productOptionsById).length > 0) {
     initialSearchState.productOptions = productOptionsById;
+
+    // Add product option filter to search options
+    filter[`options.choicesSettings.choices.choiceId`] = {
+      $hasSome: Object.values(productOptionsById).flat(),
+    };
   }
 
   // Add filter to search options if any filters were set
@@ -645,12 +593,8 @@ export async function loadProductsListSearchServiceConfig(
     initialSearchState = input.initialSearchState;
   }
 
-  const { items: customizations = [] } = await customizationsV3
-    .queryCustomizations()
-    .find();
 
   return {
-    customizations,
     initialSearchState,
   };
 }
@@ -661,550 +605,38 @@ export async function loadProductsListSearchServiceConfig(
 export const ProductsListSearchService =
   implementService.withConfig<ProductsListSearchServiceConfig>()(
     ProductsListSearchServiceDefinition,
-    ({ getService, config }) => {
+    ({ getService }) => {
       let firstRun = true;
       const signalsService = getService(SignalsServiceDefinition);
-      const productsListService = getService(ProductsListServiceDefinition);
-      const { customizations, initialSearchState } = config;
-
-      const aggregationData = productsListService.aggregations.get()?.results;
-      const currentSearchOptions = productsListService.searchOptions.get();
-
-      // Sort signals
-      const selectedSortOptionSignal = signalsService.signal<string>(
-        initialSearchState?.sort || SortType.NAME_ASC,
-      );
-
-      // Pagination signals
-      const currentLimitSignal = signalsService.signal(
-        initialSearchState?.limit || getCurrentLimit(currentSearchOptions),
-      );
-      const currentCursorSignal = signalsService.signal<string | null>(
-        initialSearchState?.cursor || getCurrentCursor(currentSearchOptions),
-      );
-
-      // Filter signals
-      const catalogPriceRange = getCatalogPriceRange(aggregationData || []);
-
-      const userFilterMinPriceSignal = signalsService.signal(
-        initialSearchState?.priceRange?.min ?? catalogPriceRange.minPrice,
-      );
-      const userFilterMaxPriceSignal = signalsService.signal(
-        initialSearchState?.priceRange?.max ?? catalogPriceRange.maxPrice,
-      );
-
-      const catalogMinPriceSignal = signalsService.signal(
-        catalogPriceRange.minPrice,
-      );
-      const catalogMaxPriceSignal = signalsService.signal(
-        catalogPriceRange.maxPrice,
-      );
-
-      const availableInventoryStatusesSignal = signalsService.signal([
-        InventoryStatusType.IN_STOCK,
-        InventoryStatusType.OUT_OF_STOCK,
-        InventoryStatusType.PARTIALLY_OUT_OF_STOCK,
-      ] as InventoryStatusType[]);
-
-      const selectedInventoryStatusesSignal = signalsService.signal(
-        initialSearchState?.inventoryStatuses || [],
-      );
-
-      const availableProductOptionsSignal = signalsService.signal(
-        getAvailableProductOptions(aggregationData, customizations),
-      );
-
-      const selectedProductOptionsSignal = signalsService.signal(
-        initialSearchState?.productOptions || {},
-      );
-
-      const selectedCategorySignal = signalsService.signal(
-        initialSearchState?.category || null,
-      );
-      const selectedVisibleSignal = signalsService.signal(
-        initialSearchState?.visible ?? null,
-      );
-      const selectedProductTypeSignal = signalsService.signal(
-        initialSearchState?.productType || null,
-      );
-
-      // Computed signal to check if any filters are applied
-      const isFilteredSignal = signalsService.computed(() => {
-        const catalogPriceRange = getCatalogPriceRange(
-          productsListService.aggregations.get()?.results || [],
-        );
-        const minPrice = userFilterMinPriceSignal.get();
-        const maxPrice = userFilterMaxPriceSignal.get();
-        const selectedInventoryStatuses = selectedInventoryStatusesSignal.get();
-        const selectedProductOptions = selectedProductOptionsSignal.get();
-        const selectedVisible = selectedVisibleSignal.get();
-        const selectedProductType = selectedProductTypeSignal.get();
-
-        // Check if any filters are different from default values
-        const hasPriceFilter =
-          minPrice > catalogPriceRange.minPrice ||
-          maxPrice < catalogPriceRange.maxPrice;
-        const hasInventoryFilter = selectedInventoryStatuses.length > 0;
-        const hasProductOptionsFilter =
-          Object.keys(selectedProductOptions).length > 0;
-        const hasVisibilityFilter = selectedVisible !== null;
-        const hasProductTypeFilter = selectedProductType !== null;
-
-        return (
-          hasPriceFilter ||
-          hasInventoryFilter ||
-          hasProductOptionsFilter ||
-          hasVisibilityFilter ||
-          hasProductTypeFilter
-        );
-      });
-
-      // Computed signals for pagination
-      const hasNextPageSignal = signalsService.computed(() => {
-        const pagingMetadata = productsListService.pagingMetadata.get();
-        return pagingMetadata?.hasNext || false;
-      });
-
-      const hasPrevPageSignal = signalsService.computed(() => {
-        const pagingMetadata = productsListService.pagingMetadata.get();
-        return typeof pagingMetadata.cursors?.prev !== 'undefined';
-      });
-
-      // Debounce timeout IDs for price filters
-      let minPriceTimeoutId: NodeJS.Timeout | null = null;
-      let maxPriceTimeoutId: NodeJS.Timeout | null = null;
 
       if (typeof window !== 'undefined') {
         // Watch for changes in any search parameters and update search options
         signalsService.effect(() => {
           // Read all signals to establish dependencies
-          const sort = selectedSortOptionSignal.get();
-          const limit = currentLimitSignal.get();
-          const cursor = currentCursorSignal.get();
-          const minPrice = userFilterMinPriceSignal.get();
-          const maxPrice = userFilterMaxPriceSignal.get();
-          const selectedInventoryStatuses =
-            selectedInventoryStatusesSignal.get();
-          const selectedProductOptions = selectedProductOptionsSignal.get();
-          const selectedCategory = selectedCategorySignal.get();
-          const selectedVisible = selectedVisibleSignal.get();
-          const selectedProductType = selectedProductTypeSignal.get();
-
           if (firstRun) {
             firstRun = false;
             return;
           }
 
-          // Build complete new search options
-          const newSearchOptions: Parameters<
-            typeof productsV3.searchProducts
-          >[0] = {
-            ...productsListService.searchOptions.peek(),
-          };
 
-          // Update pagination
-          if (limit > 0) {
-            newSearchOptions.cursorPaging = {
-              limit,
-              ...(cursor && { cursor }),
-            };
-          } else {
-            delete newSearchOptions.cursorPaging;
-          }
 
-          // Update sort
-          switch (sort) {
-            case SortType.NAME_ASC:
-              newSearchOptions.sort = [
-                { fieldName: 'name', order: productsV3.SortDirection.ASC },
-              ];
-              break;
-            case SortType.NAME_DESC:
-              newSearchOptions.sort = [
-                { fieldName: 'name', order: productsV3.SortDirection.DESC },
-              ];
-              break;
-            case SortType.PRICE_ASC:
-              newSearchOptions.sort = [
-                {
-                  fieldName: 'actualPriceRange.minValue.amount',
-                  order: productsV3.SortDirection.ASC,
-                },
-              ];
-              break;
-            case SortType.PRICE_DESC:
-              newSearchOptions.sort = [
-                {
-                  fieldName: 'actualPriceRange.minValue.amount',
-                  order: productsV3.SortDirection.DESC,
-                },
-              ];
-              break;
-            case SortType.RECOMMENDED:
-              newSearchOptions.sort = [
-                {
-                  fieldName: 'name',
-                  order: productsV3.SortDirection.DESC,
-                },
-              ];
-              break;
-          }
+          // TODO fix it blat
 
-          // Update filters
-          if (!newSearchOptions.filter) {
-            newSearchOptions.filter = {};
-          } else {
-            newSearchOptions.filter = { ...newSearchOptions.filter };
-          }
+          // const currentFilters = {
+          //   ...(selectedVisible !== null && { visible: selectedVisible }),
+          //   ...(selectedProductType && { productType: selectedProductType }),
+          // };
 
-          // Remove existing filters
-          delete (newSearchOptions.filter as any)[
-            'actualPriceRange.minValue.amount'
-          ];
-          delete (newSearchOptions.filter as any)[
-            'actualPriceRange.maxValue.amount'
-          ];
-          delete (newSearchOptions.filter as any)[
-            'inventory.availabilityStatus'
-          ];
-          delete (newSearchOptions.filter as any)[
-            'allCategoriesInfo.categories'
-          ];
-          delete (newSearchOptions.filter as any)['visible'];
-          delete (newSearchOptions.filter as any)['productType'];
-
-          // Remove existing product option filters
-          Object.keys(newSearchOptions.filter).forEach((key) => {
-            if (key.startsWith('options.')) {
-              delete (newSearchOptions.filter as any)[key];
-            }
-          });
-
-          // Add new filters
-          if (minPrice > 0) {
-            (newSearchOptions.filter as any)[
-              'actualPriceRange.minValue.amount'
-            ] = { $gte: minPrice };
-          }
-          if (maxPrice > 0) {
-            (newSearchOptions.filter as any)[
-              'actualPriceRange.maxValue.amount'
-            ] = { $lte: maxPrice };
-          }
-          if (selectedInventoryStatuses.length > 0) {
-            if (selectedInventoryStatuses.length === 1) {
-              (newSearchOptions.filter as any)['inventory.availabilityStatus'] =
-                selectedInventoryStatuses[0];
-            } else {
-              (newSearchOptions.filter as any)['inventory.availabilityStatus'] =
-                { $in: selectedInventoryStatuses };
-            }
-          }
-          if (
-            selectedProductOptions &&
-            Object.keys(selectedProductOptions).length > 0
-          ) {
-            const allChoiceIds: string[] = [];
-            for (const choiceIds of Object.values(selectedProductOptions)) {
-              allChoiceIds.push(...choiceIds);
-            }
-            if (allChoiceIds.length > 0) {
-              (newSearchOptions.filter as any)[
-                'options.choicesSettings.choices.choiceId'
-              ] = { $hasSome: allChoiceIds };
-            }
-          }
-          if (selectedCategory) {
-            (newSearchOptions.filter as any)['allCategoriesInfo.categories'] = {
-              $matchItems: [{ _id: { $in: [selectedCategory._id] } }],
-            };
-          }
-          if (selectedVisible !== null) {
-            (newSearchOptions.filter as any)['visible'] = selectedVisible;
-          }
-          if (selectedProductType) {
-            (newSearchOptions.filter as any)['productType'] =
-              selectedProductType;
-          }
-
-          // Update the products list service
-          productsListService.setSearchOptions(newSearchOptions);
-
-          // Update URL with current search state
-          const catalogBounds = {
-            minPrice: catalogMinPriceSignal.get(),
-            maxPrice: catalogMaxPriceSignal.get(),
-          };
-
-          const currentFilters = {
-            priceRange: { min: minPrice, max: maxPrice },
-            inventoryStatuses: selectedInventoryStatuses,
-            productOptions: selectedProductOptions,
-            ...(selectedVisible !== null && { visible: selectedVisible }),
-            ...(selectedProductType && { productType: selectedProductType }),
-          };
-
-          updateUrlWithSearchState({
-            sort,
-            filters: currentFilters,
-            customizations,
-            catalogBounds,
-            categorySlug: selectedCategory?.slug || undefined,
-          });
+          // updateUrlWithSearchState({
+          //   sort,
+          //   filters: currentFilters,
+          //   customizations,
+          //   catalogBounds,
+          //   categorySlug: selectedCategory?.slug || undefined,
+          // });
         });
       }
 
-      return {
-        // Sort functionality
-        selectedSortOption: selectedSortOptionSignal,
-        sortOptions: Object.values(SortType),
-        setSelectedSortOption: (sort: string) =>
-          selectedSortOptionSignal.set(sort),
-
-        // Pagination functionality
-        currentLimit: currentLimitSignal,
-        currentCursor: currentCursorSignal,
-        hasNextPage: hasNextPageSignal,
-        hasPrevPage: hasPrevPageSignal,
-        setLimit: (limit: number) => {
-          currentLimitSignal.set(limit);
-          currentCursorSignal.set(null); // Reset pagination when changing page size
-        },
-        loadMore: (count: number) => {
-          const limit = currentLimitSignal.get();
-          currentLimitSignal.set(limit + count);
-        },
-        nextPage: () => {
-          const pagingMetadata = productsListService.pagingMetadata.get();
-          const nextCursor = pagingMetadata?.cursors?.next;
-          if (nextCursor) {
-            currentCursorSignal.set(nextCursor);
-          }
-        },
-        prevPage: () => {
-          const pagingMetadata = productsListService.pagingMetadata.get();
-          const previousCursor = pagingMetadata?.cursors?.prev;
-          if (previousCursor) {
-            currentCursorSignal.set(previousCursor);
-          }
-        },
-        navigateToFirstPage: () => {
-          currentCursorSignal.set(null);
-        },
-
-        // Filter functionality
-        selectedMinPrice: userFilterMinPriceSignal,
-        selectedMaxPrice: userFilterMaxPriceSignal,
-        availableMinPrice: catalogMinPriceSignal,
-        availableMaxPrice: catalogMaxPriceSignal,
-        availableInventoryStatuses: availableInventoryStatusesSignal,
-        selectedInventoryStatuses: selectedInventoryStatusesSignal,
-        availableProductOptions: availableProductOptionsSignal,
-        selectedProductOptions: selectedProductOptionsSignal,
-        selectedCategory: selectedCategorySignal,
-        setSelectedMinPrice: (minPrice: number) => {
-          if (minPriceTimeoutId) {
-            clearTimeout(minPriceTimeoutId);
-          }
-          minPriceTimeoutId = setTimeout(() => {
-            userFilterMinPriceSignal.set(minPrice);
-            minPriceTimeoutId = null;
-          }, PRICE_FILTER_DEBOUNCE_TIME);
-        },
-        setSelectedMaxPrice: (maxPrice: number) => {
-          if (maxPriceTimeoutId) {
-            clearTimeout(maxPriceTimeoutId);
-          }
-          maxPriceTimeoutId = setTimeout(() => {
-            userFilterMaxPriceSignal.set(maxPrice);
-            maxPriceTimeoutId = null;
-          }, PRICE_FILTER_DEBOUNCE_TIME);
-        },
-        toggleInventoryStatus: (status: InventoryStatusType) => {
-          const current = selectedInventoryStatusesSignal.get();
-          const isSelected = current.includes(status);
-          if (isSelected) {
-            selectedInventoryStatusesSignal.set(
-              current.filter((s: InventoryStatusType) => s !== status),
-            );
-          } else {
-            selectedInventoryStatusesSignal.set([...current, status]);
-          }
-        },
-        toggleProductOption: (optionId: string, choiceId: string) => {
-          const current = selectedProductOptionsSignal.get();
-          const currentChoices = current[optionId] || [];
-          const isSelected = currentChoices.includes(choiceId);
-
-          if (isSelected) {
-            const newChoices = currentChoices.filter((id) => id !== choiceId);
-            if (newChoices.length === 0) {
-              const newOptions = { ...current };
-              delete newOptions[optionId];
-              selectedProductOptionsSignal.set(newOptions);
-            } else {
-              selectedProductOptionsSignal.set({
-                ...current,
-                [optionId]: newChoices,
-              });
-            }
-          } else {
-            selectedProductOptionsSignal.set({
-              ...current,
-              [optionId]: [...currentChoices, choiceId],
-            });
-          }
-        },
-        setSelectedCategory: (category: Category | null) => {
-          selectedCategorySignal.set(category);
-        },
-        setSelectedVisible: (visible: boolean | null) => {
-          selectedVisibleSignal.set(visible);
-        },
-        setSelectedProductType: (productType: string | null) => {
-          selectedProductTypeSignal.set(productType);
-        },
-        isFiltered: isFilteredSignal,
-        reset: () => {
-          selectedSortOptionSignal.set(SortType.NAME_ASC);
-          currentLimitSignal.set(DEFAULT_QUERY_LIMIT);
-          currentCursorSignal.set(null);
-          userFilterMinPriceSignal.set(catalogMinPriceSignal.get());
-          userFilterMaxPriceSignal.set(catalogMaxPriceSignal.get());
-          selectedInventoryStatusesSignal.set([]);
-          selectedProductOptionsSignal.set({});
-          selectedVisibleSignal.set(null);
-          selectedProductTypeSignal.set(null);
-        },
-      };
+      return {};
     },
   );
-
-// Helper functions (copied from the original services)
-
-function getCurrentLimit(searchOptions: productsV3.V3ProductSearch): number {
-  return searchOptions.cursorPaging?.limit || DEFAULT_QUERY_LIMIT;
-}
-
-function getCurrentCursor(
-  searchOptions: productsV3.V3ProductSearch,
-): string | null {
-  return searchOptions.cursorPaging?.cursor || null;
-}
-
-function getCatalogPriceRange(
-  aggregationData: productsV3.AggregationResults[],
-): { minPrice: number; maxPrice: number } {
-  const minPrice = getMinPrice(aggregationData);
-  const maxPrice = getMaxPrice(aggregationData);
-  return { minPrice, maxPrice };
-}
-
-function getMinPrice(aggregationData: productsV3.AggregationResults[]): number {
-  const minPriceAggregation = aggregationData.find(
-    (data) => data.fieldPath === 'actualPriceRange.minValue.amount',
-  );
-  if (minPriceAggregation?.scalar?.value) {
-    return Number(minPriceAggregation.scalar.value) || 0;
-  }
-  return 0;
-}
-
-function getMaxPrice(aggregationData: productsV3.AggregationResults[]): number {
-  const maxPriceAggregation = aggregationData.find(
-    (data) => data.fieldPath === 'actualPriceRange.maxValue.amount',
-  );
-  if (maxPriceAggregation?.scalar?.value) {
-    return Number(maxPriceAggregation.scalar.value) || 0;
-  }
-  return 0;
-}
-
-function getAvailableProductOptions(
-  aggregationData: productsV3.AggregationResults[] = [],
-  customizations: customizationsV3.Customization[] = [],
-): ProductOption[] {
-  const matchesAggregationName = (
-    name: string,
-    aggregationNames: string[],
-  ): boolean => {
-    return aggregationNames.some(
-      (aggName) => aggName.toLowerCase() === name.toLowerCase(),
-    );
-  };
-
-  const sortChoicesIntelligently = (
-    choices: ProductChoice[],
-  ): ProductChoice[] => {
-    return [...choices].sort((a, b) => {
-      const aIsNumber = /^\d+$/.test(a.name);
-      const bIsNumber = /^\d+$/.test(b.name);
-
-      if (aIsNumber && bIsNumber) {
-        return parseInt(a.name) - parseInt(b.name);
-      }
-      if (aIsNumber && !bIsNumber) return -1;
-      if (!aIsNumber && bIsNumber) return 1;
-
-      return a.name.localeCompare(b.name);
-    });
-  };
-
-  const optionNames: string[] = [];
-  const choiceNames: string[] = [];
-
-  aggregationData.forEach((result) => {
-    if (result.name === 'optionNames' && result.values?.results) {
-      optionNames.push(
-        ...result.values.results
-          .map((item) => item.value)
-          .filter((value): value is string => typeof value === 'string'),
-      );
-    }
-    if (result.name === 'choiceNames' && result.values?.results) {
-      choiceNames.push(
-        ...result.values.results
-          .map((item) => item.value)
-          .filter((value): value is string => typeof value === 'string'),
-      );
-    }
-  });
-
-  const options: ProductOption[] = customizations
-    .filter(
-      (customization) =>
-        customization.name &&
-        customization._id &&
-        customization.customizationType ===
-          customizationsV3.CustomizationType.PRODUCT_OPTION &&
-        (optionNames.length === 0 ||
-          matchesAggregationName(customization.name, optionNames)),
-    )
-    .map((customization) => {
-      const choices: ProductChoice[] = (
-        customization.choicesSettings?.choices || []
-      )
-        .filter(
-          (choice) =>
-            choice._id &&
-            choice.name &&
-            (choiceNames.length === 0 ||
-              matchesAggregationName(choice.name, choiceNames)),
-        )
-        .map((choice) => ({
-          id: choice._id!,
-          name: choice.name!,
-          colorCode: choice.colorCode,
-        }));
-
-      return {
-        id: customization._id!,
-        name: customization.name!,
-        choices: sortChoicesIntelligently(choices),
-        optionRenderType: customization.customizationRenderType,
-      };
-    })
-    .filter((option) => option.choices.length > 0);
-
-  return options;
-}

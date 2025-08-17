@@ -46,37 +46,37 @@ const [
   productsListConfig,
   currentCartServiceConfig,
   productsListSearchConfig,
-  seoTagsServiceConfig,
+  // seoTagsServiceConfig,
 ] = await Promise.all([
   loadProductsListServiceConfig(parsed), // Both services now use same parsed result
   loadCurrentCartServiceConfig(),
   loadProductsListSearchServiceConfig(parsed),
-  loadSEOTagsServiceConfig({
-    pageUrl: Astro.url.href,
-    itemData: {
-      pageName: categoryName,
-      seoData: {
-        tags: [
-          {
-            type: 'title',
-            children: `${categoryName} - Store`,
-          },
-          {
-            type: 'meta',
-            props: {
-              content: `Browse our ${categoryName} products`,
-              name: 'description',
-            },
-          },
-        ],
-      },
-    },
-  }),
+  // loadSEOTagsServiceConfig({
+  //   pageUrl: Astro.url.href,
+  //   itemData: {
+  //     pageName: categoryName,
+  //     seoData: {
+  //       tags: [
+  //         {
+  //           type: 'title',
+  //           children: `${categoryName} - Store`,
+  //         },
+  //         {
+  //           type: 'meta',
+  //           props: {
+  //             content: `Browse our ${categoryName} products`,
+  //             name: 'description',
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   },
+  // }),
 ]);
 ---
 
 <BaseLayout>
-  <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />
+  <!-- <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" /> -->
   <StoreCollectionPage
     client:load
     currentCartServiceConfig={currentCartServiceConfig}

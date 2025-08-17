@@ -34,13 +34,13 @@ export {
   ProductsListServiceDefinition,
   loadProductsListServiceConfig,
   ProductsListServiceConfig,
-} from './products-list-service.js';
+  ProductOption,
+  ProductChoice,
+} from "./products-list-service.js";
 
 export {
-  ProductOption,
   InventoryStatusType,
   SortType,
-  ProductChoice,
   ProductsListSearchService,
   ProductsListSearchServiceDefinition,
   ProductsListSearchServiceConfig,

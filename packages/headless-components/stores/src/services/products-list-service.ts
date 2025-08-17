@@ -2,15 +2,32 @@ import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from '@wix/services-definitions/core-services/signals';
-import { productsV3, readOnlyVariantsV3 } from '@wix/stores';
-import { loadCategoriesListServiceConfig } from './categories-list-service.js';
-import {
-  parseUrlToSearchOptions,
-  type InitialSearchState,
-} from './products-list-search-service.js';
+  type ReadOnlySignal,
+} from "@wix/services-definitions/core-services/signals";
+import { customizationsV3, productsV3, readOnlyVariantsV3 } from "@wix/stores";
+import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
+import { InventoryStatusType, parseUrlToSearchOptions } from "./products-list-search-service.js";
 
 export const DEFAULT_QUERY_LIMIT = 100;
+
+/**
+ * Interface representing a product option (like Size, Color, etc.).
+ */
+export interface ProductOption {
+  id: string;
+  name: string;
+  choices: ProductChoice[];
+  optionRenderType?: string;
+}
+
+/**
+ * Interface representing a choice within a product option.
+ */
+export interface ProductChoice {
+  id: string;
+  name: string;
+  colorCode?: string;
+}
 
 /**
  * Configuration interface for the Products List service.
@@ -27,6 +44,8 @@ export type ProductsListServiceConfig = {
   pagingMetadata: productsV3.CommonCursorPagingMetadata;
   /** Aggregation data containing filters, facets, and counts */
   aggregations: productsV3.AggregationData;
+  /** Customizations used to fetch the products */
+  customizations: customizationsV3.Customization[];
 };
 
 /**
@@ -142,14 +161,14 @@ export type ProductsListServiceConfig = {
  * ```
  */
 export async function loadProductsListServiceConfig(
-  input:
-    | string
-    | {
-        searchOptions: productsV3.V3ProductSearch;
-        initialSearchState: InitialSearchState;
-      },
+  input: string | { searchOptions: productsV3.V3ProductSearch; },
 ): Promise<ProductsListServiceConfig> {
   let searchOptions: productsV3.V3ProductSearch;
+
+
+  const { items: customizations = [] } = await customizationsV3
+    .queryCustomizations()
+    .find();
 
   if (typeof input === 'string') {
     // URL input - parse it
@@ -157,6 +176,7 @@ export async function loadProductsListServiceConfig(
     const { searchOptions: parsedOptions } = await parseUrlToSearchOptions(
       input,
       categoriesListConfig.categories,
+      customizations,
     );
     searchOptions = parsedOptions;
   } else {
@@ -174,11 +194,13 @@ export async function loadProductsListServiceConfig(
   const products =
     resultWithFilter?.products ?? resultWithoutFilter?.products ?? [];
 
+
   return {
     products,
     searchOptions,
     pagingMetadata: resultWithFilter.pagingMetadata!,
     aggregations: resultWithoutFilter.aggregationData ?? {},
+    customizations,
   };
 }
 
@@ -304,12 +326,28 @@ export const ProductsListServiceDefinition = defineService<
     isLoading: Signal<boolean>;
     /** Reactive signal containing any error message, or null if no error */
     error: Signal<string | null>;
+    /** Reactive signal containing the minimum price of the products */
+    minPrice: Signal<number>;
+    /** Reactive signal containing the maximum price of the products */
+    maxPrice: Signal<number>;
+    /** Reactive signal containing the available inventory statuses */
+    availableInventoryStatuses: Signal<InventoryStatusType[]>;
+    /** Reactive signal containing the available product options */
+    availableProductOptions: Signal<ProductOption[]>;
     /** Function to update search options and trigger a new search */
     setSearchOptions: (searchOptions: productsV3.V3ProductSearch) => void;
     /** Function to update only the sort part of search options */
     setSort: (sort: productsV3.V3ProductSearch['sort']) => void;
     /** Function to update only the filter part of search options */
-    setFilter: (filter: productsV3.V3ProductSearch['filter']) => void;
+    setFilter: (filter: productsV3.V3ProductSearch["filter"]) => void;
+    /** Function to reset the filter part of search options */
+    resetFilter: () => void;
+    /** Reactive signal indicating if any filters are currently applied */
+    isFiltered: () => ReadOnlySignal<boolean>;
+    /** Function to load more products */
+    loadMore: (count: number) => void;
+    /** Reactive signal indicating if there are more products to load */
+    hasMoreProducts: ReadOnlySignal<boolean>;
   },
   ProductsListServiceConfig
 >('products-list');
@@ -385,6 +423,18 @@ export const ProductListService =
           config.pagingMetadata,
         );
 
+      const minPriceSignal = signalsService.signal<number>(getMinPrice(config.aggregations.results!));
+      const maxPriceSignal = signalsService.signal<number>(getMaxPrice(config.aggregations.results!));
+      const availableProductOptionsSignal = signalsService.signal(
+        getAvailableProductOptions(config.aggregations.results!, config.customizations),
+      );
+
+      const availableInventoryStatusesSignal = signalsService.signal([
+        InventoryStatusType.IN_STOCK,
+        InventoryStatusType.OUT_OF_STOCK,
+        InventoryStatusType.PARTIALLY_OUT_OF_STOCK,
+      ] as InventoryStatusType[]);
+
       const aggregationsSignal =
         signalsService.signal<productsV3.AggregationData>(config.aggregations);
 
@@ -407,13 +457,13 @@ export const ProductListService =
             const affectiveSearchOptions: Parameters<
               typeof productsV3.searchProducts
             >[0] = searchOptions.cursorPaging?.cursor
-              ? {
+                ? {
                   cursorPaging: {
                     cursor: searchOptions.cursorPaging.cursor,
                     limit: searchOptions.cursorPaging.limit,
                   },
                 }
-              : searchOptions;
+                : searchOptions;
 
             const result = await fetchProducts(affectiveSearchOptions);
 
@@ -436,24 +486,169 @@ export const ProductListService =
         searchOptions: searchOptionsSignal,
         pagingMetadata: pagingMetadataSignal,
         aggregations: aggregationsSignal,
-        setSearchOptions: (searchOptions: productsV3.V3ProductSearch) =>
-          searchOptionsSignal.set(searchOptions),
-        setSort: (sort: productsV3.V3ProductSearch['sort']) => {
+        /* Metadata for products list */
+        minPrice: minPriceSignal,
+        maxPrice: maxPriceSignal,
+        availableInventoryStatuses: availableInventoryStatusesSignal,
+        availableProductOptions: availableProductOptionsSignal,
+        /* End of Metadata for products list */
+        setSearchOptions: (searchOptions: productsV3.V3ProductSearch) => {
+          console.log('ProductListService::setSearchOptions ->', searchOptions);
+          console.log()
+          searchOptionsSignal.set(searchOptions);
+        },
+        setSort: (sort: productsV3.V3ProductSearch["sort"]) => {
+          console.log('ProductListService::setSort ->', sort);
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,
             sort,
           });
         },
-        setFilter: (filter: productsV3.V3ProductSearch['filter']) => {
+        setFilter: (filter: productsV3.V3ProductSearch["filter"]) => {
+          console.log('ProductListService:setFilter ->', filter);
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,
             filter,
           });
         },
+        resetFilter: () => {
+          const currentOptions = searchOptionsSignal.peek();
+          searchOptionsSignal.set({
+            ...currentOptions,
+            filter: {},
+          });
+        },
+        isFiltered: () => {
+          return signalsService.computed(() => {
+            const currentOptions = searchOptionsSignal.peek();
+            if (!currentOptions.filter) return false;
+            return currentOptions.filter !== undefined && Object.keys(currentOptions.filter).length > 0;
+          });
+        },
         isLoading: isLoadingSignal,
         error: errorSignal,
+        loadMore: (count: number) => {
+          const currentOptions = searchOptionsSignal.peek();
+          searchOptionsSignal.set({
+            ...currentOptions,
+            cursorPaging: {
+              cursor: pagingMetadataSignal.get().cursors?.next,
+              limit: currentOptions.cursorPaging?.limit ?? 0 + count,
+            },
+          });
+        },
+        hasMoreProducts: signalsService.computed(() => pagingMetadataSignal.get().hasNext ?? false),
       };
     },
   );
+
+function getMinPrice(aggregationData: productsV3.AggregationResults[]): number {
+  const minPriceAggregation = aggregationData.find(
+    (data) => data.fieldPath === "actualPriceRange.minValue.amount",
+  );
+  if (minPriceAggregation?.scalar?.value) {
+    return Number(minPriceAggregation.scalar.value) || 0;
+  }
+  return 0;
+}
+
+function getMaxPrice(aggregationData: productsV3.AggregationResults[]): number {
+  const maxPriceAggregation = aggregationData.find(
+    (data) => data.fieldPath === "actualPriceRange.maxValue.amount",
+  );
+  if (maxPriceAggregation?.scalar?.value) {
+    return Number(maxPriceAggregation.scalar.value) || 0;
+  }
+  return 0;
+}
+
+function getAvailableProductOptions(
+  aggregationData: productsV3.AggregationResults[] = [],
+  customizations: customizationsV3.Customization[] = [],
+): ProductOption[] {
+  const matchesAggregationName = (
+    name: string,
+    aggregationNames: string[],
+  ): boolean => {
+    return aggregationNames.some(
+      (aggName) => aggName.toLowerCase() === name.toLowerCase(),
+    );
+  };
+
+  const sortChoicesIntelligently = (
+    choices: ProductChoice[],
+  ): ProductChoice[] => {
+    return [...choices].sort((a, b) => {
+      const aIsNumber = /^\d+$/.test(a.name);
+      const bIsNumber = /^\d+$/.test(b.name);
+
+      if (aIsNumber && bIsNumber) {
+        return parseInt(a.name) - parseInt(b.name);
+      }
+      if (aIsNumber && !bIsNumber) return -1;
+      if (!aIsNumber && bIsNumber) return 1;
+
+      return a.name.localeCompare(b.name);
+    });
+  };
+
+  const optionNames: string[] = [];
+  const choiceNames: string[] = [];
+
+  aggregationData.forEach((result) => {
+    if (result.name === "optionNames" && result.values?.results) {
+      optionNames.push(
+        ...result.values.results
+          .map((item) => item.value)
+          .filter((value): value is string => typeof value === "string"),
+      );
+    }
+    if (result.name === "choiceNames" && result.values?.results) {
+      choiceNames.push(
+        ...result.values.results
+          .map((item) => item.value)
+          .filter((value): value is string => typeof value === "string"),
+      );
+    }
+  });
+
+  const options: ProductOption[] = customizations
+    .filter(
+      (customization) =>
+        customization.name &&
+        customization._id &&
+        customization.customizationType ===
+        customizationsV3.CustomizationType.PRODUCT_OPTION &&
+        (optionNames.length === 0 ||
+          matchesAggregationName(customization.name, optionNames)),
+    )
+    .map((customization) => {
+      const choices: ProductChoice[] = (
+        customization.choicesSettings?.choices || []
+      )
+        .filter(
+          (choice) =>
+            choice._id &&
+            choice.name &&
+            (choiceNames.length === 0 ||
+              matchesAggregationName(choice.name, choiceNames)),
+        )
+        .map((choice) => ({
+          id: choice._id!,
+          name: choice.name!,
+          colorCode: choice.colorCode,
+        }));
+
+      return {
+        id: customization._id!,
+        name: customization.name!,
+        choices: sortChoicesIntelligently(choices),
+        optionRenderType: customization.customizationRenderType,
+      };
+    })
+    .filter((option) => option.choices.length > 0);
+
+  return options;
+}
