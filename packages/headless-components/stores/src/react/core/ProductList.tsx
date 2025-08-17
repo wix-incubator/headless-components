@@ -1,20 +1,20 @@
-import { useService, WixServices } from "@wix/services-manager-react";
-import { createServicesMap } from "@wix/services-manager";
+import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
 import {
   ProductListService,
   ProductsListServiceDefinition,
   type ProductsListServiceConfig,
-} from "../../services/products-list-service.js";
-import { productsV3 } from "@wix/stores";
+} from '../../services/products-list-service.js';
+import { productsV3 } from '@wix/stores';
 import {
   ProductService,
   ProductServiceDefinition,
-} from "../../services/product-service.js";
+} from '../../services/product-service.js';
 import {
   ProductsListSearchService,
   ProductsListSearchServiceConfig,
   ProductsListSearchServiceDefinition,
-} from "../../services/products-list-search-service.js";
+} from '../../services/products-list-search-service.js';
 
 /**
  * Props for Root headless component
@@ -154,7 +154,7 @@ export function EmptyState(props: EmptyStateProps): React.ReactNode {
   const productsValue = products.get();
 
   if (!isLoadingValue && !errorValue && productsValue.length === 0) {
-    return typeof props.children === "function"
+    return typeof props.children === 'function'
       ? props.children({})
       : props.children;
   }
@@ -203,7 +203,7 @@ export function Loading(props: LoadingProps): React.ReactNode {
   const isLoadingValue = isLoading.get();
 
   if (isLoadingValue) {
-    return typeof props.children === "function"
+    return typeof props.children === 'function'
       ? props.children({})
       : props.children;
   }
@@ -258,7 +258,7 @@ export function Error(props: ErrorProps): React.ReactNode {
   const errorValue = error.get();
 
   if (errorValue) {
-    return typeof props.children === "function"
+    return typeof props.children === 'function'
       ? props.children({ error: errorValue })
       : props.children;
   }
@@ -329,7 +329,7 @@ export function ItemContent(props: ItemContentProps): React.ReactNode {
         { product },
       )}
     >
-      {typeof props.children === "function"
+      {typeof props.children === 'function'
         ? props.children({ product })
         : props.children}
     </WixServices>
@@ -348,7 +348,7 @@ export function Items(props: ItemsProps) {
   const { products } = useService(ProductsListServiceDefinition);
   const productsValue = products.get();
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ products: productsValue })
     : props.children;
 }

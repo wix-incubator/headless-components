@@ -1,14 +1,14 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   CurrentCartServiceDefinition,
   CurrentCartService,
   CurrentCartServiceConfig,
   type LineItem,
-} from "../services/current-cart-service.js";
-import { createServicesMap } from "@wix/services-manager";
-import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
-import { media } from "@wix/sdk";
+} from '../services/current-cart-service.js';
+import { createServicesMap } from '@wix/services-manager';
+import * as currentCart from '@wix/auto_sdk_ecom_current-cart';
+import { media } from '@wix/sdk';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -109,7 +109,7 @@ export function EmptyState(props: EmptyStateProps) {
   const cartValue = cart.get();
 
   if (!isLoadingValue && !errorValue && cartValue?.lineItems?.length === 0) {
-    return typeof props.children === "function"
+    return typeof props.children === 'function'
       ? props.children({})
       : props.children;
   }
@@ -122,8 +122,8 @@ export function EmptyState(props: EmptyStateProps) {
  */
 function formatCurrency(amount: number, currencyCode: string): string {
   try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
       currency: currencyCode,
     }).format(amount);
   } catch (error) {
@@ -483,10 +483,10 @@ export const Item = (props: ItemProps) => {
   const isLoading = service.isLoading.get();
 
   if (!item) {
-    const currency = cart?.currency || "USD";
+    const currency = cart?.currency || 'USD';
     return props.children({
       quantity: 0,
-      title: "",
+      title: '',
       image: null,
       price: formatCurrency(0, currency),
       selectedOptions: [],
@@ -503,7 +503,7 @@ export const Item = (props: ItemProps) => {
     try {
       image = media.getImageUrl(item.image).url;
     } catch (error) {
-      console.warn("Failed to get image URL:", error);
+      console.warn('Failed to get image URL:', error);
       image = null;
     }
   }
@@ -538,19 +538,19 @@ export const Item = (props: ItemProps) => {
   }
 
   // Calculate total price for this line item (unit price × quantity)
-  const unitPrice = parseFloat(item.price?.amount || "0");
+  const unitPrice = parseFloat(item.price?.amount || '0');
   const quantity = item.quantity || 0;
   const totalPrice = unitPrice * quantity;
-  const currency = cart?.currency || "USD";
+  const currency = cart?.currency || 'USD';
 
   // Format price with proper currency
   const formattedPrice = formatCurrency(totalPrice, currency);
 
-  const lineItemId = item._id || "";
+  const lineItemId = item._id || '';
 
   return props.children({
     quantity,
-    title: item.productName?.original || "",
+    title: item.productName?.original || '',
     image,
     price: formattedPrice,
     selectedOptions,
@@ -625,21 +625,21 @@ export const Summary = (props: SummaryProps) => {
   const totalItems = service.cartCount.get();
   const cartTotals = service.cartTotals.get();
   const isTotalsLoading = service.isTotalsLoading.get();
-  const currency = cart?.currency || cartTotals?.currency || "USD";
+  const currency = cart?.currency || cartTotals?.currency || 'USD';
 
   // Use SDK totals only
   const totals = cartTotals?.priceSummary || {};
   const subtotal = formatCurrency(
-    parseFloat(totals.subtotal?.amount || "0"),
+    parseFloat(totals.subtotal?.amount || '0'),
     currency,
   );
   const shipping = formatCurrency(
-    parseFloat(totals.shipping?.amount || "0"),
+    parseFloat(totals.shipping?.amount || '0'),
     currency,
   );
-  const tax = formatCurrency(parseFloat(totals.tax?.amount || "0"), currency);
+  const tax = formatCurrency(parseFloat(totals.tax?.amount || '0'), currency);
   const total = formatCurrency(
-    parseFloat(totals.total?.amount || "0"),
+    parseFloat(totals.total?.amount || '0'),
     currency,
   );
 

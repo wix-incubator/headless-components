@@ -3,7 +3,7 @@ export {
   CurrentCartServiceDefinition,
   loadCurrentCartServiceConfig,
   CurrentCartServiceConfig,
-} from "./current-cart-service.js";
+} from './current-cart-service.js';
 
 export {
   CheckoutService,
@@ -13,4 +13,4 @@ export {
   checkoutServiceBinding,
   ChannelType,
   type LineItem,
-} from "./checkout-service.js";
+} from './checkout-service.js';

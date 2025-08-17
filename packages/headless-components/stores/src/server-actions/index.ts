@@ -1,1 +1,1 @@
-export * from "./custom-checkout-action.js";
+export * from './custom-checkout-action.js';

@@ -1,10 +1,10 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
-import { getCheckoutUrlForProduct } from "../utils/index.js";
-import { getProductBySlug } from "@wix/auto_sdk_stores_products-v-3";
+} from '@wix/services-definitions/core-services/signals';
+import { getCheckoutUrlForProduct } from '../utils/index.js';
+import { getProductBySlug } from '@wix/auto_sdk_stores_products-v-3';
 
 /**
  * Service definition for the Buy Now service.
@@ -29,7 +29,7 @@ export const BuyNowServiceDefinition = defineService<{
   price: string;
   /** The currency code for the product price */
   currency: string;
-}>("BuyNow");
+}>('BuyNow');
 
 /**
  * Configuration interface for the Buy Now service.
@@ -203,7 +203,7 @@ export const loadBuyNowServiceInitialData = async (
   variantId?: string,
 ) => {
   const res = await getProductBySlug(productSlug, {
-    fields: ["CURRENCY"],
+    fields: ['CURRENCY'],
   });
   const product = res.product!;
 

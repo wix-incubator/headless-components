@@ -2,14 +2,14 @@ import {
   defineService,
   implementService,
   type ServiceFactoryConfig,
-} from "@wix/services-definitions";
+} from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
   type ReadOnlySignal,
-} from "@wix/services-definitions/core-services/signals";
-import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
-import { ProductServiceDefinition } from "./product-service.js";
+} from '@wix/services-definitions/core-services/signals';
+import * as productsV3 from '@wix/auto_sdk_stores_products-v-3';
+import { ProductServiceDefinition } from './product-service.js';
 
 export interface ModifierValue {
   modifierName: string;
@@ -35,7 +35,7 @@ export interface ProductModifiersServiceAPI {
 }
 
 export const ProductModifiersServiceDefinition =
-  defineService<ProductModifiersServiceAPI>("productModifiers");
+  defineService<ProductModifiersServiceAPI>('productModifiers');
 
 export const ProductModifiersService = implementService.withConfig()(
   ProductModifiersServiceDefinition,
@@ -120,7 +120,7 @@ export const ProductModifiersService = implementService.withConfig()(
       return mods.every((modifier) => {
         if (!modifier.mandatory) return true;
 
-        const selectedValue = current[modifier.name || ""];
+        const selectedValue = current[modifier.name || ''];
         if (!selectedValue) return false;
 
         // Check based on modifier type
@@ -135,7 +135,7 @@ export const ProductModifiersService = implementService.withConfig()(
         } else if (renderType === productsV3.ModifierRenderType.FREE_TEXT) {
           return (
             !!selectedValue.freeTextValue &&
-            selectedValue.freeTextValue.trim() !== ""
+            selectedValue.freeTextValue.trim() !== ''
           );
         }
 

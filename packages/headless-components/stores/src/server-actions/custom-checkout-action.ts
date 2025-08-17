@@ -1,6 +1,6 @@
-import { checkout } from "@wix/ecom";
-import { redirects } from "@wix/redirects";
-import { auth } from "@wix/essentials";
+import { checkout } from '@wix/ecom';
+import { redirects } from '@wix/redirects';
+import { auth } from '@wix/essentials';
 
 /**
  * Options for creating a checkout with a custom line item.

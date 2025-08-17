@@ -8,7 +8,8 @@
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "test": "vitest",
-    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\""
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "files": [
     "dist",

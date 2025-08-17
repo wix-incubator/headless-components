@@ -48,22 +48,22 @@ import {
   Indicator as CoreIndicator,
   ThumbnailList as CoreThumbnailList,
   ThumbnailItem as CoreThumbnailItem,
-} from "./core/MediaGallery.js";
-import React, { createContext, useContext } from "react";
-import type { MediaItem } from "../services/media-gallery-service.js";
-import type { MediaGalleryServiceConfig } from "../services/media-gallery-service.js";
-import { Slot } from "@radix-ui/react-slot";
-import { WixMediaImage } from "./WixMediaImage.js";
+} from './core/MediaGallery.js';
+import React, { createContext, useContext } from 'react';
+import type { MediaItem } from '../services/media-gallery-service.js';
+import type { MediaGalleryServiceConfig } from '../services/media-gallery-service.js';
+import { Slot } from '@radix-ui/react-slot';
+import { WixMediaImage } from './WixMediaImage.js';
 
 // Components that render actual DOM elements get test IDs on their rendered elements
 // Components that only provide context/logic don't introduce new DOM elements
 export enum TestIds {
-  mediaGalleryRoot = "media-gallery-root",
-  mediaGalleryNext = "media-gallery-next",
-  mediaGalleryPrevious = "media-gallery-previous",
-  mediaGalleryViewport = "media-gallery-viewport",
-  mediaGalleryIndicator = "media-gallery-indicator",
-  mediaGalleryThumbnailItem = "media-gallery-thumbnail-item",
+  mediaGalleryRoot = 'media-gallery-root',
+  mediaGalleryNext = 'media-gallery-next',
+  mediaGalleryPrevious = 'media-gallery-previous',
+  mediaGalleryViewport = 'media-gallery-viewport',
+  mediaGalleryIndicator = 'media-gallery-indicator',
+  mediaGalleryThumbnailItem = 'media-gallery-thumbnail-item',
 }
 
 /**
@@ -145,7 +145,7 @@ export const Root = ({ children, mediaGalleryServiceConfig }: RootProps) => {
  */
 export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, ...props }, ref) => {
-    const Comp = props.asChild ? Slot : "button";
+    const Comp = props.asChild ? Slot : 'button';
 
     return (
       <CoreNext>
@@ -190,7 +190,7 @@ export const Next = React.forwardRef<HTMLButtonElement, ButtonProps>(
  */
 export const Previous = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, ...props }, ref) => {
-    const Comp = props.asChild ? Slot : "button";
+    const Comp = props.asChild ? Slot : 'button';
     return (
       <CorePrevious>
         {({ previous, canGoPrevious }) => (
@@ -258,7 +258,7 @@ export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
     return (
       <CoreViewport>
         {({ src, alt }) => {
-          const Comp = asChild ? Slot : "div";
+          const Comp = asChild ? Slot : 'div';
           return (
             <Comp
               ref={ref}
@@ -323,7 +323,7 @@ export const Indicator = React.forwardRef<HTMLDivElement, IndicatorProps>(
     return (
       <CoreIndicator>
         {({ current, total }) => {
-          const Comp = asChild ? Slot : "div";
+          const Comp = asChild ? Slot : 'div';
           return (
             <Comp
               ref={ref}
@@ -469,7 +469,7 @@ export const ThumbnailItem = React.forwardRef<
   return (
     <CoreThumbnailItem index={index}>
       {({ src, isActive, select, alt }) => {
-        const Comp = asChild ? Slot : "div";
+        const Comp = asChild ? Slot : 'div';
         return (
           <Comp
             ref={ref}

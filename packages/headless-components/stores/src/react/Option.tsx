@@ -1,18 +1,18 @@
 import {
   type ConnectedModifierChoice,
   type ConnectedOptionChoice,
-} from "@wix/auto_sdk_stores_products-v-3";
-import React from "react";
-import { renderAsChild, type AsChildProps } from "../utils/index.js";
-import * as Choice from "./Choice.js";
-import * as ProductModifiersPrimitive from "./core/ProductModifiers.js";
-import * as ProductVariantSelectorPrimitive from "./core/ProductVariantSelector.js";
+} from '@wix/auto_sdk_stores_products-v-3';
+import React from 'react';
+import { renderAsChild, type AsChildProps } from '../utils/index.js';
+import * as Choice from './Choice.js';
+import * as ProductModifiersPrimitive from './core/ProductModifiers.js';
+import * as ProductVariantSelectorPrimitive from './core/ProductVariantSelector.js';
 
 enum TestIds {
-  optionRoot = "option-root",
-  optionName = "option-name",
-  optionMandatoryIndicator = "option-mandatory-indicator",
-  optionChoices = "option-choices",
+  optionRoot = 'option-root',
+  optionName = 'option-name',
+  optionMandatoryIndicator = 'option-mandatory-indicator',
+  optionChoices = 'option-choices',
 }
 
 export interface Option {
@@ -30,11 +30,11 @@ export interface RootProps
   extends AsChildProps<{
     option: Option;
     onValueChange?: (value: string) => void;
-    allowedTypes?: ("color" | "text" | "free-text")[];
+    allowedTypes?: ('color' | 'text' | 'free-text')[];
   }> {
   option: Option;
   onValueChange?: (value: string) => void;
-  allowedTypes?: ("color" | "text" | "free-text")[];
+  allowedTypes?: ('color' | 'text' | 'free-text')[];
 }
 
 /**
@@ -122,9 +122,9 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { asChild, children, option, onValueChange, allowedTypes } = props;
 
   // Determine the option type based on the option name and available choices
-  const getOptionType = (): "color" | "text" | "free-text" => {
-    if (option.type === "FREE_TEXT") {
-      return "free-text";
+  const getOptionType = (): 'color' | 'text' | 'free-text' => {
+    if (option.type === 'FREE_TEXT') {
+      return 'free-text';
     }
 
     if (
@@ -134,10 +134,10 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
           choice.colorCode,
       )
     ) {
-      return "color";
+      return 'color';
     }
 
-    return "text";
+    return 'text';
   };
 
   const optionType = getOptionType();
@@ -151,13 +151,13 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   };
 
   const attributes = {
-    "data-testid": TestIds.optionRoot,
-    "data-type": optionType,
+    'data-testid': TestIds.optionRoot,
+    'data-type': optionType,
   };
 
   const content = (
     <OptionContext.Provider value={contextValue}>
-      {typeof children === "function" ? null : (children as React.ReactNode)}
+      {typeof children === 'function' ? null : (children as React.ReactNode)}
     </OptionContext.Provider>
   );
 
@@ -216,10 +216,10 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 
   if (!optionData) return null;
 
-  const name = optionData.name || "";
+  const name = optionData.name || '';
 
   const attributes = {
-    "data-testid": TestIds.optionName,
+    'data-testid': TestIds.optionName,
   };
 
   if (asChild) {
@@ -283,7 +283,7 @@ export const MandatoryIndicator = React.forwardRef<
   if (!mandatory) return null;
 
   const attributes = {
-    "data-testid": TestIds.optionMandatoryIndicator,
+    'data-testid': TestIds.optionMandatoryIndicator,
   };
 
   if (asChild) {
@@ -291,7 +291,7 @@ export const MandatoryIndicator = React.forwardRef<
       children,
       props: { mandatory },
       ref,
-      content: "*",
+      content: '*',
       attributes,
     });
     if (rendered) return rendered;
@@ -357,15 +357,15 @@ export const Choices = React.forwardRef<HTMLElement, ChoicesProps>(
     // Check if we have choices to render (List Container Level pattern)
     const hasChoicesOrFreeText =
       (optionData.choices && optionData.choices.length > 0) ||
-      optionData.optionType === "free-text";
+      optionData.optionType === 'free-text';
 
     if (!hasChoicesOrFreeText) {
       return emptyState || null;
     }
 
     const attributes = {
-      "data-testid": TestIds.optionChoices,
-      "data-type": optionData.optionType || "text",
+      'data-testid': TestIds.optionChoices,
+      'data-type': optionData.optionType || 'text',
     };
 
     return (
@@ -409,27 +409,27 @@ export const ChoiceRepeater = React.forwardRef<
 
   if (
     !optionData ||
-    (!optionData.choices?.length && optionData.optionType !== "free-text")
+    (!optionData.choices?.length && optionData.optionType !== 'free-text')
   )
     return null;
 
   const onValueChange = optionData.onValueChange || (() => {});
   const isModifier = optionData.type;
   const allowedTypes = optionData.allowedTypes || [
-    "color",
-    "text",
-    "free-text",
+    'color',
+    'text',
+    'free-text',
   ];
 
-  if (optionData.optionType === "free-text") {
+  if (optionData.optionType === 'free-text') {
     // Check if free-text is allowed
-    if (!allowedTypes.includes("free-text")) {
+    if (!allowedTypes.includes('free-text')) {
       return null;
     }
 
     const choice = {
       ...optionData,
-      type: "free-text",
+      type: 'free-text',
     };
 
     return (
@@ -467,11 +467,11 @@ export const ChoiceRepeater = React.forwardRef<
         (choice: ConnectedOptionChoice | ConnectedModifierChoice) => {
           const choiceKey = choice.choiceId;
 
-          const getChoiceType = (): "color" | "text" | "free-text" => {
-            if (choice?.choiceType === "ONE_COLOR") return "color";
-            if (choice?.choiceType === "CHOICE_TEXT") return "text";
+          const getChoiceType = (): 'color' | 'text' | 'free-text' => {
+            if (choice?.choiceType === 'ONE_COLOR') return 'color';
+            if (choice?.choiceType === 'CHOICE_TEXT') return 'text';
 
-            return "text";
+            return 'text';
           };
 
           const choiceType = getChoiceType();
@@ -497,9 +497,9 @@ export const ChoiceRepeater = React.forwardRef<
                   const contextValue = {
                     choice: choiceData,
                     onValueChange,
-                    shouldRenderAsColor: choiceType === "color",
-                    shouldRenderAsText: choiceType === "text",
-                    shouldRenderAsFreeText: choiceType === "free-text",
+                    shouldRenderAsColor: choiceType === 'color',
+                    shouldRenderAsText: choiceType === 'text',
+                    shouldRenderAsFreeText: choiceType === 'free-text',
                     isSelected,
                     isVisible: true, // ProductModifiers doesn't provide visibility
                     isInStock: true, // ProductModifiers doesn't provide stock info
@@ -539,9 +539,9 @@ export const ChoiceRepeater = React.forwardRef<
                   const contextValue = {
                     choice: choiceData,
                     onValueChange,
-                    shouldRenderAsColor: choiceType === "color",
-                    shouldRenderAsText: choiceType === "text",
-                    shouldRenderAsFreeText: choiceType === "free-text",
+                    shouldRenderAsColor: choiceType === 'color',
+                    shouldRenderAsText: choiceType === 'text',
+                    shouldRenderAsFreeText: choiceType === 'free-text',
                     isSelected,
                     isVisible,
                     isInStock,

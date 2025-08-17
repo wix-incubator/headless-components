@@ -1,11 +1,11 @@
-import { useService } from "@wix/services-manager-react";
-import type { ReactNode } from "react";
+import { useService } from '@wix/services-manager-react';
+import type { ReactNode } from 'react';
 import {
   ProductsListSearchServiceDefinition,
   type ProductOption,
   InventoryStatusType,
-} from "../../services/products-list-search-service.js";
-import { Category } from "@wix/auto_sdk_categories_categories";
+} from '../../services/products-list-search-service.js';
+import { Category } from '@wix/auto_sdk_categories_categories';
 
 /**
  * Props for InventoryStatus headless component
@@ -69,7 +69,7 @@ export function InventoryStatus(props: InventoryStatusProps) {
   const selectedInventoryStatuses = service.selectedInventoryStatuses.get();
   const toggleInventoryStatus = service.toggleInventoryStatus;
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({
         availableInventoryStatuses,
         selectedInventoryStatuses,
@@ -131,7 +131,7 @@ export function ResetTrigger(props: ResetTriggerProps) {
   const resetFilters = service.reset;
   const isFiltered = service.isFiltered.get();
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ resetFilters, isFiltered })
     : props.children;
 }
@@ -215,7 +215,7 @@ export function PriceRange(props: PriceRangeProps) {
   const setSelectedMinPrice = service.setSelectedMinPrice;
   const setSelectedMaxPrice = service.setSelectedMaxPrice;
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({
         availableMinPrice,
         selectedMinPrice,
@@ -242,7 +242,7 @@ export function CategoryFilter(props: CategoryFilterProps) {
   const selectedCategory = service.selectedCategory.get();
   const setSelectedCategory = service.setSelectedCategory;
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ selectedCategory, setSelectedCategory })
     : props.children;
 }
@@ -325,7 +325,7 @@ export function ProductOptions(props: ProductOptionsProps) {
           service.toggleProductOption(option.id, choiceId);
         };
 
-        return typeof props.children === "function"
+        return typeof props.children === 'function'
           ? props.children({ option, selectedChoices, toggleChoice })
           : props.children;
       })}

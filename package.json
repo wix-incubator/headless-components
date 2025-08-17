@@ -15,7 +15,8 @@
     "tsc": "tsc",
     "syncpack": "syncpack",
     "test:headless-components": "turbo run test --filter=\"./packages/headless-components/*\" -- run",
-    "lint:headless-components": "turbo run lint:fix --filter=\"./packages/headless-components/*\""
+    "lint:headless-components": "turbo run lint:fix --filter=\"./packages/headless-components/*\"",
+    "lint:check:headless-components": "turbo run lint:check --filter=\"./packages/headless-components/*\""
   },
   "devDependencies": {
     "astro": "^5.9.0",

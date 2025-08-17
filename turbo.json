@@ -52,6 +52,18 @@
         "*.json",
         "*.md"
       ]
+    },
+    "lint:check": {
+      "outputs": [],
+      "inputs": [
+        "src/**",
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx",
+        "*.json",
+        "*.md"
+      ]
     }
   }
 }

@@ -1,11 +1,11 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   MediaGalleryServiceDefinition,
   MediaGalleryService,
-} from "../../services/index.js";
-import { MediaGalleryServiceConfig } from "../../services/media-gallery-service.js";
-import { createServicesMap } from "@wix/services-manager";
+} from '../../services/index.js';
+import { MediaGalleryServiceConfig } from '../../services/media-gallery-service.js';
+import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
   children: React.ReactNode;

@@ -1,14 +1,14 @@
-import type { ServiceAPI } from "@wix/services-manager/types";
+import type { ServiceAPI } from '@wix/services-manager/types';
 import {
   DynamicPageData,
   SEOTagsService,
   SEOTagsServiceDefinition,
   StaticPageData,
   type SEOTagsServiceConfig,
-} from "../services/seo-tags-service.js";
-import { useService, WixServices } from "@wix/services-manager-react";
-import { ItemType } from "@wix/auto_sdk_seo_seo-tags";
-import { createServicesMap } from "@wix/services-manager";
+} from '../services/seo-tags-service.js';
+import { useService, WixServices } from '@wix/services-manager-react';
+import { ItemType } from '@wix/auto_sdk_seo_seo-tags';
+import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -94,33 +94,33 @@ export interface TagsProps {
  */
 export function Tags(props: TagsProps): React.ReactNode {
   const { seoTagsServiceConfig } = props;
-  const dataAttr = { "wix-seo-tags": "true" };
+  const dataAttr = { 'wix-seo-tags': 'true' };
   return seoTagsServiceConfig.tags
     .filter((tag) => !tag.disabled)
     .map((tag, index) => {
-      if (tag.type === "title") {
+      if (tag.type === 'title') {
         return (
           <title key={`title-${index}`} {...dataAttr}>
             {tag.children}
           </title>
         );
       }
-      if (tag.type === "meta") {
+      if (tag.type === 'meta') {
         return <meta key={`meta-${index}`} {...tag.props} {...dataAttr} />;
       }
 
-      if (tag.type === "link") {
+      if (tag.type === 'link') {
         return <link key={`link-${index}`} {...tag.props} {...dataAttr} />;
       }
 
-      if (tag.type === "script") {
+      if (tag.type === 'script') {
         return (
           <script
             key={`script-${index}`}
             {...tag.props}
             {...tag.meta}
             {...dataAttr}
-            dangerouslySetInnerHTML={{ __html: tag.children || "" }}
+            dangerouslySetInnerHTML={{ __html: tag.children || '' }}
           />
         );
       }

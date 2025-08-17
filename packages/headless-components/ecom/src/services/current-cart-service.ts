@@ -1,15 +1,15 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
   type ReadOnlySignal,
-} from "@wix/services-definitions/core-services/signals";
-import * as currentCart from "@wix/auto_sdk_ecom_current-cart";
-import * as checkout from "@wix/auto_sdk_ecom_checkout";
-import { redirects } from "@wix/redirects";
+} from '@wix/services-definitions/core-services/signals';
+import * as currentCart from '@wix/auto_sdk_ecom_current-cart';
+import * as checkout from '@wix/auto_sdk_ecom_checkout';
+import { redirects } from '@wix/redirects';
 
 export type LineItem = NonNullable<
-  currentCart.AddToCurrentCartRequest["lineItems"]
+  currentCart.AddToCurrentCartRequest['lineItems']
 >[number];
 
 export interface CurrentCartServiceAPI {
@@ -24,7 +24,7 @@ export interface CurrentCartServiceAPI {
   cartTotals: Signal<any | null>;
 
   addToCart: (
-    lineItems: currentCart.AddToCurrentCartRequest["lineItems"],
+    lineItems: currentCart.AddToCurrentCartRequest['lineItems'],
   ) => Promise<void>;
   removeLineItem: (lineItemId: string) => Promise<void>;
   updateLineItemQuantity: (
@@ -43,13 +43,13 @@ export interface CurrentCartServiceAPI {
   reloadCart: () => Promise<void>;
   onAddedToCart: (
     callback: (
-      lineItems: currentCart.AddToCurrentCartRequest["lineItems"],
+      lineItems: currentCart.AddToCurrentCartRequest['lineItems'],
     ) => void,
   ) => void;
 }
 
 export const CurrentCartServiceDefinition =
-  defineService<CurrentCartServiceAPI>("currentCart");
+  defineService<CurrentCartServiceAPI>('currentCart');
 
 export interface CurrentCartServiceConfig {
   initialCart?: currentCart.Cart | null;
@@ -69,10 +69,10 @@ export const CurrentCartService =
       const isTotalsLoading: Signal<boolean> = signalsService.signal(false);
       const isCouponLoading: Signal<boolean> = signalsService.signal(false);
       const error: Signal<string | null> = signalsService.signal(null as any);
-      const buyerNotes: Signal<string> = signalsService.signal("");
+      const buyerNotes: Signal<string> = signalsService.signal('');
       const cartTotals: Signal<any | null> = signalsService.signal(null);
       const onAddedToCartCallbaks = new Set<
-        (lineItems: currentCart.AddToCurrentCartRequest["lineItems"]) => void
+        (lineItems: currentCart.AddToCurrentCartRequest['lineItems']) => void
       >();
 
       const cartCount: ReadOnlySignal<number> = signalsService.computed(() => {
@@ -90,7 +90,7 @@ export const CurrentCartService =
           const totalsResponse = await currentCart.estimateCurrentCartTotals();
           cartTotals.set(totalsResponse || null);
         } catch (err) {
-          console.warn("Failed to estimate cart totals:", err);
+          console.warn('Failed to estimate cart totals:', err);
           cartTotals.set(null);
         } finally {
           isTotalsLoading.set(false);
@@ -98,7 +98,7 @@ export const CurrentCartService =
       };
 
       const addToCart = async (
-        lineItems: currentCart.AddToCurrentCartRequest["lineItems"],
+        lineItems: currentCart.AddToCurrentCartRequest['lineItems'],
       ) => {
         try {
           isLoading.set(true);
@@ -116,7 +116,7 @@ export const CurrentCartService =
           }, 0);
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to add to cart",
+            err instanceof Error ? err.message : 'Failed to add to cart',
           );
         } finally {
           isLoading.set(false);
@@ -125,7 +125,7 @@ export const CurrentCartService =
 
       const onAddedToCart = (
         callback: (
-          lineItems: currentCart.AddToCurrentCartRequest["lineItems"],
+          lineItems: currentCart.AddToCurrentCartRequest['lineItems'],
         ) => void,
       ) => {
         onAddedToCartCallbaks.add(callback);
@@ -149,7 +149,7 @@ export const CurrentCartService =
           }
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to remove item",
+            err instanceof Error ? err.message : 'Failed to remove item',
           );
         } finally {
           isLoading.set(false);
@@ -177,7 +177,7 @@ export const CurrentCartService =
           }
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to update quantity",
+            err instanceof Error ? err.message : 'Failed to update quantity',
           );
         } finally {
           isLoading.set(false);
@@ -239,7 +239,7 @@ export const CurrentCartService =
           }
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to clear cart",
+            err instanceof Error ? err.message : 'Failed to clear cart',
           );
         } finally {
           isLoading.set(false);
@@ -263,29 +263,29 @@ export const CurrentCartService =
             estimateTotals();
           }
         } catch (err: any) {
-          console.error("Coupon application error:", err);
+          console.error('Coupon application error:', err);
 
           // Handle specific coupon errors
           if (
             err?.details?.applicationError?.code ===
-            "ERROR_COUPON_DOES_NOT_EXIST"
+            'ERROR_COUPON_DOES_NOT_EXIST'
           ) {
             error.set(
-              "This coupon code does not exist. Please check the code and try again.",
+              'This coupon code does not exist. Please check the code and try again.',
             );
           } else if (
-            err?.details?.applicationError?.code === "ERROR_COUPON_EXPIRED"
+            err?.details?.applicationError?.code === 'ERROR_COUPON_EXPIRED'
           ) {
-            error.set("This coupon has expired.");
+            error.set('This coupon has expired.');
           } else if (
             err?.details?.applicationError?.code ===
-            "ERROR_COUPON_NOT_APPLICABLE"
+            'ERROR_COUPON_NOT_APPLICABLE'
           ) {
-            error.set("This coupon cannot be applied to your current cart.");
-          } else if (err?.message?.includes("coupon")) {
+            error.set('This coupon cannot be applied to your current cart.');
+          } else if (err?.message?.includes('coupon')) {
             error.set(err.message);
           } else {
-            error.set("Failed to apply coupon. Please try again.");
+            error.set('Failed to apply coupon. Please try again.');
           }
         } finally {
           isCouponLoading.set(false);
@@ -304,9 +304,9 @@ export const CurrentCartService =
             estimateTotals();
           }
         } catch (err: any) {
-          console.error("Coupon removal error:", err);
+          console.error('Coupon removal error:', err);
           error.set(
-            err instanceof Error ? err.message : "Failed to remove coupon",
+            err instanceof Error ? err.message : 'Failed to remove coupon',
           );
         } finally {
           isCouponLoading.set(false);
@@ -328,7 +328,7 @@ export const CurrentCartService =
               });
               cart.set(updatedCart);
             } catch (noteError) {
-              console.warn("Failed to add buyer notes to cart:", noteError);
+              console.warn('Failed to add buyer notes to cart:', noteError);
             }
           }
 
@@ -338,7 +338,7 @@ export const CurrentCartService =
             });
 
           if (!checkoutResult.checkoutId) {
-            throw new Error("Failed to create checkout");
+            throw new Error('Failed to create checkout');
           }
 
           const { redirectSession } = await redirects.createRedirectSession({
@@ -346,7 +346,7 @@ export const CurrentCartService =
             preferences: { useGenericWixPages: false },
             callbacks: {
               postFlowUrl: window.location.href,
-              cartPageUrl: window.location.origin + "/cart",
+              cartPageUrl: window.location.origin + '/cart',
             },
           });
 
@@ -357,7 +357,7 @@ export const CurrentCartService =
           error.set(
             err instanceof Error
               ? err.message
-              : "Failed to proceed to checkout",
+              : 'Failed to proceed to checkout',
           );
         } finally {
           isLoading.set(false);
@@ -412,7 +412,7 @@ export async function loadCurrentCartServiceConfig(): Promise<CurrentCartService
     };
   } catch (error) {
     if (
-      (error as any).details?.applicationError?.code === "OWNED_CART_NOT_FOUND"
+      (error as any).details?.applicationError?.code === 'OWNED_CART_NOT_FOUND'
     ) {
       return {
         initialCart: null,

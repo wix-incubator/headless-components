@@ -1,6 +1,6 @@
-import React from "react";
-import { media as wixMedia } from "@wix/sdk";
-import { Slot } from "@radix-ui/react-slot";
+import React from 'react';
+import { media as wixMedia } from '@wix/sdk';
+import { Slot } from '@radix-ui/react-slot';
 
 type MediaItem = { image?: string };
 
@@ -15,7 +15,7 @@ export const WixMediaImage = React.forwardRef<
   WixMediaImageProps
 >(
   (
-    { media, width, height, className, alt = "", asChild, children, ...rest },
+    { media, width, height, className, alt = '', asChild, children, ...rest },
     ref,
   ) => {
     if (!media?.image) return null;
