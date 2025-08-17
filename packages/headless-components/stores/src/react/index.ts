@@ -10,3 +10,5 @@ export * as ProductVariantSelector from "./core/ProductVariantSelector.js";
 export * as SelectedVariant from "./core/SelectedVariant.js";
 
 export * as ProductV2 from "./Product.js";
+export * as CategoryListV2 from "./CategoryList.js";
+export * as CategoryV2 from "./Category.js";

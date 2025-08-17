@@ -50,6 +50,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
     "@wix/auto_sdk_bookings_availability-calendar": "^1.0.155",
     "@wix/auto_sdk_categories_categories": "^1.0.62",
     "@wix/auto_sdk_stores_customizations-v-3": "^1.0.26",

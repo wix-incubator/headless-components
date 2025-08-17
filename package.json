@@ -5,7 +5,7 @@
   "workspaces": [
     "packages/*",
     "packages/headless-components/*",
-    "examples/*"
+    "examples/astro-stores-demo"
   ],
   "scripts": {
     "build:all": "turbo run build",

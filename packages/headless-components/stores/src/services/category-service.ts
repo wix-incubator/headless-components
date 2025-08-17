@@ -13,16 +13,20 @@ import {
  */
 export type Category = categories.Category;
 
+export interface CategoryServiceAPI {
+  /** Reactive signal containing the current category data */
+  category: Signal<Category>;
+  /** Reactive signal indicating if a category is currently selected */
+  isSelected: Signal<boolean>;
+}
+
 /**
  * Service definition for the Category service.
  * This defines the reactive API contract for managing a single product category.
  *
  * @constant
  */
-export const CategoryServiceDefinition = defineService<{
-  /** Reactive signal containing the current category data */
-  category: Signal<Category>;
-}>("category");
+export const CategoryServiceDefinition = defineService<CategoryServiceAPI>("category");
 
 /**
  * Configuration interface for the Category service.
@@ -33,6 +37,8 @@ export const CategoryServiceDefinition = defineService<{
 export type CategoryServiceConfig = {
   /** The category object to initialize the service with */
   category: Category;
+  /** Whether the category is currently selected */
+  isSelected?: boolean;
 };
 
 /**
@@ -75,9 +81,11 @@ export const CategoryService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const categorySignal = signalsService.signal(config.category);
+      const isSelectedSignal = signalsService.signal(config.isSelected ?? false);
 
       return {
         category: categorySignal,
+        isSelected: isSelectedSignal,
       };
     },
   );

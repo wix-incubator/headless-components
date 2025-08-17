@@ -1,9 +1,8 @@
-import { CategoryList } from '@wix/headless-stores/react';
+import { CategoryListV2, CategoryV2 } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
   Category as CategoryType,
 } from '@wix/headless-stores/services';
-import { Category } from '@wix/headless-stores/react';
 
 interface CategoryPickerProps {
   onCategorySelect: (category: CategoryType) => void;
@@ -17,7 +16,7 @@ export function CategoryPicker({
   currentCategorySlug,
 }: CategoryPickerProps) {
   return (
-    <CategoryList.Root categoriesListConfig={categoriesListConfig}>
+    <CategoryListV2.Root categoriesListConfig={categoriesListConfig}>
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-content-primary font-semibold text-sm uppercase tracking-wide">
@@ -27,26 +26,23 @@ export function CategoryPicker({
 
         {/* Category Navigation - Horizontal scrollable for mobile */}
         <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
-          <CategoryList.ItemContent>
-            {({ category }) => (
-              <Category.Slug>
-                {({ slug }) => (
+          <CategoryListV2.CategoryRepeater>
+            <CategoryV2.Trigger asChild onSelect={(category) => onCategorySelect(category)}>
+                {({ category }) => (
                   <button
-                    onClick={() => onCategorySelect(category)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                      currentCategorySlug === slug
+                      currentCategorySlug === category.slug
                         ? 'text-content-primary shadow-lg transform scale-105 btn-primary'
                         : 'bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary'
                     }`}
                   >
-                    <Category.Name>{({ name }) => name}</Category.Name>
+                    <CategoryV2.Label></CategoryV2.Label>
                   </button>
                 )}
-              </Category.Slug>
-            )}
-          </CategoryList.ItemContent>
+              </CategoryV2.Trigger>
+            </CategoryListV2.CategoryRepeater>
         </div>
       </div>
-    </CategoryList.Root>
+    </CategoryListV2.Root>
   );
 }
