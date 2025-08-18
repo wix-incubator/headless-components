@@ -86,14 +86,6 @@ export const Next: React.FC<
   </MediaGalleryPrimitive.Next>
 );
 
-export const Thumbnails: React.FC<
-  React.ComponentProps<typeof MediaGalleryPrimitive.Thumbnails>
-> = ({ children, ...props }) => (
-  <MediaGalleryPrimitive.Thumbnails {...props}>
-    {children}
-  </MediaGalleryPrimitive.Thumbnails>
-);
-
 export const ThumbnailRepeater: React.FC<
   React.ComponentProps<typeof MediaGalleryPrimitive.ThumbnailRepeater>
 > = ({ children, ...props }) => (
