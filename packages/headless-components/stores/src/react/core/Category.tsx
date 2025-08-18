@@ -19,7 +19,7 @@ export interface RootProps {
  * @component
  * @example
  * ```tsx
- * import { Category } from '@wix/stores/components';
+ * import { CategoryCore } from '@wix/stores/components';
  *
  * function CategoryPage() {
  *   return (
@@ -71,7 +71,7 @@ export interface NameRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Category } from '@wix/stores/components';
+ * import { CategoryCore } from '@wix/stores/components';
  *
  * function CategoryHeader() {
  *   return (
@@ -114,7 +114,7 @@ export interface SlugRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Category } from '@wix/stores/components';
+ * import { CategoryCore } from '@wix/stores/components';
  *
  * function CategoryInfo() {
  *   return (

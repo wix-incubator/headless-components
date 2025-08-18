@@ -21,7 +21,7 @@ export interface RootProps {
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryListCore } from '@wix/stores/components';
  *
  * function CategoriesPage() {
  *   return (
@@ -74,7 +74,7 @@ export interface EmptyStateRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryListCore } from '@wix/stores/components';
  *
  * function EmptyCategoriesMessage() {
  *   return (
@@ -127,7 +127,7 @@ export interface LoadingRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryListCore } from '@wix/stores/components';
  *
  * function CategoriesLoading() {
  *   return (
@@ -179,7 +179,7 @@ export interface ErrorRenderProps {
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryListCore } from '@wix/stores/components';
  *
  * function CategoriesError() {
  *   return (
@@ -237,7 +237,7 @@ export interface ItemContentRenderProps {
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryListCore } from '@wix/stores/components';
  *
  * function CategoriesGrid() {
  *   return (
