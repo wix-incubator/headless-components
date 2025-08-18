@@ -106,7 +106,7 @@ export const CategoryService =
  * ---
  * // Astro page example - pages/category/[slug].astro
  * import { loadCategoryServiceConfig } from '@wix/stores/services';
- * import { Category } from '@wix/stores/components';
+ * import { Category } from '@wix/stores/components/react';
  *
  * // Get category slug from URL params
  * const { slug } = Astro.params;
@@ -132,7 +132,7 @@ export const CategoryService =
  * // Next.js page example - pages/category/[slug].tsx
  * import { GetServerSideProps } from 'next';
  * import { loadCategoryServiceConfig } from '@wix/stores/services';
- * import { Category } from '@wix/stores/components';
+ * import { Category } from '@wix/stores/components/react';
  *
  * interface CategoryPageProps {
  *   categoryConfig: Awaited<ReturnType<typeof loadCategoryServiceConfig>>['config'];

@@ -1,4 +1,4 @@
-import { CategoryListV2, CategoryV2 } from '@wix/headless-stores/react';
+import { CategoryList, Category } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
   Category as CategoryType,
@@ -16,7 +16,7 @@ export function CategoryPicker({
   currentCategorySlug,
 }: CategoryPickerProps) {
   return (
-    <CategoryListV2.Root categoriesListConfig={categoriesListConfig}>
+            <CategoryList.Root categoriesListConfig={categoriesListConfig}>
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-content-primary font-semibold text-sm uppercase tracking-wide">
@@ -26,8 +26,8 @@ export function CategoryPicker({
 
         {/* Category Navigation - Horizontal scrollable for mobile */}
         <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
-          <CategoryListV2.CategoryRepeater>
-            <CategoryV2.Trigger asChild onSelect={(category) => onCategorySelect(category)}>
+          <CategoryList.CategoryRepeater>
+            <Category.Trigger asChild onSelect={(category) => onCategorySelect(category)}>
                 {({ category }) => (
                   <button
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
@@ -36,13 +36,13 @@ export function CategoryPicker({
                         : 'bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary'
                     }`}
                   >
-                    <CategoryV2.Label></CategoryV2.Label>
+                    <Category.Label></Category.Label>
                   </button>
                 )}
-              </CategoryV2.Trigger>
-            </CategoryListV2.CategoryRepeater>
+                          </Category.Trigger>
+          </CategoryList.CategoryRepeater>
         </div>
       </div>
-    </CategoryListV2.Root>
+            </CategoryList.Root>
   );
 }

@@ -58,7 +58,7 @@ export interface CategoryListCategoryRepeaterProps {
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/headless-stores/react';
  *
  * function CategoriesPage() {
  *   return (
@@ -99,7 +99,7 @@ export function Root(props: CategoryListRootProps): React.ReactNode {
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/headless-stores/react';
  *
  * function CategoriesLoading() {
  *   return (
@@ -135,7 +135,7 @@ export const Loading = React.forwardRef<
  * @component
  * @example
  * ```tsx
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/headless-stores/react';
  *
  * function CategoriesGrid() {
  *   return (
