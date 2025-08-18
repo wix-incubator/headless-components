@@ -1,4 +1,4 @@
-import { metroinspector } from "@wix/echo";
+import { metroinspector } from '@wix/echo';
 
 /**
  * Props for the BuyNow component

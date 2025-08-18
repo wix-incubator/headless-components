@@ -1,15 +1,15 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   ProductServiceDefinition,
   ProductServiceConfig,
   ProductService,
-} from "../../services/product-service.js";
-import { createServicesMap } from "@wix/services-manager";
+} from '../../services/product-service.js';
+import { createServicesMap } from '@wix/services-manager';
 import type {
   V3Product,
   ProductMedia,
-} from "@wix/auto_sdk_stores_products-v-3";
+} from '@wix/auto_sdk_stores_products-v-3';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -121,9 +121,9 @@ export interface ProductDescriptionProps {
  */
 export interface ProductDescriptionRenderProps {
   /** Product description using the RICOS (Rich Content Object) format. See https://dev.wix.com/docs/ricos/api-reference/ricos-document */
-  description: NonNullable<V3Product["description"]>;
+  description: NonNullable<V3Product['description']>;
   /** Product description with plain html */
-  plainDescription: NonNullable<V3Product["plainDescription"]>;
+  plainDescription: NonNullable<V3Product['plainDescription']>;
 }
 
 /**
@@ -131,9 +131,9 @@ export interface ProductDescriptionRenderProps {
  */
 export interface ProductDescriptionRenderProps {
   /** Product description using the RICOS (Rich Content Object) format. See https://dev.wix.com/docs/ricos/api-reference/ricos-document */
-  description: NonNullable<V3Product["description"]>;
+  description: NonNullable<V3Product['description']>;
   /** Product description with plain html */
-  plainDescription: NonNullable<V3Product["plainDescription"]>;
+  plainDescription: NonNullable<V3Product['plainDescription']>;
 }
 /**
  * Headless component for product description display

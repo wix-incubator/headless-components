@@ -1,6 +1,6 @@
-import { useService } from "@wix/services-manager-react";
-import { ProductsListSearchServiceDefinition } from "../../services/products-list-search-service.js";
-import { ProductsListServiceDefinition } from "../../services/products-list-service.js";
+import { useService } from '@wix/services-manager-react';
+import { ProductsListSearchServiceDefinition } from '../../services/products-list-search-service.js';
+import { ProductsListServiceDefinition } from '../../services/products-list-service.js';
 
 /**
  * Props for PageSize headless component
@@ -59,7 +59,7 @@ export function PageSize(props: PageSizeProps) {
   const currentLimit = service.currentLimit.get();
   const setLimit = service.setLimit;
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ currentLimit, setLimit })
     : props.children;
 }
@@ -118,7 +118,7 @@ export function NextPageTrigger(props: NextPageTriggerProps) {
   const service = useService(ProductsListSearchServiceDefinition);
   const nextPage = service.nextPage;
   const hasNextPage = service.hasNextPage.get();
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ nextPage, hasNextPage })
     : props.children;
 }
@@ -177,7 +177,7 @@ export function PreviousPageTrigger(props: PreviousPageTriggerProps) {
   const service = useService(ProductsListSearchServiceDefinition);
   const prevPage = service.prevPage;
   const hasPrevPage = service.hasPrevPage.get();
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ prevPage, hasPrevPage })
     : props.children;
 }
@@ -237,7 +237,7 @@ export function FirstPageTrigger(props: FirstPageTriggerProps) {
   const navigateToFirstPage = service.navigateToFirstPage;
   const hasPrevPage = service.hasPrevPage.get();
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ navigateToFirstPage, hasPrevPage })
     : props.children;
 }
@@ -302,7 +302,7 @@ export function LoadMoreTrigger(props: LoadMoreTriggerProps) {
   const hasMoreProducts = service.hasNextPage.get();
   const isLoading = productsListService.isLoading.get();
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ loadMore, hasMoreProducts, isLoading })
     : props.children;
 }

@@ -1,1 +1,1 @@
-export * as SEO from "./SEO.js";
+export * as SEO from './SEO.js';

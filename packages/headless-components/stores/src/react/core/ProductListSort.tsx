@@ -1,6 +1,6 @@
-import { useService } from "@wix/services-manager-react";
-import { ProductsListSearchServiceDefinition } from "../../services/products-list-search-service.js";
-import { SortType } from "../../enums/sort-enums.js";
+import { useService } from '@wix/services-manager-react';
+import { ProductsListSearchServiceDefinition } from '../../services/products-list-search-service.js';
+import { SortType } from '../../enums/sort-enums.js';
 
 /**
  * Props for Options headless component
@@ -66,7 +66,7 @@ export function Options(props: OptionsProps) {
   const sortOptions = service.sortOptions;
   const updateSortOption = service.setSelectedSortOption;
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({
         selectedSortOption,
         updateSortOption,

@@ -1,8 +1,8 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
+} from '@wix/services-definitions/core-services/signals';
 import {
   ItemType,
   type PageNameData,
@@ -10,7 +10,7 @@ import {
   type Tag,
   resolveItemSeoTags,
   resolveStaticPageSeoTags,
-} from "@wix/auto_sdk_seo_seo-tags";
+} from '@wix/auto_sdk_seo_seo-tags';
 
 export interface SEOTagsServiceAPI {
   seoTags: Signal<Tag[]>;
@@ -21,7 +21,7 @@ export interface SEOTagsServiceAPI {
 }
 
 export const SEOTagsServiceDefinition =
-  defineService<SEOTagsServiceAPI>("seoTagsService");
+  defineService<SEOTagsServiceAPI>('seoTagsService');
 
 export interface SEOTagsServiceConfig {
   tags: Tag[];
@@ -39,7 +39,7 @@ export const SEOTagsService =
       const updateSeoTags = async (
         itemType: ItemType = ItemType.UNKNOWN_ITEM_TYPE,
         itemData: StaticPageData | DynamicPageData = {
-          pageName: "",
+          pageName: '',
           seoData: { tags: [] },
         },
       ) => {
@@ -129,7 +129,9 @@ export interface LoadSEOTagsServiceConfigParams {
   itemData: StaticPageData | DynamicPageData;
 }
 
-export async function loadSEOTagsServiceConfig(params: LoadSEOTagsServiceConfigParams): Promise<SEOTagsServiceConfig> {
+export async function loadSEOTagsServiceConfig(
+  params: LoadSEOTagsServiceConfigParams,
+): Promise<SEOTagsServiceConfig> {
   const { itemType, pageUrl, itemData } = params;
   const isStaticPage = !itemType || itemType === ItemType.UNKNOWN_ITEM_TYPE;
 
@@ -137,7 +139,11 @@ export async function loadSEOTagsServiceConfig(params: LoadSEOTagsServiceConfigP
   if (isStaticPage) {
     tags = await resolveStaticSeoTags(pageUrl, itemData as StaticPageData);
   } else {
-    tags = await resolveDynamicSeoTags(pageUrl, itemType, itemData as DynamicPageData);
+    tags = await resolveDynamicSeoTags(
+      pageUrl,
+      itemType,
+      itemData as DynamicPageData,
+    );
   }
   return {
     tags,
@@ -145,7 +151,7 @@ export async function loadSEOTagsServiceConfig(params: LoadSEOTagsServiceConfigP
 }
 
 function appendNewTags(tags: Tag[]) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   const newTagElements: HTMLElement[] = [];
   try {
@@ -160,27 +166,27 @@ function appendNewTags(tags: Tag[]) {
 
     newTagElements.forEach((el) => document.head.appendChild(el));
   } catch (err) {
-    console.error("SEO tag update failed", err);
+    console.error('SEO tag update failed', err);
   }
 
   function createTagElement(tag: any): HTMLElement | null {
     let el: HTMLElement | null = null;
-    if (tag.type === "title") {
-      el = document.createElement("title");
-      el.textContent = tag.children || "";
-    } else if (tag.type === "meta") {
-      el = document.createElement("meta");
+    if (tag.type === 'title') {
+      el = document.createElement('title');
+      el.textContent = tag.children || '';
+    } else if (tag.type === 'meta') {
+      el = document.createElement('meta');
       setAttributes(el, tag.props);
-    } else if (tag.type === "link") {
-      el = document.createElement("link");
+    } else if (tag.type === 'link') {
+      el = document.createElement('link');
       setAttributes(el, tag.props);
-    } else if (tag.type === "script") {
-      el = document.createElement("script");
+    } else if (tag.type === 'script') {
+      el = document.createElement('script');
       setAttributes(el, tag.props);
       setAttributes(el, tag.meta);
       if (tag.children) el.textContent = tag.children;
     }
-    if (el) el.setAttribute("wix-seo-tags", "true");
+    if (el) el.setAttribute('wix-seo-tags', 'true');
     return el;
   }
 

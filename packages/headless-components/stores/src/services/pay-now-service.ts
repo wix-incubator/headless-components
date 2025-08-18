@@ -1,8 +1,8 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
+} from '@wix/services-definitions/core-services/signals';
 
 /**
  * Service definition for the Pay Now service.
@@ -17,7 +17,7 @@ export const PayNowServiceDefinition = defineService<{
   loadingSignal: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   errorSignal: Signal<string | null>;
-}>("PayNow");
+}>('PayNow');
 
 /**
  * Configuration interface for the Pay Now service.
@@ -98,7 +98,7 @@ export const PayNowServiceImplementation =
               if (result && result.data) {
                 window.location.href = result.data;
               } else {
-                throw new Error("Failed to create checkout" + result?.error);
+                throw new Error('Failed to create checkout' + result?.error);
               }
             }
           } catch (error) {

@@ -1,6 +1,6 @@
-import { checkout } from "@wix/ecom";
-import { redirects } from "@wix/redirects";
-import { auth } from "@wix/essentials";
+import { checkout } from '@wix/ecom';
+import { redirects } from '@wix/redirects';
+import { auth } from '@wix/essentials';
 
 /**
  * Options for creating a checkout with a custom line item.
@@ -20,7 +20,7 @@ export interface CustomLineItemCheckoutOptions {
    * An array of policies related to this custom item.
    * Each policy should have a title and content.
    */
-  policies?: { content: string, title: string }[];
+  policies?: { content: string; title: string }[];
   /**
    * The URL to redirect the user to after the checkout is successfully completed.
    */
@@ -48,14 +48,16 @@ export interface CustomLineItemCheckoutOptions {
  * @param factoryOpts - The options for the factory, including the price.
  * @returns A function that takes `CustomLineItemCheckoutOptions` and returns a checkout URL.
  */
-export function getCustomLineItemCheckoutURLFactory(factoryOpts: CustomLineItemCheckoutOptions) {
+export function getCustomLineItemCheckoutURLFactory(
+  factoryOpts: CustomLineItemCheckoutOptions,
+) {
   /**
    * Generates a checkout URL for a custom line item.
    * @param opts - The options for the custom line item checkout.
    * @returns A promise that resolves to the full URL for the redirect session to the checkout.
    * @throws Will throw an error if the checkout creation or redirect session fails.
    */
-   return async function getCustomLineItemCheckoutURL() {
+  return async function getCustomLineItemCheckoutURL() {
     try {
       const checkoutResult = await auth.elevate(checkout.createCheckout)({
         customLineItems: [
@@ -69,27 +71,33 @@ export function getCustomLineItemCheckoutURLFactory(factoryOpts: CustomLineItemC
               preset: checkout.ItemTypeItemType.PHYSICAL,
             },
             priceDescription: {
-              original: factoryOpts.priceDescription
+              original: factoryOpts.priceDescription,
             },
             policies: factoryOpts.policies || [],
-          }
+          },
         ],
         channelType: checkout.ChannelType.WEB,
-        ...(factoryOpts.currency ? {
-          checkoutInfo: {
-            currency: factoryOpts.currency,
-          }
-        } : {})
+        ...(factoryOpts.currency
+          ? {
+              checkoutInfo: {
+                currency: factoryOpts.currency,
+              },
+            }
+          : {}),
       });
 
       if (!checkoutResult._id) {
-        throw new Error(`Failed to create checkout for custom line item ${factoryOpts.productName}`);
+        throw new Error(
+          `Failed to create checkout for custom line item ${factoryOpts.productName}`,
+        );
       }
 
       const { redirectSession } = await redirects.createRedirectSession({
         ecomCheckout: { checkoutId: checkoutResult._id },
         callbacks: {
-          ...(factoryOpts.postFlowUrl ? {postFlowUrl: factoryOpts.postFlowUrl} : {})
+          ...(factoryOpts.postFlowUrl
+            ? { postFlowUrl: factoryOpts.postFlowUrl }
+            : {}),
         },
       });
 
@@ -97,5 +105,5 @@ export function getCustomLineItemCheckoutURLFactory(factoryOpts: CustomLineItemC
     } catch (error) {
       throw error;
     }
-  }
+  };
 }

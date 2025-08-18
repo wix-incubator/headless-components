@@ -1,12 +1,12 @@
-import { useService, WixServices } from "@wix/services-manager-react";
-import { createServicesMap } from "@wix/services-manager";
+import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
 import {
   CategoriesListService,
   CategoriesListServiceDefinition,
   type CategoriesListServiceConfig,
-} from "../../services/categories-list-service.js";
-import { Root as CategoryRoot } from "./Category.js";
-import { type Category } from "../../services/category-service.js";
+} from '../../services/categories-list-service.js';
+import { Root as CategoryRoot } from './Category.js';
+import { type Category } from '../../services/category-service.js';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -99,7 +99,7 @@ export function EmptyState(props: EmptyStateProps) {
   const categoriesValue = categories.get();
 
   if (!isLoadingValue && !errorValue && categoriesValue.length === 0) {
-    return typeof props.children === "function"
+    return typeof props.children === 'function'
       ? props.children({})
       : props.children;
   }
@@ -148,7 +148,7 @@ export function Loading(props: LoadingProps) {
   const isLoadingValue = isLoading.get();
 
   if (isLoadingValue) {
-    return typeof props.children === "function"
+    return typeof props.children === 'function'
       ? props.children({})
       : props.children;
   }
@@ -203,7 +203,7 @@ export function Error(props: ErrorProps) {
   const errorValue = error.get();
 
   if (errorValue) {
-    return typeof props.children === "function"
+    return typeof props.children === 'function'
       ? props.children({ error: errorValue })
       : props.children;
   }
@@ -266,7 +266,7 @@ export function ItemContent(props: ItemContentProps) {
 
   return categoriesValue.map((category: Category) => (
     <CategoryRoot key={category._id} categoryServiceConfig={{ category }}>
-      {typeof props.children === "function"
+      {typeof props.children === 'function'
         ? props.children({
             category,
           })

@@ -1,1 +1,1 @@
-export * from "./BuyNow.js";
+export * from './BuyNow.js';

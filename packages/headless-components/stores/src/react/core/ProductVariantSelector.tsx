@@ -1,16 +1,16 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   SelectedVariantServiceDefinition,
   SelectedVariantService,
   SelectedVariantServiceConfig,
-} from "../../services/selected-variant-service.js";
-import { createServicesMap } from "@wix/services-manager";
+} from '../../services/selected-variant-service.js';
+import { createServicesMap } from '@wix/services-manager';
 import {
   type ConnectedOption,
   type ConnectedOptionChoice,
   InventoryAvailabilityStatus,
-} from "@wix/auto_sdk_stores_products-v-3";
+} from '@wix/auto_sdk_stores_products-v-3';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -199,7 +199,7 @@ export function Option(props: OptionProps) {
   const selectedChoices = variantService.selectedChoices.get();
   const { option } = props;
 
-  const name = option.name || "";
+  const name = option.name || '';
   const choices = option.choicesSettings?.choices || [];
   const selectedValue = selectedChoices[name] || null;
 
@@ -279,8 +279,8 @@ export function Choice(props: ChoiceProps) {
   const selectedChoices = variantService.selectedChoices.get();
   const { option, choice } = props;
 
-  const optionName = option.name || "";
-  const choiceValue = choice.name || "";
+  const optionName = option.name || '';
+  const choiceValue = choice.name || '';
 
   const isSelected = selectedChoices[optionName] === choiceValue;
 
@@ -316,7 +316,7 @@ export function Choice(props: ChoiceProps) {
     optionName,
     choiceValue,
   });
-};
+}
 
 /**
  * Props for Stock headless component
@@ -417,7 +417,7 @@ export function Stock(props: StockProps) {
     incrementQuantity,
     decrementQuantity,
   });
-};
+}
 
 /**
  * Props for Reset headless component
@@ -476,4 +476,4 @@ export function Reset(props: ResetProps) {
     reset,
     hasSelections,
   });
-};
+}

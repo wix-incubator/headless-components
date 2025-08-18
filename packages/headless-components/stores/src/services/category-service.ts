@@ -1,9 +1,9 @@
-import { defineService, implementService } from "@wix/services-definitions";
-import { categories } from "@wix/categories";
+import { defineService, implementService } from '@wix/services-definitions';
+import { categories } from '@wix/categories';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
+} from '@wix/services-definitions/core-services/signals';
 
 /**
  * Type representing a category from the Wix Categories API.
@@ -22,7 +22,7 @@ export type Category = categories.Category;
 export const CategoryServiceDefinition = defineService<{
   /** Reactive signal containing the current category data */
   category: Signal<Category>;
-}>("category");
+}>('category');
 
 /**
  * Configuration interface for the Category service.
@@ -161,32 +161,32 @@ export const CategoryService =
 export async function loadCategoryServiceConfig(slug: string): Promise<
   | {
       /** Type "success" means that the category was found and the config is valid */
-      type: "success";
+      type: 'success';
       /** The category config containing the loaded category data */
       config: CategoryServiceConfig;
     }
   | {
       /** Type "not-found" means that the category was not found */
-      type: "not-found";
+      type: 'not-found';
     }
 > {
   const category = await categories
     .queryCategories({
       treeReference: {
-        appNamespace: "@wix/stores",
+        appNamespace: '@wix/stores',
       },
     })
-    .eq("slug", slug)
+    .eq('slug', slug)
     .find();
 
   if (category.items.length === 0) {
     return {
-      type: "not-found",
+      type: 'not-found',
     };
   }
 
   return {
-    type: "success",
+    type: 'success',
     config: {
       category: category.items[0]!,
     },

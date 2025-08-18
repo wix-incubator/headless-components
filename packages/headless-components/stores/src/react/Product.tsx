@@ -1,11 +1,12 @@
-import type { V3Product } from "@wix/auto_sdk_stores_products-v-3";
-import React from "react";
-import { renderAsChild, type AsChildProps } from "../utils/index.js";
-import * as CoreProduct from "./core/Product.js";
-import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import * as SelectedVariant from "./core/SelectedVariant.js";
-import * as Option from "./Option.js";
-import { AsContent } from "./types.js";
+import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
+import React from 'react';
+import { renderAsChild, type AsChildProps } from '../utils/index.js';
+import * as CoreProduct from './core/Product.js';
+import * as ProductVariantSelector from './core/ProductVariantSelector.js';
+import * as ProductModifiers from './core/ProductModifiers.js';
+import * as SelectedVariant from './core/SelectedVariant.js';
+import * as Option from './Option.js';
+import { AsContent } from './types.js';
 
 /**
  * Context for sharing variant options state between components
@@ -24,21 +25,49 @@ export function useVariantsContext(): VariantsContextValue {
   const context = React.useContext(VariantsContext);
   if (!context) {
     throw new Error(
-      "useVariantsContext must be used within a Product.Variants component",
+      'useVariantsContext must be used within a Product.Variants component',
+    );
+  }
+  return context;
+}
+
+/**
+ * Context for sharing modifier options state between components
+ */
+interface ModifiersContextValue {
+  hasModifiers: boolean;
+  modifiers: any[];
+}
+
+const ModifiersContext = React.createContext<ModifiersContextValue | null>(
+  null,
+);
+
+/**
+ * Hook to access modifiers context
+ */
+export function useModifiersContext(): ModifiersContextValue {
+  const context = React.useContext(ModifiersContext);
+  if (!context) {
+    throw new Error(
+      'useModifiersContext must be used within a Product.Modifiers component',
     );
   }
   return context;
 }
 
 enum TestIds {
-  productRoot = "product-root",
-  productName = "product-name",
-  productDescription = "product-description",
-  productPrice = "product-price",
-  productCompareAtPrice = "product-compare-at-price",
-  productVariants = "product-variants",
-  productVariantOptions = "product-variant-options",
-  productVariantOption = "product-variant-option",
+  productRoot = 'product-root',
+  productName = 'product-name',
+  productDescription = 'product-description',
+  productPrice = 'product-price',
+  productCompareAtPrice = 'product-compare-at-price',
+  productVariants = 'product-variants',
+  productVariantOptions = 'product-variant-options',
+  productVariantOption = 'product-variant-option',
+  productModifiers = 'product-modifiers',
+  productModifierOptions = 'product-modifier-options',
+  productModifierOption = 'product-modifier-option',
 }
 
 /**
@@ -77,7 +106,9 @@ export function Root(props: ProductRootProps): React.ReactNode {
       data-testid={TestIds.productRoot}
     >
       <ProductVariantSelector.Root>
-        <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
+        <ProductModifiers.Root>
+          <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
+        </ProductModifiers.Root>
       </ProductVariantSelector.Root>
     </CoreProduct.Root>
   );
@@ -119,7 +150,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
     <CoreProduct.Name>
       {({ name }) => {
         const attributes = {
-          "data-testid": TestIds.productName,
+          'data-testid': TestIds.productName,
         };
 
         if (asChild) {
@@ -183,7 +214,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
       <CoreProduct.Description>
         {({ description: richDescription, plainDescription }) => {
           const attributes = {
-            "data-testid": TestIds.productDescription,
+            'data-testid': TestIds.productDescription,
           };
 
           // Determine which description to use based on the 'as' prop
@@ -191,17 +222,17 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 
           switch (as) {
             case AsContent.Html:
-              description = plainDescription || "";
+              description = plainDescription || '';
               break;
             case AsContent.Ricos:
-              description = JSON.stringify(richDescription) || "";
+              description = JSON.stringify(richDescription) || '';
               break;
             case AsContent.Plain:
             default:
               // For plain text, we'll strip HTML tags from plainDescription
               description = plainDescription
-                ? plainDescription.replace(/<[^>]*>/g, "")
-                : "";
+                ? plainDescription.replace(/<[^>]*>/g, '')
+                : '';
               break;
           }
 
@@ -275,8 +306,8 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
     <SelectedVariant.Price>
       {({ price, compareAtPrice }) => {
         const attributes = {
-          "data-testid": TestIds.productPrice,
-          "data-discounted": compareAtPrice !== null,
+          'data-testid': TestIds.productPrice,
+          'data-discounted': compareAtPrice !== null,
         };
 
         const priceData = {
@@ -350,8 +381,8 @@ export const CompareAtPrice = React.forwardRef<
     <SelectedVariant.Price>
       {({ compareAtPrice }) => {
         const attributes = {
-          "data-testid": testId,
-          "data-discounted": compareAtPrice !== null,
+          'data-testid': testId,
+          'data-discounted': compareAtPrice !== null,
         };
 
         // Don't render anything if there's no compare-at price
@@ -447,12 +478,12 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
           };
 
           const attributes = {
-            "data-testid": TestIds.productVariants,
+            'data-testid': TestIds.productVariants,
           };
 
           const content = (
             <VariantsContext.Provider value={contextValue}>
-              {typeof children === "function"
+              {typeof children === 'function'
                 ? null
                 : (children as React.ReactNode)}
             </VariantsContext.Provider>
@@ -528,7 +559,7 @@ export const VariantOptions = React.forwardRef<
   }
 
   const attributes = {
-    "data-testid": TestIds.productVariantOptions,
+    'data-testid': TestIds.productVariantOptions,
   };
 
   return (
@@ -563,13 +594,219 @@ export const VariantOptionRepeater = React.forwardRef<
     <>
       {options.map((option: any) => {
         return (
-          <Option.Root
-            key={option.name}
-            option={option}
-            data-testid={TestIds.productVariantOption}
-          >
-            {children as React.ReactElement}
-          </Option.Root>
+          <ProductVariantSelector.Option key={option._id} option={option}>
+            {(optionData) => (
+              <Option.Root
+                option={{
+                  ...optionData,
+                  mandatory: false,
+                }}
+              >
+                {children as React.ReactElement}
+              </Option.Root>
+            )}
+          </ProductVariantSelector.Option>
+        );
+      })}
+    </>
+  );
+});
+
+/**
+ * Props for Product Modifiers container
+ */
+export interface ModifiersProps
+  extends AsChildProps<{ hasModifiers: boolean }> {}
+
+/**
+ * Container for product modifier system.
+ * Does not render when there are no modifiers.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Modifiers>
+ *   <Product.ModifierOptions>
+ *     <Product.ModifierOptionRepeater>
+ *       <Option.Name className="text-lg font-medium mb-3" />
+ *       <Option.Choices>
+ *         <Option.ChoiceRepeater>
+ *           <Choice.Text className="px-4 py-2 border rounded-lg" />
+ *           <Choice.Color className="w-10 h-10 rounded-full border-4" />
+ *           <Choice.FreeText className="w-full p-3 border rounded-lg resize-none" />
+ *         </Option.ChoiceRepeater>
+ *       </Option.Choices>
+ *     </Product.ModifierOptionRepeater>
+ *   </Product.ModifierOptions>
+ * </Product.Modifiers>
+ *
+ * // asChild with primitive
+ * <Product.Modifiers asChild>
+ *   <section className="modifier-section">
+ *     <Product.ModifierOptions>
+ *       // modifier options
+ *     </Product.ModifierOptions>
+ *   </section>
+ * </Product.Modifiers>
+ *
+ * // asChild with react component
+ * <Product.Modifiers asChild>
+ *   {React.forwardRef(({hasModifiers, ...props}, ref) => (
+ *     <section ref={ref} {...props} className="modifier-section">
+ *       {hasModifiers && <h3>Customize Your Product</h3>}
+ *       {props.children}
+ *     </section>
+ *   ))}
+ * </Product.Modifiers>
+ * ```
+ */
+export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
+  (props, ref) => {
+    const { asChild, children } = props;
+
+    return (
+      <ProductModifiers.Modifiers>
+        {({ hasModifiers, modifiers }) => {
+          if (!hasModifiers) return null;
+
+          const contextValue: ModifiersContextValue = {
+            hasModifiers,
+            modifiers,
+          };
+
+          const attributes = {
+            'data-testid': TestIds.productModifiers,
+          };
+
+          const content = (
+            <ModifiersContext.Provider value={contextValue}>
+              {typeof children === 'function'
+                ? null
+                : (children as React.ReactNode)}
+            </ModifiersContext.Provider>
+          );
+
+          if (asChild) {
+            const rendered = renderAsChild({
+              children,
+              props: { hasModifiers },
+              ref,
+              content,
+              attributes,
+            });
+            if (rendered) return rendered;
+          }
+
+          return (
+            <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+              {content}
+            </div>
+          );
+        }}
+      </ProductModifiers.Modifiers>
+    );
+  },
+);
+
+/**
+ * Props for Product ModifierOptions component
+ */
+export interface ModifierOptionsProps {
+  children: React.ReactNode;
+  emptyState?: React.ReactNode;
+}
+
+/**
+ * Component that provides access to modifier options.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.ModifierOptions emptyState={<div>No options available</div>}>
+ *   <Product.ModifierOptionRepeater>
+ *     <Option.Name />
+ *     <Option.Choices>
+ *       <Option.ChoiceRepeater>
+ *         <Choice.Text />
+ *         <Choice.Color />
+ *         <Choice.FreeText />
+ *       </Option.ChoiceRepeater>
+ *     </Option.Choices>
+ *   </Product.ModifierOptionRepeater>
+ * </Product.ModifierOptions>
+ *
+ * // Simple container usage
+ * <Product.ModifierOptions emptyState={<div>No options</div>}>
+ *   <div className="options-container">
+ *     <Product.ModifierOptionRepeater>
+ *       // option content
+ *     </Product.ModifierOptionRepeater>
+ *   </div>
+ * </Product.ModifierOptions>
+ * ```
+ */
+export const ModifierOptions = React.forwardRef<
+  HTMLElement,
+  ModifierOptionsProps
+>((props, ref) => {
+  const { children, emptyState } = props;
+  const { hasModifiers } = useModifiersContext();
+
+  if (!hasModifiers) {
+    return emptyState || null;
+  }
+
+  const attributes = {
+    'data-testid': TestIds.productModifierOptions,
+  };
+
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {children}
+    </div>
+  );
+});
+
+/**
+ * Props for Product ModifierOptionRepeater component
+ */
+export interface ModifierOptionRepeaterProps {
+  children: React.ReactNode;
+  allowedTypes?: ('color' | 'text' | 'free-text')[]; // default - ['color', 'text', 'free-text'] - the types of the options to render
+}
+
+/**
+ * Repeater component that renders children for each modifier option.
+ *
+ * @component
+ */
+export const ModifierOptionRepeater = React.forwardRef<
+  HTMLElement,
+  ModifierOptionRepeaterProps
+>((props, _ref) => {
+  const { children, allowedTypes = ['color', 'text', 'free-text'] } = props;
+  const { hasModifiers, modifiers } = useModifiersContext();
+
+  if (!hasModifiers) return null;
+
+  return (
+    <>
+      {modifiers.map((modifier: any) => {
+        return (
+          <ProductModifiers.Modifier key={modifier._id} modifier={modifier}>
+            {(modifierData) => (
+              <Option.Root
+                option={{
+                  ...modifierData,
+                }}
+                allowedTypes={allowedTypes}
+              >
+                {children as React.ReactElement}
+              </Option.Root>
+            )}
+          </ProductModifiers.Modifier>
         );
       })}
     </>
