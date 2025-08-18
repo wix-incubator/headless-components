@@ -10,6 +10,7 @@ export * as ProductVariantSelector from './core/ProductVariantSelector.js';
 export * as SelectedVariant from './core/SelectedVariant.js';
 
 export * as Product from './Product.js';
+export * as ProductListV2 from './ProductList.js';
 export * as Option from './Option.js';
 export * as Choice from './Choice.js';
 export * as CategoryList from './CategoryList.js';
