@@ -16,7 +16,7 @@ export function CategoryPicker({
   currentCategorySlug,
 }: CategoryPickerProps) {
   return (
-            <CategoryList.Root categoriesListConfig={categoriesListConfig}>
+    <CategoryList.Root categoriesListConfig={categoriesListConfig}>
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-content-primary font-semibold text-sm uppercase tracking-wide">
@@ -39,10 +39,10 @@ export function CategoryPicker({
                     <Category.Label></Category.Label>
                   </button>
                 )}
-                          </Category.Trigger>
+            </Category.Trigger>
           </CategoryList.CategoryRepeater>
         </div>
       </div>
-            </CategoryList.Root>
+    </CategoryList.Root>
   );
 }
