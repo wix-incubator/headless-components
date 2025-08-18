@@ -6,16 +6,22 @@ import {
   EventListServiceConfig,
   EventListServiceDefinition,
 } from '../services/event-list-service.js';
+import { wixEventsV2 } from '@wix/events';
 
-interface EventListRootProps {
+enum TestIds {
+  eventListEvents = 'event-list-events',
+}
+
+export interface EventListRootProps {
+  events?: wixEventsV2.Event[];
   children: React.ReactNode;
 }
 
 export function Root(props: EventListRootProps): React.ReactNode {
-  const { children } = props;
+  const { events = [], children } = props;
 
   const eventListServiceConfig: EventListServiceConfig = {
-    events: [],
+    events,
   };
 
   return (
@@ -31,31 +37,33 @@ export function Root(props: EventListRootProps): React.ReactNode {
   );
 }
 
-export interface EventsProps extends AsChildProps {
+export interface EventListEventsProps extends AsChildProps {
   emptyState?: React.ReactNode;
 }
 
-export function Events(props: EventsProps): React.ReactNode {
+export function Events(props: EventListEventsProps): React.ReactNode {
   const { asChild, children, emptyState, ...otherProps } = props;
   const Comp = useAsChild(asChild, 'div');
 
   const service = useService(EventListServiceDefinition);
   const events = service.events.get();
 
-  if (!events.length && emptyState) {
-    return emptyState;
+  if (!events.length) {
+    return emptyState || null;
   }
 
   return (
-    <Comp data-testid="event-list-events" {...otherProps}>
+    <Comp data-testid={TestIds.eventListEvents} {...otherProps}>
       {children}
     </Comp>
   );
 }
 
-export interface EventRepeaterProps extends AsChildProps {}
+export interface EventListEventRepeaterProps extends AsChildProps {}
 
-export function EventRepeater(props: EventRepeaterProps): React.ReactNode {
+export function EventRepeater(
+  props: EventListEventRepeaterProps,
+): React.ReactNode {
   const { asChild, children, ...otherProps } = props;
   const Comp = useAsChild(asChild, 'div');
 

@@ -42,6 +42,7 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
     "@wix/events": "^1.0.590",
     "@wix/redirects": "^1.0.83",
     "@wix/sdk": "^1.15.24",

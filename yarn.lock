@@ -3901,6 +3901,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-events@workspace:packages/headless-components/events"
   dependencies:
+    "@radix-ui/react-slot": "npm:^1.2.3"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
