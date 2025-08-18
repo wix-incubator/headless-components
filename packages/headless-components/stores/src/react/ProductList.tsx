@@ -7,34 +7,8 @@ import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as CoreProduct from './core/Product.js';
 import type { ProductsListServiceConfig } from '../services/products-list-service.js';
 import type { ProductsListSearchServiceConfig } from '../services/products-list-search-service.js';
-
-/**
- * Context for sharing product list state between components
- */
-interface ProductListContextValue {
-  hasProducts: boolean;
-  products: V3Product[];
-  totalProducts: number;
-  displayedProducts: number;
-  isFiltered: boolean;
-}
-
-const ProductListContext = React.createContext<ProductListContextValue | null>(
-  null,
-);
-
-/**
- * Hook to access product list context
- */
-export function useProductListContext(): ProductListContextValue {
-  const context = React.useContext(ProductListContext);
-  if (!context) {
-    throw new Error(
-      'useProductListContext must be used within a ProductList.Root component',
-    );
-  }
-  return context;
-}
+import { useService } from '@wix/services-manager-react';
+import { ProductsListServiceDefinition } from '../services/products-list-service.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -86,90 +60,31 @@ export interface ProductListRootProps {
  * }
  * ```
  */
-export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
-  (props, ref) => {
-    const {
-      asChild,
-      children,
-      products,
-      productsListConfig,
-      productsListSearchConfig,
-      className,
-    } = props;
+export function Root(props: ProductListRootProps): React.ReactNode {
+  const { children, products, productsListConfig, productsListSearchConfig } =
+    props;
 
-    // If products are provided directly, use them; otherwise rely on service configuration
-    const config = productsListConfig || {
-      products: products || [],
-      searchOptions: {},
-      pagingMetadata: { count: products?.length || 0, hasNext: false },
-      aggregations: {},
-    };
+  const serviceConfig = productsListConfig || {
+    products: products || [],
+    searchOptions: {
+      cursorPaging: { limit: 10 },
+    },
+    pagingMetadata: {
+      count: products?.length || 0,
+    },
+    aggregations: {}, // Empty aggregation data
+  };
 
-    const searchConfig = productsListSearchConfig || {
-      customizations: [],
-      initialSearchState: {},
-    };
-
-    return (
-      <CoreProductList.Root
-        productsListConfig={config}
-        productsListSearchConfig={searchConfig}
-      >
-        <CoreProductList.Items>
-          {({ products: serviceProducts }) => {
-            const productList = products || serviceProducts;
-            const hasProducts = productList.length > 0;
-            const totalProducts = productList.length;
-            const displayedProducts = productList.length;
-            const isFiltered = false; // TODO: Get from search service
-
-            const contextValue: ProductListContextValue = {
-              hasProducts,
-              products: productList,
-              totalProducts,
-              displayedProducts,
-              isFiltered,
-            };
-
-            const attributes = {
-              'data-testid': TestIds.productListRoot,
-              'data-filtered': isFiltered,
-              'data-total': totalProducts,
-              'data-displayed': displayedProducts,
-            };
-
-            const content = (
-              <ProductListContext.Provider value={contextValue}>
-                {children}
-              </ProductListContext.Provider>
-            );
-
-            if (asChild) {
-              const rendered = renderAsChild({
-                children: () => content, // Wrap content in function for asChild
-                props: { totalProducts, displayedProducts, isFiltered },
-                ref,
-                content,
-                attributes,
-              });
-              if (rendered) return rendered;
-            }
-
-            return (
-              <div
-                className={className}
-                {...attributes}
-                ref={ref as React.Ref<HTMLDivElement>}
-              >
-                {content}
-              </div>
-            );
-          }}
-        </CoreProductList.Items>
-      </CoreProductList.Root>
-    );
-  },
-);
+  return (
+    <CoreProductList.Root
+      productsListConfig={serviceConfig}
+      productsListSearchConfig={productsListSearchConfig}
+      data-testid={TestIds.productListRoot}
+    >
+      {children}
+    </CoreProductList.Root>
+  );
+}
 
 /**
  * Props for ProductList Raw component
@@ -200,8 +115,12 @@ export interface RawProps
  */
 export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
   const { asChild, children } = props;
-  const { totalProducts, displayedProducts, isFiltered } =
-    useProductListContext();
+  const productsListService = useService(ProductsListServiceDefinition);
+  const products = productsListService.products.get();
+  const pagingMetadata = productsListService.pagingMetadata.get();
+  const displayedProducts = products.length;
+  const totalProducts = pagingMetadata.count || products.length;
+  const isFiltered = false; // TODO: Implement filtering detection
 
   if (asChild) {
     const rendered = renderAsChild({
@@ -545,7 +464,9 @@ export interface ProductsProps {
 export const Products = React.forwardRef<HTMLElement, ProductsProps>(
   (props, ref) => {
     const { children, emptyState, infiniteScroll = true, pageSize = 0 } = props;
-    const { hasProducts } = useProductListContext();
+    const productsListService = useService(ProductsListServiceDefinition);
+    const products = productsListService.products.get();
+    const hasProducts = products.length > 0;
 
     if (!hasProducts) {
       return emptyState || null;
@@ -594,7 +515,9 @@ export const ProductRepeater = React.forwardRef<
   ProductRepeaterProps
 >((props, _ref) => {
   const { children } = props;
-  const { hasProducts, products } = useProductListContext();
+  const productsListService = useService(ProductsListServiceDefinition);
+  const products = productsListService.products.get();
+  const hasProducts = products.length > 0;
 
   if (!hasProducts) return null;
 
@@ -693,7 +616,10 @@ export const Totals = {
   Count: React.forwardRef<HTMLElement, AsChildProps<{ total: number }>>(
     (props, ref) => {
       const { asChild, children, className } = props;
-      const { totalProducts } = useProductListContext();
+      const productsListService = useService(ProductsListServiceDefinition);
+      const pagingMetadata = productsListService.pagingMetadata.get();
+      const products = productsListService.products.get();
+      const totalProducts = pagingMetadata.count || products.length;
 
       const attributes = {
         'data-testid': TestIds.productListTotals,
@@ -729,7 +655,9 @@ export const Totals = {
   Displayed: React.forwardRef<HTMLElement, AsChildProps<{ displayed: number }>>(
     (props, ref) => {
       const { asChild, children, className } = props;
-      const { displayedProducts } = useProductListContext();
+      const productsListService = useService(ProductsListServiceDefinition);
+      const products = productsListService.products.get();
+      const displayedProducts = products.length;
 
       const attributes = {
         'data-testid': TestIds.productListTotals,
@@ -801,8 +729,12 @@ export interface InfoProps
  */
 export const Info = React.forwardRef<HTMLElement, InfoProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const { totalProducts, displayedProducts, isFiltered } =
-    useProductListContext();
+  const productsListService = useService(ProductsListServiceDefinition);
+  const products = productsListService.products.get();
+  const pagingMetadata = productsListService.pagingMetadata.get();
+  const displayedProducts = products.length;
+  const totalProducts = pagingMetadata.count || products.length;
+  const isFiltered = false; // TODO: Implement filtering detection
 
   const attributes = {
     'data-testid': TestIds.productListInfo,

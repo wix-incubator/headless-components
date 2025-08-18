@@ -7,6 +7,7 @@ import {
   ProductListPagination as ProductListPaginationPrimitive,
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
+  ProductListV2 as ProductList,
 } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
@@ -661,12 +662,12 @@ export function CategoryPage({
   categoriesListConfig,
 }: StoreCollectionPageProps) {
   return (
-    <ProductListPrimitive.Root
+    <ProductList.Root
       productsListConfig={productsListConfig}
       productsListSearchConfig={productsListSearchConfig}
     >
       <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />
-    </ProductListPrimitive.Root>
+    </ProductList.Root>
   );
 }
