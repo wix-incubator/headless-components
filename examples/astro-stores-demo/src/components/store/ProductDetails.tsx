@@ -55,11 +55,9 @@ export default function ProductDetails({
                 </div>
 
                 {/* Thumbnail Images */}
-                <StyledMediaGallery.Thumbnails>
-                  <StyledMediaGallery.ThumbnailRepeater>
-                    <StyledMediaGallery.ThumbnailItem />
-                  </StyledMediaGallery.ThumbnailRepeater>
-                </StyledMediaGallery.Thumbnails>
+                <StyledMediaGallery.ThumbnailRepeater>
+                  <StyledMediaGallery.ThumbnailItem />
+                </StyledMediaGallery.ThumbnailRepeater>
               </div>
 
               {/* Product Info */}

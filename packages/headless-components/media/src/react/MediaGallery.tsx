@@ -27,11 +27,9 @@
  *       <MediaGallery.Previous />
  *       <MediaGallery.Next />
  *       <MediaGallery.Indicator />
- *       <MediaGallery.Thumbnails>
- *         <MediaGallery.ThumbnailRepeater>
- *           <MediaGallery.ThumbnailItem />
- *         </MediaGallery.ThumbnailRepeater>
- *       </MediaGallery.Thumbnails>
+ *       <MediaGallery.ThumbnailRepeater>
+ *         <MediaGallery.ThumbnailItem />
+ *       </MediaGallery.ThumbnailRepeater>
  *     </MediaGallery.Root>
  *   );
  * }
@@ -50,7 +48,6 @@ import {
   ThumbnailItem as CoreThumbnailItem,
 } from './core/MediaGallery.js';
 import React, { createContext, useContext } from 'react';
-import type { MediaItem } from '../services/media-gallery-service.js';
 import type { MediaGalleryServiceConfig } from '../services/media-gallery-service.js';
 import { Slot } from '@radix-ui/react-slot';
 import { WixMediaImage } from './WixMediaImage.js';
@@ -99,11 +96,9 @@ export interface RootProps {
  *   return (
  *     <MediaGallery.Root mediaGalleryServiceConfig={{ media: productMedia }}>
  *       <MediaGallery.Viewport className="main-viewer" />
- *       <MediaGallery.Thumbnails>
- *         <MediaGallery.ThumbnailRepeater>
- *           <MediaGallery.ThumbnailItem />
- *         </MediaGallery.ThumbnailRepeater>
- *       </MediaGallery.Thumbnails>
+ *       <MediaGallery.ThumbnailRepeater>
+ *         <MediaGallery.ThumbnailItem />
+ *       </MediaGallery.ThumbnailRepeater>
  *     </MediaGallery.Root>
  *   );
  * }
@@ -345,40 +340,7 @@ export const Indicator = React.forwardRef<HTMLDivElement, IndicatorProps>(
   },
 );
 
-const ThumbnailsContext = createContext<{ items: MediaItem[] } | null>(null);
 const ThumbnailItemContext = createContext<{ index: number } | null>(null);
-
-/**
- * Props for the Thumbnails component
- */
-export interface ThumbnailsProps {
-  /** Child components that will have access to the thumbnail context */
-  children: React.ReactNode;
-}
-
-/**
- * Thumbnails container component that provides thumbnail context to its children.
- * Only renders when there are multiple media items to display.
- *
- * @component
- * @example
- * ```tsx
- * <MediaGallery.Thumbnails>
- *   <MediaGallery.ThumbnailRepeater>
- *     <MediaGallery.ThumbnailItem />
- *   </MediaGallery.ThumbnailRepeater>
- * </MediaGallery.Thumbnails>
- * ```
- */
-export const Thumbnails = ({ children }: ThumbnailsProps) => (
-  <CoreThumbnailList>
-    {({ items }) => (
-      <ThumbnailsContext.Provider value={{ items: items as MediaItem[] }}>
-        {children}
-      </ThumbnailsContext.Provider>
-    )}
-  </CoreThumbnailList>
-);
 
 /**
  * Props for the ThumbnailRepeater component
@@ -401,19 +363,22 @@ export interface ThumbnailRepeaterProps {
  * </MediaGallery.ThumbnailRepeater>
  * ```
  */
-export const ThumbnailRepeater = ({ children }: ThumbnailRepeaterProps) => {
-  const ctx = useContext(ThumbnailsContext);
-  if (!ctx || !ctx.items || ctx.items.length <= 1) return null;
-  return (
-    <>
-      {ctx.items.map((_, i) => (
-        <ThumbnailItemContext.Provider key={i} value={{ index: i }}>
-          {children}
-        </ThumbnailItemContext.Provider>
-      ))}
-    </>
-  );
-};
+export const ThumbnailRepeater = ({ children }: ThumbnailRepeaterProps) => (
+  <CoreThumbnailList>
+    {({ items }) => {
+      if (!items || items.length <= 1) return null;
+      return (
+        <>
+          {items.map((_, i) => (
+            <ThumbnailItemContext.Provider key={i} value={{ index: i }}>
+              {children}
+            </ThumbnailItemContext.Provider>
+          ))}
+        </>
+      );
+    }}
+  </CoreThumbnailList>
+);
 
 /**
  * Props for the ThumbnailItem component
