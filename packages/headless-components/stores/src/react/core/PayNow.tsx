@@ -1,5 +1,5 @@
-import { useService } from "@wix/services-manager-react";
-import { PayNowServiceDefinition } from "../../services/pay-now-service.js";
+import { useService } from '@wix/services-manager-react';
+import { PayNowServiceDefinition } from '../../services/pay-now-service.js';
 
 /**
  * Props passed to the render function of the PayNow component
@@ -46,7 +46,7 @@ export interface PayNowProps {
  */
 export function PayNow(props: PayNowProps): React.ReactNode {
   const { redirectToCheckout, loadingSignal, errorSignal } = useService(
-    PayNowServiceDefinition
+    PayNowServiceDefinition,
   );
 
   return props.children({

@@ -1,1 +1,1 @@
-export * from "./seo-tags-service.js";
+export * from './seo-tags-service.js';

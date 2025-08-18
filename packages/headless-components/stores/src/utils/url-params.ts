@@ -67,7 +67,7 @@ export class URLParamsUtils {
    * ```
    */
   static updateURL(params: Record<string, string | string[]>) {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     const url = new URL(window.location.href);
     const urlParams = new URLSearchParams();
@@ -86,7 +86,7 @@ export class URLParamsUtils {
       ? `${url.pathname}?${urlParams.toString()}`
       : url.pathname;
 
-    window.history.replaceState({}, "", newURL);
+    window.history.replaceState({}, '', newURL);
   }
 
   /**
@@ -111,7 +111,7 @@ export class URLParamsUtils {
    * ```
    */
   static getURLParams(): Record<string, string | string[]> {
-    if (typeof window === "undefined") return {};
+    if (typeof window === 'undefined') return {};
     return this.parseSearchParams(new URLSearchParams(window.location.search));
   }
 }

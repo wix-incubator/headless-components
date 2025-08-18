@@ -1,27 +1,27 @@
-import { render, screen } from "@testing-library/react";
-import React from "react";
-import { beforeEach, describe, expect, it, vi, afterEach } from "vitest";
-import * as Product from "./Product";
-import * as CoreProduct from "./core/Product.js";
-import * as ProductVariantSelector from "./core/ProductVariantSelector.js";
-import * as ProductModifiers from "./core/ProductModifiers.js";
-import * as SelectedVariant from "./core/SelectedVariant.js";
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
+import * as Product from './Product';
+import * as CoreProduct from './core/Product.js';
+import * as ProductVariantSelector from './core/ProductVariantSelector.js';
+import * as ProductModifiers from './core/ProductModifiers.js';
+import * as SelectedVariant from './core/SelectedVariant.js';
 
 // Mock all core components
-vi.mock("./core/Product.js", () => ({
+vi.mock('./core/Product.js', () => ({
   Root: vi.fn(({ children, productServiceConfig, ...props }) => (
     <div {...props}>{children}</div>
   )),
-  Name: vi.fn(({ children }) => children({ name: "Test Product Name" })),
+  Name: vi.fn(({ children }) => children({ name: 'Test Product Name' })),
   Description: vi.fn(({ children }) =>
     children({
-      description: { content: "Rich description" },
-      plainDescription: "<p>Plain HTML description</p>",
+      description: { content: 'Rich description' },
+      plainDescription: '<p>Plain HTML description</p>',
     }),
   ),
 }));
 
-vi.mock("./core/ProductVariantSelector.js", () => ({
+vi.mock('./core/ProductVariantSelector.js', () => ({
   Root: vi.fn(({ children }) => (
     <div data-testid="variant-selector-root">{children}</div>
   )),
@@ -29,8 +29,8 @@ vi.mock("./core/ProductVariantSelector.js", () => ({
     children({
       hasOptions: true,
       options: [
-        { name: "Color", id: "color-option" },
-        { name: "Size", id: "size-option" },
+        { name: 'Color', id: 'color-option' },
+        { name: 'Size', id: 'size-option' },
       ],
     }),
   ),
@@ -38,8 +38,8 @@ vi.mock("./core/ProductVariantSelector.js", () => ({
     children({
       name: option.name,
       choices: [
-        { name: "Red", colorCode: "#ff0000" },
-        { name: "Blue", colorCode: "#0000ff" },
+        { name: 'Red', colorCode: '#ff0000' },
+        { name: 'Blue', colorCode: '#0000ff' },
       ],
       selectedValue: null,
       hasChoices: true,
@@ -59,7 +59,7 @@ vi.mock("./core/ProductVariantSelector.js", () => ({
   ),
 }));
 
-vi.mock("./core/ProductModifiers.js", () => ({
+vi.mock('./core/ProductModifiers.js', () => ({
   // Root component needed by Product.Root
   Root: vi.fn(({ children }) => children),
 
@@ -69,20 +69,20 @@ vi.mock("./core/ProductModifiers.js", () => ({
       hasModifiers: true,
       modifiers: [
         {
-          name: "Engraving",
-          _id: "engraving-mod",
-          id: "engraving-mod",
+          name: 'Engraving',
+          _id: 'engraving-mod',
+          id: 'engraving-mod',
           mandatory: false,
-          choices: [{ name: "Custom Text", type: "free-text" }],
+          choices: [{ name: 'Custom Text', type: 'free-text' }],
         },
         {
-          name: "Size Upgrade",
-          _id: "size-mod",
-          id: "size-mod",
+          name: 'Size Upgrade',
+          _id: 'size-mod',
+          id: 'size-mod',
           mandatory: true,
           choices: [
-            { name: "Large", addedPrice: "$5.00" },
-            { name: "Extra Large", addedPrice: "$10.00" },
+            { name: 'Large', addedPrice: '$5.00' },
+            { name: 'Extra Large', addedPrice: '$10.00' },
           ],
         },
       ],
@@ -94,46 +94,46 @@ vi.mock("./core/ProductModifiers.js", () => ({
     children({
       ...modifier,
       onValueChange: vi.fn(),
-      type: "modifier", // Mark as modifier type
+      type: 'modifier', // Mark as modifier type
     }),
   ),
 
   // Choice component needed by Option.ChoiceRepeater
   Choice: vi.fn(({ children, modifier, choice }) =>
     children({
-      value: choice?.name || modifier?.name || "",
+      value: choice?.name || modifier?.name || '',
       isSelected: false,
       select: vi.fn(),
     }),
   ),
 }));
 
-vi.mock("./core/SelectedVariant.js", () => ({
+vi.mock('./core/SelectedVariant.js', () => ({
   Root: vi.fn(({ children }) => (
     <div data-testid="selected-variant-root">{children}</div>
   )),
   Price: vi.fn(({ children }) =>
     children({
-      price: "$29.99",
-      compareAtPrice: "$39.99",
-      currency: "USD",
+      price: '$29.99',
+      compareAtPrice: '$39.99',
+      currency: 'USD',
     }),
   ),
 }));
 
 const mockProduct = {
-  id: "test-product-id",
-  name: "Test Product",
-  description: "Test product description",
+  id: 'test-product-id',
+  name: 'Test Product',
+  description: 'Test product description',
 } as any;
 
-describe("Product Components", () => {
+describe('Product Components', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe("Product.Root", () => {
-    it("should render with proper data attributes and context setup", () => {
+  describe('Product.Root', () => {
+    it('should render with proper data attributes and context setup', () => {
       render(
         <Product.Root product={mockProduct}>
           <div data-testid="child-content">Child content</div>
@@ -141,17 +141,17 @@ describe("Product Components", () => {
       );
 
       // Check that the root has the correct test id
-      expect(screen.getByTestId("product-root")).toBeInTheDocument();
+      expect(screen.getByTestId('product-root')).toBeInTheDocument();
 
       // Verify child content is rendered
-      expect(screen.getByTestId("child-content")).toBeInTheDocument();
+      expect(screen.getByTestId('child-content')).toBeInTheDocument();
 
       // Verify all context providers are set up
-      expect(screen.getByTestId("variant-selector-root")).toBeInTheDocument();
-      expect(screen.getByTestId("selected-variant-root")).toBeInTheDocument();
+      expect(screen.getByTestId('variant-selector-root')).toBeInTheDocument();
+      expect(screen.getByTestId('selected-variant-root')).toBeInTheDocument();
     });
 
-    it("should pass product to CoreProduct.Root", () => {
+    it('should pass product to CoreProduct.Root', () => {
       render(
         <Product.Root product={mockProduct}>
           <div>Content</div>
@@ -161,14 +161,14 @@ describe("Product Components", () => {
       expect(CoreProduct.Root).toHaveBeenCalledWith(
         expect.objectContaining({
           productServiceConfig: { product: mockProduct },
-          "data-testid": "product-root",
+          'data-testid': 'product-root',
         }),
         expect.any(Object),
       );
     });
 
-    it("should handle selectedVariant prop", () => {
-      const selectedVariant = { id: "variant-1" };
+    it('should handle selectedVariant prop', () => {
+      const selectedVariant = { id: 'variant-1' };
 
       render(
         <Product.Root product={mockProduct} selectedVariant={selectedVariant}>
@@ -178,35 +178,35 @@ describe("Product Components", () => {
 
       // The selectedVariant is currently not used in the implementation,
       // but we test that the component accepts it without errors
-      expect(screen.getByTestId("product-root")).toBeInTheDocument();
+      expect(screen.getByTestId('product-root')).toBeInTheDocument();
     });
   });
 
-  describe("Product.Name", () => {
-    it("should render product name with default styling", () => {
+  describe('Product.Name', () => {
+    it('should render product name with default styling', () => {
       render(<Product.Name className="custom-class" />);
 
-      const nameElement = screen.getByTestId("product-name");
+      const nameElement = screen.getByTestId('product-name');
       expect(nameElement).toBeInTheDocument();
-      expect(nameElement).toHaveClass("custom-class");
-      expect(nameElement).toHaveTextContent("Test Product Name");
+      expect(nameElement).toHaveClass('custom-class');
+      expect(nameElement).toHaveTextContent('Test Product Name');
     });
 
-    it("should render with asChild using React element", () => {
+    it('should render with asChild using React element', () => {
       render(
         <Product.Name asChild>
           <h1 className="title-class">Custom title</h1>
         </Product.Name>,
       );
 
-      const titleElement = screen.getByTestId("product-name");
+      const titleElement = screen.getByTestId('product-name');
       expect(titleElement).toBeInTheDocument();
-      expect(titleElement.tagName).toBe("H1");
-      expect(titleElement).toHaveClass("title-class");
-      expect(titleElement).toHaveTextContent("Test Product Name");
+      expect(titleElement.tagName).toBe('H1');
+      expect(titleElement).toHaveClass('title-class');
+      expect(titleElement).toHaveTextContent('Test Product Name');
     });
 
-    it("should render with asChild using render function", () => {
+    it('should render with asChild using render function', () => {
       const renderFunction = vi.fn((props, ref) => (
         <h2 ref={ref} data-testid="custom-name" className="function-class">
           Name: {props.name}
@@ -217,20 +217,20 @@ describe("Product Components", () => {
 
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "Test Product Name",
-          "data-testid": "product-name",
+          name: 'Test Product Name',
+          'data-testid': 'product-name',
         }),
         expect.any(Object),
       );
 
-      const customElement = screen.getByTestId("custom-name");
+      const customElement = screen.getByTestId('custom-name');
       expect(customElement).toBeInTheDocument();
-      expect(customElement.tagName).toBe("H2");
-      expect(customElement).toHaveClass("function-class");
-      expect(customElement).toHaveTextContent("Name: Test Product Name");
+      expect(customElement.tagName).toBe('H2');
+      expect(customElement).toHaveClass('function-class');
+      expect(customElement).toHaveTextContent('Name: Test Product Name');
     });
 
-    it("should forward ref correctly with asChild", () => {
+    it('should forward ref correctly with asChild', () => {
       const ref = React.createRef<HTMLElement>();
 
       render(
@@ -239,57 +239,57 @@ describe("Product Components", () => {
         </Product.Name>,
       );
 
-      const element = screen.getByTestId("product-name");
-      expect(element.tagName).toBe("H1");
+      const element = screen.getByTestId('product-name');
+      expect(element.tagName).toBe('H1');
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(<Product.Name />);
 
-      const nameElement = screen.getByTestId("product-name");
-      expect(nameElement).toHaveAttribute("data-testid", "product-name");
+      const nameElement = screen.getByTestId('product-name');
+      expect(nameElement).toHaveAttribute('data-testid', 'product-name');
     });
   });
 
-  describe("Product.Description", () => {
-    it("should render description with default plain format", () => {
+  describe('Product.Description', () => {
+    it('should render description with default plain format', () => {
       render(<Product.Description className="desc-class" />);
 
-      const descElement = screen.getByTestId("product-description");
+      const descElement = screen.getByTestId('product-description');
       expect(descElement).toBeInTheDocument();
-      expect(descElement).toHaveClass("desc-class");
-      expect(descElement).toHaveTextContent("Plain HTML description");
+      expect(descElement).toHaveClass('desc-class');
+      expect(descElement).toHaveTextContent('Plain HTML description');
     });
 
     it("should render as HTML when as='html' is specified", () => {
       render(<Product.Description as="html" className="html-desc" />);
 
-      const descElement = screen.getByTestId("product-description");
+      const descElement = screen.getByTestId('product-description');
       expect(descElement).toBeInTheDocument();
-      expect(descElement).toHaveClass("html-desc");
+      expect(descElement).toHaveClass('html-desc');
       // Should render HTML content directly
-      expect(descElement.innerHTML).toContain("<p>Plain HTML description</p>");
+      expect(descElement.innerHTML).toContain('<p>Plain HTML description</p>');
     });
 
     it("should render as RICOS when as='ricos' is specified", () => {
       render(<Product.Description as="ricos" className="ricos-desc" />);
 
-      const descElement = screen.getByTestId("product-description");
+      const descElement = screen.getByTestId('product-description');
       expect(descElement).toBeInTheDocument();
-      expect(descElement).toHaveClass("ricos-desc");
+      expect(descElement).toHaveClass('ricos-desc');
       // Should render stringified rich description
       expect(descElement).toHaveTextContent('{"content":"Rich description"}');
     });
 
-    it("should strip HTML tags for plain format", () => {
+    it('should strip HTML tags for plain format', () => {
       render(<Product.Description as="plain" />);
 
-      const descElement = screen.getByTestId("product-description");
-      expect(descElement).toHaveTextContent("Plain HTML description");
-      expect(descElement.innerHTML).not.toContain("<p>");
+      const descElement = screen.getByTestId('product-description');
+      expect(descElement).toHaveTextContent('Plain HTML description');
+      expect(descElement.innerHTML).not.toContain('<p>');
     });
 
-    it("should render with asChild using render function", () => {
+    it('should render with asChild using render function', () => {
       const renderFunction = vi.fn((props, ref) => (
         <article
           ref={ref}
@@ -306,85 +306,85 @@ describe("Product Components", () => {
 
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
-          description: "Plain HTML description",
-          "data-testid": "product-description",
+          description: 'Plain HTML description',
+          'data-testid': 'product-description',
         }),
         expect.any(Object),
       );
 
-      const customElement = screen.getByTestId("custom-description");
+      const customElement = screen.getByTestId('custom-description');
       expect(customElement).toBeInTheDocument();
-      expect(customElement.tagName).toBe("ARTICLE");
-      expect(customElement).toHaveClass("article-class");
+      expect(customElement.tagName).toBe('ARTICLE');
+      expect(customElement).toHaveClass('article-class');
     });
 
-    it("should handle empty description gracefully", () => {
+    it('should handle empty description gracefully', () => {
       // Mock empty description
       vi.mocked(CoreProduct.Description).mockImplementationOnce(
         ({ children }) =>
           children({
-            description: { content: "" } as any,
-            plainDescription: "",
+            description: { content: '' } as any,
+            plainDescription: '',
           }),
       );
 
       render(<Product.Description />);
 
-      const descElement = screen.getByTestId("product-description");
+      const descElement = screen.getByTestId('product-description');
       expect(descElement).toBeInTheDocument();
-      expect(descElement).toHaveTextContent("");
+      expect(descElement).toHaveTextContent('');
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(<Product.Description />);
 
-      const descElement = screen.getByTestId("product-description");
-      expect(descElement).toHaveAttribute("data-testid", "product-description");
+      const descElement = screen.getByTestId('product-description');
+      expect(descElement).toHaveAttribute('data-testid', 'product-description');
     });
   });
 
-  describe("Product.Price", () => {
-    it("should render price with discount data attribute", () => {
+  describe('Product.Price', () => {
+    it('should render price with discount data attribute', () => {
       render(<Product.Price className="price-class" />);
 
-      const priceElement = screen.getByTestId("product-price");
+      const priceElement = screen.getByTestId('product-price');
       expect(priceElement).toBeInTheDocument();
-      expect(priceElement).toHaveClass("price-class");
-      expect(priceElement).toHaveTextContent("$29.99");
-      expect(priceElement).toHaveAttribute("data-discounted", "true");
+      expect(priceElement).toHaveClass('price-class');
+      expect(priceElement).toHaveTextContent('$29.99');
+      expect(priceElement).toHaveAttribute('data-discounted', 'true');
     });
 
-    it("should render without discount data attribute when no compareAtPrice", () => {
+    it('should render without discount data attribute when no compareAtPrice', () => {
       // Mock price without compareAtPrice
       vi.mocked(SelectedVariant.Price).mockImplementationOnce(({ children }) =>
         children({
-          price: "$29.99",
+          price: '$29.99',
           compareAtPrice: null,
-          currency: "USD",
+          currency: 'USD',
         }),
       );
 
       render(<Product.Price />);
 
-      const priceElement = screen.getByTestId("product-price");
-      expect(priceElement).toHaveAttribute("data-discounted", "false");
+      const priceElement = screen.getByTestId('product-price');
+      expect(priceElement).toHaveAttribute('data-discounted', 'false');
     });
 
-    it("should render with asChild using React element", () => {
+    it('should render with asChild using React element', () => {
       render(
         <Product.Price asChild>
           <span className="custom-price">Price display</span>
         </Product.Price>,
       );
 
-      const priceElement = screen.getByTestId("product-price");
+      const priceElement = screen.getByTestId('product-price');
       expect(priceElement).toBeInTheDocument();
-      expect(priceElement.tagName).toBe("SPAN");
-      expect(priceElement).toHaveClass("custom-price");
-      expect(priceElement).toHaveTextContent("$29.99");
+      expect(priceElement.tagName).toBe('SPAN');
+      expect(priceElement).toHaveClass('custom-price');
+      expect(priceElement).toHaveTextContent('$29.99');
     });
 
-    it("should render with asChild using render function", () => {
+    it('should render with asChild using render function', () => {
       const renderFunction = vi.fn((props, ref) => (
         <div ref={ref} data-testid="custom-price" className="function-price">
           Current price: {props.formattedPrice}
@@ -395,79 +395,79 @@ describe("Product Components", () => {
 
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
-          price: "$29.99",
-          formattedPrice: "$29.99",
-          "data-testid": "product-price",
-          "data-discounted": true,
+          price: '$29.99',
+          formattedPrice: '$29.99',
+          'data-testid': 'product-price',
+          'data-discounted': true,
         }),
         expect.any(Object),
       );
 
-      const customElement = screen.getByTestId("custom-price");
+      const customElement = screen.getByTestId('custom-price');
       expect(customElement).toBeInTheDocument();
-      expect(customElement).toHaveTextContent("Current price: $29.99");
+      expect(customElement).toHaveTextContent('Current price: $29.99');
     });
 
-    it("should forward ref correctly", () => {
+    it('should forward ref correctly', () => {
       const ref = React.createRef<HTMLElement>();
 
       render(<Product.Price ref={ref} />);
 
-      expect(ref.current).toBe(screen.getByTestId("product-price"));
+      expect(ref.current).toBe(screen.getByTestId('product-price'));
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(<Product.Price />);
 
-      const priceElement = screen.getByTestId("product-price");
-      expect(priceElement).toHaveAttribute("data-testid", "product-price");
-      expect(priceElement).toHaveAttribute("data-discounted", "true");
+      const priceElement = screen.getByTestId('product-price');
+      expect(priceElement).toHaveAttribute('data-testid', 'product-price');
+      expect(priceElement).toHaveAttribute('data-discounted', 'true');
     });
   });
 
-  describe("Product.CompareAtPrice", () => {
-    it("should render compare-at price when available", () => {
+  describe('Product.CompareAtPrice', () => {
+    it('should render compare-at price when available', () => {
       render(<Product.CompareAtPrice className="compare-price-class" />);
 
-      const compareElement = screen.getByTestId("product-compare-at-price");
+      const compareElement = screen.getByTestId('product-compare-at-price');
       expect(compareElement).toBeInTheDocument();
-      expect(compareElement).toHaveClass("compare-price-class");
-      expect(compareElement).toHaveTextContent("$39.99");
-      expect(compareElement).toHaveAttribute("data-discounted", "true");
+      expect(compareElement).toHaveClass('compare-price-class');
+      expect(compareElement).toHaveTextContent('$39.99');
+      expect(compareElement).toHaveAttribute('data-discounted', 'true');
     });
 
-    it("should not render when no compare-at price is available", () => {
+    it('should not render when no compare-at price is available', () => {
       // Mock price without compareAtPrice
       vi.mocked(SelectedVariant.Price).mockImplementationOnce(({ children }) =>
         children({
-          price: "$29.99",
+          price: '$29.99',
           compareAtPrice: null,
-          currency: "USD",
+          currency: 'USD',
         }),
       );
 
       render(<Product.CompareAtPrice />);
 
       expect(
-        screen.queryByTestId("product-compare-at-price"),
+        screen.queryByTestId('product-compare-at-price'),
       ).not.toBeInTheDocument();
     });
 
-    it("should render with asChild using React element", () => {
+    it('should render with asChild using React element', () => {
       render(
         <Product.CompareAtPrice asChild>
           <del className="strikethrough">Original price</del>
         </Product.CompareAtPrice>,
       );
 
-      const compareElement = screen.getByTestId("product-compare-at-price");
+      const compareElement = screen.getByTestId('product-compare-at-price');
       expect(compareElement).toBeInTheDocument();
-      expect(compareElement.tagName).toBe("DEL");
-      expect(compareElement).toHaveClass("strikethrough");
-      expect(compareElement).toHaveTextContent("$39.99");
+      expect(compareElement.tagName).toBe('DEL');
+      expect(compareElement).toHaveClass('strikethrough');
+      expect(compareElement).toHaveTextContent('$39.99');
     });
 
-    it("should render with asChild using render function", () => {
+    it('should render with asChild using render function', () => {
       const renderFunction = vi.fn((props, ref) => (
         <span
           ref={ref}
@@ -486,26 +486,26 @@ describe("Product Components", () => {
 
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
-          price: "$39.99",
-          formattedPrice: "$39.99",
-          "data-testid": "product-compare-at-price",
-          "data-discounted": true,
+          price: '$39.99',
+          formattedPrice: '$39.99',
+          'data-testid': 'product-compare-at-price',
+          'data-discounted': true,
         }),
         expect.any(Object),
       );
 
-      const customElement = screen.getByTestId("custom-compare-price");
+      const customElement = screen.getByTestId('custom-compare-price');
       expect(customElement).toBeInTheDocument();
-      expect(customElement).toHaveTextContent("Was: $39.99");
+      expect(customElement).toHaveTextContent('Was: $39.99');
     });
 
-    it("should return null with asChild when no compare-at price", () => {
+    it('should return null with asChild when no compare-at price', () => {
       // Mock price without compareAtPrice
       vi.mocked(SelectedVariant.Price).mockImplementationOnce(({ children }) =>
         children({
-          price: "$29.99",
+          price: '$29.99',
           compareAtPrice: null,
-          currency: "USD",
+          currency: 'USD',
         }),
       );
 
@@ -519,44 +519,44 @@ describe("Product Components", () => {
 
       expect(renderFunction).not.toHaveBeenCalled();
       expect(
-        screen.queryByTestId("product-compare-at-price"),
+        screen.queryByTestId('product-compare-at-price'),
       ).not.toBeInTheDocument();
     });
 
-    it("should forward ref correctly", () => {
+    it('should forward ref correctly', () => {
       const ref = React.createRef<HTMLElement>();
 
       render(<Product.CompareAtPrice ref={ref} />);
 
-      expect(ref.current).toBe(screen.getByTestId("product-compare-at-price"));
+      expect(ref.current).toBe(screen.getByTestId('product-compare-at-price'));
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(<Product.CompareAtPrice />);
 
-      const compareElement = screen.getByTestId("product-compare-at-price");
+      const compareElement = screen.getByTestId('product-compare-at-price');
       expect(compareElement).toHaveAttribute(
-        "data-testid",
-        "product-compare-at-price",
+        'data-testid',
+        'product-compare-at-price',
       );
-      expect(compareElement).toHaveAttribute("data-discounted", "true");
+      expect(compareElement).toHaveAttribute('data-discounted', 'true');
     });
   });
 
-  describe("Product.Variants", () => {
-    it("should render variants container when options are available", () => {
+  describe('Product.Variants', () => {
+    it('should render variants container when options are available', () => {
       render(
         <Product.Variants>
           <div data-testid="variants-content">Variants content</div>
         </Product.Variants>,
       );
 
-      const variantsElement = screen.getByTestId("product-variants");
+      const variantsElement = screen.getByTestId('product-variants');
       expect(variantsElement).toBeInTheDocument();
-      expect(screen.getByTestId("variants-content")).toBeInTheDocument();
+      expect(screen.getByTestId('variants-content')).toBeInTheDocument();
     });
 
-    it("should not render when no options are available", () => {
+    it('should not render when no options are available', () => {
       // Mock no options available
       vi.mocked(ProductVariantSelector.Options).mockImplementationOnce(
         ({ children }) =>
@@ -573,11 +573,11 @@ describe("Product Components", () => {
         </Product.Variants>,
       );
 
-      expect(screen.queryByTestId("product-variants")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("variants-content")).not.toBeInTheDocument();
+      expect(screen.queryByTestId('product-variants')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('variants-content')).not.toBeInTheDocument();
     });
 
-    it("should render with asChild using React element", () => {
+    it('should render with asChild using React element', () => {
       render(
         <Product.Variants asChild>
           <section className="custom-variants">
@@ -586,13 +586,13 @@ describe("Product Components", () => {
         </Product.Variants>,
       );
 
-      const variantsElement = screen.getByTestId("product-variants");
+      const variantsElement = screen.getByTestId('product-variants');
       expect(variantsElement).toBeInTheDocument();
-      expect(variantsElement.tagName).toBe("SECTION");
-      expect(variantsElement).toHaveClass("custom-variants");
+      expect(variantsElement.tagName).toBe('SECTION');
+      expect(variantsElement).toHaveClass('custom-variants');
     });
 
-    it("should render with asChild using render function", () => {
+    it('should render with asChild using render function', () => {
       const renderFunction = vi.fn((props, ref) => (
         <div
           ref={ref}
@@ -609,33 +609,33 @@ describe("Product Components", () => {
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
           hasOptions: true,
-          "data-testid": "product-variants",
+          'data-testid': 'product-variants',
         }),
         expect.any(Object),
       );
 
-      const customElement = screen.getByTestId("custom-variants");
+      const customElement = screen.getByTestId('custom-variants');
       expect(customElement).toBeInTheDocument();
-      expect(customElement).toHaveTextContent("Has options: true");
+      expect(customElement).toHaveTextContent('Has options: true');
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(
         <Product.Variants>
           <div>Content</div>
         </Product.Variants>,
       );
 
-      const variantsElement = screen.getByTestId("product-variants");
+      const variantsElement = screen.getByTestId('product-variants');
       expect(variantsElement).toHaveAttribute(
-        "data-testid",
-        "product-variants",
+        'data-testid',
+        'product-variants',
       );
     });
   });
 
-  describe("Product.VariantOptions", () => {
-    it("should render variant options container when options exist", () => {
+  describe('Product.VariantOptions', () => {
+    it('should render variant options container when options exist', () => {
       render(
         <Product.Root product={mockProduct}>
           <Product.Variants>
@@ -646,12 +646,12 @@ describe("Product Components", () => {
         </Product.Root>,
       );
 
-      const optionsElement = screen.getByTestId("product-variant-options");
+      const optionsElement = screen.getByTestId('product-variant-options');
       expect(optionsElement).toBeInTheDocument();
-      expect(screen.getByTestId("options-content")).toBeInTheDocument();
+      expect(screen.getByTestId('options-content')).toBeInTheDocument();
     });
 
-    it("should render empty state when no options exist", () => {
+    it('should render empty state when no options exist', () => {
       // Mock ProductVariantSelector.Options to return hasOptions: false
       // This will cause Variants to not render, which is the correct behavior
       // when there are no options
@@ -679,15 +679,15 @@ describe("Product Components", () => {
 
       // When hasOptions is false, the entire Variants component returns null
       // So neither the empty state nor the content should render
-      expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("options-content")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("product-variants")).not.toBeInTheDocument();
+      expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('options-content')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('product-variants')).not.toBeInTheDocument();
       expect(
-        screen.queryByTestId("product-variant-options"),
+        screen.queryByTestId('product-variant-options'),
       ).not.toBeInTheDocument();
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(
         <Product.Root product={mockProduct}>
           <Product.Variants>
@@ -698,16 +698,16 @@ describe("Product Components", () => {
         </Product.Root>,
       );
 
-      const optionsElement = screen.getByTestId("product-variant-options");
+      const optionsElement = screen.getByTestId('product-variant-options');
       expect(optionsElement).toHaveAttribute(
-        "data-testid",
-        "product-variant-options",
+        'data-testid',
+        'product-variant-options',
       );
     });
   });
 
-  describe("Product.VariantOptionRepeater", () => {
-    it("should render option repeater with children for each option", () => {
+  describe('Product.VariantOptionRepeater', () => {
+    it('should render option repeater with children for each option', () => {
       render(
         <Product.Root product={mockProduct}>
           <Product.Variants>
@@ -722,15 +722,15 @@ describe("Product Components", () => {
 
       // Should render multiple options (mocked to return 2 options)
       // The actual test ID comes from Option.Root, not the repeater
-      const optionElements = screen.getAllByTestId("option-root");
+      const optionElements = screen.getAllByTestId('option-root');
       expect(optionElements).toHaveLength(2);
 
       // Each option should have the content
-      const optionContents = screen.getAllByTestId("option-content");
+      const optionContents = screen.getAllByTestId('option-content');
       expect(optionContents).toHaveLength(2);
     });
 
-    it("should not render when no options exist", () => {
+    it('should not render when no options exist', () => {
       // Mock ProductVariantSelector.Options to return no options
       vi.mocked(ProductVariantSelector.Options).mockImplementationOnce(
         ({ children }) =>
@@ -754,13 +754,13 @@ describe("Product Components", () => {
         </Product.Root>,
       );
 
-      expect(screen.queryByTestId("option-content")).not.toBeInTheDocument();
+      expect(screen.queryByTestId('option-content')).not.toBeInTheDocument();
     });
 
-    it("should pass correct props to Option.Root", () => {
+    it('should pass correct props to Option.Root', () => {
       const mockOptions = [
-        { name: "Color", id: "color-option" },
-        { name: "Size", id: "size-option" },
+        { name: 'Color', id: 'color-option' },
+        { name: 'Size', id: 'size-option' },
       ];
 
       // Mock ProductVariantSelector.Options to return specific options
@@ -786,24 +786,24 @@ describe("Product Components", () => {
       );
 
       // Verify that Option.Root components are rendered
-      expect(screen.getAllByTestId("option-root")).toHaveLength(2);
+      expect(screen.getAllByTestId('option-root')).toHaveLength(2);
     });
   });
 
-  describe("Product.Modifiers", () => {
-    it("should render modifiers container when modifiers are available", () => {
+  describe('Product.Modifiers', () => {
+    it('should render modifiers container when modifiers are available', () => {
       render(
         <Product.Modifiers>
           <div data-testid="modifiers-content">Modifiers content</div>
         </Product.Modifiers>,
       );
 
-      const modifiersElement = screen.getByTestId("product-modifiers");
+      const modifiersElement = screen.getByTestId('product-modifiers');
       expect(modifiersElement).toBeInTheDocument();
-      expect(screen.getByTestId("modifiers-content")).toBeInTheDocument();
+      expect(screen.getByTestId('modifiers-content')).toBeInTheDocument();
     });
 
-    it("should not render when no modifiers are available", () => {
+    it('should not render when no modifiers are available', () => {
       // Mock no modifiers available
       vi.mocked(ProductModifiers.Modifiers).mockImplementationOnce(
         ({ children }) =>
@@ -821,11 +821,11 @@ describe("Product Components", () => {
         </Product.Modifiers>,
       );
 
-      expect(screen.queryByTestId("product-modifiers")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("modifiers-content")).not.toBeInTheDocument();
+      expect(screen.queryByTestId('product-modifiers')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('modifiers-content')).not.toBeInTheDocument();
     });
 
-    it("should render with asChild using React element", () => {
+    it('should render with asChild using React element', () => {
       render(
         <Product.Modifiers asChild>
           <section className="custom-modifiers">
@@ -834,13 +834,13 @@ describe("Product Components", () => {
         </Product.Modifiers>,
       );
 
-      const modifiersElement = screen.getByTestId("product-modifiers");
+      const modifiersElement = screen.getByTestId('product-modifiers');
       expect(modifiersElement).toBeInTheDocument();
-      expect(modifiersElement.tagName).toBe("SECTION");
-      expect(modifiersElement).toHaveClass("custom-modifiers");
+      expect(modifiersElement.tagName).toBe('SECTION');
+      expect(modifiersElement).toHaveClass('custom-modifiers');
     });
 
-    it("should render with asChild using render function", () => {
+    it('should render with asChild using render function', () => {
       const renderFunction = vi.fn((props, ref) => (
         <div
           ref={ref}
@@ -857,43 +857,43 @@ describe("Product Components", () => {
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
           hasModifiers: true,
-          "data-testid": "product-modifiers",
+          'data-testid': 'product-modifiers',
         }),
         expect.any(Object),
       );
 
-      const customElement = screen.getByTestId("custom-modifiers");
+      const customElement = screen.getByTestId('custom-modifiers');
       expect(customElement).toBeInTheDocument();
-      expect(customElement).toHaveTextContent("Has modifiers: true");
+      expect(customElement).toHaveTextContent('Has modifiers: true');
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(
         <Product.Modifiers>
           <div>Content</div>
         </Product.Modifiers>,
       );
 
-      const modifiersElement = screen.getByTestId("product-modifiers");
+      const modifiersElement = screen.getByTestId('product-modifiers');
       expect(modifiersElement).toHaveAttribute(
-        "data-testid",
-        "product-modifiers",
+        'data-testid',
+        'product-modifiers',
       );
     });
   });
 
-  describe("Product.ModifierOptions", () => {
+  describe('Product.ModifierOptions', () => {
     const MockModifiersContext = React.createContext({
       hasModifiers: true,
       modifiers: [
         {
-          name: "Engraving",
-          id: "engraving-mod",
+          name: 'Engraving',
+          id: 'engraving-mod',
           mandatory: false,
         },
         {
-          name: "Size Upgrade",
-          id: "size-mod",
+          name: 'Size Upgrade',
+          id: 'size-mod',
           mandatory: true,
         },
       ],
@@ -901,17 +901,17 @@ describe("Product Components", () => {
 
     beforeEach(() => {
       // Mock React.useContext for ModifiersContext
-      vi.spyOn(React, "useContext").mockReturnValue({
+      vi.spyOn(React, 'useContext').mockReturnValue({
         hasModifiers: true,
         modifiers: [
           {
-            name: "Engraving",
-            id: "engraving-mod",
+            name: 'Engraving',
+            id: 'engraving-mod',
             mandatory: false,
           },
           {
-            name: "Size Upgrade",
-            id: "size-mod",
+            name: 'Size Upgrade',
+            id: 'size-mod',
             mandatory: true,
           },
         ],
@@ -922,22 +922,22 @@ describe("Product Components", () => {
       vi.restoreAllMocks();
     });
 
-    it("should render modifier options container when modifiers exist", () => {
+    it('should render modifier options container when modifiers exist', () => {
       render(
         <Product.ModifierOptions>
           <div data-testid="modifier-options-content">Options content</div>
         </Product.ModifierOptions>,
       );
 
-      const optionsElement = screen.getByTestId("product-modifier-options");
+      const optionsElement = screen.getByTestId('product-modifier-options');
       expect(optionsElement).toBeInTheDocument();
       expect(
-        screen.getByTestId("modifier-options-content"),
+        screen.getByTestId('modifier-options-content'),
       ).toBeInTheDocument();
     });
 
-    it("should render empty state when no modifiers exist", () => {
-      vi.spyOn(React, "useContext").mockReturnValue({
+    it('should render empty state when no modifiers exist', () => {
+      vi.spyOn(React, 'useContext').mockReturnValue({
         hasModifiers: false,
         modifiers: [],
       });
@@ -950,45 +950,45 @@ describe("Product Components", () => {
         </Product.ModifierOptions>,
       );
 
-      expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+      expect(screen.getByTestId('empty-state')).toBeInTheDocument();
       expect(
-        screen.queryByTestId("modifier-options-content"),
+        screen.queryByTestId('modifier-options-content'),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByTestId("product-modifier-options"),
+        screen.queryByTestId('product-modifier-options'),
       ).not.toBeInTheDocument();
     });
 
-    it("should have correct data attributes", () => {
+    it('should have correct data attributes', () => {
       render(
         <Product.ModifierOptions>
           <div>Content</div>
         </Product.ModifierOptions>,
       );
 
-      const optionsElement = screen.getByTestId("product-modifier-options");
+      const optionsElement = screen.getByTestId('product-modifier-options');
       expect(optionsElement).toHaveAttribute(
-        "data-testid",
-        "product-modifier-options",
+        'data-testid',
+        'product-modifier-options',
       );
     });
   });
 
-  describe("Product.ModifierOptionRepeater", () => {
+  describe('Product.ModifierOptionRepeater', () => {
     const mockModifiers = [
       {
-        name: "Engraving",
-        id: "engraving-mod",
+        name: 'Engraving',
+        id: 'engraving-mod',
         mandatory: false,
-        choices: [{ name: "Custom Text", type: "free-text" }],
+        choices: [{ name: 'Custom Text', type: 'free-text' }],
       },
       {
-        name: "Size Upgrade",
-        id: "size-mod",
+        name: 'Size Upgrade',
+        id: 'size-mod',
         mandatory: true,
         choices: [
-          { name: "Large", addedPrice: "$5.00" },
-          { name: "Extra Large", addedPrice: "$10.00" },
+          { name: 'Large', addedPrice: '$5.00' },
+          { name: 'Extra Large', addedPrice: '$10.00' },
         ],
       },
     ];
@@ -1000,7 +1000,7 @@ describe("Product Components", () => {
 
     beforeEach(() => {
       // Mock React.useContext for ModifiersContext
-      vi.spyOn(React, "useContext").mockReturnValue({
+      vi.spyOn(React, 'useContext').mockReturnValue({
         hasModifiers: true,
         modifiers: mockModifiers,
       });
@@ -1010,7 +1010,7 @@ describe("Product Components", () => {
       vi.restoreAllMocks();
     });
 
-    it("should render modifier repeater with children for each modifier", () => {
+    it('should render modifier repeater with children for each modifier', () => {
       render(
         <Product.ModifierOptionRepeater>
           <div data-testid="modifier-content">Modifier item</div>
@@ -1018,12 +1018,12 @@ describe("Product Components", () => {
       );
 
       // Should render Option.Root for each modifier
-      const modifierContents = screen.getAllByTestId("modifier-content");
+      const modifierContents = screen.getAllByTestId('modifier-content');
       expect(modifierContents).toHaveLength(2);
     });
 
-    it("should not render when no modifiers exist", () => {
-      vi.spyOn(React, "useContext").mockReturnValue({
+    it('should not render when no modifiers exist', () => {
+      vi.spyOn(React, 'useContext').mockReturnValue({
         hasModifiers: false,
         modifiers: [],
       });
@@ -1034,10 +1034,10 @@ describe("Product Components", () => {
         </Product.ModifierOptionRepeater>,
       );
 
-      expect(screen.queryByTestId("modifier-content")).not.toBeInTheDocument();
+      expect(screen.queryByTestId('modifier-content')).not.toBeInTheDocument();
     });
 
-    it("should pass correct modifier data to Option.Root", () => {
+    it('should pass correct modifier data to Option.Root', () => {
       // We'll need to spy on Option.Root to verify props
       // This would require importing Option and mocking it
       render(
@@ -1047,27 +1047,27 @@ describe("Product Components", () => {
       );
 
       // Verify that modifiers are rendered
-      const modifierContents = screen.getAllByTestId("modifier-content");
+      const modifierContents = screen.getAllByTestId('modifier-content');
       expect(modifierContents).toHaveLength(2);
     });
 
-    it("should handle different modifier types correctly", () => {
+    it('should handle different modifier types correctly', () => {
       const mixedModifiers = [
         {
-          name: "Color Modifier",
-          id: "color-mod",
+          name: 'Color Modifier',
+          id: 'color-mod',
           mandatory: false,
-          choices: [{ name: "Red", colorCode: "#ff0000" }],
+          choices: [{ name: 'Red', colorCode: '#ff0000' }],
         },
         {
-          name: "Free Text Modifier",
-          id: "text-mod",
+          name: 'Free Text Modifier',
+          id: 'text-mod',
           mandatory: true,
-          type: "free-text",
+          type: 'free-text',
         },
       ];
 
-      vi.spyOn(React, "useContext").mockReturnValue({
+      vi.spyOn(React, 'useContext').mockReturnValue({
         hasModifiers: true,
         modifiers: mixedModifiers,
       });
@@ -1078,12 +1078,12 @@ describe("Product Components", () => {
         </Product.ModifierOptionRepeater>,
       );
 
-      const modifierContents = screen.getAllByTestId("modifier-content");
+      const modifierContents = screen.getAllByTestId('modifier-content');
       expect(modifierContents).toHaveLength(2);
     });
 
-    it("should pass allowedTypes prop to Option.Root", () => {
-      const allowedTypes = ["color", "text"];
+    it('should pass allowedTypes prop to Option.Root', () => {
+      const allowedTypes = ['color', 'text'];
 
       render(
         <Product.ModifierOptionRepeater allowedTypes={allowedTypes}>
@@ -1092,14 +1092,14 @@ describe("Product Components", () => {
       );
 
       // Verify that modifiers are rendered with allowedTypes
-      const modifierContents = screen.getAllByTestId("modifier-content");
+      const modifierContents = screen.getAllByTestId('modifier-content');
       expect(modifierContents).toHaveLength(2);
 
       // Note: We can't easily verify the allowedTypes prop is passed to Option.Root
       // without mocking Option.Root, but the integration test above covers this
     });
 
-    it("should handle empty allowedTypes array", () => {
+    it('should handle empty allowedTypes array', () => {
       render(
         <Product.ModifierOptionRepeater allowedTypes={[]}>
           <div data-testid="modifier-content">Should not render</div>
@@ -1107,11 +1107,11 @@ describe("Product Components", () => {
       );
 
       // Should still render modifiers, but the Option.ChoiceRepeater should filter out all choices
-      const modifierContents = screen.getAllByTestId("modifier-content");
+      const modifierContents = screen.getAllByTestId('modifier-content');
       expect(modifierContents).toHaveLength(2); // Modifiers render, but choices will be filtered
     });
 
-    it("should use default allowedTypes when prop not provided", () => {
+    it('should use default allowedTypes when prop not provided', () => {
       render(
         <Product.ModifierOptionRepeater>
           <div data-testid="modifier-content">Modifier item</div>
@@ -1119,13 +1119,13 @@ describe("Product Components", () => {
       );
 
       // Should render all modifiers with default allowedTypes
-      const modifierContents = screen.getAllByTestId("modifier-content");
+      const modifierContents = screen.getAllByTestId('modifier-content');
       expect(modifierContents).toHaveLength(2);
     });
   });
 
-  describe("Integration Tests", () => {
-    it("should work together in a complete product display", () => {
+  describe('Integration Tests', () => {
+    it('should work together in a complete product display', () => {
       render(
         <Product.Root product={mockProduct}>
           <div className="product-layout">
@@ -1147,23 +1147,23 @@ describe("Product Components", () => {
       );
 
       // Verify all components render together
-      expect(screen.getByTestId("product-root")).toBeInTheDocument();
-      expect(screen.getByTestId("product-name")).toBeInTheDocument();
-      expect(screen.getByTestId("product-description")).toBeInTheDocument();
-      expect(screen.getByTestId("product-price")).toBeInTheDocument();
+      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+      expect(screen.getByTestId('product-name')).toBeInTheDocument();
+      expect(screen.getByTestId('product-description')).toBeInTheDocument();
+      expect(screen.getByTestId('product-price')).toBeInTheDocument();
       expect(
-        screen.getByTestId("product-compare-at-price"),
+        screen.getByTestId('product-compare-at-price'),
       ).toBeInTheDocument();
-      expect(screen.getByTestId("product-variants")).toBeInTheDocument();
-      expect(screen.getByTestId("product-variant-options")).toBeInTheDocument();
+      expect(screen.getByTestId('product-variants')).toBeInTheDocument();
+      expect(screen.getByTestId('product-variant-options')).toBeInTheDocument();
 
       // Verify content
-      expect(screen.getByText("Test Product Name")).toBeInTheDocument();
-      expect(screen.getByText("$29.99")).toBeInTheDocument();
-      expect(screen.getByText("$39.99")).toBeInTheDocument();
+      expect(screen.getByText('Test Product Name')).toBeInTheDocument();
+      expect(screen.getByText('$29.99')).toBeInTheDocument();
+      expect(screen.getByText('$39.99')).toBeInTheDocument();
     });
 
-    it("should handle asChild patterns across multiple components", () => {
+    it('should handle asChild patterns across multiple components', () => {
       render(
         <Product.Root product={mockProduct}>
           <Product.Name asChild>
@@ -1188,25 +1188,25 @@ describe("Product Components", () => {
       );
 
       // Verify all components use their custom elements
-      const title = screen.getByTestId("product-name");
-      const price = screen.getByTestId("product-price");
-      const compare = screen.getByTestId("product-compare-at-price");
-      const variants = screen.getByTestId("product-variants");
+      const title = screen.getByTestId('product-name');
+      const price = screen.getByTestId('product-price');
+      const compare = screen.getByTestId('product-compare-at-price');
+      const variants = screen.getByTestId('product-variants');
 
-      expect(title.tagName).toBe("H1");
-      expect(title).toHaveClass("custom-title");
+      expect(title.tagName).toBe('H1');
+      expect(title).toHaveClass('custom-title');
 
-      expect(price.tagName).toBe("SPAN");
-      expect(price).toHaveClass("custom-price");
+      expect(price.tagName).toBe('SPAN');
+      expect(price).toHaveClass('custom-price');
 
-      expect(compare.tagName).toBe("DEL");
-      expect(compare).toHaveClass("custom-compare");
+      expect(compare.tagName).toBe('DEL');
+      expect(compare).toHaveClass('custom-compare');
 
-      expect(variants.tagName).toBe("SECTION");
-      expect(variants).toHaveClass("custom-variants");
+      expect(variants.tagName).toBe('SECTION');
+      expect(variants).toHaveClass('custom-variants');
     });
 
-    it("should work together with modifiers in a complete product display", () => {
+    it('should work together with modifiers in a complete product display', () => {
       render(
         <Product.Root product={mockProduct}>
           <div className="product-layout">
@@ -1235,33 +1235,33 @@ describe("Product Components", () => {
       );
 
       // Verify all components render together
-      expect(screen.getByTestId("product-root")).toBeInTheDocument();
-      expect(screen.getByTestId("product-name")).toBeInTheDocument();
-      expect(screen.getByTestId("product-description")).toBeInTheDocument();
-      expect(screen.getByTestId("product-price")).toBeInTheDocument();
+      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+      expect(screen.getByTestId('product-name')).toBeInTheDocument();
+      expect(screen.getByTestId('product-description')).toBeInTheDocument();
+      expect(screen.getByTestId('product-price')).toBeInTheDocument();
       expect(
-        screen.getByTestId("product-compare-at-price"),
+        screen.getByTestId('product-compare-at-price'),
       ).toBeInTheDocument();
-      expect(screen.getByTestId("product-variants")).toBeInTheDocument();
-      expect(screen.getByTestId("product-variant-options")).toBeInTheDocument();
-      expect(screen.getByTestId("product-modifiers")).toBeInTheDocument();
+      expect(screen.getByTestId('product-variants')).toBeInTheDocument();
+      expect(screen.getByTestId('product-variant-options')).toBeInTheDocument();
+      expect(screen.getByTestId('product-modifiers')).toBeInTheDocument();
       expect(
-        screen.getByTestId("product-modifier-options"),
+        screen.getByTestId('product-modifier-options'),
       ).toBeInTheDocument();
 
       // Verify content
-      expect(screen.getByText("Test Product Name")).toBeInTheDocument();
-      expect(screen.getByText("$29.99")).toBeInTheDocument();
-      expect(screen.getByText("$39.99")).toBeInTheDocument();
+      expect(screen.getByText('Test Product Name')).toBeInTheDocument();
+      expect(screen.getByText('$29.99')).toBeInTheDocument();
+      expect(screen.getByText('$39.99')).toBeInTheDocument();
 
       // Verify both variants and modifiers render
-      const variantOptions = screen.getAllByTestId("variant-option");
-      const modifierOptions = screen.getAllByTestId("modifier-option");
+      const variantOptions = screen.getAllByTestId('variant-option');
+      const modifierOptions = screen.getAllByTestId('modifier-option');
       expect(variantOptions).toHaveLength(2); // From mock
       expect(modifierOptions).toHaveLength(2); // From mock
     });
 
-    it("should handle modifier-only product (no variants)", () => {
+    it('should handle modifier-only product (no variants)', () => {
       // Mock no variants available
       vi.mocked(ProductVariantSelector.Options).mockImplementationOnce(
         ({ children }) =>
@@ -1292,16 +1292,16 @@ describe("Product Components", () => {
       );
 
       // Variants should not render
-      expect(screen.queryByTestId("product-variants")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("variant-option")).not.toBeInTheDocument();
+      expect(screen.queryByTestId('product-variants')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('variant-option')).not.toBeInTheDocument();
 
       // But modifiers should still render
-      expect(screen.getByTestId("product-modifiers")).toBeInTheDocument();
-      const modifierOptions = screen.getAllByTestId("modifier-option");
+      expect(screen.getByTestId('product-modifiers')).toBeInTheDocument();
+      const modifierOptions = screen.getAllByTestId('modifier-option');
       expect(modifierOptions).toHaveLength(2);
     });
 
-    it("should handle variant-only product (no modifiers)", () => {
+    it('should handle variant-only product (no modifiers)', () => {
       // Mock no modifiers available
       vi.mocked(ProductModifiers.Modifiers).mockImplementationOnce(
         ({ children }) =>
@@ -1333,34 +1333,34 @@ describe("Product Components", () => {
       );
 
       // Variants should render
-      expect(screen.getByTestId("product-variants")).toBeInTheDocument();
-      const variantOptions = screen.getAllByTestId("variant-option");
+      expect(screen.getByTestId('product-variants')).toBeInTheDocument();
+      const variantOptions = screen.getAllByTestId('variant-option');
       expect(variantOptions).toHaveLength(2);
 
       // But modifiers should not render
-      expect(screen.queryByTestId("product-modifiers")).not.toBeInTheDocument();
-      expect(screen.queryByTestId("modifier-option")).not.toBeInTheDocument();
+      expect(screen.queryByTestId('product-modifiers')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('modifier-option')).not.toBeInTheDocument();
     });
   });
 
-  describe("Type Safety and Props", () => {
-    it("should accept correct AsChildProps interface", () => {
+  describe('Type Safety and Props', () => {
+    it('should accept correct AsChildProps interface', () => {
       // This test verifies TypeScript compilation - no runtime assertions needed
       const nameProps: Product.NameProps = {
         asChild: true,
         children: React.forwardRef(({ name }, ref) => (
           <h1 ref={ref}>{name}</h1>
         )),
-        className: "test-class",
+        className: 'test-class',
       };
 
       const descProps: Product.DescriptionProps = {
         asChild: true,
-        as: "html",
+        as: 'html',
         children: React.forwardRef(({ description }, ref) => (
           <div ref={ref} dangerouslySetInnerHTML={{ __html: description }} />
         )),
-        className: "desc-class",
+        className: 'desc-class',
       };
 
       const priceProps: Product.PriceProps = {
@@ -1368,7 +1368,7 @@ describe("Product Components", () => {
         children: React.forwardRef(({ formattedPrice }, ref) => (
           <span ref={ref}>{formattedPrice}</span>
         )),
-        className: "price-class",
+        className: 'price-class',
       };
 
       const variantsProps: Product.VariantsProps = {

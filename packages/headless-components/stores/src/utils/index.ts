@@ -1,7 +1,7 @@
-import { checkout } from "@wix/ecom";
-import { redirects } from "@wix/redirects";
+import { checkout } from '@wix/ecom';
+import { redirects } from '@wix/redirects';
 
-const CATLOG_APP_ID_V3 = "215238eb-22a5-4c36-9e7b-e7c08025e04e";
+const CATLOG_APP_ID_V3 = '215238eb-22a5-4c36-9e7b-e7c08025e04e';
 
 export async function getCheckoutUrlForProduct(
   productId: string,
@@ -24,7 +24,7 @@ export async function getCheckoutUrlForProduct(
   });
 
   if (!checkoutResult._id) {
-    throw new Error("Failed to create checkout");
+    throw new Error('Failed to create checkout');
   }
 
   const { redirectSession } = await redirects.createRedirectSession({
@@ -37,4 +37,4 @@ export async function getCheckoutUrlForProduct(
   return redirectSession?.fullUrl!;
 }
 
-export * from "./renderAsChild.js";
+export * from './renderAsChild.js';

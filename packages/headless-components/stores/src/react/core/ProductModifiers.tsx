@@ -1,16 +1,16 @@
-import { useState } from "react";
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import { useState } from 'react';
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   ProductModifiersServiceDefinition,
   ProductModifiersService,
-} from "../../services/product-modifiers-service.js";
+} from '../../services/product-modifiers-service.js';
 import {
   ModifierRenderType,
   type ConnectedModifier,
   type ConnectedModifierChoice,
-} from "@wix/auto_sdk_stores_products-v-3";
-import { createServicesMap } from "@wix/services-manager";
+} from '@wix/auto_sdk_stores_products-v-3';
+import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -294,7 +294,7 @@ export function Modifier(props: ModifierProps) {
   const modifiersService = useModifiersService();
   const { modifier } = props;
 
-  const name = modifier.name || "";
+  const name = modifier.name || '';
   const type = modifier.modifierRenderType;
   const mandatory = modifier.mandatory || false;
   const choices = modifier.choicesSettings?.choices || [];
@@ -385,16 +385,16 @@ export function Choice(props: ChoiceProps) {
   const modifiersService = useModifiersService();
   const { modifier, choice } = props;
 
-  const modifierName = modifier.name || "";
+  const modifierName = modifier.name || '';
   const renderType = modifier.modifierRenderType;
 
   // For TEXT_CHOICES, use choice.key; for SWATCH_CHOICES, use choice.name
   const choiceValue =
     renderType === ModifierRenderType.TEXT_CHOICES
-      ? (choice as any).key || choice.name || ""
-      : choice.name || "";
+      ? (choice as any).key || choice.name || ''
+      : choice.name || '';
 
-  const value = choice.name || ""; // Display name is always choice.name
+  const value = choice.name || ''; // Display name is always choice.name
   const description = (choice as any).description;
   const colorCode = (choice as any).colorCode;
 
@@ -487,14 +487,14 @@ export function FreeText(props: FreeTextProps) {
   const modifiersService = useModifiersService();
   const { modifier } = props;
 
-  const modifierName = modifier.name || "";
+  const modifierName = modifier.name || '';
   const mandatory = modifier.mandatory || false;
   const freeTextSettings = modifier.freeTextSettings;
   const maxChars = (freeTextSettings as any)?.maxLength;
   const placeholder = (freeTextSettings as any)?.placeholder;
 
   const selectedValue = modifiersService?.getModifierValue(modifierName);
-  const value = selectedValue?.freeTextValue || "";
+  const value = selectedValue?.freeTextValue || '';
   const charCount = value.length;
   const isOverLimit = maxChars ? charCount > maxChars : false;
 
@@ -585,7 +585,7 @@ export function ToggleFreeText(props: ToggleFreeTextProps) {
   const modifiersService = useModifiersService();
   const { modifier } = props;
 
-  const modifierName = modifier.name || "";
+  const modifierName = modifier.name || '';
   const mandatory = modifier.mandatory || false;
   const [isTextInputShown, setIsTextInputShown] = useState(mandatory);
 

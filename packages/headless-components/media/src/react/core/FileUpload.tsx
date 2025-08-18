@@ -1,19 +1,18 @@
-import React from "react";
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import React from 'react';
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   FileUploadServiceDefinition,
   FileUploadService,
   type UploadState,
-} from "../../services/index.js";
-import { FileUploadServiceConfig } from "../../services/file-upload-service.js";
-import { createServicesMap } from "@wix/services-manager";
+} from '../../services/index.js';
+import { FileUploadServiceConfig } from '../../services/file-upload-service.js';
+import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
   children: React.ReactNode;
   fileUploadServiceConfig: FileUploadServiceConfig;
 }
-
 
 /**
  * Root component that provides the FileUpload service context to its children.
@@ -274,11 +273,11 @@ export const UploadProgress = (props: UploadProgressProps) => {
 
   return props.children({
     uploadState,
-    isLoading: uploadState.type === "loading",
-    isSuccess: uploadState.type === "success",
-    isError: uploadState.type === "error",
-    hasError: uploadState.type === "error",
-    hasMessage: uploadState.message !== "",
+    isLoading: uploadState.type === 'loading',
+    isSuccess: uploadState.type === 'success',
+    isError: uploadState.type === 'error',
+    hasError: uploadState.type === 'error',
+    hasMessage: uploadState.message !== '',
   });
 };
 
@@ -335,8 +334,8 @@ export const UploadTrigger = (props: UploadTriggerProps) => {
   const selectedFile = service.selectedFile.get();
   const uploadState = service.uploadState.get();
 
-  const canUpload = selectedFile !== null && uploadState.type !== "loading";
-  const isUploading = uploadState.type === "loading";
+  const canUpload = selectedFile !== null && uploadState.type !== 'loading';
+  const isUploading = uploadState.type === 'loading';
 
   return props.children({
     uploadFile: service.uploadFile,
@@ -419,11 +418,11 @@ export const FilePreview = (props: FilePreviewProps) => {
   const hasPreview = previewUrl !== null;
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return props.children({
@@ -431,10 +430,10 @@ export const FilePreview = (props: FilePreviewProps) => {
     previewUrl,
     hasPreview,
     canPreview,
-    fileName: selectedFile?.name || "",
+    fileName: selectedFile?.name || '',
     fileSize: selectedFile?.size || 0,
-    formattedFileSize: selectedFile ? formatFileSize(selectedFile.size) : "",
-    fileType: selectedFile?.type || "",
+    formattedFileSize: selectedFile ? formatFileSize(selectedFile.size) : '',
+    fileType: selectedFile?.type || '',
   });
 };
 

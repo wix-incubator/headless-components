@@ -1,9 +1,9 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
-import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
+} from '@wix/services-definitions/core-services/signals';
+import * as productsV3 from '@wix/auto_sdk_stores_products-v-3';
 
 /**
  * API interface for the Product service, providing reactive product data management.
@@ -29,7 +29,7 @@ export interface ProductServiceAPI {
  * @constant
  */
 export const ProductServiceDefinition =
-  defineService<ProductServiceAPI>("product");
+  defineService<ProductServiceAPI>('product');
 
 /**
  * Configuration interface required to initialize the ProductService.
@@ -96,7 +96,7 @@ export const ProductService =
         const productResponse = await loadProductBySlug(slug!);
 
         if (!productResponse.product) {
-          error.set("Product not found");
+          error.set('Product not found');
         } else {
           product.set(productResponse.product!);
           error.set(null);
@@ -126,7 +126,7 @@ export const ProductService =
  */
 export interface SuccessProductServiceConfigResult {
   /** Type "success" means that the product was found and the config is valid */
-  type: "success";
+  type: 'success';
   /** The product config containing the loaded product data */
   config: ProductServiceConfig;
 }
@@ -139,7 +139,7 @@ export interface SuccessProductServiceConfigResult {
  */
 export interface NotFoundProductServiceConfigResult {
   /** Type "notFound" means that the product was not found */
-  type: "notFound";
+  type: 'notFound';
 }
 
 /**
@@ -153,16 +153,16 @@ export interface NotFoundProductServiceConfigResult {
 const loadProductBySlug = async (slug: string) => {
   const productResponse = await productsV3.getProductBySlug(slug, {
     fields: [
-      "DESCRIPTION" as any,
-      "DIRECT_CATEGORIES_INFO" as any,
-      "BREADCRUMBS_INFO" as any,
-      "INFO_SECTION" as any,
-      "MEDIA_ITEMS_INFO" as any,
-      "PLAIN_DESCRIPTION" as any,
-      "THUMBNAIL" as any,
-      "URL" as any,
-      "VARIANT_OPTION_CHOICE_NAMES" as any,
-      "WEIGHT_MEASUREMENT_UNIT_INFO" as any,
+      'DESCRIPTION' as any,
+      'DIRECT_CATEGORIES_INFO' as any,
+      'BREADCRUMBS_INFO' as any,
+      'INFO_SECTION' as any,
+      'MEDIA_ITEMS_INFO' as any,
+      'PLAIN_DESCRIPTION' as any,
+      'THUMBNAIL' as any,
+      'URL' as any,
+      'VARIANT_OPTION_CHOICE_NAMES' as any,
+      'WEIGHT_MEASUREMENT_UNIT_INFO' as any,
     ],
   });
 
@@ -255,17 +255,17 @@ export async function loadProductServiceConfig(
     const productResponse = await loadProductBySlug(productSlug);
 
     if (!productResponse.product) {
-      return { type: "notFound" };
+      return { type: 'notFound' };
     }
 
     return {
-      type: "success",
+      type: 'success',
       config: {
         product: productResponse.product!,
       },
     };
   } catch (error) {
     console.error(`Failed to load product for slug "${productSlug}":`, error);
-    return { type: "notFound" };
+    return { type: 'notFound' };
   }
 }

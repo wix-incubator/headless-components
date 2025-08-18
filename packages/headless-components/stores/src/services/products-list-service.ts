@@ -1,11 +1,14 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
-import { productsV3, readOnlyVariantsV3 } from "@wix/stores";
-import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
-import { parseUrlToSearchOptions, type InitialSearchState } from "./products-list-search-service.js";
+} from '@wix/services-definitions/core-services/signals';
+import { productsV3, readOnlyVariantsV3 } from '@wix/stores';
+import { loadCategoriesListServiceConfig } from './categories-list-service.js';
+import {
+  parseUrlToSearchOptions,
+  type InitialSearchState,
+} from './products-list-search-service.js';
 
 export const DEFAULT_QUERY_LIMIT = 100;
 
@@ -123,7 +126,7 @@ export type ProductsListServiceConfig = {
  * }
  * ```
  *
-  * @example
+ * @example
  * ```tsx
  * // Advanced: Performance optimization when using both services
  * import { parseUrlToSearchOptions, loadProductsListServiceConfig, loadProductsListSearchServiceConfig, loadCategoriesListServiceConfig } from '@wix/stores/services';
@@ -139,7 +142,12 @@ export type ProductsListServiceConfig = {
  * ```
  */
 export async function loadProductsListServiceConfig(
-  input: string | { searchOptions: productsV3.V3ProductSearch; initialSearchState: InitialSearchState },
+  input:
+    | string
+    | {
+        searchOptions: productsV3.V3ProductSearch;
+        initialSearchState: InitialSearchState;
+      },
 ): Promise<ProductsListServiceConfig> {
   let searchOptions: productsV3.V3ProductSearch;
 
@@ -148,7 +156,7 @@ export async function loadProductsListServiceConfig(
     const categoriesListConfig = await loadCategoriesListServiceConfig();
     const { searchOptions: parsedOptions } = await parseUrlToSearchOptions(
       input,
-      categoriesListConfig.categories
+      categoriesListConfig.categories,
     );
     searchOptions = parsedOptions;
   } else {
@@ -229,7 +237,7 @@ const fetchMissingVariants = async (
 
     const res = await readOnlyVariantsV3
       .queryVariants({})
-      .in("productData.productId", productIds)
+      .in('productData.productId', productIds)
       .limit(DEFAULT_QUERY_LIMIT)
       .find();
 
@@ -251,14 +259,14 @@ const fetchMissingVariants = async (
         }
         variantsByProductId.get(productId)!.push({
           ...item,
-          choices: item.optionChoices as productsV3.Variant["choices"],
+          choices: item.optionChoices as productsV3.Variant['choices'],
         });
       }
     });
 
     // Update products with their variants
     return products.map((product) => {
-      const variants = variantsByProductId.get(product._id || "");
+      const variants = variantsByProductId.get(product._id || '');
       if (variants && variants.length > 0) {
         return {
           ...product,
@@ -271,7 +279,7 @@ const fetchMissingVariants = async (
       return product;
     });
   } catch (error) {
-    console.error("Failed to fetch missing variants:", error);
+    console.error('Failed to fetch missing variants:', error);
     return products;
   }
 };
@@ -299,12 +307,12 @@ export const ProductsListServiceDefinition = defineService<
     /** Function to update search options and trigger a new search */
     setSearchOptions: (searchOptions: productsV3.V3ProductSearch) => void;
     /** Function to update only the sort part of search options */
-    setSort: (sort: productsV3.V3ProductSearch["sort"]) => void;
+    setSort: (sort: productsV3.V3ProductSearch['sort']) => void;
     /** Function to update only the filter part of search options */
-    setFilter: (filter: productsV3.V3ProductSearch["filter"]) => void;
+    setFilter: (filter: productsV3.V3ProductSearch['filter']) => void;
   },
   ProductsListServiceConfig
->("products-list");
+>('products-list');
 
 /**
  * Implementation of the Products List service that manages reactive products data.
@@ -383,7 +391,7 @@ export const ProductListService =
       const isLoadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
 
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         signalsService.effect(async () => {
           // CRITICAL: Read the signals FIRST to establish dependencies, even on first run
           const searchOptions = searchOptionsSignal.get();
@@ -413,7 +421,7 @@ export const ProductListService =
             pagingMetadataSignal.set(result.pagingMetadata!);
           } catch (error) {
             errorSignal.set(
-              error instanceof Error ? error.message : "Unknown error",
+              error instanceof Error ? error.message : 'Unknown error',
             );
           } finally {
             isLoadingSignal.set(false);
@@ -430,14 +438,14 @@ export const ProductListService =
         aggregations: aggregationsSignal,
         setSearchOptions: (searchOptions: productsV3.V3ProductSearch) =>
           searchOptionsSignal.set(searchOptions),
-        setSort: (sort: productsV3.V3ProductSearch["sort"]) => {
+        setSort: (sort: productsV3.V3ProductSearch['sort']) => {
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,
             sort,
           });
         },
-        setFilter: (filter: productsV3.V3ProductSearch["filter"]) => {
+        setFilter: (filter: productsV3.V3ProductSearch['filter']) => {
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,

@@ -1,12 +1,12 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
-import * as checkout from "@wix/auto_sdk_ecom_checkout";
-import { redirects } from "@wix/redirects";
+} from '@wix/services-definitions/core-services/signals';
+import * as checkout from '@wix/auto_sdk_ecom_checkout';
+import { redirects } from '@wix/redirects';
 
-export { ChannelType } from "@wix/auto_sdk_ecom_checkout";
+export { ChannelType } from '@wix/auto_sdk_ecom_checkout';
 
 export type LineItem = checkout.LineItem;
 
@@ -21,7 +21,7 @@ export interface CheckoutServiceAPI {
 }
 
 export const CheckoutServiceDefinition =
-  defineService<CheckoutServiceAPI>("checkout");
+  defineService<CheckoutServiceAPI>('checkout');
 
 /**
  * Configuration options for the Checkout service
@@ -51,7 +51,7 @@ export const CheckoutService =
           });
 
           if (!checkoutResult._id) {
-            throw new Error("Failed to create checkout");
+            throw new Error('Failed to create checkout');
           }
 
           const { redirectSession } = await redirects.createRedirectSession({
@@ -59,20 +59,20 @@ export const CheckoutService =
             callbacks: {
               postFlowUrl:
                 config.postFlowUrl ||
-                (typeof window !== "undefined" ? window.location.href : ""),
+                (typeof window !== 'undefined' ? window.location.href : ''),
             },
           });
 
           if (redirectSession?.fullUrl) {
-            if (typeof window !== "undefined") {
+            if (typeof window !== 'undefined') {
               window.location.href = redirectSession.fullUrl;
             }
           } else {
-            throw new Error("Failed to create redirect session");
+            throw new Error('Failed to create redirect session');
           }
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to create checkout",
+            err instanceof Error ? err.message : 'Failed to create checkout',
           );
         } finally {
           isLoading.set(false);
