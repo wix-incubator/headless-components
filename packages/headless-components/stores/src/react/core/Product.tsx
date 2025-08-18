@@ -241,3 +241,53 @@ export function Loading(props: LoadingProps) {
     isLoading,
   });
 }
+
+/**
+ * Props for ProductSlug headless component
+ */
+export interface ProductSlugProps {
+  /** Render prop function that receives product slug data */
+  children: (props: ProductSlugRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProductSlug component
+ */
+export interface ProductSlugRenderProps {
+  /** Product slug */
+  slug: string;
+}
+
+/**
+ * Headless component for product slug display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductSlugDisplay() {
+ *   return (
+ *     <Product.Slug>
+ *       {({ slug }) => (
+ *         <a href={`/product/${slug}`}>
+ *           View Product
+ *         </a>
+ *       )}
+ *     </Product.Slug>
+ *   );
+ * }
+ * ```
+ */
+export function Slug(props: ProductSlugProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const product = service.product.get();
+  const slug = product.slug!;
+
+  return props.children({
+    slug,
+  });
+}

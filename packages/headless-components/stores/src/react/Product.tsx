@@ -62,6 +62,7 @@ enum TestIds {
   productDescription = 'product-description',
   productPrice = 'product-price',
   productCompareAtPrice = 'product-compare-at-price',
+  productSlug = 'product-slug',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
@@ -413,6 +414,68 @@ export const CompareAtPrice = React.forwardRef<
         );
       }}
     </SelectedVariant.Price>
+  );
+});
+
+/**
+ * Props for Slug component
+ * @interface SlugProps
+ */
+export interface SlugProps extends AsChildProps<{ slug: string }> {}
+
+/**
+ * Product Slug component that displays the product's slug
+ *
+ * @component
+ * @order 6
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductSlugLink() {
+ *   return (
+ *     <Product.Slug>
+ *       {({ slug }) => (
+ *         <a href={`/product/${slug}`}>
+ *           View Product Details
+ *         </a>
+ *       )}
+ *     </Product.Slug>
+ *   );
+ * }
+ * ```
+ */
+export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
+  const { asChild, children } = props;
+  const testId = TestIds.productSlug;
+
+  return (
+    <CoreProduct.Slug>
+      {({ slug }) => {
+        const attributes = {
+          'data-testid': testId,
+        };
+
+        const slugData = { slug };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: slugData,
+            ref,
+            content: slug,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        return (
+          <span {...attributes} ref={ref}>
+            {slug}
+          </span>
+        );
+      }}
+    </CoreProduct.Slug>
   );
 });
 

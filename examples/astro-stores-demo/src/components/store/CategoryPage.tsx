@@ -300,7 +300,7 @@ export const ProductGridContent = ({
 
   return (
     <div className="min-h-screen">
-      <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
+      {/* <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
         <div className="flex items-top justify-between">
           <ProductListFiltersPrimitive.CategoryFilter>
             {({ selectedCategory, setSelectedCategory }) => (
@@ -313,7 +313,7 @@ export const ProductGridContent = ({
           </ProductListFiltersPrimitive.CategoryFilter>
           <SortDropdown />
         </div>
-      </div>
+      </div> */}
 
       {/* Main Layout with Sidebar and Content */}
 
@@ -470,9 +470,13 @@ export const ProductGridContent = ({
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               <ProductList.ProductRepeater>
-                <ProductPrimitive.Content>
-                  {({ product }) => <ProductItem product={product} />}
-                </ProductPrimitive.Content>
+                <Product.Slug asChild>
+                  {({ slug }) => (
+                    <a data-testid="title-navigation" href={`/${slug}`}>
+                      <Product.Name className="text-content-primary font-semibold mb-2 line-clamp-2" />
+                    </a>
+                  )}
+                </Product.Slug>
               </ProductList.ProductRepeater>
             </div>
           </ProductList.Products>
@@ -480,7 +484,7 @@ export const ProductGridContent = ({
       </div>
 
       {/* Quick View Modal */}
-      {quickViewProduct && (
+      {/* {quickViewProduct && (
         <ProductPrimitive.Root
           productServiceConfig={{ productSlug: quickViewProduct.slug! }}
         >
@@ -499,7 +503,7 @@ export const ProductGridContent = ({
             )}
           </ProductPrimitive.Loading>
         </ProductPrimitive.Root>
-      )}
+      )} */}
     </div>
   );
 };
