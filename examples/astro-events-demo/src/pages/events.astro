@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EventsPage from '../react-pages/events';
+---
+
+<BaseLayout>
+  <title>Events</title>
+  <meta name="description" content="Events" />
+
+  <EventsPage client:load slot="body" />
+</BaseLayout>

@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
-    "@wix/events": "^1.0.590",
+    "@wix/events": "^1.0.591",
     "@wix/redirects": "^1.0.83",
     "@wix/sdk": "^1.15.24",
     "@wix/services-definitions": "^0.1.4",
