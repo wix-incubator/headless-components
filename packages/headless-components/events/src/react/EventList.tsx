@@ -1,19 +1,19 @@
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import { AsChildProps, useAsChild } from '../utils/asChild.js';
+import { type AsChildProps, useAsChild } from '../utils/asChild.js';
 import {
   EventListService,
-  EventListServiceConfig,
   EventListServiceDefinition,
+  type EventListServiceConfig,
 } from '../services/event-list-service.js';
-import { wixEventsV2 } from '@wix/events';
+import { type Event } from '../services/event-service.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
 }
 
 export interface EventListRootProps {
-  events?: wixEventsV2.Event[];
+  events?: Event[];
   children: React.ReactNode;
 }
 

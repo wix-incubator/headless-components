@@ -3,14 +3,14 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { wixEventsV2 } from '@wix/events';
+import { type Event } from './event-service.js';
 
 export interface EventListServiceAPI {
-  events: Signal<wixEventsV2.Event[]>;
+  events: Signal<Event[]>;
 }
 
 export interface EventListServiceConfig {
-  events: wixEventsV2.Event[];
+  events: Event[];
 }
 
 export const EventListServiceDefinition = defineService<
@@ -24,9 +24,7 @@ export const EventListService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const events: Signal<wixEventsV2.Event[]> = signalsService.signal(
-        config.events,
-      );
+      const events: Signal<Event[]> = signalsService.signal(config.events);
 
       return {
         events,
