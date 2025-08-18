@@ -1,13 +1,13 @@
-import React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import * as CoreCategoryList from "./core/CategoryList.js";
-import * as Category from "./Category.js";
-import { type Category as CategoryType } from "../services/category-service.js";
-import { type CategoriesListServiceConfig } from "../services/categories-list-service.js";
+import React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import * as CoreCategoryList from './core/CategoryList.js';
+import * as Category from './Category.js';
+import { type Category as CategoryType } from '../services/category-service.js';
+import { type CategoriesListServiceConfig } from '../services/categories-list-service.js';
 
 enum TestIds {
-  categoryListRoot = "category-list",
-  categoryRepeater = "category-repeater",
+  categoryListRoot = 'category-list',
+  categoryRepeater = 'category-repeater',
 }
 
 /**
@@ -76,7 +76,8 @@ export function Root(props: CategoryListRootProps): React.ReactNode {
   const { categories, categoriesListConfig, children, emptyState } = props;
 
   // Create service config, prioritizing categoriesListConfig, then categories prop
-  const serviceConfig = categoriesListConfig || (categories ? { categories } : { categories: [] });
+  const serviceConfig =
+    categoriesListConfig || (categories ? { categories } : { categories: [] });
 
   return (
     <CoreCategoryList.Root
@@ -85,9 +86,7 @@ export function Root(props: CategoryListRootProps): React.ReactNode {
     >
       {children}
       {emptyState && (
-        <CoreCategoryList.EmptyState>
-          {emptyState}
-        </CoreCategoryList.EmptyState>
+        <CoreCategoryList.EmptyState>{emptyState}</CoreCategoryList.EmptyState>
       )}
     </CoreCategoryList.Root>
   );
@@ -111,10 +110,13 @@ export function Root(props: CategoryListRootProps): React.ReactNode {
  * }
  * ```
  */
-export const Loading = React.forwardRef<HTMLDivElement, CategoryListLoadingProps>((props, ref) => {
+export const Loading = React.forwardRef<
+  HTMLDivElement,
+  CategoryListLoadingProps
+>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const Comp = asChild && children ? Slot : "h1";
+  const Comp = asChild && children ? Slot : 'h1';
 
   return (
     <CoreCategoryList.Loading>
@@ -145,7 +147,10 @@ export const Loading = React.forwardRef<HTMLDivElement, CategoryListLoadingProps
  * }
  * ```
  */
-export const CategoryRepeater = React.forwardRef<HTMLDivElement, CategoryListCategoryRepeaterProps>((props) => {
+export const CategoryRepeater = React.forwardRef<
+  HTMLDivElement,
+  CategoryListCategoryRepeaterProps
+>((props) => {
   // const { children, asChild = false, className } = props;
   const { children } = props;
   // Note: maxDepth is not implemented yet as it depends on category hierarchy structure
@@ -154,7 +159,10 @@ export const CategoryRepeater = React.forwardRef<HTMLDivElement, CategoryListCat
     <CoreCategoryList.ItemContent>
       {({ category }) => {
         return (
-          <Category.Root key={category._id} categoryServiceConfig={{ category }}>
+          <Category.Root
+            key={category._id}
+            categoryServiceConfig={{ category }}
+          >
             {children}
           </Category.Root>
         );

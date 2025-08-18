@@ -1,17 +1,20 @@
-import React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import * as CoreCategory from "./core/Category.js";
-import { type Category } from "../services/category-service.js";
-import { type CategoryServiceConfig, CategoryServiceDefinition } from "../services/category-service.js";
-import { useService } from "@wix/services-manager-react";
-import { renderChildren } from "../utils/renderChildren.js";
+import React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import * as CoreCategory from './core/Category.js';
+import { type Category } from '../services/category-service.js';
+import {
+  type CategoryServiceConfig,
+  CategoryServiceDefinition,
+} from '../services/category-service.js';
+import { useService } from '@wix/services-manager-react';
+import { renderChildren } from '../utils/renderChildren.js';
 
 enum TestIds {
-  categoryItem = "category-item",
-  categoryTrigger = "category-trigger",
-  categoryLabel = "category-label",
-  categoryId = "category-id",
-  categoryRaw = "category-raw",
+  categoryItem = 'category-item',
+  categoryTrigger = 'category-trigger',
+  categoryLabel = 'category-label',
+  categoryId = 'category-id',
+  categoryRaw = 'category-raw',
 }
 
 /**
@@ -35,11 +38,16 @@ export interface CategoryTriggerProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode | React.ForwardRefRenderFunction<HTMLButtonElement, {
-    category: Category;
-    isSelected: boolean;
-    onSelect: () => void;
-  }>;
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          category: Category;
+          isSelected: boolean;
+          onSelect: () => void;
+        }
+      >;
   /** Callback when category is selected */
   onSelect?: (category: Category) => void;
   /** CSS classes to apply to the default element */
@@ -53,10 +61,15 @@ export interface CategoryLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode | React.ForwardRefRenderFunction<HTMLElement, {
-    name: string;
-    category: Category;
-  }>;
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          name: string;
+          category: Category;
+        }
+      >;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -68,10 +81,15 @@ export interface CategoryIDProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode | React.ForwardRefRenderFunction<HTMLElement, {
-    id: string;
-    category: Category;
-  }>;
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          id: string;
+          category: Category;
+        }
+      >;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -83,10 +101,15 @@ export interface CategoryRawProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode | React.ForwardRefRenderFunction<HTMLElement, {
-    category: Category;
-    isSelected: boolean;
-  }>;
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          category: Category;
+          isSelected: boolean;
+        }
+      >;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -113,7 +136,9 @@ export function Root(props: CategoryRootProps): React.ReactNode {
   const { category, categoryServiceConfig, isSelected, children } = props;
 
   if (!category && !categoryServiceConfig) {
-    throw new Error("Category.Root: category or categoryServiceConfig is required");
+    throw new Error(
+      'Category.Root: category or categoryServiceConfig is required',
+    );
   }
 
   const serviceConfig = categoryServiceConfig || {
@@ -157,7 +182,10 @@ export function Root(props: CategoryRootProps): React.ReactNode {
  * </Category.Trigger>
  * ```
  */
-export const Trigger = React.forwardRef<HTMLButtonElement, CategoryTriggerProps>((props, ref) => {
+export const Trigger = React.forwardRef<
+  HTMLButtonElement,
+  CategoryTriggerProps
+>((props, ref) => {
   const { asChild, children, onSelect, className } = props;
 
   const categoryService = useService(CategoryServiceDefinition);
@@ -170,7 +198,7 @@ export const Trigger = React.forwardRef<HTMLButtonElement, CategoryTriggerProps>
     }
   };
 
-  const Comp = asChild && children ? Slot : "button";
+  const Comp = asChild && children ? Slot : 'button';
 
   return (
     <Comp
@@ -178,10 +206,14 @@ export const Trigger = React.forwardRef<HTMLButtonElement, CategoryTriggerProps>
       className={className}
       onClick={handleSelect}
       data-testid={TestIds.categoryTrigger}
-      data-selected={isSelected ? "true" : "false"}
+      data-selected={isSelected ? 'true' : 'false'}
     >
-      {asChild && children ?
-        renderChildren({ children, props: { category, isSelected, onSelect: handleSelect }, ref })
+      {asChild && children
+        ? renderChildren({
+            children,
+            props: { category, isSelected, onSelect: handleSelect },
+            ref,
+          })
         : category.name}
     </Comp>
   );
@@ -212,34 +244,36 @@ export const Trigger = React.forwardRef<HTMLButtonElement, CategoryTriggerProps>
  * </Category.Label>
  * ```
  */
-export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>((props, ref) => {
-  const { asChild, children, className } = props;
+export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
 
-  const categoryService = useService(CategoryServiceDefinition);
-  const category = categoryService.category.get();
-  const isSelected = categoryService.isSelected.get();
+    const categoryService = useService(CategoryServiceDefinition);
+    const category = categoryService.category.get();
+    const isSelected = categoryService.isSelected.get();
 
-  return (
-    <CoreCategory.Name>
-      {({ name }) => {
-        const Comp = asChild && children ? Slot : "span";
+    return (
+      <CoreCategory.Name>
+        {({ name }) => {
+          const Comp = asChild && children ? Slot : 'span';
 
-        return (
-          <Comp
-            ref={ref}
-            className={className}
-            data-testid={TestIds.categoryLabel}
-            data-selected={isSelected ? "true" : "false"}
-          >
-            {asChild && children ?
-              renderChildren({ children, props: { name, category }, ref })
-              : name}
-          </Comp>
-        );
-      }}
-    </CoreCategory.Name>
-  );
-});
+          return (
+            <Comp
+              ref={ref}
+              className={className}
+              data-testid={TestIds.categoryLabel}
+              data-selected={isSelected ? 'true' : 'false'}
+            >
+              {asChild && children
+                ? renderChildren({ children, props: { name, category }, ref })
+                : name}
+            </Comp>
+          );
+        }}
+      </CoreCategory.Name>
+    );
+  },
+);
 
 /**
  * Provides access to the category ID for advanced use cases.
@@ -266,29 +300,31 @@ export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>((props, r
  * </Category.ID>
  * ```
  */
-export const ID = React.forwardRef<HTMLElement, CategoryIDProps>((props, ref) => {
-  const { asChild, children, className } = props;
+export const ID = React.forwardRef<HTMLElement, CategoryIDProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
 
-  const categoryService = useService(CategoryServiceDefinition);
-  const category = categoryService.category.get();
-  const isSelected = categoryService.isSelected.get();
-  const id = category._id || '';
+    const categoryService = useService(CategoryServiceDefinition);
+    const category = categoryService.category.get();
+    const isSelected = categoryService.isSelected.get();
+    const id = category._id || '';
 
-  const Comp = asChild && children ? Slot : "span";
+    const Comp = asChild && children ? Slot : 'span';
 
-  return (
-    <Comp
-      ref={ref}
-      className={className || "sr-only"}
-      data-testid={TestIds.categoryId}
-      data-selected={isSelected ? "true" : "false"}
-    >
-      {asChild && children ?
-        renderChildren({ children, props: { id, category }, ref })
-        : id}
-    </Comp>
-  );
-});
+    return (
+      <Comp
+        ref={ref}
+        className={className || 'sr-only'}
+        data-testid={TestIds.categoryId}
+        data-selected={isSelected ? 'true' : 'false'}
+      >
+        {asChild && children
+          ? renderChildren({ children, props: { id, category }, ref })
+          : id}
+      </Comp>
+    );
+  },
+);
 
 /**
  * Provides access to the full category data for advanced use cases.
@@ -312,25 +348,27 @@ export const ID = React.forwardRef<HTMLElement, CategoryIDProps>((props, ref) =>
  * </Category.Raw>
  * ```
  */
-export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>((props, ref) => {
-  const { asChild, children, className } = props;
+export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
 
-  const categoryService = useService(CategoryServiceDefinition);
-  const category = categoryService.category.get();
-  const isSelected = categoryService.isSelected.get();
+    const categoryService = useService(CategoryServiceDefinition);
+    const category = categoryService.category.get();
+    const isSelected = categoryService.isSelected.get();
 
-  const Comp = asChild && children ? Slot : "span";
+    const Comp = asChild && children ? Slot : 'span';
 
-  return (
-    <Comp
-      ref={ref}
-      className={className || "sr-only"}
-      data-testid={TestIds.categoryRaw}
-      data-selected={isSelected ? "true" : "false"}
-    >
-      {asChild && children ?
-        renderChildren({ children, props: { category, isSelected }, ref })
-        : JSON.stringify(category)}
-    </Comp>
-  );
-});
+    return (
+      <Comp
+        ref={ref}
+        className={className || 'sr-only'}
+        data-testid={TestIds.categoryRaw}
+        data-selected={isSelected ? 'true' : 'false'}
+      >
+        {asChild && children
+          ? renderChildren({ children, props: { category, isSelected }, ref })
+          : JSON.stringify(category)}
+      </Comp>
+    );
+  },
+);

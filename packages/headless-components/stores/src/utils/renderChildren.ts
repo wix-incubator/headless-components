@@ -1,11 +1,17 @@
-import React from "react";
+import React from 'react';
 
 /**
  * Parameters for the renderAsChild utility function
  */
-export interface RenderChildrenParams<THTMLElement = HTMLElement, TProps = any> {
+export interface RenderChildrenParams<
+  THTMLElement = HTMLElement,
+  TProps = any,
+> {
   /** The children to render (React element, function, or render object) */
-  children:  React.ReactNode | React.ForwardRefRenderFunction<THTMLElement, TProps> | undefined;
+  children:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<THTMLElement, TProps>
+    | undefined;
   /** Props to pass to render functions */
   props: TProps;
   /** Ref to forward to the rendered element */
@@ -54,7 +60,7 @@ export function renderChildren<THTMLElement = HTMLElement, TProps = any>({
   }
 
   // Handle render function pattern
-  if (typeof children === "function") {
+  if (typeof children === 'function') {
     return children(props, ref);
   }
 
