@@ -1,12 +1,12 @@
 import { CurrentCart } from '@wix/headless-ecom/react';
 import type { LineItem } from '@wix/headless-ecom/services';
 import {
-  Product,
-  ProductList,
-  ProductListFilters,
-  ProductListPagination,
-  ProductVariantSelector,
-  SelectedVariant,
+  Product as ProductPrimitive,
+  ProductList as ProductListPrimitive,
+  ProductListFilters as ProductListFiltersPrimitive,
+  ProductListPagination as ProductListPaginationPrimitive,
+  ProductVariantSelector as ProductVariantSelectorPrimitive,
+  SelectedVariant as SelectedVariantPrimitive,
 } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
@@ -64,7 +64,7 @@ export const ProductGridContent = ({
           media: product.media?.itemsInfo?.items ?? [],
         }}
       >
-        <SelectedVariant.Root
+        <SelectedVariantPrimitive.Root
           selectedVariantServiceConfig={{ fetchInventoryData: false }}
         >
           <div
@@ -178,13 +178,13 @@ export const ProductGridContent = ({
             </a>
 
             {/* Product Options */}
-            <ProductVariantSelector.Options>
+            <ProductVariantSelectorPrimitive.Options>
               {({ options, hasOptions }) => (
                 <>
                   {hasOptions && (
                     <div className="mb-3 space-y-2">
                       {options.map((option: any) => (
-                        <ProductVariantSelector.Option
+                        <ProductVariantSelectorPrimitive.Option
                           key={option._id}
                           option={option}
                         >
@@ -195,7 +195,7 @@ export const ProductGridContent = ({
                               </span>
                               <div className="flex flex-wrap gap-1">
                                 {choices?.slice(0, 3).map((choice: any) => (
-                                  <ProductVariantSelector.Choice
+                                  <ProductVariantSelectorPrimitive.Choice
                                     key={choice.choiceId}
                                     option={option}
                                     choice={choice}
@@ -289,7 +289,7 @@ export const ProductGridContent = ({
                                         );
                                       }
                                     }}
-                                  </ProductVariantSelector.Choice>
+                                  </ProductVariantSelectorPrimitive.Choice>
                                 ))}
                                 {choices?.length > 3 && (
                                   <span className="text-content-muted text-xs">
@@ -299,15 +299,15 @@ export const ProductGridContent = ({
                               </div>
                             </div>
                           )}
-                        </ProductVariantSelector.Option>
+                        </ProductVariantSelectorPrimitive.Option>
                       ))}
                     </div>
                   )}
                 </>
               )}
-            </ProductVariantSelector.Options>
+            </ProductVariantSelectorPrimitive.Options>
 
-            <ProductVariantSelector.Reset>
+            <ProductVariantSelectorPrimitive.Reset>
               {({ reset, hasSelections }) =>
                 hasSelections && (
                   <div className="pt-4">
@@ -320,9 +320,9 @@ export const ProductGridContent = ({
                   </div>
                 )
               }
-            </ProductVariantSelector.Reset>
+            </ProductVariantSelectorPrimitive.Reset>
 
-            <Product.Description>
+            <ProductPrimitive.Description>
               {({ plainDescription }) => (
                 <>
                   {plainDescription && (
@@ -335,11 +335,11 @@ export const ProductGridContent = ({
                   )}
                 </>
               )}
-            </Product.Description>
+            </ProductPrimitive.Description>
 
             <div className="mt-auto mb-3">
               <div className="space-y-1">
-                <SelectedVariant.Price>
+                <SelectedVariantPrimitive.Price>
                   {({ price, compareAtPrice }) => {
                     return compareAtPrice &&
                       parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) > 0 ? (
@@ -383,14 +383,14 @@ export const ProductGridContent = ({
                       </div>
                     );
                   }}
-                </SelectedVariant.Price>
+                </SelectedVariantPrimitive.Price>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-2">
               {/* Add to Cart Button */}
-              <SelectedVariant.Actions>
+              <SelectedVariantPrimitive.Actions>
                 {({ error }) => (
                   <div className="space-y-2">
                     {error && (
@@ -404,7 +404,7 @@ export const ProductGridContent = ({
                     />
                   </div>
                 )}
-              </SelectedVariant.Actions>
+              </SelectedVariantPrimitive.Actions>
 
               {/* View Product Button */}
               <a
@@ -429,7 +429,7 @@ export const ProductGridContent = ({
               </a>
             </div>
           </div>
-        </SelectedVariant.Root>
+        </SelectedVariantPrimitive.Root>
       </MediaGalleryCore.Root>
     );
   };
@@ -438,7 +438,7 @@ export const ProductGridContent = ({
     <div className="min-h-screen">
       <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
         <div className="flex items-top justify-between">
-          <ProductListFilters.CategoryFilter>
+          <ProductListFiltersPrimitive.CategoryFilter>
             {({ selectedCategory, setSelectedCategory }) => (
               <CategoryPicker
                 categoriesListConfig={categoriesListConfig}
@@ -446,7 +446,7 @@ export const ProductGridContent = ({
                 onCategorySelect={setSelectedCategory}
               />
             )}
-          </ProductListFilters.CategoryFilter>
+          </ProductListFiltersPrimitive.CategoryFilter>
           <SortDropdown />
         </div>
       </div>
@@ -465,7 +465,7 @@ export const ProductGridContent = ({
 
         {/* Main Content Area */}
         <div className="flex-1 min-w-0">
-          <ProductList.Error>
+          <ProductListPrimitive.Error>
             {({ error }) => (
               <div className="bg-surface-error border border-status-error rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
                 <p className="text-status-error text-sm sm:text-base">
@@ -473,10 +473,10 @@ export const ProductGridContent = ({
                 </p>
               </div>
             )}
-          </ProductList.Error>
+          </ProductListPrimitive.Error>
 
           {/* Filter Status Bar */}
-          <ProductListFilters.ResetTrigger>
+          <ProductListFiltersPrimitive.ResetTrigger>
             {({ resetFilters, isFiltered }) =>
               isFiltered && (
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 filter-status-bar rounded-xl p-4 mb-6">
@@ -495,9 +495,9 @@ export const ProductGridContent = ({
                       />
                     </svg>
                     <span className="text-brand-light text-sm sm:text-base">
-                      <ProductList.Items>
+                      <ProductListPrimitive.Items>
                         {({ products }) => `Showing ${String(products.length)}`}
-                      </ProductList.Items>
+                      </ProductListPrimitive.Items>
                     </span>
                   </div>
                   <button
@@ -509,9 +509,9 @@ export const ProductGridContent = ({
                 </div>
               )
             }
-          </ProductListFilters.ResetTrigger>
+          </ProductListFiltersPrimitive.ResetTrigger>
 
-          <ProductList.Loading>
+          <ProductListPrimitive.Loading>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
@@ -524,9 +524,9 @@ export const ProductGridContent = ({
                 </div>
               ))}
             </div>
-          </ProductList.Loading>
+          </ProductListPrimitive.Loading>
 
-          <ProductList.EmptyState>
+          <ProductListPrimitive.EmptyState>
             <div className="text-center py-12 sm:py-16">
               <div className="w-16 h-16 sm:w-24 sm:h-24 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
                 <svg
@@ -543,7 +543,7 @@ export const ProductGridContent = ({
                   />
                 </svg>
               </div>
-              <ProductListFilters.ResetTrigger>
+              <ProductListFiltersPrimitive.ResetTrigger>
                 {({ isFiltered }) => (
                   <>
                     <h2 className="text-xl sm:text-2xl font-bold text-content-primary mb-3 sm:mb-4">
@@ -558,26 +558,26 @@ export const ProductGridContent = ({
                     </p>
                   </>
                 )}
-              </ProductListFilters.ResetTrigger>
+              </ProductListFiltersPrimitive.ResetTrigger>
             </div>
-          </ProductList.EmptyState>
+          </ProductListPrimitive.EmptyState>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            <ProductList.ItemContent>
+            <ProductListPrimitive.ItemContent>
               {({ product }) => <ProductItem product={product} />}
-            </ProductList.ItemContent>
+            </ProductListPrimitive.ItemContent>
           </div>
         </div>
       </div>
 
       {/* Quick View Modal */}
       {quickViewProduct && (
-        <Product.Root
+        <ProductPrimitive.Root
           productServiceConfig={{ productSlug: quickViewProduct.slug! }}
         >
-          <Product.Loading>
+          <ProductPrimitive.Loading>
             {({ isLoading }) => (
-              <Product.Content>
+              <ProductPrimitive.Content>
                 {({ product }) => (
                   <QuickViewModal
                     product={product}
@@ -586,10 +586,10 @@ export const ProductGridContent = ({
                     onClose={closeQuickView}
                   />
                 )}
-              </Product.Content>
+              </ProductPrimitive.Content>
             )}
-          </Product.Loading>
-        </Product.Root>
+          </ProductPrimitive.Loading>
+        </ProductPrimitive.Root>
       )}
     </div>
   );
@@ -597,9 +597,9 @@ export const ProductGridContent = ({
 
 export const LoadMoreSection = () => {
   return (
-    <ProductListPagination.LoadMoreTrigger>
+    <ProductListPaginationPrimitive.LoadMoreTrigger>
       {({ loadMore, hasMoreProducts, isLoading }) => (
-        <ProductList.Items>
+        <ProductListPrimitive.Items>
           {({ products }) =>
             hasMoreProducts ? (
               <>
@@ -649,9 +649,9 @@ export const LoadMoreSection = () => {
               </>
             ) : null
           }
-        </ProductList.Items>
+        </ProductListPrimitive.Items>
       )}
-    </ProductListPagination.LoadMoreTrigger>
+    </ProductListPaginationPrimitive.LoadMoreTrigger>
   );
 };
 
@@ -661,12 +661,12 @@ export function CategoryPage({
   categoriesListConfig,
 }: StoreCollectionPageProps) {
   return (
-    <ProductList.Root
+    <ProductListPrimitive.Root
       productsListConfig={productsListConfig}
       productsListSearchConfig={productsListSearchConfig}
     >
       <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />
-    </ProductList.Root>
+    </ProductListPrimitive.Root>
   );
 }
