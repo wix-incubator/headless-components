@@ -44,7 +44,7 @@ export interface EventListEventsProps extends AsChildProps {
 
 export function Events(props: EventListEventsProps): React.ReactNode {
   const { asChild, children, emptyState, ...otherProps } = props;
-  const Comp = useAsChild(asChild, 'div');
+  const Comp = useAsChild(asChild);
 
   const service = useService(EventListServiceDefinition);
   const events = service.events.get();
@@ -66,7 +66,7 @@ export function EventRepeater(
   props: EventListEventRepeaterProps,
 ): React.ReactNode {
   const { asChild, children, ...otherProps } = props;
-  const Comp = useAsChild(asChild, 'div');
+  const Comp = useAsChild(asChild);
 
   const service = useService(EventListServiceDefinition);
   const events = service.events.get();
