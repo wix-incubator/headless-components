@@ -2,13 +2,16 @@
   "name": "@wix/headless-bookings",
   "version": "0.0.1",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "exports": {
     "./react": "./dist/react/index.js"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
+    "prettier": "^3.4.2",
     "typescript": "^5.8.3"
   }
 }

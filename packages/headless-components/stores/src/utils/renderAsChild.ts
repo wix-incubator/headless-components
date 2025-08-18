@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 /**
  * Function signature for render function pattern
@@ -138,7 +138,7 @@ export function renderAsChild<TProps = any>({
   }
 
   // Handle render function pattern
-  if (typeof children === "function") {
+  if (typeof children === 'function') {
     return children(
       {
         ...props,
@@ -149,7 +149,7 @@ export function renderAsChild<TProps = any>({
   }
 
   // Handle render object pattern
-  if (children && typeof children === "object" && "render" in children) {
+  if (children && typeof children === 'object' && 'render' in children) {
     return children.render(
       {
         ...props,

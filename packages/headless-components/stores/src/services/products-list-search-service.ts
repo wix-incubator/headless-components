@@ -1,19 +1,19 @@
-import type { Signal } from "@wix/services-definitions/core-services/signals";
-import { defineService, implementService } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
+import type { Signal } from '@wix/services-definitions/core-services/signals';
+import { defineService, implementService } from '@wix/services-definitions';
+import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
 import {
   DEFAULT_QUERY_LIMIT,
   ProductsListServiceDefinition,
-} from "./products-list-service.js";
-import { productsV3, customizationsV3 } from "@wix/stores";
-import { type Category } from "./category-service.js";
-import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
+} from './products-list-service.js';
+import { productsV3, customizationsV3 } from '@wix/stores';
+import { type Category } from './category-service.js';
+import { loadCategoriesListServiceConfig } from './categories-list-service.js';
 
 const PRICE_FILTER_DEBOUNCE_TIME = 300;
 
-import { SortType } from "./../enums/sort-enums.js";
+import { SortType } from './../enums/sort-enums.js';
 
-export { SortType } from "./../enums/sort-enums.js";
+export { SortType } from './../enums/sort-enums.js';
 
 /**
  * Enumeration of inventory status types available for filtering.
@@ -108,7 +108,7 @@ export const ProductsListSearchServiceDefinition = defineService<{
   setSelectedCategory: (category: Category | null) => void;
   isFiltered: { get: () => boolean };
   reset: () => void;
-}>("products-list-search");
+}>('products-list-search');
 
 /**
  * Convert SortType enum to URL format
@@ -116,19 +116,19 @@ export const ProductsListSearchServiceDefinition = defineService<{
 function convertSortTypeToUrl(sortType: SortType): string {
   switch (sortType) {
     case SortType.NAME_ASC:
-      return "name";
+      return 'name';
     case SortType.NAME_DESC:
-      return "name:desc";
+      return 'name:desc';
     case SortType.PRICE_ASC:
-      return "price";
+      return 'price';
     case SortType.PRICE_DESC:
-      return "price:desc";
+      return 'price:desc';
     case SortType.NEWEST:
-      return "newest";
+      return 'newest';
     case SortType.RECOMMENDED:
-      return "recommended";
+      return 'recommended';
     default:
-      return "name";
+      return 'name';
   }
 }
 
@@ -136,19 +136,19 @@ function convertSortTypeToUrl(sortType: SortType): string {
  * Convert URL sort format to SortType enum
  */
 export function convertUrlSortToSortType(urlSort: string): SortType | null {
-  const sortParts = urlSort.split(":");
+  const sortParts = urlSort.split(':');
   const field = sortParts[0]?.toLowerCase();
-  const order = sortParts[1]?.toLowerCase() === "desc" ? "desc" : "asc";
+  const order = sortParts[1]?.toLowerCase() === 'desc' ? 'desc' : 'asc';
 
   switch (field) {
-    case "name":
-      return order === "desc" ? SortType.NAME_DESC : SortType.NAME_ASC;
-    case "price":
-      return order === "desc" ? SortType.PRICE_DESC : SortType.PRICE_ASC;
-    case "newest":
-    case "created":
+    case 'name':
+      return order === 'desc' ? SortType.NAME_DESC : SortType.NAME_ASC;
+    case 'price':
+      return order === 'desc' ? SortType.PRICE_DESC : SortType.PRICE_ASC;
+    case 'newest':
+    case 'created':
       return SortType.NEWEST;
-    case "recommended":
+    case 'recommended':
       return SortType.RECOMMENDED;
     default:
       return null;
@@ -165,7 +165,7 @@ function updateUrlWithSearchState(searchState: {
   catalogBounds: { minPrice: number; maxPrice: number };
   categorySlug?: string;
 }): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
   const { sort, filters, customizations, catalogBounds, categorySlug } =
     searchState;
@@ -197,14 +197,14 @@ function updateUrlWithSearchState(searchState: {
 
   // Define search-related parameters that we manage
   const searchParams = [
-    "sort",
-    "limit",
-    "cursor",
-    "minPrice",
-    "maxPrice",
-    "inventoryStatus",
-    "visible",
-    "productType",
+    'sort',
+    'limit',
+    'cursor',
+    'minPrice',
+    'maxPrice',
+    'inventoryStatus',
+    'visible',
+    'productType',
     // Product option names will be dynamically added below
     // Note: category is NOT included here as it's handled in the URL path
   ];
@@ -226,7 +226,7 @@ function updateUrlWithSearchState(searchState: {
   // Add sort parameter (only if not default)
   const urlSort = convertSortTypeToUrl(sort as SortType);
   if (sort !== SortType.NAME_ASC) {
-    params.set("sort", urlSort);
+    params.set('sort', urlSort);
   }
 
   // Add price range parameters only if they differ from catalog bounds
@@ -234,34 +234,34 @@ function updateUrlWithSearchState(searchState: {
     filters.priceRange?.min &&
     filters.priceRange.min > catalogBounds.minPrice
   ) {
-    params.set("minPrice", filters.priceRange.min.toString());
+    params.set('minPrice', filters.priceRange.min.toString());
   }
   if (
     filters.priceRange?.max &&
     filters.priceRange.max < catalogBounds.maxPrice
   ) {
-    params.set("maxPrice", filters.priceRange.max.toString());
+    params.set('maxPrice', filters.priceRange.max.toString());
   }
 
   // Add inventory status parameters
   if (filters.inventoryStatuses && filters.inventoryStatuses.length > 0) {
-    params.set("inventoryStatus", filters.inventoryStatuses.join(","));
+    params.set('inventoryStatus', filters.inventoryStatuses.join(','));
   }
 
   // Add visibility filter (only if explicitly false, since true is default)
   if (filters.visible === false) {
-    params.set("visible", "false");
+    params.set('visible', 'false');
   }
 
   // Add product type filter
   if (filters.productType) {
-    params.set("productType", filters.productType);
+    params.set('productType', filters.productType);
   }
 
   // Add product options as individual parameters (Color=Red,Blue&Size=Large)
   for (const [optionName, values] of Object.entries(humanReadableOptions)) {
     if (values.length > 0) {
-      params.set(optionName, values.join(","));
+      params.set(optionName, values.join(','));
     }
   }
 
@@ -270,11 +270,11 @@ function updateUrlWithSearchState(searchState: {
 
   // If categorySlug is provided, replace the last path segment (which represents the category)
   if (categorySlug) {
-    const pathSegments = baseUrl.split("/").filter(Boolean);
+    const pathSegments = baseUrl.split('/').filter(Boolean);
     if (pathSegments.length > 0) {
       // Replace the last segment with the new category slug
       pathSegments[pathSegments.length - 1] = categorySlug;
-      baseUrl = "/" + pathSegments.join("/");
+      baseUrl = '/' + pathSegments.join('/');
     } else {
       // If no segments, just use the category slug
       baseUrl = `/${categorySlug}`;
@@ -288,7 +288,7 @@ function updateUrlWithSearchState(searchState: {
 
   // Only update if URL actually changed
   if (newUrl !== window.location.pathname + window.location.search) {
-    window.history.pushState(null, "", newUrl);
+    window.history.pushState(null, '', newUrl);
   }
 }
 
@@ -348,7 +348,7 @@ export async function parseUrlToSearchOptions(
 
   // Extract category slug from URL path
   // The category slug is always the last segment of the path
-  const pathSegments = urlObj.pathname.split("/").filter(Boolean);
+  const pathSegments = urlObj.pathname.split('/').filter(Boolean);
   let category: Category | undefined = undefined;
 
   if (pathSegments.length > 0) {
@@ -361,7 +361,7 @@ export async function parseUrlToSearchOptions(
   }
 
   // Handle text search (q parameter)
-  const query = searchParams.get("q");
+  const query = searchParams.get('q');
   if (query) {
     searchOptions.search = {
       expression: query,
@@ -369,7 +369,7 @@ export async function parseUrlToSearchOptions(
   }
 
   // Handle sorting
-  const sort = searchParams.get("sort");
+  const sort = searchParams.get('sort');
   if (sort) {
     const sortType = convertUrlSortToSortType(sort);
     if (sortType) {
@@ -379,18 +379,18 @@ export async function parseUrlToSearchOptions(
       switch (sortType) {
         case SortType.NAME_ASC:
           searchOptions.sort = [
-            { fieldName: "name", order: productsV3.SortDirection.ASC },
+            { fieldName: 'name', order: productsV3.SortDirection.ASC },
           ];
           break;
         case SortType.NAME_DESC:
           searchOptions.sort = [
-            { fieldName: "name", order: productsV3.SortDirection.DESC },
+            { fieldName: 'name', order: productsV3.SortDirection.DESC },
           ];
           break;
         case SortType.PRICE_ASC:
           searchOptions.sort = [
             {
-              fieldName: "actualPriceRange.minValue.amount",
+              fieldName: 'actualPriceRange.minValue.amount',
               order: productsV3.SortDirection.ASC,
             },
           ];
@@ -398,7 +398,7 @@ export async function parseUrlToSearchOptions(
         case SortType.PRICE_DESC:
           searchOptions.sort = [
             {
-              fieldName: "actualPriceRange.minValue.amount",
+              fieldName: 'actualPriceRange.minValue.amount',
               order: productsV3.SortDirection.DESC,
             },
           ];
@@ -406,7 +406,7 @@ export async function parseUrlToSearchOptions(
         case SortType.RECOMMENDED:
           searchOptions.sort = [
             {
-              fieldName: "name",
+              fieldName: 'name',
               order: productsV3.SortDirection.DESC,
             },
           ];
@@ -416,8 +416,8 @@ export async function parseUrlToSearchOptions(
   }
 
   // Handle pagination
-  const limit = searchParams.get("limit");
-  const cursor = searchParams.get("cursor");
+  const limit = searchParams.get('limit');
+  const cursor = searchParams.get('cursor');
   if (limit || cursor) {
     searchOptions.cursorPaging = {};
     if (limit) {
@@ -436,42 +436,42 @@ export async function parseUrlToSearchOptions(
   // Handle filtering for search options
   const filter: Record<string, any> = {};
 
-  const visible = searchParams.get("visible");
+  const visible = searchParams.get('visible');
   if (visible !== null) {
-    filter["visible"] = visible === "true";
-    initialSearchState.visible = visible === "true";
+    filter['visible'] = visible === 'true';
+    initialSearchState.visible = visible === 'true';
   }
 
-  const productType = searchParams.get("productType");
+  const productType = searchParams.get('productType');
   if (productType) {
-    filter["productType"] = productType;
+    filter['productType'] = productType;
     initialSearchState.productType = productType;
   }
 
   // Add category filter if found
   if (category) {
-    filter["allCategoriesInfo.categories"] = {
+    filter['allCategoriesInfo.categories'] = {
       $matchItems: [{ _id: { $in: [category._id] } }],
     };
   }
 
   // Price range filtering
-  const minPrice = searchParams.get("minPrice");
-  const maxPrice = searchParams.get("maxPrice");
+  const minPrice = searchParams.get('minPrice');
+  const maxPrice = searchParams.get('maxPrice');
   if (minPrice || maxPrice) {
     initialSearchState.priceRange = {};
 
     if (minPrice) {
       const minPriceNum = parseFloat(minPrice);
       if (!isNaN(minPriceNum)) {
-        filter["actualPriceRange.minValue.amount"] = { $gte: minPriceNum };
+        filter['actualPriceRange.minValue.amount'] = { $gte: minPriceNum };
         initialSearchState.priceRange.min = minPriceNum;
       }
     }
     if (maxPrice) {
       const maxPriceNum = parseFloat(maxPrice);
       if (!isNaN(maxPriceNum)) {
-        filter["actualPriceRange.maxValue.amount"] = { $lte: maxPriceNum };
+        filter['actualPriceRange.maxValue.amount'] = { $lte: maxPriceNum };
         initialSearchState.priceRange.max = maxPriceNum;
       }
     }
@@ -479,16 +479,16 @@ export async function parseUrlToSearchOptions(
 
   // Parse product options from URL parameters
   const reservedParams = [
-    "minPrice",
-    "maxPrice",
-    "inventory_status",
-    "inventoryStatus",
-    "visible",
-    "productType",
-    "q",
-    "limit",
-    "cursor",
-    "sort",
+    'minPrice',
+    'maxPrice',
+    'inventory_status',
+    'inventoryStatus',
+    'visible',
+    'productType',
+    'q',
+    'limit',
+    'cursor',
+    'sort',
   ];
 
   const productOptionsById: Record<string, string[]> = {};
@@ -505,7 +505,7 @@ export async function parseUrlToSearchOptions(
     );
 
     if (option && option._id) {
-      const choiceValues = optionValues.split(",").filter(Boolean);
+      const choiceValues = optionValues.split(',').filter(Boolean);
       const choiceIds: string[] = [];
 
       // Convert choice names to IDs
@@ -541,20 +541,20 @@ export async function parseUrlToSearchOptions(
   // Add aggregations for getting filter options
   searchOptions.aggregations = [
     {
-      name: "minPrice",
-      fieldPath: "actualPriceRange.minValue.amount",
-      type: "SCALAR" as const,
-      scalar: { type: "MIN" as const },
+      name: 'minPrice',
+      fieldPath: 'actualPriceRange.minValue.amount',
+      type: 'SCALAR' as const,
+      scalar: { type: 'MIN' as const },
     },
     {
-      name: "maxPrice",
-      fieldPath: "actualPriceRange.maxValue.amount",
-      type: "SCALAR" as const,
-      scalar: { type: "MAX" as const },
+      name: 'maxPrice',
+      fieldPath: 'actualPriceRange.maxValue.amount',
+      type: 'SCALAR' as const,
+      scalar: { type: 'MAX' as const },
     },
     {
-      name: "optionNames",
-      fieldPath: "options.name",
+      name: 'optionNames',
+      fieldPath: 'options.name',
       type: productsV3.SortType.VALUE,
       value: {
         limit: 20,
@@ -563,8 +563,8 @@ export async function parseUrlToSearchOptions(
       },
     },
     {
-      name: "choiceNames",
-      fieldPath: "options.choicesSettings.choices.name",
+      name: 'choiceNames',
+      fieldPath: 'options.choicesSettings.choices.name',
       type: productsV3.SortType.VALUE,
       value: {
         limit: 50,
@@ -573,8 +573,8 @@ export async function parseUrlToSearchOptions(
       },
     },
     {
-      name: "inventoryStatus",
-      fieldPath: "inventory.availabilityStatus",
+      name: 'inventoryStatus',
+      fieldPath: 'inventory.availabilityStatus',
       type: productsV3.SortType.VALUE,
       value: {
         limit: 10,
@@ -632,7 +632,7 @@ export async function loadProductsListSearchServiceConfig(
 ): Promise<ProductsListSearchServiceConfig> {
   let initialSearchState: InitialSearchState;
 
-  if (typeof input === "string") {
+  if (typeof input === 'string') {
     // URL input - parse it
     const categoriesListConfig = await loadCategoriesListServiceConfig();
     const { initialSearchState: parsedState } = await parseUrlToSearchOptions(
@@ -767,14 +767,14 @@ export const ProductsListSearchService =
 
       const hasPrevPageSignal = signalsService.computed(() => {
         const pagingMetadata = productsListService.pagingMetadata.get();
-        return typeof pagingMetadata.cursors?.prev !== "undefined";
+        return typeof pagingMetadata.cursors?.prev !== 'undefined';
       });
 
       // Debounce timeout IDs for price filters
       let minPriceTimeoutId: NodeJS.Timeout | null = null;
       let maxPriceTimeoutId: NodeJS.Timeout | null = null;
 
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         // Watch for changes in any search parameters and update search options
         signalsService.effect(() => {
           // Read all signals to establish dependencies
@@ -816,18 +816,18 @@ export const ProductsListSearchService =
           switch (sort) {
             case SortType.NAME_ASC:
               newSearchOptions.sort = [
-                { fieldName: "name", order: productsV3.SortDirection.ASC },
+                { fieldName: 'name', order: productsV3.SortDirection.ASC },
               ];
               break;
             case SortType.NAME_DESC:
               newSearchOptions.sort = [
-                { fieldName: "name", order: productsV3.SortDirection.DESC },
+                { fieldName: 'name', order: productsV3.SortDirection.DESC },
               ];
               break;
             case SortType.PRICE_ASC:
               newSearchOptions.sort = [
                 {
-                  fieldName: "actualPriceRange.minValue.amount",
+                  fieldName: 'actualPriceRange.minValue.amount',
                   order: productsV3.SortDirection.ASC,
                 },
               ];
@@ -835,7 +835,7 @@ export const ProductsListSearchService =
             case SortType.PRICE_DESC:
               newSearchOptions.sort = [
                 {
-                  fieldName: "actualPriceRange.minValue.amount",
+                  fieldName: 'actualPriceRange.minValue.amount',
                   order: productsV3.SortDirection.DESC,
                 },
               ];
@@ -843,7 +843,7 @@ export const ProductsListSearchService =
             case SortType.RECOMMENDED:
               newSearchOptions.sort = [
                 {
-                  fieldName: "name",
+                  fieldName: 'name',
                   order: productsV3.SortDirection.DESC,
                 },
               ];
@@ -859,23 +859,23 @@ export const ProductsListSearchService =
 
           // Remove existing filters
           delete (newSearchOptions.filter as any)[
-            "actualPriceRange.minValue.amount"
+            'actualPriceRange.minValue.amount'
           ];
           delete (newSearchOptions.filter as any)[
-            "actualPriceRange.maxValue.amount"
+            'actualPriceRange.maxValue.amount'
           ];
           delete (newSearchOptions.filter as any)[
-            "inventory.availabilityStatus"
+            'inventory.availabilityStatus'
           ];
           delete (newSearchOptions.filter as any)[
-            "allCategoriesInfo.categories"
+            'allCategoriesInfo.categories'
           ];
-          delete (newSearchOptions.filter as any)["visible"];
-          delete (newSearchOptions.filter as any)["productType"];
+          delete (newSearchOptions.filter as any)['visible'];
+          delete (newSearchOptions.filter as any)['productType'];
 
           // Remove existing product option filters
           Object.keys(newSearchOptions.filter).forEach((key) => {
-            if (key.startsWith("options.")) {
+            if (key.startsWith('options.')) {
               delete (newSearchOptions.filter as any)[key];
             }
           });
@@ -883,20 +883,20 @@ export const ProductsListSearchService =
           // Add new filters
           if (minPrice > 0) {
             (newSearchOptions.filter as any)[
-              "actualPriceRange.minValue.amount"
+              'actualPriceRange.minValue.amount'
             ] = { $gte: minPrice };
           }
           if (maxPrice > 0) {
             (newSearchOptions.filter as any)[
-              "actualPriceRange.maxValue.amount"
+              'actualPriceRange.maxValue.amount'
             ] = { $lte: maxPrice };
           }
           if (selectedInventoryStatuses.length > 0) {
             if (selectedInventoryStatuses.length === 1) {
-              (newSearchOptions.filter as any)["inventory.availabilityStatus"] =
+              (newSearchOptions.filter as any)['inventory.availabilityStatus'] =
                 selectedInventoryStatuses[0];
             } else {
-              (newSearchOptions.filter as any)["inventory.availabilityStatus"] =
+              (newSearchOptions.filter as any)['inventory.availabilityStatus'] =
                 { $in: selectedInventoryStatuses };
             }
           }
@@ -910,20 +910,20 @@ export const ProductsListSearchService =
             }
             if (allChoiceIds.length > 0) {
               (newSearchOptions.filter as any)[
-                "options.choicesSettings.choices.choiceId"
+                'options.choicesSettings.choices.choiceId'
               ] = { $hasSome: allChoiceIds };
             }
           }
           if (selectedCategory) {
-            (newSearchOptions.filter as any)["allCategoriesInfo.categories"] = {
+            (newSearchOptions.filter as any)['allCategoriesInfo.categories'] = {
               $matchItems: [{ _id: { $in: [selectedCategory._id] } }],
             };
           }
           if (selectedVisible !== null) {
-            (newSearchOptions.filter as any)["visible"] = selectedVisible;
+            (newSearchOptions.filter as any)['visible'] = selectedVisible;
           }
           if (selectedProductType) {
-            (newSearchOptions.filter as any)["productType"] =
+            (newSearchOptions.filter as any)['productType'] =
               selectedProductType;
           }
 
@@ -1102,7 +1102,7 @@ function getCatalogPriceRange(
 
 function getMinPrice(aggregationData: productsV3.AggregationResults[]): number {
   const minPriceAggregation = aggregationData.find(
-    (data) => data.fieldPath === "actualPriceRange.minValue.amount",
+    (data) => data.fieldPath === 'actualPriceRange.minValue.amount',
   );
   if (minPriceAggregation?.scalar?.value) {
     return Number(minPriceAggregation.scalar.value) || 0;
@@ -1112,7 +1112,7 @@ function getMinPrice(aggregationData: productsV3.AggregationResults[]): number {
 
 function getMaxPrice(aggregationData: productsV3.AggregationResults[]): number {
   const maxPriceAggregation = aggregationData.find(
-    (data) => data.fieldPath === "actualPriceRange.maxValue.amount",
+    (data) => data.fieldPath === 'actualPriceRange.maxValue.amount',
   );
   if (maxPriceAggregation?.scalar?.value) {
     return Number(maxPriceAggregation.scalar.value) || 0;
@@ -1154,18 +1154,18 @@ function getAvailableProductOptions(
   const choiceNames: string[] = [];
 
   aggregationData.forEach((result) => {
-    if (result.name === "optionNames" && result.values?.results) {
+    if (result.name === 'optionNames' && result.values?.results) {
       optionNames.push(
         ...result.values.results
           .map((item) => item.value)
-          .filter((value): value is string => typeof value === "string"),
+          .filter((value): value is string => typeof value === 'string'),
       );
     }
-    if (result.name === "choiceNames" && result.values?.results) {
+    if (result.name === 'choiceNames' && result.values?.results) {
       choiceNames.push(
         ...result.values.results
           .map((item) => item.value)
-          .filter((value): value is string => typeof value === "string"),
+          .filter((value): value is string => typeof value === 'string'),
       );
     }
   });

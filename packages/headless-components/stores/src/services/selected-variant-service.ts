@@ -1,14 +1,14 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
   type ReadOnlySignal,
-} from "@wix/services-definitions/core-services/signals";
-import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
-import * as inventoryItemsV3 from "@wix/auto_sdk_stores_inventory-items-v-3";
-import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
-import { MediaGalleryServiceDefinition } from "@wix/headless-media/services";
-import { ProductServiceDefinition } from "./product-service.js";
+} from '@wix/services-definitions/core-services/signals';
+import * as productsV3 from '@wix/auto_sdk_stores_products-v-3';
+import * as inventoryItemsV3 from '@wix/auto_sdk_stores_inventory-items-v-3';
+import { CurrentCartServiceDefinition } from '@wix/headless-ecom/services';
+import { MediaGalleryServiceDefinition } from '@wix/headless-media/services';
+import { ProductServiceDefinition } from './product-service.js';
 
 type V3Product = productsV3.V3Product;
 type Variant = productsV3.Variant;
@@ -79,7 +79,7 @@ export interface SelectedVariantServiceConfig {
 }
 
 export const SelectedVariantServiceDefinition =
-  defineService<SelectedVariantServiceAPI>("selectedVariant");
+  defineService<SelectedVariantServiceAPI>('selectedVariant');
 
 export const SelectedVariantService =
   implementService.withConfig<SelectedVariantServiceConfig>()(
@@ -190,7 +190,7 @@ export const SelectedVariantService =
           // Use the correct Wix inventoryItemsV3.queryInventoryItems() API
           const queryResult = await inventoryItemsV3
             .queryInventoryItems()
-            .eq("variantId", variantId)
+            .eq('variantId', variantId)
             .find();
 
           const inventoryItem = queryResult.items?.[0];
@@ -212,7 +212,7 @@ export const SelectedVariantService =
             quantityAvailable.set(null);
           }
         } catch (error) {
-          console.error("Failed to fetch inventory quantity:", error);
+          console.error('Failed to fetch inventory quantity:', error);
           // Fallback on error
           quantityAvailable.set(null);
           trackQuantity.set(false);
@@ -265,7 +265,7 @@ export const SelectedVariantService =
         false as any,
       );
       const selectedQuantity: Signal<number> = signalsService.signal(1 as any);
-      const productId: Signal<string> = signalsService.signal("" as any);
+      const productId: Signal<string> = signalsService.signal('' as any);
       const ribbonLabel: Signal<string | null> = signalsService.signal(
         null as any,
       );
@@ -277,7 +277,7 @@ export const SelectedVariantService =
       const init = (currentProduct: V3Product | null) => {
         if (currentProduct) {
           v3Product.set(currentProduct);
-          productId.set(currentProduct._id || "");
+          productId.set(currentProduct._id || '');
           ribbonLabel.set(currentProduct.ribbon?.name || null);
 
           const actualPrice = currentProduct.actualPriceRange?.minValue?.amount;
@@ -296,7 +296,7 @@ export const SelectedVariantService =
             currentProduct.options.forEach((option: any) => {
               if (option.name && option.choicesSettings?.choices) {
                 optionsMap[option.name] = option.choicesSettings.choices.map(
-                  (choice: any) => choice.name || "",
+                  (choice: any) => choice.name || '',
                 );
               }
             });
@@ -313,7 +313,7 @@ export const SelectedVariantService =
             }
           } else {
             const singleVariant: productsV3.Variant = {
-              _id: "default",
+              _id: 'default',
               visible: true,
               choices: [],
               price: {
@@ -328,7 +328,7 @@ export const SelectedVariantService =
                     productsV3.InventoryAvailabilityStatus
                       .PARTIALLY_OUT_OF_STOCK,
                 preorderEnabled:
-                  currentProduct.inventory?.preorderStatus === "ENABLED",
+                  currentProduct.inventory?.preorderStatus === 'ENABLED',
               },
             };
             variants.set([singleVariant]);
@@ -396,7 +396,7 @@ export const SelectedVariantService =
             rawAmount = prod.actualPriceRange.minValue.amount;
           }
 
-          return rawAmount ? `$${rawAmount}` : "";
+          return rawAmount ? `$${rawAmount}` : '';
         },
       );
 
@@ -452,7 +452,7 @@ export const SelectedVariantService =
 
       const currency: ReadOnlySignal<string> = signalsService.computed(() => {
         const prod = v3Product.get();
-        return prod?.currency || "USD";
+        return prod?.currency || 'USD';
       });
 
       const selectedVariant = (): productsV3.Variant | null => {
@@ -488,15 +488,15 @@ export const SelectedVariantService =
         const variant = currentVariant.get();
 
         if (!prod?._id) {
-          throw new Error("Product not found");
+          throw new Error('Product not found');
         }
 
         // Build catalog reference with modifiers if provided
         const catalogReference: any = {
           catalogItemId: prod._id,
-          appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+          appId: '215238eb-22a5-4c36-9e7b-e7c08025e04e',
           options:
-            variant?._id && variant._id !== "default"
+            variant?._id && variant._id !== 'default'
               ? {
                   variantId: variant._id,
                   preOrderRequested:
@@ -578,7 +578,7 @@ export const SelectedVariantService =
           await cartService.addToCart(lineItems);
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to add to cart",
+            err instanceof Error ? err.message : 'Failed to add to cart',
           );
         } finally {
           isLoading.set(false);

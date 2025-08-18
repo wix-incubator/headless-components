@@ -1,12 +1,12 @@
-import React from "react";
-import { renderAsChild, type AsChildProps } from "../utils/index.js";
-import { FreeText as FreeTextPrimitive } from "./core/ProductModifiers.js";
+import React from 'react';
+import { renderAsChild, type AsChildProps } from '../utils/index.js';
+import { FreeText as FreeTextPrimitive } from './core/ProductModifiers.js';
 
 enum TestIds {
-  choiceRoot = "choice-root",
-  choiceText = "choice-text",
-  choiceColor = "choice-color",
-  choiceFreetext = "choice-freetext",
+  choiceRoot = 'choice-root',
+  choiceText = 'choice-text',
+  choiceColor = 'choice-color',
+  choiceFreetext = 'choice-freetext',
 }
 
 /**
@@ -16,7 +16,7 @@ export interface Choice {
   colorCode?: string;
   choiceId?: string | null;
   linkedMedia?: any[]; // ProductMedia[] - will be updated when ProductMedia is available
-  type?: "color" | "text" | "free-text";
+  type?: 'color' | 'text' | 'free-text';
   key?: string;
   name?: string | null;
   addedPrice?: string | null;
@@ -66,7 +66,7 @@ export function useChoiceContext(): ChoiceContextValue {
   const context = React.useContext(ChoiceContext);
   if (!context) {
     throw new Error(
-      "useChoiceContext must be used within a Choice context provider (Option.ChoiceRepeater)",
+      'useChoiceContext must be used within a Choice context provider (Option.ChoiceRepeater)',
     );
   }
   return context;
@@ -100,8 +100,8 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const { choice } = choiceContext;
 
     const attributes = {
-      "data-testid": TestIds.choiceRoot,
-      "data-type": choice?.type,
+      'data-testid': TestIds.choiceRoot,
+      'data-type': choice?.type,
     };
 
     return (
@@ -172,11 +172,11 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    const choiceId = choice?.choiceId || "";
+    const choiceId = choice?.choiceId || '';
 
     const attributes = {
-      "data-testid": TestIds.choiceText,
-      "data-selected": isSelected ? "true" : "false",
+      'data-testid': TestIds.choiceText,
+      'data-selected': isSelected ? 'true' : 'false',
       disabled: !isInStock && !isPreOrderEnabled,
       onClick: select,
     };
@@ -268,8 +268,8 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
     const { colorCode, choiceId } = choice;
 
     const attributes = {
-      "data-testid": TestIds.choiceColor,
-      "data-selected": isSelected ? "true" : "false",
+      'data-testid': TestIds.choiceColor,
+      'data-selected': isSelected ? 'true' : 'false',
       disabled: !isInStock && !isPreOrderEnabled,
       onClick: select,
     };
@@ -278,9 +278,9 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
       const rendered = renderAsChild({
         children,
         props: {
-          colorCode: colorCode || "",
+          colorCode: colorCode || '',
           name: value,
-          id: choiceId || "",
+          id: choiceId || '',
         },
         ref,
         content: null,
@@ -313,7 +313,7 @@ export interface FreeTextProps
       value?: string;
       onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     }>,
-    Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "children"> {}
+    Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children'> {}
 
 /**
  * Provides a free text input for variant selection.
@@ -372,8 +372,8 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     if (!isVisible) return null;
 
     const attributes = {
-      "data-testid": TestIds.choiceFreetext,
-      "data-selected": isSelected ? "true" : "false",
+      'data-testid': TestIds.choiceFreetext,
+      'data-selected': isSelected ? 'true' : 'false',
     };
 
     return (

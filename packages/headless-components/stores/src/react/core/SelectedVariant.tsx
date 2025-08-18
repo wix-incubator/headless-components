@@ -1,18 +1,18 @@
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService, WixServices } from "@wix/services-manager-react";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   SelectedVariantServiceDefinition,
   SelectedVariantService,
   SelectedVariantServiceConfig,
-} from "../../services/selected-variant-service.js";
-import { ProductModifiersServiceDefinition } from "../../services/product-modifiers-service.js";
-import { createServicesMap } from "@wix/services-manager";
-import { Checkout } from "@wix/headless-ecom/react";
+} from '../../services/selected-variant-service.js';
+import { ProductModifiersServiceDefinition } from '../../services/product-modifiers-service.js';
+import { createServicesMap } from '@wix/services-manager';
+import { Checkout } from '@wix/headless-ecom/react';
 import {
   CheckoutServiceDefinition,
   CurrentCartServiceDefinition,
-} from "@wix/headless-ecom/services";
-import { type LineItem } from "@wix/headless-ecom/services";
+} from '@wix/headless-ecom/services';
+import { type LineItem } from '@wix/headless-ecom/services';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -383,7 +383,7 @@ export function Actions(props: ActionsProps) {
       // Proceed to checkout
       await cartService.proceedToCheckout();
     } catch (error) {
-      console.error("Buy now failed:", error);
+      console.error('Buy now failed:', error);
       throw error;
     }
   };
