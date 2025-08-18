@@ -3,4 +3,4 @@ export {
   EventListServiceDefinition,
   type EventListServiceAPI,
   type EventListServiceConfig,
-} from "./event-list-service.js";
+} from './event-list-service.js';

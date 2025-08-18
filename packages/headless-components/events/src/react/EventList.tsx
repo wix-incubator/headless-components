@@ -1,7 +1,11 @@
-import { useService, WixServices } from "@wix/services-manager-react";
-import { createServicesMap } from "@wix/services-manager";
-import { AsChildProps, useAsChild } from "../utils/asChild.js";
-import { EventListService, EventListServiceConfig, EventListServiceDefinition } from "../services/event-list-service.js";
+import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import { AsChildProps, useAsChild } from '../utils/asChild.js';
+import {
+  EventListService,
+  EventListServiceConfig,
+  EventListServiceDefinition,
+} from '../services/event-list-service.js';
 
 interface EventListRootProps {
   children: React.ReactNode;
@@ -33,7 +37,7 @@ export interface EventsProps extends AsChildProps {
 
 export function Events(props: EventsProps): React.ReactNode {
   const { asChild, children, emptyState, ...otherProps } = props;
-  const Comp = useAsChild(asChild, "div");
+  const Comp = useAsChild(asChild, 'div');
 
   const service = useService(EventListServiceDefinition);
   const events = service.events.get();
@@ -53,7 +57,7 @@ export interface EventRepeaterProps extends AsChildProps {}
 
 export function EventRepeater(props: EventRepeaterProps): React.ReactNode {
   const { asChild, children, ...otherProps } = props;
-  const Comp = useAsChild(asChild, "div");
+  const Comp = useAsChild(asChild, 'div');
 
   // const service = useService(EventListServiceDefinition);
   // const events = service.events.get();

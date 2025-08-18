@@ -1,5 +1,5 @@
-import React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import React from 'react';
+import { Slot } from '@radix-ui/react-slot';
 
 export interface AsChildProps {
   asChild?: boolean;
@@ -30,6 +30,6 @@ export interface AsChildProps {
  * </Button>
  * ```
  */
-export function useAsChild(asChild?: boolean, defaultElement = "div") {
+export function useAsChild(asChild?: boolean, defaultElement = 'div') {
   return asChild ? Slot : defaultElement;
 }
