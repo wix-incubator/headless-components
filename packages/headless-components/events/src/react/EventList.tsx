@@ -6,14 +6,15 @@ import {
   EventListServiceDefinition,
   type EventListServiceConfig,
 } from '../services/event-list-service.js';
-import { type Event } from '../services/event-service.js';
+import { type Event as IEvent } from '../services/event-service.js';
+import * as Event from './Event.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
 }
 
 export interface EventListRootProps {
-  events?: Event[];
+  events?: IEvent[];
   children: React.ReactNode;
 }
 
@@ -67,16 +68,16 @@ export function EventRepeater(
   const { asChild, children, ...otherProps } = props;
   const Comp = useAsChild(asChild, 'div');
 
-  // const service = useService(EventListServiceDefinition);
-  // const events = service.events.get();
+  const service = useService(EventListServiceDefinition);
+  const events = service.events.get();
 
   return (
     <Comp {...otherProps}>
-      {/* {events.map((event, index) => (
+      {events.map((event, index) => (
         <Event.Root key={event._id || index} event={event}>
           {children}
         </Event.Root>
-      ))} */}
+      ))}
     </Comp>
   );
 }
