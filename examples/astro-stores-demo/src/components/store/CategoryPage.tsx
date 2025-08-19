@@ -163,22 +163,6 @@ export const ProductGridContent = ({
                   />
                 </svg>
               </div>
-              <ProductListFiltersPrimitive.ResetTrigger>
-                {({ isFiltered }) => (
-                  <>
-                    <h2 className="text-xl sm:text-2xl font-bold text-content-primary mb-3 sm:mb-4">
-                      {isFiltered
-                        ? 'No Products Match Your Filters'
-                        : 'No Products Found'}
-                    </h2>
-                    <p className="text-content-light text-sm sm:text-base">
-                      {isFiltered
-                        ? 'Try adjusting your filters to see more products.'
-                        : "We couldn't find any products to display."}
-                    </p>
-                  </>
-                )}
-              </ProductListFiltersPrimitive.ResetTrigger>
             </div>
           </ProductListPrimitive.EmptyState>
 
@@ -270,10 +254,71 @@ export const ProductGridContent = ({
                 <div className="mt-auto mb-3">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Product.Price className="text-xl font-bold text-content-primary" />
-                        <Product.CompareAtPrice className="text-sm font-medium text-content-faded line-through" />
-                      </div>
+                      <SelectedVariantPrimitive.Price>
+                        {({
+                          price,
+                          compareAtPrice,
+                        }: {
+                          price: string;
+                          compareAtPrice: string | null;
+                        }) => {
+                          return (
+                            <Product.Raw asChild>
+                              {({ product }) => {
+                                const available =
+                                  product.inventory?.availabilityStatus ===
+                                    productsV3.InventoryAvailabilityStatus
+                                      .IN_STOCK ||
+                                  product.inventory?.availabilityStatus ===
+                                    productsV3.InventoryAvailabilityStatus
+                                      .PARTIALLY_OUT_OF_STOCK;
+
+                                return compareAtPrice &&
+                                  parseFloat(
+                                    compareAtPrice.replace(/[^\d.]/g, '')
+                                  ) > 0 ? (
+                                  <>
+                                    <div className="flex items-center gap-2">
+                                      <Product.Price className="text-xl font-bold text-content-primary" />
+                                      <Product.CompareAtPrice className="text-sm font-medium text-content-faded line-through" />
+                                    </div>
+                                    <div className="flex items-center justify-end">
+                                      <div className="flex items-center gap-1">
+                                        <div
+                                          className={`w-2 h-2 rounded-full ${available ? 'bg-status-success' : 'bg-status-error'}`}
+                                        ></div>
+                                        <span
+                                          className={`text-xs font-medium ${available ? 'text-status-success' : 'text-status-error'}`}
+                                        >
+                                          {available
+                                            ? 'In Stock'
+                                            : 'Out of Stock'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div className="w-full flex items-center justify-between">
+                                    <Product.Price className="text-xl font-bold text-content-primary" />
+                                    <div className="flex items-center gap-1">
+                                      <div
+                                        className={`w-2 h-2 rounded-full ${available ? 'bg-status-success' : 'bg-status-error'}`}
+                                      ></div>
+                                      <span
+                                        className={`text-xs font-medium ${available ? 'text-status-success' : 'text-status-error'}`}
+                                      >
+                                        {available
+                                          ? 'In Stock'
+                                          : 'Out of Stock'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                );
+                              }}
+                            </Product.Raw>
+                          );
+                        }}
+                      </SelectedVariantPrimitive.Price>
                     </div>
                   </div>
                 </div>

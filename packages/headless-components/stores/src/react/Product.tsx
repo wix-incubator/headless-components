@@ -64,6 +64,7 @@ enum TestIds {
   productPrice = 'product-price',
   productCompareAtPrice = 'product-compare-at-price',
   productSlug = 'product-slug',
+  productRaw = 'product-raw',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
@@ -484,6 +485,58 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
         );
       }}
     </CoreProduct.Slug>
+  );
+});
+
+/**
+ * Props for Product Raw component
+ */
+export interface RawProps extends AsChildProps<{ product: V3Product }> {}
+
+/**
+ * Provides access to the raw product data for advanced use cases.
+ * Similar to Category.Raw, this should only be used when you need custom access to product data.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Custom rendering with forwardRef
+ * <Product.Raw asChild>
+ *   {React.forwardRef(({product, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="product-debug">
+ *       <span>Product ID: {product._id}</span>
+ *       <span>SKU: {product.sku}</span>
+ *       <span>Inventory: {product.inventory?.quantity}</span>
+ *     </div>
+ *   ))}
+ * </Product.Raw>
+ * ```
+ */
+export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
+  const { asChild, children } = props;
+
+  return (
+    <CoreProduct.Content>
+      {({ product }) => {
+        const attributes = {
+          'data-testid': TestIds.productRaw,
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: { product },
+            ref,
+            content: null,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        // Raw component should not render anything by default when not using asChild
+        return null;
+      }}
+    </CoreProduct.Content>
   );
 });
 
