@@ -10,18 +10,6 @@ import * as Option from './Option.js';
 import { AsContent } from './types.js';
 
 /**
- * Configuration for MediaGallery service
- */
-interface MediaGalleryConfig {
-  media?: Array<{ image?: string | null; altText?: string | null }>;
-  infinite?: boolean;
-  autoPlay?: {
-    direction?: 'forward' | 'backward';
-    intervalMs?: number;
-  };
-}
-
-/**
  * Context for sharing variant options state between components
  */
 interface VariantsContextValue {
@@ -899,9 +887,13 @@ export const ModifierOptionRepeater = React.forwardRef<
 /**
  * Props for Product MediaGallery component
  */
-export interface ProductMediaGalleryProps
-  extends Omit<MediaGalleryConfig, 'media'> {
+export interface ProductMediaGalleryProps {
   children: React.ReactNode;
+  infinite?: boolean;
+  autoPlay?: {
+    direction?: 'forward' | 'backward';
+    intervalMs?: number;
+  };
 }
 
 /**
