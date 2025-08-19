@@ -27,6 +27,7 @@ import { ProductFilters } from './ProductFilters';
 import QuickViewModal from './QuickViewModal';
 import { SortDropdown } from './SortDropdown';
 import { MediaGallery as MediaGalleryCore } from '@wix/headless-media/core';
+import React from 'react';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
@@ -214,11 +215,11 @@ export const ProductGridContent = ({
 
                 {/* Product Name with Link */}
                 <Product.Slug asChild>
-                  {({ slug }) => (
+                  {React.forwardRef(({ slug }, ref) => (
                     <a data-testid="title-navigation" href={`/${slug}`}>
                       <Product.Name className="text-content-primary font-semibold mb-2 line-clamp-2" />
                     </a>
-                  )}
+                  ))}
                 </Product.Slug>
 
                 {/* Product Options */}
@@ -255,13 +256,7 @@ export const ProductGridContent = ({
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <SelectedVariantPrimitive.Price>
-                        {({
-                          price,
-                          compareAtPrice,
-                        }: {
-                          price: string;
-                          compareAtPrice: string | null;
-                        }) => {
+                        {({ compareAtPrice }) => {
                           return (
                             <Product.Raw asChild>
                               {({ product }) => {
@@ -321,6 +316,51 @@ export const ProductGridContent = ({
                       </SelectedVariantPrimitive.Price>
                     </div>
                   </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="space-y-2">
+                  {/* Add to Cart Button */}
+                  <SelectedVariantPrimitive.Actions>
+                    {({ error }) => (
+                      <div className="space-y-2">
+                        {error && (
+                          <div className="bg-status-danger-light border border-status-danger rounded-lg p-2">
+                            <p className="text-status-error text-xs">{error}</p>
+                          </div>
+                        )}
+
+                        <ProductActionButtons
+                          isQuickView={true} // This will hide the Buy Now button for list items
+                        />
+                      </div>
+                    )}
+                  </SelectedVariantPrimitive.Actions>
+
+                  {/* View Product Button */}
+                  <Product.Slug asChild>
+                    {React.forwardRef(({ slug }, ref) => (
+                      <a
+                        href={`/${slug}`}
+                        className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
+                      >
+                        View Product
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </a>
+                    ))}
+                  </Product.Slug>
                 </div>
               </div>
             </ProductList.ProductRepeater>
