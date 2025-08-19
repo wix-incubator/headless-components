@@ -8,7 +8,6 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
-import { renderAsChild, type AsChildProps } from '../utils/renderAsChild.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -279,11 +278,10 @@ export const ProductRepeater = React.forwardRef<
 /**
  * Props for ProductList LoadMoreTrigger component
  */
-export interface LoadMoreTriggerProps
-  extends AsChildProps<{
-    loadMore: (count: number) => void;
-  }> {
-  // children is already defined in AsChildProps, no need to override
+export interface LoadMoreTriggerProps {
+  children?: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
 }
 
 /**
@@ -319,22 +317,18 @@ export const LoadMoreTrigger = React.forwardRef<
           disabled: isLoading,
         };
 
-        const defaultContent = isLoading ? 'Loading...' : 'Load More';
-
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { loadMore },
+        if (asChild && React.isValidElement(children)) {
+          return React.cloneElement(children as React.ReactElement<any>, {
+            ...attributes,
+            onClick: handleClick,
+            disabled: isLoading,
             ref,
-            content: defaultContent,
-            attributes,
           });
-          if (rendered) return rendered;
         }
 
         return (
           <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-            {defaultContent}
+            {children}
           </button>
         );
       }}

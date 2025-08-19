@@ -405,7 +405,9 @@ export const LoadMoreSection = () => {
   return (
     <div className="text-center mt-12">
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <ProductList.LoadMoreTrigger className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary" />
+        <ProductList.LoadMoreTrigger className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary">
+          Load More Products
+        </ProductList.LoadMoreTrigger>
       </div>
       <ProductListPrimitive.Items>
         {({ products }) => (
