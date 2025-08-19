@@ -3831,7 +3831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@npm:0.0.8, @wix/headless-media@npm:^0.0.8":
+"@wix/headless-media@npm:0.0.8":
   version: 0.0.8
   resolution: "@wix/headless-media@npm:0.0.8"
   dependencies:
@@ -3839,6 +3839,17 @@ __metadata:
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
   checksum: 10c0/0f47091789586884e0a499385e5aa19a9c5fe847d342d3efac9af32c723cbfe1cccfc44f41046f602e4075c5c3b3d5af6dde1f82b91d259c89765ac0441a3e5f
+  languageName: node
+  linkType: hard
+
+"@wix/headless-media@npm:^0.0.10":
+  version: 0.0.10
+  resolution: "@wix/headless-media@npm:0.0.10"
+  dependencies:
+    "@wix/sdk": "npm:^1.15.26"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/0bb511677ec656497c96e2cd8205af73e5c4e35d65098bebddbe67c0dd521f31be6dc4abd550335b4344454793abce541d7ebc064b6477949d02bdd20db63f82
   languageName: node
   linkType: hard
 
@@ -3984,7 +3995,7 @@ __metadata:
     "@wix/ecom": "npm:^1.0.1278"
     "@wix/essentials": "npm:^0.1.24"
     "@wix/headless-ecom": "npm:^0.0.14"
-    "@wix/headless-media": "npm:^0.0.8"
+    "@wix/headless-media": "npm:^0.0.10"
     "@wix/redirects": "npm:^1.0.83"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
