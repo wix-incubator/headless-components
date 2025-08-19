@@ -6,12 +6,15 @@ import type { ProductsListServiceConfig } from '../services/products-list-servic
 import { ProductsListServiceDefinition } from '../services/products-list-service.js';
 
 import * as CoreProductList from './core/ProductList.js';
+import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
+import { renderAsChild, type AsChildProps } from '../utils/renderAsChild.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
   productListProducts = 'product-list-products',
   productListItem = 'product-list-item',
+  productListLoadMore = 'product-list-load-more',
 }
 
 /**
@@ -270,5 +273,71 @@ export const ProductRepeater = React.forwardRef<
         </Product.Root>
       ))}
     </>
+  );
+});
+
+/**
+ * Props for ProductList LoadMoreTrigger component
+ */
+export interface LoadMoreTriggerProps
+  extends AsChildProps<{
+    loadMore: (count: number) => void;
+  }> {
+  // children is already defined in AsChildProps, no need to override
+}
+
+/**
+ * Displays a button to load more products. Not rendered if infiniteScroll is false or no products are left to load.
+ * Follows the architecture rules - does not support asChild as it's a simple trigger component.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ProductList.LoadMoreTrigger asChild>
+ *   <button>Load More</button>
+ * </ProductList.LoadMoreTrigger>
+ * ```
+ */
+export const LoadMoreTrigger = React.forwardRef<
+  HTMLElement,
+  LoadMoreTriggerProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <CoreProductListPagination.LoadMoreTrigger>
+      {({ loadMore, hasMoreProducts, isLoading }) => {
+        // Don't render if no more products to load
+        if (!hasMoreProducts) return null;
+
+        const handleClick = () => loadMore(10);
+
+        const attributes = {
+          'data-testid': TestIds.productListLoadMore,
+          className,
+          onClick: handleClick,
+          disabled: isLoading,
+        };
+
+        const defaultContent = isLoading ? 'Loading...' : 'Load More';
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: { loadMore },
+            ref,
+            content: defaultContent,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        return (
+          <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
+            {defaultContent}
+          </button>
+        );
+      }}
+    </CoreProductListPagination.LoadMoreTrigger>
   );
 });
