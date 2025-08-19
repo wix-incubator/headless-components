@@ -423,7 +423,7 @@ export const SelectedVariantService =
             rawAmount = prod.compareAtPriceRange.minValue.amount;
           }
 
-          return rawAmount ? `$${rawAmount}` : null;
+          return rawAmount && rawAmount !== '0' ? `$${rawAmount}` : null;
         });
 
       const isInStock: ReadOnlySignal<boolean> = signalsService.computed(() => {
