@@ -10,6 +10,18 @@ import * as Option from './Option.js';
 import { AsContent } from './types.js';
 
 /**
+ * Configuration for MediaGallery service
+ */
+interface MediaGalleryConfig {
+  media?: Array<{ image?: string | null; altText?: string | null }>;
+  infinite?: boolean;
+  autoPlay?: {
+    direction?: 'forward' | 'backward';
+    intervalMs?: number;
+  };
+}
+
+/**
  * Context for sharing variant options state between components
  */
 interface VariantsContextValue {
@@ -70,6 +82,7 @@ enum TestIds {
   productModifiers = 'product-modifiers',
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
+  productMediaGallery = 'product-media-gallery',
 }
 
 /**
@@ -882,3 +895,81 @@ export const ModifierOptionRepeater = React.forwardRef<
     </>
   );
 });
+
+/**
+ * Props for Product MediaGallery component
+ */
+export interface ProductMediaGalleryProps
+  extends Omit<MediaGalleryConfig, 'media'> {
+  children: React.ReactNode;
+}
+
+/**
+ * Container for product media gallery.
+ * Renders a MediaGallery.Root with the product media items.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.MediaGallery
+ *   infinite={true}
+ *   autoPlay={{ direction: "forward", intervalMs: 5000 }}
+ * >
+ *   <MediaGallery.Viewport />
+ *   <MediaGallery.Previous />
+ *   <MediaGallery.Next />
+ *   <MediaGallery.Thumbnails>
+ *     <MediaGallery.ThumbnailRepeater>
+ *       <MediaGallery.ThumbnailItem />
+ *     </MediaGallery.ThumbnailRepeater>
+ *   </MediaGallery.Thumbnails>
+ * </Product.MediaGallery>
+ *
+ * // Simple usage
+ * <Product.MediaGallery>
+ *   <MediaGallery.Viewport className="rounded-lg" />
+ * </Product.MediaGallery>
+ * ```
+ */
+export const ProductMediaGallery = React.forwardRef<
+  HTMLElement,
+  ProductMediaGalleryProps
+>((props, ref) => {
+  const { children, infinite, autoPlay, ...otherProps } = props;
+
+  return (
+    <CoreProduct.Media>
+      {({ media }) => {
+        const mediaGalleryServiceConfig = {
+          media: media ?? [],
+          infinite,
+          autoPlay,
+        };
+
+        const attributes = {
+          'data-testid': TestIds.productMediaGallery,
+        };
+
+        return (
+          <div
+            {...attributes}
+            ref={ref as React.Ref<HTMLDivElement>}
+            {...otherProps}
+          >
+            <MediaGallery.Root
+              mediaGalleryServiceConfig={mediaGalleryServiceConfig}
+            >
+              {children}
+            </MediaGallery.Root>
+          </div>
+        );
+      }}
+    </CoreProduct.Media>
+  );
+});
+
+/**
+ * Alias for ProductMediaGallery to match the documented API
+ */
+export { ProductMediaGallery as MediaGallery };

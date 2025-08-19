@@ -20,6 +20,7 @@ import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
 import { useEffect, useState } from 'react';
 import { WixMediaImage } from '../media';
+import * as StyledMediaGallery from '../media/MediaGallery';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
 import { ProductFilters } from './ProductFilters';
@@ -184,6 +185,49 @@ export const ProductGridContent = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             <ProductList.ProductRepeater>
               <div className="relative bg-surface-card backdrop-blur-sm rounded-xl p-4 border border-surface-primary hover:border-surface-hover transition-all duration-200 hover:scale-105 group h-full flex flex-col">
+                <div className="aspect-square bg-surface-primary rounded-lg mb-4 overflow-hidden relative">
+                  <Product.MediaGallery>
+                    <StyledMediaGallery.Viewport className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </Product.MediaGallery>
+
+                  {/* Quick View Button - appears on hover */}
+                  <ProductPrimitive.Content>
+                    {({ product }) => (
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out translate-y-2 group-hover:translate-y-0">
+                        <button
+                          onClick={e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openQuickView(product);
+                          }}
+                          className="bg-gradient-primary text-white px-4 py-2 rounded-lg border border-surface-primary shadow-lg flex items-center gap-2 font-medium bg-gradient-primary-hover transition-all duration-200 whitespace-nowrap"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                          Quick View
+                        </button>
+                      </div>
+                    )}
+                  </ProductPrimitive.Content>
+                </div>
+
                 {/* Product Name with Link */}
                 <Product.Slug asChild>
                   {({ slug }) => (
