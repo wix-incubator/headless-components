@@ -186,7 +186,8 @@ export interface ProductMediaProps {
 }
 
 export interface ProductMediaRenderProps {
-  media: ProductMedia[];
+  mediaItems: ProductMedia[];
+  mainMedia?: ProductMedia;
 }
 
 export function Media(props: ProductMediaProps) {
@@ -195,10 +196,12 @@ export function Media(props: ProductMediaProps) {
   >;
 
   const product = service.product.get();
-  const media = product.media?.itemsInfo?.items ?? [];
+  const mainMedia = product.media?.main;
+  const mediaItems = product.media?.itemsInfo?.items ?? [];
 
   return props.children({
-    media,
+    mediaItems,
+    mainMedia,
   });
 }
 

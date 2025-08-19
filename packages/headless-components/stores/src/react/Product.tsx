@@ -940,9 +940,12 @@ export const ProductMediaGallery = React.forwardRef<
 
   return (
     <CoreProduct.Media>
-      {({ media }) => {
+      {({ mediaItems, mainMedia }) => {
+        const media =
+          mediaItems.length > 0 ? mediaItems : mainMedia ? [mainMedia] : [];
+
         const mediaGalleryServiceConfig = {
-          media: media ?? [],
+          media,
           infinite,
           autoPlay,
         };
