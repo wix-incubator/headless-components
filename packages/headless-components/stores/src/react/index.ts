@@ -1,6 +1,6 @@
 export * as CategoryListCore from './core/CategoryList.js';
 export * as CategoryCore from './core/Category.js';
-export * as Product from './core/Product.js';
+export * as ProductCore from './core/Product.js';
 export * as ProductModifiers from './core/ProductModifiers.js';
 export * as ProductList from './core/ProductList.js';
 export * as ProductListFilters from './core/ProductListFilters.js';
@@ -9,7 +9,7 @@ export * as ProductListSort from './core/ProductListSort.js';
 export * as ProductVariantSelector from './core/ProductVariantSelector.js';
 export * as SelectedVariant from './core/SelectedVariant.js';
 
-export * as ProductV2 from './Product.js';
+export * as Product from './Product.js';
 export * as Option from './Option.js';
 export * as Choice from './Choice.js';
 export * as CategoryList from './CategoryList.js';
