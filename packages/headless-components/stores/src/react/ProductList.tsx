@@ -17,12 +17,15 @@ enum TestIds {
 /**
  * Props for the ProductList root component following the documented API
  */
-export interface ProductListRootProps {
-  children?: React.ReactNode;
+export interface ProductListRootProps
+  extends AsChildProps<{
+    totalProducts: number;
+    displayedProducts: number;
+    isFiltered: boolean;
+  }> {
   products?: V3Product[];
   productsListConfig?: ProductsListServiceConfig;
   productsListSearchConfig?: ProductsListSearchServiceConfig;
-  asChild?: boolean;
   className?: string;
 }
 
@@ -49,31 +52,89 @@ export interface ProductListRootProps {
  * }
  * ```
  */
-export function Root(props: ProductListRootProps): React.ReactNode {
-  const { children, products, productsListConfig, productsListSearchConfig } =
-    props;
+export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
+  (props, ref) => {
+    const {
+      asChild,
+      children,
+      products,
+      productsListConfig,
+      productsListSearchConfig,
+      className,
+    } = props;
 
-  const serviceConfig = productsListConfig || {
-    products: products || [],
-    searchOptions: {
-      cursorPaging: { limit: 10 },
-    },
-    pagingMetadata: {
-      count: products?.length || 0,
-    },
-    aggregations: {}, // Empty aggregation data
+    const serviceConfig = productsListConfig || {
+      products: products || [],
+      searchOptions: {
+        cursorPaging: { limit: 10 },
+      },
+      pagingMetadata: {
+        count: products?.length || 0,
+      },
+      aggregations: {}, // Empty aggregation data
+    };
+
+    return (
+      <CoreProductList.Root
+        productsListConfig={serviceConfig}
+        productsListSearchConfig={productsListSearchConfig}
+      >
+        <RootContent
+          asChild={asChild}
+          children={children as any}
+          className={className}
+          ref={ref}
+        />
+      </CoreProductList.Root>
+    );
+  },
+);
+
+/**
+ * Internal component to handle the Root content with service access
+ */
+const RootContent = React.forwardRef<
+  HTMLElement,
+  {
+    asChild?: boolean;
+    children?: any;
+    className?: string;
+  }
+>((props, ref) => {
+  const { asChild, children, className } = props;
+  const productsListService = useService(ProductsListServiceDefinition);
+  const contextProducts = productsListService.products.get();
+  const pagingMetadata = productsListService.pagingMetadata.get();
+
+  const displayedProducts = contextProducts.length;
+  const totalProducts = pagingMetadata.count || contextProducts.length;
+  const isFiltered = false; // TODO: Implement filtering detection
+
+  const attributes = {
+    'data-testid': TestIds.productListRoot,
+    'data-total-products': totalProducts,
+    'data-displayed-products': displayedProducts,
+    'data-filtered': isFiltered,
+    className,
   };
 
+  if (asChild) {
+    const rendered = renderAsChild({
+      children,
+      props: { totalProducts, displayedProducts, isFiltered },
+      ref,
+      content: null,
+      attributes,
+    });
+    if (rendered) return rendered;
+  }
+
   return (
-    <CoreProductList.Root
-      productsListConfig={serviceConfig}
-      productsListSearchConfig={productsListSearchConfig}
-      data-testid={TestIds.productListRoot}
-    >
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
       {children}
-    </CoreProductList.Root>
+    </div>
   );
-}
+});
 
 /**
  * Props for ProductList Raw component
@@ -129,11 +190,15 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
 /**
  * Props for ProductList Products component
  */
-export interface ProductsProps {
-  children: React.ReactNode;
+export interface ProductsProps
+  extends AsChildProps<{
+    hasProducts: boolean;
+    productsCount: number;
+  }> {
   emptyState?: React.ReactNode;
   infiniteScroll?: boolean;
   pageSize?: number;
+  className?: string;
 }
 
 /**
@@ -153,10 +218,18 @@ export interface ProductsProps {
  */
 export const Products = React.forwardRef<HTMLElement, ProductsProps>(
   (props, ref) => {
-    const { children, emptyState, infiniteScroll = true, pageSize = 0 } = props;
+    const {
+      asChild,
+      children,
+      emptyState,
+      infiniteScroll = true,
+      pageSize = 0,
+      className,
+    } = props;
     const productsListService = useService(ProductsListServiceDefinition);
     const products = productsListService.products.get();
     const hasProducts = products.length > 0;
+    const productsCount = products.length;
 
     if (!hasProducts) {
       return emptyState || null;
@@ -167,11 +240,23 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
       'data-empty': !hasProducts,
       'data-infinite-scroll': infiniteScroll,
       'data-page-size': pageSize,
+      className,
     };
+
+    if (asChild) {
+      const rendered = renderAsChild({
+        children: children as any,
+        props: { hasProducts, productsCount },
+        ref,
+        content: children as React.ReactNode,
+        attributes,
+      });
+      if (rendered) return rendered;
+    }
 
     return (
       <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {children}
+        {children as React.ReactNode}
       </div>
     );
   },
@@ -187,6 +272,7 @@ export interface ProductRepeaterProps {
 /**
  * Repeater component that renders Product.Root for each product.
  * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
  * @example
