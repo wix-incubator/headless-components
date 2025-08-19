@@ -4,10 +4,10 @@ import React from 'react';
 import { productsV3 } from '@wix/stores';
 
 import {
-  Product as ProductPrimitive,
+  ProductCore as ProductPrimitive,
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
-  ProductV2 as Product,
+  Product,
   Option,
   Choice,
 } from '@wix/headless-stores/react';
