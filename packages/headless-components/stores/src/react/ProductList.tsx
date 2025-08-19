@@ -1,12 +1,12 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
+import { useService } from '@wix/services-manager-react';
 import React from 'react';
+import type { ProductsListSearchServiceConfig } from '../services/products-list-search-service.js';
+import type { ProductsListServiceConfig } from '../services/products-list-service.js';
+import { ProductsListServiceDefinition } from '../services/products-list-service.js';
 import { renderAsChild, type AsChildProps } from '../utils/index.js';
 import * as CoreProductList from './core/ProductList.js';
-import * as CoreProduct from './core/Product.js';
-import type { ProductsListServiceConfig } from '../services/products-list-service.js';
-import type { ProductsListSearchServiceConfig } from '../services/products-list-search-service.js';
-import { useService } from '@wix/services-manager-react';
-import { ProductsListServiceDefinition } from '../services/products-list-service.js';
+import * as Product from './Product.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -214,15 +214,15 @@ export const ProductRepeater = React.forwardRef<
   return (
     <>
       {products.map((product: V3Product) => (
-        <CoreProduct.Root
+        <Product.Root
           key={product._id}
-          productServiceConfig={{ product }}
+          product={product}
           data-testid={TestIds.productListItem}
           data-product-id={product._id}
-          data-product-available={true} // TODO: Add proper stock check when V3Product type includes stock info
+          data-product-available={true}
         >
           {children}
-        </CoreProduct.Root>
+        </Product.Root>
       ))}
     </>
   );

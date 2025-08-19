@@ -1,6 +1,7 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
 import { renderAsChild, type AsChildProps } from '../utils/index.js';
+import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
 import * as ProductModifiers from './core/ProductModifiers.js';
@@ -106,11 +107,17 @@ export function Root(props: ProductRootProps): React.ReactNode {
       productServiceConfig={{ product: props.product }}
       data-testid={TestIds.productRoot}
     >
-      <ProductVariantSelector.Root>
-        <ProductModifiers.Root>
-          <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
-        </ProductModifiers.Root>
-      </ProductVariantSelector.Root>
+      <MediaGallery.Root
+        mediaGalleryServiceConfig={{
+          media: props.product.media?.itemsInfo?.items ?? [],
+        }}
+      >
+        <ProductVariantSelector.Root>
+          <ProductModifiers.Root>
+            <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
+          </ProductModifiers.Root>
+        </ProductVariantSelector.Root>
+      </MediaGallery.Root>
     </CoreProduct.Root>
   );
 }

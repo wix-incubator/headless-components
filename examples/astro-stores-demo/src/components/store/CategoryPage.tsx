@@ -9,6 +9,8 @@ import {
   SelectedVariant as SelectedVariantPrimitive,
   ProductListV2 as ProductList,
   ProductV2 as Product,
+  Option,
+  Choice,
 } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
@@ -51,394 +53,9 @@ export const ProductGridContent = ({
     setTimeout(() => setQuickViewProduct(null), 300); // Allow animation to complete
   };
 
-  const ProductItem = ({ product }: { product: productsV3.V3Product }) => {
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
-    const availabilityStatus = product.inventory?.availabilityStatus;
-    const available =
-      availabilityStatus === productsV3.InventoryAvailabilityStatus.IN_STOCK ||
-      availabilityStatus ===
-        productsV3.InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK;
-
-    return (
-      <MediaGalleryCore.Root
-        mediaGalleryServiceConfig={{
-          media: product.media?.itemsInfo?.items ?? [],
-        }}
-      >
-        <SelectedVariantPrimitive.Root
-          selectedVariantServiceConfig={{ fetchInventoryData: false }}
-        >
-          <div
-            data-testid="product-item"
-            data-product-id={product._id}
-            data-product-available={available}
-            className="relative bg-surface-card backdrop-blur-sm rounded-xl p-4 border border-surface-primary hover:border-surface-hover transition-all duration-200 hover:scale-105 group h-full flex flex-col relative"
-          >
-            {/* Success Message */}
-            {showSuccessMessage && (
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                <div className="bg-status-success-light/90 backdrop-blur-sm border border-status-success rounded-lg px-4 py-2 text-status-success text-base font-bold text-center shadow-md animate-bounce">
-                  Added to Cart!
-                </div>
-              </div>
-            )}
-
-            <CurrentCart.LineItemAdded>
-              {({ onAddedToCart }) => {
-                useEffect(() => {
-                  return onAddedToCart((lineItems: LineItem[] | undefined) => {
-                    if (!lineItems) return;
-                    const myLineItemIsThere = lineItems.some(
-                      lineItem =>
-                        lineItem.catalogReference?.catalogItemId === product._id
-                    );
-                    if (!myLineItemIsThere) return;
-
-                    setShowSuccessMessage(true);
-                    setTimeout(() => {
-                      setShowSuccessMessage(false);
-                    }, 3000);
-                  });
-                }, [onAddedToCart]);
-
-                return null;
-              }}
-            </CurrentCart.LineItemAdded>
-
-            <div className="aspect-square bg-surface-primary rounded-lg mb-4 overflow-hidden relative">
-              {product.media?.main?.image ? (
-                <WixMediaImage
-                  media={{ image: product.media.main.image }}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  alt={product.media.main.altText || ''}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <svg
-                    className="w-12 h-12 text-content-subtle"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-              )}
-
-              {/* Quick View Button - appears on hover */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out translate-y-2 group-hover:translate-y-0">
-                <button
-                  onClick={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openQuickView(product);
-                  }}
-                  className="bg-gradient-primary text-white px-4 py-2 rounded-lg border border-surface-primary shadow-lg flex items-center gap-2 font-medium bg-gradient-primary-hover transition-all duration-200 whitespace-nowrap"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                  Quick View
-                </button>
-              </div>
-            </div>
-
-            {product.ribbon?.name && (
-              <div className="absolute top-2 left-2">
-                <span className="bg-gradient-ribbon text-content-primary text-xs px-2 py-1 rounded-full font-medium">
-                  {product.ribbon.name}
-                </span>
-              </div>
-            )}
-
-            <a data-testid="title-navigation" href={`/${product.slug}`}>
-              <h3 className="text-content-primary font-semibold mb-2 line-clamp-2">
-                {product.name}
-              </h3>
-            </a>
-
-            {/* Product Options */}
-            <ProductVariantSelectorPrimitive.Options>
-              {({ options, hasOptions }) => (
-                <>
-                  {hasOptions && (
-                    <div className="mb-3 space-y-2">
-                      {options.map((option: any) => (
-                        <ProductVariantSelectorPrimitive.Option
-                          key={option._id}
-                          option={option}
-                        >
-                          {({ name, choices }) => (
-                            <div className="space-y-1">
-                              <span className="text-content-secondary text-xs font-medium">
-                                {String(name)}:
-                              </span>
-                              <div className="flex flex-wrap gap-1">
-                                {choices?.slice(0, 3).map((choice: any) => (
-                                  <ProductVariantSelectorPrimitive.Choice
-                                    key={choice.choiceId}
-                                    option={option}
-                                    choice={choice}
-                                  >
-                                    {({
-                                      value,
-                                      isSelected,
-                                      isVisible,
-                                      isInStock,
-                                      isPreOrderEnabled,
-                                      select,
-                                      optionName,
-                                    }) => {
-                                      // Check if this is a color option and if choice has color data
-                                      const isColorOption = String(optionName)
-                                        .toLowerCase()
-                                        .includes('color');
-                                      const hasColorCode =
-                                        choice.colorCode || choice.media?.image;
-
-                                      // Only render if visible
-                                      if (!isVisible) return null;
-
-                                      if (
-                                        isColorOption &&
-                                        (choice.colorCode || hasColorCode)
-                                      ) {
-                                        return (
-                                          <div className="relative group/color">
-                                            <div
-                                              className={`w-6 h-6 rounded-full border-2 transition-colors cursor-pointer ${
-                                                isSelected
-                                                  ? 'border-brand-primary shadow-md ring-1 ring-brand-primary/30'
-                                                  : 'border-color-swatch hover:border-color-swatch-hover'
-                                              } ${
-                                                !isInStock && !isPreOrderEnabled
-                                                  ? 'grayscale opacity-50'
-                                                  : ''
-                                              }`}
-                                              style={{
-                                                backgroundColor:
-                                                  choice.colorCode ||
-                                                  'var(--theme-fallback-color)',
-                                              }}
-                                              onClick={select}
-                                            />
-                                            {/* Stock indicator for color swatches */}
-                                            {!isInStock &&
-                                              !isPreOrderEnabled && (
-                                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                  <svg
-                                                    className="w-3 h-3 text-status-error"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                  >
-                                                    <path
-                                                      strokeLinecap="round"
-                                                      strokeLinejoin="round"
-                                                      strokeWidth="2"
-                                                      d="M6 18L18 6M6 6l12 12"
-                                                    />
-                                                  </svg>
-                                                </div>
-                                              )}
-                                            {/* Tooltip */}
-                                            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-surface-tooltip text-content-primary text-xs px-2 py-1 rounded opacity-0 group-hover/color:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                                              {String(value)}
-                                              {!isInStock &&
-                                                !isPreOrderEnabled &&
-                                                ' (Out of Stock)'}
-                                            </div>
-                                          </div>
-                                        );
-                                      } else {
-                                        return (
-                                          <span
-                                            className={`inline-flex items-center px-2 py-1 text-xs rounded border transition-colors cursor-pointer ${
-                                              isSelected
-                                                ? 'bg-brand-primary text-content-primary border-brand-primary'
-                                                : 'bg-surface-primary text-content-secondary border-brand-medium hover:border-brand-primary'
-                                            } ${
-                                              !isInStock && !isPreOrderEnabled
-                                                ? 'opacity-50 line-through'
-                                                : ''
-                                            }`}
-                                            onClick={select}
-                                          >
-                                            {String(value)}
-                                          </span>
-                                        );
-                                      }
-                                    }}
-                                  </ProductVariantSelectorPrimitive.Choice>
-                                ))}
-                                {choices?.length > 3 && (
-                                  <span className="text-content-muted text-xs">
-                                    +{choices.length - 3} more
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </ProductVariantSelectorPrimitive.Option>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </ProductVariantSelectorPrimitive.Options>
-
-            <ProductVariantSelectorPrimitive.Reset>
-              {({ reset, hasSelections }) =>
-                hasSelections && (
-                  <div className="pt-4">
-                    <button
-                      onClick={reset}
-                      className="text-sm text-brand-primary hover:text-brand-light transition-colors"
-                    >
-                      Reset Selections
-                    </button>
-                  </div>
-                )
-              }
-            </ProductVariantSelectorPrimitive.Reset>
-
-            <ProductPrimitive.Description>
-              {({ plainDescription }) => (
-                <>
-                  {plainDescription && (
-                    <p
-                      className="text-content-muted text-sm mb-3 line-clamp-2"
-                      dangerouslySetInnerHTML={{
-                        __html: plainDescription,
-                      }}
-                    />
-                  )}
-                </>
-              )}
-            </ProductPrimitive.Description>
-
-            <div className="mt-auto mb-3">
-              <div className="space-y-1">
-                <SelectedVariantPrimitive.Price>
-                  {({ price, compareAtPrice }) => {
-                    return compareAtPrice &&
-                      parseFloat(compareAtPrice.replace(/[^\d.]/g, '')) > 0 ? (
-                      <>
-                        <div className="text-xl font-bold text-content-primary">
-                          {price}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm font-medium text-content-faded line-through">
-                            {compareAtPrice}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {available ? (
-                              <span className="text-status-success text-sm">
-                                In Stock
-                              </span>
-                            ) : (
-                              <span className="text-status-error text-sm">
-                                Out of Stock
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex items-center justify-between">
-                        <div className="text-xl font-bold text-content-primary">
-                          {price}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {available ? (
-                            <span className="text-status-success text-sm">
-                              In Stock
-                            </span>
-                          ) : (
-                            <span className="text-status-error text-sm">
-                              Out of Stock
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  }}
-                </SelectedVariantPrimitive.Price>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-2">
-              {/* Add to Cart Button */}
-              <SelectedVariantPrimitive.Actions>
-                {({ error }) => (
-                  <div className="space-y-2">
-                    {error && (
-                      <div className="bg-status-danger-light border border-status-danger rounded-lg p-2">
-                        <p className="text-status-error text-xs">{error}</p>
-                      </div>
-                    )}
-
-                    <ProductActionButtons
-                      isQuickView={true} // This will hide the Buy Now button for list items
-                    />
-                  </div>
-                )}
-              </SelectedVariantPrimitive.Actions>
-
-              {/* View Product Button */}
-              <a
-                data-testid="view-product-button"
-                href={`/${product.slug}`}
-                className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
-              >
-                View Product
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </a>
-            </div>
-          </div>
-        </SelectedVariantPrimitive.Root>
-      </MediaGalleryCore.Root>
-    );
-  };
-
   return (
     <div className="min-h-screen">
-      <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4 mb-6">
+      <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4">
         <div className="flex items-top justify-between">
           <ProductListFiltersPrimitive.CategoryFilter>
             {({ selectedCategory, setSelectedCategory }) => (
@@ -565,17 +182,58 @@ export const ProductGridContent = ({
           </ProductListPrimitive.EmptyState>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            {/* <ProductListPrimitive.ItemContent>
-              {({ product }) => <ProductItem product={product} />}
-            </ProductListPrimitive.ItemContent> */}
             <ProductList.ProductRepeater>
-              <Product.Slug asChild>
-                {({ slug }) => (
-                  <a data-testid="title-navigation" href={`/${slug}`}>
-                    <Product.Name className="text-content-primary font-semibold mb-2 line-clamp-2" />
-                  </a>
-                )}
-              </Product.Slug>
+              <div className="relative bg-surface-card backdrop-blur-sm rounded-xl p-4 border border-surface-primary hover:border-surface-hover transition-all duration-200 hover:scale-105 group h-full flex flex-col">
+                {/* Product Name with Link */}
+                <Product.Slug asChild>
+                  {({ slug }) => (
+                    <a data-testid="title-navigation" href={`/${slug}`}>
+                      <Product.Name className="text-content-primary font-semibold mb-2 line-clamp-2" />
+                    </a>
+                  )}
+                </Product.Slug>
+
+                {/* Product Options */}
+                <Product.Variants>
+                  <Product.VariantOptions>
+                    <div className="mb-3 space-y-2">
+                      <Product.VariantOptionRepeater>
+                        <div className="space-y-1">
+                          <Option.Name className="text-content-secondary text-xs font-medium" />
+                          <Option.Choices>
+                            <div className="flex flex-wrap gap-1">
+                              <Option.ChoiceRepeater>
+                                <>
+                                  <Choice.Color className="w-6 h-6 rounded-full border-2 transition-colors cursor-pointer border-color-swatch hover:border-color-swatch-hover data-[selected='true']:border-brand-primary data-[selected='true']:shadow-md data-[selected='true']:ring-1 data-[selected='true']:ring-brand-primary/30 data-[out-of-stock='true']:grayscale data-[out-of-stock='true']:opacity-50" />
+                                  <Choice.Text className="inline-flex items-center px-2 py-1 text-xs rounded border transition-colors cursor-pointer bg-surface-primary text-content-secondary border-brand-medium hover:border-brand-primary data-[selected='true']:bg-brand-primary data-[selected='true']:text-content-primary data-[selected='true']:border-brand-primary data-[out-of-stock='true']:opacity-50 data-[out-of-stock='true']:line-through" />
+                                </>
+                              </Option.ChoiceRepeater>
+                            </div>
+                          </Option.Choices>
+                        </div>
+                      </Product.VariantOptionRepeater>
+                    </div>
+                  </Product.VariantOptions>
+                </Product.Variants>
+
+                {/* Product Description */}
+                <Product.Description
+                  as="plain"
+                  className="text-content-muted text-sm mb-3 line-clamp-2"
+                />
+
+                {/* Price */}
+                <div className="mt-auto mb-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Product.Price className="text-xl font-bold text-content-primary" />
+                        <Product.CompareAtPrice className="text-sm font-medium text-content-faded line-through" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </ProductList.ProductRepeater>
           </div>
         </div>

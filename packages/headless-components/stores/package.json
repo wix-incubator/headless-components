@@ -63,7 +63,7 @@
     "@wix/ecom": "^1.0.1278",
     "@wix/essentials": "^0.1.24",
     "@wix/headless-ecom": "^0.0.14",
-    "@wix/headless-media": "^0.0.8",
+    "@wix/headless-media": "^0.0.10",
     "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
