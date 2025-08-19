@@ -4,7 +4,7 @@ import React from 'react';
 import type { ProductsListSearchServiceConfig } from '../services/products-list-search-service.js';
 import type { ProductsListServiceConfig } from '../services/products-list-service.js';
 import { ProductsListServiceDefinition } from '../services/products-list-service.js';
-import { renderAsChild, type AsChildProps } from '../utils/index.js';
+
 import * as CoreProductList from './core/ProductList.js';
 import * as Product from './Product.js';
 
@@ -17,12 +17,8 @@ enum TestIds {
 /**
  * Props for the ProductList root component following the documented API
  */
-export interface ProductListRootProps
-  extends AsChildProps<{
-    totalProducts: number;
-    displayedProducts: number;
-    isFiltered: boolean;
-  }> {
+export interface ProductListRootProps {
+  children: React.ReactNode;
   products?: V3Product[];
   productsListConfig?: ProductsListServiceConfig;
   productsListSearchConfig?: ProductsListSearchServiceConfig;
@@ -55,7 +51,6 @@ export interface ProductListRootProps
 export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   (props, ref) => {
     const {
-      asChild,
       children,
       products,
       productsListConfig,
@@ -80,7 +75,6 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
         productsListSearchConfig={productsListSearchConfig}
       >
         <RootContent
-          asChild={asChild}
           children={children as any}
           className={className}
           ref={ref}
@@ -96,12 +90,11 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
 const RootContent = React.forwardRef<
   HTMLElement,
   {
-    asChild?: boolean;
     children?: any;
     className?: string;
   }
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { children, className } = props;
   const productsListService = useService(ProductsListServiceDefinition);
   const contextProducts = productsListService.products.get();
   const pagingMetadata = productsListService.pagingMetadata.get();
@@ -118,17 +111,6 @@ const RootContent = React.forwardRef<
     className,
   };
 
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { totalProducts, displayedProducts, isFiltered },
-      ref,
-      content: null,
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
-
   return (
     <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
       {children}
@@ -139,12 +121,15 @@ const RootContent = React.forwardRef<
 /**
  * Props for ProductList Raw component
  */
-export interface RawProps
-  extends AsChildProps<{
-    totalProducts: number;
-    displayedProducts: number;
-    isFiltered: boolean;
-  }> {}
+export interface RawProps {
+  children:
+    | ((props: {
+        totalProducts: number;
+        displayedProducts: number;
+        isFiltered: boolean;
+      }) => React.ReactNode)
+    | React.ReactNode;
+}
 
 /**
  * Raw component that provides direct access to product list data.
@@ -153,18 +138,18 @@ export interface RawProps
  * @component
  * @example
  * ```tsx
- * <ProductList.Raw asChild>
- *   {React.forwardRef(({totalProducts, displayedProducts, isFiltered, ...props}, ref) => (
- *     <div ref={ref} {...props} className="text-content-muted">
+ * <ProductList.Raw>
+ *   {({ totalProducts, displayedProducts, isFiltered }) => (
+ *     <div className="text-content-muted">
  *       Showing {displayedProducts} of {totalProducts} products
  *       {isFiltered && <span className="ml-2 text-brand-primary">(Filtered)</span>}
  *     </div>
- *   ))}
+ *   )}
  * </ProductList.Raw>
  * ```
  */
-export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
-  const { asChild, children } = props;
+export const Raw = React.forwardRef<HTMLElement, RawProps>((props, _ref) => {
+  const { children } = props;
   const productsListService = useService(ProductsListServiceDefinition);
   const products = productsListService.products.get();
   const pagingMetadata = productsListService.pagingMetadata.get();
@@ -172,29 +157,16 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
   const totalProducts = pagingMetadata.count || products.length;
   const isFiltered = false; // TODO: Implement filtering detection
 
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { totalProducts, displayedProducts, isFiltered },
-      ref,
-      content: null,
-      attributes: {},
-    });
-    if (rendered) return rendered;
-  }
-
-  // Raw component should not render anything by default when not using asChild
-  return null;
+  return typeof children === 'function'
+    ? children({ totalProducts, displayedProducts, isFiltered })
+    : children;
 });
 
 /**
  * Props for ProductList Products component
  */
-export interface ProductsProps
-  extends AsChildProps<{
-    hasProducts: boolean;
-    productsCount: number;
-  }> {
+export interface ProductsProps {
+  children: React.ReactNode;
   emptyState?: React.ReactNode;
   infiniteScroll?: boolean;
   pageSize?: number;
@@ -219,7 +191,6 @@ export interface ProductsProps
 export const Products = React.forwardRef<HTMLElement, ProductsProps>(
   (props, ref) => {
     const {
-      asChild,
       children,
       emptyState,
       infiniteScroll = true,
@@ -229,7 +200,6 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
     const productsListService = useService(ProductsListServiceDefinition);
     const products = productsListService.products.get();
     const hasProducts = products.length > 0;
-    const productsCount = products.length;
 
     if (!hasProducts) {
       return emptyState || null;
@@ -242,17 +212,6 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
       'data-page-size': pageSize,
       className,
     };
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children: children as any,
-        props: { hasProducts, productsCount },
-        ref,
-        content: children as React.ReactNode,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
 
     return (
       <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>

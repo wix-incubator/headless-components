@@ -1,14 +1,14 @@
 import { CurrentCart } from '@wix/headless-ecom/react';
 import type { LineItem } from '@wix/headless-ecom/services';
 import {
-  Product as ProductPrimitive,
-  ProductList as ProductListPrimitive,
+  ProductCore as ProductPrimitive,
+  ProductListCore as ProductListPrimitive,
   ProductListFilters as ProductListFiltersPrimitive,
   ProductListPagination as ProductListPaginationPrimitive,
   ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
-  ProductListV2 as ProductList,
-  ProductV2 as Product,
+  ProductList,
+  Product,
   Option,
   Choice,
 } from '@wix/headless-stores/react';
@@ -216,7 +216,11 @@ export const ProductGridContent = ({
                 {/* Product Name with Link */}
                 <Product.Slug asChild>
                   {React.forwardRef(({ slug }, ref) => (
-                    <a data-testid="title-navigation" href={`/${slug}`}>
+                    <a
+                      ref={ref}
+                      data-testid="title-navigation"
+                      href={`/${slug}`}
+                    >
                       <Product.Name className="text-content-primary font-semibold mb-2 line-clamp-2" />
                     </a>
                   ))}
@@ -341,6 +345,7 @@ export const ProductGridContent = ({
                   <Product.Slug asChild>
                     {React.forwardRef(({ slug }, ref) => (
                       <a
+                        ref={ref}
                         href={`/${slug}`}
                         className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
                       >
