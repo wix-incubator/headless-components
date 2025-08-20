@@ -8,6 +8,7 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
+import { renderAsChild, type AsChildProps } from '../utils/renderAsChild.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -278,10 +279,8 @@ export const ProductRepeater = React.forwardRef<
 /**
  * Props for ProductList LoadMoreTrigger component
  */
-export interface LoadMoreTriggerProps {
-  children?: React.ReactNode;
-  asChild?: boolean;
-  className?: string;
+export interface LoadMoreTriggerProps extends AsChildProps<{}> {
+  // children and other props are inherited from AsChildProps
 }
 
 /**
@@ -313,22 +312,35 @@ export const LoadMoreTrigger = React.forwardRef<
         const attributes = {
           'data-testid': TestIds.productListLoadMore,
           className,
-          onClick: handleClick,
-          disabled: isLoading,
         };
 
-        if (asChild && React.isValidElement(children)) {
-          return React.cloneElement(children as React.ReactElement<any>, {
-            ...attributes,
-            onClick: handleClick,
-            disabled: isLoading,
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: {},
             ref,
+            content: null,
+            attributes: {
+              ...attributes,
+              onClick: handleClick,
+              disabled: isLoading,
+            },
           });
+          if (rendered) return rendered;
         }
 
         return (
-          <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-            {children}
+          <button
+            {...attributes}
+            onClick={handleClick}
+            disabled={isLoading}
+            ref={ref as React.Ref<HTMLButtonElement>}
+          >
+            {React.isValidElement(children) ||
+            typeof children === 'string' ||
+            typeof children === 'number'
+              ? children
+              : null}
           </button>
         );
       }}
