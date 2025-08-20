@@ -6,12 +6,14 @@ import type { ProductsListServiceConfig } from '../services/products-list-servic
 import { ProductsListServiceDefinition } from '../services/products-list-service.js';
 
 import * as CoreProductList from './core/ProductList.js';
+import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
   productListProducts = 'product-list-products',
   productListItem = 'product-list-item',
+  productListLoadMore = 'product-list-load-more',
 }
 
 /**
@@ -270,5 +272,64 @@ export const ProductRepeater = React.forwardRef<
         </Product.Root>
       ))}
     </>
+  );
+});
+
+/**
+ * Props for ProductList LoadMoreTrigger component
+ */
+export interface LoadMoreTriggerProps {
+  children?: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+}
+
+/**
+ * Displays a button to load more products. Not rendered if infiniteScroll is false or no products are left to load.
+ * Follows the architecture rules - does not support asChild as it's a simple trigger component.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ProductList.LoadMoreTrigger asChild>
+ *   <button>Load More</button>
+ * </ProductList.LoadMoreTrigger>
+ * ```
+ */
+export const LoadMoreTrigger = React.forwardRef<
+  HTMLElement,
+  LoadMoreTriggerProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <CoreProductListPagination.LoadMoreTrigger>
+      {({ loadMore, hasMoreProducts }) => {
+        // Don't render if no more products to load
+        if (!hasMoreProducts) return null;
+
+        const handleClick = () => loadMore(10);
+
+        const attributes = {
+          'data-testid': TestIds.productListLoadMore,
+          className,
+          onClick: handleClick,
+        };
+
+        if (asChild && React.isValidElement(children)) {
+          return React.cloneElement(children as React.ReactElement<any>, {
+            ...attributes,
+            onClick: handleClick,
+            ref,
+          });
+        }
+
+        return (
+          <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
+            {children}
+          </button>
+        );
+      }}
+    </CoreProductListPagination.LoadMoreTrigger>
   );
 });
