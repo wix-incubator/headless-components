@@ -323,7 +323,6 @@ export const LoadMoreTrigger = React.forwardRef<
             attributes: {
               ...attributes,
               onClick: handleClick,
-              disabled: isLoading,
             },
           });
           if (rendered) return rendered;
@@ -333,7 +332,6 @@ export const LoadMoreTrigger = React.forwardRef<
           <button
             {...attributes}
             onClick={handleClick}
-            disabled={isLoading}
             ref={ref as React.Ref<HTMLButtonElement>}
           >
             {React.isValidElement(children) ||
