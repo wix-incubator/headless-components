@@ -306,7 +306,7 @@ export const LoadMoreTrigger = React.forwardRef<
 
   return (
     <CoreProductListPagination.LoadMoreTrigger>
-      {({ loadMore, hasMoreProducts }) => {
+      {({ loadMore, hasMoreProducts, isLoading }) => {
         // Don't render if no more products to load
         if (!hasMoreProducts) return null;
 
@@ -316,6 +316,7 @@ export const LoadMoreTrigger = React.forwardRef<
           'data-testid': TestIds.productListLoadMore,
           className,
           onClick: handleClick,
+          disabled: isLoading,
         };
 
         if (asChild && React.isValidElement(children)) {
