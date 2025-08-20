@@ -115,9 +115,7 @@ export const ProductGridContent = ({
                       />
                     </svg>
                     <span className="text-brand-light text-sm sm:text-base">
-                      <ProductListPrimitive.Items>
-                        {({ products }) => `Showing ${String(products.length)}`}
-                      </ProductListPrimitive.Items>
+                      Showing <ProductList.TotalsDisplayed /> products
                     </span>
                   </div>
                   <button
@@ -409,13 +407,6 @@ export const LoadMoreSection = () => {
           Load More Products
         </ProductList.LoadMoreTrigger>
       </div>
-      <ProductListPrimitive.Items>
-        {({ products }) => (
-          <p className="text-content-muted text-sm mt-4">
-            {products.length} products loaded
-          </p>
-        )}
-      </ProductListPrimitive.Items>
     </div>
   );
 };

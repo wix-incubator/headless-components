@@ -8,12 +8,14 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
+import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
   productListProducts = 'product-list-products',
   productListItem = 'product-list-item',
   productListLoadMore = 'product-list-load-more',
+  productListTotalsDisplayed = 'product-list-totals-displayed',
 }
 
 /**
@@ -304,7 +306,7 @@ export const LoadMoreTrigger = React.forwardRef<
 
   return (
     <CoreProductListPagination.LoadMoreTrigger>
-      {({ loadMore, hasMoreProducts }) => {
+      {({ loadMore, hasMoreProducts, isLoading }) => {
         // Don't render if no more products to load
         if (!hasMoreProducts) return null;
 
@@ -314,6 +316,7 @@ export const LoadMoreTrigger = React.forwardRef<
           'data-testid': TestIds.productListLoadMore,
           className,
           onClick: handleClick,
+          disabled: isLoading,
         };
 
         if (asChild && React.isValidElement(children)) {
@@ -331,5 +334,61 @@ export const LoadMoreTrigger = React.forwardRef<
         );
       }}
     </CoreProductListPagination.LoadMoreTrigger>
+  );
+});
+
+/**
+ * Props for ProductList Totals Displayed component
+ */
+export interface TotalsDisplayedProps
+  extends AsChildProps<{ displayedProducts: number }> {}
+
+/**
+ * Displays the number of products currently displayed.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ProductList.TotalsDisplayed />
+ * // or with asChild
+ * <ProductList.TotalsDisplayed asChild>
+ *   <strong />
+ * </ProductList.TotalsDisplayed>
+ * // or with render function
+ * <ProductList.TotalsDisplayed asChild>
+ *   {({ displayedProducts }, ref) => <strong ref={ref}>{displayedProducts}</strong>}
+ * </ProductList.TotalsDisplayed>
+ * ```
+ */
+export const TotalsDisplayed = React.forwardRef<
+  HTMLElement,
+  TotalsDisplayedProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+  const productsListService = useService(ProductsListServiceDefinition);
+  const products = productsListService.products.get();
+  const displayedProducts = products.length;
+
+  const attributes = {
+    'data-testid': TestIds.productListTotalsDisplayed,
+    'data-displayed': displayedProducts,
+    className,
+  };
+
+  if (asChild) {
+    const rendered = renderAsChild({
+      children,
+      props: { displayedProducts },
+      ref,
+      content: displayedProducts.toString(),
+      attributes,
+    });
+    if (rendered) return rendered;
+  }
+
+  return (
+    <span {...attributes} ref={ref as React.Ref<HTMLSpanElement>}>
+      {displayedProducts}
+    </span>
   );
 });
