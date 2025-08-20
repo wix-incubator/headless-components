@@ -2,6 +2,32 @@
 
 A comprehensive cart display and management component system built with composable primitives, similar to Radix UI architecture.
 
+## Table of Contents
+
+### Components
+
+- [Cart.Root](#cartroot)
+- [Cart.LineItems](#cartlineitems)
+- [Cart.LineItemRepeater](#cartlineitemrepeater)
+- [LineItem.Title](#lineitemtitle)
+- [LineItem.Image](#lineitemimage)
+- [LineItem.SelectedOptions](#lineitemselectedoptions)
+- [LineItem.SelectedOptionRepeater](#lineitemselectedoptionrepeater)
+- [SelectedOption.Text](#selectedoptiontext)
+- [SelectedOption.Color](#selectedoptioncolor)
+- [Cart.Summary](#cartsummary)
+- [Cart.Coupon.Input](#cartcouponinput)
+- [Cart.Coupon.Trigger](#cartcoupontrigger)
+- [Cart.Coupon.Clear](#cartcouponclear)
+- [Cart.Note.Input](#cartnoteinput)
+- [Cart.Errors](#carterrors)
+- [Cart.Totals.Price/Cart.Totals.Tax/Cart.Totals.Discount](#carttotalspricecarttotalstaxcarttotalsdiscount)
+- [LineItem.Quantity](#lineitemquantity)
+- [Commerce.Actions.AddToCart/Commerce.Actions.BuyNow](#commerceactionsaddtocartcommerceactionsbuynow)
+- [Commerce.Actions.Checkout](#commerceactionscheckout)
+
+---
+
 ## Architecture
 
 The Cart component follows a compound component pattern where each part can be composed together to create flexible cart displays and interactions.
