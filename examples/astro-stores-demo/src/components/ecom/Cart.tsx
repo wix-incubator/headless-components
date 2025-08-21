@@ -148,7 +148,7 @@ export default function CartContent() {
                         label="Total"
                       />
                     </div>
-                    <Cart.Errors className="w-full bg-surface-error border border-status-error rounded-lg p-3 text-status-error"/>
+                    <Cart.Errors className="w-full bg-surface-error border border-status-error rounded-lg p-3 text-status-error" />
 
                     <Commerce.Actions.Checkout
                       className="btn-primary w-full text-content-primary font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"

@@ -10,7 +10,7 @@ import {
 } from './core/CurrentCart.js';
 import { Trigger as CoreCheckout } from './core/Checkout.js';
 import React from 'react';
-import { type LineItem } from '../../services/checkout-service.js';
+import { type LineItem } from '../services/checkout-service.js';
 
 // Components that render actual DOM elements get test IDs on their rendered elements
 // Components that only provide context/logic don't introduce new DOM elements
