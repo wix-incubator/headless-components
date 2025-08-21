@@ -127,12 +127,15 @@ export function renderAsChild<TProps = any>({
 
   // Handle React element pattern
   if (React.isValidElement(children)) {
+    const className = (props as any).className;
+
     return React.cloneElement(
       children as React.ReactElement<CloneableElementProps>,
       {
         ref,
         children: content,
         ...attributes,
+        ...(className ? { className } : {}),
       },
     );
   }

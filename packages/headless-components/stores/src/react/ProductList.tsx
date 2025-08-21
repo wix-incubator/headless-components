@@ -378,7 +378,7 @@ export const TotalsDisplayed = React.forwardRef<
   if (asChild) {
     const rendered = renderAsChild({
       children,
-      props: { displayedProducts },
+      props: { displayedProducts, className },
       ref,
       content: displayedProducts.toString(),
       attributes,

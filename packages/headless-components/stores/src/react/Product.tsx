@@ -166,7 +166,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
         if (asChild) {
           const rendered = renderAsChild({
             children,
-            props: { name },
+            props: { name, className },
             ref,
             content: name,
             attributes,
@@ -249,7 +249,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
           if (asChild) {
             const rendered = renderAsChild({
               children,
-              props: { description },
+              props: { description, className },
               ref,
               content: description,
               attributes,
@@ -323,6 +323,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
         const priceData = {
           price,
           formattedPrice: price,
+          className,
         };
 
         if (asChild) {
@@ -401,6 +402,7 @@ export const CompareAtPrice = React.forwardRef<
         }
 
         const priceData = {
+          className,
           price: compareAtPrice,
           formattedPrice: compareAtPrice,
         };
@@ -455,7 +457,7 @@ export interface SlugProps extends AsChildProps<{ slug: string }> {}
  * ```
  */
 export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
-  const { asChild, children } = props;
+  const { asChild, children, className } = props;
   const testId = TestIds.productSlug;
 
   return (
@@ -465,7 +467,7 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
           'data-testid': testId,
         };
 
-        const slugData = { slug };
+        const slugData = { slug, className };
 
         if (asChild) {
           const rendered = renderAsChild({
@@ -513,7 +515,7 @@ export interface RawProps extends AsChildProps<{ product: V3Product }> {}
  * ```
  */
 export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
-  const { asChild, children } = props;
+  const { asChild, children, className } = props;
 
   return (
     <CoreProduct.Content>
@@ -525,7 +527,7 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
         if (asChild) {
           const rendered = renderAsChild({
             children,
-            props: { product },
+            props: { product, className },
             ref,
             content: null,
             attributes,
@@ -589,7 +591,7 @@ export interface VariantsProps extends AsChildProps<{ hasOptions: boolean }> {}
  */
 export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     return (
       <ProductVariantSelector.Options>
@@ -616,7 +618,7 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
           if (asChild) {
             const rendered = renderAsChild({
               children,
-              props: { hasOptions },
+              props: { hasOptions, className },
               ref,
               content,
               attributes,
@@ -787,7 +789,7 @@ export interface ModifiersProps
  */
 export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     return (
       <ProductModifiers.Modifiers>
@@ -814,7 +816,7 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
           if (asChild) {
             const rendered = renderAsChild({
               children,
-              props: { hasModifiers },
+              props: { hasModifiers, className },
               ref,
               content,
               attributes,
