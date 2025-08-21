@@ -1,6 +1,6 @@
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import { type AsChildProps, useAsChild } from '../utils/asChild.js';
+import React from 'react';
 import {
   EventListService,
   EventListServiceDefinition,
@@ -10,14 +10,15 @@ import * as Event from './Event.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
+  eventListEvent = 'event-list-event',
 }
 
-export interface EventListRootProps {
+export interface RootProps {
   eventListServiceConfig: EventListServiceConfig;
   children: React.ReactNode;
 }
 
-export function Root(props: EventListRootProps): React.ReactNode {
+export const Root = (props: RootProps): React.ReactNode => {
   const { eventListServiceConfig, children } = props;
 
   return (
@@ -31,48 +32,67 @@ export function Root(props: EventListRootProps): React.ReactNode {
       {children}
     </WixServices>
   );
-}
+};
 
-export interface EventListEventsProps extends AsChildProps {
+export interface EventsProps {
+  children: React.ReactNode;
   emptyState?: React.ReactNode;
+  className?: string;
 }
 
-export function Events(props: EventListEventsProps): React.ReactNode {
-  const { asChild, children, emptyState, ...otherProps } = props;
-  const Comp = useAsChild(asChild);
+export const Events = React.forwardRef<HTMLDivElement, EventsProps>(
+  (props, ref) => {
+    const { children, emptyState, className } = props;
+
+    const service = useService(EventListServiceDefinition);
+    const events = service.events.get();
+    const hasEvents = !!events.length;
+
+    if (!hasEvents) {
+      return emptyState || null;
+    }
+
+    const attributes = {
+      'data-testid': TestIds.eventListEvents,
+      'data-empty': !hasEvents,
+      className,
+    };
+
+    return (
+      <div {...attributes} ref={ref}>
+        {children}
+      </div>
+    );
+  },
+);
+
+export interface EventRepeaterProps {
+  children: React.ReactNode;
+}
+
+export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
+  const { children } = props;
 
   const service = useService(EventListServiceDefinition);
   const events = service.events.get();
+  const hasEvents = !!events.length;
 
-  if (!events.length) {
-    return emptyState || null;
+  if (!hasEvents) {
+    return null;
   }
 
   return (
-    <Comp data-testid={TestIds.eventListEvents} {...otherProps}>
-      {children}
-    </Comp>
-  );
-}
-
-export interface EventListEventRepeaterProps extends AsChildProps {}
-
-export function EventRepeater(
-  props: EventListEventRepeaterProps,
-): React.ReactNode {
-  const { asChild, children, ...otherProps } = props;
-  const Comp = useAsChild(asChild);
-
-  const service = useService(EventListServiceDefinition);
-  const events = service.events.get();
-
-  return (
-    <Comp {...otherProps}>
-      {events.map((event, index) => (
-        <Event.Root key={event._id || index} event={event}>
+    <>
+      {events.map((event) => (
+        <Event.Root
+          key={event._id}
+          event={event}
+          data-testid={TestIds.eventListEvent}
+          data-event-id={event._id}
+        >
           {children}
         </Event.Root>
       ))}
-    </Comp>
+    </>
   );
-}
+};
