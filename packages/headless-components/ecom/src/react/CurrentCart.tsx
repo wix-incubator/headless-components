@@ -1,6 +1,4 @@
-import {
-  Root as CoreRoot,
-} from './core/CurrentCart.js';
+import { Root as CoreRoot } from './core/CurrentCart.js';
 import { Root as CartRoot } from './Cart.js';
 import { CurrentCartServiceConfig } from '../services/current-cart-service.js';
 
@@ -24,9 +22,7 @@ export const Root = ({ children, currentCartServiceConfig }: RootProps) => {
       currentCartServiceConfig={currentCartServiceConfig}
       data-testid={TestIds.currentCartRoot}
     >
-      <CartRoot>
-        {children}
-      </CartRoot>
+      <CartRoot>{children}</CartRoot>
     </CoreRoot>
   );
 };
