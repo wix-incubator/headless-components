@@ -1,6 +1,7 @@
 export {
   EventListService,
   EventListServiceDefinition,
+  loadEventListServiceConfig,
   type EventListServiceAPI,
   type EventListServiceConfig,
 } from './event-list-service.js';

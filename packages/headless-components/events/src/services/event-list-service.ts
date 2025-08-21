@@ -3,6 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
+import { wixEventsV2 } from '@wix/events';
 import { type Event } from './event-service.js';
 
 export interface EventListServiceAPI {
@@ -31,3 +32,16 @@ export const EventListService =
       };
     },
   );
+
+export async function loadEventListServiceConfig(): Promise<EventListServiceConfig> {
+  const queryEventsResponse = await wixEventsV2
+    .queryEvents({
+      fields: [wixEventsV2.RequestedFields.DETAILS],
+    })
+    .find();
+  const events = queryEventsResponse.items ?? [];
+
+  return {
+    events,
+  };
+}

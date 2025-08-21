@@ -6,7 +6,6 @@ import {
   EventListServiceDefinition,
   type EventListServiceConfig,
 } from '../services/event-list-service.js';
-import { type Event as IEvent } from '../services/event-service.js';
 import * as Event from './Event.js';
 
 enum TestIds {
@@ -14,16 +13,12 @@ enum TestIds {
 }
 
 export interface EventListRootProps {
-  events?: IEvent[];
+  eventListServiceConfig: EventListServiceConfig;
   children: React.ReactNode;
 }
 
 export function Root(props: EventListRootProps): React.ReactNode {
-  const { events = [], children } = props;
-
-  const eventListServiceConfig: EventListServiceConfig = {
-    events,
-  };
+  const { eventListServiceConfig, children } = props;
 
   return (
     <WixServices

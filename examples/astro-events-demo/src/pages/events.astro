@@ -1,11 +1,19 @@
 ---
+import { loadEventListServiceConfig } from '@wix/headless-events/services';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EventsPage from '../react-pages/events';
+
+// Load initial event list data server-side
+const eventListServiceConfig = await loadEventListServiceConfig();
 ---
 
 <BaseLayout>
   <title>Events</title>
   <meta name="description" content="Events" />
 
-  <EventsPage client:load slot="body" />
+  <EventsPage
+    client:load
+    slot="body"
+    eventListServiceConfig={eventListServiceConfig}
+  />
 </BaseLayout>
