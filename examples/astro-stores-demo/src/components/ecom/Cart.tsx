@@ -3,6 +3,7 @@ import {
   LineItem,
   Quantity,
   SelectedOption,
+  Commerce,
 } from '@wix/headless-ecom/react';
 import React from 'react';
 
@@ -147,69 +148,13 @@ export default function CartContent() {
                         label="Total"
                       />
                     </div>
+                    <Cart.Errors className="w-full bg-surface-error border border-status-error rounded-lg p-3 text-status-error"/>
 
-                    <Cart.Checkout asChild>
-                      {({
-                        proceedToCheckout,
-                        canCheckout: canProceed,
-                        isLoading: checkoutLoading,
-                        error: checkoutError,
-                      }: {
-                        proceedToCheckout: () => Promise<void>;
-                        canCheckout: boolean;
-                        isLoading: boolean;
-                        error: string | null;
-                      }) => (
-                        <div className="w-full space-y-4">
-                          {checkoutError && (
-                            <div className="bg-surface-error border border-status-error rounded-lg p-3">
-                              <p className="text-status-error text-sm">
-                                {checkoutError}
-                              </p>
-                            </div>
-                          )}
-
-                          <button
-                            data-testid="proceed-to-checkout-button"
-                            onClick={proceedToCheckout}
-                            disabled={!canProceed || checkoutLoading}
-                            className={`w-full text-content-primary font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-center ${
-                              canProceed ? 'btn-primary' : 'bg-surface-primary'
-                            }`}
-                            style={{
-                              cursor: !canProceed ? 'not-allowed' : 'pointer',
-                            }}
-                          >
-                            {checkoutLoading ? (
-                              <span className="flex items-center justify-center gap-2">
-                                <svg
-                                  className="animate-spin w-5 h-5"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="currentColor"
-                                    strokeWidth="4"
-                                  ></circle>
-                                  <path
-                                    className="opacity-75"
-                                    fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                  ></path>
-                                </svg>
-                                Processing...
-                              </span>
-                            ) : (
-                              'Proceed to Checkout'
-                            )}
-                          </button>
-                        </div>
-                      )}
-                    </Cart.Checkout>
+                    <Commerce.Actions.Checkout
+                      className="btn-primary w-full text-content-primary font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                      label="Proceed to Checkout"
+                      loadingState="Processing..."
+                    />
 
                     <div className="text-center pt-4">
                       <a

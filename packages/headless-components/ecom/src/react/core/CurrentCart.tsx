@@ -651,9 +651,7 @@ export const Summary = (props: SummaryProps) => {
       ?.coupon?.code || null;
 
   const discountAmount = totals.discount?.amount || '0';
-  const discount = discountAmount
-    ? formatCurrency(parseFloat(discountAmount), currency)
-    : null;
+  const discount = discountAmount ? formatCurrency(parseFloat(discountAmount), currency) : null;
 
   const amountValues = {
     subtotal: subtotalAmount,

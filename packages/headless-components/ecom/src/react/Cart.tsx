@@ -77,6 +77,7 @@ enum TestIds {
   cartSummary = 'cart-summary',
   cartClear = 'cart-clear',
   cartCheckout = 'cart-checkout',
+  cartErrors = 'cart-errors',
   cartNotes = 'cart-notes',
   cartCoupon = 'cart-coupon',
   couponInput = 'coupon-input',
@@ -1313,33 +1314,62 @@ export const Note = {
   Input: NoteInput,
 } as const;
 
+/**
+ * Represents a monetary value with amount and currency
+ */
 export interface Money {
+  /** The amount in the smallest currency unit (e.g., cents for USD) */
   amount: number;
+  /** The currency code (e.g., 'USD', 'EUR') */
   currency: string;
 }
 
-export interface CartPriceProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+/**
+ * Props for cart price components that display various cart pricing information.
+ * Supports the asChild pattern for flexible composition.
+ */
+export interface CartPriceProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLDivElement,
-    {
-      price: Money;
-      formattedPrice: string;
-      isLoading: boolean;
-      label?: string;
-    }
-  >;
+  /** Render function that receives price data and formatting information */
+  children?:
+  | React.ReactNode
+  | React.ForwardRefRenderFunction<HTMLDivElement, {
+    /** The price object containing amount and currency */
+    price: Money;
+    /** Human-readable formatted price string (e.g., "$24.99") */
+    formattedPrice: string;
+    /** Whether the price calculation is currently loading */
+    isLoading: boolean;
+    /** Optional label for the price component */
+    label?: string;
+  }>;
+  /** Optional text label to display with the price */
   label?: string;
 }
 
+/**
+ * Factory function that creates price component variants for different cart pricing elements.
+ * This internal factory generates components for subtotal, discount, shipping, tax, and total prices
+ * with consistent behavior and styling patterns.
+ *
+ * @internal
+ * @param config - Configuration object for the price component
+ * @param config.priceProp - The property key from cart summary to display (e.g., 'subtotal', 'total')
+ * @param config.shouldRender - Function to determine if the component should render based on cart state
+ * @param config.isDiscount - Whether this represents a discount amount (will be displayed with negative sign)
+ * @returns A React component that displays the specified price information
+ */
 const PricePartFactory = ({
   priceProp,
   shouldRender = () => true,
   isDiscount = false,
 }: {
+  /** The key from the cart summary's amountValues to display */
   priceProp: keyof CoreSummaryRenderProps['amountValues'];
+  /** Function to determine if this price component should render */
   shouldRender?: (renderProps: CoreSummaryRenderProps) => boolean;
+  /** Whether to format as a discount (with negative sign) */
   isDiscount?: boolean;
 }) =>
   React.forwardRef<HTMLDivElement, CartPriceProps>(
@@ -1388,20 +1418,230 @@ const PricePartFactory = ({
     },
   );
 
+/**
+ * Cart subtotal price component that displays the sum of all items before taxes, shipping, and discounts.
+ * Supports the asChild pattern for flexible composition.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Cart.Totals.Price label="Subtotal:" />
+ *
+ * // Custom rendering with asChild
+ * <Cart.Totals.Price asChild>
+ *   {({ price, formattedPrice, isLoading }, ref) => (
+ *     <div ref={ref} className="flex justify-between">
+ *       <span>Subtotal</span>
+ *       <span>{isLoading ? '...' : formattedPrice}</span>
+ *     </div>
+ *   )}
+ * </Cart.Totals.Price>
+ * ```
+ */
 const Price = PricePartFactory({ priceProp: 'subtotal' });
+
+/**
+ * Cart discount amount component that displays the discount applied from coupons.
+ * Only renders when a coupon is applied to the cart.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering (only shows when coupon applied)
+ * <Cart.Totals.Discount label="Discount:" />
+ *
+ * // Custom rendering with asChild
+ * <Cart.Totals.Discount asChild>
+ *   {({ price, formattedPrice, isLoading }, ref) => (
+ *     <div ref={ref} className="text-green-600">
+ *       <span>Savings: </span>
+ *       <span>{isLoading ? '...' : formattedPrice}</span>
+ *     </div>
+ *   )}
+ * </Cart.Totals.Discount>
+ * ```
+ */
 const Discount = PricePartFactory({
   priceProp: 'discount',
   shouldRender: (renderProps) => !!renderProps.appliedCoupon,
   isDiscount: true,
 });
+
+/**
+ * Cart shipping cost component that displays the calculated shipping fee.
+ * Not rendered when there is no shipping cost for the cart.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Cart.Totals.Shipping label="Shipping:" />
+ *
+ * // Custom rendering with conditional display
+ * <Cart.Totals.Shipping asChild>
+ *   {({ price, formattedPrice, isLoading }, ref) => (
+ *     <div ref={ref}>
+ *       <span>Shipping: </span>
+ *       <span>{price.amount === 0 ? 'FREE' : (isLoading ? '...' : formattedPrice)}</span>
+ *     </div>
+ *   )}
+ * </Cart.Totals.Shipping>
+ * ```
+ */
 const Shipping = PricePartFactory({ priceProp: 'shipping' });
+
+/**
+ * Cart tax amount component that displays the calculated tax for the order.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Cart.Totals.Tax label="Tax:" />
+ *
+ * // Custom rendering with percentage display
+ * <Cart.Totals.Tax asChild>
+ *   {({ price, formattedPrice, isLoading }, ref) => (
+ *     <div ref={ref} className="text-sm text-gray-600">
+ *       <span>Tax: </span>
+ *       <span>{isLoading ? '...' : formattedPrice}</span>
+ *     </div>
+ *   )}
+ * </Cart.Totals.Tax>
+ * ```
+ */
 const Tax = PricePartFactory({ priceProp: 'tax' });
+
+/**
+ * Cart total price component that displays the final amount to be charged.
+ * This includes all items, taxes, shipping, and applies any discounts.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Cart.Totals.Total label="Total:" />
+ *
+ * // Custom rendering with emphasis
+ * <Cart.Totals.Total asChild>
+ *   {({ price, formattedPrice, isLoading }, ref) => (
+ *     <div ref={ref} className="font-bold text-lg border-t pt-2">
+ *       <span>Total: </span>
+ *       <span>{isLoading ? 'Calculating...' : formattedPrice}</span>
+ *     </div>
+ *   )}
+ * </Cart.Totals.Total>
+ * ```
+ */
 const Total = PricePartFactory({ priceProp: 'total' });
 
+/**
+ * Namespace containing all cart pricing/totals components.
+ * These components provide a consistent way to display different aspects of cart pricing
+ * including subtotal, discounts, shipping, tax, and final total.
+ *
+ * All components support the asChild pattern for flexible styling and composition.
+ * They automatically handle loading states and conditional rendering based on cart state.
+ *
+ * @namespace
+ * @example
+ * ```tsx
+ * // Basic cart totals display
+ * function CartSummary() {
+ *   return (
+ *     <div className="cart-totals">
+ *       <Cart.Totals.Price label="Subtotal:" />
+ *       <Cart.Totals.Discount label="Discount:" />
+ *       <Cart.Totals.Shipping label="Shipping:" />
+ *       <Cart.Totals.Tax label="Tax:" />
+ *       <hr />
+ *       <Cart.Totals.Total label="Total:" />
+ *     </div>
+ *   );
+ * }
+ *
+ * // Custom styled totals with asChild
+ * function StyledCartTotals() {
+ *   return (
+ *     <div className="space-y-2">
+ *       <Cart.Totals.Price asChild>
+ *         {({ formattedPrice, isLoading }, ref) => (
+ *           <div ref={ref} className="flex justify-between">
+ *             <span>Items:</span>
+ *             <span>{isLoading ? '...' : formattedPrice}</span>
+ *           </div>
+ *         )}
+ *       </Cart.Totals.Price>
+ *
+ *       <Cart.Totals.Total asChild>
+ *         {({ formattedPrice, isLoading }, ref) => (
+ *           <div ref={ref} className="flex justify-between font-bold text-lg">
+ *             <span>Total:</span>
+ *             <span>{isLoading ? 'Calculating...' : formattedPrice}</span>
+ *           </div>
+ *         )}
+ *       </Cart.Totals.Total>
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
 export const Totals = {
+  /** Cart subtotal before taxes, shipping, and discounts */
   Price,
+  /** Discount amount from applied coupons (only shows when coupon applied) */
   Discount,
+  /** Shipping cost for the order */
   Shipping,
+  /** Tax amount for the order */
   Tax,
+  /** Final total including all charges and discounts */
   Total,
 } as const;
+
+
+interface ErrorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>{
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Render prop function that receives error data */
+  children?:
+  | React.ReactNode
+  | React.ForwardRefRenderFunction<HTMLDivElement, {
+    /** Error message to display */
+    error: string;
+  }>;
+}
+
+export const Errors = React.forwardRef<HTMLDivElement, ErrorProps>(
+  ({ asChild, children, className, ...props }, ref) => {
+    return (
+      <CoreCheckout>
+        {(renderProps) => {
+          if (!renderProps.error) {
+            return null;
+          }
+          if (asChild && children && typeof children === 'function') {
+            return children(
+              {
+                error: renderProps.error,
+              },
+              ref,
+            );
+          }
+          const Comp = asChild ? Slot : 'div';
+          return (
+            <Comp
+              ref={ref}
+              className={className}
+              data-testid={TestIds.cartErrors}
+              {...props}
+            >
+              {renderProps.error}
+            </Comp>
+          );
+        }}
+      </CoreCheckout>
+    )
+  }
+)
