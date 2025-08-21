@@ -2,7 +2,10 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { MiniCartContent, MiniCartIcon } from '../components/ecom/MiniCart';
 import { CurrentCart, Cart } from '@wix/headless-ecom/react';
 import type { CurrentCartServiceConfig } from '@wix/headless-ecom/services';
-import { MiniCartModalProvider, useMiniCartModal } from '../components/MiniCartModal';
+import {
+  MiniCartModalProvider,
+  useMiniCartModal,
+} from '../components/MiniCartModal';
 
 interface StoreLayoutProps {
   children: ReactNode;

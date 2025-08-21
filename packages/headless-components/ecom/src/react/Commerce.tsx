@@ -67,9 +67,7 @@
  */
 
 import { Slot } from '@radix-ui/react-slot';
-import {
-  Checkout as CoreCurrentCartCheckout,
-} from './core/CurrentCart.js';
+import { Checkout as CoreCurrentCartCheckout } from './core/CurrentCart.js';
 import { Trigger as CoreCheckout } from './core/Checkout.js';
 import React from 'react';
 import { type LineItem } from '../services/checkout-service.js';
@@ -103,14 +101,17 @@ export interface ActionCheckoutProps
    */
   children?:
     | React.ReactNode
-    | React.ForwardRefRenderFunction<HTMLButtonElement, {
-        /** Function to proceed to checkout */
-        proceedToCheckout: () => Promise<void>;
-        /** Whether checkout is available */
-        canCheckout: boolean;
-        /** Whether checkout action is loading */
-        isLoading: boolean;
-      }>;
+    | React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          /** Function to proceed to checkout */
+          proceedToCheckout: () => Promise<void>;
+          /** Whether checkout is available */
+          canCheckout: boolean;
+          /** Whether checkout action is loading */
+          isLoading: boolean;
+        }
+      >;
   /** Text or content to display when not loading */
   label?: string | React.ReactNode;
   /** Text or content to display when loading */
@@ -210,21 +211,28 @@ const ActionCheckout = React.forwardRef<HTMLButtonElement, ActionCheckoutProps>(
               data-testid={TestIds.actionCheckout}
               data-in-progress={renderProps.isLoading}
               {...props}
-              children={children ? children as React.ReactNode : (renderProps.isLoading ? loadingState : label)}
+              children={
+                children
+                  ? (children as React.ReactNode)
+                  : renderProps.isLoading
+                    ? loadingState
+                    : label
+              }
             />
           );
         }}
       </CoreCurrentCartCheckout>
-    )
-  }
-)
+    );
+  },
+);
 
 /**
  * Props for ActionAddToCart and ActionBuyNow components.
  * These components require line items to add to cart or purchase.
  * Supports the asChild pattern for flexible composition.
  */
-export interface ActionAddToCartProps extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'children'> {
+export interface ActionAddToCartProps
+  extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'children'> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /**
@@ -233,16 +241,19 @@ export interface ActionAddToCartProps extends Omit<React.HTMLAttributes<HTMLButt
    */
   children?:
     | React.ReactNode
-    | React.ForwardRefRenderFunction<HTMLButtonElement, {
-        /** Whether the button should be disabled */
-        disabled?: boolean;
-        /** Whether the action is currently loading */
-        isLoading: boolean;
-        /** Function to execute the action (add to cart or buy now) */
-        onClick: () => Promise<void>;
-        /** Line items that will be processed */
-        lineItems: LineItem[];
-      }>;
+    | React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          /** Whether the button should be disabled */
+          disabled?: boolean;
+          /** Whether the action is currently loading */
+          isLoading: boolean;
+          /** Function to execute the action (add to cart or buy now) */
+          onClick: () => Promise<void>;
+          /** Line items that will be processed */
+          lineItems: LineItem[];
+        }
+      >;
   /** Text or content to display when not loading */
   label?: string | React.ReactNode;
   /** Text or content to display when loading */
@@ -314,14 +325,28 @@ export interface ActionBuyNowRenderProps extends ActionAddToCartProps {}
  * </Commerce.Actions.BuyNow>
  * ```
  */
-const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowRenderProps>(
-  ({ disabled, asChild, children, className, label = 'Buy Now', loadingState = '...', ...props }, ref) => {
+const ActionBuyNow = React.forwardRef<
+  HTMLButtonElement,
+  ActionBuyNowRenderProps
+>(
+  (
+    {
+      disabled,
+      asChild,
+      children,
+      className,
+      label = 'Buy Now',
+      loadingState = '...',
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <CoreCheckout>
         {(renderProps) => {
           const onClick = () => {
             return renderProps.createCheckout(props.lineItems);
-          }
+          };
           if (asChild && children && typeof children === 'function') {
             return children(
               {
@@ -343,14 +368,20 @@ const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowRenderProps
               data-testid={TestIds.actionBuyNow}
               data-in-progress={renderProps.isLoading}
               {...props}
-              children={children ? children as React.ReactNode : (renderProps.isLoading ? loadingState : label)}
+              children={
+                children
+                  ? (children as React.ReactNode)
+                  : renderProps.isLoading
+                    ? loadingState
+                    : label
+              }
             />
           );
         }}
       </CoreCheckout>
-    )
-  }
-)
+    );
+  },
+);
 
 /**
  * Add to Cart action button component that adds specified items to the current cart.
@@ -420,14 +451,28 @@ const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowRenderProps
  * />
  * ```
  */
-const ActionAddToCart = React.forwardRef<HTMLButtonElement, ActionBuyNowRenderProps>(
-  ({ disabled, asChild, children, className, label = 'Add to Cart', loadingState = '...', ...props }, ref) => {
+const ActionAddToCart = React.forwardRef<
+  HTMLButtonElement,
+  ActionBuyNowRenderProps
+>(
+  (
+    {
+      disabled,
+      asChild,
+      children,
+      className,
+      label = 'Add to Cart',
+      loadingState = '...',
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <CoreCurrentCartCheckout>
         {(renderProps) => {
           const onClick = () => {
             return renderProps.addToCart(props.lineItems);
-          }
+          };
           if (asChild && children && typeof children === 'function') {
             return children(
               {
@@ -449,14 +494,20 @@ const ActionAddToCart = React.forwardRef<HTMLButtonElement, ActionBuyNowRenderPr
               data-testid={TestIds.actionAddToCart}
               data-in-progress={renderProps.isLoading}
               {...props}
-              children={children ? children as React.ReactNode : (renderProps.isLoading ? loadingState : label)}
+              children={
+                children
+                  ? (children as React.ReactNode)
+                  : renderProps.isLoading
+                    ? loadingState
+                    : label
+              }
             />
           );
         }}
       </CoreCurrentCartCheckout>
-    )
-  }
-)
+    );
+  },
+);
 
 /**
  * Namespace containing all commerce action components.
@@ -540,7 +591,7 @@ const ActionAddToCart = React.forwardRef<HTMLButtonElement, ActionBuyNowRenderPr
  *         </span>
  *       </button>
  *     </Commerce.Actions.Checkout>
-*     </div>
+ *     </div>
  *   );
  *
  * // Advanced custom rendering
@@ -586,4 +637,3 @@ export const Actions = {
   /** Buy Now button for immediate purchase flow bypassing the cart */
   BuyNow: ActionBuyNow,
 } as const;
-

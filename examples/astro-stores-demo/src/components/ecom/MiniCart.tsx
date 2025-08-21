@@ -180,9 +180,7 @@ export function MiniCartContent() {
                     />
                   </svg>
                 </div>
-                <p className="text-content-muted">
-                  Your cart is empty
-                </p>
+                <p className="text-content-muted">Your cart is empty</p>
               </div>
             }
           >
@@ -283,17 +281,17 @@ export function MiniCartContent() {
                 label="Total"
               />
             </div>
-            </div>
-          </div>
-
-          <div className="px-4 pb-4 space-y-2">
-            <Commerce.Actions.Checkout
-              className="btn-primary w-full disabled:cursor-not-allowed p-2 rounded-sm disabled:opacity-50"
-              label="Proceed to Checkout"
-              loadingState="Processing..."
-            />
           </div>
         </div>
+
+        <div className="px-4 pb-4 space-y-2">
+          <Commerce.Actions.Checkout
+            className="btn-primary w-full disabled:cursor-not-allowed p-2 rounded-sm disabled:opacity-50"
+            label="Proceed to Checkout"
+            loadingState="Processing..."
+          />
+        </div>
       </div>
+    </div>
   ) : null;
 }

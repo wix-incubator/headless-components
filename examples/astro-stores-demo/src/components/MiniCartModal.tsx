@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  type ReactNode,
+} from 'react';
 
 interface MiniCartModalContextValue {
   isOpen: boolean;
@@ -6,12 +11,16 @@ interface MiniCartModalContextValue {
   close: () => void;
 }
 
-const MiniCartModalContext = createContext<MiniCartModalContextValue | undefined>(undefined);
+const MiniCartModalContext = createContext<
+  MiniCartModalContextValue | undefined
+>(undefined);
 
 export function useMiniCartModal(): MiniCartModalContextValue {
   const context = useContext(MiniCartModalContext);
   if (!context) {
-    throw new Error('useMiniCartModal must be used within a MiniCartModalProvider');
+    throw new Error(
+      'useMiniCartModal must be used within a MiniCartModalProvider'
+    );
   }
   return context;
 }
@@ -20,7 +29,9 @@ interface MiniCartModalProviderProps {
   children: ReactNode;
 }
 
-export function MiniCartModalProvider({ children }: MiniCartModalProviderProps) {
+export function MiniCartModalProvider({
+  children,
+}: MiniCartModalProviderProps) {
   const [isOpen, setIsOpened] = useState(false);
 
   const open = () => setIsOpened(true);
