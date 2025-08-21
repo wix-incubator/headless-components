@@ -1,4 +1,4 @@
-import { media } from '@wix/sdk';
+import { WixMediaImage } from '@wix/headless-media/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -43,28 +43,32 @@ export function Root(props: EventRootProps): React.ReactNode {
   );
 }
 
-export interface EventImageProps extends AsChildProps {}
+export interface EventImageProps
+  extends React.ImgHTMLAttributes<HTMLImageElement>,
+    AsChildProps {}
 
-export const Image = React.forwardRef<HTMLElement, EventImageProps>(
+export const Image = React.forwardRef<HTMLImageElement, EventImageProps>(
   (props, ref) => {
     const { asChild, children, ...otherProps } = props;
-    const Comp = useAsChild(asChild, 'img');
 
     const service = useService(EventServiceDefinition);
     const event = service.event.get();
-    const src = event.mainImage ? media.getImageUrl(event.mainImage).url : '';
+    const image = event.mainImage;
 
     const attributes = {
       'data-testid': TestIds.eventImage,
-      src,
       ...otherProps,
     };
 
-    return src || asChild ? (
-      <Comp ref={ref} {...attributes}>
-        {asChild ? children : null}
-      </Comp>
-    ) : null;
+    return (
+      <WixMediaImage
+        ref={ref}
+        asChild={asChild}
+        children={children}
+        media={{ image }}
+        {...attributes}
+      />
+    );
   },
 );
 
