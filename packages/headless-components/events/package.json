@@ -44,7 +44,7 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
     "@wix/events": "^1.0.597",
-    "@wix/headless-media": "^0.0.11",
+    "@wix/headless-media": "workspace:*",
     "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
