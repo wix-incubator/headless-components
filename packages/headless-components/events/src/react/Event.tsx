@@ -2,13 +2,13 @@ import { WixMediaImage } from '@wix/headless-media/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
-import { type AsChildProps, useAsChild } from '../utils/asChild.js';
 import {
   EventService,
   EventServiceDefinition,
   type EventServiceConfig,
   type Event,
 } from '../services/event-service.js';
+import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
 
 enum TestIds {
   eventImage = 'event-image',
@@ -18,12 +18,12 @@ enum TestIds {
   eventDescription = 'event-description',
 }
 
-export interface EventRootProps {
+export interface RootProps {
   event: Event;
   children: React.ReactNode;
 }
 
-export function Root(props: EventRootProps): React.ReactNode {
+export const Root = (props: RootProps): React.ReactNode => {
   const { event, children } = props;
 
   const eventServiceConfig: EventServiceConfig = {
@@ -41,21 +41,22 @@ export function Root(props: EventRootProps): React.ReactNode {
       {children}
     </WixServices>
   );
+};
+
+export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  asChild?: boolean;
 }
 
-export interface EventImageProps
-  extends React.ImgHTMLAttributes<HTMLImageElement>,
-    AsChildProps {}
-
-export const Image = React.forwardRef<HTMLImageElement, EventImageProps>(
+export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     const service = useService(EventServiceDefinition);
     const event = service.event.get();
     const image = event.mainImage;
 
     const attributes = {
+      className,
       'data-testid': TestIds.eventImage,
       ...otherProps,
     };
@@ -72,110 +73,147 @@ export const Image = React.forwardRef<HTMLImageElement, EventImageProps>(
   },
 );
 
-export interface EventTitleProps extends AsChildProps {}
+export interface TitleProps extends AsChildProps<{ title: string }> {}
 
-export const Title = React.forwardRef<HTMLElement, EventTitleProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-    const Comp = useAsChild(asChild);
+export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
+  const { asChild, children, className } = props;
 
-    const service = useService(EventServiceDefinition);
-    const event = service.event.get();
-    const title = event.title;
+  const service = useService(EventServiceDefinition);
+  const event = service.event.get();
+  const title = event.title!;
 
-    const attributes = {
-      'data-testid': TestIds.eventTitle,
-      ...otherProps,
-    };
+  const attributes = {
+    className,
+    'data-testid': TestIds.eventTitle,
+  };
 
-    return (
-      <Comp ref={ref} {...attributes}>
-        {asChild ? children : title}
-      </Comp>
-    );
-  },
-);
+  if (asChild) {
+    const rendered = renderAsChild({
+      ref,
+      children,
+      attributes,
+      props: { title },
+      content: title,
+    });
 
-export interface EventDateProps extends AsChildProps {
+    if (rendered) {
+      return rendered;
+    }
+  }
+
+  return <div {...attributes}>{title}</div>;
+});
+
+export interface DateProps extends AsChildProps<{ date: string }> {
   format?: 'short' | 'full';
 }
 
-export const Date = React.forwardRef<HTMLElement, EventDateProps>(
-  (props, ref) => {
-    const { asChild, children, format = 'short', ...otherProps } = props;
-    const Comp = useAsChild(asChild);
+export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
+  const { asChild, children, className, format = 'short' } = props;
 
-    const service = useService(EventServiceDefinition);
-    const event = service.event.get();
-    const date = event.dateAndTimeSettings!.dateAndTimeTbd
-      ? event.dateAndTimeSettings!.dateAndTimeTbdMessage
-      : format === 'short'
-        ? event.dateAndTimeSettings!.formatted!.startDate
-        : event.dateAndTimeSettings!.formatted!.dateAndTime;
+  const service = useService(EventServiceDefinition);
+  const event = service.event.get();
+  const date = event.dateAndTimeSettings!.dateAndTimeTbd
+    ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
+    : format === 'short'
+      ? event.dateAndTimeSettings!.formatted!.startDate!
+      : event.dateAndTimeSettings!.formatted!.dateAndTime!;
 
-    const attributes = {
-      'data-testid': TestIds.eventDate,
-      ...otherProps,
-    };
+  const attributes = {
+    className,
+    'data-testid': TestIds.eventDate,
+  };
 
-    return (
-      <Comp ref={ref} {...attributes}>
-        {asChild ? children : date}
-      </Comp>
-    );
-  },
-);
+  if (asChild) {
+    const rendered = renderAsChild({
+      ref,
+      children,
+      attributes,
+      props: { date },
+      content: date,
+    });
 
-export interface EventLocationProps extends AsChildProps {
+    if (rendered) {
+      return rendered;
+    }
+  }
+
+  return <div {...attributes}>{date}</div>;
+});
+
+export interface LocationProps extends AsChildProps<{ location: string }> {
   format?: 'short' | 'full';
 }
 
-export const Location = React.forwardRef<HTMLElement, EventLocationProps>(
+export const Location = React.forwardRef<HTMLElement, LocationProps>(
   (props, ref) => {
-    const { asChild, children, format = 'short', ...otherProps } = props;
-    const Comp = useAsChild(asChild);
+    const { asChild, children, className, format = 'short' } = props;
 
     const service = useService(EventServiceDefinition);
     const event = service.event.get();
     const location =
       event.location!.locationTbd || format === 'short'
-        ? event.location!.name
+        ? event.location!.name!
         : // @ts-expect-error
           `${event.location!.name}, ${event.location!.address!.formatted}`;
 
     const attributes = {
+      className,
       'data-testid': TestIds.eventLocation,
-      ...otherProps,
     };
 
-    return (
-      <Comp ref={ref} {...attributes}>
-        {asChild ? children : location}
-      </Comp>
-    );
+    if (asChild) {
+      const rendered = renderAsChild({
+        ref,
+        children,
+        attributes,
+        props: { location },
+        content: location,
+      });
+
+      if (rendered) {
+        return rendered;
+      }
+    }
+
+    return <div {...attributes}>{location}</div>;
   },
 );
 
-export interface EventDescriptionProps extends AsChildProps {}
+export interface DescriptionProps
+  extends AsChildProps<{ description: string }> {}
 
-export const Description = React.forwardRef<HTMLElement, EventDescriptionProps>(
+export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-    const Comp = useAsChild(asChild);
+    const { asChild, children, className } = props;
 
     const service = useService(EventServiceDefinition);
     const event = service.event.get();
     const description = event.shortDescription;
 
     const attributes = {
+      className,
       'data-testid': TestIds.eventDescription,
-      ...otherProps,
     };
 
-    return description || asChild ? (
-      <Comp ref={ref} {...attributes}>
-        {asChild ? children : description}
-      </Comp>
-    ) : null;
+    if (!description) {
+      return null;
+    }
+
+    if (asChild) {
+      const rendered = renderAsChild({
+        ref,
+        children,
+        attributes,
+        props: { description },
+        content: description,
+      });
+
+      if (rendered) {
+        return rendered;
+      }
+    }
+
+    return <div {...attributes}>{description}</div>;
   },
 );

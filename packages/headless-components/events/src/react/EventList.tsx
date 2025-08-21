@@ -10,7 +10,6 @@ import * as Event from './Event.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
-  eventListEvent = 'event-list-event',
 }
 
 export interface RootProps {
@@ -84,12 +83,7 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
   return (
     <>
       {events.map((event) => (
-        <Event.Root
-          key={event._id}
-          event={event}
-          data-testid={TestIds.eventListEvent}
-          data-event-id={event._id}
-        >
+        <Event.Root key={event._id} event={event}>
           {children}
         </Event.Root>
       ))}

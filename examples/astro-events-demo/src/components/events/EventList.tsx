@@ -12,6 +12,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
   return (
     <EventListPrimitive.Root eventListServiceConfig={eventListServiceConfig}>
       <EventListPrimitive.Events
+        className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 p-6"
         emptyState={
           <div className="text-center text-white py-12">
             <p className="text-xl">No events available</p>
@@ -21,7 +22,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
           </div>
         }
       >
-        <EventListPrimitive.EventRepeater className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 p-6">
+        <EventListPrimitive.EventRepeater>
           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
             {/* Event Image */}
             <div className="relative overflow-hidden w-full pt-[100%] bg-blue-600">
