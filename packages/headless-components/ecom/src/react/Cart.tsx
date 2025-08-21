@@ -1328,22 +1328,26 @@ export interface Money {
  * Props for cart price components that display various cart pricing information.
  * Supports the asChild pattern for flexible composition.
  */
-export interface CartPriceProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface CartPriceProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Render function that receives price data and formatting information */
   children?:
-  | React.ReactNode
-  | React.ForwardRefRenderFunction<HTMLDivElement, {
-    /** The price object containing amount and currency */
-    price: Money;
-    /** Human-readable formatted price string (e.g., "$24.99") */
-    formattedPrice: string;
-    /** Whether the price calculation is currently loading */
-    isLoading: boolean;
-    /** Optional label for the price component */
-    label?: string;
-  }>;
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLDivElement,
+        {
+          /** The price object containing amount and currency */
+          price: Money;
+          /** Human-readable formatted price string (e.g., "$24.99") */
+          formattedPrice: string;
+          /** Whether the price calculation is currently loading */
+          isLoading: boolean;
+          /** Optional label for the price component */
+          label?: string;
+        }
+      >;
   /** Optional text label to display with the price */
   label?: string;
 }
@@ -1600,17 +1604,20 @@ export const Totals = {
   Total,
 } as const;
 
-
-interface ErrorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>{
+interface ErrorProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Render prop function that receives error data */
   children?:
-  | React.ReactNode
-  | React.ForwardRefRenderFunction<HTMLDivElement, {
-    /** Error message to display */
-    error: string;
-  }>;
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLDivElement,
+        {
+          /** Error message to display */
+          error: string;
+        }
+      >;
 }
 
 export const Errors = React.forwardRef<HTMLDivElement, ErrorProps>(
@@ -1642,6 +1649,6 @@ export const Errors = React.forwardRef<HTMLDivElement, ErrorProps>(
           );
         }}
       </CoreCheckout>
-    )
-  }
-)
+    );
+  },
+);

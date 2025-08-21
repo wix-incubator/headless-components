@@ -5,9 +5,7 @@
  */
 
 import { Slot } from '@radix-ui/react-slot';
-import {
-  Checkout as CoreCheckout,
-} from './core/CurrentCart.js';
+import { Checkout as CoreCheckout } from './core/CurrentCart.js';
 import React from 'react';
 
 // Components that render actual DOM elements get test IDs on their rendered elements
@@ -18,27 +16,41 @@ enum TestIds {
   actionBuyNow = 'action-buy-now',
 }
 
-export interface ActionCheckoutProps extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'children'> {
+export interface ActionCheckoutProps
+  extends Omit<React.HTMLAttributes<HTMLButtonElement>, 'children'> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   children?:
-  | React.ReactNode
-  | React.ForwardRefRenderFunction<HTMLButtonElement, {
-    /** Function to proceed to checkout */
-    proceedToCheckout: () => Promise<void>;
-    /** Whether checkout is available */
-    canCheckout: boolean;
-    /** Whether checkout action is loading */
-    isLoading: boolean;
-    label: string | React.ReactNode;
-    loadingState: string | React.ReactNode;
-  }>;
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          /** Function to proceed to checkout */
+          proceedToCheckout: () => Promise<void>;
+          /** Whether checkout is available */
+          canCheckout: boolean;
+          /** Whether checkout action is loading */
+          isLoading: boolean;
+          label: string | React.ReactNode;
+          loadingState: string | React.ReactNode;
+        }
+      >;
   label?: string | React.ReactNode;
   loadingState?: string | React.ReactNode;
 }
 
 const ActionCheckout = React.forwardRef<HTMLButtonElement, ActionCheckoutProps>(
-  ({ asChild, children, className, label = 'Checkout', loadingState = '...', ...props }, ref) => {
+  (
+    {
+      asChild,
+      children,
+      className,
+      label = 'Checkout',
+      loadingState = '...',
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <CoreCheckout>
         {(renderProps) => {
@@ -70,11 +82,10 @@ const ActionCheckout = React.forwardRef<HTMLButtonElement, ActionCheckoutProps>(
           );
         }}
       </CoreCheckout>
-    )
-  }
-)
+    );
+  },
+);
 
 export const Actions = {
   Checkout: ActionCheckout,
-}
-
+};
