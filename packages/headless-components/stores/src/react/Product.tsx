@@ -160,13 +160,14 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
     <CoreProduct.Name>
       {({ name }) => {
         const attributes = {
+          className,
           'data-testid': TestIds.productName,
         };
 
         if (asChild) {
           const rendered = renderAsChild({
             children,
-            props: { name, className },
+            props: { name },
             ref,
             content: name,
             attributes,
@@ -174,11 +175,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
           if (rendered) return rendered;
         }
 
-        return (
-          <div className={className} {...attributes}>
-            {name}
-          </div>
-        );
+        return <div {...attributes}>{name}</div>;
       }}
     </CoreProduct.Name>
   );
@@ -224,6 +221,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
       <CoreProduct.Description>
         {({ description: richDescription, plainDescription }) => {
           const attributes = {
+            className,
             'data-testid': TestIds.productDescription,
           };
 
@@ -249,7 +247,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
           if (asChild) {
             const rendered = renderAsChild({
               children,
-              props: { description, className },
+              props: { description },
               ref,
               content: description,
               attributes,
@@ -261,18 +259,13 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
           if (as === AsContent.Html) {
             return (
               <div
-                className={className}
                 {...attributes}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             );
           }
 
-          return (
-            <div className={className} {...attributes}>
-              {description}
-            </div>
-          );
+          return <div {...attributes}>{description}</div>;
         }}
       </CoreProduct.Description>
     );
@@ -316,6 +309,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
     <SelectedVariant.Price>
       {({ price, compareAtPrice }) => {
         const attributes = {
+          className,
           'data-testid': TestIds.productPrice,
           'data-discounted': compareAtPrice !== null,
         };
@@ -323,7 +317,6 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
         const priceData = {
           price,
           formattedPrice: price,
-          className,
         };
 
         if (asChild) {
@@ -338,7 +331,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
         }
 
         return (
-          <span className={className} {...attributes} ref={ref}>
+          <span {...attributes} ref={ref}>
             {price}
           </span>
         );
@@ -392,6 +385,7 @@ export const CompareAtPrice = React.forwardRef<
     <SelectedVariant.Price>
       {({ compareAtPrice }) => {
         const attributes = {
+          className,
           'data-testid': testId,
           'data-discounted': compareAtPrice !== null,
         };
@@ -402,7 +396,6 @@ export const CompareAtPrice = React.forwardRef<
         }
 
         const priceData = {
-          className,
           price: compareAtPrice,
           formattedPrice: compareAtPrice,
         };
@@ -419,7 +412,7 @@ export const CompareAtPrice = React.forwardRef<
         }
 
         return (
-          <span className={className} {...attributes} ref={ref}>
+          <span {...attributes} ref={ref}>
             {compareAtPrice}
           </span>
         );
@@ -464,10 +457,11 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
     <CoreProduct.Slug>
       {({ slug }) => {
         const attributes = {
+          className,
           'data-testid': testId,
         };
 
-        const slugData = { slug, className };
+        const slugData = { slug };
 
         if (asChild) {
           const rendered = renderAsChild({
@@ -521,13 +515,14 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
     <CoreProduct.Content>
       {({ product }) => {
         const attributes = {
+          className,
           'data-testid': TestIds.productRaw,
         };
 
         if (asChild) {
           const rendered = renderAsChild({
             children,
-            props: { product, className },
+            props: { product },
             ref,
             content: null,
             attributes,
@@ -604,6 +599,7 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
           };
 
           const attributes = {
+            className,
             'data-testid': TestIds.productVariants,
           };
 
@@ -618,7 +614,7 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
           if (asChild) {
             const rendered = renderAsChild({
               children,
-              props: { hasOptions, className },
+              props: { hasOptions },
               ref,
               content,
               attributes,
@@ -802,6 +798,7 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
           };
 
           const attributes = {
+            className,
             'data-testid': TestIds.productModifiers,
           };
 
@@ -816,7 +813,7 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
           if (asChild) {
             const rendered = renderAsChild({
               children,
-              props: { hasModifiers, className },
+              props: { hasModifiers },
               ref,
               content,
               attributes,
