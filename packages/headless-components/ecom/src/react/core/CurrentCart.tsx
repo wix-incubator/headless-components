@@ -133,60 +133,6 @@ function formatCurrency(amount: number, currencyCode: string): string {
 }
 
 /**
- * Props for Trigger headless component
- */
-export interface OpenTriggerProps {
-  /** Render prop function that receives trigger data */
-  children: (props: OpenTriggerRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for Trigger component
- */
-export interface OpenTriggerRenderProps {
-  /** Number of items in cart */
-  totalItems: number;
-  /** Function to open cart */
-  open: () => void;
-  /** Whether cart is currently loading */
-  isLoading: boolean;
-}
-
-/**
- * Headless component for cart trigger with item count
- *
- * @example
- * ```tsx
- * <CurrentCart.OpenTrigger>
- *   {({ totalItems, open, isLoading }) =>
- *     isLoading ? (
- *       <div>Loading Cart...</div>
- *     ) : (
- *       <div>
- *         <h1>Cart ({totalItems} items)</h1>
- *         <button onClick={open}>Open Cart</button>
- *       </div>
- *     )
- *   }
- * </CurrentCart.OpenTrigger>
- * ```
- */
-export const OpenTrigger = (props: OpenTriggerProps) => {
-  const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
-    typeof CurrentCartServiceDefinition
-  >;
-
-  const totalItems = service.cartCount.get();
-  const isLoading = service.isLoading.get();
-
-  return props.children({
-    totalItems,
-    open: service.openCart,
-    isLoading,
-  });
-};
-
-/**
  * Props for Content headless component
  */
 export interface ContentProps {
@@ -198,10 +144,6 @@ export interface ContentProps {
  * Render props for Content component
  */
 export interface ContentRenderProps {
-  /** Whether cart content is open */
-  isOpen: boolean;
-  /** Function to close cart */
-  close: () => void;
   /** Cart data */
   cart: currentCart.Cart | null;
   /** Whether cart is loading */
@@ -350,14 +292,11 @@ export const Content = (props: ContentProps) => {
     typeof CurrentCartServiceDefinition
   >;
 
-  const isOpen = service.isOpen.get();
   const cart = service.cart.get();
   const isLoading = service.isLoading.get();
   const error = service.error.get();
 
   return props.children({
-    isOpen,
-    close: service.closeCart,
     cart,
     isLoading,
     error,

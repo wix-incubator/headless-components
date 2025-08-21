@@ -17,7 +17,7 @@ export default function CartContent() {
             <h1 className="text-5xl font-bold text-content-primary mb-4">
               Shopping Cart
             </h1>
-            <Cart.OpenTrigger asChild>
+            <Cart.Summary asChild>
               {({ totalItems }, ref) => (
                 <p
                   ref={ref as React.Ref<HTMLParagraphElement>}
@@ -27,7 +27,7 @@ export default function CartContent() {
                   cart
                 </p>
               )}
-            </Cart.OpenTrigger>
+            </Cart.Summary>
           </div>
 
           {/* Cart with Items */}

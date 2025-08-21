@@ -45,7 +45,6 @@
 
 import {
   EmptyState as CoreEmptyState,
-  OpenTrigger as CoreOpenTrigger,
   LineItemsList as CoreLineItemsList,
   Item as CoreItem,
   Summary as CoreSummary,
@@ -212,57 +211,6 @@ export interface OpenTriggerProps {
   /** CSS classes to apply to the default element */
   className?: string;
 }
-
-/**
- * Headless component for cart trigger with item count.
- * Supports the asChild pattern for flexible composition.
- *
- * @component
- * @example
- * ```tsx
- * // Default button
- * <Cart.OpenTrigger>
- *   {({ totalItems, open, isLoading }) => (
- *     <span>
- *       Cart ({totalItems})
- *       <button onClick={open} disabled={isLoading}>
- *         {isLoading ? 'Loading...' : 'Open'}
- *       </button>
- *     </span>
- *   )}
- * </Cart.OpenTrigger>
- *
- * // Using asChild for custom button
- * <Cart.OpenTrigger asChild>
- *   <button className="custom-cart-button">
- *     Trigger content will be rendered here
- *   </button>
- * </Cart.OpenTrigger>
- * ```
- */
-export const OpenTrigger = React.forwardRef<
-  HTMLButtonElement,
-  OpenTriggerProps
->(({ children, asChild, ...props }, ref) => {
-  return (
-    <CoreOpenTrigger>
-      {(renderProps) => {
-        const Comp = asChild ? Slot : 'button';
-        return (
-          <Comp
-            ref={ref}
-            onClick={renderProps.open}
-            disabled={renderProps.isLoading}
-            data-testid={TestIds.cartOpenTrigger}
-            {...props}
-          >
-            {renderChildren({ children, props: renderProps, ref })}
-          </Comp>
-        );
-      }}
-    </CoreOpenTrigger>
-  );
-});
 
 /**
  * Props for LineItemsList component
@@ -492,10 +440,6 @@ export interface ContentProps {
  * Render props for Content component
  */
 export interface ContentRenderProps {
-  /** Whether cart content is open */
-  isOpen: boolean;
-  /** Function to close cart */
-  close: () => void;
   /** Whether cart is loading */
   isLoading: boolean;
   /** Error message if any */
