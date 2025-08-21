@@ -749,6 +749,8 @@ export interface CheckoutRenderProps {
   isLoading: boolean;
   /** Error message if checkout fails */
   error: string | null;
+  /** Function to add items to cart */
+  addToCart: (lineItems: LineItem[]) => Promise<void>;
 }
 
 /**
@@ -777,12 +779,14 @@ export const Checkout = (props: CheckoutProps) => {
   const totalItems = service.cartCount.get();
   const isLoading = service.isLoading.get();
   const error = service.error.get();
+  const addToCart = service.addToCart;
 
   return props.children({
     proceedToCheckout: service.proceedToCheckout,
     canCheckout: totalItems > 0,
     isLoading,
     error,
+    addToCart,
   });
 };
 
