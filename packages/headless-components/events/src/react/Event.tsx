@@ -96,18 +96,22 @@ export const Title = React.forwardRef<HTMLElement, EventTitleProps>(
   },
 );
 
-export interface EventDateProps extends AsChildProps {}
+export interface EventDateProps extends AsChildProps {
+  format?: 'short' | 'full';
+}
 
 export const Date = React.forwardRef<HTMLElement, EventDateProps>(
   (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
+    const { asChild, children, format = 'short', ...otherProps } = props;
     const Comp = useAsChild(asChild);
 
     const service = useService(EventServiceDefinition);
     const event = service.event.get();
     const date = event.dateAndTimeSettings!.dateAndTimeTbd
       ? event.dateAndTimeSettings!.dateAndTimeTbdMessage
-      : event.dateAndTimeSettings!.formatted!.dateAndTime;
+      : format === 'short'
+        ? event.dateAndTimeSettings!.formatted!.startDate
+        : event.dateAndTimeSettings!.formatted!.dateAndTime;
 
     const attributes = {
       'data-testid': TestIds.eventDate,
@@ -122,16 +126,22 @@ export const Date = React.forwardRef<HTMLElement, EventDateProps>(
   },
 );
 
-export interface EventLocationProps extends AsChildProps {}
+export interface EventLocationProps extends AsChildProps {
+  format?: 'short' | 'full';
+}
 
 export const Location = React.forwardRef<HTMLElement, EventLocationProps>(
   (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
+    const { asChild, children, format = 'short', ...otherProps } = props;
     const Comp = useAsChild(asChild);
 
     const service = useService(EventServiceDefinition);
     const event = service.event.get();
-    const location = event.location!.name;
+    const location =
+      event.location!.locationTbd || format === 'short'
+        ? event.location!.name
+        : // @ts-expect-error
+          `${event.location!.name}, ${event.location!.address!.formatted}`;
 
     const attributes = {
       'data-testid': TestIds.eventLocation,
