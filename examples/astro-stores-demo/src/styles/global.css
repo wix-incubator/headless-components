@@ -750,3 +750,22 @@ button:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
+
+/* Button Loading State Controls */
+/* Default state (data-in-progress="false") - show first span, hide second */
+button[data-in-progress="false"] span:nth-child(1) {
+  display: inline;
+}
+
+button[data-in-progress="false"] span:nth-child(2) {
+  display: none;
+}
+
+/* Loading state (data-in-progress="true") - hide first span, show second */
+button[data-in-progress="true"] span:nth-child(1) {
+  display: none;
+}
+
+button[data-in-progress="true"] span:nth-child(2) {
+  display: inline;
+}
