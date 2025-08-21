@@ -186,7 +186,8 @@ export interface ProductMediaProps {
 }
 
 export interface ProductMediaRenderProps {
-  media: ProductMedia[];
+  mediaItems: ProductMedia[];
+  mainMedia?: ProductMedia;
 }
 
 export function Media(props: ProductMediaProps) {
@@ -195,10 +196,12 @@ export function Media(props: ProductMediaProps) {
   >;
 
   const product = service.product.get();
-  const media = product.media?.itemsInfo?.items ?? [];
+  const mainMedia = product.media?.main;
+  const mediaItems = product.media?.itemsInfo?.items ?? [];
 
   return props.children({
-    media,
+    mediaItems,
+    mainMedia,
   });
 }
 
@@ -239,5 +242,55 @@ export function Loading(props: LoadingProps) {
 
   return props.children({
     isLoading,
+  });
+}
+
+/**
+ * Props for ProductSlug headless component
+ */
+export interface ProductSlugProps {
+  /** Render prop function that receives product slug data */
+  children: (props: ProductSlugRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProductSlug component
+ */
+export interface ProductSlugRenderProps {
+  /** Product slug */
+  slug: string;
+}
+
+/**
+ * Headless component for product slug display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductSlugDisplay() {
+ *   return (
+ *     <Product.Slug>
+ *       {({ slug }) => (
+ *         <a href={`/product/${slug}`}>
+ *           View Product
+ *         </a>
+ *       )}
+ *     </Product.Slug>
+ *   );
+ * }
+ * ```
+ */
+export function Slug(props: ProductSlugProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const product = service.product.get();
+  const slug = product.slug!;
+
+  return props.children({
+    slug,
   });
 }

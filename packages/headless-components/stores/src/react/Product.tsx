@@ -1,6 +1,7 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
 import { renderAsChild, type AsChildProps } from '../utils/index.js';
+import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
 import * as ProductModifiers from './core/ProductModifiers.js';
@@ -62,12 +63,15 @@ enum TestIds {
   productDescription = 'product-description',
   productPrice = 'product-price',
   productCompareAtPrice = 'product-compare-at-price',
+  productSlug = 'product-slug',
+  productRaw = 'product-raw',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
   productModifiers = 'product-modifiers',
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
+  productMediaGallery = 'product-media-gallery',
 }
 
 /**
@@ -105,11 +109,17 @@ export function Root(props: ProductRootProps): React.ReactNode {
       productServiceConfig={{ product: props.product }}
       data-testid={TestIds.productRoot}
     >
-      <ProductVariantSelector.Root>
-        <ProductModifiers.Root>
-          <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
-        </ProductModifiers.Root>
-      </ProductVariantSelector.Root>
+      <MediaGallery.Root
+        mediaGalleryServiceConfig={{
+          media: props.product.media?.itemsInfo?.items ?? [],
+        }}
+      >
+        <ProductVariantSelector.Root>
+          <ProductModifiers.Root>
+            <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
+          </ProductModifiers.Root>
+        </ProductVariantSelector.Root>
+      </MediaGallery.Root>
     </CoreProduct.Root>
   );
 }
@@ -413,6 +423,120 @@ export const CompareAtPrice = React.forwardRef<
         );
       }}
     </SelectedVariant.Price>
+  );
+});
+
+/**
+ * Props for Slug component
+ * @interface SlugProps
+ */
+export interface SlugProps extends AsChildProps<{ slug: string }> {}
+
+/**
+ * Product Slug component that displays the product's slug
+ *
+ * @component
+ * @order 6
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductSlugLink() {
+ *   return (
+ *     <Product.Slug>
+ *       {({ slug }) => (
+ *         <a href={`/product/${slug}`}>
+ *           View Product Details
+ *         </a>
+ *       )}
+ *     </Product.Slug>
+ *   );
+ * }
+ * ```
+ */
+export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
+  const { asChild, children } = props;
+  const testId = TestIds.productSlug;
+
+  return (
+    <CoreProduct.Slug>
+      {({ slug }) => {
+        const attributes = {
+          'data-testid': testId,
+        };
+
+        const slugData = { slug };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: slugData,
+            ref,
+            content: slug,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        return (
+          <span {...attributes} ref={ref}>
+            {slug}
+          </span>
+        );
+      }}
+    </CoreProduct.Slug>
+  );
+});
+
+/**
+ * Props for Product Raw component
+ */
+export interface RawProps extends AsChildProps<{ product: V3Product }> {}
+
+/**
+ * Provides access to the raw product data for advanced use cases.
+ * Similar to Category.Raw, this should only be used when you need custom access to product data.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Custom rendering with forwardRef
+ * <Product.Raw asChild>
+ *   {React.forwardRef(({product, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="product-debug">
+ *       <span>Product ID: {product._id}</span>
+ *       <span>SKU: {product.sku}</span>
+ *       <span>Inventory: {product.inventory?.quantity}</span>
+ *     </div>
+ *   ))}
+ * </Product.Raw>
+ * ```
+ */
+export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
+  const { asChild, children } = props;
+
+  return (
+    <CoreProduct.Content>
+      {({ product }) => {
+        const attributes = {
+          'data-testid': TestIds.productRaw,
+        };
+
+        if (asChild) {
+          const rendered = renderAsChild({
+            children,
+            props: { product },
+            ref,
+            content: null,
+            attributes,
+          });
+          if (rendered) return rendered;
+        }
+
+        // Raw component should not render anything by default when not using asChild
+        return null;
+      }}
+    </CoreProduct.Content>
   );
 });
 
@@ -812,3 +936,88 @@ export const ModifierOptionRepeater = React.forwardRef<
     </>
   );
 });
+
+/**
+ * Props for Product MediaGallery component
+ */
+export interface ProductMediaGalleryProps {
+  children: React.ReactNode;
+  infinite?: boolean;
+  autoPlay?: {
+    direction?: 'forward' | 'backward';
+    intervalMs?: number;
+  };
+}
+
+/**
+ * Container for product media gallery.
+ * Renders a MediaGallery.Root with the product media items.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.MediaGallery
+ *   infinite={true}
+ *   autoPlay={{ direction: "forward", intervalMs: 5000 }}
+ * >
+ *   <MediaGallery.Viewport />
+ *   <MediaGallery.Previous />
+ *   <MediaGallery.Next />
+ *   <MediaGallery.Thumbnails>
+ *     <MediaGallery.ThumbnailRepeater>
+ *       <MediaGallery.ThumbnailItem />
+ *     </MediaGallery.ThumbnailRepeater>
+ *   </MediaGallery.Thumbnails>
+ * </Product.MediaGallery>
+ *
+ * // Simple usage
+ * <Product.MediaGallery>
+ *   <MediaGallery.Viewport className="rounded-lg" />
+ * </Product.MediaGallery>
+ * ```
+ */
+export const ProductMediaGallery = React.forwardRef<
+  HTMLElement,
+  ProductMediaGalleryProps
+>((props, ref) => {
+  const { children, infinite, autoPlay, ...otherProps } = props;
+
+  return (
+    <CoreProduct.Media>
+      {({ mediaItems, mainMedia }) => {
+        const media =
+          mediaItems.length > 0 ? mediaItems : mainMedia ? [mainMedia] : [];
+
+        const mediaGalleryServiceConfig = {
+          media,
+          infinite,
+          autoPlay,
+        };
+
+        const attributes = {
+          'data-testid': TestIds.productMediaGallery,
+        };
+
+        return (
+          <div
+            {...attributes}
+            ref={ref as React.Ref<HTMLDivElement>}
+            {...otherProps}
+          >
+            <MediaGallery.Root
+              mediaGalleryServiceConfig={mediaGalleryServiceConfig}
+            >
+              {children}
+            </MediaGallery.Root>
+          </div>
+        );
+      }}
+    </CoreProduct.Media>
+  );
+});
+
+/**
+ * Alias for ProductMediaGallery to match the documented API
+ */
+export { ProductMediaGallery as MediaGallery };

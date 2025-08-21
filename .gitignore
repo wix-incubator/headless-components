@@ -31,5 +31,7 @@ out
 
 .turbo
 
-
 .specstory
+
+# jetbrains setting folder
+.idea/
