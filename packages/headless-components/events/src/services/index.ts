@@ -11,3 +11,19 @@ export {
   type EventServiceAPI,
   type EventServiceConfig,
 } from './event-service.js';
+
+export {
+  TicketService,
+  TicketServiceDefinition,
+  type TicketServiceAPI,
+  type TicketServiceConfig,
+  type TicketDefinition,
+} from './ticket-service';
+
+export {
+  TicketListService,
+  TicketListServiceDefinition,
+  loadTicketListServiceConfig,
+  type TicketListServiceAPI,
+  type TicketListServiceConfig,
+} from './ticket-list-service';
