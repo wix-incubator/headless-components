@@ -91,7 +91,7 @@ export interface EventsProps {
  * </EventList.Events>
  * ```
  */
-export const Events = React.forwardRef<HTMLDivElement, EventsProps>(
+export const Events = React.forwardRef<HTMLElement, EventsProps>(
   (props, ref) => {
     const { children, emptyState, className } = props;
     // TODO: Implement infiniteScroll and pageSize logic
@@ -111,7 +111,7 @@ export const Events = React.forwardRef<HTMLDivElement, EventsProps>(
     };
 
     return (
-      <div {...attributes} ref={ref}>
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
         {children}
       </div>
     );
@@ -182,7 +182,7 @@ export interface LoadMoreTriggerProps {
  * ```
  */
 export const LoadMoreTrigger = React.forwardRef<
-  HTMLButtonElement,
+  HTMLElement,
   LoadMoreTriggerProps
 >((props, ref) => {
   const { children, asChild, className } = props;
@@ -209,7 +209,7 @@ export const LoadMoreTrigger = React.forwardRef<
   }
 
   return (
-    <button {...attributes} ref={ref}>
+    <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
       {children}
     </button>
   );
@@ -235,33 +235,31 @@ export interface ErrorProps {
  * </EventList.Error>
  * ```
  */
-export const Error = React.forwardRef<HTMLDivElement, ErrorProps>(
-  (props, ref) => {
-    const { children, asChild, className } = props;
+export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
+  const { children, asChild, className } = props;
 
-    // TODO: Implement service integration
-    const hasError = false;
+  // TODO: Implement service integration
+  const hasError = false;
 
-    const attributes = {
-      className,
-      'data-testid': TestIds.eventListError,
-    };
+  const attributes = {
+    className,
+    'data-testid': TestIds.eventListError,
+  };
 
-    if (!hasError) {
-      return null;
-    }
+  if (!hasError) {
+    return null;
+  }
 
-    if (asChild && React.isValidElement(children)) {
-      return React.cloneElement(children as React.ReactElement, {
-        ...attributes,
-        ref,
-      });
-    }
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children as React.ReactElement, {
+      ...attributes,
+      ref,
+    });
+  }
 
-    return (
-      <div {...attributes} ref={ref}>
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {children}
+    </div>
+  );
+});

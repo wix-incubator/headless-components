@@ -27,7 +27,7 @@ export interface RootProps {
 }
 
 /**
- * Root component that provides the Event service context for rendering events.
+ * Root container that provides event context to all child components.
  *
  * @order 1
  * @component
@@ -43,6 +43,7 @@ export interface RootProps {
  *       <Event.Date />
  *       <Event.Location />
  *       <Event.Description />
+ *       <Event.RsvpButton>RSVP</Event.RsvpButton>
  *     </Event.Root>
  *   );
  * }
@@ -171,7 +172,11 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
     }
   }
 
-  return <div {...attributes}>{title}</div>;
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {title}
+    </div>
+  );
 });
 
 /**
@@ -179,7 +184,7 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
  */
 export interface DateProps extends AsChildProps<{ date: string }> {
   /** Format of the event date */
-  format?: 'short' | 'full';
+  format?: 'short' | 'full'; // Default: 'short'
 }
 
 /**
@@ -236,7 +241,11 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
     }
   }
 
-  return <div {...attributes}>{date}</div>;
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {date}
+    </div>
+  );
 });
 
 /**
@@ -244,7 +253,7 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
  */
 export interface LocationProps extends AsChildProps<{ location: string }> {
   /** Format of the event location */
-  format?: 'short' | 'full';
+  format?: 'short' | 'full'; // Default: 'short'
 }
 
 /**
@@ -302,7 +311,11 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
       }
     }
 
-    return <div {...attributes}>{location}</div>;
+    return (
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+        {location}
+      </div>
+    );
   },
 );
 
@@ -367,6 +380,10 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
       }
     }
 
-    return <div {...attributes}>{description}</div>;
+    return (
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+        {description}
+      </div>
+    );
   },
 );
