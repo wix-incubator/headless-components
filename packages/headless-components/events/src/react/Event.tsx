@@ -16,6 +16,7 @@ enum TestIds {
   eventDate = 'event-date',
   eventLocation = 'event-location',
   eventDescription = 'event-description',
+  eventRsvpButton = 'event-rsvp-button',
 }
 
 /**
@@ -384,6 +385,57 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
       <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
         {description}
       </div>
+    );
+  },
+);
+
+/**
+ * Props for the Event RsvpButton component.
+ */
+export interface RsvpButtonProps {
+  children: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+}
+
+/**
+ * Displays button for RSVP functionality with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.RsvpButton className="w-full">
+ *   RSVP
+ * </Event.RsvpButton>
+ *
+ * // asChild with primitive
+ * <Event.RsvpButton asChild>
+ *   <button className="w-full">RSVP</button>
+ * </Event.RsvpButton>
+ * ```
+ */
+export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
+  (props, ref) => {
+    const { children, asChild, className } = props;
+
+    const attributes = {
+      className,
+      'data-testid': TestIds.eventRsvpButton,
+      onClick: () => {},
+    };
+
+    if (asChild && React.isValidElement(children)) {
+      return React.cloneElement(children as React.ReactElement, {
+        ...attributes,
+        ref,
+      });
+    }
+
+    return (
+      <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
+        {children}
+      </button>
     );
   },
 );
