@@ -213,6 +213,7 @@ export const Trigger = React.forwardRef<
             children,
             props: { category, isSelected, onSelect: handleSelect },
             ref,
+            content: category.name,
           })
         : category.name}
     </Comp>
@@ -265,7 +266,12 @@ export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
               data-selected={isSelected ? 'true' : 'false'}
             >
               {asChild && children
-                ? renderChildren({ children, props: { name, category }, ref })
+                ? renderChildren({
+                    children,
+                    props: { name, category },
+                    ref,
+                    content: name,
+                  })
                 : name}
             </Comp>
           );
@@ -319,7 +325,12 @@ export const ID = React.forwardRef<HTMLElement, CategoryIDProps>(
         data-selected={isSelected ? 'true' : 'false'}
       >
         {asChild && children
-          ? renderChildren({ children, props: { id, category }, ref })
+          ? renderChildren({
+              children,
+              props: { id, category },
+              ref,
+              content: id,
+            })
           : id}
       </Comp>
     );
@@ -366,7 +377,12 @@ export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>(
         data-selected={isSelected ? 'true' : 'false'}
       >
         {asChild && children
-          ? renderChildren({ children, props: { category, isSelected }, ref })
+          ? renderChildren({
+              children,
+              props: { category, isSelected },
+              ref,
+              content: JSON.stringify(category),
+            })
           : JSON.stringify(category)}
       </Comp>
     );

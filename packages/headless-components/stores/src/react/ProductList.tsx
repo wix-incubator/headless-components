@@ -8,7 +8,8 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
-import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
+import { Slot } from '@radix-ui/react-slot';
+import { renderChildren } from '../utils/renderChildren.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -340,8 +341,21 @@ export const LoadMoreTrigger = React.forwardRef<
 /**
  * Props for ProductList Totals Displayed component
  */
-export interface TotalsDisplayedProps
-  extends AsChildProps<{ displayedProducts: number }> {}
+export interface TotalsDisplayedProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          displayedProducts: number;
+        }
+      >;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the number of products currently displayed.
@@ -369,26 +383,24 @@ export const TotalsDisplayed = React.forwardRef<
   const products = productsListService.products.get();
   const displayedProducts = products.length;
 
-  const attributes = {
-    'data-testid': TestIds.productListTotalsDisplayed,
-    'data-displayed': displayedProducts,
-    className,
-  };
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { displayedProducts, className },
-      ref,
-      content: displayedProducts.toString(),
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
+  const Comp = asChild && children ? Slot : 'span';
 
   return (
-    <span {...attributes} ref={ref as React.Ref<HTMLSpanElement>}>
+    <Comp
+      data-testid={TestIds.productListTotalsDisplayed}
+      data-displayed={displayedProducts}
+      className={className}
+      ref={ref}
+    >
+      {asChild && children
+        ? renderChildren({
+            children,
+            props: { displayedProducts },
+            ref,
+            content: displayedProducts.toString(),
+          })
+        : displayedProducts}
       {displayedProducts}
-    </span>
+    </Comp>
   );
 });

@@ -212,16 +212,14 @@ export const ProductGridContent = ({
 
                 {/* Product Name with Link */}
                 <Product.Slug asChild>
-                  {React.forwardRef<HTMLAnchorElement, { slug: string }>(
-                    ({ slug }, ref) => (
-                      <a
-                        ref={ref}
-                        data-testid="title-navigation"
-                        href={`/${slug}`}
-                      >
-                        <Product.Name className="text-content-primary font-semibold mb-2 line-clamp-2" />
-                      </a>
-                    )
+                  {({ slug }, ref) => (
+                    <a
+                      ref={ref as React.Ref<HTMLAnchorElement>}
+                      data-testid="title-navigation"
+                      href={`/${slug}`}
+                    >
+                      <Product.Name className="text-content-primary font-semibold mb-2 line-clamp-2" />
+                    </a>
                   )}
                 </Product.Slug>
 
@@ -342,29 +340,27 @@ export const ProductGridContent = ({
 
                   {/* View Product Button */}
                   <Product.Slug asChild>
-                    {React.forwardRef<HTMLAnchorElement, { slug: string }>(
-                      ({ slug }, ref) => (
-                        <a
-                          ref={ref}
-                          href={`/${slug}`}
-                          className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
+                    {({ slug }, ref) => (
+                      <a
+                        ref={ref as React.Ref<HTMLAnchorElement>}
+                        href={`/${slug}`}
+                        className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
+                      >
+                        View Product
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
                         >
-                          View Product
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </a>
-                      )
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </a>
                     )}
                   </Product.Slug>
                 </div>

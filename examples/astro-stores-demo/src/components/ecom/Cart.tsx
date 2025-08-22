@@ -447,7 +447,9 @@ export default function CartContent({
                                         <div className="flex justify-between text-lg text-content-primary">
                                           <span>
                                             Subtotal ({totalItems}{' '}
-                                            {totalItems === 1 ? 'item' : 'items'}
+                                            {totalItems === 1
+                                              ? 'item'
+                                              : 'items'}
                                             )
                                           </span>
                                           <span className="font-semibold">

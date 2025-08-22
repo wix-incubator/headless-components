@@ -16,6 +16,7 @@ export interface RenderChildrenParams<
   props: TProps;
   /** Ref to forward to the rendered element */
   ref: React.Ref<THTMLElement>;
+  content?: string | null;
 }
 
 /**
@@ -50,13 +51,17 @@ export function renderChildren<THTMLElement = HTMLElement, TProps = any>({
   children,
   props,
   ref,
+  content,
 }: RenderChildrenParams<THTMLElement, TProps>): React.ReactNode | null {
   // Early return if no children provided
   if (!children) return null;
 
   // Handle React element pattern
   if (React.isValidElement(children)) {
-    return children;
+    return React.cloneElement(children as React.ReactElement, {
+      ref,
+      ...(content ? { children: content } : {}),
+    });
   }
 
   // Handle render function pattern
