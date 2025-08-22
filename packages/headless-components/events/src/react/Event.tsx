@@ -18,11 +18,36 @@ enum TestIds {
   eventDescription = 'event-description',
 }
 
+/**
+ * Props for the Event Root component.
+ */
 export interface RootProps {
   event: Event;
   children: React.ReactNode;
 }
 
+/**
+ * Root component that provides the Event service context for rendering events.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { Event } from '@wix/headless-events/react';
+ *
+ * function EventPage({ event }) {
+ *   return (
+ *     <Event.Root event={event}>
+ *       <Event.Image />
+ *       <Event.Title />
+ *       <Event.Date />
+ *       <Event.Location />
+ *       <Event.Description />
+ *     </Event.Root>
+ *   );
+ * }
+ * ```
+ */
 export const Root = (props: RootProps): React.ReactNode => {
   const { event, children } = props;
 
@@ -43,10 +68,28 @@ export const Root = (props: RootProps): React.ReactNode => {
   );
 };
 
+/**
+ * Props for the Event Image component.
+ */
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   asChild?: boolean;
 }
 
+/**
+ * Displays the event image using WixMediaImage component with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.Image className="w-full h-full object-cover" />
+ *
+ * // asChild with primitive
+ * <Event.Image asChild>
+ *   <img className="w-full h-full object-cover" />
+ * </Event.Image>
+ * ```
+ */
 export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
@@ -73,8 +116,35 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   },
 );
 
+/**
+ * Props for the Event Title component.
+ */
 export interface TitleProps extends AsChildProps<{ title: string }> {}
 
+/**
+ * Displays the event title with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.Title className="text-4xl font-bold" />
+ *
+ * // asChild with primitive
+ * <Event.Title asChild>
+ *   <h1 className="text-4xl font-bold" />
+ * </Event.Title>
+ *
+ * // asChild with react component
+ * <Event.Title asChild>
+ *   {React.forwardRef(({title, ...props}, ref) => (
+ *     <h1 ref={ref} {...props} className="text-4xl font-bold">
+ *       {title}
+ *     </h1>
+ *   ))}
+ * </Event.Title>
+ * ```
+ */
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   const { asChild, children, className } = props;
 
@@ -104,10 +174,38 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   return <div {...attributes}>{title}</div>;
 });
 
+/**
+ * Props for the Event Date component.
+ */
 export interface DateProps extends AsChildProps<{ date: string }> {
+  /** Format of the event date */
   format?: 'short' | 'full';
 }
 
+/**
+ * Displays the event date with customizable rendering and format options following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.Date className="text-sm font-medium" format="full" />
+ *
+ * // asChild with primitive
+ * <Event.Date asChild format="full">
+ *   <span className="text-sm font-medium" />
+ * </Event.Date>
+ *
+ * // asChild with react component
+ * <Event.Date asChild>
+ *   {React.forwardRef(({date, ...props}, ref) => (
+ *     <span ref={ref} {...props} className="text-sm font-medium">
+ *       {date}
+ *     </span>
+ *   ))}
+ * </Event.Date>
+ * ```
+ */
 export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
   const { asChild, children, className, format = 'short' } = props;
 
@@ -141,10 +239,38 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
   return <div {...attributes}>{date}</div>;
 });
 
+/**
+ * Props for the Event Location component.
+ */
 export interface LocationProps extends AsChildProps<{ location: string }> {
+  /** Format of the event location */
   format?: 'short' | 'full';
 }
 
+/**
+ * Displays the event location with customizable rendering and format options following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.Location className="text-sm font-medium" format="full" />
+ *
+ * // asChild with primitive
+ * <Event.Location asChild format="full">
+ *   <span className="text-sm font-medium" />
+ * </Event.Location>
+ *
+ * // asChild with react component
+ * <Event.Location asChild>
+ *   {React.forwardRef(({location, ...props}, ref) => (
+ *     <span ref={ref} {...props} className="text-sm font-medium">
+ *       {location}
+ *     </span>
+ *   ))}
+ * </Event.Location>
+ * ```
+ */
 export const Location = React.forwardRef<HTMLElement, LocationProps>(
   (props, ref) => {
     const { asChild, children, className, format = 'short' } = props;
@@ -180,9 +306,36 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
   },
 );
 
+/**
+ * Props for the Event Description component.
+ */
 export interface DescriptionProps
   extends AsChildProps<{ description: string }> {}
 
+/**
+ * Displays the event description with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.Description className="text-sm font-medium" />
+ *
+ * // asChild with primitive
+ * <Event.Description asChild>
+ *   <span className="text-sm font-medium" />
+ * </Event.Description>
+ *
+ * // asChild with react component
+ * <Event.Description asChild>
+ *   {React.forwardRef(({description, ...props}, ref) => (
+ *     <span ref={ref} {...props} className="text-sm font-medium">
+ *       {description}
+ *     </span>
+ *   ))}
+ * </Event.Description>
+ * ```
+ */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
