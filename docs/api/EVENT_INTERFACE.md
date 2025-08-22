@@ -256,7 +256,7 @@ interface RsvpButtonProps {
 | `data-testid="event-date"`        | Event.Date        | Event date element        |
 | `data-testid="event-location"`    | Event.Location    | Event location element    |
 | `data-testid="event-description"` | Event.Description | Event description element |
-| `data-testid="event-rsvp-button"` | Event.RsvpButton  | RSVP button element       |
+| `data-testid="event-rsvp-button"` | Event.RsvpButton  | Event RSVP button element |
 
 ## Usage Examples
 
