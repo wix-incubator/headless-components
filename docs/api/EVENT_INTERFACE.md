@@ -10,7 +10,7 @@ The Event component follows a compound component pattern where each part can be 
 
 ### Event.Root
 
-Root component that provides event context to all child components.
+Root container that provides event context to all child components.
 
 **Props**
 
