@@ -1,9 +1,9 @@
 import React from 'react';
-import { Slot } from '@radix-ui/react-slot';
 import * as CoreCategoryList from './core/CategoryList.js';
 import * as Category from './Category.js';
 import { type Category as CategoryType } from '../services/category-service.js';
 import { type CategoriesListServiceConfig } from '../services/categories-list-service.js';
+import { AsChildSlot } from '../utils/AsChildSlot.js';
 
 enum TestIds {
   categoryListRoot = 'category-list',
@@ -116,13 +116,16 @@ export const Loading = React.forwardRef<
 >((props, ref) => {
   const { asChild, children, className } = props;
 
-  const Comp = asChild && children ? Slot : 'h1';
-
   return (
     <CoreCategoryList.Loading>
-      <Comp className={className} ref={ref}>
-        Loading...
-      </Comp>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        customElement={children}
+      >
+        <h1>Loading...</h1>
+      </AsChildSlot>
     </CoreCategoryList.Loading>
   );
 });
