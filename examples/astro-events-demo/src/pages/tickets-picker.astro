@@ -1,0 +1,25 @@
+---
+import { loadEventListServiceConfig, loadTicketListServiceConfig } from '@wix/headless-events/services';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TicketsPickerPage from '../react-pages/tickets-picker';
+
+// Load initial event list to get first event ID
+const eventListServiceConfig = await loadEventListServiceConfig();
+const firstEventId = eventListServiceConfig.events[0]?._id;
+
+let ticketsServiceConfig = { ticketDefinitions: [] };
+if (firstEventId) {
+  ticketsServiceConfig = await loadTicketListServiceConfig(firstEventId);
+}
+---
+
+<BaseLayout>
+  <title>Tickets Picker</title>
+  <meta name="description" content="Tickets Picker" />
+
+  <TicketsPickerPage
+    client:load
+    slot="body"
+    ticketsServiceConfig={ticketsServiceConfig}
+  />
+</BaseLayout>

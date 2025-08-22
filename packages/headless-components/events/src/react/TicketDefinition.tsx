@@ -1,8 +1,8 @@
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
-import { TicketService, TicketServiceDefinition, type TicketDefinition } from '../services/ticket-service';
-import { type AsChildProps, renderAsChild } from '../utils/renderAsChild';
+import { TicketService, TicketServiceDefinition, type TicketDefinition } from '../services/ticket-service.js';
+import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
 
 enum TestIds {
   ticketName = 'ticket-name',
@@ -69,7 +69,8 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>(
 
     const service = useService(TicketServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
-    const price = ticketDefinition.price?.formattedAmount ?? '';
+
+    const price = ticketDefinition.pricingMethod?.fixedPrice?.value ?? '';
 
     const attributes = { 'data-testid': TestIds.ticketPrice };
 

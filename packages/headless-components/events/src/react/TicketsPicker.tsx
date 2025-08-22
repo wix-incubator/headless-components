@@ -5,8 +5,8 @@ import {
   TicketListService,
   TicketListServiceDefinition,
   type TicketListServiceConfig,
-} from '../services/ticket-list-service';
-import * as TicketDefinition from './TicketDefinition';
+} from '../services/ticket-list-service.js';
+import * as TicketDefinition from './TicketDefinition.js';
 
 enum TestIds {
   ticketListTickets = 'ticket-list-tickets',

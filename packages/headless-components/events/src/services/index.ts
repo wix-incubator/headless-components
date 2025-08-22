@@ -18,7 +18,7 @@ export {
   type TicketServiceAPI,
   type TicketServiceConfig,
   type TicketDefinition,
-} from './ticket-service';
+} from './ticket-service.js';
 
 export {
   TicketListService,
@@ -26,4 +26,4 @@ export {
   loadTicketListServiceConfig,
   type TicketListServiceAPI,
   type TicketListServiceConfig,
-} from './ticket-list-service';
+} from './ticket-list-service.js';

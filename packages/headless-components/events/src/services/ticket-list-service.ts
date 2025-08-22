@@ -1,7 +1,7 @@
 import { defineService, implementService } from '@wix/services-definitions';
 import { SignalsServiceDefinition, type Signal } from '@wix/services-definitions/core-services/signals';
 import { ticketDefinitionsV2 } from '@wix/events';
-import { type TicketDefinition } from './ticket-service';
+import { type TicketDefinition } from './ticket-service.js';
 
 export interface TicketListServiceAPI {
   ticketDefinitions: Signal<TicketDefinition[]>;
