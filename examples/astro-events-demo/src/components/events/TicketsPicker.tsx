@@ -24,16 +24,18 @@ export function TicketsPicker({ ticketsServiceConfig }: TicketsPickerProps) {
       >
         <TicketsPickerPrimitive.TicketDefinitionRepeater>
           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
-            {/* Ticket Name */}
-            <div className="p-4">
+            <div className="p-4 flex-grow">
               <TicketDefinitionPrimitive.Name className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2" />
-              <TicketDefinitionPrimitive.Price className="text-sm text-gray-600 mb-4" />
+              <TicketDefinitionPrimitive.Description className="text-sm text-gray-500 mb-3 line-clamp-3" />
+              <TicketDefinitionPrimitive.Price className="text-base font-medium text-gray-900 mb-2" />
+              <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
+                <span>Remaining: <TicketDefinitionPrimitive.Remaining /></span>
+                <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium" />
+              </div>
             </div>
-
-            {/* Select Button */}
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 mt-auto">
-              Select Ticket
-            </button>
+            <div className="p-4 border-t mt-auto">
+              <TicketDefinitionPrimitive.Quantity />
+            </div>
           </div>
         </TicketsPickerPrimitive.TicketDefinitionRepeater>
       </TicketsPickerPrimitive.TicketDefinitions>

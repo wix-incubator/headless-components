@@ -18,6 +18,7 @@ enum TestIds {
  */
 export interface RootProps {
   ticketsServiceConfig: TicketListServiceConfig;
+  initialSelectedQuantities?: Record<string, number>;
   children: React.ReactNode;
 }
 
@@ -44,14 +45,16 @@ export interface RootProps {
  * ```
  */
 export const Root = (props: RootProps): React.ReactNode => {
-  const { ticketsServiceConfig, children } = props;
+  const { ticketsServiceConfig, initialSelectedQuantities, children } = props;
+
+  const config = { ...ticketsServiceConfig, initialSelectedQuantities };
 
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         TicketListServiceDefinition,
         TicketListService,
-        ticketsServiceConfig,
+        config,
       )}
     >
       {children}
