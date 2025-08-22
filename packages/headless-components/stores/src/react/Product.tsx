@@ -1,7 +1,7 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
 
-import { renderChildren } from '../utils/renderChildren.js';
+import { AsChildSlot } from '../utils/AsChildSlot.js';
 import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
@@ -9,7 +9,6 @@ import * as ProductModifiers from './core/ProductModifiers.js';
 import * as SelectedVariant from './core/SelectedVariant.js';
 import * as Option from './Option.js';
 import { AsContent } from './types.js';
-import { Slot } from '@radix-ui/react-slot';
 
 /**
  * Context for sharing variant options state between components
@@ -172,26 +171,21 @@ export interface NameProps {
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const Comp = asChild && children ? Slot : 'div';
-
   return (
     <CoreProduct.Name>
       {({ name }) => {
         return (
-          <Comp
-            ref={ref as React.Ref<HTMLDivElement>}
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
             className={className}
             data-testid={TestIds.productName}
+            customElement={children}
+            customElementProps={{ name }}
+            content={name}
           >
-            {asChild && children
-              ? renderChildren({
-                  children,
-                  props: { name },
-                  ref,
-                  content: name,
-                })
-              : name}
-          </Comp>
+            <div>{name}</div>
+          </AsChildSlot>
         );
       }}
     </CoreProduct.Name>
@@ -246,8 +240,6 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, className, as = AsContent.Plain } = props;
 
-    const Comp = asChild && children ? Slot : 'div';
-
     return (
       <CoreProduct.Description>
         {({ description: richDescription, plainDescription }) => {
@@ -285,20 +277,17 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
           }
 
           return (
-            <Comp
-              ref={ref as React.Ref<HTMLDivElement>}
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
               className={className}
               data-testid={TestIds.productDescription}
+              customElement={children}
+              customElementProps={{ description }}
+              content={description}
             >
-              {asChild && children
-                ? renderChildren({
-                    children,
-                    props: { description },
-                    ref,
-                    content: description,
-                  })
-                : description}
-            </Comp>
+              <div>{description}</div>
+            </AsChildSlot>
           );
         }}
       </CoreProduct.Description>
@@ -353,32 +342,25 @@ export interface PriceProps {
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const Comp = asChild && children ? Slot : 'span';
-
   return (
     <SelectedVariant.Price>
       {({ price, compareAtPrice }) => {
-        const priceData = {
-          price,
-          formattedPrice: price,
-        };
-
         return (
-          <Comp
+          <AsChildSlot
             ref={ref}
+            asChild={asChild}
             className={className}
             data-testid={TestIds.productPrice}
             data-discounted={compareAtPrice !== null}
+            customElement={children}
+            customElementProps={{
+              price,
+              formattedPrice: price,
+            }}
+            content={price}
           >
-            {asChild && children
-              ? renderChildren({
-                  children,
-                  props: priceData,
-                  ref,
-                  content: price,
-                })
-              : price}
-          </Comp>
+            <span>{price}</span>
+          </AsChildSlot>
         );
       }}
     </SelectedVariant.Price>
@@ -440,8 +422,6 @@ export const CompareAtPrice = React.forwardRef<
   const { asChild, children, className } = props;
   const testId = TestIds.productCompareAtPrice;
 
-  const Comp = asChild && children ? Slot : 'span';
-
   return (
     <SelectedVariant.Price>
       {({ compareAtPrice }) => {
@@ -450,27 +430,22 @@ export const CompareAtPrice = React.forwardRef<
           return null;
         }
 
-        const priceData = {
-          price: compareAtPrice,
-          formattedPrice: compareAtPrice,
-        };
-
         return (
-          <Comp
+          <AsChildSlot
             ref={ref}
+            asChild={asChild}
             className={className}
             data-testid={testId}
             data-discounted={compareAtPrice !== null}
+            customElement={children}
+            customElementProps={{
+              price: compareAtPrice,
+              formattedPrice: compareAtPrice,
+            }}
+            content={compareAtPrice}
           >
-            {asChild && children
-              ? renderChildren({
-                  children,
-                  props: priceData,
-                  ref,
-                  content: compareAtPrice,
-                })
-              : compareAtPrice}
-          </Comp>
+            <span>{compareAtPrice}</span>
+          </AsChildSlot>
         );
       }}
     </SelectedVariant.Price>
@@ -523,24 +498,21 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
   const { asChild, children, className } = props;
   const testId = TestIds.productSlug;
 
-  const Comp = asChild && children ? Slot : 'span';
-
   return (
     <CoreProduct.Slug>
       {({ slug }) => {
-        const slugData = { slug };
-
         return (
-          <Comp ref={ref} className={className} data-testid={testId}>
-            {asChild && children
-              ? renderChildren({
-                  children,
-                  props: slugData,
-                  ref,
-                  content: slug,
-                })
-              : slug}
-          </Comp>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={testId}
+            customElement={children}
+            customElementProps={{ slug }}
+            content={slug}
+          >
+            <span>{slug}</span>
+          </AsChildSlot>
         );
       }}
     </CoreProduct.Slug>
@@ -588,8 +560,6 @@ export interface RawProps {
 export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const Comp = asChild && children ? Slot : 'div';
-
   return (
     <CoreProduct.Content>
       {({ product }) => {
@@ -599,13 +569,13 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
         }
 
         return (
-          <Comp
-            ref={ref as React.Ref<HTMLDivElement>}
+          <AsChildSlot
+            ref={ref}
             className={className}
             data-testid={TestIds.productRaw}
-          >
-            {renderChildren({ children, props: { product }, ref })}
-          </Comp>
+            customElement={children}
+            customElementProps={{ product }}
+          />
         );
       }}
     </CoreProduct.Content>
@@ -670,8 +640,6 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const Comp = asChild && children ? Slot : 'div';
-
     return (
       <ProductVariantSelector.Options>
         {({ hasOptions, options }) => {
@@ -684,13 +652,15 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
 
           return (
             <VariantsContext.Provider value={contextValue}>
-              <Comp
-                ref={ref as React.Ref<HTMLDivElement>}
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
                 className={className}
                 data-testid={TestIds.productVariants}
+                customElement={children}
               >
-                {React.isValidElement(children) ? children : null}
-              </Comp>
+                <div>{React.isValidElement(children) ? children : null}</div>
+              </AsChildSlot>
             </VariantsContext.Provider>
           );
         }}
@@ -859,8 +829,6 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const Comp = asChild && children ? Slot : 'div';
-
     return (
       <ProductModifiers.Modifiers>
         {({ hasModifiers, modifiers }) => {
@@ -873,13 +841,15 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
 
           return (
             <ModifiersContext.Provider value={contextValue}>
-              <Comp
-                ref={ref as React.Ref<HTMLDivElement>}
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
                 className={className}
                 data-testid={TestIds.productModifiers}
+                customElement={children}
               >
-                {React.isValidElement(children) ? children : null}
-              </Comp>
+                <div>{React.isValidElement(children) ? children : null}</div>
+              </AsChildSlot>
             </ModifiersContext.Provider>
           );
         }}

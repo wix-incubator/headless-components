@@ -25,7 +25,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       asChild,
       children,
       customElement,
-      customElementProps,
+      customElementProps = {},
       content,
       ...restPros
     } = props;

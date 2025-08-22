@@ -8,8 +8,7 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
-import { Slot } from '@radix-ui/react-slot';
-import { renderChildren } from '../utils/renderChildren.js';
+import { AsChildSlot } from '../utils/AsChildSlot.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -383,24 +382,18 @@ export const TotalsDisplayed = React.forwardRef<
   const products = productsListService.products.get();
   const displayedProducts = products.length;
 
-  const Comp = asChild && children ? Slot : 'span';
-
   return (
-    <Comp
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
       data-testid={TestIds.productListTotalsDisplayed}
       data-displayed={displayedProducts}
-      className={className}
-      ref={ref}
+      customElement={children}
+      customElementProps={{ displayedProducts }}
+      content={displayedProducts}
     >
-      {asChild && children
-        ? renderChildren({
-            children,
-            props: { displayedProducts },
-            ref,
-            content: displayedProducts.toString(),
-          })
-        : displayedProducts}
-      {displayedProducts}
-    </Comp>
+      <span>{displayedProducts}</span>
+    </AsChildSlot>
   );
 });
