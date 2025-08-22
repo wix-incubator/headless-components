@@ -10,6 +10,8 @@ import * as Event from './Event.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
+  eventListLoadMore = 'event-list-load-more',
+  eventListError = 'event-list-error',
 }
 
 /**
@@ -21,7 +23,7 @@ export interface RootProps {
 }
 
 /**
- * Root component that provides the EventList service context for rendering event lists.
+ * Root container that provides event list context to all child components.
  *
  * @order 1
  * @component
@@ -39,6 +41,7 @@ export interface RootProps {
  *           <Event.Date />
  *           <Event.Location />
  *           <Event.Description />
+ *           <Event.RsvpButton>RSVP</Event.RsvpButton>
  *         </EventList.EventRepeater>
  *       </EventList.Events>
  *     </EventList.Root>
@@ -69,16 +72,18 @@ export interface EventsProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
   className?: string;
+  infiniteScroll?: boolean; // Default: true
+  pageSize?: number; // 0 means no limit, max is 100
 }
 
 /**
- * Container for the event list with empty state support.
+ * Container for the event list with support for empty state and custom layout.
  * Follows List Container Level pattern.
  *
  * @component
  * @example
  * ```tsx
- * <EventList.Events emptyState={<div>No events found</div>}>
+ * <EventList.Events emptyState={<div>No events found</div>} infiniteScroll={false} pageSize={3}>
  *   <EventList.EventRepeater>
  *     <Event.Image />
  *     <Event.Title />
@@ -89,6 +94,7 @@ export interface EventsProps {
 export const Events = React.forwardRef<HTMLDivElement, EventsProps>(
   (props, ref) => {
     const { children, emptyState, className } = props;
+    // TODO: Implement infiniteScroll and pageSize logic
 
     const service = useService(EventListServiceDefinition);
     const events = service.events.get();
@@ -99,9 +105,9 @@ export const Events = React.forwardRef<HTMLDivElement, EventsProps>(
     }
 
     const attributes = {
+      className,
       'data-testid': TestIds.eventListEvents,
       'data-empty': !hasEvents,
-      className,
     };
 
     return (
@@ -154,3 +160,108 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
     </>
   );
 };
+
+/**
+ * Props for the EventList LoadMoreTrigger component.
+ */
+export interface LoadMoreTriggerProps {
+  children: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+}
+
+/**
+ * Displays a button to load more events. Not rendered if infiniteScroll is false or no events are left to load.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <EventList.LoadMoreTrigger>
+ *   Load More
+ * </EventList.LoadMoreTrigger>
+ * ```
+ */
+export const LoadMoreTrigger = React.forwardRef<
+  HTMLButtonElement,
+  LoadMoreTriggerProps
+>((props, ref) => {
+  const { children, asChild, className } = props;
+
+  // TODO: Implement service integration
+  const hasMoreEvents = true;
+  const infiniteScroll = true;
+
+  const attributes = {
+    className,
+    'data-testid': TestIds.eventListLoadMore,
+    onClick: () => {},
+  };
+
+  if (!infiniteScroll || !hasMoreEvents) {
+    return null;
+  }
+
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children as React.ReactElement, {
+      ...attributes,
+      ref,
+    });
+  }
+
+  return (
+    <button {...attributes} ref={ref}>
+      {children}
+    </button>
+  );
+});
+
+/**
+ * Props for the EventList Error component.
+ */
+export interface ErrorProps {
+  children: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+}
+
+/**
+ * Displays an error message when the event list fails to load.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <EventList.Error>
+ *   Unable to load events.
+ * </EventList.Error>
+ * ```
+ */
+export const Error = React.forwardRef<HTMLDivElement, ErrorProps>(
+  (props, ref) => {
+    const { children, asChild, className } = props;
+
+    // TODO: Implement service integration
+    const hasError = false;
+
+    const attributes = {
+      className,
+      'data-testid': TestIds.eventListError,
+    };
+
+    if (!hasError) {
+      return null;
+    }
+
+    if (asChild && React.isValidElement(children)) {
+      return React.cloneElement(children as React.ReactElement, {
+        ...attributes,
+        ref,
+      });
+    }
+
+    return (
+      <div {...attributes} ref={ref}>
+        {children}
+      </div>
+    );
+  },
+);
