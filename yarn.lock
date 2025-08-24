@@ -1621,7 +1621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-slot@npm:^1.2.3":
+"@radix-ui/react-slot@npm:^1.1.0, @radix-ui/react-slot@npm:^1.2.3":
   version: 1.2.3
   resolution: "@radix-ui/react-slot@npm:1.2.3"
   dependencies:
@@ -3771,28 +3771,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@npm:^0.0.14, @wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
-  dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@types/node": "npm:^20.9.0"
-    "@vitest/ui": "npm:^3.1.4"
-    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.61"
-    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.56"
-    "@wix/redirects": "npm:^1.0.0"
-    "@wix/sdk": "npm:^1.15.24"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-    jsdom: "npm:^26.1.0"
-    prettier: "npm:^3.4.2"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
-  languageName: unknown
-  linkType: soft
-
 "@wix/headless-ecom@npm:^0.0.7":
   version: 0.0.7
   resolution: "@wix/headless-ecom@npm:0.0.7"
@@ -3805,6 +3783,30 @@ __metadata:
   checksum: 10c0/b599015eb2667a6ec0cef3ff0ef98976f84f474414b84492f0681ef0c3b457fffa5e3d3d8ef3980b026eaa101128f5a9e73fd518ec97a37f9b4c580d09029e34
   languageName: node
   linkType: hard
+
+"@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.1.0"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.61"
+    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.56"
+    "@wix/headless-media": "workspace:*"
+    "@wix/redirects": "npm:^1.0.0"
+    "@wix/sdk": "npm:^1.15.24"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
 
 "@wix/headless-integrations@workspace:.":
   version: 0.0.0-use.local
@@ -3839,17 +3841,6 @@ __metadata:
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
   checksum: 10c0/0f47091789586884e0a499385e5aa19a9c5fe847d342d3efac9af32c723cbfe1cccfc44f41046f602e4075c5c3b3d5af6dde1f82b91d259c89765ac0441a3e5f
-  languageName: node
-  linkType: hard
-
-"@wix/headless-media@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "@wix/headless-media@npm:0.0.10"
-  dependencies:
-    "@wix/sdk": "npm:^1.15.26"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-  checksum: 10c0/0bb511677ec656497c96e2cd8205af73e5c4e35d65098bebddbe67c0dd521f31be6dc4abd550335b4344454793abce541d7ebc064b6477949d02bdd20db63f82
   languageName: node
   linkType: hard
 
@@ -3891,6 +3882,12 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
+
+"@wix/headless-platform@workspace:packages/headless-components/headless-platform":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-platform@workspace:packages/headless-components/headless-platform"
   languageName: unknown
   linkType: soft
 
@@ -3994,9 +3991,8 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1278"
     "@wix/essentials": "npm:^0.1.24"
-    "@wix/headless-ecom": "npm:^0.0.14"
-    "@wix/headless-media": "npm:^0.0.10"
-    "@wix/headless-utils": "npm:^0.0.1"
+    "@wix/headless-ecom": "workspace:*"
+    "@wix/headless-media": "workspace:*"
     "@wix/redirects": "npm:^1.0.83"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
@@ -4004,21 +4000,6 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
-  languageName: unknown
-  linkType: soft
-
-"@wix/headless-utils@npm:^0.0.1, @wix/headless-utils@workspace:packages/headless-components/utils":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-utils@workspace:packages/headless-components/utils"
-  dependencies:
-    "@radix-ui/react-slot": "npm:^1.2.3"
-    "@types/node": "npm:^20.9.0"
-    prettier: "npm:^3.4.2"
-    react: "npm:^18.0.0"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
-  peerDependencies:
-    react: ">=18.0.0"
   languageName: unknown
   linkType: soft
 
@@ -8757,7 +8738,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.0.0, react@npm:^18.3.1":
+"react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:

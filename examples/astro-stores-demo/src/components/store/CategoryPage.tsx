@@ -1,10 +1,7 @@
-import { CurrentCart } from '@wix/headless-ecom/react';
-import type { LineItem } from '@wix/headless-ecom/services';
 import {
   ProductCore as ProductPrimitive,
   ProductListCore as ProductListPrimitive,
   ProductListFilters as ProductListFiltersPrimitive,
-  ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductList,
   Product,
@@ -17,16 +14,13 @@ import type {
 } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
-import { useEffect, useState } from 'react';
-import { WixMediaImage } from '../media';
 import * as StyledMediaGallery from '../media/MediaGallery';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
 import { ProductFilters } from './ProductFilters';
 import QuickViewModal from './QuickViewModal';
 import { SortDropdown } from './SortDropdown';
-import { MediaGallery as MediaGalleryCore } from '@wix/headless-media/core';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
