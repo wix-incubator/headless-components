@@ -1,13 +1,11 @@
-import { defineService, implementService } from "@wix/services-definitions";
-import { SignalsServiceDefinition } from "@wix/services-definitions/core-services/signals";
-import {
-  DEFAULT_QUERY_LIMIT,
-} from "./products-list-service.js";
-import { productsV3, customizationsV3 } from "@wix/stores";
-import { type Category } from "./category-service.js";
-import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
+import { defineService, implementService } from '@wix/services-definitions';
+import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
+import { DEFAULT_QUERY_LIMIT } from './products-list-service.js';
+import { productsV3, customizationsV3 } from '@wix/stores';
+import { type Category } from './category-service.js';
+import { loadCategoriesListServiceConfig } from './categories-list-service.js';
 
-import { SortType } from "./../enums/sort-enums.js";
+import { SortType } from './../enums/sort-enums.js';
 
 export { SortType } from './../enums/sort-enums.js';
 
@@ -22,8 +20,6 @@ export const InventoryStatusType = productsV3.InventoryAvailabilityStatus;
  * Re-exports the Wix inventory availability status enum type.
  */
 export type InventoryStatusType = productsV3.InventoryAvailabilityStatus;
-
-
 
 /**
  * Initial search state that can be loaded from URL parameters.
@@ -51,8 +47,9 @@ export type ProductsListSearchServiceConfig = {
  * Service definition for the Products List Search service.
  * This consolidates sort, pagination, and filtering functionality.
  */
-export const ProductsListSearchServiceDefinition = defineService<{
-}>("products-list-search");
+export const ProductsListSearchServiceDefinition = defineService<{}>(
+  'products-list-search',
+);
 
 /**
  * Convert SortType enum to URL format
@@ -418,9 +415,11 @@ export async function parseUrlToSearchOptions(
     }
   }
 
-  const inventoryStatus = searchParams.get("inventoryStatus");
+  const inventoryStatus = searchParams.get('inventoryStatus');
   if (inventoryStatus) {
-    filter["inventory.availabilityStatus"] = { $in: inventoryStatus.split(",") as InventoryStatusType[] };
+    filter['inventory.availabilityStatus'] = {
+      $in: inventoryStatus.split(',') as InventoryStatusType[],
+    };
   }
 
   // Parse product options from URL parameters
@@ -451,7 +450,7 @@ export async function parseUrlToSearchOptions(
     );
 
     if (option && option._id) {
-      const choiceValues = optionValues.split(",").filter(Boolean);
+      const choiceValues = optionValues.split(',').filter(Boolean);
       const choiceIds: string[] = [];
 
       // Convert choice names to IDs
@@ -597,7 +596,6 @@ export async function loadProductsListSearchServiceConfig(
     initialSearchState = input.initialSearchState;
   }
 
-
   return {
     initialSearchState,
   };
@@ -621,8 +619,6 @@ export const ProductsListSearchService =
             firstRun = false;
             return;
           }
-
-
 
           // TODO fix it blat
 

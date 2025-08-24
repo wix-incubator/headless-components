@@ -36,7 +36,7 @@ export {
   ProductsListServiceConfig,
   ProductOption,
   ProductChoice,
-} from "./products-list-service.js";
+} from './products-list-service.js';
 
 export {
   InventoryStatusType,

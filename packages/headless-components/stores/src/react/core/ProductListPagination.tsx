@@ -1,5 +1,5 @@
-import { useService } from "@wix/services-manager-react";
-import { ProductsListServiceDefinition } from "../../services/products-list-service.js";
+import { useService } from '@wix/services-manager-react';
+import { ProductsListServiceDefinition } from '../../services/products-list-service.js';
 
 /**
  * Props for LoadMoreTrigger headless component

@@ -14,8 +14,12 @@ import {
   ProductsListSearchService,
   ProductsListSearchServiceConfig,
   ProductsListSearchServiceDefinition,
-} from "../../services/products-list-search-service.js";
-import { CategoriesListService, CategoriesListServiceConfig, CategoriesListServiceDefinition } from "../../services/categories-list-service.js";
+} from '../../services/products-list-search-service.js';
+import {
+  CategoriesListService,
+  CategoriesListServiceConfig,
+  CategoriesListServiceDefinition,
+} from '../../services/categories-list-service.js';
 
 /**
  * Props for Root headless component

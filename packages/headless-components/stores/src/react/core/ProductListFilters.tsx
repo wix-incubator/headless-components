@@ -6,14 +6,16 @@ import {
   type ProductChoice,
   InventoryStatusType,
   CategoriesListServiceDefinition,
-} from "../../services/index.js";
-import { Category } from "@wix/auto_sdk_categories_categories";
-import { useMemo } from "react";
-import { Filter as FilterPrimitive, type FilterOption } from "@wix/headless-components/react";
-import type { productsV3 } from "@wix/stores";
-import { Slot } from "@radix-ui/react-slot";
-import React from "react";
-
+} from '../../services/index.js';
+import { Category } from '@wix/auto_sdk_categories_categories';
+import { useMemo } from 'react';
+import {
+  Filter as FilterPrimitive,
+  type FilterOption,
+} from '@wix/headless-components/react';
+import type { productsV3 } from '@wix/stores';
+import { Slot } from '@radix-ui/react-slot';
+import React from 'react';
 
 // Conversion utilities for platform compatibility
 function getInventoryStatusLabel(status: InventoryStatusType): string {
@@ -47,23 +49,30 @@ function buildSearchFilterData(
       valueFormatter: (value: string | number) => `$${value}`,
       fieldName: [
         'actualPriceRange.minValue.amount',
-        'actualPriceRange.maxValue.amount'
+        'actualPriceRange.maxValue.amount',
       ],
     },
 
     // Product options (colors, sizes, etc.) - individual filters for each option type
-    ...availableOptions.map(option => ({
+    ...availableOptions.map((option) => ({
       key: option.id,
       label: String(option.name),
       type: 'multi' as const,
-      displayType: option.optionRenderType === 'SWATCH_CHOICES' ? 'color' as const : 'text' as const,
+      displayType:
+        option.optionRenderType === 'SWATCH_CHOICES'
+          ? ('color' as const)
+          : ('text' as const),
       fieldName: 'options.choicesSettings.choices.choiceId',
       fieldType: 'array' as const,
       validValues: option.choices.map((choice: ProductChoice) => choice.id),
       valueFormatter: (value: string | number) => {
-        const choice = option.choices.find((c: ProductChoice) => c.id === value);
+        const choice = option.choices.find(
+          (c: ProductChoice) => c.id === value,
+        );
         const name = choice?.name || String(value);
-        return option.optionRenderType === 'SWATCH_CHOICES' ? name.toLowerCase() : name;
+        return option.optionRenderType === 'SWATCH_CHOICES'
+          ? name.toLowerCase()
+          : name;
       },
     })),
 
@@ -76,14 +85,13 @@ function buildSearchFilterData(
       fieldName: 'inventory.availabilityStatus',
       fieldType: 'singular' as const,
       validValues: availableInventoryStatuses,
-      valueFormatter: (value: string | number) => getInventoryStatusLabel(value as InventoryStatusType),
+      valueFormatter: (value: string | number) =>
+        getInventoryStatusLabel(value as InventoryStatusType),
     },
   ];
 
   return { filterOptions };
 }
-
-
 
 /**
  * Props for ResetTrigger headless component
@@ -143,8 +151,6 @@ export function ResetTrigger(props: ResetTriggerProps) {
     : props.children;
 }
 
-
-
 export interface CategoryFilterRenderProps {
   selectedCategory: Category | null;
   setSelectedCategory: (category: Category | null) => void;
@@ -163,28 +169,30 @@ export function CategoryFilter(props: CategoryFilterProps) {
   const setSelectedCategory = (category: Category | null) => {
     const currentFilter = productListService.searchOptions.get().filter || {};
     if (!category) {
-      delete (currentFilter as any)["allCategoriesInfo.categories"];
+      delete (currentFilter as any)['allCategoriesInfo.categories'];
       productListService.setFilter(currentFilter);
       return;
     }
 
     productListService.setFilter({
       ...currentFilter,
-      "allCategoriesInfo.categories": {
+      'allCategoriesInfo.categories': {
         $matchItems: [{ id: { $in: [category._id!] } }],
-      }
+      },
     });
-  }
+  };
 
-  const selectedCategoryId = (productListService.searchOptions.get().filter as any)["allCategoriesInfo.categories"]?.$matchItems?.[0]?.id?.$in?.[0] as Category | null;
-  const selectedCategory = categories?.find(c => c._id === selectedCategoryId) || null;
+  const selectedCategoryId = (
+    productListService.searchOptions.get().filter as any
+  )['allCategoriesInfo.categories']?.$matchItems?.[0]?.id
+    ?.$in?.[0] as Category | null;
+  const selectedCategory =
+    categories?.find((c) => c._id === selectedCategoryId) || null;
 
   return typeof props.children === 'function'
     ? props.children({ selectedCategory, setSelectedCategory })
     : props.children;
 }
-
-
 
 /**
  * Props for AllFilters consolidated headless component
@@ -200,11 +208,11 @@ interface AllFiltersProps {
 interface AllFiltersRenderProps {
   searchFilter: {
     /** Current filter values in search format */
-    filterValue: productsV3.V3ProductSearch["filter"];
+    filterValue: productsV3.V3ProductSearch['filter'];
     /** Filter options configuration for filter components */
     filterOptions: FilterOption[];
     /** Update filters using search format */
-    updateFilter: (newFilter: productsV3.V3ProductSearch["filter"]) => void;
+    updateFilter: (newFilter: productsV3.V3ProductSearch['filter']) => void;
     /** Clear all filters */
     clearFilters: () => void;
     /** Whether any filters are currently applied */
@@ -225,7 +233,8 @@ function AllFilters(props: AllFiltersProps) {
 
   // Get available filter data
   const availableOptions = listService.availableProductOptions.get();
-  const availableInventoryStatuses = listService.availableInventoryStatuses.get();
+  const availableInventoryStatuses =
+    listService.availableInventoryStatuses.get();
   const availableMinPrice = listService.minPrice.get();
   const availableMaxPrice = listService.maxPrice.get();
 
@@ -242,7 +251,7 @@ function AllFilters(props: AllFiltersProps) {
       availableMaxPrice,
     );
 
-    const updateFilter = (newFilter: productsV3.V3ProductSearch["filter"]) => {
+    const updateFilter = (newFilter: productsV3.V3ProductSearch['filter']) => {
       listService.setFilter(newFilter);
     };
 
@@ -261,10 +270,10 @@ function AllFilters(props: AllFiltersProps) {
     currentFilter,
     resetFilters,
     isFiltered,
-    listService
+    listService,
   ]);
 
-  return typeof props.children === "function"
+  return typeof props.children === 'function'
     ? props.children({ searchFilter: searchFilterData })
     : props.children;
 }
@@ -275,20 +284,25 @@ interface FilterProps {
   className?: string;
 }
 
-
-export const Filter = React.forwardRef<HTMLDivElement, FilterProps>(({ children, className, asChild }, ref) => {
-  const Comp = asChild ? Slot : 'div';
-  return <AllFilters>
-    {({ searchFilter }) => {
-      return (
-        <FilterPrimitive.Root
-          value={searchFilter.filterValue!}
-          onChange={searchFilter.updateFilter}
-          filterOptions={searchFilter.filterOptions}
-        >
-          <Comp className={className} ref={ref}>{children}</Comp>
-        </FilterPrimitive.Root>
-      );
-    }}
-  </AllFilters>
-});
+export const Filter = React.forwardRef<HTMLDivElement, FilterProps>(
+  ({ children, className, asChild }, ref) => {
+    const Comp = asChild ? Slot : 'div';
+    return (
+      <AllFilters>
+        {({ searchFilter }) => {
+          return (
+            <FilterPrimitive.Root
+              value={searchFilter.filterValue!}
+              onChange={searchFilter.updateFilter}
+              filterOptions={searchFilter.filterOptions}
+            >
+              <Comp className={className} ref={ref}>
+                {children}
+              </Comp>
+            </FilterPrimitive.Root>
+          );
+        }}
+      </AllFilters>
+    );
+  },
+);

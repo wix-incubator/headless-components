@@ -3,10 +3,13 @@ import {
   SignalsServiceDefinition,
   type Signal,
   type ReadOnlySignal,
-} from "@wix/services-definitions/core-services/signals";
-import { customizationsV3, productsV3, readOnlyVariantsV3 } from "@wix/stores";
-import { loadCategoriesListServiceConfig } from "./categories-list-service.js";
-import { InventoryStatusType, parseUrlToSearchOptions } from "./products-list-search-service.js";
+} from '@wix/services-definitions/core-services/signals';
+import { customizationsV3, productsV3, readOnlyVariantsV3 } from '@wix/stores';
+import { loadCategoriesListServiceConfig } from './categories-list-service.js';
+import {
+  InventoryStatusType,
+  parseUrlToSearchOptions,
+} from './products-list-search-service.js';
 
 export const DEFAULT_QUERY_LIMIT = 100;
 
@@ -161,10 +164,9 @@ export type ProductsListServiceConfig = {
  * ```
  */
 export async function loadProductsListServiceConfig(
-  input: string | { searchOptions: productsV3.V3ProductSearch; },
+  input: string | { searchOptions: productsV3.V3ProductSearch },
 ): Promise<ProductsListServiceConfig> {
   let searchOptions: productsV3.V3ProductSearch;
-
 
   const { items: customizations = [] } = await customizationsV3
     .queryCustomizations()
@@ -193,7 +195,6 @@ export async function loadProductsListServiceConfig(
 
   const products =
     resultWithFilter?.products ?? resultWithoutFilter?.products ?? [];
-
 
   return {
     products,
@@ -339,7 +340,7 @@ export const ProductsListServiceDefinition = defineService<
     /** Function to update only the sort part of search options */
     setSort: (sort: productsV3.V3ProductSearch['sort']) => void;
     /** Function to update only the filter part of search options */
-    setFilter: (filter: productsV3.V3ProductSearch["filter"]) => void;
+    setFilter: (filter: productsV3.V3ProductSearch['filter']) => void;
     /** Function to reset the filter part of search options */
     resetFilter: () => void;
     /** Reactive signal indicating if any filters are currently applied */
@@ -423,10 +424,17 @@ export const ProductListService =
           config.pagingMetadata,
         );
 
-      const minPriceSignal = signalsService.signal<number>(getMinPrice(config.aggregations.results!));
-      const maxPriceSignal = signalsService.signal<number>(getMaxPrice(config.aggregations.results!));
+      const minPriceSignal = signalsService.signal<number>(
+        getMinPrice(config.aggregations.results!),
+      );
+      const maxPriceSignal = signalsService.signal<number>(
+        getMaxPrice(config.aggregations.results!),
+      );
       const availableProductOptionsSignal = signalsService.signal(
-        getAvailableProductOptions(config.aggregations.results!, config.customizations),
+        getAvailableProductOptions(
+          config.aggregations.results!,
+          config.customizations,
+        ),
       );
 
       const availableInventoryStatusesSignal = signalsService.signal([
@@ -457,13 +465,13 @@ export const ProductListService =
             const affectiveSearchOptions: Parameters<
               typeof productsV3.searchProducts
             >[0] = searchOptions.cursorPaging?.cursor
-                ? {
+              ? {
                   cursorPaging: {
                     cursor: searchOptions.cursorPaging.cursor,
                     limit: searchOptions.cursorPaging.limit,
                   },
                 }
-                : searchOptions;
+              : searchOptions;
 
             const result = await fetchProducts(affectiveSearchOptions);
 
@@ -495,14 +503,14 @@ export const ProductListService =
         setSearchOptions: (searchOptions: productsV3.V3ProductSearch) => {
           searchOptionsSignal.set(searchOptions);
         },
-        setSort: (sort: productsV3.V3ProductSearch["sort"]) => {
+        setSort: (sort: productsV3.V3ProductSearch['sort']) => {
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,
             sort,
           });
         },
-        setFilter: (filter: productsV3.V3ProductSearch["filter"]) => {
+        setFilter: (filter: productsV3.V3ProductSearch['filter']) => {
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,
@@ -520,7 +528,10 @@ export const ProductListService =
           return signalsService.computed(() => {
             const currentOptions = searchOptionsSignal.peek();
             if (!currentOptions.filter) return false;
-            return currentOptions.filter !== undefined && Object.keys(currentOptions.filter).length > 0;
+            return (
+              currentOptions.filter !== undefined &&
+              Object.keys(currentOptions.filter).length > 0
+            );
           });
         },
         isLoading: isLoadingSignal,
@@ -535,14 +546,16 @@ export const ProductListService =
             },
           });
         },
-        hasMoreProducts: signalsService.computed(() => pagingMetadataSignal.get().hasNext ?? false),
+        hasMoreProducts: signalsService.computed(
+          () => pagingMetadataSignal.get().hasNext ?? false,
+        ),
       };
     },
   );
 
 function getMinPrice(aggregationData: productsV3.AggregationResults[]): number {
   const minPriceAggregation = aggregationData.find(
-    (data) => data.fieldPath === "actualPriceRange.minValue.amount",
+    (data) => data.fieldPath === 'actualPriceRange.minValue.amount',
   );
   if (minPriceAggregation?.scalar?.value) {
     return Number(minPriceAggregation.scalar.value) || 0;
@@ -552,7 +565,7 @@ function getMinPrice(aggregationData: productsV3.AggregationResults[]): number {
 
 function getMaxPrice(aggregationData: productsV3.AggregationResults[]): number {
   const maxPriceAggregation = aggregationData.find(
-    (data) => data.fieldPath === "actualPriceRange.maxValue.amount",
+    (data) => data.fieldPath === 'actualPriceRange.maxValue.amount',
   );
   if (maxPriceAggregation?.scalar?.value) {
     return Number(maxPriceAggregation.scalar.value) || 0;
@@ -594,18 +607,18 @@ function getAvailableProductOptions(
   const choiceNames: string[] = [];
 
   aggregationData.forEach((result) => {
-    if (result.name === "optionNames" && result.values?.results) {
+    if (result.name === 'optionNames' && result.values?.results) {
       optionNames.push(
         ...result.values.results
           .map((item) => item.value)
-          .filter((value): value is string => typeof value === "string"),
+          .filter((value): value is string => typeof value === 'string'),
       );
     }
-    if (result.name === "choiceNames" && result.values?.results) {
+    if (result.name === 'choiceNames' && result.values?.results) {
       choiceNames.push(
         ...result.values.results
           .map((item) => item.value)
-          .filter((value): value is string => typeof value === "string"),
+          .filter((value): value is string => typeof value === 'string'),
       );
     }
   });
@@ -616,7 +629,7 @@ function getAvailableProductOptions(
         customization.name &&
         customization._id &&
         customization.customizationType ===
-        customizationsV3.CustomizationType.PRODUCT_OPTION &&
+          customizationsV3.CustomizationType.PRODUCT_OPTION &&
         (optionNames.length === 0 ||
           matchesAggregationName(customization.name, optionNames)),
     )
