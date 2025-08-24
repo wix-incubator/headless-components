@@ -1102,24 +1102,26 @@ describe('Product Components', () => {
     it('should handle asChild patterns across multiple components', () => {
       render(
         <Product.Root product={mockProduct}>
-          <Product.Name asChild>
-            <h1 className="custom-title" />
-          </Product.Name>
-          <Product.Price asChild>
-            <span className="custom-price" />
-          </Product.Price>
-          <Product.CompareAtPrice asChild>
-            <del className="custom-compare" />
-          </Product.CompareAtPrice>
-          <Product.Variants asChild>
-            <section className="custom-variants">
-              <Product.VariantOptions>
-                <Product.VariantOptionRepeater>
-                  <div>Variant</div>
-                </Product.VariantOptionRepeater>
-              </Product.VariantOptions>
-            </section>
-          </Product.Variants>
+          <div>
+            <Product.Name asChild>
+              <h1 className="custom-title" />
+            </Product.Name>
+            <Product.Price asChild>
+              <span className="custom-price" />
+            </Product.Price>
+            <Product.CompareAtPrice asChild>
+              <del className="custom-compare" />
+            </Product.CompareAtPrice>
+            <Product.Variants asChild>
+              <section className="custom-variants">
+                <Product.VariantOptions>
+                  <Product.VariantOptionRepeater>
+                    <div>Variant</div>
+                  </Product.VariantOptionRepeater>
+                </Product.VariantOptions>
+              </section>
+            </Product.Variants>
+          </div>
         </Product.Root>,
       );
 
@@ -1210,20 +1212,22 @@ describe('Product Components', () => {
 
       render(
         <Product.Root product={mockProduct}>
-          <Product.Variants>
-            <Product.VariantOptions emptyState={<div>No variants</div>}>
-              <Product.VariantOptionRepeater>
-                <div data-testid="variant-option">Variant option</div>
-              </Product.VariantOptionRepeater>
-            </Product.VariantOptions>
-          </Product.Variants>
-          <Product.Modifiers>
-            <Product.ModifierOptions>
-              <Product.ModifierOptionRepeater>
-                <div data-testid="modifier-option">Modifier option</div>
-              </Product.ModifierOptionRepeater>
-            </Product.ModifierOptions>
-          </Product.Modifiers>
+          <div>
+            <Product.Variants>
+              <Product.VariantOptions emptyState={<div>No variants</div>}>
+                <Product.VariantOptionRepeater>
+                  <div data-testid="variant-option">Variant option</div>
+                </Product.VariantOptionRepeater>
+              </Product.VariantOptions>
+            </Product.Variants>
+            <Product.Modifiers>
+              <Product.ModifierOptions>
+                <Product.ModifierOptionRepeater>
+                  <div data-testid="modifier-option">Modifier option</div>
+                </Product.ModifierOptionRepeater>
+              </Product.ModifierOptions>
+            </Product.Modifiers>
+          </div>
         </Product.Root>,
       );
 
@@ -1251,20 +1255,22 @@ describe('Product Components', () => {
 
       render(
         <Product.Root product={mockProduct}>
-          <Product.Variants>
-            <Product.VariantOptions>
-              <Product.VariantOptionRepeater>
-                <div data-testid="variant-option">Variant option</div>
-              </Product.VariantOptionRepeater>
-            </Product.VariantOptions>
-          </Product.Variants>
-          <Product.Modifiers>
-            <Product.ModifierOptions emptyState={<div>No modifiers</div>}>
-              <Product.ModifierOptionRepeater>
-                <div data-testid="modifier-option">Modifier option</div>
-              </Product.ModifierOptionRepeater>
-            </Product.ModifierOptions>
-          </Product.Modifiers>
+          <div>
+            <Product.Variants>
+              <Product.VariantOptions>
+                <Product.VariantOptionRepeater>
+                  <div data-testid="variant-option">Variant option</div>
+                </Product.VariantOptionRepeater>
+              </Product.VariantOptions>
+            </Product.Variants>
+            <Product.Modifiers>
+              <Product.ModifierOptions emptyState={<div>No modifiers</div>}>
+                <Product.ModifierOptionRepeater>
+                  <div data-testid="modifier-option">Modifier option</div>
+                </Product.ModifierOptionRepeater>
+              </Product.ModifierOptions>
+            </Product.Modifiers>
+          </div>
         </Product.Root>,
       );
 
