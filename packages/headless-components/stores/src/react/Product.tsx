@@ -670,7 +670,7 @@ export interface StockProps {
  *   className="stock-indicator"
  *   labels={{
  *     inStock: 'In Stock',
- *     limitedStock: 'Only {quantity} left in stock',
+ *     limitedStock: 'Limited Stock',
  *     outOfStock: 'Out of Stock'
  *   }}
  * />
@@ -682,18 +682,21 @@ export interface StockProps {
  *
  * // asChild with react component
  * <Product.Stock
- *   labels={{ inStock: 'Available', outOfStock: 'Sold Out' }}
+ *   labels={{
+ *     inStock: 'Available',
+ *     limitedStock: 'Low Stock',
+ *     outOfStock: 'Sold Out'
+ *   }}
  *   asChild
  * >
  *   {React.forwardRef(({status, label, ...props}, ref) => (
  *     <div
  *       ref={ref}
  *       {...props}
- *       className="flex items-center gap-1"
- *       data-state={status}
+ *       className="flex items-center gap-1 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600"
  *     >
- *       <div className={`w-2 h-2 rounded-full ${status === 'in-stock' ? 'bg-green-500' : 'bg-red-500'}`} />
- *       <span className={`text-xs font-medium ${status === 'in-stock' ? 'text-green-600' : 'text-red-600'}`}>
+ *       <div className="w-2 h-2 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500" />
+ *       <span className="text-xs font-medium">
  *         {label}
  *       </span>
  *     </div>
