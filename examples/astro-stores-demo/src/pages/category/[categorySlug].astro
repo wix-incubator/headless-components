@@ -4,7 +4,6 @@ import { SEO } from '@wix/headless-seo/react';
 import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
 import {
   loadCategoriesListServiceConfig,
-  loadProductsListSearchServiceConfig,
   loadProductsListServiceConfig,
   parseUrlToSearchOptions,
 } from '@wix/headless-stores/services';
@@ -51,12 +50,10 @@ const parsed = await parseUrlToSearchOptions(
 const [
   productsListConfig,
   currentCartServiceConfig,
-  productsListSearchConfig,
   seoTagsServiceConfig,
 ] = await Promise.all([
   loadProductsListServiceConfig(parsed), // Both services now use same parsed result
   loadCurrentCartServiceConfig(),
-  loadProductsListSearchServiceConfig(parsed),
   loadSEOTagsServiceConfig({
     pageUrl: Astro.url.href,
     itemData: {
@@ -89,7 +86,6 @@ const [
     categoryServiceConfig={{ category }}
     categoriesListConfig={categoriesListConfig}
     productsListConfig={productsListConfig}
-    productsListSearchConfig={productsListSearchConfig}
     slot="body"
   />
 </BaseLayout>

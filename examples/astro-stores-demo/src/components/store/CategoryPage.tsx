@@ -10,7 +10,6 @@ import {
 } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
-  ProductsListSearchServiceConfig,
 } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
@@ -24,7 +23,6 @@ import React, { useState } from 'react';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
-  productsListSearchConfig: ProductsListSearchServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
   productPageRoute?: string;
 }
@@ -401,13 +399,11 @@ export const LoadMoreSection = () => {
 
 export function CategoryPage({
   productsListConfig,
-  productsListSearchConfig,
   categoriesListConfig,
 }: StoreCollectionPageProps) {
   return (
     <ProductList.Root
       productsListConfig={productsListConfig}
-      productsListSearchConfig={productsListSearchConfig}
     >
       <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />
