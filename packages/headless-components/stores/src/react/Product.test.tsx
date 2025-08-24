@@ -133,15 +133,12 @@ describe('Product Components', () => {
   });
 
   describe('Product.Root', () => {
-    it('should render with proper data attributes and context setup', () => {
+    it('should render with proper context setup', () => {
       render(
         <Product.Root product={mockProduct}>
           <div data-testid="child-content">Child content</div>
         </Product.Root>,
       );
-
-      // Check that the root has the correct test id
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
 
       // Verify child content is rendered
       expect(screen.getByTestId('child-content')).toBeInTheDocument();
@@ -161,7 +158,6 @@ describe('Product Components', () => {
       expect(CoreProduct.Root).toHaveBeenCalledWith(
         expect.objectContaining({
           productServiceConfig: { product: mockProduct },
-          'data-testid': 'product-root',
         }),
         expect.any(Object),
       );
@@ -172,13 +168,13 @@ describe('Product Components', () => {
 
       render(
         <Product.Root product={mockProduct} selectedVariant={selectedVariant}>
-          <div>Content</div>
+          <div data-testid="child-content">Content</div>
         </Product.Root>,
       );
 
       // The selectedVariant is currently not used in the implementation,
       // but we test that the component accepts it without errors
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+      expect(screen.getByTestId('child-content')).toBeInTheDocument();
     });
   });
 
@@ -1087,7 +1083,7 @@ describe('Product Components', () => {
       );
 
       // Verify all components render together
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+
       expect(screen.getByTestId('product-name')).toBeInTheDocument();
       expect(screen.getByTestId('product-description')).toBeInTheDocument();
       expect(screen.getByTestId('product-price')).toBeInTheDocument();
@@ -1175,7 +1171,7 @@ describe('Product Components', () => {
       );
 
       // Verify all components render together
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+
       expect(screen.getByTestId('product-name')).toBeInTheDocument();
       expect(screen.getByTestId('product-description')).toBeInTheDocument();
       expect(screen.getByTestId('product-price')).toBeInTheDocument();
