@@ -5,24 +5,24 @@ import { Slot } from '@radix-ui/react-slot';
  * Function signature for render function pattern
  */
 export type AsChildRenderFunction<TProps = any> = (
-    props: TProps,
-    ref: React.Ref<HTMLElement>,
+  props: TProps,
+  ref: React.Ref<HTMLElement>,
 ) => React.ReactNode;
 
 /**
  * Object with render method pattern
  */
 export type AsChildRenderObject<TProps = any> = {
-    render: AsChildRenderFunction<TProps>;
+  render: AsChildRenderFunction<TProps>;
 };
 
 /**
  * Union type for all supported asChild patterns
  */
 export type AsChildChildren<TProps = any> =
-    | React.ReactElement
-    | AsChildRenderFunction<TProps>
-    | AsChildRenderObject<TProps>;
+  | React.ReactElement
+  | AsChildRenderFunction<TProps>
+  | AsChildRenderObject<TProps>;
 
 export interface AsChildSlot {
   /** Whether to render as a child component */
