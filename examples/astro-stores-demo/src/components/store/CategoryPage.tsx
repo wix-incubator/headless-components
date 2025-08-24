@@ -408,7 +408,6 @@ export function CategoryPage({
     <ProductList.Root
       productsListConfig={productsListConfig}
       productsListSearchConfig={productsListSearchConfig}
-      categoriesListConfig={categoriesListConfig}
     >
       <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />

@@ -153,7 +153,7 @@ export function ResetTrigger(props: ResetTriggerProps) {
 
 export interface CategoryFilterRenderProps {
   selectedCategory: Category | null;
-  setSelectedCategory: (category: Category | null) => void;
+  setSelectedCategory: (category: Category) => void;
 }
 
 export interface CategoryFilterProps {
@@ -163,10 +163,11 @@ export interface CategoryFilterProps {
 
 export function CategoryFilter(props: CategoryFilterProps) {
   const categoriesService = useService(CategoriesListServiceDefinition);
-  const categories = categoriesService.categories.get();
   const productListService = useService(ProductsListServiceDefinition);
 
-  const setSelectedCategory = (category: Category | null) => {
+  const categories = categoriesService.categories.get();
+
+  const setSelectedCategory = (category: Category) => {
     const currentFilter = productListService.searchOptions.get().filter || {};
     if (!category) {
       delete (currentFilter as any)['allCategoriesInfo.categories'];
