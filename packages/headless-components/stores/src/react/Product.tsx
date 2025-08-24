@@ -107,11 +107,10 @@ export interface ProductRootProps {
  * ```
  */
 export function Root(props: ProductRootProps): React.ReactNode {
+  const { children, product, ...attrs } = props;
+
   return (
-    <CoreProduct.Root
-      productServiceConfig={{ product: props.product }}
-      data-testid={TestIds.productRoot}
-    >
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
       <MediaGallery.Root
         mediaGalleryServiceConfig={{
           media: props.product.media?.itemsInfo?.items ?? [],
@@ -119,7 +118,9 @@ export function Root(props: ProductRootProps): React.ReactNode {
       >
         <ProductVariantSelector.Root>
           <ProductModifiers.Root>
-            <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
+            <SelectedVariant.Root>
+              <AsChildSlot {...attrs}>{children}</AsChildSlot>
+            </SelectedVariant.Root>
           </ProductModifiers.Root>
         </ProductVariantSelector.Root>
       </MediaGallery.Root>
