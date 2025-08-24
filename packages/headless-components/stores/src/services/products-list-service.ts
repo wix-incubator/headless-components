@@ -675,7 +675,6 @@ function getAvailableProductOptions(
   return options;
 }
 
-
 /**
  * Initial search state that can be loaded from URL parameters.
  */
@@ -989,7 +988,6 @@ export async function parseUrlToSearchOptions(
 
   return { searchOptions, initialSearchState };
 }
-
 
 /**
  * Convert SortType enum to URL format

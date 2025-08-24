@@ -52,12 +52,7 @@ export interface ProductListRootProps {
  */
 export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   (props, ref) => {
-    const {
-      children,
-      products,
-      productsListConfig,
-      className,
-    } = props;
+    const { children, products, productsListConfig, className } = props;
 
     const serviceConfig = productsListConfig || {
       products: products || [],
@@ -72,9 +67,7 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
     };
 
     return (
-      <CoreProductList.Root
-        productsListConfig={serviceConfig}
-      >
+      <CoreProductList.Root productsListConfig={serviceConfig}>
         <RootContent
           children={children as any}
           className={className}

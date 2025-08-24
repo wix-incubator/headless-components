@@ -36,7 +36,6 @@ export {
   ProductsListServiceConfig,
   ProductOption,
   ProductChoice,
-
   InventoryStatusType,
   SortType,
   InitialSearchState,
