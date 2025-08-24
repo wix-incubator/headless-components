@@ -1,7 +1,6 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
-import type { ProductsListSearchServiceConfig } from '../services/products-list-search-service.js';
 import type { ProductsListServiceConfig } from '../services/products-list-service.js';
 import { ProductsListServiceDefinition } from '../services/products-list-service.js';
 
@@ -25,7 +24,6 @@ export interface ProductListRootProps {
   children: React.ReactNode;
   products?: V3Product[];
   productsListConfig?: ProductsListServiceConfig;
-  productsListSearchConfig?: ProductsListSearchServiceConfig;
   className?: string;
 }
 
@@ -54,13 +52,7 @@ export interface ProductListRootProps {
  */
 export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   (props, ref) => {
-    const {
-      children,
-      products,
-      productsListConfig,
-      productsListSearchConfig,
-      className,
-    } = props;
+    const { children, products, productsListConfig, className } = props;
 
     const serviceConfig = productsListConfig || {
       products: products || [],
@@ -75,10 +67,7 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
     };
 
     return (
-      <CoreProductList.Root
-        productsListConfig={serviceConfig}
-        productsListSearchConfig={productsListSearchConfig}
-      >
+      <CoreProductList.Root productsListConfig={serviceConfig}>
         <RootContent
           children={children as any}
           className={className}
