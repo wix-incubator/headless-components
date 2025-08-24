@@ -133,15 +133,12 @@ describe('Product Components', () => {
   });
 
   describe('Product.Root', () => {
-    it('should render with proper data attributes and context setup', () => {
+    it('should render with proper context setup', () => {
       render(
         <Product.Root product={mockProduct}>
           <div data-testid="child-content">Child content</div>
         </Product.Root>,
       );
-
-      // Check that the root has the correct test id
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
 
       // Verify child content is rendered
       expect(screen.getByTestId('child-content')).toBeInTheDocument();
@@ -161,7 +158,6 @@ describe('Product Components', () => {
       expect(CoreProduct.Root).toHaveBeenCalledWith(
         expect.objectContaining({
           productServiceConfig: { product: mockProduct },
-          'data-testid': 'product-root',
         }),
         expect.any(Object),
       );
@@ -172,13 +168,13 @@ describe('Product Components', () => {
 
       render(
         <Product.Root product={mockProduct} selectedVariant={selectedVariant}>
-          <div>Content</div>
+          <div data-testid="child-content">Content</div>
         </Product.Root>,
       );
 
       // The selectedVariant is currently not used in the implementation,
       // but we test that the component accepts it without errors
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+      expect(screen.getByTestId('child-content')).toBeInTheDocument();
     });
   });
 
@@ -628,7 +624,6 @@ describe('Product Components', () => {
             hasOptions: false,
             options: [],
             selectedChoices: {},
-            selectedChoices: {},
           }),
       );
 
@@ -704,7 +699,6 @@ describe('Product Components', () => {
           children({
             hasOptions: false,
             options: [],
-            selectedChoices: {},
             selectedChoices: {},
           }),
       );
@@ -1087,7 +1081,7 @@ describe('Product Components', () => {
       );
 
       // Verify all components render together
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+
       expect(screen.getByTestId('product-name')).toBeInTheDocument();
       expect(screen.getByTestId('product-description')).toBeInTheDocument();
       expect(screen.getByTestId('product-price')).toBeInTheDocument();
@@ -1106,24 +1100,26 @@ describe('Product Components', () => {
     it('should handle asChild patterns across multiple components', () => {
       render(
         <Product.Root product={mockProduct}>
-          <Product.Name asChild>
-            <h1 className="custom-title" />
-          </Product.Name>
-          <Product.Price asChild>
-            <span className="custom-price" />
-          </Product.Price>
-          <Product.CompareAtPrice asChild>
-            <del className="custom-compare" />
-          </Product.CompareAtPrice>
-          <Product.Variants asChild>
-            <section className="custom-variants">
-              <Product.VariantOptions>
-                <Product.VariantOptionRepeater>
-                  <div>Variant</div>
-                </Product.VariantOptionRepeater>
-              </Product.VariantOptions>
-            </section>
-          </Product.Variants>
+          <div>
+            <Product.Name asChild>
+              <h1 className="custom-title" />
+            </Product.Name>
+            <Product.Price asChild>
+              <span className="custom-price" />
+            </Product.Price>
+            <Product.CompareAtPrice asChild>
+              <del className="custom-compare" />
+            </Product.CompareAtPrice>
+            <Product.Variants asChild>
+              <section className="custom-variants">
+                <Product.VariantOptions>
+                  <Product.VariantOptionRepeater>
+                    <div>Variant</div>
+                  </Product.VariantOptionRepeater>
+                </Product.VariantOptions>
+              </section>
+            </Product.Variants>
+          </div>
         </Product.Root>,
       );
 
@@ -1175,7 +1171,7 @@ describe('Product Components', () => {
       );
 
       // Verify all components render together
-      expect(screen.getByTestId('product-root')).toBeInTheDocument();
+
       expect(screen.getByTestId('product-name')).toBeInTheDocument();
       expect(screen.getByTestId('product-description')).toBeInTheDocument();
       expect(screen.getByTestId('product-price')).toBeInTheDocument();
@@ -1214,20 +1210,22 @@ describe('Product Components', () => {
 
       render(
         <Product.Root product={mockProduct}>
-          <Product.Variants>
-            <Product.VariantOptions emptyState={<div>No variants</div>}>
-              <Product.VariantOptionRepeater>
-                <div data-testid="variant-option">Variant option</div>
-              </Product.VariantOptionRepeater>
-            </Product.VariantOptions>
-          </Product.Variants>
-          <Product.Modifiers>
-            <Product.ModifierOptions>
-              <Product.ModifierOptionRepeater>
-                <div data-testid="modifier-option">Modifier option</div>
-              </Product.ModifierOptionRepeater>
-            </Product.ModifierOptions>
-          </Product.Modifiers>
+          <div>
+            <Product.Variants>
+              <Product.VariantOptions emptyState={<div>No variants</div>}>
+                <Product.VariantOptionRepeater>
+                  <div data-testid="variant-option">Variant option</div>
+                </Product.VariantOptionRepeater>
+              </Product.VariantOptions>
+            </Product.Variants>
+            <Product.Modifiers>
+              <Product.ModifierOptions>
+                <Product.ModifierOptionRepeater>
+                  <div data-testid="modifier-option">Modifier option</div>
+                </Product.ModifierOptionRepeater>
+              </Product.ModifierOptions>
+            </Product.Modifiers>
+          </div>
         </Product.Root>,
       );
 
@@ -1255,20 +1253,22 @@ describe('Product Components', () => {
 
       render(
         <Product.Root product={mockProduct}>
-          <Product.Variants>
-            <Product.VariantOptions>
-              <Product.VariantOptionRepeater>
-                <div data-testid="variant-option">Variant option</div>
-              </Product.VariantOptionRepeater>
-            </Product.VariantOptions>
-          </Product.Variants>
-          <Product.Modifiers>
-            <Product.ModifierOptions emptyState={<div>No modifiers</div>}>
-              <Product.ModifierOptionRepeater>
-                <div data-testid="modifier-option">Modifier option</div>
-              </Product.ModifierOptionRepeater>
-            </Product.ModifierOptions>
-          </Product.Modifiers>
+          <div>
+            <Product.Variants>
+              <Product.VariantOptions>
+                <Product.VariantOptionRepeater>
+                  <div data-testid="variant-option">Variant option</div>
+                </Product.VariantOptionRepeater>
+              </Product.VariantOptions>
+            </Product.Variants>
+            <Product.Modifiers>
+              <Product.ModifierOptions emptyState={<div>No modifiers</div>}>
+                <Product.ModifierOptionRepeater>
+                  <div data-testid="modifier-option">Modifier option</div>
+                </Product.ModifierOptionRepeater>
+              </Product.ModifierOptions>
+            </Product.Modifiers>
+          </div>
         </Product.Root>,
       );
 

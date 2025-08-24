@@ -1,4 +1,5 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
+import { InventoryAvailabilityStatus } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
 
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
@@ -66,6 +67,8 @@ enum TestIds {
   productCompareAtPrice = 'product-compare-at-price',
   productSlug = 'product-slug',
   productRaw = 'product-raw',
+  productRibbon = 'product-ribbon',
+  productStock = 'product-stock',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
@@ -105,11 +108,10 @@ export interface ProductRootProps {
  * ```
  */
 export function Root(props: ProductRootProps): React.ReactNode {
+  const { children, product, ...attrs } = props;
+
   return (
-    <CoreProduct.Root
-      productServiceConfig={{ product: props.product }}
-      data-testid={TestIds.productRoot}
-    >
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
       <MediaGallery.Root
         mediaGalleryServiceConfig={{
           media: props.product.media?.itemsInfo?.items ?? [],
@@ -117,7 +119,9 @@ export function Root(props: ProductRootProps): React.ReactNode {
       >
         <ProductVariantSelector.Root>
           <ProductModifiers.Root>
-            <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
+            <SelectedVariant.Root>
+              <AsChildSlot {...attrs}>{children}</AsChildSlot>
+            </SelectedVariant.Root>
           </ProductModifiers.Root>
         </ProductVariantSelector.Root>
       </MediaGallery.Root>
@@ -544,6 +548,215 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
             customElement={children}
             customElementProps={{ product }}
           />
+        );
+      }}
+    </CoreProduct.Content>
+  );
+});
+
+/**
+ * Props for Product Ribbon component
+ */
+export interface RibbonProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          ribbon: string | null;
+        }
+      >
+    | React.ForwardRefExoticComponent<any>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the product ribbon with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Ribbon className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs rounded" />
+ *
+ * // asChild with primitive
+ * <Product.Ribbon asChild>
+ *   <span className="ribbon-badge" />
+ * </Product.Ribbon>
+ *
+ * // asChild with react component
+ * <Product.Ribbon asChild>
+ *   {React.forwardRef(({ribbon, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="ribbon-badge">
+ *       {ribbon}
+ *     </div>
+ *   ))}
+ * </Product.Ribbon>
+ * ```
+ */
+export const Ribbon = React.forwardRef<HTMLElement, RibbonProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    return (
+      <CoreProduct.Ribbon>
+        {({ ribbon, hasRibbon }) => {
+          // Don't render anything if there's no ribbon
+          if (!hasRibbon) {
+            return null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productRibbon}
+              customElement={children}
+              customElementProps={{ ribbon }}
+              content={ribbon}
+            >
+              <span>{ribbon}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreProduct.Ribbon>
+    );
+  },
+);
+
+/**
+ * Props for Product Stock component
+ */
+export interface StockProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+          label: string;
+        }
+      >
+    | React.ForwardRefExoticComponent<any>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Custom labels for different stock states */
+  labels?: {
+    /** Label for in stock state */
+    inStock?: string;
+    /** Label for limited stock state (when quantity is low) */
+    limitedStock?: string;
+    /** Label for out of stock state */
+    outOfStock?: string;
+  };
+}
+
+/**
+ * Displays the product stock status with customizable rendering and labels following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Stock
+ *   className="stock-indicator"
+ *   labels={{
+ *     inStock: 'In Stock',
+ *     limitedStock: 'Limited Stock',
+ *     outOfStock: 'Out of Stock'
+ *   }}
+ * />
+ *
+ * // asChild with primitive
+ * <Product.Stock asChild>
+ *   <div className="stock-status" />
+ * </Product.Stock>
+ *
+ * // asChild with react component
+ * <Product.Stock
+ *   labels={{
+ *     inStock: 'Available',
+ *     limitedStock: 'Low Stock',
+ *     outOfStock: 'Sold Out'
+ *   }}
+ *   asChild
+ * >
+ *   {React.forwardRef(({status, label, ...props}, ref) => (
+ *     <div
+ *       ref={ref}
+ *       {...props}
+ *       className="flex items-center gap-1 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600"
+ *     >
+ *       <div className="w-2 h-2 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500" />
+ *       <span className="text-xs font-medium">
+ *         {label}
+ *       </span>
+ *     </div>
+ *   ))}
+ * </Product.Stock>
+ * ```
+ */
+export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
+  const { asChild, children, className, labels } = props;
+
+  return (
+    <CoreProduct.Content>
+      {({ product }) => {
+        const availabilityStatus = product.inventory?.availabilityStatus;
+
+        // Default labels
+        const defaultLabels = {
+          inStock: 'In Stock',
+          limitedStock: 'Partially Out of Stock',
+          outOfStock: 'Out of Stock',
+        };
+
+        const finalLabels = { ...defaultLabels, ...labels };
+
+        // Determine status based on availabilityStatus
+        let status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+        let label: string;
+
+        switch (availabilityStatus) {
+          case InventoryAvailabilityStatus.IN_STOCK:
+            status = 'in-stock';
+            label = finalLabels.inStock;
+            break;
+          case InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK:
+            status = 'limited-stock';
+            label = finalLabels.limitedStock;
+            break;
+          case InventoryAvailabilityStatus.OUT_OF_STOCK:
+          default:
+            status = 'out-of-stock';
+            label = finalLabels.outOfStock;
+            break;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productStock}
+            data-state={status}
+            customElement={children}
+            customElementProps={{
+              status,
+              label,
+            }}
+            content={label}
+          >
+            <span>{label}</span>
+          </AsChildSlot>
         );
       }}
     </CoreProduct.Content>

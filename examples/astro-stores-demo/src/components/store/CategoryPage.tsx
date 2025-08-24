@@ -8,9 +8,7 @@ import {
   Option,
   Choice,
 } from '@wix/headless-stores/react';
-import type {
-  CategoriesListServiceConfig,
-} from '@wix/headless-stores/services';
+import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
 import * as StyledMediaGallery from '../media/MediaGallery';
@@ -244,65 +242,38 @@ export const ProductGridContent = ({
                 <div className="mt-auto mb-3">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <SelectedVariantPrimitive.Price>
-                        {({ compareAtPrice }) => {
-                          return (
-                            <Product.Raw asChild>
-                              {({ product }) => {
-                                const available =
-                                  product.inventory?.availabilityStatus ===
-                                    productsV3.InventoryAvailabilityStatus
-                                      .IN_STOCK ||
-                                  product.inventory?.availabilityStatus ===
-                                    productsV3.InventoryAvailabilityStatus
-                                      .PARTIALLY_OUT_OF_STOCK;
-
-                                return compareAtPrice &&
-                                  parseFloat(
-                                    compareAtPrice.replace(/[^\d.]/g, '')
-                                  ) > 0 ? (
-                                  <>
-                                    <div className="flex items-center gap-2">
-                                      <Product.Price className="text-xl font-bold text-content-primary" />
-                                      <Product.CompareAtPrice className="text-sm font-medium text-content-faded line-through" />
-                                    </div>
-                                    <div className="flex items-center justify-end">
-                                      <div className="flex items-center gap-1">
-                                        <div
-                                          className={`w-2 h-2 rounded-full ${available ? 'bg-status-success' : 'bg-status-error'}`}
-                                        ></div>
-                                        <span
-                                          className={`text-xs font-medium ${available ? 'text-status-success' : 'text-status-error'}`}
-                                        >
-                                          {available
-                                            ? 'In Stock'
-                                            : 'Out of Stock'}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <div className="w-full flex items-center justify-between">
-                                    <Product.Price className="text-xl font-bold text-content-primary" />
-                                    <div className="flex items-center gap-1">
-                                      <div
-                                        className={`w-2 h-2 rounded-full ${available ? 'bg-status-success' : 'bg-status-error'}`}
-                                      ></div>
-                                      <span
-                                        className={`text-xs font-medium ${available ? 'text-status-success' : 'text-status-error'}`}
-                                      >
-                                        {available
-                                          ? 'In Stock'
-                                          : 'Out of Stock'}
-                                      </span>
-                                    </div>
-                                  </div>
-                                );
-                              }}
-                            </Product.Raw>
-                          );
-                        }}
-                      </SelectedVariantPrimitive.Price>
+                      <div className="w-full flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Product.Price className="text-xl font-bold text-content-primary" />
+                          <Product.CompareAtPrice className="text-sm font-medium text-content-faded line-through" />
+                        </div>
+                        <Product.Stock
+                          labels={{
+                            inStock: 'In Stock',
+                            limitedStock: 'In Stock',
+                            outOfStock: 'Out of Stock',
+                          }}
+                          asChild
+                        >
+                          {React.forwardRef<
+                            HTMLDivElement,
+                            {
+                              status:
+                                | 'in-stock'
+                                | 'limited-stock'
+                                | 'out-of-stock';
+                              label: string;
+                            }
+                          >(({ label }, ref) => (
+                            <div
+                              ref={ref}
+                              className="flex items-center gap-1 text-xs font-medium data-[state='out-of-stock']:text-status-error data-[state='in-stock']:text-status-success data-[state='limited-stock']:text-status-success"
+                            >
+                              {label}
+                            </div>
+                          ))}
+                        </Product.Stock>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -402,9 +373,7 @@ export function CategoryPage({
   categoriesListConfig,
 }: StoreCollectionPageProps) {
   return (
-    <ProductList.Root
-      productsListConfig={productsListConfig}
-    >
+    <ProductList.Root productsListConfig={productsListConfig}>
       <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />
     </ProductList.Root>
