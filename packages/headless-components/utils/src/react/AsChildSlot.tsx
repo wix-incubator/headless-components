@@ -27,17 +27,26 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       customElement,
       customElementProps = {},
       content,
-      ...restPros
+      ...restProps
     } = props;
 
     if (asChild && customElement) {
+      // Handle string
+      if (typeof customElement === 'string') {
+        return (
+          <Slot ref={ref} {...restProps}>
+            <div>{customElement}</div>
+          </Slot>
+        );
+      }
+
       // Handle React element pattern
       if (React.isValidElement(customElement)) {
         return (
-          <Slot {...restPros}>
+          <Slot {...restProps}>
             {React.cloneElement(customElement as React.ReactElement, {
               ref,
-              ...(content ? { children: content } : {}),
+              ...(content !== undefined ? { children: content } : {}),
             })}
           </Slot>
         );
@@ -46,27 +55,45 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       // Handle render function pattern
       if (typeof customElement === 'function') {
         return (
-          <Slot {...restPros}>{customElement(customElementProps, ref)}</Slot>
+          <Slot {...restProps}>{customElement(customElementProps, ref)}</Slot>
+        );
+      }
+
+      // Handle render object pattern
+      if (typeof customElement === 'object' && 'render' in customElement) {
+        return (
+          <Slot {...restProps}>
+            {customElement.render(customElementProps, ref)}
+          </Slot>
         );
       }
     }
 
-    // Handle render object pattern
-    if (
-      customElement &&
-      typeof customElement === 'object' &&
-      'render' in customElement
-    ) {
+    if (!children) {
+      return null;
+    }
+
+    if (typeof children === 'string') {
       return (
-        <Slot {...restPros}>
-          {customElement.render(customElementProps, ref)}
+        <Slot ref={ref} {...restProps}>
+          <div>{children}</div>
         </Slot>
       );
     }
 
+    if (typeof children === 'function') {
+      return <Slot {...restProps}>{children({}, ref)}</Slot>;
+    }
+
+    if (typeof children === 'object' && 'render' in children) {
+      return (
+        <Slot {...restProps}>{children.render(customElementProps, ref)}</Slot>
+      );
+    }
+
     return (
-      <Slot ref={ref} {...restPros}>
-        {typeof children === 'function' ? children({}, ref) : children}
+      <Slot ref={ref} {...restProps}>
+        {children}
       </Slot>
     );
   },
