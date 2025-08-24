@@ -1,4 +1,5 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
+import { InventoryAvailabilityStatus } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
 
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
@@ -642,10 +643,6 @@ export interface StockProps {
         {
           status: 'in-stock' | 'limited-stock' | 'out-of-stock';
           label: string;
-          quantity: number | null;
-          trackQuantity: boolean;
-          inStock: boolean;
-          preOrderEnabled: boolean;
         }
       >
     | React.ForwardRefExoticComponent<any>;
@@ -688,15 +685,15 @@ export interface StockProps {
  *   labels={{ inStock: 'Available', outOfStock: 'Sold Out' }}
  *   asChild
  * >
- *   {React.forwardRef(({status, label, inStock, ...props}, ref) => (
+ *   {React.forwardRef(({status, label, ...props}, ref) => (
  *     <div
  *       ref={ref}
  *       {...props}
  *       className="flex items-center gap-1"
  *       data-state={status}
  *     >
- *       <div className={`w-2 h-2 rounded-full ${inStock ? 'bg-green-500' : 'bg-red-500'}`} />
- *       <span className={`text-xs font-medium ${inStock ? 'text-green-600' : 'text-red-600'}`}>
+ *       <div className={`w-2 h-2 rounded-full ${status === 'in-stock' ? 'bg-green-500' : 'bg-red-500'}`} />
+ *       <span className={`text-xs font-medium ${status === 'in-stock' ? 'text-green-600' : 'text-red-600'}`}>
  *         {label}
  *       </span>
  *     </div>
@@ -709,7 +706,7 @@ export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
 
   return (
     <ProductVariantSelector.Stock>
-      {({ inStock, isPreOrderEnabled, availableQuantity, trackInventory }) => {
+      {({ availabilityStatus, availableQuantity }) => {
         // Default labels
         const defaultLabels = {
           inStock: 'In Stock',
@@ -719,28 +716,27 @@ export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
 
         const finalLabels = { ...defaultLabels, ...labels };
 
-        // Determine status based on variant selector data
+        // Determine status based on availabilityStatus
         let status: 'in-stock' | 'limited-stock' | 'out-of-stock';
         let label: string;
 
-        if (!inStock && !isPreOrderEnabled) {
-          status = 'out-of-stock';
-          label = finalLabels.outOfStock;
-        } else if (
-          trackInventory &&
-          availableQuantity !== null &&
-          availableQuantity <= 5 &&
-          availableQuantity > 0
-        ) {
-          // Consider it limited stock if quantity is low (5 or less)
-          status = 'limited-stock';
-          label = finalLabels.limitedStock.replace(
-            '{quantity}',
-            availableQuantity.toString(),
-          );
-        } else {
-          status = 'in-stock';
-          label = finalLabels.inStock;
+        switch (availabilityStatus) {
+          case InventoryAvailabilityStatus.IN_STOCK:
+            status = 'in-stock';
+            label = finalLabels.inStock;
+            break;
+          case InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK:
+            status = 'limited-stock';
+            label = finalLabels.limitedStock.replace(
+              '{quantity}',
+              availableQuantity?.toString() || '0',
+            );
+            break;
+          case InventoryAvailabilityStatus.OUT_OF_STOCK:
+          default:
+            status = 'out-of-stock';
+            label = finalLabels.outOfStock;
+            break;
         }
 
         return (
@@ -754,10 +750,6 @@ export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
             customElementProps={{
               status,
               label,
-              quantity: availableQuantity,
-              trackQuantity: trackInventory,
-              inStock,
-              preOrderEnabled: isPreOrderEnabled,
             }}
             content={label}
           >
