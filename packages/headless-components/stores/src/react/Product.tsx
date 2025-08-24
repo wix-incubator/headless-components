@@ -66,6 +66,7 @@ enum TestIds {
   productCompareAtPrice = 'product-compare-at-price',
   productSlug = 'product-slug',
   productRaw = 'product-raw',
+  productRibbon = 'product-ribbon',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
@@ -549,6 +550,81 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
     </CoreProduct.Content>
   );
 });
+
+/**
+ * Props for Product Ribbon component
+ */
+export interface RibbonProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          ribbon: string | null;
+        }
+      >
+    | React.ForwardRefExoticComponent<any>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the product ribbon with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Ribbon className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs rounded" />
+ *
+ * // asChild with primitive
+ * <Product.Ribbon asChild>
+ *   <span className="ribbon-badge" />
+ * </Product.Ribbon>
+ *
+ * // asChild with react component
+ * <Product.Ribbon asChild>
+ *   {React.forwardRef(({ribbon, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="ribbon-badge">
+ *       {ribbon}
+ *     </div>
+ *   ))}
+ * </Product.Ribbon>
+ * ```
+ */
+export const Ribbon = React.forwardRef<HTMLElement, RibbonProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    return (
+      <CoreProduct.Ribbon>
+        {({ ribbon, hasRibbon }) => {
+          // Don't render anything if there's no ribbon
+          if (!hasRibbon) {
+            return null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productRibbon}
+              customElement={children}
+              customElementProps={{ ribbon }}
+              content={ribbon}
+            >
+              <span>{ribbon}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreProduct.Ribbon>
+    );
+  },
+);
 
 /**
  * Props for Product Variants container
