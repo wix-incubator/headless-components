@@ -6,7 +6,7 @@ import {
   CategoryServiceDefinition,
 } from '../services/category-service.js';
 import { useService } from '@wix/services-manager-react';
-import { AsChildSlot } from '../utils/AsChildSlot.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {
   categoryItem = 'category-item',

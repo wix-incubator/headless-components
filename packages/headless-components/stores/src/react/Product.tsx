@@ -1,7 +1,7 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
 
-import { AsChildSlot } from '../utils/AsChildSlot.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
@@ -139,7 +139,8 @@ export interface NameProps {
         {
           name: string;
         }
-      >;
+      >
+    | React.ForwardRefExoticComponent<any>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -206,7 +207,8 @@ export interface DescriptionProps {
         {
           description: string;
         }
-      >;
+      >
+    | React.ForwardRefExoticComponent<any>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the description content */
@@ -310,7 +312,8 @@ export interface PriceProps {
           price: string;
           formattedPrice: string;
         }
-      >;
+      >
+    | React.ForwardRefExoticComponent<any>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -382,7 +385,8 @@ export interface CompareAtPriceProps {
           price: string;
           formattedPrice: string;
         }
-      >;
+      >
+    | React.ForwardRefExoticComponent<any>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -467,7 +471,8 @@ export interface SlugProps {
         {
           slug: string;
         }
-      >;
+      >
+    | React.ForwardRefExoticComponent<any>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -533,7 +538,8 @@ export interface RawProps {
         {
           product: V3Product;
         }
-      >;
+      >
+    | React.ForwardRefExoticComponent<any>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

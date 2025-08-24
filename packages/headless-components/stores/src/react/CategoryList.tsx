@@ -3,7 +3,7 @@ import * as CoreCategoryList from './core/CategoryList.js';
 import * as Category from './Category.js';
 import { type Category as CategoryType } from '../services/category-service.js';
 import { type CategoriesListServiceConfig } from '../services/categories-list-service.js';
-import { AsChildSlot } from '../utils/AsChildSlot.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {
   categoryListRoot = 'category-list',
