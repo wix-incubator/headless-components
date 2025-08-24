@@ -452,7 +452,6 @@ export async function parseUrlToSearchOptions(
 
     if (option && option._id) {
       const choiceValues = optionValues.split(",").filter(Boolean);
-      console.log('option ->', JSON.stringify(option, null, 2), choiceValues);
       const choiceIds: string[] = [];
 
       // Convert choice names to IDs
@@ -583,9 +582,14 @@ export async function loadProductsListSearchServiceConfig(
   if (typeof input === 'string') {
     // URL input - parse it
     const categoriesListConfig = await loadCategoriesListServiceConfig();
+    const { items: customizations = [] } = await customizationsV3
+      .queryCustomizations()
+      .find();
+
     const { initialSearchState: parsedState } = await parseUrlToSearchOptions(
       input,
       categoriesListConfig.categories,
+      customizations,
     );
     initialSearchState = parsedState;
   } else {

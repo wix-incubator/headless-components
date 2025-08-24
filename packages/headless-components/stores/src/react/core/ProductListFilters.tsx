@@ -177,7 +177,7 @@ export function CategoryFilter(props: CategoryFilterProps) {
   }
 
   const selectedCategoryId = (productListService.searchOptions.get().filter as any)["allCategoriesInfo.categories"]?.$matchItems?.[0]?.id?.$in?.[0] as Category | null;
-  const selectedCategory = categories.find(c => c._id === selectedCategoryId) || null;
+  const selectedCategory = categories?.find(c => c._id === selectedCategoryId) || null;
 
   return typeof props.children === 'function'
     ? props.children({ selectedCategory, setSelectedCategory })

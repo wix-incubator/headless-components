@@ -71,6 +71,7 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
         count: products?.length || 0,
       },
       aggregations: {}, // Empty aggregation data
+      customizations: [],
     };
 
     return (

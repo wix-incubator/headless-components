@@ -493,12 +493,9 @@ export const ProductListService =
         availableProductOptions: availableProductOptionsSignal,
         /* End of Metadata for products list */
         setSearchOptions: (searchOptions: productsV3.V3ProductSearch) => {
-          console.log('ProductListService::setSearchOptions ->', searchOptions);
-          console.log()
           searchOptionsSignal.set(searchOptions);
         },
         setSort: (sort: productsV3.V3ProductSearch["sort"]) => {
-          console.log('ProductListService::setSort ->', sort);
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,
@@ -506,7 +503,6 @@ export const ProductListService =
           });
         },
         setFilter: (filter: productsV3.V3ProductSearch["filter"]) => {
-          console.log('ProductListService:setFilter ->', filter);
           const currentOptions = searchOptionsSignal.peek();
           searchOptionsSignal.set({
             ...currentOptions,
