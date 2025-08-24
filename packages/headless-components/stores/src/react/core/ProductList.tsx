@@ -15,6 +15,11 @@ import {
   ProductsListSearchServiceConfig,
   ProductsListSearchServiceDefinition,
 } from '../../services/products-list-search-service.js';
+import {
+  CategoriesListService,
+  CategoriesListServiceConfig,
+  CategoriesListServiceDefinition,
+} from '../../services/categories-list-service.js';
 
 /**
  * Props for Root headless component
@@ -26,6 +31,8 @@ export interface RootProps {
   productsListConfig: ProductsListServiceConfig;
   /** Configuration for the ProductListSearch service */
   productsListSearchConfig?: ProductsListSearchServiceConfig;
+  /** Configuration for the CategoriesList service */
+  categoriesListConfig?: CategoriesListServiceConfig;
 }
 
 /**
@@ -90,6 +97,11 @@ export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap()
+        .addService(
+          CategoriesListServiceDefinition,
+          CategoriesListService,
+          props.categoriesListConfig,
+        )
         .addService(
           ProductsListServiceDefinition,
           ProductListService,

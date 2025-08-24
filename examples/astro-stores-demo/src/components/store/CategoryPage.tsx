@@ -17,7 +17,7 @@ import { productsV3 } from '@wix/stores';
 import * as StyledMediaGallery from '../media/MediaGallery';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
-import { ProductFilters } from './ProductFilters';
+import ProductFiltersSidebar from './ProductFiltersSidebar';
 import QuickViewModal from './QuickViewModal';
 import { SortDropdown } from './SortDropdown';
 import React, { useState } from 'react';
@@ -69,13 +69,7 @@ export const ProductGridContent = ({
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Filters Sidebar */}
-        <div className="w-full lg:w-80 lg:flex-shrink-0">
-          <div className="lg:sticky lg:top-6">
-            <div className="relative">
-              <ProductFilters />
-            </div>
-          </div>
-        </div>
+        <ProductFiltersSidebar />
 
         {/* Main Content Area */}
         <div className="flex-1 min-w-0">
