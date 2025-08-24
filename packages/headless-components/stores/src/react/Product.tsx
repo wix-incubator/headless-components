@@ -67,6 +67,7 @@ enum TestIds {
   productSlug = 'product-slug',
   productRaw = 'product-raw',
   productRibbon = 'product-ribbon',
+  productStock = 'product-stock',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
@@ -625,6 +626,147 @@ export const Ribbon = React.forwardRef<HTMLElement, RibbonProps>(
     );
   },
 );
+
+/**
+ * Props for Product Stock component
+ */
+export interface StockProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+          label: string;
+          quantity: number | null;
+          trackQuantity: boolean;
+          inStock: boolean;
+          preOrderEnabled: boolean;
+        }
+      >
+    | React.ForwardRefExoticComponent<any>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Custom labels for different stock states */
+  labels?: {
+    /** Label for in stock state */
+    inStock?: string;
+    /** Label for limited stock state (when quantity is low) */
+    limitedStock?: string;
+    /** Label for out of stock state */
+    outOfStock?: string;
+  };
+}
+
+/**
+ * Displays the product stock status with customizable rendering and labels following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Stock
+ *   className="stock-indicator"
+ *   labels={{
+ *     inStock: 'In Stock',
+ *     limitedStock: 'Only {quantity} left in stock',
+ *     outOfStock: 'Out of Stock'
+ *   }}
+ * />
+ *
+ * // asChild with primitive
+ * <Product.Stock asChild>
+ *   <div className="stock-status" />
+ * </Product.Stock>
+ *
+ * // asChild with react component
+ * <Product.Stock
+ *   labels={{ inStock: 'Available', outOfStock: 'Sold Out' }}
+ *   asChild
+ * >
+ *   {React.forwardRef(({status, label, inStock, ...props}, ref) => (
+ *     <div
+ *       ref={ref}
+ *       {...props}
+ *       className="flex items-center gap-1"
+ *       data-state={status}
+ *     >
+ *       <div className={`w-2 h-2 rounded-full ${inStock ? 'bg-green-500' : 'bg-red-500'}`} />
+ *       <span className={`text-xs font-medium ${inStock ? 'text-green-600' : 'text-red-600'}`}>
+ *         {label}
+ *       </span>
+ *     </div>
+ *   ))}
+ * </Product.Stock>
+ * ```
+ */
+export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
+  const { asChild, children, className, labels } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {({ inStock, isPreOrderEnabled, availableQuantity, trackInventory }) => {
+        // Default labels
+        const defaultLabels = {
+          inStock: 'In Stock',
+          limitedStock: 'Only {quantity} left in stock',
+          outOfStock: 'Out of Stock',
+        };
+
+        const finalLabels = { ...defaultLabels, ...labels };
+
+        // Determine status based on variant selector data
+        let status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+        let label: string;
+
+        if (!inStock && !isPreOrderEnabled) {
+          status = 'out-of-stock';
+          label = finalLabels.outOfStock;
+        } else if (
+          trackInventory &&
+          availableQuantity !== null &&
+          availableQuantity <= 5 &&
+          availableQuantity > 0
+        ) {
+          // Consider it limited stock if quantity is low (5 or less)
+          status = 'limited-stock';
+          label = finalLabels.limitedStock.replace(
+            '{quantity}',
+            availableQuantity.toString(),
+          );
+        } else {
+          status = 'in-stock';
+          label = finalLabels.inStock;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productStock}
+            data-state={status}
+            customElement={children}
+            customElementProps={{
+              status,
+              label,
+              quantity: availableQuantity,
+              trackQuantity: trackInventory,
+              inStock,
+              preOrderEnabled: isPreOrderEnabled,
+            }}
+            content={label}
+          >
+            <span>{label}</span>
+          </AsChildSlot>
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
 
 /**
  * Props for Product Variants container
