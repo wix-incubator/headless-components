@@ -41,14 +41,15 @@
  * @module Filter
  */
 
-import React, { createContext, useContext } from "react";
-import { Slot } from "@radix-ui/react-slot";
-import * as Slider from "@radix-ui/react-slider";
-import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import React, { createContext, useContext } from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import * as Slider from '@radix-ui/react-slider';
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
 /**
  * Props for button-like components that support the asChild pattern
  */
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
 }
@@ -142,16 +143,16 @@ export interface FilterOption {
  * TestIds enum for Filter components
  */
 enum TestIds {
-  filterRoot = "filter-root",
-  filterFiltered = "filter-filtered",
-  filterActionClear = "filter-action-clear",
-  filterOptions = "filter-options",
-  filterOptionRepeater = "filter-option-repeater",
-  filterOption = "filter-option",
-  filterOptionLabel = "filter-option-label",
-  filterOptionSingle = "filter-option-single",
-  filterOptionMulti = "filter-option-multi",
-  filterOptionRange = "filter-option-range",
+  filterRoot = 'filter-root',
+  filterFiltered = 'filter-filtered',
+  filterActionClear = 'filter-action-clear',
+  filterOptions = 'filter-options',
+  filterOptionRepeater = 'filter-option-repeater',
+  filterOption = 'filter-option',
+  filterOptionLabel = 'filter-option-label',
+  filterOptionSingle = 'filter-option-single',
+  filterOptionMulti = 'filter-option-multi',
+  filterOptionRange = 'filter-option-range',
 }
 
 // ============================================================================
@@ -161,7 +162,13 @@ enum TestIds {
 interface FilterContextValue {
   value: Filter;
   onChange: (value: Filter) => void;
-  onFilterChange?: ({ value, key }: { value: FilterValue; key: string }) => Filter;
+  onFilterChange?: ({
+    value,
+    key,
+  }: {
+    value: FilterValue;
+    key: string;
+  }) => Filter;
   filterOptions: FilterOption[];
   hasFilters: boolean;
   clearFilters: () => void;
@@ -172,7 +179,9 @@ const FilterContext = createContext<FilterContextValue | null>(null);
 function useFilterContext(): FilterContextValue {
   const context = useContext(FilterContext);
   if (!context) {
-    throw new Error("useFilterContext must be used within a Filter.Root component");
+    throw new Error(
+      'useFilterContext must be used within a Filter.Root component',
+    );
   }
   return context;
 }
@@ -182,12 +191,16 @@ interface FilterOptionContextValue {
   updateFilter: (value: FilterValue) => void;
 }
 
-const FilterOptionContext = createContext<FilterOptionContextValue | null>(null);
+const FilterOptionContext = createContext<FilterOptionContextValue | null>(
+  null,
+);
 
 function useFilterOptionContext(): FilterOptionContextValue {
   const context = useContext(FilterOptionContext);
   if (!context) {
-    throw new Error("useFilterOptionContext must be used within a Filter.FilterOptionRepeater component");
+    throw new Error(
+      'useFilterOptionContext must be used within a Filter.FilterOptionRepeater component',
+    );
   }
   return context;
 }
@@ -199,13 +212,20 @@ function useFilterOptionContext(): FilterOptionContextValue {
 /**
  * Check if any filters are currently active
  */
-function hasActiveFilters(filter: Filter, filterOptions: FilterOption[]): boolean {
+function hasActiveFilters(
+  filter: Filter,
+  filterOptions: FilterOption[],
+): boolean {
   if (!filter) return false;
 
-      return filterOptions.some(option => {
+  return filterOptions.some((option) => {
     if (option.type === 'range') {
       const extractedValue = rangeFilterGetUIValue(filter, option);
-      return Array.isArray(extractedValue) && extractedValue.length > 0 && extractedValue.some(v => v !== undefined && v !== null);
+      return (
+        Array.isArray(extractedValue) &&
+        extractedValue.length > 0 &&
+        extractedValue.some((v) => v !== undefined && v !== null)
+      );
     }
 
     if (option.type === 'multi') {
@@ -215,7 +235,11 @@ function hasActiveFilters(filter: Filter, filterOptions: FilterOption[]): boolea
 
     if (option.type === 'single') {
       const extractedValue = singleFilterGetUIValue(filter, option);
-      return extractedValue !== undefined && extractedValue !== null && extractedValue !== '';
+      return (
+        extractedValue !== undefined &&
+        extractedValue !== null &&
+        extractedValue !== ''
+      );
     }
 
     return false;
@@ -229,7 +253,8 @@ function hasActiveFilters(filter: Filter, filterOptions: FilterOption[]): boolea
 /**
  * Props for the Root component
  */
-export interface FilterRootProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface FilterRootProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** Current complete filter value */
   value: Filter;
   /** Function called when the complete filter changes */
@@ -239,7 +264,13 @@ export interface FilterRootProps extends Omit<React.HTMLAttributes<HTMLDivElemen
    * Should merge the single change into the complete filter and return the updated filter.
    * Optional - if not provided, components will handle conversions automatically using fieldName and fieldType.
    */
-  onFilterChange?: ({ value, key }: { value: FilterValue; key: string }) => Filter;
+  onFilterChange?: ({
+    value,
+    key,
+  }: {
+    value: FilterValue;
+    key: string;
+  }) => Filter;
   /** Available filter options */
   filterOptions: FilterOption[];
   /** When true, the component will not render its own element but forward its props to its child */
@@ -320,7 +351,7 @@ export const Root = React.forwardRef<HTMLDivElement, FilterRootProps>(
     };
 
     // Default div rendering with proper asChild pattern
-    const Comp = asChild ? Slot : "div";
+    const Comp = asChild ? Slot : 'div';
 
     return (
       <FilterContext.Provider value={contextValue}>
@@ -334,13 +365,14 @@ export const Root = React.forwardRef<HTMLDivElement, FilterRootProps>(
         </Comp>
       </FilterContext.Provider>
     );
-  }
+  },
 );
 
 /**
  * Props for the Filtered component
  */
-export interface FilterFilteredProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FilterFilteredProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   /** Children to render when filters are active */
   children: React.ReactNode;
 }
@@ -365,7 +397,11 @@ export const Filtered = ({ children, ...otherProps }: FilterFilteredProps) => {
   if (!hasFilters) return null;
 
   return (
-    <div data-testid={TestIds.filterFiltered} data-has-filters={hasFilters} {...otherProps}>
+    <div
+      data-testid={TestIds.filterFiltered}
+      data-has-filters={hasFilters}
+      {...otherProps}
+    >
       {children}
     </div>
   );
@@ -374,7 +410,8 @@ export const Filtered = ({ children, ...otherProps }: FilterFilteredProps) => {
 /**
  * Props for the FilterOptions component
  */
-export interface FilterOptionsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FilterOptionsProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   /** Children components */
   children: React.ReactNode;
 }
@@ -384,7 +421,10 @@ export interface FilterOptionsProps extends React.HTMLAttributes<HTMLDivElement>
  *
  * @component
  */
-export const FilterOptions = ({ children, ...otherProps }: FilterOptionsProps) => {
+export const FilterOptions = ({
+  children,
+  ...otherProps
+}: FilterOptionsProps) => {
   return (
     <div data-testid={TestIds.filterOptions} {...otherProps}>
       {children}
@@ -395,7 +435,8 @@ export const FilterOptions = ({ children, ...otherProps }: FilterOptionsProps) =
 /**
  * Props for the FilterOptionRepeater component
  */
-export interface FilterOptionRepeaterProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FilterOptionRepeaterProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   /** Template to repeat for each filter option */
   children: React.ReactNode;
 }
@@ -405,8 +446,16 @@ export interface FilterOptionRepeaterProps extends React.HTMLAttributes<HTMLDivE
  *
  * @component
  */
-export const FilterOptionRepeater = ({ children, ...otherProps }: FilterOptionRepeaterProps) => {
-  const { filterOptions, onFilterChange, onChange, value: filterValue } = useFilterContext();
+export const FilterOptionRepeater = ({
+  children,
+  ...otherProps
+}: FilterOptionRepeaterProps) => {
+  const {
+    filterOptions,
+    onFilterChange,
+    onChange,
+    value: filterValue,
+  } = useFilterContext();
 
   return (
     <div data-testid={TestIds.filterOptionRepeater} {...otherProps}>
@@ -420,7 +469,7 @@ export const FilterOptionRepeater = ({ children, ...otherProps }: FilterOptionRe
             // Fallback to direct assignment for simple cases
             const newFilter = {
               ...(filterValue || {}),
-              [option.key]: value
+              [option.key]: value,
             };
             onChange(newFilter);
           }
@@ -431,7 +480,10 @@ export const FilterOptionRepeater = ({ children, ...otherProps }: FilterOptionRe
             key={option.key}
             value={{ option, updateFilter }}
           >
-            <div data-testid={TestIds.filterOption} data-filter-key={option.key}>
+            <div
+              data-testid={TestIds.filterOption}
+              data-filter-key={option.key}
+            >
               {children}
             </div>
           </FilterOptionContext.Provider>
@@ -481,27 +533,28 @@ export interface FilterActionClearProps extends ButtonProps {
  * </Filter.Action.Clear>
  * ```
  */
-export const Clear = React.forwardRef<HTMLButtonElement, FilterActionClearProps>(
-  (props, ref) => {
-    const { label, asChild, children, ...otherProps } = props;
-    const { hasFilters, clearFilters } = useFilterContext();
+export const Clear = React.forwardRef<
+  HTMLButtonElement,
+  FilterActionClearProps
+>((props, ref) => {
+  const { label, asChild, children, ...otherProps } = props;
+  const { hasFilters, clearFilters } = useFilterContext();
 
-    // Use the same pattern as MediaGallery components
-    const Comp = asChild ? Slot : "button";
+  // Use the same pattern as MediaGallery components
+  const Comp = asChild ? Slot : 'button';
 
-    return (
-      <Comp
-        ref={ref}
-        onClick={clearFilters}
-        disabled={!hasFilters}
-        data-testid={TestIds.filterActionClear}
-        {...otherProps}
-      >
-        {children || label}
-      </Comp>
-    );
-  }
-);
+  return (
+    <Comp
+      ref={ref}
+      onClick={clearFilters}
+      disabled={!hasFilters}
+      data-testid={TestIds.filterActionClear}
+      {...otherProps}
+    >
+      {children || label}
+    </Comp>
+  );
+});
 
 // ============================================================================
 // FILTER OPTION COMPONENTS
@@ -510,7 +563,8 @@ export const Clear = React.forwardRef<HTMLButtonElement, FilterActionClearProps>
 /**
  * Props for the FilterOptionLabel component
  */
-export interface FilterOptionLabelProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FilterOptionLabelProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Children for custom rendering */
@@ -522,25 +576,22 @@ export interface FilterOptionLabelProps extends React.HTMLAttributes<HTMLDivElem
  *
  * @component
  */
-export const FilterOptionLabel = React.forwardRef<HTMLDivElement, FilterOptionLabelProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-    const { option } = useFilterOptionContext();
+export const FilterOptionLabel = React.forwardRef<
+  HTMLDivElement,
+  FilterOptionLabelProps
+>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+  const { option } = useFilterOptionContext();
 
-    // Use the same pattern as MediaGallery components
-    const Comp = asChild ? Slot : "div";
+  // Use the same pattern as MediaGallery components
+  const Comp = asChild ? Slot : 'div';
 
-    return (
-      <Comp
-        ref={ref}
-        data-testid={TestIds.filterOptionLabel}
-        {...otherProps}
-      >
-        {children || option.label}
-      </Comp>
-    );
-  }
-);
+  return (
+    <Comp ref={ref} data-testid={TestIds.filterOptionLabel} {...otherProps}>
+      {children || option.label}
+    </Comp>
+  );
+});
 
 /**
  * Props for single filter components
@@ -566,10 +617,17 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
     if (option.type !== 'single') return null;
 
     // Single-specific updateFilter function that handles its own conversion
-    const updateFilter = React.useCallback((uiValue: string) => {
-      const newFilter = singleFilterUiValueToFilter(uiValue, option, filterValue || {});
-      onChange(newFilter);
-    }, [option, filterValue, onChange]);
+    const updateFilter = React.useCallback(
+      (uiValue: string) => {
+        const newFilter = singleFilterUiValueToFilter(
+          uiValue,
+          option,
+          filterValue || {},
+        );
+        onChange(newFilter);
+      },
+      [option, filterValue, onChange],
+    );
 
     // Extract single value from search filter format
     let currentValue = '';
@@ -590,11 +648,8 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
           data-display-type={option.displayType}
           className={otherProps.className}
         >
-          {option.validValues?.map(value => (
-            <ToggleGroup.Item
-              key={value}
-              value={String(value)}
-            >
+          {option.validValues?.map((value) => (
+            <ToggleGroup.Item key={value} value={String(value)}>
               {option.valueFormatter ? option.valueFormatter(value) : value}
             </ToggleGroup.Item>
           ))}
@@ -621,7 +676,9 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
       <select
         ref={ref as React.Ref<HTMLSelectElement>}
         value={currentValue}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateFilter(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+          updateFilter(e.target.value)
+        }
         data-testid={TestIds.filterOptionSingle}
         data-filter-type="single"
         data-display-type={option.displayType}
@@ -630,7 +687,7 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
         {children || (
           <>
             <option value="">Select {option.label}</option>
-            {option.validValues?.map(value => (
+            {option.validValues?.map((value) => (
               <option key={value} value={value}>
                 {option.valueFormatter ? option.valueFormatter(value) : value}
               </option>
@@ -639,7 +696,7 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
         )}
       </select>
     );
-  }
+  },
 );
 
 /**
@@ -666,10 +723,17 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
     if (option.type !== 'multi') return null;
 
     // Multi-specific updateFilter function that handles its own conversion
-    const updateFilter = React.useCallback((uiValue: string[]) => {
-      const newFilter = multiFilterUiValueToFilter(uiValue, option, filterValue || {});
-      onChange(newFilter);
-    }, [option, filterValue, onChange]);
+    const updateFilter = React.useCallback(
+      (uiValue: string[]) => {
+        const newFilter = multiFilterUiValueToFilter(
+          uiValue,
+          option,
+          filterValue || {},
+        );
+        onChange(newFilter);
+      },
+      [option, filterValue, onChange],
+    );
 
     // Extract array value from search filter format
     let currentValue: string[] = [];
@@ -679,7 +743,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
     }
 
     // Use the same pattern as MediaGallery components
-    const Comp = asChild ? Slot : "div";
+    const Comp = asChild ? Slot : 'div';
 
     // Default rendering - Radix ToggleGroup for better UX
     if (!asChild && !children) {
@@ -693,13 +757,19 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
           data-display-type={option.displayType}
           className={otherProps.className}
         >
-          {option.validValues?.map(value => {
-            const formattedValue = option.valueFormatter ? option.valueFormatter(value) : String(value);
+          {option.validValues?.map((value) => {
+            const formattedValue = option.valueFormatter
+              ? option.valueFormatter(value)
+              : String(value);
             return (
               <ToggleGroup.Item
                 key={value}
                 value={String(value)}
-                data-color={option.displayType === 'color' ? formattedValue.toLowerCase() : undefined}
+                data-color={
+                  option.displayType === 'color'
+                    ? formattedValue.toLowerCase()
+                    : undefined
+                }
                 aria-label={formattedValue}
               >
                 {option.displayType === 'color' ? '' : formattedValue}
@@ -721,7 +791,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
       >
         {children || (
           <>
-            {option.validValues?.map(value => (
+            {option.validValues?.map((value) => (
               <label key={value}>
                 <input
                   type="checkbox"
@@ -741,7 +811,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
         )}
       </Comp>
     );
-  }
+  },
 );
 
 /**
@@ -754,13 +824,15 @@ export interface RangeFilterProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;
 }
 
-
-function rangeFilterGetUIValue(value: FilterValue, option: FilterOption): number[] {
+function rangeFilterGetUIValue(
+  value: FilterValue,
+  option: FilterOption,
+): number[] {
   if (!value || typeof value !== 'object') {
     return [];
   }
 
-    let min: number | undefined;
+  let min: number | undefined;
   let max: number | undefined;
 
   if (Array.isArray(option.fieldName) && option.fieldName.length >= 2) {
@@ -806,7 +878,11 @@ function rangeFilterGetUIValue(value: FilterValue, option: FilterOption): number
   return result;
 }
 
-function rangeFilterUiValueToFilter(uiValue: number[], option: FilterOption, currentFilter: FilterValue): any {
+function rangeFilterUiValueToFilter(
+  uiValue: number[],
+  option: FilterOption,
+  currentFilter: FilterValue,
+): any {
   const newFilter = { ...currentFilter };
 
   if (!option.fieldName) {
@@ -867,12 +943,16 @@ function rangeFilterUiValueToFilter(uiValue: number[], option: FilterOption, cur
   return newFilter;
 }
 
-function singleFilterGetUIValue(value: FilterValue, option: FilterOption): string {
+function singleFilterGetUIValue(
+  value: FilterValue,
+  option: FilterOption,
+): string {
   if (!value || typeof value !== 'object') {
     return '';
   }
 
-  const fieldName = (typeof option.fieldName === 'string' ? option.fieldName : option.key);
+  const fieldName =
+    typeof option.fieldName === 'string' ? option.fieldName : option.key;
   const field = value[fieldName];
 
   if (field !== undefined && field !== null) {
@@ -882,9 +962,14 @@ function singleFilterGetUIValue(value: FilterValue, option: FilterOption): strin
   return '';
 }
 
-function singleFilterUiValueToFilter(uiValue: string, option: FilterOption, currentFilter: FilterValue): any {
+function singleFilterUiValueToFilter(
+  uiValue: string,
+  option: FilterOption,
+  currentFilter: FilterValue,
+): any {
   const newFilter = { ...currentFilter };
-  const fieldName = (typeof option.fieldName === 'string' ? option.fieldName : option.key);
+  const fieldName =
+    typeof option.fieldName === 'string' ? option.fieldName : option.key;
 
   if (uiValue && uiValue.trim() !== '') {
     newFilter[fieldName] = uiValue;
@@ -895,7 +980,10 @@ function singleFilterUiValueToFilter(uiValue: string, option: FilterOption, curr
   return newFilter;
 }
 
-function extractArrayFromOperators(field: any, preferredOperator: string): string[] {
+function extractArrayFromOperators(
+  field: any,
+  preferredOperator: string,
+): string[] {
   if (!field || typeof field !== 'object') return [];
 
   const operators = [preferredOperator, '$in', '$hasSome'].filter(Boolean);
@@ -907,22 +995,38 @@ function extractArrayFromOperators(field: any, preferredOperator: string): strin
   return [];
 }
 
-function multiFilterGetUIValue(value: FilterValue, option: FilterOption): string[] {
+function multiFilterGetUIValue(
+  value: FilterValue,
+  option: FilterOption,
+): string[] {
   if (!value || typeof value !== 'object') {
     return [];
   }
 
-  const fieldName = (typeof option.fieldName === 'string' ? option.fieldName : option.key);
+  const fieldName =
+    typeof option.fieldName === 'string' ? option.fieldName : option.key;
   const field = value[fieldName];
 
   // Special handling for shared fields (like product options)
-  if (fieldName === 'options.choicesSettings.choices.choiceId' && option.validValues) {
+  if (
+    fieldName === 'options.choicesSettings.choices.choiceId' &&
+    option.validValues
+  ) {
     // This is a shared field that needs filtering by validValues
-    if (field && typeof field === 'object' && '$hasSome' in field && Array.isArray(field.$hasSome)) {
+    if (
+      field &&
+      typeof field === 'object' &&
+      '$hasSome' in field &&
+      Array.isArray(field.$hasSome)
+    ) {
       const allSelectedChoices = field.$hasSome.map(String);
       // Filter to only include choices that belong to this specific option
-      const choicesForThisOption = Array.isArray(option.validValues) ? option.validValues.map(String) : [];
-      return allSelectedChoices.filter((choiceId: string) => choicesForThisOption.includes(choiceId));
+      const choicesForThisOption = Array.isArray(option.validValues)
+        ? option.validValues.map(String)
+        : [];
+      return allSelectedChoices.filter((choiceId: string) =>
+        choicesForThisOption.includes(choiceId),
+      );
     }
     return [];
   }
@@ -942,24 +1046,42 @@ function multiFilterGetUIValue(value: FilterValue, option: FilterOption): string
   return [];
 }
 
-function multiFilterUiValueToFilter(uiValue: string[], option: FilterOption, currentFilter: FilterValue): any {
+function multiFilterUiValueToFilter(
+  uiValue: string[],
+  option: FilterOption,
+  currentFilter: FilterValue,
+): any {
   const newFilter = { ...currentFilter };
-  const fieldName = (typeof option.fieldName === 'string' ? option.fieldName : option.key);
+  const fieldName =
+    typeof option.fieldName === 'string' ? option.fieldName : option.key;
 
   // Special handling for shared fields (like product options)
-  if (fieldName === 'options.choicesSettings.choices.choiceId' && option.validValues) {
+  if (
+    fieldName === 'options.choicesSettings.choices.choiceId' &&
+    option.validValues
+  ) {
     // This is a shared field that needs merging logic
     const existingField = newFilter[fieldName];
     let existingChoices: string[] = [];
 
     // Extract existing choices
-    if (existingField && typeof existingField === 'object' && '$hasSome' in existingField) {
-      existingChoices = Array.isArray(existingField.$hasSome) ? [...existingField.$hasSome] : [];
+    if (
+      existingField &&
+      typeof existingField === 'object' &&
+      '$hasSome' in existingField
+    ) {
+      existingChoices = Array.isArray(existingField.$hasSome)
+        ? [...existingField.$hasSome]
+        : [];
     }
 
     // Remove choices for this specific option (based on validValues)
-    const choicesForThisOption = Array.isArray(option.validValues) ? option.validValues.map(String) : [];
-    existingChoices = existingChoices.filter((choiceId: string) => !choicesForThisOption.includes(choiceId));
+    const choicesForThisOption = Array.isArray(option.validValues)
+      ? option.validValues.map(String)
+      : [];
+    existingChoices = existingChoices.filter(
+      (choiceId: string) => !choicesForThisOption.includes(choiceId),
+    );
 
     // Add new choices for this option
     if (Array.isArray(uiValue) && uiValue.length > 0) {
@@ -1006,13 +1128,20 @@ export const RangeFilter = React.forwardRef<HTMLElement, RangeFilterProps>(
 
     if (option.type !== 'range') return null;
 
-    const numericValidValues = option.validValues as number[] || [];
+    const numericValidValues = (option.validValues as number[]) || [];
 
     // Range-specific updateFilter function that handles its own conversion
-    const updateFilter = React.useCallback((uiValue: number[]) => {
-      const newFilter = rangeFilterUiValueToFilter(uiValue, option, filterValue || {});
-      onChange(newFilter);
-    }, [option, filterValue, onChange]);
+    const updateFilter = React.useCallback(
+      (uiValue: number[]) => {
+        const newFilter = rangeFilterUiValueToFilter(
+          uiValue,
+          option,
+          filterValue || {},
+        );
+        onChange(newFilter);
+      },
+      [option, filterValue, onChange],
+    );
 
     // Extract range value from search filter format
     let currentValue: number[] = [];
@@ -1023,11 +1152,14 @@ export const RangeFilter = React.forwardRef<HTMLElement, RangeFilterProps>(
 
     // Ensure we have a valid range
     if (currentValue.length === 0) {
-      currentValue = [numericValidValues[0] || 0, numericValidValues[numericValidValues.length - 1] || 100];
+      currentValue = [
+        numericValidValues[0] || 0,
+        numericValidValues[numericValidValues.length - 1] || 100,
+      ];
     }
 
     // Use the same pattern as MediaGallery components
-    const Comp = asChild ? Slot : "div";
+    const Comp = asChild ? Slot : 'div';
 
     // Default rendering - Radix Slider for better UX
     const minBound = numericValidValues[0] || 0;
@@ -1068,10 +1200,14 @@ export const RangeFilter = React.forwardRef<HTMLElement, RangeFilterProps>(
           </Slider.Root>
           <div>
             <span data-range-value="min">
-              {option.valueFormatter ? option.valueFormatter(localValue[0] ?? minBound) : (localValue[0] ?? minBound)}
+              {option.valueFormatter
+                ? option.valueFormatter(localValue[0] ?? minBound)
+                : (localValue[0] ?? minBound)}
             </span>
             <span data-range-value="max">
-              {option.valueFormatter ? option.valueFormatter(localValue[1] ?? maxBound) : (localValue[1] ?? maxBound)}
+              {option.valueFormatter
+                ? option.valueFormatter(localValue[1] ?? maxBound)
+                : (localValue[1] ?? maxBound)}
             </span>
           </div>
         </div>
@@ -1106,7 +1242,7 @@ export const RangeFilter = React.forwardRef<HTMLElement, RangeFilterProps>(
         )}
       </Comp>
     );
-  }
+  },
 );
 
 // ============================================================================
@@ -1131,12 +1267,12 @@ export const FilterOption = {
 };
 
 // Set display names for debugging
-Root.displayName = "Filter.Root";
-Filtered.displayName = "Filter.Filtered";
-FilterOptions.displayName = "Filter.FilterOptions";
-FilterOptionRepeater.displayName = "Filter.FilterOptionRepeater";
-Clear.displayName = "Filter.Action.Clear";
-FilterOptionLabel.displayName = "Filter.FilterOption.Label";
-SingleFilter.displayName = "Filter.FilterOption.SingleFilter";
-MultiFilter.displayName = "Filter.FilterOption.MultiFilter";
-RangeFilter.displayName = "Filter.FilterOption.RangeFilter";
+Root.displayName = 'Filter.Root';
+Filtered.displayName = 'Filter.Filtered';
+FilterOptions.displayName = 'Filter.FilterOptions';
+FilterOptionRepeater.displayName = 'Filter.FilterOptionRepeater';
+Clear.displayName = 'Filter.Action.Clear';
+FilterOptionLabel.displayName = 'Filter.FilterOption.Label';
+SingleFilter.displayName = 'Filter.FilterOption.SingleFilter';
+MultiFilter.displayName = 'Filter.FilterOption.MultiFilter';
+RangeFilter.displayName = 'Filter.FilterOption.RangeFilter';
