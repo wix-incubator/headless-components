@@ -11,15 +11,30 @@ import { useMiniCartModal } from '../MiniCartModal';
 // Mini coupon form for the cart sidebar
 const CouponFormMini = ({
   apply,
+  remove,
   isLoading,
   appliedCoupon,
 }: {
   apply: (code: string) => void;
+  remove: () => void;
   isLoading: boolean;
   appliedCoupon: string | null;
 }) => {
   if (appliedCoupon) {
-    return null;
+    return (
+      <div className="flex items-center justify-between p-2 bg-status-success-light border border-status-success rounded">
+        <span className="text-status-success text-xs font-medium">
+          Coupon: {appliedCoupon}
+        </span>
+        <button
+          onClick={remove}
+          disabled={isLoading}
+          className="text-status-danger hover:text-status-error text-xs disabled:opacity-50"
+        >
+          {isLoading ? 'Removing...' : 'Remove'}
+        </button>
+      </div>
+    );
   }
 
   const [code, setCode] = useState('');
@@ -228,23 +243,18 @@ export function MiniCartContent() {
 
           {/* Coupon Code */}
           <div className="mb-4">
-            <Cart.Coupon.Input
-              placeholder="Enter coupon code"
-              className="flex-1 px-3 py-2 border border-brand-light rounded-lg focus:ring-2 focus:ring-brand-primary"
-            />
-            <Cart.Coupon.Clear className="text-sm text-content-muted hover:text-content-primary mt-2 inline-block">
-              Remove applied coupon
-            </Cart.Coupon.Clear>
-
-            <Cart.Coupon.Trigger asChild>
-              {({ apply, isLoading, appliedCoupon }) => (
-                <CouponFormMini
-                  apply={apply}
-                  isLoading={isLoading}
-                  appliedCoupon={appliedCoupon}
-                />
-              )}
-            </Cart.Coupon.Trigger>
+            <Cart.Coupon.Root>
+              <Cart.Coupon.Raw asChild>
+                {({ apply, isLoading, appliedCoupon, remove }) => (
+                  <CouponFormMini
+                    apply={apply}
+                    isLoading={isLoading}
+                    remove={remove}
+                    appliedCoupon={appliedCoupon}
+                  />
+                )}
+              </Cart.Coupon.Raw>
+            </Cart.Coupon.Root>
           </div>
           <Cart.Errors className="my-2 bg-status-danger-light border border-status-danger rounded p-2 mt-2 w-full text-status-danger text-xs" />
           <div className="space-y-4">

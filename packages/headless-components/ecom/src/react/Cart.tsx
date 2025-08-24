@@ -53,7 +53,6 @@ import {
   Clear as CoreClear,
   Checkout as CoreCheckout,
   Notes as CoreNotes,
-  Coupon as CoreCoupon,
   LineItemAdded as CoreLineItemAdded,
 } from './core/CurrentCart.js';
 import type { ServiceAPI } from '@wix/services-definitions';
@@ -64,6 +63,7 @@ import type { LineItem } from '../services/common-types.js';
 import { Slot } from '@radix-ui/react-slot';
 import { renderAsChild, renderChildren } from '../utils/asChild.js';
 import * as LineItemComponent from './LineItem.js';
+import * as CouponComponents from './cart-coupon.js';
 
 // Components that render actual DOM elements get test IDs on their rendered elements
 // Components that only provide context/logic don't introduce new DOM elements
@@ -79,9 +79,7 @@ enum TestIds {
   cartErrors = 'cart-errors',
   cartNotes = 'cart-notes',
   cartCoupon = 'cart-coupon',
-  couponInput = 'coupon-input',
-  couponTrigger = 'coupon-trigger',
-  couponClear = 'coupon-clear',
+
   cartNoteInput = 'cart-note-input',
   cartLineItems = 'cart-line-items',
   cartLineItemRepeater = 'cart-line-item-repeater',
@@ -880,273 +878,12 @@ export const LineItemAdded = (props: LineItemAddedProps) => {
 
 // ===== COUPON SUB-COMPONENTS =====
 
-/**
- * Props for Coupon.Input component
- */
-export interface CouponInputProps {
-  asChild?: boolean;
-  placeholder?: string;
-  className?: string;
-  children?: React.ForwardRefRenderFunction<
-    HTMLInputElement,
-    {
-      value: string;
-      onChange: (value: string) => void;
-    }
-  >;
-}
-
-/**
- * Coupon code input field.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Cart.Coupon.Input
- *   value={couponCode}
- *   onChange={setCouponCode}
- *   placeholder="Enter coupon code"
- *   className="px-3 py-2 border rounded-lg"
- * />
- *
- * // Custom rendering with forwardRef
- * <Cart.Coupon.Input asChild value={couponCode} onChange={setCouponCode}>
- *   {React.forwardRef(({value, onChange, ...props}, ref) => (
- *     <input
- *       ref={ref}
- *       {...props}
- *       type="text"
- *       value={value}
- *       onChange={(e) => onChange(e.target.value)}
- *       className="px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-primary"
- *     />
- *   ))}
- * </Cart.Coupon.Input>
- * ```
- */
-const CouponInput = React.forwardRef<HTMLInputElement, CouponInputProps>(
-  (
-    {
-      asChild,
-      children,
-      placeholder = 'Enter coupon code',
-      className,
-      ...props
-    },
-    ref,
-  ) => {
-    return (
-      <CoreCoupon>
-        {(renderProps) => {
-          const { appliedCoupon, apply } = renderProps;
-
-          const inputProps = {
-            value: appliedCoupon || '',
-            onChange: (value: string) => apply(value),
-          };
-
-          const Comp = asChild ? Slot : 'input';
-
-          return (
-            <Comp
-              ref={ref}
-              type={'text'}
-              value={inputProps.value}
-              onChange={(e) => apply(e.target.value)}
-              placeholder={placeholder}
-              className={className}
-              data-testid={TestIds.couponInput}
-              {...props}
-            >
-              {asChild && children
-                ? renderChildren({ children, props: inputProps, ref })
-                : null}
-            </Comp>
-          );
-        }}
-      </CoreCoupon>
-    );
-  },
-);
-
-/**
- * Props for Coupon.Trigger component
- */
-export interface CouponTriggerProps {
-  asChild?: boolean;
-  className?: string;
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLButtonElement,
-        {
-          disabled: boolean;
-          isLoading: boolean;
-          appliedCoupon: string | null;
-          onClick: () => Promise<void>;
-          apply: (value: string) => Promise<void>;
-        }
-      >;
-}
-
-/**
- * Apply coupon button.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Cart.Coupon.Trigger couponCode={inputValue} className="btn-primary px-4 py-2">Apply</Cart.Coupon.Trigger>
- *
- * // Custom rendering with forwardRef
- * <Cart.Coupon.Trigger asChild couponCode={inputValue}>
- *   {React.forwardRef(({apply, disabled, isLoading, ...props}, ref) => (
- *     <button
- *       ref={ref}
- *       {...props}
- *       disabled={disabled}
- *       onClick={() => apply(couponCode)}
- *       className="btn-primary px-4 py-2 disabled:opacity-50"
- *     >
- *       {isLoading ? 'Applying...' : 'Apply'}
- *     </button>
- *   ))}
- * </Cart.Coupon.Trigger>
- * ```
- */
-const CouponTrigger = React.forwardRef<HTMLButtonElement, CouponTriggerProps>(
-  ({ asChild, children, className, ...props }, ref) => {
-    return (
-      <CoreCoupon>
-        {(renderProps) => {
-          const { apply, isLoading, appliedCoupon } = renderProps;
-          const disabled = isLoading;
-
-          const triggerProps = {
-            disabled,
-            isLoading,
-            apply,
-            appliedCoupon,
-            onClick: async () => {
-              await apply(appliedCoupon ?? '');
-            },
-          };
-
-          const Comp = asChild ? Slot : 'button';
-
-          return (
-            <Comp
-              ref={ref}
-              onClick={triggerProps.onClick}
-              disabled={disabled}
-              className={className}
-              data-testid={TestIds.couponTrigger}
-              data-loading={isLoading}
-              {...props}
-            >
-              {asChild && typeof children === 'function'
-                ? renderChildren({
-                    children: children as any,
-                    props: triggerProps,
-                    ref,
-                  })
-                : !asChild && typeof children !== 'function'
-                  ? children || (isLoading ? 'Applying...' : 'Apply')
-                  : null}
-            </Comp>
-          );
-        }}
-      </CoreCoupon>
-    );
-  },
-);
-
-/**
- * Props for Coupon.Clear component
- */
-export interface CouponClearProps {
-  asChild?: boolean;
-  className?: string;
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLButtonElement,
-        {
-          onClick: () => Promise<void>;
-        }
-      >;
-}
-
-/**
- * Remove applied coupon button.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Cart.Coupon.Clear className="text-sm text-content-muted hover:text-content-primary">Remove</Cart.Coupon.Clear>
- *
- * // Custom rendering with forwardRef
- * <Cart.Coupon.Clear asChild>
- *   {React.forwardRef(({remove, appliedCoupon, isLoading, ...props}, ref) => (
- *     <button
- *       ref={ref}
- *       {...props}
- *       onClick={remove}
- *       disabled={!appliedCoupon || isLoading}
- *       className="text-sm text-content-muted hover:text-content-primary underline"
- *     >
- *       {isLoading ? 'Removing...' : 'Remove coupon'}
- *     </button>
- *   ))}
- * </Cart.Coupon.Clear>
- * ```
- */
-const CouponClear = React.forwardRef<HTMLButtonElement, CouponClearProps>(
-  ({ asChild, children, className, ...props }, ref) => {
-    return (
-      <CoreCoupon>
-        {(renderProps) => {
-          const { remove, appliedCoupon, isLoading } = renderProps;
-          const disabled = !appliedCoupon || isLoading;
-
-          const clearProps = {
-            onClick: remove,
-          };
-
-          // Only render if there's an applied coupon
-          if (!appliedCoupon) {
-            return null;
-          }
-
-          const Comp = asChild ? Slot : 'button';
-
-          return (
-            <Comp
-              ref={ref}
-              onClick={remove}
-              disabled={disabled}
-              className={className}
-              data-testid={TestIds.couponClear}
-              {...props}
-            >
-              {asChild && typeof children === 'function'
-                ? renderChildren({
-                    children: children as any,
-                    props: clearProps,
-                    ref,
-                  })
-                : !asChild && typeof children !== 'function'
-                  ? children || (isLoading ? 'Removing...' : 'Remove')
-                  : null}
-            </Comp>
-          );
-        }}
-      </CoreCoupon>
-    );
-  },
-);
+// Re-export coupon components with new Root structure
+export type CouponRootProps = CouponComponents.CouponRootProps;
+export type CouponInputProps = CouponComponents.CouponInputProps;
+export type CouponTriggerProps = CouponComponents.CouponTriggerProps;
+export type CouponClearProps = CouponComponents.CouponClearProps;
+export type CouponRawProps = CouponComponents.CouponRawProps;
 
 // ===== NOTE SUB-COMPONENTS =====
 
@@ -1244,11 +981,45 @@ const NoteInput = React.forwardRef<HTMLTextAreaElement, NoteInputProps>(
 
 /**
  * Coupon-related components namespace
+ *
+ * @example
+ * ```tsx
+ * // Complete coupon management with new Root structure
+ * <Cart.Coupon.Root>
+ *   <div className="flex gap-2">
+ *     <Cart.Coupon.Input
+ *       placeholder="Enter coupon code"
+ *       className="flex-1 px-3 py-2 border rounded"
+ *     />
+ *     <Cart.Coupon.Trigger className="px-4 py-2 bg-blue-500 text-white rounded">
+ *       Apply
+ *     </Cart.Coupon.Trigger>
+ *   </div>
+ *   <Cart.Coupon.Clear className="text-sm text-red-500 underline mt-2">
+ *     Remove coupon
+ *   </Cart.Coupon.Clear>
+ * </Cart.Coupon.Root>
+ *
+ * // Raw access to all coupon functionality
+ * <Cart.Coupon.Raw>
+ *   {({ appliedCoupon, apply, remove, isLoading, error }) => (
+ *     <div>
+ *       {appliedCoupon ? (
+ *         <span>Applied: {appliedCoupon}</span>
+ *       ) : (
+ *         <input onBlur={(e) => apply(e.target.value)} />
+ *       )}
+ *     </div>
+ *   )}
+ * </Cart.Coupon.Raw>
+ * ```
  */
 export const Coupon = {
-  Input: CouponInput,
-  Trigger: CouponTrigger,
-  Clear: CouponClear,
+  Root: CouponComponents.Root,
+  Input: CouponComponents.Input,
+  Trigger: CouponComponents.Trigger,
+  Clear: CouponComponents.Clear,
+  Raw: CouponComponents.Raw,
 } as const;
 
 /**

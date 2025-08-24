@@ -100,18 +100,20 @@ export default function CartContent() {
                     <label className="block text-sm font-medium text-content-primary mb-2">
                       Coupon Code:
                     </label>
-                    <div className="space-y-2">
-                      <Cart.Coupon.Input
-                        placeholder="Enter coupon code"
-                        className="w-full px-3 py-2 bg-surface-interactive border border-surface-interactive rounded-lg text-content-primary placeholder:text-content-muted focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors duration-200"
-                      />
-                      <Cart.Coupon.Trigger className="w-full text-content-primary font-medium py-2 px-6 rounded-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-center text-sm btn-primary">
-                        Apply
-                      </Cart.Coupon.Trigger>
-                    </div>
-                    <Cart.Coupon.Clear className="text-sm text-content-muted hover:text-content-primary mt-2 inline-block">
-                      Remove applied coupon
-                    </Cart.Coupon.Clear>
+                    <Cart.Coupon.Root>
+                      <div className="space-y-2">
+                        <Cart.Coupon.Input
+                          placeholder="Enter coupon code"
+                          className="w-full px-3 py-2 bg-surface-interactive border border-surface-interactive rounded-lg text-content-primary placeholder:text-content-muted focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors duration-200"
+                        />
+                        <Cart.Coupon.Trigger className="w-full text-content-primary font-medium py-2 px-6 rounded-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-center text-sm btn-primary">
+                          Apply
+                        </Cart.Coupon.Trigger>
+                      </div>
+                      <Cart.Coupon.Clear className="text-sm text-content-muted hover:text-content-primary mt-2 inline-block">
+                        Remove applied coupon
+                      </Cart.Coupon.Clear>
+                    </Cart.Coupon.Root>
                   </>
 
                   <div className="w-full space-y-4">
