@@ -264,16 +264,12 @@ export const ProductGridContent = ({
                                 | 'out-of-stock';
                               label: string;
                             }
-                          >(({ status, label }, ref) => (
-                            <div ref={ref} className="flex items-center gap-1">
-                              <div
-                                className={`w-2 h-2 rounded-full ${status === 'out-of-stock' ? 'bg-status-error' : 'bg-status-success'}`}
-                              ></div>
-                              <span
-                                className={`text-xs font-medium ${status === 'out-of-stock' ? 'text-status-error' : 'text-status-success'}`}
-                              >
-                                {label}
-                              </span>
+                          >(({ label }, ref) => (
+                            <div
+                              ref={ref}
+                              className="flex items-center gap-1 text-xs font-medium data-[state='out-of-stock']:text-status-error data-[state='in-stock']:text-status-success data-[state='limited-stock']:text-status-success"
+                            >
+                              {label}
                             </div>
                           ))}
                         </Product.Stock>
