@@ -709,60 +709,51 @@ export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
       {({ product }) => {
         const availabilityStatus = product.inventory?.availabilityStatus;
 
+        // Default labels
+        const defaultLabels = {
+          inStock: 'In Stock',
+          limitedStock: 'Partially Out of Stock',
+          outOfStock: 'Out of Stock',
+        };
+
+        const finalLabels = { ...defaultLabels, ...labels };
+
+        // Determine status based on availabilityStatus
+        let status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+        let label: string;
+
+        switch (availabilityStatus) {
+          case InventoryAvailabilityStatus.IN_STOCK:
+            status = 'in-stock';
+            label = finalLabels.inStock;
+            break;
+          case InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK:
+            status = 'limited-stock';
+            label = finalLabels.limitedStock;
+            break;
+          case InventoryAvailabilityStatus.OUT_OF_STOCK:
+          default:
+            status = 'out-of-stock';
+            label = finalLabels.outOfStock;
+            break;
+        }
+
         return (
-          <ProductVariantSelector.Stock>
-            {({ availableQuantity }) => {
-              // Default labels
-              const defaultLabels = {
-                inStock: 'In Stock',
-                limitedStock: 'Only {quantity} left in stock',
-                outOfStock: 'Out of Stock',
-              };
-
-              const finalLabels = { ...defaultLabels, ...labels };
-
-              // Determine status based on availabilityStatus
-              let status: 'in-stock' | 'limited-stock' | 'out-of-stock';
-              let label: string;
-
-              switch (availabilityStatus) {
-                case InventoryAvailabilityStatus.IN_STOCK:
-                  status = 'in-stock';
-                  label = finalLabels.inStock;
-                  break;
-                case InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK:
-                  status = 'limited-stock';
-                  label = finalLabels.limitedStock.replace(
-                    '{quantity}',
-                    availableQuantity?.toString() || '0',
-                  );
-                  break;
-                case InventoryAvailabilityStatus.OUT_OF_STOCK:
-                default:
-                  status = 'out-of-stock';
-                  label = finalLabels.outOfStock;
-                  break;
-              }
-
-              return (
-                <AsChildSlot
-                  ref={ref}
-                  asChild={asChild}
-                  className={className}
-                  data-testid={TestIds.productStock}
-                  data-state={status}
-                  customElement={children}
-                  customElementProps={{
-                    status,
-                    label,
-                  }}
-                  content={label}
-                >
-                  <span>{label}</span>
-                </AsChildSlot>
-              );
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productStock}
+            data-state={status}
+            customElement={children}
+            customElementProps={{
+              status,
+              label,
             }}
-          </ProductVariantSelector.Stock>
+            content={label}
+          >
+            <span>{label}</span>
+          </AsChildSlot>
         );
       }}
     </CoreProduct.Content>

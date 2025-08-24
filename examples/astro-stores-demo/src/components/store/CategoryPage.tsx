@@ -250,7 +250,7 @@ export const ProductGridContent = ({
                         <Product.Stock
                           labels={{
                             inStock: 'In Stock',
-                            limitedStock: 'Only {quantity} left',
+                            limitedStock: 'In Stock',
                             outOfStock: 'Out of Stock',
                           }}
                           asChild
