@@ -312,25 +312,18 @@ export const LoadMoreTrigger = React.forwardRef<
 
         const handleClick = () => loadMore(10);
 
-        const attributes = {
-          'data-testid': TestIds.productListLoadMore,
-          className,
-          onClick: handleClick,
-          disabled: isLoading,
-        };
-
-        if (asChild && React.isValidElement(children)) {
-          return React.cloneElement(children as React.ReactElement<any>, {
-            ...attributes,
-            onClick: handleClick,
-            ref,
-          });
-        }
-
         return (
-          <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-            {children}
-          </button>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={handleClick}
+            disabled={isLoading}
+            data-testid={TestIds.productListLoadMore}
+            customElement={children}
+          >
+            <button>{children}</button>
+          </AsChildSlot>
         );
       }}
     </CoreProductListPagination.LoadMoreTrigger>

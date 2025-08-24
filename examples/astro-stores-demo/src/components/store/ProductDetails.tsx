@@ -60,14 +60,16 @@ export default function ProductDetails({
               <div className="space-y-1">
                 <Product.Price className="text-3xl font-bold text-content-primary" />
                 <Product.CompareAtPrice asChild>
-                  {({ formattedPrice, ...props }, ref) => (
-                    <div
-                      ref={ref}
-                      {...props}
-                      className="text-lg font-medium text-content-faded line-through"
-                    >
-                      {formattedPrice}
-                    </div>
+                  {React.forwardRef<HTMLDivElement, { formattedPrice: string }>(
+                    ({ formattedPrice, ...props }, ref) => (
+                      <div
+                        ref={ref}
+                        {...props}
+                        className="text-lg font-medium text-content-faded line-through"
+                      >
+                        {formattedPrice}
+                      </div>
+                    )
                   )}
                 </Product.CompareAtPrice>
               </div>
