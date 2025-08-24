@@ -92,7 +92,7 @@ export default function CartContent() {
 
                   {/* Order Notes */}
                   <div className="mb-6">
-                    <Cart.Notes />
+                    <Cart.Notes className="[&_textarea]:focus:border-surface-interactive [&_textarea]:focus:ring-0 [&_textarea]:focus:outline-none" />
                   </div>
 
                   {/* Coupon Section */}
@@ -101,18 +101,16 @@ export default function CartContent() {
                       Coupon Code:
                     </label>
                     <Cart.Coupon.Root>
-                      <div className="space-y-2">
+                      <div className="space-y-2 mb-6">
                         <Cart.Coupon.Input
                           placeholder="Enter coupon code"
-                          className="w-full px-3 py-2 bg-surface-interactive border border-surface-interactive rounded-lg text-content-primary placeholder:text-content-muted focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors duration-200"
+                          className="w-full px-3 py-2 bg-surface-interactive border border-surface-interactive rounded-lg text-content-primary placeholder:text-content-muted focus:border-surface-interactive focus:ring-0 focus:outline-none transition-colors duration-200"
                         />
                         <Cart.Coupon.Trigger className="w-full text-content-primary font-medium py-2 px-6 rounded-lg transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-center text-sm btn-primary">
-                          Apply
+                          Apply Coupon
                         </Cart.Coupon.Trigger>
+                        <Cart.Coupon.Clear>Remove</Cart.Coupon.Clear>
                       </div>
-                      <Cart.Coupon.Clear className="text-sm text-content-muted hover:text-content-primary mt-2 inline-block">
-                        Remove applied coupon
-                      </Cart.Coupon.Clear>
                     </Cart.Coupon.Root>
                   </>
 
@@ -150,7 +148,7 @@ export default function CartContent() {
                         label="Total"
                       />
                     </div>
-                    <Cart.Errors className="w-full bg-surface-error border border-status-error rounded-lg p-3 text-status-error" />
+                    <Cart.Errors className="w-full bg-surface-error border border-status-error rounded-lg p-3 text-status-error text-xs" />
 
                     <Commerce.Actions.Checkout
                       className="btn-primary w-full text-content-primary font-bold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"

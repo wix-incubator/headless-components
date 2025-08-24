@@ -75,9 +75,10 @@ const CouponFormMini = ({
           disabled={!code.trim() || isLoading}
           className="btn-accent px-2 py-1 disabled:opacity-50 text-content-primary text-xs font-medium rounded"
         >
-          {isLoading ? '...' : 'Apply'}
+          {isLoading ? '...' : 'Apply Coupon'}
         </button>
       </div>
+
       <button
         type="button"
         onClick={() => setIsExpanded(false)}
@@ -245,7 +246,7 @@ export function MiniCartContent() {
           <div className="mb-4">
             <Cart.Coupon.Root>
               <Cart.Coupon.Raw asChild>
-                {({ apply, isLoading, appliedCoupon, remove }) => (
+                {({ apply, isLoading, appliedCoupon, remove, error }) => (
                   <CouponFormMini
                     apply={apply}
                     isLoading={isLoading}

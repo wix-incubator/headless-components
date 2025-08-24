@@ -63,7 +63,7 @@ import type { LineItem } from '../services/common-types.js';
 import { Slot } from '@radix-ui/react-slot';
 import { renderAsChild, renderChildren } from '../utils/asChild.js';
 import * as LineItemComponent from './LineItem.js';
-import * as CouponComponents from './cart-coupon.js';
+import * as CouponComponents from './CartCoupon.js';
 
 // Components that render actual DOM elements get test IDs on their rendered elements
 // Components that only provide context/logic don't introduce new DOM elements

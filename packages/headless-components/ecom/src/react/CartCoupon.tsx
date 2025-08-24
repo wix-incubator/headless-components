@@ -55,6 +55,7 @@ export interface CouponRootProps {
 /**
  * Root component that provides coupon context to its children.
  * Manages local input state separately from the applied coupon in the cart.
+ * Shows input/apply when no coupon is applied, shows coupon display when applied.
  *
  * @component
  * @example
@@ -62,7 +63,7 @@ export interface CouponRootProps {
  * <Cart.Coupon.Root>
  *   <Cart.Coupon.Input placeholder="Enter coupon code" />
  *   <Cart.Coupon.Trigger>Apply</Cart.Coupon.Trigger>
- *   <Cart.Coupon.Clear>Remove</Cart.Coupon.Clear>
+ *   <Cart.Coupon.Clear />
  * </Cart.Coupon.Root>
  * ```
  */
@@ -102,6 +103,7 @@ export interface CouponInputProps {
 
 /**
  * Coupon code input field.
+ * Automatically hides when a coupon is already applied.
  *
  * @component
  * @example
@@ -113,6 +115,7 @@ export interface CouponInputProps {
  *     className="px-3 py-2 border rounded-lg"
  *   />
  *   <Cart.Coupon.Trigger>Apply</Cart.Coupon.Trigger>
+ *   <Cart.Coupon.Clear />
  * </Cart.Coupon.Root>
  *
  * // Custom rendering with asChild
@@ -145,28 +148,41 @@ export const Input = React.forwardRef<HTMLInputElement, CouponInputProps>(
   ) => {
     const { contextInputValue, setContextInputValue } = useCouponContext();
 
-    const inputProps = {
-      value: contextInputValue,
-      onChange: setContextInputValue,
-    };
-
-    if (asChild && children) {
-      return children(inputProps, ref);
-    }
-
-    const Comp = asChild ? Slot : 'input';
-
     return (
-      <Comp
-        ref={ref}
-        type="text"
-        value={contextInputValue}
-        onChange={(e) => setContextInputValue(e.target.value)}
-        placeholder={placeholder}
-        className={className}
-        data-testid={TestIds.couponInput}
-        {...props}
-      />
+      <CoreCoupon>
+        {(renderProps) => {
+          const { appliedCoupon } = renderProps;
+
+          // Hide input if coupon is already applied
+          if (appliedCoupon) {
+            return null;
+          }
+
+          const inputProps = {
+            value: contextInputValue,
+            onChange: setContextInputValue,
+          };
+
+          if (asChild && children) {
+            return children(inputProps, ref);
+          }
+
+          const Comp = asChild ? Slot : 'input';
+
+          return (
+            <Comp
+              ref={ref}
+              type="text"
+              value={contextInputValue}
+              onChange={(e) => setContextInputValue(e.target.value)}
+              placeholder={placeholder}
+              className={className}
+              data-testid={TestIds.couponInput}
+              {...props}
+            />
+          );
+        }}
+      </CoreCoupon>
     );
   },
 );
@@ -193,6 +209,7 @@ export interface CouponTriggerProps {
 
 /**
  * Apply coupon button.
+ * Automatically hides when a coupon is already applied.
  *
  * @component
  * @example
@@ -201,6 +218,7 @@ export interface CouponTriggerProps {
  * <Cart.Coupon.Root>
  *   <Cart.Coupon.Input placeholder="Enter coupon code" />
  *   <Cart.Coupon.Trigger className="btn-primary px-4 py-2">Apply</Cart.Coupon.Trigger>
+ *   <Cart.Coupon.Clear />
  * </Cart.Coupon.Root>
  *
  * // Custom rendering with asChild
@@ -229,7 +247,13 @@ export const Trigger = React.forwardRef<HTMLButtonElement, CouponTriggerProps>(
     return (
       <CoreCoupon>
         {(renderProps) => {
-          const { apply, isLoading } = renderProps;
+          const { apply, isLoading, appliedCoupon } = renderProps;
+
+          // Hide trigger if coupon is already applied
+          if (appliedCoupon) {
+            return null;
+          }
+
           const disabled = isLoading || !contextInputValue.trim();
 
           const triggerProps = {
@@ -280,15 +304,19 @@ export interface CouponClearProps {
   children?:
     | React.ReactNode
     | React.ForwardRefRenderFunction<
-        HTMLButtonElement,
+        HTMLDivElement,
         {
           onClick: () => Promise<void>;
+          appliedCoupon: string | null;
+          disabled: boolean;
+          isLoading: boolean;
         }
       >;
 }
 
 /**
- * Remove applied coupon button.
+ * Display applied coupon with remove option.
+ * Shows the applied coupon in a styled container with a remove button.
  *
  * @component
  * @example
@@ -297,28 +325,29 @@ export interface CouponClearProps {
  * <Cart.Coupon.Root>
  *   <Cart.Coupon.Input placeholder="Enter coupon code" />
  *   <Cart.Coupon.Trigger>Apply</Cart.Coupon.Trigger>
- *   <Cart.Coupon.Clear className="text-sm text-content-muted hover:text-content-primary">Remove</Cart.Coupon.Clear>
+ *   <Cart.Coupon.Clear />
  * </Cart.Coupon.Root>
  *
  * // Custom rendering with asChild
  * <Cart.Coupon.Root>
  *   <Cart.Coupon.Clear asChild>
- *     {React.forwardRef(({onClick, disabled, isLoading, ...props}, ref) => (
- *       <button
- *         ref={ref}
- *         {...props}
- *         onClick={onClick}
- *         disabled={disabled}
- *         className="text-sm text-content-muted hover:text-content-primary underline"
- *       >
- *         {isLoading ? 'Removing...' : 'Remove coupon'}
- *       </button>
+ *     {React.forwardRef(({onClick, disabled, isLoading, appliedCoupon, ...props}, ref) => (
+ *       <div ref={ref} {...props} className="flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+ *         <span className="text-green-600 font-medium text-sm">Coupon: {appliedCoupon}</span>
+ *         <button
+ *           onClick={onClick}
+ *           disabled={disabled}
+ *           className="text-orange-400 hover:text-orange-500 text-sm font-medium disabled:opacity-50"
+ *         >
+ *           {isLoading ? 'Removing...' : 'Remove'}
+ *         </button>
+ *       </div>
  *     ))}
  *   </Cart.Coupon.Clear>
  * </Cart.Coupon.Root>
  * ```
  */
-export const Clear = React.forwardRef<HTMLButtonElement, CouponClearProps>(
+export const Clear = React.forwardRef<HTMLDivElement, CouponClearProps>(
   ({ asChild, children, className, ...props }, ref) => {
     const { setContextInputValue } = useCouponContext();
 
@@ -333,6 +362,9 @@ export const Clear = React.forwardRef<HTMLButtonElement, CouponClearProps>(
               await remove();
               setContextInputValue(''); // Clear the input when removing coupon
             },
+            appliedCoupon,
+            disabled,
+            isLoading,
           };
 
           // Only render if there's an applied coupon
@@ -344,20 +376,29 @@ export const Clear = React.forwardRef<HTMLButtonElement, CouponClearProps>(
             return children(clearProps, ref);
           }
 
-          const Comp = asChild ? Slot : 'button';
+          const Comp = asChild ? Slot : 'div';
 
           return (
             <Comp
               ref={ref}
-              onClick={clearProps.onClick}
-              disabled={disabled}
               className={className}
               data-testid={TestIds.couponClear}
               {...props}
             >
-              {!asChild && typeof children !== 'function'
-                ? children || (isLoading ? 'Removing...' : 'Remove')
-                : null}
+              {!asChild && typeof children !== 'function' ? (
+                <div className="flex items-center justify-between p-3 bg-status-success-light border border-status-success rounded-lg">
+                  <span className="text-status-success text-sm font-medium">
+                    Coupon: {appliedCoupon}
+                  </span>
+                  <button
+                    onClick={remove}
+                    disabled={isLoading}
+                    className="text-status-error hover:text-status-error/80 text-sm disabled:opacity-50"
+                  >
+                    {isLoading ? 'Removing...' : 'Remove'}
+                  </button>
+                </div>
+              ) : null}
             </Comp>
           );
         }}
