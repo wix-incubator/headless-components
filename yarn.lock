@@ -3091,8 +3091,8 @@ __metadata:
     "@wix/cli-edge": "npm:^1.1.74"
     "@wix/dashboard": "npm:^1.3.39"
     "@wix/headless-bookings": "npm:^0.0.1"
-    "@wix/headless-ecom": "npm:^0.0.8"
-    "@wix/headless-stores": "npm:^0.0.20"
+    "@wix/headless-ecom": "npm:^0.0.17"
+    "@wix/headless-stores": "npm:^0.0.57"
     "@wix/services-manager-react": "npm:^0.1.26"
     "@wix/stores": "npm:^1.0.498"
     astro: "npm:^5.9.0"
@@ -4114,7 +4114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/essentials@npm:^0.1.22, @wix/essentials@npm:^0.1.24":
+"@wix/essentials@npm:^0.1.24":
   version: 0.1.24
   resolution: "@wix/essentials@npm:0.1.24"
   dependencies:
@@ -4220,20 +4220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@wix/headless-ecom@npm:0.0.7"
-  dependencies:
-    "@wix/auto_sdk_ecom_checkout": "npm:^1.0.52"
-    "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.48"
-    "@wix/sdk": "npm:^1.15.24"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-  checksum: 10c0/b599015eb2667a6ec0cef3ff0ef98976f84f474414b84492f0681ef0c3b457fffa5e3d3d8ef3980b026eaa101128f5a9e73fd518ec97a37f9b4c580d09029e34
-  languageName: node
-  linkType: hard
-
-"@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@npm:^0.0.17, @wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -4311,17 +4298,6 @@ __metadata:
     vitest: "npm:^3.1.4"
   languageName: unknown
   linkType: soft
-
-"@wix/headless-media@npm:^0.0.4":
-  version: 0.0.4
-  resolution: "@wix/headless-media@npm:0.0.4"
-  dependencies:
-    "@wix/image": "npm:^1.403.0"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-  checksum: 10c0/7369ec4690a96c4f8b6ebb36c74a607a6a05654f70f3b85b23e8bcb96919809b02aac6acd1e78ed1759eefd47f653a216f7c42c656b1aecd8f72c495ecb9222f
-  languageName: node
-  linkType: hard
 
 "@wix/headless-media@npm:^0.0.7":
   version: 0.0.7
@@ -4401,28 +4377,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-stores@npm:^0.0.20":
-  version: 0.0.20
-  resolution: "@wix/headless-stores@npm:0.0.20"
-  dependencies:
-    "@wix/auto_sdk_bookings_availability-calendar": "npm:^1.0.155"
-    "@wix/auto_sdk_categories_categories": "npm:^1.0.62"
-    "@wix/auto_sdk_stores_customizations-v-3": "npm:^1.0.26"
-    "@wix/auto_sdk_stores_inventory-items-v-3": "npm:^1.0.26"
-    "@wix/auto_sdk_stores_products-v-3": "npm:^1.0.53"
-    "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
-    "@wix/ecom": "npm:^1.0.1238"
-    "@wix/essentials": "npm:^0.1.22"
-    "@wix/headless-ecom": "npm:^0.0.7"
-    "@wix/headless-media": "npm:^0.0.4"
-    "@wix/redirects": "npm:^1.0.79"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-  checksum: 10c0/899a290a9fe8af6ae3444f59b914608a7383839ec382ba1930dae79f488134008f547907d0025c8739de78a27736ec5ea5a251e1b09aefbd86b10e125fbc9b8c
-  languageName: node
-  linkType: hard
-
-"@wix/headless-stores@workspace:*, @wix/headless-stores@workspace:packages/headless-components/stores":
+"@wix/headless-stores@npm:^0.0.57, @wix/headless-stores@workspace:*, @wix/headless-stores@workspace:packages/headless-components/stores":
   version: 0.0.0-use.local
   resolution: "@wix/headless-stores@workspace:packages/headless-components/stores"
   dependencies:
@@ -4440,7 +4395,7 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1278"
     "@wix/essentials": "npm:^0.1.24"
-    "@wix/headless-ecom": "workspace:*"
+    "@wix/headless-ecom": "npm:^0.0.17"
     "@wix/headless-media": "npm:^0.0.11"
     "@wix/headless-utils": "npm:^0.0.1"
     "@wix/redirects": "npm:^1.0.83"
@@ -4592,7 +4547,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/redirects@npm:^1.0.0, @wix/redirects@npm:^1.0.70, @wix/redirects@npm:^1.0.79, @wix/redirects@npm:^1.0.83":
+"@wix/redirects@npm:^1.0.0, @wix/redirects@npm:^1.0.70, @wix/redirects@npm:^1.0.83":
   version: 1.0.93
   resolution: "@wix/redirects@npm:1.0.93"
   dependencies:
