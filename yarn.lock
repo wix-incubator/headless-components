@@ -4148,7 +4148,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-components@npm:0.0.2, @wix/headless-components@workspace:packages/headless-components/components":
+"@wix/headless-components@npm:0.0.3, @wix/headless-components@workspace:packages/headless-components/components":
   version: 0.0.0-use.local
   resolution: "@wix/headless-components@workspace:packages/headless-components/components"
   dependencies:
@@ -4441,7 +4441,7 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1278"
     "@wix/essentials": "npm:^0.1.24"
-    "@wix/headless-components": "npm:0.0.2"
+    "@wix/headless-components": "npm:0.0.3"
     "@wix/headless-ecom": "npm:0.0.17"
     "@wix/headless-media": "npm:^0.0.11"
     "@wix/headless-utils": "npm:^0.0.2"
