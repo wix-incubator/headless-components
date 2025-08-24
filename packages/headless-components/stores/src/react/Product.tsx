@@ -1,7 +1,7 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
 
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
@@ -132,15 +132,7 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          name: string;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{ name: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -200,15 +192,9 @@ export interface DescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          description: string;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    description: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the description content */
@@ -304,16 +290,10 @@ export interface PriceProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          price: string;
-          formattedPrice: string;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    price: string;
+    formattedPrice: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -377,16 +357,10 @@ export interface CompareAtPriceProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          price: string;
-          formattedPrice: string;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    price: string;
+    formattedPrice: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -464,15 +438,9 @@ export interface SlugProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          slug: string;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    slug: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -531,15 +499,9 @@ export interface RawProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          product: V3Product;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    product: V3Product;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

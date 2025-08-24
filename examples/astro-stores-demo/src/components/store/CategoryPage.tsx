@@ -26,7 +26,7 @@ interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
   productsListSearchConfig: ProductsListSearchServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
-  productPageRoute: string;
+  productPageRoute?: string;
 }
 
 export const ProductGridContent = ({
