@@ -8,7 +8,7 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
-import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -312,25 +312,18 @@ export const LoadMoreTrigger = React.forwardRef<
 
         const handleClick = () => loadMore(10);
 
-        const attributes = {
-          'data-testid': TestIds.productListLoadMore,
-          className,
-          onClick: handleClick,
-          disabled: isLoading,
-        };
-
-        if (asChild && React.isValidElement(children)) {
-          return React.cloneElement(children as React.ReactElement<any>, {
-            ...attributes,
-            onClick: handleClick,
-            ref,
-          });
-        }
-
         return (
-          <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-            {children}
-          </button>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={handleClick}
+            disabled={isLoading}
+            data-testid={TestIds.productListLoadMore}
+            customElement={children}
+          >
+            <button>{children}</button>
+          </AsChildSlot>
         );
       }}
     </CoreProductListPagination.LoadMoreTrigger>
@@ -340,8 +333,22 @@ export const LoadMoreTrigger = React.forwardRef<
 /**
  * Props for ProductList Totals Displayed component
  */
-export interface TotalsDisplayedProps
-  extends AsChildProps<{ displayedProducts: number }> {}
+export interface TotalsDisplayedProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLElement,
+        {
+          displayedProducts: number;
+        }
+      >
+    | React.ForwardRefExoticComponent<any>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the number of products currently displayed.
@@ -369,26 +376,18 @@ export const TotalsDisplayed = React.forwardRef<
   const products = productsListService.products.get();
   const displayedProducts = products.length;
 
-  const attributes = {
-    'data-testid': TestIds.productListTotalsDisplayed,
-    'data-displayed': displayedProducts,
-    className,
-  };
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { displayedProducts },
-      ref,
-      content: displayedProducts.toString(),
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
-
   return (
-    <span {...attributes} ref={ref as React.Ref<HTMLSpanElement>}>
-      {displayedProducts}
-    </span>
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.productListTotalsDisplayed}
+      data-displayed={displayedProducts}
+      customElement={children}
+      customElementProps={{ displayedProducts }}
+      content={displayedProducts}
+    >
+      <span>{displayedProducts}</span>
+    </AsChildSlot>
   );
 });

@@ -195,7 +195,7 @@ describe('Product Components', () => {
     it('should render with asChild using React element', () => {
       render(
         <Product.Name asChild>
-          <h1 className="title-class">Custom title</h1>
+          <h1 className="title-class"></h1>
         </Product.Name>,
       );
 
@@ -218,7 +218,6 @@ describe('Product Components', () => {
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
           name: 'Test Product Name',
-          'data-testid': 'product-name',
         }),
         expect.any(Object),
       );
@@ -307,7 +306,6 @@ describe('Product Components', () => {
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
           description: 'Plain HTML description',
-          'data-testid': 'product-description',
         }),
         expect.any(Object),
       );
@@ -397,8 +395,6 @@ describe('Product Components', () => {
         expect.objectContaining({
           price: '$29.99',
           formattedPrice: '$29.99',
-          'data-testid': 'product-price',
-          'data-discounted': true,
         }),
         expect.any(Object),
       );
@@ -488,8 +484,6 @@ describe('Product Components', () => {
         expect.objectContaining({
           price: '$39.99',
           formattedPrice: '$39.99',
-          'data-testid': 'product-compare-at-price',
-          'data-discounted': true,
         }),
         expect.any(Object),
       );
@@ -590,33 +584,6 @@ describe('Product Components', () => {
       expect(variantsElement).toBeInTheDocument();
       expect(variantsElement.tagName).toBe('SECTION');
       expect(variantsElement).toHaveClass('custom-variants');
-    });
-
-    it('should render with asChild using render function', () => {
-      const renderFunction = vi.fn((props, ref) => (
-        <div
-          ref={ref}
-          data-testid="custom-variants"
-          className="function-variants"
-        >
-          Has options: {props.hasOptions.toString()}
-          {(props as any).children}
-        </div>
-      ));
-
-      render(<Product.Variants asChild>{renderFunction}</Product.Variants>);
-
-      expect(renderFunction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          hasOptions: true,
-          'data-testid': 'product-variants',
-        }),
-        expect.any(Object),
-      );
-
-      const customElement = screen.getByTestId('custom-variants');
-      expect(customElement).toBeInTheDocument();
-      expect(customElement).toHaveTextContent('Has options: true');
     });
 
     it('should have correct data attributes', () => {
@@ -838,33 +805,6 @@ describe('Product Components', () => {
       expect(modifiersElement).toBeInTheDocument();
       expect(modifiersElement.tagName).toBe('SECTION');
       expect(modifiersElement).toHaveClass('custom-modifiers');
-    });
-
-    it('should render with asChild using render function', () => {
-      const renderFunction = vi.fn((props, ref) => (
-        <div
-          ref={ref}
-          data-testid="custom-modifiers"
-          className="function-modifiers"
-        >
-          Has modifiers: {props.hasModifiers.toString()}
-          {(props as any).children}
-        </div>
-      ));
-
-      render(<Product.Modifiers asChild>{renderFunction}</Product.Modifiers>);
-
-      expect(renderFunction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          hasModifiers: true,
-          'data-testid': 'product-modifiers',
-        }),
-        expect.any(Object),
-      );
-
-      const customElement = screen.getByTestId('custom-modifiers');
-      expect(customElement).toBeInTheDocument();
-      expect(customElement).toHaveTextContent('Has modifiers: true');
     });
 
     it('should have correct data attributes', () => {

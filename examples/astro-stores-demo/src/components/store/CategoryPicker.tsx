@@ -31,9 +31,8 @@ export function CategoryPicker({
               asChild
               onSelect={category => onCategorySelect(category)}
             >
-              {({ category, isSelected, onSelect, ...props }, ref) => (
+              {({ category }) => (
                 <button
-                  ref={ref}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                     currentCategorySlug === category.slug
                       ? 'text-content-primary shadow-lg transform scale-105 btn-primary'
