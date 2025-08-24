@@ -7,7 +7,7 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import * as Product from './Product.js';
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -327,15 +327,9 @@ export interface TotalsDisplayedProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          displayedProducts: number;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    displayedProducts: number;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
-  productPageRoute: string;
+  productPageRoute?: string;
 }
 
 export const ProductGridContent = ({

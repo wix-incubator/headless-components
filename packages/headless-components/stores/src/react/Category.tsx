@@ -6,7 +6,7 @@ import {
   CategoryServiceDefinition,
 } from '../services/category-service.js';
 import { useService } from '@wix/services-manager-react';
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
 enum TestIds {
   categoryItem = 'category-item',
@@ -37,17 +37,12 @@ export interface CategoryTriggerProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLButtonElement,
-        {
-          category: Category;
-          isSelected: boolean;
-          onSelect: () => void;
-          setIsSelected: (isSelected: boolean) => void;
-        }
-      >;
+  children?: AsChildChildren<{
+    category: Category;
+    isSelected: boolean;
+    onSelect: () => void;
+    setIsSelected: (isSelected: boolean) => void;
+  }>;
   /** Callback when category is selected */
   onSelect?: (category: Category) => void;
   /** CSS classes to apply to the default element */
@@ -61,15 +56,10 @@ export interface CategoryLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          name: string;
-          category: Category;
-        }
-      >;
+  children?: AsChildChildren<{
+    name: string;
+    category: Category;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -81,15 +71,10 @@ export interface CategoryIDProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          id: string;
-          category: Category;
-        }
-      >;
+  children?: AsChildChildren<{
+    id: string;
+    category: Category;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -101,15 +86,10 @@ export interface CategoryRawProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          category: Category;
-          isSelected: boolean;
-        }
-      >;
+  children?: AsChildChildren<{
+    category: Category;
+    isSelected: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
