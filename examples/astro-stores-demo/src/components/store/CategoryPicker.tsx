@@ -33,7 +33,7 @@ export function CategoryPicker({
                 >
                   {({ category }) => (
                     <button
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${selectedCategory.slug === category.slug
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${selectedCategory?.slug === category.slug
                           ? 'text-content-primary shadow-lg transform scale-105 btn-primary'
                           : 'bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary'
                         }`}
