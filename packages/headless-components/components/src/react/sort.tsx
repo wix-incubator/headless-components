@@ -45,12 +45,13 @@
  * @module Sort
  */
 
-import React, { createContext, useContext } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import React, { createContext, useContext } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 /**
  * Props for button-like components that support the asChild pattern
  */
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
 }
@@ -97,8 +98,8 @@ interface SortOptionRenderable {
  * TestIds enum for Sort components
  */
 enum TestIds {
-  sortRoot = "sort-root",
-  sortOption = "sort-option",
+  sortRoot = 'sort-root',
+  sortOption = 'sort-option',
 }
 
 // ============================================================================
@@ -115,7 +116,7 @@ const SortContext = createContext<SortContextValue | null>(null);
 function useSortContext(): SortContextValue {
   const context = useContext(SortContext);
   if (!context) {
-    throw new Error("useSortContext must be used within a Sort.Root component");
+    throw new Error('useSortContext must be used within a Sort.Root component');
   }
   return context;
 }
@@ -127,7 +128,8 @@ function useSortContext(): SortContextValue {
 /**
  * Props for the Root component
  */
-export interface SortRootProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface SortRootProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** Predefined sort options for declarative API */
   sortOptions?: Array<{
     label: string;
@@ -165,7 +167,8 @@ export interface SortOptionProps {
 /**
  * Internal component for rendering native HTML select element
  */
-interface SelectRendererProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
+interface SelectRendererProps
+  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
   currentSort: { fieldName: string; order: string };
   options: SortOptionRenderable[];
   onChange: (fieldName: string, order: string) => void;
@@ -196,10 +199,10 @@ const SelectRenderer = React.forwardRef<HTMLSelectElement, SelectRendererProps>(
         ))}
       </select>
     );
-  }
+  },
 );
 
-SelectRenderer.displayName = "Sort.SelectRenderer";
+SelectRenderer.displayName = 'Sort.SelectRenderer';
 
 /**
  * Root component that provides sort context and can render as select or custom controls.
@@ -246,12 +249,19 @@ SelectRenderer.displayName = "Sort.SelectRenderer";
  * ```
  */
 // Helper function to get current sort from array or default to first option
-const getCurrentSort = (sortArray: SortValue | undefined, fallbackOptions: Array<{ fieldName: string; order: 'ASC' | 'DESC'; label?: string }>): { fieldName: string; order: string } => {
-  const currentSort = sortArray?.find(sort => sort) || fallbackOptions[0];
+const getCurrentSort = (
+  sortArray: SortValue | undefined,
+  fallbackOptions: Array<{
+    fieldName: string;
+    order: 'ASC' | 'DESC';
+    label?: string;
+  }>,
+): { fieldName: string; order: string } => {
+  const currentSort = sortArray?.find((sort) => sort) || fallbackOptions[0];
 
   return {
     fieldName: currentSort?.fieldName || 'name',
-    order: currentSort?.order || 'ASC'
+    order: currentSort?.order || 'ASC',
   };
 };
 
@@ -280,7 +290,7 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
 
     if (sortOptions.length > 0) {
       // Use sortOptions prop (declarative API)
-      completeOptions = sortOptions.map(option => {
+      completeOptions = sortOptions.map((option) => {
         return {
           fieldName: option.fieldName,
           label: option.label,
@@ -293,8 +303,11 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
       React.Children.forEach(children, (child) => {
         if (React.isValidElement(child)) {
           // Check if it's the primitive Option or a styled wrapper containing it
-          const isOption = child.type === Option ||
-            (child.type && typeof child.type === 'function' && child.props?.fieldName !== undefined);
+          const isOption =
+            child.type === Option ||
+            (child.type &&
+              typeof child.type === 'function' &&
+              child.props?.fieldName !== undefined);
 
           if (isOption) {
             const { fieldName, order, label } = child.props;
@@ -351,12 +364,10 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
 
     return (
       <SortContext.Provider value={contextValue}>
-        <Comp {...compProps}>
-          {children}
-        </Comp>
+        <Comp {...compProps}>{children}</Comp>
       </SortContext.Provider>
     );
-  }
+  },
 );
 
 /**
@@ -413,7 +424,8 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
       onChange([{ fieldName: targetFieldName, order: targetOrder }]);
     };
 
-    const isSelected = (!fieldName || currentSort.fieldName === fieldName) &&
+    const isSelected =
+      (!fieldName || currentSort.fieldName === fieldName) &&
       (!order || currentSort.order === order);
 
     // When used in list mode (ul parent), render as li > button
@@ -450,7 +462,7 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
         </button>
       </li>
     );
-  }
+  },
 );
 
 // ============================================================================
@@ -458,5 +470,5 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
 // ============================================================================
 
 // Set display names for debugging
-Root.displayName = "Sort.Root";
-Option.displayName = "Sort.Option";
+Root.displayName = 'Sort.Root';
+Option.displayName = 'Sort.Option';
