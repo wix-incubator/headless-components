@@ -624,7 +624,6 @@ describe('Product Components', () => {
             hasOptions: false,
             options: [],
             selectedChoices: {},
-            selectedChoices: {},
           }),
       );
 
@@ -700,7 +699,6 @@ describe('Product Components', () => {
           children({
             hasOptions: false,
             options: [],
-            selectedChoices: {},
             selectedChoices: {},
           }),
       );
