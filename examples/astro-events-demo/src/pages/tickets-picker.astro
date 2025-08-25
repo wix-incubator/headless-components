@@ -1,5 +1,5 @@
 ---
-import { loadEventListServiceConfig, loadTicketListServiceConfig } from '@wix/headless-events/services';
+import { loadEventListServiceConfig, loadTicketListServiceConfig, loadEventServiceConfig } from '@wix/headless-events/services';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TicketsPickerPage from '../react-pages/tickets-picker';
 
@@ -8,7 +8,9 @@ const eventListServiceConfig = await loadEventListServiceConfig();
 const firstEventId = eventListServiceConfig.events[0]?._id;
 
 let ticketsServiceConfig = { ticketDefinitions: [] };
+let eventServiceConfig = null;
 if (firstEventId) {
+  eventServiceConfig = await loadEventServiceConfig(firstEventId);
   ticketsServiceConfig = await loadTicketListServiceConfig(firstEventId);
 }
 ---
@@ -21,5 +23,6 @@ if (firstEventId) {
     client:load
     slot="body"
     ticketsServiceConfig={ticketsServiceConfig}
+    eventServiceConfig={eventServiceConfig}
   />
 </BaseLayout>

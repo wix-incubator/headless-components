@@ -7,10 +7,13 @@ import {
   type TicketListServiceConfig,
 } from '../services/ticket-list-service.js';
 import * as TicketDefinition from './TicketDefinition.js';
+import { EventServiceDefinition, EventService, type EventServiceConfig   } from '../services/event-service.js';
+import { CheckoutServiceDefinition, CheckoutService, type TicketQuantity } from '../services/checkout-service.js';
 
 enum TestIds {
   ticketListTickets = 'ticket-list-tickets',
   ticketListTicket = 'ticket-list-ticket',
+  ticketListCheckout = 'ticket-list-checkout',
 }
 
 /**
@@ -19,6 +22,7 @@ enum TestIds {
 export interface RootProps {
   ticketsServiceConfig: TicketListServiceConfig;
   initialSelectedQuantities?: Record<string, number>;
+  eventServiceConfig: EventServiceConfig;
   children: React.ReactNode;
 }
 
@@ -45,17 +49,17 @@ export interface RootProps {
  * ```
  */
 export const Root = (props: RootProps): React.ReactNode => {
-  const { ticketsServiceConfig, initialSelectedQuantities, children } = props;
+  const { ticketsServiceConfig, eventServiceConfig, initialSelectedQuantities, children } = props;
 
   const config = { ...ticketsServiceConfig, initialSelectedQuantities };
 
   return (
     <WixServices
-      servicesMap={createServicesMap().addService(
-        TicketListServiceDefinition,
-        TicketListService,
-        config,
-      )}
+      servicesMap={createServicesMap()
+        .addService(EventServiceDefinition, EventService, eventServiceConfig)
+        .addService(TicketListServiceDefinition, TicketListService, config)
+        .addService(CheckoutServiceDefinition, CheckoutService, {})
+      }
     >
       {children}
     </WixServices>
@@ -137,6 +141,7 @@ export const TicketDefinitionRepeater = (props: TicketDefinitionRepeaterProps): 
   const { children } = props;
 
   const service = useService(TicketListServiceDefinition);
+  const eventService = useService(EventServiceDefinition);
   const ticketDefinitions = service.ticketDefinitions.get();
   const hasTickets = !!ticketDefinitions.length;
 
@@ -157,4 +162,89 @@ export const TicketDefinitionRepeater = (props: TicketDefinitionRepeaterProps): 
       ))}
     </>
   );
+};
+
+/**
+ * Props passed to the render function of the Checkout component
+ */
+export interface CheckoutRenderProps {
+  /** Whether the checkout operation is currently loading */
+  isLoading: boolean;
+  /** Error message if any (including no tickets selected) */
+  error: string | null;
+  /** Function to trigger the checkout */
+  checkout: () => Promise<void>;
+  /** Whether any tickets are selected */
+  hasSelectedTickets: boolean;
+}
+
+/**
+ * Props for the Checkout component
+ */
+export interface CheckoutProps {
+  /** Render function that receives checkout state and actions */
+  children: (props: CheckoutRenderProps) => React.ReactNode;
+  /** Custom error message when no tickets are selected */
+  noTicketsErrorMessage?: string;
+}
+
+/**
+ * Headless component providing checkout functionality for selected tickets.
+ * Uses render props to allow custom UI.
+ * Shows error if attempting checkout with no tickets selected.
+ *
+ * @component
+ * @example
+ * <TicketsPicker.Checkout noTicketsErrorMessage="Select tickets first">
+ *   {({ isLoading, error, checkout, hasSelectedTickets }) => (
+ *     <div>
+ *       {error && <div className="error">{error}</div>}
+ *       <button
+ *         onClick={checkout}
+ *         disabled={isLoading || !hasSelectedTickets}
+ *       >
+ *         {isLoading ? 'Processing...' : 'Checkout'}
+ *       </button>
+ *     </div>
+ *   )}
+ * </TicketsPicker.Checkout>
+ */
+export const Checkout = (props: CheckoutProps): React.ReactNode => {
+  const { children, noTicketsErrorMessage = 'Please select at least one ticket' } = props;
+
+  const ticketService = useService(TicketListServiceDefinition);
+  const eventService = useService(EventServiceDefinition);
+  const checkoutService = useService(CheckoutServiceDefinition);
+  console.log(eventService);
+
+  const event = eventService.event.get();
+  console.log({asl: event});
+  const selectedQuantities = ticketService.selectedQuantities.get();
+
+  const ticketQuantities: TicketQuantity[] = Object.entries(selectedQuantities)
+    .filter(([_, qty]) => qty > 0)
+    .map(([id, quantity]) => ({ ticketDefinitionId: id, quantity }));
+
+  const hasSelectedTickets = ticketQuantities.length > 0;
+
+  const [localError, setLocalError] = React.useState<string | null>(null);
+
+  const onCheckout = async () => {
+    if (!hasSelectedTickets) {
+      setLocalError(noTicketsErrorMessage);
+      return;
+    }
+
+    setLocalError(null);
+    await checkoutService.createCheckout(event._id!, event.slug!, ticketQuantities);
+  };
+
+  const error = localError || checkoutService.error.get();
+
+  return children({
+    isLoading: checkoutService.isLoading.get(),
+    error,
+    checkout: onCheckout,
+    hasSelectedTickets,
+  });
 };

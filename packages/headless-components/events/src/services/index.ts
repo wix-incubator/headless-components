@@ -8,6 +8,7 @@ export {
 export {
   EventService,
   EventServiceDefinition,
+  loadEventServiceConfig,
   type EventServiceAPI,
   type EventServiceConfig,
 } from './event-service.js';
