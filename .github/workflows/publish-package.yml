@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       package_name:
-        description: "Package name to publish (e.g., stores)"
+        description: "Package name to publish (e.g., stores, components, ecom)"
         required: true
         type: string
         default: "stores"
@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,12 +28,22 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build headless components
+      - name: Build packages
         run: yarn build:headless-components
 
-      - name: Publish to npm
+      - name: Publish specific package with dependencies
         run: |
-          cd packages/headless-components/${{ inputs.package_name }}
-          npm publish --access public
+          # Create a temporary changeset for the specific package
+          cat > .changeset/temp-release.md << EOF
+          ---
+          "@wix/headless-${{ inputs.package_name }}": patch
+          ---
+
+          Manual release of ${{ inputs.package_name }}
+          EOF
+
+          # Version and publish
+          yarn changeset version
+          yarn changeset publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
