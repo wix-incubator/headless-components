@@ -74,6 +74,12 @@ function buildSearchFilterData(
           ? name.toLowerCase()
           : name;
       },
+      valueBgColorFormatter: (value: string | number) => {
+        const choice = option.choices.find(
+          (c: ProductChoice) => c.id === value,
+        );
+        return choice?.colorCode || null;
+      },
     })),
 
     // Inventory status - use actual search field name

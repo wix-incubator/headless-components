@@ -1,5 +1,37 @@
 import React from 'react';
-import { renderChildren } from '../utils/asChild.js';
+
+/**
+ * Utility function to handle children rendering.
+ * TODO - use AsChildSlot instead
+ */
+function renderChildren<THTMLElement = HTMLElement, TProps = any>({
+  children,
+  props,
+  ref,
+}: {
+  children:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<THTMLElement, TProps>
+    | undefined;
+  props: TProps;
+  ref: React.Ref<THTMLElement>;
+}): React.ReactNode | null {
+  // Early return if no children provided
+  if (!children) return null;
+
+  // Handle React element pattern
+  if (React.isValidElement(children)) {
+    return children;
+  }
+
+  // Handle render function pattern
+  if (typeof children === 'function') {
+    return children(props, ref);
+  }
+
+  // Fallback for unknown patterns
+  return children;
+}
 
 enum TestIds {
   quantityRoot = 'quantity-root',
