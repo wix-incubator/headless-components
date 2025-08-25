@@ -33,7 +33,7 @@ interface RootProps {
 
 ### EventList.Events
 
-Container for the event list with support for empty state and custom layout.
+Container for the event list with support for empty state.
 
 **Props**
 
@@ -42,35 +42,17 @@ interface EventsProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
   className?: string;
-  infiniteScroll?: boolean; // Default: true
-  pageSize?: number; // 0 means no limit, max is 100
 }
 ```
 
 **Example**
 
 ```tsx
-// Show 3 events
 <EventList.Events
   emptyState={<div>No events found</div>}
   className="grid grid-cols-1 md:grid-cols-3 gap-4"
-  infiniteScroll={false}
-  pageSize={3}
 >
-  <EventList.EventRepeater>
-    {/* Event template */}
-  </EventList.EventRepeater>
-</EventList.Events>
-
-// Show all events with infinite scroll
-<EventList.Events
-  emptyState={<div>No events found</div>}
-  className="grid grid-cols-1 md:grid-cols-3 gap-4"
-  infiniteScroll
->
-  <EventList.EventRepeater>
-    {/* Event template */}
-  </EventList.EventRepeater>
+  <EventList.EventRepeater>{/* Event template */}</EventList.EventRepeater>
 </EventList.Events>
 ```
 
@@ -110,7 +92,7 @@ interface EventRepeaterProps {
 
 ### EventList.LoadMoreTrigger
 
-Displays a button to load more events. Not rendered if infiniteScroll is false or no events are left to load.
+Displays a button to load more events. Not rendered if no events are left to load.
 
 **Props**
 
@@ -234,61 +216,6 @@ function EventGrid() {
 }
 ```
 
-### Limited Event List (No Infinite Scroll)
-
-```tsx
-function FeaturedEvents() {
-  return (
-    <EventList.Root eventListServiceConfig={eventListServiceConfig}>
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6">Featured Events</h2>
-
-        <EventList.Events
-          className="space-y-4"
-          infiniteScroll={false}
-          pageSize={3}
-          emptyState={
-            <p className="text-gray-500 text-center py-8">
-              No featured events at the moment.
-            </p>
-          }
-        >
-          <EventList.EventRepeater>
-            <div className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-              <Event.Image
-                width={80}
-                height={80}
-                className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
-              />
-
-              <div className="flex-1 min-w-0">
-                <Event.Title className="font-medium text-lg mb-1 truncate" />
-                <Event.Date
-                  format="full"
-                  className="text-sm text-gray-500 mb-1"
-                />
-                <Event.Location
-                  format="short"
-                  className="text-sm text-gray-500"
-                />
-              </div>
-
-              <Event.RsvpButton className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex-shrink-0">
-                Join
-              </Event.RsvpButton>
-            </div>
-          </EventList.EventRepeater>
-        </EventList.Events>
-
-        <EventList.Error className="text-red-600 text-center py-4 bg-red-50 rounded-lg mt-4">
-          Unable to load featured events.
-        </EventList.Error>
-      </div>
-    </EventList.Root>
-  );
-}
-```
-
 ### Event List with Custom Load More Button
 
 ```tsx
@@ -389,8 +316,6 @@ function MinimalEventList() {
     <EventList.Root eventListServiceConfig={eventListServiceConfig}>
       <EventList.Events
         className="divide-y divide-gray-200"
-        infiniteScroll={false}
-        pageSize={5}
         emptyState={<p className="text-gray-500 py-4">No events available.</p>}
       >
         <EventList.EventRepeater>
