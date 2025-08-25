@@ -313,7 +313,6 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
 
     // Handle change events - create Wix SDK array format
     const handleChange = (fieldName?: string, order?: string) => {
-      debugger;
       onChange([
         {
           fieldName: fieldName || currentValue?.fieldName,
