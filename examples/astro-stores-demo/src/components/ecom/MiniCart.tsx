@@ -2,10 +2,11 @@ import { useState } from 'react';
 import {
   Cart,
   LineItem,
-  SelectedOption,
   Quantity,
+  SelectedOption,
   Commerce,
 } from '@wix/headless-ecom/react';
+
 import { useMiniCartModal } from '../MiniCartModal';
 
 // Mini coupon form for the cart sidebar

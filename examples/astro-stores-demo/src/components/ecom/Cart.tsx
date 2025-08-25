@@ -1,8 +1,8 @@
 import {
   Cart,
   LineItem,
-  Quantity,
   SelectedOption,
+  Quantity,
   Commerce,
 } from '@wix/headless-ecom/react';
 import React from 'react';
