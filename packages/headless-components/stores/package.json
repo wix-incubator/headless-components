@@ -63,9 +63,9 @@
     "@wix/ecom": "^1.0.1278",
     "@wix/essentials": "^0.1.24",
     "@wix/headless-components": "workspace:*",
-    "@wix/headless-ecom": "0.0.17",
-    "@wix/headless-media": "^0.0.11",
-    "@wix/headless-utils": "^0.0.2",
+    "@wix/headless-ecom": "workspace:*",
+    "@wix/headless-media": "workspace:*",
+    "@wix/headless-utils": "workspace:*",
     "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"

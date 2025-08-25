@@ -46,7 +46,7 @@
     "@wix/auto_sdk_ecom_checkout": "^1.0.61",
     "@wix/auto_sdk_ecom_current-cart": "^1.0.56",
     "@wix/headless-components": "workspace:*",
-    "@wix/headless-media": "^0.0.11",
+    "@wix/headless-media": "workspace:*",
     "@wix/redirects": "^1.0.0",
     "@wix/sdk": "^1.15.24",
     "@wix/services-definitions": "^0.1.4",
