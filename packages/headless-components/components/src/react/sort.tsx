@@ -68,7 +68,6 @@ export type SortValue = Array<{
   order?: string; // Wix SDK format (typically 'ASC'/'DESC')
 }>;
 
-
 interface SortFieldOption {
   fieldName: string;
   label: string;
@@ -185,15 +184,21 @@ const SelectRenderer = React.forwardRef<HTMLSelectElement, SelectRendererProps>(
     const { currentSort, options, onChange, ...otherProps } = props;
 
     const toStringValue = (fieldName?: string, order?: string) => {
-      return `${fieldName ?? ''}-${order ?? '' }`;
-    }
+      return `${fieldName ?? ''}-${order ?? ''}`;
+    };
 
     const fromStringValue = (value: string) => {
       const [fieldName, order] = value.split('-');
-      return { fieldName: fieldName === '' ? undefined : fieldName, order: order === '' ? undefined : order };
-    }
+      return {
+        fieldName: fieldName === '' ? undefined : fieldName,
+        order: order === '' ? undefined : order,
+      };
+    };
 
-    const currentValue = toStringValue(currentSort?.fieldName, currentSort?.order);
+    const currentValue = toStringValue(
+      currentSort?.fieldName,
+      currentSort?.order,
+    );
 
     return (
       <select
@@ -273,7 +278,10 @@ const getCurrentSort = (
 
   const mostSimillarOption = options.find((option) => {
     if ('fieldName' in option && 'order' in option) {
-      return option.fieldName === currentSort?.fieldName && option.order === currentSort?.order;
+      return (
+        option.fieldName === currentSort?.fieldName &&
+        option.order === currentSort?.order
+      );
     }
     if ('fieldName' in option) {
       return option.fieldName === currentSort?.fieldName;
@@ -306,7 +314,12 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
     // Handle change events - create Wix SDK array format
     const handleChange = (fieldName?: string, order?: string) => {
       debugger;
-      onChange([{ fieldName: fieldName || currentValue?.fieldName, order: order || currentValue?.order }]);
+      onChange([
+        {
+          fieldName: fieldName || currentValue?.fieldName,
+          order: order || currentValue?.order,
+        },
+      ]);
     };
 
     // Use EITHER sortOptions prop OR extract from children - not both
