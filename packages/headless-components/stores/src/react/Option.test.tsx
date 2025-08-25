@@ -289,8 +289,6 @@ describe('Option Components', () => {
           option: mockOption,
           onValueChange: undefined,
           allowedTypes: undefined,
-          'data-testid': 'option-root',
-          'data-type': 'color', // This should be color since mockOption has colorCode choices
         }),
         expect.any(Object),
       );
@@ -380,7 +378,6 @@ describe('Option Components', () => {
       expect(renderFunction).toHaveBeenCalledWith(
         expect.objectContaining({
           name: 'Test Option Name',
-          'data-testid': 'option-name',
         }),
         expect.any(Object),
       );

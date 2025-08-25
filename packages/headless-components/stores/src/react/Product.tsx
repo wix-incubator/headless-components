@@ -561,15 +561,9 @@ export interface RibbonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          ribbon: string | null;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    ribbon: string | null;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -636,16 +630,10 @@ export interface StockProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          status: 'in-stock' | 'limited-stock' | 'out-of-stock';
-          label: string;
-        }
-      >
-    | React.ForwardRefExoticComponent<any>;
+  children?: AsChildChildren<{
+    status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+    label: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Custom labels for different stock states */
