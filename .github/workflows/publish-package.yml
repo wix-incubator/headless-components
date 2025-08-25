@@ -33,19 +33,8 @@ jobs:
 
       - name: Publish specific package with dependencies
         run: |
-          # Create a temporary changeset for the specific package
-          cat > .changeset/temp-release.md << EOF
-          ---
-          "@wix/headless-${{ inputs.package_name }}": patch
-          ---
-
-          Manual release of ${{ inputs.package_name }}
-          EOF
-
-          # Version and publish
-          #yarn changeset version
-          #yarn changeset publish
           cd packages/headless-components/${{ inputs.package_name }}
           yarn npm publish --access public
+          echo "Published ${{ inputs.package_name }}"
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

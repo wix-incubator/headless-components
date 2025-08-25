@@ -17,13 +17,9 @@
     "syncpack": "syncpack",
     "test:headless-components": "turbo run test --filter=\"./packages/headless-components/*\" -- run",
     "lint:headless-components": "turbo run lint:fix --filter=\"./packages/headless-components/*\"",
-    "lint:check:headless-components": "turbo run lint:check --filter=\"./packages/headless-components/*\"",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "turbo build && changeset publish"
+    "lint:check:headless-components": "turbo run lint:check --filter=\"./packages/headless-components/*\""
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.6",
     "astro": "^5.9.0",
     "knip": "^5.43.6",
     "lefthook": "^1.1.1",
