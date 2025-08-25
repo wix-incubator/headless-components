@@ -43,7 +43,9 @@ jobs:
           EOF
 
           # Version and publish
-          yarn changeset version
-          yarn changeset publish
+          #yarn changeset version
+          #yarn changeset publish
+          cd packages/headless-components/${{ inputs.package_name }}
+          yarn npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
