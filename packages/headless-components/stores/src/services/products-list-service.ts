@@ -500,7 +500,7 @@ export const ProductListService =
             cursor: pagingMetadataSignal.get().cursors?.next,
             limit: DEFAULT_QUERY_LIMIT || count,
           },
-        }
+        };
 
         try {
           isLoadingSignal.set(true);
@@ -653,7 +653,7 @@ function getAvailableProductOptions(
         customization.name &&
         customization._id &&
         customization.customizationType ===
-        customizationsV3.CustomizationType.PRODUCT_OPTION &&
+          customizationsV3.CustomizationType.PRODUCT_OPTION &&
         (optionNames.length === 0 ||
           matchesAggregationName(customization.name, optionNames)),
     )
@@ -913,7 +913,7 @@ export async function parseUrlToSearchOptions(
       (c) =>
         c.name === optionName &&
         c.customizationType ===
-        customizationsV3.CustomizationType.PRODUCT_OPTION,
+          customizationsV3.CustomizationType.PRODUCT_OPTION,
     );
 
     if (option && option._id) {
@@ -1107,7 +1107,7 @@ function updateUrlWithSearchState(searchState: {
   for (const customization of customizations) {
     if (
       customization.customizationType ===
-      customizationsV3.CustomizationType.PRODUCT_OPTION &&
+        customizationsV3.CustomizationType.PRODUCT_OPTION &&
       customization.name
     ) {
       params.delete(customization.name);
