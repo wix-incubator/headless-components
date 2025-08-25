@@ -3119,7 +3119,6 @@ __metadata:
     "@wix/categories": "npm:^1.0.133"
     "@wix/cli": "npm:^1.1.95"
     "@wix/ecom": "npm:^1.0.1278"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-ecom": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-seo": "workspace:*"
@@ -4160,7 +4159,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-components@workspace:*, @wix/headless-components@workspace:packages/headless-components/components":
+"@wix/headless-components@workspace:packages/headless-components/components":
   version: 0.0.0-use.local
   resolution: "@wix/headless-components@workspace:packages/headless-components/components"
   dependencies:

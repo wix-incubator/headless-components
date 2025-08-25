@@ -2,11 +2,10 @@ import { useState } from 'react';
 import {
   Cart,
   LineItem,
+  Quantity,
   SelectedOption,
   Commerce,
 } from '@wix/headless-ecom/react';
-
-import { Quantity } from '@wix/headless-components/react';
 
 import { useMiniCartModal } from '../MiniCartModal';
 

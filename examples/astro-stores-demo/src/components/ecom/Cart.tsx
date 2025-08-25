@@ -2,11 +2,10 @@ import {
   Cart,
   LineItem,
   SelectedOption,
+  Quantity,
   Commerce,
 } from '@wix/headless-ecom/react';
 import React from 'react';
-
-import { Quantity } from '@wix/headless-components/react';
 
 export default function CartContent() {
   return (
