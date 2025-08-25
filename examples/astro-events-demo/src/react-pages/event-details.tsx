@@ -1,21 +1,24 @@
 import '../styles/theme-1.css';
 import { type TicketListServiceConfig, type EventServiceConfig } from '@wix/headless-events/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
-import { TicketsPicker } from '../components/events/TicketsPicker';
+import { EventDetails } from '../components/events/EventDetails';
 
-interface TicketsPickerPageProps {
+interface EventDetailsPageProps {
   ticketsServiceConfig: TicketListServiceConfig;
   eventServiceConfig: EventServiceConfig;
 }
 
-export default function TicketsPickerPage({
+export default function EventDetailsPage({
   ticketsServiceConfig,
   eventServiceConfig,
-}: TicketsPickerPageProps) {
+}: EventDetailsPageProps) {
   return (
     <KitchensinkLayout>
       <div className="max-w-7xl mx-auto">
-        <TicketsPicker ticketsServiceConfig={ticketsServiceConfig} eventServiceConfig={eventServiceConfig} />
+        <EventDetails
+          ticketsServiceConfig={ticketsServiceConfig}
+          eventServiceConfig={eventServiceConfig}
+        />
       </div>
     </KitchensinkLayout>
   );

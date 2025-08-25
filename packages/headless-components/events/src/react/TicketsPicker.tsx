@@ -214,10 +214,8 @@ export const Checkout = (props: CheckoutProps): React.ReactNode => {
   const ticketService = useService(TicketListServiceDefinition);
   const eventService = useService(EventServiceDefinition);
   const checkoutService = useService(CheckoutServiceDefinition);
-  console.log(eventService);
 
   const event = eventService.event.get();
-  console.log({asl: event});
   const selectedQuantities = ticketService.selectedQuantities.get();
 
   const ticketQuantities: TicketQuantity[] = Object.entries(selectedQuantities)

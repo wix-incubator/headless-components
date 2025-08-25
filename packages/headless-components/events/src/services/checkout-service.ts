@@ -84,8 +84,6 @@ export const CheckoutService =
           error.set(
             err instanceof Error ? err.message : 'Failed to create checkout',
           );
-        } finally {
-          isLoading.set(false);
         }
       };
 
