@@ -29,11 +29,6 @@ export const ProductListSort = (props: ProductListSortProps) => {
       order: 'DESC' as const,
       label: 'Price: High to Low',
     },
-    {
-      fieldName: 'name',
-      order: 'DESC' as const,
-      label: 'Latest Arrivals',
-    },
   ];
 
   return props.children({
@@ -44,3 +39,39 @@ export const ProductListSort = (props: ProductListSortProps) => {
     },
   });
 };
+
+export interface ProductListSeperateSortProps {
+  children: (props: {
+    currentSort: productsV3.V3ProductSearch['sort'];
+    sortFieldOptions: SortPrimitive.SortOption[];
+    sortOrderOptions: SortPrimitive.SortOption[];
+    setSort: (sort: productsV3.V3ProductSearch['sort']) => void;
+  }) => React.ReactNode;
+}
+export function ProductListSeperateSort(props: ProductListSeperateSortProps) {
+  const productListService = useService(ProductsListServiceDefinition);
+  const currentSort = productListService.searchOptions.get().sort;
+
+  // Define sort options - primitive handles all conversion logic
+  const sortFieldOptions = [
+    { fieldName: 'name', label: 'Name' },
+    {
+      fieldName: 'actualPriceRange.minValue.amount',
+      label: 'Price',
+    },
+  ];
+
+  const sortOrderOptions = [
+    { order: 'ASC' as const, label: 'Ascending' },
+    { order: 'DESC' as const, label: 'Descending' },
+  ];
+
+  return props.children({
+    currentSort,
+    sortFieldOptions,
+    sortOrderOptions,
+    setSort: (sort: productsV3.V3ProductSearch['sort']) => {
+      productListService.setSort(sort);
+    },
+  });
+}

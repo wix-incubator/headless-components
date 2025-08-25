@@ -42,6 +42,37 @@ export const StyledProductListSort = (props: StyledProductListSortProps) => {
   )
 }
 
+export interface StyledProductListSortSplitProps {
+  /** Additional CSS classes */
+  className?: string;
+  as?: "select" | "list";
+  children?: ProductListSortPrimitive.ProductListSeperateSortProps["children"]
+}
+export const StyledProductListSortSplit = (props: StyledProductListSortSplitProps) => {
+  return (
+    <ProductListSortPrimitive.ProductListSeperateSort>
+      {({ currentSort, sortFieldOptions, sortOrderOptions, setSort }) => (
+        <>
+          <Root
+            value={currentSort}
+            onChange={setSort as (value: SortValue) => void}
+            sortOptions={sortFieldOptions}
+            as={props.as}
+            className={props.className}
+          />
+          <Root
+            value={currentSort}
+            onChange={setSort as (value: SortValue) => void}
+            sortOptions={sortOrderOptions}
+            as={props.as}
+            className={props.className}
+          />
+        </>
+      )}
+    </ProductListSortPrimitive.ProductListSeperateSort>
+  )
+}
+
 
 // Styled Root component - pure styling wrapper, no logic
 export const Root: React.FC<SortRootProps> = (props) => {
