@@ -4,7 +4,7 @@ import { renderAsChild } from '../utils/asChild.js';
 import { WixMediaImage } from '@wix/headless-media/react';
 import * as SelectedOption from './SelectedOption.js';
 import { Item as CoreItem } from './core/CurrentCart.js';
-import * as QuantityComponent from './Quantity.js';
+import { Quantity as QuantityComponent } from '@wix/headless-components/react';
 
 // LineItem Context
 interface LineItemContextValue {
