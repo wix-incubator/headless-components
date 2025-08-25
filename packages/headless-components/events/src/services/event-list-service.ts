@@ -99,7 +99,10 @@ export async function loadEventListServiceConfig(): Promise<EventListServiceConf
 const queryEvents = async (offset = 0) => {
   const queryEventsResult = await wixEventsV2
     .queryEvents({
-      fields: [wixEventsV2.RequestedFields.DETAILS],
+      fields: [
+        wixEventsV2.RequestedFields.DETAILS,
+        wixEventsV2.RequestedFields.TEXTS,
+      ],
     })
     .ascending('dateAndTimeSettings.startDate')
     .descending('_createdDate')

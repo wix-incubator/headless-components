@@ -1,5 +1,28 @@
 import { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import {
+  LinkPreviewProviders,
+  RichContent,
+  RicosViewer,
+  pluginAudioViewer,
+  pluginCodeBlockViewer,
+  pluginCollapsibleListViewer,
+  pluginDividerViewer,
+  pluginEmojiViewer,
+  pluginFileUploadViewer,
+  pluginGalleryViewer,
+  pluginGiphyViewer,
+  pluginHashtagViewer,
+  pluginHtmlViewer,
+  pluginImageViewer,
+  pluginIndentViewer,
+  pluginLineSpacingViewer,
+  pluginLinkViewer,
+  pluginLinkPreviewViewer,
+  pluginSpoilerViewer,
+  pluginVideoViewer,
+  isRichContentEmpty,
+} from '@wix/ricos';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -9,6 +32,9 @@ import {
   type EventServiceConfig,
   type Event,
 } from '../services/event-service.js';
+import '@wix/ricos/css/ricos-viewer.global.css';
+import '@wix/ricos/css/plugin-hashtag-viewer.global.css';
+import '@wix/ricos/css/plugin-spoiler-viewer.global.css';
 
 enum TestIds {
   eventImage = 'event-image',
@@ -304,65 +330,125 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
 );
 
 /**
- * Props for the Event Description component.
+ * Props for the Event ShortDescription component.
  */
-export interface DescriptionProps {
+export interface ShortDescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ description: string }>;
+  children?: AsChildChildren<{ shortDescription: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the event description with customizable rendering following the documented API.
+ * Displays the event short description with customizable rendering following the documented API.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Event.Description className="text-sm font-medium" />
+ * <Event.ShortDescription className="text-sm font-medium" />
  *
  * // asChild with primitive
- * <Event.Description asChild>
+ * <Event.ShortDescription asChild>
  *   <span className="text-sm font-medium" />
- * </Event.Description>
+ * </Event.ShortDescription>
  *
  * // asChild with react component
- * <Event.Description asChild>
- *   {React.forwardRef(({description, ...props}, ref) => (
+ * <Event.ShortDescription asChild>
+ *   {React.forwardRef(({shortDescription, ...props}, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
- *       {description}
+ *       {shortDescription}
  *     </span>
  *   ))}
- * </Event.Description>
+ * </Event.ShortDescription>
+ * ```
+ */
+export const ShortDescription = React.forwardRef<
+  HTMLElement,
+  ShortDescriptionProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const service = useService(EventServiceDefinition);
+  const event = service.event.get();
+  const shortDescription = event.shortDescription;
+
+  if (!shortDescription) {
+    return null;
+  }
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventDescription}
+      customElement={children}
+      customElementProps={{ shortDescription }}
+      content={shortDescription}
+    >
+      <div>{shortDescription}</div>
+    </AsChildSlot>
+  );
+});
+
+/**
+ * Props for the Event Description component.
+ */
+export interface DescriptionProps {}
+
+/**
+ * Displays the event description following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.Description />
  * ```
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-
+  (_props, ref) => {
     const service = useService(EventServiceDefinition);
     const event = service.event.get();
-    const description = event.shortDescription;
+    const description = event.description as RichContent | undefined;
 
-    if (!description) {
+    if (!description || isRichContentEmpty(description)) {
       return null;
     }
 
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventDescription}
-        customElement={children}
-        customElementProps={{ description }}
+      <RicosViewer
+        ref={ref as React.Ref<RicosViewer>}
         content={description}
-      >
-        <div>{description}</div>
-      </AsChildSlot>
+        plugins={[
+          pluginAudioViewer(),
+          pluginCodeBlockViewer(),
+          pluginCollapsibleListViewer(),
+          pluginDividerViewer(),
+          pluginEmojiViewer(),
+          pluginFileUploadViewer(),
+          pluginGalleryViewer(),
+          pluginGiphyViewer(),
+          pluginHashtagViewer(),
+          pluginHtmlViewer(),
+          pluginImageViewer(),
+          pluginIndentViewer(),
+          pluginLineSpacingViewer(),
+          pluginLinkViewer(),
+          pluginLinkPreviewViewer({
+            exposeEmbedButtons: [
+              LinkPreviewProviders.Instagram,
+              LinkPreviewProviders.Twitter,
+              LinkPreviewProviders.TikTok,
+            ],
+          }),
+          pluginSpoilerViewer(),
+          pluginVideoViewer(),
+        ]}
+      />
     );
   },
 );
