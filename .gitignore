@@ -8,6 +8,7 @@ storybook-static
 .env*.local
 lefthook-local.yml
 .astro/
+.idea/
 
 # Logs
 logs
