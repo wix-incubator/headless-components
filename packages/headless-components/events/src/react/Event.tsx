@@ -1,4 +1,5 @@
 import { WixMediaImage } from '@wix/headless-media/react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -8,7 +9,6 @@ import {
   type EventServiceConfig,
   type Event,
 } from '../services/event-service.js';
-import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
 
 enum TestIds {
   eventImage = 'event-image',
@@ -74,6 +74,7 @@ export const Root = (props: RootProps): React.ReactNode => {
  * Props for the Event Image component.
  */
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  /** Whether to render as a child component */
   asChild?: boolean;
 }
 
@@ -100,19 +101,15 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
     const event = service.event.get();
     const image = event.mainImage;
 
-    const attributes = {
-      className,
-      'data-testid': TestIds.eventImage,
-      ...otherProps,
-    };
-
     return (
       <WixMediaImage
         ref={ref}
         asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventImage}
         children={children}
         media={{ image }}
-        {...attributes}
+        {...otherProps}
       />
     );
   },
@@ -121,7 +118,14 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
 /**
  * Props for the Event Title component.
  */
-export interface TitleProps extends AsChildProps<{ title: string }> {}
+export interface TitleProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ title: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the event title with customizable rendering following the documented API.
@@ -154,36 +158,31 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   const event = service.event.get();
   const title = event.title!;
 
-  const attributes = {
-    className,
-    'data-testid': TestIds.eventTitle,
-  };
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      ref,
-      children,
-      attributes,
-      props: { title },
-      content: title,
-    });
-
-    if (rendered) {
-      return rendered;
-    }
-  }
-
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-      {title}
-    </div>
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventTitle}
+      customElement={children}
+      customElementProps={{ title }}
+      content={title}
+    >
+      <div>{title}</div>
+    </AsChildSlot>
   );
 });
 
 /**
  * Props for the Event Date component.
  */
-export interface DateProps extends AsChildProps<{ date: string }> {
+export interface DateProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ date: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
   /** Format of the event date */
   format?: 'short' | 'full'; // Default: 'short'
 }
@@ -223,36 +222,31 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
       ? event.dateAndTimeSettings!.formatted!.startDate!
       : event.dateAndTimeSettings!.formatted!.dateAndTime!;
 
-  const attributes = {
-    className,
-    'data-testid': TestIds.eventDate,
-  };
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      ref,
-      children,
-      attributes,
-      props: { date },
-      content: date,
-    });
-
-    if (rendered) {
-      return rendered;
-    }
-  }
-
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-      {date}
-    </div>
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventDate}
+      customElement={children}
+      customElementProps={{ date }}
+      content={date}
+    >
+      <div>{date}</div>
+    </AsChildSlot>
   );
 });
 
 /**
  * Props for the Event Location component.
  */
-export interface LocationProps extends AsChildProps<{ location: string }> {
+export interface LocationProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ location: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
   /** Format of the event location */
   format?: 'short' | 'full'; // Default: 'short'
 }
@@ -293,29 +287,18 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
         : // @ts-expect-error
           `${event.location!.name}, ${event.location!.address!.formatted}`;
 
-    const attributes = {
-      className,
-      'data-testid': TestIds.eventLocation,
-    };
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        ref,
-        children,
-        attributes,
-        props: { location },
-        content: location,
-      });
-
-      if (rendered) {
-        return rendered;
-      }
-    }
-
     return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {location}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventLocation}
+        customElement={children}
+        customElementProps={{ location }}
+        content={location}
+      >
+        <div>{location}</div>
+      </AsChildSlot>
     );
   },
 );
@@ -323,8 +306,14 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
 /**
  * Props for the Event Description component.
  */
-export interface DescriptionProps
-  extends AsChildProps<{ description: string }> {}
+export interface DescriptionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ description: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the event description with customizable rendering following the documented API.
@@ -358,33 +347,22 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
     const event = service.event.get();
     const description = event.shortDescription;
 
-    const attributes = {
-      className,
-      'data-testid': TestIds.eventDescription,
-    };
-
     if (!description) {
       return null;
     }
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        ref,
-        children,
-        attributes,
-        props: { description },
-        content: description,
-      });
-
-      if (rendered) {
-        return rendered;
-      }
-    }
-
     return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {description}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventDescription}
+        customElement={children}
+        customElementProps={{ description }}
+        content={description}
+      >
+        <div>{description}</div>
+      </AsChildSlot>
     );
   },
 );
@@ -393,8 +371,11 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
  * Props for the Event RsvpButton component.
  */
 export interface RsvpButtonProps {
-  children: React.ReactNode;
+  /** Whether to render as a child component */
   asChild?: boolean;
+  /** Content to display inside the RSVP button */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
@@ -417,25 +398,19 @@ export interface RsvpButtonProps {
  */
 export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
   (props, ref) => {
-    const { children, asChild, className } = props;
-
-    const attributes = {
-      className,
-      'data-testid': TestIds.eventRsvpButton,
-      onClick: () => {},
-    };
-
-    if (asChild && React.isValidElement(children)) {
-      return React.cloneElement(children as React.ReactElement, {
-        ...attributes,
-        ref,
-      });
-    }
+    const { asChild, children, className } = props;
 
     return (
-      <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-        {children}
-      </button>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventRsvpButton}
+        customElement={children}
+        onClick={() => {}}
+      >
+        <button>{children}</button>
+      </AsChildSlot>
     );
   },
 );
