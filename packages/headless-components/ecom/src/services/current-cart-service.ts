@@ -8,13 +8,8 @@ import * as currentCart from '@wix/auto_sdk_ecom_current-cart';
 import * as checkout from '@wix/auto_sdk_ecom_checkout';
 import { redirects } from '@wix/redirects';
 
-export type LineItem = NonNullable<
-  currentCart.AddToCurrentCartRequest['lineItems']
->[number];
-
 export interface CurrentCartServiceAPI {
   cart: Signal<currentCart.Cart | null>;
-  isOpen: Signal<boolean>;
   isLoading: Signal<boolean>;
   isTotalsLoading: Signal<boolean>;
   isCouponLoading: Signal<boolean>;
@@ -33,8 +28,6 @@ export interface CurrentCartServiceAPI {
   ) => Promise<void>;
   increaseLineItemQuantity: (lineItemId: string) => Promise<void>;
   decreaseLineItemQuantity: (lineItemId: string) => Promise<void>;
-  openCart: () => void;
-  closeCart: () => void;
   clearCart: () => Promise<void>;
   setBuyerNotes: (notes: string) => Promise<void>;
   proceedToCheckout: () => Promise<void>;
@@ -64,7 +57,6 @@ export const CurrentCartService =
       const cart: Signal<currentCart.Cart | null> = signalsService.signal(
         config.initialCart || null,
       );
-      const isOpen: Signal<boolean> = signalsService.signal(false);
       const isLoading: Signal<boolean> = signalsService.signal(false);
       const isTotalsLoading: Signal<boolean> = signalsService.signal(false);
       const isCouponLoading: Signal<boolean> = signalsService.signal(false);
@@ -208,14 +200,6 @@ export const CurrentCartService =
             (lineItem.quantity || 0) - 1,
           );
         }
-      };
-
-      const openCart = () => {
-        isOpen.set(true);
-      };
-
-      const closeCart = () => {
-        isOpen.set(false);
       };
 
       const clearCart = async () => {
@@ -378,7 +362,6 @@ export const CurrentCartService =
 
       return {
         cart,
-        isOpen,
         cartCount,
         isLoading,
         isTotalsLoading,
@@ -391,8 +374,6 @@ export const CurrentCartService =
         updateLineItemQuantity,
         increaseLineItemQuantity,
         decreaseLineItemQuantity,
-        openCart,
-        closeCart,
         clearCart,
         setBuyerNotes,
         proceedToCheckout,

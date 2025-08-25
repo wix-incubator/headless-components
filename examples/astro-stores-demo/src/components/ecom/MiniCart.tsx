@@ -1,15 +1,42 @@
 import { useState } from 'react';
-import { CurrentCart } from '@wix/headless-ecom/react';
-import { WixMediaImage } from '../media';
+import {
+  Cart,
+  LineItem,
+  SelectedOption,
+  Quantity,
+  Commerce,
+} from '@wix/headless-ecom/react';
+import { useMiniCartModal } from '../MiniCartModal';
 
 // Mini coupon form for the cart sidebar
 const CouponFormMini = ({
   apply,
+  remove,
   isLoading,
+  appliedCoupon,
 }: {
   apply: (code: string) => void;
+  remove: () => void;
   isLoading: boolean;
+  appliedCoupon: string | null;
 }) => {
+  if (appliedCoupon) {
+    return (
+      <div className="flex items-center justify-between p-2 bg-status-success-light border border-status-success rounded">
+        <span className="text-status-success text-xs font-medium">
+          Coupon: {appliedCoupon}
+        </span>
+        <button
+          onClick={remove}
+          disabled={isLoading}
+          className="text-status-danger hover:text-status-error text-xs disabled:opacity-50"
+        >
+          {isLoading ? 'Removing...' : 'Remove'}
+        </button>
+      </div>
+    );
+  }
+
   const [code, setCode] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -48,9 +75,10 @@ const CouponFormMini = ({
           disabled={!code.trim() || isLoading}
           className="btn-accent px-2 py-1 disabled:opacity-50 text-content-primary text-xs font-medium rounded"
         >
-          {isLoading ? '...' : 'Apply'}
+          {isLoading ? '...' : 'Apply Coupon'}
         </button>
       </div>
+
       <button
         type="button"
         onClick={() => setIsExpanded(false)}
@@ -63,13 +91,15 @@ const CouponFormMini = ({
 };
 
 export function MiniCartIcon() {
+  const { open } = useMiniCartModal();
   return (
     <>
       {/* Fixed Cart Icon */}
-      <div className="fixed top-6 right-6 z-50">
-        <CurrentCart.OpenTrigger>
-          {({ open, totalItems }) => (
+      <div className="fixed top-6 right-6 z-50 text-content-primary">
+        <Cart.Summary>
+          {({ totalItems }) => (
             <button
+              data-testid="mini-cart-icon"
               onClick={open}
               className="relative p-2 text-content-primary hover:text-brand-light transition-colors"
             >
@@ -93,390 +123,186 @@ export function MiniCartIcon() {
               )}
             </button>
           )}
-        </CurrentCart.OpenTrigger>
+        </Cart.Summary>
       </div>
     </>
   );
 }
 
 export function MiniCartContent() {
-  return (
-    <>
-      {/* Cart Modal */}
-      <CurrentCart.Content>
-        {({ isOpen, close }) => {
-          // Lock body scroll when modal is open
-          if (typeof document !== 'undefined') {
-            if (isOpen) {
-              document.body.style.overflow = 'hidden';
-            } else {
-              document.body.style.overflow = 'unset';
-            }
-          }
+  const { close, isOpen } = useMiniCartModal();
+  // Lock body scroll when modal is open
+  if (typeof document !== 'undefined') {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }
+  return isOpen ? (
+    <div
+      className="fixed inset-0 z-50 bg-surface-overlay backdrop-blur-sm"
+      onClick={close}
+    >
+      <div
+        className="fixed right-0 top-0 h-full w-full max-w-md bg-surface-modal shadow-xl flex flex-col"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between p-6 border-b border-surface-subtle flex-shrink-0">
+          <Cart.Summary asChild>
+            {({ totalItems }) => (
+              <h2 className="text-xl font-bold text-content-primary">
+                Shopping Cart ({totalItems})
+              </h2>
+            )}
+          </Cart.Summary>
 
-          return (
-            <>
-              {isOpen && (
-                <div
-                  className="fixed inset-0 z-50 bg-surface-overlay backdrop-blur-sm"
-                  onClick={close}
-                >
-                  <div
-                    className="fixed right-0 top-0 h-full w-full max-w-md bg-surface-modal shadow-xl flex flex-col"
-                    onClick={e => e.stopPropagation()}
+          <button
+            onClick={close}
+            className="p-2 text-content-primary hover:text-brand-light transition-colors"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 min-h-0">
+          <Cart.LineItems
+            emptyState={
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-surface-interactive rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-8 h-8 text-content-muted"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <CurrentCart.Summary>
-                      {({ totalItems }) => (
-                        <div className="flex items-center justify-between p-6 border-b border-surface-subtle flex-shrink-0">
-                          <h2 className="text-xl font-bold text-content-primary">
-                            Shopping Cart ({totalItems})
-                          </h2>
-                          <button
-                            onClick={close}
-                            className="p-2 text-content-primary hover:text-brand-light transition-colors"
-                          >
-                            <svg
-                              className="w-6 h-6"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      )}
-                    </CurrentCart.Summary>
-
-                    <div className="flex-1 overflow-y-auto p-6 min-h-0">
-                      <CurrentCart.LineItemsList>
-                        {({ items, totalItems }) => (
-                          <>
-                            {totalItems > 0 ? (
-                              <div className="space-y-4">
-                                {items.map(item => (
-                                  <CurrentCart.Item key={item._id} item={item}>
-                                    {({
-                                      title,
-                                      image,
-                                      price,
-                                      quantity,
-                                      selectedOptions,
-                                      increaseQuantity,
-                                      decreaseQuantity,
-                                      remove,
-                                    }) => (
-                                      <div className="flex gap-4 p-4 bg-surface-card rounded-xl border border-surface-subtle">
-                                        <div className="w-16 h-16 bg-surface-interactive rounded-lg overflow-hidden flex-shrink-0">
-                                          {image && (
-                                            <WixMediaImage
-                                              media={{ image: image }}
-                                              width={64}
-                                              height={64}
-                                            />
-                                          )}
-                                        </div>
-
-                                        <div className="flex-1 min-w-0">
-                                          <h3 className="text-content-primary font-medium text-sm truncate">
-                                            {title}
-                                          </h3>
-                                          {selectedOptions.length > 0 && (
-                                            <div className="mt-1 mb-2">
-                                              <div className="flex flex-wrap gap-1">
-                                                {selectedOptions.map(
-                                                  (option, index) => {
-                                                    const isColor =
-                                                      typeof option.value ===
-                                                      'object';
-                                                    const text = isColor
-                                                      ? (option.value as any)
-                                                          .name
-                                                      : option.value;
-                                                    const color = isColor
-                                                      ? (option.value as any)
-                                                          .code
-                                                      : null;
-
-                                                    return (
-                                                      <div
-                                                        key={index}
-                                                        className="flex items-center gap-1 text-xs text-content-light"
-                                                      >
-                                                        <span>
-                                                          {option.name}:
-                                                        </span>
-                                                        <div className="flex items-center gap-1">
-                                                          {color && (
-                                                            <div
-                                                              className="w-3 h-3 rounded-full border border-surface-strong"
-                                                              style={{
-                                                                backgroundColor:
-                                                                  color,
-                                                              }}
-                                                              title={text}
-                                                            />
-                                                          )}
-                                                          <span className="font-medium">
-                                                            {text}
-                                                          </span>
-                                                        </div>
-                                                        {index <
-                                                          selectedOptions.length -
-                                                            1 && (
-                                                          <span className="text-content-subtle">
-                                                            ,
-                                                          </span>
-                                                        )}
-                                                      </div>
-                                                    );
-                                                  }
-                                                )}
-                                              </div>
-                                            </div>
-                                          )}
-                                          <p className="text-accent font-semibold text-sm mt-1">
-                                            {price}
-                                          </p>
-
-                                          <div className="flex items-center justify-between mt-3">
-                                            <div className="flex items-center gap-2">
-                                              <button
-                                                onClick={decreaseQuantity}
-                                                className="w-6 h-6 rounded bg-surface-interactive text-content-primary text-sm hover:bg-surface-interactive-hover transition-colors"
-                                              >
-                                                -
-                                              </button>
-                                              <span className="text-content-primary text-sm w-6 text-center">
-                                                {quantity}
-                                              </span>
-                                              <button
-                                                onClick={increaseQuantity}
-                                                className="w-6 h-6 rounded bg-surface-interactive text-content-primary text-sm hover:bg-surface-interactive-hover transition-colors"
-                                              >
-                                                +
-                                              </button>
-                                            </div>
-
-                                            <button
-                                              onClick={remove}
-                                              className="text-status-danger hover:text-status-error text-xs transition-colors"
-                                            >
-                                              Remove
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-                                  </CurrentCart.Item>
-                                ))}
-                              </div>
-                            ) : (
-                              <div className="text-center py-8">
-                                <div className="w-16 h-16 bg-surface-interactive rounded-full flex items-center justify-center mx-auto mb-4">
-                                  <svg
-                                    className="w-8 h-8 text-content-muted"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"
-                                    />
-                                  </svg>
-                                </div>
-                                <p className="text-content-muted">
-                                  Your cart is empty
-                                </p>
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </CurrentCart.LineItemsList>
-                    </div>
-
-                    <div className="border-t border-surface-subtle p-6 flex-shrink-0">
-                      <CurrentCart.Notes>
-                        {({ notes, updateNotes }) => (
-                          <div>
-                            <label className="block text-xs font-medium text-content-secondary mb-2">
-                              Notes:
-                            </label>
-                            <textarea
-                              value={notes}
-                              onChange={e => updateNotes(e.target.value)}
-                              placeholder="Special instructions for your order (e.g., gift wrap, delivery notes)"
-                              rows={2}
-                              className="w-full px-2 py-1 text-xs bg-surface-interactive border border-surface-interactive rounded text-content-primary placeholder:text-content-muted focus:border-brand-light focus:outline-none transition-colors duration-200 resize-vertical mb-4"
-                            />
-                          </div>
-                        )}
-                      </CurrentCart.Notes>
-
-                      {/* Coupon Code */}
-                      <CurrentCart.Coupon>
-                        {({
-                          appliedCoupon,
-                          apply,
-                          remove,
-                          isLoading,
-                          error,
-                        }) => (
-                          <div className="mb-4">
-                            {appliedCoupon ? (
-                              <div className="flex items-center justify-between p-2 bg-status-success-light border border-status-success rounded">
-                                <span className="text-status-success text-xs font-medium">
-                                  Coupon: {appliedCoupon}
-                                </span>
-                                <button
-                                  onClick={remove}
-                                  disabled={isLoading}
-                                  className="text-status-danger hover:text-status-error text-xs disabled:opacity-50"
-                                >
-                                  {isLoading ? 'Removing...' : 'Remove'}
-                                </button>
-                              </div>
-                            ) : (
-                              <CouponFormMini
-                                apply={apply}
-                                isLoading={isLoading}
-                              />
-                            )}
-                            {error && error.includes('coupon') && (
-                              <div className="bg-status-danger-light border border-status-danger rounded p-2 mt-2">
-                                <p className="text-status-danger text-xs">
-                                  {error}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </CurrentCart.Coupon>
-                      <CurrentCart.Summary>
-                        {({
-                          subtotal,
-                          discount,
-                          appliedCoupon,
-                          shipping,
-                          tax,
-                          total,
-                          totalItems,
-                          isTotalsLoading,
-                        }) => {
-                          const LoadingOrValue = ({
-                            children,
-                          }: {
-                            children: string;
-                          }) =>
-                            isTotalsLoading ? (
-                              <span className="text-content-muted">
-                                Calculating...
-                              </span>
-                            ) : (
-                              children
-                            );
-
-                          return (
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <div className="flex justify-between">
-                                  <span className="text-content-secondary">
-                                    Subtotal ({totalItems}{' '}
-                                    {totalItems === 1 ? 'item' : 'items'})
-                                  </span>
-                                  <span className="text-content-primary font-semibold">
-                                    <LoadingOrValue>{subtotal}</LoadingOrValue>
-                                  </span>
-                                </div>
-                                {appliedCoupon && discount && (
-                                  <div className="flex justify-between">
-                                    <span className="text-status-success">
-                                      Discount
-                                    </span>
-                                    <span className="text-status-success font-semibold">
-                                      {isTotalsLoading ? (
-                                        <span className="text-content-muted">
-                                          Calculating...
-                                        </span>
-                                      ) : (
-                                        `-${discount}`
-                                      )}
-                                    </span>
-                                  </div>
-                                )}
-                                <div className="flex justify-between">
-                                  <span className="text-content-secondary">
-                                    Shipping
-                                  </span>
-                                  <span className="text-content-primary font-semibold">
-                                    <LoadingOrValue>{shipping}</LoadingOrValue>
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-content-secondary">
-                                    Tax
-                                  </span>
-                                  <span className="text-content-primary font-semibold">
-                                    <LoadingOrValue>{tax}</LoadingOrValue>
-                                  </span>
-                                </div>
-                                <div className="border-t border-surface-interactive pt-2">
-                                  <div className="flex justify-between">
-                                    <span className="text-content-primary font-bold">
-                                      Total
-                                    </span>
-                                    <span className="text-content-primary font-bold text-lg">
-                                      <LoadingOrValue>{total}</LoadingOrValue>
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <CurrentCart.Checkout>
-                                {({
-                                  proceedToCheckout,
-                                  canCheckout,
-                                  error,
-                                }) => (
-                                  <>
-                                    <button
-                                      onClick={proceedToCheckout}
-                                      disabled={!canCheckout}
-                                      className="w-full bg-gradient-primary bg-gradient-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-content-primary font-semibold py-3 px-6 rounded-lg transition-all duration-200"
-                                    >
-                                      Proceed to Checkout
-                                    </button>
-                                    {error && (
-                                      <div className="bg-status-danger-light border border-status-danger rounded p-2 mt-2">
-                                        <p className="text-status-danger text-xs">
-                                          Failed to checkout. Please contact
-                                          support.
-                                        </p>
-                                      </div>
-                                    )}
-                                  </>
-                                )}
-                              </CurrentCart.Checkout>
-                            </div>
-                          );
-                        }}
-                      </CurrentCart.Summary>
-                    </div>
-                  </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"
+                    />
+                  </svg>
                 </div>
-              )}
-            </>
-          );
-        }}
-      </CurrentCart.Content>
-    </>
-  );
+                <p className="text-content-muted">Your cart is empty</p>
+              </div>
+            }
+          >
+            <Cart.LineItemRepeater>
+              <div className="flex gap-4 p-4 border border-brand-light rounded-lg">
+                <LineItem.Image className="w-16 h-16 rounded-lg object-cover" />
+                <div className="flex-1 space-y-2">
+                  <LineItem.Title className="text-lg font-semibold text-content-primary" />
+                  <LineItem.SelectedOptions>
+                    <div className="flex flex-wrap gap-2">
+                      <LineItem.SelectedOptionRepeater>
+                        <SelectedOption.Text className="text-sm text-content-secondary" />
+                        <SelectedOption.Color className="flex items-center gap-2 text-sm text-content-secondary" />
+                      </LineItem.SelectedOptionRepeater>
+                    </div>
+                  </LineItem.SelectedOptions>
+
+                  {/* Quantity Controls */}
+                  <LineItem.Quantity steps={1}>
+                    <div className="flex items-center gap-2 mt-3">
+                      <span className="text-sm text-content-secondary">
+                        Qty:
+                      </span>
+                      <div className="flex items-center border border-brand-light rounded-lg bg-surface-primary">
+                        <Quantity.Decrement className="px-3 py-1 text-content-primary hover:bg-surface-interactive transition-colors" />
+                        <Quantity.Input
+                          disabled={true}
+                          className="w-16 text-center py-1 border-x border-brand-light bg-surface-primary text-content-primary focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                        />
+                        <Quantity.Increment className="px-3 py-1 text-content-primary hover:bg-surface-interactive transition-colors" />
+                      </div>
+                      <Quantity.Reset className="px-2 py-1 text-xs text-status-danger hover:text-status-danger/80 hover:bg-status-danger/10 rounded transition-colors">
+                        Remove
+                      </Quantity.Reset>
+                    </div>
+                  </LineItem.Quantity>
+                </div>
+              </div>
+            </Cart.LineItemRepeater>
+          </Cart.LineItems>
+        </div>
+
+        <div className="border-t border-surface-subtle p-6 flex-shrink-0">
+          <Cart.Notes />
+
+          {/* Coupon Code */}
+          <div className="mb-4">
+            <Cart.Coupon.Root>
+              <Cart.Coupon.Raw asChild>
+                {({ apply, isLoading, appliedCoupon, remove, error }) => (
+                  <CouponFormMini
+                    apply={apply}
+                    isLoading={isLoading}
+                    remove={remove}
+                    appliedCoupon={appliedCoupon}
+                  />
+                )}
+              </Cart.Coupon.Raw>
+            </Cart.Coupon.Root>
+          </div>
+          <Cart.Errors className="my-2 bg-status-danger-light border border-status-danger rounded p-2 mt-2 w-full text-status-danger text-xs" />
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-content-secondary">
+                <Cart.Summary asChild>
+                  {({ totalItems }) => (
+                    <span>
+                      Subtotal ({totalItems}{' '}
+                      {totalItems === 1 ? 'item' : 'items'})
+                    </span>
+                  )}
+                </Cart.Summary>
+
+                <Cart.Totals.Price />
+              </div>
+              <Cart.Totals.Discount
+                className="flex justify-between text-status-success"
+                label="Discount"
+              />
+              <Cart.Totals.Shipping
+                className="flex justify-between text-content-secondary"
+                label="Shipping"
+              />
+              <Cart.Totals.Tax
+                className="flex justify-between text-content-secondary"
+                label="Tax"
+              />
+            </div>
+
+            <div className="border-t border-surface-interactive pt-2">
+              <Cart.Totals.Total
+                className="flex justify-between text-xl font-bold text-content-primary font-semibold"
+                label="Total"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="px-4 pb-4 space-y-2">
+          <Commerce.Actions.Checkout
+            className="btn-primary w-full disabled:cursor-not-allowed p-2 rounded-sm disabled:opacity-50"
+            label="Proceed to Checkout"
+            loadingState="Processing..."
+          />
+        </div>
+      </div>
+    </div>
+  ) : null;
 }

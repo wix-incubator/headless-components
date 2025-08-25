@@ -12,7 +12,7 @@ import {
 } from '@wix/headless-stores/react';
 
 import { ProductActionButtons } from './ProductActionButtons';
-import { CurrentCart } from '@wix/headless-ecom/react';
+import { Cart } from '@wix/headless-ecom/react';
 
 import { getStockStatusMessage } from './product-status-enums';
 
@@ -349,7 +349,7 @@ export default function ProductDetails({
       {/* Current Cart Summary */}
       {!isQuickView && (
         <div className="mt-12 pt-8 border-t border-brand-subtle">
-          <CurrentCart.Summary>
+          <Cart.Summary>
             {({ subtotal, totalItems }) => (
               <>
                 {totalItems > 0 && (
@@ -389,7 +389,7 @@ export default function ProductDetails({
                 )}
               </>
             )}
-          </CurrentCart.Summary>
+          </Cart.Summary>
         </div>
       )}
     </>

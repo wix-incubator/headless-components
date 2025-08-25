@@ -15,14 +15,12 @@ interface StoreCollectionPageProps {
   categoryServiceConfig: CategoryServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
   productsListConfig: ProductsListServiceConfig;
-  productsListSearchConfig: ProductsListSearchServiceConfig;
 }
 
 export default function StoreCollectionPage({
   currentCartServiceConfig,
   categoriesListConfig,
   productsListConfig,
-  productsListSearchConfig,
 }: StoreCollectionPageProps) {
   return (
     <KitchensinkLayout>
@@ -39,7 +37,6 @@ export default function StoreCollectionPage({
 
           <CategoryPage
             productsListConfig={productsListConfig}
-            productsListSearchConfig={productsListSearchConfig}
             categoriesListConfig={categoriesListConfig}
           />
         </div>
