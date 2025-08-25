@@ -1,5 +1,7 @@
 import { Event as EventPrimitive, TicketsPicker as TicketsPickerPrimitive, TicketDefinition as TicketDefinitionPrimitive } from '@wix/headless-events/react';
 import { type TicketListServiceConfig, type EventServiceConfig } from '@wix/headless-events/services';
+import { useService } from '@wix/services-manager-react';
+import { TicketListServiceDefinition } from '@wix/headless-events/services';
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
@@ -54,24 +56,69 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig }: Event
                 </div>
               </div>
               <div className="p-4 border-t mt-auto">
-                <TicketDefinitionPrimitive.Quantity />
+                <TicketDefinitionPrimitive.Quantity asChild>
+                  {({ quantity, maxQuantity, increment, decrement }) => (
+                    <div className="flex items-center justify-center border border-gray-300 rounded-md overflow-hidden">
+                      <button
+                        onClick={decrement}
+                        disabled={quantity === 0}
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                      >
+                        -
+                      </button>
+                      <span className="px-4 py-2 min-w-[3rem] text-center font-medium">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={increment}
+                        disabled={quantity >= maxQuantity || maxQuantity === 0}
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
+                </TicketDefinitionPrimitive.Quantity>
               </div>
             </div>
           </TicketsPickerPrimitive.TicketDefinitionRepeater>
         </TicketsPickerPrimitive.TicketDefinitions>
         <TicketsPickerPrimitive.Checkout noTicketsErrorMessage="Please select at least one ticket">
-          {({ isLoading, error, checkout }) => (
-            <div className="p-6 flex justify-center">
-              {error && <p className="text-red-600 mb-4">{error}</p>}
-              <button
-                onClick={checkout}
-                disabled={isLoading}
-                className={`px-6 py-3 rounded-lg text-white font-medium transition-colors ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-              >
-                {isLoading ? 'Processing...' : 'Proceed to Checkout'}
-              </button>
-            </div>
-          )}
+          {({ isLoading, error, checkout, hasSelectedTickets }) => {
+            const service = useService(TicketListServiceDefinition);
+            const selectedQuantities = service.selectedQuantities.get();
+            const ticketDefinitions = service.ticketDefinitions.get();
+
+            let total = 0;
+            let currency = 'USD';
+            if (ticketDefinitions.length > 0) {
+              currency = ticketDefinitions[0].pricingMethod?.fixedPrice?.currency ?? 'USD';
+              for (const [id, qty] of Object.entries(selectedQuantities)) {
+                if (qty > 0) {
+                  const td = ticketDefinitions.find(t => t._id === id);
+                  if (td && td.pricingMethod?.fixedPrice) {
+                    total += parseFloat(td.pricingMethod.fixedPrice.value ?? '0') * qty;
+                  }
+                }
+              }
+            }
+
+            return (
+              <div className="p-6 flex flex-col items-center">
+                {error && <p className="text-red-600 mb-4">{error}</p>}
+                <p className="text-lg font-bold mb-4">
+                  Total: {total.toFixed(2)} {currency}
+                </p>
+                <button
+                  onClick={checkout}
+                  disabled={isLoading || !hasSelectedTickets}
+                  className={`px-6 py-3 rounded-lg text-white font-medium transition-colors ${isLoading || !hasSelectedTickets ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                >
+                  {isLoading ? 'Processing...' : 'Proceed to Checkout'}
+                </button>
+              </div>
+            );
+          }}
         </TicketsPickerPrimitive.Checkout>
       </TicketsPickerPrimitive.Root>
     </div>
