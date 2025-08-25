@@ -1,3 +1,4 @@
+import { AsChildSlot } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -18,6 +19,7 @@ enum TestIds {
  * Props for the EventList Root component.
  */
 export interface RootProps {
+  /** Configuration for the event list service */
   eventListServiceConfig: EventListServiceConfig;
   children: React.ReactNode;
 }
@@ -70,9 +72,13 @@ export const Root = (props: RootProps): React.ReactNode => {
  */
 export interface EventsProps {
   children: React.ReactNode;
+  /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
+  /** Whether to enable infinite scroll */
   infiniteScroll?: boolean; // Default: true
+  /** Number of events to display in a page */
   pageSize?: number; // 0 means no limit, max is 100
 }
 
@@ -165,8 +171,11 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
  * Props for the EventList LoadMoreTrigger component.
  */
 export interface LoadMoreTriggerProps {
-  children: React.ReactNode;
+  /** Whether to render as a child component */
   asChild?: boolean;
+  /** Content to display inside the load more button */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
@@ -185,33 +194,27 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { children, asChild, className } = props;
+  const { asChild, children, className } = props;
 
   // TODO: Implement service integration
   const hasMoreEvents = true;
   const infiniteScroll = true;
 
-  const attributes = {
-    className,
-    'data-testid': TestIds.eventListLoadMore,
-    onClick: () => {},
-  };
-
   if (!infiniteScroll || !hasMoreEvents) {
     return null;
   }
 
-  if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement, {
-      ...attributes,
-      ref,
-    });
-  }
-
   return (
-    <button {...attributes} ref={ref as React.Ref<HTMLButtonElement>}>
-      {children}
-    </button>
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventListLoadMore}
+      customElement={children}
+      onClick={() => {}}
+    >
+      <button>{children}</button>
+    </AsChildSlot>
   );
 });
 
@@ -219,8 +222,11 @@ export const LoadMoreTrigger = React.forwardRef<
  * Props for the EventList Error component.
  */
 export interface ErrorProps {
-  children: React.ReactNode;
+  /** Whether to render as a child component */
   asChild?: boolean;
+  /** Content to display inside the error message */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
@@ -236,30 +242,24 @@ export interface ErrorProps {
  * ```
  */
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
-  const { children, asChild, className } = props;
+  const { asChild, children, className } = props;
 
   // TODO: Implement service integration
   const hasError = false;
-
-  const attributes = {
-    className,
-    'data-testid': TestIds.eventListError,
-  };
 
   if (!hasError) {
     return null;
   }
 
-  if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement, {
-      ...attributes,
-      ref,
-    });
-  }
-
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-      {children}
-    </div>
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventListError}
+      customElement={children}
+    >
+      <div>{children}</div>
+    </AsChildSlot>
   );
 });
