@@ -61,6 +61,11 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
           </div>
         </EventListPrimitive.EventRepeater>
       </EventListPrimitive.Events>
+      <div className="flex justify-center">
+        <EventListPrimitive.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 mb-12 rounded-md transition-colors duration-200">
+          Load More
+        </EventListPrimitive.LoadMoreTrigger>
+      </div>
     </EventListPrimitive.Root>
   );
 }

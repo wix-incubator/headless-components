@@ -191,8 +191,9 @@ export const LoadMoreTrigger = React.forwardRef<
 >((props, ref) => {
   const { asChild, children, className } = props;
 
-  // TODO: Implement service integration
-  const hasMoreEvents = true;
+  const service = useService(EventListServiceDefinition);
+  const isLoading = service.isLoading.get();
+  const hasMoreEvents = service.hasMoreEvents.get();
 
   if (!hasMoreEvents) {
     return null;
@@ -205,7 +206,8 @@ export const LoadMoreTrigger = React.forwardRef<
       className={className}
       data-testid={TestIds.eventListLoadMore}
       customElement={children}
-      onClick={() => {}}
+      disabled={isLoading}
+      onClick={() => service.loadMoreEvents()}
     >
       <button>{children}</button>
     </AsChildSlot>
@@ -238,10 +240,10 @@ export interface ErrorProps {
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  // TODO: Implement service integration
-  const hasError = false;
+  const service = useService(EventListServiceDefinition);
+  const error = service.error.get();
 
-  if (!hasError) {
+  if (!error) {
     return null;
   }
 
