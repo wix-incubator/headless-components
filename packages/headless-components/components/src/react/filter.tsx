@@ -137,6 +137,8 @@ export interface FilterOption {
   type: 'single' | 'multi' | 'range';
   /** Display type for styling/rendering */
   displayType: 'color' | 'text' | 'range';
+  /** Function to format background color for color filters */
+  valueBgColorFormatter?: (value: string | number) => string | null;
 }
 
 /**
@@ -337,8 +339,12 @@ export const Root = React.forwardRef<HTMLDivElement, FilterRootProps>(
     const hasFilters = hasActiveFilters(value, filterOptions);
 
     const clearFilters = () => {
-      // Clear filters by setting to null (no filters applied)
-      onChange(null);
+      // Clear all filters except for category filter
+      onChange({
+        ...(value ? {
+          'allCategoriesInfo.categories': value['allCategoriesInfo.categories'],
+        } : {}),
+      });
     };
 
     const contextValue: FilterContextValue = {
@@ -707,6 +713,7 @@ export interface MultiFilterProps extends React.HTMLAttributes<HTMLElement> {
   asChild?: boolean;
   /** Children for custom rendering */
   children?: React.ReactNode;
+
 }
 
 /**
@@ -770,9 +777,14 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
                     ? formattedValue.toLowerCase()
                     : undefined
                 }
+                style={{
+                  backgroundColor: option.valueBgColorFormatter
+                    ? option.valueBgColorFormatter(value)!
+                    : undefined,
+                }}
                 aria-label={formattedValue}
               >
-                {option.displayType === 'color' ? '' : formattedValue}
+                {formattedValue}
               </ToggleGroup.Item>
             );
           })}
