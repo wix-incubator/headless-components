@@ -42,7 +42,6 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.3",
     "@wix/events": "^1.0.597",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
