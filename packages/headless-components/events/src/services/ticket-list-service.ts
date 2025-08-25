@@ -25,6 +25,7 @@ export const TicketListService = implementService.withConfig<TicketListServiceCo
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
+
     const ticketDefinitions: Signal<TicketDefinition[]> = signalsService.signal(config.ticketDefinitions);
     const selectedQuantities: Signal<Record<string, number>> = signalsService.signal(config.initialSelectedQuantities ?? {});
 
