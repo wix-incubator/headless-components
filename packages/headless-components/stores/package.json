@@ -1,13 +1,15 @@
 {
   "name": "@wix/headless-stores",
-  "version": "0.0.51",
+  "version": "0.0.67",
   "type": "module",
   "scripts": {
     "prebuild": "cd ../media && yarn build && cd ../ecom && yarn build",
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "test": "vitest"
+    "test": "vitest",
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "files": [
     "dist",
@@ -46,10 +48,12 @@
     "@types/node": "^20.9.0",
     "@vitest/ui": "^3.1.4",
     "jsdom": "^26.1.0",
+    "prettier": "^3.4.2",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
     "@wix/auto_sdk_bookings_availability-calendar": "^1.0.155",
     "@wix/auto_sdk_categories_categories": "^1.0.62",
     "@wix/auto_sdk_stores_customizations-v-3": "^1.0.26",
@@ -58,8 +62,10 @@
     "@wix/auto_sdk_stores_read-only-variants-v-3": "^1.0.23",
     "@wix/ecom": "^1.0.1278",
     "@wix/essentials": "^0.1.24",
-    "@wix/headless-ecom": "^0.0.11",
-    "@wix/headless-media": "^0.0.8",
+    "@wix/headless-components": "workspace:*",
+    "@wix/headless-ecom": "workspace:*",
+    "@wix/headless-media": "workspace:*",
+    "@wix/headless-utils": "workspace:*",
     "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"

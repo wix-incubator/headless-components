@@ -9,11 +9,15 @@
   ],
   "scripts": {
     "build:all": "turbo run build",
+    "format:all": "yarn workspaces foreach --all run format && yarn workspaces foreach --all run lint:fix",
     "build:headless-components": "yarn build:all --filter=\"./packages/headless-components/*\"",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && rm -rf .astro ./dist .turbo",
     "astro": "astro",
     "tsc": "tsc",
-    "syncpack": "syncpack"
+    "syncpack": "syncpack",
+    "test:headless-components": "turbo run test --filter=\"./packages/headless-components/*\" -- run",
+    "lint:headless-components": "turbo run lint:fix --filter=\"./packages/headless-components/*\"",
+    "lint:check:headless-components": "turbo run lint:check --filter=\"./packages/headless-components/*\""
   },
   "devDependencies": {
     "astro": "^5.9.0",

@@ -1,9 +1,9 @@
-import { defineService, implementService } from "@wix/services-definitions";
-import { categories } from "@wix/categories";
+import { defineService, implementService } from '@wix/services-definitions';
+import { categories } from '@wix/categories';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
+} from '@wix/services-definitions/core-services/signals';
 
 /**
  * Type representing a category from the Wix Categories API.
@@ -13,16 +13,21 @@ import {
  */
 export type Category = categories.Category;
 
+export interface CategoryServiceAPI {
+  /** Reactive signal containing the current category data */
+  category: Signal<Category>;
+  /** Reactive signal indicating if a category is currently selected */
+  isSelected: Signal<boolean>;
+}
+
 /**
  * Service definition for the Category service.
  * This defines the reactive API contract for managing a single product category.
  *
  * @constant
  */
-export const CategoryServiceDefinition = defineService<{
-  /** Reactive signal containing the current category data */
-  category: Signal<Category>;
-}>("category");
+export const CategoryServiceDefinition =
+  defineService<CategoryServiceAPI>('category');
 
 /**
  * Configuration interface for the Category service.
@@ -33,6 +38,8 @@ export const CategoryServiceDefinition = defineService<{
 export type CategoryServiceConfig = {
   /** The category object to initialize the service with */
   category: Category;
+  /** Whether the category is currently selected */
+  isSelected?: boolean;
 };
 
 /**
@@ -75,9 +82,13 @@ export const CategoryService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const categorySignal = signalsService.signal(config.category);
+      const isSelectedSignal = signalsService.signal(
+        config.isSelected ?? false,
+      );
 
       return {
         category: categorySignal,
+        isSelected: isSelectedSignal,
       };
     },
   );
@@ -95,7 +106,7 @@ export const CategoryService =
  * ---
  * // Astro page example - pages/category/[slug].astro
  * import { loadCategoryServiceConfig } from '@wix/stores/services';
- * import { Category } from '@wix/stores/components';
+ * import { Category } from '@wix/stores/components/react';
  *
  * // Get category slug from URL params
  * const { slug } = Astro.params;
@@ -121,7 +132,7 @@ export const CategoryService =
  * // Next.js page example - pages/category/[slug].tsx
  * import { GetServerSideProps } from 'next';
  * import { loadCategoryServiceConfig } from '@wix/stores/services';
- * import { Category } from '@wix/stores/components';
+ * import { Category } from '@wix/stores/components/react';
  *
  * interface CategoryPageProps {
  *   categoryConfig: Awaited<ReturnType<typeof loadCategoryServiceConfig>>['config'];
@@ -161,32 +172,32 @@ export const CategoryService =
 export async function loadCategoryServiceConfig(slug: string): Promise<
   | {
       /** Type "success" means that the category was found and the config is valid */
-      type: "success";
+      type: 'success';
       /** The category config containing the loaded category data */
       config: CategoryServiceConfig;
     }
   | {
       /** Type "not-found" means that the category was not found */
-      type: "not-found";
+      type: 'not-found';
     }
 > {
   const category = await categories
     .queryCategories({
       treeReference: {
-        appNamespace: "@wix/stores",
+        appNamespace: '@wix/stores',
       },
     })
-    .eq("slug", slug)
+    .eq('slug', slug)
     .find();
 
   if (category.items.length === 0) {
     return {
-      type: "not-found",
+      type: 'not-found',
     };
   }
 
   return {
-    type: "success",
+    type: 'success',
     config: {
       category: category.items[0]!,
     },

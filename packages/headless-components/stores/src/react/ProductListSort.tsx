@@ -1,76 +1,43 @@
-import { useService } from "@wix/services-manager-react";
-import { ProductsListSearchServiceDefinition } from "../services/products-list-search-service.js";
-import { SortType } from "../enums/sort-enums.js";
+import { Sort as SortPrimitive } from '@wix/headless-components/react';
+import { productsV3 } from '@wix/stores';
+import { ProductListSort as ProductListSortPrimitive } from './core/ProductListSort.js';
+import React from 'react';
 
-/**
- * Props for Options headless component
- */
-export interface OptionsProps {
-  /** Content to display (can be a render function receiving sort controls or ReactNode) */
-  children: ((props: OptionsRenderProps) => React.ReactNode) | React.ReactNode;
+export interface ProductListSortProps {
+  children?: (props: {
+    currentSort: productsV3.V3ProductSearch['sort'];
+    sortOptions: SortPrimitive.SortOption[];
+    setSort: (sort: productsV3.V3ProductSearch['sort']) => void;
+  }) => React.ReactNode;
+  className?: string;
+  as?: 'select' | 'list';
+  asChild?: boolean;
 }
 
-/**
- * Render props for Options component
- */
-export interface OptionsRenderProps {
-  /** Currently selected sort option value */
-  selectedSortOption: string;
-  /** Function to update the selected sort option */
-  updateSortOption: (sort: string) => void;
-  /** Available sort options */
-  sortOptions: SortType[];
-}
+export const ProductListSort = React.forwardRef<
+  HTMLElement,
+  ProductListSortProps
+>(({ children, className, as, asChild }, ref) => {
+  return (
+    <ProductListSortPrimitive>
+      {({ currentSort, sortOptions, setSort }) => {
+        if (asChild && children) {
+          return children({ currentSort, sortOptions, setSort });
+        }
 
-/**
- * Headless component for managing product list sorting options
- *
- * @component
- * @example
- * ```tsx
- * import { ProductList, ProductListSort } from '@wix/stores/components';
- *
- * function ProductSortDropdown() {
- *   return (
- *     <ProductList.Root
- *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
- *       productsListSearchConfig={{ customizations: [] }}
- *     >
- *       <ProductListSort.Options>
- *         {({ selectedSortOption, updateSortOption, sortOptions }) => (
- *           <div className="sort-container">
- *             <label htmlFor="sort-select">Sort by:</label>
- *             <select
- *               id="sort-select"
- *               value={selectedSortOption}
- *               onChange={(e) => updateSortOption(e.target.value)}
- *               className="sort-dropdown"
- *             >
- *               {sortOptions.map(option => (
- *                 <option key={option} value={option}>
- *                   {option}
- *                 </option>
- *               ))}
- *             </select>
- *           </div>
- *         )}
- *       </ProductListSort.Options>
- *     </ProductList.Root>
- *   );
- * }
- * ```
- */
-export function Options(props: OptionsProps) {
-  const service = useService(ProductsListSearchServiceDefinition);
-  const selectedSortOption = service.selectedSortOption.get();
-  const sortOptions = service.sortOptions;
-  const updateSortOption = service.setSelectedSortOption;
-
-  return typeof props.children === "function"
-    ? props.children({
-        selectedSortOption,
-        updateSortOption,
-        sortOptions,
-      })
-    : props.children;
-}
+        return (
+          <SortPrimitive.Root
+            ref={ref}
+            value={currentSort}
+            onChange={(value) => {
+              setSort(value as productsV3.V3ProductSearch['sort']);
+            }}
+            sortOptions={sortOptions}
+            as={as}
+            className={className}
+          ></SortPrimitive.Root>
+        );
+      }}
+    </ProductListSortPrimitive>
+  );
+});

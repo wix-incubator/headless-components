@@ -1,9 +1,8 @@
-import { CategoryList } from '@wix/headless-stores/react';
+import { CategoryList, Category, ProductListFilters as ProductListFiltersPrimitive } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
   Category as CategoryType,
 } from '@wix/headless-stores/services';
-import { Category } from '@wix/headless-stores/react';
 
 interface CategoryPickerProps {
   onCategorySelect: (category: CategoryType) => void;
@@ -12,9 +11,7 @@ interface CategoryPickerProps {
 }
 
 export function CategoryPicker({
-  onCategorySelect,
   categoriesListConfig,
-  currentCategorySlug,
 }: CategoryPickerProps) {
   return (
     <CategoryList.Root categoriesListConfig={categoriesListConfig}>
@@ -27,24 +24,27 @@ export function CategoryPicker({
 
         {/* Category Navigation - Horizontal scrollable for mobile */}
         <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
-          <CategoryList.ItemContent>
-            {({ category }) => (
-              <Category.Slug>
-                {({ slug }) => (
-                  <button
-                    onClick={() => onCategorySelect(category)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                      currentCategorySlug === slug
-                        ? 'text-content-primary shadow-lg transform scale-105 btn-primary'
-                        : 'bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary'
-                    }`}
-                  >
-                    <Category.Name>{({ name }) => name}</Category.Name>
-                  </button>
-                )}
-              </Category.Slug>
+          <ProductListFiltersPrimitive.CategoryFilter>
+            {({ selectedCategory, setSelectedCategory }) => (
+              <CategoryList.CategoryRepeater>
+                <Category.Trigger
+                  asChild
+                  onSelect={category => setSelectedCategory(category)}
+                >
+                  {({ category }) => (
+                    <button
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${selectedCategory?.slug === category.slug
+                          ? 'text-content-primary shadow-lg transform scale-105 btn-primary'
+                          : 'bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary'
+                        }`}
+                    >
+                      <Category.Label></Category.Label>
+                    </button>
+                  )}
+                </Category.Trigger>
+              </CategoryList.CategoryRepeater>
             )}
-          </CategoryList.ItemContent>
+          </ProductListFiltersPrimitive.CategoryFilter>
         </div>
       </div>
     </CategoryList.Root>

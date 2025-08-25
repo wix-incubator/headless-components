@@ -2,9 +2,9 @@ name: Sanity Check
 
 on:
   pull_request:
-    branches: ["**"]
+    branches: ['**']
   push:
-    branches: ["main"]
+    branches: ['main']
 
 jobs:
   sanity-check:
@@ -17,10 +17,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: '18'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Verify code formatting
+        run: yarn lint:check:headless-components
+
       - name: Build headless components
         run: yarn build:headless-components
+
+      - name: Run tests
+        run: yarn test:headless-components

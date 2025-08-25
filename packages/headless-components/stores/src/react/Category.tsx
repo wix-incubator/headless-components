@@ -1,136 +1,356 @@
-import { createServicesMap } from "@wix/services-manager";
-import { useService, WixServices } from "@wix/services-manager-react";
+import React from 'react';
+import * as CoreCategory from './core/Category.js';
+import { type Category } from '../services/category-service.js';
 import {
-  CategoryService,
-  CategoryServiceDefinition,
   type CategoryServiceConfig,
-} from "../services/category-service.js";
+  CategoryServiceDefinition,
+} from '../services/category-service.js';
+import { useService } from '@wix/services-manager-react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
-export interface RootProps {
-  children: React.ReactNode;
-  categoryServiceConfig: CategoryServiceConfig;
+enum TestIds {
+  categoryItem = 'category-item',
+  categoryTrigger = 'category-trigger',
+  categoryLabel = 'category-label',
+  categoryId = 'category-id',
+  categoryRaw = 'category-raw',
 }
 
 /**
- * Root component that provides the Category service context to its children.
- * This component sets up the necessary services for managing category state.
+ * Props for Category.Root component
+ */
+export interface CategoryRootProps {
+  /** Category object to initialize the service with */
+  category?: Category;
+  /** Configuration for the category service */
+  categoryServiceConfig?: CategoryServiceConfig;
+  /** Whether the category is currently selected */
+  isSelected?: boolean;
+  /** Child components */
+  children: React.ReactNode;
+}
+
+/**
+ * Props for Category.Trigger component
+ */
+export interface CategoryTriggerProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    category: Category;
+    isSelected: boolean;
+    onSelect: () => void;
+    setIsSelected: (isSelected: boolean) => void;
+  }>;
+  /** Callback when category is selected */
+  onSelect?: (category: Category) => void;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Props for Category.Label component
+ */
+export interface CategoryLabelProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    name: string;
+    category: Category;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Props for Category.ID component
+ */
+export interface CategoryIDProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    id: string;
+    category: Category;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Props for Category.Raw component
+ */
+export interface CategoryRawProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    category: Category;
+    isSelected: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Root container for a single category item.
+ * This component sets up the necessary services for managing category state
+ * and provides category context to child components.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { Category } from '@wix/stores/components';
+ * import { Category } from '@wix/headless-stores/react';
  *
- * function CategoryPage() {
- *   return (
- *     <Category.Root categoryServiceConfig={{ category: myCategory }}>
- *       <Category.Name>
- *         {({ name }) => <h1>{name}</h1>}
- *       </Category.Name>
- *       <Category.Slug>
- *         {({ slug }) => <p>Slug: {slug}</p>}
- *       </Category.Slug>
- *     </Category.Root>
- *   );
- * }
+ * <Category.Root categoryServiceConfig={{ category }}>
+ *   <Category.Trigger />
+ *   <Category.Label />
+ *   <Category.ID />
+ * </Category.Root>
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
+export function Root(props: CategoryRootProps): React.ReactNode {
+  const { category, categoryServiceConfig, isSelected, children } = props;
+
+  if (!category && !categoryServiceConfig) {
+    throw new Error(
+      'Category.Root: category or categoryServiceConfig is required',
+    );
+  }
+
+  const serviceConfig = categoryServiceConfig || {
+    category: category!,
+    isSelected,
+  };
+
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        CategoryServiceDefinition,
-        CategoryService,
-        props.categoryServiceConfig,
-      )}
-    >
-      {props.children}
-    </WixServices>
+    <CoreCategory.Root categoryServiceConfig={serviceConfig}>
+      {children}
+    </CoreCategory.Root>
   );
 }
 
 /**
- * Props for Name headless component
- */
-export interface NameProps {
-  /** Content to display (can be a render function receiving name data or ReactNode) */
-  children: ((props: NameRenderProps) => React.ReactNode) | React.ReactNode;
-}
-
-/**
- * Render props for Name component
- */
-export interface NameRenderProps {
-  /** Category name */
-  name: string;
-}
-
-/**
- * Headless component for category name display
+ * Interactive element for selecting or triggering category actions.
+ * Provides category data and selection state to custom render functions.
  *
  * @component
  * @example
  * ```tsx
- * import { Category } from '@wix/stores/components';
+ * // Default usage
+ * <Category.Trigger className="px-4 py-2 rounded border hover:bg-surface-hover" />
  *
- * function CategoryHeader() {
- *   return (
- *     <Category.Name>
- *       {({ name }) => (
- *         <h1 className="category-title">{name}</h1>
- *       )}
- *     </Category.Name>
- *   );
- * }
+ * // Custom rendering with forwardRef
+ * <Category.Trigger asChild>
+ *   {React.forwardRef(({category, isSelected, onSelect, ...props}, ref) => (
+ *     <button
+ *       ref={ref}
+ *       {...props}
+ *       onClick={onSelect}
+ *       className={`px-4 py-2 rounded transition-colors ${
+ *         isSelected
+ *           ? 'bg-brand-primary text-white'
+ *           : 'border border-surface-subtle hover:bg-surface-hover'
+ *       }`}
+ *     >
+ *       {category.name}
+ *     </button>
+ *   ))}
+ * </Category.Trigger>
  * ```
  */
-export function Name(props: NameProps) {
+export const Trigger = React.forwardRef<
+  HTMLButtonElement,
+  CategoryTriggerProps
+>((props, ref) => {
+  const { asChild, children, onSelect, className } = props;
+
   const categoryService = useService(CategoryServiceDefinition);
+  const category = categoryService.category.get();
+  const isSelected = categoryService.isSelected.get();
+  const setIsSelected = (isSelected: boolean) =>
+    categoryService.isSelected.set(isSelected);
 
-  return typeof props.children === "function"
-    ? props.children({ name: categoryService.category.get().name! })
-    : props.children;
-}
+  const handleSelect = () => {
+    if (onSelect) {
+      onSelect(category);
+    }
+  };
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      onClick={handleSelect}
+      data-testid={TestIds.categoryTrigger}
+      data-selected={isSelected ? 'true' : 'false'}
+      customElement={children}
+      customElementProps={{
+        category,
+        isSelected,
+        onSelect: handleSelect,
+        setIsSelected,
+      }}
+      content={category.name}
+    >
+      <button>{category.name}</button>
+    </AsChildSlot>
+  );
+});
 
 /**
- * Props for Slug headless component
- */
-export interface SlugProps {
-  /** Content to display (can be a render function receiving slug data or ReactNode) */
-  children: ((props: SlugRenderProps) => React.ReactNode) | React.ReactNode;
-}
-
-/**
- * Render props for Slug component
- */
-export interface SlugRenderProps {
-  /** Category slug */
-  slug: string;
-}
-
-/**
- * Headless component for category slug display
+ * Displays the category name or label.
+ * Provides category name and full category data to custom render functions.
  *
  * @component
  * @example
  * ```tsx
- * import { Category } from '@wix/stores/components';
+ * // Default usage
+ * <Category.Label className="text-lg font-medium text-content-primary" />
  *
- * function CategoryInfo() {
- *   return (
- *     <Category.Slug>
- *       {({ slug }) => (
- *         <p className="category-slug">Category slug: {slug}</p>
+ * // Custom rendering with forwardRef
+ * <Category.Label asChild>
+ *   {React.forwardRef(({name, category, ...props}, ref) => (
+ *     <span ref={ref} {...props} className="text-lg font-medium text-content-primary">
+ *       {name}
+ *       {category.numberOfProducts > 0 && (
+ *         <span className="text-sm text-content-muted ml-2">
+ *           ({category.numberOfProducts})
+ *         </span>
  *       )}
- *     </Category.Slug>
- *   );
- * }
+ *     </span>
+ *   ))}
+ * </Category.Label>
  * ```
  */
-export function Slug(props: SlugProps) {
-  const categoryService = useService(CategoryServiceDefinition);
+export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
 
-  return typeof props.children === "function"
-    ? props.children({ slug: categoryService.category.get().slug! })
-    : props.children;
-}
+    const categoryService = useService(CategoryServiceDefinition);
+    const category = categoryService.category.get();
+    const isSelected = categoryService.isSelected.get();
+
+    return (
+      <CoreCategory.Name>
+        {({ name }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.categoryLabel}
+              data-selected={isSelected ? 'true' : 'false'}
+              customElement={children}
+              customElementProps={{ name, category }}
+              content={name}
+            >
+              <span>{name}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreCategory.Name>
+    );
+  },
+);
+
+/**
+ * Provides access to the category ID for advanced use cases.
+ * Typically used for tracking, analytics, or hidden form fields.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage (hidden by default)
+ * <Category.ID className="hidden" />
+ *
+ * // Custom rendering with forwardRef
+ * <Category.ID asChild>
+ *   {React.forwardRef(({id, category, ...props}, ref) => (
+ *     <span
+ *       ref={ref}
+ *       {...props}
+ *       data-category-id={id}
+ *       className="sr-only"
+ *     >
+ *       Category ID: {id}
+ *     </span>
+ *   ))}
+ * </Category.ID>
+ * ```
+ */
+export const ID = React.forwardRef<HTMLElement, CategoryIDProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    const categoryService = useService(CategoryServiceDefinition);
+    const category = categoryService.category.get();
+    const isSelected = categoryService.isSelected.get();
+    const id = category._id || '';
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className || 'sr-only'}
+        data-testid={TestIds.categoryId}
+        data-selected={isSelected ? 'true' : 'false'}
+        customElement={children}
+        customElementProps={{ id, category }}
+        content={id}
+      >
+        <span>{id}</span>
+      </AsChildSlot>
+    );
+  },
+);
+
+/**
+ * Provides access to the full category data for advanced use cases.
+ * Useful for custom implementations that need access to all category properties.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Custom rendering with forwardRef
+ * <Category.Raw asChild>
+ *   {React.forwardRef(({category, ...props}, ref) => (
+ *     <div
+ *       ref={ref}
+ *       {...props}
+ *       data-category-id={category._id}
+ *       className="category-raw-data"
+ *     >
+ *       <pre>{JSON.stringify(category, null, 2)}</pre>
+ *     </div>
+ *   ))}
+ * </Category.Raw>
+ * ```
+ */
+export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    const categoryService = useService(CategoryServiceDefinition);
+    const category = categoryService.category.get();
+    const isSelected = categoryService.isSelected.get();
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className || 'sr-only'}
+        data-testid={TestIds.categoryRaw}
+        data-selected={isSelected ? 'true' : 'false'}
+        customElement={children}
+        customElementProps={{ category, isSelected }}
+      >
+        <span>{JSON.stringify(category)}</span>
+      </AsChildSlot>
+    );
+  },
+);

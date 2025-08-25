@@ -1,354 +1,377 @@
-import { useService, WixServices } from "@wix/services-manager-react";
-import { createServicesMap } from "@wix/services-manager";
-import {
-  ProductListService,
-  ProductsListServiceDefinition,
-  type ProductsListServiceConfig,
-} from "../services/products-list-service.js";
-import { productsV3 } from "@wix/stores";
-import {
-  ProductService,
-  ProductServiceDefinition,
-} from "../services/product-service.js";
-import {
-  ProductsListSearchService,
-  ProductsListSearchServiceConfig,
-  ProductsListSearchServiceDefinition,
-} from "../services/products-list-search-service.js";
+import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
+import { useService } from '@wix/services-manager-react';
+import React from 'react';
+import type { ProductsListServiceConfig } from '../services/products-list-service.js';
+import { ProductsListServiceDefinition } from '../services/products-list-service.js';
 
-/**
- * Props for Root headless component
- */
-export interface RootProps {
-  /** Child components that will have access to the ProductList service */
-  children: React.ReactNode;
-  /** Configuration for the ProductList service */
-  productsListConfig: ProductsListServiceConfig;
-  /** Configuration for the ProductListSearch service */
-  productsListSearchConfig?: ProductsListSearchServiceConfig;
+import * as CoreProductList from './core/ProductList.js';
+import * as CoreProductListPagination from './core/ProductListPagination.js';
+import * as Product from './Product.js';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+
+enum TestIds {
+  productListRoot = 'product-list-root',
+  productListProducts = 'product-list-products',
+  productListItem = 'product-list-item',
+  productListLoadMore = 'product-list-load-more',
+  productListTotalsDisplayed = 'product-list-totals-displayed',
 }
 
 /**
- * Root component that provides both ProductList and ProductListSearch service contexts to its children.
- * This component sets up the necessary services for managing products list state, including search,
- * filtering, sorting, and pagination functionality.
+ * Props for the ProductList root component following the documented API
+ */
+export interface ProductListRootProps {
+  children: React.ReactNode;
+  products?: V3Product[];
+  productsListConfig?: ProductsListServiceConfig;
+  className?: string;
+}
+
+/**
+ * Root component that provides the ProductList service context for rendering product lists.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { ProductList, ProductListFilters, ProductListSort, ProductListPagination } from '@wix/stores/components';
+ * import { ProductList } from '@wix/stores/components';
  *
- * function ProductListPage() {
+ * function ProductListPage({ products }) {
  *   return (
- *     <ProductList.Root
- *       productsListConfig={{
- *         products: myProducts,
- *         searchOptions: { query: { search: 'searchTerm' } },
- *         pagingMetadata: { count: 10, hasNext: true },
- *         aggregations: {}
- *       }}
- *       productsListSearchConfig={{
- *         customizations: [],
- *         initialSearchState: { sort: 'name_asc', limit: 20 }
- *       }}
- *     >
- *       <ProductListSort.Options>
- *         {({ selectedSortOption, updateSortOption, sortOptions }) => (
- *           <select value={selectedSortOption} onChange={(e) => updateSortOption(e.target.value)}>
- *             {sortOptions.map(option => <option key={option} value={option}>{option}</option>)}
- *           </select>
- *         )}
- *       </ProductListSort.Options>
- *
- *       <ProductListFilters.PriceRange>
- *         {({ selectedMinPrice, setSelectedMinPrice }) => (
- *           <input value={selectedMinPrice} onChange={(e) => setSelectedMinPrice(Number(e.target.value))} />
- *         )}
- *       </ProductListFilters.PriceRange>
- *
- *       <ProductList.ItemContent>
- *         {({ product }) => (
- *           <div key={product._id}>
- *             <h3>{product.name}</h3>
- *             <p>{product.actualPriceRange?.minValue?.formattedAmount}</p>
- *           </div>
- *         )}
- *       </ProductList.ItemContent>
- *
- *       <ProductListPagination.NextPageTrigger>
- *         {({ nextPage, hasNextPage }) => (
- *           <button onClick={nextPage} disabled={!hasNextPage}>Next</button>
- *         )}
- *       </ProductListPagination.NextPageTrigger>
+ *     <ProductList.Root products={products}>
+ *       <ProductList.Products>
+ *         <ProductList.ProductRepeater>
+ *           <Product.Name />
+ *           <Product.Price />
+ *         </ProductList.ProductRepeater>
+ *       </ProductList.Products>
  *     </ProductList.Root>
  *   );
  * }
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
+export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
+  (props, ref) => {
+    const { children, products, productsListConfig, className } = props;
+
+    const serviceConfig = productsListConfig || {
+      products: products || [],
+      searchOptions: {
+        cursorPaging: { limit: 10 },
+      },
+      pagingMetadata: {
+        count: products?.length || 0,
+      },
+      aggregations: {}, // Empty aggregation data
+      customizations: [],
+    };
+
+    return (
+      <CoreProductList.Root productsListConfig={serviceConfig}>
+        <RootContent
+          children={children as any}
+          className={className}
+          ref={ref}
+        />
+      </CoreProductList.Root>
+    );
+  },
+);
+
+/**
+ * Internal component to handle the Root content with service access
+ */
+const RootContent = React.forwardRef<
+  HTMLElement,
+  {
+    children?: any;
+    className?: string;
+  }
+>((props, ref) => {
+  const { children, className } = props;
+  const productsListService = useService(ProductsListServiceDefinition);
+  const contextProducts = productsListService.products.get();
+  const pagingMetadata = productsListService.pagingMetadata.get();
+
+  const displayedProducts = contextProducts.length;
+  const totalProducts = pagingMetadata.count || contextProducts.length;
+  const isFiltered = false; // TODO: Implement filtering detection
+
+  const attributes = {
+    'data-testid': TestIds.productListRoot,
+    'data-total-products': totalProducts,
+    'data-displayed-products': displayedProducts,
+    'data-filtered': isFiltered,
+    className,
+  };
+
   return (
-    <WixServices
-      servicesMap={createServicesMap()
-        .addService(
-          ProductsListServiceDefinition,
-          ProductListService,
-          props.productsListConfig,
-        )
-        .addService(
-          ProductsListSearchServiceDefinition,
-          ProductsListSearchService,
-          props.productsListSearchConfig,
-        )}
-    >
-      {props.children}
-    </WixServices>
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {children}
+    </div>
   );
-}
+});
 
 /**
- * Props for EmptyState headless component
+ * Props for ProductList Raw component
  */
-export interface EmptyStateProps {
-  /** Content to display when products list is empty (can be a render function or ReactNode) */
+export interface RawProps {
   children:
-    | ((props: EmptyStateRenderProps) => React.ReactNode)
+    | ((props: {
+        totalProducts: number;
+        displayedProducts: number;
+        isFiltered: boolean;
+      }) => React.ReactNode)
     | React.ReactNode;
 }
 
 /**
- * Render props for EmptyState component
- */
-export interface EmptyStateRenderProps {}
-
-/**
- * Component that renders content when the products list is empty.
- * Only displays its children when there are no products, no loading state, and no errors.
+ * Raw component that provides direct access to product list data.
+ * Similar to Product.Raw, this should only be used when you need custom access to list data.
  *
  * @component
  * @example
  * ```tsx
- * import { ProductList } from '@wix/stores/components';
- *
- * function EmptyProductsMessage() {
- *   return (
- *     <ProductList.EmptyState>
- *       {() => (
- *         <div className="empty-state">
- *           <h3>No products found</h3>
- *           <p>Try adjusting your search or filter criteria</p>
- *           <button>Clear Filters</button>
- *         </div>
- *       )}
- *     </ProductList.EmptyState>
- *   );
- * }
+ * <ProductList.Raw>
+ *   {({ totalProducts, displayedProducts, isFiltered }) => (
+ *     <div className="text-content-muted">
+ *       Showing {displayedProducts} of {totalProducts} products
+ *       {isFiltered && <span className="ml-2 text-brand-primary">(Filtered)</span>}
+ *     </div>
+ *   )}
+ * </ProductList.Raw>
  * ```
  */
-export function EmptyState(props: EmptyStateProps): React.ReactNode {
-  const { isLoading, error, products } = useService(
-    ProductsListServiceDefinition,
+export const Raw = React.forwardRef<HTMLElement, RawProps>((props, _ref) => {
+  const { children } = props;
+  const productsListService = useService(ProductsListServiceDefinition);
+  const products = productsListService.products.get();
+  const pagingMetadata = productsListService.pagingMetadata.get();
+  const displayedProducts = products.length;
+  const totalProducts = pagingMetadata.count || products.length;
+  const isFiltered = false; // TODO: Implement filtering detection
+
+  return typeof children === 'function'
+    ? children({ totalProducts, displayedProducts, isFiltered })
+    : children;
+});
+
+/**
+ * Props for ProductList Products component
+ */
+export interface ProductsProps {
+  children: React.ReactNode;
+  emptyState?: React.ReactNode;
+  infiniteScroll?: boolean;
+  pageSize?: number;
+  className?: string;
+}
+
+/**
+ * Container for the product list with empty state support.
+ * Follows List Container Level pattern.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ProductList.Products emptyState={<div>No products found</div>}>
+ *   <ProductList.ProductRepeater>
+ *     <Product.Name />
+ *     <Product.Price />
+ *   </ProductList.ProductRepeater>
+ * </ProductList.Products>
+ * ```
+ */
+export const Products = React.forwardRef<HTMLElement, ProductsProps>(
+  (props, ref) => {
+    const {
+      children,
+      emptyState,
+      infiniteScroll = true,
+      pageSize = 0,
+      className,
+    } = props;
+    const productsListService = useService(ProductsListServiceDefinition);
+    const products = productsListService.products.get();
+    const hasProducts = products.length > 0;
+
+    if (!hasProducts) {
+      return emptyState || null;
+    }
+
+    const attributes = {
+      'data-testid': TestIds.productListProducts,
+      'data-empty': !hasProducts,
+      'data-infinite-scroll': infiniteScroll,
+      'data-page-size': pageSize,
+      className,
+    };
+
+    return (
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+        {children as React.ReactNode}
+      </div>
+    );
+  },
+);
+
+/**
+ * Props for ProductList ProductRepeater component
+ */
+export interface ProductRepeaterProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Repeater component that renders Product.Root for each product.
+ * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ProductList.ProductRepeater>
+ *   <Product.Name />
+ *   <Product.Price />
+ *   <Product.MediaGallery>
+ *     <MediaGallery.Viewport />
+ *   </Product.MediaGallery>
+ * </ProductList.ProductRepeater>
+ * ```
+ */
+export const ProductRepeater = React.forwardRef<
+  HTMLElement,
+  ProductRepeaterProps
+>((props, _ref) => {
+  const { children } = props;
+  const productsListService = useService(ProductsListServiceDefinition);
+  const products = productsListService.products.get();
+  const hasProducts = products.length > 0;
+
+  if (!hasProducts) return null;
+
+  return (
+    <>
+      {products.map((product: V3Product) => (
+        <Product.Root
+          key={product._id}
+          product={product}
+          data-testid={TestIds.productListItem}
+          data-product-id={product._id}
+          data-product-available={true}
+        >
+          {children}
+        </Product.Root>
+      ))}
+    </>
   );
-  const isLoadingValue = isLoading.get();
-  const errorValue = error.get();
-  const productsValue = products.get();
+});
 
-  if (!isLoadingValue && !errorValue && productsValue.length === 0) {
-    return typeof props.children === "function"
-      ? props.children({})
-      : props.children;
-  }
-
-  return null;
+/**
+ * Props for ProductList LoadMoreTrigger component
+ */
+export interface LoadMoreTriggerProps {
+  children?: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
 }
 
 /**
- * Props for Loading headless component
- */
-export interface LoadingProps {
-  /** Content to display during loading (can be a render function or ReactNode) */
-  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
-}
-
-/**
- * Render props for Loading component
- */
-export interface LoadingRenderProps {}
-
-/**
- * Component that renders content during loading state.
- * Only displays its children when the products list is currently loading.
+ * Displays a button to load more products. Not rendered if infiniteScroll is false or no products are left to load.
+ * Follows the architecture rules - does not support asChild as it's a simple trigger component.
  *
  * @component
  * @example
  * ```tsx
- * import { ProductList } from '@wix/stores/components';
- *
- * function ProductsLoading() {
- *   return (
- *     <ProductList.Loading>
- *       {() => (
- *         <div className="loading-spinner">
- *           <div>Loading products...</div>
- *           <div className="spinner"></div>
- *         </div>
- *       )}
- *     </ProductList.Loading>
- *   );
- * }
+ * <ProductList.LoadMoreTrigger asChild>
+ *   <button>Load More</button>
+ * </ProductList.LoadMoreTrigger>
  * ```
  */
-export function Loading(props: LoadingProps): React.ReactNode {
-  const { isLoading } = useService(ProductsListServiceDefinition);
-  const isLoadingValue = isLoading.get();
+export const LoadMoreTrigger = React.forwardRef<
+  HTMLElement,
+  LoadMoreTriggerProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
 
-  if (isLoadingValue) {
-    return typeof props.children === "function"
-      ? props.children({})
-      : props.children;
-  }
+  return (
+    <CoreProductListPagination.LoadMoreTrigger>
+      {({ loadMore, hasMoreProducts, isLoading }) => {
+        // Don't render if no more products to load
+        if (!hasMoreProducts) return null;
 
-  return null;
-}
+        const handleClick = () => loadMore(10);
 
-/**
- * Props for Error headless component
- */
-export interface ErrorProps {
-  /** Content to display during error state (can be a render function or ReactNode) */
-  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
-}
-
-/**
- * Render props for Error component
- */
-export interface ErrorRenderProps {
-  /** Error message */
-  error: string | null;
-}
-
-/**
- * Component that renders content when there's an error loading products.
- * Only displays its children when an error has occurred.
- *
- * @component
- * @example
- * ```tsx
- * import { ProductList } from '@wix/stores/components';
- *
- * function ProductsError() {
- *   return (
- *     <ProductList.Error>
- *       {({ error }) => (
- *         <div className="error-state">
- *           <h3>Error loading products</h3>
- *           <p>{error}</p>
- *           <button onClick={() => window.location.reload()}>
- *             Try Again
- *           </button>
- *         </div>
- *       )}
- *     </ProductList.Error>
- *   );
- * }
- * ```
- */
-export function Error(props: ErrorProps): React.ReactNode {
-  const { error } = useService(ProductsListServiceDefinition);
-  const errorValue = error.get();
-
-  if (errorValue) {
-    return typeof props.children === "function"
-      ? props.children({ error: errorValue })
-      : props.children;
-  }
-
-  return null;
-}
-
-/**
- * Props for ItemContent headless component
- */
-export interface ItemContentProps {
-  /** Content to display for each product (can be a render function receiving product data or ReactNode) */
-  children:
-    | ((props: ItemContentRenderProps) => React.ReactNode)
-    | React.ReactNode;
-}
-
-/**
- * Render props for ItemContent component
- */
-export interface ItemContentRenderProps {
-  /** Product data */
-  product: productsV3.V3Product;
-}
-
-/**
- * Component that renders content for each product in the list.
- * Maps over all products and provides each product through a service context.
- * Only renders when products are successfully loaded (not loading, no error, and has products).
- *
- * @component
- * @example
- * ```tsx
- * import { ProductList } from '@wix/stores/components';
- *
- * function ProductsGrid() {
- *   return (
- *     <ProductList.ItemContent>
- *       {({ product }) => (
- *         <div className="product-card">
- *           <img src={product.media?.main?.image} alt={product.name} />
- *           <h3>{product.name}</h3>
- *           <p>{product.actualPriceRange?.minValue?.formattedAmount}</p>
- *           <button>View Details</button>
- *         </div>
- *       )}
- *     </ProductList.ItemContent>
- *   );
- * }
- * ```
- */
-export function ItemContent(props: ItemContentProps): React.ReactNode {
-  const { products, isLoading, error } = useService(
-    ProductsListServiceDefinition,
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={handleClick}
+            disabled={isLoading}
+            data-testid={TestIds.productListLoadMore}
+            customElement={children}
+          >
+            <button>{children}</button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreProductListPagination.LoadMoreTrigger>
   );
-  const productsValue = products.get();
+});
 
-  if (isLoading.get() || error.get() || productsValue.length === 0) {
-    return null;
-  }
+/**
+ * Props for ProductList Totals Displayed component
+ */
+export interface TotalsDisplayedProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    displayedProducts: number;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
-  return productsValue.map((product: productsV3.V3Product) => (
-    <WixServices
-      key={product._id}
-      servicesMap={createServicesMap().addService(
-        ProductServiceDefinition,
-        ProductService,
-        { product },
-      )}
+/**
+ * Displays the number of products currently displayed.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ProductList.TotalsDisplayed />
+ * // or with asChild
+ * <ProductList.TotalsDisplayed asChild>
+ *   <strong />
+ * </ProductList.TotalsDisplayed>
+ * // or with render function
+ * <ProductList.TotalsDisplayed asChild>
+ *   {({ displayedProducts }, ref) => <strong ref={ref}>{displayedProducts}</strong>}
+ * </ProductList.TotalsDisplayed>
+ * ```
+ */
+export const TotalsDisplayed = React.forwardRef<
+  HTMLElement,
+  TotalsDisplayedProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+  const productsListService = useService(ProductsListServiceDefinition);
+  const products = productsListService.products.get();
+  const displayedProducts = products.length;
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.productListTotalsDisplayed}
+      data-displayed={displayedProducts}
+      customElement={children}
+      customElementProps={{ displayedProducts }}
+      content={displayedProducts}
     >
-      {typeof props.children === "function"
-        ? props.children({ product })
-        : props.children}
-    </WixServices>
-  ));
-}
-
-export type ItemsProps = {
-  children: ((props: ItemsRenderProps) => React.ReactNode) | React.ReactNode;
-};
-
-export type ItemsRenderProps = {
-  products: productsV3.V3Product[];
-};
-
-export function Items(props: ItemsProps) {
-  const { products } = useService(ProductsListServiceDefinition);
-  const productsValue = products.get();
-
-  return typeof props.children === "function"
-    ? props.children({ products: productsValue })
-    : props.children;
-}
+      <span>{displayedProducts}</span>
+    </AsChildSlot>
+  );
+});

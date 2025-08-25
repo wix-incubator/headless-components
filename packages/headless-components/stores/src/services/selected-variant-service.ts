@@ -1,13 +1,14 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
   type ReadOnlySignal,
-} from "@wix/services-definitions/core-services/signals";
-import * as productsV3 from "@wix/auto_sdk_stores_products-v-3";
-import * as inventoryItemsV3 from "@wix/auto_sdk_stores_inventory-items-v-3";
-import { CurrentCartServiceDefinition } from "@wix/headless-ecom/services";
-import { ProductServiceDefinition } from "./product-service.js";
+} from '@wix/services-definitions/core-services/signals';
+import * as productsV3 from '@wix/auto_sdk_stores_products-v-3';
+import * as inventoryItemsV3 from '@wix/auto_sdk_stores_inventory-items-v-3';
+import { CurrentCartServiceDefinition } from '@wix/headless-ecom/services';
+import { MediaGalleryServiceDefinition } from '@wix/headless-media/services';
+import { ProductServiceDefinition } from './product-service.js';
 
 type V3Product = productsV3.V3Product;
 type Variant = productsV3.Variant;
@@ -44,6 +45,10 @@ export interface SelectedVariantServiceAPI {
   isLowStock: () => boolean;
 
   setSelectedChoices: (choices: Record<string, string>) => void;
+  createLineItems: (
+    quantity?: number,
+    modifiers?: Record<string, any>,
+  ) => Array<{ catalogReference: any; quantity: number }>;
   addToCart: (
     quantity?: number,
     modifiers?: Record<string, any>,
@@ -74,12 +79,13 @@ export interface SelectedVariantServiceConfig {
 }
 
 export const SelectedVariantServiceDefinition =
-  defineService<SelectedVariantServiceAPI>("selectedVariant");
+  defineService<SelectedVariantServiceAPI>('selectedVariant');
 
 export const SelectedVariantService =
   implementService.withConfig<SelectedVariantServiceConfig>()(
     SelectedVariantServiceDefinition,
     ({ getService, config: { fetchInventoryData = true } }) => {
+      const mediaService = getService(MediaGalleryServiceDefinition);
       const signalsService = getService(SignalsServiceDefinition);
       const cartService = getService(CurrentCartServiceDefinition);
       const productService = getService(ProductServiceDefinition);
@@ -95,7 +101,7 @@ export const SelectedVariantService =
       signalsService.effect(() => {
         const product = productService.product.get();
         const selectedChoicesValue = selectedChoices.get() || {};
-        // let mediaToDisplay: productsV3.ProductMedia[] = [];
+        let mediaToDisplay: productsV3.ProductMedia[] = [];
 
         const productItemsImages =
           product?.media?.itemsInfo?.items
@@ -103,9 +109,9 @@ export const SelectedVariantService =
             .filter(Boolean) ?? [];
 
         if (productItemsImages.length) {
-          // mediaToDisplay = productItemsImages;
+          mediaToDisplay = productItemsImages;
         } else if (product?.media?.main) {
-          // mediaToDisplay = [product.media.main];
+          mediaToDisplay = [product.media.main];
         }
 
         // Get images based on selected choices if available
@@ -123,10 +129,10 @@ export const SelectedVariantService =
         });
 
         if (selectedChoicesImages?.length) {
-          // mediaToDisplay = selectedChoicesImages;
+          mediaToDisplay = selectedChoicesImages;
         }
 
-        // mediaService.setMediaToDisplay(mediaToDisplay ?? []);
+        mediaService.setMediaToDisplay(mediaToDisplay ?? []);
       });
 
       const parsePrice = (amount?: string | null): number => {
@@ -184,7 +190,7 @@ export const SelectedVariantService =
           // Use the correct Wix inventoryItemsV3.queryInventoryItems() API
           const queryResult = await inventoryItemsV3
             .queryInventoryItems()
-            .eq("variantId", variantId)
+            .eq('variantId', variantId)
             .find();
 
           const inventoryItem = queryResult.items?.[0];
@@ -206,7 +212,7 @@ export const SelectedVariantService =
             quantityAvailable.set(null);
           }
         } catch (error) {
-          console.error("Failed to fetch inventory quantity:", error);
+          console.error('Failed to fetch inventory quantity:', error);
           // Fallback on error
           quantityAvailable.set(null);
           trackQuantity.set(false);
@@ -259,7 +265,7 @@ export const SelectedVariantService =
         false as any,
       );
       const selectedQuantity: Signal<number> = signalsService.signal(1 as any);
-      const productId: Signal<string> = signalsService.signal("" as any);
+      const productId: Signal<string> = signalsService.signal('' as any);
       const ribbonLabel: Signal<string | null> = signalsService.signal(
         null as any,
       );
@@ -271,7 +277,7 @@ export const SelectedVariantService =
       const init = (currentProduct: V3Product | null) => {
         if (currentProduct) {
           v3Product.set(currentProduct);
-          productId.set(currentProduct._id || "");
+          productId.set(currentProduct._id || '');
           ribbonLabel.set(currentProduct.ribbon?.name || null);
 
           const actualPrice = currentProduct.actualPriceRange?.minValue?.amount;
@@ -290,7 +296,7 @@ export const SelectedVariantService =
             currentProduct.options.forEach((option: any) => {
               if (option.name && option.choicesSettings?.choices) {
                 optionsMap[option.name] = option.choicesSettings.choices.map(
-                  (choice: any) => choice.name || "",
+                  (choice: any) => choice.name || '',
                 );
               }
             });
@@ -307,7 +313,7 @@ export const SelectedVariantService =
             }
           } else {
             const singleVariant: productsV3.Variant = {
-              _id: "default",
+              _id: 'default',
               visible: true,
               choices: [],
               price: {
@@ -322,7 +328,7 @@ export const SelectedVariantService =
                     productsV3.InventoryAvailabilityStatus
                       .PARTIALLY_OUT_OF_STOCK,
                 preorderEnabled:
-                  currentProduct.inventory?.preorderStatus === "ENABLED",
+                  currentProduct.inventory?.preorderStatus === 'ENABLED',
               },
             };
             variants.set([singleVariant]);
@@ -390,7 +396,7 @@ export const SelectedVariantService =
             rawAmount = prod.actualPriceRange.minValue.amount;
           }
 
-          return rawAmount ? `$${rawAmount}` : "";
+          return rawAmount ? `$${rawAmount}` : '';
         },
       );
 
@@ -417,7 +423,7 @@ export const SelectedVariantService =
             rawAmount = prod.compareAtPriceRange.minValue.amount;
           }
 
-          return rawAmount ? `$${rawAmount}` : null;
+          return rawAmount && rawAmount !== '0' ? `$${rawAmount}` : null;
         });
 
       const isInStock: ReadOnlySignal<boolean> = signalsService.computed(() => {
@@ -446,7 +452,7 @@ export const SelectedVariantService =
 
       const currency: ReadOnlySignal<string> = signalsService.computed(() => {
         const prod = v3Product.get();
-        return prod?.currency || "USD";
+        return prod?.currency || 'USD';
       });
 
       const selectedVariant = (): productsV3.Variant | null => {
@@ -474,6 +480,92 @@ export const SelectedVariantService =
         updateDataFromVariant(matchingVariant);
       };
 
+      const createLineItems = (
+        quantity: number = 1,
+        modifiers?: Record<string, any>,
+      ): Array<{ catalogReference: any; quantity: number }> => {
+        const prod = v3Product.get();
+        const variant = currentVariant.get();
+
+        if (!prod?._id) {
+          throw new Error('Product not found');
+        }
+
+        // Build catalog reference with modifiers if provided
+        const catalogReference: any = {
+          catalogItemId: prod._id,
+          appId: '215238eb-22a5-4c36-9e7b-e7c08025e04e',
+          options:
+            variant?._id && variant._id !== 'default'
+              ? {
+                  variantId: variant._id,
+                  preOrderRequested:
+                    !!variant?.inventoryStatus?.preorderEnabled,
+                }
+              : undefined,
+        };
+
+        // Transform and add modifiers to catalog reference if they exist
+        if (modifiers && Object.keys(modifiers).length > 0) {
+          const options: Record<string, string> = {};
+          const customTextFields: Record<string, string> = {};
+
+          // Get product modifiers to determine types and keys
+          const productModifiers = prod.modifiers || [];
+
+          Object.values(modifiers).forEach((modifierValue: any) => {
+            const modifierName = modifierValue.modifierName;
+            const productModifier = productModifiers.find(
+              (m) => m.name === modifierName,
+            );
+
+            if (!productModifier) return;
+
+            const renderType = productModifier.modifierRenderType;
+
+            if (
+              renderType === productsV3.ModifierRenderType.TEXT_CHOICES ||
+              renderType === productsV3.ModifierRenderType.SWATCH_CHOICES
+            ) {
+              // For choice modifiers, use the modifier key and choice value
+              const modifierKey = (productModifier as any).key || modifierName;
+              if (modifierValue.choiceValue) {
+                options[modifierKey] = modifierValue.choiceValue;
+              }
+            } else if (renderType === productsV3.ModifierRenderType.FREE_TEXT) {
+              // For free text modifiers, use the freeTextSettings key
+              const freeTextKey =
+                (productModifier.freeTextSettings as any)?.key || modifierName;
+              if (modifierValue.freeTextValue) {
+                customTextFields[freeTextKey] = modifierValue.freeTextValue;
+              }
+            }
+          });
+
+          // Add formatted modifiers to catalog reference
+          if (Object.keys(options).length > 0) {
+            catalogReference.options = {
+              ...catalogReference.options,
+              options,
+            };
+          }
+
+          if (Object.keys(customTextFields).length > 0) {
+            catalogReference.options = {
+              ...catalogReference.options,
+              customTextFields,
+            };
+          }
+        }
+
+        return [
+          {
+            catalogReference,
+            quantity,
+          },
+        ];
+      };
+
       const addToCart = async (
         quantity: number = 1,
         modifiers?: Record<string, any>,
@@ -482,95 +574,11 @@ export const SelectedVariantService =
           isLoading.set(true);
           error.set(null);
 
-          const prod = v3Product.get();
-          const variant = currentVariant.get();
-
-          if (!prod?._id) {
-            throw new Error("Product not found");
-          }
-
-          // Build catalog reference with modifiers if provided
-          const catalogReference: any = {
-            catalogItemId: prod._id,
-            appId: "215238eb-22a5-4c36-9e7b-e7c08025e04e",
-            options:
-              variant?._id && variant._id !== "default"
-                ? {
-                    variantId: variant._id,
-                    preOrderRequested:
-                      !!variant?.inventoryStatus?.preorderEnabled,
-                  }
-                : undefined,
-          };
-
-          // Transform and add modifiers to catalog reference if they exist
-          if (modifiers && Object.keys(modifiers).length > 0) {
-            const options: Record<string, string> = {};
-            const customTextFields: Record<string, string> = {};
-
-            // Get product modifiers to determine types and keys
-            const productModifiers = prod.modifiers || [];
-
-            Object.values(modifiers).forEach((modifierValue: any) => {
-              const modifierName = modifierValue.modifierName;
-              const productModifier = productModifiers.find(
-                (m) => m.name === modifierName,
-              );
-
-              if (!productModifier) return;
-
-              const renderType = productModifier.modifierRenderType;
-
-              if (
-                renderType === productsV3.ModifierRenderType.TEXT_CHOICES ||
-                renderType === productsV3.ModifierRenderType.SWATCH_CHOICES
-              ) {
-                // For choice modifiers, use the modifier key and choice value
-                const modifierKey =
-                  (productModifier as any).key || modifierName;
-                if (modifierValue.choiceValue) {
-                  options[modifierKey] = modifierValue.choiceValue;
-                }
-              } else if (
-                renderType === productsV3.ModifierRenderType.FREE_TEXT
-              ) {
-                // For free text modifiers, use the freeTextSettings key
-                const freeTextKey =
-                  (productModifier.freeTextSettings as any)?.key ||
-                  modifierName;
-                if (modifierValue.freeTextValue) {
-                  customTextFields[freeTextKey] = modifierValue.freeTextValue;
-                }
-              }
-            });
-
-            // Add formatted modifiers to catalog reference
-            if (Object.keys(options).length > 0) {
-              catalogReference.options = {
-                ...catalogReference.options,
-                options,
-              };
-            }
-
-            if (Object.keys(customTextFields).length > 0) {
-              catalogReference.options = {
-                ...catalogReference.options,
-                customTextFields,
-              };
-            }
-          }
-
-          const lineItems = [
-            {
-              catalogReference,
-              quantity,
-            },
-          ];
-
+          const lineItems = createLineItems(quantity, modifiers);
           await cartService.addToCart(lineItems);
         } catch (err) {
           error.set(
-            err instanceof Error ? err.message : "Failed to add to cart",
+            err instanceof Error ? err.message : 'Failed to add to cart',
           );
         } finally {
           isLoading.set(false);
@@ -760,6 +768,7 @@ export const SelectedVariantService =
         ribbonLabel,
 
         setSelectedChoices,
+        createLineItems,
         addToCart,
 
         setOption,

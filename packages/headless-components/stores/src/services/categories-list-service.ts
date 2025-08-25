@@ -1,10 +1,10 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
-import { categories } from "@wix/categories";
-import { type Category } from "./category-service.js";
+} from '@wix/services-definitions/core-services/signals';
+import { categories } from '@wix/categories';
+import { type Category } from './category-service.js';
 
 /**
  * Configuration interface for the Categories List service.
@@ -33,7 +33,7 @@ export const CategoriesListServiceDefinition = defineService<
     error: Signal<string | null>;
   },
   CategoriesListServiceConfig
->("categories-list");
+>('categories-list');
 
 /**
  * Implementation of the Categories List service that manages reactive categories data.
@@ -106,7 +106,7 @@ export const CategoriesListService =
  * ---
  * // Astro page example - pages/categories.astro
  * import { loadCategoriesListServiceConfig } from '@wix/stores/services';
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components/react';
  *
  * // Load categories data during SSR
  * const categoriesConfig = await loadCategoriesListServiceConfig();
@@ -129,7 +129,7 @@ export const CategoriesListService =
  * // Next.js page example - pages/categories.tsx
  * import { GetServerSideProps } from 'next';
  * import { loadCategoriesListServiceConfig } from '@wix/stores/services';
- * import { CategoryList } from '@wix/stores/components';
+ * import { CategoryList } from '@wix/stores/components/react';
  *
  * interface CategoriesPageProps {
  *   categoriesConfig: Awaited<ReturnType<typeof loadCategoriesListServiceConfig>>;
@@ -165,21 +165,21 @@ export async function loadCategoriesListServiceConfig(): Promise<CategoriesListS
   const categoriesResponse = await categories
     .queryCategories({
       treeReference: {
-        appNamespace: "@wix/stores",
+        appNamespace: '@wix/stores',
         treeKey: null,
       },
     })
-    .eq("visible", true)
+    .eq('visible', true)
     .find();
 
   const fetchedCategories = categoriesResponse.items || [];
 
   // Sort categories to put "all-products" first, keep the rest in original order
   const allProductsCategory = fetchedCategories.find(
-    (cat) => cat.slug === "all-products",
+    (cat) => cat.slug === 'all-products',
   );
   const otherCategories = fetchedCategories.filter(
-    (cat) => cat.slug !== "all-products",
+    (cat) => cat.slug !== 'all-products',
   );
 
   const allCategories = allProductsCategory

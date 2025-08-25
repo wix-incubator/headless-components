@@ -1,12 +1,14 @@
 {
   "name": "@wix/headless-ecom",
-  "version": "0.0.13",
+  "version": "0.0.20",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "test": "vitest"
+    "test": "vitest",
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "files": [
     "dist",
@@ -35,12 +37,17 @@
     "@types/node": "^20.9.0",
     "@vitest/ui": "^3.1.4",
     "jsdom": "^26.1.0",
+    "prettier": "^3.4.2",
     "typescript": "^5.8.3",
     "vitest": "^3.1.4"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
     "@wix/auto_sdk_ecom_checkout": "^1.0.61",
     "@wix/auto_sdk_ecom_current-cart": "^1.0.56",
+    "@wix/headless-components": "workspace:*",
+    "@wix/headless-media": "workspace:*",
+    "@wix/redirects": "^1.0.0",
     "@wix/sdk": "^1.15.24",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
