@@ -62,7 +62,7 @@
     "@wix/auto_sdk_stores_read-only-variants-v-3": "^1.0.23",
     "@wix/ecom": "^1.0.1278",
     "@wix/essentials": "^0.1.24",
-    "@wix/headless-components": "0.0.3",
+    "@wix/headless-components": "0.0.4",
     "@wix/headless-ecom": "0.0.17",
     "@wix/headless-media": "^0.0.11",
     "@wix/headless-utils": "^0.0.2",

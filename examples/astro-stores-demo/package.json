@@ -24,6 +24,7 @@
     "@wix/astro": "^1.0.22",
     "@wix/categories": "^1.0.133",
     "@wix/ecom": "^1.0.1278",
+    "@wix/headless-components": "workspace:*",
     "@wix/headless-ecom": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-seo": "workspace:*",

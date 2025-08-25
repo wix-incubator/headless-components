@@ -7,6 +7,8 @@ import {
 } from '@wix/headless-ecom/react';
 import React from 'react';
 
+import { Quantity } from '@wix/headless-components/react';
+
 export default function CartContent() {
   return (
     <div className="min-h-screen" data-testid="cart-summary">
