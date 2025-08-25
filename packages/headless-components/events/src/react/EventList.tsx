@@ -76,20 +76,16 @@ export interface EventsProps {
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Whether to enable infinite scroll */
-  infiniteScroll?: boolean; // Default: true
-  /** Number of events to display in a page */
-  pageSize?: number; // 0 means no limit, max is 100
 }
 
 /**
- * Container for the event list with support for empty state and custom layout.
+ * Container for the event list with support for empty state.
  * Follows List Container Level pattern.
  *
  * @component
  * @example
  * ```tsx
- * <EventList.Events emptyState={<div>No events found</div>} infiniteScroll={false} pageSize={3}>
+ * <EventList.Events emptyState={<div>No events found</div>}>
  *   <EventList.EventRepeater>
  *     <Event.Image />
  *     <Event.Title />
@@ -100,7 +96,6 @@ export interface EventsProps {
 export const Events = React.forwardRef<HTMLElement, EventsProps>(
   (props, ref) => {
     const { children, emptyState, className } = props;
-    // TODO: Implement infiniteScroll and pageSize logic
 
     const service = useService(EventListServiceDefinition);
     const events = service.events.get();
@@ -180,7 +175,7 @@ export interface LoadMoreTriggerProps {
 }
 
 /**
- * Displays a button to load more events. Not rendered if infiniteScroll is false or no events are left to load.
+ * Displays a button to load more events. Not rendered if no events are left to load.
  *
  * @component
  * @example
@@ -198,9 +193,8 @@ export const LoadMoreTrigger = React.forwardRef<
 
   // TODO: Implement service integration
   const hasMoreEvents = true;
-  const infiniteScroll = true;
 
-  if (!infiniteScroll || !hasMoreEvents) {
+  if (!hasMoreEvents) {
     return null;
   }
 
