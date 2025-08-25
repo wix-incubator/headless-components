@@ -48,4 +48,4 @@ jobs:
           cd packages/headless-components/${{ inputs.package_name }}
           yarn npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
