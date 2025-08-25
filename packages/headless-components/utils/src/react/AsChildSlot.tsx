@@ -58,7 +58,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       if (typeof customElement === 'string') {
         return (
           <Slot ref={ref} {...restProps}>
-            <div>{customElement}</div>
+            <span>{customElement}</span>
           </Slot>
         );
       }
@@ -116,7 +116,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
 
     return (
       <Slot ref={ref} {...restProps}>
-        {children}
+        {React.Children.count(children) > 1 ? <>{children}</> : children}
       </Slot>
     );
   },
