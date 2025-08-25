@@ -475,20 +475,10 @@ export const ProductListService =
           try {
             isLoadingSignal.set(true);
 
-            const affectiveSearchOptions: Parameters<
-              typeof productsV3.searchProducts
-            >[0] = searchOptions.cursorPaging?.cursor
-              ? {
-                  cursorPaging: {
-                    cursor: searchOptions.cursorPaging.cursor,
-                    limit: searchOptions.cursorPaging.limit,
-                  },
-                }
-              : searchOptions;
-
-            const result = await fetchProducts(affectiveSearchOptions);
+            const result = await fetchProducts(searchOptions);
 
             productsSignal.set(result.products ?? []);
+
             pagingMetadataSignal.set(result.pagingMetadata!);
           } catch (error) {
             errorSignal.set(
@@ -501,6 +491,34 @@ export const ProductListService =
       }
 
       firstRun = false;
+
+      const loadMoreCursor = async (count: number) => {
+        const affectiveSearchOptions: Parameters<
+          typeof productsV3.searchProducts
+        >[0] = {
+          cursorPaging: {
+            cursor: pagingMetadataSignal.get().cursors?.next,
+            limit: DEFAULT_QUERY_LIMIT || count,
+          },
+        };
+
+        try {
+          isLoadingSignal.set(true);
+          const result = await fetchProducts(affectiveSearchOptions);
+          productsSignal.set([
+            ...productsSignal.get(),
+            ...(result.products ?? []),
+          ]);
+
+          pagingMetadataSignal.set(result.pagingMetadata!);
+        } catch (error) {
+          errorSignal.set(
+            error instanceof Error ? error.message : 'Unknown error',
+          );
+        } finally {
+          isLoadingSignal.set(false);
+        }
+      };
 
       return {
         products: productsSignal,
@@ -550,14 +568,7 @@ export const ProductListService =
         isLoading: isLoadingSignal,
         error: errorSignal,
         loadMore: (count: number) => {
-          const currentOptions = searchOptionsSignal.peek();
-          searchOptionsSignal.set({
-            ...currentOptions,
-            cursorPaging: {
-              cursor: pagingMetadataSignal.get().cursors?.next,
-              limit: currentOptions.cursorPaging?.limit ?? 0 + count,
-            },
-          });
+          loadMoreCursor(count);
         },
         hasMoreProducts: signalsService.computed(
           () => pagingMetadataSignal.get().hasNext ?? false,
