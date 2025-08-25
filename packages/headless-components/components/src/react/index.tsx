@@ -32,11 +32,11 @@ export type {
 } from './filter.js';
 
 // Quantity Components
-export * as Quantity from './foo.js';
+export * as Quantity from './quantity.js';
 export type {
   QuantityRootProps,
   QuantityIncrementProps,
   QuantityDecrementProps,
   QuantityInputProps,
   QuantityResetProps,
-} from './foo.js';
+} from './quantity.js';
