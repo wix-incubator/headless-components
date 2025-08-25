@@ -3,9 +3,11 @@ import {
   Cart,
   LineItem,
   SelectedOption,
-  Quantity,
   Commerce,
 } from '@wix/headless-ecom/react';
+
+import { Quantity } from '@wix/headless-components/react';
+
 import { useMiniCartModal } from '../MiniCartModal';
 
 // Mini coupon form for the cart sidebar
