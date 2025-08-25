@@ -141,7 +141,6 @@ export const TicketDefinitionRepeater = (props: TicketDefinitionRepeaterProps): 
   const { children } = props;
 
   const service = useService(TicketListServiceDefinition);
-  const eventService = useService(EventServiceDefinition);
   const ticketDefinitions = service.ticketDefinitions.get();
   const hasTickets = !!ticketDefinitions.length;
 
