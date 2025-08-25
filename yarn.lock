@@ -4431,7 +4431,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-components@npm:^0.0.4, @wix/headless-components@workspace:*, @wix/headless-components@workspace:packages/headless-components/components":
+"@wix/headless-components@workspace:*, @wix/headless-components@workspace:packages/headless-components/components":
   version: 0.0.0-use.local
   resolution: "@wix/headless-components@workspace:packages/headless-components/components"
   dependencies:
@@ -4504,7 +4504,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-ecom@npm:^0.0.18, @wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
+"@wix/headless-ecom@workspace:*, @wix/headless-ecom@workspace:packages/headless-components/ecom":
   version: 0.0.0-use.local
   resolution: "@wix/headless-ecom@workspace:packages/headless-components/ecom"
   dependencies:
@@ -4566,7 +4566,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@npm:^0.0.11, @wix/headless-media@workspace:*, @wix/headless-media@workspace:packages/headless-components/media":
+"@wix/headless-media@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@wix/headless-media@npm:0.0.7"
+  dependencies:
+    "@wix/image": "npm:^1.403.0"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/e4c0b970d6ac84a1237dc624914679f53f0d375616893948c154e62652fa6f031c059afddcf4464a86a80473b6c3a8c920170e74a5b9a133e5320f55141ad5c6
+  languageName: node
+  linkType: hard
+
+"@wix/headless-media@workspace:*, @wix/headless-media@workspace:packages/headless-components/media":
   version: 0.0.0-use.local
   resolution: "@wix/headless-media@workspace:packages/headless-components/media"
   dependencies:
@@ -4584,17 +4595,6 @@ __metadata:
     vitest: "npm:^3.1.4"
   languageName: unknown
   linkType: soft
-
-"@wix/headless-media@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@wix/headless-media@npm:0.0.7"
-  dependencies:
-    "@wix/image": "npm:^1.403.0"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-  checksum: 10c0/e4c0b970d6ac84a1237dc624914679f53f0d375616893948c154e62652fa6f031c059afddcf4464a86a80473b6c3a8c920170e74a5b9a133e5320f55141ad5c6
-  languageName: node
-  linkType: hard
 
 "@wix/headless-platform@workspace:packages/headless-components/headless-platform":
   version: 0.0.0-use.local
@@ -4681,10 +4681,10 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1278"
     "@wix/essentials": "npm:^0.1.24"
-    "@wix/headless-components": "npm:^0.0.4"
-    "@wix/headless-ecom": "npm:^0.0.18"
-    "@wix/headless-media": "npm:^0.0.11"
-    "@wix/headless-utils": "npm:^0.0.3"
+    "@wix/headless-components": "workspace:*"
+    "@wix/headless-ecom": "workspace:*"
+    "@wix/headless-media": "workspace:*"
+    "@wix/headless-utils": "workspace:*"
     "@wix/redirects": "npm:^1.0.83"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
@@ -4695,7 +4695,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-utils@npm:^0.0.3, @wix/headless-utils@workspace:packages/headless-components/utils":
+"@wix/headless-utils@workspace:*, @wix/headless-utils@workspace:packages/headless-components/utils":
   version: 0.0.0-use.local
   resolution: "@wix/headless-utils@workspace:packages/headless-components/utils"
   dependencies:
