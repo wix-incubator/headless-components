@@ -341,9 +341,12 @@ export const Root = React.forwardRef<HTMLDivElement, FilterRootProps>(
     const clearFilters = () => {
       // Clear all filters except for category filter
       onChange({
-        ...(value ? {
-          'allCategoriesInfo.categories': value['allCategoriesInfo.categories'],
-        } : {}),
+        ...(value
+          ? {
+              'allCategoriesInfo.categories':
+                value['allCategoriesInfo.categories'],
+            }
+          : {}),
       });
     };
 
@@ -713,7 +716,6 @@ export interface MultiFilterProps extends React.HTMLAttributes<HTMLElement> {
   asChild?: boolean;
   /** Children for custom rendering */
   children?: React.ReactNode;
-
 }
 
 /**
