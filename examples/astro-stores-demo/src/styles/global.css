@@ -908,17 +908,3 @@ button:not(:disabled) {
   border: 1px solid var(--theme-border-subtle);
   border-radius: 0.25rem;
 }
-
-/* Color mapping for color filters - using actual product colors */
-[data-color="beige"] { background-color: #F5F5DC; }
-[data-color="black"] { background-color: #000000; }
-[data-color="cognac"] { background-color: #A0522D; }
-[data-color="lime"] { background-color: #32CD32; }
-[data-color="maroon"] { background-color: #800000; }
-[data-color="olive"] { background-color: #6B8E23; }
-[data-color="orange"] { background-color: #FF6B35; }
-[data-color="pink"] { background-color: #FFC0CB; }
-[data-color="purple"] { background-color: #CAB4E7; }
-[data-color="teal"] { background-color: #008080; }
-[data-color="white"] { background-color: #FFFFFF; border: 1px solid #cccccc; }
-[data-color="yellow"] { background-color: #FFD700; }
