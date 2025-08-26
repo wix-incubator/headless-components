@@ -1,7 +1,7 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import { InventoryAvailabilityStatus } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
-
+import { Commerce } from '@wix/headless-ecom/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreProduct from './core/Product.js';
@@ -76,6 +76,10 @@ enum TestIds {
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
   productMediaGallery = 'product-media-gallery',
+  productAddToCart = 'product-add-to-cart',
+  productActionAddToCart = 'product-action-add-to-cart',
+  productActionBuyNow = 'product-action-buy-now',
+  productActionPreOrder = 'product-action-pre-order',
 }
 
 /**
@@ -1211,3 +1215,215 @@ export const ProductMediaGallery = React.forwardRef<
  * Alias for ProductMediaGallery to match the documented API
  */
 export { ProductMediaGallery as MediaGallery };
+
+/**
+ * Props for Product Action components following the documented API
+ */
+export interface ProductActionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Text label for the button */
+  label: string;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    disabled: boolean;
+    isLoading: boolean;
+    onClick: () => Promise<void>;
+  }>;
+  /** CSS classes to apply to the button */
+  className?: string;
+  /** Content to display when loading */
+  loadingState?: string | React.ReactNode;
+}
+
+/**
+ * Add to cart action button component following the documented API.
+ * Automatically integrates with the selected variant and handles loading states.
+ */
+export const ProductActionAddToCart = React.forwardRef<
+  HTMLButtonElement,
+  ProductActionProps
+>((props, ref) => {
+  const { asChild, children, className, label, loadingState } = props;
+
+  return (
+    <SelectedVariant.Actions>
+      {({
+        lineItems,
+        canAddToCart,
+        isLoading,
+        addToCart,
+        isPreOrderEnabled,
+      }) => {
+        if (isPreOrderEnabled) {
+          return null;
+        }
+
+        const onClick = addToCart;
+        const disabled = !canAddToCart || isLoading;
+
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productActionAddToCart}
+              data-in-progress={isLoading}
+              customElement={children}
+              customElementProps={{
+                disabled,
+                isLoading,
+                onClick,
+              }}
+            />
+          );
+        }
+
+        return (
+          <Commerce.Actions.AddToCart
+            ref={ref}
+            label={label}
+            lineItems={lineItems}
+            className={className}
+            disabled={disabled}
+            loadingState={loadingState}
+            data-testid={TestIds.productActionAddToCart}
+            data-in-progress={isLoading}
+          />
+        );
+      }}
+    </SelectedVariant.Actions>
+  );
+});
+
+/**
+ * Buy Now action button component following the documented API.
+ * Bypasses the cart and redirects directly to checkout.
+ */
+export const ProductActionBuyNow = React.forwardRef<
+  HTMLButtonElement,
+  ProductActionProps
+>((props, ref) => {
+  const { asChild, children, className, label, loadingState } = props;
+
+  return (
+    <SelectedVariant.Actions>
+      {({
+        lineItems,
+        canAddToCart,
+        isLoading,
+        buyNow,
+        inStock,
+        isPreOrderEnabled,
+      }) => {
+        if (!inStock || isPreOrderEnabled) {
+          return null;
+        }
+
+        const onClick = buyNow;
+        const disabled = !canAddToCart || isLoading;
+
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productActionBuyNow}
+              data-in-progress={isLoading}
+              customElement={children}
+              customElementProps={{
+                disabled,
+                isLoading,
+                onClick,
+              }}
+            />
+          );
+        }
+
+        return (
+          <Commerce.Actions.BuyNow
+            ref={ref}
+            label={label}
+            lineItems={lineItems}
+            className={className}
+            disabled={disabled}
+            loadingState={loadingState}
+            data-testid={TestIds.productActionBuyNow}
+            data-in-progress={isLoading}
+          />
+        );
+      }}
+    </SelectedVariant.Actions>
+  );
+});
+
+/**
+ * Pre-Order action button component following the documented API.
+ * Handles pre-order functionality when products are not in stock.
+ */
+export const ProductActionPreOrder = React.forwardRef<
+  HTMLButtonElement,
+  ProductActionProps
+>((props, ref) => {
+  const { asChild, children, className, label, loadingState } = props;
+
+  return (
+    <SelectedVariant.Actions>
+      {({ lineItems, isLoading, addToCart, isPreOrderEnabled }) => {
+        if (!isPreOrderEnabled) {
+          return null;
+        }
+
+        const canPreOrder = !isLoading;
+        const onClick = addToCart;
+        const disabled = !canPreOrder;
+
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productActionPreOrder}
+              data-in-progress={isLoading}
+              customElement={children}
+              customElementProps={{
+                disabled,
+                isLoading,
+                onClick,
+              }}
+            />
+          );
+        }
+
+        return (
+          <Commerce.Actions.AddToCart
+            ref={ref}
+            label={label}
+            lineItems={lineItems}
+            className={className}
+            disabled={disabled}
+            loadingState={loadingState}
+            data-testid={TestIds.productActionPreOrder}
+            data-in-progress={isLoading}
+          />
+        );
+      }}
+    </SelectedVariant.Actions>
+  );
+});
+
+/**
+ * Actions namespace containing all product action components
+ * following the documented API: Product.Action.AddToCart, Product.Action.BuyNow, Product.Action.PreOrder
+ */
+export const Action = {
+  /** Add to cart action button */
+  AddToCart: ProductActionAddToCart,
+  /** Buy now action button */
+  BuyNow: ProductActionBuyNow,
+  /** Pre-order action button */
+  PreOrder: ProductActionPreOrder,
+} as const;
