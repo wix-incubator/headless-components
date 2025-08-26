@@ -1265,19 +1265,21 @@ export const ProductActionAddToCart = React.forwardRef<
 
         if (asChild && children) {
           return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.productActionAddToCart}
-              data-in-progress={isLoading}
-              customElement={children}
-              customElementProps={{
-                disabled,
-                isLoading,
-                onClick,
-              }}
-            />
+            <Commerce.Actions.AddToCart lineItems={lineItems} asChild={asChild}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productActionAddToCart}
+                data-in-progress={isLoading}
+                customElement={children}
+                customElementProps={{
+                  disabled,
+                  isLoading,
+                  onClick,
+                }}
+              />
+            </Commerce.Actions.AddToCart>
           );
         }
 
@@ -1327,19 +1329,21 @@ export const ProductActionBuyNow = React.forwardRef<
 
         if (asChild && children) {
           return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.productActionBuyNow}
-              data-in-progress={isLoading}
-              customElement={children}
-              customElementProps={{
-                disabled,
-                isLoading,
-                onClick,
-              }}
-            />
+            <Commerce.Actions.BuyNow lineItems={lineItems} asChild={asChild}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productActionBuyNow}
+                data-in-progress={isLoading}
+                customElement={children}
+                customElementProps={{
+                  disabled,
+                  isLoading,
+                  onClick,
+                }}
+              />
+            </Commerce.Actions.BuyNow>
           );
         }
 
@@ -1383,19 +1387,21 @@ export const ProductActionPreOrder = React.forwardRef<
 
         if (asChild && children) {
           return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.productActionPreOrder}
-              data-in-progress={isLoading}
-              customElement={children}
-              customElementProps={{
-                disabled,
-                isLoading,
-                onClick,
-              }}
-            />
+            <Commerce.Actions.AddToCart lineItems={lineItems} asChild={asChild}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productActionPreOrder}
+                data-in-progress={isLoading}
+                customElement={children}
+                customElementProps={{
+                  disabled,
+                  isLoading,
+                  onClick,
+                }}
+              />
+            </Commerce.Actions.AddToCart>
           );
         }
 
