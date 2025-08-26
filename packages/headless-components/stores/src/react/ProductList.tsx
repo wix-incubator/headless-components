@@ -12,7 +12,11 @@ import { ProductListSort as ProductListSortPrimitive } from './core/ProductListS
 import * as Product from './Product.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
-export { Filter, CategoryFilter, ResetTrigger as FilterResetTrigger } from './core/ProductListFilters.js';
+export {
+  Filter,
+  CategoryFilter,
+  ResetTrigger as FilterResetTrigger,
+} from './core/ProductListFilters.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
