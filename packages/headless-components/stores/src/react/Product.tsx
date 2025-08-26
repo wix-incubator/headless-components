@@ -543,6 +543,7 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
         return (
           <AsChildSlot
             ref={ref}
+            asChild={asChild}
             className={className}
             data-testid={TestIds.productRaw}
             customElement={children}
