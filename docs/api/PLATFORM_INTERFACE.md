@@ -3,69 +3,230 @@ Components which are not specific to a single vertical, serves as utilities for 
 
 ### Sort.Root
 
-Container for sort controls.
+Container for sort controls that provides sort context and manages sort state. Supports both declarative (sortOptions prop) and programmatic (children) APIs.
+
+**Type Definitions**
+```tsx
+/** Wix SDK sort array format - the only sort format we support */
+export type SortValue = Array<{
+  fieldName?: string;
+  order?: string; // Wix SDK format (typically 'ASC'/'DESC')
+}>;
+
+interface SortFieldOption {
+  fieldName: string;
+  label: string;
+}
+
+interface SortOrderOption {
+  order: 'ASC' | 'DESC';
+  label: string;
+}
+
+interface FullSortOption {
+  fieldName: string;
+  order: 'ASC' | 'DESC';
+  label: string;
+}
+
+/** Sort option configuration */
+export type SortOption = SortFieldOption | SortOrderOption | FullSortOption;
+```
 
 **Props**
 ```tsx
-interface Sort {
-  fieldName: string;
-  order: 'asc' | 'desc';
-}
-
 interface SortRootProps {
-  sortOptions: Array<{
-    label: string;
-    fieldName: string;
-  }>;
+  /** Predefined sort options for declarative API */
+  sortOptions?: Array<SortOption>;
+  /** Current sort value - Wix SDK array format */
+  value?: SortValue;
+  /** Function called when sort changes - receives Wix SDK array format */
+  onChange: (value: SortValue) => void;
+  /** Render mode - 'select' uses native HTML select, 'list' provides custom controls (default: 'select') */
+  as?: 'select' | 'list';
+  /** Children components */
   children?: React.ReactNode;
-  value: Sort; // platform sort object, same one sent as query.sort
-  onChange: (value: Sort) => void;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    sortingOptions: Array<SortOptionProps>;
-    onChange: (value: Sort) => void;
-    value: Sort;
-  }>;
-  as: 'select' | 'list'; // default is 'select'
-}
-
-interface SortOptionProps {
-  fieldName?: string;
-  order?: 'asc' | 'desc';
-  label?: string;
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
 }
 ```
 
-#### Sort.Option
-
-Single sort option, sets the sort field and/or order
+**Data Attributes**
+- `data-testid="sort-root"` - Applied to root container
 
 **Example**
 ```tsx
-const sortOptions = [
-  { fieldName: 'price', label: 'Price: Low to High', order: 'asc' },
-  { fieldName: 'price', label: 'Price: High to Low', order: 'desc' },
-];
+// Declarative API with native select
+<Sort.Root
+  value={sort}
+  onChange={setSort}
+  sortOptions={[
+    { fieldName: 'price', label: 'Price: Low to High', order: 'ASC' },
+    { fieldName: 'price', label: 'Price: High to Low', order: 'DESC' },
+    { fieldName: 'name', label: 'Name: A to Z', order: 'ASC' },
+    { fieldName: 'name', label: 'Name: Z to A', order: 'DESC' },
+  ]}
+  as="select"
+  className="w-full"
+/>
 
-<Sort.Root value={sort} onChange={setSort} sortOptions={sortOptions} as='select' className="w-full" />
-
-// set the options programmatically
-<Sort.Root value={sort} onChange={setSort} className="w-full">
-  <Sort.Option fieldName="price" order="asc" label="Price: Low to High" />
-  <Sort.Option fieldName="price" order="desc" label="Price: High to Low" />
+// Custom component replacing the entire Sort root
+<Sort.Root
+  value={sort}
+  onChange={setSort}
+  sortOptions={sortOptions}
+  asChild
+>
+  <CustomSortComponent />
 </Sort.Root>
 
-// set the options programmatically, using asChild
-<Sort.Root value={sort} onChange={setSort} className="w-full">
-  <Sort.Option fieldName="price" label="Price" />
-  <Sort.Option fieldName="name" label="Name" />
-  <Sort.Option order="asc" asChild>
-    <button>Ascending</button>
-  </Sort.Option>
-  <Sort.Option order="desc" asChild>
-    <button>Descending</button>
-  </Sort.Option>
+// List mode with custom buttons (programmatic API)
+<Sort.Root value={sort} onChange={setSort} as="list">
+  <Sort.Option fieldName="price" order="ASC" label="Price ↑" />
+  <Sort.Option fieldName="price" order="DESC" label="Price ↓" />
+  <Sort.Option fieldName="name" order="ASC" label="Name A-Z" />
+</Sort.Root>
+
+// Custom list container with asChild
+<Sort.Root value={sort} onChange={setSort} as="list" asChild>
+  <div className="custom-sort-container">
+    <Sort.Option fieldName="price" order="ASC" label="Price ↑" />
+    <Sort.Option fieldName="price" order="DESC" label="Price ↓" />
+  </div>
 </Sort.Root>
 ```
+
+---
+
+### Sort.Option
+
+Single sort option component that represents a sort option. Can be used to set field name, order, or both. Only works within Sort.Root context.
+
+**Props**
+```tsx
+interface SortOptionProps extends ButtonProps {
+  /** Field name to sort by (required) */
+  fieldName: string;
+  /** Sort order (required) */
+  order: 'ASC' | 'DESC';
+  /** Display label */
+  label: string;
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Children components */
+  children?: React.ReactNode;
+}
+```
+
+**Data Attributes**
+- `data-testid="sort-option"` - Applied to option element
+- `data-selected` - Boolean indicating if this option is currently selected
+- `data-field-name` - The field name of this option
+- `data-order` - The sort order of this option
+
+**Example**
+```tsx
+// Set both field and order
+<Sort.Option fieldName="price" order="ASC" label="Price: Low to High" />
+
+// Custom rendering with asChild
+<Sort.Option fieldName="price" order="ASC" label="Price" asChild>
+  <button className="sort-option-btn">
+    📈 Price (Low to High)
+  </button>
+</Sort.Option>
+
+// With children override
+<Sort.Option fieldName="name" order="DESC" label="Name Z-A">
+  <span className="sort-icon">🔤</span>
+  Name: Z to A
+</Sort.Option>
+```
+
+---
+
+## Sort Architecture
+
+The Sort components follow a streamlined architecture pattern that provides flexibility and platform compatibility:
+
+### Component Hierarchy
+
+```
+Sort.Root (Provider & Renderer)
+└── Sort.Option (Individual options)
+```
+
+### Key Design Principles
+
+#### 1. **Dual API Pattern**
+- **Declarative API**: Use `sortOptions` prop for quick setup with predefined options
+- **Programmatic API**: Use child `Sort.Option` components for granular control
+- **Automatic Selection**: Components choose the appropriate API based on props provided
+
+#### 2. **Wix SDK Compatibility**
+- Sort values use Wix SDK array format: `[{fieldName: 'price', order: 'ASC'}]`
+- Direct compatibility with `query.sort` parameter
+- Support for 'ASC'/'DESC' order values (uppercase as per Wix standards)
+
+#### 3. **Flexible Rendering Modes**
+- **Select Mode** (`as="select"`): Renders native HTML select dropdown (default)
+- **List Mode** (`as="list"`): Renders as unordered list with button options
+- **AsChild Pattern**: Complete control over DOM structure via Slot forwarding
+
+#### 4. **Context-Driven Data Flow**
+- SortContext provides current sort state and change handlers
+- Automatic option selection state management
+- Type-safe option handling with union types
+
+#### 5. **Union Type Flexibility**
+- **SortFieldOption**: Set only field name (keeps current order)
+- **SortOrderOption**: Set only order (keeps current field)
+- **FullSortOption**: Set both field name and order
+- Enables granular control over sort behavior
+
+### Integration Examples
+
+#### With Stores Package
+```tsx
+import { ProductList } from '@wix/stores/react';
+import { Sort } from '@wix/headless-components/react';
+
+// Store-specific sort integration
+<ProductList.Sort as="select" className="w-full" />
+
+// Custom implementation using ProductList context
+<ProductList.Sort asChild>
+  {({ currentSort, sortOptions, setSort }) => (
+    <Sort.Root
+      value={currentSort}
+      onChange={setSort}
+      sortOptions={sortOptions}
+      as="list"
+    />
+  )}
+</ProductList.Sort>
+```
+
+#### Custom Implementation
+```tsx
+// Platform-agnostic usage
+<Sort.Root
+  value={currentSort}
+  onChange={handleSortChange}
+  sortOptions={[
+    { fieldName: 'createdAt', order: 'DESC', label: 'Newest First' },
+    { fieldName: 'createdAt', order: 'ASC', label: 'Oldest First' },
+    { fieldName: 'title', order: 'ASC', label: 'Title A-Z' },
+  ]}
+  as="select"
+/>
+```
+
+### Performance Considerations
+
+- **Lightweight Context**: Minimal context overhead with only essential state
+- **Native Elements**: Uses native HTML select for better performance and accessibility
+- **Memoized Handlers**: Option selection handlers are automatically memoized
 
 ---
 
