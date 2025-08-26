@@ -285,12 +285,87 @@ function AllFilters(props: AllFiltersProps) {
     : props.children;
 }
 
-interface FilterProps {
+/**
+ * Props for the ProductList Filter component
+ */
+export interface FilterProps {
+  /**
+   * Child components that will have access to filter functionality.
+   * Typically contains Filter primitive components like FilterOptions,
+   * FilterOptionRepeater, etc.
+   */
   children: ReactNode;
+
+  /**
+   * When true, the component will not render its own div wrapper but will
+   * delegate rendering to its child component. Useful for custom containers.
+   *
+   * @default false
+   */
   asChild?: boolean;
+
+  /**
+   * CSS classes to apply to the filter container.
+   * Only used when asChild is false (default).
+   */
   className?: string;
 }
 
+/**
+ * Filter component that provides comprehensive filtering functionality for product lists.
+ *
+ * This component acts as a provider that integrates with the ProductList service to offer
+ * predefined filter options including:
+ * - **Price Range**: Min/max price filtering with currency formatting
+ * - **Product Options**: Dynamic filters for colors, sizes, and other product variants
+ * - **Inventory Status**: Filter by availability (In Stock, Out of Stock, Limited Stock)
+ *
+ * The component automatically extracts available filter options from the current product set
+ * and provides them to child Filter primitive components for rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage with styled filter components
+ * <ProductList.Filter>
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.Label />
+ *       <Filter.FilterOption.MultiFilter />
+ *       <Filter.FilterOption.RangeFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </ProductList.Filter>
+ *
+ * // With custom container using asChild
+ * <ProductList.Filter asChild>
+ *   <aside className="filter-sidebar">
+ *     <Filter.FilterOptions>
+ *       <Filter.FilterOptionRepeater>
+ *         <Filter.FilterOption.Label />
+ *         <Filter.FilterOption.MultiFilter />
+ *       </Filter.FilterOptionRepeater>
+ *     </Filter.FilterOptions>
+ *   </aside>
+ * </ProductList.Filter>
+ *
+ * // With reset functionality
+ * <ProductList.Filter className="filters-container">
+ *   <Filter.Action.Clear label="Clear All" />
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.Label />
+ *       <Filter.FilterOption.MultiFilter />
+ *       <Filter.FilterOption.RangeFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </ProductList.Filter>
+ * ```
+ *
+ * @see {@link AllFilters} for the underlying filter data logic
+ * @see {@link FilterPrimitive.Root} for the primitive filter component
+ * @see {@link ResetTrigger} for filter reset functionality
+ */
 export const Filter = React.forwardRef<HTMLDivElement, FilterProps>(
   ({ children, className, asChild }, ref) => {
     const Comp = asChild ? Slot : 'div';
@@ -313,3 +388,5 @@ export const Filter = React.forwardRef<HTMLDivElement, FilterProps>(
     );
   },
 );
+
+Filter.displayName = 'ProductList.Filter';
