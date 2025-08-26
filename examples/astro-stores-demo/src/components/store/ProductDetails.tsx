@@ -188,11 +188,33 @@ export default function ProductDetails({
                 Quantity
               </h3>
               <Product.Quantity.Root className="flex items-center gap-3">
-                <div className="flex items-center border border-brand-light rounded-lg">
-                  <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary transition-colors" />
-                  <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-                  <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary transition-colors" />
-                </div>
+                <>
+                  <div className="flex items-center border border-brand-light rounded-lg">
+                    <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors" />
+                    <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+                    <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors" />
+                  </div>
+                  <Product.Quantity.Raw asChild>
+                    {({ availableQuantity, inStock, isPreOrderEnabled }) => (
+                      <div>
+                        {/* Show max quantity only when out of stock AND preorder enabled */}
+                        {!inStock && isPreOrderEnabled && availableQuantity && (
+                          <span className="text-content-muted text-sm">
+                            Max: {availableQuantity} Pre Order
+                          </span>
+                        )}
+                        {/* Show stock message when in stock but available quantity < 10 */}
+                        {inStock &&
+                          availableQuantity &&
+                          availableQuantity < 10 && (
+                            <span className="text-content-muted text-sm">
+                              Only {availableQuantity} left in stock
+                            </span>
+                          )}
+                      </div>
+                    )}
+                  </Product.Quantity.Raw>
+                </>
               </Product.Quantity.Root>
             </div>
 

@@ -85,6 +85,7 @@ enum TestIds {
   productQuantityDecrement = 'product-quantity-decrement',
   productQuantityInput = 'product-quantity-input',
   productQuantityIncrement = 'product-quantity-increment',
+  productQuantityRaw = 'product-quantity-raw',
 }
 
 /**
@@ -1240,8 +1241,6 @@ export interface ProductQuantityProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Threshold for showing "low stock" message (default: 10) */
-  lowStockThreshold?: number;
 }
 
 /**
@@ -1271,7 +1270,7 @@ export interface ProductQuantitySubComponentProps {
  * <Product.Quantity className="flex items-center gap-3" />
  *
  * // With custom low stock threshold
- * <Product.Quantity lowStockThreshold={5} className="flex items-center gap-3" />
+ * <Product.Quantity className="flex items-center gap-3" />
  *
  * // Custom rendering with asChild
  * <Product.Quantity asChild>
@@ -1379,7 +1378,7 @@ export const ProductQuantity = React.forwardRef<
             ref={ref as React.Ref<HTMLDivElement>}
             data-testid={TestIds.productQuantity}
           >
-            {children as React.ReactNode}
+            {React.isValidElement(children) ? children : null}
           </QuantityComponent.Root>
         );
       }}
@@ -1435,7 +1434,7 @@ export const ProductQuantityInput = React.forwardRef<
   HTMLInputElement,
   ProductQuantitySubComponentProps
 >((props, ref) => {
-  const { asChild, children, className, disabled } = props;
+  const { asChild, children, className, disabled = true } = props;
 
   return (
     <ProductVariantSelector.Stock>
@@ -1533,6 +1532,47 @@ export interface ProductActionProps {
   /** Content to display when loading */
   loadingState?: string | React.ReactNode;
 }
+
+export interface ProductQuantityRawSubComponentProps {
+  /** CSS classes to apply to the element */
+  className?: string;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    selectedQuantity: number;
+    availableQuantity: number;
+    inStock: boolean;
+    isPreOrderEnabled: boolean;
+    setSelectedQuantity: (quantity: number) => void;
+    incrementQuantity: () => void;
+    decrementQuantity: () => void;
+  }>;
+}
+
+export const ProductQuantityRaw = React.forwardRef<
+  HTMLElement,
+  ProductQuantityRawSubComponentProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {(renderProps) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            customElement={children}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productQuantityRaw}
+            customElementProps={renderProps}
+          />
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
 
 /**
  * Add to cart action button component following the documented API.
@@ -1745,4 +1785,6 @@ export const Quantity = {
   Input: ProductQuantityInput,
   /** Product quantity increment component */
   Increment: ProductQuantityIncrement,
+  /** Product quantity raw component */
+  Raw: ProductQuantityRaw,
 } as const;
