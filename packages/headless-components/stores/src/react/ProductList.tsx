@@ -382,7 +382,6 @@ export const TotalsDisplayed = React.forwardRef<
   );
 });
 
-
 /**
  * Props for the ProductList Sort component
  */
@@ -482,31 +481,30 @@ export interface SortProps {
  * @see {@link ProductListSortPrimitive} for the underlying sort logic
  * @see {@link SortPrimitive.Root} for the primitive sort component
  */
-export const Sort = React.forwardRef<
-  HTMLElement,
-  SortProps
->(({ children, className, as, asChild }, ref) => {
-  return (
-    <ProductListSortPrimitive>
-      {({ currentSort, sortOptions, setSort }) => {
-        if (asChild && children) {
-          return children({ currentSort, sortOptions, setSort });
-        }
+export const Sort = React.forwardRef<HTMLElement, SortProps>(
+  ({ children, className, as, asChild }, ref) => {
+    return (
+      <ProductListSortPrimitive>
+        {({ currentSort, sortOptions, setSort }) => {
+          if (asChild && children) {
+            return children({ currentSort, sortOptions, setSort });
+          }
 
-        return (
-          <SortPrimitive.Root
-            ref={ref}
-            value={currentSort}
-            onChange={(value) => {
-              setSort(value as productsV3.V3ProductSearch['sort']);
-            }}
-            sortOptions={sortOptions}
-            as={as}
-            className={className}
-            data-testid={TestIds.productListSort}
-          ></SortPrimitive.Root>
-        );
-      }}
-    </ProductListSortPrimitive>
-  );
-});
+          return (
+            <SortPrimitive.Root
+              ref={ref}
+              value={currentSort}
+              onChange={(value) => {
+                setSort(value as productsV3.V3ProductSearch['sort']);
+              }}
+              sortOptions={sortOptions}
+              as={as}
+              className={className}
+              data-testid={TestIds.productListSort}
+            ></SortPrimitive.Root>
+          );
+        }}
+      </ProductListSortPrimitive>
+    );
+  },
+);
