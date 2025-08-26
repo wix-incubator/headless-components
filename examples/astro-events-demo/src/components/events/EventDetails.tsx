@@ -1,36 +1,48 @@
-import { Event as EventPrimitive, TicketsPicker as TicketsPickerPrimitive, TicketDefinition as TicketDefinitionPrimitive } from '@wix/headless-events/react';
-import { type TicketListServiceConfig, type EventServiceConfig } from '@wix/headless-events/services';
+import { Event as EventPrimitive, TicketsPicker as TicketsPickerPrimitive, TicketDefinition as TicketDefinitionPrimitive, EventList } from '@wix/headless-events/react';
+import { type TicketListServiceConfig, type EventServiceConfig, type EventListServiceConfig } from '@wix/headless-events/services';
 import { useService } from '@wix/services-manager-react';
-import { TicketListServiceDefinition } from '@wix/headless-events/services';
+import { TicketListServiceDefinition, EventServiceDefinition } from '@wix/headless-events/services'; // Added EventServiceDefinition
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
   ticketsServiceConfig: TicketListServiceConfig;
+  eventListServiceConfig: EventListServiceConfig;
 }
 
-export function EventDetails({ eventServiceConfig, ticketsServiceConfig }: EventDetailsProps) {
+export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventListServiceConfig }: EventDetailsProps) {
+  const EventInfo = () => {
+    return (
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-4 text-gray-900">Event Info</h3>
+        <table className="w-full text-left">
+          <tbody>
+            <tr>
+              <th className="pr-4 py-2 font-medium text-gray-900">Date:</th>
+              <td className="py-2"><EventPrimitive.Date /></td>
+            </tr>
+            <tr>
+              <th className="pr-4 py-2 font-medium text-gray-900">Location:</th>
+              <td className="py-2"><EventPrimitive.Location format="full" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const currentEventId = eventServiceConfig.event._id;
+  const otherEvents = eventListServiceConfig.events.filter(e => e._id !== currentEventId);
+  const otherEventListConfig = { events: otherEvents };
+
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <EventPrimitive.Root event={eventServiceConfig.event}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="order-2 md:order-1">
-            <EventPrimitive.Title className="text-3xl font-bold text-gray-900 mb-4" />
-            <div className="flex flex-wrap gap-4 mb-4 text-gray-600">
-              <div className="flex items-center">
-                <span className="mr-2">📅</span>
-                <EventPrimitive.Date />
-              </div>
-              <div className="flex items-center">
-                <span className="mr-2">📍</span>
-                <EventPrimitive.Location />
-              </div>
-            </div>
-            <EventPrimitive.Description className="mt-6 text-gray-700" />
-          </div>
-          <div className="order-1 md:order-2">
-            <EventPrimitive.Image className="w-full h-96 object-cover rounded-lg shadow-md" />
-          </div>
+        <div className="mb-4">
+          <EventPrimitive.Image className="w-full h-96 object-cover rounded-lg shadow-md" />
         </div>
+        <EventPrimitive.Title className="text-3xl font-bold text-gray-900 mb-4" />
+        <EventPrimitive.Description className="text-gray-700 mb-8" />
+        <EventInfo />
       </EventPrimitive.Root>
       <TicketsPickerPrimitive.Root ticketsServiceConfig={ticketsServiceConfig} eventServiceConfig={eventServiceConfig}>
         <TicketsPickerPrimitive.TicketDefinitions
@@ -121,6 +133,26 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig }: Event
           }}
         </TicketsPickerPrimitive.Checkout>
       </TicketsPickerPrimitive.Root>
+      <div className="my-8">
+        <h3 className="text-xl font-bold mb-4 text-gray-900">Other Events</h3>
+        <EventList.Root eventListServiceConfig={otherEventListConfig}>
+          <EventList.Events
+            emptyState={<p className="text-center text-gray-600 py-8">No other events available</p>}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            <EventList.EventRepeater>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <EventPrimitive.Image className="h-48 w-full object-cover" />
+                <div className="p-4">
+                  <EventPrimitive.Title className="font-bold text-lg text-gray-900 mb-1" />
+                  <EventPrimitive.Date className="text-sm text-gray-600 mb-1" />
+                  <EventPrimitive.Location className="text-sm text-gray-600" format="full" />
+                </div>
+              </div>
+            </EventList.EventRepeater>
+          </EventList.Events>
+        </EventList.Root>
+      </div>
     </div>
   );
 }
