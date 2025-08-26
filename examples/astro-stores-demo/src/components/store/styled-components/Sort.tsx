@@ -1,7 +1,7 @@
 import React from "react";
 import { Sort as SortPrimitive } from "@wix/headless-components/react";
 import {
-  ProductListSort as ProductListSortPrimitive,
+  ProductList as ProductListPrimitive,
 } from "@wix/headless-stores/react";
 import type { Sort as SortType, SortRootProps as PrimitiveSortRootProps, SortOptionProps as PrimitiveSortOptionProps, SortValue } from "@wix/headless-components/react";
 
@@ -23,12 +23,12 @@ export interface StyledProductListSortProps {
   /** Additional CSS classes */
   className?: string;
   as?: "select" | "list";
-  children?: ProductListSortPrimitive.ProductListSortProps["children"]
+  children?: ProductListPrimitive.SortProps["children"]
 }
 
 export const StyledProductListSort = (props: StyledProductListSortProps) => {
   return (
-    <ProductListSortPrimitive.ProductListSort>
+    <ProductListPrimitive.Sort>
       {({ currentSort, sortOptions, setSort }) => (
         <Root
           value={currentSort}
@@ -38,7 +38,7 @@ export const StyledProductListSort = (props: StyledProductListSortProps) => {
           className={props.className}
         />
       )}
-    </ProductListSortPrimitive.ProductListSort>
+    </ProductListPrimitive.Sort>
   )
 }
 
@@ -46,11 +46,11 @@ export interface StyledProductListSortSplitProps {
   /** Additional CSS classes */
   className?: string;
   as?: "select" | "list";
-  children?: ProductListSortPrimitive.ProductListSeperateSortProps["children"]
+  children?: ProductListPrimitive.SortProps["children"]
 }
 export const StyledProductListSortSplit = (props: StyledProductListSortSplitProps) => {
   return (
-    <ProductListSortPrimitive.ProductListSeperateSort>
+    <ProductListPrimitive.Sort>
       {({ currentSort, sortFieldOptions, sortOrderOptions, setSort }) => (
         <>
           <Root
@@ -69,7 +69,7 @@ export const StyledProductListSortSplit = (props: StyledProductListSortSplitProp
           />
         </>
       )}
-    </ProductListSortPrimitive.ProductListSeperateSort>
+    </ProductListPrimitive.Sort>
   )
 }
 

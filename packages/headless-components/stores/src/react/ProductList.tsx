@@ -1,11 +1,14 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
+import { Sort as SortPrimitive } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import type { ProductsListServiceConfig } from '../services/products-list-service.js';
 import { ProductsListServiceDefinition } from '../services/products-list-service.js';
+import { productsV3 } from '@wix/stores';
 
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
+import { ProductListSort as ProductListSortPrimitive } from './core/ProductListSort.js';
 import * as Product from './Product.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
@@ -15,6 +18,7 @@ enum TestIds {
   productListItem = 'product-list-item',
   productListLoadMore = 'product-list-load-more',
   productListTotalsDisplayed = 'product-list-totals-displayed',
+  productListSort = 'product-list-sort',
 }
 
 /**
@@ -373,5 +377,134 @@ export const TotalsDisplayed = React.forwardRef<
     >
       <span>{displayedProducts}</span>
     </AsChildSlot>
+  );
+});
+
+
+/**
+ * Props for the ProductList Sort component
+ */
+export interface SortProps {
+  /**
+   * Render function that provides sort state and controls when using asChild pattern.
+   * Only called when asChild is true and children is provided.
+   *
+   * @param props.currentSort - Current sort configuration from Wix Stores API
+   * @param props.sortOptions - Available sort options with field names, order, and labels
+   * @param props.setSort - Function to update the sort configuration
+   *
+   * @example
+   * ```tsx
+   * <ProductList.Sort asChild>
+   *   {({ currentSort, sortOptions, setSort }) => (
+   *     <CustomSortSelect
+   *       value={currentSort}
+   *       options={sortOptions}
+   *       onChange={setSort}
+   *     />
+   *   )}
+   * </ProductList.Sort>
+   * ```
+   */
+  children?: (props: {
+    currentSort: productsV3.V3ProductSearch['sort'];
+    sortOptions: SortPrimitive.SortOption[];
+    setSort: (sort: productsV3.V3ProductSearch['sort']) => void;
+  }) => React.ReactNode;
+
+  /**
+   * CSS classes to apply to the sort component.
+   * Only used when asChild is false (default rendering).
+   */
+  className?: string;
+
+  /**
+   * Render mode for the default sort component.
+   * - 'select': Renders as HTML select dropdown
+   * - 'list': Renders as clickable list of options
+   *
+   * @default 'select'
+   */
+  as?: 'select' | 'list';
+
+  /**
+   * When true, the component uses the asChild pattern and delegates
+   * rendering to the children render function. When false (default),
+   * renders the built-in Sort.Root component.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+}
+
+/**
+ * Sort component for product lists that provides sorting functionality.
+ *
+ * This component integrates with the ProductList service to provide predefined sort options
+ * including name (A-Z, Z-A) and price (low to high, high to low). It supports both
+ * controlled rendering via the asChild pattern and default UI rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default select dropdown
+ * <ProductList.Sort />
+ *
+ * // As list of clickable options
+ * <ProductList.Sort as="list" />
+ *
+ * // With custom styling
+ * <ProductList.Sort
+ *   as="select"
+ *   className="custom-sort-select"
+ * />
+ *
+ * // Custom implementation using asChild pattern
+ * <ProductList.Sort asChild>
+ *   {({ currentSort, sortOptions, setSort }) => (
+ *     <div className="custom-sort-container">
+ *       {sortOptions.map((option) => (
+ *         <button
+ *           key={`${option.fieldName}-${option.order}`}
+ *           onClick={() => setSort([{ fieldName: option.fieldName, order: option.order }])}
+ *           className={isCurrentSort(option) ? 'active' : ''}
+ *         >
+ *           {option.label}
+ *         </button>
+ *       ))}
+ *     </div>
+ *   )}
+ * </ProductList.Sort>
+ * ```
+ *
+ * @see {@link ProductListSortPrimitive} for the underlying sort logic
+ * @see {@link SortPrimitive.Root} for the primitive sort component
+ */
+export const Sort = React.forwardRef<
+  HTMLElement,
+  SortProps
+>(({ children, className, as, asChild }, ref) => {
+  return (
+    <ProductListSortPrimitive>
+      {({ currentSort, sortOptions, setSort }) => {
+        if (asChild && children) {
+          return children({ currentSort, sortOptions, setSort });
+        }
+
+        return (
+          <SortPrimitive.Root
+            ref={ref}
+            value={currentSort}
+            onChange={(value) => {
+              setSort(value as productsV3.V3ProductSearch['sort']);
+            }}
+            sortOptions={sortOptions}
+            as={as}
+            className={className}
+            data-testid={TestIds.productListSort}
+          ></SortPrimitive.Root>
+        );
+      }}
+    </ProductListSortPrimitive>
   );
 });
