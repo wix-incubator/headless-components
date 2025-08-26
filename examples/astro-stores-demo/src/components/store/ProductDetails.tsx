@@ -262,6 +262,8 @@ export default function ProductDetails({
                       </div>
                     )}
 
+                    <Product.AddToCart label="Add to Cart" />
+
                     <ProductActionButtons isQuickView={isQuickView} />
                   </div>
                 )}

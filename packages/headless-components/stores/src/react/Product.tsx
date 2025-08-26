@@ -1,7 +1,7 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import { InventoryAvailabilityStatus } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
-
+import { Commerce } from '@wix/headless-ecom/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreProduct from './core/Product.js';
@@ -76,6 +76,7 @@ enum TestIds {
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
   productMediaGallery = 'product-media-gallery',
+  productAddToCart = 'product-add-to-cart',
 }
 
 /**
@@ -1211,3 +1212,35 @@ export const ProductMediaGallery = React.forwardRef<
  * Alias for ProductMediaGallery to match the documented API
  */
 export { ProductMediaGallery as MediaGallery };
+
+export interface AddToCartProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  label?: string;
+  loadingState?: string;
+}
+
+export const AddToCart = React.forwardRef<HTMLElement, AddToCartProps>(
+  (props, ref) => {
+    const { asChild, children, className, label, loadingState } = props;
+
+    return (
+      <SelectedVariant.Actions>
+        {({ lineItems }) => {
+          return (
+            <Commerce.Actions.AddToCart
+              ref={ref as React.Ref<HTMLButtonElement>}
+              label={label}
+              lineItems={lineItems}
+              className={className}
+              asChild={asChild}
+              children={children}
+              loadingState={loadingState}
+            />
+          );
+        }}
+      </SelectedVariant.Actions>
+    );
+  },
+);
