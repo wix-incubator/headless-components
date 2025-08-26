@@ -187,61 +187,10 @@ export default function ProductDetails({
               <h3 className="text-lg font-semibold text-content-primary">
                 Quantity
               </h3>
-              <ProductVariantSelectorPrimitive.Stock>
-                {({
-                  inStock,
-                  isPreOrderEnabled,
-                  availableQuantity,
-                  selectedQuantity,
-                  incrementQuantity,
-                  decrementQuantity,
-                }) => {
-                  return (
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center border border-brand-light rounded-lg">
-                        <button
-                          onClick={decrementQuantity}
-                          disabled={
-                            selectedQuantity <= 1 ||
-                            (!inStock && !isPreOrderEnabled)
-                          }
-                          className="px-3 py-2 text-content-primary hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          -
-                        </button>
-                        <span className="px-4 py-2 text-content-primary border-x border-brand-light min-w-[3rem] text-center">
-                          {selectedQuantity}
-                        </span>
-                        <button
-                          onClick={incrementQuantity}
-                          disabled={
-                            (!!availableQuantity &&
-                              selectedQuantity >= availableQuantity) ||
-                            (!inStock && !isPreOrderEnabled)
-                          }
-                          className="px-3 py-2 text-content-primary hover:bg-surface-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          +
-                        </button>
-                      </div>
-                      {/* Show max quantity only when out of stock AND preorder enabled */}
-                      {!inStock && isPreOrderEnabled && availableQuantity && (
-                        <span className="text-content-muted text-sm">
-                          Max: {availableQuantity} Pre Order
-                        </span>
-                      )}
-                      {/* Show stock message when in stock but available quantity < 10 */}
-                      {inStock &&
-                        availableQuantity &&
-                        availableQuantity < 10 && (
-                          <span className="text-content-muted text-sm">
-                            Only {availableQuantity} left in stock
-                          </span>
-                        )}
-                    </div>
-                  );
-                }}
-              </ProductVariantSelectorPrimitive.Stock>
+              <Product.Quantity
+                lowStockThreshold={9}
+                className="flex items-center gap-3"
+              />
             </div>
 
             {/* Add to Cart */}
@@ -262,7 +211,7 @@ export default function ProductDetails({
                       </div>
                     )}
 
-                    <ProductActionButtons isQuickView={isQuickView} />
+                    <ProductActionButtons />
                   </div>
                 )}
               </SelectedVariantPrimitive.Actions>

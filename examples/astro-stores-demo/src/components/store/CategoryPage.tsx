@@ -289,9 +289,7 @@ export const ProductGridContent = ({
                           </div>
                         )}
 
-                        <ProductActionButtons
-                          isQuickView={true} // This will hide the Buy Now button for list items
-                        />
+                        <ProductActionButtons />
                       </div>
                     )}
                   </SelectedVariantPrimitive.Actions>

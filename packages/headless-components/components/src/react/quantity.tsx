@@ -206,6 +206,8 @@ export interface QuantityDecrementProps {
     | React.ForwardRefRenderFunction<HTMLButtonElement, {}>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Whether the button is disabled */
+  disabled?: boolean;
 }
 
 /**

@@ -80,6 +80,7 @@ enum TestIds {
   productActionAddToCart = 'product-action-add-to-cart',
   productActionBuyNow = 'product-action-buy-now',
   productActionPreOrder = 'product-action-pre-order',
+  productQuantity = 'product-quantity',
 }
 
 /**
@@ -1218,6 +1219,192 @@ export const ProductMediaGallery = React.forwardRef<
 export { ProductMediaGallery as MediaGallery };
 
 /**
+ * Props for Product Quantity component
+ */
+export interface ProductQuantityProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    selectedQuantity: number;
+    availableQuantity: number | null;
+    inStock: boolean;
+    isPreOrderEnabled: boolean;
+    incrementQuantity: () => void;
+    decrementQuantity: () => void;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Threshold for showing "low stock" message (default: 10) */
+  lowStockThreshold?: number;
+}
+
+/**
+ * Product quantity selector component that integrates with the selected variant.
+ * Provides quantity controls with stock validation and pre-order support.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Quantity className="flex items-center gap-3" />
+ *
+ * // With custom low stock threshold
+ * <Product.Quantity lowStockThreshold={5} className="flex items-center gap-3" />
+ *
+ * // Custom rendering with asChild
+ * <Product.Quantity asChild>
+ *   {({ selectedQuantity, availableQuantity, inStock, incrementQuantity, decrementQuantity }) => (
+ *     <div className="flex items-center gap-3">
+ *       <div className="flex items-center border border-brand-light rounded-lg">
+ *         <button
+ *           onClick={decrementQuantity}
+ *           disabled={selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled)}
+ *           className="px-3 py-2 hover:bg-surface-primary disabled:opacity-50"
+ *         >
+ *           -
+ *         </button>
+ *         <span className="px-4 py-2 border-x border-brand-light min-w-[3rem] text-center">
+ *           {selectedQuantity}
+ *         </span>
+ *         <button
+ *           onClick={incrementQuantity}
+ *           disabled={availableQuantity && selectedQuantity >= availableQuantity}
+ *           className="px-3 py-2 hover:bg-surface-primary disabled:opacity-50"
+ *         >
+ *           +
+ *         </button>
+ *       </div>
+ *     </div>
+ *   )}
+ * </Product.Quantity>
+ *
+ * // Using with Quantity components
+ * <Product.Quantity asChild>
+ *   {({ selectedQuantity, availableQuantity, inStock, incrementQuantity, decrementQuantity }) => (
+ *     <Quantity.Root
+ *       initialValue={selectedQuantity}
+ *       onValueChange={(value) => {
+ *         if (value > selectedQuantity) incrementQuantity();
+ *         else if (value < selectedQuantity) decrementQuantity();
+ *       }}
+ *     >
+ *       <div className="flex items-center gap-2">
+ *         <div className="flex items-center border border-brand-light rounded-lg">
+ *           <Quantity.Decrement
+ *             className="px-3 py-1 hover:bg-surface-primary transition-colors"
+ *             disabled={selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled)}
+ *           />
+ *           <Quantity.Input
+ *             disabled={true}
+ *             className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary"
+ *           />
+ *           <Quantity.Increment
+ *             className="px-3 py-1 hover:bg-surface-primary transition-colors"
+ *             disabled={availableQuantity && selectedQuantity >= availableQuantity}
+ *           />
+ *         </div>
+ *       </div>
+ *     </Quantity.Root>
+ *   )}
+ * </Product.Quantity>
+ * ```
+ */
+export const ProductQuantity = React.forwardRef<
+  HTMLElement,
+  ProductQuantityProps
+>((props, ref) => {
+  const { asChild, children, className, lowStockThreshold = 10 } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {({
+        inStock,
+        isPreOrderEnabled,
+        availableQuantity,
+        selectedQuantity,
+        setSelectedQuantity,
+        incrementQuantity,
+        decrementQuantity,
+      }) => {
+        const renderProps = {
+          selectedQuantity,
+          availableQuantity,
+          inStock,
+          isPreOrderEnabled,
+          setSelectedQuantity,
+          incrementQuantity,
+          decrementQuantity,
+        };
+
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productQuantity}
+              customElement={children}
+              customElementProps={renderProps}
+            />
+          );
+        }
+
+        return (
+          <div
+            ref={ref as React.Ref<HTMLDivElement>}
+            className={className}
+            data-testid={TestIds.productQuantity}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex items-center border border-brand-light rounded-lg">
+                <button
+                  onClick={decrementQuantity}
+                  disabled={
+                    selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled)
+                  }
+                  className="px-3 py-2 text-content-primary hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  -
+                </button>
+                <span className="px-4 py-2 text-content-primary border-x border-brand-light min-w-[3rem] text-center">
+                  {selectedQuantity}
+                </span>
+                <button
+                  onClick={incrementQuantity}
+                  disabled={
+                    (!!availableQuantity &&
+                      selectedQuantity >= availableQuantity) ||
+                    (!inStock && !isPreOrderEnabled)
+                  }
+                  className="px-3 py-2 text-content-primary hover:bg-surface-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  +
+                </button>
+              </div>
+              {/* Show max quantity only when out of stock AND preorder enabled */}
+              {!inStock && isPreOrderEnabled && availableQuantity && (
+                <span className="text-content-muted text-sm">
+                  Max: {availableQuantity} Pre Order
+                </span>
+              )}
+              {/* Show stock message when in stock but available quantity < threshold */}
+              {inStock &&
+                availableQuantity &&
+                availableQuantity < lowStockThreshold && (
+                  <span className="text-content-muted text-sm">
+                    Only {availableQuantity} left in stock
+                  </span>
+                )}
+            </div>
+          </div>
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
  * Props for Product Action components following the documented API
  */
 export interface ProductActionProps {
@@ -1434,3 +1621,15 @@ export const Action = {
   /** Pre-order action button */
   PreOrder: ProductActionPreOrder,
 } as const;
+
+/**
+ * Quantity namespace containing the product quantity component
+ * following the documented API: Product.Quantity
+ */
+export const ProductQuantityNamespace = {
+  /** Product quantity selector component */
+  Quantity: ProductQuantity,
+} as const;
+
+// Alias for backward compatibility
+export { ProductQuantity as Quantity };
