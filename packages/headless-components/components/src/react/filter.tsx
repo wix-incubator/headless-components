@@ -382,7 +382,11 @@ export const Root = React.forwardRef<HTMLDivElement, FilterRootProps>(
  */
 export interface FilterFilteredProps
   extends React.HTMLAttributes<HTMLDivElement> {
-  /** Children to render when filters are active */
+  /**
+   * Content to render when filters are active.
+   * This component only renders its children when hasFilters is true,
+   * making it perfect for showing clear buttons or active filter indicators.
+   */
   children: React.ReactNode;
 }
 
@@ -421,14 +425,34 @@ export const Filtered = ({ children, ...otherProps }: FilterFilteredProps) => {
  */
 export interface FilterOptionsProps
   extends React.HTMLAttributes<HTMLDivElement> {
-  /** Children components */
+  /**
+   * Child components, typically containing FilterOptionRepeater.
+   * This is a simple container component that provides structural organization
+   * for filter option groups.
+   */
   children: React.ReactNode;
 }
 
 /**
  * Container for filter option components.
  *
+ * This component provides a wrapper for organizing filter controls and serves as
+ * a semantic container for the FilterOptionRepeater and related components.
+ *
  * @component
+ * @example
+ * ```tsx
+ * <Filter.FilterOptions className="space-y-4">
+ *   <Filter.FilterOptionRepeater>
+ *     <div className="filter-group">
+ *       <Filter.FilterOption.Label className="font-semibold mb-2" />
+ *       <Filter.FilterOption.SingleFilter />
+ *       <Filter.FilterOption.MultiFilter />
+ *       <Filter.FilterOption.RangeFilter />
+ *     </div>
+ *   </Filter.FilterOptionRepeater>
+ * </Filter.FilterOptions>
+ * ```
  */
 export const FilterOptions = ({
   children,
@@ -446,14 +470,41 @@ export const FilterOptions = ({
  */
 export interface FilterOptionRepeaterProps
   extends React.HTMLAttributes<HTMLDivElement> {
-  /** Template to repeat for each filter option */
+  /**
+   * Template to repeat for each filter option defined in filterOptions.
+   *
+   * This template will be rendered once for each FilterOption in the filterOptions array.
+   * The template typically contains FilterOption.Label and one or more filter type components
+   * (SingleFilter, MultiFilter, or RangeFilter) that automatically adapt to each option's type.
+   *
+   * Each repetition is wrapped in a FilterOptionContext that provides the current option
+   * and an updateFilter function to child components.
+   */
   children: React.ReactNode;
 }
 
 /**
  * Repeater component that renders a template for each filter option.
  *
+ * This component maps over the filterOptions array provided to Filter.Root and renders
+ * the children template for each option. It automatically provides FilterOptionContext
+ * to each rendered template, enabling child components to access the current option
+ * configuration and update functions.
+ *
+ * The component follows the List, Options, and Repeater pattern from the architecture rules.
+ *
  * @component
+ * @example
+ * ```tsx
+ * <Filter.FilterOptionRepeater>
+ *   <div className="mb-6">
+ *     <Filter.FilterOption.Label className="block text-sm font-medium mb-2" />
+ *     <Filter.FilterOption.SingleFilter className="w-full" />
+ *     <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2" />
+ *     <Filter.FilterOption.RangeFilter className="space-y-2" />
+ *   </div>
+ * </Filter.FilterOptionRepeater>
+ * ```
  */
 export const FilterOptionRepeater = ({
   children,
@@ -574,16 +625,44 @@ export const Clear = React.forwardRef<
  */
 export interface FilterOptionLabelProps
   extends React.HTMLAttributes<HTMLDivElement> {
-  /** When true, the component will not render its own element but forward its props to its child */
+  /**
+   * When true, the component will not render its own div wrapper but will
+   * delegate rendering to its child component using the Slot pattern.
+   *
+   * @default false
+   */
   asChild?: boolean;
-  /** Children for custom rendering */
+
+  /**
+   * Custom content to render instead of the default option label.
+   * If not provided, displays the option.label from the current FilterOptionContext.
+   */
   children?: React.ReactNode;
 }
 
 /**
  * Label component for filter options.
  *
+ * Displays the label for the current filter option from the FilterOptionContext.
+ * This component automatically accesses the option.label property and renders it,
+ * making it easy to display consistent filter labels.
+ *
  * @component
+ * @example
+ * ```tsx
+ * // Default label rendering
+ * <Filter.FilterOption.Label className="block text-sm font-medium text-gray-700 mb-1" />
+ *
+ * // Custom label with asChild pattern
+ * <Filter.FilterOption.Label asChild>
+ *   <h3 className="text-lg font-semibold" />
+ * </Filter.FilterOption.Label>
+ *
+ * // Custom content overriding the label
+ * <Filter.FilterOption.Label>
+ *   <span className="text-blue-600">Custom Label Text</span>
+ * </Filter.FilterOption.Label>
+ * ```
  */
 export const FilterOptionLabel = React.forwardRef<
   HTMLDivElement,
@@ -606,16 +685,54 @@ export const FilterOptionLabel = React.forwardRef<
  * Props for single filter components
  */
 export interface SingleFilterProps extends React.HTMLAttributes<HTMLElement> {
-  /** When true, the component will not render its own element but forward its props to its child */
+  /**
+   * When true, enables the asChild pattern where the component delegates
+   * rendering to its child using the Slot pattern. Useful for custom styling
+   * while maintaining filter functionality.
+   *
+   * @default false
+   */
   asChild?: boolean;
-  /** Children for custom rendering */
+
+  /**
+   * Custom content for the filter component. When provided with asChild=false,
+   * replaces the default select dropdown. When used with asChild=true,
+   * should be a single child element that will receive filter props.
+   */
   children?: React.ReactNode;
 }
 
 /**
  * Single selection filter component.
  *
+ * Renders a single-selection filter that allows users to choose one value from
+ * the available options. Only renders when the current option.type is 'single'.
+ *
+ * **Default Behavior:**
+ * - Uses Radix ToggleGroup in single mode for better UX and accessibility
+ * - Displays all validValues from the option configuration
+ * - Applies valueFormatter if provided for custom value display
+ *
+ * **Fallback Behavior:**
+ * - When asChild=false and children provided: renders native select element
+ * - When asChild=true: delegates to child component via Slot pattern
+ *
  * @component
+ * @example
+ * ```tsx
+ * // Default ToggleGroup rendering
+ * <Filter.FilterOption.SingleFilter className="flex gap-2" />
+ *
+ * // Custom select dropdown with asChild
+ * <Filter.FilterOption.SingleFilter asChild>
+ *   <select className="form-select" />
+ * </Filter.FilterOption.SingleFilter>
+ *
+ * // Custom styling with children
+ * <Filter.FilterOption.SingleFilter>
+ *   <option value="">All Categories</option>
+ * </Filter.FilterOption.SingleFilter>
+ * ```
  */
 export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
   (props, ref) => {
@@ -712,16 +829,62 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
  * Props for multi filter components
  */
 export interface MultiFilterProps extends React.HTMLAttributes<HTMLElement> {
-  /** When true, the component will not render its own element but forward its props to its child */
+  /**
+   * When true, enables the asChild pattern where the component delegates
+   * rendering to its child using the Slot pattern. Useful for custom styling
+   * while maintaining multi-selection filter functionality.
+   *
+   * @default false
+   */
   asChild?: boolean;
-  /** Children for custom rendering */
+
+  /**
+   * Custom content for the multi-filter component. When provided with asChild=false,
+   * replaces the default checkbox list. When used with asChild=true,
+   * should be a single child element that will receive filter props.
+   */
   children?: React.ReactNode;
 }
 
 /**
  * Multi-selection filter component.
  *
+ * Renders a multi-selection filter that allows users to choose multiple values from
+ * the available options. Only renders when the current option.type is 'multi'.
+ *
+ * **Default Behavior:**
+ * - Uses Radix ToggleGroup in multiple mode for better UX and accessibility
+ * - Displays all validValues from the option configuration
+ * - Applies valueFormatter if provided for custom value display
+ * - Supports color swatches when displayType is 'color' with valueBgColorFormatter
+ *
+ * **Fallback Behavior:**
+ * - When asChild=false and children provided: renders checkbox list
+ * - When asChild=true: delegates to child component via Slot pattern
+ *
+ * **Field Type Handling:**
+ * - fieldType='array': uses $hasSome operator (for array fields like product choices)
+ * - fieldType='singular': uses $in operator (for single fields with multiple values)
+ *
  * @component
+ * @example
+ * ```tsx
+ * // Default ToggleGroup rendering
+ * <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2" />
+ *
+ * // Color swatch display (when displayType='color')
+ * <Filter.FilterOption.MultiFilter className="grid grid-cols-6 gap-2" />
+ *
+ * // Custom checkbox list with asChild
+ * <Filter.FilterOption.MultiFilter asChild>
+ *   <div className="space-y-2" />
+ * </Filter.FilterOption.MultiFilter>
+ *
+ * // Custom rendering with children override
+ * <Filter.FilterOption.MultiFilter>
+ *   <div>Custom checkboxes here</div>
+ * </Filter.FilterOption.MultiFilter>
+ * ```
  */
 export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
   (props, ref) => {
@@ -832,9 +995,20 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
  * Props for range filter components
  */
 export interface RangeFilterProps extends React.HTMLAttributes<HTMLElement> {
-  /** When true, the component will not render its own element but forward its props to its child */
+  /**
+   * When true, enables the asChild pattern where the component delegates
+   * rendering to its child using the Slot pattern. Useful for custom styling
+   * while maintaining range filter functionality.
+   *
+   * @default false
+   */
   asChild?: boolean;
-  /** Children for custom rendering */
+
+  /**
+   * Custom content for the range filter component. When provided with asChild=false,
+   * replaces the default Radix Slider with number inputs. When used with asChild=true,
+   * should be a single child element that will receive filter props.
+   */
   children?: React.ReactNode;
 }
 
@@ -1129,10 +1303,44 @@ function multiFilterUiValueToFilter(
 /**
  * Range filter component for numeric ranges.
  *
- * Features smooth slider interaction by using local state during dragging
- * and only committing changes when the user releases the handle.
+ * Renders a range filter that allows users to select a minimum and maximum value
+ * from a numeric range. Only renders when the current option.type is 'range'.
+ *
+ * **Default Behavior:**
+ * - Uses Radix Slider with dual thumbs for better UX and accessibility
+ * - Features smooth slider interaction using local state during dragging
+ * - Only commits changes when the user releases the handle (onValueCommit)
+ * - Displays formatted values using valueFormatter if provided
+ * - Shows current min/max values with data attributes for styling
+ *
+ * **Fallback Behavior:**
+ * - When asChild=false and children provided: renders dual number inputs
+ * - When asChild=true: delegates to child component via Slot pattern
+ *
+ * **Field Name Handling:**
+ * - Single field: uses $gte/$lte operators (e.g., {price: {$gte: 10, $lte: 100}})
+ * - Dual fields: separate min/max fields (e.g., {'price.min': {$gte: 10}, 'price.max': {$lte: 100}})
  *
  * @component
+ * @example
+ * ```tsx
+ * // Default Radix Slider rendering
+ * <Filter.FilterOption.RangeFilter className="w-full px-4 py-2" />
+ *
+ * // Custom dual number inputs with asChild
+ * <Filter.FilterOption.RangeFilter asChild>
+ *   <div className="flex items-center gap-2">
+ *     <input type="number" placeholder="Min" className="form-input" />
+ *     <span>to</span>
+ *     <input type="number" placeholder="Max" className="form-input" />
+ *   </div>
+ * </Filter.FilterOption.RangeFilter>
+ *
+ * // Override with completely custom range component
+ * <Filter.FilterOption.RangeFilter>
+ *   <div>Custom range slider component</div>
+ * </Filter.FilterOption.RangeFilter>
+ * ```
  */
 export const RangeFilter = React.forwardRef<HTMLElement, RangeFilterProps>(
   (props, ref) => {
