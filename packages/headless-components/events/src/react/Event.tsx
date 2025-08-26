@@ -486,6 +486,10 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
+    const service = useService(EventServiceDefinition);
+    const event = service.event.get();
+    const eventSlug = event.slug;
+
     return (
       <AsChildSlot
         ref={ref}
@@ -493,7 +497,9 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
         className={className}
         data-testid={TestIds.eventRsvpButton}
         customElement={children}
-        onClick={() => {}}
+        onClick={() => {
+          window.location.href = `/events/${eventSlug}`;
+        }}
       >
         <button>{children}</button>
       </AsChildSlot>
