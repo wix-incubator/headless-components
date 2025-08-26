@@ -142,6 +142,8 @@ Root.displayName = 'Quantity.Root';
 export interface QuantityIncrementProps {
   asChild?: boolean;
   className?: string;
+  /** Whether the button is disabled */
+  disabled?: boolean;
   children?:
     | string
     | React.ReactNode

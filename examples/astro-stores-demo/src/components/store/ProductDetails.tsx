@@ -187,13 +187,13 @@ export default function ProductDetails({
               <h3 className="text-lg font-semibold text-content-primary">
                 Quantity
               </h3>
-              <Product.Quantity className="flex items-center gap-3">
+              <Product.Quantity.Root className="flex items-center gap-3">
                 <div className="flex items-center border border-brand-light rounded-lg">
                   <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary transition-colors" />
                   <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
                   <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary transition-colors" />
                 </div>
-              </Product.Quantity>
+              </Product.Quantity.Root>
             </div>
 
             {/* Add to Cart */}

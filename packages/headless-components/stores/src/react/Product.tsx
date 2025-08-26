@@ -4,7 +4,7 @@ import React from 'react';
 import { Commerce } from '@wix/headless-ecom/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
-import { Quantity } from '@wix/headless-components/react';
+import { Quantity as QuantityComponent } from '@wix/headless-components/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
 import * as ProductModifiers from './core/ProductModifiers.js';
@@ -1256,6 +1256,8 @@ export interface ProductQuantitySubComponentProps {
   children?: AsChildChildren<{
     disabled: boolean;
   }>;
+  /** Whether the component is disabled */
+  disabled?: boolean;
 }
 
 /**
@@ -1370,7 +1372,7 @@ export const ProductQuantity = React.forwardRef<
         }
 
         return (
-          <Quantity.Root
+          <QuantityComponent.Root
             initialValue={selectedQuantity}
             onValueChange={setSelectedQuantity}
             className={className}
@@ -1378,7 +1380,7 @@ export const ProductQuantity = React.forwardRef<
             data-testid={TestIds.productQuantity}
           >
             {children as React.ReactNode}
-          </Quantity.Root>
+          </QuantityComponent.Root>
         );
       }}
     </ProductVariantSelector.Stock>
@@ -1396,7 +1398,10 @@ export const ProductQuantityDecrement = React.forwardRef<
 
   return (
     <ProductVariantSelector.Stock>
-      {() => {
+      {({ selectedQuantity, inStock, isPreOrderEnabled }) => {
+        const disabled =
+          selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled);
+
         if (asChild && children) {
           return (
             <AsChildSlot
@@ -1405,16 +1410,17 @@ export const ProductQuantityDecrement = React.forwardRef<
               className={className}
               data-testid={TestIds.productQuantityDecrement}
               customElement={children}
-              customElementProps={{}}
+              customElementProps={{ disabled }}
             />
           );
         }
 
         return (
-          <Quantity.Decrement
+          <QuantityComponent.Decrement
             className={className}
             ref={ref as React.Ref<HTMLButtonElement>}
             data-testid={TestIds.productQuantityDecrement}
+            disabled={disabled}
           />
         );
       }}
@@ -1429,7 +1435,7 @@ export const ProductQuantityInput = React.forwardRef<
   HTMLInputElement,
   ProductQuantitySubComponentProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, disabled } = props;
 
   return (
     <ProductVariantSelector.Stock>
@@ -1440,6 +1446,7 @@ export const ProductQuantityInput = React.forwardRef<
               ref={ref}
               asChild={asChild}
               className={className}
+              disabled={disabled}
               data-testid={TestIds.productQuantityInput}
               customElement={children}
               customElementProps={{}}
@@ -1448,8 +1455,9 @@ export const ProductQuantityInput = React.forwardRef<
         }
 
         return (
-          <Quantity.Input
+          <QuantityComponent.Input
             className={className}
+            disabled={disabled}
             ref={ref as React.Ref<HTMLInputElement>}
             data-testid={TestIds.productQuantityInput}
           />
@@ -1470,7 +1478,16 @@ export const ProductQuantityIncrement = React.forwardRef<
 
   return (
     <ProductVariantSelector.Stock>
-      {() => {
+      {({
+        selectedQuantity,
+        availableQuantity,
+        inStock,
+        isPreOrderEnabled,
+      }) => {
+        const disabled =
+          (!!availableQuantity && selectedQuantity >= availableQuantity) ||
+          (!inStock && !isPreOrderEnabled);
+
         if (asChild && children) {
           return (
             <AsChildSlot
@@ -1479,16 +1496,17 @@ export const ProductQuantityIncrement = React.forwardRef<
               className={className}
               data-testid={TestIds.productQuantityIncrement}
               customElement={children}
-              customElementProps={{}}
+              customElementProps={{ disabled }}
             />
           );
         }
 
         return (
-          <Quantity.Increment
+          <QuantityComponent.Increment
             className={className}
             ref={ref as React.Ref<HTMLButtonElement>}
             data-testid={TestIds.productQuantityIncrement}
+            disabled={disabled}
           />
         );
       }}
@@ -1718,35 +1736,13 @@ export const Action = {
  * Quantity namespace containing the product quantity component
  * following the documented API: Product.Quantity
  */
-export const ProductQuantityNamespace = {
+export const Quantity = {
   /** Product quantity selector component */
-  Quantity: ProductQuantity,
+  Root: ProductQuantity,
   /** Product quantity decrement component */
   Decrement: ProductQuantityDecrement,
   /** Product quantity input component */
   Input: ProductQuantityInput,
   /** Product quantity increment component */
   Increment: ProductQuantityIncrement,
-} as const;
-
-// Alias for backward compatibility
-export { ProductQuantity as Quantity };
-
-/**
- * Product namespace containing all product components
- * following the documented API: Product.Root, Product.Action.*, Product.Quantity.*
- */
-export const Product = {
-  /** Product name component */
-  Name,
-  /** Product description component */
-  Description,
-  /** Product price component */
-  Price,
-  /** Product media gallery component */
-  MediaGallery: ProductMediaGallery,
-  /** Product actions namespace */
-  Action,
-  /** Product quantity namespace */
-  Quantity: ProductQuantityNamespace,
 } as const;
