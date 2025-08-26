@@ -1248,7 +1248,17 @@ export const ProductActionAddToCart = React.forwardRef<
 
   return (
     <SelectedVariant.Actions>
-      {({ lineItems, canAddToCart, isLoading, addToCart }) => {
+      {({
+        lineItems,
+        canAddToCart,
+        isLoading,
+        addToCart,
+        isPreOrderEnabled,
+      }) => {
+        if (isPreOrderEnabled) {
+          return null;
+        }
+
         const onClick = addToCart;
         const disabled = !canAddToCart || isLoading;
 
@@ -1299,7 +1309,18 @@ export const ProductActionBuyNow = React.forwardRef<
 
   return (
     <SelectedVariant.Actions>
-      {({ lineItems, canAddToCart, isLoading, buyNow }) => {
+      {({
+        lineItems,
+        canAddToCart,
+        isLoading,
+        buyNow,
+        inStock,
+        isPreOrderEnabled,
+      }) => {
+        if (!inStock || isPreOrderEnabled) {
+          return null;
+        }
+
         const onClick = buyNow;
         const disabled = !canAddToCart || isLoading;
 
@@ -1351,9 +1372,12 @@ export const ProductActionPreOrder = React.forwardRef<
   return (
     <SelectedVariant.Actions>
       {({ lineItems, isLoading, addToCart, isPreOrderEnabled }) => {
-        // Pre-order is only available when pre-order is enabled
-        const canPreOrder = isPreOrderEnabled && !isLoading;
-        const onClick = addToCart; // Pre-order uses the same add to cart functionality
+        if (!isPreOrderEnabled) {
+          return null;
+        }
+
+        const canPreOrder = !isLoading;
+        const onClick = addToCart;
         const disabled = !canPreOrder;
 
         if (asChild && children) {
