@@ -1,7 +1,11 @@
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
-import { TicketService, TicketServiceDefinition, type TicketDefinition } from '../services/ticket-service.js';
+import {
+  TicketService,
+  TicketServiceDefinition,
+  type TicketDefinition,
+} from '../services/ticket-service.js';
 import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
 import { TicketListServiceDefinition } from '../services/ticket-list-service.js';
 
@@ -39,69 +43,66 @@ export const Root = (props: RootProps): React.ReactNode => {
 
 export interface NameProps extends AsChildProps<{ name: string }> {}
 
-export const Name = React.forwardRef<HTMLElement, NameProps>(
-  (props, ref) => {
-    const { asChild, children } = props;
+export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
+  const { asChild, children } = props;
 
-    const service = useService(TicketServiceDefinition);
-    const ticketDefinition = service.ticketDefinition.get();
-    const name = ticketDefinition.name ?? '';
+  const service = useService(TicketServiceDefinition);
+  const ticketDefinition = service.ticketDefinition.get();
+  const name = ticketDefinition.name ?? '';
 
-    const attributes = { 'data-testid': TestIds.ticketName };
+  const attributes = { 'data-testid': TestIds.ticketName };
 
-    const content = <span {...attributes}>{name}</span>;
+  const content = <span {...attributes}>{name}</span>;
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { name },
-        ref,
-        content,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
+  if (asChild) {
+    const rendered = renderAsChild({
+      children,
+      props: { name },
+      ref,
+      content,
+      attributes,
+    });
+    if (rendered) return rendered;
+  }
 
-    return content;
-  },
-);
+  return content;
+});
 
 export interface PriceProps extends AsChildProps<{ price: string }> {}
 
-export const Price = React.forwardRef<HTMLElement, PriceProps>(
-  (props, ref) => {
-    const { asChild, children } = props;
+export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
+  const { asChild, children } = props;
 
-    const service = useService(TicketServiceDefinition);
-    const ticketDefinition = service.ticketDefinition.get();
+  const service = useService(TicketServiceDefinition);
+  const ticketDefinition = service.ticketDefinition.get();
 
-    let price = '';
-    if (ticketDefinition.pricingMethod?.free) {
-      price = 'Free';
-    } else if (ticketDefinition.pricingMethod?.fixedPrice) {
-      price = `${ticketDefinition.pricingMethod.fixedPrice.value} ${ticketDefinition.pricingMethod.fixedPrice.currency}`;
-    } // Add other types if needed
+  let price = '';
+  if (ticketDefinition.pricingMethod?.free) {
+    price = 'Free';
+  } else if (ticketDefinition.pricingMethod?.fixedPrice) {
+    price = `${ticketDefinition.pricingMethod.fixedPrice.value} ${ticketDefinition.pricingMethod.fixedPrice.currency}`;
+  } // Add other types if needed
 
-    const attributes = { 'data-testid': TestIds.ticketPrice };
+  const attributes = { 'data-testid': TestIds.ticketPrice };
 
-    const content = <span {...attributes}>{price}</span>;
+  const content = <span {...attributes}>{price}</span>;
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { price },
-        ref,
-        content,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
+  if (asChild) {
+    const rendered = renderAsChild({
+      children,
+      props: { price },
+      ref,
+      content,
+      attributes,
+    });
+    if (rendered) return rendered;
+  }
 
-    return content;
-  },
-);
+  return content;
+});
 
-export interface DescriptionProps extends AsChildProps<{ description: string }> {}
+export interface DescriptionProps
+  extends AsChildProps<{ description: string }> {}
 
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
@@ -189,7 +190,14 @@ export const SoldOut = React.forwardRef<HTMLElement, SoldOutProps>(
   },
 );
 
-export interface QuantityProps extends AsChildProps<{ quantity: number, maxQuantity: number, increment: () => void, decrement: () => void, setQuantity: (n: number) => void }> {}
+export interface QuantityProps
+  extends AsChildProps<{
+    quantity: number;
+    maxQuantity: number;
+    increment: () => void;
+    decrement: () => void;
+    setQuantity: (n: number) => void;
+  }> {}
 
 export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
   (props, ref) => {

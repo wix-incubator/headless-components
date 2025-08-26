@@ -7,8 +7,16 @@ import {
   type TicketListServiceConfig,
 } from '../services/ticket-list-service.js';
 import * as TicketDefinition from './TicketDefinition.js';
-import { EventServiceDefinition, EventService, type EventServiceConfig   } from '../services/event-service.js';
-import { CheckoutServiceDefinition, CheckoutService, type TicketQuantity } from '../services/checkout-service.js';
+import {
+  EventServiceDefinition,
+  EventService,
+  type EventServiceConfig,
+} from '../services/event-service.js';
+import {
+  CheckoutServiceDefinition,
+  CheckoutService,
+  type TicketQuantity,
+} from '../services/checkout-service.js';
 
 enum TestIds {
   ticketListTickets = 'ticket-list-tickets',
@@ -20,7 +28,7 @@ enum TestIds {
  * Props for the TicketsPicker Root component.
  */
 export interface RootProps {
-  ticketsServiceConfig: TicketListServiceConfig;
+  ticketListServiceConfig: TicketListServiceConfig;
   initialSelectedQuantities?: Record<string, number>;
   eventServiceConfig: EventServiceConfig;
   children: React.ReactNode;
@@ -34,9 +42,9 @@ export interface RootProps {
  * ```tsx
  * import { TicketsPicker } from '@wix/headless-events/react';
  *
- * function TicketsPickerComponent({ ticketsServiceConfig }) {
+ * function TicketsPickerComponent({ ticketListServiceConfig }) {
  *   return (
- *     <TicketsPicker.Root ticketsServiceConfig={ticketsServiceConfig}>
+ *     <TicketsPicker.Root ticketListServiceConfig={ticketListServiceConfig}>
  *       <TicketsPicker.TicketDefinitions>
  *         <TicketsPicker.TicketDefinitionRepeater>
  *           <TicketDefinition.Name />
@@ -49,17 +57,21 @@ export interface RootProps {
  * ```
  */
 export const Root = (props: RootProps): React.ReactNode => {
-  const { ticketsServiceConfig, eventServiceConfig, initialSelectedQuantities, children } = props;
+  const {
+    ticketListServiceConfig,
+    eventServiceConfig,
+    initialSelectedQuantities,
+    children,
+  } = props;
 
-  const config = { ...ticketsServiceConfig, initialSelectedQuantities };
+  const config = { ...ticketListServiceConfig, initialSelectedQuantities };
 
   return (
     <WixServices
       servicesMap={createServicesMap()
         .addService(EventServiceDefinition, EventService, eventServiceConfig)
         .addService(TicketListServiceDefinition, TicketListService, config)
-        .addService(CheckoutServiceDefinition, CheckoutService, {})
-      }
+        .addService(CheckoutServiceDefinition, CheckoutService, {})}
     >
       {children}
     </WixServices>
@@ -90,31 +102,32 @@ export interface TicketDefinitionsProps {
  * </TicketsPicker.TicketDefinitions>
  * ```
  */
-export const TicketDefinitions = React.forwardRef<HTMLDivElement, TicketDefinitionsProps>(
-  (props, ref) => {
-    const { children, emptyState, className } = props;
+export const TicketDefinitions = React.forwardRef<
+  HTMLDivElement,
+  TicketDefinitionsProps
+>((props, ref) => {
+  const { children, emptyState, className } = props;
 
-    const service = useService(TicketListServiceDefinition);
-    const ticketDefinitions = service.ticketDefinitions.get();
-    const hasTickets = !!ticketDefinitions.length;
+  const service = useService(TicketListServiceDefinition);
+  const ticketDefinitions = service.ticketDefinitions.get();
+  const hasTickets = !!ticketDefinitions.length;
 
-    if (!hasTickets) {
-      return emptyState || null;
-    }
+  if (!hasTickets) {
+    return emptyState || null;
+  }
 
-    const attributes = {
-      'data-testid': TestIds.ticketListTickets,
-      'data-empty': !hasTickets,
-      className,
-    };
+  const attributes = {
+    'data-testid': TestIds.ticketListTickets,
+    'data-empty': !hasTickets,
+    className,
+  };
 
-    return (
-      <div {...attributes} ref={ref}>
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    <div {...attributes} ref={ref}>
+      {children}
+    </div>
+  );
+});
 
 /**
  * Props for the TicketsPicker TicketDefinitionRepeater component.
@@ -137,7 +150,9 @@ export interface TicketDefinitionRepeaterProps {
  * </TicketsPicker.TicketDefinitionRepeater>
  * ```
  */
-export const TicketDefinitionRepeater = (props: TicketDefinitionRepeaterProps): React.ReactNode => {
+export const TicketDefinitionRepeater = (
+  props: TicketDefinitionRepeaterProps,
+): React.ReactNode => {
   const { children } = props;
 
   const service = useService(TicketListServiceDefinition);
@@ -209,7 +224,10 @@ export interface CheckoutProps {
  * </TicketsPicker.Checkout>
  */
 export const Checkout = (props: CheckoutProps): React.ReactNode => {
-  const { children, noTicketsErrorMessage = 'Please select at least one ticket' } = props;
+  const {
+    children,
+    noTicketsErrorMessage = 'Please select at least one ticket',
+  } = props;
 
   const ticketService = useService(TicketListServiceDefinition);
   const eventService = useService(EventServiceDefinition);
@@ -233,7 +251,11 @@ export const Checkout = (props: CheckoutProps): React.ReactNode => {
     }
 
     setLocalError(null);
-    await checkoutService.createCheckout(event._id!, event.slug!, ticketQuantities);
+    await checkoutService.createCheckout(
+      event._id!,
+      event.slug!,
+      ticketQuantities,
+    );
   };
 
   const error = localError || checkoutService.error.get();

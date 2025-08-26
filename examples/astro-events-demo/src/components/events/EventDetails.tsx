@@ -1,15 +1,27 @@
-import { Event as EventPrimitive, TicketsPicker as TicketsPickerPrimitive, TicketDefinition as TicketDefinitionPrimitive, EventList } from '@wix/headless-events/react';
-import { type TicketListServiceConfig, type EventServiceConfig, type EventListServiceConfig } from '@wix/headless-events/services';
+import {
+  Event as EventPrimitive,
+  TicketsPicker as TicketsPickerPrimitive,
+  TicketDefinition as TicketDefinitionPrimitive,
+} from '@wix/headless-events/react';
+import {
+  TicketListServiceDefinition,
+  type EventServiceConfig,
+  type EventListServiceConfig,
+  type TicketListServiceConfig,
+} from '@wix/headless-events/services';
 import { useService } from '@wix/services-manager-react';
-import { TicketListServiceDefinition, EventServiceDefinition } from '@wix/headless-events/services'; // Added EventServiceDefinition
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
-  ticketsServiceConfig: TicketListServiceConfig;
   eventListServiceConfig: EventListServiceConfig;
+  ticketListServiceConfig: TicketListServiceConfig;
 }
 
-export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventListServiceConfig }: EventDetailsProps) {
+export function EventDetails({
+  eventServiceConfig,
+  // eventListServiceConfig,
+  ticketListServiceConfig,
+}: EventDetailsProps) {
   const EventInfo = () => {
     return (
       <div className="mb-8">
@@ -18,11 +30,15 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventLi
           <tbody>
             <tr>
               <th className="pr-4 py-2 font-medium text-gray-900">Date:</th>
-              <td className="py-2"><EventPrimitive.Date /></td>
+              <td className="py-2">
+                <EventPrimitive.Date />
+              </td>
             </tr>
             <tr>
               <th className="pr-4 py-2 font-medium text-gray-900">Location:</th>
-              <td className="py-2"><EventPrimitive.Location format="full" /></td>
+              <td className="py-2">
+                <EventPrimitive.Location format="full" />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -30,9 +46,11 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventLi
     );
   };
 
-  const currentEventId = eventServiceConfig.event._id;
-  const otherEvents = eventListServiceConfig.events.filter(e => e._id !== currentEventId);
-  const otherEventListConfig = { events: otherEvents };
+  // const currentEventId = eventServiceConfig.event._id;
+  // const otherEvents = eventListServiceConfig.events.filter(
+  //   e => e._id !== currentEventId
+  // );
+  // const otherEventListConfig = { events: otherEvents };
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -41,10 +59,13 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventLi
           <EventPrimitive.Image className="w-full h-96 object-cover rounded-lg shadow-md" />
         </div>
         <EventPrimitive.Title className="text-3xl font-bold text-gray-900 mb-4" />
-        <EventPrimitive.Description className="text-gray-700 mb-8" />
+        <EventPrimitive.ShortDescription className="text-gray-700 mb-8" />
         <EventInfo />
       </EventPrimitive.Root>
-      <TicketsPickerPrimitive.Root ticketsServiceConfig={ticketsServiceConfig} eventServiceConfig={eventServiceConfig}>
+      <TicketsPickerPrimitive.Root
+        ticketListServiceConfig={ticketListServiceConfig}
+        eventServiceConfig={eventServiceConfig}
+      >
         <TicketsPickerPrimitive.TicketDefinitions
           className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 p-6"
           emptyState={
@@ -63,7 +84,9 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventLi
                 <TicketDefinitionPrimitive.Description className="text-sm text-gray-500 mb-3 line-clamp-3" />
                 <TicketDefinitionPrimitive.Price className="text-base font-medium text-gray-900 mb-2" />
                 <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
-                  <span>Remaining: <TicketDefinitionPrimitive.Remaining /></span>
+                  <span>
+                    Remaining: <TicketDefinitionPrimitive.Remaining />
+                  </span>
                   <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium" />
                 </div>
               </div>
@@ -104,12 +127,16 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventLi
             let total = 0;
             let currency = 'USD';
             if (ticketDefinitions.length > 0) {
-              currency = ticketDefinitions[0].pricingMethod?.fixedPrice?.currency ?? 'USD';
+              currency =
+                ticketDefinitions[0].pricingMethod?.fixedPrice?.currency ??
+                'USD';
               for (const [id, qty] of Object.entries(selectedQuantities)) {
                 if (qty > 0) {
                   const td = ticketDefinitions.find(t => t._id === id);
                   if (td && td.pricingMethod?.fixedPrice) {
-                    total += parseFloat(td.pricingMethod.fixedPrice.value ?? '0') * qty;
+                    total +=
+                      parseFloat(td.pricingMethod.fixedPrice.value ?? '0') *
+                      qty;
                   }
                 }
               }
@@ -133,11 +160,15 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventLi
           }}
         </TicketsPickerPrimitive.Checkout>
       </TicketsPickerPrimitive.Root>
-      <div className="my-8">
+      {/* <div className="my-8">
         <h3 className="text-xl font-bold mb-4 text-gray-900">Other Events</h3>
         <EventList.Root eventListServiceConfig={otherEventListConfig}>
           <EventList.Events
-            emptyState={<p className="text-center text-gray-600 py-8">No other events available</p>}
+            emptyState={
+              <p className="text-center text-gray-600 py-8">
+                No other events available
+              </p>
+            }
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
             <EventList.EventRepeater>
@@ -146,13 +177,16 @@ export function EventDetails({ eventServiceConfig, ticketsServiceConfig, eventLi
                 <div className="p-4">
                   <EventPrimitive.Title className="font-bold text-lg text-gray-900 mb-1" />
                   <EventPrimitive.Date className="text-sm text-gray-600 mb-1" />
-                  <EventPrimitive.Location className="text-sm text-gray-600" format="full" />
+                  <EventPrimitive.Location
+                    className="text-sm text-gray-600"
+                    format="full"
+                  />
                 </div>
               </div>
             </EventList.EventRepeater>
           </EventList.Events>
         </EventList.Root>
-      </div>
+      </div> */}
     </div>
   );
 }

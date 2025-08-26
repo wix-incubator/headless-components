@@ -1,0 +1,37 @@
+---
+import {
+  loadEventServiceConfig,
+  loadEventListServiceConfig,
+  loadTicketListServiceConfig,
+} from '@wix/headless-events/services';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EventDetailsPage from '../../react-pages/event-details';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/');
+}
+
+// Load initial data server-side
+const [eventServiceConfig, eventListServiceConfig] = await Promise.all([
+  loadEventServiceConfig(slug),
+  loadEventListServiceConfig(),
+]);
+const ticketListServiceConfig = await loadTicketListServiceConfig(
+  eventServiceConfig.event._id
+);
+---
+
+<BaseLayout>
+  <title>Event Details</title>
+  <meta name="description" content="Event Details" />
+
+  <EventDetailsPage
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfig}
+    eventListServiceConfig={eventListServiceConfig}
+    ticketListServiceConfig={ticketListServiceConfig}
+  />
+</BaseLayout>

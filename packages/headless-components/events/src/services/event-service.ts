@@ -33,7 +33,17 @@ export const EventService = implementService.withConfig<EventServiceConfig>()(
   },
 );
 
-export async function loadEventServiceConfig(eventId: string): Promise<EventServiceConfig> {
-  const eventResponse = await wixEventsV2.getEvent(eventId, { fields: [wixEventsV2.RequestedFields.DETAILS] }) as any;
-  return { event: eventResponse };
+export async function loadEventServiceConfig(
+  slug: string,
+): Promise<EventServiceConfig> {
+  const { event } = await wixEventsV2.getEventBySlug(slug, {
+    fields: [
+      wixEventsV2.RequestedFields.DETAILS,
+      wixEventsV2.RequestedFields.TEXTS,
+    ],
+  });
+
+  return {
+    event: event!,
+  };
 }
