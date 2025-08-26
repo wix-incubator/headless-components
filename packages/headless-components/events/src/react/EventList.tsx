@@ -1,3 +1,4 @@
+import { AsChildSlot } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -10,18 +11,21 @@ import * as Event from './Event.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
+  eventListLoadMore = 'event-list-load-more',
+  eventListError = 'event-list-error',
 }
 
 /**
  * Props for the EventList Root component.
  */
 export interface RootProps {
+  /** Configuration for the event list service */
   eventListServiceConfig: EventListServiceConfig;
   children: React.ReactNode;
 }
 
 /**
- * Root component that provides the EventList service context for rendering event lists.
+ * Root container that provides event list context to all child components.
  *
  * @order 1
  * @component
@@ -39,6 +43,7 @@ export interface RootProps {
  *           <Event.Date />
  *           <Event.Location />
  *           <Event.Description />
+ *           <Event.RsvpButton>RSVP</Event.RsvpButton>
  *         </EventList.EventRepeater>
  *       </EventList.Events>
  *     </EventList.Root>
@@ -67,12 +72,14 @@ export const Root = (props: RootProps): React.ReactNode => {
  */
 export interface EventsProps {
   children: React.ReactNode;
+  /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Container for the event list with empty state support.
+ * Container for the event list with support for empty state.
  * Follows List Container Level pattern.
  *
  * @component
@@ -86,7 +93,7 @@ export interface EventsProps {
  * </EventList.Events>
  * ```
  */
-export const Events = React.forwardRef<HTMLDivElement, EventsProps>(
+export const Events = React.forwardRef<HTMLElement, EventsProps>(
   (props, ref) => {
     const { children, emptyState, className } = props;
 
@@ -99,13 +106,13 @@ export const Events = React.forwardRef<HTMLDivElement, EventsProps>(
     }
 
     const attributes = {
+      className,
       'data-testid': TestIds.eventListEvents,
       'data-empty': !hasEvents,
-      className,
     };
 
     return (
-      <div {...attributes} ref={ref}>
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
         {children}
       </div>
     );
@@ -154,3 +161,101 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
     </>
   );
 };
+
+/**
+ * Props for the EventList LoadMoreTrigger component.
+ */
+export interface LoadMoreTriggerProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display inside the load more button */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays a button to load more events. Not rendered if no events are left to load.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <EventList.LoadMoreTrigger>
+ *   Load More
+ * </EventList.LoadMoreTrigger>
+ * ```
+ */
+export const LoadMoreTrigger = React.forwardRef<
+  HTMLElement,
+  LoadMoreTriggerProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const service = useService(EventListServiceDefinition);
+  const isLoading = service.isLoading.get();
+  const hasMoreEvents = service.hasMoreEvents.get();
+
+  if (!hasMoreEvents) {
+    return null;
+  }
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventListLoadMore}
+      customElement={children}
+      disabled={isLoading}
+      onClick={() => service.loadMoreEvents()}
+    >
+      <button>{children}</button>
+    </AsChildSlot>
+  );
+});
+
+/**
+ * Props for the EventList Error component.
+ */
+export interface ErrorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display inside the error message */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays an error message when the event list fails to load.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <EventList.Error>
+ *   Unable to load events.
+ * </EventList.Error>
+ * ```
+ */
+export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const service = useService(EventListServiceDefinition);
+  const error = service.error.get();
+
+  if (!error) {
+    return null;
+  }
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventListError}
+      customElement={children}
+    >
+      <div>{children}</div>
+    </AsChildSlot>
+  );
+});

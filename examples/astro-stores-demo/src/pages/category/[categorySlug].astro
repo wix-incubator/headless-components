@@ -4,12 +4,12 @@ import { SEO } from '@wix/headless-seo/react';
 import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
 import {
   loadCategoriesListServiceConfig,
-  loadProductsListSearchServiceConfig,
   loadProductsListServiceConfig,
   parseUrlToSearchOptions,
 } from '@wix/headless-stores/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoreCollectionPage from '../../react-pages/category/index';
+import { customizationsV3 } from '@wix/stores';
 
 // Get category slug from URL params
 const { categorySlug = '' } = Astro.params;
@@ -26,10 +26,15 @@ if (!category) {
 
 const categoryName = category?.name || '';
 
+const { items: customizations = [] } = await customizationsV3
+  .queryCustomizations()
+  .find();
+
 // Parse URL to get search options with defaults for this category
 const parsed = await parseUrlToSearchOptions(
   Astro.url.href,
   categoriesListConfig.categories,
+  customizations,
   {
     cursorPaging: {
       limit: 10,
@@ -45,12 +50,10 @@ const parsed = await parseUrlToSearchOptions(
 const [
   productsListConfig,
   currentCartServiceConfig,
-  productsListSearchConfig,
   seoTagsServiceConfig,
 ] = await Promise.all([
   loadProductsListServiceConfig(parsed), // Both services now use same parsed result
   loadCurrentCartServiceConfig(),
-  loadProductsListSearchServiceConfig(parsed),
   loadSEOTagsServiceConfig({
     pageUrl: Astro.url.href,
     itemData: {
@@ -83,7 +86,6 @@ const [
     categoryServiceConfig={{ category }}
     categoriesListConfig={categoriesListConfig}
     productsListConfig={productsListConfig}
-    productsListSearchConfig={productsListSearchConfig}
     slot="body"
   />
 </BaseLayout>

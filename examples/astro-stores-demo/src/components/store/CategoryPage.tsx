@@ -1,38 +1,28 @@
-import { CurrentCart } from '@wix/headless-ecom/react';
-import type { LineItem } from '@wix/headless-ecom/services';
 import {
   ProductCore as ProductPrimitive,
   ProductListCore as ProductListPrimitive,
   ProductListFilters as ProductListFiltersPrimitive,
-  ProductVariantSelector as ProductVariantSelectorPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductList,
   Product,
   Option,
   Choice,
 } from '@wix/headless-stores/react';
-import type {
-  CategoriesListServiceConfig,
-  ProductsListSearchServiceConfig,
-} from '@wix/headless-stores/services';
+import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
-import { useEffect, useState } from 'react';
-import { WixMediaImage } from '../media';
 import * as StyledMediaGallery from '../media/MediaGallery';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
-import { ProductFilters } from './ProductFilters';
+import ProductFiltersSidebar from './ProductFiltersSidebar';
 import QuickViewModal from './QuickViewModal';
 import { SortDropdown } from './SortDropdown';
-import { MediaGallery as MediaGalleryCore } from '@wix/headless-media/core';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface StoreCollectionPageProps {
   productsListConfig: ProductsListServiceConfig;
-  productsListSearchConfig: ProductsListSearchServiceConfig;
   categoriesListConfig: CategoriesListServiceConfig;
-  productPageRoute: string;
+  productPageRoute?: string;
 }
 
 export const ProductGridContent = ({
@@ -75,13 +65,7 @@ export const ProductGridContent = ({
 
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
         {/* Filters Sidebar */}
-        <div className="w-full lg:w-80 lg:flex-shrink-0">
-          <div className="lg:sticky lg:top-6">
-            <div className="relative">
-              <ProductFilters />
-            </div>
-          </div>
-        </div>
+        <ProductFiltersSidebar />
 
         {/* Main Content Area */}
         <div className="flex-1 min-w-0">
@@ -258,65 +242,38 @@ export const ProductGridContent = ({
                 <div className="mt-auto mb-3">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <SelectedVariantPrimitive.Price>
-                        {({ compareAtPrice }) => {
-                          return (
-                            <Product.Raw asChild>
-                              {({ product }) => {
-                                const available =
-                                  product.inventory?.availabilityStatus ===
-                                    productsV3.InventoryAvailabilityStatus
-                                      .IN_STOCK ||
-                                  product.inventory?.availabilityStatus ===
-                                    productsV3.InventoryAvailabilityStatus
-                                      .PARTIALLY_OUT_OF_STOCK;
-
-                                return compareAtPrice &&
-                                  parseFloat(
-                                    compareAtPrice.replace(/[^\d.]/g, '')
-                                  ) > 0 ? (
-                                  <>
-                                    <div className="flex items-center gap-2">
-                                      <Product.Price className="text-xl font-bold text-content-primary" />
-                                      <Product.CompareAtPrice className="text-sm font-medium text-content-faded line-through" />
-                                    </div>
-                                    <div className="flex items-center justify-end">
-                                      <div className="flex items-center gap-1">
-                                        <div
-                                          className={`w-2 h-2 rounded-full ${available ? 'bg-status-success' : 'bg-status-error'}`}
-                                        ></div>
-                                        <span
-                                          className={`text-xs font-medium ${available ? 'text-status-success' : 'text-status-error'}`}
-                                        >
-                                          {available
-                                            ? 'In Stock'
-                                            : 'Out of Stock'}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <div className="w-full flex items-center justify-between">
-                                    <Product.Price className="text-xl font-bold text-content-primary" />
-                                    <div className="flex items-center gap-1">
-                                      <div
-                                        className={`w-2 h-2 rounded-full ${available ? 'bg-status-success' : 'bg-status-error'}`}
-                                      ></div>
-                                      <span
-                                        className={`text-xs font-medium ${available ? 'text-status-success' : 'text-status-error'}`}
-                                      >
-                                        {available
-                                          ? 'In Stock'
-                                          : 'Out of Stock'}
-                                      </span>
-                                    </div>
-                                  </div>
-                                );
-                              }}
-                            </Product.Raw>
-                          );
-                        }}
-                      </SelectedVariantPrimitive.Price>
+                      <div className="w-full flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Product.Price className="text-xl font-bold text-content-primary" />
+                          <Product.CompareAtPrice className="text-sm font-medium text-content-faded line-through" />
+                        </div>
+                        <Product.Stock
+                          labels={{
+                            inStock: 'In Stock',
+                            limitedStock: 'In Stock',
+                            outOfStock: 'Out of Stock',
+                          }}
+                          asChild
+                        >
+                          {React.forwardRef<
+                            HTMLDivElement,
+                            {
+                              status:
+                                | 'in-stock'
+                                | 'limited-stock'
+                                | 'out-of-stock';
+                              label: string;
+                            }
+                          >(({ label }, ref) => (
+                            <div
+                              ref={ref}
+                              className="flex items-center gap-1 text-xs font-medium data-[state='out-of-stock']:text-status-error data-[state='in-stock']:text-status-success data-[state='limited-stock']:text-status-success"
+                            >
+                              {label}
+                            </div>
+                          ))}
+                        </Product.Stock>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -413,14 +370,10 @@ export const LoadMoreSection = () => {
 
 export function CategoryPage({
   productsListConfig,
-  productsListSearchConfig,
   categoriesListConfig,
 }: StoreCollectionPageProps) {
   return (
-    <ProductList.Root
-      productsListConfig={productsListConfig}
-      productsListSearchConfig={productsListSearchConfig}
-    >
+    <ProductList.Root productsListConfig={productsListConfig}>
       <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />
     </ProductList.Root>

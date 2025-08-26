@@ -294,3 +294,59 @@ export function Slug(props: ProductSlugProps) {
     slug,
   });
 }
+
+/**
+ * Props for ProductRibbon headless component
+ */
+export interface ProductRibbonProps {
+  /** Render prop function that receives product ribbon data */
+  children: (props: ProductRibbonRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProductRibbon component
+ */
+export interface ProductRibbonRenderProps {
+  /** Product ribbon text */
+  ribbon: string | null;
+  /** Whether the product has a ribbon */
+  hasRibbon: boolean;
+}
+
+/**
+ * Headless component for product ribbon display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Product } from '@wix/stores/components';
+ *
+ * function ProductRibbonDisplay() {
+ *   return (
+ *     <Product.Ribbon>
+ *       {({ ribbon, hasRibbon }) => (
+ *         hasRibbon ? (
+ *           <span className="ribbon-badge">
+ *             {ribbon}
+ *           </span>
+ *         ) : null
+ *       )}
+ *     </Product.Ribbon>
+ *   );
+ * }
+ * ```
+ */
+export function Ribbon(props: ProductRibbonProps) {
+  const service = useService(ProductServiceDefinition) as ServiceAPI<
+    typeof ProductServiceDefinition
+  >;
+
+  const product = service.product.get();
+  const ribbon = product.ribbon?.name || null;
+  const hasRibbon = !!ribbon;
+
+  return props.children({
+    ribbon,
+    hasRibbon,
+  });
+}
