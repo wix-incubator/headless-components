@@ -4,6 +4,7 @@ import React from 'react';
 import { Commerce } from '@wix/headless-ecom/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
+import { Quantity } from '@wix/headless-components/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
 import * as ProductModifiers from './core/ProductModifiers.js';
@@ -81,6 +82,9 @@ enum TestIds {
   productActionBuyNow = 'product-action-buy-now',
   productActionPreOrder = 'product-action-pre-order',
   productQuantity = 'product-quantity',
+  productQuantityDecrement = 'product-quantity-decrement',
+  productQuantityInput = 'product-quantity-input',
+  productQuantityIncrement = 'product-quantity-increment',
 }
 
 /**
@@ -1230,6 +1234,7 @@ export interface ProductQuantityProps {
     availableQuantity: number | null;
     inStock: boolean;
     isPreOrderEnabled: boolean;
+    setSelectedQuantity: (quantity: number) => void;
     incrementQuantity: () => void;
     decrementQuantity: () => void;
   }>;
@@ -1237,6 +1242,20 @@ export interface ProductQuantityProps {
   className?: string;
   /** Threshold for showing "low stock" message (default: 10) */
   lowStockThreshold?: number;
+}
+
+/**
+ * Props for Product Quantity sub-components
+ */
+export interface ProductQuantitySubComponentProps {
+  /** CSS classes to apply to the element */
+  className?: string;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    disabled: boolean;
+  }>;
 }
 
 /**
@@ -1311,10 +1330,10 @@ export interface ProductQuantityProps {
  * ```
  */
 export const ProductQuantity = React.forwardRef<
-  HTMLElement,
+  HTMLDivElement,
   ProductQuantityProps
 >((props, ref) => {
-  const { asChild, children, className, lowStockThreshold = 10 } = props;
+  const { asChild, children, className } = props;
 
   return (
     <ProductVariantSelector.Stock>
@@ -1351,53 +1370,126 @@ export const ProductQuantity = React.forwardRef<
         }
 
         return (
-          <div
-            ref={ref as React.Ref<HTMLDivElement>}
+          <Quantity.Root
+            initialValue={selectedQuantity}
+            onValueChange={setSelectedQuantity}
             className={className}
+            ref={ref as React.Ref<HTMLDivElement>}
             data-testid={TestIds.productQuantity}
           >
-            <div className="flex items-center gap-3">
-              <div className="flex items-center border border-brand-light rounded-lg">
-                <button
-                  onClick={decrementQuantity}
-                  disabled={
-                    selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled)
-                  }
-                  className="px-3 py-2 text-content-primary hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  -
-                </button>
-                <span className="px-4 py-2 text-content-primary border-x border-brand-light min-w-[3rem] text-center">
-                  {selectedQuantity}
-                </span>
-                <button
-                  onClick={incrementQuantity}
-                  disabled={
-                    (!!availableQuantity &&
-                      selectedQuantity >= availableQuantity) ||
-                    (!inStock && !isPreOrderEnabled)
-                  }
-                  className="px-3 py-2 text-content-primary hover:bg-surface-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  +
-                </button>
-              </div>
-              {/* Show max quantity only when out of stock AND preorder enabled */}
-              {!inStock && isPreOrderEnabled && availableQuantity && (
-                <span className="text-content-muted text-sm">
-                  Max: {availableQuantity} Pre Order
-                </span>
-              )}
-              {/* Show stock message when in stock but available quantity < threshold */}
-              {inStock &&
-                availableQuantity &&
-                availableQuantity < lowStockThreshold && (
-                  <span className="text-content-muted text-sm">
-                    Only {availableQuantity} left in stock
-                  </span>
-                )}
-            </div>
-          </div>
+            {children as React.ReactNode}
+          </Quantity.Root>
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Product Quantity Decrement component
+ */
+export const ProductQuantityDecrement = React.forwardRef<
+  HTMLButtonElement,
+  ProductQuantitySubComponentProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {() => {
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productQuantityDecrement}
+              customElement={children}
+              customElementProps={{}}
+            />
+          );
+        }
+
+        return (
+          <Quantity.Decrement
+            className={className}
+            ref={ref as React.Ref<HTMLButtonElement>}
+            data-testid={TestIds.productQuantityDecrement}
+          />
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Product Quantity Input component
+ */
+export const ProductQuantityInput = React.forwardRef<
+  HTMLInputElement,
+  ProductQuantitySubComponentProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {() => {
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productQuantityInput}
+              customElement={children}
+              customElementProps={{}}
+            />
+          );
+        }
+
+        return (
+          <Quantity.Input
+            className={className}
+            ref={ref as React.Ref<HTMLInputElement>}
+            data-testid={TestIds.productQuantityInput}
+          />
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Product Quantity Increment component
+ */
+export const ProductQuantityIncrement = React.forwardRef<
+  HTMLButtonElement,
+  ProductQuantitySubComponentProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {() => {
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productQuantityIncrement}
+              customElement={children}
+              customElementProps={{}}
+            />
+          );
+        }
+
+        return (
+          <Quantity.Increment
+            className={className}
+            ref={ref as React.Ref<HTMLButtonElement>}
+            data-testid={TestIds.productQuantityIncrement}
+          />
         );
       }}
     </ProductVariantSelector.Stock>
@@ -1629,7 +1721,32 @@ export const Action = {
 export const ProductQuantityNamespace = {
   /** Product quantity selector component */
   Quantity: ProductQuantity,
+  /** Product quantity decrement component */
+  Decrement: ProductQuantityDecrement,
+  /** Product quantity input component */
+  Input: ProductQuantityInput,
+  /** Product quantity increment component */
+  Increment: ProductQuantityIncrement,
 } as const;
 
 // Alias for backward compatibility
 export { ProductQuantity as Quantity };
+
+/**
+ * Product namespace containing all product components
+ * following the documented API: Product.Root, Product.Action.*, Product.Quantity.*
+ */
+export const Product = {
+  /** Product name component */
+  Name,
+  /** Product description component */
+  Description,
+  /** Product price component */
+  Price,
+  /** Product media gallery component */
+  MediaGallery: ProductMediaGallery,
+  /** Product actions namespace */
+  Action,
+  /** Product quantity namespace */
+  Quantity: ProductQuantityNamespace,
+} as const;
