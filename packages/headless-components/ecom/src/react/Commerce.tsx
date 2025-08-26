@@ -373,6 +373,7 @@ const ActionBuyNow = React.forwardRef<
       className,
       label = 'Buy Now',
       loadingState = '...',
+      lineItems,
       ...props
     },
     ref,
@@ -381,7 +382,7 @@ const ActionBuyNow = React.forwardRef<
       <CoreCheckout>
         {(renderProps) => {
           const onClick = () => {
-            return renderProps.createCheckout(props.lineItems);
+            return renderProps.createCheckout(lineItems);
           };
           if (asChild && children && typeof children === 'function') {
             return children(
@@ -389,7 +390,7 @@ const ActionBuyNow = React.forwardRef<
                 onClick,
                 disabled: renderProps.isLoading || disabled,
                 isLoading: renderProps.isLoading,
-                lineItems: props.lineItems,
+                lineItems,
               },
               ref,
             );
@@ -499,6 +500,7 @@ const ActionAddToCart = React.forwardRef<
       className,
       label = 'Add to Cart',
       loadingState = '...',
+      lineItems,
       ...props
     },
     ref,
@@ -507,7 +509,7 @@ const ActionAddToCart = React.forwardRef<
       <CoreCurrentCartCheckout>
         {(renderProps) => {
           const onClick = () => {
-            return renderProps.addToCart(props.lineItems);
+            return renderProps.addToCart(lineItems);
           };
           if (asChild && children && typeof children === 'function') {
             return children(
@@ -515,7 +517,7 @@ const ActionAddToCart = React.forwardRef<
                 onClick,
                 disabled: renderProps.isLoading || disabled,
                 isLoading: renderProps.isLoading,
-                lineItems: props.lineItems,
+                lineItems,
               },
               ref,
             );
