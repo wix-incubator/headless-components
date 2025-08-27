@@ -1,4 +1,4 @@
-import { CategoryList, Category, ProductListFilters as ProductListFiltersPrimitive } from '@wix/headless-stores/react';
+import { CategoryList, Category, ProductList as ProductListPrimitive } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
   Category as CategoryType,
@@ -24,7 +24,7 @@ export function CategoryPicker({
 
         {/* Category Navigation - Horizontal scrollable for mobile */}
         <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
-          <ProductListFiltersPrimitive.CategoryFilter>
+          <ProductListPrimitive.CategoryFilter>
             {({ selectedCategory, setSelectedCategory }) => (
               <CategoryList.CategoryRepeater>
                 <Category.Trigger
@@ -44,7 +44,7 @@ export function CategoryPicker({
                 </Category.Trigger>
               </CategoryList.CategoryRepeater>
             )}
-          </ProductListFiltersPrimitive.CategoryFilter>
+          </ProductListPrimitive.CategoryFilter>
         </div>
       </div>
     </CategoryList.Root>
