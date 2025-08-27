@@ -40,6 +40,7 @@ export async function loadEventServiceConfig(
     fields: [
       wixEventsV2.RequestedFields.DETAILS,
       wixEventsV2.RequestedFields.TEXTS,
+      wixEventsV2.RequestedFields.FORM,
     ],
   });
 

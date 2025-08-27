@@ -108,7 +108,6 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
     const attributes = {
       className,
       'data-testid': TestIds.eventListEvents,
-      'data-empty': !hasEvents,
     };
 
     return (

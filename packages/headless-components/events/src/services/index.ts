@@ -5,13 +5,23 @@ export {
   type EventListServiceAPI,
   type EventListServiceConfig,
 } from './event-list-service.js';
+
 export {
   EventService,
   EventServiceDefinition,
   loadEventServiceConfig,
+  type Event,
   type EventServiceAPI,
   type EventServiceConfig,
 } from './event-service.js';
+
+export {
+  FormControlService,
+  FormControlServiceDefinition,
+  type FormControl,
+  type FormControlServiceAPI,
+  type FormControlServiceConfig,
+} from './form-control-service.js';
 
 export {
   TicketService,
