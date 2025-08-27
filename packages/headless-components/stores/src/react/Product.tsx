@@ -1236,8 +1236,6 @@ export interface ProductQuantityProps {
     inStock: boolean;
     isPreOrderEnabled: boolean;
     setSelectedQuantity: (quantity: number) => void;
-    incrementQuantity: () => void;
-    decrementQuantity: () => void;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -1262,23 +1260,43 @@ export interface ProductQuantitySubComponentProps {
 /**
  * Product quantity selector component that integrates with the selected variant.
  * Provides quantity controls with stock validation and pre-order support.
+ * Uses a compound component pattern with Root, Decrement, Input, Increment, and Raw sub-components.
  *
  * @component
  * @example
  * ```tsx
- * // Default usage
- * <Product.Quantity className="flex items-center gap-3" />
+ * // Compound component usage (recommended)
+ * <Product.Quantity.Root className="flex items-center gap-3">
+ *   <div className="flex items-center border border-brand-light rounded-lg">
+ *     <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ *     <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+ *     <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ *   </div>
+ *   <Product.Quantity.Raw asChild>
+ *     {({ availableQuantity, inStock, isPreOrderEnabled }) => (
+ *       <div>
+ *         {!inStock && isPreOrderEnabled && availableQuantity && (
+ *           <span className="text-content-muted text-sm">
+ *             Max: {availableQuantity} Pre Order
+ *           </span>
+ *         )}
+ *         {inStock && availableQuantity && availableQuantity < 10 && (
+ *           <span className="text-content-muted text-sm">
+ *             Only {availableQuantity} left in stock
+ *           </span>
+ *         )}
+ *       </div>
+ *     )}
+ *   </Product.Quantity.Raw>
+ * </Product.Quantity.Root>
  *
- * // With custom low stock threshold
- * <Product.Quantity className="flex items-center gap-3" />
- *
- * // Custom rendering with asChild
+ * // Legacy asChild usage (still supported)
  * <Product.Quantity asChild>
- *   {({ selectedQuantity, availableQuantity, inStock, incrementQuantity, decrementQuantity }) => (
+ *   {({ selectedQuantity, availableQuantity, inStock, setSelectedQuantity }) => (
  *     <div className="flex items-center gap-3">
  *       <div className="flex items-center border border-brand-light rounded-lg">
  *         <button
- *           onClick={decrementQuantity}
+ *           onClick={() => setSelectedQuantity(selectedQuantity - 1)}
  *           disabled={selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled)}
  *           className="px-3 py-2 hover:bg-surface-primary disabled:opacity-50"
  *         >
@@ -1288,7 +1306,7 @@ export interface ProductQuantitySubComponentProps {
  *           {selectedQuantity}
  *         </span>
  *         <button
- *           onClick={incrementQuantity}
+ *           onClick={() => setSelectedQuantity(selectedQuantity + 1)}
  *           disabled={availableQuantity && selectedQuantity >= availableQuantity}
  *           className="px-3 py-2 hover:bg-surface-primary disabled:opacity-50"
  *         >
@@ -1296,36 +1314,6 @@ export interface ProductQuantitySubComponentProps {
  *         </button>
  *       </div>
  *     </div>
- *   )}
- * </Product.Quantity>
- *
- * // Using with Quantity components
- * <Product.Quantity asChild>
- *   {({ selectedQuantity, availableQuantity, inStock, incrementQuantity, decrementQuantity }) => (
- *     <Quantity.Root
- *       initialValue={selectedQuantity}
- *       onValueChange={(value) => {
- *         if (value > selectedQuantity) incrementQuantity();
- *         else if (value < selectedQuantity) decrementQuantity();
- *       }}
- *     >
- *       <div className="flex items-center gap-2">
- *         <div className="flex items-center border border-brand-light rounded-lg">
- *           <Quantity.Decrement
- *             className="px-3 py-1 hover:bg-surface-primary transition-colors"
- *             disabled={selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled)}
- *           />
- *           <Quantity.Input
- *             disabled={true}
- *             className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary"
- *           />
- *           <Quantity.Increment
- *             className="px-3 py-1 hover:bg-surface-primary transition-colors"
- *             disabled={availableQuantity && selectedQuantity >= availableQuantity}
- *           />
- *         </div>
- *       </div>
- *     </Quantity.Root>
  *   )}
  * </Product.Quantity>
  * ```
@@ -1344,8 +1332,6 @@ export const ProductQuantity = React.forwardRef<
         availableQuantity,
         selectedQuantity,
         setSelectedQuantity,
-        incrementQuantity,
-        decrementQuantity,
       }) => {
         const renderProps = {
           selectedQuantity,
@@ -1353,8 +1339,6 @@ export const ProductQuantity = React.forwardRef<
           inStock,
           isPreOrderEnabled,
           setSelectedQuantity,
-          incrementQuantity,
-          decrementQuantity,
         };
 
         if (asChild && children) {
@@ -1387,7 +1371,15 @@ export const ProductQuantity = React.forwardRef<
 });
 
 /**
- * Product Quantity Decrement component
+ * Product Quantity Decrement component.
+ * Automatically handles disabled state based on stock and pre-order settings.
+ * Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ * ```
  */
 export const ProductQuantityDecrement = React.forwardRef<
   HTMLButtonElement,
@@ -1428,7 +1420,14 @@ export const ProductQuantityDecrement = React.forwardRef<
 });
 
 /**
- * Product Quantity Input component
+ * Product Quantity Input component.
+ * Displays the current quantity value. Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+ * ```
  */
 export const ProductQuantityInput = React.forwardRef<
   HTMLInputElement,
@@ -1467,7 +1466,15 @@ export const ProductQuantityInput = React.forwardRef<
 });
 
 /**
- * Product Quantity Increment component
+ * Product Quantity Increment component.
+ * Automatically handles disabled state based on stock availability.
+ * Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ * ```
  */
 export const ProductQuantityIncrement = React.forwardRef<
   HTMLButtonElement,
@@ -1533,6 +1540,9 @@ export interface ProductActionProps {
   loadingState?: string | React.ReactNode;
 }
 
+/**
+ * Props for Product Quantity Raw component
+ */
 export interface ProductQuantityRawSubComponentProps {
   /** CSS classes to apply to the element */
   className?: string;
@@ -1545,11 +1555,35 @@ export interface ProductQuantityRawSubComponentProps {
     inStock: boolean;
     isPreOrderEnabled: boolean;
     setSelectedQuantity: (quantity: number) => void;
-    incrementQuantity: () => void;
-    decrementQuantity: () => void;
   }>;
 }
 
+/**
+ * Product Quantity Raw component.
+ * Provides access to raw quantity data for custom stock messages and advanced use cases.
+ * Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Raw asChild>
+ *   {({ availableQuantity, inStock, isPreOrderEnabled }) => (
+ *     <div>
+ *       {!inStock && isPreOrderEnabled && availableQuantity && (
+ *         <span className="text-content-muted text-sm">
+ *           Max: {availableQuantity} Pre Order
+ *         </span>
+ *       )}
+ *       {inStock && availableQuantity && availableQuantity < 10 && (
+ *         <span className="text-content-muted text-sm">
+ *           Only {availableQuantity} left in stock
+ *         </span>
+ *       )}
+ *     </div>
+ *   )}
+ * </Product.Quantity.Raw>
+ * ```
+ */
 export const ProductQuantityRaw = React.forwardRef<
   HTMLElement,
   ProductQuantityRawSubComponentProps
@@ -1773,8 +1807,8 @@ export const Action = {
 } as const;
 
 /**
- * Quantity namespace containing the product quantity component
- * following the documented API: Product.Quantity
+ * Quantity namespace containing all product quantity components
+ * following the compound component pattern: Product.Quantity.Root, Product.Quantity.Decrement, etc.
  */
 export const Quantity = {
   /** Product quantity selector component */
