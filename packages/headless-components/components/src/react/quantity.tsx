@@ -142,6 +142,8 @@ Root.displayName = 'Quantity.Root';
 export interface QuantityIncrementProps {
   asChild?: boolean;
   className?: string;
+  /** Whether the button is disabled */
+  disabled?: boolean;
   children?:
     | string
     | React.ReactNode
@@ -206,6 +208,8 @@ export interface QuantityDecrementProps {
     | React.ForwardRefRenderFunction<HTMLButtonElement, {}>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Whether the button is disabled */
+  disabled?: boolean;
 }
 
 /**
@@ -329,7 +333,7 @@ export const Input = React.forwardRef<HTMLInputElement, QuantityInputProps>(
     return (
       <input
         ref={ref}
-        type="number"
+        type="text" // avoid number input spinner padding issues
         value={value}
         onChange={(e) => handleChange(parseInt(e.target.value) || 1)}
         disabled={disabled}
