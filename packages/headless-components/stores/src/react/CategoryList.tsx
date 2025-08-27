@@ -151,10 +151,7 @@ export const Loading = React.forwardRef<
  * }
  * ```
  */
-export const CategoryRepeater = React.forwardRef<
-  HTMLDivElement,
-  CategoryListCategoryRepeaterProps
->((props) => {
+export function CategoryRepeater(props: CategoryListCategoryRepeaterProps) {
   // const { children, asChild = false, className } = props;
   const { children } = props;
   // Note: maxDepth is not implemented yet as it depends on category hierarchy structure
@@ -173,4 +170,4 @@ export const CategoryRepeater = React.forwardRef<
       }}
     </CoreCategoryList.ItemContent>
   );
-});
+}
