@@ -256,6 +256,8 @@ export interface ActionsRenderProps {
   addToCart: () => Promise<void>;
   /** Function to buy now (clear cart, add product, proceed to checkout) */
   buyNow: () => Promise<void>;
+  /** Line items */
+  lineItems: LineItem[];
   /** Whether add to cart is available */
   canAddToCart: boolean;
   /** Whether add to cart is currently loading */
@@ -394,6 +396,7 @@ export function Actions(props: ActionsProps) {
   };
 
   const commonProps = {
+    lineItems: getLineItems(),
     addToCart,
     canAddToCart,
     isLoading,
