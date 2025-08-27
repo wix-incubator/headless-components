@@ -5,17 +5,18 @@ import {
   TicketService,
   TicketServiceDefinition,
   type TicketDefinition,
+  type TicketServiceConfig,
 } from '../services/ticket-service.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { TicketListServiceDefinition } from '../services/ticket-list-service.js';
 
 enum TestIds {
-  ticketName = 'ticket-name',
-  ticketDescription = 'ticket-description',
-  ticketPrice = 'ticket-price',
-  ticketRemaining = 'ticket-remaining',
-  ticketSoldOut = 'ticket-sold-out',
-  ticketQuantity = 'ticket-quantity',
+  ticketDefinitionName = 'ticket-definition-name',
+  ticketDefinitionDescription = 'ticket-definition-description',
+  ticketDefinitionPrice = 'ticket-definition-price',
+  ticketDefinitionRemaining = 'ticket-definition-remaining',
+  ticketDefinitionSoldOut = 'ticket-definition-sold-out',
+  ticketDefinitionQuantity = 'ticket-definition-quantity',
 }
 
 export interface RootProps {
@@ -26,14 +27,16 @@ export interface RootProps {
 export const Root = (props: RootProps): React.ReactNode => {
   const { ticketDefinition, children } = props;
 
-  const config = { ticketDefinition };
+  const ticketServiceConfig: TicketServiceConfig = {
+    ticketDefinition,
+  };
 
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         TicketServiceDefinition,
         TicketService,
-        config,
+        ticketServiceConfig,
       )}
     >
       {children}
@@ -59,7 +62,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
       ref={ref}
       asChild={asChild}
       className={className}
-      data-testid={TestIds.ticketName}
+      data-testid={TestIds.ticketDefinitionName}
       customElement={children}
       customElementProps={{ name }}
       content={name}
@@ -93,7 +96,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
       ref={ref}
       asChild={asChild}
       className={className}
-      data-testid={TestIds.ticketPrice}
+      data-testid={TestIds.ticketDefinitionPrice}
       customElement={children}
       customElementProps={{ price }}
       content={price}
@@ -122,7 +125,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.ticketDescription}
+        data-testid={TestIds.ticketDefinitionDescription}
         customElement={children}
         customElementProps={{ description }}
         content={description}
@@ -154,7 +157,7 @@ export const Remaining = React.forwardRef<HTMLElement, RemainingProps>(
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.ticketRemaining}
+        data-testid={TestIds.ticketDefinitionRemaining}
         customElement={children}
         customElementProps={{ remaining: limitPerCheckout }}
         content={remainingStr}
@@ -180,7 +183,6 @@ export const SoldOut = React.forwardRef<HTMLElement, SoldOutProps>(
     const ticketDefinition = service.ticketDefinition.get();
     const soldOut = listService.isSoldOut(ticketDefinition._id ?? '');
 
-
     if (!soldOut) {
       return null;
     }
@@ -190,7 +192,7 @@ export const SoldOut = React.forwardRef<HTMLElement, SoldOutProps>(
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.ticketSoldOut}
+        data-testid={TestIds.ticketDefinitionSoldOut}
         customElement={children}
       >
         <span>{children}</span>
@@ -240,9 +242,15 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.ticketQuantity}
+        data-testid={TestIds.ticketDefinitionQuantity}
         customElement={children}
-        customElementProps={{ quantity, maxQuantity, increment, decrement, setQuantity }}
+        customElementProps={{
+          quantity,
+          maxQuantity,
+          increment,
+          decrement,
+          setQuantity,
+        }}
         content={defaultUI}
       >
         {defaultUI}

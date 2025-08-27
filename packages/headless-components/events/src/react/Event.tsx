@@ -194,7 +194,7 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
       customElementProps={{ title }}
       content={title}
     >
-      <div>{title}</div>
+      <span>{title}</span>
     </AsChildSlot>
   );
 });
@@ -258,7 +258,7 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
       customElementProps={{ date }}
       content={date}
     >
-      <div>{date}</div>
+      <span>{date}</span>
     </AsChildSlot>
   );
 });
@@ -323,7 +323,7 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
         customElementProps={{ location }}
         content={location}
       >
-        <div>{location}</div>
+        <span>{location}</span>
       </AsChildSlot>
     );
   },
@@ -389,7 +389,7 @@ export const ShortDescription = React.forwardRef<
       customElementProps={{ shortDescription }}
       content={shortDescription}
     >
-      <div>{shortDescription}</div>
+      <span>{shortDescription}</span>
     </AsChildSlot>
   );
 });

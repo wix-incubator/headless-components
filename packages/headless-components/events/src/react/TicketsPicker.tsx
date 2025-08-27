@@ -19,9 +19,9 @@ import {
 } from '../services/checkout-service.js';
 
 enum TestIds {
-  ticketListTickets = 'ticket-list-tickets',
-  ticketListTicket = 'ticket-list-ticket',
-  ticketListCheckout = 'ticket-list-checkout',
+  ticketsPickerTickets = 'tickets-picker-tickets',
+  ticketsPickerTicket = 'tickets-picker-ticket',
+  ticketsPickerCheckout = 'tickets-picker-checkout',
 }
 
 /**
@@ -64,7 +64,10 @@ export const Root = (props: RootProps): React.ReactNode => {
     children,
   } = props;
 
-  const config = { ...ticketListServiceConfig, initialSelectedQuantities };
+  const config: TicketListServiceConfig = {
+    ...ticketListServiceConfig,
+    initialSelectedQuantities,
+  };
 
   return (
     <WixServices
@@ -117,7 +120,7 @@ export const TicketDefinitions = React.forwardRef<
   }
 
   const attributes = {
-    'data-testid': TestIds.ticketListTickets,
+    'data-testid': TestIds.ticketsPickerTickets,
     'data-empty': !hasTickets,
     className,
   };
@@ -169,7 +172,7 @@ export const TicketDefinitionRepeater = (
         <TicketDefinition.Root
           key={ticketDefinition._id}
           ticketDefinition={ticketDefinition}
-          data-testid={TestIds.ticketListTicket}
+          data-testid={TestIds.ticketsPickerTicket}
         >
           {children}
         </TicketDefinition.Root>

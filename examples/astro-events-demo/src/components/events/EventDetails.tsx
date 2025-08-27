@@ -61,6 +61,8 @@ export function EventDetails({
         <EventPrimitive.Title className="text-3xl font-bold text-gray-900 mb-4" />
         <EventPrimitive.ShortDescription className="text-gray-700 mb-8" />
         <EventInfo />
+        <h3 className="text-xl font-semibold mb-4 text-gray-900">About</h3>
+        <EventPrimitive.Description />
       </EventPrimitive.Root>
       <TicketsPickerPrimitive.Root
         ticketListServiceConfig={ticketListServiceConfig}

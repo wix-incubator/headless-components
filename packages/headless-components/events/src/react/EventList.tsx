@@ -255,7 +255,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
       data-testid={TestIds.eventListError}
       customElement={children}
     >
-      <div>{children}</div>
+      <span>{children}</span>
     </AsChildSlot>
   );
 });
