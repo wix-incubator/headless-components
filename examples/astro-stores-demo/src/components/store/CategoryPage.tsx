@@ -47,15 +47,9 @@ export const ProductGridContent = ({
     <div className="min-h-screen">
       <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4">
         <div className="flex items-top justify-between">
-          <ProductList.CategoryFilter>
-            {({ selectedCategory, setSelectedCategory }) => (
-              <CategoryPicker
-                categoriesListConfig={categoriesListConfig}
-                currentCategorySlug={selectedCategory?.slug || ''}
-                onCategorySelect={setSelectedCategory}
-              />
-            )}
-          </ProductList.CategoryFilter>
+          <CategoryPicker
+            categoriesListConfig={categoriesListConfig}
+          />
           <SortDropdown />
         </div>
       </div>

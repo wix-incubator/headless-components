@@ -16,6 +16,7 @@ export interface RootProps {
 /**
  * Root component that provides the CategoryList service context to its children.
  * This component sets up the necessary services for managing categories list state.
+ * Optionally connects to ProductList filtering when connectToProductFilter is enabled.
  *
  * @order 1
  * @component
@@ -25,7 +26,10 @@ export interface RootProps {
  *
  * function CategoriesPage() {
  *   return (
- *     <CategoryList.Root categoriesListConfig={{ collectionId: 'my-collection' }}>
+ *     <CategoryList.Root
+ *       categoriesListConfig={{ categories: myCategories }}
+ *       connectToProductFilter={true}
+ *     >
  *       <CategoryList.ItemContent>
  *         {({ category }) => (
  *           <div key={category._id}>
@@ -38,16 +42,19 @@ export interface RootProps {
  * }
  * ```
  */
+
 export function Root(props: RootProps): React.ReactNode {
+  const { categoriesListConfig, children } = props;
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         CategoriesListServiceDefinition,
         CategoriesListService,
-        props.categoriesListConfig,
+        categoriesListConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }

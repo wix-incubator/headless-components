@@ -53,6 +53,7 @@ export interface CategoryListCategoryRepeaterProps {
 /**
  * Root container that provides category list context to all child components.
  * This component sets up the necessary services for managing categories list state.
+ * Automatically connects to ProductList filtering when available.
  *
  * @order 1
  * @component

@@ -5,6 +5,7 @@ import {
   type CategoryServiceConfig,
   CategoryServiceDefinition,
 } from '../services/category-service.js';
+import { ProductsListServiceDefinition } from '../services/products-list-service.js';
 import { useService } from '@wix/services-manager-react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
@@ -170,11 +171,35 @@ export const Trigger = React.forwardRef<
 
   const categoryService = useService(CategoryServiceDefinition);
   const category = categoryService.category.get();
-  const isSelected = categoryService.isSelected.get();
-  const setIsSelected = (isSelected: boolean) =>
-    categoryService.isSelected.set(isSelected);
+
+  // Get ProductList service for filter integration
+  const productListService = useService(ProductsListServiceDefinition);
+
+  // Read selection state from ProductList filter (source of truth)
+  const currentFilter = productListService.searchOptions.get().filter || {};
+  const selectedCategoryId = (currentFilter as any)[
+    'allCategoriesInfo.categories'
+  ]?.$matchItems?.[0]?.id?.$in?.[0];
+  const isSelected = selectedCategoryId === category._id;
 
   const handleSelect = () => {
+    // Update ProductList filter
+    const currentFilter = productListService.searchOptions.get().filter || {};
+
+    if (isSelected) {
+      // Remove category filter if currently selected
+      delete (currentFilter as any)['allCategoriesInfo.categories'];
+      productListService.setFilter(currentFilter);
+    } else {
+      // Add category filter if not currently selected
+      productListService.setFilter({
+        ...currentFilter,
+        'allCategoriesInfo.categories': {
+          $matchItems: [{ id: { $in: [category._id!] } }],
+        },
+      });
+    }
+
     if (onSelect) {
       onSelect(category);
     }
@@ -193,7 +218,6 @@ export const Trigger = React.forwardRef<
         category,
         isSelected,
         onSelect: handleSelect,
-        setIsSelected,
       }}
       content={category.name}
     >
@@ -233,7 +257,16 @@ export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
 
     const categoryService = useService(CategoryServiceDefinition);
     const category = categoryService.category.get();
-    const isSelected = categoryService.isSelected.get();
+
+    // Get ProductList service to read selection state from filter
+    const productListService = useService(ProductsListServiceDefinition);
+
+    // Read selection state from ProductList filter (source of truth)
+    const currentFilter = productListService.searchOptions.get().filter || {};
+    const selectedCategoryId = (currentFilter as any)[
+      'allCategoriesInfo.categories'
+    ]?.$matchItems?.[0]?.id?.$in?.[0];
+    const isSelected = selectedCategoryId === category._id;
 
     return (
       <CoreCategory.Name>

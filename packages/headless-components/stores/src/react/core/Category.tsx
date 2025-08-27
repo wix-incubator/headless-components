@@ -1,3 +1,4 @@
+import React from 'react';
 import { createServicesMap } from '@wix/services-manager';
 import { useService, WixServices } from '@wix/services-manager-react';
 import {
@@ -14,6 +15,7 @@ export interface RootProps {
 /**
  * Root component that provides the Category service context to its children.
  * This component sets up the necessary services for managing category state.
+ * Automatically detects selection state from ProductList filter when available.
  *
  * @order 1
  * @component
@@ -36,12 +38,18 @@ export interface RootProps {
  * ```
  */
 export function Root(props: RootProps): React.ReactNode {
+  // Don't determine selection state here - let components read it reactively
+  const config: CategoryServiceConfig = {
+    ...props.categoryServiceConfig,
+    isSelected: props.categoryServiceConfig.isSelected ?? false,
+  };
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         CategoryServiceDefinition,
         CategoryService,
-        props.categoryServiceConfig,
+        config,
       )}
     >
       {props.children}
