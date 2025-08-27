@@ -6,7 +6,7 @@ import {
   TicketServiceDefinition,
   type TicketDefinition,
 } from '../services/ticket-service.js';
-import { type AsChildProps, renderAsChild } from '../utils/renderAsChild.js';
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { TicketListServiceDefinition } from '../services/ticket-list-service.js';
 
 enum TestIds {
@@ -41,167 +41,179 @@ export const Root = (props: RootProps): React.ReactNode => {
   );
 };
 
-export interface NameProps extends AsChildProps<{ name: string }> {}
+export interface NameProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ name: string }>;
+  className?: string;
+}
 
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children } = props;
+  const { asChild, children, className } = props;
 
   const service = useService(TicketServiceDefinition);
   const ticketDefinition = service.ticketDefinition.get();
   const name = ticketDefinition.name ?? '';
 
-  const attributes = { 'data-testid': TestIds.ticketName };
-
-  const content = <span {...attributes}>{name}</span>;
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { name },
-      ref,
-      content,
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
-
-  return content;
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.ticketName}
+      customElement={children}
+      customElementProps={{ name }}
+      content={name}
+    >
+      <span>{name}</span>
+    </AsChildSlot>
+  );
 });
 
-export interface PriceProps extends AsChildProps<{ price: string }> {}
+export interface PriceProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ price: string }>;
+  className?: string;
+}
 
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
-  const { asChild, children } = props;
+  const { asChild, children, className } = props;
 
   const service = useService(TicketServiceDefinition);
   const ticketDefinition = service.ticketDefinition.get();
 
   let price = '';
   if (ticketDefinition.pricingMethod?.free) {
-    price = 'Free';
+    price = '0';
   } else if (ticketDefinition.pricingMethod?.fixedPrice) {
     price = `${ticketDefinition.pricingMethod.fixedPrice.value} ${ticketDefinition.pricingMethod.fixedPrice.currency}`;
-  } // Add other types if needed
-
-  const attributes = { 'data-testid': TestIds.ticketPrice };
-
-  const content = <span {...attributes}>{price}</span>;
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { price },
-      ref,
-      content,
-      attributes,
-    });
-    if (rendered) return rendered;
   }
 
-  return content;
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.ticketPrice}
+      customElement={children}
+      customElementProps={{ price }}
+      content={price}
+    >
+      <span>{price}</span>
+    </AsChildSlot>
+  );
 });
 
-export interface DescriptionProps
-  extends AsChildProps<{ description: string }> {}
+export interface DescriptionProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ description: string }>;
+  className?: string;
+}
 
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     const service = useService(TicketServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
     const description = ticketDefinition.description ?? '';
 
-    const attributes = { 'data-testid': TestIds.ticketDescription };
-
-    const content = <p {...attributes}>{description}</p>;
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { description },
-        ref,
-        content,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
-
-    return content;
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketDescription}
+        customElement={children}
+        customElementProps={{ description }}
+        content={description}
+      >
+        <span>{description}</span>
+      </AsChildSlot>
+    );
   },
 );
 
-export interface RemainingProps extends AsChildProps<{ remaining: number }> {}
+export interface RemainingProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ remaining: number }>;
+  className?: string;
+}
 
 export const Remaining = React.forwardRef<HTMLElement, RemainingProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     const service = useService(TicketServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
     const limitPerCheckout = ticketDefinition.limitPerCheckout || 0;
 
-    const attributes = { 'data-testid': TestIds.ticketRemaining };
+    const remainingStr = limitPerCheckout.toString();
 
-    const content = <span {...attributes}>{limitPerCheckout.toString()}</span>;
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { remaining: limitPerCheckout },
-        ref,
-        content,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
-
-    return content;
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketRemaining}
+        customElement={children}
+        customElementProps={{ remaining: limitPerCheckout }}
+        content={remainingStr}
+      >
+        <span>{remainingStr}</span>
+      </AsChildSlot>
+    );
   },
 );
 
-export interface SoldOutProps extends AsChildProps<{ soldOut: boolean }> {}
+export interface SoldOutProps {
+  asChild?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}
 
 export const SoldOut = React.forwardRef<HTMLElement, SoldOutProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     const listService = useService(TicketListServiceDefinition);
     const service = useService(TicketServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
     const soldOut = listService.isSoldOut(ticketDefinition._id ?? '');
 
-    const attributes = { 'data-testid': TestIds.ticketSoldOut };
 
-    const content = soldOut ? <span {...attributes}>Sold Out</span> : null;
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { soldOut },
-        ref,
-        content,
-        attributes,
-      });
-      if (rendered) return rendered;
+    if (!soldOut) {
+      return null;
     }
 
-    return content;
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketSoldOut}
+        customElement={children}
+      >
+        <span>{children}</span>
+      </AsChildSlot>
+    );
   },
 );
 
-export interface QuantityProps
-  extends AsChildProps<{
+export interface QuantityProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{
     quantity: number;
     maxQuantity: number;
     increment: () => void;
     decrement: () => void;
     setQuantity: (n: number) => void;
-  }> {}
+  }>;
+  className?: string;
+}
 
 export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     const listService = useService(TicketListServiceDefinition);
     const service = useService(TicketServiceDefinition);
@@ -215,27 +227,26 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     const decrement = () => listService.decrementQuantity(id);
     const setQuantity = (n: number) => listService.setQuantity(id, n);
 
-    const attributes = { 'data-testid': TestIds.ticketQuantity };
-
-    const content = (
-      <div {...attributes}>
+    const defaultUI = (
+      <div>
         <button onClick={decrement}>-</button>
         <span>{quantity}</span>
         <button onClick={increment}>+</button>
       </div>
     );
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { quantity, maxQuantity, increment, decrement, setQuantity },
-        ref,
-        content,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
-
-    return content;
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketQuantity}
+        customElement={children}
+        customElementProps={{ quantity, maxQuantity, increment, decrement, setQuantity }}
+        content={defaultUI}
+      >
+        {defaultUI}
+      </AsChildSlot>
+    );
   },
 );
