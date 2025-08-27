@@ -333,7 +333,7 @@ export const Input = React.forwardRef<HTMLInputElement, QuantityInputProps>(
     return (
       <input
         ref={ref}
-        type="number"
+        type="text" // avoid number input spinner padding issues
         value={value}
         onChange={(e) => handleChange(parseInt(e.target.value) || 1)}
         disabled={disabled}
