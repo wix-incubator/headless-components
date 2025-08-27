@@ -1,7 +1,7 @@
 import React from 'react';
 import * as CoreCategoryList from './core/CategoryList.js';
 import * as Category from './Category.js';
-import { type Category as CategoryType } from '../services/category-service.js';
+import { type Category as CategoryType } from './Category.js';
 import { type CategoriesListServiceConfig } from '../services/categories-list-service.js';
 import { AsChildSlot } from '@wix/headless-utils/react';
 
@@ -160,10 +160,7 @@ export function CategoryRepeater(props: CategoryListCategoryRepeaterProps) {
     <CoreCategoryList.ItemContent>
       {({ category }) => {
         return (
-          <Category.Root
-            key={category._id}
-            categoryServiceConfig={{ category }}
-          >
+          <Category.Root key={category._id} category={category}>
             {children}
           </Category.Root>
         );

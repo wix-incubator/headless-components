@@ -1,7 +1,6 @@
-import { CategoryList, Category } from '@wix/headless-stores/react';
+import { CategoryList, Category, type Category as CategoryType } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
-  Category as CategoryType,
 } from '@wix/headless-stores/services';
 
 interface CategoryPickerProps {

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
@@ -5,8 +6,9 @@ import {
   CategoriesListServiceDefinition,
   type CategoriesListServiceConfig,
 } from '../../services/categories-list-service.js';
-import { Root as CategoryRoot } from './Category.js';
-import { type Category } from '../../services/category-service.js';
+import { categories } from '@wix/categories';
+
+export type Category = categories.Category;
 
 export interface RootProps {
   children: React.ReactNode;
@@ -272,12 +274,12 @@ export function ItemContent(props: ItemContentProps) {
   }
 
   return categoriesValue.map((category: Category) => (
-    <CategoryRoot key={category._id} categoryServiceConfig={{ category }}>
+    <React.Fragment key={category._id}>
       {typeof props.children === 'function'
         ? props.children({
             category,
           })
         : props.children}
-    </CategoryRoot>
+    </React.Fragment>
   ));
 }
