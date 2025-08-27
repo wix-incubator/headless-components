@@ -1,7 +1,10 @@
 import React from 'react';
 import { categories } from '@wix/categories';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import { CategoryFilter, type CategoryFilterRenderProps } from './core/ProductListFilters.js';
+import {
+  CategoryFilter,
+  type CategoryFilterRenderProps,
+} from './core/ProductListFilters.js';
 
 export type Category = categories.Category;
 
