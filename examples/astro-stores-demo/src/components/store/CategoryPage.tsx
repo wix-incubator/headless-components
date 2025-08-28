@@ -47,9 +47,7 @@ export const ProductGridContent = ({
     <div className="min-h-screen">
       <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4">
         <div className="flex items-top justify-between">
-          <CategoryPicker
-            categoriesListConfig={categoriesListConfig}
-          />
+          <CategoryPicker categoriesListConfig={categoriesListConfig} />
           <SortDropdown />
         </div>
       </div>
@@ -351,9 +349,11 @@ export const LoadMoreSection = () => {
   return (
     <div className="text-center mt-12">
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <ProductList.LoadMoreTrigger className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary">
-          Load More Products
-        </ProductList.LoadMoreTrigger>
+        <ProductList.LoadMoreTrigger
+          className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary"
+          loadingState="Loading..."
+          label="Load More Products"
+        />
       </div>
     </div>
   );
