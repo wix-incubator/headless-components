@@ -14,7 +14,6 @@ import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
 export {
   Filter,
-  CategoryFilter,
   ResetTrigger as FilterResetTrigger,
 } from './core/ProductListFilters.js';
 
@@ -281,9 +280,36 @@ export const ProductRepeater = React.forwardRef<
  * Props for ProductList LoadMoreTrigger component
  */
 export interface LoadMoreTriggerProps {
-  children?: React.ReactNode;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          isLoading: boolean;
+          hasMoreProducts: boolean;
+          loadMore: () => void;
+        }
+      >;
+  /**
+   * Whether to render as a child component.
+   * @default false
+   */
   asChild?: boolean;
+  /**
+   * The CSS classes to apply to the button.
+   */
   className?: string;
+
+  /**
+   * The label to display inside the button.
+   */
+  label?: string;
+
+  /**
+   * The loading state to display inside the button.
+   */
+  loadingState?: React.ReactNode;
 }
 
 /**
@@ -299,10 +325,16 @@ export interface LoadMoreTriggerProps {
  * ```
  */
 export const LoadMoreTrigger = React.forwardRef<
-  HTMLElement,
+  HTMLButtonElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const {
+    asChild,
+    children,
+    className,
+    label = 'Load More',
+    loadingState = 'Loading...',
+  } = props;
 
   return (
     <CoreProductListPagination.LoadMoreTrigger>
@@ -321,8 +353,13 @@ export const LoadMoreTrigger = React.forwardRef<
             disabled={isLoading}
             data-testid={TestIds.productListLoadMore}
             customElement={children}
+            customElementProps={{
+              loadMore,
+              hasMoreProducts,
+              isLoading,
+            }}
           >
-            <button>{children}</button>
+            <button>{isLoading ? loadingState : label}</button>
           </AsChildSlot>
         );
       }}

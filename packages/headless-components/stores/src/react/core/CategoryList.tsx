@@ -1,3 +1,4 @@
+import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
@@ -5,8 +6,9 @@ import {
   CategoriesListServiceDefinition,
   type CategoriesListServiceConfig,
 } from '../../services/categories-list-service.js';
-import { Root as CategoryRoot } from './Category.js';
-import { type Category } from '../../services/category-service.js';
+import { categories } from '@wix/categories';
+
+export type Category = categories.Category;
 
 export interface RootProps {
   children: React.ReactNode;
@@ -16,6 +18,7 @@ export interface RootProps {
 /**
  * Root component that provides the CategoryList service context to its children.
  * This component sets up the necessary services for managing categories list state.
+ * Optionally connects to ProductList filtering when connectToProductFilter is enabled.
  *
  * @order 1
  * @component
@@ -25,7 +28,10 @@ export interface RootProps {
  *
  * function CategoriesPage() {
  *   return (
- *     <CategoryList.Root categoriesListConfig={{ collectionId: 'my-collection' }}>
+ *     <CategoryList.Root
+ *       categoriesListConfig={{ categories: myCategories }}
+ *       connectToProductFilter={true}
+ *     >
  *       <CategoryList.ItemContent>
  *         {({ category }) => (
  *           <div key={category._id}>
@@ -38,16 +44,19 @@ export interface RootProps {
  * }
  * ```
  */
+
 export function Root(props: RootProps): React.ReactNode {
+  const { categoriesListConfig, children } = props;
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         CategoriesListServiceDefinition,
         CategoriesListService,
-        props.categoriesListConfig,
+        categoriesListConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }
@@ -265,12 +274,12 @@ export function ItemContent(props: ItemContentProps) {
   }
 
   return categoriesValue.map((category: Category) => (
-    <CategoryRoot key={category._id} categoryServiceConfig={{ category }}>
+    <React.Fragment key={category._id}>
       {typeof props.children === 'function'
         ? props.children({
             category,
           })
         : props.children}
-    </CategoryRoot>
+    </React.Fragment>
   ));
 }

@@ -335,3 +335,18 @@ interface CmsCollectionBulkUpdateActionProps {
 | `data-displayed` | CmsCollection.Totals.Displayed | Number of items displayed |
 | `data-selected-count` | CmsCollection.BulkUpdateAction | Number of selected items |
 | `data-loading` | Action components | Operation in progress status |
+
+
+
+
+
+
+Form
+
+next prev maybe be generic
+
+service to refreash data
+
+ecom buttons (add to cart etc)
+
+search filter etc

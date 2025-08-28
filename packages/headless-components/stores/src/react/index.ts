@@ -1,5 +1,5 @@
 export * as CategoryListCore from './core/CategoryList.js';
-export * as CategoryCore from './core/Category.js';
+
 export * as ProductCore from './core/Product.js';
 export * as ProductModifiers from './core/ProductModifiers.js';
 export * as ProductListCore from './core/ProductList.js';

@@ -4,7 +4,8 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 import { categories } from '@wix/categories';
-import { type Category } from './category-service.js';
+
+export type Category = categories.Category;
 
 /**
  * Configuration interface for the Categories List service.

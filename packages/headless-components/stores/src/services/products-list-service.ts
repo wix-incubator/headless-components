@@ -6,7 +6,9 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { customizationsV3, productsV3, readOnlyVariantsV3 } from '@wix/stores';
 import { loadCategoriesListServiceConfig } from './categories-list-service.js';
-import { type Category } from './category-service.js';
+import { categories } from '@wix/categories';
+
+type Category = categories.Category;
 
 export const DEFAULT_QUERY_LIMIT = 100;
 
