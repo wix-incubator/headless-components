@@ -1,3 +1,4 @@
+import { AsChildSlot } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -5,11 +6,12 @@ import {
   EventService,
   EventServiceDefinition,
   type EventServiceConfig,
-} from '../services/index.js';
+} from '../services/event-service.js';
 import * as Control from './Control.js';
 
 enum TestIds {
   formControls = 'form-controls',
+  formSubmit = 'form-submit',
 }
 
 export interface RootProps {
@@ -78,13 +80,53 @@ export const ControlRepeater = (props: ControlRepeaterProps) => {
     return null;
   }
 
+  const controls = event.form!.controls!.flatMap((control) =>
+    control.inputs!.flatMap((input) => {
+      const labels = input.labels?.length
+        ? input.labels
+        : [{ name: input.name, label: input.label }];
+
+      return labels.map((label) => ({
+        ...control,
+        inputs: [{ ...input, ...label }],
+      }));
+    }),
+  );
+
   return (
     <>
-      {event.form!.controls!.map((control) => (
-        <Control.Root key={control._id} control={control}>
+      {controls.map((control, index) => (
+        // TODO: use correct key
+        <Control.Root key={index} control={control}>
           {children}
         </Control.Root>
       ))}
     </>
   );
 };
+
+export interface SubmitTriggerProps {
+  asChild?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const SubmitTrigger = React.forwardRef<HTMLElement, SubmitTriggerProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.formSubmit}
+        customElement={children}
+        // disabled={isSubmitting}
+        onClick={() => console.log('submit')}
+      >
+        <button>{children}</button>
+      </AsChildSlot>
+    );
+  },
+);

@@ -11,6 +11,7 @@ import {
 
 enum TestIds {
   controlLabel = 'control-label',
+  controlField = 'control-field',
 }
 
 export interface RootProps {
@@ -62,6 +63,34 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
       content={label}
     >
       <span>{label}</span>
+    </AsChildSlot>
+  );
+});
+
+export interface FieldProps {
+  asChild?: boolean;
+  children?: AsChildChildren<never>;
+  className?: string;
+}
+
+export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
+  const { asChild, className } = props;
+
+  const service = useService(FormControlServiceDefinition);
+  const control = service.control.get();
+  const input = control.inputs![0]!;
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.controlField}
+      name={input.name}
+      maxLength={input.maxLength}
+      // customElement={children}
+    >
+      <input />
     </AsChildSlot>
   );
 });
