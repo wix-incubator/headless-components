@@ -280,9 +280,31 @@ export const ProductRepeater = React.forwardRef<
  * Props for ProductList LoadMoreTrigger component
  */
 export interface LoadMoreTriggerProps {
-  children?: React.ReactNode;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<
+        HTMLButtonElement,
+        {
+          isLoading: boolean;
+          hasMoreProducts: boolean;
+          loadMore: () => void;
+        }
+      >;
+  /**
+   * Whether to render as a child component.
+   * @default false
+   */
   asChild?: boolean;
+  /**
+   * The CSS classes to apply to the button.
+   */
   className?: string;
+
+  /**
+   * The label to display inside the button.
+   */
+  label?: string;
 }
 
 /**
@@ -298,10 +320,10 @@ export interface LoadMoreTriggerProps {
  * ```
  */
 export const LoadMoreTrigger = React.forwardRef<
-  HTMLElement,
+  HTMLButtonElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, label = 'Load More' } = props;
 
   return (
     <CoreProductListPagination.LoadMoreTrigger>
@@ -320,8 +342,13 @@ export const LoadMoreTrigger = React.forwardRef<
             disabled={isLoading}
             data-testid={TestIds.productListLoadMore}
             customElement={children}
+            customElementProps={{
+              loadMore,
+              hasMoreProducts,
+              isLoading,
+            }}
           >
-            <button>{children}</button>
+            <button>{label}</button>
           </AsChildSlot>
         );
       }}
