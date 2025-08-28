@@ -14,7 +14,6 @@ import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
 export {
   Filter,
-  CategoryFilter,
   ResetTrigger as FilterResetTrigger,
 } from './core/ProductListFilters.js';
 

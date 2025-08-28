@@ -1,12 +1,4 @@
 export {
-  CategoryService,
-  CategoryServiceDefinition,
-  loadCategoryServiceConfig,
-  CategoryServiceConfig,
-  Category,
-} from './category-service.js';
-
-export {
   CategoriesListService,
   CategoriesListServiceDefinition,
   loadCategoriesListServiceConfig,
