@@ -350,15 +350,10 @@ export const LoadMoreSection = () => {
     <div className="text-center mt-12">
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <ProductList.LoadMoreTrigger
-          asChild
           className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary"
-        >
-          {({ loadMore, isLoading }) => (
-            <button onClick={loadMore}>
-              {isLoading ? 'Loading...' : 'Load More Products'}
-            </button>
-          )}
-        </ProductList.LoadMoreTrigger>
+          loadingState="Loading..."
+          label="Load More Products"
+        />
       </div>
     </div>
   );
