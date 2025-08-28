@@ -305,6 +305,11 @@ export interface LoadMoreTriggerProps {
    * The label to display inside the button.
    */
   label?: string;
+
+  /**
+   * The loading state to display inside the button.
+   */
+  loadingState?: React.ReactNode;
 }
 
 /**
@@ -323,7 +328,13 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLButtonElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { asChild, children, className, label = 'Load More' } = props;
+  const {
+    asChild,
+    children,
+    className,
+    label = 'Load More',
+    loadingState = 'Loading...',
+  } = props;
 
   return (
     <CoreProductListPagination.LoadMoreTrigger>
@@ -348,7 +359,7 @@ export const LoadMoreTrigger = React.forwardRef<
               isLoading,
             }}
           >
-            <button>{label}</button>
+            <button>{isLoading ? loadingState : label}</button>
           </AsChildSlot>
         );
       }}
