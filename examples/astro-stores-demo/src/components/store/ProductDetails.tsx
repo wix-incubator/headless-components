@@ -288,33 +288,21 @@ export default function ProductDetails({
 
             {/* Product Details */}
             {!isQuickView && (
-              <SelectedVariantPrimitive.Details>
-                {({ sku, weight }) => (
-                  <>
-                    {(sku || weight) && (
-                      <div className="border-t border-brand-light pt-8">
-                        <h3 className="text-xl font-semibold text-content-primary mb-4">
-                          Product Details
-                        </h3>
-                        <div className="space-y-3 text-content-secondary">
-                          {sku && (
-                            <div className="flex justify-between">
-                              <span>SKU:</span>
-                              <span>{sku}</span>
-                            </div>
-                          )}
-                          {weight && (
-                            <div className="flex justify-between">
-                              <span>Weight:</span>
-                              <span>{weight}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </SelectedVariantPrimitive.Details>
+              <div className="border-t border-brand-light pt-8">
+                <h3 className="text-xl font-semibold text-content-primary mb-4">
+                  Product Details
+                </h3>
+                <div className="space-y-3 text-content-secondary">
+                  <div className="flex items-center gap-2">
+                    <span>SKU:</span>
+                    <Product.ProductVariant.SKU />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>Weight:</span>
+                    <Product.ProductVariant.Weight />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </Product.Root>
