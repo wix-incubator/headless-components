@@ -13,6 +13,7 @@ A comprehensive CMS collection display component system built with composable pr
 - [CmsCollection.NextAction / PrevAction](#cmscollectionnextaction--prevaction)
 - [CmsCollection.Totals.Count/CmsCollection.Totals.Displayed](#cmscollectiontotalscountcmscollectiontotalsdisplayed)
 - [CmsCollection.CreateItemAction](#cmscollectioncreateitemaction)
+- [CmsCollection.BulkUpdateAction](#cmscollectionbulkupdateaction)
 
 ---
 
@@ -32,6 +33,7 @@ The root container that provides CMS collection context to all child components.
 interface CmsCollectionProps {
   collection: CollectionData;
   children: React.ReactNode;
+  invalidateKey?: string; // a key for invalidating the data
 }
 ```
 
@@ -255,6 +257,63 @@ interface CmsCollectionCreateItemActionProps {
 
 ---
 
+### CmsCollection.BulkUpdateAction
+
+Displays a button to update multiple modified items in the collection.
+
+**Props**
+```tsx
+interface CmsCollectionBulkUpdateActionProps {
+  asChild?: boolean;
+  label: string;
+  children?: AsChildChildren<{
+    disabled: boolean;
+    isLoading: boolean;
+    selectedCount: number;
+    onClick: () => Promise<void>;
+  }>;
+  className?: string;
+  loadingState?: string | React.ReactNode;
+}
+```
+
+**Example**
+```tsx
+// Default usage
+<CmsCollection.BulkUpdateAction
+  label="Update Selected"
+  className="btn-secondary"
+  loadingState="Updating..."
+/>
+
+// With asChild pattern
+<CmsCollection.BulkUpdateAction asChild label="Update Selected">
+  <Button variant="outline">Update Selected Items</Button>
+</CmsCollection.BulkUpdateAction>
+
+// With custom behavior and selection count
+<CmsCollection.BulkUpdateAction asChild label="Update Selected">
+  {({ disabled, isLoading, selectedCount, onClick }) => (
+    <Button
+      disabled={disabled || selectedCount === 0}
+      onClick={onClick}
+      variant="outline"
+      className="gap-2"
+    >
+      {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+      <Edit className="h-4 w-4" />
+      Update {selectedCount > 0 ? `${selectedCount} ` : ''}Items
+    </Button>
+  )}
+</CmsCollection.BulkUpdateAction>
+```
+
+**Data Attributes**
+- `data-testid="cms-collection-bulk-update"`
+- `data-loading` - Present when bulk update operation is in progress
+
+---
+
 ## Data Attributes Summary
 
 | Attribute | Applied To | Purpose |
@@ -267,10 +326,12 @@ interface CmsCollectionCreateItemActionProps {
 | `data-testid="cms-collection-next"` | CmsCollection.NextAction | Next page button |
 | `data-testid="cms-collection-prev"` | CmsCollection.PrevAction | Previous page button |
 | `data-testid="cms-collection-create-item"` | CmsCollection.CreateItemAction | Create item button |
+| `data-testid="cms-collection-bulk-update"` | CmsCollection.BulkUpdateAction | Bulk update button |
 | `data-testid="cms-collection-items-totals"` | CmsCollection.Totals.Count/Displayed | Totals container |
 | `data-empty` | CmsCollection.Items | Empty collection status |
 | `data-infinite-scroll` | CmsCollection.Items | Infinite scroll mode |
 | `data-page-size` | CmsCollection.Items | Current page size setting |
 | `data-total` | CmsCollection.Totals.Count | Total number of items |
 | `data-displayed` | CmsCollection.Totals.Displayed | Number of items displayed |
+| `data-selected-count` | CmsCollection.BulkUpdateAction | Number of selected items |
 | `data-loading` | Action components | Operation in progress status |
