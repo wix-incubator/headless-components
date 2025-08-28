@@ -3132,6 +3132,7 @@ __metadata:
     "@wix/services-manager": "npm:^0.2.21"
     "@wix/services-manager-react": "npm:^0.1.27"
     "@wix/stores": "npm:^1.0.498"
+    "@wix/wix-vibe-plugins": "npm:^0.0.1"
     astro: "npm:^5.9.0"
     clsx: "npm:^2.1.1"
     prettier: "npm:^3.6.2"
@@ -4706,6 +4707,13 @@ __metadata:
     "@wix/sdk-runtime": "npm:^0.3.55"
     "@wix/sdk-types": "npm:^1.13.35"
   checksum: 10c0/f61ce0983988dee00c61c41bdbd4432f31f6415cfae867e82d638a57e41a55523280fcb414f3fad09cd4ca0e3dae492a0de64a8a32cb89fae2d4d89f8fd4544e
+  languageName: node
+  linkType: hard
+
+"@wix/wix-vibe-plugins@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@wix/wix-vibe-plugins@npm:0.0.1"
+  checksum: 10c0/bfbab94e707e74dc2864b1812d1927630e20d458d461e25c578a4e5185bba1bc40ea5ec9503dbf251f599be6a4eeaa4dbdbcb8432d0321129e7f97b28d8e8472
   languageName: node
   linkType: hard
 
