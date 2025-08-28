@@ -6,6 +6,7 @@ import {
 import { wixEventsV2 } from '@wix/events';
 
 export type FormControl = wixEventsV2.InputControl;
+export type FormInput = wixEventsV2.Input;
 
 export interface FormControlServiceAPI {
   control: Signal<FormControl>;
