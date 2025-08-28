@@ -73,9 +73,9 @@ enum TestIds {
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
-  productVariantDetails = 'product-variant-details',
-  productVariantDetailsSku = 'product-variant-details-sku',
-  productVariantDetailsWeight = 'product-variant-details-weight',
+  productVariant = 'product-variant',
+  productVariantSku = 'product-variant-sku',
+  productVariantWeight = 'product-variant-weight',
   productModifiers = 'product-modifiers',
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
@@ -1810,9 +1810,9 @@ export const Action = {
 } as const;
 
 /**
- * Props for Product VariantDetails SKU component
+ * Props for ProductVariantSKU component
  */
-export interface VariantDetailsSKUProps {
+export interface ProductVariantSKUProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -1830,26 +1830,26 @@ export interface VariantDetailsSKUProps {
  * @example
  * ```tsx
  * // Default usage
- * <Product.VariantDetails.SKU className="text-content-secondary" />
+ * <Product.ProductVariant.SKU className="text-content-secondary" />
  *
  * // asChild with primitive
- * <Product.VariantDetails.SKU asChild>
+ * <Product.ProductVariant.SKU asChild>
  *   <span className="sku-value" />
- * </Product.VariantDetails.SKU>
+ * </Product.ProductVariant.SKU>
  *
  * // asChild with react component
- * <Product.VariantDetails.SKU asChild>
+ * <Product.ProductVariant.SKU asChild>
  *   {React.forwardRef(({sku, ...props}, ref) => (
  *     <span ref={ref} {...props}>
  *       {sku}
  *     </span>
  *   ))}
- * </Product.VariantDetails.SKU>
+ * </Product.ProductVariant.SKU>
  * ```
  */
 export const ProductVariantSKU = React.forwardRef<
   HTMLElement,
-  VariantDetailsSKUProps
+  ProductVariantSKUProps
 >((props, ref) => {
   const { asChild, children, className } = props;
 
@@ -1866,7 +1866,7 @@ export const ProductVariantSKU = React.forwardRef<
             ref={ref}
             asChild={asChild}
             className={className}
-            data-testid={TestIds.productVariantDetailsSku}
+            data-testid={TestIds.productVariantSku}
             customElement={children}
             customElementProps={{ sku }}
             content={sku}
@@ -1880,9 +1880,9 @@ export const ProductVariantSKU = React.forwardRef<
 });
 
 /**
- * Props for Product VariantDetails Weight component
+ * Props for ProductVariantWeight component
  */
-export interface VariantDetailsWeightProps {
+export interface ProductVariantWeightProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -1900,26 +1900,26 @@ export interface VariantDetailsWeightProps {
  * @example
  * ```tsx
  * // Default usage
- * <Product.VariantDetails.Weight className="text-content-secondary" />
+ * <Product.ProductVariant.Weight className="text-content-secondary" />
  *
  * // asChild with primitive
- * <Product.VariantDetails.Weight asChild>
+ * <Product.ProductVariant.Weight asChild>
  *   <span className="weight-value" />
- * </Product.VariantDetails.Weight>
+ * </Product.ProductVariant.Weight>
  *
  * // asChild with react component
- * <Product.VariantDetails.Weight asChild>
+ * <Product.ProductVariant.Weight asChild>
  *   {React.forwardRef(({weight, ...props}, ref) => (
  *     <span ref={ref} {...props}>
  *       {weight}
  *     </span>
  *   ))}
- * </Product.VariantDetails.Weight>
+ * </Product.ProductVariant.Weight>
  * ```
  */
 export const ProductVariantWeight = React.forwardRef<
   HTMLElement,
-  VariantDetailsWeightProps
+  ProductVariantWeightProps
 >((props, ref) => {
   const { asChild, children, className } = props;
 
@@ -1936,7 +1936,7 @@ export const ProductVariantWeight = React.forwardRef<
             ref={ref}
             asChild={asChild}
             className={className}
-            data-testid={TestIds.productVariantDetailsWeight}
+            data-testid={TestIds.productVariantWeight}
             customElement={children}
             customElementProps={{ weight }}
             content={weight}
