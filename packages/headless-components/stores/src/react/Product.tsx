@@ -73,6 +73,9 @@ enum TestIds {
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
   productVariantOption = 'product-variant-option',
+  productVariantDetails = 'product-variant-details',
+  productVariantDetailsSku = 'product-variant-details-sku',
+  productVariantDetailsWeight = 'product-variant-details-weight',
   productModifiers = 'product-modifiers',
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
@@ -1411,7 +1414,7 @@ export const ProductQuantityDecrement = React.forwardRef<
             className={className}
             ref={ref as React.Ref<HTMLButtonElement>}
             data-testid={TestIds.productQuantityDecrement}
-            disabled={disabled}
+            {...{ disabled }}
           />
         );
       }}
@@ -1512,7 +1515,7 @@ export const ProductQuantityIncrement = React.forwardRef<
             className={className}
             ref={ref as React.Ref<HTMLButtonElement>}
             data-testid={TestIds.productQuantityIncrement}
-            disabled={disabled}
+            {...{ disabled }}
           />
         );
       }}
@@ -1804,6 +1807,157 @@ export const Action = {
   BuyNow: ProductActionBuyNow,
   /** Pre-order action button */
   PreOrder: ProductActionPreOrder,
+} as const;
+
+/**
+ * Props for Product VariantDetails SKU component
+ */
+export interface VariantDetailsSKUProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    sku: string | null;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the selected variant SKU with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.VariantDetails.SKU className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Product.VariantDetails.SKU asChild>
+ *   <span className="sku-value" />
+ * </Product.VariantDetails.SKU>
+ *
+ * // asChild with react component
+ * <Product.VariantDetails.SKU asChild>
+ *   {React.forwardRef(({sku, ...props}, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {sku}
+ *     </span>
+ *   ))}
+ * </Product.VariantDetails.SKU>
+ * ```
+ */
+export const ProductVariantSKU = React.forwardRef<
+  HTMLElement,
+  VariantDetailsSKUProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <SelectedVariant.Details>
+      {({ sku }) => {
+        // Don't render anything if there's no SKU
+        if (!sku) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantDetailsSku}
+            customElement={children}
+            customElementProps={{ sku }}
+            content={sku}
+          >
+            <span>{sku}</span>
+          </AsChildSlot>
+        );
+      }}
+    </SelectedVariant.Details>
+  );
+});
+
+/**
+ * Props for Product VariantDetails Weight component
+ */
+export interface VariantDetailsWeightProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    weight: string | null;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the selected variant weight with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.VariantDetails.Weight className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Product.VariantDetails.Weight asChild>
+ *   <span className="weight-value" />
+ * </Product.VariantDetails.Weight>
+ *
+ * // asChild with react component
+ * <Product.VariantDetails.Weight asChild>
+ *   {React.forwardRef(({weight, ...props}, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {weight}
+ *     </span>
+ *   ))}
+ * </Product.VariantDetails.Weight>
+ * ```
+ */
+export const ProductVariantWeight = React.forwardRef<
+  HTMLElement,
+  VariantDetailsWeightProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <SelectedVariant.Details>
+      {({ weight }) => {
+        // Don't render anything if there's no weight
+        if (!weight) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantDetailsWeight}
+            customElement={children}
+            customElementProps={{ weight }}
+            content={weight}
+          >
+            <span>{weight}</span>
+          </AsChildSlot>
+        );
+      }}
+    </SelectedVariant.Details>
+  );
+});
+
+/**
+ * ProductVariant namespace containing product variant components
+ * following the compound component pattern: Product.ProductVariant.SKU, Product.ProductVariant.Weight
+ */
+export const ProductVariant = {
+  /** Product variant SKU component */
+  SKU: ProductVariantSKU,
+  /** Product variant weight component */
+  Weight: ProductVariantWeight,
 } as const;
 
 /**
