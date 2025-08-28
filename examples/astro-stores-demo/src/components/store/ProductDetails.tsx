@@ -293,11 +293,11 @@ export default function ProductDetails({
                   Product Details
                 </h3>
                 <div className="space-y-3 text-content-secondary">
-                  <div>
+                  <div className="flex items-center gap-2">
                     <span>SKU:</span>
                     <Product.ProductVariant.SKU />
                   </div>
-                  <div>
+                  <div className="flex items-center gap-2">
                     <span>Weight:</span>
                     <Product.ProductVariant.Weight />
                   </div>
