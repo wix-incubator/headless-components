@@ -27,6 +27,7 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
   loadBlogFeedServiceConfig({
     pageSize: 3,
     sort: [{ fieldName: 'firstPublishedDate', order: 'DESC' }],
+    postIds: blogPostServiceConfig.post.relatedPostIds,
     excludePostIds: [blogPostServiceConfig.post._id],
   }),
   loadSEOTagsServiceConfig({
