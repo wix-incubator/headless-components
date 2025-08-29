@@ -190,12 +190,6 @@ export default function BlogFeedPage({
                       />
                     </div>
 
-                    {/* <BlogFeed.PostTags className="flex flex-wrap gap-1">
-                      <BlogFeed.PostTagRepeater>
-                        <BlogFeed.PostTag className="badge-tag text-xs" />
-                      </BlogFeed.PostTagRepeater>
-                    </BlogFeed.PostTags> */}
-
                     <BlogFeed.PostLink
                       baseUrl="/"
                       className="text-brand-primary hover:text-brand-light hover:underline transition-colors text-sm gap-1 flex items-center"
