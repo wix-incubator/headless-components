@@ -3877,6 +3877,7 @@ __metadata:
     "@wix/headless-utils": "workspace:*"
     "@wix/services-manager": "npm:^0.2.21"
     "@wix/services-manager-react": "npm:^0.1.27"
+    "@wix/wix-vibe-plugins": "npm:^0.0.1"
     astro: "npm:^5.13.4"
     clsx: "npm:^2.1.1"
     prettier: "npm:^3.6.2"
