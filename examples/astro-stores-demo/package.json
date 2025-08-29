@@ -13,6 +13,7 @@
     "format:check": "prettier --check src/",
     "lint": "npm run format:check && astro check"
   },
+  "private": true,
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/react": "^4.3.0",
@@ -24,6 +25,7 @@
     "@wix/astro": "^1.0.22",
     "@wix/categories": "^1.0.133",
     "@wix/ecom": "^1.0.1278",
+    "@wix/headless-components": "workspace:*",
     "@wix/headless-ecom": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-seo": "workspace:*",
@@ -36,6 +38,7 @@
     "@wix/services-manager": "^0.2.21",
     "@wix/services-manager-react": "^0.1.27",
     "@wix/stores": "^1.0.498",
+    "@wix/wix-vibe-plugins": "^0.0.1",
     "astro": "^5.9.0",
     "clsx": "^2.1.1",
     "react": "^18.3.1",

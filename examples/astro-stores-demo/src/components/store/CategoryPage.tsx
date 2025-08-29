@@ -1,7 +1,6 @@
 import {
   ProductCore as ProductPrimitive,
   ProductListCore as ProductListPrimitive,
-  ProductListFilters as ProductListFiltersPrimitive,
   SelectedVariant as SelectedVariantPrimitive,
   ProductList,
   Product,
@@ -48,15 +47,7 @@ export const ProductGridContent = ({
     <div className="min-h-screen">
       <div className="mb-6 bg-surface-primary backdrop-blur-sm rounded-xl border border-surface-subtle p-4">
         <div className="flex items-top justify-between">
-          <ProductListFiltersPrimitive.CategoryFilter>
-            {({ selectedCategory, setSelectedCategory }) => (
-              <CategoryPicker
-                categoriesListConfig={categoriesListConfig}
-                currentCategorySlug={selectedCategory?.slug || ''}
-                onCategorySelect={setSelectedCategory}
-              />
-            )}
-          </ProductListFiltersPrimitive.CategoryFilter>
+          <CategoryPicker categoriesListConfig={categoriesListConfig} />
           <SortDropdown />
         </div>
       </div>
@@ -80,7 +71,7 @@ export const ProductGridContent = ({
           </ProductListPrimitive.Error>
 
           {/* Filter Status Bar */}
-          <ProductListFiltersPrimitive.ResetTrigger>
+          <ProductList.FilterResetTrigger>
             {({ resetFilters, isFiltered }) =>
               isFiltered && (
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 filter-status-bar rounded-xl p-4 mb-6">
@@ -111,7 +102,7 @@ export const ProductGridContent = ({
                 </div>
               )
             }
-          </ProductListFiltersPrimitive.ResetTrigger>
+          </ProductList.FilterResetTrigger>
 
           <ProductListPrimitive.Loading>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
@@ -290,9 +281,7 @@ export const ProductGridContent = ({
                           </div>
                         )}
 
-                        <ProductActionButtons
-                          isQuickView={true} // This will hide the Buy Now button for list items
-                        />
+                        <ProductActionButtons />
                       </div>
                     )}
                   </SelectedVariantPrimitive.Actions>
@@ -360,9 +349,11 @@ export const LoadMoreSection = () => {
   return (
     <div className="text-center mt-12">
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <ProductList.LoadMoreTrigger className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary">
-          Load More Products
-        </ProductList.LoadMoreTrigger>
+        <ProductList.LoadMoreTrigger
+          className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary"
+          loadingState="Loading..."
+          label="Load More Products"
+        />
       </div>
     </div>
   );

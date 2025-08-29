@@ -68,7 +68,10 @@
 
 import { Slot } from '@radix-ui/react-slot';
 import { Checkout as CoreCurrentCartCheckout } from './core/CurrentCart.js';
-import { Trigger as CoreCheckout } from './core/Checkout.js';
+import {
+  Trigger as CoreCheckout,
+  Root as CoreCheckoutRoot,
+} from './core/Checkout.js';
 import React from 'react';
 import { type LineItem } from '../services/checkout-service.js';
 
@@ -86,6 +89,39 @@ enum TestIds {
   /** Test ID for buy now action buttons */
   actionBuyNow = 'action-buy-now',
 }
+
+/**
+ * Props for the Commerce Root component.
+ */
+export interface RootProps {
+  /** Configuration for the checkout service */
+  checkoutServiceConfig?: Parameters<
+    typeof CoreCheckoutRoot
+  >[0]['checkoutServiceConfig'];
+  /** Content to render inside the root component */
+  children?: React.ReactNode;
+}
+
+/**
+ * Root component that provides the Commerce context to its children.
+ * This component sets up the necessary services for managing commerce functionality.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Commerce.Root checkoutServiceConfig={{ channelType: 'WEB', postFlowUrl: '/thank-you' }}>
+ *   <Commerce.Actions.BuyNow lineItems={lineItems} />
+ *   <Commerce.Actions.AddToCart lineItems={lineItems} />
+ * </Commerce.Root>
+ * ```
+ */
+export const Root = ({ checkoutServiceConfig, children }: RootProps) => {
+  return (
+    <CoreCheckoutRoot checkoutServiceConfig={checkoutServiceConfig}>
+      {children}
+    </CoreCheckoutRoot>
+  );
+};
 
 /**
  * Props for the ActionCheckout component.
@@ -337,6 +373,7 @@ const ActionBuyNow = React.forwardRef<
       className,
       label = 'Buy Now',
       loadingState = '...',
+      lineItems,
       ...props
     },
     ref,
@@ -345,7 +382,7 @@ const ActionBuyNow = React.forwardRef<
       <CoreCheckout>
         {(renderProps) => {
           const onClick = () => {
-            return renderProps.createCheckout(props.lineItems);
+            return renderProps.createCheckout(lineItems);
           };
           if (asChild && children && typeof children === 'function') {
             return children(
@@ -353,7 +390,7 @@ const ActionBuyNow = React.forwardRef<
                 onClick,
                 disabled: renderProps.isLoading || disabled,
                 isLoading: renderProps.isLoading,
-                lineItems: props.lineItems,
+                lineItems,
               },
               ref,
             );
@@ -463,6 +500,7 @@ const ActionAddToCart = React.forwardRef<
       className,
       label = 'Add to Cart',
       loadingState = '...',
+      lineItems,
       ...props
     },
     ref,
@@ -471,7 +509,7 @@ const ActionAddToCart = React.forwardRef<
       <CoreCurrentCartCheckout>
         {(renderProps) => {
           const onClick = () => {
-            return renderProps.addToCart(props.lineItems);
+            return renderProps.addToCart(lineItems);
           };
           if (asChild && children && typeof children === 'function') {
             return children(
@@ -479,7 +517,7 @@ const ActionAddToCart = React.forwardRef<
                 onClick,
                 disabled: renderProps.isLoading || disabled,
                 isLoading: renderProps.isLoading,
-                lineItems: props.lineItems,
+                lineItems,
               },
               ref,
             );

@@ -1,12 +1,30 @@
 import React from 'react';
-import * as CoreCategory from './core/Category.js';
-import { type Category } from '../services/category-service.js';
-import {
-  type CategoryServiceConfig,
-  CategoryServiceDefinition,
-} from '../services/category-service.js';
-import { useService } from '@wix/services-manager-react';
+import { categories } from '@wix/categories';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import {
+  CategoryFilter,
+  type CategoryFilterRenderProps,
+} from './core/ProductListFilters.js';
+
+export type Category = categories.Category;
+
+// Context to provide category data and filter functions to child components
+interface CategoryContextValue extends CategoryFilterRenderProps {
+  category: Category;
+  isSelected: boolean;
+}
+
+const CategoryContext = React.createContext<CategoryContextValue | null>(null);
+
+function useCategoryContext(): CategoryContextValue {
+  const context = React.useContext(CategoryContext);
+  if (!context) {
+    throw new Error(
+      'useCategoryContext must be used within a Category.Root component',
+    );
+  }
+  return context;
+}
 
 enum TestIds {
   categoryItem = 'category-item',
@@ -20,12 +38,8 @@ enum TestIds {
  * Props for Category.Root component
  */
 export interface CategoryRootProps {
-  /** Category object to initialize the service with */
-  category?: Category;
-  /** Configuration for the category service */
-  categoryServiceConfig?: CategoryServiceConfig;
-  /** Whether the category is currently selected */
-  isSelected?: boolean;
+  /** Category data */
+  category: Category;
   /** Child components */
   children: React.ReactNode;
 }
@@ -113,23 +127,28 @@ export interface CategoryRawProps {
  * ```
  */
 export function Root(props: CategoryRootProps): React.ReactNode {
-  const { category, categoryServiceConfig, isSelected, children } = props;
-
-  if (!category && !categoryServiceConfig) {
-    throw new Error(
-      'Category.Root: category or categoryServiceConfig is required',
-    );
-  }
-
-  const serviceConfig = categoryServiceConfig || {
-    category: category!,
-    isSelected,
-  };
+  const { category, children } = props;
 
   return (
-    <CoreCategory.Root categoryServiceConfig={serviceConfig}>
-      {children}
-    </CoreCategory.Root>
+    <CategoryFilter>
+      {({ selectedCategory, setSelectedCategory }) => {
+        // Determine if this category is selected by comparing with selectedCategory
+        const isSelected = selectedCategory?._id === category._id;
+
+        const contextValue: CategoryContextValue = {
+          category,
+          isSelected,
+          selectedCategory,
+          setSelectedCategory,
+        };
+
+        return (
+          <CategoryContext.Provider value={contextValue}>
+            {children}
+          </CategoryContext.Provider>
+        );
+      }}
+    </CategoryFilter>
   );
 }
 
@@ -168,13 +187,18 @@ export const Trigger = React.forwardRef<
 >((props, ref) => {
   const { asChild, children, onSelect, className } = props;
 
-  const categoryService = useService(CategoryServiceDefinition);
-  const category = categoryService.category.get();
-  const isSelected = categoryService.isSelected.get();
-  const setIsSelected = (isSelected: boolean) =>
-    categoryService.isSelected.set(isSelected);
+  const { category, isSelected, setSelectedCategory } = useCategoryContext();
 
   const handleSelect = () => {
+    // Use CategoryFilter's setSelectedCategory function
+    if (isSelected) {
+      // Deselect by passing null
+      setSelectedCategory(null);
+    } else {
+      // Select this category
+      setSelectedCategory(category);
+    }
+
     if (onSelect) {
       onSelect(category);
     }
@@ -193,7 +217,6 @@ export const Trigger = React.forwardRef<
         category,
         isSelected,
         onSelect: handleSelect,
-        setIsSelected,
       }}
       content={category.name}
     >
@@ -231,29 +254,21 @@ export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const categoryService = useService(CategoryServiceDefinition);
-    const category = categoryService.category.get();
-    const isSelected = categoryService.isSelected.get();
+    const { category, isSelected } = useCategoryContext();
 
     return (
-      <CoreCategory.Name>
-        {({ name }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.categoryLabel}
-              data-selected={isSelected ? 'true' : 'false'}
-              customElement={children}
-              customElementProps={{ name, category }}
-              content={name}
-            >
-              <span>{name}</span>
-            </AsChildSlot>
-          );
-        }}
-      </CoreCategory.Name>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.categoryLabel}
+        data-selected={isSelected ? 'true' : 'false'}
+        customElement={children}
+        customElementProps={{ name: category.name!, category }}
+        content={category.name!}
+      >
+        <span>{category.name}</span>
+      </AsChildSlot>
     );
   },
 );
@@ -287,9 +302,7 @@ export const ID = React.forwardRef<HTMLElement, CategoryIDProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const categoryService = useService(CategoryServiceDefinition);
-    const category = categoryService.category.get();
-    const isSelected = categoryService.isSelected.get();
+    const { category, isSelected } = useCategoryContext();
     const id = category._id || '';
 
     return (
@@ -335,9 +348,7 @@ export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const categoryService = useService(CategoryServiceDefinition);
-    const category = categoryService.category.get();
-    const isSelected = categoryService.isSelected.get();
+    const { category, isSelected } = useCategoryContext();
 
     return (
       <AsChildSlot

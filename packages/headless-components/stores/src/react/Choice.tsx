@@ -1,6 +1,6 @@
 import React from 'react';
-import { renderAsChild, type AsChildProps } from '../utils/index.js';
 import { FreeText as FreeTextPrimitive } from './core/ProductModifiers.js';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
 enum TestIds {
   choiceRoot = 'choice-root',
@@ -114,8 +114,14 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 /**
  * Props for Choice Text component
  */
-export interface TextProps
-  extends AsChildProps<{ id: string; value: string }> {}
+export interface TextProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ id: string; value: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Text-based choice button.
@@ -174,28 +180,21 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
 
     const choiceId = choice?.choiceId || '';
 
-    const attributes = {
-      'data-testid': TestIds.choiceText,
-      'data-selected': isSelected ? 'true' : 'false',
-      disabled: !isInStock && !isPreOrderEnabled,
-      onClick: select,
-    };
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { id: choiceId, value },
-        ref,
-        content: value,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <button className={className} {...attributes} ref={ref}>
-        {value}
-      </button>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.choiceText}
+        data-selected={isSelected ? 'true' : 'false'}
+        disabled={!isInStock && !isPreOrderEnabled}
+        onClick={select}
+        customElement={children}
+        customElementProps={{ id: choiceId, value }}
+        content={value}
+      >
+        <button>{value}</button>
+      </AsChildSlot>
     );
   },
 );
@@ -203,8 +202,14 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
 /**
  * Props for Choice Color component
  */
-export interface ColorProps
-  extends AsChildProps<{ colorCode: string; name: string; id: string }> {}
+export interface ColorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ colorCode: string; name: string; id: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Color swatch choice.
@@ -267,36 +272,24 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
 
     const { colorCode, choiceId } = choice;
 
-    const attributes = {
-      'data-testid': TestIds.choiceColor,
-      'data-selected': isSelected ? 'true' : 'false',
-      disabled: !isInStock && !isPreOrderEnabled,
-      onClick: select,
-    };
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: {
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.choiceColor}
+        data-selected={isSelected ? 'true' : 'false'}
+        disabled={!isInStock && !isPreOrderEnabled}
+        onClick={select}
+        customElement={children}
+        customElementProps={{
           colorCode: colorCode || '',
           name: value,
           id: choiceId || '',
-        },
-        ref,
-        content: null,
-        attributes,
-      });
-      if (rendered) return rendered;
-    }
-
-    return (
-      <button
-        className={className}
-        {...attributes}
-        ref={ref}
-        style={{ backgroundColor: colorCode }}
-        title={value}
-      />
+        }}
+      >
+        <button style={{ backgroundColor: colorCode }} title={value} />
+      </AsChildSlot>
     );
   },
 );
@@ -305,15 +298,21 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
  * Props for Choice FreeText component
  */
 export interface FreeTextProps
-  extends AsChildProps<{
-      minCharCount?: number;
-      maxCharCount?: number;
-      defaultAddedPrice?: string | null;
-      title?: string;
-      value?: string;
-      onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    }>,
-    Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children'> {}
+  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'children'> {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    minCharCount?: number;
+    maxCharCount?: number;
+    defaultAddedPrice?: string | null;
+    title?: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Provides a free text input for variant selection.
@@ -371,11 +370,6 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
     // Don't render if not visible (handled by ProductVariantSelector in Root)
     if (!isVisible) return null;
 
-    const attributes = {
-      'data-testid': TestIds.choiceFreetext,
-      'data-selected': isSelected ? 'true' : 'false',
-    };
-
     return (
       <FreeTextPrimitive modifier={choice}>
         {({ value, setText, placeholder, maxChars }) => {
@@ -386,34 +380,30 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
             }
           };
 
-          if (asChild) {
-            const rendered = renderAsChild({
-              children,
-              props: {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.choiceFreetext}
+              data-selected={isSelected ? 'true' : 'false'}
+              customElement={children}
+              customElementProps={{
                 minCharCount: choice?.minCharCount,
                 maxCharCount: choice?.maxCharCount,
                 defaultAddedPrice: choice?.addedPrice || undefined,
                 title: choice?.name || undefined,
                 onChange: handleChange,
-              },
-              ref,
-              content: null,
-              attributes,
-            });
-            if (rendered) return rendered;
-          }
-
-          return (
-            <textarea
-              ref={ref}
-              className={className}
-              placeholder={placeholder}
-              rows={3}
-              value={value}
-              maxLength={maxChars}
-              {...attributes}
-              onChange={handleChange}
-            />
+              }}
+            >
+              <textarea
+                placeholder={placeholder}
+                rows={3}
+                value={value}
+                maxLength={maxChars}
+                onChange={handleChange}
+              />
+            </AsChildSlot>
           );
         }}
       </FreeTextPrimitive>

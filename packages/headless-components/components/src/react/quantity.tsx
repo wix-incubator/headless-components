@@ -1,5 +1,37 @@
 import React from 'react';
-import { renderChildren } from '../utils/asChild.js';
+
+/**
+ * Utility function to handle children rendering.
+ * TODO - use AsChildSlot instead
+ */
+function renderChildren<THTMLElement = HTMLElement, TProps = any>({
+  children,
+  props,
+  ref,
+}: {
+  children:
+    | React.ReactNode
+    | React.ForwardRefRenderFunction<THTMLElement, TProps>
+    | undefined;
+  props: TProps;
+  ref: React.Ref<THTMLElement>;
+}): React.ReactNode | null {
+  // Early return if no children provided
+  if (!children) return null;
+
+  // Handle React element pattern
+  if (React.isValidElement(children)) {
+    return children;
+  }
+
+  // Handle render function pattern
+  if (typeof children === 'function') {
+    return children(props, ref);
+  }
+
+  // Fallback for unknown patterns
+  return children;
+}
 
 enum TestIds {
   quantityRoot = 'quantity-root',
@@ -110,6 +142,8 @@ Root.displayName = 'Quantity.Root';
 export interface QuantityIncrementProps {
   asChild?: boolean;
   className?: string;
+  /** Whether the button is disabled */
+  disabled?: boolean;
   children?:
     | string
     | React.ReactNode
@@ -174,6 +208,8 @@ export interface QuantityDecrementProps {
     | React.ForwardRefRenderFunction<HTMLButtonElement, {}>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Whether the button is disabled */
+  disabled?: boolean;
 }
 
 /**
@@ -297,7 +333,7 @@ export const Input = React.forwardRef<HTMLInputElement, QuantityInputProps>(
     return (
       <input
         ref={ref}
-        type="number"
+        type="text" // avoid number input spinner padding issues
         value={value}
         onChange={(e) => handleChange(parseInt(e.target.value) || 1)}
         disabled={disabled}

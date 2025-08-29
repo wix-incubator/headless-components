@@ -187,61 +187,35 @@ export default function ProductDetails({
               <h3 className="text-lg font-semibold text-content-primary">
                 Quantity
               </h3>
-              <ProductVariantSelectorPrimitive.Stock>
-                {({
-                  inStock,
-                  isPreOrderEnabled,
-                  availableQuantity,
-                  selectedQuantity,
-                  incrementQuantity,
-                  decrementQuantity,
-                }) => {
-                  return (
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center border border-brand-light rounded-lg">
-                        <button
-                          onClick={decrementQuantity}
-                          disabled={
-                            selectedQuantity <= 1 ||
-                            (!inStock && !isPreOrderEnabled)
-                          }
-                          className="px-3 py-2 text-content-primary hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          -
-                        </button>
-                        <span className="px-4 py-2 text-content-primary border-x border-brand-light min-w-[3rem] text-center">
-                          {selectedQuantity}
-                        </span>
-                        <button
-                          onClick={incrementQuantity}
-                          disabled={
-                            (!!availableQuantity &&
-                              selectedQuantity >= availableQuantity) ||
-                            (!inStock && !isPreOrderEnabled)
-                          }
-                          className="px-3 py-2 text-content-primary hover:bg-surface-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          +
-                        </button>
-                      </div>
-                      {/* Show max quantity only when out of stock AND preorder enabled */}
-                      {!inStock && isPreOrderEnabled && availableQuantity && (
-                        <span className="text-content-muted text-sm">
-                          Max: {availableQuantity} Pre Order
-                        </span>
-                      )}
-                      {/* Show stock message when in stock but available quantity < 10 */}
-                      {inStock &&
-                        availableQuantity &&
-                        availableQuantity < 10 && (
+              <Product.Quantity.Root className="flex items-center gap-3">
+                <>
+                  <div className="flex items-center border border-brand-light rounded-lg">
+                    <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors" />
+                    <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+                    <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors" />
+                  </div>
+                  <Product.Quantity.Raw asChild>
+                    {({ availableQuantity, inStock, isPreOrderEnabled }) => (
+                      <div>
+                        {/* Show max quantity only when out of stock AND preorder enabled */}
+                        {!inStock && isPreOrderEnabled && availableQuantity && (
                           <span className="text-content-muted text-sm">
-                            Only {availableQuantity} left in stock
+                            Max: {availableQuantity} Pre Order
                           </span>
                         )}
-                    </div>
-                  );
-                }}
-              </ProductVariantSelectorPrimitive.Stock>
+                        {/* Show stock message when in stock but available quantity < 10 */}
+                        {inStock &&
+                          availableQuantity &&
+                          availableQuantity < 10 && (
+                            <span className="text-content-muted text-sm">
+                              Only {availableQuantity} left in stock
+                            </span>
+                          )}
+                      </div>
+                    )}
+                  </Product.Quantity.Raw>
+                </>
+              </Product.Quantity.Root>
             </div>
 
             {/* Add to Cart */}
@@ -262,7 +236,7 @@ export default function ProductDetails({
                       </div>
                     )}
 
-                    <ProductActionButtons isQuickView={isQuickView} />
+                    <ProductActionButtons />
                   </div>
                 )}
               </SelectedVariantPrimitive.Actions>
@@ -314,33 +288,21 @@ export default function ProductDetails({
 
             {/* Product Details */}
             {!isQuickView && (
-              <SelectedVariantPrimitive.Details>
-                {({ sku, weight }) => (
-                  <>
-                    {(sku || weight) && (
-                      <div className="border-t border-brand-light pt-8">
-                        <h3 className="text-xl font-semibold text-content-primary mb-4">
-                          Product Details
-                        </h3>
-                        <div className="space-y-3 text-content-secondary">
-                          {sku && (
-                            <div className="flex justify-between">
-                              <span>SKU:</span>
-                              <span>{sku}</span>
-                            </div>
-                          )}
-                          {weight && (
-                            <div className="flex justify-between">
-                              <span>Weight:</span>
-                              <span>{weight}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </SelectedVariantPrimitive.Details>
+              <div className="border-t border-brand-light pt-8">
+                <h3 className="text-xl font-semibold text-content-primary mb-4">
+                  Product Details
+                </h3>
+                <div className="space-y-3 text-content-secondary">
+                  <div className="flex items-center gap-2">
+                    <span>SKU:</span>
+                    <Product.ProductVariant.SKU />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>Weight:</span>
+                    <Product.ProductVariant.Weight />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </Product.Root>

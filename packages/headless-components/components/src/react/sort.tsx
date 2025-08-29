@@ -68,26 +68,35 @@ export type SortValue = Array<{
   order?: string; // Wix SDK format (typically 'ASC'/'DESC')
 }>;
 
+interface SortFieldOption {
+  fieldName: string;
+  label: string;
+}
+
+interface SortOrderOption {
+  order: 'ASC' | 'DESC';
+  label: string;
+}
+
+interface FullSortOption {
+  fieldName: string;
+  order: 'ASC' | 'DESC';
+  label: string;
+}
+
 /**
  * Sort option configuration
  */
-export interface SortOption {
-  /** Field name to sort by (optional if only setting order) */
-  fieldName: string;
-  /** Sort order (optional if only setting field) */
-  order: 'ASC' | 'DESC';
-  /** Display label */
-  label: string;
-}
+export type SortOption = SortFieldOption | SortOrderOption | FullSortOption;
 
 /**
  * Internal sort option structure with handler for rendering
  */
 interface SortOptionRenderable {
   /** Field name to sort by */
-  fieldName: string;
+  fieldName?: string;
   /** Sort order */
-  order: 'ASC' | 'DESC';
+  order?: 'ASC' | 'DESC';
   /** Display label */
   label: string;
   /** Function to select this option */
@@ -107,7 +116,7 @@ enum TestIds {
 // ============================================================================
 
 interface SortContextValue {
-  currentSort: { fieldName: string; order: string };
+  currentSort: { fieldName?: string; order?: string };
   onChange: (value: SortValue) => void;
 }
 
@@ -131,11 +140,7 @@ function useSortContext(): SortContextValue {
 export interface SortRootProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** Predefined sort options for declarative API */
-  sortOptions?: Array<{
-    label: string;
-    fieldName: string;
-    order: 'ASC' | 'DESC';
-  }>;
+  sortOptions?: Array<SortOption>;
   /** Current sort value - Wix SDK array format */
   value?: SortValue;
   /** Function called when sort changes - receives Wix SDK array format */
@@ -171,28 +176,44 @@ interface SelectRendererProps
   extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange'> {
   currentSort: { fieldName: string; order: string };
   options: SortOptionRenderable[];
-  onChange: (fieldName: string, order: string) => void;
+  onChange: (fieldName?: string, order?: string) => void;
 }
 
 const SelectRenderer = React.forwardRef<HTMLSelectElement, SelectRendererProps>(
   (props, ref) => {
     const { currentSort, options, onChange, ...otherProps } = props;
-    const currentValue = `${currentSort.fieldName}-${currentSort.order}`;
+
+    const toStringValue = (fieldName?: string, order?: string) => {
+      return `${fieldName ?? ''}-${order ?? ''}`;
+    };
+
+    const fromStringValue = (value: string) => {
+      const [fieldName, order] = value.split('-');
+      return {
+        fieldName: fieldName === '' ? undefined : fieldName,
+        order: order === '' ? undefined : order,
+      };
+    };
+
+    const currentValue = toStringValue(
+      currentSort?.fieldName,
+      currentSort?.order,
+    );
 
     return (
       <select
         ref={ref}
         value={currentValue}
         onChange={(e) => {
-          const [fieldName, order] = e.target.value.split('-');
-          onChange(fieldName || '', order || 'ASC');
+          const { fieldName, order } = fromStringValue(e.target.value);
+          onChange(fieldName, order);
         }}
         {...otherProps}
       >
         {options.map((option, index) => (
           <option
-            key={`${option.fieldName}-${option.order}-${index}`}
-            value={`${option.fieldName}-${option.order}`}
+            key={`${option?.fieldName}-${option?.order}-${index}`}
+            value={toStringValue(option?.fieldName, option?.order)}
           >
             {option.label}
           </option>
@@ -251,18 +272,27 @@ SelectRenderer.displayName = 'Sort.SelectRenderer';
 // Helper function to get current sort from array or default to first option
 const getCurrentSort = (
   sortArray: SortValue | undefined,
-  fallbackOptions: Array<{
-    fieldName: string;
-    order: 'ASC' | 'DESC';
-    label?: string;
-  }>,
-): { fieldName: string; order: string } => {
-  const currentSort = sortArray?.find((sort) => sort) || fallbackOptions[0];
+  options: Array<SortOption>,
+): { fieldName?: string; order?: string } => {
+  const currentSort = sortArray?.find((sort) => sort);
 
-  return {
-    fieldName: currentSort?.fieldName || 'name',
-    order: currentSort?.order || 'ASC',
-  };
+  const mostSimillarOption = options.find((option) => {
+    if ('fieldName' in option && 'order' in option) {
+      return (
+        option.fieldName === currentSort?.fieldName &&
+        option.order === currentSort?.order
+      );
+    }
+    if ('fieldName' in option) {
+      return option.fieldName === currentSort?.fieldName;
+    }
+    if ('order' in option) {
+      return option.order === currentSort?.order;
+    }
+    return false;
+  });
+
+  return mostSimillarOption as { fieldName?: string; order?: string };
 };
 
 export const Root = React.forwardRef<HTMLElement, SortRootProps>(
@@ -278,11 +308,17 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
     } = props;
 
     // Get current sort from sortOptions directly
-    const currentSort = getCurrentSort(value, sortOptions);
+    const currentSortOption = getCurrentSort(value, sortOptions);
+    const currentValue = value?.[0];
 
     // Handle change events - create Wix SDK array format
-    const handleChange = (fieldName: string, order: string) => {
-      onChange([{ fieldName, order }]);
+    const handleChange = (fieldName?: string, order?: string) => {
+      onChange([
+        {
+          fieldName: fieldName || currentValue?.fieldName,
+          order: order || currentValue?.order,
+        },
+      ]);
     };
 
     // Use EITHER sortOptions prop OR extract from children - not both
@@ -291,12 +327,16 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
     if (sortOptions.length > 0) {
       // Use sortOptions prop (declarative API)
       completeOptions = sortOptions.map((option) => {
+        // Type guards to safely access properties
+        const fieldName = 'fieldName' in option ? option.fieldName : undefined;
+        const order = 'order' in option ? option.order : undefined;
+
         return {
-          fieldName: option.fieldName,
+          fieldName,
           label: option.label,
-          order: option.order,
-          onSelect: () => handleChange(option.fieldName, option.order),
-        };
+          order,
+          onSelect: () => handleChange(fieldName, order),
+        } as SortOptionRenderable;
       });
     } else if (children) {
       // Extract options from children (programmatic API)
@@ -325,7 +365,7 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
     }
 
     const contextValue: SortContextValue = {
-      currentSort,
+      currentSort: currentSortOption,
       onChange,
     };
 
@@ -334,7 +374,7 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
     let compProps: any;
     const commonProps = {
       'data-testid': TestIds.sortRoot,
-      currentSort,
+      currentSort: currentSortOption,
       options: completeOptions,
       onChange: handleChange,
     };
