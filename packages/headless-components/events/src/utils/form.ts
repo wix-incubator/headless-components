@@ -41,19 +41,21 @@ export const getFormResponse = (formData: FormData): rsvpV2.FormResponse => {
   }
 
   return {
-    inputValues: Object.entries(data).map(([inputName, value]) => {
-      const inputValue: rsvpV2.InputValue = {
-        inputName,
-      };
+    inputValues: Object.entries(data)
+      .filter(([, values]) => values.some((value) => !!value))
+      .map(([inputName, values]) => {
+        const inputValue: rsvpV2.InputValue = {
+          inputName,
+        };
 
-      // TODO: backend issue with address
-      if (value.length > 1 || inputName.includes('address')) {
-        inputValue.values = value;
-      } else {
-        inputValue.value = value[0];
-      }
+        // TODO: ADDRESS_SHORT issue - should accept value instead of values
+        if (values.length > 1 || inputName.includes('address')) {
+          inputValue.values = values;
+        } else {
+          inputValue.value = values[0];
+        }
 
-      return inputValue;
-    }),
+        return inputValue;
+      }),
   };
 };
