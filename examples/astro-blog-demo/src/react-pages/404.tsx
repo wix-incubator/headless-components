@@ -1,6 +1,5 @@
 import React from 'react';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
-import '../styles/theme-blog.css';
 
 export default function NotFoundPage() {
   return (
@@ -24,7 +23,9 @@ export default function NotFoundPage() {
                 />
               </svg>
             </div>
-            <h1 className="text-6xl font-bold text-blog-title mb-2">404</h1>
+            <h1 className="text-6xl font-bold text-content-primary mb-2">
+              404
+            </h1>
             <h2 className="text-2xl font-semibold text-content-secondary mb-4">
               Page Not Found
             </h2>
@@ -32,7 +33,7 @@ export default function NotFoundPage() {
 
           {/* Error Message */}
           <div className="mb-8">
-            <p className="text-blog-excerpt mb-4">
+            <p className="text-content-light mb-4">
               Oops! The page you're looking for seems to have wandered off into
               the digital void.
             </p>
@@ -46,12 +47,6 @@ export default function NotFoundPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/"
-              className="btn-primary px-6 py-3 rounded-lg font-medium transition-all hover:scale-105"
-            >
-              Go Home
-            </a>
-            <a
-              href="/blog"
               className="btn-secondary px-6 py-3 rounded-lg font-medium transition-all hover:scale-105"
             >
               Browse Blog
@@ -65,7 +60,7 @@ export default function NotFoundPage() {
             </p>
             <button
               onClick={() => window.history.back()}
-              className="link-primary text-sm hover:underline"
+              className="text-brand-primary hover:text-brand-light text-sm hover:underline transition-colors"
             >
               ← Go back to previous page
             </button>

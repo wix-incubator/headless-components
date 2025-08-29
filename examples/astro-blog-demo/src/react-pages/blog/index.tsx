@@ -54,7 +54,7 @@ export default function BlogFeedPage({
           <div className="max-w-6xl mx-auto px-6 py-12 space-y-8">
             {/* Hero Section */}
             <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-blog-title mb-4">
+              <h1 className="text-4xl font-bold text-content-primary mb-4">
                 Headless Components Blog
               </h1>
             </div>
@@ -93,37 +93,44 @@ export default function BlogFeedPage({
                             className={`${withImage ? 'text-white' : 'text-content-primary'}`}
                           />
                         </div>
+                        <BlogCategories.Categories>
+                          <div className="isolate">
+                            <div className="flex flex-wrap gap-3 justify-center">
+                              <BlogCategories.CategoryRepeater>
+                                <BlogCategories.CategoryLink
+                                  baseUrl="/category/"
+                                  asChild
+                                >
+                                  {({ href }) => {
+                                    const activeClass = withImage
+                                      ? 'bg-white text-black border border-transparent'
+                                      : 'bg-black text-white border border-transparent';
+                                    const inactiveClass = withImage
+                                      ? 'bg-transparent text-white border border-white'
+                                      : 'bg-transparent text-black border border-black';
+
+                                    return (
+                                      <a
+                                        href={href}
+                                        className={`px-4 py-2 rounded-lg hover:scale-105 ${
+                                          pathname === href
+                                            ? activeClass
+                                            : inactiveClass
+                                        }`}
+                                      >
+                                        <BlogCategories.CategoryLabel />
+                                      </a>
+                                    );
+                                  }}
+                                </BlogCategories.CategoryLink>
+                              </BlogCategories.CategoryRepeater>
+                            </div>
+                          </div>
+                        </BlogCategories.Categories>
                       </>
                     );
                   }}
                 </BlogCategories.ActiveCategory>
-                <BlogCategories.Categories>
-                  <div className="isolate">
-                    <div className="flex flex-wrap gap-3 justify-center">
-                      <BlogCategories.CategoryRepeater>
-                        <BlogCategories.CategoryLink
-                          baseUrl="/category/"
-                          asChild
-                        >
-                          {({ href }) => {
-                            return (
-                              <a
-                                href={href}
-                                className={`px-4 py-2 rounded-lg border hover:scale-105 ${
-                                  pathname === href
-                                    ? 'bg-black text-white border-transparent'
-                                    : 'bg-surface-secondary hover:bg-surface-tertiary'
-                                }`}
-                              >
-                                <BlogCategories.CategoryLabel />
-                              </a>
-                            );
-                          }}
-                        </BlogCategories.CategoryLink>
-                      </BlogCategories.CategoryRepeater>
-                    </div>
-                  </div>
-                </BlogCategories.Categories>
               </section>
             </BlogCategories.Root>
             <BlogFeed.Sort className="mb-4" />
@@ -158,12 +165,12 @@ export default function BlogFeedPage({
                 }
               >
                 <BlogFeed.PostRepeater>
-                  <article className="card-blog-post h-full flex flex-col gap-5">
+                  <article className="bg-surface-card border border-surface-primary rounded-xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 h-full flex flex-col gap-5">
                     <BlogFeed.PostCoverImage className="w-full aspect-video object-cover rounded-xl" />
 
                     <BlogFeed.PostCategories className="flex flex-wrap gap-2">
                       <BlogFeed.PostCategoryRepeater>
-                        <BlogFeed.PostCategoryLabel className="badge-category text-xs" />
+                        <BlogFeed.PostCategoryLabel className="bg-status-info-light text-brand-primary border border-brand-light px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide" />
                       </BlogFeed.PostCategoryRepeater>
                     </BlogFeed.PostCategories>
 
@@ -171,7 +178,7 @@ export default function BlogFeedPage({
                       <BlogFeed.PostTitle className="text-xl font-bold" />
                     </BlogFeed.PostLink>
 
-                    <BlogFeed.PostExcerpt className="text-blog-excerpt mb-4 line-clamp-3 flex-grow" />
+                    <BlogFeed.PostExcerpt className="text-content-light mb-4 line-clamp-3 flex-grow" />
 
                     <div className="flex items-center text-sm gap-3 text-content-muted mt-auto pt-4">
                       <BlogFeed.PostAuthorAvatar className="w-8 h-8 text-xs bg-gradient-to-br from-purple-500/60 to-red-500/80 text-white rounded-full flex items-center justify-center" />
@@ -191,7 +198,7 @@ export default function BlogFeedPage({
 
                     <BlogFeed.PostLink
                       baseUrl="/"
-                      className="link-primary text-sm gap-1 flex items-center"
+                      className="text-brand-primary hover:text-brand-light hover:underline transition-colors text-sm gap-1 flex items-center"
                     >
                       Read More
                       <svg
@@ -224,7 +231,7 @@ export default function BlogFeedPage({
                         >
                           {isLoading ? (
                             <>
-                              <div className="loading-spinner w-4 h-4"></div>
+                              <div className="w-4 h-4 border-2 border-transparent border-t-current rounded-full animate-spin"></div>
                               Loading...
                             </>
                           ) : (

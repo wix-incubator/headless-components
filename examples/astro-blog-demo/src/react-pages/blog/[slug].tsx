@@ -54,7 +54,7 @@ export default function BlogPostPage({
             <div>
               <a
                 href="/"
-                className="inline-flex items-center gap-2 text-content-muted hover:text-content-primary transition-colors link-primary"
+                className="inline-flex items-center gap-2 text-content-muted hover:text-content-primary transition-colors text-brand-primary hover:text-brand-light hover:underline"
               >
                 <svg
                   className="w-4 h-4"
@@ -74,7 +74,7 @@ export default function BlogPostPage({
             </div>
             <BlogPost.Root
               emptyState={
-                <div className="card-blog-post text-center py-12">
+                <div className="bg-surface-card border border-surface-primary rounded-xl p-6 shadow-sm text-center py-12">
                   <p className="text-content-muted">Post not found</p>
                 </div>
               }
@@ -85,19 +85,19 @@ export default function BlogPostPage({
                     <BlogPost.CategoryRepeater>
                       <BlogPost.CategoryLink
                         baseUrl="/category/"
-                        className="badge-category"
+                        className="bg-status-info-light text-brand-primary border border-brand-light px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide"
                       />
                     </BlogPost.CategoryRepeater>
                   </BlogPost.Categories>
 
-                  <BlogPost.Title className="text-4xl md:text-5xl font-bold text-blog-title leading-tight mb-4" />
+                  <BlogPost.Title className="text-4xl md:text-5xl font-bold text-content-primary leading-tight mb-4" />
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-content-muted">
                     <div className="flex items-center gap-2">
                       <BlogPost.AuthorAvatar className="w-8 h-8 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center" />
-                      <BlogPost.AuthorName className="text-blog-author" />
+                      <BlogPost.AuthorName className="text-content-secondary" />
                       <BlogPost.PublishDate
-                        className="text-blog-date"
+                        className="text-content-muted"
                         locale="en-US"
                       />
                       <BlogPost.ReadingTime asChild>
@@ -114,7 +114,7 @@ export default function BlogPostPage({
 
                 <BlogPost.Tags className="flex flex-wrap gap-2">
                   <BlogPost.TagRepeater>
-                    <BlogPost.Tag className="badge-tag" />
+                    <BlogPost.Tag className="bg-accent-medium text-accent border border-accent px-3 py-1 rounded-full text-xs font-medium" />
                   </BlogPost.TagRepeater>
                 </BlogPost.Tags>
                 {/* Social Sharing */}
@@ -196,13 +196,13 @@ export default function BlogPostPage({
                     <BlogFeed.PostRepeater>
                       <BlogFeed.PostLink
                         baseUrl="/"
-                        className="card-blog-post transition-all hover:scale-105 h-full flex flex-col"
+                        className="bg-surface-card border border-surface-primary rounded-xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 hover:scale-105 h-full flex flex-col"
                       >
                         <BlogFeed.PostCoverImage className="w-full aspect-video object-cover rounded-xl mb-3" />
 
                         <div className="flex-1 flex flex-col">
-                          <BlogFeed.PostTitle className="text-lg font-semibold text-blog-title mb-2 line-clamp-2" />
-                          <BlogFeed.PostExcerpt className="text-blog-excerpt text-sm line-clamp-3 flex-1" />
+                          <BlogFeed.PostTitle className="text-lg font-semibold text-content-primary mb-2 line-clamp-2" />
+                          <BlogFeed.PostExcerpt className="text-content-light text-sm line-clamp-3 flex-1" />
                           <div className="mt-3 pt-3 flex items-center gap-2 text-xs text-content-muted">
                             <BlogFeed.PostPublishDate locale="en-US" />
                             <span>•</span>
