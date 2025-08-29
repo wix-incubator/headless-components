@@ -647,7 +647,7 @@ export const PostAuthorName = React.forwardRef<
   const owner = post?.resolvedFields?.owner;
   if (!owner) return null;
 
-  const authorName = createAuthorName(owner);
+  const { authorName } = createAuthorName(owner);
 
   const attributes = {
     'data-testid': TestIds.blogFeedPostAuthorName,
@@ -692,13 +692,8 @@ export const PostAuthorAvatar = React.forwardRef<
   if (!owner) return null;
 
   const [error, setError] = React.useState(false);
-  const authorName = createAuthorName(owner);
+  const { authorAvatarInitials } = createAuthorName(owner);
   const authorAvatarUrl = owner.profile?.photo?.url;
-  const authorAvatarInitials = owner.profile?.nickname
-    ?.split(' ')
-    .map((name) => name[0]?.toLocaleUpperCase())
-    .filter((char) => char && /[A-Z]/i.test(char))
-    .join('');
 
   const attributes = {
     'data-testid': TestIds.blogFeedPostAuthorAvatar,
@@ -715,7 +710,6 @@ export const PostAuthorAvatar = React.forwardRef<
         authorAvatarUrl,
         authorAvatarInitials,
       }}
-      content={authorName}
     >
       {authorAvatarUrl && !error ? (
         <img
@@ -1125,9 +1119,7 @@ export const PostLink = React.forwardRef<HTMLAnchorElement, PostLinkProps>(
 export interface PostReadingTimeProps {
   asChild?: boolean;
   className?: string;
-  children?:
-    | AsChildChildren<{ readingTime: number; readingTimeText: string }>
-    | React.ReactNode;
+  children?: AsChildChildren<{ readingTime: number }> | React.ReactNode;
 }
 
 /**

@@ -728,7 +728,7 @@ export const AuthorName = React.forwardRef<HTMLElement, AuthorNameProps>(
     const owner = post?.resolvedFields?.owner;
     if (!owner) return null;
 
-    const authorName = createAuthorName(owner);
+    const { authorName } = createAuthorName(owner);
     if (!authorName) return null;
 
     const attributes = {
@@ -773,15 +773,10 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
     if (!owner) return null;
 
     const [error, setError] = React.useState(false);
-    const authorName = createAuthorName(owner);
+    const { authorAvatarInitials } = createAuthorName(owner);
     const authorAvatarUrl = owner.profile?.photo?.url;
-    const authorAvatarInitials = owner.profile?.nickname
-      ?.split(' ')
-      .map((name) => name[0]?.toLocaleUpperCase())
-      .filter((char) => char && /[A-Z]/i.test(char))
-      .join('');
 
-    if (!authorName && !authorAvatarInitials) return null;
+    if (!authorAvatarInitials && !authorAvatarUrl) return null;
 
     const attributes = {
       'data-testid': TestIds.blogPostAuthorAvatar,
@@ -798,7 +793,6 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
           authorAvatarUrl,
           authorAvatarInitials,
         }}
-        content={authorName}
       >
         {authorAvatarUrl && !error ? (
           <img
