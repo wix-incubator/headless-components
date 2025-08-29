@@ -1,0 +1,109 @@
+/* ===== BLOG THEME VARIABLES ===== */
+
+:root {
+  /* Base Colors */
+  --theme-text-primary: #1f2937;
+  --theme-text-secondary: #4b5563;
+  --theme-text-muted: #6b7280;
+  --theme-text-subtle: #9ca3af;
+
+  /* Blog-specific Text Colors */
+  --theme-blog-title: #111827;
+  --theme-blog-excerpt: #4b5563;
+  --theme-blog-author: #374151;
+  --theme-blog-date: #6b7280;
+  --theme-blog-category: #7c3aed;
+  --theme-blog-tag: #059669;
+
+  /* Background Colors */
+  --theme-background-primary: #ffffff;
+  --theme-background-secondary: #f9fafb;
+  --theme-background-card: #ffffff;
+  --theme-background-hover: #f3f4f6;
+
+  /* Blog-specific Background Colors */
+  --theme-blog-post-card: #ffffff;
+  --theme-blog-category-badge: rgba(124, 58, 237, 0.1);
+  --theme-blog-tag-badge: rgba(5, 150, 105, 0.1);
+
+  /* Border Colors */
+  --theme-border-primary: #e5e7eb;
+  --theme-border-secondary: #d1d5db;
+  --theme-blog-card-border: #e5e7eb;
+
+  /* Button Colors */
+  --theme-button-primary-bg: #7c3aed;
+  --theme-button-primary-bg-hover: #6d28d9;
+  --theme-button-primary-text: #ffffff;
+  --theme-button-primary-border: #7c3aed;
+
+  --theme-button-secondary-bg: #f3f4f6;
+  --theme-button-secondary-bg-hover: #e5e7eb;
+  --theme-button-secondary-text: #374151;
+  --theme-button-secondary-border: #d1d5db;
+
+  /* Link Colors */
+  --theme-link-primary: #7c3aed;
+  --theme-link-primary-hover: #6d28d9;
+
+  /* Status Colors */
+  --theme-status-success: #10b981;
+  --theme-status-warning: #f59e0b;
+  --theme-status-danger: #ef4444;
+  --theme-status-info: #3b82f6;
+
+  /* Shadow Variables */
+  --theme-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --theme-shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --theme-shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode Theme (when .dark class is applied) */
+.dark {
+  /* Base Colors */
+  --theme-text-primary: #f9fafb;
+  --theme-text-secondary: #d1d5db;
+  --theme-text-muted: #9ca3af;
+  --theme-text-subtle: #6b7280;
+
+  /* Blog-specific Text Colors */
+  --theme-blog-title: #ffffff;
+  --theme-blog-excerpt: #d1d5db;
+  --theme-blog-author: #e5e7eb;
+  --theme-blog-date: #9ca3af;
+  --theme-blog-category: #a78bfa;
+  --theme-blog-tag: #34d399;
+
+  /* Background Colors */
+  --theme-background-primary: #111827;
+  --theme-background-secondary: #1f2937;
+  --theme-background-card: #1f2937;
+  --theme-background-hover: #374151;
+
+  /* Blog-specific Background Colors */
+  --theme-blog-post-card: #1f2937;
+  --theme-blog-category-badge: rgba(167, 139, 250, 0.2);
+  --theme-blog-tag-badge: rgba(52, 211, 153, 0.2);
+
+  /* Border Colors */
+  --theme-border-primary: #374151;
+  --theme-border-secondary: #4b5563;
+  --theme-blog-card-border: #374151;
+
+  /* Button Colors */
+  --theme-button-primary-bg: #8b5cf6;
+  --theme-button-primary-bg-hover: #7c3aed;
+  --theme-button-primary-text: #ffffff;
+  --theme-button-primary-border: #8b5cf6;
+
+  --theme-button-secondary-bg: #374151;
+  --theme-button-secondary-bg-hover: #4b5563;
+  --theme-button-secondary-text: #d1d5db;
+  --theme-button-secondary-border: #4b5563;
+
+  /* Link Colors */
+  --theme-link-primary: #a78bfa;
+  --theme-link-primary-hover: #8b5cf6;
+}
