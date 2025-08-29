@@ -1,7 +1,7 @@
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import React from 'react';
+import React, { HTMLInputTypeAttribute } from 'react';
 import {
   FormControlService,
   FormControlServiceDefinition,
@@ -42,7 +42,7 @@ export const Root = (props: RootProps): React.ReactNode => {
 
 export interface LabelProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ label: string }>;
+  children?: AsChildChildren<{ label: string; required: boolean }>;
   className?: string;
 }
 
@@ -51,7 +51,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
 
   const formControlService = useService(FormControlServiceDefinition);
   const control = formControlService.control.get();
-  const label = control.inputs![0]!.label!;
+  const input = control.inputs![0]!;
 
   return (
     <AsChildSlot
@@ -60,11 +60,13 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
       className={className}
       data-testid={TestIds.controlLabel}
       customElement={children}
-      customElementProps={{ label }}
-      content={label}
+      customElementProps={{ label: input.label, required: input.mandatory }}
+      content={input.label}
     >
-      {/* TODO: change to label element? */}
-      <span>{label}</span>
+      <label htmlFor={input.name}>
+        {input.label}
+        {input.mandatory ? ' *' : ''}
+      </label>
     </AsChildSlot>
   );
 });
@@ -99,6 +101,23 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
   }
 
   if (control.type === 'CHECKBOX') {
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const form = e.target.form;
+
+      if (!form) {
+        return;
+      }
+
+      const checkboxes = form.querySelectorAll<HTMLInputElement>(
+        `input[name="${input.name}"]`,
+      );
+      const anyChecked = Array.from(checkboxes).some(
+        (checkbox) => checkbox.checked,
+      );
+
+      checkboxes.forEach((checkbox) => (checkbox.required = !anyChecked));
+    };
+
     return (
       <div
         ref={ref as React.Ref<HTMLDivElement>}
@@ -113,6 +132,8 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
               name={input.name}
               id={`${input.name}-${option}`}
               value={option}
+              required={input.mandatory}
+              onChange={input.mandatory ? handleCheckboxChange : undefined}
             />
             <label htmlFor={`${input.name}-${option}`}>{option}</label>
           </div>
@@ -136,6 +157,7 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
               name={input.name}
               id={`${input.name}-${option}`}
               value={option}
+              required={input.mandatory}
             />
             <label htmlFor={`${input.name}-${option}`}>{option}</label>
           </div>
@@ -153,6 +175,7 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
         id={input.name}
         name={input.name}
       >
+        {!input.mandatory && <option value="" />}
         {options.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -185,8 +208,23 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
       name={input.name}
       maxLength={input.maxLength}
       required={input.mandatory}
-      // TODO: add more types
-      type={control.type === 'DATE' ? 'date' : 'text'}
+      type={getInputType(control)}
     />
   );
 });
+
+const getInputType = (control: FormControl) => {
+  if (control._id!.includes('email')) {
+    return 'email';
+  }
+
+  if (control._id!.includes('phone')) {
+    return 'tel';
+  }
+
+  if (control.type === 'DATE') {
+    return 'date';
+  }
+
+  return 'text';
+};
