@@ -75,8 +75,6 @@ export const TicketListService = implementService.withConfig<TicketListServiceCo
         newSelectedQuantity
       ]
 
-      console.log(newSelectedQuantities)
-
       selectedQuantities.set(newSelectedQuantities);
     };
 

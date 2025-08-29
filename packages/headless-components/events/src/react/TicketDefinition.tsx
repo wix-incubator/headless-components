@@ -152,7 +152,6 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>((pr
     const {value, currency} = ticketDefinition.pricingMethod.guestPrice
 
     const onChange = (val: string) => {
-      console.log('onChange', val)
       listService.setQuantity({ticketDefinitionId: ticketDefinition._id!, priceOverride: val});
     }
 
