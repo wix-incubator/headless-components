@@ -12,7 +12,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
   return (
     <EventListPrimitive.Root eventListServiceConfig={eventListServiceConfig}>
       <EventListPrimitive.Events
-        className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 p-6"
+        className="grid justify-center grid-cols-[repeat(auto-fit,minmax(280px,360px))] gap-4 p-6"
         emptyState={
           <div className="text-center text-white py-12">
             <p className="text-xl">No events available</p>
