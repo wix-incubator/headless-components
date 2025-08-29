@@ -17,6 +17,9 @@ enum TestIds {
   ticketDefinitionRemaining = 'ticket-definition-remaining',
   ticketDefinitionSoldOut = 'ticket-definition-sold-out',
   ticketDefinitionQuantity = 'ticket-definition-quantity',
+  ticketDefinitionFixedPricing = 'ticket-definition-fixed-pricing',
+  ticketDefinitionGuestPricing = 'ticket-definition-guest-pricing',
+  ticketDefinitionFreePricing = 'ticket-definition-free-pricing',
 }
 
 export interface RootProps {
@@ -93,7 +96,7 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>((pr
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.ticketPrice}
+        data-testid={TestIds.ticketDefinitionFixedPricing}
         customElement={children}
         customElementProps={{ value, currency }}
         content={price}
@@ -124,7 +127,7 @@ export const FreePricing = React.forwardRef<HTMLElement, FreePricingProps>((prop
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.ticketPrice}
+        data-testid={TestIds.ticketDefinitionFreePricing}
         customElement={children}
       >
         <span>{children}</span>
@@ -160,7 +163,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>((pr
       ref={ref}
       asChild={asChild}
       className={className}
-      data-testid={TestIds.ticketDefinitionPrice}
+      data-testid={TestIds.ticketDefinitionGuestPricing}
       customElement={children}
       customElementProps={{ min: value, currency, onChange }}
       type="number"
