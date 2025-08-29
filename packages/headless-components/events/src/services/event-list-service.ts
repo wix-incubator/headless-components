@@ -56,6 +56,7 @@ export const EventListService =
 
       const loadMoreEvents = async () => {
         isLoading.set(true);
+        error.set(null);
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);

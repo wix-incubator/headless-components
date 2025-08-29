@@ -16,6 +16,13 @@ export {
 } from './event-service.js';
 
 export {
+  FormService,
+  FormServiceDefinition,
+  type FormServiceAPI,
+  type FormServiceConfig,
+} from './form-service.js';
+
+export {
   FormControlService,
   FormControlServiceDefinition,
   type FormControl,

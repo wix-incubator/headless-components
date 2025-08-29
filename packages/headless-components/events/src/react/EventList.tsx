@@ -97,8 +97,8 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
   (props, ref) => {
     const { children, emptyState, className } = props;
 
-    const service = useService(EventListServiceDefinition);
-    const events = service.events.get();
+    const eventListService = useService(EventListServiceDefinition);
+    const events = eventListService.events.get();
     const hasEvents = !!events.length;
 
     if (!hasEvents) {
@@ -142,8 +142,8 @@ export interface EventRepeaterProps {
 export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
   const { children } = props;
 
-  const service = useService(EventListServiceDefinition);
-  const events = service.events.get();
+  const eventListService = useService(EventListServiceDefinition);
+  const events = eventListService.events.get();
   const hasEvents = !!events.length;
 
   if (!hasEvents) {
@@ -190,9 +190,9 @@ export const LoadMoreTrigger = React.forwardRef<
 >((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(EventListServiceDefinition);
-  const isLoading = service.isLoading.get();
-  const hasMoreEvents = service.hasMoreEvents.get();
+  const eventListService = useService(EventListServiceDefinition);
+  const isLoading = eventListService.isLoading.get();
+  const hasMoreEvents = eventListService.hasMoreEvents.get();
 
   if (!hasMoreEvents) {
     return null;
@@ -206,7 +206,7 @@ export const LoadMoreTrigger = React.forwardRef<
       data-testid={TestIds.eventListLoadMore}
       customElement={children}
       disabled={isLoading}
-      onClick={() => service.loadMoreEvents()}
+      onClick={() => eventListService.loadMoreEvents()}
     >
       <button>{children}</button>
     </AsChildSlot>
@@ -239,8 +239,8 @@ export interface ErrorProps {
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(EventListServiceDefinition);
-  const error = service.error.get();
+  const eventListService = useService(EventListServiceDefinition);
+  const error = eventListService.error.get();
 
   if (!error) {
     return null;

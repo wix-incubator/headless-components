@@ -49,8 +49,8 @@ export interface LabelProps {
 export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(FormControlServiceDefinition);
-  const control = service.control.get();
+  const formControlService = useService(FormControlServiceDefinition);
+  const control = formControlService.control.get();
   const label = control.inputs![0]!.label!;
 
   return (
@@ -78,8 +78,8 @@ export interface FieldProps {
 export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(FormControlServiceDefinition);
-  const control = service.control.get();
+  const formControlService = useService(FormControlServiceDefinition);
+  const control = formControlService.control.get();
   const input = control.inputs![0]!;
   const options = input.options ?? [];
 
@@ -185,6 +185,7 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
       name={input.name}
       maxLength={input.maxLength}
       required={input.mandatory}
+      // TODO: add more types
       type={control.type === 'DATE' ? 'date' : 'text'}
     />
   );

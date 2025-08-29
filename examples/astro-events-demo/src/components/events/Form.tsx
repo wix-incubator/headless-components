@@ -40,11 +40,11 @@ export function Form({ eventServiceConfig }: FormProps) {
               />
             </div>
           </FormPrimitive.ControlRepeater>
-        </FormPrimitive.Controls>
 
-        <FormPrimitive.SubmitTrigger className="w-full mt-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-          Register for Event
-        </FormPrimitive.SubmitTrigger>
+          <FormPrimitive.SubmitTrigger className="w-full mt-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+            Register for Event
+          </FormPrimitive.SubmitTrigger>
+        </FormPrimitive.Controls>
       </div>
     </FormPrimitive.Root>
   );

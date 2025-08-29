@@ -123,8 +123,8 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
 
-    const service = useService(EventServiceDefinition);
-    const event = service.event.get();
+    const eventService = useService(EventServiceDefinition);
+    const event = eventService.event.get();
     const image = event.mainImage;
 
     return (
@@ -180,8 +180,8 @@ export interface TitleProps {
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(EventServiceDefinition);
-  const event = service.event.get();
+  const eventService = useService(EventServiceDefinition);
+  const event = eventService.event.get();
   const title = event.title!;
 
   return (
@@ -240,8 +240,8 @@ export interface DateProps {
 export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
   const { asChild, children, className, format = 'short' } = props;
 
-  const service = useService(EventServiceDefinition);
-  const event = service.event.get();
+  const eventService = useService(EventServiceDefinition);
+  const event = eventService.event.get();
   const date = event.dateAndTimeSettings!.dateAndTimeTbd
     ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
     : format === 'short'
@@ -305,8 +305,8 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
   (props, ref) => {
     const { asChild, children, className, format = 'short' } = props;
 
-    const service = useService(EventServiceDefinition);
-    const event = service.event.get();
+    const eventService = useService(EventServiceDefinition);
+    const event = eventService.event.get();
     const location =
       event.location!.locationTbd || format === 'short'
         ? event.location!.name!
@@ -371,8 +371,8 @@ export const ShortDescription = React.forwardRef<
 >((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(EventServiceDefinition);
-  const event = service.event.get();
+  const eventService = useService(EventServiceDefinition);
+  const event = eventService.event.get();
   const shortDescription = event.shortDescription;
 
   if (!shortDescription) {
@@ -411,8 +411,8 @@ export interface DescriptionProps {}
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (_props, ref) => {
-    const service = useService(EventServiceDefinition);
-    const event = service.event.get();
+    const eventService = useService(EventServiceDefinition);
+    const event = eventService.event.get();
     const description = event.description as RichContent | undefined;
 
     if (!description || isRichContentEmpty(description)) {
@@ -486,8 +486,8 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const service = useService(EventServiceDefinition);
-    const event = service.event.get();
+    const eventService = useService(EventServiceDefinition);
+    const event = eventService.event.get();
     const eventSlug = event.slug;
 
     return (
