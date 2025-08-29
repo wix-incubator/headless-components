@@ -1,0 +1,17 @@
+---
+import { loadEventServiceConfig } from '@wix/headless-events/services';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FormPage from '../../../react-pages/form';
+
+const { slug } = Astro.params;
+
+// Load initial data server-side
+const eventServiceConfig = await loadEventServiceConfig(slug);
+---
+
+<BaseLayout>
+  <title>RSVP Form</title>
+  <meta name="description" content="RSVP Form" />
+
+  <FormPage client:load slot="body" eventServiceConfig={eventServiceConfig} />
+</BaseLayout>
