@@ -51,7 +51,7 @@ export const CheckoutService =
           const reservationResult = await orders.createReservation(eventId, {
             ticketQuantities: ticketQuantities.map(({quantity,ticketDefinitionId, priceOverride}) => {
               if (Number(quantity) > 0) {
-                return {ticketDefinitionId, quantity, ticketDetails: priceOverride ? new Array(quantity).fill({priceOverride}): null}
+                return {ticketDefinitionId, quantity, ticketDetails: priceOverride ? new Array(quantity).fill({priceOverride: priceOverride, quantity: 1}): null}
               }
               return null
             }).filter(Boolean) as orders.TicketReservationQuantity[]
