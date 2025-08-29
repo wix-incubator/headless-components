@@ -1,7 +1,7 @@
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import React, { HTMLInputTypeAttribute } from 'react';
+import React from 'react';
 import {
   FormControlService,
   FormControlServiceDefinition,
