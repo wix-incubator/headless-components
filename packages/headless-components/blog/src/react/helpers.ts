@@ -16,16 +16,27 @@ export function isValidChildren(
 /**
  * Helper function to create author name from member data
  */
-export function createAuthorName(
-  owner: members.Member | null | undefined,
-): string | undefined {
+export function createAuthorName(owner: members.Member | null | undefined): {
+  authorName: string;
+  authorAvatarInitials: string;
+} {
   const formattedFirstName = owner?.contact?.firstName?.trim();
   const formattedLastName = owner?.contact?.lastName?.trim();
   const nickname = owner?.profile?.nickname?.trim();
 
-  return (
+  const authorName =
     nickname ||
     `${formattedFirstName || ''} ${formattedLastName || ''}`.trim() ||
-    undefined
-  );
+    '';
+
+  const authorAvatarInitials = authorName
+    ?.split(' ')
+    .map((name) => name[0]?.toLocaleUpperCase())
+    .filter((char) => char && /[A-Z]/i.test(char))
+    .join('');
+
+  return {
+    authorName,
+    authorAvatarInitials,
+  };
 }
