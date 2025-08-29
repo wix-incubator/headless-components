@@ -103,6 +103,7 @@ export const BlogFeedService =
             pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
             categoryId: config.initialCategory?._id,
             excludePostIds: config.excludePostIds || [],
+            postIds: [],
           });
 
           if (loadMore) {
@@ -150,6 +151,7 @@ export type BlogFeedServiceConfigParams = {
   categorySlug?: string;
   pageSize?: number;
   excludePostIds?: (string | undefined)[];
+  postIds?: (string | undefined)[];
   sort?: QueryPostsSort[];
 };
 
@@ -164,6 +166,7 @@ export async function loadBlogFeedServiceConfig(
     },
   ];
   const excludePostIds = params.excludePostIds?.filter(nonNullable) || [];
+  const postIds = params.postIds?.filter(nonNullable) || [];
 
   try {
     let initialCategory: categories.Category | undefined;
@@ -184,6 +187,7 @@ export async function loadBlogFeedServiceConfig(
       pageSize,
       categoryId: initialCategory?._id,
       excludePostIds,
+      postIds,
     });
 
     return {
@@ -214,6 +218,7 @@ type FetchPostsParams = {
   pageSize: number;
   categoryId?: string;
   excludePostIds: string[];
+  postIds: string[];
 };
 
 async function fetchPosts(
@@ -227,6 +232,7 @@ async function fetchPosts(
     categoryId,
     pageSize = DEFAULT_PAGE_SIZE,
     excludePostIds,
+    postIds,
   } = params;
 
   let query = posts.queryPosts().limit(pageSize);
@@ -247,6 +253,10 @@ async function fetchPosts(
 
   if (categoryId) {
     query = query.hasSome('categoryIds', [categoryId]);
+  }
+
+  if (postIds.length) {
+    query = query.in('_id', postIds);
   }
 
   for (const excludePostId of excludePostIds || []) {
