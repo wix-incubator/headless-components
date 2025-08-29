@@ -72,38 +72,109 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   );
 });
 
-export interface PriceProps {
+export interface FixedPricingProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ price: string }>;
+  children?: AsChildChildren<{ value: string, currency: string }>;
   className?: string;
 }
 
-export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
+export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>((props, ref) => {
   const { asChild, children, className } = props;
 
   const service = useService(TicketServiceDefinition);
   const ticketDefinition = service.ticketDefinition.get();
 
-  let price = '';
-  if (ticketDefinition.pricingMethod?.free) {
-    price = '0';
-  } else if (ticketDefinition.pricingMethod?.fixedPrice) {
-    price = `${ticketDefinition.pricingMethod.fixedPrice.value} ${ticketDefinition.pricingMethod.fixedPrice.currency}`;
+  if (ticketDefinition.pricingMethod?.fixedPrice) {
+    const {value, currency} = ticketDefinition.pricingMethod.fixedPrice
+    const price = `${value} ${currency}`;
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketPrice}
+        customElement={children}
+        customElementProps={{ value, currency }}
+        content={price}
+      >
+        <span>{price}</span>
+      </AsChildSlot>
+    );
   }
 
-  return (
-    <AsChildSlot
+  return null;
+});
+
+export interface FreePricingProps {
+  asChild?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const FreePricing = React.forwardRef<HTMLElement, FreePricingProps>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const service = useService(TicketServiceDefinition);
+  const ticketDefinition = service.ticketDefinition.get();
+
+  if (ticketDefinition.pricingMethod?.free) {
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketPrice}
+        customElement={children}
+      >
+        <span>{children}</span>
+      </AsChildSlot>
+    );
+  }
+
+  return null;
+});
+
+export interface GuestPricingProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ min: string, currency: string }>;
+  className?: string;
+}
+
+export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const service = useService(TicketServiceDefinition);
+  const listService = useService(TicketListServiceDefinition);
+  const ticketDefinition = service.ticketDefinition.get();
+
+  if (ticketDefinition.pricingMethod?.guestPrice) {
+    const {value, currency} = ticketDefinition.pricingMethod.guestPrice
+
+    const onChange = (val: string) => {
+      console.log('onChange', val)
+      listService.setQuantity({ticketDefinitionId: ticketDefinition._id!, priceOverride: val});
+    }
+
+    return (
+      <AsChildSlot
       ref={ref}
       asChild={asChild}
       className={className}
       data-testid={TestIds.ticketDefinitionPrice}
       customElement={children}
-      customElementProps={{ price }}
-      content={price}
-    >
-      <span>{price}</span>
-    </AsChildSlot>
-  );
+      customElementProps={{ min: value, currency, onChange }}
+      type="number"
+      placeholder={`${value} ${currency}`}
+      onChange={(e: any) => onChange(e.target.value)}
+      min={value}
+      >
+        <input />
+      </AsChildSlot>
+    );
+  }
+
+  return null;
 });
 
 export interface DescriptionProps {
@@ -213,26 +284,25 @@ export interface QuantityProps {
   className?: string;
 }
 
+// TODO use common component
 export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
     const listService = useService(TicketListServiceDefinition);
     const service = useService(TicketServiceDefinition);
-    const ticketDefinition = service.ticketDefinition.get();
-    const id = ticketDefinition._id ?? '';
-    const quantities = listService.selectedQuantities.get();
-    const quantity = quantities[id] ?? 0;
-    const maxQuantity = listService.getMaxQuantity(id);
+    const ticketDefinitionId = service.ticketDefinition.get()._id ?? '';
+    const currentQuantity = listService.getCurrentSelectedQuantity(ticketDefinitionId)
+    const maxQuantity = listService.getMaxQuantity(ticketDefinitionId);
 
-    const increment = () => listService.incrementQuantity(id);
-    const decrement = () => listService.decrementQuantity(id);
-    const setQuantity = (n: number) => listService.setQuantity(id, n);
+    const increment = () => listService.incrementQuantity(ticketDefinitionId);
+    const decrement = () => listService.decrementQuantity(ticketDefinitionId);
+    const setQuantity = (quantity: number) => listService.setQuantity({ticketDefinitionId, quantity});
 
     const defaultUI = (
       <div>
         <button onClick={decrement}>-</button>
-        <span>{quantity}</span>
+        <span>{currentQuantity}</span>
         <button onClick={increment}>+</button>
       </div>
     );
@@ -244,13 +314,7 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
         className={className}
         data-testid={TestIds.ticketDefinitionQuantity}
         customElement={children}
-        customElementProps={{
-          quantity,
-          maxQuantity,
-          increment,
-          decrement,
-          setQuantity,
-        }}
+        customElementProps={{ quantity: currentQuantity, maxQuantity, increment, decrement, setQuantity }}
         content={defaultUI}
       >
         {defaultUI}

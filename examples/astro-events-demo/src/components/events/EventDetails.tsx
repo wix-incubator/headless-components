@@ -84,12 +84,13 @@ export function EventDetails({
               <div className="p-4 flex-grow">
                 <TicketDefinitionPrimitive.Name className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2" />
                 <TicketDefinitionPrimitive.Description className="text-sm text-gray-500 mb-3 line-clamp-3" />
-                <TicketDefinitionPrimitive.Price className="text-base font-medium text-gray-900 mb-2" />
+                <TicketDefinitionPrimitive.FixedPricing className="text-base font-medium text-gray-900 mb-2" />
+                <TicketDefinitionPrimitive.GuestPricing className="text-base font-medium text-gray-900 mb-2" />
                 <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
                   <span>
                     Remaining: <TicketDefinitionPrimitive.Remaining />
                   </span>
-                  <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium" />
+                  <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium">Sold Out</TicketDefinitionPrimitive.SoldOut>
                 </div>
               </div>
               <div className="p-4 border-t mt-auto">
@@ -122,73 +123,22 @@ export function EventDetails({
         </TicketsPickerPrimitive.TicketDefinitions>
         <TicketsPickerPrimitive.Checkout noTicketsErrorMessage="Please select at least one ticket">
           {({ isLoading, error, checkout, hasSelectedTickets }) => {
-            const service = useService(TicketListServiceDefinition);
-            const selectedQuantities = service.selectedQuantities.get();
-            const ticketDefinitions = service.ticketDefinitions.get();
-
-            let total = 0;
-            let currency = 'USD';
-            if (ticketDefinitions.length > 0) {
-              currency =
-                ticketDefinitions[0].pricingMethod?.fixedPrice?.currency ??
-                'USD';
-              for (const [id, qty] of Object.entries(selectedQuantities)) {
-                if (qty > 0) {
-                  const td = ticketDefinitions.find(t => t._id === id);
-                  if (td && td.pricingMethod?.fixedPrice) {
-                    total +=
-                      parseFloat(td.pricingMethod.fixedPrice.value ?? '0') *
-                      qty;
-                  }
-                }
-              }
-            }
 
             return (
               <div className="p-6 flex flex-col items-center">
                 {error && <p className="text-red-600 mb-4">{error}</p>}
-                <p className="text-lg font-bold mb-4">
-                  Total: {total.toFixed(2)} {currency}
-                </p>
                 <button
                   onClick={checkout}
                   disabled={isLoading || !hasSelectedTickets}
                   className={`px-6 py-3 rounded-lg text-white font-medium transition-colors ${isLoading || !hasSelectedTickets ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                 >
-                  {isLoading ? 'Processing...' : 'Proceed to Checkout'}
+                  {isLoading ? 'Processing.' : 'Proceed to Checkout'}
                 </button>
               </div>
             );
           }}
         </TicketsPickerPrimitive.Checkout>
       </TicketsPickerPrimitive.Root>
-      {/* <div className="my-8">
-        <h3 className="text-xl font-bold mb-4 text-gray-900">Other Events</h3>
-        <EventList.Root eventListServiceConfig={otherEventListConfig}>
-          <EventList.Events
-            emptyState={
-              <p className="text-center text-gray-600 py-8">
-                No other events available
-              </p>
-            }
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
-            <EventList.EventRepeater>
-              <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-                <EventPrimitive.Image className="h-48 w-full object-cover" />
-                <div className="p-4">
-                  <EventPrimitive.Title className="font-bold text-lg text-gray-900 mb-1" />
-                  <EventPrimitive.Date className="text-sm text-gray-600 mb-1" />
-                  <EventPrimitive.Location
-                    className="text-sm text-gray-600"
-                    format="full"
-                  />
-                </div>
-              </div>
-            </EventList.EventRepeater>
-          </EventList.Events>
-        </EventList.Root>
-      </div> */}
     </div>
   );
 }

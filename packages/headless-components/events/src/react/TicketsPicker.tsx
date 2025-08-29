@@ -4,6 +4,7 @@ import React from 'react';
 import {
   TicketListService,
   TicketListServiceDefinition,
+  TicketReservationQuantity,
   type TicketListServiceConfig,
 } from '../services/ticket-list-service.js';
 import * as TicketDefinition from './TicketDefinition.js';
@@ -15,7 +16,6 @@ import {
 import {
   CheckoutServiceDefinition,
   CheckoutService,
-  type TicketQuantity,
 } from '../services/checkout-service.js';
 
 enum TestIds {
@@ -29,7 +29,7 @@ enum TestIds {
  */
 export interface RootProps {
   ticketListServiceConfig: TicketListServiceConfig;
-  initialSelectedQuantities?: Record<string, number>;
+  initialSelectedQuantities?: TicketReservationQuantity[];
   eventServiceConfig: EventServiceConfig;
   children: React.ReactNode;
 }
@@ -239,11 +239,7 @@ export const Checkout = (props: CheckoutProps): React.ReactNode => {
   const event = eventService.event.get();
   const selectedQuantities = ticketService.selectedQuantities.get();
 
-  const ticketQuantities: TicketQuantity[] = Object.entries(selectedQuantities)
-    .filter(([_, qty]) => qty > 0)
-    .map(([id, quantity]) => ({ ticketDefinitionId: id, quantity }));
-
-  const hasSelectedTickets = ticketQuantities.length > 0;
+  const hasSelectedTickets = selectedQuantities.length > 0;
 
   const [localError, setLocalError] = React.useState<string | null>(null);
 
@@ -257,7 +253,7 @@ export const Checkout = (props: CheckoutProps): React.ReactNode => {
     await checkoutService.createCheckout(
       event._id!,
       event.slug!,
-      ticketQuantities,
+      selectedQuantities,
     );
   };
 

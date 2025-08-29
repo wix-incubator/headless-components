@@ -5,17 +5,24 @@ import { type TicketDefinition } from './ticket-service.js';
 
 export interface TicketListServiceAPI {
   ticketDefinitions: Signal<TicketDefinition[]>;
-  selectedQuantities: Signal<Record<string, number>>;
-  setQuantity: (ticketId: string, quantity: number) => void;
-  incrementQuantity: (ticketId: string) => void;
-  decrementQuantity: (ticketId: string) => void;
-  getMaxQuantity: (ticketId: string) => number;
-  isSoldOut: (ticketId: string) => boolean;
+  selectedQuantities: Signal<TicketReservationQuantity[]>;
+  setQuantity: (params: {ticketDefinitionId: string, quantity?: number, priceOverride?: string}) => void;
+  incrementQuantity: (ticketDefinitionId: string) => void;
+  decrementQuantity: (ticketDefinitionId: string) => void;
+  getMaxQuantity: (ticketDefinitionId: string) => number;
+  getCurrentSelectedQuantity: (ticketDefinitionId: string) => number;
+  isSoldOut: (ticketDefinitionId: string) => boolean;
+}
+
+export interface TicketReservationQuantity {
+  ticketDefinitionId?: string;
+  quantity?: number;
+  priceOverride?: string;
 }
 
 export interface TicketListServiceConfig {
   ticketDefinitions: TicketDefinition[];
-  initialSelectedQuantities?: Record<string, number>;
+  initialSelectedQuantities?: TicketReservationQuantity[];
 }
 
 export const TicketListServiceDefinition = defineService<TicketListServiceAPI, TicketListServiceConfig>('ticketList');
@@ -25,45 +32,67 @@ export const TicketListService = implementService.withConfig<TicketListServiceCo
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
-
     const ticketDefinitions: Signal<TicketDefinition[]> = signalsService.signal(config.ticketDefinitions);
-    const selectedQuantities: Signal<Record<string, number>> = signalsService.signal(config.initialSelectedQuantities ?? {});
+    const selectedQuantities: Signal<TicketReservationQuantity[]> = signalsService.signal(config.initialSelectedQuantities ?? []);
 
-    const findDef = (ticketId: string) => ticketDefinitions.get().find(d => d._id === ticketId);
+    const findTicketDefinition = (ticketDefinitionId: string) => ticketDefinitions.get().find(d => d._id === ticketDefinitionId);
 
-    const getMaxQuantity = (ticketId: string) => {
-      const def = findDef(ticketId);
+    const findTicketReservation = (ticketDefinitionId: string) => selectedQuantities.get().find(d => d.ticketDefinitionId === ticketDefinitionId);
 
-      return def?.limitPerCheckout || 0;
+    const getMaxQuantity = (ticketDefinitionId: string) => {
+      const ticketDefinition = findTicketDefinition(ticketDefinitionId);
+
+      return ticketDefinition?.limitPerCheckout || 0;
     };
 
-    const isSoldOut = (ticketId: string) => {
-      const def = findDef(ticketId);
-      if (!def) return true;
+    const getCurrentSelectedQuantity = (ticketDefinitionId: string) => {
+      const selectedQuantity = findTicketReservation(ticketDefinitionId);
 
-      return def.limitPerCheckout === 0
+      return selectedQuantity?.quantity ?? 0
     };
 
-    const setQuantity = (ticketId: string, quantity: number) => {
+    const getCurrentPriceOverride = (ticketDefinitionId: string):string => {
+      const selectedQuantity = findTicketReservation(ticketDefinitionId);
+
+      return selectedQuantity?.priceOverride ?? ''
+    };
+
+    const isSoldOut = (ticketDefinitionId: string) =>
+      getMaxQuantity(ticketDefinitionId) === 0
+
+    const setQuantity = ({
+      ticketDefinitionId,
+      quantity = getCurrentSelectedQuantity(ticketDefinitionId),
+      priceOverride = getCurrentPriceOverride(ticketDefinitionId)
+    }: {ticketDefinitionId: string, quantity?: number, priceOverride?: string}) => {
+      const max = getMaxQuantity(ticketDefinitionId);
+
+      const newQuantity = Math.max(0, Math.min(quantity, max));
+      const newSelectedQuantity: TicketReservationQuantity = {ticketDefinitionId, quantity: newQuantity, priceOverride: priceOverride ? priceOverride : undefined}
+
+      const newSelectedQuantities = [
+        ...selectedQuantities.get().filter(selected => selected.ticketDefinitionId !== ticketDefinitionId),
+        newSelectedQuantity
+      ]
+
+      console.log(newSelectedQuantities)
+
+      selectedQuantities.set(newSelectedQuantities);
+    };
+
+    const incrementQuantity = (ticketDefinitionId: string, priceOverride?: string) => {
       const current = selectedQuantities.get();
-      const max = getMaxQuantity(ticketId);
-      const newQty = Math.max(0, Math.min(quantity, max));
-      selectedQuantities.set({ ...current, [ticketId]: newQty });
+      const qty = current.find(val => val.ticketDefinitionId === ticketDefinitionId)?.quantity ?? 0;
+      setQuantity({ticketDefinitionId: ticketDefinitionId, quantity: qty + 1, priceOverride: priceOverride});
     };
 
-    const incrementQuantity = (ticketId: string) => {
+    const decrementQuantity = (ticketDefinitionId: string, priceOverride?: string) => {
       const current = selectedQuantities.get();
-      const qty = current[ticketId] ?? 0;
-      setQuantity(ticketId, qty + 1);
+      const qty = current.find(val => val.ticketDefinitionId === ticketDefinitionId)?.quantity ?? 0;
+      setQuantity({ticketDefinitionId: ticketDefinitionId, quantity: qty - 1, priceOverride: priceOverride});
     };
 
-    const decrementQuantity = (ticketId: string) => {
-      const current = selectedQuantities.get();
-      const qty = current[ticketId] ?? 0;
-      setQuantity(ticketId, qty - 1);
-    };
-
-    return { ticketDefinitions, selectedQuantities, setQuantity, incrementQuantity, decrementQuantity, getMaxQuantity, isSoldOut };
+    return { ticketDefinitions, selectedQuantities, setQuantity, incrementQuantity, decrementQuantity, getMaxQuantity, isSoldOut, getCurrentSelectedQuantity };
   },
 );
 
@@ -71,5 +100,6 @@ export async function loadTicketListServiceConfig(eventId: string): Promise<Tick
   const query = { filter: { eventId } };
   const response = await ticketDefinitionsV2.queryAvailableTicketDefinitions(query);
   const ticketDefinitions = response.ticketDefinitions ?? [];
+
   return { ticketDefinitions };
 }

@@ -9,7 +9,7 @@ import EventDetailsPage from '../../../react-pages/event-details';
 
 const { slug } = Astro.params;
 
-if (!slug) {
+if (!slug || slug.includes('site-bi-navigation')) {
   return Astro.redirect('/');
 }
 

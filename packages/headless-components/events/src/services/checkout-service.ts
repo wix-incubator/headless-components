@@ -5,6 +5,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import {orders} from '@wix/events';
 import { redirects } from '@wix/redirects';
+import { TicketReservationQuantity } from './ticket-list-service.js';
 
 /**
  * API interface for the Checkout service
@@ -16,14 +17,9 @@ export interface CheckoutServiceAPI {
   createCheckout: (
     eventId: string,
     eventSlug: string,
-    ticketQuantities: TicketQuantity[],
+    ticketQuantities: TicketReservationQuantity[],
   ) => Promise<void>;
 }
-
-export type TicketQuantity = {
-  ticketDefinitionId: string;
-  quantity: number;
-};
 
 export const CheckoutServiceDefinition =
   defineService<CheckoutServiceAPI>('checkout');
@@ -47,14 +43,18 @@ export const CheckoutService =
       const createCheckout = async (
         eventId: string,
         eventSlug: string,
-        ticketQuantities: TicketQuantity[],
+        ticketQuantities: TicketReservationQuantity[],
       ) => {
         try {
           isLoading.set(true);
           error.set(null);
-
           const reservationResult = await orders.createReservation(eventId, {
-            ticketQuantities,
+            ticketQuantities: ticketQuantities.map(({quantity,ticketDefinitionId, priceOverride}) => {
+              if (Number(quantity) > 0) {
+                return {ticketDefinitionId, quantity, ticketDetails: priceOverride ? new Array(quantity).fill({priceOverride}): null}
+              }
+              return null
+            }).filter(Boolean) as orders.TicketReservationQuantity[]
           });
 
           if (!reservationResult._id) {
@@ -81,6 +81,7 @@ export const CheckoutService =
             throw new Error('Failed to create redirect session');
           }
         } catch (err) {
+          isLoading.set(false)
           error.set(
             err instanceof Error ? err.message : 'Failed to create checkout',
           );
