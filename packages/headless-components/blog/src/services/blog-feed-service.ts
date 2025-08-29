@@ -292,9 +292,9 @@ async function fetchPostEntities(posts: posts.Post[]): Promise<{
   categories: Record<string, categories.Category | null | undefined>;
   tags: Record<string, tags.BlogTag | null | undefined>;
 }> {
-  const memberIdsToResolve = flatMapByKey(posts, 'memberId');
-  const categoryIdsToResolve = flatMapByKey(posts, 'categoryIds');
-  const tagIdsToResolve = flatMapByKey(posts, 'tagIds');
+  const memberIdsToResolve = uniqueFlatMapByKey(posts, 'memberId');
+  const categoryIdsToResolve = uniqueFlatMapByKey(posts, 'categoryIds');
+  const tagIdsToResolve = uniqueFlatMapByKey(posts, 'tagIds');
 
   const memberPromises = memberIdsToResolve.map((memberId) => {
     return members
@@ -362,7 +362,7 @@ function nonNullable<T>(value: T): value is NonNullable<T> {
   return !!value;
 }
 
-function flatMapByKey<T extends Record<string, any>, K extends keyof T>(
+function uniqueFlatMapByKey<T extends Record<string, any>, K extends keyof T>(
   collection: T[],
   key: K,
 ): Array<NonNullable<T[K]> extends Array<infer U> ? U : NonNullable<T[K]>> {
