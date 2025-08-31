@@ -120,7 +120,7 @@ export interface CategoryFilterProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Label for the button */
+  /** Label for the selected category display */
   label?: string;
 }
 
@@ -391,6 +391,9 @@ export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>(
  * ```tsx
  * // Default usage
  * <CategoryFilter className="category-filter" />
+ *
+ * // With custom label
+ * <CategoryFilter label="Current Category:" />
  *
  * // Custom rendering with forwardRef
  * <CategoryFilter asChild>

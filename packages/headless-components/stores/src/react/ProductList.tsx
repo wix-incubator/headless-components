@@ -568,17 +568,17 @@ export interface FilterProps {
  * @example
  * ```tsx
  * // Default usage
- * <ProductList.Filter className="filter-container">
+ * <ProductList.Filter.Root className="filter-container">
  *   <Filter.FilterOptions>
  *     <Filter.FilterOptionRepeater>
  *       <Filter.FilterOption.Label />
  *       <Filter.FilterOption.MultiFilter />
  *     </Filter.FilterOptionRepeater>
  *   </Filter.FilterOptions>
- * </ProductList.Filter>
+ * </ProductList.Filter.Root>
  *
  * // With custom container using asChild
- * <ProductList.Filter asChild>
+ * <ProductList.Filter.Root asChild>
  *   <aside className="filter-sidebar">
  *     <Filter.FilterOptions>
  *       <Filter.FilterOptionRepeater>
@@ -587,30 +587,32 @@ export interface FilterProps {
  *       </Filter.FilterOptionRepeater>
  *     </Filter.FilterOptions>
  *   </aside>
- * </ProductList.Filter>
+ * </ProductList.Filter.Root>
  * ```
  */
-export const Filter = React.forwardRef<HTMLElement, FilterProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
+const FilterRoot = React.forwardRef<HTMLElement, FilterProps>((props, ref) => {
+  const { asChild, children, className } = props;
 
-    return (
-      <CoreProductListFilters.Filter asChild={asChild} className={className}>
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.productListFilter}
-          customElement={children}
-        >
-          <div>{children}</div>
-        </AsChildSlot>
-      </CoreProductListFilters.Filter>
-    );
-  },
-);
+  return (
+    <CoreProductListFilters.FilterRoot asChild={asChild} className={className}>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.productListFilter}
+        customElement={children}
+      >
+        <div>{children}</div>
+      </AsChildSlot>
+    </CoreProductListFilters.FilterRoot>
+  );
+});
 
-Filter.displayName = 'ProductList.Filter';
+FilterRoot.displayName = 'ProductList.Filter';
+
+export const Filter = {
+  Root: FilterRoot,
+};
 
 /**
  * Props for ProductList FilterResetTrigger component
@@ -632,12 +634,16 @@ export interface FilterResetTriggerProps {
 /**
  * Reset trigger component for clearing all applied filters.
  * Provides reset functionality and filter state to custom render functions.
+ * Only renders when filters are applied.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
  * <ProductList.FilterResetTrigger className="reset-filters-btn" />
+ *
+ * // With custom label
+ * <ProductList.FilterResetTrigger label="Clear Filters" />
  *
  * // Custom rendering with forwardRef
  * <ProductList.FilterResetTrigger asChild>
