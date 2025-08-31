@@ -9,13 +9,9 @@ import { productsV3 } from '@wix/stores';
 import * as CoreProductList from './core/ProductList.js';
 import * as CoreProductListPagination from './core/ProductListPagination.js';
 import { ProductListSort as ProductListSortPrimitive } from './core/ProductListSort.js';
+import * as CoreProductListFilters from './core/ProductListFilters.js';
 import * as Product from './Product.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-
-export {
-  Filter,
-  ResetTrigger as FilterResetTrigger,
-} from './core/ProductListFilters.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -24,6 +20,8 @@ enum TestIds {
   productListLoadMore = 'product-list-load-more',
   productListTotalsDisplayed = 'product-list-totals-displayed',
   productListSort = 'product-list-sort',
+  productListFilter = 'product-list-filter',
+  productListFilterResetTrigger = 'product-list-filter-reset-trigger',
 }
 
 /**
@@ -549,3 +547,150 @@ export const Sort = React.forwardRef<HTMLElement, SortProps>(
     );
   },
 );
+
+/**
+ * Props for ProductList Filter component
+ */
+export interface FilterProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components that will have access to filter functionality */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Filter component that provides comprehensive filtering functionality for product lists.
+ * This component acts as a provider that integrates with the ProductList service.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <ProductList.Filter className="filter-container">
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.Label />
+ *       <Filter.FilterOption.MultiFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </ProductList.Filter>
+ *
+ * // With custom container using asChild
+ * <ProductList.Filter asChild>
+ *   <aside className="filter-sidebar">
+ *     <Filter.FilterOptions>
+ *       <Filter.FilterOptionRepeater>
+ *         <Filter.FilterOption.Label />
+ *         <Filter.FilterOption.MultiFilter />
+ *       </Filter.FilterOptionRepeater>
+ *     </Filter.FilterOptions>
+ *   </aside>
+ * </ProductList.Filter>
+ * ```
+ */
+export const Filter = React.forwardRef<HTMLElement, FilterProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    return (
+      <CoreProductListFilters.Filter asChild={asChild} className={className}>
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.productListFilter}
+          customElement={children}
+        >
+          <div>{children}</div>
+        </AsChildSlot>
+      </CoreProductListFilters.Filter>
+    );
+  },
+);
+
+Filter.displayName = 'ProductList.Filter';
+
+/**
+ * Props for ProductList FilterResetTrigger component
+ */
+export interface FilterResetTriggerProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    resetFilters: () => void;
+    isFiltered: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the button */
+  label?: string;
+}
+
+/**
+ * Reset trigger component for clearing all applied filters.
+ * Provides reset functionality and filter state to custom render functions.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <ProductList.FilterResetTrigger className="reset-filters-btn" />
+ *
+ * // Custom rendering with forwardRef
+ * <ProductList.FilterResetTrigger asChild>
+ *   {React.forwardRef(({resetFilters, isFiltered, ...props}, ref) => (
+ *     <button
+ *       ref={ref}
+ *       {...props}
+ *       onClick={resetFilters}
+ *       disabled={!isFiltered}
+ *       className="custom-reset-button disabled:opacity-50"
+ *     >
+ *       Reset All Filters
+ *     </button>
+ *   ))}
+ * </ProductList.FilterResetTrigger>
+ * ```
+ */
+export const FilterResetTrigger = React.forwardRef<
+  HTMLButtonElement,
+  FilterResetTriggerProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+  const label = props.label || 'Reset All Filters';
+
+  return (
+    <CoreProductListFilters.ResetTrigger>
+      {({ resetFilters, isFiltered }) => {
+        if (!isFiltered) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={resetFilters}
+            disabled={!isFiltered}
+            data-testid={TestIds.productListFilterResetTrigger}
+            data-filtered={isFiltered ? 'true' : 'false'}
+            customElement={children}
+            customElementProps={{
+              resetFilters,
+              isFiltered,
+            }}
+            content={label}
+          >
+            <button disabled={!isFiltered}>{label}</button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreProductListFilters.ResetTrigger>
+  );
+});
+
+FilterResetTrigger.displayName = 'ProductList.FilterResetTrigger';

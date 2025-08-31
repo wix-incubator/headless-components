@@ -71,7 +71,7 @@ export const ProductGridContent = ({
           </ProductListPrimitive.Error>
 
           {/* Filter Status Bar */}
-          <ProductList.FilterResetTrigger>
+          <ProductList.FilterResetTrigger asChild>
             {({ resetFilters, isFiltered }) =>
               isFiltered && (
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 filter-status-bar rounded-xl p-4 mb-6">

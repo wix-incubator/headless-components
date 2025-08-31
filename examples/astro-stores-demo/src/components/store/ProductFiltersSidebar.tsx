@@ -19,7 +19,7 @@ export const ProductFiltersSidebar: React.FC<ProductFiltersSidebarProps> = ({
           <div
             className={`bg-surface-primary backdrop-blur-sm rounded-xl p-6 border border-brand-subtle ${className}`}
           >
-            <ProductList.Filter>
+            <ProductList.Filter asChild>
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-semibold text-content-primary flex items-center gap-2">
@@ -48,8 +48,9 @@ export const ProductFiltersSidebar: React.FC<ProductFiltersSidebarProps> = ({
                     className="lg:hidden text-content-muted hover:text-content-primary transition-colors"
                   >
                     <svg
-                      className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''
-                        }`}
+                      className={`w-5 h-5 transition-transform ${
+                        isExpanded ? 'rotate-180' : ''
+                      }`}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -66,7 +67,9 @@ export const ProductFiltersSidebar: React.FC<ProductFiltersSidebarProps> = ({
               </div>
 
               {/* Filter Content - Consolidated All Filters */}
-              <div className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}>
+              <div
+                className={`space-y-6 ${isExpanded ? 'block' : 'hidden lg:block'}`}
+              >
                 <Filter.FilterOptions>
                   <Filter.FilterOptionRepeater>
                     <Filter.FilterOption.Label />
