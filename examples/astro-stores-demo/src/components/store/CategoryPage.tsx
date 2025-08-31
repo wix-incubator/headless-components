@@ -142,6 +142,8 @@ export const ProductGridContent = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             <ProductList.ProductRepeater>
               <div className="relative bg-surface-card backdrop-blur-sm rounded-xl p-4 border border-surface-primary hover:border-surface-hover transition-all duration-200 hover:scale-105 group h-full flex flex-col">
+                <Product.Ribbon className="bg-purple-500 text-white font-bold px-3 py-1 rounded-full text-sm absolute top-2 z-10" />
+
                 <div className="aspect-square bg-surface-primary rounded-lg mb-4 overflow-hidden relative">
                   <Product.MediaGallery>
                     <StyledMediaGallery.Viewport className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />

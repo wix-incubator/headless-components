@@ -72,6 +72,7 @@ enum TestIds {
   productStock = 'product-stock',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
+  productVariantSelectorReset = 'product-variant-selector-reset',
   productVariantOption = 'product-variant-option',
   productVariant = 'product-variant',
   productVariantSku = 'product-variant-sku',
@@ -1608,6 +1609,52 @@ export const ProductQuantityRaw = React.forwardRef<
         );
       }}
     </ProductVariantSelector.Stock>
+  );
+});
+
+export interface ProductVariantSelectorResetProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    reset: () => void;
+    hasSelections: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the reset button */
+  label?: string;
+}
+
+export const ProductVariantSelectorReset = React.forwardRef<
+  HTMLButtonElement,
+  ProductVariantSelectorResetProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Reset>
+      {(renderProps) => {
+        if (!renderProps.hasSelections) {
+          return null;
+        }
+
+        const label = props.label || 'Reset Selections';
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            customElement={children}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantSelectorReset}
+            customElementProps={renderProps}
+          >
+            <button onClick={renderProps.reset}>{label}</button>
+          </AsChildSlot>
+        );
+      }}
+    </ProductVariantSelector.Reset>
   );
 });
 

@@ -130,20 +130,7 @@ export default function ProductDetails({
                   </Product.VariantOptionRepeater>
                 </Product.VariantOptions>
 
-                <ProductVariantSelectorPrimitive.Reset>
-                  {({ reset, hasSelections }) =>
-                    hasSelections && (
-                      <div className="pt-4">
-                        <button
-                          onClick={reset}
-                          className="text-sm text-brand-primary hover:text-brand-light transition-colors"
-                        >
-                          Reset Selections
-                        </button>
-                      </div>
-                    )
-                  }
-                </ProductVariantSelectorPrimitive.Reset>
+                <Product.ProductVariantSelectorReset className="text-sm text-brand-primary hover:text-brand-light transition-colors" />
               </div>
             </Product.Variants>
 
