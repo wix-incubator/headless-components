@@ -9,12 +9,15 @@ interface ProductActionButtonsProps {
 export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
   showBuyNow = false,
 }) => {
+  const btnClass =
+    'w-full disabled:opacity-50 disabled:cursor-not-allowed font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 btn-primary';
+
   return (
-    <div className="flex gap-3">
+    <>
       {/* Add to Cart Button */}
       <Product.ProductActionAddToCart
         label="Add to Cart"
-        className="flex-1 text-content-primary font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 data-[disabled]:hover:scale-100 relative data-[disabled]:bg-surface-primary data-[disabled]:cursor-not-allowed btn-primary"
+        className={btnClass}
         loadingState={
           <>
             <span className="opacity-0">Add to Cart</span>
@@ -47,7 +50,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
       {/* Pre-Order Button */}
       <Product.ProductActionPreOrder
         label="Pre Order"
-        className="flex-1 text-content-primary font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 data-[disabled]:hover:scale-100 relative data-[disabled]:bg-surface-primary data-[disabled]:cursor-not-allowed btn-primary"
+        className={btnClass}
         loadingState={
           <>
             <span className="opacity-0">Pre Order</span>
@@ -108,7 +111,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
           }
         />
       )}
-    </div>
+    </>
   );
 };
 
