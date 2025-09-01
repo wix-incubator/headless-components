@@ -551,10 +551,10 @@ const ActionAddToCart = React.forwardRef<
 );
 
 /**
- * Props for the CheckoutCoreTrigger component.
+ * Props for the CheckoutTrigger component.
  * Wraps CheckoutCore.Trigger for use in other packages.
  */
-export interface CheckoutCoreTriggerProps {
+export interface CheckoutTriggerProps {
   /** Content to render inside the trigger */
   children: (props: {
     createCheckout: (lineItems: LineItem[]) => Promise<void>;
@@ -564,24 +564,24 @@ export interface CheckoutCoreTriggerProps {
 }
 
 /**
- * CheckoutCoreTrigger component that wraps CheckoutCore.Trigger.
+ * CheckoutTrigger component that wraps CheckoutCore.Trigger.
  * This wrapper provides a consistent interface for other packages to use.
  *
  * @component
  * @example
  * ```tsx
- * <CheckoutCoreTrigger lineItems={lineItems}>
+ * <CheckoutTrigger lineItems={lineItems}>
  *   {({ createCheckout, isLoading, error }) => (
  *     <button onClick={() => createCheckout(lineItems)}>
  *       {isLoading ? 'Processing...' : 'Checkout'}
  *     </button>
  *   )}
- * </CheckoutCoreTrigger>
+ * </CheckoutTrigger>
  * ```
  */
 export const CheckoutTrigger = React.forwardRef<
   HTMLDivElement,
-  CheckoutCoreTriggerProps
+  CheckoutTriggerProps
 >((props, ref) => {
   const { children } = props;
 
