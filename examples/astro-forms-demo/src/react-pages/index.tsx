@@ -1,7 +1,6 @@
 import { Form } from '@wix/headless-forms/react';
 import { type FormServiceConfig } from '@wix/headless-forms/services';
 
-import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import '../styles/theme-1.css';
 
 interface FormsPageProps {
@@ -9,17 +8,16 @@ interface FormsPageProps {
 }
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
+
   return (
-        <KitchensinkLayout>
           <Form.Root form={formServiceConfig.form}>
             <Form.Container>
               {({ fields }) => (
                <form>
-                <input type="text" value="A form, weeeee!!!" />
+                <h1>This is form {formServiceConfig.form._id}</h1>
                </form>
               )}
             </Form.Container>
           </Form.Root>
-        </KitchensinkLayout>
    );
 }

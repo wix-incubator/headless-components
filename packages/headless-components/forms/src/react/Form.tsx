@@ -1,6 +1,6 @@
 import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
-import { Field, Form } from '@wix/auto_sdk_forms_forms';
+import { type Field, type Form } from '@wix/auto_sdk_forms_forms';
 import { createServicesMap } from '@wix/services-manager';
 
 import {
