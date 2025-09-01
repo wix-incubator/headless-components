@@ -216,10 +216,8 @@ export const ProductGridContent = ({
                           <Option.Choices>
                             <div className="flex flex-wrap gap-1">
                               <Option.ChoiceRepeater>
-                                <>
-                                  <Choice.Color className="w-6 h-6 rounded-full border-2 transition-colors cursor-pointer border-color-swatch hover:border-color-swatch-hover data-[selected='true']:border-brand-primary data-[selected='true']:shadow-md data-[selected='true']:ring-1 data-[selected='true']:ring-brand-primary/30 data-[out-of-stock='true']:grayscale data-[out-of-stock='true']:opacity-50" />
-                                  <Choice.Text className="inline-flex items-center px-2 py-1 text-xs rounded border transition-colors cursor-pointer bg-surface-primary text-content-secondary border-brand-medium hover:border-brand-primary data-[selected='true']:bg-brand-primary data-[selected='true']:text-content-primary data-[selected='true']:border-brand-primary data-[out-of-stock='true']:opacity-50 data-[out-of-stock='true']:line-through" />
-                                </>
+                                <Choice.Color className="w-7 h-7 rounded-full border-2 transition-all duration-200 border-color-swatch hover:border-color-swatch-hover hover:scale-105 data-[selected='true']:border-accent-strong data-[selected='true']:ring-1 data-[selected='true']:scale-115 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
+                                <Choice.Text className="text-xs inline-flex items-center px-2 py-1 border transition-all duration-200 border-color-swatch hover:border-color-swatch-hover hover:scale-105 data-[selected='true']:border-accent-strong data-[selected='true']:shadow-lg data-[selected='true']:bg-primary data-[selected='true']:scale-115 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
                               </Option.ChoiceRepeater>
                             </div>
                           </Option.Choices>
