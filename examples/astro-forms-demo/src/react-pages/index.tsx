@@ -14,7 +14,7 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
             <Form.Container>
               {({ fields }) => (
                <form>
-                <h1>{formServiceConfig.form.name} ({formServiceConfig.form.formFields?.length} fields)</h1>
+                <h1>{formServiceConfig.form.name} ({formServiceConfig.form._id})</h1>
                 {fields.map(field => (
                   <div key={field?.fieldType}>{field?.fieldType}</div>
                 ))}
