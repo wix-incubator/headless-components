@@ -3,7 +3,7 @@ import { Event } from '../services/event-service.js';
 import { FormControl } from '../services/form-control-service.js';
 
 export const flattenFormControls = (controls: FormControl[]): FormControl[] =>
-  controls!.flatMap((control) =>
+  controls.flatMap((control) =>
     control.type === 'GUEST_CONTROL'
       ? [control]
       : control.inputs!.flatMap((input) => {
@@ -19,7 +19,7 @@ export const flattenFormControls = (controls: FormControl[]): FormControl[] =>
                 label: label.label,
                 name:
                   control.type === 'ADDRESS_FULL'
-                    ? `${control._id!}_${label.name}`
+                    ? `${control._id}_${label.name}`
                     : label.name,
               },
             ],
@@ -31,7 +31,7 @@ export const getRequiredRsvpData = (
   event: Event,
   formData: FormData,
 ): Pick<
-  rsvpV2.CreateRsvpRequest['rsvp'],
+  rsvpV2.Rsvp,
   'firstName' | 'lastName' | 'email' | 'additionalGuestDetails'
 > => {
   const guestControl = event.form?.controls?.find(
@@ -41,7 +41,7 @@ export const getRequiredRsvpData = (
   const guestNamesInput = guestControl?.inputs?.[1];
 
   const guestCount = guestCountInput
-    ? Number(formData.get(guestCountInput.name!))
+    ? Number(formData.get(guestCountInput.name!)) || 0
     : 0;
   const guestNames = guestNamesInput?.mandatory
     ? Array.from({ length: guestCount }).map(
@@ -101,11 +101,20 @@ export const getFormResponse = (
     inputValues: Object.entries(data)
       .filter(([, values]) => values.some((value) => !!value))
       .map(([inputName, values]) => {
+        const controlType = event.form?.controls?.find(
+          (control) => control._id === inputName,
+        )?.type;
+
         const inputValue: rsvpV2.InputValue = {
           inputName,
         };
 
-        if (values.length > 1 || inputName.includes('address')) {
+        if (
+          values.length > 1 ||
+          controlType === 'ADDRESS_FULL' ||
+          controlType === 'ADDRESS_SHORT' ||
+          controlType === 'CHECKBOX'
+        ) {
           inputValue.values = values;
         } else {
           inputValue.value = values[0];

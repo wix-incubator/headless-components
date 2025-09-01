@@ -59,10 +59,9 @@ export const Controls = React.forwardRef<HTMLElement, ControlsProps>(
     const attributes = {
       className,
       'data-testid': TestIds.formControls,
-      onSubmit: async (e: React.FormEvent<HTMLFormElement>) => {
+      onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        await formService.submit(new FormData(e.currentTarget));
+        formService.submit(new FormData(e.currentTarget));
       },
     };
 
@@ -94,7 +93,6 @@ export const ControlRepeater = (props: ControlRepeaterProps) => {
   return (
     <>
       {controls.map((control, index) => (
-        // TODO: use correct key
         <Control.Root key={index} control={control}>
           {children}
         </Control.Root>

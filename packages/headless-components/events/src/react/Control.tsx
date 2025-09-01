@@ -206,11 +206,10 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
 
   if (control.type === 'GUEST_CONTROL') {
     const guestCountInput = control.inputs![0]!;
-    const guestNamesInput = control.inputs![1];
+    const guestNamesInput = control.inputs![1]!;
 
     const guestCountOptions = guestCountInput.options ?? [];
     const singleGuest = guestCountOptions.length === 2;
-    const guestNamesRequired = !!guestNamesInput?.mandatory;
 
     return (
       <div
@@ -245,7 +244,7 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
             ))}
           </select>
         )}
-        {guestNamesRequired && !!guestCount
+        {guestNamesInput.mandatory && !!guestCount
           ? Array.from({ length: guestCount }).map((_, index) => (
               <div key={index}>
                 <label htmlFor={`${guestNamesInput.name}_${index}_firstName`}>

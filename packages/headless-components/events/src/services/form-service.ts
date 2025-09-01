@@ -18,7 +18,7 @@ export interface FormServiceConfig {}
 export const FormServiceDefinition = defineService<
   FormServiceAPI,
   FormServiceConfig
->('formService');
+>('form');
 
 export const FormService = implementService.withConfig<FormServiceConfig>()(
   FormServiceDefinition,
