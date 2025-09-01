@@ -4,12 +4,11 @@ import {
   TicketDefinition as TicketDefinitionPrimitive,
 } from '@wix/headless-events/react';
 import {
-  TicketListServiceDefinition,
   type EventServiceConfig,
   type EventListServiceConfig,
   type TicketListServiceConfig,
 } from '@wix/headless-events/services';
-import { useService } from '@wix/services-manager-react';
+import { EventList } from './EventList';
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
@@ -19,38 +18,13 @@ interface EventDetailsProps {
 
 export function EventDetails({
   eventServiceConfig,
-  // eventListServiceConfig,
+  eventListServiceConfig,
   ticketListServiceConfig,
 }: EventDetailsProps) {
-  const EventInfo = () => {
-    return (
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4 text-gray-900">Event Info</h3>
-        <table className="w-full text-left">
-          <tbody>
-            <tr>
-              <th className="pr-4 py-2 font-medium text-gray-900">Date:</th>
-              <td className="py-2">
-                <EventPrimitive.Date />
-              </td>
-            </tr>
-            <tr>
-              <th className="pr-4 py-2 font-medium text-gray-900">Location:</th>
-              <td className="py-2">
-                <EventPrimitive.Location format="full" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  };
-
-  // const currentEventId = eventServiceConfig.event._id;
-  // const otherEvents = eventListServiceConfig.events.filter(
-  //   e => e._id !== currentEventId
-  // );
-  // const otherEventListConfig = { events: otherEvents };
+  const currentEventId = eventServiceConfig.event._id;
+  const otherEvents = eventListServiceConfig.events
+    .filter(event => event._id !== currentEventId)
+    .slice(0, 3);
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -60,7 +34,29 @@ export function EventDetails({
         </div>
         <EventPrimitive.Title className="text-3xl font-bold text-gray-900 mb-4" />
         <EventPrimitive.ShortDescription className="text-gray-700 mb-8" />
-        <EventInfo />
+        <div className="mb-8">
+          <h3 className="text-xl font-semibold mb-4 text-gray-900">
+            Event Info
+          </h3>
+          <table className="w-full text-left">
+            <tbody>
+              <tr>
+                <th className="pr-4 py-2 font-medium text-gray-900">Date:</th>
+                <td className="py-2">
+                  <EventPrimitive.Date />
+                </td>
+              </tr>
+              <tr>
+                <th className="pr-4 py-2 font-medium text-gray-900">
+                  Location:
+                </th>
+                <td className="py-2">
+                  <EventPrimitive.Location format="full" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <h3 className="text-xl font-semibold mb-4 text-gray-900">About</h3>
         <EventPrimitive.Description />
       </EventPrimitive.Root>
@@ -90,7 +86,9 @@ export function EventDetails({
                   <span>
                     Remaining: <TicketDefinitionPrimitive.Remaining />
                   </span>
-                  <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium">Sold Out</TicketDefinitionPrimitive.SoldOut>
+                  <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium">
+                    Sold Out
+                  </TicketDefinitionPrimitive.SoldOut>
                 </div>
               </div>
               <div className="p-4 border-t mt-auto">
@@ -123,7 +121,6 @@ export function EventDetails({
         </TicketsPickerPrimitive.TicketDefinitions>
         <TicketsPickerPrimitive.Checkout noTicketsErrorMessage="Please select at least one ticket">
           {({ isLoading, error, checkout, hasSelectedTickets }) => {
-
             return (
               <div className="p-6 flex flex-col items-center">
                 {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -139,6 +136,17 @@ export function EventDetails({
           }}
         </TicketsPickerPrimitive.Checkout>
       </TicketsPickerPrimitive.Root>
+      <h3 className="text-xl font-bold mb-4 mt-8 text-gray-900">
+        Other Events
+      </h3>
+      <EventList
+        eventListServiceConfig={{
+          events: otherEvents,
+          pageSize: 3,
+          currentPage: 0,
+          totalPages: 1,
+        }}
+      />
     </div>
   );
 }
