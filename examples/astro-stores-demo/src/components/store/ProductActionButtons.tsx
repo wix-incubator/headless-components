@@ -1,14 +1,16 @@
 import React from 'react';
 import { Product } from '@wix/headless-stores/react';
 
-interface ProductActionButtonsProps {}
+interface ProductActionButtonsProps {
+  showBuyNow?: boolean;
+}
 
 // Main Product Action Buttons Container
 export const ProductActionButtons: React.FC<ProductActionButtonsProps> = () => {
   return (
     <div className="flex gap-3">
       {/* Add to Cart Button */}
-      <Product.Action.AddToCart
+      <Product.ProductActionAddToCart
         label="Add to Cart"
         className="flex-1 text-content-primary font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 data-[disabled]:hover:scale-100 relative data-[disabled]:bg-surface-primary data-[disabled]:cursor-not-allowed btn-primary"
         loadingState={
@@ -41,7 +43,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = () => {
       />
 
       {/* Pre-Order Button */}
-      <Product.Action.PreOrder
+      <Product.ProductActionPreOrder
         label="Pre Order"
         className="flex-1 text-content-primary font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 data-[disabled]:hover:scale-100 relative data-[disabled]:bg-surface-primary data-[disabled]:cursor-not-allowed btn-primary"
         loadingState={
@@ -74,7 +76,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = () => {
       />
 
       {/* Buy Now Button */}
-      <Product.Action.BuyNow
+      <Product.ProductActionBuyNow
         label="Buy Now"
         className="flex-1 btn-warning text-content-primary font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 data-[disabled]:hover:scale-100 data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
         loadingState={

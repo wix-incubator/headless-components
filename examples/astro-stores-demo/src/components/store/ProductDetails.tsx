@@ -185,7 +185,7 @@ export default function ProductDetails({
 
             {/* Add to Cart */}
             <div className="space-y-4">
-              <ProductActionButtons />
+              <ProductActionButtons showBuyNow={true} />
             </div>
 
             {/* Product Details */}
