@@ -141,6 +141,7 @@ export const ProductGridContent = ({
                         </div>
                       </Product.VariantOptionRepeater>
                     </div>
+                    <Product.ProductVariantSelectorReset className="text-sm text-brand-primary hover:text-brand-light transition-colors" />
                   </Product.VariantOptions>
                 </Product.Variants>
 
