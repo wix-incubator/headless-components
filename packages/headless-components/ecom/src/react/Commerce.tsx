@@ -69,7 +69,7 @@
 import { Slot } from '@radix-ui/react-slot';
 import { Checkout as CoreCurrentCartCheckout } from './core/CurrentCart.js';
 import {
-  Trigger as CoreCheckout,
+  Trigger as CoreCheckoutTrigger,
   Root as CoreCheckoutRoot,
 } from './core/Checkout.js';
 import React from 'react';
@@ -288,6 +288,8 @@ export interface ActionAddToCartProps
           onClick: () => Promise<void>;
           /** Line items that will be processed */
           lineItems: LineItem[];
+          /** Error message if any */
+          error?: string | null;
         }
       >;
   /** Text or content to display when not loading */
@@ -379,7 +381,7 @@ const ActionBuyNow = React.forwardRef<
     ref,
   ) => {
     return (
-      <CoreCheckout>
+      <CoreCheckoutTrigger>
         {(renderProps) => {
           const onClick = () => {
             return renderProps.createCheckout(lineItems);
@@ -391,6 +393,7 @@ const ActionBuyNow = React.forwardRef<
                 disabled: renderProps.isLoading || disabled,
                 isLoading: renderProps.isLoading,
                 lineItems,
+                error: renderProps.error,
               },
               ref,
             );
@@ -415,7 +418,7 @@ const ActionBuyNow = React.forwardRef<
             />
           );
         }}
-      </CoreCheckout>
+      </CoreCheckoutTrigger>
     );
   },
 );
@@ -546,6 +549,58 @@ const ActionAddToCart = React.forwardRef<
     );
   },
 );
+
+/**
+ * Props for the CheckoutCoreTrigger component.
+ * Wraps CheckoutCore.Trigger for use in other packages.
+ */
+export interface CheckoutCoreTriggerProps {
+  /** Content to render inside the trigger */
+  children: (props: {
+    createCheckout: (lineItems: LineItem[]) => Promise<void>;
+    isLoading: boolean;
+    error: string | null;
+  }) => React.ReactNode;
+}
+
+/**
+ * CheckoutCoreTrigger component that wraps CheckoutCore.Trigger.
+ * This wrapper provides a consistent interface for other packages to use.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CheckoutCoreTrigger lineItems={lineItems}>
+ *   {({ createCheckout, isLoading, error }) => (
+ *     <button onClick={() => createCheckout(lineItems)}>
+ *       {isLoading ? 'Processing...' : 'Checkout'}
+ *     </button>
+ *   )}
+ * </CheckoutCoreTrigger>
+ * ```
+ */
+export const CheckoutTrigger = React.forwardRef<
+  HTMLDivElement,
+  CheckoutCoreTriggerProps
+>((props, ref) => {
+  const { children } = props;
+
+  return (
+    <CoreCheckoutTrigger>
+      {(renderProps) => {
+        return (
+          <div ref={ref}>
+            {children({
+              createCheckout: renderProps.createCheckout,
+              isLoading: renderProps.isLoading,
+              error: renderProps.error,
+            })}
+          </div>
+        );
+      }}
+    </CoreCheckoutTrigger>
+  );
+});
 
 /**
  * Namespace containing all commerce action components.

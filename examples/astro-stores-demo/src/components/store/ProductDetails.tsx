@@ -8,8 +8,6 @@ import { Product, Option, Choice } from '@wix/headless-stores/react';
 import { ProductActionButtons } from './ProductActionButtons';
 import { Cart } from '@wix/headless-ecom/react';
 
-import { getStockStatusMessage } from './product-status-enums';
-
 // This component is no longer needed as we'll use Choice.FreeText directly
 
 export default function ProductDetails({
