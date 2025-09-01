@@ -60,7 +60,6 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
-
 /**
  * Render props for § component
  */
@@ -95,8 +94,8 @@ export interface ContainerProps {
  * ```
  */
 export const Container = React.forwardRef<HTMLElement, ContainerProps>(
-  ({children}) => {
-    const formService= useService(FormServiceDefinition);
+  ({ children }) => {
+    const formService = useService(FormServiceDefinition);
 
     const fields = formService.form.get()?.formFields || [];
 
