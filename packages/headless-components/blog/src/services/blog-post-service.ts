@@ -14,25 +14,19 @@ import {
 
 export const BlogPostServiceDefinition = defineService<{
   post: Signal<PostWithResolvedFields>;
-  recentPosts: Signal<PostWithResolvedFields[]>;
 }>('blogPostService');
 
 export type BlogPostServiceAPI = ServiceAPI<typeof BlogPostServiceDefinition>;
 
 export const BlogPostService = implementService.withConfig<{
   post: PostWithResolvedFields;
-  recentPosts: PostWithResolvedFields[];
 }>()(BlogPostServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
 
   const postSignal = signalsService.signal<PostWithResolvedFields>(config.post);
-  const recentPostsSignal = signalsService.signal<PostWithResolvedFields[]>(
-    config.recentPosts,
-  );
 
   return {
     post: postSignal,
-    recentPosts: recentPostsSignal,
   };
 });
 
@@ -47,51 +41,40 @@ export type BlogPostServiceConfigResult =
     }
   | { type: 'notFound' };
 
+type BlogPostServiceConfigParams = {
+  postSlug: string;
+};
+
 export async function loadBlogPostServiceConfig(
-  postSlug?: string,
-  recentPostCount: number = 3,
+  params: BlogPostServiceConfigParams,
 ): Promise<BlogPostServiceConfigResult> {
+  const { postSlug } = params;
+
+  if (!postSlug) {
+    return { type: 'notFound' };
+  }
+
   try {
-    if (postSlug) {
-      const [getPostBySlugResult, recentPostsResult] = await Promise.all([
-        posts.getPostBySlug(postSlug, {
-          fieldsets: ['RICH_CONTENT', 'SEO'],
-        }),
-        recentPostCount > 0
-          ? posts
-              .queryPosts()
-              .descending('firstPublishedDate')
-              .ne('slug', postSlug)
-              .limit(recentPostCount)
-              .find()
-          : undefined,
-      ]);
+    const { post } = await posts.getPostBySlug(postSlug, {
+      fieldsets: ['RICH_CONTENT', 'SEO'],
+    });
 
-      const post = getPostBySlugResult.post;
-
-      if (!post) {
-        return { type: 'notFound' };
-      }
-
-      const [enhancedPost, ...enhancedRecentPosts] = await enhancePosts([
-        post,
-        ...(recentPostsResult?.items || []),
-      ]);
-
-      if (!enhancedPost) {
-        return { type: 'notFound' };
-      }
-
-      return {
-        type: 'success',
-        config: {
-          post: enhancedPost,
-          recentPosts: enhancedRecentPosts,
-        },
-      };
+    if (!post) {
+      return { type: 'notFound' };
     }
 
-    return { type: 'notFound' };
+    const [enhancedPost] = await enhancePosts([post]);
+
+    if (!enhancedPost) {
+      return { type: 'notFound' };
+    }
+
+    return {
+      type: 'success',
+      config: {
+        post: enhancedPost,
+      },
+    };
   } catch (error) {
     console.error('Failed to load initial post for slug', postSlug, error);
     return { type: 'notFound' };

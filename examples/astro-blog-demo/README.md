@@ -192,7 +192,9 @@ const blogFeedServiceConfig = await loadBlogFeedServiceConfig({
 The application uses discriminated union results for proper 404 handling:
 
 ```typescript
-const blogPostServiceConfigResult = await loadBlogPostServiceConfig(slug);
+const blogPostServiceConfigResult = await loadBlogPostServiceConfig({
+  postSlug: Astro.params.slug,
+});
 
 if (blogPostServiceConfigResult.type === 'notFound') {
   return Astro.rewrite('/404');

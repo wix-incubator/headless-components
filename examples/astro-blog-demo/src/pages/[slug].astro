@@ -15,7 +15,7 @@ if (!slug) {
   return Astro.redirect('/');
 }
 
-const blogPostServiceConfigResult = await loadBlogPostServiceConfig(slug);
+const blogPostServiceConfigResult = await loadBlogPostServiceConfig({ postSlug: slug});
 
 if (blogPostServiceConfigResult.type === 'notFound') {
   return Astro.rewrite('/404');
