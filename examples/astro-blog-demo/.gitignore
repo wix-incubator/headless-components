@@ -31,6 +31,9 @@ pnpm-debug.log*
 # Cache
 .turbo/
 
+# SSL certificates (mkcert)
+*.pem
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
