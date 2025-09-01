@@ -1,0 +1,5 @@
+/* using tailwindcss as a base for styles */
+@import 'tailwindcss';
+@import '@wix/wix-vibe-plugins/plugins-theme.css';
+@import '@wix/wix-vibe-plugins/plugins-vars.css';
+

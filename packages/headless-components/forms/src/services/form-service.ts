@@ -3,7 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { type Form } from '@wix/auto_sdk_forms_forms';
+import { type Form, getForm } from '@wix/auto_sdk_forms_forms';
 
 export interface FormServiceAPI {
   form: Signal<Form>;
@@ -27,3 +27,13 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     return { form };
   },
 );
+
+export async function loadFormServiceConfig(
+  id: string,
+): Promise<FormServiceConfig> {
+  const form = await getForm(id);
+
+  return {
+    form,
+  };
+}
