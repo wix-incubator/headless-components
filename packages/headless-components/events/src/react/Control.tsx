@@ -85,6 +85,8 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
   const input = control.inputs![0]!;
   const options = input.options ?? [];
 
+  const [guestCount, setGuestCount] = React.useState<number>(0);
+
   if (asChild) {
     return (
       <AsChildSlot
@@ -168,48 +170,125 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
 
   if (control.type === 'DROPDOWN') {
     return (
-      <select
-        ref={ref as React.Ref<HTMLSelectElement>}
+      <div
+        ref={ref as React.Ref<HTMLDivElement>}
         className={className}
         data-testid={TestIds.controlField}
-        id={input.name}
-        name={input.name}
       >
-        {!input.mandatory && <option value="" />}
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
+        <select id={input.name} name={input.name}>
+          {!input.mandatory && <option value="" />}
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
     );
   }
 
   if (control.type === 'TEXTAREA') {
     return (
-      <textarea
-        ref={ref as React.Ref<HTMLTextAreaElement>}
+      <div
+        ref={ref as React.Ref<HTMLDivElement>}
         className={className}
         data-testid={TestIds.controlField}
-        id={input.name}
-        name={input.name}
-        maxLength={input.maxLength}
-        required={input.mandatory}
-      />
+      >
+        <textarea
+          id={input.name}
+          name={input.name}
+          maxLength={input.maxLength}
+          required={input.mandatory}
+        />
+      </div>
+    );
+  }
+
+  if (control.type === 'GUEST_CONTROL') {
+    const guestCountInput = control.inputs![0]!;
+    const guestNamesInput = control.inputs![1];
+
+    const guestCountOptions = guestCountInput.options ?? [];
+    const singleGuest = guestCountOptions.length === 2;
+    const guestNamesRequired = !!guestNamesInput?.mandatory;
+
+    return (
+      <div
+        ref={ref as React.Ref<HTMLDivElement>}
+        className={className}
+        data-testid={TestIds.controlField}
+      >
+        {singleGuest ? (
+          <div data-type="checkbox-option">
+            <input
+              type="checkbox"
+              name={guestCountInput.name}
+              id={guestCountInput.name}
+              value="1"
+              onChange={(event) => setGuestCount(event.target.checked ? 1 : 0)}
+            />
+            <label htmlFor={guestCountInput.name}>
+              {guestCountInput.label}
+            </label>
+          </div>
+        ) : (
+          <select
+            id={guestCountInput.name}
+            name={guestCountInput.name}
+            value={guestCount}
+            onChange={(event) => setGuestCount(Number(event.target.value))}
+          >
+            {guestCountOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        )}
+        {guestNamesRequired && !!guestCount
+          ? Array.from({ length: guestCount }).map((_, index) => (
+              <div key={index}>
+                <label htmlFor={`${guestNamesInput.name}_${index}_firstName`}>
+                  {guestNamesInput.additionalLabels?.['firstName'] ?? ''}
+                </label>
+                <input
+                  required
+                  type="text"
+                  name={`${guestNamesInput.name}_${index}_firstName`}
+                  id={`${guestNamesInput.name}_${index}_firstName`}
+                  maxLength={guestNamesInput.maxLength}
+                />
+                <label htmlFor={`${guestNamesInput.name}_${index}_lastName`}>
+                  {guestNamesInput.additionalLabels?.['lastName'] ?? ''}
+                </label>
+                <input
+                  required
+                  type="text"
+                  name={`${guestNamesInput.name}_${index}_lastName`}
+                  id={`${guestNamesInput.name}_${index}_lastName`}
+                  maxLength={guestNamesInput.maxLength}
+                />
+              </div>
+            ))
+          : null}
+      </div>
     );
   }
 
   return (
-    <input
-      ref={ref as React.Ref<HTMLInputElement>}
+    <div
+      ref={ref as React.Ref<HTMLDivElement>}
       className={className}
       data-testid={TestIds.controlField}
-      id={input.name}
-      name={input.name}
-      maxLength={input.maxLength}
-      required={input.mandatory}
-      type={getInputType(control)}
-    />
+    >
+      <input
+        id={input.name}
+        name={input.name}
+        maxLength={input.maxLength}
+        required={input.mandatory}
+        type={getInputType(control)}
+      />
+    </div>
   );
 });
 

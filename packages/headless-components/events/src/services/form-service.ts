@@ -4,7 +4,7 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 import { rsvpV2 } from '@wix/events';
-import { getFormResponse } from '../utils/form.js';
+import { getFormResponse, getRequiredRsvpData } from '../utils/form.js';
 import { EventServiceDefinition } from './event-service.js';
 
 export interface FormServiceAPI {
@@ -38,11 +38,9 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       try {
         await rsvpV2.createRsvp({
           eventId: event._id,
-          firstName: formData.get('firstName') as string,
-          lastName: formData.get('lastName') as string,
-          email: formData.get('email') as string,
-          form: getFormResponse(formData),
           status: 'YES',
+          form: getFormResponse(event, formData),
+          ...getRequiredRsvpData(event, formData),
         });
       } catch (err) {
         error.set(err instanceof Error ? err.message : 'Unknown error');
