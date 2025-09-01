@@ -216,6 +216,7 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
         ref={ref as React.Ref<HTMLDivElement>}
         className={className}
         data-testid={TestIds.controlField}
+        data-type="guest-control"
       >
         {singleGuest ? (
           <div data-type="checkbox-option">
@@ -246,7 +247,7 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
         )}
         {guestNamesInput.mandatory && !!guestCount
           ? Array.from({ length: guestCount }).map((_, index) => (
-              <div key={index}>
+              <React.Fragment key={index}>
                 <label htmlFor={`${guestNamesInput.name}_${index}_firstName`}>
                   {guestNamesInput.additionalLabels?.['firstName'] ?? ''}
                 </label>
@@ -267,7 +268,7 @@ export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
                   id={`${guestNamesInput.name}_${index}_lastName`}
                   maxLength={guestNamesInput.maxLength}
                 />
-              </div>
+              </React.Fragment>
             ))
           : null}
       </div>

@@ -20,26 +20,7 @@ export function Form({ eventServiceConfig }: FormProps) {
           <FormPrimitive.ControlRepeater>
             <div className="space-y-2">
               <ControlPrimitive.Label className="block text-sm font-medium text-white" />
-              <ControlPrimitive.Field
-                className={`
-                  [&>[type="text"]]:w-full [&>[type="text"]]:px-4 [&>[type="text"]]:py-3 [&>[type="text"]]:bg-white/20 [&>[type="text"]]:border [&>[type="text"]]:border-white/30 [&>[type="text"]]:rounded-lg [&>[type="text"]]:text-white [&>[type="text"]]:placeholder-white/50 [&>[type="text"]]:focus:outline-none [&>[type="text"]]:focus:ring-2 [&>[type="text"]]:focus:ring-blue-400 [&>[type="text"]]:focus:border-transparent
-                  [&>[type="email"]]:w-full [&>[type="email"]]:px-4 [&>[type="email"]]:py-3 [&>[type="email"]]:bg-white/20 [&>[type="email"]]:border [&>[type="email"]]:border-white/30 [&>[type="email"]]:rounded-lg [&>[type="email"]]:text-white [&>[type="email"]]:placeholder-white/50 [&>[type="email"]]:focus:outline-none [&>[type="email"]]:focus:ring-2 [&>[type="email"]]:focus:ring-blue-400 [&>[type="email"]]:focus:border-transparent
-                  [&>[type="tel"]]:w-full [&>[type="tel"]]:px-4 [&>[type="tel"]]:py-3 [&>[type="tel"]]:bg-white/20 [&>[type="tel"]]:border [&>[type="tel"]]:border-white/30 [&>[type="tel"]]:rounded-lg [&>[type="tel"]]:text-white [&>[type="tel"]]:placeholder-white/50 [&>[type="tel"]]:focus:outline-none [&>[type="tel"]]:focus:ring-2 [&>[type="tel"]]:focus:ring-blue-400 [&>[type="tel"]]:focus:border-transparent
-                  [&>[type="date"]]:w-full [&>[type="date"]]:px-4 [&>[type="date"]]:py-3 [&>[type="date"]]:bg-white/20 [&>[type="date"]]:border [&>[type="date"]]:border-white/30 [&>[type="date"]]:rounded-lg [&>[type="date"]]:text-white [&>[type="date"]]:placeholder-white/50 [&>[type="date"]]:focus:outline-none [&>[type="date"]]:focus:ring-2 [&>[type="date"]]:focus:ring-blue-400 [&>[type="date"]]:focus:border-transparent
-                  [&>textarea]:w-full [&>textarea]:px-4 [&>textarea]:py-3 [&>textarea]:bg-white/20 [&>textarea]:border [&>textarea]:border-white/30 [&>textarea]:rounded-lg [&>textarea]:text-white [&>textarea]:placeholder-white/50 [&>textarea]:focus:outline-none [&>textarea]:focus:ring-2 [&>textarea]:focus:ring-blue-400 [&>textarea]:focus:border-transparent
-                  [&>select]:w-full [&>select]:px-4 [&>select]:py-3 [&>select]:bg-white/20 [&>select]:border [&>select]:border-white/30 [&>select]:rounded-lg [&>select]:text-white [&>select]:placeholder-white/50 [&>select]:focus:outline-none [&>select]:focus:ring-2 [&>select]:focus:ring-blue-400 [&>select]:focus:border-transparent
-
-                  [&[data-type="checkbox"]]:space-y-4
-                  [&>[data-type="checkbox-option"]]:flex [&>[data-type="checkbox-option"]]:items-center
-                  [&>[data-type="checkbox-option"]_input]:w-5 [&>[data-type="checkbox-option"]_input]:h-5 [&>[data-type="checkbox-option"]_input]:focus:outline-none [&>[data-type="checkbox-option"]_input]:focus:ring-2 [&>[data-type="checkbox-option"]_input]:focus:ring-blue-400
-                  [&>[data-type="checkbox-option"]_label]:ml-3 [&>[data-type="checkbox-option"]_label]:text-white [&>[data-type="checkbox-option"]_label]:text-sm [&>[data-type="checkbox-option"]_label]:font-medium [&>[data-type="checkbox-option"]_label]:cursor-pointer
-
-                  [&[data-type="radio"]]:space-y-4
-                  [&>[data-type="radio-option"]]:flex [&>[data-type="radio-option"]]:items-center
-                  [&>[data-type="radio-option"]_input]:w-5 [&>[data-type="radio-option"]_input]:h-5 [&>[data-type="radio-option"]_input]:focus:outline-none [&>[data-type="radio-option"]_input]:focus:ring-2 [&>[data-type="radio-option"]_input]:focus:ring-blue-400
-                  [&>[data-type="radio-option"]_label]:ml-3 [&>[data-type="radio-option"]_label]:text-white [&>[data-type="radio-option"]_label]:text-sm [&>[data-type="radio-option"]_label]:font-medium [&>[data-type="radio-option"]_label]:cursor-pointer
-                `}
-              />
+              <ControlPrimitive.Field className="form-field" />
             </div>
           </FormPrimitive.ControlRepeater>
 
