@@ -33,8 +33,7 @@ import {
   type Event,
 } from '../services/event-service.js';
 import '@wix/ricos/css/ricos-viewer.global.css';
-import '@wix/ricos/css/plugin-hashtag-viewer.global.css';
-import '@wix/ricos/css/plugin-spoiler-viewer.global.css';
+import '@wix/ricos/css/all-plugins-viewer.css';
 
 enum TestIds {
   eventImage = 'event-image',
@@ -398,7 +397,14 @@ export const ShortDescription = React.forwardRef<
 /**
  * Props for the Event Description component.
  */
-export interface DescriptionProps {}
+export interface DescriptionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ description: RichContent }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the event description following the documented API.
@@ -408,10 +414,19 @@ export interface DescriptionProps {}
  * ```tsx
  * // Default usage
  * <Event.Description />
+ *
+ * // asChild with react component
+ * <Event.Description asChild>
+ *   {React.forwardRef(({ description, ...props }, ref) => (
+ *     <RicosViewer ref={ref} content={description} plugins={plugins} />
+ *   ))}
+ * </Event.Description>
  * ```
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
-  (_props, ref) => {
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
     const eventService = useService(EventServiceDefinition);
     const event = eventService.event.get();
     const description = event.description as RichContent | undefined;
@@ -421,35 +436,43 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
     }
 
     return (
-      <RicosViewer
-        ref={ref as React.Ref<RicosViewer>}
-        content={description}
-        plugins={[
-          pluginAudioViewer(),
-          pluginCodeBlockViewer(),
-          pluginCollapsibleListViewer(),
-          pluginDividerViewer(),
-          pluginEmojiViewer(),
-          pluginFileUploadViewer(),
-          pluginGalleryViewer(),
-          pluginGiphyViewer(),
-          pluginHashtagViewer(),
-          pluginHtmlViewer(),
-          pluginImageViewer(),
-          pluginIndentViewer(),
-          pluginLineSpacingViewer(),
-          pluginLinkViewer(),
-          pluginLinkPreviewViewer({
-            exposeEmbedButtons: [
-              LinkPreviewProviders.Instagram,
-              LinkPreviewProviders.Twitter,
-              LinkPreviewProviders.TikTok,
-            ],
-          }),
-          pluginSpoilerViewer(),
-          pluginVideoViewer(),
-        ]}
-      />
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventDescription}
+        customElement={children}
+        customElementProps={{ description }}
+      >
+        <RicosViewer
+          content={description}
+          plugins={[
+            pluginAudioViewer(),
+            pluginCodeBlockViewer(),
+            pluginCollapsibleListViewer(),
+            pluginDividerViewer(),
+            pluginEmojiViewer(),
+            pluginFileUploadViewer(),
+            pluginGalleryViewer(),
+            pluginGiphyViewer(),
+            pluginHashtagViewer(),
+            pluginHtmlViewer(),
+            pluginImageViewer(),
+            pluginIndentViewer(),
+            pluginLineSpacingViewer(),
+            pluginLinkViewer(),
+            pluginLinkPreviewViewer({
+              exposeEmbedButtons: [
+                LinkPreviewProviders.Instagram,
+                LinkPreviewProviders.Twitter,
+                LinkPreviewProviders.TikTok,
+              ],
+            }),
+            pluginSpoilerViewer(),
+            pluginVideoViewer(),
+          ]}
+        />
+      </AsChildSlot>
     );
   },
 );
