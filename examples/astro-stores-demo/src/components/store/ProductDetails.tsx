@@ -3,18 +3,10 @@ import React from 'react';
 
 import { productsV3 } from '@wix/stores';
 
-import {
-  ProductVariantSelector as ProductVariantSelectorPrimitive,
-  SelectedVariant as SelectedVariantPrimitive,
-  Product,
-  Option,
-  Choice,
-} from '@wix/headless-stores/react';
+import { Product, Option, Choice } from '@wix/headless-stores/react';
 
 import { ProductActionButtons } from './ProductActionButtons';
 import { Cart } from '@wix/headless-ecom/react';
-
-import { getStockStatusMessage } from './product-status-enums';
 
 // This component is no longer needed as we'll use Choice.FreeText directly
 
@@ -73,20 +65,6 @@ export default function ProductDetails({
                   )}
                 </Product.CompareAtPrice>
               </div>
-              {isQuickView && (
-                <SelectedVariantPrimitive.SKU>
-                  {({ sku }) =>
-                    sku && (
-                      <>
-                        <br />
-                        <div className="text-base text-content-muted">
-                          SKU: {sku}
-                        </div>
-                      </>
-                    )
-                  }
-                </SelectedVariantPrimitive.SKU>
-              )}
             </div>
 
             {/* Product Description */}
@@ -119,10 +97,8 @@ export default function ProductDetails({
                       <Option.Choices>
                         <div className="flex flex-wrap gap-3">
                           <Option.ChoiceRepeater>
-                            <>
-                              <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all duration-200 border-color-swatch hover:border-color-swatch-hover hover:scale-105 data-[selected='true']:border-brand-primary data-[selected='true']:shadow-lg data-[selected='true']:scale-110 data-[selected='true']:ring-2 data-[selected='true']:ring-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
-                              <Choice.Text className="px-4 py-2 border rounded-lg transition-all duration-200 product-option-inactive data-[selected='true']:product-option-active disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400" />
-                            </>
+                            <Choice.Color className="w-10 h-10 rounded-full border-2 transition-all duration-200 border-color-swatch hover:border-color-swatch-hover hover:scale-105 data-[selected='true']:border-accent-strong data-[selected='true']:ring-1 data-[selected='true']:scale-115 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
+                            <Choice.Text className="text-lg inline-flex items-center px-2 py-1 border transition-all duration-200 border-color-swatch hover:border-color-swatch-hover hover:scale-105 data-[selected='true']:border-accent-strong data-[selected='true']:shadow-lg data-[selected='true']:bg-primary data-[selected='true']:scale-115 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale" />
                           </Option.ChoiceRepeater>
                         </div>
                       </Option.Choices>
@@ -130,20 +106,7 @@ export default function ProductDetails({
                   </Product.VariantOptionRepeater>
                 </Product.VariantOptions>
 
-                <ProductVariantSelectorPrimitive.Reset>
-                  {({ reset, hasSelections }) =>
-                    hasSelections && (
-                      <div className="pt-4">
-                        <button
-                          onClick={reset}
-                          className="text-sm text-brand-primary hover:text-brand-light transition-colors"
-                        >
-                          Reset Selections
-                        </button>
-                      </div>
-                    )
-                  }
-                </ProductVariantSelectorPrimitive.Reset>
+                <Product.ProductVariantSelectorReset className="text-sm text-brand-primary hover:text-brand-light transition-colors" />
               </div>
             </Product.Variants>
 
@@ -220,70 +183,17 @@ export default function ProductDetails({
 
             {/* Add to Cart */}
             <div className="space-y-4">
-              <SelectedVariantPrimitive.Actions>
-                {({ error, isPreOrderEnabled, preOrderMessage, inStock }) => (
-                  <div className="space-y-4">
-                    {error && (
-                      <div className="bg-status-danger-light border border-status-danger rounded-lg p-3">
-                        <p className="text-status-error text-sm">{error}</p>
-                      </div>
-                    )}
-                    {!inStock && preOrderMessage && isPreOrderEnabled && (
-                      <div className="bg-status-info-light border border-status-info rounded-lg p-3">
-                        <p className="text-status-info text-sm">
-                          {preOrderMessage}
-                        </p>
-                      </div>
-                    )}
+              <ProductActionButtons showBuyNow={true} />
 
-                    <ProductActionButtons />
-                  </div>
-                )}
-              </SelectedVariantPrimitive.Actions>
-
-              {/* Stock Status */}
-              <ProductVariantSelectorPrimitive.Stock>
-                {({
-                  inStock,
-                  isPreOrderEnabled,
-                  availabilityStatus,
-                  availableQuantity,
-                  trackInventory,
-                  currentVariantId,
-                }) => {
-                  const displayMessage = getStockStatusMessage(
-                    availabilityStatus,
-                    isPreOrderEnabled
-                  );
-                  return (
-                    (!!availabilityStatus || currentVariantId) && (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-3 h-3 rounded-full ${
-                            inStock || isPreOrderEnabled
-                              ? 'status-dot-success'
-                              : 'status-dot-danger'
-                          }`}
-                        ></div>
-                        <span
-                          className={`text-sm ${
-                            inStock || isPreOrderEnabled
-                              ? 'text-status-success'
-                              : 'text-status-error'
-                          }`}
-                        >
-                          {displayMessage}
-                          {trackInventory && availableQuantity !== null && (
-                            <span className="text-content-muted ml-1">
-                              ({availableQuantity} available)
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    )
-                  );
+              <Product.ProductVariant.Stock
+                labels={{
+                  inStock: 'In Stock',
+                  limitedStock: 'In Stock',
+                  outOfStock: 'Out of Stock',
+                  preOrder: 'Available for Pre-order',
                 }}
-              </ProductVariantSelectorPrimitive.Stock>
+                className="flex items-center gap-2 data-[state='out-of-stock']:text-status-error data-[state='in-stock']:text-status-success data-[state='limited-stock']:text-status-success data-[state='pre-order']:text-status-success"
+              />
             </div>
 
             {/* Product Details */}
