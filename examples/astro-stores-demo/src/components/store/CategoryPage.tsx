@@ -57,6 +57,8 @@ export const ProductGridContent = ({
 
         {/* Main Content Area */}
         <div className="flex-1 min-w-0">
+          <ProductList.Error />
+
           {/* Filter Status Bar */}
           <ProductList.FilterResetTrigger asChild>
             {React.forwardRef(
