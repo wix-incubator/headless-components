@@ -461,7 +461,7 @@ export interface RsvpButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ rsvp: () => void }>;
+  children?: AsChildChildren<{ event: Event }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
@@ -484,7 +484,7 @@ export interface RsvpButtonProps {
  *
  * // asChild with react component
  * <Event.RsvpButton asChild>
- *   {React.forwardRef(({ rsvp, ...props }, ref) => (
+ *   {React.forwardRef(({ event, ...props }, ref) => (
  *     <button ref={ref} {...props}>
  *       RSVP
  *     </button>
@@ -498,11 +498,6 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
 
     const eventService = useService(EventServiceDefinition);
     const event = eventService.event.get();
-    const eventSlug = event.slug;
-
-    const rsvp = () => {
-      window.location.href = `/events/${eventSlug}`;
-    };
 
     return (
       <AsChildSlot
@@ -511,8 +506,7 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
         className={className}
         data-testid={TestIds.eventRsvpButton}
         customElement={children}
-        customElementProps={{ rsvp }}
-        onClick={rsvp}
+        customElementProps={{ event }}
       >
         <button>{label}</button>
       </AsChildSlot>

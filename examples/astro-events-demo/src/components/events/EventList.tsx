@@ -55,9 +55,19 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
 
               {/* RSVP Button */}
               <EventPrimitive.RsvpButton
+                asChild
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 mt-auto"
-                label="RSVP"
-              />
+              >
+                {({ event }) => (
+                  <button
+                    onClick={() => {
+                      window.location.href = `/events/${event.slug}`;
+                    }}
+                  >
+                    RSVP
+                  </button>
+                )}
+              </EventPrimitive.RsvpButton>
             </div>
           </div>
         </EventListPrimitive.EventRepeater>
