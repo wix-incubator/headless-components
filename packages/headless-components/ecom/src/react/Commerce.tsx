@@ -582,20 +582,20 @@ export interface CheckoutTriggerProps {
 export const CheckoutTrigger = React.forwardRef<
   HTMLDivElement,
   CheckoutTriggerProps
->((props) => {
+>((props, ref) => {
   const { children } = props;
 
   return (
     <CoreCheckoutTrigger>
       {(renderProps) => {
         return (
-          <React.Fragment>
+          <div ref={ref}>
             {children({
               createCheckout: renderProps.createCheckout,
               isLoading: renderProps.isLoading,
               error: renderProps.error,
             })}
-          </React.Fragment>
+          </div>
         );
       }}
     </CoreCheckoutTrigger>
