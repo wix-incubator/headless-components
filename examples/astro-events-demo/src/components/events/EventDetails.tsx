@@ -22,8 +22,10 @@ export function EventDetails({
   ticketListServiceConfig,
 }: EventDetailsProps) {
   const currentEventId = eventServiceConfig.event._id;
-  const otherEvents = eventListServiceConfig.events
-    .filter(event => event._id !== currentEventId)
+  const otherUpcomingEvents = eventListServiceConfig.events
+    .filter(
+      event => event._id !== currentEventId && event.status === 'UPCOMING'
+    )
     .slice(0, 3);
 
   return (
@@ -137,11 +139,11 @@ export function EventDetails({
         </TicketsPickerPrimitive.Checkout>
       </TicketsPickerPrimitive.Root>
       <h3 className="text-xl font-bold mb-4 mt-8 text-gray-900">
-        Other Events
+        Upcoming Events
       </h3>
       <EventList
         eventListServiceConfig={{
-          events: otherEvents,
+          events: otherUpcomingEvents,
           pageSize: 3,
           currentPage: 0,
           totalPages: 1,

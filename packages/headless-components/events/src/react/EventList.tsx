@@ -1,4 +1,4 @@
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -43,7 +43,7 @@ export interface RootProps {
  *           <Event.Date />
  *           <Event.Location />
  *           <Event.Description />
- *           <Event.RsvpButton>RSVP</Event.RsvpButton>
+ *           <Event.RsvpButton label="RSVP" />
  *         </EventList.EventRepeater>
  *       </EventList.Events>
  *     </EventList.Root>
@@ -167,10 +167,15 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
 export interface LoadMoreTriggerProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Content to display inside the load more button */
-  children: React.ReactNode;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    isLoading: boolean;
+    loadMoreEvents: () => void;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** The label to display inside the button */
+  label?: string;
 }
 
 /**
@@ -179,8 +184,21 @@ export interface LoadMoreTriggerProps {
  * @component
  * @example
  * ```tsx
- * <EventList.LoadMoreTrigger>
- *   Load More
+ * // Default usage
+ * <EventList.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Load More" />
+ *
+ * // asChild with primitive
+ * <EventList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+ *   <button>Load More</button>
+ * </EventList.LoadMoreTrigger>
+ *
+ * // asChild with react component
+ * <EventList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+ *   {React.forwardRef(({ isLoading, loadMoreEvents, ...props }, ref) => (
+ *     <button ref={ref} {...props}>
+ *       {isLoading ? 'Loading...' : 'Load More'}
+ *     </button>
+ *   ))}
  * </EventList.LoadMoreTrigger>
  * ```
  */
@@ -188,11 +206,15 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, label } = props;
 
   const eventListService = useService(EventListServiceDefinition);
   const isLoading = eventListService.isLoading.get();
   const hasMoreEvents = eventListService.hasMoreEvents.get();
+
+  const loadMoreEvents = () => {
+    eventListService.loadMoreEvents();
+  };
 
   if (!hasMoreEvents) {
     return null;
@@ -205,10 +227,11 @@ export const LoadMoreTrigger = React.forwardRef<
       className={className}
       data-testid={TestIds.eventListLoadMore}
       customElement={children}
+      customElementProps={{ isLoading, loadMoreEvents }}
       disabled={isLoading}
-      onClick={() => eventListService.loadMoreEvents()}
+      onClick={loadMoreEvents}
     >
-      <button>{children}</button>
+      <button>{label}</button>
     </AsChildSlot>
   );
 });
@@ -219,8 +242,8 @@ export const LoadMoreTrigger = React.forwardRef<
 export interface ErrorProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Content to display inside the error message */
-  children: React.ReactNode;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ error: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -231,8 +254,21 @@ export interface ErrorProps {
  * @component
  * @example
  * ```tsx
- * <EventList.Error>
- *   Unable to load events.
+ * // Default usage
+ * <EventList.Error className="text-red-500" />
+ *
+ * // asChild with primitive
+ * <EventList.Error asChild className="text-red-500">
+ *   <span />
+ * </EventList.Error>
+ *
+ * // asChild with react component
+ * <EventList.Error asChild className="text-red-500">
+ *   {React.forwardRef(({ error, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {error}
+ *     </span>
+ *   ))}
  * </EventList.Error>
  * ```
  */
@@ -253,8 +289,10 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
       className={className}
       data-testid={TestIds.eventListError}
       customElement={children}
+      customElementProps={{ error }}
+      content={error}
     >
-      <span>{children}</span>
+      <span>{error}</span>
     </AsChildSlot>
   );
 });

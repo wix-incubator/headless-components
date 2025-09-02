@@ -64,9 +64,10 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
 
       {/* Load More Button */}
       <div className="flex justify-center">
-        <EventListPrimitive.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 mb-12 rounded-md transition-colors duration-200">
-          Load More
-        </EventListPrimitive.LoadMoreTrigger>
+        <EventListPrimitive.LoadMoreTrigger
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 mb-12 rounded-md transition-colors duration-200"
+          label="Load More"
+        />
       </div>
     </EventListPrimitive.Root>
   );
