@@ -1,19 +1,19 @@
+import { forms } from '@wix/forms';
 import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { type Form, getForm } from '@wix/auto_sdk_forms_forms';
 
 export interface FormServiceAPI {
-  form: Signal<Form>;
+  form: Signal<forms.Form>;
 }
 
 export const FormServiceDefinition =
   defineService<FormServiceAPI>('formService');
 
 export interface FormServiceConfig {
-  form: Form;
+  form: forms.Form;
 }
 
 export const FormService = implementService.withConfig<FormServiceConfig>()(
@@ -22,7 +22,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     const signalsService = getService(SignalsServiceDefinition);
     const { form: initialForm } = config;
 
-    const form: Signal<Form> = signalsService.signal(initialForm);
+    const form: Signal<forms.Form> = signalsService.signal(initialForm);
 
     return { form };
   },
@@ -31,7 +31,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
 export async function loadFormServiceConfig(
   id: string,
 ): Promise<FormServiceConfig> {
-  const form = await getForm(id);
+  const form = await forms.getForm(id);
 
   return {
     form,

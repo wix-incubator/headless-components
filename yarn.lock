@@ -3706,13 +3706,53 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_forms_forms@npm:^1.0.46":
+"@wix/auto_sdk_forms_form-spam-submission-reports@npm:1.0.9":
+  version: 1.0.9
+  resolution: "@wix/auto_sdk_forms_form-spam-submission-reports@npm:1.0.9"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/090a7d407b7a4e24de7d92e5366f67dc9d8d97ab1d7965f08fd629d7fa97d2e21f12de923436dd5b90b8a656094e2b4ec8cddf63fe4d4e9e06f357c830aad3df
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_forms_form-submissions@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@wix/auto_sdk_forms_form-submissions@npm:1.0.4"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/7edb049cfa6332de2dd9843bb1315935aa8af93843f7a3c450d2e9d53dccdddc9bcbd482e5d9d3a2e4622ccd0351d7dc456957206934f50c86481e256105d709
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_forms_forms@npm:1.0.46, @wix/auto_sdk_forms_forms@npm:^1.0.46":
   version: 1.0.46
   resolution: "@wix/auto_sdk_forms_forms@npm:1.0.46"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.3.55"
     "@wix/sdk-types": "npm:^1.13.35"
   checksum: 10c0/9c2e784ef7314ff078f82085e579de038e0e2b750815f214b45a216b8646a971d9657dc0aa9667440a729af158c860b7dcb94915ad83ba4743f90857148cc33e
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_forms_interactive-form-sessions@npm:1.0.6":
+  version: 1.0.6
+  resolution: "@wix/auto_sdk_forms_interactive-form-sessions@npm:1.0.6"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/a441e02340bb4171a572babe6abcb17904db557075f0a529dff819d6e7134022f0632f699d6b92b145fa59fa72ec27a2eb057d53a276ed69d23e8fa0cc9fc7a1
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_forms_submissions@npm:1.0.47":
+  version: 1.0.47
+  resolution: "@wix/auto_sdk_forms_submissions@npm:1.0.47"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/10d293b34ce3c1de810d24411652ab835648dea1bb33b617cdab328061293c6fdccefc4ec6c00952f1dddb96a9beb71bd5e5087b9f245a55b9ad034c9f51d9c5
   languageName: node
   linkType: hard
 
@@ -4220,6 +4260,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/forms@npm:^1.0.292":
+  version: 1.0.292
+  resolution: "@wix/forms@npm:1.0.292"
+  dependencies:
+    "@wix/auto_sdk_forms_form-spam-submission-reports": "npm:1.0.9"
+    "@wix/auto_sdk_forms_form-submissions": "npm:1.0.4"
+    "@wix/auto_sdk_forms_forms": "npm:1.0.46"
+    "@wix/auto_sdk_forms_interactive-form-sessions": "npm:1.0.6"
+    "@wix/auto_sdk_forms_submissions": "npm:1.0.47"
+  checksum: 10c0/3cb7c217c0a1498b401d2a808be0cd670b24ac28103fa52408eb773844abefab08cd2f37e0253774cee3b840f185b00b3a1287d74fcaeed826ba18e021e7fc3c
+  languageName: node
+  linkType: hard
+
 "@wix/headless-bookings@workspace:*, @wix/headless-bookings@workspace:packages/headless-components/bookings":
   version: 0.0.0-use.local
   resolution: "@wix/headless-bookings@workspace:packages/headless-components/bookings"
@@ -4338,6 +4391,7 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/auto_sdk_forms_forms": "npm:^1.0.46"
+    "@wix/forms": "npm:^1.0.292"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"

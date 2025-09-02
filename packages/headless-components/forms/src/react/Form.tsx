@@ -1,6 +1,6 @@
 import React from 'react';
+import { forms } from '@wix/forms';
 import { useService, WixServices } from '@wix/services-manager-react';
-import { type Field, type Form } from '@wix/auto_sdk_forms_forms';
 import { createServicesMap } from '@wix/services-manager';
 
 import {
@@ -11,7 +11,7 @@ import {
 
 export interface RootProps {
   children: React.ReactNode;
-  form: Form;
+  form: forms.Form;
 }
 
 /**
@@ -27,7 +27,7 @@ export interface RootProps {
  *   return (
  *     <Form.Root form={form} >
  *       <Form.Container>
- *          {({ fields, error }) => (
+ *          {({ fields }) => (
  *             <form>
  *               {fields.map(field => (
  *                 <input key={field.name} name={field.name} onChange={(e) => onChange(e.target.value)} />
@@ -60,12 +60,20 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
+type FormField = {
+  type: string;
+  name: string;
+  label: string;
+  required: boolean;
+  readOnly: boolean;
+};
+
 /**
  * Render props for § component
  */
 export interface ContainerRenderProps {
   /** Form fields */
-  fields: Field[];
+  fields: FormField[];
 }
 
 /**
@@ -97,10 +105,17 @@ export const Container = React.forwardRef<HTMLElement, ContainerProps>(
   ({ children }) => {
     const formService = useService(FormServiceDefinition);
 
-    const fields = formService.form.get()?.formFields || [];
+    const form = formService.form.get();
+    const fields = form?.formFields || [];
 
     return children({
-      fields,
+      fields: fields.map(({ inputOptions, identifier }) => ({
+        type: identifier!,
+        name: inputOptions?.target ?? '',
+        label: inputOptions?.target ?? '',
+        required: inputOptions?.required ?? false,
+        readOnly: inputOptions?.readOnly ?? false,
+      })),
     });
   },
 );
