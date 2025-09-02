@@ -81,7 +81,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
       {showBuyNow && (
         <Product.ProductActionBuyNow
           label="Buy Now"
-          className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed btn-warning text-content-primary font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 data-[disabled]:hover:scale-100 data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed"
+          className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed text-content-primary font-semibold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 data-[disabled]:hover:scale-100 relative data-[disabled]:bg-surface-primary data-[disabled]:cursor-not-allowed btn-primary"
           loadingState={
             <span className="flex items-center justify-center gap-2">
               <svg
