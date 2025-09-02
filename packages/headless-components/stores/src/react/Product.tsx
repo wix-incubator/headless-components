@@ -1919,10 +1919,6 @@ export interface ProductVariantStockProps {
   children?: AsChildChildren<{
     status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'pre-order';
     label: string;
-    inStock: boolean;
-    isPreOrderEnabled: boolean;
-    availableQuantity: number | null;
-    currentVariantId: string | null;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -1972,7 +1968,7 @@ export interface ProductVariantStockProps {
  *   }}
  *   asChild
  * >
- *   {React.forwardRef(({status, label, inStock, isPreOrderEnabled, availableQuantity, ...props}, ref) => (
+ *   {React.forwardRef(({status, label, ...props}, ref) => (
  *     <div
  *       ref={ref}
  *       {...props}
@@ -1982,11 +1978,6 @@ export interface ProductVariantStockProps {
  *       <span className="text-sm font-medium">
  *         {label}
  *       </span>
- *       {availableQuantity && availableQuantity < 10 && inStock && (
- *         <span className="text-xs text-content-muted">
- *           ({availableQuantity} left)
- *         </span>
- *       )}
  *     </div>
  *   ))}
  * </Product.ProductVariant.Stock>
@@ -2004,7 +1995,6 @@ export const ProductVariantStock = React.forwardRef<
         inStock,
         isPreOrderEnabled,
         availabilityStatus,
-        availableQuantity,
         currentVariantId,
       }) => {
         // Only render if we have a current variant selected
@@ -2041,10 +2031,6 @@ export const ProductVariantStock = React.forwardRef<
             customElementProps={{
               status,
               label,
-              inStock,
-              isPreOrderEnabled,
-              availableQuantity,
-              currentVariantId,
             }}
             content={label}
           >
