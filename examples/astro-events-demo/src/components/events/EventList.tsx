@@ -54,9 +54,10 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
               <EventPrimitive.ShortDescription className="text-sm text-gray-700 mb-4 line-clamp-3" />
 
               {/* RSVP Button */}
-              <EventPrimitive.RsvpButton className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 mt-auto">
-                RSVP
-              </EventPrimitive.RsvpButton>
+              <EventPrimitive.RsvpButton
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 mt-auto"
+                label="RSVP"
+              />
             </div>
           </div>
         </EventListPrimitive.EventRepeater>

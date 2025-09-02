@@ -70,7 +70,7 @@ export interface RootProps {
  *       <Event.Date />
  *       <Event.Location />
  *       <Event.Description />
- *       <Event.RsvpButton>RSVP</Event.RsvpButton>
+ *       <Event.RsvpButton label="RSVP" />
  *     </Event.Root>
  *   );
  * }
@@ -133,10 +133,11 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
         asChild={asChild}
         className={className}
         data-testid={TestIds.eventImage}
-        children={children}
         media={{ image }}
         {...otherProps}
-      />
+      >
+        {children}
+      </WixMediaImage>
     );
   },
 );
@@ -169,7 +170,7 @@ export interface TitleProps {
  *
  * // asChild with react component
  * <Event.Title asChild>
- *   {React.forwardRef(({title, ...props}, ref) => (
+ *   {React.forwardRef(({ title, ...props }, ref) => (
  *     <h1 ref={ref} {...props} className="text-4xl font-bold">
  *       {title}
  *     </h1>
@@ -229,7 +230,7 @@ export interface DateProps {
  *
  * // asChild with react component
  * <Event.Date asChild>
- *   {React.forwardRef(({date, ...props}, ref) => (
+ *   {React.forwardRef(({ date, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
  *       {date}
  *     </span>
@@ -293,7 +294,7 @@ export interface LocationProps {
  *
  * // asChild with react component
  * <Event.Location asChild>
- *   {React.forwardRef(({location, ...props}, ref) => (
+ *   {React.forwardRef(({ location, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
  *       {location}
  *     </span>
@@ -357,7 +358,7 @@ export interface ShortDescriptionProps {
  *
  * // asChild with react component
  * <Event.ShortDescription asChild>
- *   {React.forwardRef(({shortDescription, ...props}, ref) => (
+ *   {React.forwardRef(({ shortDescription, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
  *       {shortDescription}
  *     </span>
@@ -459,10 +460,12 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 export interface RsvpButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Content to display inside the RSVP button */
-  children: React.ReactNode;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ rsvp: () => void }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** The label to display inside the button */
+  label?: string;
 }
 
 /**
@@ -472,23 +475,34 @@ export interface RsvpButtonProps {
  * @example
  * ```tsx
  * // Default usage
- * <Event.RsvpButton className="w-full">
- *   RSVP
- * </Event.RsvpButton>
+ * <Event.RsvpButton className="w-full" label="RSVP" />
  *
  * // asChild with primitive
  * <Event.RsvpButton asChild>
  *   <button className="w-full">RSVP</button>
  * </Event.RsvpButton>
+ *
+ * // asChild with react component
+ * <Event.RsvpButton asChild>
+ *   {React.forwardRef(({ rsvp, ...props }, ref) => (
+ *     <button ref={ref} {...props}>
+ *       RSVP
+ *     </button>
+ *   ))}
+ * </Event.RsvpButton>
  * ```
  */
 export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, label } = props;
 
     const eventService = useService(EventServiceDefinition);
     const event = eventService.event.get();
     const eventSlug = event.slug;
+
+    const rsvp = () => {
+      window.location.href = `/events/${eventSlug}`;
+    };
 
     return (
       <AsChildSlot
@@ -497,11 +511,10 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
         className={className}
         data-testid={TestIds.eventRsvpButton}
         customElement={children}
-        onClick={() => {
-          window.location.href = `/events/${eventSlug}`;
-        }}
+        customElementProps={{ rsvp }}
+        onClick={rsvp}
       >
-        <button>{children}</button>
+        <button>{label}</button>
       </AsChildSlot>
     );
   },

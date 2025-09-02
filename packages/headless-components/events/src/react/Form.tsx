@@ -1,4 +1,4 @@
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
@@ -103,13 +103,14 @@ export const ControlRepeater = (props: ControlRepeaterProps) => {
 
 export interface SubmitTriggerProps {
   asChild?: boolean;
-  children: React.ReactNode;
+  children?: AsChildChildren<{ isSubmitting: boolean }>;
   className?: string;
+  label?: string;
 }
 
 export const SubmitTrigger = React.forwardRef<HTMLElement, SubmitTriggerProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, label } = props;
 
     const formService = useService(FormServiceDefinition);
     const isSubmitting = formService.isSubmitting.get();
@@ -121,10 +122,11 @@ export const SubmitTrigger = React.forwardRef<HTMLElement, SubmitTriggerProps>(
         className={className}
         data-testid={TestIds.formSubmit}
         customElement={children}
-        type="submit"
+        customElementProps={{ isSubmitting }}
         disabled={isSubmitting}
+        type="submit"
       >
-        <button>{children}</button>
+        <button>{label}</button>
       </AsChildSlot>
     );
   },
