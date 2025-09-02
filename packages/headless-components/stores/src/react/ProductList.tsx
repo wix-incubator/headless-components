@@ -70,7 +70,9 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
       pagingMetadata: {
         count: products?.length || 0,
       },
-      aggregations: {}, // Empty aggregation data
+      aggregations: {
+        results: [],
+      }, // Empty aggregation data
       customizations: [],
     };
 

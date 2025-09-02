@@ -4320,7 +4320,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-seo@npm:0.0.10, @wix/headless-seo@workspace:*, @wix/headless-seo@workspace:packages/headless-components/seo":
+"@wix/headless-seo@npm:0.0.10":
+  version: 0.0.10
+  resolution: "@wix/headless-seo@npm:0.0.10"
+  dependencies:
+    "@wix/seo": "npm:^1.0.14"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/d78b3d9783be80857f8e46f09390e45062f524e9452ca73cf8906251df64da631c5ccefa0f78c374d97859e42245e56c15a867a9cef04a45acaa8204dec27222
+  languageName: node
+  linkType: hard
+
+"@wix/headless-seo@workspace:*, @wix/headless-seo@workspace:packages/headless-components/seo":
   version: 0.0.0-use.local
   resolution: "@wix/headless-seo@workspace:packages/headless-components/seo"
   dependencies:
