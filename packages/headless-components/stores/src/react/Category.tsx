@@ -1,15 +1,13 @@
 import React from 'react';
 import { categories } from '@wix/categories';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import {
-  CategoryFilter,
-  type CategoryFilterRenderProps,
-} from './core/ProductListFilters.js';
+import * as CoreProductListFilters from './core/ProductListFilters.js';
 
 export type Category = categories.Category;
 
 // Context to provide category data and filter functions to child components
-interface CategoryContextValue extends CategoryFilterRenderProps {
+interface CategoryContextValue
+  extends CoreProductListFilters.CategoryFilterRenderProps {
   category: Category;
   isSelected: boolean;
 }
@@ -32,6 +30,7 @@ enum TestIds {
   categoryLabel = 'category-label',
   categoryId = 'category-id',
   categoryRaw = 'category-raw',
+  categoryFilter = 'category-filter',
 }
 
 /**
@@ -109,6 +108,23 @@ export interface CategoryRawProps {
 }
 
 /**
+ * Props for CategoryFilter component
+ */
+export interface CategoryFilterProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    selectedCategory: Category | null;
+    setSelectedCategory: (category: Category | null) => void;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the selected category display */
+  label?: string;
+}
+
+/**
  * Root container for a single category item.
  * This component sets up the necessary services for managing category state
  * and provides category context to child components.
@@ -130,7 +146,7 @@ export function Root(props: CategoryRootProps): React.ReactNode {
   const { category, children } = props;
 
   return (
-    <CategoryFilter>
+    <CoreProductListFilters.CategoryFilter>
       {({ selectedCategory, setSelectedCategory }) => {
         // Determine if this category is selected by comparing with selectedCategory
         const isSelected = selectedCategory?._id === category._id;
@@ -148,7 +164,7 @@ export function Root(props: CategoryRootProps): React.ReactNode {
           </CategoryContext.Provider>
         );
       }}
-    </CategoryFilter>
+    </CoreProductListFilters.CategoryFilter>
   );
 }
 
@@ -365,3 +381,71 @@ export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>(
     );
   },
 );
+
+/**
+ * Category filter component that provides category selection functionality.
+ * Provides selected category state and selection controls to custom render functions.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <CategoryFilter className="category-filter" />
+ *
+ * // With custom label
+ * <CategoryFilter label="Current Category:" />
+ *
+ * // Custom rendering with forwardRef
+ * <CategoryFilter asChild>
+ *   {React.forwardRef(({selectedCategory, setSelectedCategory, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="custom-category-filter">
+ *       {selectedCategory && (
+ *         <span>Selected: {selectedCategory.name}</span>
+ *       )}
+ *       <button onClick={() => setSelectedCategory(null)}>
+ *         Clear Selection
+ *       </button>
+ *     </div>
+ *   ))}
+ * </CategoryFilter>
+ * ```
+ */
+export const CategoryFilter = React.forwardRef<
+  HTMLElement,
+  CategoryFilterProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const label = props.label || 'Selected:';
+
+  return (
+    <CoreProductListFilters.CategoryFilter>
+      {({ selectedCategory, setSelectedCategory }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.categoryFilter}
+            data-selected={selectedCategory ? 'true' : 'false'}
+            customElement={children}
+            customElementProps={{
+              selectedCategory,
+              setSelectedCategory,
+            }}
+          >
+            <div>
+              {selectedCategory && (
+                <span>
+                  {label} {selectedCategory.name}
+                </span>
+              )}
+            </div>
+          </AsChildSlot>
+        );
+      }}
+    </CoreProductListFilters.CategoryFilter>
+  );
+});
+
+CategoryFilter.displayName = 'CategoryFilter';

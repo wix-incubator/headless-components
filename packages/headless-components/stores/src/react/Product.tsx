@@ -72,10 +72,12 @@ enum TestIds {
   productStock = 'product-stock',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
+  productVariantSelectorReset = 'product-variant-selector-reset',
   productVariantOption = 'product-variant-option',
   productVariant = 'product-variant',
   productVariantSku = 'product-variant-sku',
   productVariantWeight = 'product-variant-weight',
+  productVariantStock = 'product-variant-stock',
   productModifiers = 'product-modifiers',
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
@@ -1611,6 +1613,52 @@ export const ProductQuantityRaw = React.forwardRef<
   );
 });
 
+export interface ProductVariantSelectorResetProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    reset: () => void;
+    hasSelections: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the reset button */
+  label?: string;
+}
+
+export const ProductVariantSelectorReset = React.forwardRef<
+  HTMLButtonElement,
+  ProductVariantSelectorResetProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Reset>
+      {(renderProps) => {
+        if (!renderProps.hasSelections) {
+          return null;
+        }
+
+        const label = props.label || 'Reset Selections';
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            customElement={children}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantSelectorReset}
+            customElementProps={renderProps}
+          >
+            <button onClick={renderProps.reset}>{label}</button>
+          </AsChildSlot>
+        );
+      }}
+    </ProductVariantSelector.Reset>
+  );
+});
+
 /**
  * Add to cart action button component following the documented API.
  * Automatically integrates with the selected variant and handles loading states.
@@ -1810,6 +1858,191 @@ export const Action = {
 } as const;
 
 /**
+ * Helper function to determine stock status and label based on availability and pre-order settings
+ */
+function getStockStatusMessage(
+  inStock: boolean,
+  isPreOrderEnabled: boolean,
+  availabilityStatus: string,
+  labels: {
+    inStock: string;
+    limitedStock: string;
+    outOfStock: string;
+    preOrder: string;
+  },
+): {
+  status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'pre-order';
+  label: string;
+} {
+  // Pre-order takes precedence
+  if (isPreOrderEnabled) {
+    return {
+      status: 'pre-order',
+      label: labels.preOrder,
+    };
+  }
+
+  // Handle stock status based on availability
+  if (inStock) {
+    switch (availabilityStatus) {
+      case InventoryAvailabilityStatus.IN_STOCK:
+        return {
+          status: 'in-stock',
+          label: labels.inStock,
+        };
+      case InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK:
+        return {
+          status: 'limited-stock',
+          label: labels.limitedStock,
+        };
+      default:
+        return {
+          status: 'in-stock',
+          label: labels.inStock,
+        };
+    }
+  }
+
+  return {
+    status: 'out-of-stock',
+    label: labels.outOfStock,
+  };
+}
+
+/**
+ * Props for ProductVariantStock component
+ */
+export interface ProductVariantStockProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'pre-order';
+    label: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Custom labels for different stock states */
+  labels?: {
+    /** Label for in stock state */
+    inStock?: string;
+    /** Label for limited stock state (when quantity is low) */
+    limitedStock?: string;
+    /** Label for out of stock state */
+    outOfStock?: string;
+    /** Label for pre-order state */
+    preOrder?: string;
+  };
+}
+
+/**
+ * Displays the selected variant stock status with customizable rendering and labels,
+ * including pre-order support. Similar to Product.Stock but for the selected variant.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.ProductVariant.Stock
+ *   className="stock-indicator"
+ *   labels={{
+ *     inStock: 'In Stock',
+ *     limitedStock: 'Limited Stock',
+ *     outOfStock: 'Out of Stock',
+ *     preOrder: 'Available for Pre-order'
+ *   }}
+ * />
+ *
+ * // asChild with primitive
+ * <Product.ProductVariant.Stock asChild>
+ *   <div className="variant-stock-status" />
+ * </Product.ProductVariant.Stock>
+ *
+ * // asChild with react component
+ * <Product.ProductVariant.Stock
+ *   labels={{
+ *     inStock: 'Available',
+ *     limitedStock: 'Low Stock',
+ *     outOfStock: 'Sold Out',
+ *     preOrder: 'Pre-order Now'
+ *   }}
+ *   asChild
+ * >
+ *   {React.forwardRef(({status, label, ...props}, ref) => (
+ *     <div
+ *       ref={ref}
+ *       {...props}
+ *       className="flex items-center gap-2 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600 data-[state='pre-order']:text-blue-600"
+ *     >
+ *       <div className="w-3 h-3 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500 data-[state='pre-order']:bg-blue-500" />
+ *       <span className="text-sm font-medium">
+ *         {label}
+ *       </span>
+ *     </div>
+ *   ))}
+ * </Product.ProductVariant.Stock>
+ * ```
+ */
+export const ProductVariantStock = React.forwardRef<
+  HTMLElement,
+  ProductVariantStockProps
+>((props, ref) => {
+  const { asChild, children, className, labels } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {({
+        inStock,
+        isPreOrderEnabled,
+        availabilityStatus,
+        currentVariantId,
+      }) => {
+        // Only render if we have a current variant selected
+        if (!currentVariantId && !availabilityStatus) {
+          return null;
+        }
+
+        // Default labels
+        const defaultLabels = {
+          inStock: 'In Stock',
+          limitedStock: 'Limited Stock',
+          outOfStock: 'Out of Stock',
+          preOrder: 'Available for Pre-order',
+        };
+
+        const finalLabels = { ...defaultLabels, ...labels };
+
+        // Get status and label using the helper function
+        const { status, label } = getStockStatusMessage(
+          inStock,
+          isPreOrderEnabled,
+          availabilityStatus,
+          finalLabels,
+        );
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantStock}
+            data-state={status}
+            customElement={children}
+            customElementProps={{
+              status,
+              label,
+            }}
+            content={label}
+          >
+            <span>{label}</span>
+          </AsChildSlot>
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
  * Props for ProductVariantSKU component
  */
 export interface ProductVariantSKUProps {
@@ -1951,9 +2184,11 @@ export const ProductVariantWeight = React.forwardRef<
 
 /**
  * ProductVariant namespace containing product variant components
- * following the compound component pattern: Product.ProductVariant.SKU, Product.ProductVariant.Weight
+ * following the compound component pattern: Product.ProductVariant.Stock, Product.ProductVariant.SKU, Product.ProductVariant.Weight
  */
 export const ProductVariant = {
+  /** Product variant stock component */
+  Stock: ProductVariantStock,
   /** Product variant SKU component */
   SKU: ProductVariantSKU,
   /** Product variant weight component */

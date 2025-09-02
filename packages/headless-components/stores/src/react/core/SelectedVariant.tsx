@@ -7,7 +7,7 @@ import {
 } from '../../services/selected-variant-service.js';
 import { ProductModifiersServiceDefinition } from '../../services/product-modifiers-service.js';
 import { createServicesMap } from '@wix/services-manager';
-import { CheckoutCore } from '@wix/headless-ecom/react';
+import { Commerce } from '@wix/headless-ecom/react';
 import {
   CheckoutServiceDefinition,
   CurrentCartServiceDefinition,
@@ -408,7 +408,7 @@ export function Actions(props: ActionsProps) {
 
   if (checkoutService) {
     return (
-      <CheckoutCore.Trigger>
+      <Commerce.CheckoutTrigger>
         {({
           createCheckout,
           isLoading: checkoutLoading,
@@ -425,7 +425,7 @@ export function Actions(props: ActionsProps) {
             buyNow: () => createCheckout(getLineItems()),
           })
         }
-      </CheckoutCore.Trigger>
+      </Commerce.CheckoutTrigger>
     );
   }
 
