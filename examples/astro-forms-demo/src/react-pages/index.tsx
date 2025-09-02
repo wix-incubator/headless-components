@@ -11,14 +11,15 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
   return (
     <Form.Root form={formServiceConfig.form}>
       <Form.Container>
-        {({ fields }) => (
+        {({ name, fields }) => (
           <form>
             <h1>
-              {formServiceConfig.form.name} ({formServiceConfig.form._id})
+              {name} ({formServiceConfig.form._id})
             </h1>
+
             {fields.map(field => (
-              <div key={field?.type}>
-                {field?.name}: {field?.type}
+              <div key={field.type}>
+                {field.label}: {field.type}
               </div>
             ))}
           </form>

@@ -60,6 +60,30 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
+/**
+ * Represents a form field configuration with its properties and constraints.
+ *
+ * @interface FormField
+ * @description A standardized representation of a form field that includes
+ * all necessary information for rendering and validation.
+ *
+ * @property {string} type - The type identifier of the form field
+ * @property {string} name - The unique identifier for the form field
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ *
+ * @example
+ * ```tsx
+ * const field: FormField = {
+ *   type: 'text',
+ *   name: 'firstName',
+ *   label: 'First Name',
+ *   required: true,
+ *   readOnly: false
+ * };
+ * ```
+ */
 type FormField = {
   type: string;
   name: string;
@@ -69,9 +93,11 @@ type FormField = {
 };
 
 /**
- * Render props for § component
+ * Render props for Container component
  */
 export interface ContainerRenderProps {
+  /** Form name */
+  name: string;
   /** Form fields */
   fields: FormField[];
 }
@@ -107,12 +133,15 @@ export const Container = React.forwardRef<HTMLElement, ContainerProps>(
 
     const form = formService.form.get();
     const fields = form?.formFields || [];
-
+    console.log("form", form);
+    console.log("fields", fields.map(({ inputOptions }) => inputOptions?.stringOptions));
     return children({
+      name: form?.name ?? '',
+      // TODO: return in same order as in form
       fields: fields.map(({ inputOptions, identifier }) => ({
         type: identifier!,
         name: inputOptions?.target ?? '',
-        label: inputOptions?.target ?? '',
+        label: inputOptions?.stringOptions?.textInputOptions?.label ?? '',
         required: inputOptions?.required ?? false,
         readOnly: inputOptions?.readOnly ?? false,
       })),
