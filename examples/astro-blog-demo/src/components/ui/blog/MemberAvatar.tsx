@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import React, { useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import { useMemberName } from "./MemberName";
-import { User2Icon, UserIcon } from "lucide-react";
+import { User2Icon } from "lucide-react";
 
 const defaultSize = 'md';
 

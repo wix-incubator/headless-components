@@ -1,0 +1,256 @@
+import { createServicesManager, createServicesMap } from '@wix/services-manager';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  BlogPostCommentsService,
+  BlogPostCommentsServiceDefinition,
+  type CommentWithResolvedFields,
+} from './blog-post-comments-service.js';
+
+vi.mock('@wix/comments', () => ({
+  comments: {
+    createComment: vi.fn(),
+    listCommentsByResource: vi.fn(),
+  },
+}));
+
+vi.mock('@wix/members', () => ({
+  members: {
+    getMember: vi.fn(),
+  },
+}));
+
+import { comments as commentsModule, type comments } from '@wix/comments';
+import { members as membersModule } from '@wix/members';
+
+const mockMember = {
+  _id: 'member-1',
+  profile: {
+    nickname: 'Test User',
+    slug: 'test-user',
+  },
+};
+
+const aComment = ({
+  id,
+  message,
+  replyCount,
+  parentId,
+}: {
+  id: string;
+  message: string;
+  replyCount?: number;
+  parentId?: string;
+}): comments.Comment => ({
+  _id: id,
+  content: { message } as unknown as comments.Comment['content'],
+  author: { memberId: mockMember._id },
+  replyCount: replyCount ?? 0,
+  parentComment: parentId
+    ? {
+        _id: parentId,
+        author: { memberId: mockMember._id },
+      }
+    : undefined,
+});
+
+const aEnhancedComment = (comment: comments.Comment): CommentWithResolvedFields => ({
+  ...comment,
+  resolvedFields: expect.any(Object),
+});
+
+const mockCreateComment = (comment: comments.Comment) => {
+  vi.mocked(commentsModule.createComment).mockResolvedValueOnce(comment as any);
+};
+
+describe('BlogPostCommentsService', () => {
+  const mockConfig = {
+    postReferenceId: 'post-123',
+    pageSize: 5,
+    sort: [{ fieldName: 'NEWEST_FIRST' as const }],
+  };
+
+  const createServiceInstance = () => {
+    const servicesManager = createServicesManager(
+      createServicesMap().addService(
+        BlogPostCommentsServiceDefinition,
+        BlogPostCommentsService,
+        mockConfig,
+      ),
+    );
+
+    return servicesManager.getService(BlogPostCommentsServiceDefinition);
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Setup default mock implementations
+    vi.mocked(membersModule.getMember).mockResolvedValue(mockMember as any);
+    vi.mocked(commentsModule.listCommentsByResource).mockRejectedValue(
+      new Error('listCommentsByResource is not implemented'),
+    );
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('initialLoad', () => {
+    it('should store comments and cursors', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment' });
+      const commentB = aComment({ id: 'B', message: 'Reply to A', parentId: commentA._id! });
+      const commentC = aComment({ id: 'C', message: 'Reply to B', parentId: commentB._id! });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+          commentReplies: {
+            [commentA._id!]: {
+              replies: [commentB, commentC],
+              pagingMetadata: { cursors: { next: 'next-replies-cursor' } },
+            },
+          },
+          pagingMetadata: { cursors: { next: 'next-cursor' } },
+        },
+      });
+
+      expect(service.getComments()).toHaveLength(1);
+      expect(service.hasNextPage()).toBe(true);
+      expect(service.getComments(commentA._id!)).toHaveLength(2);
+      expect(service.hasNextPage(commentA._id!)).toBe(true);
+    });
+  });
+
+  describe('createComment', () => {
+    it('should create a comment and update root comment reply count', async () => {
+      const { service } = await setup({ listCommentsByResourceResponse: { comments: [] } });
+      const comment = aComment({ id: 'A', message: '1st comment' });
+      mockCreateComment(comment);
+      const resultPromise = service.createComment(comment.content!);
+
+      expect(service.isLoading()).toEqual('saving');
+
+      await resultPromise;
+
+      expect(service.isLoading()).toEqual(false);
+      expect(service.getComments()).toHaveLength(1);
+    });
+  });
+
+  describe('createReply', () => {
+    it('should create a reply and update parent comment reply count', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment' });
+      const commentB = aComment({ id: 'B', message: 'Reply to A', parentId: commentA._id! });
+      const { service } = await setup({
+        listCommentsByResourceResponse: { comments: [commentA] },
+      });
+
+      mockCreateComment(commentB);
+      const replyPromise = service.createReply(commentA._id!, commentA._id!, commentB.content!);
+
+      expect(service.isLoading(commentA._id!)).toEqual('saving');
+      expect(service.getComment(commentA._id!)?.replyCount).toBe(0);
+      expect(service.getComments(commentA._id!)).toHaveLength(0);
+
+      await replyPromise;
+
+      expect(service.isLoading(commentA._id!)).toEqual(false);
+      expect(service.getComment(commentA._id!)?.replyCount).toBe(1);
+      expect(service.getComments(commentA._id!)).toEqual([aEnhancedComment(commentB)]);
+    });
+
+    it('should handle replies to replies', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment', replyCount: 1 });
+      const commentB = aComment({ id: 'B', message: 'Reply comment', parentId: 'A' });
+      const commentC = aComment({ id: 'C', message: 'Nested reply', parentId: 'B' });
+      const commentD = aComment({ id: 'D', message: 'New reply', parentId: 'C' });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+          commentReplies: {
+            [commentA._id!]: {
+              replies: [commentB],
+            },
+          },
+        },
+      });
+
+      mockCreateComment(commentC);
+
+      // Execute
+      const resultPromise = service.createReply(commentA._id!, commentB._id!, commentC.content!);
+
+      expect(service.isLoading(commentA._id!)).toEqual(false);
+      expect(service.isLoading(commentB._id!)).toEqual('saving');
+
+      await resultPromise;
+
+      // Assert
+      expect(service.isLoading(commentA._id!)).toEqual(false);
+      expect(service.isLoading(commentB._id!)).toEqual(false);
+      expect(service.getComment(commentA._id!)?.replyCount).toBe(2);
+      expect(service.getComments(commentA._id!)).toEqual([
+        aEnhancedComment(commentB),
+        aEnhancedComment(commentC),
+      ]);
+
+      // Reply to a new reply (to self)
+      mockCreateComment(commentD);
+      const resultPromise2 = service.createReply(commentA._id!, commentC._id!, commentD.content!);
+
+      expect(service.isLoading(commentA._id!)).toEqual(false);
+      expect(service.isLoading(commentB._id!)).toEqual(false);
+      expect(service.isLoading(commentC._id!)).toEqual('saving');
+
+      await resultPromise2;
+
+      expect(service.isLoading(commentA._id!)).toEqual(false);
+      expect(service.isLoading(commentB._id!)).toEqual(false);
+      expect(service.isLoading(commentC._id!)).toEqual(false);
+      expect(service.getComment(commentA._id!)?.replyCount).toBe(3);
+      expect(service.getComments(commentA._id!)).toEqual([
+        aEnhancedComment(commentB),
+        aEnhancedComment(commentC),
+        aEnhancedComment(commentD),
+      ]);
+    });
+
+    it('should return null when reply creation fails', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment', replyCount: 1 });
+      const commentB = aComment({ id: 'B', message: 'Reply comment', parentId: 'A' });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+        },
+      });
+
+      // Mock reply creation failure
+      vi.mocked(commentsModule.createComment).mockRejectedValueOnce(
+        new Error('Failed to create comment'),
+      );
+
+      // Execute
+      const result = await service.createReply(commentA._id!, commentA._id!, commentB.content!);
+
+      // Assert
+      expect(result).toBeNull();
+      expect(service.getError(commentA._id!)).toBe('Failed to create reply');
+    });
+  });
+
+  async function setup({
+    listCommentsByResourceResponse,
+  }: {
+    listCommentsByResourceResponse: comments.ListCommentsByResourceResponse;
+  }) {
+    // Setup
+    const service = createServiceInstance();
+    // Mock initial load
+    vi.mocked(commentsModule.listCommentsByResource).mockResolvedValueOnce(
+      listCommentsByResourceResponse as any,
+    );
+
+    await service.initialLoad();
+
+    return { service };
+  }
+});

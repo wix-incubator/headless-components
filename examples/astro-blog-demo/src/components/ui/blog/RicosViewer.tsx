@@ -149,3 +149,36 @@ export const RicosViewer: React.FC<RicosViewerProps> = (props) => {
 };
 
 RicosViewer.displayName = "RicosViewer";
+
+type PlainTextRicosViewerProps = {
+  className?: string;
+  content?: RichContent;
+};
+
+export const PlainTextRicosViewer: React.FC<PlainTextRicosViewerProps> = (
+  props
+) => {
+  const { content, className } = props;
+
+  const [plainText, setPlainText] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (content) {
+      toPlainText(content)
+        .then((plainText) => {
+          setPlainText(plainText);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [content]);
+
+  return (
+    <span title={plainText} className={cn(className)}>
+      {plainText}
+    </span>
+  );
+};
+
+PlainTextRicosViewer.displayName = "PlainTextRicosViewer";

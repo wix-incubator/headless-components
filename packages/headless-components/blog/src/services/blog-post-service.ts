@@ -8,8 +8,11 @@ import {
 import type { Signal } from '@wix/services-definitions/core-services/signals';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
 import { enhancePosts, type PostWithResolvedFields } from './blog-feed-service.js';
+import type { QueryCommentsSort } from './blog-post-comments-service.js';
 
 type QueryPostsBuilder = ReturnType<ReturnType<typeof posts.queryPosts>>;
+
+export const DEFAULT_COMMENTS_PAGE_SIZE = 10;
 
 export const BlogPostServiceDefinition = defineService<{
   post: Signal<PostWithResolvedFields>;
@@ -19,14 +22,21 @@ export const BlogPostServiceDefinition = defineService<{
 
 export type BlogPostServiceAPI = ServiceAPI<typeof BlogPostServiceDefinition>;
 
+type CommentsConfig = {
+  pageSize: number;
+  sort: QueryCommentsSort[];
+};
+
 export const BlogPostService = implementService.withConfig<{
   post: PostWithResolvedFields;
+  commentsConfig: CommentsConfig;
   olderPost: PostWithResolvedFields | undefined;
   newerPost: PostWithResolvedFields | undefined;
 }>()(BlogPostServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
 
   const postSignal = signalsService.signal<PostWithResolvedFields>(config.post);
+  const commentsConfigSignal = signalsService.signal<CommentsConfig>(config.commentsConfig);
   const olderPostSignal = signalsService.signal<PostWithResolvedFields | undefined>(
     config.olderPost,
   );
@@ -36,6 +46,7 @@ export const BlogPostService = implementService.withConfig<{
 
   return {
     post: postSignal,
+    commentsConfig: commentsConfigSignal,
     olderPost: olderPostSignal,
     newerPost: newerPostSignal,
   };
@@ -52,6 +63,7 @@ export type BlogPostServiceConfigResult =
 
 type BlogPostServiceConfigParams = {
   postSlug: string;
+  commentsConfig?: Partial<CommentsConfig>;
   /** Fetches sibling posts (next/previous), defaults to true */
   includeSiblingPosts?: boolean;
 };
@@ -59,7 +71,7 @@ type BlogPostServiceConfigParams = {
 export async function loadBlogPostServiceConfig(
   params: BlogPostServiceConfigParams,
 ): Promise<BlogPostServiceConfigResult> {
-  const { postSlug, includeSiblingPosts = true } = params;
+  const { postSlug, includeSiblingPosts = true, commentsConfig } = params;
 
   if (!postSlug) {
     return { type: 'notFound' };
@@ -67,7 +79,7 @@ export async function loadBlogPostServiceConfig(
 
   try {
     const { post } = await posts.getPostBySlug(postSlug, {
-      fieldsets: ['RICH_CONTENT', 'SEO'],
+      fieldsets: ['RICH_CONTENT', 'SEO', 'REFERENCE_ID'],
     });
 
     if (!post) {
@@ -92,6 +104,10 @@ export async function loadBlogPostServiceConfig(
       type: 'success',
       config: {
         post: enhancedPost,
+        commentsConfig: {
+          pageSize: commentsConfig?.pageSize ?? DEFAULT_COMMENTS_PAGE_SIZE,
+          sort: commentsConfig?.sort ?? [{ fieldName: 'NEWEST_FIRST' }],
+        },
         olderPost,
         newerPost,
       },

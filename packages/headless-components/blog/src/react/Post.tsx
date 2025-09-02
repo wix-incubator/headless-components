@@ -1,19 +1,26 @@
 import { posts, tags } from '@wix/blog';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import type { members } from '@wix/members';
 import React from 'react';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import * as BlogCategories from './Categories.js';
 import * as CoreBlogPost from './core/Post.js';
 
+import type { members } from '@wix/members';
 import { createServicesMap } from '@wix/services-manager';
 import { WixServices } from '@wix/services-manager-react';
+import {
+  BlogPostCommentsService,
+  BlogPostCommentsServiceDefinition,
+} from '../services/blog-post-comments-service.js';
 import {
   BlogPostService,
   BlogPostServiceDefinition,
   type BlogPostServiceConfig,
 } from '../services/blog-post-service.js';
 import { isValidChildren } from './helpers.js';
+
+export * as Comment from './Comment.js';
+export * as Comments from './Comments.js';
 
 /** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=cb293890-7b26-4bcf-8c87-64f624c59158 */
 const HTML_CODE_TAG = 'blog.post';
@@ -174,12 +181,14 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>((props, ref
   return (
     <WixServices
       // key: Ensure we re-render the component when the post changes
-      key={blogPostServiceConfig?.post._id}
-      servicesMap={createServicesMap().addService(
-        BlogPostServiceDefinition,
-        BlogPostService,
-        blogPostServiceConfig,
-      )}
+      key={blogPostServiceConfig.post._id}
+      servicesMap={createServicesMap()
+        .addService(BlogPostServiceDefinition, BlogPostService, blogPostServiceConfig)
+        .addService(BlogPostCommentsServiceDefinition, BlogPostCommentsService, {
+          postReferenceId: blogPostServiceConfig.post.referenceId!,
+          pageSize: blogPostServiceConfig.commentsConfig.pageSize,
+          sort: blogPostServiceConfig.commentsConfig.sort,
+        })}
     >
       <CoreBlogPost.Root>
         {({ post, olderPost, newerPost }) => {
@@ -497,7 +506,7 @@ export const PublishDate = React.forwardRef<HTMLElement, PublishDateProps>((prop
   const publishDate = post?.firstPublishedDate;
   if (!publishDate) return null;
 
-  const formattedDate = new Date(publishDate).toLocaleDateString(locale, {
+  const formattedDate = new Date(publishDate).toLocaleDateString(locale ?? 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
