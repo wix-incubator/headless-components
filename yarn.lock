@@ -11959,6 +11959,8 @@ __metadata:
     "@wix/essentials": "npm:^0.1.23"
     "@wix/sdk": "npm:^1.15.23"
     astro: "npm:^5.8.0"
+    prettier: "npm:^3.6.2"
+    prettier-plugin-astro: "npm:^0.14.1"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
     typescript: "npm:^5.8.3"

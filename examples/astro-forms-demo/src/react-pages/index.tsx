@@ -8,19 +8,22 @@ interface FormsPageProps {
 }
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
-
   return (
-          <Form.Root form={formServiceConfig.form}>
-            <Form.Container>
-              {({ fields }) => (
-               <form>
-                <h1>{formServiceConfig.form.name} ({formServiceConfig.form._id})</h1>
-                {fields.map(field => (
-                  <div key={field?.type}>{field?.name}: {field?.type}</div>
-                ))}
-               </form>
-              )}
-            </Form.Container>
-          </Form.Root>
-   );
+    <Form.Root form={formServiceConfig.form}>
+      <Form.Container>
+        {({ fields }) => (
+          <form>
+            <h1>
+              {formServiceConfig.form.name} ({formServiceConfig.form._id})
+            </h1>
+            {fields.map(field => (
+              <div key={field?.type}>
+                {field?.name}: {field?.type}
+              </div>
+            ))}
+          </form>
+        )}
+      </Form.Container>
+    </Form.Root>
+  );
 }

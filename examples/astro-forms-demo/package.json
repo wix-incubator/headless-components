@@ -10,7 +10,10 @@
     "preview": "wix preview",
     "release": "wix release",
     "generate": "wix generate",
-    "env": "wix env"
+    "env": "wix env",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/",
+    "lint": "npm run format:check && astro check"
   },
   "dependencies": {
     "@wix/astro": "^1.0.8",
@@ -26,6 +29,8 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@wix/cli": "^1.1.92",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   }
