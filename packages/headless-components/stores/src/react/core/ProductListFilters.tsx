@@ -366,7 +366,7 @@ export interface FilterProps {
  * @see {@link FilterPrimitive.Root} for the primitive filter component
  * @see {@link ResetTrigger} for filter reset functionality
  */
-export const Filter = React.forwardRef<HTMLDivElement, FilterProps>(
+export const FilterRoot = React.forwardRef<HTMLDivElement, FilterProps>(
   ({ children, className, asChild }, ref) => {
     const Comp = asChild ? Slot : 'div';
     return (
@@ -389,4 +389,4 @@ export const Filter = React.forwardRef<HTMLDivElement, FilterProps>(
   },
 );
 
-Filter.displayName = 'ProductList.Filter';
+FilterRoot.displayName = 'ProductList.Filter';
