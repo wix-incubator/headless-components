@@ -5,6 +5,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { rsvpV2 } from '@wix/events';
 import { getFormResponse, getRequiredRsvpData } from '../utils/form.js';
+import { getErrorMessage } from '../utils/errors.js';
 import { EventServiceDefinition } from './event-service.js';
 
 export interface FormServiceAPI {
@@ -43,7 +44,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
           ...getRequiredRsvpData(event, formData),
         });
       } catch (err) {
-        error.set(err instanceof Error ? err.message : 'Unknown error');
+        error.set(getErrorMessage(err));
       } finally {
         isSubmitting.set(false);
       }

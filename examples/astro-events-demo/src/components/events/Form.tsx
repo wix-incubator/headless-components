@@ -29,6 +29,7 @@ export function Form({ eventServiceConfig }: FormProps) {
             label="Register for Event"
           />
         </FormPrimitive.Controls>
+        <FormPrimitive.Error className="block mt-3 text-center text-sm text-red-500" />
       </div>
     </FormPrimitive.Root>
   );

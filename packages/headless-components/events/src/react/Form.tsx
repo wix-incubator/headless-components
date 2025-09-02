@@ -17,6 +17,7 @@ import * as Control from './Control.js';
 enum TestIds {
   formControls = 'form-controls',
   formSubmit = 'form-submit',
+  formError = 'form-error',
 }
 
 export interface RootProps {
@@ -131,3 +132,34 @@ export const SubmitTrigger = React.forwardRef<HTMLElement, SubmitTriggerProps>(
     );
   },
 );
+
+export interface ErrorProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ error: string }>;
+  className?: string;
+}
+
+export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const formService = useService(FormServiceDefinition);
+  const error = formService.error.get();
+
+  if (!error) {
+    return null;
+  }
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.formError}
+      customElement={children}
+      customElementProps={{ error }}
+      content={error}
+    >
+      <span>{error}</span>
+    </AsChildSlot>
+  );
+});

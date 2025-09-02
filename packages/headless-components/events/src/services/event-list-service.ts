@@ -5,6 +5,7 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 import { wixEventsV2 } from '@wix/events';
+import { getErrorMessage } from '../utils/errors.js';
 import { type Event } from './event-service.js';
 
 export interface EventListServiceAPI {
@@ -67,7 +68,7 @@ export const EventListService =
           currentPage.set(queryEventsResult.currentPage ?? 0);
           totalPages.set(queryEventsResult.totalPages ?? 0);
         } catch (err) {
-          error.set(err instanceof Error ? err.message : 'Unknown error');
+          error.set(getErrorMessage(err));
         } finally {
           isLoading.set(false);
         }
