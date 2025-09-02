@@ -124,6 +124,8 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
             ref={ref}
             asChild={asChild}
             className={className}
+            customElement={children}
+            customElementProps={{ post }}
             {...attributes}
           >
             {children}
@@ -395,7 +397,7 @@ interface CategoryContextValue {
 
 const CategoryContext = React.createContext<CategoryContextValue | null>(null);
 
-export function useCategoryContext(): CategoryContextValue {
+function useCategoryContext(): CategoryContextValue {
   const context = React.useContext(CategoryContext);
   if (!context) {
     throw new Error(
