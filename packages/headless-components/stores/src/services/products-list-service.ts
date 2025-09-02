@@ -440,14 +440,14 @@ export const ProductListService =
         );
 
       const minPriceSignal = signalsService.signal<number>(
-        getMinPrice(config.aggregations.results!),
+        getMinPrice(config.aggregations.results ?? []),
       );
       const maxPriceSignal = signalsService.signal<number>(
-        getMaxPrice(config.aggregations.results!),
+        getMaxPrice(config.aggregations.results ?? []),
       );
       const availableProductOptionsSignal = signalsService.signal(
         getAvailableProductOptions(
-          config.aggregations.results!,
+          config.aggregations.results ?? [],
           config.customizations,
         ),
       );
