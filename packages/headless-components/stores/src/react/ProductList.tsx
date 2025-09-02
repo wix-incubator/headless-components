@@ -22,6 +22,7 @@ enum TestIds {
   productListSort = 'product-list-sort',
   productListFilter = 'product-list-filter',
   productListFilterResetTrigger = 'product-list-filter-reset-trigger',
+  productListError = 'product-list-error',
 }
 
 /**
@@ -700,3 +701,77 @@ export const FilterResetTrigger = React.forwardRef<
 });
 
 FilterResetTrigger.displayName = 'ProductList.FilterResetTrigger';
+
+/**
+ * Props for ProductList Error component
+ */
+export interface ErrorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    error: string | null;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Error component that displays product list errors.
+ * Provides error data to custom render functions.
+ * Only renders when there's an error.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <ProductList.Error className="error-message" />
+ *
+ * // Custom rendering with forwardRef
+ * <ProductList.Error asChild>
+ *   {React.forwardRef(({error, ...props}, ref) => (
+ *     <div
+ *       ref={ref}
+ *       {...props}
+ *       className="custom-error-container"
+ *     >
+ *       Error: {error}
+ *     </div>
+ *   ))}
+ * </ProductList.Error>
+ * ```
+ */
+export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <CoreProductList.Error>
+      {({ error }) => {
+        if (!error) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productListError}
+            data-error={error}
+            customElement={children}
+            customElementProps={{
+              error,
+            }}
+            content={error}
+          >
+            <div className="text-status-error text-sm sm:text-base">
+              {error}
+            </div>
+          </AsChildSlot>
+        );
+      }}
+    </CoreProductList.Error>
+  );
+});
+
+Error.displayName = 'ProductList.Error';

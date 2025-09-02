@@ -3,18 +3,10 @@ import React from 'react';
 
 import { productsV3 } from '@wix/stores';
 
-import {
-  ProductVariantSelector as ProductVariantSelectorPrimitive,
-  SelectedVariant as SelectedVariantPrimitive,
-  Product,
-  Option,
-  Choice,
-} from '@wix/headless-stores/react';
+import { Product, Option, Choice } from '@wix/headless-stores/react';
 
 import { ProductActionButtons } from './ProductActionButtons';
 import { Cart } from '@wix/headless-ecom/react';
-
-import { getStockStatusMessage } from './product-status-enums';
 
 // This component is no longer needed as we'll use Choice.FreeText directly
 
@@ -73,20 +65,6 @@ export default function ProductDetails({
                   )}
                 </Product.CompareAtPrice>
               </div>
-              {isQuickView && (
-                <SelectedVariantPrimitive.SKU>
-                  {({ sku }) =>
-                    sku && (
-                      <>
-                        <br />
-                        <div className="text-base text-content-muted">
-                          SKU: {sku}
-                        </div>
-                      </>
-                    )
-                  }
-                </SelectedVariantPrimitive.SKU>
-              )}
             </div>
 
             {/* Product Description */}
@@ -205,70 +183,7 @@ export default function ProductDetails({
 
             {/* Add to Cart */}
             <div className="space-y-4">
-              <SelectedVariantPrimitive.Actions>
-                {({ error, isPreOrderEnabled, preOrderMessage, inStock }) => (
-                  <div className="space-y-4">
-                    {error && (
-                      <div className="bg-status-danger-light border border-status-danger rounded-lg p-3">
-                        <p className="text-status-error text-sm">{error}</p>
-                      </div>
-                    )}
-                    {!inStock && preOrderMessage && isPreOrderEnabled && (
-                      <div className="bg-status-info-light border border-status-info rounded-lg p-3">
-                        <p className="text-status-info text-sm">
-                          {preOrderMessage}
-                        </p>
-                      </div>
-                    )}
-
-                    <ProductActionButtons />
-                  </div>
-                )}
-              </SelectedVariantPrimitive.Actions>
-
-              {/* Stock Status */}
-              <ProductVariantSelectorPrimitive.Stock>
-                {({
-                  inStock,
-                  isPreOrderEnabled,
-                  availabilityStatus,
-                  availableQuantity,
-                  trackInventory,
-                  currentVariantId,
-                }) => {
-                  const displayMessage = getStockStatusMessage(
-                    availabilityStatus,
-                    isPreOrderEnabled
-                  );
-                  return (
-                    (!!availabilityStatus || currentVariantId) && (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-3 h-3 rounded-full ${
-                            inStock || isPreOrderEnabled
-                              ? 'status-dot-success'
-                              : 'status-dot-danger'
-                          }`}
-                        ></div>
-                        <span
-                          className={`text-sm ${
-                            inStock || isPreOrderEnabled
-                              ? 'text-status-success'
-                              : 'text-status-error'
-                          }`}
-                        >
-                          {displayMessage}
-                          {trackInventory && availableQuantity !== null && (
-                            <span className="text-content-muted ml-1">
-                              ({availableQuantity} available)
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    )
-                  );
-                }}
-              </ProductVariantSelectorPrimitive.Stock>
+              <ProductActionButtons showBuyNow={true} />
             </div>
 
             {/* Product Details */}
