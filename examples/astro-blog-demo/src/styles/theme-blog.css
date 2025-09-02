@@ -1,0 +1,151 @@
+/* ===== BLOG THEME VARIABLES ===== */
+
+:root {
+  /* Standardized theme variables matching plugins-theme.css expectations */
+
+  /* Font families */
+  --theme-font-family-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --theme-font-family-paragraph: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Primary Content Text Colors */
+  --theme-text-content: #111827; /* Main text content */
+  --theme-text-content-90: #1f2937; /* Very dark text */
+  --theme-text-content-80: #374151; /* Dark text for secondary content */
+  --theme-text-content-70: #4b5563; /* Medium-dark text */
+  --theme-text-content-60: #6b7280; /* Medium text */
+  --theme-text-content-50: #9ca3af; /* Light text */
+  --theme-text-content-40: #d1d5db; /* Very light text */
+
+  /* Brand/Primary Colors */
+  --theme-text-primary-400: #7c3aed; /* Primary brand color */
+  --theme-text-primary-300: #8b5cf6; /* Lighter brand color */
+
+  /* Status Colors */
+  --theme-text-success: #10b981;
+  --theme-text-error: #ef4444;
+  --theme-text-info: #3b82f6;
+  --theme-text-danger: #dc2626;
+  --theme-text-accent: #059669;
+
+  /* Social Colors */
+  --theme-text-social-muted: #6b7280;
+  --theme-text-social-x: #000000;
+  --theme-text-social-facebook: #1877f2;
+  --theme-text-social-linkedin: #0077b5;
+  --theme-text-social-link: #7c3aed;
+
+  /* Navigation */
+  --theme-text-nav: #374151;
+
+  /* Background Colors */
+  --theme-bg-options: #ffffff; /* Main background */
+  --theme-bg-card: #ffffff; /* Card backgrounds */
+  --theme-bg-loading: #f9fafb; /* Loading states */
+  --theme-bg-tooltip: #1f2937; /* Tooltips */
+  --theme-bg-error: #fef2f2; /* Error backgrounds */
+  --theme-bg-overlay: #000000; /* Modal overlays */
+  --theme-bg-modal: #ffffff; /* Modal content */
+
+  /* Primary brand backgrounds */
+  --theme-bg-primary-10: rgba(124, 58, 237, 0.1);
+  --theme-bg-primary-20: rgba(124, 58, 237, 0.2);
+
+  /* Status backgrounds */
+  --theme-bg-success-10: rgba(16, 185, 129, 0.1);
+  --theme-bg-success-20: rgba(16, 185, 129, 0.2);
+  --theme-bg-danger-10: rgba(239, 68, 68, 0.1);
+  --theme-bg-danger-20: rgba(239, 68, 68, 0.2);
+  --theme-bg-info-10: rgba(59, 130, 246, 0.1);
+  --theme-bg-info-20: rgba(59, 130, 246, 0.2);
+  --theme-bg-accent-20: rgba(5, 150, 105, 0.2);
+
+  /* Social backgrounds */
+  --theme-bg-social-button: #f3f4f6;
+  --theme-bg-social-link: #f3f4f6;
+
+  /* Border Colors */
+  --theme-border-card: #e5e7eb; /* Card borders */
+  --theme-border-card-hover: #d1d5db; /* Card borders on hover */
+  --theme-border-primary-10: rgba(124, 58, 237, 0.1);
+  --theme-border-primary-20: rgba(124, 58, 237, 0.2);
+  --theme-border-primary-30: rgba(124, 58, 237, 0.3);
+  --theme-border-error: #fca5a5;
+  --theme-border-success-20: rgba(16, 185, 129, 0.2);
+  --theme-border-success-30: rgba(16, 185, 129, 0.3);
+  --theme-border-danger-20: rgba(239, 68, 68, 0.2);
+  --theme-border-danger-30: rgba(239, 68, 68, 0.3);
+  --theme-border-info-20: rgba(59, 130, 246, 0.2);
+  --theme-border-info-30: rgba(59, 130, 246, 0.3);
+  --theme-border-accent-20: rgba(5, 150, 105, 0.2);
+  --theme-border-accent-30: rgba(5, 150, 105, 0.3);
+  --theme-border-social-subtle: #e5e7eb;
+
+  /* Color swatch borders */
+  --theme-color-border-40: #d1d5db;
+  --theme-color-border-80: #6b7280;
+
+  /* Button Variables */
+  --theme-btn-primary: #7c3aed;
+  --theme-btn-primary-hover: #6d28d9;
+  --theme-btn-primary-text: #ffffff;
+  --theme-btn-primary-border: #7c3aed;
+
+  --theme-btn-secondary: #f3f4f6;
+  --theme-btn-secondary-hover: #e5e7eb;
+  --theme-btn-secondary-text: #374151;
+  --theme-btn-secondary-border: #d1d5db;
+
+  /* Status indicators */
+  --theme-success-500: #10b981;
+  --theme-danger-500: #ef4444;
+  --theme-info-500: #3b82f6;
+
+  /* Gradients */
+  --theme-gradient-primary: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+  --theme-gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  --theme-gradient-info: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  --theme-gradient-accent: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  --theme-gradient-ribbon: linear-gradient(
+    90deg,
+    #7c3aed 0%,
+    #8b5cf6 50%,
+    #a855f7 100%
+  );
+  --theme-hero-text-gradient: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+  --theme-hero-card-gradient: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.1) 0%,
+    rgba(139, 92, 246, 0.1) 100%
+  );
+  --theme-hero-feature-gradient: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.05) 0%,
+    rgba(139, 92, 246, 0.05) 100%
+  );
+
+  /* Blog-specific custom properties for direct CSS usage */
+  --theme-blog-title: var(--theme-text-content);
+  --theme-blog-excerpt: var(--theme-text-content-70);
+  --theme-blog-author: var(--theme-text-content-80);
+  --theme-blog-date: var(--theme-text-content-60);
+  --theme-blog-category: var(--theme-text-primary-400);
+  --theme-blog-tag: var(--theme-text-accent);
+  --theme-blog-post-card: var(--theme-bg-card);
+  --theme-blog-category-badge: var(--theme-bg-primary-10);
+  --theme-blog-tag-badge: var(--theme-bg-accent-20);
+  --theme-blog-card-border: var(--theme-border-card);
+
+  /* Legacy blog variables for backward compatibility */
+  --theme-text-primary: var(--theme-text-content);
+  --theme-text-secondary: var(--theme-text-content-80);
+  --theme-text-muted: var(--theme-text-content-60);
+  --theme-text-subtle: var(--theme-text-content-40);
+  --theme-background-primary: var(--theme-bg-options);
+  --theme-background-secondary: var(--theme-bg-loading);
+  --theme-background-card: var(--theme-bg-card);
+  --theme-background-hover: var(--theme-bg-loading);
+  --theme-border-primary: var(--theme-border-card);
+  --theme-border-secondary: var(--theme-border-card-hover);
+  --theme-link-primary: var(--theme-text-primary-400);
+  --theme-link-primary-hover: var(--theme-text-primary-300);
+}
