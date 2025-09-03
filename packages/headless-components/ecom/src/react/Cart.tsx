@@ -334,10 +334,10 @@ export const LineItems = React.forwardRef<HTMLElement, LineItemsProps>(
       <AsChildSlot
         ref={ref}
         asChild={asChild}
+        data-testid={TestIds.cartLineItems}
         customElement={children}
         customElementProps={{ cart }}
         content={React.isValidElement(children) ? children : null}
-        data-testid={TestIds.cartLineItems}
         {...otherProps}
       >
         <div>{React.isValidElement(children) ? children : null}</div>
@@ -401,11 +401,11 @@ export const LineItemRepeater = React.forwardRef<
     <AsChildSlot
       ref={ref}
       asChild={asChild}
+      className={className}
+      data-testid={TestIds.cartLineItemRepeater}
       customElement={children}
       customElementProps={{ items }}
       content={content}
-      data-testid={TestIds.cartLineItemRepeater}
-      className={className}
       {...otherProps}
     >
       <div>{content}</div>

@@ -96,10 +96,10 @@ export const Text = React.forwardRef<HTMLElement, SelectedOptionTextProps>(
       <AsChildSlot
         ref={ref}
         asChild={asChild}
+        data-testid={TestIds.selectedOptionText}
         customElement={children}
         customElementProps={{ name, value }}
         content={defaultContent}
-        data-testid={TestIds.selectedOptionText}
         {...otherProps}
       >
         <span>{defaultContent}</span>
@@ -159,10 +159,10 @@ export const Color = React.forwardRef<HTMLElement, SelectedOptionColorProps>(
       <AsChildSlot
         ref={ref}
         asChild={asChild}
+        data-testid={TestIds.selectedOptionColor}
         customElement={children}
         customElementProps={{ name, colorCode, colorName }}
         content={defaultContent}
-        data-testid={TestIds.selectedOptionColor}
         {...otherProps}
       >
         <span>{defaultContent}</span>
