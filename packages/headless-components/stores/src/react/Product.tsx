@@ -60,6 +60,16 @@ export function useModifiersContext(): ModifiersContextValue {
   return context;
 }
 
+/**
+ * Basic stock status type for product availability states
+ */
+export type BasicStockStatus = 'in-stock' | 'limited-stock' | 'out-of-stock';
+
+/**
+ * Extended stock status type including pre-order capability
+ */
+export type StockStatus = BasicStockStatus | 'can-pre-order';
+
 enum TestIds {
   productRoot = 'product-root',
   productName = 'product-name',
@@ -647,7 +657,7 @@ export interface StockProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+    status: BasicStockStatus;
     label: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -726,7 +736,7 @@ export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
         const finalLabels = { ...defaultLabels, ...labels };
 
         // Determine status based on availabilityStatus
-        let status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+        let status: BasicStockStatus;
         let label: string;
 
         switch (availabilityStatus) {
@@ -1871,7 +1881,7 @@ function getStockStatusMessage(
     preOrder: string;
   },
 ): {
-  status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'can-pre-order';
+  status: StockStatus;
   label: string;
 } {
   // Pre-order takes precedence
@@ -1917,7 +1927,7 @@ export interface ProductVariantStockProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'can-pre-order';
+    status: StockStatus;
     label: string;
   }>;
   /** CSS classes to apply to the default element */
