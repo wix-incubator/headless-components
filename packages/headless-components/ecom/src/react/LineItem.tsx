@@ -51,7 +51,7 @@ export interface LineItemRootProps {
  */
 export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
   (props, ref) => {
-    const { asChild, children, item, ...otherProps } = props;
+    const { asChild, children, item } = props;
 
     const contextValue: LineItemContextValue = {
       lineItem: item,
@@ -71,7 +71,6 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
         customElement={children}
         customElementProps={{ item }}
         content={content}
-        {...otherProps}
       >
         <div>{content}</div>
       </AsChildSlot>
@@ -129,7 +128,7 @@ export interface TitleProps {
  * ```
  */
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+  const { asChild, children } = props;
   const { lineItem } = useLineItemContext();
 
   return (
@@ -142,7 +141,6 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
           customElement={children}
           customElementProps={{ title }}
           content={title}
-          {...otherProps}
         >
           <span>{title}</span>
         </AsChildSlot>
@@ -331,7 +329,7 @@ export const SelectedOptions = React.forwardRef<
   HTMLElement,
   SelectedOptionsProps
 >((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+  const { asChild, children } = props;
   const { lineItem } = useLineItemContext();
 
   return (
@@ -349,7 +347,6 @@ export const SelectedOptions = React.forwardRef<
             customElement={children}
             customElementProps={{ selectedOptions }}
             content={React.isValidElement(children) ? children : null}
-            {...otherProps}
           >
             <div>{React.isValidElement(children) ? children : null}</div>
           </AsChildSlot>

@@ -317,7 +317,7 @@ export interface LineItemsProps {
  */
 export const LineItems = React.forwardRef<HTMLElement, LineItemsProps>(
   (props, ref) => {
-    const { asChild, children, emptyState, ...otherProps } = props;
+    const { asChild, children, emptyState } = props;
 
     const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
       typeof CurrentCartServiceDefinition
@@ -338,7 +338,6 @@ export const LineItems = React.forwardRef<HTMLElement, LineItemsProps>(
         customElement={children}
         customElementProps={{ cart }}
         content={React.isValidElement(children) ? children : null}
-        {...otherProps}
       >
         <div>{React.isValidElement(children) ? children : null}</div>
       </AsChildSlot>
@@ -386,7 +385,7 @@ export const LineItemRepeater = React.forwardRef<
   const service = useService(CurrentCartServiceDefinition) as ServiceAPI<
     typeof CurrentCartServiceDefinition
   >;
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className } = props;
 
   const cart = service.cart.get();
   const items = cart?.lineItems || [];
@@ -406,7 +405,6 @@ export const LineItemRepeater = React.forwardRef<
       customElement={children}
       customElementProps={{ items }}
       content={content}
-      {...otherProps}
     >
       <div>{content}</div>
     </AsChildSlot>
