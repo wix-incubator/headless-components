@@ -1,6 +1,6 @@
 import React from 'react';
 import { type LineItem } from '../services/common-types.js';
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { WixMediaImage } from '@wix/headless-media/react';
 import * as SelectedOption from './SelectedOption.js';
 import { Item as CoreItem } from './core/CurrentCart.js';
@@ -28,7 +28,7 @@ export interface LineItemRootProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children: React.ReactNode;
+  children: AsChildChildren<{ item: LineItem }>;
   /** The line item data */
   item: LineItem;
   /** CSS classes to apply to the default element */
@@ -97,14 +97,7 @@ export interface TitleProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          title: string;
-        }
-      >;
+  children?: AsChildChildren<{ title: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -165,13 +158,7 @@ Title.displayName = 'LineItem.Title';
  */
 export interface ImageProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLImageElement,
-    {
-      src: string;
-      alt: string;
-    }
-  >;
+  children?: AsChildChildren<{ src: string; alt: string }>;
   className?: string;
   [key: string]: any;
 }
@@ -239,7 +226,10 @@ export interface QuantityProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components for quantity controls */
-  children: React.ReactNode;
+  children: AsChildChildren<{
+    quantity: number;
+    updateQuantity: (quantity: number) => void;
+  }>;
   /** How much to increment/decrement (default: 1) */
   steps?: number;
   /** CSS classes to apply to the default element */
@@ -297,17 +287,12 @@ export interface SelectedOptionsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          selectedOptions: Array<{
-            name: string;
-            value: string | { color: string };
-          }>;
-        }
-      >;
+  children?: AsChildChildren<{
+    selectedOptions: Array<{
+      name: string;
+      value: string | { color: string };
+    }>;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */

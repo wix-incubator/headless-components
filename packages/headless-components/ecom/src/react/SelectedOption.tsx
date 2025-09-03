@@ -8,8 +8,8 @@ import {
   isColorOption,
 } from '../services/selected-option-service.js';
 import { createServicesMap } from '@wix/services-manager';
-import { type AsChildProps } from '../utils/asChild.js';
-import { AsChildSlot } from '@wix/headless-utils/react';
+
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
 enum TestIds {
   selectedOptionText = 'selected-option-text',
@@ -55,7 +55,14 @@ Root.displayName = 'SelectedOption.Root';
 /**
  * Props for SelectedOption Text component
  */
-export interface SelectedOptionTextProps extends AsChildProps {}
+export interface SelectedOptionTextProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ name: string; value: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays text-based selected option.
@@ -113,7 +120,18 @@ Text.displayName = 'SelectedOption.Text';
 /**
  * Props for SelectedOption Color component
  */
-export interface SelectedOptionColorProps extends AsChildProps {}
+export interface SelectedOptionColorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    name: string;
+    colorCode: string;
+    colorName: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays color-based selected option.

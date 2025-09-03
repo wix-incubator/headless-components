@@ -62,7 +62,7 @@ import { CurrentCartServiceDefinition } from '../services/current-cart-service.j
 import type { LineItem } from '../services/common-types.js';
 import { Slot } from '@radix-ui/react-slot';
 import { renderChildren } from '../utils/asChild.js';
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as LineItemComponent from './LineItem.js';
 import * as CouponComponents from './CartCoupon.js';
 
@@ -290,7 +290,7 @@ export interface LineItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode;
+  children?: AsChildChildren<{ cart: any }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Empty state to display when cart is empty */
@@ -350,7 +350,7 @@ export interface LineItemRepeaterProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode;
+  children?: AsChildChildren<{ items: LineItem[] }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
