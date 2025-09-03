@@ -101,6 +101,7 @@ export type FormField = {
   placeholder?: string;
   description?: forms.RichContent;
   showLabel: boolean;
+  showPlaceholder?: boolean;
 };
 
 /**
@@ -145,7 +146,7 @@ export const Container = React.forwardRef<HTMLElement, ContainerProps>(
     const form = formService.form.get();
     // TODO: return in same order as in form
     const fields = (form?.formFields || []).map(formatField);
-    console.log('formatted fields', fields);
+    console.log('formatted fields', fields[4]);
 
     return children({
       name: form?.name ?? '',
