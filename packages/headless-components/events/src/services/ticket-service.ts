@@ -15,13 +15,13 @@ export interface TicketServiceConfig {
   ticketDefinition: TicketDefinition;
 }
 
-export const TicketServiceDefinition = defineService<
+export const TicketDefinitionServiceDefinition = defineService<
   TicketServiceAPI,
   TicketServiceConfig
 >('ticket');
 
 export const TicketService = implementService.withConfig<TicketServiceConfig>()(
-  TicketServiceDefinition,
+  TicketDefinitionServiceDefinition,
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 

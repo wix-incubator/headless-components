@@ -2,6 +2,7 @@ import {
   Event as EventPrimitive,
   TicketsPicker as TicketsPickerPrimitive,
   TicketDefinition as TicketDefinitionPrimitive,
+  PricingOption as PricingOptionPrimitive,
 } from '@wix/headless-events/react';
 import {
   type EventServiceConfig,
@@ -83,7 +84,14 @@ export function EventDetails({
                 <TicketDefinitionPrimitive.Name className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2" />
                 <TicketDefinitionPrimitive.Description className="text-sm text-gray-500 mb-3 line-clamp-3" />
                 <TicketDefinitionPrimitive.FixedPricing className="text-base font-medium text-gray-900 mb-2" />
-                <TicketDefinitionPrimitive.GuestPricing className="text-base font-medium text-gray-900 mb-2" />
+                <TicketDefinitionPrimitive.GuestPricing className="text-base font-medium text-red-900 mb-2" />
+                <TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
+                  <div>
+                    <PricingOptionPrimitive.Name className="text-sm font-medium text-gray-900 mb-2" />{' '}
+                    <PricingOptionPrimitive.Pricing className="text-sm text-gray-500 mb-2" />
+                    <PricingOptionPrimitive.Quantity className="text-sm text-gray-500 mb-2" />
+                  </div>
+                </TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
                 <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
                   <span>
                     Remaining: <TicketDefinitionPrimitive.Remaining />

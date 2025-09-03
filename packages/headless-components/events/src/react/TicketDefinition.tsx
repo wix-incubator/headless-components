@@ -3,12 +3,13 @@ import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
 import {
   TicketService,
-  TicketServiceDefinition,
+  TicketDefinitionServiceDefinition,
   type TicketDefinition,
   type TicketServiceConfig,
 } from '../services/ticket-service.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TicketListServiceDefinition } from '../services/ticket-list-service.js';
+import { TicketDefinitionListServiceDefinition } from '../services/ticket-list-service.js';
+import { PricingOption } from './index.js';
 
 enum TestIds {
   ticketDefinitionName = 'ticket-definition-name',
@@ -43,7 +44,7 @@ export const Root = (props: RootProps): React.ReactNode => {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
-        TicketServiceDefinition,
+        TicketDefinitionServiceDefinition,
         TicketService,
         ticketServiceConfig,
       )}
@@ -62,7 +63,7 @@ export interface NameProps {
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(TicketServiceDefinition);
+  const service = useService(TicketDefinitionServiceDefinition);
   const ticketDefinition = service.ticketDefinition.get();
   const name = ticketDefinition.name ?? '';
 
@@ -91,7 +92,7 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const service = useService(TicketServiceDefinition);
+    const service = useService(TicketDefinitionServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
 
     if (ticketDefinition.pricingMethod?.fixedPrice) {
@@ -127,7 +128,7 @@ export const FreePricing = React.forwardRef<HTMLElement, FreePricingProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const service = useService(TicketServiceDefinition);
+    const service = useService(TicketDefinitionServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
 
     if (ticketDefinition.pricingMethod?.free) {
@@ -158,8 +159,8 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const service = useService(TicketServiceDefinition);
-    const listService = useService(TicketListServiceDefinition);
+    const service = useService(TicketDefinitionServiceDefinition);
+    const listService = useService(TicketDefinitionListServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
 
     if (ticketDefinition.pricingMethod?.guestPrice) {
@@ -204,7 +205,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const service = useService(TicketServiceDefinition);
+    const service = useService(TicketDefinitionServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
     const description = ticketDefinition.description ?? '';
 
@@ -234,7 +235,7 @@ export const Remaining = React.forwardRef<HTMLElement, RemainingProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const service = useService(TicketServiceDefinition);
+    const service = useService(TicketDefinitionServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
     const limitPerCheckout = ticketDefinition.limitPerCheckout || 0;
 
@@ -266,8 +267,8 @@ export const SoldOut = React.forwardRef<HTMLElement, SoldOutProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const listService = useService(TicketListServiceDefinition);
-    const service = useService(TicketServiceDefinition);
+    const listService = useService(TicketDefinitionListServiceDefinition);
+    const service = useService(TicketDefinitionServiceDefinition);
     const ticketDefinition = service.ticketDefinition.get();
     const soldOut = listService.isSoldOut(ticketDefinition._id ?? '');
 
@@ -306,9 +307,10 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const listService = useService(TicketListServiceDefinition);
-    const service = useService(TicketServiceDefinition);
-    const ticketDefinitionId = service.ticketDefinition.get()._id ?? '';
+    const listService = useService(TicketDefinitionListServiceDefinition);
+    const service = useService(TicketDefinitionServiceDefinition);
+    const ticketDefinition = service.ticketDefinition.get();
+    const ticketDefinitionId = ticketDefinition._id ?? '';
     const currentQuantity =
       listService.getCurrentSelectedQuantity(ticketDefinitionId);
     const maxQuantity = listService.getMaxQuantity(ticketDefinitionId);
@@ -317,6 +319,10 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     const decrement = () => listService.decrementQuantity(ticketDefinitionId);
     const setQuantity = (quantity: number) =>
       listService.setQuantity({ ticketDefinitionId, quantity });
+
+    if (ticketDefinition.pricingMethod?.pricingOptions) {
+      return null;
+    }
 
     const defaultUI = (
       <div>
@@ -347,3 +353,47 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     );
   },
 );
+
+interface PricingOptionsPricingRepeaterProps {
+  children: React.ReactNode;
+}
+
+export const PricingOptionsPricingRepeater = React.forwardRef<
+  HTMLElement,
+  PricingOptionsPricingRepeaterProps
+>(({ children }, _ref) => {
+  const service = useService(TicketDefinitionServiceDefinition);
+  const listService = useService(TicketDefinitionListServiceDefinition);
+  const ticketDefinition = service.ticketDefinition.get();
+
+  if (ticketDefinition.pricingMethod?.pricingOptions?.optionDetails?.length) {
+    const { optionDetails } = ticketDefinition.pricingMethod.pricingOptions;
+
+    const onChange = (val: string) => {
+      listService.setQuantity({
+        ticketDefinitionId: ticketDefinition._id!,
+        priceOverride: val,
+      });
+    };
+
+    // TODO remove
+    console.log(onChange);
+
+    return (
+      <>
+        {optionDetails.map((pricingOption) => (
+          <PricingOption.Root
+            key={pricingOption.optionId}
+            pricingOption={pricingOption}
+            // onSelect={onChange}
+            data-testid={TestIds.ticketDefinitionPricingOption}
+          >
+            {children}
+          </PricingOption.Root>
+        ))}
+      </>
+    );
+  }
+
+  return null;
+});

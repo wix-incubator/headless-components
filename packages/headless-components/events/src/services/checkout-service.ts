@@ -3,7 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { orders } from '@wix/events';
+import { orders, ticketReservations } from '@wix/events';
 import { redirects } from '@wix/redirects';
 import { TicketReservationQuantity } from './ticket-list-service.js';
 
@@ -48,6 +48,9 @@ export const CheckoutService =
         try {
           isLoading.set(true);
           error.set(null);
+          ticketReservations.createTicketReservation({tickets: [
+            {eventId: eventId}
+          ]})
           const reservationResult = await orders.createReservation(eventId, {
             ticketQuantities: ticketQuantities
               .map(({ quantity, ticketDefinitionId, priceOverride }) => {

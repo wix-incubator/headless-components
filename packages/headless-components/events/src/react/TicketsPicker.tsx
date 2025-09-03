@@ -3,7 +3,7 @@ import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
 import {
   TicketListService,
-  TicketListServiceDefinition,
+  TicketDefinitionListServiceDefinition,
   TicketReservationQuantity,
   type TicketListServiceConfig,
 } from '../services/ticket-list-service.js';
@@ -73,7 +73,11 @@ export const Root = (props: RootProps): React.ReactNode => {
     <WixServices
       servicesMap={createServicesMap()
         .addService(EventServiceDefinition, EventService, eventServiceConfig)
-        .addService(TicketListServiceDefinition, TicketListService, config)
+        .addService(
+          TicketDefinitionListServiceDefinition,
+          TicketListService,
+          config,
+        )
         .addService(CheckoutServiceDefinition, CheckoutService, {})}
     >
       {children}
@@ -111,7 +115,7 @@ export const TicketDefinitions = React.forwardRef<
 >((props, ref) => {
   const { children, emptyState, className } = props;
 
-  const service = useService(TicketListServiceDefinition);
+  const service = useService(TicketDefinitionListServiceDefinition);
   const ticketDefinitions = service.ticketDefinitions.get();
   const hasTickets = !!ticketDefinitions.length;
 
@@ -158,7 +162,7 @@ export const TicketDefinitionRepeater = (
 ): React.ReactNode => {
   const { children } = props;
 
-  const service = useService(TicketListServiceDefinition);
+  const service = useService(TicketDefinitionListServiceDefinition);
   const ticketDefinitions = service.ticketDefinitions.get();
   const hasTickets = !!ticketDefinitions.length;
 
@@ -232,7 +236,7 @@ export const Checkout = (props: CheckoutProps): React.ReactNode => {
     noTicketsErrorMessage = 'Please select at least one ticket',
   } = props;
 
-  const ticketService = useService(TicketListServiceDefinition);
+  const ticketService = useService(TicketDefinitionListServiceDefinition);
   const eventService = useService(EventServiceDefinition);
   const checkoutService = useService(CheckoutServiceDefinition);
 

@@ -32,7 +32,7 @@ export {
 
 export {
   TicketService,
-  TicketServiceDefinition,
+  TicketDefinitionServiceDefinition as TicketServiceDefinition,
   type TicketServiceAPI,
   type TicketServiceConfig,
   type TicketDefinition,
@@ -40,7 +40,7 @@ export {
 
 export {
   TicketListService,
-  TicketListServiceDefinition,
+  TicketDefinitionListServiceDefinition as TicketListServiceDefinition,
   loadTicketListServiceConfig,
   type TicketListServiceAPI,
   type TicketListServiceConfig,
