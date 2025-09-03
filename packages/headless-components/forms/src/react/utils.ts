@@ -1,6 +1,9 @@
 import { forms } from '@wix/forms';
-import { INPUT_FIELD_TYPES, InputFieldType } from './input-field-types.js';
-import { FormField } from './Form.js';
+import {
+  INPUT_FIELD_TYPES,
+  InputFieldType,
+} from './types/input-field-types.js';
+import { FormField } from './types/formatted-fields.js';
 
 export function formatField(field: forms.Field): FormField {
   const { inputOptions, identifier } = field;
