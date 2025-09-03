@@ -73,6 +73,42 @@ export interface ContactsSubscribeField extends BaseFormField {
   defaultValue: boolean;
 }
 
+/**
+ * Represents a text area form field configuration.
+ *
+ * @interface TextAreaField
+ *
+ * @property {typeof INPUT_FIELD_TYPES.TEXT_AREA} type - Always 'TEXT_AREA'
+ * @property {string} name - The unique identifier for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ *
+ * @example
+ * ```tsx
+ * const textAreaField: TextAreaField = {
+ *   type: INPUT_FIELD_TYPES.TEXT_AREA,
+ *   name: 'message',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Your Message',
+ *   showLabel: true,
+ *   placeholder: 'Enter your message here...',
+ *   description: { nodes: [{ type: 'text', text: 'Please provide detailed information' }] }
+ * };
+ * ```
+ */
+export interface TextAreaField extends BaseFormField {
+  type: typeof INPUT_FIELD_TYPES.TEXT_AREA;
+  label: string;
+  showLabel: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+}
+
 // TODO: DefaultField should be deleted once all fields have specific types defined
 export interface DefaultField extends BaseFormField {
   type: Exclude<InputFieldType, typeof INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE>;

@@ -8,6 +8,7 @@ import {
   ContactsBirthdateField,
   ContactsSubscribeField,
   DefaultField,
+  TextAreaField,
 } from './types/formatted-fields.js';
 
 export function formatField(field: forms.Field): FormField {
@@ -17,9 +18,6 @@ export function formatField(field: forms.Field): FormField {
   const name = inputOptions?.target ?? '';
   const required = inputOptions?.required ?? false;
   const readOnly = inputOptions?.readOnly ?? false;
-
-  // console.log('---- field ----', label, identifier, field);
-  // console.log('inputOptions', inputOptions);
 
   switch (type) {
     case INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE: {
@@ -44,26 +42,44 @@ export function formatField(field: forms.Field): FormField {
       return contactsBirthdateField;
     }
     case INPUT_FIELD_TYPES.CONTACTS_SUBSCRIBE: {
-      const options = inputOptions?.stringOptions?.dateInputOptions ?? {};
-      const checkboxOptions =
-        inputOptions?.booleanOptions?.checkboxOptions ?? {};
+      const options = inputOptions?.booleanOptions?.checkboxOptions ?? {};
+
+      const contactsSubscribeField: ContactsSubscribeField = {
+        type,
+        name,
+        label: options?.label!,
+        required,
+        readOnly,
+        defaultValue: options?.checked ?? false,
+      };
+
+      return contactsSubscribeField;
+    }
+    case INPUT_FIELD_TYPES.TEXT_AREA: {
+      const options = inputOptions?.stringOptions?.textInputOptions ?? {};
       const label = options?.label ?? '';
+      const placeholder = options?.placeholder ?? undefined;
+      const description = options?.description ?? undefined;
+      const showLabel = options?.showLabel ?? true;
 
       console.log('---- field ----', label, identifier, field);
       console.log('inputOptions', inputOptions);
       console.log('booleanOptions', inputOptions?.booleanOptions);
 
-      const contactsSubscribeField: ContactsSubscribeField = {
+      const textAreaField: TextAreaField = {
         type,
         name,
-        label: checkboxOptions?.label!,
+        label,
         required,
         readOnly,
-        defaultValue: checkboxOptions?.checked ?? false,
+        placeholder,
+        description,
+        showLabel,
       };
 
-      return contactsSubscribeField;
+      return textAreaField;
     }
+    // case INPUT_FIELD_TYPES.TEXT_AREA:
     // case INPUT_FIELD_TYPES.CONTACTS_FIRST_NAME:
     // case INPUT_FIELD_TYPES.CONTACTS_LAST_NAME:
     // case INPUT_FIELD_TYPES.CONTACTS_EMAIL: {
