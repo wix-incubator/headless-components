@@ -1,8 +1,7 @@
 import { forms } from '@wix/forms';
 import { InputFieldType, INPUT_FIELD_TYPES } from './input-field-types';
 
-interface BaseFormField {
-  type: InputFieldType;
+export interface BaseFormField {
   name: string;
   required: boolean;
   readOnly: boolean;
@@ -73,6 +72,13 @@ export interface ContactsSubscribeField extends BaseFormField {
   defaultValue: boolean;
 }
 
+export interface TextField extends BaseFormField {
+  label: string;
+  showLabel: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+}
+
 /**
  * Represents a text area form field configuration.
  *
@@ -101,21 +107,13 @@ export interface ContactsSubscribeField extends BaseFormField {
  * };
  * ```
  */
-export interface TextAreaField extends BaseFormField {
+export interface TextAreaField extends TextField {
   type: typeof INPUT_FIELD_TYPES.TEXT_AREA;
-  label: string;
-  showLabel: boolean;
-  placeholder?: string;
-  description?: forms.RichContent;
 }
 
 // TODO: DefaultField should be deleted once all fields have specific types defined
-export interface DefaultField extends BaseFormField {
-  type: Exclude<InputFieldType, typeof INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE>;
-  label: string;
-  placeholder?: string;
-  description?: forms.RichContent;
-  showLabel: boolean;
+export interface DefaultField extends TextField {
+  type: InputFieldType;
 }
 
 export type FormField =

@@ -9,6 +9,7 @@ import {
   ContactsSubscribeField,
   DefaultField,
   TextAreaField,
+  BaseFormField,
 } from './types/formatted-fields.js';
 
 export function formatField(field: forms.Field): FormField {
@@ -18,6 +19,12 @@ export function formatField(field: forms.Field): FormField {
   const name = inputOptions?.target ?? '';
   const required = inputOptions?.required ?? false;
   const readOnly = inputOptions?.readOnly ?? false;
+
+  const baseField: BaseFormField = {
+    name,
+    required,
+    readOnly,
+  };
 
   switch (type) {
     case INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE: {
@@ -29,11 +36,9 @@ export function formatField(field: forms.Field): FormField {
       const description = options?.description ?? undefined;
 
       const contactsBirthdateField: ContactsBirthdateField = {
+        ...baseField,
         type,
-        name,
         label,
-        required,
-        readOnly,
         description,
         showLabel,
         showPlaceholder,
@@ -45,11 +50,9 @@ export function formatField(field: forms.Field): FormField {
       const options = inputOptions?.booleanOptions?.checkboxOptions ?? {};
 
       const contactsSubscribeField: ContactsSubscribeField = {
+        ...baseField,
         type,
-        name,
         label: options?.label!,
-        required,
-        readOnly,
         defaultValue: options?.checked ?? false,
       };
 
@@ -67,11 +70,9 @@ export function formatField(field: forms.Field): FormField {
       console.log('booleanOptions', inputOptions?.booleanOptions);
 
       const textAreaField: TextAreaField = {
+        ...baseField,
         type,
-        name,
         label,
-        required,
-        readOnly,
         placeholder,
         description,
         showLabel,
@@ -92,11 +93,9 @@ export function formatField(field: forms.Field): FormField {
       const showLabel = options?.showLabel ?? true;
 
       const defaultField: DefaultField = {
+        ...baseField,
         type,
-        name,
         label,
-        required,
-        readOnly,
         placeholder,
         description,
         showLabel,
