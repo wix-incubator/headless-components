@@ -6,6 +6,7 @@ import {
 import {
   FormField,
   ContactsBirthdateField,
+  ContactsSubscribeField,
   DefaultField,
 } from './types/formatted-fields.js';
 
@@ -29,10 +30,7 @@ export function formatField(field: forms.Field): FormField {
       const showLabel = options?.showLabel ?? true;
       const description = options?.description ?? undefined;
 
-      console.log('---- field ----', label, identifier, field);
-      console.log('inputOptions', inputOptions);
-
-      const birthdateField: ContactsBirthdateField = {
+      const contactsBirthdateField: ContactsBirthdateField = {
         type,
         name,
         label,
@@ -43,7 +41,28 @@ export function formatField(field: forms.Field): FormField {
         showPlaceholder,
       };
 
-      return birthdateField;
+      return contactsBirthdateField;
+    }
+    case INPUT_FIELD_TYPES.CONTACTS_SUBSCRIBE: {
+      const options = inputOptions?.stringOptions?.dateInputOptions ?? {};
+      const checkboxOptions =
+        inputOptions?.booleanOptions?.checkboxOptions ?? {};
+      const label = options?.label ?? '';
+
+      console.log('---- field ----', label, identifier, field);
+      console.log('inputOptions', inputOptions);
+      console.log('booleanOptions', inputOptions?.booleanOptions);
+
+      const contactsSubscribeField: ContactsSubscribeField = {
+        type,
+        name,
+        label: checkboxOptions?.label!,
+        required,
+        readOnly,
+        defaultValue: checkboxOptions?.checked ?? false,
+      };
+
+      return contactsSubscribeField;
     }
     // case INPUT_FIELD_TYPES.CONTACTS_FIRST_NAME:
     // case INPUT_FIELD_TYPES.CONTACTS_LAST_NAME:

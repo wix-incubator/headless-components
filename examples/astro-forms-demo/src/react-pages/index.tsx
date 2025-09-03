@@ -19,7 +19,7 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
 
             {fields.map(field => (
               <div key={field.type}>
-                {field.label}: {field.type}
+                {typeof field.label === 'string' ? field.label : "RICOS label"}: {field.type}
               </div>
             ))}
           </form>
