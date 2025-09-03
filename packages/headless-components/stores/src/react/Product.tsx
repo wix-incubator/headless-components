@@ -1875,7 +1875,7 @@ function getStockStatusMessage(
   label: string;
 } {
   // Pre-order takes precedence
-  if (isPreOrderEnabled) {
+  if (isPreOrderEnabled && !inStock) {
     return {
       status: 'can-pre-order',
       label: labels.preOrder,
