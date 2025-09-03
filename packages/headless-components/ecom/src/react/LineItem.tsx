@@ -67,10 +67,10 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
       <AsChildSlot
         ref={ref}
         asChild={asChild}
+        data-testid={TestIds.lineItemRoot}
         customElement={children}
         customElementProps={{ item }}
         content={content}
-        data-testid={TestIds.lineItemRoot}
         {...otherProps}
       >
         <div>{content}</div>
@@ -145,10 +145,10 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
         <AsChildSlot
           ref={ref}
           asChild={asChild}
+          data-testid={TestIds.lineItemTitle}
           customElement={children}
           customElementProps={{ title }}
           content={title}
-          data-testid={TestIds.lineItemTitle}
           {...otherProps}
         >
           <span>{title}</span>
@@ -360,10 +360,10 @@ export const SelectedOptions = React.forwardRef<
           <AsChildSlot
             ref={ref}
             asChild={asChild}
+            data-testid={TestIds.lineItemSelectedOptions}
             customElement={children}
             customElementProps={{ selectedOptions }}
             content={React.isValidElement(children) ? children : null}
-            data-testid={TestIds.lineItemSelectedOptions}
             {...otherProps}
           >
             <div>{React.isValidElement(children) ? children : null}</div>
