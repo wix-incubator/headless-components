@@ -104,7 +104,7 @@ export const Container = React.forwardRef<HTMLElement, ContainerProps>(
     const form = formService.form.get();
     // TODO: return in same order as in form
     const fields: FormField[] = (form?.formFields || []).map(formatField);
-    console.log('formatted fields', fields[6]);
+    console.log('formatted fields', fields);
 
     return children({
       name: form?.name ?? '',

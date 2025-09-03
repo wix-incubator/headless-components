@@ -9,8 +9,27 @@ import {
   ContactsSubscribeField,
   DefaultField,
   TextAreaField,
-  BaseFormField,
+  TextInputField,
+  NumberInputField,
+  CheckboxField,
+  BaseField,
 } from './types/formatted-fields.js';
+
+function formatTextFieldOptions(options: forms.TextInput) {
+  return {
+    label: options?.label ?? '',
+    placeholder: options?.placeholder ?? undefined,
+    description: options?.description ?? undefined,
+    showLabel: options?.showLabel ?? true,
+  };
+}
+
+function formatCheckboxOptions(options: forms.Checkbox) {
+  return {
+    label: options?.label!,
+    defaultValue: options?.checked ?? false,
+  };
+}
 
 export function formatField(field: forms.Field): FormField {
   const { inputOptions, identifier } = field;
@@ -20,7 +39,7 @@ export function formatField(field: forms.Field): FormField {
   const required = inputOptions?.required ?? false;
   const readOnly = inputOptions?.readOnly ?? false;
 
-  const baseField: BaseFormField = {
+  const baseField: BaseField = {
     name,
     required,
     readOnly,
@@ -46,44 +65,71 @@ export function formatField(field: forms.Field): FormField {
 
       return contactsBirthdateField;
     }
-    case INPUT_FIELD_TYPES.CONTACTS_SUBSCRIBE: {
-      const options = inputOptions?.booleanOptions?.checkboxOptions ?? {};
-
-      const contactsSubscribeField: ContactsSubscribeField = {
-        ...baseField,
-        type,
-        label: options?.label!,
-        defaultValue: options?.checked ?? false,
-      };
-
-      return contactsSubscribeField;
-    }
     case INPUT_FIELD_TYPES.TEXT_AREA: {
-      const options = inputOptions?.stringOptions?.textInputOptions ?? {};
-      const label = options?.label ?? '';
-      const placeholder = options?.placeholder ?? undefined;
-      const description = options?.description ?? undefined;
-      const showLabel = options?.showLabel ?? true;
-
-      console.log('---- field ----', label, identifier, field);
-      console.log('inputOptions', inputOptions);
-      console.log('booleanOptions', inputOptions?.booleanOptions);
+      const formattedOptions = formatTextFieldOptions(
+        inputOptions?.stringOptions?.textInputOptions ?? {},
+      );
 
       const textAreaField: TextAreaField = {
         ...baseField,
+        ...formattedOptions,
         type,
-        label,
-        placeholder,
-        description,
-        showLabel,
       };
 
       return textAreaField;
     }
-    // case INPUT_FIELD_TYPES.TEXT_AREA:
-    // case INPUT_FIELD_TYPES.CONTACTS_FIRST_NAME:
-    // case INPUT_FIELD_TYPES.CONTACTS_LAST_NAME:
-    // case INPUT_FIELD_TYPES.CONTACTS_EMAIL: {
+    case INPUT_FIELD_TYPES.TEXT_INPUT: {
+      const formattedOptions = formatTextFieldOptions(
+        inputOptions?.stringOptions?.textInputOptions ?? {},
+      );
+
+      const textInputField: TextInputField = {
+        ...baseField,
+        ...formattedOptions,
+        type,
+      };
+
+      return textInputField;
+    }
+    case INPUT_FIELD_TYPES.NUMBER_INPUT: {
+      const formattedOptions = formatTextFieldOptions(
+        inputOptions?.stringOptions?.textInputOptions ?? {},
+      );
+
+      const numberInputField: NumberInputField = {
+        ...baseField,
+        ...formattedOptions,
+        type,
+      };
+
+      return numberInputField;
+    }
+    case INPUT_FIELD_TYPES.CHECKBOX: {
+      const formattedOptions = formatCheckboxOptions(
+        inputOptions?.booleanOptions?.checkboxOptions ?? {},
+      );
+
+      const checkboxField: CheckboxField = {
+        ...baseField,
+        ...formattedOptions,
+        type,
+      };
+
+      return checkboxField;
+    }
+    case INPUT_FIELD_TYPES.CONTACTS_SUBSCRIBE: {
+      const formattedOptions = formatCheckboxOptions(
+        inputOptions?.booleanOptions?.checkboxOptions ?? {},
+      );
+
+      const contactsSubscribeField: ContactsSubscribeField = {
+        ...baseField,
+        ...formattedOptions,
+        type,
+      };
+
+      return contactsSubscribeField;
+    }
     default: {
       const options = inputOptions?.stringOptions?.textInputOptions ?? {};
 
