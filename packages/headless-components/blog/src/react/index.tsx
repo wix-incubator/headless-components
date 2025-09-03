@@ -8,5 +8,8 @@ export * as BlogFeed from './BlogFeed.js';
 export * as BlogCategories from './BlogCategories.js';
 export * as BlogPost from './BlogPost.js';
 
+// CSS exports - consumers must import this alongside components
+// import '@wix/headless-blog/react/styles.css';
+
 // Utility exports
 export { createCustomCategory } from './BlogCategories.js';
