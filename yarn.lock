@@ -5467,7 +5467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/events@npm:^1.0.597":
+"@wix/events@npm:^1.0.597, @wix/events@npm:^1.0.607":
   version: 1.0.607
   resolution: "@wix/events@npm:1.0.607"
   dependencies:
@@ -5655,7 +5655,8 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/events": "npm:^1.0.597"
+    "@wix/events": "npm:^1.0.607"
+    "@wix/headless-components": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/redirects": "npm:^1.0.83"
