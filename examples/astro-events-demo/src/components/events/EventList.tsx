@@ -12,7 +12,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
   return (
     <EventListPrimitive.Root eventListServiceConfig={eventListServiceConfig}>
       <EventListPrimitive.Events
-        className="grid justify-center grid-cols-[repeat(auto-fit,minmax(280px,360px))] gap-4 p-6"
+        className="grid justify-center grid-cols-[repeat(auto-fit,minmax(280px,360px))] gap-5 p-6"
         emptyState={
           <div className="text-center text-white py-12">
             <p className="text-xl">No events available</p>
@@ -23,40 +23,31 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
         }
       >
         <EventListPrimitive.EventRepeater>
-          <div className="bg-surface-card rounded-lg overflow-hidden flex flex-col">
-            {/* Event Image */}
-            <div className="relative overflow-hidden w-full pt-[100%] bg-accent-medium">
+          <div className="bg-surface-card flex flex-col">
+            <div className="relative w-full pt-[100%] bg-accent-medium">
               <EventPrimitive.Image
                 width={560}
                 height={560}
-                className="absolute top-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                className="absolute top-0 w-full h-full object-cover"
               />
             </div>
 
-            {/* Event Content */}
-            <div className="p-4 flex flex-col flex-grow">
-              {/* Event Title */}
-              <EventPrimitive.Title className="text-lg font-semibold text-content-primary mb-2 line-clamp-2" />
+            <div className="p-8 flex flex-col flex-grow text-center">
+              <EventPrimitive.Title className="text-2xl font-semibold text-content-primary mb-1 line-clamp-2" />
 
-              {/* Event Date */}
-              <EventPrimitive.Date
-                format="short"
-                className="text-sm text-content-secondary"
-              />
+              <div className="text-sm text-content-secondary mb-4">
+                <EventPrimitive.Date format="short" />
+                <span className="mx-1">|</span>
+                <EventPrimitive.Location format="short" />
+              </div>
 
-              {/* Event Location */}
-              <EventPrimitive.Location
-                format="short"
-                className="text-sm text-content-secondary mb-4"
-              />
+              <button className="underline font-light text-content-primary mb-8">
+                More info
+              </button>
 
-              {/* Event Description */}
-              <EventPrimitive.ShortDescription className="text-sm text-content-secondary mb-4 line-clamp-3" />
-
-              {/* RSVP Button */}
               <EventPrimitive.RsvpButton
                 asChild
-                className="btn-primary w-full font-medium py-2 px-4 mt-auto rounded-md"
+                className="btn-primary self-center font-light py-2 px-10 mt-auto"
               >
                 {({ event }) => (
                   <button
@@ -64,7 +55,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
                       window.location.href = `/events/${event.slug}`;
                     }}
                   >
-                    RSVP
+                    Buy Tickets
                   </button>
                 )}
               </EventPrimitive.RsvpButton>
@@ -73,13 +64,10 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
         </EventListPrimitive.EventRepeater>
       </EventListPrimitive.Events>
 
-      {/* Load More Button */}
-      <div className="flex justify-center">
-        <EventListPrimitive.LoadMoreTrigger
-          className="btn-primary font-medium py-2 px-4 mb-12 rounded-md"
-          label="Load More"
-        />
-      </div>
+      <EventListPrimitive.LoadMoreTrigger
+        className="btn-primary block font-light py-2 px-4 mb-12 mx-auto"
+        label="Load More"
+      />
     </EventListPrimitive.Root>
   );
 }
