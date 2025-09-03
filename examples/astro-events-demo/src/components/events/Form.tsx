@@ -22,12 +22,12 @@ export function Form({ eventServiceConfig }: FormProps) {
               <ControlPrimitive.Label className="block text-sm font-medium text-content-primary" />
               <ControlPrimitive.Field
                 className={`
-                  [&>[type="text"]]:w-full [&>[type="text"]]:px-4 [&>[type="text"]]:py-3 [&>[type="text"]]:border [&>[type="text"]]:border-surface-strong [&>[type="text"]]:rounded-lg [&>[type="text"]]:text-content-primary
-                  [&>[type="email"]]:w-full [&>[type="email"]]:px-4 [&>[type="email"]]:py-3 [&>[type="email"]]:border [&>[type="email"]]:border-surface-strong [&>[type="email"]]:rounded-lg [&>[type="email"]]:text-content-primary
-                  [&>[type="tel"]]:w-full [&>[type="tel"]]:px-4 [&>[type="tel"]]:py-3 [&>[type="tel"]]:border [&>[type="tel"]]:border-surface-strong [&>[type="tel"]]:rounded-lg [&>[type="tel"]]:text-content-primary
-                  [&>[type="date"]]:w-full [&>[type="date"]]:px-4 [&>[type="date"]]:py-3 [&>[type="date"]]:border [&>[type="date"]]:border-surface-strong [&>[type="date"]]:rounded-lg [&>[type="date"]]:text-content-primary
-                  [&>textarea]:w-full [&>textarea]:px-4 [&>textarea]:py-3 [&>textarea]:border [&>textarea]:border-surface-strong [&>textarea]:rounded-lg [&>textarea]:text-content-primary
-                  [&>select]:w-full [&>select]:px-4 [&>select]:py-3 [&>select]:border [&>select]:border-surface-strong [&>select]:rounded-lg [&>select]:text-content-primary
+                  [&>[type="text"]]:w-full [&>[type="text"]]:px-4 [&>[type="text"]]:py-3 [&>[type="text"]]:border [&>[type="text"]]:border-surface-strong [&>[type="text"]]:text-content-primary
+                  [&>[type="email"]]:w-full [&>[type="email"]]:px-4 [&>[type="email"]]:py-3 [&>[type="email"]]:border [&>[type="email"]]:border-surface-strong [&>[type="email"]]:text-content-primary
+                  [&>[type="tel"]]:w-full [&>[type="tel"]]:px-4 [&>[type="tel"]]:py-3 [&>[type="tel"]]:border [&>[type="tel"]]:border-surface-strong [&>[type="tel"]]:text-content-primary
+                  [&>[type="date"]]:w-full [&>[type="date"]]:px-4 [&>[type="date"]]:py-3 [&>[type="date"]]:border [&>[type="date"]]:border-surface-strong [&>[type="date"]]:text-content-primary
+                  [&>textarea]:w-full [&>textarea]:px-4 [&>textarea]:py-3 [&>textarea]:border [&>textarea]:border-surface-strong [&>textarea]:text-content-primary
+                  [&>select]:w-full [&>select]:px-4 [&>select]:py-3 [&>select]:border [&>select]:border-surface-strong [&>select]:text-content-primary
 
                   [&[data-type="checkbox"]]:space-y-4
                   [&>[data-type="checkbox-option"]]:flex [&>[data-type="checkbox-option"]]:items-center
@@ -47,8 +47,8 @@ export function Form({ eventServiceConfig }: FormProps) {
           </FormPrimitive.ControlRepeater>
 
           <FormPrimitive.SubmitTrigger
-            className="btn-primary w-full mt-6 py-3 px-6 font-semibold rounded-lg"
-            label="Register for Event"
+            className="btn-primary block font-light py-2 px-10 mt-10 mx-auto"
+            label="RSVP"
           />
         </FormPrimitive.Controls>
         <FormPrimitive.Error className="block mt-3 text-center text-sm text-status-error" />
