@@ -8,6 +8,8 @@ import {
   FormService,
   type FormServiceConfig,
 } from '../services/form-service.js';
+import { formatField } from './utils.js';
+import { InputFieldType } from './input-field-types.js';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -67,29 +69,38 @@ export function Root(props: RootProps): React.ReactNode {
  * @description A standardized representation of a form field that includes
  * all necessary information for rendering and validation.
  *
- * @property {string} type - The type identifier of the form field
+ * @property {InputFieldType} type - The type identifier of the form field (e.g., CONTACTS_FIRST_NAME, CONTACTS_EMAIL)
  * @property {string} name - The unique identifier for the form field
  * @property {string} label - The display label for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @default true
  *
  * @example
  * ```tsx
  * const field: FormField = {
- *   type: 'text',
+ *   type: INPUT_FIELD_TYPES.CONTACTS_FIRST_NAME,
  *   name: 'firstName',
  *   label: 'First Name',
  *   required: true,
- *   readOnly: false
+ *   readOnly: false,
+ *   placeholder: 'Enter your first name',
+ *   showLabel: true
  * };
  * ```
  */
-type FormField = {
-  type: string;
+export type FormField = {
+  type: InputFieldType;
   name: string;
   label: string;
   required: boolean;
   readOnly: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+  showLabel: boolean;
 };
 
 /**
@@ -130,21 +141,15 @@ export interface ContainerProps {
 export const Container = React.forwardRef<HTMLElement, ContainerProps>(
   ({ children }) => {
     const formService = useService(FormServiceDefinition);
-
+    console.log('****** Container ******');
     const form = formService.form.get();
-    const fields = form?.formFields || [];
-    console.log("form", form);
-    console.log("fields", fields.map(({ inputOptions }) => inputOptions?.stringOptions));
+    // TODO: return in same order as in form
+    const fields = (form?.formFields || []).map(formatField);
+    console.log('formatted fields', fields);
+
     return children({
       name: form?.name ?? '',
-      // TODO: return in same order as in form
-      fields: fields.map(({ inputOptions, identifier }) => ({
-        type: identifier!,
-        name: inputOptions?.target ?? '',
-        label: inputOptions?.stringOptions?.textInputOptions?.label ?? '',
-        required: inputOptions?.required ?? false,
-        readOnly: inputOptions?.readOnly ?? false,
-      })),
+      fields,
     });
   },
 );
