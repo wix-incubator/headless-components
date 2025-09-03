@@ -711,6 +711,141 @@ interface QuantityInputValueProps {
 
 ---
 
+### Product.Variant.Stock
+
+Displays the selected variant stock status with customizable rendering and labels, including can-pre-order support. Similar to Product.Stock but for the selected variant.
+
+**Props**
+```tsx
+interface ProductVariantStockProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<HTMLElement, {
+    status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'can-pre-order';
+    label: string;
+  }>;
+  className?: string;
+  labels?: {
+    inStock?: string;
+    limitedStock?: string;
+    outOfStock?: string;
+    preOrder?: string;
+  };
+}
+```
+
+**Example**
+```tsx
+// Default usage
+<Product.Variant.Stock
+  className="stock-indicator"
+  labels={{
+    inStock: 'In Stock',
+    limitedStock: 'Limited Stock',
+    outOfStock: 'Out of Stock',
+    preOrder: 'Pre-Order Available'
+  }}
+/>
+
+// Custom rendering with forwardRef
+<Product.Variant.Stock asChild>
+  {React.forwardRef(({status, label, ...props}, ref) => (
+    <div
+      ref={ref}
+      {...props}
+      className="flex items-center gap-2 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600 data-[state='can-pre-order']:text-blue-600"
+    >
+      <div className="w-3 h-3 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500 data-[state='can-pre-order']:bg-blue-500" />
+      <span className="text-sm font-medium">
+        {label}
+      </span>
+    </div>
+  ))}
+</Product.Variant.Stock>
+```
+
+**Data Attributes**
+- `data-testid="product-variant-stock"` - Applied to stock element
+- `data-state` - Current stock status ('in-stock' | 'limited-stock' | 'out-of-stock' | 'can-pre-order')
+
+---
+
+### Product.Variant.SKU
+
+Displays the selected variant SKU (Stock Keeping Unit) identifier.
+
+**Props**
+```tsx
+interface ProductVariantSKUProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<HTMLElement, {
+    sku: string;
+  }>;
+  className?: string;
+}
+```
+
+**Example**
+```tsx
+// Default usage
+<Product.Variant.SKU className="text-sm text-content-secondary font-mono" />
+
+// Custom rendering with forwardRef
+<Product.Variant.SKU asChild>
+  {React.forwardRef(({sku, ...props}, ref) => (
+    <div ref={ref} {...props} className="flex items-center gap-2">
+      <span className="text-xs text-content-muted">SKU:</span>
+      <code className="text-sm font-mono bg-surface-secondary px-2 py-1 rounded">
+        {sku}
+      </code>
+    </div>
+  ))}
+</Product.Variant.SKU>
+```
+
+**Data Attributes**
+- `data-testid="product-variant-sku"` - Applied to SKU element
+
+---
+
+### Product.Variant.Weight
+
+Displays the selected variant weight with customizable formatting.
+
+**Props**
+```tsx
+interface ProductVariantWeightProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<HTMLElement, {
+    weight: number;
+    formattedWeight: string;
+  }>;
+  className?: string;
+}
+```
+
+**Example**
+```tsx
+// Default usage
+<Product.Variant.Weight className="text-sm text-content-secondary" />
+
+// Custom rendering with forwardRef
+<Product.Variant.Weight asChild>
+  {React.forwardRef(({weight, formattedWeight, ...props}, ref) => (
+    <div ref={ref} {...props} className="flex items-center gap-2">
+      <span className="text-xs text-content-muted">Weight:</span>
+      <span className="text-sm font-medium">
+        {formattedWeight}
+      </span>
+    </div>
+  ))}
+</Product.Variant.Weight>
+```
+
+**Data Attributes**
+- `data-testid="product-variant-weight"` - Applied to weight element
+
+---
+
 ### Product.MediaGallery
 
 Container for product media gallery.
@@ -1108,6 +1243,21 @@ function BasicProduct() {
             </Product.VariantOptions>
           </Product.Variants>
 
+          {/* Variant Information */}
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <Product.Variant.Stock
+              className="flex items-center gap-2"
+              labels={{
+                inStock: 'In Stock',
+                limitedStock: 'Limited Stock',
+                outOfStock: 'Out of Stock',
+                preOrder: 'Pre-Order Available'
+              }}
+            />
+            <Product.Variant.SKU className="text-content-secondary font-mono" />
+            <Product.Variant.Weight className="text-content-secondary" />
+          </div>
+
           {/* Product Modifiers */}
           <Product.Modifiers>
             <Product.ModifierOptions>
@@ -1325,6 +1475,49 @@ function CustomizedProduct() {
               </Product.VariantOptionRepeater>
             </Product.VariantOptions>
           </Product.Variants>
+
+          {/* Enhanced Variant Information */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-surface-card rounded-lg border border-brand-subtle">
+            <Product.Variant.Stock asChild>
+              {React.forwardRef(({status, label, ...props}, ref) => (
+                <div ref={ref} {...props} className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded-full data-[state='in-stock']:bg-status-success data-[state='limited-stock']:bg-status-warning data-[state='out-of-stock']:bg-status-error data-[state='can-pre-order']:bg-status-info" />
+                  <div>
+                    <p className="text-xs text-content-muted uppercase tracking-wide">Availability</p>
+                    <p className="text-sm font-medium text-content-primary">{label}</p>
+                  </div>
+                </div>
+              ))}
+            </Product.Variant.Stock>
+            
+            <Product.Variant.SKU asChild>
+              {React.forwardRef(({sku, ...props}, ref) => (
+                <div ref={ref} {...props} className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded bg-surface-secondary flex items-center justify-center">
+                    <span className="text-xs text-content-secondary">#</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-content-muted uppercase tracking-wide">SKU</p>
+                    <p className="text-sm font-mono text-content-primary">{sku}</p>
+                  </div>
+                </div>
+              ))}
+            </Product.Variant.SKU>
+            
+            <Product.Variant.Weight asChild>
+              {React.forwardRef(({weight, formattedWeight, ...props}, ref) => (
+                <div ref={ref} {...props} className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded bg-surface-secondary flex items-center justify-center">
+                    <span className="text-xs text-content-secondary">⚖</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-content-muted uppercase tracking-wide">Weight</p>
+                    <p className="text-sm font-medium text-content-primary">{formattedWeight}</p>
+                  </div>
+                </div>
+              ))}
+            </Product.Variant.Weight>
+          </div>
           
           {/* Enhanced Modifiers */}
           <Product.Modifiers>
@@ -1577,6 +1770,13 @@ function MinimalProduct() {
             </Product.VariantOptionRepeater>
           </Product.VariantOptions>
         </Product.Variants>
+        
+        {/* Simple Variant Info */}
+        <div className="flex gap-2 text-xs text-content-secondary">
+          <Product.Variant.Stock />
+          <Product.Variant.SKU />
+          <Product.Variant.Weight />
+        </div>
         
         <Product.Quantity steps={1}>
           <div className="flex items-center border rounded">
