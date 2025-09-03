@@ -23,9 +23,9 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
         }
       >
         <EventListPrimitive.EventRepeater>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
+          <div className="bg-surface-card rounded-lg overflow-hidden flex flex-col">
             {/* Event Image */}
-            <div className="relative overflow-hidden w-full pt-[100%] bg-blue-600">
+            <div className="relative overflow-hidden w-full pt-[100%] bg-accent-medium">
               <EventPrimitive.Image
                 width={560}
                 height={560}
@@ -36,27 +36,27 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
             {/* Event Content */}
             <div className="p-4 flex flex-col flex-grow">
               {/* Event Title */}
-              <EventPrimitive.Title className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2" />
+              <EventPrimitive.Title className="text-lg font-semibold text-content-primary mb-2 line-clamp-2" />
 
               {/* Event Date */}
               <EventPrimitive.Date
                 format="short"
-                className="text-sm text-gray-600"
+                className="text-sm text-content-secondary"
               />
 
               {/* Event Location */}
               <EventPrimitive.Location
                 format="short"
-                className="text-sm text-gray-600 mb-4"
+                className="text-sm text-content-secondary mb-4"
               />
 
               {/* Event Description */}
-              <EventPrimitive.ShortDescription className="text-sm text-gray-700 mb-4 line-clamp-3" />
+              <EventPrimitive.ShortDescription className="text-sm text-content-secondary mb-4 line-clamp-3" />
 
               {/* RSVP Button */}
               <EventPrimitive.RsvpButton
                 asChild
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 mt-auto"
+                className="btn-primary w-full font-medium py-2 px-4 mt-auto rounded-md"
               >
                 {({ event }) => (
                   <button
@@ -76,7 +76,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
       {/* Load More Button */}
       <div className="flex justify-center">
         <EventListPrimitive.LoadMoreTrigger
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 mb-12 rounded-md transition-colors duration-200"
+          className="btn-primary font-medium py-2 px-4 mb-12 rounded-md"
           label="Load More"
         />
       </div>

@@ -1,31 +1,12 @@
-@import 'tailwindcss';
+/*
 
-.form-field {
-  [type='text'],
-  [type='email'],
-  [type='tel'],
-  [type='date'],
-  textarea,
-  select {
-    @apply w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent;
-  }
+██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗
+██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝
+██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗
+██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║
+╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝
 
-  &[data-type='checkbox'],
-  &[data-type='radio'],
-  &[data-type='guest-control'] {
-    @apply space-y-4;
-  }
-
-  [data-type='checkbox-option'],
-  [data-type='radio-option'] {
-    @apply flex items-center;
-
-    input {
-      @apply w-5 h-5 mr-3 focus:outline-none focus:ring-2 focus:ring-blue-400;
-    }
-  }
-
-  label {
-    @apply text-sm text-white font-medium;
-  }
-}
+Do not put here anything, refer to the calsses availbile at
+@wix/wix-vibe-plugins/plugins-theme.css
+*/
