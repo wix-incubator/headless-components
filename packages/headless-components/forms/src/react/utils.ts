@@ -3,7 +3,11 @@ import {
   INPUT_FIELD_TYPES,
   InputFieldType,
 } from './types/input-field-types.js';
-import { FormField } from './types/formatted-fields.js';
+import {
+  FormField,
+  ContactsBirthdateField,
+  DefaultField,
+} from './types/formatted-fields.js';
 
 export function formatField(field: forms.Field): FormField {
   const { inputOptions, identifier } = field;
@@ -28,7 +32,7 @@ export function formatField(field: forms.Field): FormField {
       console.log('---- field ----', label, identifier, field);
       console.log('inputOptions', inputOptions);
 
-      return {
+      const birthdateField: ContactsBirthdateField = {
         type,
         name,
         label,
@@ -38,6 +42,8 @@ export function formatField(field: forms.Field): FormField {
         showLabel,
         showPlaceholder,
       };
+
+      return birthdateField;
     }
     // case INPUT_FIELD_TYPES.CONTACTS_FIRST_NAME:
     // case INPUT_FIELD_TYPES.CONTACTS_LAST_NAME:
@@ -50,7 +56,7 @@ export function formatField(field: forms.Field): FormField {
       const description = options?.description ?? undefined;
       const showLabel = options?.showLabel ?? true;
 
-      return {
+      const defaultField: DefaultField = {
         type,
         name,
         label,
@@ -60,6 +66,8 @@ export function formatField(field: forms.Field): FormField {
         description,
         showLabel,
       };
+
+      return defaultField;
     }
   }
 }
