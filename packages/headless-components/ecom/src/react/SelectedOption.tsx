@@ -8,7 +8,8 @@ import {
   isColorOption,
 } from '../services/selected-option-service.js';
 import { createServicesMap } from '@wix/services-manager';
-import { type AsChildProps, renderAsChild } from '../utils/asChild.js';
+import { type AsChildProps } from '../utils/asChild.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {
   selectedOptionText = 'selected-option-text',
@@ -91,24 +92,18 @@ export const Text = React.forwardRef<HTMLElement, SelectedOptionTextProps>(
     const value = selectedOption.value;
     const defaultContent = `${name}: ${value}`;
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { name, value },
-        ref,
-        content: defaultContent,
-        attributes: {
-          'data-testid': TestIds.selectedOptionText,
-          ...otherProps,
-        },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <span ref={ref} data-testid={TestIds.selectedOptionText} {...otherProps}>
-        {defaultContent}
-      </span>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        customElement={children}
+        customElementProps={{ name, value }}
+        content={defaultContent}
+        data-testid={TestIds.selectedOptionText}
+        {...otherProps}
+      >
+        <span>{defaultContent}</span>
+      </AsChildSlot>
     );
   },
 );
@@ -160,24 +155,18 @@ export const Color = React.forwardRef<HTMLElement, SelectedOptionColorProps>(
     const colorCode = selectedOption.value.code;
     const defaultContent = `${name}: ${colorName}`;
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { name, colorCode, colorName },
-        ref,
-        content: defaultContent,
-        attributes: {
-          'data-testid': TestIds.selectedOptionColor,
-          ...otherProps,
-        },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <span ref={ref} data-testid={TestIds.selectedOptionColor} {...otherProps}>
-        {defaultContent}
-      </span>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        customElement={children}
+        customElementProps={{ name, colorCode, colorName }}
+        content={defaultContent}
+        data-testid={TestIds.selectedOptionColor}
+        {...otherProps}
+      >
+        <span>{defaultContent}</span>
+      </AsChildSlot>
     );
   },
 );

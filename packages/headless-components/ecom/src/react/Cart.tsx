@@ -61,7 +61,8 @@ import React from 'react';
 import { CurrentCartServiceDefinition } from '../services/current-cart-service.js';
 import type { LineItem } from '../services/common-types.js';
 import { Slot } from '@radix-ui/react-slot';
-import { renderAsChild, renderChildren } from '../utils/asChild.js';
+import { renderChildren } from '../utils/asChild.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 import * as LineItemComponent from './LineItem.js';
 import * as CouponComponents from './CartCoupon.js';
 
@@ -329,21 +330,18 @@ export const LineItems = React.forwardRef<HTMLElement, LineItemsProps>(
       return emptyState;
     }
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { cart },
-        ref,
-        content: React.isValidElement(children) ? children : null,
-        attributes: { 'data-testid': TestIds.cartLineItems, ...otherProps },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <div ref={ref as any} data-testid={TestIds.cartLineItems} {...otherProps}>
-        {React.isValidElement(children) ? children : null}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        customElement={children}
+        customElementProps={{ cart }}
+        content={React.isValidElement(children) ? children : null}
+        data-testid={TestIds.cartLineItems}
+        {...otherProps}
+      >
+        <div>{React.isValidElement(children) ? children : null}</div>
+      </AsChildSlot>
     );
   },
 );
@@ -399,30 +397,19 @@ export const LineItemRepeater = React.forwardRef<
     </LineItemComponent.Root>
   ));
 
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { items },
-      ref,
-      content,
-      attributes: {
-        'data-testid': TestIds.cartLineItemRepeater,
-        className,
-        ...otherProps,
-      },
-    });
-    if (rendered) return rendered;
-  }
-
   return (
-    <div
-      ref={ref as any}
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      customElement={children}
+      customElementProps={{ items }}
+      content={content}
       data-testid={TestIds.cartLineItemRepeater}
       className={className}
       {...otherProps}
     >
-      {content}
-    </div>
+      <div>{content}</div>
+    </AsChildSlot>
   );
 });
 

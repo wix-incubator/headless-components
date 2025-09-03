@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Parameters for the renderAsChild utility function
+ * Parameters for the renderChildren utility function
  */
 export interface RenderChildrenParams<
   THTMLElement = HTMLElement,

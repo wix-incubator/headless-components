@@ -1,6 +1,6 @@
 import React from 'react';
 import { type LineItem } from '../services/common-types.js';
-import { renderAsChild } from '../utils/asChild.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 import { WixMediaImage } from '@wix/headless-media/react';
 import * as SelectedOption from './SelectedOption.js';
 import { Item as CoreItem } from './core/CurrentCart.js';
@@ -63,21 +63,18 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
       </LineItemContext.Provider>
     );
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children: children as any,
-        props: { item },
-        ref,
-        content,
-        attributes: { 'data-testid': TestIds.lineItemRoot, ...otherProps },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <div ref={ref as any} data-testid={TestIds.lineItemRoot} {...otherProps}>
-        {content}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        customElement={children}
+        customElementProps={{ item }}
+        content={content}
+        data-testid={TestIds.lineItemRoot}
+        {...otherProps}
+      >
+        <div>{content}</div>
+      </AsChildSlot>
     );
   },
 );
@@ -144,28 +141,19 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
 
   return (
     <CoreItem item={lineItem}>
-      {({ title }) => {
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { title },
-            ref,
-            content: title,
-            attributes: { 'data-testid': TestIds.lineItemTitle, ...otherProps },
-          });
-          if (rendered) return rendered;
-        }
-
-        return (
-          <span
-            ref={ref as any}
-            data-testid={TestIds.lineItemTitle}
-            {...otherProps}
-          >
-            {title}
-          </span>
-        );
-      }}
+      {({ title }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          customElement={children}
+          customElementProps={{ title }}
+          content={title}
+          data-testid={TestIds.lineItemTitle}
+          {...otherProps}
+        >
+          <span>{title}</span>
+        </AsChildSlot>
+      )}
     </CoreItem>
   );
 });
@@ -368,28 +356,18 @@ export const SelectedOptions = React.forwardRef<
           return null;
         }
 
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { selectedOptions },
-            ref,
-            content: React.isValidElement(children) ? children : null,
-            attributes: {
-              'data-testid': TestIds.lineItemSelectedOptions,
-              ...otherProps,
-            },
-          });
-          if (rendered) return rendered;
-        }
-
         return (
-          <div
-            ref={ref as any}
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            customElement={children}
+            customElementProps={{ selectedOptions }}
+            content={React.isValidElement(children) ? children : null}
             data-testid={TestIds.lineItemSelectedOptions}
             {...otherProps}
           >
-            {React.isValidElement(children) ? children : null}
-          </div>
+            <div>{React.isValidElement(children) ? children : null}</div>
+          </AsChildSlot>
         );
       }}
     </CoreItem>
