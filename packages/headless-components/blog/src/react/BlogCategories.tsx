@@ -16,7 +16,7 @@ const CategoriesContext = React.createContext<CategoriesContextValue | null>(
   null,
 );
 
-export function useCategoriesContext(): CategoriesContextValue {
+function useCategoriesContext(): CategoriesContextValue {
   const context = React.useContext(CategoriesContext);
   if (!context) {
     throw new Error(
