@@ -28,7 +28,7 @@ export interface LineItemRootProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children: AsChildChildren<{}>;
+  children: AsChildChildren<{ item: LineItem }>;
   /** The line item data */
   item: LineItem;
   /** CSS classes to apply to the default element */
@@ -69,7 +69,7 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
         asChild={asChild}
         data-testid={TestIds.lineItemRoot}
         customElement={children}
-        customElementProps={{}}
+        customElementProps={{ item }}
         content={content}
       >
         <div>{content}</div>
