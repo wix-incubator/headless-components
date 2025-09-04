@@ -65,7 +65,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
       </EventListPrimitive.Events>
 
       <EventListPrimitive.LoadMoreTrigger
-        className="btn-primary block font-light py-2 px-4 mb-12 mx-auto"
+        className="btn-primary block font-light py-2 px-4 mt-8 mx-auto"
         label="Load More"
       />
     </EventListPrimitive.Root>

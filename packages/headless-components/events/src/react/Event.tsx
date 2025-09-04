@@ -22,6 +22,7 @@ import {
   pluginSpoilerViewer,
   pluginVideoViewer,
   isRichContentEmpty,
+  type RicosCustomStyles,
 } from '@wix/ricos';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
@@ -404,6 +405,8 @@ export interface DescriptionProps {
   children?: AsChildChildren<{ description: RichContent }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Theme custom styles */
+  customStyles?: RicosCustomStyles;
 }
 
 /**
@@ -425,7 +428,7 @@ export interface DescriptionProps {
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, customStyles } = props;
 
     const eventService = useService(EventServiceDefinition);
     const event = eventService.event.get();
@@ -446,6 +449,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
       >
         <RicosViewer
           content={description}
+          theme={{ customStyles }}
           plugins={[
             pluginAudioViewer(),
             pluginCodeBlockViewer(),

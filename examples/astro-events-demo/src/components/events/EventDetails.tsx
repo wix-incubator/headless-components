@@ -62,10 +62,12 @@ export function EventDetails({
 
           <EventPrimitive.ShortDescription className="block max-w-2xl mt-6 font-light text-content-primary" />
 
-          <EventPrimitive.RsvpButton
-            className="btn-primary font-light py-2 px-8 mt-10"
-            label="Buy Tickets"
-          />
+          <a
+            href="#tickets"
+            className="inline-block btn-primary font-light py-2 px-8 mt-10"
+          >
+            Buy Tickets
+          </a>
         </div>
 
         <EventPrimitive.Image className="aspect-16/9 object-cover" />
@@ -89,7 +91,13 @@ export function EventDetails({
             <h2 className="text-3xl font-light text-content-primary mb-4">
               About the Event
             </h2>
-            <EventPrimitive.Description />
+            <EventPrimitive.Description
+              customStyles={{
+                p: {
+                  color: 'var(--theme-text-content)',
+                },
+              }}
+            />
           </div>
 
           <TicketsPickerPrimitive.Root
@@ -97,7 +105,10 @@ export function EventDetails({
             eventServiceConfig={eventServiceConfig}
           >
             <TicketsPickerPrimitive.TicketDefinitions className="space-y-6">
-              <h2 className="text-3xl font-light text-content-primary mb-6">
+              <h2
+                id="tickets"
+                className="text-3xl font-light text-content-primary mb-6"
+              >
                 Tickets
               </h2>
               <TicketsPickerPrimitive.TicketDefinitionRepeater>
