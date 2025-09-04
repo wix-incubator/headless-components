@@ -85,7 +85,7 @@ export interface SelectedOptionTextProps {
  */
 export const Text = React.forwardRef<HTMLElement, SelectedOptionTextProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, ...otherProps } = props;
     const selectedOptionService = useService(SelectedOptionServiceDefinition);
 
     const selectedOption = selectedOptionService.selectedOption.get();
@@ -107,6 +107,7 @@ export const Text = React.forwardRef<HTMLElement, SelectedOptionTextProps>(
         customElement={children}
         customElementProps={{ name, value }}
         content={defaultContent}
+        {...otherProps}
       >
         <span>{defaultContent}</span>
       </AsChildSlot>
@@ -156,7 +157,7 @@ export interface SelectedOptionColorProps {
  */
 export const Color = React.forwardRef<HTMLElement, SelectedOptionColorProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, ...otherProps } = props;
     const selectedOptionService = useService(SelectedOptionServiceDefinition);
 
     const selectedOption = selectedOptionService.selectedOption.get();
@@ -179,6 +180,7 @@ export const Color = React.forwardRef<HTMLElement, SelectedOptionColorProps>(
         customElement={children}
         customElementProps={{ name, colorCode }}
         content={defaultContent}
+        {...otherProps}
       >
         <span>{defaultContent}</span>
       </AsChildSlot>
