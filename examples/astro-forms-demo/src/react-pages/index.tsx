@@ -13,32 +13,13 @@ interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
 }
 
+const FIELD_MAP = {};
+
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
   return (
     <Form.Root form={formServiceConfig.form}>
-      <Form.Container>
-        {({ name, fields }) => (
-          <form>
-            <h1>
-              {name} ({formServiceConfig.form._id})
-            </h1>
-
-            {fields.map(field => (
-              <div key={field.type}>
-                {typeof field.label === 'string' ? (
-                  field.label
-                ) : (
-                  <RicosViewer
-                    content={field.label as RichContent}
-                    plugins={quickStartViewerPlugins()}
-                  />
-                )}{' '}
-                : {field.type}
-              </div>
-            ))}
-          </form>
-        )}
-      </Form.Container>
+      {/* user should not map each field separately, instead use the FIELD_MAP */}
+      <Form.Container fieldsMap={FIELD_MAP} />
     </Form.Root>
   );
 }

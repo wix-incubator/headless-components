@@ -20,7 +20,7 @@ interface BaseTextField extends BaseField {
  * @interface ContactsBirthdateField
  *
  * @property {typeof INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE} type - Always 'CONTACTS_BIRTHDATE'
- * @property {string} name - The unique identifier for the form field
+ * @property {string} id - The unique identifier for the form field
  * @property {string} label - The display label for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user

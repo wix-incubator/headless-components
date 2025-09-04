@@ -8,14 +8,14 @@ import {
   FormService,
   type FormServiceConfig,
 } from '../services/form-service.js';
-import { formatField } from './utils.js';
-import { FormField } from './types/formatted-fields.js';
+import { TextInputField } from './types/formatted-fields.js';
 
 export interface RootProps {
   children: React.ReactNode;
   form: forms.Form;
 }
 
+// TODO: use single Form component instead of Root and Container
 /**
  * Root container that provides form context to all child components.
  *
@@ -28,15 +28,7 @@ export interface RootProps {
  * function FormPage({ form }) {
  *   return (
  *     <Form.Root form={form} >
- *       <Form.Container>
- *          {({ fields }) => (
- *             <form>
- *               {fields.map(field => (
- *                 <input key={field.name} name={field.name} onChange={(e) => onChange(e.target.value)} />
- *               ))}
- *             </form>
- *           )}
- *       </Form.Container>
+ *       <Form.Container formId="491ce063-931e-47c9-aad9-4845d9271c30" fieldsMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
  * }
@@ -62,22 +54,18 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
-/**
- * Render props for Container component
- */
-export interface ContainerRenderProps {
-  /** Form name */
-  name: string;
-  /** Form fields */
-  fields: FormField[];
+interface FieldsMaps {
+  TEXT_INPUT: React.Component<TextInputField>;
 }
 
 /**
  * Props for the Form Container component.
  */
 export interface ContainerProps {
-  /** Render prop function that receives form data */
-  children: (props: ContainerRenderProps) => React.ReactNode;
+  /** Form id */
+  formId: string;
+  /** Fields map */
+  fieldsMap: FieldsMaps;
 }
 
 /**
@@ -86,27 +74,13 @@ export interface ContainerProps {
  * @component
  * @example
  * ```tsx
- *  <Form.Container>
- *    {({ fields, error }) => (
- *      <form>
- *        {fields.map(field => (
- *          <input key={field.name} name={field.name} onChange={(e) => onChange(e.target.value)} />
- *          ))}
- *      </form>
- *     )}
- *  </Form.Container>
+ *  <Form.Container formId="491ce063-931e-47c9-aad9-4845d9271c30" fieldsMap={FIELD_MAP} />
  * ```
  */
-export const Container = React.forwardRef<HTMLElement, ContainerProps>(
-  ({ children }) => {
-    const formService = useService(FormServiceDefinition);
-    const form = formService.form.get();
-    // TODO: return in same order as in form
-    const fields: FormField[] = (form?.formFields || []).map(formatField);
-
-    return children({
-      name: form?.name ?? '',
-      fields,
-    });
-  },
-);
+export const Container = React.forwardRef<HTMLElement, ContainerProps>(() => {
+  // ({ formId, fieldsMap }) => {
+  const formService = useService(FormServiceDefinition);
+  const form = formService.form.get();
+  // TODO: render viewer
+  return null;
+});
