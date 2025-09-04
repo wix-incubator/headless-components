@@ -458,19 +458,11 @@ export const PricingOptionsPricingRepeater = React.forwardRef<
   HTMLElement,
   PricingOptionsPricingRepeaterProps
 >(({ children }, _ref) => {
-  const service = useService(TicketDefinitionServiceDefinition);
-  const listService = useService(TicketDefinitionListServiceDefinition);
-  const ticketDefinition = service.ticketDefinition.get();
+  const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+  const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
 
   if (ticketDefinition.pricingMethod?.pricingOptions?.optionDetails?.length) {
     const { optionDetails } = ticketDefinition.pricingMethod.pricingOptions;
-
-    const onChange = (val: string) => {
-      listService.setQuantity({
-        ticketDefinitionId: ticketDefinition._id!,
-        priceOverride: val,
-      });
-    };
 
     return (
       <>
@@ -478,7 +470,6 @@ export const PricingOptionsPricingRepeater = React.forwardRef<
           <PricingOption.Root
             key={pricingOption.optionId}
             pricingOption={pricingOption}
-            // onSelect={onChange}
             data-testid={TestIds.ticketDefinitionPricingOption}
           >
             {children}
