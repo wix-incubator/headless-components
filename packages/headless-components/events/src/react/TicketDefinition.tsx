@@ -294,7 +294,10 @@ export const SoldOut = React.forwardRef<HTMLElement, SoldOutProps>(
 
 export interface SaleStartsProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ startDate: Date | null; startDateStr: string }>;
+  children?: AsChildChildren<{
+    startDate: Date | null;
+    startDateFormatted: string;
+  }>;
   className?: string;
 }
 
@@ -313,10 +316,7 @@ export const SaleStarts = React.forwardRef<HTMLElement, SaleStartsProps>(
     }
 
     const startDate = ticketDefinition.salePeriod?.startDate ?? null;
-    const startDateStr = startDate ? startDate.toLocaleString() : '';
-
-    console.log(startDateStr);
-    console.log(startDate);
+    const startDateFormatted = startDate ? startDate.toLocaleString() : '';
 
     return (
       <AsChildSlot
@@ -325,10 +325,10 @@ export const SaleStarts = React.forwardRef<HTMLElement, SaleStartsProps>(
         className={className}
         data-testid={TestIds.ticketDefinitionSaleStarts}
         customElement={children}
-        customElementProps={{ startDate, startDateStr }}
-        content={startDateStr}
+        customElementProps={{ startDate, startDateFormatted }}
+        content={startDateFormatted}
       >
-        <span>{startDateStr}</span>
+        <span>{startDateFormatted}</span>
       </AsChildSlot>
     );
   },
@@ -336,7 +336,10 @@ export const SaleStarts = React.forwardRef<HTMLElement, SaleStartsProps>(
 
 export interface SaleEndedProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ endDate: Date | null; endDateStr: string }>;
+  children?: AsChildChildren<{
+    endDate: Date | null;
+    endDateFormatted: string;
+  }>;
   className?: string;
 }
 
@@ -353,7 +356,7 @@ export const SaleEnded = React.forwardRef<HTMLElement, SaleEndedProps>(
     }
 
     const endDate = ticketDefinition.salePeriod?.endDate ?? null;
-    const endDateStr = endDate ? endDate.toLocaleString() : '';
+    const endDateFormatted = endDate ? endDate.toLocaleString() : '';
 
     return (
       <AsChildSlot
@@ -362,10 +365,10 @@ export const SaleEnded = React.forwardRef<HTMLElement, SaleEndedProps>(
         className={className}
         data-testid={TestIds.ticketDefinitionSaleEnded}
         customElement={children}
-        customElementProps={{ endDate, endDateStr }}
-        content={endDateStr}
+        customElementProps={{ endDate, endDateStr: endDateFormatted }}
+        content={endDateFormatted}
       >
-        <span>{endDateStr}</span>
+        <span>{endDateFormatted}</span>
       </AsChildSlot>
     );
   },
