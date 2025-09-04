@@ -15,10 +15,8 @@ export interface TicketListServiceAPI {
     priceOverride?: string;
     pricingOptionId?: string;
   }) => void;
-  incrementQuantity: (ticketDefinitionId: string) => void;
-  decrementQuantity: (ticketDefinitionId: string) => void;
   getMaxQuantity: (ticketDefinitionId: string) => number;
-  getCurrentSelectedQuantity: (ticketDefinitionId: string) => number;
+  getCurrentSelectedQuantity: (ticketDefinitionId: string, pricingOptionId?: string) => number;
   isSoldOut: (ticketDefinitionId: string) => boolean;
 }
 
@@ -53,10 +51,18 @@ export const TicketListService =
       const findTicketDefinition = (ticketDefinitionId: string) =>
         ticketDefinitions.get().find((d) => d._id === ticketDefinitionId);
 
-      const findTicketReservation = (ticketDefinitionId: string) =>
-        selectedQuantities
+      const findTicketReservation = (ticketDefinitionId: string, pricingOptionId?: string) => {
+        if (pricingOptionId) {
+  return selectedQuantities
+          .get()
+          .filter((d) => d.ticketDefinitionId === ticketDefinitionId)
+          .find((d) => d.pricingOptionId === pricingOptionId);
+
+        }
+        return selectedQuantities
           .get()
           .find((d) => d.ticketDefinitionId === ticketDefinitionId);
+      }
 
       const getMaxQuantity = (ticketDefinitionId: string) => {
         const ticketDefinition = findTicketDefinition(ticketDefinitionId);
@@ -64,9 +70,8 @@ export const TicketListService =
         return ticketDefinition?.limitPerCheckout || 0;
       };
 
-      const getCurrentSelectedQuantity = (ticketDefinitionId: string) => {
-        const selectedQuantity = findTicketReservation(ticketDefinitionId);
-
+      const getCurrentSelectedQuantity = (ticketDefinitionId: string, pricingOptionId?: string) => {
+        const selectedQuantity = findTicketReservation(ticketDefinitionId, pricingOptionId);
         return selectedQuantity?.quantity ?? 0;
       };
 
@@ -76,20 +81,14 @@ export const TicketListService =
         return selectedQuantity?.priceOverride ?? '';
       };
 
-      const getCurrentPricingOptionId = (ticketDefinitionId: string): string => {
-        const selectedQuantity = findTicketReservation(ticketDefinitionId);
-
-        return selectedQuantity?.pricingOptionId ?? '';
-      };
-
       const isSoldOut = (ticketDefinitionId: string) =>
         getMaxQuantity(ticketDefinitionId) === 0;
 
       const setQuantity = ({
         ticketDefinitionId,
-        quantity = getCurrentSelectedQuantity(ticketDefinitionId),
         priceOverride = getCurrentPriceOverride(ticketDefinitionId),
-        pricingOptionId = getCurrentPricingOptionId(ticketDefinitionId),
+        pricingOptionId,
+        quantity = getCurrentSelectedQuantity(ticketDefinitionId, pricingOptionId),
       }: {
         ticketDefinitionId: string;
         quantity?: number;
@@ -110,7 +109,12 @@ export const TicketListService =
           ...selectedQuantities
             .get()
             .filter(
-              (selected) => selected.ticketDefinitionId !== ticketDefinitionId,
+              (selected) => {
+                if (pricingOptionId) {
+                  return !(selected.ticketDefinitionId === ticketDefinitionId && selected.pricingOptionId === pricingOptionId)
+                }
+                return selected.ticketDefinitionId !== ticketDefinitionId
+              },
             ),
           newSelectedQuantity,
         ];
@@ -118,46 +122,10 @@ export const TicketListService =
         selectedQuantities.set(newSelectedQuantities);
       };
 
-      const incrementQuantity = (
-        ticketDefinitionId: string,
-        priceOverride?: string,
-        pricingOptionId?: string,
-      ) => {
-        const current = selectedQuantities.get();
-        const qty =
-          current.find((val) => val.ticketDefinitionId === ticketDefinitionId)
-            ?.quantity ?? 0;
-        setQuantity({
-          ticketDefinitionId: ticketDefinitionId,
-          quantity: qty + 1,
-          priceOverride: priceOverride,
-          pricingOptionId: pricingOptionId
-        });
-      };
-
-      const decrementQuantity = (
-        ticketDefinitionId: string,
-        priceOverride?: string,
-        pricingOptionId?: string
-      ) => {
-        const current = selectedQuantities.get();
-        const qty =
-          current.find((val) => val.ticketDefinitionId === ticketDefinitionId)
-            ?.quantity ?? 0;
-        setQuantity({
-          ticketDefinitionId: ticketDefinitionId,
-          quantity: qty - 1,
-          priceOverride: priceOverride,
-          pricingOptionId,
-        });
-      };
-
       return {
         ticketDefinitions,
         selectedQuantities,
         setQuantity,
-        incrementQuantity,
-        decrementQuantity,
         getMaxQuantity,
         isSoldOut,
         getCurrentSelectedQuantity,

@@ -3,9 +3,9 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { orders } from '@wix/events';
+import { ticketDefinitionsV2 } from '@wix/events';
 
-export type PricingOption = orders.PricingOption;
+export type PricingOption = ticketDefinitionsV2.OptionDetails;
 
 export interface PricingOptionServiceAPI {
   pricingOption: Signal<PricingOption>;

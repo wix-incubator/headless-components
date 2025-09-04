@@ -315,8 +315,17 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
       listService.getCurrentSelectedQuantity(ticketDefinitionId);
     const maxQuantity = listService.getMaxQuantity(ticketDefinitionId);
 
-    const increment = () => listService.incrementQuantity(ticketDefinitionId);
-    const decrement = () => listService.decrementQuantity(ticketDefinitionId);
+    const increment = () =>
+      listService.setQuantity({
+        ticketDefinitionId,
+        quantity: currentQuantity + 1,
+      });
+    const decrement = () =>
+      listService.setQuantity({
+        ticketDefinitionId,
+        quantity: currentQuantity - 1,
+      });
+
     const setQuantity = (quantity: number) =>
       listService.setQuantity({ ticketDefinitionId, quantity });
 

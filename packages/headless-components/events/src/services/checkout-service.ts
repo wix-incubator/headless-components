@@ -3,7 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { orders, ticketReservations } from '@wix/events';
+import { ticketReservations } from '@wix/events';
 import { redirects } from '@wix/redirects';
 import { TicketReservationQuantity } from './ticket-list-service.js';
 
@@ -48,36 +48,24 @@ export const CheckoutService =
         try {
           isLoading.set(true);
           error.set(null);
-          ticketReservations.createTicketReservation({tickets: [
-            {eventId: eventId}
-          ]})
-          const reservationResult = await orders.createReservation(eventId, {
-            ticketQuantities: ticketQuantities
-              .map(({ quantity, ticketDefinitionId, priceOverride }) => {
-                if (Number(quantity) > 0) {
-                  return {
-                    ticketDefinitionId,
-                    quantity,
-                    ticketDetails: priceOverride
-                      ? new Array(quantity).fill({
-                          priceOverride: priceOverride,
-                          quantity: 1,
-                        })
-                      : null,
-                  };
-                }
-                return null;
-              })
-              .filter(Boolean) as orders.TicketReservationQuantity[],
-          });
+          const {_id: reservationId} = await ticketReservations.createTicketReservation({tickets: ticketQuantities.map(({quantity, ticketDefinitionId, priceOverride, pricingOptionId
+          }) => {
+            if (quantity) {
+              return {
+                eventId, quantity, ticketDefinitionId, ticketInfo: priceOverride || pricingOptionId ? {guestPrice: priceOverride, pricingOptionId, quantity} : undefined
+              }
 
-          if (!reservationResult._id) {
+            }
+            return null
+          }).filter(Boolean) as ticketReservations.TicketLineItem[]})
+
+          if (!reservationId) {
             throw new Error('Failed to create reservation');
           }
 
           const { redirectSession } = await redirects.createRedirectSession({
             eventsCheckout: {
-              reservationId: reservationResult._id,
+              reservationId: reservationId,
               eventSlug,
             },
             callbacks: {

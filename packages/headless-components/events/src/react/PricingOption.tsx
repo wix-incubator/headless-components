@@ -124,23 +124,42 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     const ticketDefinitionService = useService(
       TicketDefinitionServiceDefinition,
     );
+    const pricingOptionService = useService(PricingOptionServiceDefinition);
+    const pricingOption = pricingOptionService.pricingOption.get();
+
+    const pricingOptionId = pricingOption.optionId ?? undefined;
 
     const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
     const ticketDefinitionId = ticketDefinition._id ?? '';
     const currentQuantity =
       ticketDefinitionListService.getCurrentSelectedQuantity(
         ticketDefinitionId,
+        pricingOptionId,
       );
 
     const maxQuantity =
       ticketDefinitionListService.getMaxQuantity(ticketDefinitionId);
 
     const increment = () =>
-      ticketDefinitionListService.incrementQuantity(ticketDefinitionId);
+      ticketDefinitionListService.setQuantity({
+        ticketDefinitionId,
+        quantity: currentQuantity + 1,
+        pricingOptionId: pricingOptionId,
+      });
+
     const decrement = () =>
-      ticketDefinitionListService.decrementQuantity(ticketDefinitionId);
+      ticketDefinitionListService.setQuantity({
+        ticketDefinitionId,
+        quantity: currentQuantity - 1,
+        pricingOptionId: pricingOptionId,
+      });
+
     const setQuantity = (quantity: number) =>
-      ticketDefinitionListService.setQuantity({ ticketDefinitionId, quantity });
+      ticketDefinitionListService.setQuantity({
+        ticketDefinitionId,
+        quantity,
+        pricingOptionId: pricingOptionId,
+      });
 
     const defaultUI = (
       <div>
