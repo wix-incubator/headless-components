@@ -1,8 +1,7 @@
 import { forms } from '@wix/forms';
-import { InputFieldType, INPUT_FIELD_TYPES } from './input-field-types.js';
 
 export interface BaseField {
-  name: string;
+  id: string;
   required: boolean;
   readOnly: boolean;
 }
@@ -19,7 +18,6 @@ interface BaseTextField extends BaseField {
  *
  * @interface ContactsBirthdateField
  *
- * @property {typeof INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE} type - Always 'CONTACTS_BIRTHDATE'
  * @property {string} id - The unique identifier for the form field
  * @property {string} label - The display label for the form field
  * @property {boolean} required - Whether the field is required for form submission
@@ -31,8 +29,7 @@ interface BaseTextField extends BaseField {
  * @example
  * ```tsx
  * const birthdateField: ContactsBirthdateField = {
- *   type: INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE,
- *   name: 'birthdate',
+ *   id: 'birthdate',
  *   label: 'Date of Birth',
  *   required: true,
  *   readOnly: false,
@@ -42,7 +39,6 @@ interface BaseTextField extends BaseField {
  * ```
  */
 export interface ContactsBirthdateField extends BaseField {
-  type: typeof INPUT_FIELD_TYPES.CONTACTS_BIRTHDATE;
   label: string;
   showLabel: boolean;
   showPlaceholder: boolean;
@@ -54,8 +50,7 @@ export interface ContactsBirthdateField extends BaseField {
  *
  * @interface ContactsSubscribeField
  *
- * @property {typeof INPUT_FIELD_TYPES.CONTACTS_SUBSCRIBE} type - Always 'CONTACTS_SUBSCRIBE'
- * @property {string} name - The unique identifier for the form field
+ * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} label - The display label for the form field
@@ -64,8 +59,7 @@ export interface ContactsBirthdateField extends BaseField {
  * @example
  * ```tsx
  * const subscribeField: ContactsSubscribeField = {
- *   type: INPUT_FIELD_TYPES.CONTACTS_SUBSCRIBE,
- *   name: 'subscribe',
+ *   id: 'subscribe',
  *   required: false,
  *   readOnly: false,
  *   label: { nodes: [{ type: 'text', text: 'Subscribe to newsletter' }] },
@@ -74,7 +68,6 @@ export interface ContactsBirthdateField extends BaseField {
  * ```
  */
 export interface ContactsSubscribeField extends BaseField {
-  type: typeof INPUT_FIELD_TYPES.CONTACTS_SUBSCRIBE;
   label: forms.RichContent;
   defaultValue: boolean;
 }
@@ -84,8 +77,7 @@ export interface ContactsSubscribeField extends BaseField {
  *
  * @interface TextAreaField
  *
- * @property {typeof INPUT_FIELD_TYPES.TEXT_AREA} type - Always 'TEXT_AREA'
- * @property {string} name - The unique identifier for the form field
+ * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {string} label - The display label for the form field
@@ -96,8 +88,7 @@ export interface ContactsSubscribeField extends BaseField {
  * @example
  * ```tsx
  * const textAreaField: TextAreaField = {
- *   type: INPUT_FIELD_TYPES.TEXT_AREA,
- *   name: 'message',
+ *   id: 'message',
  *   required: true,
  *   readOnly: false,
  *   label: 'Your Message',
@@ -107,17 +98,14 @@ export interface ContactsSubscribeField extends BaseField {
  * };
  * ```
  */
-export interface TextAreaField extends BaseTextField {
-  type: typeof INPUT_FIELD_TYPES.TEXT_AREA;
-}
+export interface TextAreaField extends BaseTextField {}
 
 /**
  * Represents a text input form field configuration.
  *
  * @interface TextInputField
  *
- * @property {typeof INPUT_FIELD_TYPES.TEXT_INPUT} type - Always 'TEXT_INPUT'
- * @property {string} name - The unique identifier for the form field
+ * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {string} label - The display label for the form field
@@ -128,8 +116,7 @@ export interface TextAreaField extends BaseTextField {
  * @example
  * ```tsx
  * const textInputField: TextInputField = {
- *   type: INPUT_FIELD_TYPES.TEXT_INPUT,
- *   name: 'firstName',
+ *   id: 'firstName',
  *   required: true,
  *   readOnly: false,
  *   label: 'First Name',
@@ -139,17 +126,14 @@ export interface TextAreaField extends BaseTextField {
  * };
  * ```
  */
-export interface TextInputField extends BaseTextField {
-  type: typeof INPUT_FIELD_TYPES.TEXT_INPUT;
-}
+export interface TextInputField extends BaseTextField {}
 
 /**
  * Represents a number input form field configuration.
  *
  * @interface NumberInputField
  *
- * @property {typeof INPUT_FIELD_TYPES.NUMBER_INPUT} type - Always 'NUMBER_INPUT'
- * @property {string} name - The unique identifier for the form field
+ * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {string} label - The display label for the form field
@@ -160,8 +144,7 @@ export interface TextInputField extends BaseTextField {
  * @example
  * ```tsx
  * const numberInputField: NumberInputField = {
- *   type: INPUT_FIELD_TYPES.NUMBER_INPUT,
- *   name: 'age',
+ *   id: 'age',
  *   required: true,
  *   readOnly: false,
  *   label: 'Age',
@@ -171,17 +154,14 @@ export interface TextInputField extends BaseTextField {
  * };
  * ```
  */
-export interface NumberInputField extends BaseTextField {
-  type: typeof INPUT_FIELD_TYPES.NUMBER_INPUT;
-}
+export interface NumberInputField extends BaseTextField {}
 
 /**
  * Represents a checkbox form field configuration.
  *
  * @interface CheckboxField
  *
- * @property {typeof INPUT_FIELD_TYPES.CHECKBOX} type - Always 'CHECKBOX'
- * @property {string} name - The unique identifier for the form field
+ * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} label - The display label for the form field
@@ -190,8 +170,7 @@ export interface NumberInputField extends BaseTextField {
  * @example
  * ```tsx
  * const checkboxField: CheckboxField = {
- *   type: INPUT_FIELD_TYPES.CHECKBOX,
- *   name: 'agree',
+ *   id: 'agree',
  *   required: true,
  *   readOnly: false,
  *   label: { nodes: [{ type: 'text', text: 'I agree to the terms and conditions' }] },
@@ -200,12 +179,6 @@ export interface NumberInputField extends BaseTextField {
  * ```
  */
 export interface CheckboxField extends BaseField {
-  type: typeof INPUT_FIELD_TYPES.CHECKBOX;
   label: forms.RichContent;
   defaultValue: boolean;
-}
-
-// TODO: DefaultField should be deleted once all fields have specific types defined
-export interface DefaultField extends BaseTextField {
-  type: InputFieldType;
 }
