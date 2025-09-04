@@ -17,6 +17,8 @@ enum TestIds {
   ticketDefinitionPrice = 'ticket-definition-price',
   ticketDefinitionRemaining = 'ticket-definition-remaining',
   ticketDefinitionSoldOut = 'ticket-definition-sold-out',
+  ticketDefinitionSaleStarts = 'ticket-definition-sale-starts',
+  ticketDefinitionSaleEnded = 'ticket-definition-sale-ended',
   ticketDefinitionQuantity = 'ticket-definition-quantity',
   ticketDefinitionFixedPricing = 'ticket-definition-fixed-pricing',
   ticketDefinitionGuestPricing = 'ticket-definition-guest-pricing',
@@ -285,6 +287,85 @@ export const SoldOut = React.forwardRef<HTMLElement, SoldOutProps>(
         customElement={children}
       >
         <span>{children}</span>
+      </AsChildSlot>
+    );
+  },
+);
+
+export interface SaleStartsProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ startDate: Date | null; startDateStr: string }>;
+  className?: string;
+}
+
+export const SaleStarts = React.forwardRef<HTMLElement, SaleStartsProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    const ticketDefinitionService = useService(
+      TicketDefinitionServiceDefinition,
+    );
+    const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+    const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
+
+    if (!saleScheduled) {
+      return null;
+    }
+
+    const startDate = ticketDefinition.salePeriod?.startDate ?? null;
+    const startDateStr = startDate ? startDate.toLocaleString() : '';
+
+    console.log(startDateStr);
+    console.log(startDate);
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketDefinitionSaleStarts}
+        customElement={children}
+        customElementProps={{ startDate, startDateStr }}
+        content={startDateStr}
+      >
+        <span>{startDateStr}</span>
+      </AsChildSlot>
+    );
+  },
+);
+
+export interface SaleEndedProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ endDate: Date | null; endDateStr: string }>;
+  className?: string;
+}
+
+export const SaleEnded = React.forwardRef<HTMLElement, SaleEndedProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    const service = useService(TicketDefinitionServiceDefinition);
+    const ticketDefinition = service.ticketDefinition.get();
+    const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
+
+    if (!saleEnded) {
+      return null;
+    }
+
+    const endDate = ticketDefinition.salePeriod?.endDate ?? null;
+    const endDateStr = endDate ? endDate.toLocaleString() : '';
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.ticketDefinitionSaleEnded}
+        customElement={children}
+        customElementProps={{ endDate, endDateStr }}
+        content={endDateStr}
+      >
+        <span>{endDateStr}</span>
       </AsChildSlot>
     );
   },

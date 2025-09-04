@@ -16,7 +16,10 @@ export interface TicketListServiceAPI {
     pricingOptionId?: string;
   }) => void;
   getMaxQuantity: (ticketDefinitionId: string) => number;
-  getCurrentSelectedQuantity: (ticketDefinitionId: string, pricingOptionId?: string) => number;
+  getCurrentSelectedQuantity: (
+    ticketDefinitionId: string,
+    pricingOptionId?: string,
+  ) => number;
   isSoldOut: (ticketDefinitionId: string) => boolean;
 }
 
@@ -51,18 +54,20 @@ export const TicketListService =
       const findTicketDefinition = (ticketDefinitionId: string) =>
         ticketDefinitions.get().find((d) => d._id === ticketDefinitionId);
 
-      const findTicketReservation = (ticketDefinitionId: string, pricingOptionId?: string) => {
+      const findTicketReservation = (
+        ticketDefinitionId: string,
+        pricingOptionId?: string,
+      ) => {
         if (pricingOptionId) {
-  return selectedQuantities
-          .get()
-          .filter((d) => d.ticketDefinitionId === ticketDefinitionId)
-          .find((d) => d.pricingOptionId === pricingOptionId);
-
+          return selectedQuantities
+            .get()
+            .filter((d) => d.ticketDefinitionId === ticketDefinitionId)
+            .find((d) => d.pricingOptionId === pricingOptionId);
         }
         return selectedQuantities
           .get()
           .find((d) => d.ticketDefinitionId === ticketDefinitionId);
-      }
+      };
 
       const getMaxQuantity = (ticketDefinitionId: string) => {
         const ticketDefinition = findTicketDefinition(ticketDefinitionId);
@@ -70,8 +75,14 @@ export const TicketListService =
         return ticketDefinition?.limitPerCheckout || 0;
       };
 
-      const getCurrentSelectedQuantity = (ticketDefinitionId: string, pricingOptionId?: string) => {
-        const selectedQuantity = findTicketReservation(ticketDefinitionId, pricingOptionId);
+      const getCurrentSelectedQuantity = (
+        ticketDefinitionId: string,
+        pricingOptionId?: string,
+      ) => {
+        const selectedQuantity = findTicketReservation(
+          ticketDefinitionId,
+          pricingOptionId,
+        );
         return selectedQuantity?.quantity ?? 0;
       };
 
@@ -88,7 +99,10 @@ export const TicketListService =
         ticketDefinitionId,
         priceOverride = getCurrentPriceOverride(ticketDefinitionId),
         pricingOptionId,
-        quantity = getCurrentSelectedQuantity(ticketDefinitionId, pricingOptionId),
+        quantity = getCurrentSelectedQuantity(
+          ticketDefinitionId,
+          pricingOptionId,
+        ),
       }: {
         ticketDefinitionId: string;
         quantity?: number;
@@ -102,20 +116,19 @@ export const TicketListService =
           ticketDefinitionId,
           quantity: newQuantity,
           priceOverride: priceOverride ? priceOverride : undefined,
-          pricingOptionId
+          pricingOptionId,
         };
 
         const newSelectedQuantities = [
-          ...selectedQuantities
-            .get()
-            .filter(
-              (selected) => {
-                if (pricingOptionId) {
-                  return !(selected.ticketDefinitionId === ticketDefinitionId && selected.pricingOptionId === pricingOptionId)
-                }
-                return selected.ticketDefinitionId !== ticketDefinitionId
-              },
-            ),
+          ...selectedQuantities.get().filter((selected) => {
+            if (pricingOptionId) {
+              return !(
+                selected.ticketDefinitionId === ticketDefinitionId &&
+                selected.pricingOptionId === pricingOptionId
+              );
+            }
+            return selected.ticketDefinitionId !== ticketDefinitionId;
+          }),
           newSelectedQuantity,
         ];
 

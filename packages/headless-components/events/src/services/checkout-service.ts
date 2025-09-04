@@ -48,16 +48,36 @@ export const CheckoutService =
         try {
           isLoading.set(true);
           error.set(null);
-          const {_id: reservationId} = await ticketReservations.createTicketReservation({tickets: ticketQuantities.map(({quantity, ticketDefinitionId, priceOverride, pricingOptionId
-          }) => {
-            if (quantity) {
-              return {
-                eventId, quantity, ticketDefinitionId, ticketInfo: priceOverride || pricingOptionId ? {guestPrice: priceOverride, pricingOptionId, quantity} : undefined
-              }
-
-            }
-            return null
-          }).filter(Boolean) as ticketReservations.TicketLineItem[]})
+          const { _id: reservationId } =
+            await ticketReservations.createTicketReservation({
+              tickets: ticketQuantities
+                .map(
+                  ({
+                    quantity,
+                    ticketDefinitionId,
+                    priceOverride,
+                    pricingOptionId,
+                  }) => {
+                    if (quantity) {
+                      return {
+                        eventId,
+                        quantity,
+                        ticketDefinitionId,
+                        ticketInfo:
+                          priceOverride || pricingOptionId
+                            ? {
+                                guestPrice: priceOverride,
+                                pricingOptionId,
+                                quantity,
+                              }
+                            : undefined,
+                      };
+                    }
+                    return null;
+                  },
+                )
+                .filter(Boolean) as ticketReservations.TicketLineItem[],
+            });
 
           if (!reservationId) {
             throw new Error('Failed to create reservation');

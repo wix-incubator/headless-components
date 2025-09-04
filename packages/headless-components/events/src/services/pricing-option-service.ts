@@ -20,15 +20,16 @@ export const PricingOptionServiceDefinition = defineService<
   PricingOptionServiceConfig
 >('pricing-option');
 
-export const PricingOptionService = implementService.withConfig<PricingOptionServiceConfig>()(
-  PricingOptionServiceDefinition,
-  ({ getService, config }) => {
-    const signalsService = getService(SignalsServiceDefinition);
+export const PricingOptionService =
+  implementService.withConfig<PricingOptionServiceConfig>()(
+    PricingOptionServiceDefinition,
+    ({ getService, config }) => {
+      const signalsService = getService(SignalsServiceDefinition);
 
-    const pricingOption: Signal<PricingOption> = signalsService.signal(
-      config.pricingOption,
-    );
+      const pricingOption: Signal<PricingOption> = signalsService.signal(
+        config.pricingOption,
+      );
 
-    return { pricingOption };
-  },
-);
+      return { pricingOption };
+    },
+  );

@@ -85,6 +85,8 @@ export function EventDetails({
                 <TicketDefinitionPrimitive.Description className="text-sm text-gray-500 mb-3 line-clamp-3" />
                 <TicketDefinitionPrimitive.FixedPricing className="text-base font-medium text-gray-900 mb-2" />
                 <TicketDefinitionPrimitive.GuestPricing className="text-base font-medium text-red-900 mb-2" />
+                <TicketDefinitionPrimitive.SaleStarts className="text-sm text-gray-500 mb-2" />
+                <TicketDefinitionPrimitive.SaleEnded className="text-sm text-gray-500 mb-2" />
                 <TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
                   <div>
                     <PricingOptionPrimitive.Name className="text-sm font-medium text-gray-900 mb-2" />{' '}
