@@ -329,7 +329,10 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     const setQuantity = (quantity: number) =>
       listService.setQuantity({ ticketDefinitionId, quantity });
 
-    if (ticketDefinition.pricingMethod?.pricingOptions) {
+    if (
+      ticketDefinition.pricingMethod?.pricingOptions ||
+      ticketDefinition.saleStatus !== 'SALE_STARTED'
+    ) {
       return null;
     }
 
