@@ -57,6 +57,6 @@
     "@wix/services-manager-react": "^0.1.27"
   },
   "peerDependencies": {
-    "@wix/headless-stores": "workspace:*"
+    "@wix/headless-components": "workspace:*"
   }
 }

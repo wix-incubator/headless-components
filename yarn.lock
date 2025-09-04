@@ -3872,6 +3872,7 @@ __metadata:
     "@wix/astro": "npm:^1.0.30"
     "@wix/cli": "npm:^1.1.114"
     "@wix/headless-blog": "workspace:*"
+    "@wix/headless-components": "workspace:*"
     "@wix/headless-seo": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-manager": "npm:^0.2.21"
@@ -3887,8 +3888,6 @@ __metadata:
     sass-embedded: "npm:^1.89.0"
     tailwindcss: "npm:^4.1.7"
     typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@wix/headless-stores": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -3935,6 +3934,7 @@ __metadata:
     "@wix/categories": "npm:^1.0.133"
     "@wix/cli": "npm:^1.1.95"
     "@wix/ecom": "npm:^1.0.1278"
+    "@wix/headless-components": "workspace:*"
     "@wix/headless-ecom": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-seo": "workspace:*"
@@ -3958,8 +3958,6 @@ __metadata:
     sass-embedded: "npm:^1.89.0"
     tailwindcss: "npm:^4.1.7"
     typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@wix/headless-stores": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5309,7 +5307,7 @@ __metadata:
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
   peerDependencies:
-    "@wix/headless-stores": "workspace:*"
+    "@wix/headless-components": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5323,7 +5321,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-components@workspace:packages/headless-components/components":
+"@wix/headless-components@workspace:*, @wix/headless-components@workspace:packages/headless-components/components":
   version: 0.0.0-use.local
   resolution: "@wix/headless-components@workspace:packages/headless-components/components"
   dependencies:
@@ -5418,7 +5416,7 @@ __metadata:
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
   peerDependencies:
-    "@wix/headless-stores": "workspace:*"
+    "@wix/headless-components": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5595,7 +5593,7 @@ __metadata:
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
   peerDependencies:
-    "@wix/headless-stores": "workspace:*"
+    "@wix/headless-components": "workspace:*"
   languageName: unknown
   linkType: soft
 
