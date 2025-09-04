@@ -472,9 +472,6 @@ export const PricingOptionsPricingRepeater = React.forwardRef<
       });
     };
 
-    // TODO remove
-    console.log(onChange);
-
     return (
       <>
         {optionDetails.map((pricingOption) => (
