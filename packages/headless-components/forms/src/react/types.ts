@@ -1,5 +1,5 @@
 import { forms } from '@wix/forms';
-import { InputFieldType, INPUT_FIELD_TYPES } from './input-field-types';
+import { InputFieldType, INPUT_FIELD_TYPES } from './input-field-types.js';
 
 export interface BaseField {
   name: string;
@@ -209,12 +209,3 @@ export interface CheckboxField extends BaseField {
 export interface DefaultField extends BaseTextField {
   type: InputFieldType;
 }
-
-export type FormField =
-  | ContactsBirthdateField
-  | ContactsSubscribeField
-  | TextAreaField
-  | TextInputField
-  | NumberInputField
-  | CheckboxField
-  | DefaultField;

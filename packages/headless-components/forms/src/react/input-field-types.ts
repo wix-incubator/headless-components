@@ -112,6 +112,7 @@ export const INPUT_FIELD_TYPES = {
   ...COMMON_FIELD_TYPES,
 } as const;
 
+// TODO: import from new public package
 export type InputFieldTypes = typeof INPUT_FIELD_TYPES;
 export type InputFieldType = keyof typeof INPUT_FIELD_TYPES;
 export type ContactsInputFieldType = keyof typeof CONTACTS_FIELD_TYPES;

@@ -8,7 +8,7 @@ import {
   FormService,
   type FormServiceConfig,
 } from '../services/form-service.js';
-import { TextInputField } from './types/formatted-fields.js';
+import { TextInputField } from './types.js';
 
 export interface RootProps {
   children: React.ReactNode;
