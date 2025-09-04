@@ -316,7 +316,9 @@ export const SaleStarts = React.forwardRef<HTMLElement, SaleStartsProps>(
     }
 
     const startDate = ticketDefinition.salePeriod?.startDate ?? null;
-    const startDateFormatted = startDate ? startDate.toLocaleString() : '';
+    const startDateFormatted = startDate
+      ? new Intl.DateTimeFormat('en-US').format(new Date(startDate))
+      : '';
 
     return (
       <AsChildSlot
@@ -356,7 +358,9 @@ export const SaleEnded = React.forwardRef<HTMLElement, SaleEndedProps>(
     }
 
     const endDate = ticketDefinition.salePeriod?.endDate ?? null;
-    const endDateFormatted = endDate ? endDate.toLocaleString() : '';
+    const endDateFormatted = endDate
+      ? new Intl.DateTimeFormat('en-US').format(new Date(endDate))
+      : '';
 
     return (
       <AsChildSlot
@@ -449,6 +453,40 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     );
   },
 );
+
+export const PricingOptions = React.forwardRef<
+  HTMLDivElement,
+  PricingOptionsProps
+>((props, ref) => {
+  const { children, emptyState, className } = props;
+
+  const service = useService(TicketDefinitionServiceDefinition);
+  const ticketDefinitions = service.ticketDefinition.get();
+  const hasPricingOptions =
+    !!ticketDefinitions.pricingMethod?.pricingOptions?.optionDetails?.length;
+
+  if (!hasPricingOptions) {
+    return emptyState || null;
+  }
+
+  const attributes = {
+    'data-testid': TestIds.ticketDefinitionPricingOptions,
+    'data-empty': !hasPricingOptions,
+    className,
+  };
+
+  return (
+    <div {...attributes} ref={ref}>
+      {children}
+    </div>
+  );
+});
+
+interface PricingOptionsProps {
+  children: React.ReactNode;
+  emptyState?: React.ReactNode;
+  className?: string;
+}
 
 interface PricingOptionsPricingRepeaterProps {
   children: React.ReactNode;
