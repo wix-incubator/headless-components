@@ -64,7 +64,7 @@ export function EventDetails({
 
           <a
             href="#tickets"
-            className="inline-block btn-primary font-light py-2 px-8 mt-10"
+            className="inline-block btn-primary font-light py-3 px-8 mt-10"
           >
             Buy Tickets
           </a>
@@ -166,23 +166,23 @@ export function EventDetails({
 
             {/* Checkout Section */}
             <TicketsPickerPrimitive.Checkout noTicketsErrorMessage="Please select at least one ticket">
-              {({ isLoading, error, checkout, hasSelectedTickets }) => (
-                <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-                  {error && (
-                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-red-600">{error}</p>
+              {({ isLoading, error, checkout }) => (
+                <div className="mt-6">
+                  {!!error && (
+                    <div className="mb-6 p-4 bg-status-danger-medium border border-status-danger text-center">
+                      <p className="font-light text-status-error">{error}</p>
                     </div>
                   )}
                   <button
-                    onClick={checkout}
-                    disabled={isLoading || !hasSelectedTickets}
-                    className={`px-8 py-3 rounded-lg font-medium transition-all ${
-                      isLoading || !hasSelectedTickets
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl'
+                    className={`block font-light py-3 px-20 ml-auto ${
+                      isLoading
+                        ? 'bg-gray-300 text-content-faded'
+                        : 'btn-primary'
                     }`}
+                    disabled={isLoading}
+                    onClick={checkout}
                   >
-                    {isLoading ? 'Processing...' : 'Reserve Tickets'}
+                    {isLoading ? 'Processing...' : 'Checkout'}
                   </button>
                 </div>
               )}
