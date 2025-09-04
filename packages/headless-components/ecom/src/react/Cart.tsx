@@ -290,7 +290,7 @@ export interface LineItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ cart: any }>;
+  children?: AsChildChildren<{}>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Empty state to display when cart is empty */
@@ -330,16 +330,18 @@ export const LineItems = React.forwardRef<HTMLElement, LineItemsProps>(
       return emptyState;
     }
 
+    const content = React.isValidElement(children) ? children : null;
+
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
         data-testid={TestIds.cartLineItems}
         customElement={children}
-        customElementProps={{ cart }}
-        content={React.isValidElement(children) ? children : null}
+        customElementProps={{}}
+        content={content}
       >
-        <div>{React.isValidElement(children) ? children : null}</div>
+        <div>{content}</div>
       </AsChildSlot>
     );
   },
@@ -349,7 +351,7 @@ export interface LineItemRepeaterProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ items: LineItem[] }>;
+  children?: AsChildChildren<{}>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -403,7 +405,7 @@ export const LineItemRepeater = React.forwardRef<
       className={className}
       data-testid={TestIds.cartLineItemRepeater}
       customElement={children}
-      customElementProps={{ items }}
+      customElementProps={{}}
       content={content}
     >
       <div>{content}</div>
