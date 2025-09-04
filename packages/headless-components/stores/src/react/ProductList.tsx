@@ -403,7 +403,7 @@ export const TotalsDisplayed = React.forwardRef<
   HTMLElement,
   TotalsDisplayedProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const productsListService = useService(ProductsListServiceDefinition);
   const products = productsListService.products.get();
   const displayedProducts = products.length;
@@ -418,6 +418,7 @@ export const TotalsDisplayed = React.forwardRef<
       customElement={children}
       customElementProps={{ displayedProducts }}
       content={displayedProducts}
+      {...otherProps}
     >
       <span>{displayedProducts}</span>
     </AsChildSlot>
@@ -594,7 +595,7 @@ export interface FilterProps {
  * ```
  */
 const FilterRoot = React.forwardRef<HTMLElement, FilterProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProductListFilters.FilterRoot asChild={asChild} className={className}>
@@ -604,6 +605,7 @@ const FilterRoot = React.forwardRef<HTMLElement, FilterProps>((props, ref) => {
         className={className}
         data-testid={TestIds.productListFilter}
         customElement={children}
+        {...otherProps}
       >
         <div>{children}</div>
       </AsChildSlot>
@@ -668,7 +670,7 @@ export const FilterResetTrigger = React.forwardRef<
   HTMLButtonElement,
   FilterResetTriggerProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const label = props.label || 'Reset All Filters';
 
   return (
@@ -693,6 +695,7 @@ export const FilterResetTrigger = React.forwardRef<
               isFiltered,
             }}
             content={label}
+            {...otherProps}
           >
             <button disabled={!isFiltered}>{label}</button>
           </AsChildSlot>
@@ -744,7 +747,7 @@ export interface ErrorProps {
  * ```
  */
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProductList.Error>
@@ -765,6 +768,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
               error,
             }}
             content={error}
+            {...otherProps}
           >
             <div className="text-status-error text-sm sm:text-base">
               {error}

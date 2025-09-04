@@ -154,7 +154,7 @@ export interface TextProps {
  */
 export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) {
@@ -192,6 +192,7 @@ export const Text = React.forwardRef<HTMLButtonElement, TextProps>(
         customElement={children}
         customElementProps={{ id: choiceId, value }}
         content={value}
+        {...otherProps}
       >
         <button>{value}</button>
       </AsChildSlot>
@@ -246,7 +247,7 @@ export interface ColorProps {
  */
 export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) {
@@ -287,6 +288,7 @@ export const Color = React.forwardRef<HTMLButtonElement, ColorProps>(
           name: value,
           id: choiceId || '',
         }}
+        {...otherProps}
       >
         <button style={{ backgroundColor: colorCode }} title={value} />
       </AsChildSlot>
@@ -349,7 +351,7 @@ export interface FreeTextProps
  */
 export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
     const choiceContext = React.useContext(ChoiceContext);
 
     if (!choiceContext) {
@@ -395,6 +397,7 @@ export const FreeText = React.forwardRef<HTMLTextAreaElement, FreeTextProps>(
                 title: choice?.name || undefined,
                 onChange: handleChange,
               }}
+              {...otherProps}
             >
               <textarea
                 placeholder={placeholder}

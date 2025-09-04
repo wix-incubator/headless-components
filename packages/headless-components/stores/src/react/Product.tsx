@@ -191,7 +191,7 @@ export interface NameProps {
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProduct.Name>
@@ -205,6 +205,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
             customElement={children}
             customElementProps={{ name }}
             content={name}
+            {...otherProps}
           >
             <div>{name}</div>
           </AsChildSlot>
@@ -255,7 +256,13 @@ export interface DescriptionProps {
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className, as = AsContent.Plain } = props;
+    const {
+      asChild,
+      children,
+      className,
+      as = AsContent.Plain,
+      ...otherProps
+    } = props;
 
     return (
       <CoreProduct.Description>
@@ -302,6 +309,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
               customElement={children}
               customElementProps={{ description }}
               content={description}
+              {...otherProps}
             >
               <div>{description}</div>
             </AsChildSlot>
@@ -352,7 +360,7 @@ export interface PriceProps {
  * ```
  */
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <SelectedVariant.Price>
@@ -370,6 +378,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
               formattedPrice: price,
             }}
             content={price}
+            {...otherProps}
           >
             <span>{price}</span>
           </AsChildSlot>
@@ -426,7 +435,7 @@ export const CompareAtPrice = React.forwardRef<
   HTMLElement,
   CompareAtPriceProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const testId = TestIds.productCompareAtPrice;
 
   return (
@@ -450,6 +459,7 @@ export const CompareAtPrice = React.forwardRef<
               formattedPrice: compareAtPrice,
             }}
             content={compareAtPrice}
+            {...otherProps}
           >
             <span>{compareAtPrice}</span>
           </AsChildSlot>
@@ -497,7 +507,7 @@ export interface SlugProps {
  * ```
  */
 export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const testId = TestIds.productSlug;
 
   return (
@@ -512,6 +522,7 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
             customElement={children}
             customElementProps={{ slug }}
             content={slug}
+            {...otherProps}
           >
             <span>{slug}</span>
           </AsChildSlot>
@@ -555,7 +566,7 @@ export interface RawProps {
  * ```
  */
 export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProduct.Content>
@@ -573,6 +584,7 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
             data-testid={TestIds.productRaw}
             customElement={children}
             customElementProps={{ product }}
+            {...otherProps}
           />
         );
       }}

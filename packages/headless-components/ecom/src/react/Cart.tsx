@@ -60,8 +60,7 @@ import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import { CurrentCartServiceDefinition } from '../services/current-cart-service.js';
 import type { LineItem } from '../services/common-types.js';
-import { Slot } from '@radix-ui/react-slot';
-import { renderAsChild, renderChildren } from '../utils/asChild.js';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as LineItemComponent from './LineItem.js';
 import * as CouponComponents from './CartCoupon.js';
 
@@ -127,7 +126,7 @@ export interface EmptyStateProps {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Content to display when cart is empty (can be a render function or ReactNode) */
-  children: ((props: {}) => React.ReactNode) | React.ReactNode;
+  children: AsChildChildren<{}>;
   /** CSS class name */
   className?: string;
   /** Additional HTML attributes */
@@ -162,19 +161,17 @@ export interface EmptyStateProps {
  */
 export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
   ({ asChild, children }, ref) => {
-    const Comp = asChild && children ? Slot : 'p';
-
     return (
       <CoreEmptyState>
-        <Comp ref={ref} data-testid={TestIds.cartEmptyState}>
-          {asChild && children
-            ? renderChildren({
-                children,
-                props: {},
-                ref,
-              })
-            : 'No items in cart'}
-        </Comp>
+        <AsChildSlot
+          asChild={asChild}
+          customElement={children}
+          customElementProps={{}}
+          ref={ref}
+          data-testid={TestIds.cartEmptyState}
+        >
+          <div>{children ? children : 'No items in cart'}</div>
+        </AsChildSlot>
       </CoreEmptyState>
     );
   },
@@ -217,15 +214,10 @@ export interface LineItemsListProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          items: LineItem[];
-          totalItems: number;
-        }
-      >;
+  children?: AsChildChildren<{
+    items: LineItem[];
+    totalItems: number;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Empty state to display when cart is empty */
@@ -268,14 +260,18 @@ export const LineItemsList = React.forwardRef<
           return props.emptyState || null;
         }
 
-        const Comp = asChild && children ? Slot : 'div';
         return (
-          <Comp ref={ref} data-testid={TestIds.cartLineItemsList} {...props}>
-            {asChild && children
-              ? renderChildren({ children, props: renderProps, ref })
-              : null}
-            <EmptyState asChild>{props.emptyState}</EmptyState>
-          </Comp>
+          <AsChildSlot
+            asChild={asChild}
+            customElement={children}
+            customElementProps={renderProps}
+            ref={ref}
+            data-testid={TestIds.cartLineItemsList}
+            {...props}
+          >
+            {children ? children : null}
+            <EmptyState asChild={asChild}>{props.emptyState}</EmptyState>
+          </AsChildSlot>
         );
       }}
     </CoreLineItemsList>
@@ -289,7 +285,7 @@ export interface LineItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode;
+  children?: AsChildChildren<{}>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Empty state to display when cart is empty */
@@ -329,21 +325,16 @@ export const LineItems = React.forwardRef<HTMLElement, LineItemsProps>(
       return emptyState;
     }
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { cart },
-        ref,
-        content: React.isValidElement(children) ? children : null,
-        attributes: { 'data-testid': TestIds.cartLineItems, ...otherProps },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <div ref={ref as any} data-testid={TestIds.cartLineItems} {...otherProps}>
-        {React.isValidElement(children) ? children : null}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        data-testid={TestIds.cartLineItems}
+        customElement={children}
+        {...otherProps}
+      >
+        <div>{children}</div>
+      </AsChildSlot>
     );
   },
 );
@@ -352,7 +343,7 @@ export interface LineItemRepeaterProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ReactNode;
+  children?: AsChildChildren<{}>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -399,30 +390,18 @@ export const LineItemRepeater = React.forwardRef<
     </LineItemComponent.Root>
   ));
 
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { items },
-      ref,
-      content,
-      attributes: {
-        'data-testid': TestIds.cartLineItemRepeater,
-        className,
-        ...otherProps,
-      },
-    });
-    if (rendered) return rendered;
-  }
-
   return (
-    <div
-      ref={ref as any}
-      data-testid={TestIds.cartLineItemRepeater}
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
       className={className}
+      data-testid={TestIds.cartLineItemRepeater}
+      customElement={children}
+      customElementProps={{}}
       {...otherProps}
     >
-      {content}
-    </div>
+      <div>{content}</div>
+    </AsChildSlot>
   );
 });
 
@@ -457,7 +436,7 @@ export interface ItemProps {
   /** Line item data */
   item: LineItem;
   /** Render prop function that receives item data */
-  children: (props: {
+  children: AsChildChildren<{
     /** Current quantity */
     quantity: number;
     /** Product title */
@@ -479,7 +458,7 @@ export interface ItemProps {
     remove: () => Promise<void>;
     /** Whether item is loading */
     isLoading: boolean;
-  }) => React.ReactNode;
+  }>;
   /** CSS class name */
   className?: string;
   /** Additional HTML attributes */
@@ -522,13 +501,36 @@ export const Item = React.forwardRef<HTMLDivElement, ItemProps>(
     return (
       <CoreItem item={item}>
         {(renderProps) => {
-          const Comp = asChild && children ? Slot : 'div';
           return (
-            <Comp ref={ref} data-testid={TestIds.cartItem} {...props}>
-              {asChild && children
-                ? renderChildren({ children, props: renderProps, ref })
-                : children(renderProps)}
-            </Comp>
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={renderProps}
+              ref={ref}
+              data-testid={TestIds.cartItem}
+              {...props}
+            >
+              <div>
+                <p>{renderProps.title}</p>
+                <p>{renderProps.price}</p>
+                <p>{renderProps.quantity}</p>
+                <button onClick={renderProps.remove}>Remove</button>
+                <button
+                  onClick={() =>
+                    renderProps.onValueChange(renderProps.quantity + 1)
+                  }
+                >
+                  +
+                </button>
+                <button
+                  onClick={() =>
+                    renderProps.onValueChange(renderProps.quantity - 1)
+                  }
+                >
+                  -
+                </button>
+              </div>
+            </AsChildSlot>
           );
         }}
       </CoreItem>
@@ -543,31 +545,26 @@ export interface SummaryProps {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Render prop function that receives summary data */
-  children:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLDivElement,
-        {
-          /** Cart subtotal */
-          subtotal: string;
-          /** Discount amount if coupon applied */
-          discount: string | null;
-          /** Applied coupon code if any */
-          appliedCoupon: string | null;
-          /** Shipping cost */
-          shipping: string;
-          /** Tax amount */
-          tax: string;
-          /** Cart total */
-          total: string;
-          /** Currency code */
-          currency: string;
-          /** Total number of items */
-          totalItems: number;
-          /** Whether totals are being calculated */
-          isTotalsLoading: boolean;
-        }
-      >;
+  children: AsChildChildren<{
+    /** Cart subtotal */
+    subtotal: string;
+    /** Discount amount if coupon applied */
+    discount: string | null;
+    /** Applied coupon code if any */
+    appliedCoupon: string | null;
+    /** Shipping cost */
+    shipping: string;
+    /** Tax amount */
+    tax: string;
+    /** Cart total */
+    total: string;
+    /** Currency code */
+    currency: string;
+    /** Total number of items */
+    totalItems: number;
+    /** Whether totals are being calculated */
+    isTotalsLoading: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -602,11 +599,28 @@ export const Summary = React.forwardRef<HTMLDivElement, SummaryProps>(
     return (
       <CoreSummary>
         {(renderProps) => {
-          const Comp = asChild ? Slot : 'div';
           return (
-            <Comp ref={ref} data-testid={TestIds.cartSummary} {...props}>
-              {renderChildren({ children, props: renderProps, ref })}
-            </Comp>
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={renderProps}
+              ref={ref}
+              data-testid={TestIds.cartSummary}
+              {...props}
+            >
+              <div>
+                <p>
+                  Subtotal ({renderProps.totalItems} items):{' '}
+                  {renderProps.subtotal}
+                </p>
+                <p>
+                  Total:{' '}
+                  {renderProps.isTotalsLoading
+                    ? 'Calculating...'
+                    : renderProps.total}
+                </p>
+              </div>
+            </AsChildSlot>
           );
         }}
       </CoreSummary>
@@ -621,16 +635,11 @@ export interface ClearProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          clear: () => Promise<void>;
-          totalItems: number;
-          isLoading: boolean;
-        }
-      >;
+  children?: AsChildChildren<{
+    clear: () => Promise<void>;
+    totalItems: number;
+    isLoading: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -667,17 +676,26 @@ export const Clear = React.forwardRef<HTMLButtonElement, ClearProps>(
           if (renderProps.totalItems === 0) {
             return null;
           }
-          const Comp = asChild ? Slot : 'button';
           return (
-            <Comp
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={renderProps}
               ref={ref}
               onClick={renderProps.clear}
               disabled={renderProps.isLoading}
               data-testid={TestIds.cartClear}
               {...props}
             >
-              {renderChildren({ children, props: renderProps, ref })}
-            </Comp>
+              <button
+                onClick={renderProps.clear}
+                disabled={renderProps.isLoading || renderProps.totalItems === 0}
+              >
+                {renderProps.isLoading
+                  ? 'Clearing...'
+                  : `Clear Cart (${renderProps.totalItems})`}
+              </button>
+            </AsChildSlot>
           );
         }}
       </CoreClear>
@@ -692,7 +710,7 @@ export interface CheckoutProps {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Render prop function that receives checkout data */
-  children: (props: {
+  children: AsChildChildren<{
     /** Function to proceed to checkout */
     proceedToCheckout: () => Promise<void>;
     /** Whether checkout is available */
@@ -701,7 +719,7 @@ export interface CheckoutProps {
     isLoading: boolean;
     /** Error message if checkout fails */
     error: string | null;
-  }) => React.ReactNode;
+  }>;
   /** CSS class name */
   className?: string;
   /** Additional HTML attributes */
@@ -740,17 +758,26 @@ export const Checkout = React.forwardRef<HTMLButtonElement, CheckoutProps>(
     return (
       <CoreCheckout>
         {(renderProps) => {
-          const Comp = asChild ? Slot : 'button';
           return (
-            <Comp
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={renderProps}
               ref={ref}
               onClick={renderProps.proceedToCheckout}
               disabled={!renderProps.canCheckout || renderProps.isLoading}
               data-testid={TestIds.cartCheckout}
               {...props}
             >
-              {children(renderProps)}
-            </Comp>
+              <button
+                onClick={renderProps.proceedToCheckout}
+                disabled={!renderProps.canCheckout || renderProps.isLoading}
+              >
+                {renderProps.isLoading
+                  ? 'Processing...'
+                  : 'Proceed to Checkout'}
+              </button>
+            </AsChildSlot>
           );
         }}
       </CoreCheckout>
@@ -765,12 +792,12 @@ export interface NotesProps {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Render prop function that receives notes data */
-  children?: (props: {
+  children?: AsChildChildren<{
     /** Current notes value */
     notes: string;
     /** Function to update notes */
     updateNotes: (notes: string) => Promise<void>;
-  }) => React.ReactNode;
+  }>;
   /** CSS class name */
   className?: string;
   /** Additional HTML attributes */
@@ -808,26 +835,28 @@ export const Notes = React.forwardRef<HTMLDivElement, NotesProps>(
     return (
       <CoreNotes>
         {(renderProps) => {
-          const Comp = asChild && children ? Slot : 'div';
           return (
-            <Comp ref={ref} data-testid={TestIds.cartNotes} {...props}>
-              {asChild && children ? (
-                renderChildren({ children, props: renderProps, ref })
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-content-primary mb-2">
-                    Notes:
-                  </label>
-                  <textarea
-                    value={renderProps.notes}
-                    onChange={(e) => renderProps.updateNotes(e.target.value)}
-                    placeholder="Special instructions for your order (e.g., gift wrap, delivery notes)"
-                    rows={3}
-                    className="w-full px-3 py-2 bg-surface-interactive border border-surface-interactive rounded-lg text-content-primary placeholder:text-content-muted focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors duration-200 resize-vertical"
-                  />
-                </div>
-              )}
-            </Comp>
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={renderProps}
+              ref={ref}
+              data-testid={TestIds.cartNotes}
+              {...props}
+            >
+              <div>
+                <label className="block text-sm font-medium text-content-primary mb-2">
+                  Notes:
+                </label>
+                <textarea
+                  value={renderProps.notes}
+                  onChange={(e) => renderProps.updateNotes(e.target.value)}
+                  placeholder="Special instructions for your order (e.g., gift wrap, delivery notes)"
+                  rows={3}
+                  className="w-full px-3 py-2 bg-surface-interactive border border-surface-interactive rounded-lg text-content-primary placeholder:text-content-muted focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors duration-200 resize-vertical"
+                />
+              </div>
+            </AsChildSlot>
           );
         }}
       </CoreNotes>
@@ -894,13 +923,10 @@ export interface NoteInputProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ForwardRefRenderFunction<
-    HTMLTextAreaElement,
-    {
-      value: string;
-      onChange: (value: string) => void;
-    }
-  >;
+  children?: AsChildChildren<{
+    value: string;
+    onChange: (value: string) => void;
+  }>;
   /** Placeholder text for the textarea */
   placeholder?: string;
   /** Maximum character limit */
@@ -951,25 +977,24 @@ const NoteInput = React.forwardRef<HTMLTextAreaElement, NoteInputProps>(
         {(renderProps) => {
           const { notes, updateNotes } = renderProps;
 
-          const noteProps = {
-            value: notes || '',
-            onChange: updateNotes,
-          };
-
-          if (asChild && children) {
-            return children(noteProps, ref);
-          }
-
           return (
-            <textarea
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={renderProps}
               ref={ref}
-              value={notes || ''}
-              onChange={(e) => updateNotes(e.target.value)}
-              placeholder={placeholder}
-              maxLength={maxLength}
               data-testid={TestIds.cartNoteInput}
               {...props}
-            />
+            >
+              <textarea
+                value={notes || ''}
+                onChange={(e) => updateNotes(e.target.value)}
+                placeholder={placeholder}
+                maxLength={maxLength}
+                data-testid={TestIds.cartNoteInput}
+                {...props}
+              />
+            </AsChildSlot>
           );
         }}
       </CoreNotes>
@@ -1048,21 +1073,16 @@ export interface CartPriceProps
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Render function that receives price data and formatting information */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLDivElement,
-        {
-          /** The price object containing amount and currency */
-          price: Money;
-          /** Human-readable formatted price string (e.g., "$24.99") */
-          formattedPrice: string;
-          /** Whether the price calculation is currently loading */
-          isLoading: boolean;
-          /** Optional label for the price component */
-          label?: string;
-        }
-      >;
+  children?: AsChildChildren<{
+    /** The price object containing amount and currency */
+    price: Money;
+    /** Human-readable formatted price string (e.g., "$24.99") */
+    formattedPrice: string;
+    /** Whether the price calculation is currently loading */
+    isLoading: boolean;
+    /** Optional label for the price component */
+    label?: string;
+  }>;
   /** Optional text label to display with the price */
   label?: string;
 }
@@ -1107,8 +1127,6 @@ const PricePartFactory = ({
               currency: currency,
             };
 
-            const Comp = asChild ? Slot : 'div';
-
             if (asChild && children && typeof children === 'function') {
               return children(
                 {
@@ -1122,14 +1140,26 @@ const PricePartFactory = ({
             }
 
             return (
-              <Comp ref={ref} className={className} {...props}>
+              <AsChildSlot
+                asChild={asChild}
+                customElement={children}
+                customElementProps={{
+                  price,
+                  formattedPrice: total,
+                  isLoading: isTotalsLoading,
+                  label,
+                }}
+                ref={ref}
+                className={className}
+                {...props}
+              >
                 {label && <span>{label}</span>}
                 {isTotalsLoading ? (
                   <span>...</span>
                 ) : (
                   <span>{isDiscount ? `-${total}` : total}</span>
                 )}
-              </Comp>
+              </AsChildSlot>
             );
           }}
         </CoreSummary>
@@ -1324,15 +1354,10 @@ interface ErrorProps
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Render prop function that receives error data */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLDivElement,
-        {
-          /** Error message to display */
-          error: string;
-        }
-      >;
+  children?: AsChildChildren<{
+    /** Error message to display */
+    error: string;
+  }>;
 }
 
 export const Errors = React.forwardRef<HTMLDivElement, ErrorProps>(
@@ -1343,24 +1368,21 @@ export const Errors = React.forwardRef<HTMLDivElement, ErrorProps>(
           if (!renderProps.error) {
             return null;
           }
-          if (asChild && children && typeof children === 'function') {
-            return children(
-              {
-                error: renderProps.error,
-              },
-              ref,
-            );
-          }
-          const Comp = asChild ? Slot : 'div';
+
           return (
-            <Comp
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={{
+                error: renderProps.error,
+              }}
               ref={ref}
               className={className}
               data-testid={TestIds.cartErrors}
               {...props}
             >
               {renderProps.error}
-            </Comp>
+            </AsChildSlot>
           );
         }}
       </CoreCheckout>

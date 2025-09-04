@@ -71,7 +71,7 @@
 - Integrates with core ProductList service for data management
 - Supports empty state handling and infinite scroll configuration
 - LoadMoreTrigger includes loading state support and disabled state handling
-- TotalsDisplayed implements full AsChild pattern with `renderAsChild` utility
+- TotalsDisplayed implements full AsChild pattern with `AsChildSlot` component
 - Simplified totals implementation (removed complex context, uses standalone component)
 
 ---
@@ -241,7 +241,7 @@
 
 2. **AsChild Pattern** (for flexible composition)
    - Support `asChild` prop for custom DOM structure
-   - Use `renderAsChild` utility for implementation
+   - Use `AsChildSlot` component for implementation
 
 3. **TestIds Enum** (for consistent testing)
    - Define centralized `TestIds` enum in each component file

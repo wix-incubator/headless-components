@@ -124,8 +124,15 @@ export interface RootProps {
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { asChild, children, option, onValueChange, allowedTypes, className } =
-    props;
+  const {
+    asChild,
+    children,
+    option,
+    onValueChange,
+    allowedTypes,
+    className,
+    ...otherProps
+  } = props;
 
   // Determine the option type based on the option name and available choices
   const getOptionType = (): 'color' | 'text' | 'free-text' => {
@@ -166,6 +173,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         data-type={optionType}
         customElement={children}
         customElementProps={{ option, onValueChange, allowedTypes }}
+        {...otherProps}
       >
         <div>{React.isValidElement(children) ? children : null}</div>
       </AsChildSlot>
@@ -212,7 +220,7 @@ export interface NameProps {
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const optionData = React.useContext(OptionContext);
 
   if (!optionData) return null;
@@ -228,6 +236,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
       customElement={children}
       customElementProps={{ name }}
       content={name}
+      {...otherProps}
     >
       <div>{name}</div>
     </AsChildSlot>
