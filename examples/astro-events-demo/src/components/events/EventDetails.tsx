@@ -132,11 +132,13 @@ export function EventDetails({
                       </TicketDefinitionPrimitive.SaleStarts>
                     </div>
                     <div className="flex w-full">
-                      <TicketDefinitionPrimitive.FixedPricing className="font-medium text-gray-900" />
-                      <TicketDefinitionPrimitive.GuestPricing className="font-medium text-red-600" />
-                      <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium">
-                        Sold Out
-                      </TicketDefinitionPrimitive.SoldOut>
+                      <div>
+                        <TicketDefinitionPrimitive.FixedPricing className="font-medium text-gray-900" />
+                        <TicketDefinitionPrimitive.GuestPricing className="font-medium text-red-600" />
+                        <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium block">
+                          Sold Out
+                        </TicketDefinitionPrimitive.SoldOut>
+                      </div>
                       <TicketDefinitionPrimitive.Quantity asChild>
                         {({ quantity, maxQuantity, setQuantity }) => (
                           <div className="ml-auto">
