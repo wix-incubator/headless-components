@@ -8,7 +8,14 @@ import {
   FormService,
   type FormServiceConfig,
 } from '../services/form-service.js';
-import { TextInputField } from './types.js';
+import {
+  CheckboxField,
+  ContactsBirthdateField,
+  ContactsSubscribeField,
+  NumberInputField,
+  TextAreaField,
+  TextInputField,
+} from './types.js';
 
 export interface RootProps {
   children: React.ReactNode;
@@ -56,6 +63,11 @@ export function Root(props: RootProps): React.ReactNode {
 
 interface FieldsMaps {
   TEXT_INPUT: React.Component<TextInputField>;
+  CONTACTS_BIRTHDATE: React.Component<ContactsBirthdateField>;
+  CONTACTS_SUBSCRIBE: React.Component<ContactsSubscribeField>;
+  TEXT_AREA: React.Component<TextAreaField>;
+  NUMBER_INPUT: React.Component<NumberInputField>;
+  CHECKBOX: React.Component<CheckboxField>;
 }
 
 /**
