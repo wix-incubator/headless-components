@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-blog",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "prebuild": "cd ../utils && yarn build && cd ../components && yarn build && cd ../media && yarn build",
@@ -47,7 +47,6 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
     "@wix/blog": "^1.0.470",
-    "@wix/headless-components": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/members": "^1.0.322",
@@ -56,5 +55,8 @@
     "@wix/sdk": "^1.15.27",
     "@wix/services-definitions": "^0.1.5",
     "@wix/services-manager-react": "^0.1.27"
+  },
+  "peerDependencies": {
+    "@wix/headless-stores": "workspace:*"
   }
 }

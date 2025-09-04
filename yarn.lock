@@ -3872,7 +3872,6 @@ __metadata:
     "@wix/astro": "npm:^1.0.30"
     "@wix/cli": "npm:^1.1.114"
     "@wix/headless-blog": "workspace:*"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-seo": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-manager": "npm:^0.2.21"
@@ -3888,6 +3887,8 @@ __metadata:
     sass-embedded: "npm:^1.89.0"
     tailwindcss: "npm:^4.1.7"
     typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wix/headless-stores": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -3934,7 +3935,6 @@ __metadata:
     "@wix/categories": "npm:^1.0.133"
     "@wix/cli": "npm:^1.1.95"
     "@wix/ecom": "npm:^1.0.1278"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-ecom": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-seo": "workspace:*"
@@ -3958,6 +3958,8 @@ __metadata:
     sass-embedded: "npm:^1.89.0"
     tailwindcss: "npm:^4.1.7"
     typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wix/headless-stores": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5294,7 +5296,6 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/blog": "npm:^1.0.470"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/members": "npm:^1.0.322"
@@ -5307,6 +5308,8 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+  peerDependencies:
+    "@wix/headless-stores": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5320,7 +5323,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-components@workspace:*, @wix/headless-components@workspace:packages/headless-components/components":
+"@wix/headless-components@workspace:packages/headless-components/components":
   version: 0.0.0-use.local
   resolution: "@wix/headless-components@workspace:packages/headless-components/components"
   dependencies:
@@ -5405,7 +5408,6 @@ __metadata:
     "@vitest/ui": "npm:^3.1.4"
     "@wix/auto_sdk_ecom_checkout": "npm:^1.0.61"
     "@wix/auto_sdk_ecom_current-cart": "npm:^1.0.56"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/redirects": "npm:^1.0.0"
     "@wix/sdk": "npm:^1.15.24"
@@ -5415,6 +5417,8 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+  peerDependencies:
+    "@wix/headless-stores": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -5580,7 +5584,6 @@ __metadata:
     "@wix/auto_sdk_stores_read-only-variants-v-3": "npm:^1.0.23"
     "@wix/ecom": "npm:^1.0.1278"
     "@wix/essentials": "npm:^0.1.24"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-ecom": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
@@ -5591,6 +5594,8 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+  peerDependencies:
+    "@wix/headless-stores": "workspace:*"
   languageName: unknown
   linkType: soft
 
