@@ -52,6 +52,7 @@ import {
 import React, { createContext, useContext } from 'react';
 import type { MediaItem } from '../services/media-gallery-service.js';
 import type { MediaGalleryServiceConfig } from '../services/media-gallery-service.js';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { Slot } from '@radix-ui/react-slot';
 import { WixMediaImage } from './WixMediaImage.js';
 
@@ -212,9 +213,10 @@ export const Previous = React.forwardRef<HTMLButtonElement, ButtonProps>(
 /**
  * Props for the Viewport component
  */
-export interface ViewportProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ViewportProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Optional children to render instead of the default image. Renders default media image if not provided */
-  children?: React.ReactNode;
+  children?: AsChildChildren<{ src: string; alt: string }>;
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Custom empty state content to display when no media is available */
@@ -254,26 +256,34 @@ export interface ViewportProps extends React.HTMLAttributes<HTMLDivElement> {
  * ```
  */
 export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
-  ({ children, asChild, emptyState, ...props }, ref) => {
+  ({ children, asChild, emptyState, ...otherProps }, ref) => {
     return (
       <CoreViewport>
         {({ src, alt }) => {
-          const Comp = asChild ? Slot : 'div';
+          const defaultContent =
+            children ??
+            (src ? (
+              <WixMediaImage media={{ image: src }} alt={alt} />
+            ) : (
+              (emptyState ?? <div>No image</div>)
+            ));
+
           return (
-            <Comp
+            <AsChildSlot
               ref={ref}
+              asChild={asChild}
               data-src={src}
               data-alt={alt}
               data-testid={TestIds.mediaGalleryViewport}
-              {...props}
+              customElement={children}
+              customElementProps={{ src, alt }}
+              content={defaultContent}
+              {...otherProps}
             >
-              {children ??
-                (src ? (
-                  <WixMediaImage media={{ image: src }} alt={alt} />
-                ) : (
-                  (emptyState ?? <div>No image</div>)
-                ))}
-            </Comp>
+              <div>
+                {React.isValidElement(defaultContent) ? defaultContent : null}
+              </div>
+            </AsChildSlot>
           );
         }}
       </CoreViewport>
@@ -419,7 +429,15 @@ export const ThumbnailRepeater = ({ children }: ThumbnailRepeaterProps) => {
  * Props for the ThumbnailItem component
  */
 export interface ThumbnailItemProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  /** Optional children to render instead of the default thumbnail */
+  children?: AsChildChildren<{
+    src: string;
+    alt: string;
+    isActive: boolean;
+    select: () => void;
+    index: number;
+  }>;
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Custom empty state content to display when the thumbnail has no media */
@@ -461,7 +479,7 @@ export interface ThumbnailItemProps
 export const ThumbnailItem = React.forwardRef<
   HTMLDivElement,
   ThumbnailItemProps
->(({ children, asChild, emptyState, ...props }, ref) => {
+>(({ children, asChild, emptyState, ...otherProps }, ref) => {
   const itemCtx = useContext(ThumbnailItemContext);
   if (!itemCtx) return null;
   const { index } = itemCtx;
@@ -469,28 +487,34 @@ export const ThumbnailItem = React.forwardRef<
   return (
     <CoreThumbnailItem index={index}>
       {({ src, isActive, select, alt }) => {
-        const Comp = asChild ? Slot : 'div';
+        const defaultContent =
+          children ??
+          (src ? (
+            <WixMediaImage media={{ image: src }} alt={alt} />
+          ) : (
+            (emptyState ?? <div>No image</div>)
+          ));
+
         return (
-          <Comp
+          <AsChildSlot
             ref={ref}
+            asChild={asChild}
             onClick={select}
             data-active={isActive}
             data-src={src}
             data-alt={alt}
             data-index={index}
-            data-available={
-              true
-            } /* TODO: need get this from variant or something */
+            data-available={true}
             data-testid={TestIds.mediaGalleryThumbnailItem}
-            {...props}
+            customElement={children}
+            customElementProps={{ src, alt, isActive, select, index }}
+            content={defaultContent}
+            {...otherProps}
           >
-            {children ??
-              (src ? (
-                <WixMediaImage media={{ image: src }} alt={alt} />
-              ) : (
-                (emptyState ?? <div>No image</div>)
-              ))}
-          </Comp>
+            <div>
+              {React.isValidElement(defaultContent) ? defaultContent : null}
+            </div>
+          </AsChildSlot>
         );
       }}
     </CoreThumbnailItem>
