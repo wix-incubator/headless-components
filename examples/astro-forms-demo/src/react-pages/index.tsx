@@ -1,5 +1,11 @@
 import { Form } from '@wix/headless-forms/react';
 import { type FormServiceConfig } from '@wix/headless-forms/services';
+import {
+  quickStartViewerPlugins,
+  RicosViewer,
+  type RichContent,
+} from '@wix/ricos';
+import '@wix/ricos/css/all-plugins-viewer.css';
 
 import '../styles/theme-1.css';
 
@@ -19,7 +25,15 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
 
             {fields.map(field => (
               <div key={field.type}>
-                {typeof field.label === 'string' ? field.label : "RICOS label"}: {field.type}
+                {typeof field.label === 'string' ? (
+                  field.label
+                ) : (
+                  <RicosViewer
+                    content={field.label as RichContent}
+                    plugins={quickStartViewerPlugins()}
+                  />
+                )}{' '}
+                : {field.type}
               </div>
             ))}
           </form>

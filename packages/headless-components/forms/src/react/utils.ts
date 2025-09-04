@@ -130,6 +130,7 @@ export function formatField(field: forms.Field): FormField {
 
       return contactsSubscribeField;
     }
+    // TODO: remove default case once all fields are handled
     default: {
       const options = inputOptions?.stringOptions?.textInputOptions ?? {};
 

@@ -3982,19 +3982,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/astro@npm:^1.0.22, @wix/astro@npm:^1.0.30":
-  version: 1.0.30
-  resolution: "@wix/astro@npm:1.0.30"
-  peerDependencies:
-    "@wix/dashboard": ^1.3.35
-    "@wix/essentials": ^0.1.23
-    "@wix/sdk": ^1.15.23
-    astro: ^5.0.0
-  checksum: 10c0/019d3495f6991847224b724974c15af65ec390606ff67773552651a9c38895f2c94c63f98fe96b1c5e8d151145af6234963e37f5622906a29b2a87c52f5e1666
-  languageName: node
-  linkType: hard
-
-"@wix/astro@npm:^1.0.8":
+"@wix/astro@npm:^1.0.22, @wix/astro@npm:^1.0.30, @wix/astro@npm:^1.0.8":
   version: 1.0.31
   resolution: "@wix/astro@npm:1.0.31"
   peerDependencies:
@@ -4606,23 +4594,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_forms_forms@npm:1.0.49":
+"@wix/auto_sdk_forms_forms@npm:1.0.49, @wix/auto_sdk_forms_forms@npm:^1.0.46":
   version: 1.0.49
   resolution: "@wix/auto_sdk_forms_forms@npm:1.0.49"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.3.55"
     "@wix/sdk-types": "npm:^1.13.35"
   checksum: 10c0/c112b25b0938b1892aa3789470d442e82a11ea5731a84e4f60b779effc06646c09445765850421662757dac90ab4904e9add258628fbc3dc242e85cefe9c1197
-  languageName: node
-  linkType: hard
-
-"@wix/auto_sdk_forms_forms@npm:^1.0.46":
-  version: 1.0.46
-  resolution: "@wix/auto_sdk_forms_forms@npm:1.0.46"
-  dependencies:
-    "@wix/sdk-runtime": "npm:^0.3.55"
-    "@wix/sdk-types": "npm:^1.13.35"
-  checksum: 10c0/9c2e784ef7314ff078f82085e579de038e0e2b750815f214b45a216b8646a971d9657dc0aa9667440a729af158c860b7dcb94915ad83ba4743f90857148cc33e
   languageName: node
   linkType: hard
 
@@ -5109,22 +5087,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/cli@npm:^1.1.114, @wix/cli@npm:^1.1.95":
-  version: 1.1.114
-  resolution: "@wix/cli@npm:1.1.114"
-  dependencies:
-    fsevents: "npm:^2.3.2"
-    node-gyp: "npm:^8.4.1"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    wix: bin/wix.cjs
-  checksum: 10c0/4dbaff791ef03aa0981e540a62f60b69b174214517a939a166fdb4231911e8993b2f43e2d879f8737df8fd20ee8fd56699a48c40a73c6ef4fad0f69dcad7fa28
-  languageName: node
-  linkType: hard
-
-"@wix/cli@npm:^1.1.92":
+"@wix/cli@npm:^1.1.114, @wix/cli@npm:^1.1.92, @wix/cli@npm:^1.1.95":
   version: 1.1.116
   resolution: "@wix/cli@npm:1.1.116"
   dependencies:
@@ -5947,9 +5910,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/ricos@npm:^10.141.3":
-  version: 10.141.3
-  resolution: "@wix/ricos@npm:10.141.3"
+"@wix/ricos@npm:^10.141.3, @wix/ricos@npm:^10.141.4":
+  version: 10.141.4
+  resolution: "@wix/ricos@npm:10.141.4"
   dependencies:
     "@codemirror/lang-json": "npm:^6.0.0"
     "@codemirror/lint": "npm:^6.0.0"
@@ -6035,7 +5998,7 @@ __metadata:
     lodash: ^4.17.15
     react: ^16.14.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/49f61bbb2625a9a6acc0afb5d7b5ecbbd8215c1d7b0f03baf61f1957953a97afac63bc444eec8c06d8a6c745ad88e85c517625d1a4c01839405a68b346975a27
+  checksum: 10c0/14a38baa2c33661164bdea2fbe82b0c51ab72914f5298c1ac88c055820642a0c767cd8fd03868b165a46f9161cadb8731102b6028e817645c6b265f0239ba810
   languageName: node
   linkType: hard
 
@@ -6593,83 +6556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"astro@npm:^5.13.4, astro@npm:^5.9.0":
-  version: 5.13.4
-  resolution: "astro@npm:5.13.4"
-  dependencies:
-    "@astrojs/compiler": "npm:^2.12.2"
-    "@astrojs/internal-helpers": "npm:0.7.2"
-    "@astrojs/markdown-remark": "npm:6.3.6"
-    "@astrojs/telemetry": "npm:3.3.0"
-    "@capsizecss/unpack": "npm:^2.4.0"
-    "@oslojs/encoding": "npm:^1.1.0"
-    "@rollup/pluginutils": "npm:^5.1.4"
-    acorn: "npm:^8.14.1"
-    aria-query: "npm:^5.3.2"
-    axobject-query: "npm:^4.1.0"
-    boxen: "npm:8.0.1"
-    ci-info: "npm:^4.2.0"
-    clsx: "npm:^2.1.1"
-    common-ancestor-path: "npm:^1.0.1"
-    cookie: "npm:^1.0.2"
-    cssesc: "npm:^3.0.0"
-    debug: "npm:^4.4.0"
-    deterministic-object-hash: "npm:^2.0.2"
-    devalue: "npm:^5.1.1"
-    diff: "npm:^5.2.0"
-    dlv: "npm:^1.1.3"
-    dset: "npm:^3.1.4"
-    es-module-lexer: "npm:^1.6.0"
-    esbuild: "npm:^0.25.0"
-    estree-walker: "npm:^3.0.3"
-    flattie: "npm:^1.1.1"
-    fontace: "npm:~0.3.0"
-    github-slugger: "npm:^2.0.0"
-    html-escaper: "npm:3.0.3"
-    http-cache-semantics: "npm:^4.1.1"
-    import-meta-resolve: "npm:^4.1.0"
-    js-yaml: "npm:^4.1.0"
-    kleur: "npm:^4.1.5"
-    magic-string: "npm:^0.30.17"
-    magicast: "npm:^0.3.5"
-    mrmime: "npm:^2.0.1"
-    neotraverse: "npm:^0.6.18"
-    p-limit: "npm:^6.2.0"
-    p-queue: "npm:^8.1.0"
-    package-manager-detector: "npm:^1.1.0"
-    picomatch: "npm:^4.0.2"
-    prompts: "npm:^2.4.2"
-    rehype: "npm:^13.0.2"
-    semver: "npm:^7.7.1"
-    sharp: "npm:^0.33.3"
-    shiki: "npm:^3.2.1"
-    smol-toml: "npm:^1.3.4"
-    tinyexec: "npm:^0.3.2"
-    tinyglobby: "npm:^0.2.12"
-    tsconfck: "npm:^3.1.5"
-    ultrahtml: "npm:^1.6.0"
-    unifont: "npm:~0.5.0"
-    unist-util-visit: "npm:^5.0.0"
-    unstorage: "npm:^1.15.0"
-    vfile: "npm:^6.0.3"
-    vite: "npm:^6.3.4"
-    vitefu: "npm:^1.0.6"
-    xxhash-wasm: "npm:^1.1.0"
-    yargs-parser: "npm:^21.1.1"
-    yocto-spinner: "npm:^0.2.1"
-    zod: "npm:^3.24.4"
-    zod-to-json-schema: "npm:^3.24.5"
-    zod-to-ts: "npm:^1.2.0"
-  dependenciesMeta:
-    sharp:
-      optional: true
-  bin:
-    astro: astro.js
-  checksum: 10c0/d26a903bba5df0163779af8bb81eb7e413213c17353ec3c617230ef56f29646828292e8222b5bfc9760bb93f8f98ecd81c44fd2a27072f0c7f6d8089156e1511
-  languageName: node
-  linkType: hard
-
-"astro@npm:^5.8.0":
+"astro@npm:^5.13.4, astro@npm:^5.8.0, astro@npm:^5.9.0":
   version: 5.13.5
   resolution: "astro@npm:5.13.5"
   dependencies:
@@ -16979,6 +16866,7 @@ __metadata:
     "@wix/cli": "npm:^1.1.92"
     "@wix/dashboard": "npm:^1.3.36"
     "@wix/essentials": "npm:^0.1.23"
+    "@wix/ricos": "npm:^10.141.4"
     "@wix/sdk": "npm:^1.15.23"
     astro: "npm:^5.8.0"
     prettier: "npm:^3.6.2"
