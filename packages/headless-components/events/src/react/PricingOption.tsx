@@ -168,6 +168,8 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
         className={className}
         data-testid={TestIds.pricingOptionQuantity}
         customElement={children}
+        value={currentQuantity}
+        onChange={(e: any) => setQuantity(Number(e.target.value))}
         customElementProps={{
           value: currentQuantity,
           max: maxQuantity,
