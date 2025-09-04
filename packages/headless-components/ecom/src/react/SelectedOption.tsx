@@ -126,7 +126,6 @@ export interface SelectedOptionColorProps {
   children?: AsChildChildren<{
     name: string;
     colorCode: string;
-    colorName: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -178,7 +177,7 @@ export const Color = React.forwardRef<HTMLElement, SelectedOptionColorProps>(
         asChild={asChild}
         data-testid={TestIds.selectedOptionColor}
         customElement={children}
-        customElementProps={{ name, colorCode, colorName }}
+        customElementProps={{ name, colorCode }}
         content={defaultContent}
       >
         <span>{defaultContent}</span>
