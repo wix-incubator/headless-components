@@ -57,12 +57,6 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
       lineItem: item,
     };
 
-    const content = (
-      <LineItemContext.Provider value={contextValue}>
-        {children}
-      </LineItemContext.Provider>
-    );
-
     return (
       <AsChildSlot
         ref={ref}
@@ -70,10 +64,11 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
         data-testid={TestIds.lineItemRoot}
         customElement={children}
         customElementProps={{ item }}
-        content={content}
         {...otherProps}
       >
-        <div>{content}</div>
+        <LineItemContext.Provider value={contextValue}>
+          <div>{children}</div>
+        </LineItemContext.Provider>
       </AsChildSlot>
     );
   },
@@ -341,8 +336,6 @@ export const SelectedOptions = React.forwardRef<
           return null;
         }
 
-        const content = React.isValidElement(children) ? children : null;
-
         return (
           <AsChildSlot
             ref={ref}
@@ -350,10 +343,9 @@ export const SelectedOptions = React.forwardRef<
             data-testid={TestIds.lineItemSelectedOptions}
             customElement={children}
             customElementProps={{ selectedOptions }}
-            content={content}
             {...otherProps}
           >
-            <div>{content}</div>
+            <div>{children}</div>
           </AsChildSlot>
         );
       }}

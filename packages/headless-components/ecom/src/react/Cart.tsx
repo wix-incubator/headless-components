@@ -330,19 +330,15 @@ export const LineItems = React.forwardRef<HTMLElement, LineItemsProps>(
       return emptyState;
     }
 
-    const content = React.isValidElement(children) ? children : null;
-
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
         data-testid={TestIds.cartLineItems}
         customElement={children}
-        customElementProps={{}}
-        content={content}
         {...otherProps}
       >
-        <div>{content}</div>
+        <div>{children}</div>
       </AsChildSlot>
     );
   },
@@ -407,7 +403,6 @@ export const LineItemRepeater = React.forwardRef<
       data-testid={TestIds.cartLineItemRepeater}
       customElement={children}
       customElementProps={{}}
-      content={content}
       {...otherProps}
     >
       <div>{content}</div>
