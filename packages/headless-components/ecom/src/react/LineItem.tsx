@@ -28,7 +28,7 @@ export interface LineItemRootProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children: AsChildChildren<{ item: LineItem }>;
+  children: AsChildChildren<{}>;
   /** The line item data */
   item: LineItem;
   /** CSS classes to apply to the default element */
@@ -69,7 +69,7 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
         asChild={asChild}
         data-testid={TestIds.lineItemRoot}
         customElement={children}
-        customElementProps={{ item }}
+        customElementProps={{}}
         content={content}
       >
         <div>{content}</div>
@@ -339,6 +339,8 @@ export const SelectedOptions = React.forwardRef<
           return null;
         }
 
+        const content = React.isValidElement(children) ? children : null;
+
         return (
           <AsChildSlot
             ref={ref}
@@ -346,9 +348,9 @@ export const SelectedOptions = React.forwardRef<
             data-testid={TestIds.lineItemSelectedOptions}
             customElement={children}
             customElementProps={{ selectedOptions }}
-            content={React.isValidElement(children) ? children : null}
+            content={content}
           >
-            <div>{React.isValidElement(children) ? children : null}</div>
+            <div>{content}</div>
           </AsChildSlot>
         );
       }}
