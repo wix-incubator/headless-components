@@ -1,12 +1,12 @@
 import { forms } from '@wix/forms';
 
-export interface BaseField {
+interface BaseFieldProps {
   id: string;
   required: boolean;
   readOnly: boolean;
 }
 
-interface BaseTextField extends BaseField {
+interface BaseTextFieldProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   placeholder?: string;
@@ -16,7 +16,7 @@ interface BaseTextField extends BaseField {
 /**
  * Represents a contacts birthdate form field configuration.
  *
- * @interface ContactsBirthdateField
+ * @interface ContactsBirthdateProps
  *
  * @property {string} id - The unique identifier for the form field
  * @property {string} label - The display label for the form field
@@ -28,7 +28,7 @@ interface BaseTextField extends BaseField {
  *
  * @example
  * ```tsx
- * const birthdateField: ContactsBirthdateField = {
+ * const birthdateField: ContactsBirthdateProps = {
  *   id: 'birthdate',
  *   label: 'Date of Birth',
  *   required: true,
@@ -38,7 +38,7 @@ interface BaseTextField extends BaseField {
  * };
  * ```
  */
-export interface ContactsBirthdateField extends BaseField {
+export interface ContactsBirthdateProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   showPlaceholder: boolean;
@@ -48,7 +48,7 @@ export interface ContactsBirthdateField extends BaseField {
 /**
  * Represents a contacts subscribe form field configuration.
  *
- * @interface ContactsSubscribeField
+ * @interface ContactsSubscribeProps
  *
  * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
@@ -58,7 +58,7 @@ export interface ContactsBirthdateField extends BaseField {
  *
  * @example
  * ```tsx
- * const subscribeField: ContactsSubscribeField = {
+ * const subscribeField: ContactsSubscribeProps = {
  *   id: 'subscribe',
  *   required: false,
  *   readOnly: false,
@@ -67,7 +67,7 @@ export interface ContactsBirthdateField extends BaseField {
  * };
  * ```
  */
-export interface ContactsSubscribeField extends BaseField {
+export interface ContactsSubscribeProps extends BaseFieldProps {
   label: forms.RichContent;
   defaultValue: boolean;
 }
@@ -75,7 +75,7 @@ export interface ContactsSubscribeField extends BaseField {
 /**
  * Represents a text area form field configuration.
  *
- * @interface TextAreaField
+ * @interface TextAreaProps
  *
  * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
@@ -87,7 +87,7 @@ export interface ContactsSubscribeField extends BaseField {
  *
  * @example
  * ```tsx
- * const textAreaField: TextAreaField = {
+ * const textAreaField: TextAreaProps = {
  *   id: 'message',
  *   required: true,
  *   readOnly: false,
@@ -98,12 +98,12 @@ export interface ContactsSubscribeField extends BaseField {
  * };
  * ```
  */
-export interface TextAreaField extends BaseTextField {}
+export interface TextAreaProps extends BaseTextFieldProps {}
 
 /**
  * Represents a text input form field configuration.
  *
- * @interface TextInputField
+ * @interface TextInputProps
  *
  * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
@@ -115,7 +115,7 @@ export interface TextAreaField extends BaseTextField {}
  *
  * @example
  * ```tsx
- * const textInputField: TextInputField = {
+ * const textInputField: TextInputProps = {
  *   id: 'firstName',
  *   required: true,
  *   readOnly: false,
@@ -126,12 +126,12 @@ export interface TextAreaField extends BaseTextField {}
  * };
  * ```
  */
-export interface TextInputField extends BaseTextField {}
+export interface TextInputProps extends BaseTextFieldProps {}
 
 /**
  * Represents a number input form field configuration.
  *
- * @interface NumberInputField
+ * @interface NumberInputProps
  *
  * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
@@ -143,7 +143,7 @@ export interface TextInputField extends BaseTextField {}
  *
  * @example
  * ```tsx
- * const numberInputField: NumberInputField = {
+ * const numberInputField: NumberInputProps = {
  *   id: 'age',
  *   required: true,
  *   readOnly: false,
@@ -154,12 +154,12 @@ export interface TextInputField extends BaseTextField {}
  * };
  * ```
  */
-export interface NumberInputField extends BaseTextField {}
+export interface NumberInputProps extends BaseTextFieldProps {}
 
 /**
  * Represents a checkbox form field configuration.
  *
- * @interface CheckboxField
+ * @interface CheckboxProps
  *
  * @property {string} id - The unique identifier for the form field
  * @property {boolean} required - Whether the field is required for form submission
@@ -169,7 +169,7 @@ export interface NumberInputField extends BaseTextField {}
  *
  * @example
  * ```tsx
- * const checkboxField: CheckboxField = {
+ * const checkboxField: CheckboxProps = {
  *   id: 'agree',
  *   required: true,
  *   readOnly: false,
@@ -178,7 +178,7 @@ export interface NumberInputField extends BaseTextField {}
  * };
  * ```
  */
-export interface CheckboxField extends BaseField {
+export interface CheckboxProps extends BaseFieldProps {
   label: forms.RichContent;
   defaultValue: boolean;
 }

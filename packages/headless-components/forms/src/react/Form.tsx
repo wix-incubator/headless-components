@@ -9,12 +9,12 @@ import {
   type FormServiceConfig,
 } from '../services/form-service.js';
 import {
-  CheckboxField,
-  ContactsBirthdateField,
-  ContactsSubscribeField,
-  NumberInputField,
-  TextAreaField,
-  TextInputField,
+  CheckboxProps,
+  ContactsBirthdateProps,
+  ContactsSubscribeProps,
+  NumberInputProps,
+  TextAreaProps,
+  TextInputProps,
 } from './types.js';
 
 export interface RootProps {
@@ -61,13 +61,13 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
-interface FieldsMaps {
-  TEXT_INPUT: React.Component<TextInputField>;
-  CONTACTS_BIRTHDATE: React.Component<ContactsBirthdateField>;
-  CONTACTS_SUBSCRIBE: React.Component<ContactsSubscribeField>;
-  TEXT_AREA: React.Component<TextAreaField>;
-  NUMBER_INPUT: React.Component<NumberInputField>;
-  CHECKBOX: React.Component<CheckboxField>;
+interface FieldsMap {
+  TEXT_INPUT: React.ComponentType<TextInputProps>;
+  CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
+  CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
+  TEXT_AREA: React.ComponentType<TextAreaProps>;
+  NUMBER_INPUT: React.ComponentType<NumberInputProps>;
+  CHECKBOX: React.ComponentType<CheckboxProps>;
 }
 
 /**
@@ -77,7 +77,7 @@ export interface ContainerProps {
   /** Form id */
   formId: string;
   /** Fields map */
-  fieldsMap: FieldsMaps;
+  fieldsMap: FieldsMap;
 }
 
 /**
@@ -92,7 +92,7 @@ export interface ContainerProps {
 export const Container = React.forwardRef<HTMLElement, ContainerProps>(() => {
   // ({ formId, fieldsMap }) => {
   const formService = useService(FormServiceDefinition);
-  const form = formService.form.get();
+  formService.form.get();
   // TODO: render viewer
   return null;
 });
