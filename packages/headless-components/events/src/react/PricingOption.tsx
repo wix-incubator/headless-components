@@ -161,14 +161,6 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
         pricingOptionId: pricingOptionId,
       });
 
-    const defaultUI = (
-      <div>
-        <button onClick={decrement}>-</button>
-        <span>{currentQuantity}</span>
-        <button onClick={increment}>+</button>
-      </div>
-    );
-
     return (
       <AsChildSlot
         ref={ref}
@@ -177,15 +169,21 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
         data-testid={TestIds.pricingOptionQuantity}
         customElement={children}
         customElementProps={{
-          quantity: currentQuantity,
-          maxQuantity,
+          value: currentQuantity,
+          max: maxQuantity,
           increment,
           decrement,
-          setQuantity,
+          onChange: setQuantity,
         }}
-        content={defaultUI}
+        content={currentQuantity}
       >
-        {defaultUI}
+        <select>
+          {Array.from({ length: maxQuantity + 1 }).map((_, index) => (
+            <option key={index} value={index}>
+              {index}
+            </option>
+          ))}
+        </select>
       </AsChildSlot>
     );
   },

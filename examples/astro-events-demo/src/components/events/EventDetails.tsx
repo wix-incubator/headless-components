@@ -131,69 +131,23 @@ export function EventDetails({
                         )}
                       </TicketDefinitionPrimitive.SaleStarts>
                     </div>
-                    <div className="flex w-full">
+                    <div className="flex items-center gap-2 mb-5 w-full justify-between">
                       <div>
-                        <TicketDefinitionPrimitive.FixedPricing className="font-medium text-gray-900" />
+                        <TicketDefinitionPrimitive.FixedPricing className="font-medium text-content-primary" />
                         <TicketDefinitionPrimitive.GuestPricing className="font-medium text-red-600" />
                         <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium block">
                           Sold Out
                         </TicketDefinitionPrimitive.SoldOut>
                       </div>
-                      <TicketDefinitionPrimitive.Quantity asChild>
-                        {({ quantity, maxQuantity, setQuantity }) => (
-                          <div className="ml-auto">
-                            <div className="text-sm font-light text-content-primary mb-1">
-                              Quantity
-                            </div>
-                            <select
-                              className="min-w-24 border border-gray-300 text-content-secondary p-2"
-                              value={quantity}
-                              onChange={e =>
-                                setQuantity(Number(e.target.value))
-                              }
-                            >
-                              {Array.from({ length: maxQuantity + 1 }).map(
-                                (_, index) => (
-                                  <option key={index} value={index}>
-                                    {index}
-                                  </option>
-                                )
-                              )}
-                            </select>
-                          </div>
-                        )}
-                      </TicketDefinitionPrimitive.Quantity>
+                      <TicketDefinitionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
                       <TicketDefinitionPrimitive.PricingOptions className="flex flex-col w-full">
                         <TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
-                          <div className="flex flex-center items-center gap-2 mb-5">
-                            <div className="flex flex-col items-between">
-                              <PricingOptionPrimitive.Name className="font-medium" />
-                              <PricingOptionPrimitive.Pricing className="text-gray-900" />
+                          <div className="flex items-center gap-2 mb-5 w-full justify-between">
+                            <div>
+                              <PricingOptionPrimitive.Name className="text-content-primary" />{' '}
+                              <PricingOptionPrimitive.Pricing className="text-content-primary" />
                             </div>
-                            <PricingOptionPrimitive.Quantity asChild>
-                              {({ quantity, maxQuantity, setQuantity }) => (
-                                <div className="ml-auto">
-                                  <div className="text-sm font-light text-content-primary mb-1">
-                                    Quantity
-                                  </div>
-                                  <select
-                                    className="min-w-24 border border-gray-300 text-content-secondary p-2"
-                                    value={quantity}
-                                    onChange={e =>
-                                      setQuantity(Number(e.target.value))
-                                    }
-                                  >
-                                    {Array.from({
-                                      length: maxQuantity + 1,
-                                    }).map((_, index) => (
-                                      <option key={index} value={index}>
-                                        {index}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </div>
-                              )}
-                            </PricingOptionPrimitive.Quantity>
+                            <PricingOptionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
                           </div>
                         </TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
                       </TicketDefinitionPrimitive.PricingOptions>
