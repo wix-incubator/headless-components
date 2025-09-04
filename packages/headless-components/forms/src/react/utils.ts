@@ -26,7 +26,7 @@ function formatTextFieldOptions(options: forms.TextInput) {
 
 function formatCheckboxOptions(options: forms.Checkbox) {
   return {
-    label: options?.label ?? '',
+    label: options?.label!,
     defaultValue: options?.checked ?? false,
   };
 }

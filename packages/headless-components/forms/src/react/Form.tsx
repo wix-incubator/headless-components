@@ -100,11 +100,9 @@ export interface ContainerProps {
 export const Container = React.forwardRef<HTMLElement, ContainerProps>(
   ({ children }) => {
     const formService = useService(FormServiceDefinition);
-    console.log('****** Container ******');
     const form = formService.form.get();
     // TODO: return in same order as in form
     const fields: FormField[] = (form?.formFields || []).map(formatField);
-    console.log('formatted fields', fields);
 
     return children({
       name: form?.name ?? '',
