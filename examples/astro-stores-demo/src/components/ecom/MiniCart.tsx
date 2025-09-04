@@ -98,7 +98,7 @@ export function MiniCartIcon() {
     <>
       {/* Fixed Cart Icon */}
       <div className="fixed top-6 right-6 z-50 text-content-primary">
-        <Cart.Summary>
+        <Cart.Summary asChild>
           {({ totalItems }) => (
             <button
               data-testid="mini-cart-icon"
