@@ -30,135 +30,171 @@ export function EventDetails({
     .slice(0, 3);
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <EventPrimitive.Root event={eventServiceConfig.event}>
-        <div className="mb-4">
-          <EventPrimitive.Image className="w-full h-96 object-cover rounded-lg shadow-md" />
+    <EventPrimitive.Root event={eventServiceConfig.event}>
+      <div className="bg-surface-primary">
+        <div className="max-w-4xl mx-auto py-15">
+          <EventPrimitive.Title
+            asChild
+            className="text-6xl font-bold text-content-primary mb-4"
+          >
+            <h1 />
+          </EventPrimitive.Title>
+
+          <div className="flex gap-1 font-light text-content-primary mb-1">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M18.5 19H5.5C5.224 19 5 18.775 5 18.5V10H19V18.5C19 18.775 18.776 19 18.5 19ZM5.5 6H7V7H8V6H16V7H17V6H18.5C18.776 6 19 6.225 19 6.5V9H5V6.5C5 6.225 5.224 6 5.5 6ZM18.5 5H17V4H16V5H8V4H7V5H5.5C4.673 5 4 5.673 4 6.5V18.5C4 19.327 4.673 20 5.5 20H18.5C19.327 20 20 19.327 20 18.5V6.5C20 5.673 19.327 5 18.5 5Z"
+              />
+            </svg>
+            <EventPrimitive.Date format="short" />
+          </div>
+
+          <div className="flex gap-1 font-light text-content-primary">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M12 3C15.86 3 19 6.14 19 9.999L18.992 10.499C18.855 13.26 16.864 16.637 13.072 20.544C12.786 20.838 12.405 21 12 21L11.8494 20.9925C11.5012 20.9574 11.1783 20.8012 10.928 20.544C7.136 16.637 5.146 13.26 5.008 10.499H5.002L5.001 10.333C5.001 10.286 5 10.241 5 10.194L5.001 10.139L5 9.999C5 6.14 8.14 3 12 3ZM12 4C8.813 4 6.199 6.497 6.011 9.637L6 10.194C6 11.945 6.98 15.041 11.646 19.847C11.742 19.946 11.867 20 12 20C12.133 20 12.259 19.946 12.355 19.847C17.021 15.04 18 11.945 18 10.194L17.989 9.637C17.801 6.497 15.187 4 12 4ZM11.4184 7.0558C12.4064 6.8698 13.4184 7.1758 14.1214 7.8788C14.8244 8.5828 15.1324 9.5928 14.9444 10.5828C14.7194 11.7698 13.7704 12.7188 12.5824 12.9448C12.3914 12.9808 12.1994 12.9988 12.0084 12.9988C11.2134 12.9988 10.4464 12.6888 9.8794 12.1218C9.1754 11.4188 8.8674 10.4088 9.0554 9.4178C9.2804 8.2288 10.2304 7.2798 11.4184 7.0558ZM12.0024 8.0008C11.8704 8.0008 11.7374 8.0128 11.6044 8.0388C10.8284 8.1848 10.1844 8.8288 10.0374 9.6038C9.9104 10.2788 10.1094 10.9388 10.5864 11.4148C11.0614 11.8898 11.7204 12.0888 12.3964 11.9618C13.1714 11.8148 13.8154 11.1708 13.9624 10.3968C14.0904 9.7218 13.8904 9.0628 13.4144 8.5858C13.0324 8.2048 12.5324 8.0008 12.0024 8.0008Z"
+              />
+            </svg>
+            <EventPrimitive.Location format="short" />
+          </div>
+
+          <EventPrimitive.ShortDescription className="block max-w-2xl mt-6 font-light text-content-primary" />
+
+          <EventPrimitive.RsvpButton
+            className="btn-primary font-light py-2 px-8 mt-10"
+            label="Buy Tickets"
+          />
         </div>
-        <EventPrimitive.Title className="text-3xl font-bold text-gray-900 mb-4" />
-        <EventPrimitive.ShortDescription className="text-gray-700 mb-8" />
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">
-            Event Info
-          </h3>
-          <table className="w-full text-left">
-            <tbody>
-              <tr>
-                <th className="pr-4 py-2 font-medium text-gray-900">Date:</th>
-                <td className="py-2">
-                  <EventPrimitive.Date />
-                </td>
-              </tr>
-              <tr>
-                <th className="pr-4 py-2 font-medium text-gray-900">
-                  Location:
-                </th>
-                <td className="py-2">
-                  <EventPrimitive.Location format="full" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <h3 className="text-xl font-semibold mb-4 text-gray-900">About</h3>
-        <EventPrimitive.Description />
-      </EventPrimitive.Root>
-      <TicketsPickerPrimitive.Root
-        ticketListServiceConfig={ticketListServiceConfig}
-        eventServiceConfig={eventServiceConfig}
-      >
-        <TicketsPickerPrimitive.TicketDefinitions
-          className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 p-6"
-          emptyState={
-            <div className="text-center text-white py-12">
-              <p className="text-xl">No tickets available</p>
-              <p className="text-sm mt-2">
-                Check back later for available tickets!
-              </p>
-            </div>
-          }
-        >
-          <TicketsPickerPrimitive.TicketDefinitionRepeater>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="p-4 flex-grow">
-                <TicketDefinitionPrimitive.Name className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2" />
-                <TicketDefinitionPrimitive.Description className="text-sm text-gray-500 mb-3 line-clamp-3" />
-                <TicketDefinitionPrimitive.FixedPricing className="text-base font-medium text-gray-900 mb-2" />
-                <TicketDefinitionPrimitive.GuestPricing className="text-base font-medium text-red-900 mb-2" />
-                <TicketDefinitionPrimitive.SaleStarts className="text-sm text-gray-500 mb-2" />
-                <TicketDefinitionPrimitive.SaleEnded className="text-sm text-gray-500 mb-2" />
-                <TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
-                  <div>
-                    <PricingOptionPrimitive.Name className="text-sm font-medium text-gray-900 mb-2" />{' '}
-                    <PricingOptionPrimitive.Pricing className="text-sm text-gray-500 mb-2" />
-                    <PricingOptionPrimitive.Quantity className="text-sm text-gray-500 mb-2" />
+
+        <EventPrimitive.Image className="aspect-16/9 object-cover" />
+
+        <div className="max-w-4xl mx-auto py-15">
+          <div className="mb-15">
+            <h2 className="text-3xl font-light text-content-primary mb-4">
+              Time & Location
+            </h2>
+            <EventPrimitive.Date
+              className="block font-light text-content-primary"
+              format="full"
+            />
+            <EventPrimitive.Location
+              className="block font-light text-content-primary"
+              format="full"
+            />
+          </div>
+
+          <div className="mb-15">
+            <h2 className="text-3xl font-light text-content-primary mb-4">
+              About the Event
+            </h2>
+            <EventPrimitive.Description />
+          </div>
+
+          <TicketsPickerPrimitive.Root
+            ticketListServiceConfig={ticketListServiceConfig}
+            eventServiceConfig={eventServiceConfig}
+          >
+            <TicketsPickerPrimitive.TicketDefinitions className="space-y-6">
+              <h2 className="text-3xl font-light text-content-primary mb-6">
+                Tickets
+              </h2>
+              <TicketsPickerPrimitive.TicketDefinitionRepeater>
+                <div className="border border-gray-200 p-8">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="border-r border-gray-200">
+                      <div className="text-sm font-light text-content-primary">
+                        Ticket type
+                      </div>
+                      <TicketDefinitionPrimitive.Name className="font-light text-content-primary" />
+
+                      {/* <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                        <TicketDefinitionPrimitive.FixedPricing className="font-medium text-gray-900" />
+                        <TicketDefinitionPrimitive.GuestPricing className="font-medium text-red-600" />
+
+                        <TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
+                          <div className="flex items-center gap-2">
+                            <PricingOptionPrimitive.Name className="font-medium" />
+                            <PricingOptionPrimitive.Pricing className="text-gray-900" />
+                          </div>
+                        </TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
+
+                        <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium">
+                          Sold Out
+                        </TicketDefinitionPrimitive.SoldOut>
+                      </div> */}
+                    </div>
+
+                    <TicketDefinitionPrimitive.Quantity asChild>
+                      {({ quantity, maxQuantity, setQuantity }) => (
+                        <div className="ml-auto">
+                          <div className="text-sm font-light text-content-primary mb-1">
+                            Quantity
+                          </div>
+                          <select
+                            className="min-w-24 border border-gray-300 text-content-secondary p-2"
+                            value={quantity}
+                            onChange={e => setQuantity(Number(e.target.value))}
+                          >
+                            {Array.from({ length: maxQuantity + 1 }).map(
+                              (_, index) => (
+                                <option key={index} value={index}>
+                                  {index}
+                                </option>
+                              )
+                            )}
+                          </select>
+                        </div>
+                      )}
+                    </TicketDefinitionPrimitive.Quantity>
                   </div>
-                </TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
-                <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
-                  <span>
-                    Remaining: <TicketDefinitionPrimitive.Remaining />
-                  </span>
-                  <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium">
-                    Sold Out
-                  </TicketDefinitionPrimitive.SoldOut>
                 </div>
-              </div>
-              <div className="p-4 border-t mt-auto">
-                <TicketDefinitionPrimitive.Quantity asChild>
-                  {({ quantity, maxQuantity, increment, decrement }) => (
-                    <div className="flex items-center justify-center border border-gray-300 rounded-md overflow-hidden">
-                      <button
-                        onClick={decrement}
-                        disabled={quantity === 0}
-                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 transition-colors"
-                      >
-                        -
-                      </button>
-                      <span className="px-4 py-2 min-w-[3rem] text-center font-medium">
-                        {quantity}
-                      </span>
-                      <button
-                        onClick={increment}
-                        disabled={quantity >= maxQuantity || maxQuantity === 0}
-                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 transition-colors"
-                      >
-                        +
-                      </button>
+              </TicketsPickerPrimitive.TicketDefinitionRepeater>
+            </TicketsPickerPrimitive.TicketDefinitions>
+
+            {/* Checkout Section */}
+            <TicketsPickerPrimitive.Checkout noTicketsErrorMessage="Please select at least one ticket">
+              {({ isLoading, error, checkout, hasSelectedTickets }) => (
+                <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+                  {error && (
+                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-600">{error}</p>
                     </div>
                   )}
-                </TicketDefinitionPrimitive.Quantity>
-              </div>
-            </div>
-          </TicketsPickerPrimitive.TicketDefinitionRepeater>
-        </TicketsPickerPrimitive.TicketDefinitions>
-        <TicketsPickerPrimitive.Checkout noTicketsErrorMessage="Please select at least one ticket">
-          {({ isLoading, error, checkout, hasSelectedTickets }) => {
-            return (
-              <div className="p-6 flex flex-col items-center">
-                {error && <p className="text-red-600 mb-4">{error}</p>}
-                <button
-                  onClick={checkout}
-                  disabled={isLoading || !hasSelectedTickets}
-                  className={`px-6 py-3 rounded-lg text-white font-medium transition-colors ${isLoading || !hasSelectedTickets ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-                >
-                  {isLoading ? 'Processing.' : 'Proceed to Checkout'}
-                </button>
-              </div>
-            );
-          }}
-        </TicketsPickerPrimitive.Checkout>
-      </TicketsPickerPrimitive.Root>
-      <h3 className="text-xl font-bold mb-4 mt-8 text-gray-900">
-        Upcoming Events
-      </h3>
-      <EventList
-        eventListServiceConfig={{
-          events: otherUpcomingEvents,
-          pageSize: 3,
-          currentPage: 0,
-          totalPages: 1,
-        }}
-      />
-    </div>
+                  <button
+                    onClick={checkout}
+                    disabled={isLoading || !hasSelectedTickets}
+                    className={`px-8 py-3 rounded-lg font-medium transition-all ${
+                      isLoading || !hasSelectedTickets
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl'
+                    }`}
+                  >
+                    {isLoading ? 'Processing...' : 'Reserve Tickets'}
+                  </button>
+                </div>
+              )}
+            </TicketsPickerPrimitive.Checkout>
+          </TicketsPickerPrimitive.Root>
+        </div>
+
+        <div className="bg-surface-interactive-hover">
+          <div className="max-w-4xl mx-auto py-15">
+            <h2 className="text-3xl font-light text-content-primary mb-8">
+              You might also like
+            </h2>
+            <EventList
+              eventListServiceConfig={{
+                events: otherUpcomingEvents,
+                pageSize: 3,
+                currentPage: 0,
+                totalPages: 1,
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    </EventPrimitive.Root>
   );
 }

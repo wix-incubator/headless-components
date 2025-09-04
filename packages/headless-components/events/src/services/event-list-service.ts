@@ -105,7 +105,8 @@ const queryEvents = async (offset = 0) => {
     })
     .ascending('dateAndTimeSettings.startDate')
     .descending('_createdDate')
-    .limit(5)
+    .eq('status', wixEventsV2.Status.UPCOMING)
+    .limit(3)
     .skip(offset)
     .find();
 

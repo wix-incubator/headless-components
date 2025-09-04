@@ -12,7 +12,7 @@ export default function EventsPage({
 }: EventsPageProps) {
   return (
     <KitchensinkLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto py-10">
         <EventList eventListServiceConfig={eventListServiceConfig} />
       </div>
     </KitchensinkLayout>
