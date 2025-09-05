@@ -91,7 +91,7 @@ export default function BlogPostPage({
                     </BlogPost.CategoryRepeater>
                   </BlogPost.Categories>
 
-                  <BlogPost.Title className="text-4xl md:text-5xl font-bold text-content-primary leading-tight mb-4" />
+                  <BlogPost.Title className="text-4xl md:text-5xl font-heading font-bold text-content-primary leading-tight mb-4" />
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-content-muted">
                     <div className="flex items-center gap-2">
@@ -111,7 +111,91 @@ export default function BlogPostPage({
                     </div>
                   </div>
                 </header>
-                <BlogPost.Content />
+                <BlogPost.Content
+                  customStyles={{
+                    h1: {
+                      color: 'var(--color-pink-700)',
+                      fontSize: 'var(--text-6xl)',
+                      backgroundColor: 'var(--color-pink-100)',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 'var(--font-weight-bold)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      lineHeight: 'var(--leading-tight)',
+                    },
+                    h2: {
+                      color: 'var(--color-fuchsia-700)',
+                      fontSize: 'var(--text-5xl)',
+                      backgroundColor: 'var(--color-fuchsia-200)',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 'var(--font-weight-bold)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      lineHeight: 'var(--leading-tight)',
+                    },
+                    h3: {
+                      color: 'var(--color-purple-700)',
+                      fontSize: 'var(--text-4xl)',
+                      backgroundColor: 'var(--color-purple-200)',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      lineHeight: 'var(--leading-tight)',
+                    },
+                    h4: {
+                      color: 'var(--color-violet-700)',
+                      fontSize: 'var(--text-3xl)',
+                      backgroundColor: 'var(--color-violet-200)',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      lineHeight: 'var(--leading-tight)',
+                    },
+                    h5: {
+                      color: 'var(--color-indigo-700)',
+                      fontSize: 'var(--text-2xl)',
+                      backgroundColor: 'var(--color-indigo-200)',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                      letterSpacing: 'var(--tracking-normal)',
+                      lineHeight: 'var(--leading-tight)',
+                    },
+                    h6: {
+                      color: 'var(--color-blue-700)',
+                      fontSize: 'var(--text-xl)',
+                      backgroundColor: 'var(--color-blue-200)',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 'var(--font-weight-semibold)',
+                      letterSpacing: 'var(--tracking-normal)',
+                      lineHeight: 'var(--leading-tight)',
+                    },
+                    p: {
+                      color: 'var(--color-black)',
+                      fontSize: 'var(--text-lg)',
+                      lineHeight: 'var(--leading-relaxed)',
+                      fontFamily: 'var(--font-sans)',
+                      fontWeight: 'var(--font-weight-normal)',
+                    },
+                    link: {
+                      textDecoration: 'none',
+                      color: 'var(--color-primary)',
+                      fontWeight: 'var(--font-weight-medium)',
+                      letterSpacing: 'var(--tracking-wide)',
+                    },
+                    image: {
+                      borderRadius: 'var(--radius-lg)',
+                      borderColor: 'var(--color-gray-500)',
+                      borderWidth: '1px',
+                    },
+                    quote: {
+                      marginInlineStart: '0',
+                      backgroundColor: 'var(--color-gray-500)',
+                      borderWidth: '8px',
+                      borderColor: 'var(--color-gray-500)',
+                      fontSize: 'var(--text-base)',
+
+                      paddingInlineStart: 'calc(var(--spacing) * 4)',
+                    },
+                  }}
+                />
 
                 <BlogPost.Tags className="flex flex-wrap gap-2">
                   <BlogPost.TagRepeater>

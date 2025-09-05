@@ -1,4 +1,13 @@
 /* using tailwindcss as a base for styles */
+@import url('https://fonts.googleapis.com/css2?family=Epunda+Slab:ital,wght@0,300..900;1,300..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
 @import 'tailwindcss';
 @import '@wix/wix-vibe-plugins/plugins-theme.css';
 @import '@wix/wix-vibe-plugins/plugins-vars.css';
+
+@theme {
+  --font-heading: 'Epunda Slab', cursive;
+  --font-sans: 'Nunito Sans', sans-serif;
+  --color-primary: blue;
+  --default-font-family: var(--font-sans);
+}

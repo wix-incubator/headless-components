@@ -1,3 +1,13 @@
-/* Re-export ricos CSS for blog components */
-/* Consumers should import this alongside the components */
-@import '@wix/ricos/css/all-plugins-viewer.css';
+/* Re-export ricos CSS for blog-supported plugins */
+/* Consumers should import file this alongside the components */
+@import '@wix/ricos/css/plugin-audio-viewer.global.css';
+@import '@wix/ricos/css/plugin-collapsible-list-viewer.global.css';
+@import '@wix/ricos/css/plugin-divider-viewer.global.css';
+@import '@wix/ricos/css/plugin-gallery-viewer.global.css';
+@import '@wix/ricos/css/plugin-giphy-viewer.global.css';
+@import '@wix/ricos/css/plugin-html-viewer.global.css';
+@import '@wix/ricos/css/plugin-image-viewer.global.css';
+@import '@wix/ricos/css/plugin-link-preview-viewer.global.css';
+@import '@wix/ricos/css/plugin-table-viewer.global.css';
+@import '@wix/ricos/css/plugin-video-viewer.global.css';
+@import '@wix/ricos/css/ricos-viewer.global.css';
