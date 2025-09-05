@@ -4,10 +4,27 @@ import * as CoreBlogPost from './core/BlogPost.js';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import { posts, tags } from '@wix/blog';
 import {
-  quickStartViewerPlugins,
+  pluginCodeBlockViewer,
+  pluginIndentViewer,
+  pluginLineSpacingViewer,
+  pluginLinkViewer,
+  pluginTextColorViewer,
+  pluginTextHighlightViewer,
+  pluginAudioViewer,
+  pluginLinkButtonViewer,
+  pluginCollapsibleListViewer,
+  pluginDividerViewer,
+  pluginGalleryViewer,
+  pluginGiphyViewer,
+  pluginHtmlViewer,
+  pluginImageViewer,
+  pluginLinkPreviewViewer,
+  pluginTableViewer,
+  pluginVideoViewer,
   RicosViewer,
   type RicosCustomStyles,
 } from '@wix/ricos';
+
 import { createAuthorName } from './helpers.js';
 
 interface PostContextValue {
@@ -219,7 +236,6 @@ export interface ContentProps {
   children?: AsChildChildren<{ ricosViewerContent: any }> | React.ReactNode;
   customStyles?: RicosCustomStyles;
 }
-
 /**
  * Displays the blog post rich content using Wix Ricos viewer.
  *
@@ -263,14 +279,34 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
   (props, ref) => {
     const { asChild, children, className, customStyles } = props;
 
+    const attributes = {
+      'data-testid': TestIds.blogPostContent,
+    };
+
+    const ricosPluginsForBlog = [
+      pluginAudioViewer(),
+      pluginCodeBlockViewer(),
+      pluginCollapsibleListViewer(),
+      pluginDividerViewer(),
+      pluginGalleryViewer(),
+      pluginGiphyViewer(),
+      pluginHtmlViewer(),
+      pluginImageViewer(),
+      pluginIndentViewer(),
+      pluginLineSpacingViewer(),
+      pluginLinkViewer(),
+      pluginLinkButtonViewer(),
+      pluginLinkPreviewViewer(),
+      pluginTableViewer(),
+      pluginTextColorViewer(),
+      pluginTextHighlightViewer(),
+      pluginVideoViewer(),
+    ];
+
     return (
       <CoreBlogPost.RichContent>
         {({ ricosViewerContent }) => {
           if (!ricosViewerContent) return null;
-
-          const attributes = {
-            'data-testid': TestIds.blogPostContent,
-          };
 
           return (
             <AsChildSlot
@@ -284,10 +320,8 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
               <div>
                 <RicosViewer
                   content={ricosViewerContent}
-                  plugins={quickStartViewerPlugins()}
-                  theme={{
-                    customStyles,
-                  }}
+                  plugins={ricosPluginsForBlog}
+                  theme={{ customStyles }}
                 />
               </div>
             </AsChildSlot>
