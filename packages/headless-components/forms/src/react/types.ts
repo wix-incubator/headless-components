@@ -138,6 +138,43 @@ export interface ContactsSubscribeProps extends BaseCheckboxProps {}
 export interface ContactsEmailProps extends BaseTextFieldProps {}
 
 /**
+ * Props for contacts first name field.
+ * Used with fieldMap key: CONTACTS_FIRST_NAME
+ *
+ * @interface ContactsFirstNameProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const firstNameField: ContactsFirstNameProps = {
+ *   id: 'firstName',
+ *   value: 'John',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'First Name',
+ *   showLabel: true,
+ *   placeholder: 'Enter your first name',
+ *   description: { nodes: [{ type: 'text', text: 'Your given name' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsFirstNameProps extends BaseTextFieldProps {}
+
+/**
  * Props for text area field.
  * Used with fieldMap key: TEXT_AREA
  *
