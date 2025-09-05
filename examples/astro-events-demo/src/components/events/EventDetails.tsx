@@ -32,7 +32,7 @@ export function EventDetails({
   return (
     <EventPrimitive.Root event={eventServiceConfig.event}>
       <div className="bg-surface-primary">
-        <div className="max-w-4xl mx-auto py-15">
+        <div className="max-w-5xl mx-auto p-15">
           <EventPrimitive.Title
             asChild
             className="text-6xl font-bold text-content-primary mb-4"
@@ -72,7 +72,7 @@ export function EventDetails({
 
         <EventPrimitive.Image className="aspect-16/9 object-cover" />
 
-        <div className="max-w-4xl mx-auto py-15">
+        <div className="max-w-5xl mx-auto p-15">
           <div className="mb-15">
             <h2 className="text-3xl font-light text-content-primary mb-4">
               Time & Location
@@ -183,7 +183,7 @@ export function EventDetails({
         </div>
 
         <div className="bg-surface-interactive-hover">
-          <div className="max-w-4xl mx-auto py-15">
+          <div className="max-w-5xl mx-auto p-15">
             <h2 className="text-3xl font-light text-content-primary mb-8">
               You might also like
             </h2>
