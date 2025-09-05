@@ -137,9 +137,7 @@ interface FieldsMap {
  * ```
  */
 export interface ContainerProps {
-  /** The unique identifier of the form to render */
   formId: string;
-  /** A mapping of field types to their corresponding React components */
   fieldsMap: FieldsMap;
 }
 
