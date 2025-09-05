@@ -8,33 +8,47 @@ import {
   FormService,
   type FormServiceConfig,
 } from '../services/form-service.js';
+import {
+  CheckboxProps,
+  ContactsBirthdateProps,
+  ContactsSubscribeProps,
+  NumberInputProps,
+  TextAreaProps,
+  TextInputProps,
+} from './types.js';
 
 export interface RootProps {
   children: React.ReactNode;
   form: forms.Form;
 }
 
+// TODO: use single Form component instead of Root and Container
 /**
  * Root container that provides form context to all child components.
  *
  * @order 1
  * @component
+ *
+ * @param {forms.Form} form - The form configuration object
+ * @param {React.ReactNode} children - Child components that will have access to form context
+ *
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   CONTACTS_BIRTHDATE: ContactsBirthdate,
+ *   // ... other field components
+ * };
+ *
  * function FormPage({ form }) {
  *   return (
- *     <Form.Root form={form} >
- *       <Form.Container>
- *          {({ fields }) => (
- *             <form>
- *               {fields.map(field => (
- *                 <input key={field.name} name={field.name} onChange={(e) => onChange(e.target.value)} />
- *               ))}
- *             </form>
- *           )}
- *       </Form.Container>
+ *     <Form.Root form={form}>
+ *       <Form.Container
+ *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
+ *         fieldMap={FIELD_MAP}
+ *       />
  *     </Form.Root>
  *   );
  * }
@@ -60,62 +74,110 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
-type FormField = {
-  type: string;
-  name: string;
-  label: string;
-  required: boolean;
-  readOnly: boolean;
-};
-
 /**
- * Render props for § component
+ * Mapping of form field types to their corresponding React components.
+ *
+ * This interface defines the structure for the fieldMap prop, allowing you to specify
+ * which React component should be used to render each type of form field. Each field
+ * type maps to a React component that accepts the appropriate props for that field type.
+ *
+ * @interface fieldMap
+ *
+ * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for text input fields
+ * @property {React.ComponentType<ContactsBirthdateProps>} CONTACTS_BIRTHDATE - Component for birthdate fields
+ * @property {React.ComponentType<ContactsSubscribeProps>} CONTACTS_SUBSCRIBE - Component for subscription checkbox fields
+ * @property {React.ComponentType<TextAreaProps>} TEXT_AREA - Component for textarea fields
+ * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for number input fields
+ * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
+ *
+ * @example
+ * ```tsx
+ * const FIELD_MAP: fieldMap = {
+ *   TEXT_INPUT: MyCustomTextInput,
+ *   CONTACTS_BIRTHDATE: MyCustomBirthdatePicker,
+ *   CONTACTS_SUBSCRIBE: MyCustomSubscribeCheckbox,
+ *   TEXT_AREA: MyCustomTextArea,
+ *   NUMBER_INPUT: MyCustomNumberInput,
+ *   CHECKBOX: MyCustomCheckbox,
+ * };
+ * ```
  */
-export interface ContainerRenderProps {
-  /** Form fields */
-  fields: FormField[];
+interface FieldMap {
+  TEXT_INPUT: React.ComponentType<TextInputProps>;
+  CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
+  CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
+  TEXT_AREA: React.ComponentType<TextAreaProps>;
+  NUMBER_INPUT: React.ComponentType<NumberInputProps>;
+  CHECKBOX: React.ComponentType<CheckboxProps>;
 }
 
 /**
  * Props for the Form Container component.
+ *
+ * @interface ContainerProps
+ *
+ * @property {string} formId - The unique identifier of the form to render
+ * @property {FieldMap} fieldMap - A mapping of field types to their corresponding React components
+ *
+ * @example
+ * ```tsx
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   CONTACTS_BIRTHDATE: ContactsBirthdate,
+ *   CONTACTS_SUBSCRIBE: ContactsSubscribe,
+ *   TEXT_AREA: TextArea,
+ *   NUMBER_INPUT: NumberInput,
+ *   CHECKBOX: Checkbox,
+ * };
+ *
+ * <Form.Container
+ *   formId="491ce063-931e-47c9-aad9-4845d9271c30"
+ *   fieldMap={FIELD_MAP}
+ * />
+ * ```
  */
 export interface ContainerProps {
-  /** Render prop function that receives form data */
-  children: (props: ContainerRenderProps) => React.ReactNode;
+  formId: string;
+  fieldMap: FieldMap;
 }
 
 /**
- * Headless component for displaying the form.
+ * Headless component for displaying a form with custom field renderers.
  *
  * @component
+ * @param {string} formId - The unique identifier of the form to render
+ * @param {FieldMap} fieldMap - A mapping of field types to their corresponding React components
+ *
  * @example
  * ```tsx
- *  <Form.Container>
- *    {({ fields, error }) => (
- *      <form>
- *        {fields.map(field => (
- *          <input key={field.name} name={field.name} onChange={(e) => onChange(e.target.value)} />
- *          ))}
- *      </form>
- *     )}
- *  </Form.Container>
+ * import { Form } from '@wix/headless-forms/react';
+ * import { TextInput, ContactsBirthdate, Checkbox } from './field-components';
+ *
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   CONTACTS_BIRTHDATE: ContactsBirthdate,
+ *   CONTACTS_SUBSCRIBE: ContactsSubscribe,
+ *   TEXT_AREA: TextArea,
+ *   NUMBER_INPUT: NumberInput,
+ *   CHECKBOX: Checkbox,
+ * };
+ *
+ * function ContactForm({ form }) {
+ *   return (
+ *     <Form.Root form={form}>
+ *       <Form.Container
+ *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
+ *         fieldMap={FIELD_MAP}
+ *       />
+ *     </Form.Root>
+ *   );
+ * }
  * ```
  */
-export const Container = React.forwardRef<HTMLElement, ContainerProps>(
-  ({ children }) => {
-    const formService = useService(FormServiceDefinition);
-
-    const form = formService.form.get();
-    const fields = form?.formFields || [];
-
-    return children({
-      fields: fields.map(({ inputOptions, identifier }) => ({
-        type: identifier!,
-        name: inputOptions?.target ?? '',
-        label: inputOptions?.target ?? '',
-        required: inputOptions?.required ?? false,
-        readOnly: inputOptions?.readOnly ?? false,
-      })),
-    });
-  },
-);
+export const Container = React.forwardRef<HTMLElement, ContainerProps>(() => {
+  // ({ formId, fieldMap }) => {
+  const formService = useService(FormServiceDefinition);
+  formService.form.get();
+  // TODO: render viewer
+  return null;
+});

@@ -6,6 +6,7 @@
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "tsc -p tsconfig.json --watch",
     "test": "vitest",
     "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
     "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
