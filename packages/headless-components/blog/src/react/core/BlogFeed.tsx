@@ -45,6 +45,7 @@ export interface PostsRenderProps {
   hasNextPage: ReturnType<BlogFeedServiceAPI['hasNextPage']>;
   loadNextPage: BlogFeedServiceAPI['loadNextPage'];
   hasPosts: boolean;
+  totalPosts: number;
 }
 
 /**
@@ -62,6 +63,7 @@ export const Posts = (props: PostsProps) => {
     hasNextPage: service.hasNextPage(),
     loadNextPage: service.loadNextPage,
     hasPosts,
+    totalPosts: service.totalPosts.get(),
   });
 };
 
