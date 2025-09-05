@@ -11,20 +11,19 @@ interface FormProps {
 
 export function Form({ eventServiceConfig }: FormProps) {
   return (
-    <EventPrimitive.Root event={eventServiceConfig.event}>
-      <div className="bg-surface-primary">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 max-w-5xl mx-auto p-15">
-          <div className="col-span-1 lg:col-span-2">
-            <h1 className="text-3xl font-light text-content-primary mb-6">
-              Add your details
-            </h1>
-            <FormPrimitive.Root eventServiceConfig={eventServiceConfig}>
-              <FormPrimitive.Controls className="grid grid-cols-2 gap-6">
-                <FormPrimitive.ControlRepeater>
-                  <div className="col-span-2 [&:nth-child(-n+2)]:col-span-1">
-                    <ControlPrimitive.Label className="block text-sm font-light text-content-primary mb-2" />
-                    <ControlPrimitive.Field
-                      className={`
+    <div className="min-h-screen bg-surface-primary">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 max-w-5xl mx-auto p-15">
+        <div className="col-span-1 lg:col-span-2">
+          <h1 className="text-3xl font-light text-content-primary mb-6">
+            Add your details
+          </h1>
+          <FormPrimitive.Root eventServiceConfig={eventServiceConfig}>
+            <FormPrimitive.Controls className="grid grid-cols-2 gap-6">
+              <FormPrimitive.ControlRepeater>
+                <div className="col-span-2 [&:nth-child(-n+2)]:col-span-1">
+                  <ControlPrimitive.Label className="block text-sm font-light text-content-primary mb-2" />
+                  <ControlPrimitive.Field
+                    className={`
                   [&>[type="text"]]:w-full [&>[type="text"]]:px-4 [&>[type="text"]]:py-3 [&>[type="text"]]:border [&>[type="text"]]:border-gray-300 [&>[type="text"]]:text-content-primary
                   [&>[type="email"]]:w-full [&>[type="email"]]:px-4 [&>[type="email"]]:py-3 [&>[type="email"]]:border [&>[type="email"]]:border-gray-300 [&>[type="email"]]:text-content-primary
                   [&>[type="tel"]]:w-full [&>[type="tel"]]:px-4 [&>[type="tel"]]:py-3 [&>[type="tel"]]:border [&>[type="tel"]]:border-gray-300 [&>[type="tel"]]:text-content-primary
@@ -45,20 +44,21 @@ export function Form({ eventServiceConfig }: FormProps) {
                   [&[data-type="guest-control"]]:space-y-6
                   [&[data-type="guest-control"]_label]:block [&[data-type="guest-control"]_label]:text-sm [&[data-type="guest-control"]_label]:font-light [&[data-type="guest-control"]_label]:text-content-primary [&[data-type="guest-control"]_label]:mb-2
                 `}
-                    />
-                  </div>
-                </FormPrimitive.ControlRepeater>
-                <div className="col-span-2 text-center">
-                  <FormPrimitive.SubmitTrigger
-                    className="btn-primary w-full font-light py-3 px-3"
-                    label="RSVP"
                   />
-                  <FormPrimitive.Error className="block text-sm font-light text-status-error mt-2" />
                 </div>
-              </FormPrimitive.Controls>
-            </FormPrimitive.Root>
-          </div>
-          <div>
+              </FormPrimitive.ControlRepeater>
+              <div className="col-span-2 text-center">
+                <FormPrimitive.SubmitTrigger
+                  className="btn-primary w-full font-light py-3 px-3"
+                  label="RSVP"
+                />
+                <FormPrimitive.Error className="block text-sm font-light text-status-error mt-2" />
+              </div>
+            </FormPrimitive.Controls>
+          </FormPrimitive.Root>
+        </div>
+        <div className="col-span-1">
+          <EventPrimitive.Root event={eventServiceConfig.event}>
             <div className="border border-gray-300 p-8">
               <EventPrimitive.Title className="block text-xl font-light text-content-primary mb-4" />
               <div className="flex gap-1 font-light text-sm text-content-primary mb-1">
@@ -85,9 +85,9 @@ export function Form({ eventServiceConfig }: FormProps) {
                 className="w-full aspect-16/9 object-cover"
               />
             </div>
-          </div>
+          </EventPrimitive.Root>
         </div>
       </div>
-    </EventPrimitive.Root>
+    </div>
   );
 }

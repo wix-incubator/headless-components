@@ -31,7 +31,7 @@ export function EventDetails({
 
   return (
     <EventPrimitive.Root event={eventServiceConfig.event}>
-      <div className="bg-surface-primary">
+      <div className="min-h-screen bg-surface-primary">
         <div className="max-w-5xl mx-auto p-15">
           <EventPrimitive.Title
             asChild

@@ -1,0 +1,24 @@
+---
+import { loadEventServiceConfig } from '@wix/headless-events/services';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ThankYouPage from '../../../react-pages/thank-you';
+
+const { slug } = Astro.params;
+
+// Load initial data server-side
+const eventServiceConfig = await loadEventServiceConfig(slug);
+---
+
+<BaseLayout>
+  <title>Thank You</title>
+  <meta
+    name="description"
+    content="Thank you for your RSVP! We have received your response for this event."
+  />
+
+  <ThankYouPage
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfig}
+  />
+</BaseLayout>

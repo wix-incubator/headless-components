@@ -26,25 +26,18 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
           <div className="bg-surface-card flex flex-col">
             <div className="relative w-full pt-[100%] bg-accent-medium">
               <EventPrimitive.Image
-                width={560}
-                height={560}
+                width={600}
+                height={600}
                 className="absolute top-0 w-full h-full object-cover"
               />
             </div>
-
             <div className="p-8 flex flex-col flex-grow text-center">
               <EventPrimitive.Title className="text-2xl font-semibold text-content-primary mb-1 line-clamp-2" />
-
-              <div className="text-sm text-content-secondary mb-4">
+              <div className="font-light text-sm text-content-secondary mb-8">
                 <EventPrimitive.Date format="short" />
                 <span className="mx-1">|</span>
                 <EventPrimitive.Location format="short" />
               </div>
-
-              <button className="underline font-light text-content-primary mb-8">
-                More info
-              </button>
-
               <EventPrimitive.RsvpButton
                 asChild
                 className="btn-primary self-center font-light py-2 px-10 mt-auto"
@@ -63,7 +56,6 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
           </div>
         </EventListPrimitive.EventRepeater>
       </EventListPrimitive.Events>
-
       <EventListPrimitive.LoadMoreTrigger
         className="btn-primary block font-light py-2 px-4 mt-8 mx-auto"
         label="Load More"
