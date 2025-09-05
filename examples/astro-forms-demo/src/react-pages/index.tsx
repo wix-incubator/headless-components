@@ -27,7 +27,7 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
     <Form.Root form={formServiceConfig.form}>
       <Form.Container
         formId="491ce063-931e-47c9-aad9-4845d9271c30"
-        fieldsMap={FIELD_MAP}
+        fieldMap={FIELD_MAP}
       />
     </Form.Root>
   );

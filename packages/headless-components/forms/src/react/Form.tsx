@@ -47,7 +47,7 @@ export interface RootProps {
  *     <Form.Root form={form}>
  *       <Form.Container
  *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
- *         fieldsMap={FIELD_MAP}
+ *         fieldMap={FIELD_MAP}
  *       />
  *     </Form.Root>
  *   );
@@ -77,11 +77,11 @@ export function Root(props: RootProps): React.ReactNode {
 /**
  * Mapping of form field types to their corresponding React components.
  *
- * This interface defines the structure for the fieldsMap prop, allowing you to specify
+ * This interface defines the structure for the fieldMap prop, allowing you to specify
  * which React component should be used to render each type of form field. Each field
  * type maps to a React component that accepts the appropriate props for that field type.
  *
- * @interface FieldsMap
+ * @interface fieldMap
  *
  * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for text input fields
  * @property {React.ComponentType<ContactsBirthdateProps>} CONTACTS_BIRTHDATE - Component for birthdate fields
@@ -92,7 +92,7 @@ export function Root(props: RootProps): React.ReactNode {
  *
  * @example
  * ```tsx
- * const FIELD_MAP: FieldsMap = {
+ * const FIELD_MAP: fieldMap = {
  *   TEXT_INPUT: MyCustomTextInput,
  *   CONTACTS_BIRTHDATE: MyCustomBirthdatePicker,
  *   CONTACTS_SUBSCRIBE: MyCustomSubscribeCheckbox,
@@ -102,7 +102,7 @@ export function Root(props: RootProps): React.ReactNode {
  * };
  * ```
  */
-interface FieldsMap {
+interface FieldMap {
   TEXT_INPUT: React.ComponentType<TextInputProps>;
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
   CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
@@ -117,7 +117,7 @@ interface FieldsMap {
  * @interface ContainerProps
  *
  * @property {string} formId - The unique identifier of the form to render
- * @property {FieldsMap} fieldsMap - A mapping of field types to their corresponding React components
+ * @property {FieldMap} fieldMap - A mapping of field types to their corresponding React components
  *
  * @example
  * ```tsx
@@ -132,13 +132,13 @@ interface FieldsMap {
  *
  * <Form.Container
  *   formId="491ce063-931e-47c9-aad9-4845d9271c30"
- *   fieldsMap={FIELD_MAP}
+ *   fieldMap={FIELD_MAP}
  * />
  * ```
  */
 export interface ContainerProps {
   formId: string;
-  fieldsMap: FieldsMap;
+  fieldMap: FieldMap;
 }
 
 /**
@@ -146,7 +146,7 @@ export interface ContainerProps {
  *
  * @component
  * @param {string} formId - The unique identifier of the form to render
- * @param {FieldsMap} fieldsMap - A mapping of field types to their corresponding React components
+ * @param {FieldMap} fieldMap - A mapping of field types to their corresponding React components
  *
  * @example
  * ```tsx
@@ -167,7 +167,7 @@ export interface ContainerProps {
  *     <Form.Root form={form}>
  *       <Form.Container
  *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
- *         fieldsMap={FIELD_MAP}
+ *         fieldMap={FIELD_MAP}
  *       />
  *     </Form.Root>
  *   );
@@ -175,7 +175,7 @@ export interface ContainerProps {
  * ```
  */
 export const Container = React.forwardRef<HTMLElement, ContainerProps>(() => {
-  // ({ formId, fieldsMap }) => {
+  // ({ formId, fieldMap }) => {
   const formService = useService(FormServiceDefinition);
   formService.form.get();
   // TODO: render viewer
