@@ -43,6 +43,9 @@ enum TestIds {
   eventLocation = 'event-location',
   eventDescription = 'event-description',
   eventRsvpButton = 'event-rsvp-button',
+  eventFacebookShare = 'event-facebook-share',
+  eventLinkedInShare = 'event-linked-in-share',
+  eventXShare = 'event-x-share',
 }
 
 /**
@@ -536,6 +539,183 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
         customElementProps={{ event }}
       >
         <button>{label}</button>
+      </AsChildSlot>
+    );
+  },
+);
+
+/**
+ * Props for the Event FacebookShare component.
+ */
+export interface FacebookShareProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ eventUrl: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays Facebook share element with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.FacebookShare />
+ *
+ * // asChild with primitive
+ * <Event.FacebookShare asChild>
+ *   <a />
+ * </Event.FacebookShare>
+ *
+ * // asChild with react component
+ * <Event.FacebookShare asChild>
+ *   {React.forwardRef(({ eventUrl, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(eventUrl, '_blank')} />
+ *   ))}
+ * </Event.FacebookShare>
+ * ```
+ */
+export const FacebookShare = React.forwardRef<HTMLElement, FacebookShareProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    const eventUrl = 'https://www.wix.com';
+    const href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventUrl)}`;
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventFacebookShare}
+        customElement={children}
+        customElementProps={{ eventUrl }}
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <a />
+      </AsChildSlot>
+    );
+  },
+);
+
+/**
+ * Props for the Event LinkedInShare component.
+ */
+export interface LinkedInShareProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ eventUrl: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays LinkedIn share element with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.LinkedInShare />
+ *
+ * // asChild with primitive
+ * <Event.LinkedInShare asChild>
+ *   <a />
+ * </Event.LinkedInShare>
+ *
+ * // asChild with react component
+ * <Event.LinkedInShare asChild>
+ *   {React.forwardRef(({ eventUrl, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(eventUrl, '_blank')} />
+ *   ))}
+ * </Event.LinkedInShare>
+ * ```
+ */
+export const LinkedInShare = React.forwardRef<HTMLElement, LinkedInShareProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    const eventUrl = 'https://www.wix.com';
+    const href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(eventUrl)}`;
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventLinkedInShare}
+        customElement={children}
+        customElementProps={{ eventUrl }}
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <a />
+      </AsChildSlot>
+    );
+  },
+);
+
+/**
+ * Props for the Event XShare component.
+ */
+export interface XShareProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ eventUrl: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays X share element with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.XShare />
+ *
+ * // asChild with primitive
+ * <Event.XShare asChild>
+ *   <a />
+ * </Event.XShare>
+ *
+ * // asChild with react component
+ * <Event.XShare asChild>
+ *   {React.forwardRef(({ eventUrl, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(eventUrl, '_blank')} />
+ *   ))}
+ * </Event.XShare>
+ * ```
+ */
+export const XShare = React.forwardRef<HTMLElement, XShareProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    const eventUrl = 'https://www.wix.com';
+    const href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(eventUrl)}`;
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventXShare}
+        customElement={children}
+        customElementProps={{ eventUrl }}
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <a />
       </AsChildSlot>
     );
   },
