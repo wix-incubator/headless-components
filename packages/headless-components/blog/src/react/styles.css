@@ -1,0 +1,3 @@
+/* Re-export ricos CSS for blog components */
+/* Consumers should import this alongside the components */
+@import '@wix/ricos/css/all-plugins-viewer.css';
