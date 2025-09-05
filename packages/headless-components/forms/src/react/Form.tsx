@@ -14,6 +14,7 @@ import {
   ContactsEmailProps,
   ContactsFirstNameProps,
   ContactsLastNameProps,
+  ContactsTaxIdProps,
   ContactsSubscribeProps,
   NumberInputProps,
   TextAreaProps,
@@ -110,6 +111,7 @@ interface FieldMap {
   CONTACTS_EMAIL: React.ComponentType<ContactsEmailProps>;
   CONTACTS_FIRST_NAME: React.ComponentType<ContactsFirstNameProps>;
   CONTACTS_LAST_NAME: React.ComponentType<ContactsLastNameProps>;
+  CONTACTS_TAX_ID: React.ComponentType<ContactsTaxIdProps>;
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
   CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
   TEXT_AREA: React.ComponentType<TextAreaProps>;

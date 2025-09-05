@@ -212,6 +212,43 @@ export interface ContactsFirstNameProps extends BaseTextFieldProps {}
 export interface ContactsLastNameProps extends BaseTextFieldProps {}
 
 /**
+ * Props for contacts tax ID field.
+ * Used with fieldMap key: CONTACTS_TAX_ID
+ *
+ * @interface ContactsTaxIdProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const taxIdField: ContactsTaxIdProps = {
+ *   id: 'taxId',
+ *   value: '123-45-6789',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Tax ID',
+ *   showLabel: true,
+ *   placeholder: 'Enter your tax ID',
+ *   description: { nodes: [{ type: 'text', text: 'Your tax identification number' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsTaxIdProps extends BaseTextFieldProps {}
+
+/**
  * Props for text area field.
  * Used with fieldMap key: TEXT_AREA
  *
