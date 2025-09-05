@@ -101,6 +101,43 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
 export interface ContactsSubscribeProps extends BaseCheckboxProps {}
 
 /**
+ * Props for contacts email field.
+ * Used with fieldMap key: CONTACTS_EMAIL
+ *
+ * @interface ContactsEmailProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const emailField: ContactsEmailProps = {
+ *   id: 'email',
+ *   value: 'user@example.com',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Email Address',
+ *   showLabel: true,
+ *   placeholder: 'Enter your email address',
+ *   description: { nodes: [{ type: 'text', text: 'We will never share your email' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsEmailProps extends BaseTextFieldProps {}
+
+/**
  * Props for text area field.
  * Used with fieldMap key: TEXT_AREA
  *

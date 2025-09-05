@@ -11,6 +11,7 @@ import {
 import {
   CheckboxProps,
   ContactsBirthdateProps,
+  ContactsEmailProps,
   ContactsSubscribeProps,
   NumberInputProps,
   TextAreaProps,
@@ -104,6 +105,7 @@ export function Root(props: RootProps): React.ReactNode {
  */
 interface FieldMap {
   TEXT_INPUT: React.ComponentType<TextInputProps>;
+  CONTACTS_EMAIL: React.ComponentType<ContactsEmailProps>;
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
   CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
   TEXT_AREA: React.ComponentType<TextAreaProps>;
