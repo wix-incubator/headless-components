@@ -3,8 +3,11 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreBlogPost from './core/BlogPost.js';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import { posts, tags } from '@wix/blog';
-import { quickStartViewerPlugins, RicosViewer } from '@wix/ricos';
-import '@wix/ricos/css/all-plugins-viewer.css';
+import {
+  quickStartViewerPlugins,
+  RicosViewer,
+  type RicosCustomStyles,
+} from '@wix/ricos';
 import { createAuthorName } from './helpers.js';
 
 interface PostContextValue {
@@ -52,6 +55,12 @@ export interface BlogPostRootProps {
  * Root container for blog post that provides post context to all child components.
  * Supports both service-driven and prop-driven post data.
  * Follows Container Level pattern from architecture rules.
+ *
+ * **Important:** This package requires manual CSS import for proper styling:
+ * ```tsx
+ * import '@wix/headless-blog/react/styles.css';
+ * ```
+ * The CSS is required for proper rendering of BlogPost.Content and other styled components.
  *
  * @component
  * @example
@@ -208,10 +217,17 @@ export interface ContentProps {
   asChild?: boolean;
   className?: string;
   children?: AsChildChildren<{ ricosViewerContent: any }> | React.ReactNode;
+  customStyles?: RicosCustomStyles;
 }
 
 /**
  * Displays the blog post rich content using Wix Ricos viewer.
+ *
+ * **Note:** Requires CSS import for proper content styling:
+ * ```tsx
+ * import '@wix/headless-blog/react/styles.css';
+ * ```
+ * Without this import, the rich content may not render with proper typography and layout.
  *
  * @component
  * @example
@@ -221,6 +237,17 @@ export interface ContentProps {
  *
  * // Custom styling
  * <BlogPost.Content className="prose max-w-[60ch] mx-auto" />
+ *
+ * // Custom Ricos styles using CSS custom properties
+ * <BlogPost.Content
+ *   customStyles={{
+ *     p: {
+ *       fontSize: 'var(--text-lg)',
+ *       lineHeight: 'var(--leading-relaxed)',
+ *       color: 'var(--color-content-primary)',
+ *     },
+ *   }}
+ * />
  *
  * // Custom rendering with asChild
  * <BlogPost.Content asChild>
@@ -234,7 +261,7 @@ export interface ContentProps {
  */
 export const Content = React.forwardRef<HTMLElement, ContentProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, customStyles } = props;
 
     return (
       <CoreBlogPost.RichContent>
@@ -258,6 +285,9 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
                 <RicosViewer
                   content={ricosViewerContent}
                   plugins={quickStartViewerPlugins()}
+                  theme={{
+                    customStyles,
+                  }}
                 />
               </div>
             </AsChildSlot>
