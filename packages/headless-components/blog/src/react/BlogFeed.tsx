@@ -13,6 +13,7 @@ import { createAuthorName, isValidChildren } from './helpers.js';
 interface PostsContextValue {
   hasPosts: boolean;
   posts: PostWithResolvedFields[];
+  totalPosts: number;
 }
 
 const PostsContext = React.createContext<PostsContextValue | null>(null);
@@ -27,18 +28,20 @@ export function usePostsContext(): PostsContextValue {
   return context;
 }
 
-interface FeedPostContextValue {
+interface FeedPostRepeaterContextValue {
   post: PostWithResolvedFields;
-  hasPost: boolean;
+  index: number;
+  amount: number;
 }
 
-const FeedPostContext = React.createContext<FeedPostContextValue | null>(null);
+const FeedPostRepeaterContext =
+  React.createContext<FeedPostRepeaterContextValue | null>(null);
 
-export function useFeedPostContext(): FeedPostContextValue {
-  const context = React.useContext(FeedPostContext);
+export function useFeedPostRepeaterContext(): FeedPostRepeaterContextValue {
+  const context = React.useContext(FeedPostRepeaterContext);
   if (!context) {
     throw new Error(
-      'useFeedPostContext must be used within a BlogFeed.PostRepeater component',
+      'useFeedPostRepeaterContext must be used within a BlogFeed.PostRepeater component',
     );
   }
   return context;
@@ -61,18 +64,20 @@ export function usePostCategoriesContext(): PostCategoriesContextValue {
   return context;
 }
 
-interface CategoryContextValue {
+interface CategoryRepeaterContextValue {
   category: posts.Category;
-  hasCategory: boolean;
+  index: number;
+  amount: number;
 }
 
-const CategoryContext = React.createContext<CategoryContextValue | null>(null);
+const CategoryRepeaterContext =
+  React.createContext<CategoryRepeaterContextValue | null>(null);
 
-function useCategoryContext(): CategoryContextValue {
-  const context = React.useContext(CategoryContext);
+export function useCategoryRepeaterContext(): CategoryRepeaterContextValue {
+  const context = React.useContext(CategoryRepeaterContext);
   if (!context) {
     throw new Error(
-      'useCategoryContext must be used within a BlogFeed.PostCategoryRepeater component',
+      'useCategoryRepeaterContext must be used within a BlogFeed.PostCategoryRepeater component',
     );
   }
   return context;
@@ -94,17 +99,21 @@ export function usePostTagsContext(): PostTagsContextValue {
   return context;
 }
 
-interface TagContextValue {
+interface TagRepeaterContextValue {
   tag: tags.BlogTag;
+  index: number;
+  amount: number;
 }
 
-const TagContext = React.createContext<TagContextValue | null>(null);
+const TagRepeaterContext = React.createContext<TagRepeaterContextValue | null>(
+  null,
+);
 
-export function useTagContext(): TagContextValue {
-  const context = React.useContext(TagContext);
+export function useTagRepeaterContext(): TagRepeaterContextValue {
+  const context = React.useContext(TagRepeaterContext);
   if (!context) {
     throw new Error(
-      'useTagContext must be used within a BlogFeed.PostTagRepeater component',
+      'useTagRepeaterContext must be used within a BlogFeed.PostTagRepeater component',
     );
   }
   return context;
@@ -170,10 +179,11 @@ export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>(
 
     return (
       <CoreBlogFeed.Posts>
-        {({ posts, hasPosts }) => {
+        {({ posts, hasPosts, totalPosts }) => {
           const contextValue: PostsContextValue = {
             hasPosts,
             posts,
+            totalPosts,
           };
 
           const attributes = {
@@ -384,22 +394,26 @@ export interface PostRepeaterProps {
 export const PostRepeater = React.forwardRef<HTMLElement, PostRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
-    const { hasPosts, posts } = usePostsContext();
+    const { hasPosts, posts, totalPosts } = usePostsContext();
 
     if (!hasPosts) return null;
 
     return (
       <>
-        {posts.map((post: PostWithResolvedFields) => {
-          const contextValue: FeedPostContextValue = {
+        {posts.map((post, index) => {
+          const contextValue: FeedPostRepeaterContextValue = {
             post,
-            hasPost: Boolean(post),
+            index,
+            amount: totalPosts,
           };
 
           return (
-            <FeedPostContext.Provider key={post._id} value={contextValue}>
+            <FeedPostRepeaterContext.Provider
+              key={post._id}
+              value={contextValue}
+            >
               {children}
-            </FeedPostContext.Provider>
+            </FeedPostRepeaterContext.Provider>
           );
         })}
       </>
@@ -505,7 +519,7 @@ export interface PostTitleProps {
 export const PostTitle = React.forwardRef<HTMLElement, PostTitleProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
-    const { post } = useFeedPostContext();
+    const { post } = useFeedPostRepeaterContext();
 
     if (!post?.title) return null;
 
@@ -563,7 +577,7 @@ export interface PostExcerptProps {
 export const PostExcerpt = React.forwardRef<HTMLElement, PostExcerptProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
-    const { post } = useFeedPostContext();
+    const { post } = useFeedPostRepeaterContext();
 
     if (!post?.excerpt) return null;
 
@@ -601,7 +615,7 @@ export const PostCoverImage = React.forwardRef<
   PostCoverImageProps
 >((props, ref) => {
   const { asChild, children, className } = props;
-  const { post } = useFeedPostContext();
+  const { post } = useFeedPostRepeaterContext();
 
   const imageUrl = post?.resolvedFields?.coverImageUrl;
   const alt =
@@ -642,7 +656,7 @@ export const PostAuthorName = React.forwardRef<
   PostAuthorNameProps
 >((props, ref) => {
   const { asChild, children, className } = props;
-  const { post } = useFeedPostContext();
+  const { post } = useFeedPostRepeaterContext();
 
   const owner = post?.resolvedFields?.owner;
   if (!owner) return null;
@@ -686,7 +700,7 @@ export const PostAuthorAvatar = React.forwardRef<
   PostAuthorAvatarProps
 >((props, ref) => {
   const { asChild, children, className } = props;
-  const { post } = useFeedPostContext();
+  const { post } = useFeedPostRepeaterContext();
 
   const owner = post?.resolvedFields?.owner;
   if (!owner) return null;
@@ -738,7 +752,7 @@ export const PostPublishDate = React.forwardRef<
   PostPublishDateProps
 >((props, ref) => {
   const { asChild, children, className, locale } = props;
-  const { post } = useFeedPostContext();
+  const { post } = useFeedPostRepeaterContext();
 
   const publishDate = post?.firstPublishedDate;
   if (!publishDate) return null;
@@ -797,7 +811,7 @@ export const PostCategories = React.forwardRef<
   PostCategoriesProps
 >((props, ref) => {
   const { children, className } = props;
-  const { post } = useFeedPostContext();
+  const { post } = useFeedPostRepeaterContext();
 
   const categories = post?.resolvedFields?.categories || [];
   const hasCategories = categories.length > 0;
@@ -853,16 +867,20 @@ export const PostCategoryRepeater = React.forwardRef<
 
   return (
     <>
-      {categories.map((category) => {
-        const contextValue: CategoryContextValue = {
+      {categories.map((category, index) => {
+        const contextValue: CategoryRepeaterContextValue = {
           category,
-          hasCategory: Boolean(category),
+          index,
+          amount: categories.length,
         };
 
         return (
-          <CategoryContext.Provider key={category._id} value={contextValue}>
+          <CategoryRepeaterContext.Provider
+            key={category._id}
+            value={contextValue}
+          >
             {children}
-          </CategoryContext.Provider>
+          </CategoryRepeaterContext.Provider>
         );
       })}
     </>
@@ -884,7 +902,7 @@ export const PostCategoryLink = React.forwardRef<
   PostCategoryLinkProps
 >((props, ref) => {
   const { asChild, children, className, baseUrl = '' } = props;
-  const { category } = useCategoryContext();
+  const { category } = useCategoryRepeaterContext();
 
   if (!category?.label) return null;
 
@@ -920,7 +938,7 @@ export const PostCategoryLabel = React.forwardRef<
   PostCategoryLabelProps
 >((props, ref) => {
   const { asChild, children, className } = props;
-  const { category } = useCategoryContext();
+  const { category } = useCategoryRepeaterContext();
 
   if (!category?.label) return null;
 
@@ -966,7 +984,7 @@ export interface PostTagsProps {
 export const PostTags = React.forwardRef<HTMLElement, PostTagsProps>(
   (props, ref) => {
     const { children, className } = props;
-    const { post } = useFeedPostContext();
+    const { post } = useFeedPostRepeaterContext();
 
     const tags = post?.resolvedFields?.tags || [];
     const hasTags = tags.length > 0;
@@ -1010,15 +1028,17 @@ export const PostTagRepeater = React.forwardRef<
 
   return (
     <>
-      {tags.map((tag) => {
-        const contextValue: TagContextValue = {
+      {tags.map((tag, index) => {
+        const contextValue: TagRepeaterContextValue = {
           tag,
+          index,
+          amount: tags.length,
         };
 
         return (
-          <TagContext.Provider key={tag._id} value={contextValue}>
+          <TagRepeaterContext.Provider key={tag._id} value={contextValue}>
             {children}
-          </TagContext.Provider>
+          </TagRepeaterContext.Provider>
         );
       })}
     </>
@@ -1034,7 +1054,7 @@ export interface PostTagProps {
 export const PostTag = React.forwardRef<HTMLElement, PostTagProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
-    const { tag } = useTagContext();
+    const { tag } = useTagRepeaterContext();
 
     if (!tag?.label) return null;
 
@@ -1089,7 +1109,7 @@ export interface PostLinkProps {
 export const PostLink = React.forwardRef<HTMLAnchorElement, PostLinkProps>(
   (props, ref) => {
     const { asChild, children, className, baseUrl = '' } = props;
-    const { post } = useFeedPostContext();
+    const { post } = useFeedPostRepeaterContext();
 
     const slug = post?.slug;
     if (!slug) return null;
@@ -1144,7 +1164,7 @@ export const PostReadingTime = React.forwardRef<
   PostReadingTimeProps
 >((props, ref) => {
   const { asChild, children, className } = props;
-  const { post } = useFeedPostContext();
+  const { post } = useFeedPostRepeaterContext();
 
   const readingTime = post?.minutesToRead ?? 0;
   if (readingTime <= 0) return null;
