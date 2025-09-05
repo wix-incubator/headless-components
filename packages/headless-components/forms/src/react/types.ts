@@ -4,6 +4,9 @@ interface BaseFieldProps {
   id: string;
   required: boolean;
   readOnly: boolean;
+  onChange: (value: unknown) => void;
+  onBlur: () => void;
+  onFocus: () => void;
 }
 
 interface BaseTextFieldProps extends BaseFieldProps {
@@ -25,6 +28,9 @@ interface BaseTextFieldProps extends BaseFieldProps {
  * @property {forms.RichContent} [description] - Optional rich content description for the field
  * @property {boolean} showLabel - Whether to display the field label
  * @property {boolean} showPlaceholder - Whether to show placeholder text for the date input
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
  *
  * @example
  * ```tsx
@@ -34,7 +40,10 @@ interface BaseTextFieldProps extends BaseFieldProps {
  *   required: true,
  *   readOnly: false,
  *   showLabel: true,
- *   showPlaceholder: true
+ *   showPlaceholder: true,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
@@ -55,6 +64,9 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} label - The display label for the form field
  * @property {boolean} defaultValue - The default checked state for the subscribe checkbox
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
  *
  * @example
  * ```tsx
@@ -63,7 +75,10 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
  *   required: false,
  *   readOnly: false,
  *   label: { nodes: [{ type: 'text', text: 'Subscribe to newsletter' }] },
- *   defaultValue: false
+ *   defaultValue: false,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
@@ -84,6 +99,9 @@ export interface ContactsSubscribeProps extends BaseFieldProps {
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
  *
  * @example
  * ```tsx
@@ -94,7 +112,10 @@ export interface ContactsSubscribeProps extends BaseFieldProps {
  *   label: 'Your Message',
  *   showLabel: true,
  *   placeholder: 'Enter your message here...',
- *   description: { nodes: [{ type: 'text', text: 'Please provide detailed information' }] }
+ *   description: { nodes: [{ type: 'text', text: 'Please provide detailed information' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
@@ -112,6 +133,9 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
  *
  * @example
  * ```tsx
@@ -122,7 +146,10 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  *   label: 'First Name',
  *   showLabel: true,
  *   placeholder: 'Enter your first name',
- *   description: { nodes: [{ type: 'text', text: 'Your given name' }] }
+ *   description: { nodes: [{ type: 'text', text: 'Your given name' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
@@ -140,6 +167,9 @@ export interface TextInputProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
  *
  * @example
  * ```tsx
@@ -150,7 +180,10 @@ export interface TextInputProps extends BaseTextFieldProps {}
  *   label: 'Age',
  *   showLabel: true,
  *   placeholder: 'Enter your age',
- *   description: { nodes: [{ type: 'text', text: 'Must be 18 or older' }] }
+ *   description: { nodes: [{ type: 'text', text: 'Must be 18 or older' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
@@ -166,6 +199,9 @@ export interface NumberInputProps extends BaseTextFieldProps {}
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} label - The display label for the form field
  * @property {boolean} defaultValue - The default checked state for the checkbox
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
  *
  * @example
  * ```tsx
@@ -174,7 +210,10 @@ export interface NumberInputProps extends BaseTextFieldProps {}
  *   required: true,
  *   readOnly: false,
  *   label: { nodes: [{ type: 'text', text: 'I agree to the terms and conditions' }] },
- *   defaultValue: false
+ *   defaultValue: false,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */

@@ -14,6 +14,9 @@ const TextArea = ({
   required,
   readOnly,
   description,
+  onChange,
+  onBlur,
+  onFocus,
 }: TextAreaProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -26,6 +29,9 @@ const TextArea = ({
         readOnly={readOnly}
         placeholder={placeholder}
         aria-describedby={descriptionId}
+        onChange={e => onChange(e.target.value)}
+        onBlur={() => onBlur()}
+        onFocus={() => onFocus()}
       />
       {description && (
         <div id={descriptionId}>

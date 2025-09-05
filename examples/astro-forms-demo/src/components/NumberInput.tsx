@@ -14,6 +14,9 @@ const NumberInput = ({
   required,
   readOnly,
   description,
+  onChange,
+  onBlur,
+  onFocus,
 }: NumberInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -27,6 +30,9 @@ const NumberInput = ({
         readOnly={readOnly}
         placeholder={placeholder}
         aria-describedby={descriptionId}
+        onChange={e => onChange(e.target.value)}
+        onBlur={() => onBlur()}
+        onFocus={() => onFocus()}
       />
       {description && (
         <div id={descriptionId}>

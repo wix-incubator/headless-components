@@ -12,6 +12,9 @@ const TextInput = ({
   showLabel,
   placeholder,
   description,
+  onChange,
+  onBlur,
+  onFocus,
 }: TextInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -23,6 +26,9 @@ const TextInput = ({
         type="text"
         placeholder={placeholder}
         aria-describedby={descriptionId}
+        onChange={e => onChange(e.target.value)}
+        onBlur={() => onBlur()}
+        onFocus={() => onFocus()}
       />
       {description && (
         <div id={descriptionId}>

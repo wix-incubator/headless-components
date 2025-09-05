@@ -12,6 +12,9 @@ const ContactsSubscribe = ({
   defaultValue,
   required,
   readOnly,
+  onChange,
+  onBlur,
+  onFocus,
 }: ContactsSubscribeProps) => {
   return (
     <div>
@@ -22,6 +25,9 @@ const ContactsSubscribe = ({
           defaultChecked={defaultValue}
           required={required}
           readOnly={readOnly}
+          onChange={e => onChange(e.target.checked)}
+          onBlur={() => onBlur()}
+          onFocus={() => onFocus()}
         />
         <RicosViewer
           content={label as RichContent}

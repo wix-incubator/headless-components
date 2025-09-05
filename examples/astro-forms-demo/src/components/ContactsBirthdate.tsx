@@ -14,6 +14,9 @@ const ContactsBirthdate = ({
   required,
   readOnly,
   description,
+  onChange,
+  onBlur,
+  onFocus,
 }: ContactsBirthdateProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -27,6 +30,9 @@ const ContactsBirthdate = ({
         readOnly={readOnly}
         placeholder={showPlaceholder ? 'Enter your birthdate' : undefined}
         aria-describedby={descriptionId}
+        onChange={e => onChange(e.target.value)}
+        onBlur={() => onBlur()}
+        onFocus={() => onFocus()}
       />
       {description && (
         <div id={descriptionId}>
