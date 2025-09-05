@@ -17,7 +17,8 @@ interface BaseTextFieldProps extends BaseFieldProps {
 }
 
 /**
- * Represents a contacts birthdate form field configuration.
+ * Props for contacts birthdate field.
+ * Used with fieldsMap key: CONTACTS_BIRTHDATE
  *
  * @interface ContactsBirthdateProps
  *
@@ -55,7 +56,8 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
 }
 
 /**
- * Represents a contacts subscribe form field configuration.
+ * Props for contacts subscribe field.
+ * Used with fieldsMap key: CONTACTS_SUBSCRIBE
  *
  * @interface ContactsSubscribeProps
  *
@@ -88,7 +90,8 @@ export interface ContactsSubscribeProps extends BaseFieldProps {
 }
 
 /**
- * Represents a text area form field configuration.
+ * Props for text area field.
+ * Used with fieldsMap key: TEXT_AREA
  *
  * @interface TextAreaProps
  *
@@ -122,7 +125,8 @@ export interface ContactsSubscribeProps extends BaseFieldProps {
 export interface TextAreaProps extends BaseTextFieldProps {}
 
 /**
- * Represents a text input form field configuration.
+ * Props for text input field.
+ * Used with fieldsMap key: TEXT_INPUT
  *
  * @interface TextInputProps
  *
@@ -156,7 +160,8 @@ export interface TextAreaProps extends BaseTextFieldProps {}
 export interface TextInputProps extends BaseTextFieldProps {}
 
 /**
- * Represents a number input form field configuration.
+ * Props for number input field.
+ * Used with fieldsMap key: NUMBER_INPUT
  *
  * @interface NumberInputProps
  *
@@ -190,7 +195,8 @@ export interface TextInputProps extends BaseTextFieldProps {}
 export interface NumberInputProps extends BaseTextFieldProps {}
 
 /**
- * Represents a checkbox form field configuration.
+ * Props for checkbox field.
+ * Used with fieldsMap key: CHECKBOX
  *
  * @interface CheckboxProps
  *

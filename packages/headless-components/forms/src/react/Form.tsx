@@ -28,14 +28,27 @@ export interface RootProps {
  *
  * @order 1
  * @component
+ *
+ * @param {forms.Form} form - The form configuration object
+ * @param {React.ReactNode} children - Child components that will have access to form context
+ *
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   CONTACTS_BIRTHDATE: ContactsBirthdate,
+ *   // ... other field components
+ * };
+ *
  * function FormPage({ form }) {
  *   return (
- *     <Form.Root form={form} >
- *       <Form.Container formId="491ce063-931e-47c9-aad9-4845d9271c30" fieldsMap={FIELD_MAP} />
+ *     <Form.Root form={form}>
+ *       <Form.Container
+ *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
+ *         fieldsMap={FIELD_MAP}
+ *       />
  *     </Form.Root>
  *   );
  * }
@@ -61,6 +74,34 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
+/**
+ * Mapping of form field types to their corresponding React components.
+ *
+ * This interface defines the structure for the fieldsMap prop, allowing you to specify
+ * which React component should be used to render each type of form field. Each field
+ * type maps to a React component that accepts the appropriate props for that field type.
+ *
+ * @interface FieldsMap
+ *
+ * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for text input fields
+ * @property {React.ComponentType<ContactsBirthdateProps>} CONTACTS_BIRTHDATE - Component for birthdate fields
+ * @property {React.ComponentType<ContactsSubscribeProps>} CONTACTS_SUBSCRIBE - Component for subscription checkbox fields
+ * @property {React.ComponentType<TextAreaProps>} TEXT_AREA - Component for textarea fields
+ * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for number input fields
+ * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
+ *
+ * @example
+ * ```tsx
+ * const FIELD_MAP: FieldsMap = {
+ *   TEXT_INPUT: MyCustomTextInput,
+ *   CONTACTS_BIRTHDATE: MyCustomBirthdatePicker,
+ *   CONTACTS_SUBSCRIBE: MyCustomSubscribeCheckbox,
+ *   TEXT_AREA: MyCustomTextArea,
+ *   NUMBER_INPUT: MyCustomNumberInput,
+ *   CHECKBOX: MyCustomCheckbox,
+ * };
+ * ```
+ */
 interface FieldsMap {
   TEXT_INPUT: React.ComponentType<TextInputProps>;
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
@@ -72,21 +113,67 @@ interface FieldsMap {
 
 /**
  * Props for the Form Container component.
+ *
+ * @interface ContainerProps
+ *
+ * @property {string} formId - The unique identifier of the form to render
+ * @property {FieldsMap} fieldsMap - A mapping of field types to their corresponding React components
+ *
+ * @example
+ * ```tsx
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   CONTACTS_BIRTHDATE: ContactsBirthdate,
+ *   CONTACTS_SUBSCRIBE: ContactsSubscribe,
+ *   TEXT_AREA: TextArea,
+ *   NUMBER_INPUT: NumberInput,
+ *   CHECKBOX: Checkbox,
+ * };
+ *
+ * <Form.Container
+ *   formId="491ce063-931e-47c9-aad9-4845d9271c30"
+ *   fieldsMap={FIELD_MAP}
+ * />
+ * ```
  */
 export interface ContainerProps {
-  /** Form id */
+  /** The unique identifier of the form to render */
   formId: string;
-  /** Fields map */
+  /** A mapping of field types to their corresponding React components */
   fieldsMap: FieldsMap;
 }
 
 /**
- * Headless component for displaying the form.
+ * Headless component for displaying a form with custom field renderers.
  *
  * @component
+ * @param {string} formId - The unique identifier of the form to render
+ * @param {FieldsMap} fieldsMap - A mapping of field types to their corresponding React components
+ *
  * @example
  * ```tsx
- *  <Form.Container formId="491ce063-931e-47c9-aad9-4845d9271c30" fieldsMap={FIELD_MAP} />
+ * import { Form } from '@wix/headless-forms/react';
+ * import { TextInput, ContactsBirthdate, Checkbox } from './field-components';
+ *
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   CONTACTS_BIRTHDATE: ContactsBirthdate,
+ *   CONTACTS_SUBSCRIBE: ContactsSubscribe,
+ *   TEXT_AREA: TextArea,
+ *   NUMBER_INPUT: NumberInput,
+ *   CHECKBOX: Checkbox,
+ * };
+ *
+ * function ContactForm({ form }) {
+ *   return (
+ *     <Form.Root form={form}>
+ *       <Form.Container
+ *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
+ *         fieldsMap={FIELD_MAP}
+ *       />
+ *     </Form.Root>
+ *   );
+ * }
  * ```
  */
 export const Container = React.forwardRef<HTMLElement, ContainerProps>(() => {
