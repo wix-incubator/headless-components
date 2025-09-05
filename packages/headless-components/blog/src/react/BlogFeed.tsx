@@ -394,7 +394,7 @@ export interface PostRepeaterProps {
 export const PostRepeater = React.forwardRef<HTMLElement, PostRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
-    const { hasPosts, posts, totalPosts } = usePostsContext();
+    const { hasPosts, posts } = usePostsContext();
 
     if (!hasPosts) return null;
 
@@ -404,7 +404,7 @@ export const PostRepeater = React.forwardRef<HTMLElement, PostRepeaterProps>(
           const contextValue: FeedPostRepeaterContextValue = {
             post,
             index,
-            amount: totalPosts,
+            amount: posts.length,
           };
 
           return (
