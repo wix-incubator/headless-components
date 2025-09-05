@@ -15,6 +15,8 @@ const ContactsFirstName = ({
   description,
   required,
   readOnly,
+  minLength,
+  maxLength,
   onChange,
   onBlur,
   onFocus,
@@ -31,6 +33,8 @@ const ContactsFirstName = ({
         required={required}
         readOnly={readOnly}
         placeholder={placeholder}
+        minLength={minLength}
+        maxLength={maxLength}
         aria-describedby={descriptionId}
         onChange={e => onChange(e.target.value)}
         onBlur={() => onBlur()}

@@ -1,5 +1,10 @@
 import { forms } from '@wix/forms';
 
+interface MinMaxLengthProps {
+  minLength?: number;
+  maxLength?: number;
+}
+
 interface BaseFieldProps {
   id: string;
   required: boolean;
@@ -151,6 +156,8 @@ export interface ContactsEmailProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -166,13 +173,15 @@ export interface ContactsEmailProps extends BaseTextFieldProps {}
  *   showLabel: true,
  *   placeholder: 'Enter your first name',
  *   description: { nodes: [{ type: 'text', text: 'Your given name' }] },
+ *   minLength: 1,
+ *   maxLength: 50,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
-export interface ContactsFirstNameProps extends BaseTextFieldProps {}
+export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for contacts last name field.
@@ -188,6 +197,8 @@ export interface ContactsFirstNameProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -203,13 +214,15 @@ export interface ContactsFirstNameProps extends BaseTextFieldProps {}
  *   showLabel: true,
  *   placeholder: 'Enter your last name',
  *   description: { nodes: [{ type: 'text', text: 'Your family name' }] },
+ *   minLength: 1,
+ *   maxLength: 50,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
-export interface ContactsLastNameProps extends BaseTextFieldProps {}
+export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for contacts tax ID field.
@@ -225,6 +238,8 @@ export interface ContactsLastNameProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -240,13 +255,15 @@ export interface ContactsLastNameProps extends BaseTextFieldProps {}
  *   showLabel: true,
  *   placeholder: 'Enter your tax ID',
  *   description: { nodes: [{ type: 'text', text: 'Your tax identification number' }] },
+ *   minLength: 9,
+ *   maxLength: 11,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
-export interface ContactsTaxIdProps extends BaseTextFieldProps {}
+export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for text area field.
@@ -262,6 +279,8 @@ export interface ContactsTaxIdProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -277,13 +296,15 @@ export interface ContactsTaxIdProps extends BaseTextFieldProps {}
  *   showLabel: true,
  *   placeholder: 'Enter your message here...',
  *   description: { nodes: [{ type: 'text', text: 'Please provide detailed information' }] },
+ *   minLength: 10,
+ *   maxLength: 1000,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
-export interface TextAreaProps extends BaseTextFieldProps {}
+export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for text input field.
@@ -299,6 +320,8 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -314,13 +337,15 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  *   showLabel: true,
  *   placeholder: 'Enter your first name',
  *   description: { nodes: [{ type: 'text', text: 'Your given name' }] },
+ *   minLength: 1,
+ *   maxLength: 50,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
-export interface TextInputProps extends BaseTextFieldProps {}
+export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for number input field.
