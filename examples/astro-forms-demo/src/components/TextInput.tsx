@@ -8,10 +8,13 @@ import '@wix/ricos/css/all-plugins-viewer.css';
 
 const TextInput = ({
   id,
+  value,
   label,
   showLabel,
   placeholder,
   description,
+  required,
+  readOnly,
   onChange,
   onBlur,
   onFocus,
@@ -24,6 +27,9 @@ const TextInput = ({
       <input
         id={id}
         type="text"
+        value={value || ''}
+        required={required}
+        readOnly={readOnly}
         placeholder={placeholder}
         aria-describedby={descriptionId}
         onChange={e => onChange(e.target.value)}

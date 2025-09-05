@@ -8,6 +8,7 @@ import '@wix/ricos/css/all-plugins-viewer.css';
 
 const TextArea = ({
   id,
+  value,
   label,
   showLabel,
   placeholder,
@@ -25,6 +26,7 @@ const TextArea = ({
       {showLabel && <label htmlFor={id}>{label}</label>}
       <textarea
         id={id}
+        value={value || ''}
         required={required}
         readOnly={readOnly}
         placeholder={placeholder}

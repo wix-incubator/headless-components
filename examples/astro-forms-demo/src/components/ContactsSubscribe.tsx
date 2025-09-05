@@ -8,6 +8,7 @@ import '@wix/ricos/css/all-plugins-viewer.css';
 
 const ContactsSubscribe = ({
   id,
+  value,
   label,
   defaultValue,
   required,
@@ -22,6 +23,7 @@ const ContactsSubscribe = ({
         <input
           id={id}
           type="checkbox"
+          checked={value}
           defaultChecked={defaultValue}
           required={required}
           readOnly={readOnly}

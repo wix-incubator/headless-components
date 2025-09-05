@@ -8,6 +8,7 @@ import '@wix/ricos/css/all-plugins-viewer.css';
 
 const ContactsBirthdate = ({
   id,
+  value,
   label,
   showLabel,
   showPlaceholder,
@@ -26,6 +27,7 @@ const ContactsBirthdate = ({
       <input
         id={id}
         type="date"
+        value={value || ''}
         required={required}
         readOnly={readOnly}
         placeholder={showPlaceholder ? 'Enter your birthdate' : undefined}

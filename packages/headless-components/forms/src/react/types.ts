@@ -10,10 +10,17 @@ interface BaseFieldProps {
 }
 
 interface BaseTextFieldProps extends BaseFieldProps {
+  value: string | null | undefined;
   label: string;
   showLabel: boolean;
   placeholder?: string;
   description?: forms.RichContent;
+}
+
+interface BaseCheckboxProps extends BaseFieldProps {
+  value: boolean;
+  label: forms.RichContent;
+  defaultValue: boolean;
 }
 
 /**
@@ -23,6 +30,7 @@ interface BaseTextFieldProps extends BaseFieldProps {
  * @interface ContactsBirthdateProps
  *
  * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
  * @property {string} label - The display label for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
@@ -37,6 +45,7 @@ interface BaseTextFieldProps extends BaseFieldProps {
  * ```tsx
  * const birthdateField: ContactsBirthdateProps = {
  *   id: 'birthdate',
+ *   value: '1990-01-01',
  *   label: 'Date of Birth',
  *   required: true,
  *   readOnly: false,
@@ -49,6 +58,7 @@ interface BaseTextFieldProps extends BaseFieldProps {
  * ```
  */
 export interface ContactsBirthdateProps extends BaseFieldProps {
+  value: string | null | undefined;
   label: string;
   showLabel: boolean;
   showPlaceholder: boolean;
@@ -62,6 +72,7 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
  * @interface ContactsSubscribeProps
  *
  * @property {string} id - The unique identifier for the form field
+ * @property {boolean} value - The current value of the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} label - The display label for the form field
@@ -74,6 +85,7 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
  * ```tsx
  * const subscribeField: ContactsSubscribeProps = {
  *   id: 'subscribe',
+ *   value: true,
  *   required: false,
  *   readOnly: false,
  *   label: { nodes: [{ type: 'text', text: 'Subscribe to newsletter' }] },
@@ -84,10 +96,7 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
  * };
  * ```
  */
-export interface ContactsSubscribeProps extends BaseFieldProps {
-  label: forms.RichContent;
-  defaultValue: boolean;
-}
+export interface ContactsSubscribeProps extends BaseCheckboxProps {}
 
 /**
  * Props for text area field.
@@ -96,6 +105,7 @@ export interface ContactsSubscribeProps extends BaseFieldProps {
  * @interface TextAreaProps
  *
  * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {string} label - The display label for the form field
@@ -110,6 +120,7 @@ export interface ContactsSubscribeProps extends BaseFieldProps {
  * ```tsx
  * const textAreaField: TextAreaProps = {
  *   id: 'message',
+ *   value: 'Hello world!',
  *   required: true,
  *   readOnly: false,
  *   label: 'Your Message',
@@ -131,6 +142,7 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  * @interface TextInputProps
  *
  * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {string} label - The display label for the form field
@@ -145,6 +157,7 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  * ```tsx
  * const textInputField: TextInputProps = {
  *   id: 'firstName',
+ *   value: 'John',
  *   required: true,
  *   readOnly: false,
  *   label: 'First Name',
@@ -166,6 +179,7 @@ export interface TextInputProps extends BaseTextFieldProps {}
  * @interface NumberInputProps
  *
  * @property {string} id - The unique identifier for the form field
+ * @property {string | number | null | undefined} value - The current value of the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {string} label - The display label for the form field
@@ -180,6 +194,7 @@ export interface TextInputProps extends BaseTextFieldProps {}
  * ```tsx
  * const numberInputField: NumberInputProps = {
  *   id: 'age',
+ *   value: 25,
  *   required: true,
  *   readOnly: false,
  *   label: 'Age',
@@ -192,7 +207,13 @@ export interface TextInputProps extends BaseTextFieldProps {}
  * };
  * ```
  */
-export interface NumberInputProps extends BaseTextFieldProps {}
+export interface NumberInputProps extends BaseFieldProps {
+  value: string | number | null | undefined;
+  label: string;
+  showLabel: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+}
 
 /**
  * Props for checkbox field.
@@ -201,6 +222,7 @@ export interface NumberInputProps extends BaseTextFieldProps {}
  * @interface CheckboxProps
  *
  * @property {string} id - The unique identifier for the form field
+ * @property {boolean} value - The current value of the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} label - The display label for the form field
@@ -213,6 +235,7 @@ export interface NumberInputProps extends BaseTextFieldProps {}
  * ```tsx
  * const checkboxField: CheckboxProps = {
  *   id: 'agree',
+ *   value: true,
  *   required: true,
  *   readOnly: false,
  *   label: { nodes: [{ type: 'text', text: 'I agree to the terms and conditions' }] },
@@ -223,7 +246,4 @@ export interface NumberInputProps extends BaseTextFieldProps {}
  * };
  * ```
  */
-export interface CheckboxProps extends BaseFieldProps {
-  label: forms.RichContent;
-  defaultValue: boolean;
-}
+export interface CheckboxProps extends BaseCheckboxProps {}

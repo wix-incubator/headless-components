@@ -8,6 +8,7 @@ import '@wix/ricos/css/all-plugins-viewer.css';
 
 const NumberInput = ({
   id,
+  value,
   label,
   showLabel,
   placeholder,
@@ -26,6 +27,7 @@ const NumberInput = ({
       <input
         id={id}
         type="number"
+        value={value ?? ''}
         required={required}
         readOnly={readOnly}
         placeholder={placeholder}

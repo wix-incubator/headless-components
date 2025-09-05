@@ -12,6 +12,7 @@ const Checkbox = ({
   defaultValue,
   required,
   readOnly,
+  value,
   onChange,
   onBlur,
   onFocus,
@@ -22,6 +23,7 @@ const Checkbox = ({
         <input
           id={id}
           type="checkbox"
+          checked={value}
           defaultChecked={defaultValue}
           required={required}
           readOnly={readOnly}
