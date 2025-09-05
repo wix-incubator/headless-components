@@ -6,6 +6,7 @@ import TextInput from '../components/TextInput';
 import ContactsBirthdate from '../components/ContactsBirthdate';
 import ContactsEmail from '../components/ContactsEmail';
 import ContactsFirstName from '../components/ContactsFirstName';
+import ContactsLastName from '../components/ContactsLastName';
 import ContactsSubscribe from '../components/ContactsSubscribe';
 import TextArea from '../components/TextArea';
 import NumberInput from '../components/NumberInput';
@@ -20,6 +21,7 @@ const FIELD_MAP = {
   CONTACTS_BIRTHDATE: ContactsBirthdate,
   CONTACTS_EMAIL: ContactsEmail,
   CONTACTS_FIRST_NAME: ContactsFirstName,
+  CONTACTS_LAST_NAME: ContactsLastName,
   CONTACTS_SUBSCRIBE: ContactsSubscribe,
   TEXT_AREA: TextArea,
   NUMBER_INPUT: NumberInput,
