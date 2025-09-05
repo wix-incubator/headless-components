@@ -63,6 +63,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
       customElementProps={{ label: input.label, required: input.mandatory }}
       content={input.label}
     >
+      {/* TODO: check if * should be controlled with prop */}
       <label htmlFor={input.name}>
         {input.label}
         {input.mandatory ? ' *' : ''}

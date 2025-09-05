@@ -13,54 +13,54 @@ export function Form({ eventServiceConfig }: FormProps) {
   return (
     <EventPrimitive.Root event={eventServiceConfig.event}>
       <div className="bg-surface-primary">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-15 max-w-5xl mx-auto p-15">
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 max-w-5xl mx-auto p-15">
+          <div className="col-span-1 lg:col-span-2">
             <h1 className="text-3xl font-light text-content-primary mb-6">
               Add your details
             </h1>
             <FormPrimitive.Root eventServiceConfig={eventServiceConfig}>
-              <FormPrimitive.Controls className="space-y-4">
+              <FormPrimitive.Controls className="grid grid-cols-2 gap-6">
                 <FormPrimitive.ControlRepeater>
-                  <div className="space-y-2">
-                    <ControlPrimitive.Label className="block text-sm font-medium text-content-primary" />
+                  <div className="col-span-2 [&:nth-child(-n+2)]:col-span-1">
+                    <ControlPrimitive.Label className="block text-sm font-light text-content-primary mb-2" />
                     <ControlPrimitive.Field
                       className={`
-                  [&>[type="text"]]:w-full [&>[type="text"]]:px-4 [&>[type="text"]]:py-3 [&>[type="text"]]:border [&>[type="text"]]:border-surface-strong [&>[type="text"]]:text-content-primary
-                  [&>[type="email"]]:w-full [&>[type="email"]]:px-4 [&>[type="email"]]:py-3 [&>[type="email"]]:border [&>[type="email"]]:border-surface-strong [&>[type="email"]]:text-content-primary
-                  [&>[type="tel"]]:w-full [&>[type="tel"]]:px-4 [&>[type="tel"]]:py-3 [&>[type="tel"]]:border [&>[type="tel"]]:border-surface-strong [&>[type="tel"]]:text-content-primary
-                  [&>[type="date"]]:w-full [&>[type="date"]]:px-4 [&>[type="date"]]:py-3 [&>[type="date"]]:border [&>[type="date"]]:border-surface-strong [&>[type="date"]]:text-content-primary
-                  [&>textarea]:w-full [&>textarea]:px-4 [&>textarea]:py-3 [&>textarea]:border [&>textarea]:border-surface-strong [&>textarea]:text-content-primary
-                  [&>select]:w-full [&>select]:px-4 [&>select]:py-3 [&>select]:border [&>select]:border-surface-strong [&>select]:text-content-primary
+                  [&>[type="text"]]:w-full [&>[type="text"]]:px-4 [&>[type="text"]]:py-3 [&>[type="text"]]:border [&>[type="text"]]:border-gray-300 [&>[type="text"]]:text-content-primary
+                  [&>[type="email"]]:w-full [&>[type="email"]]:px-4 [&>[type="email"]]:py-3 [&>[type="email"]]:border [&>[type="email"]]:border-gray-300 [&>[type="email"]]:text-content-primary
+                  [&>[type="tel"]]:w-full [&>[type="tel"]]:px-4 [&>[type="tel"]]:py-3 [&>[type="tel"]]:border [&>[type="tel"]]:border-gray-300 [&>[type="tel"]]:text-content-primary
+                  [&>[type="date"]]:w-full [&>[type="date"]]:px-4 [&>[type="date"]]:py-3 [&>[type="date"]]:border [&>[type="date"]]:border-gray-300 [&>[type="date"]]:text-content-primary
+                  [&>textarea]:w-full [&>textarea]:px-4 [&>textarea]:py-3 [&>textarea]:border [&>textarea]:border-gray-300 [&>textarea]:text-content-primary
+                  [&>select]:w-full [&>select]:px-4 [&>select]:py-3 [&>select]:border [&>select]:border-gray-300 [&>select]:text-content-primary
 
                   [&[data-type="checkbox"]]:space-y-4
                   [&>[data-type="checkbox-option"]]:flex [&>[data-type="checkbox-option"]]:items-center
                   [&>[data-type="checkbox-option"]_input]:w-5 [&>[data-type="checkbox-option"]_input]:h-5 [&>[data-type="checkbox-option"]_input]:mr-3
-                  [&>[data-type="checkbox-option"]_label]:text-sm [&>[data-type="checkbox-option"]_label]:font-medium [&>[data-type="checkbox-option"]_label]:text-content-primary
+                  [&>[data-type="checkbox-option"]_label]:text-sm [&>[data-type="checkbox-option"]_label]:font-light [&>[data-type="checkbox-option"]_label]:text-content-primary
 
                   [&[data-type="radio"]]:space-y-4
                   [&>[data-type="radio-option"]]:flex [&>[data-type="radio-option"]]:items-center
                   [&>[data-type="radio-option"]_input]:w-5 [&>[data-type="radio-option"]_input]:h-5 [&>[data-type="radio-option"]_input]:mr-3
-                  [&>[data-type="radio-option"]_label]:text-sm [&>[data-type="radio-option"]_label]:font-medium [&>[data-type="radio-option"]_label]:text-content-primary
+                  [&>[data-type="radio-option"]_label]:text-sm [&>[data-type="radio-option"]_label]:font-light [&>[data-type="radio-option"]_label]:text-content-primary
 
-                  [&[data-type="guest-control"]]:space-y-4
-                  [&[data-type="guest-control"]_label]:block [&[data-type="guest-control"]_label]:text-sm [&[data-type="guest-control"]_label]:font-medium [&[data-type="guest-control"]_label]:text-content-primary
+                  [&[data-type="guest-control"]]:space-y-6
+                  [&[data-type="guest-control"]_label]:block [&[data-type="guest-control"]_label]:text-sm [&[data-type="guest-control"]_label]:font-light [&[data-type="guest-control"]_label]:text-content-primary [&[data-type="guest-control"]_label]:mb-2
                 `}
                     />
                   </div>
                 </FormPrimitive.ControlRepeater>
-
-                <FormPrimitive.SubmitTrigger
-                  className="btn-primary block font-light py-2 px-10 mt-10 mx-auto"
-                  label="RSVP"
-                />
+                <div className="col-span-2 text-center">
+                  <FormPrimitive.SubmitTrigger
+                    className="btn-primary w-full font-light py-3 px-3"
+                    label="RSVP"
+                  />
+                  <FormPrimitive.Error className="block text-sm font-light text-status-error mt-2" />
+                </div>
               </FormPrimitive.Controls>
             </FormPrimitive.Root>
           </div>
-
           <div>
-            <div className="border border-gray-200 p-8">
+            <div className="border border-gray-300 p-8">
               <EventPrimitive.Title className="block text-xl font-light text-content-primary mb-4" />
-
               <div className="flex gap-1 font-light text-sm text-content-primary mb-1">
                 <svg width="20" height="20" viewBox="0 0 20 20">
                   <path
@@ -70,7 +70,6 @@ export function Form({ eventServiceConfig }: FormProps) {
                 </svg>
                 <EventPrimitive.Date format="short" />
               </div>
-
               <div className="flex gap-1 font-light text-sm text-content-primary mb-6">
                 <svg width="20" height="20" viewBox="0 0 20 20">
                   <path
@@ -80,7 +79,6 @@ export function Form({ eventServiceConfig }: FormProps) {
                 </svg>
                 <EventPrimitive.Location format="short" />
               </div>
-
               <EventPrimitive.Image
                 width={640}
                 height={360}
