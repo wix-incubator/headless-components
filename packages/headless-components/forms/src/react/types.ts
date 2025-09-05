@@ -30,16 +30,18 @@ interface BaseCheckboxProps extends BaseFieldProps {
  * @interface ContactsBirthdateProps
  *
  * @property {string} id - The unique identifier for the form field
- * @property {string | null | undefined} value - The current value of the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO date string format: YYYY-MM-DD)
  * @property {string} label - The display label for the form field
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} [description] - Optional rich content description for the field
  * @property {boolean} showLabel - Whether to display the field label
- * @property {boolean} showPlaceholder - Whether to show placeholder text for the date input
+ * @property {boolean} showPlaceholder - Whether to show placeholder text for the date inputs
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @ui_requirement The CONTACTS_BIRTHDATE field MUST render 3 separate number inputs on the UI for day, month and year.
  *
  * @example
  * ```tsx
