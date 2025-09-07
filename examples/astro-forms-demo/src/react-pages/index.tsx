@@ -8,6 +8,7 @@ import ContactsEmail from '../components/ContactsEmail';
 import ContactsFirstName from '../components/ContactsFirstName';
 import ContactsLastName from '../components/ContactsLastName';
 import ContactsPhone from '../components/ContactsPhone';
+import ContactsCompany from '../components/ContactsCompany';
 import ContactsAddress from '../components/ContactsAddress';
 import MultilineAddress from '../components/MultilineAddress';
 import ContactsTaxId from '../components/ContactsTaxId';
@@ -27,6 +28,7 @@ const FIELD_MAP = {
   CONTACTS_FIRST_NAME: ContactsFirstName,
   CONTACTS_LAST_NAME: ContactsLastName,
   CONTACTS_PHONE: ContactsPhone,
+  CONTACTS_COMPANY: ContactsCompany,
   CONTACTS_ADDRESS: ContactsAddress,
   MULTILINE_ADDRESS: MultilineAddress,
   CONTACTS_TAX_ID: ContactsTaxId,

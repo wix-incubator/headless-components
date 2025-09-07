@@ -2,8 +2,9 @@ import { forms } from '@wix/forms';
 import { CallingCountryCode } from './constants/calling-country-codes';
 
 interface MinMaxLengthProps {
-  minLength?: number;
-  maxLength?: number;
+  minLength: number | undefined;
+  /** @constraint maxLength <= 5000 */
+  maxLength: number | undefined;
 }
 
 interface BaseFieldProps {
@@ -186,6 +187,49 @@ export interface ContactsPhoneProps extends BaseTextFieldProps {
   allowedCountryCodes: CallingCountryCode[];
   defaultCountryCode?: CallingCountryCode;
 }
+
+/**
+ * Props for contacts company field.
+ * Used with fieldMap key: CONTACTS_COMPANY
+ *
+ * @interface ContactsCompanyProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const companyField: ContactsCompanyProps = {
+ *   id: 'company',
+ *   value: 'Acme Corporation',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Company Name',
+ *   showLabel: true,
+ *   placeholder: 'Enter your company name',
+ *   description: { nodes: [{ type: 'text', text: 'Optional company or organization name' }] },
+ *   minLength: 2,
+ *   maxLength: 100,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsCompanyProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
 
 /**
  * Props for contacts address field.
