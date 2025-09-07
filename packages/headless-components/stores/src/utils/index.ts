@@ -36,5 +36,3 @@ export async function getCheckoutUrlForProduct(
 
   return redirectSession?.fullUrl!;
 }
-
-export * from './renderAsChild.js';

@@ -66,6 +66,7 @@
  * @module Commerce
  */
 
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { Slot } from '@radix-ui/react-slot';
 import { Checkout as CoreCurrentCartCheckout } from './core/CurrentCart.js';
 import {
@@ -135,19 +136,14 @@ export interface ActionCheckoutProps
    * Content to render inside the button.
    * Can be static content or a render function for custom behavior.
    */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLButtonElement,
-        {
-          /** Function to proceed to checkout */
-          proceedToCheckout: () => Promise<void>;
-          /** Whether checkout is available */
-          canCheckout: boolean;
-          /** Whether checkout action is loading */
-          isLoading: boolean;
-        }
-      >;
+  children?: AsChildChildren<{
+    /** Function to proceed to checkout */
+    proceedToCheckout: () => Promise<void>;
+    /** Whether checkout is available */
+    canCheckout: boolean;
+    /** Whether checkout action is loading */
+    isLoading: boolean;
+  }>;
   /** Text or content to display when not loading */
   label?: string | React.ReactNode;
   /** Text or content to display when loading */
@@ -220,41 +216,39 @@ const ActionCheckout = React.forwardRef<HTMLButtonElement, ActionCheckoutProps>(
       className,
       label = 'Checkout',
       loadingState = '...',
-      ...props
+      ...otherProps
     },
     ref,
   ) => {
     return (
       <CoreCurrentCartCheckout>
         {(renderProps) => {
-          if (asChild && children && typeof children === 'function') {
-            return children(
-              {
-                proceedToCheckout: renderProps.proceedToCheckout,
-                canCheckout: renderProps.canCheckout,
-                isLoading: renderProps.isLoading,
-              },
-              ref,
-            );
-          }
-          const Comp = asChild ? Slot : 'button';
+          const defaultContent = children
+            ? (children as React.ReactNode)
+            : renderProps.isLoading
+              ? loadingState
+              : label;
+
           return (
-            <Comp
+            <AsChildSlot
               ref={ref}
+              asChild={asChild}
               className={className}
               onClick={renderProps.proceedToCheckout}
               disabled={!renderProps.canCheckout || renderProps.isLoading}
               data-testid={TestIds.actionCheckout}
               data-in-progress={renderProps.isLoading}
-              {...props}
-              children={
-                children
-                  ? (children as React.ReactNode)
-                  : renderProps.isLoading
-                    ? loadingState
-                    : label
-              }
-            />
+              customElement={children}
+              customElementProps={{
+                proceedToCheckout: renderProps.proceedToCheckout,
+                canCheckout: renderProps.canCheckout,
+                isLoading: renderProps.isLoading,
+              }}
+              content={defaultContent}
+              {...otherProps}
+            >
+              <button>{defaultContent}</button>
+            </AsChildSlot>
           );
         }}
       </CoreCurrentCartCheckout>
