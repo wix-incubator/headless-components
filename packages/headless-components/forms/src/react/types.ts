@@ -181,7 +181,9 @@ export interface ContactsEmailProps extends BaseTextFieldProps {}
  * };
  * ```
  */
-export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
+export interface ContactsFirstNameProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
 
 /**
  * Props for contacts last name field.
@@ -222,7 +224,9 @@ export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLength
  * };
  * ```
  */
-export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
+export interface ContactsFirstNameProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
 
 /**
  * Props for contacts tax ID field.
@@ -263,7 +267,9 @@ export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLength
  * };
  * ```
  */
-export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
+export interface ContactsFirstNameProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
 
 /**
  * Props for text area field.
@@ -304,7 +310,9 @@ export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLength
  * };
  * ```
  */
-export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
+export interface ContactsFirstNameProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
 
 /**
  * Props for text input field.
@@ -345,7 +353,9 @@ export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLength
  * };
  * ```
  */
-export interface ContactsFirstNameProps extends BaseTextFieldProps, MinMaxLengthProps {}
+export interface ContactsFirstNameProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
 
 /**
  * Props for number input field.
