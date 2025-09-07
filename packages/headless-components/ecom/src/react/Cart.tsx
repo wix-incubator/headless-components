@@ -1080,18 +1080,6 @@ const PricePartFactory = ({
               currency: currency,
             };
 
-            if (asChild && children && typeof children === 'function') {
-              return children(
-                {
-                  price,
-                  formattedPrice: total,
-                  isLoading: isTotalsLoading,
-                  label,
-                },
-                ref,
-              );
-            }
-
             return (
               <AsChildSlot
                 asChild={asChild}
@@ -1106,12 +1094,14 @@ const PricePartFactory = ({
                 className={className}
                 {...props}
               >
-                {label && <span>{label}</span>}
-                {isTotalsLoading ? (
-                  <span>...</span>
-                ) : (
-                  <span>{isDiscount ? `-${total}` : total}</span>
-                )}
+                <div>
+                  {label && <span>{label}</span>}
+                  {isTotalsLoading ? (
+                    <span>...</span>
+                  ) : (
+                    <span>{isDiscount ? `-${total}` : total}</span>
+                  )}
+                </div>
               </AsChildSlot>
             );
           }}
