@@ -46,7 +46,6 @@
 import {
   EmptyState as CoreEmptyState,
   LineItemsList as CoreLineItemsList,
-  Item as CoreItem,
   Summary as CoreSummary,
   SummaryRenderProps as CoreSummaryRenderProps,
   Content as CoreContent,
@@ -126,7 +125,9 @@ export interface EmptyStateProps {
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Content to display when cart is empty (can be a render function or ReactNode) */
-  children: AsChildChildren<{}>;
+  children?: AsChildChildren<{}>;
+  /** Text label to display when cart is empty */
+  label?: string;
   /** CSS class name */
   className?: string;
   /** Additional HTML attributes */
@@ -141,7 +142,13 @@ export interface EmptyStateProps {
  * @component
  * @example
  * ```tsx
- * // Default div wrapper
+ * // Default rendering with default label
+ * <Cart.EmptyState />
+ *
+ * // Custom label
+ * <Cart.EmptyState label="Your cart is empty" />
+ *
+ * // Custom content with render function
  * <Cart.EmptyState>
  *   {() => (
  *     <div>
@@ -160,7 +167,7 @@ export interface EmptyStateProps {
  * ```
  */
 export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
-  ({ asChild, children }, ref) => {
+  ({ asChild, children, label = 'No items in cart' }, ref) => {
     return (
       <CoreEmptyState>
         <AsChildSlot
@@ -170,7 +177,7 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
           ref={ref}
           data-testid={TestIds.cartEmptyState}
         >
-          {children ? children : 'No items in cart'}
+          {label}
         </AsChildSlot>
       </CoreEmptyState>
     );
