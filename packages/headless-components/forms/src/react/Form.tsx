@@ -10,6 +10,7 @@ import {
 } from '../services/form-service.js';
 import {
   CheckboxProps,
+  ContactsAddressProps,
   ContactsBirthdateProps,
   ContactsEmailProps,
   ContactsFirstNameProps,
@@ -112,6 +113,7 @@ interface FieldMap {
   CONTACTS_LAST_NAME: React.ComponentType<ContactsLastNameProps>;
   CONTACTS_EMAIL: React.ComponentType<ContactsEmailProps>;
   CONTACTS_PHONE: React.ComponentType<ContactsPhoneProps>;
+  CONTACTS_ADDRESS: React.ComponentType<ContactsAddressProps>;
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
   TEXT_INPUT: React.ComponentType<TextInputProps>;
   CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;

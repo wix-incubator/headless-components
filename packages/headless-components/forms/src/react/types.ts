@@ -188,6 +188,47 @@ export interface ContactsPhoneProps extends BaseTextFieldProps {
 }
 
 /**
+ * Props for contacts address field.
+ * Used with fieldMap key: CONTACTS_ADDRESS
+ *
+ * @interface ContactsAddressProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ *
+ * @example
+ * ```tsx
+ * const addressField: ContactsAddressProps = {
+ *   id: 'address',
+ *   value: '123 Main St\nApt 4B\nNew York, NY 10001',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Address',
+ *   showLabel: true,
+ *   placeholder: 'Enter your full address',
+ *   description: { nodes: [{ type: 'text', text: 'Include street, city, state, and zip code' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ *   minLength: 10,
+ *   maxLength: 1000,
+ * };
+ * ```
+ */
+export interface ContactsAddressProps extends BaseTextFieldProps, MinMaxLengthProps {}
+
+/**
  * Props for contacts first name field.
  * Used with fieldMap key: CONTACTS_FIRST_NAME
  *

@@ -1,0 +1,56 @@
+import { type ContactsAddressProps } from '@wix/headless-forms/react';
+import {
+  quickStartViewerPlugins,
+  RicosViewer,
+  type RichContent,
+} from '@wix/ricos';
+import '@wix/ricos/css/all-plugins-viewer.css';
+
+const ContactsAddress = ({
+  id,
+  value,
+  label,
+  showLabel,
+  placeholder,
+  description,
+  required,
+  readOnly,
+  onChange,
+  onBlur,
+  onFocus,
+  minLength,
+  maxLength,
+}: ContactsAddressProps) => {
+  const descriptionId = description ? `${id}-description` : undefined;
+
+  return (
+    <div>
+      {showLabel && <label htmlFor={id}>{label}</label>}
+      <textarea
+        id={id}
+        value={value || ''}
+        required={required}
+        readOnly={readOnly}
+        placeholder={placeholder}
+        minLength={minLength}
+        maxLength={maxLength}
+        aria-describedby={descriptionId}
+        onChange={e => onChange(e.target.value)}
+        onBlur={() => onBlur()}
+        onFocus={() => onFocus()}
+        rows={4}
+        style={{ width: '100%', resize: 'vertical' }}
+      />
+      {description && (
+        <div id={descriptionId}>
+          <RicosViewer
+            content={description as RichContent}
+            plugins={quickStartViewerPlugins()}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ContactsAddress;
