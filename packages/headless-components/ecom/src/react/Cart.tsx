@@ -170,7 +170,7 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
           ref={ref}
           data-testid={TestIds.cartEmptyState}
         >
-          <div>{children ? children : 'No items in cart'}</div>
+          {children ? children : 'No items in cart'}
         </AsChildSlot>
       </CoreEmptyState>
     );
@@ -426,117 +426,6 @@ export interface ContentRenderProps {
 export const Content = (props: ContentProps) => {
   return <CoreContent>{props.children}</CoreContent>;
 };
-
-/**
- * Props for Item component
- */
-export interface ItemProps {
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Line item data */
-  item: LineItem;
-  /** Render prop function that receives item data */
-  children: AsChildChildren<{
-    /** Current quantity */
-    quantity: number;
-    /** Product title */
-    title: string;
-    /** Product image URL */
-    image: string | null;
-    /** Line item price */
-    price: string;
-    /** Selected product options */
-    selectedOptions: Array<{
-      name: string;
-      value: string | { name: string; code: string };
-    }>;
-    /** Function to increase quantity */
-    increaseQuantity: () => Promise<void>;
-    /** Function to decrease quantity */
-    decreaseQuantity: () => Promise<void>;
-    /** Function to remove item */
-    remove: () => Promise<void>;
-    /** Whether item is loading */
-    isLoading: boolean;
-  }>;
-  /** CSS class name */
-  className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
-}
-
-/**
- * Headless component for individual cart item.
- * Supports the asChild pattern for flexible composition.
- *
- * @component
- * @example
- * ```tsx
- * // Default div wrapper
- * <Cart.Item item={item}>
- *   {({ quantity, title, price, increaseQuantity, decreaseQuantity, remove }) => (
- *     <div>
- *       <h3>{title}</h3>
- *       <p>{price}</p>
- *       <div>
- *         <button onClick={decreaseQuantity}>-</button>
- *         <span>{quantity}</span>
- *         <button onClick={increaseQuantity}>+</button>
- *         <button onClick={remove}>Remove</button>
- *       </div>
- *     </div>
- *   )}
- * </Cart.Item>
- *
- * // Using asChild for custom wrapper
- * <Cart.Item item={item} asChild>
- *   <article className="cart-item">
- *     Item content will be rendered here
- *   </article>
- * </Cart.Item>
- * ```
- */
-export const Item = React.forwardRef<HTMLDivElement, ItemProps>(
-  ({ asChild, children, item, ...props }, ref) => {
-    return (
-      <CoreItem item={item}>
-        {(renderProps) => {
-          return (
-            <AsChildSlot
-              asChild={asChild}
-              customElement={children}
-              customElementProps={renderProps}
-              ref={ref}
-              data-testid={TestIds.cartItem}
-              {...props}
-            >
-              <div>
-                <p>{renderProps.title}</p>
-                <p>{renderProps.price}</p>
-                <p>{renderProps.quantity}</p>
-                <button onClick={renderProps.remove}>Remove</button>
-                <button
-                  onClick={() =>
-                    renderProps.onValueChange(renderProps.quantity + 1)
-                  }
-                >
-                  +
-                </button>
-                <button
-                  onClick={() =>
-                    renderProps.onValueChange(renderProps.quantity - 1)
-                  }
-                >
-                  -
-                </button>
-              </div>
-            </AsChildSlot>
-          );
-        }}
-      </CoreItem>
-    );
-  },
-);
 
 /**
  * Props for Summary component
