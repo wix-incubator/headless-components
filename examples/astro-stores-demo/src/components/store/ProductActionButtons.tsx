@@ -10,7 +10,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
   showBuyNow = false,
 }) => {
   return (
-    <>
+    <div className="flex gap-3">
       {/* Add to Cart Button */}
       <Product.ProductActionAddToCart
         label="Add to Cart"
@@ -108,7 +108,7 @@ export const ProductActionButtons: React.FC<ProductActionButtonsProps> = ({
           }
         />
       )}
-    </>
+    </div>
   );
 };
 

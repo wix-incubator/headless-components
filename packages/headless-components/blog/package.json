@@ -1,11 +1,13 @@
 {
-  "name": "@wix/headless-ecom",
-  "version": "0.0.28",
+  "name": "@wix/headless-blog",
+  "version": "0.0.6",
   "type": "module",
   "scripts": {
-    "build": "npm run build:esm && npm run build:cjs",
+    "prebuild": "cd ../utils && yarn build && cd ../components && yarn build && cd ../media && yarn build",
+    "build": "npm run build:esm && npm run build:cjs && npm run copy-assets",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
+    "copy-assets": "cp src/react/styles.css dist/react/styles.css",
     "test": "vitest",
     "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
     "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
@@ -24,6 +26,7 @@
       "import": "./dist/react/index.js",
       "require": "./cjs/dist/react/index.js"
     },
+    "./react/styles.css": "./dist/react/styles.css",
     "./services": {
       "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.js",
@@ -43,13 +46,15 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
-    "@wix/auto_sdk_ecom_checkout": "^1.0.61",
-    "@wix/auto_sdk_ecom_current-cart": "^1.0.56",
+    "@wix/blog": "^1.0.470",
     "@wix/headless-media": "workspace:*",
+    "@wix/headless-utils": "workspace:*",
+    "@wix/members": "^1.0.322",
     "@wix/redirects": "^1.0.0",
-    "@wix/sdk": "^1.15.24",
-    "@wix/services-definitions": "^0.1.4",
-    "@wix/services-manager-react": "^0.1.26"
+    "@wix/ricos": "^10.141.3",
+    "@wix/sdk": "^1.15.27",
+    "@wix/services-definitions": "^0.1.5",
+    "@wix/services-manager-react": "^0.1.27"
   },
   "peerDependencies": {
     "@wix/headless-components": "workspace:*"

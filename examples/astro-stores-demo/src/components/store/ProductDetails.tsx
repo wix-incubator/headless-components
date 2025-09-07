@@ -184,6 +184,8 @@ export default function ProductDetails({
             {/* Add to Cart */}
             <div className="space-y-4">
               <ProductActionButtons showBuyNow={true} />
+
+              <Product.ProductVariant.Stock className="flex items-center gap-2 data-[state='out-of-stock']:text-status-error data-[state='in-stock']:text-status-success data-[state='limited-stock']:text-status-success data-[state='can-pre-order']:text-status-success" />
             </div>
 
             {/* Product Details */}
