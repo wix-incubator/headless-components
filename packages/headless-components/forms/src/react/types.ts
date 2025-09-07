@@ -226,7 +226,57 @@ export interface ContactsPhoneProps extends BaseTextFieldProps {
  * };
  * ```
  */
-export interface ContactsAddressProps extends BaseTextFieldProps, MinMaxLengthProps {}
+export interface ContactsAddressProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+type MultilineAddressValue = {
+  country?: CallingCountryCode;
+  subdivision?: string;
+  city?: string;
+  addressLine?: string;
+  addressLine2?: string;
+  postalCode?: string;
+  streetName?: string;
+  streetNumber?: string;
+  apartment?: string;
+};
+
+/**
+ * Props for multiline address field.
+ * Used with fieldMap key: MULTILINE_ADDRESS
+ *
+ * @interface MultilineAddressProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {MultilineAddressValue | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ * @property {boolean} showAddressLine2 - Whether to show the address line 2 field
+ *
+ * @example
+ * ```tsx
+ * const multilineAddressField: MultilineAddressProps = {
+ *   id: 'multilineAddress',
+ *   value: '123 Main Street\nApt 4B\nNew York, NY 10001\nUnited States',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Full Address',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface MultilineAddressProps extends BaseFieldProps {
+  label?: string;
+  value: MultilineAddressValue;
+  showAddressLine2: boolean;
+}
 
 /**
  * Props for contacts first name field.
