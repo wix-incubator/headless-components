@@ -14,6 +14,7 @@ import {
   ContactsEmailProps,
   ContactsFirstNameProps,
   ContactsLastNameProps,
+  ContactsPhoneProps,
   ContactsTaxIdProps,
   ContactsSubscribeProps,
   NumberInputProps,
@@ -85,7 +86,7 @@ export function Root(props: RootProps): React.ReactNode {
  * which React component should be used to render each type of form field. Each field
  * type maps to a React component that accepts the appropriate props for that field type.
  *
- * @interface fieldMap
+ * @interface FieldMap
  *
  * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for text input fields
  * @property {React.ComponentType<ContactsBirthdateProps>} CONTACTS_BIRTHDATE - Component for birthdate fields
@@ -107,13 +108,14 @@ export function Root(props: RootProps): React.ReactNode {
  * ```
  */
 interface FieldMap {
-  TEXT_INPUT: React.ComponentType<TextInputProps>;
-  CONTACTS_EMAIL: React.ComponentType<ContactsEmailProps>;
   CONTACTS_FIRST_NAME: React.ComponentType<ContactsFirstNameProps>;
   CONTACTS_LAST_NAME: React.ComponentType<ContactsLastNameProps>;
-  CONTACTS_TAX_ID: React.ComponentType<ContactsTaxIdProps>;
+  CONTACTS_EMAIL: React.ComponentType<ContactsEmailProps>;
+  CONTACTS_PHONE: React.ComponentType<ContactsPhoneProps>;
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
+  TEXT_INPUT: React.ComponentType<TextInputProps>;
   CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
+  CONTACTS_TAX_ID: React.ComponentType<ContactsTaxIdProps>;
   TEXT_AREA: React.ComponentType<TextAreaProps>;
   NUMBER_INPUT: React.ComponentType<NumberInputProps>;
   CHECKBOX: React.ComponentType<CheckboxProps>;

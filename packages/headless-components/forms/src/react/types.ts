@@ -1,4 +1,5 @@
 import { forms } from '@wix/forms';
+import { CallingCountryCode } from './constants/calling-country-codes';
 
 interface MinMaxLengthProps {
   minLength?: number;
@@ -141,6 +142,50 @@ export interface ContactsSubscribeProps extends BaseCheckboxProps {}
  * ```
  */
 export interface ContactsEmailProps extends BaseTextFieldProps {}
+
+/**
+ * Props for contacts phone field.
+ * Used with fieldMap key: CONTACTS_PHONE
+ *
+ * @interface ContactsPhoneProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {CallingCountryCode[]} [allowedCountryCodes] - Optional array of allowed country codes for phone number validation
+ * @property {CallingCountryCode} [defaultCountryCode] - Optional default country code to pre-select
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const phoneField: ContactsPhoneProps = {
+ *   id: 'phone',
+ *   value: '+1-555-123-4567',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Phone Number',
+ *   showLabel: true,
+ *   placeholder: 'Enter your phone number',
+ *   description: { nodes: [{ type: 'text', text: 'Include country code' }] },
+ *   allowedCountryCodes: ['US', 'CA', 'GB'],
+ *   defaultCountryCode: 'US',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsPhoneProps extends BaseTextFieldProps {
+  allowedCountryCodes: CallingCountryCode[];
+  defaultCountryCode?: CallingCountryCode;
+}
 
 /**
  * Props for contacts first name field.
