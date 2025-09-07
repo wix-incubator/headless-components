@@ -463,6 +463,15 @@ export interface SummaryProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Labels for the summary display. Supports {totalItems} placeholder replacement */
+  labels?: {
+    /** Label for subtotal line. Use {totalItems} to include item count */
+    subtotal?: string;
+    /** Label for total line */
+    total?: string;
+    /** Label shown when totals are being calculated */
+    calculating?: string;
+  };
 }
 
 /**
@@ -482,6 +491,15 @@ export interface SummaryProps {
  *   )}
  * </Cart.Summary>
  *
+ * // With custom labels
+ * <Cart.Summary
+ *   labels={{
+ *     subtotal: 'Items ({totalItems})',
+ *     total: 'Grand Total',
+ *     calculating: 'Computing totals...'
+ *   }}
+ * />
+ *
  * // Using asChild for custom wrapper
  * <Cart.Summary asChild>
  *   <section className="cart-summary">
@@ -491,10 +509,23 @@ export interface SummaryProps {
  * ```
  */
 export const Summary = React.forwardRef<HTMLDivElement, SummaryProps>(
-  ({ asChild, children, ...props }, ref) => {
+  ({ asChild, children, labels, ...props }, ref) => {
+    const defaultLabels = {
+      subtotal: 'Subtotal ({totalItems} items)',
+      total: 'Total',
+      calculating: 'Calculating...',
+    };
+
+    const mergedLabels = { ...defaultLabels, ...labels };
+
     return (
       <CoreSummary>
         {(renderProps) => {
+          const subtotalLabel = mergedLabels.subtotal.replace(
+            '{totalItems}',
+            renderProps.totalItems.toString(),
+          );
+
           return (
             <AsChildSlot
               asChild={asChild}
@@ -506,13 +537,12 @@ export const Summary = React.forwardRef<HTMLDivElement, SummaryProps>(
             >
               <div>
                 <p>
-                  Subtotal ({renderProps.totalItems} items):{' '}
-                  {renderProps.subtotal}
+                  {subtotalLabel}: {renderProps.subtotal}
                 </p>
                 <p>
-                  Total:{' '}
+                  {mergedLabels.total}:{' '}
                   {renderProps.isTotalsLoading
-                    ? 'Calculating...'
+                    ? mergedLabels.calculating
                     : renderProps.total}
                 </p>
               </div>
