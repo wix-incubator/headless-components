@@ -232,6 +232,49 @@ export interface ContactsCompanyProps
     MinMaxLengthProps {}
 
 /**
+ * Props for contacts position field.
+ * Used with fieldMap key: CONTACTS_POSITION
+ *
+ * @interface ContactsPositionProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const positionField: ContactsPositionProps = {
+ *   id: 'position',
+ *   value: 'Software Engineer',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Job Position',
+ *   showLabel: true,
+ *   placeholder: 'Enter your job position',
+ *   description: { nodes: [{ type: 'text', text: 'Your current job title or position' }] },
+ *   minLength: 2,
+ *   maxLength: 100,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsPositionProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+/**
  * Props for contacts address field.
  * Used with fieldMap key: CONTACTS_ADDRESS
  *
