@@ -688,3 +688,84 @@ export interface CheckboxProps extends BaseCheckboxProps {}
  * ```
  */
 export interface UrlInputProps extends BaseTextFieldProps {}
+
+/**
+ * Data structure for uploaded file information.
+ *
+ * @interface FileData
+ *
+ * @property {string} fileId - Unique identifier for the uploaded file
+ * @property {string} displayName - Human-readable name for the file
+ * @property {string} url - URL where the file can be accessed
+ * @property {string} fileType - MIME type or file extension of the uploaded file
+ *
+ * @example
+ * ```tsx
+ * const fileData: FileData = {
+ *   fileId: 'file_123456789',
+ *   displayName: 'document.pdf',
+ *   url: 'https://example.com/uploads/document.pdf',
+ *   fileType: 'application/pdf'
+ * };
+ * ```
+ */
+interface FileData {
+  fileId: string;
+  displayName: string;
+  url: string;
+  fileType: string;
+}
+
+type FileFormat = 'Video' | 'Image' | 'Audio' | 'Document' | 'Archive';
+
+/**
+ * Props for file upload field.
+ * Used with fieldMap key: FILE_UPLOAD
+ *
+ * @interface FileUploadProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {FileData[] | null | undefined} value - The current value of the form field (array of uploaded file data)
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [buttonText] - Optional custom text for the upload button
+ * @property {number} [maxFiles] - Optional maximum number of files allowed
+ * @property {FileFormat[]} [allowedFileFormats] - Optional array of allowed file format extensions (e.g., [".pdf", ".doc", ".docx"])
+ * @property {string} [explanationText] - Optional explanatory text to display below the upload area
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const fileUploadField: FileUploadProps = {
+ *   id: 'documents',
+ *   value: null,
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Upload Documents',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Upload your documents (PDF, DOC, DOCX)' }] },
+ *   buttonText: 'Choose Files',
+ *   allowedFileFormats: ['.pdf', '.doc', '.docx'],
+ *   explanationText: 'Maximum file size: 10MB',
+ *   maxFiles: 5,
+ *   onChange: (files) => console.log('Files changed:', files),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface FileUploadProps extends BaseFieldProps {
+  value: FileData[] | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  buttonText?: string;
+  maxFiles?: number;
+  allowedFileFormats?: FileFormat[];
+  explanationText?: string;
+}

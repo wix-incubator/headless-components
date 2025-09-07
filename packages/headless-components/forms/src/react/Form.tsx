@@ -20,6 +20,7 @@ import {
   ContactsPositionProps,
   ContactsTaxIdProps,
   ContactsSubscribeProps,
+  FileUploadProps,
   MultilineAddressProps,
   NumberInputProps,
   TextAreaProps,
@@ -124,6 +125,7 @@ interface FieldMap {
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
   TEXT_INPUT: React.ComponentType<TextInputProps>;
   URL_INPUT: React.ComponentType<UrlInputProps>;
+  FILE_UPLOAD: React.ComponentType<FileUploadProps>;
   CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
   CONTACTS_TAX_ID: React.ComponentType<ContactsTaxIdProps>;
   TEXT_AREA: React.ComponentType<TextAreaProps>;
