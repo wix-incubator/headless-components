@@ -46,6 +46,8 @@ enum TestIds {
   eventFacebookShare = 'event-facebook-share',
   eventLinkedInShare = 'event-linked-in-share',
   eventXShare = 'event-x-share',
+  eventAddToGoogleCalendar = 'event-add-to-google-calendar',
+  eventAddToIcsCalendar = 'event-add-to-ics-calendar',
 }
 
 /**
@@ -720,3 +722,83 @@ export const XShare = React.forwardRef<HTMLElement, XShareProps>(
     );
   },
 );
+
+export interface AddToGoogleCalendarProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ url: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export const AddToGoogleCalendar = React.forwardRef<
+  HTMLElement,
+  AddToGoogleCalendarProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const eventService = useService(EventServiceDefinition);
+  const event = eventService.event.get();
+  const url = event.calendarUrls?.google;
+
+  if (!url) {
+    return null;
+  }
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventAddToGoogleCalendar}
+      customElement={children}
+      customElementProps={{ url }}
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <a />
+    </AsChildSlot>
+  );
+});
+
+export interface AddToIcsCalendarProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ url: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export const AddToIcsCalendar = React.forwardRef<
+  HTMLElement,
+  AddToIcsCalendarProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const eventService = useService(EventServiceDefinition);
+  const event = eventService.event.get();
+  const url = event.calendarUrls?.ics;
+
+  if (!url) {
+    return null;
+  }
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.eventAddToIcsCalendar}
+      customElement={children}
+      customElementProps={{ url }}
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <a />
+    </AsChildSlot>
+  );
+});
