@@ -3,6 +3,7 @@ import { type FormServiceConfig } from '@wix/headless-forms/services';
 
 import '../styles/theme-1.css';
 import TextInput from '../components/TextInput';
+import URLInput from '../components/URLInput';
 import ContactsBirthdate from '../components/ContactsBirthdate';
 import ContactsEmail from '../components/ContactsEmail';
 import ContactsFirstName from '../components/ContactsFirstName';
@@ -24,6 +25,7 @@ interface FormsPageProps {
 
 const FIELD_MAP = {
   TEXT_INPUT: TextInput,
+  URL_INPUT: URLInput,
   CONTACTS_BIRTHDATE: ContactsBirthdate,
   CONTACTS_EMAIL: ContactsEmail,
   CONTACTS_FIRST_NAME: ContactsFirstName,

@@ -24,6 +24,7 @@ import {
   NumberInputProps,
   TextAreaProps,
   TextInputProps,
+  UrlInputProps,
 } from './types.js';
 
 export interface RootProps {
@@ -122,6 +123,7 @@ interface FieldMap {
   MULTILINE_ADDRESS: React.ComponentType<MultilineAddressProps>;
   CONTACTS_BIRTHDATE: React.ComponentType<ContactsBirthdateProps>;
   TEXT_INPUT: React.ComponentType<TextInputProps>;
+  URL_INPUT: React.ComponentType<UrlInputProps>;
   CONTACTS_SUBSCRIBE: React.ComponentType<ContactsSubscribeProps>;
   CONTACTS_TAX_ID: React.ComponentType<ContactsTaxIdProps>;
   TEXT_AREA: React.ComponentType<TextAreaProps>;
