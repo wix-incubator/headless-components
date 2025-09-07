@@ -3,7 +3,6 @@ import { CallingCountryCode } from './constants/calling-country-codes';
 
 interface MinMaxLengthProps {
   minLength: number | undefined;
-  /** @constraint maxLength <= 5000 */
   maxLength: number | undefined;
 }
 

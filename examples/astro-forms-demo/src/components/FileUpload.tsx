@@ -56,13 +56,16 @@ const FileUpload = ({
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-        const isAllowed = allowedFileFormats.some(format =>
-          fileExtension === format.toLowerCase() ||
-          file.type.startsWith(format.toLowerCase())
+        const isAllowed = allowedFileFormats.some(
+          format =>
+            fileExtension === format.toLowerCase() ||
+            file.type.startsWith(format.toLowerCase())
         );
 
         if (!isAllowed) {
-          console.warn(`File ${file.name} is not in allowed formats: ${allowedFileFormats.join(', ')}`);
+          console.warn(
+            `File ${file.name} is not in allowed formats: ${allowedFileFormats.join(', ')}`
+          );
           return false;
         }
       }
@@ -71,7 +74,9 @@ const FileUpload = ({
     return true;
   };
 
-  const handleFileChangeWithValidation = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChangeWithValidation = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = event.target.files;
     if (validateFiles(files)) {
       handleFileChange(event);
@@ -82,9 +87,11 @@ const FileUpload = ({
   };
 
   // Convert allowedFileFormats to accept string for HTML input
-  const acceptString = allowedFileFormats?.map(format =>
-    format.startsWith('.') ? format : `.${format.toLowerCase()}`
-  ).join(',');
+  const acceptString = allowedFileFormats
+    ?.map(format =>
+      format.startsWith('.') ? format : `.${format.toLowerCase()}`
+    )
+    .join(',');
 
   return (
     <div>
@@ -102,7 +109,10 @@ const FileUpload = ({
         onFocus={() => onFocus()}
       />
       {buttonText && (
-        <button type="button" onClick={() => document.getElementById(id)?.click()}>
+        <button
+          type="button"
+          onClick={() => document.getElementById(id)?.click()}
+        >
           {buttonText}
         </button>
       )}
@@ -115,9 +125,7 @@ const FileUpload = ({
         </div>
       )}
       {explanationText && (
-        <div className="file-upload-explanation">
-          {explanationText}
-        </div>
+        <div className="file-upload-explanation">{explanationText}</div>
       )}
       {value && value.length > 0 && (
         <div>
