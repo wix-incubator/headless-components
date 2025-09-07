@@ -538,6 +538,13 @@ export interface ClearProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Labels for the clear button. Supports {totalItems} placeholder replacement */
+  labels?: {
+    /** Label shown when clearing is in progress */
+    clearing?: string;
+    /** Label shown when cart is ready to be cleared. Use {totalItems} to include item count */
+    clear?: string;
+  };
 }
 
 /**
@@ -556,6 +563,14 @@ export interface ClearProps {
  *   )}
  * </Cart.Clear>
  *
+ * // With custom labels
+ * <Cart.Clear
+ *   labels={{
+ *     clearing: 'Removing items...',
+ *     clear: 'Empty Cart ({totalItems} items)'
+ *   }}
+ * />
+ *
  * // Using asChild for custom button
  * <Cart.Clear asChild>
  *   <button className="danger-button">
@@ -565,13 +580,27 @@ export interface ClearProps {
  * ```
  */
 export const Clear = React.forwardRef<HTMLButtonElement, ClearProps>(
-  ({ children, asChild, ...props }, ref) => {
+  ({ children, asChild, labels, ...props }, ref) => {
+    const defaultLabels = {
+      clearing: 'Clearing...',
+      clear: 'Clear Cart ({totalItems})',
+    };
+
+    const mergedLabels = { ...defaultLabels, ...labels };
+
     return (
       <CoreClear>
         {(renderProps) => {
           if (renderProps.totalItems === 0) {
             return null;
           }
+
+          const clearingLabel = mergedLabels.clearing;
+          const clearLabel = mergedLabels.clear.replace(
+            '{totalItems}',
+            renderProps.totalItems.toString(),
+          );
+
           return (
             <AsChildSlot
               asChild={asChild}
@@ -587,9 +616,7 @@ export const Clear = React.forwardRef<HTMLButtonElement, ClearProps>(
                 onClick={renderProps.clear}
                 disabled={renderProps.isLoading || renderProps.totalItems === 0}
               >
-                {renderProps.isLoading
-                  ? 'Clearing...'
-                  : `Clear Cart (${renderProps.totalItems})`}
+                {renderProps.isLoading ? clearingLabel : clearLabel}
               </button>
             </AsChildSlot>
           );
