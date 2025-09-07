@@ -48,7 +48,7 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
                       window.location.href = `/events/${event.slug}`;
                     }}
                   >
-                    Buy Tickets
+                    RSVP
                   </button>
                 )}
               </EventPrimitive.RsvpButton>

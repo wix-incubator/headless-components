@@ -54,10 +54,12 @@ export const getRequiredRsvpData = (
     firstName: formData.get('firstName') as string,
     lastName: formData.get('lastName') as string,
     email: formData.get('email') as string,
-    additionalGuestDetails: {
-      guestCount,
-      guestNames,
-    },
+    additionalGuestDetails: guestCount
+      ? {
+          guestCount,
+          guestNames,
+        }
+      : undefined,
   };
 };
 

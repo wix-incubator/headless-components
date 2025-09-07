@@ -62,12 +62,24 @@ export function EventDetails({
 
           <EventPrimitive.ShortDescription className="block max-w-2xl mt-6 font-light text-content-primary" />
 
-          <a
-            href="#tickets"
+          <EventPrimitive.RsvpButton
+            asChild
             className="inline-block btn-primary font-light py-3 px-8 mt-10"
           >
-            Buy Tickets
-          </a>
+            {({ event }) => (
+              <a
+                href={
+                  event.registration?.type === 'TICKETING'
+                    ? '#tickets'
+                    : `/events/${event.slug}/form`
+                }
+              >
+                {event.registration?.type === 'TICKETING'
+                  ? 'Buy Tickets'
+                  : 'RSVP'}
+              </a>
+            )}
+          </EventPrimitive.RsvpButton>
         </div>
 
         <EventPrimitive.Image className="aspect-16/9 object-cover" />

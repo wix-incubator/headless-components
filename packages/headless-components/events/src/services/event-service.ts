@@ -39,6 +39,7 @@ export async function loadEventServiceConfig(
   const { event } = await wixEventsV2.getEventBySlug(slug, {
     fields: [
       wixEventsV2.RequestedFields.DETAILS,
+      wixEventsV2.RequestedFields.REGISTRATION,
       wixEventsV2.RequestedFields.TEXTS,
       wixEventsV2.RequestedFields.FORM,
     ],
