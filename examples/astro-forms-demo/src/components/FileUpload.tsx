@@ -42,49 +42,6 @@ const FileUpload = ({
     onChange(fileDataArray);
   };
 
-  const validateFiles = (files: FileList | null) => {
-    if (!files) return true;
-
-    // Check max files
-    if (maxFiles && files.length > maxFiles) {
-      console.warn(`Maximum ${maxFiles} files allowed`);
-      return false;
-    }
-
-    // Check allowed file formats
-    if (allowedFileFormats && allowedFileFormats.length > 0) {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-        const isAllowed = allowedFileFormats.some(
-          format =>
-            fileExtension === format.toLowerCase() ||
-            file.type.startsWith(format.toLowerCase())
-        );
-
-        if (!isAllowed) {
-          console.warn(
-            `File ${file.name} is not in allowed formats: ${allowedFileFormats.join(', ')}`
-          );
-          return false;
-        }
-      }
-    }
-
-    return true;
-  };
-
-  const handleFileChangeWithValidation = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (validateFiles(files)) {
-      handleFileChange(event);
-    } else {
-      // Reset the input if validation fails
-      event.target.value = '';
-    }
-  };
 
   // Convert allowedFileFormats to accept string for HTML input
   const acceptString = allowedFileFormats
@@ -104,7 +61,7 @@ const FileUpload = ({
         accept={acceptString}
         multiple={maxFiles !== 1}
         aria-describedby={descriptionId}
-        onChange={handleFileChangeWithValidation}
+        onChange={handleFileChange}
         onBlur={() => onBlur()}
         onFocus={() => onFocus()}
       />
