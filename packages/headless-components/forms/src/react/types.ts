@@ -32,6 +32,7 @@ interface BaseCheckboxProps extends BaseFieldProps {
 /**
  * Props for contacts birthdate field.
  * Used with fieldMap key: CONTACTS_BIRTHDATE
+ * The field MUST render 3 separate number inputs on the UI for day, month and year.
  *
  * @interface ContactsBirthdateProps
  *
@@ -46,8 +47,6 @@ interface BaseCheckboxProps extends BaseFieldProps {
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
- *
- * @ui_requirement The CONTACTS_BIRTHDATE field MUST render 3 separate number inputs on the UI for day, month and year.
  *
  * @example
  * ```tsx
@@ -331,6 +330,12 @@ type MultilineAddressValue = {
 /**
  * Props for multiline address field.
  * Used with fieldMap key: MULTILINE_ADDRESS
+ * The field MUST render separate inputs on the UI for these values:
+ * 1. Country/Region
+ * 2. Address
+ * 3. Address - line 2 (if showAddressLine2 is true)
+ * 4. City
+ * 5. Zip / Postal Code
  *
  * @interface MultilineAddressProps
  *
