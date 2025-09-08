@@ -6,7 +6,7 @@ import {
 } from '@wix/ricos';
 import '@wix/ricos/css/all-plugins-viewer.css';
 
-const URLInput = ({
+const UrlInput = ({
   id,
   value,
   label,
@@ -15,8 +15,6 @@ const URLInput = ({
   description,
   required,
   readOnly,
-  minLength,
-  maxLength,
   onChange,
   onBlur,
   onFocus,
@@ -33,8 +31,6 @@ const URLInput = ({
         required={required}
         readOnly={readOnly}
         placeholder={placeholder}
-        minLength={minLength}
-        maxLength={maxLength}
         aria-describedby={descriptionId}
         onChange={e => onChange(e.target.value)}
         onBlur={() => onBlur()}
@@ -52,4 +48,4 @@ const URLInput = ({
   );
 };
 
-export default URLInput;
+export default UrlInput;
