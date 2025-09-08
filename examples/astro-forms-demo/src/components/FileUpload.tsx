@@ -42,7 +42,6 @@ const FileUpload = ({
     onChange(fileDataArray);
   };
 
-
   // Convert allowedFileFormats to accept string for HTML input
   const acceptString = allowedFileFormats
     ?.map(format =>
