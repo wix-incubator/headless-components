@@ -1,4 +1,10 @@
 import { forms } from '@wix/forms';
+import { CallingCountryCode } from './constants/calling-country-codes';
+
+interface MinMaxLengthProps {
+  minLength: number | undefined;
+  maxLength: number | undefined;
+}
 
 interface BaseFieldProps {
   id: string;
@@ -26,6 +32,7 @@ interface BaseCheckboxProps extends BaseFieldProps {
 /**
  * Props for contacts birthdate field.
  * Used with fieldMap key: CONTACTS_BIRTHDATE
+ * The field MUST render 3 separate number inputs on the UI for day, month and year.
  *
  * @interface ContactsBirthdateProps
  *
@@ -40,8 +47,6 @@ interface BaseCheckboxProps extends BaseFieldProps {
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
- *
- * @ui_requirement The CONTACTS_BIRTHDATE field MUST render 3 separate number inputs on the UI for day, month and year.
  *
  * @example
  * ```tsx
@@ -101,6 +106,403 @@ export interface ContactsBirthdateProps extends BaseFieldProps {
 export interface ContactsSubscribeProps extends BaseCheckboxProps {}
 
 /**
+ * Props for contacts email field.
+ * Used with fieldMap key: CONTACTS_EMAIL
+ *
+ * @interface ContactsEmailProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const emailField: ContactsEmailProps = {
+ *   id: 'email',
+ *   value: 'user@example.com',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Email Address',
+ *   showLabel: true,
+ *   placeholder: 'Enter your email address',
+ *   description: { nodes: [{ type: 'text', text: 'We will never share your email' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsEmailProps extends BaseTextFieldProps {}
+
+/**
+ * Props for contacts phone field.
+ * Used with fieldMap key: CONTACTS_PHONE
+ *
+ * @interface ContactsPhoneProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {CallingCountryCode[]} [allowedCountryCodes] - Optional array of allowed country codes for phone number validation
+ * @property {CallingCountryCode} [defaultCountryCode] - Optional default country code to pre-select
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const phoneField: ContactsPhoneProps = {
+ *   id: 'phone',
+ *   value: '+1-555-123-4567',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Phone Number',
+ *   showLabel: true,
+ *   placeholder: 'Enter your phone number',
+ *   description: { nodes: [{ type: 'text', text: 'Include country code' }] },
+ *   allowedCountryCodes: ['US', 'CA', 'GB'],
+ *   defaultCountryCode: 'US',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsPhoneProps extends BaseTextFieldProps {
+  allowedCountryCodes: CallingCountryCode[];
+  defaultCountryCode?: CallingCountryCode;
+}
+
+/**
+ * Props for contacts company field.
+ * Used with fieldMap key: CONTACTS_COMPANY
+ *
+ * @interface ContactsCompanyProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const companyField: ContactsCompanyProps = {
+ *   id: 'company',
+ *   value: 'Acme Corporation',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Company Name',
+ *   showLabel: true,
+ *   placeholder: 'Enter your company name',
+ *   description: { nodes: [{ type: 'text', text: 'Optional company or organization name' }] },
+ *   minLength: 2,
+ *   maxLength: 100,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsCompanyProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+/**
+ * Props for contacts position field.
+ * Used with fieldMap key: CONTACTS_POSITION
+ *
+ * @interface ContactsPositionProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const positionField: ContactsPositionProps = {
+ *   id: 'position',
+ *   value: 'Software Engineer',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Job Position',
+ *   showLabel: true,
+ *   placeholder: 'Enter your job position',
+ *   description: { nodes: [{ type: 'text', text: 'Your current job title or position' }] },
+ *   minLength: 2,
+ *   maxLength: 100,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsPositionProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+/**
+ * Props for contacts address field.
+ * Used with fieldMap key: CONTACTS_ADDRESS
+ *
+ * @interface ContactsAddressProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ *
+ * @example
+ * ```tsx
+ * const addressField: ContactsAddressProps = {
+ *   id: 'address',
+ *   value: '123 Main St\nApt 4B\nNew York, NY 10001',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Address',
+ *   showLabel: true,
+ *   placeholder: 'Enter your full address',
+ *   description: { nodes: [{ type: 'text', text: 'Include street, city, state, and zip code' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ *   minLength: 10,
+ *   maxLength: 1000,
+ * };
+ * ```
+ */
+export interface ContactsAddressProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+type MultilineAddressValue = {
+  country?: CallingCountryCode;
+  subdivision?: string;
+  city?: string;
+  addressLine?: string;
+  addressLine2?: string;
+  postalCode?: string;
+  streetName?: string;
+  streetNumber?: string;
+  apartment?: string;
+};
+
+/**
+ * Props for multiline address field.
+ * Used with fieldMap key: MULTILINE_ADDRESS
+ * The field MUST render separate inputs on the UI for these values:
+ * 1. Country/Region
+ * 2. Address
+ * 3. Address - line 2 (if showAddressLine2 is true)
+ * 4. City
+ * 5. Zip / Postal Code
+ *
+ * @interface MultilineAddressProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {MultilineAddressValue | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ * @property {boolean} showAddressLine2 - Whether to show the address line 2 field
+ * @property {boolean} addressLine2Required - Whether the address line 2 field is required
+ *
+ * @example
+ * ```tsx
+ * const multilineAddressField: MultilineAddressProps = {
+ *   id: 'multilineAddress',
+ *   value: '123 Main Street\nApt 4B\nNew York, NY 10001\nUnited States',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Full Address',
+ *   showAddressLine2: true,
+ *   addressLine2Required: false,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface MultilineAddressProps extends BaseFieldProps {
+  label?: string;
+  value: MultilineAddressValue;
+  showAddressLine2: boolean;
+  addressLine2Required?: boolean;
+}
+
+/**
+ * Props for contacts first name field.
+ * Used with fieldMap key: CONTACTS_FIRST_NAME
+ *
+ * @interface ContactsFirstNameProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const firstNameField: ContactsFirstNameProps = {
+ *   id: 'firstName',
+ *   value: 'John',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'First Name',
+ *   showLabel: true,
+ *   placeholder: 'Enter your first name',
+ *   description: { nodes: [{ type: 'text', text: 'Your given name' }] },
+ *   minLength: 1,
+ *   maxLength: 50,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsFirstNameProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+/**
+ * Props for contacts last name field.
+ * Used with fieldMap key: CONTACTS_LAST_NAME
+ *
+ * @interface ContactsLastNameProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const lastNameField: ContactsLastNameProps = {
+ *   id: 'lastName',
+ *   value: 'Doe',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Last Name',
+ *   showLabel: true,
+ *   placeholder: 'Enter your last name',
+ *   description: { nodes: [{ type: 'text', text: 'Your family name' }] },
+ *   minLength: 1,
+ *   maxLength: 50,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsLastNameProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+/**
+ * Props for contacts tax ID field.
+ * Used with fieldMap key: CONTACTS_TAX_ID
+ *
+ * @interface ContactsTaxIdProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const taxIdField: ContactsTaxIdProps = {
+ *   id: 'taxId',
+ *   value: '123-45-6789',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Tax ID',
+ *   showLabel: true,
+ *   placeholder: 'Enter your tax ID',
+ *   description: { nodes: [{ type: 'text', text: 'Your tax identification number' }] },
+ *   minLength: 9,
+ *   maxLength: 11,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ContactsTaxIdProps
+  extends BaseTextFieldProps,
+    MinMaxLengthProps {}
+
+/**
  * Props for text area field.
  * Used with fieldMap key: TEXT_AREA
  *
@@ -114,6 +516,8 @@ export interface ContactsSubscribeProps extends BaseCheckboxProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -129,13 +533,15 @@ export interface ContactsSubscribeProps extends BaseCheckboxProps {}
  *   showLabel: true,
  *   placeholder: 'Enter your message here...',
  *   description: { nodes: [{ type: 'text', text: 'Please provide detailed information' }] },
+ *   minLength: 10,
+ *   maxLength: 1000,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
-export interface TextAreaProps extends BaseTextFieldProps {}
+export interface TextAreaProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for text input field.
@@ -151,6 +557,8 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -166,13 +574,15 @@ export interface TextAreaProps extends BaseTextFieldProps {}
  *   showLabel: true,
  *   placeholder: 'Enter your first name',
  *   description: { nodes: [{ type: 'text', text: 'Your given name' }] },
+ *   minLength: 1,
+ *   maxLength: 50,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
  * ```
  */
-export interface TextInputProps extends BaseTextFieldProps {}
+export interface TextInputProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for number input field.
@@ -249,3 +659,121 @@ export interface NumberInputProps extends BaseFieldProps {
  * ```
  */
 export interface CheckboxProps extends BaseCheckboxProps {}
+
+/**
+ * Props for URL input field.
+ * Used with fieldMap key: URL_INPUT
+ *
+ * @interface UrlInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const urlField: UrlInputProps = {
+ *   id: 'website',
+ *   value: 'https://example.com',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Website URL',
+ *   showLabel: true,
+ *   placeholder: 'https://example.com',
+ *   description: { nodes: [{ type: 'text', text: 'Enter your website URL' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface UrlInputProps extends BaseTextFieldProps {}
+
+/**
+ * Data structure for uploaded file information.
+ *
+ * @interface FileData
+ *
+ * @property {string} fileId - Unique identifier for the uploaded file
+ * @property {string} displayName - Human-readable name for the file
+ * @property {string} url - URL where the file can be accessed
+ * @property {string} fileType - MIME type or file extension of the uploaded file
+ *
+ * @example
+ * ```tsx
+ * const fileData: FileData = {
+ *   fileId: 'file_123456789',
+ *   displayName: 'document.pdf',
+ *   url: 'https://example.com/uploads/document.pdf',
+ *   fileType: 'application/pdf'
+ * };
+ * ```
+ */
+interface FileData {
+  fileId: string;
+  displayName: string;
+  url: string;
+  fileType: string;
+}
+
+type FileFormat = 'Video' | 'Image' | 'Audio' | 'Document' | 'Archive';
+
+/**
+ * Props for file upload field.
+ * Used with fieldMap key: FILE_UPLOAD
+ *
+ * @interface FileUploadProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {FileData[] | null | undefined} value - The current value of the form field (array of uploaded file data)
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [buttonText] - Optional custom text for the upload button
+ * @property {number} [maxFiles] - Optional maximum number of files allowed
+ * @property {FileFormat[]} [allowedFileFormats] - Optional array of allowed file format extensions (e.g., [".pdf", ".doc", ".docx"])
+ * @property {string} [explanationText] - Optional explanatory text to display below the upload area
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const fileUploadField: FileUploadProps = {
+ *   id: 'documents',
+ *   value: null,
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Upload Documents',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Upload your documents (PDF, DOC, DOCX)' }] },
+ *   buttonText: 'Choose Files',
+ *   allowedFileFormats: ['.pdf', '.doc', '.docx'],
+ *   explanationText: 'Maximum file size: 10MB',
+ *   maxFiles: 5,
+ *   onChange: (files) => console.log('Files changed:', files),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface FileUploadProps extends BaseFieldProps {
+  value: FileData[] | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  buttonText?: string;
+  maxFiles?: number;
+  allowedFileFormats?: FileFormat[];
+  explanationText?: string;
+}

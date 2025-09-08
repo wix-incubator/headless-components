@@ -1,4 +1,4 @@
-import { type TextInputProps } from '@wix/headless-forms/react';
+import { type ContactsAddressProps } from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -6,7 +6,7 @@ import {
 } from '@wix/ricos';
 import '@wix/ricos/css/all-plugins-viewer.css';
 
-const TextInput = ({
+const ContactsAddress = ({
   id,
   value,
   label,
@@ -15,20 +15,19 @@ const TextInput = ({
   description,
   required,
   readOnly,
-  minLength,
-  maxLength,
   onChange,
   onBlur,
   onFocus,
-}: TextInputProps) => {
+  minLength,
+  maxLength,
+}: ContactsAddressProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (
     <div>
       {showLabel && <label htmlFor={id}>{label}</label>}
-      <input
+      <textarea
         id={id}
-        type="text"
         value={value || ''}
         required={required}
         readOnly={readOnly}
@@ -39,6 +38,8 @@ const TextInput = ({
         onChange={e => onChange(e.target.value)}
         onBlur={() => onBlur()}
         onFocus={() => onFocus()}
+        rows={4}
+        style={{ width: '100%', resize: 'vertical' }}
       />
       {description && (
         <div id={descriptionId}>
@@ -52,4 +53,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default ContactsAddress;

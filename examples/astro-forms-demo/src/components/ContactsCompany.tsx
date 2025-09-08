@@ -1,4 +1,4 @@
-import { type TextInputProps } from '@wix/headless-forms/react';
+import { type ContactsCompanyProps } from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -6,7 +6,7 @@ import {
 } from '@wix/ricos';
 import '@wix/ricos/css/all-plugins-viewer.css';
 
-const TextInput = ({
+const ContactsCompany = ({
   id,
   value,
   label,
@@ -20,7 +20,7 @@ const TextInput = ({
   onChange,
   onBlur,
   onFocus,
-}: TextInputProps) => {
+}: ContactsCompanyProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (
@@ -52,4 +52,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default ContactsCompany;
