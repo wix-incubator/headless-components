@@ -7,7 +7,7 @@ import {
 } from '../../services/selected-variant-service.js';
 import { ProductModifiersServiceDefinition } from '../../services/product-modifiers-service.js';
 import { createServicesMap } from '@wix/services-manager';
-import { Checkout } from '@wix/headless-ecom/react';
+import { Commerce } from '@wix/headless-ecom/react';
 import {
   CheckoutServiceDefinition,
   CurrentCartServiceDefinition,
@@ -256,6 +256,8 @@ export interface ActionsRenderProps {
   addToCart: () => Promise<void>;
   /** Function to buy now (clear cart, add product, proceed to checkout) */
   buyNow: () => Promise<void>;
+  /** Line items */
+  lineItems: LineItem[];
   /** Whether add to cart is available */
   canAddToCart: boolean;
   /** Whether add to cart is currently loading */
@@ -394,6 +396,7 @@ export function Actions(props: ActionsProps) {
   };
 
   const commonProps = {
+    lineItems: getLineItems(),
     addToCart,
     canAddToCart,
     isLoading,
@@ -405,7 +408,7 @@ export function Actions(props: ActionsProps) {
 
   if (checkoutService) {
     return (
-      <Checkout.Trigger>
+      <Commerce.CheckoutTrigger>
         {({
           createCheckout,
           isLoading: checkoutLoading,
@@ -422,7 +425,7 @@ export function Actions(props: ActionsProps) {
             buyNow: () => createCheckout(getLineItems()),
           })
         }
-      </Checkout.Trigger>
+      </Commerce.CheckoutTrigger>
     );
   }
 

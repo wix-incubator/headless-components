@@ -136,15 +136,21 @@ export async function loadSEOTagsServiceConfig(
   const isStaticPage = !itemType || itemType === ItemType.UNKNOWN_ITEM_TYPE;
 
   let tags: Tag[] = [];
-  if (isStaticPage) {
-    tags = await resolveStaticSeoTags(pageUrl, itemData as StaticPageData);
-  } else {
-    tags = await resolveDynamicSeoTags(
-      pageUrl,
-      itemType,
-      itemData as DynamicPageData,
-    );
+
+  try {
+    if (isStaticPage) {
+      tags = await resolveStaticSeoTags(pageUrl, itemData as StaticPageData);
+    } else {
+      tags = await resolveDynamicSeoTags(
+        pageUrl,
+        itemType,
+        itemData as DynamicPageData,
+      );
+    }
+  } catch (error) {
+    console.error('Error loading SEO tags service config', error);
   }
+
   return {
     tags,
   };

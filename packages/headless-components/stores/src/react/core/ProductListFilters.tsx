@@ -1,81 +1,102 @@
 import { useService } from '@wix/services-manager-react';
 import type { ReactNode } from 'react';
 import {
-  ProductsListSearchServiceDefinition,
+  ProductsListServiceDefinition,
   type ProductOption,
+  type ProductChoice,
   InventoryStatusType,
-} from '../../services/products-list-search-service.js';
+  CategoriesListServiceDefinition,
+} from '../../services/index.js';
 import { Category } from '@wix/auto_sdk_categories_categories';
+import { useMemo } from 'react';
+import {
+  Filter as FilterPrimitive,
+  type FilterOption,
+} from '@wix/headless-components/react';
+import type { productsV3 } from '@wix/stores';
+import { Slot } from '@radix-ui/react-slot';
+import React from 'react';
 
-/**
- * Props for InventoryStatus headless component
- */
-export interface InventoryStatusProps {
-  /** Content to display (can be a render function receiving inventory status controls or ReactNode) */
-  children: ((props: InventoryStatusRenderProps) => ReactNode) | ReactNode;
+// Conversion utilities for platform compatibility
+function getInventoryStatusLabel(status: InventoryStatusType): string {
+  switch (status) {
+    case InventoryStatusType.IN_STOCK:
+      return 'In Stock';
+    case InventoryStatusType.OUT_OF_STOCK:
+      return 'Out of Stock';
+    case InventoryStatusType.PARTIALLY_OUT_OF_STOCK:
+      return 'Limited Stock';
+    default:
+      return String(status);
+  }
 }
 
-/**
- * Render props for InventoryStatus component
- */
-export interface InventoryStatusRenderProps {
-  /** Available inventory status options */
-  availableInventoryStatuses: InventoryStatusType[];
-  /** Currently selected inventory statuses */
-  selectedInventoryStatuses: InventoryStatusType[];
-  /** Function to toggle an inventory status filter */
-  toggleInventoryStatus: (status: InventoryStatusType) => void;
-}
+function buildSearchFilterData(
+  availableOptions: ProductOption[],
+  availableInventoryStatuses: InventoryStatusType[],
+  availableMinPrice: number,
+  availableMaxPrice: number,
+): { filterOptions: FilterOption[] } {
+  // Build consolidated filter options using search field names
+  const filterOptions: FilterOption[] = [
+    // Price range - use a logical key that maps to both min/max fields
+    {
+      key: 'priceRange',
+      label: 'Price Range',
+      type: 'range',
+      displayType: 'range',
+      validValues: [availableMinPrice, availableMaxPrice],
+      valueFormatter: (value: string | number) => `$${value}`,
+      fieldName: [
+        'actualPriceRange.minValue.amount',
+        'actualPriceRange.maxValue.amount',
+      ],
+    },
 
-/**
- * Headless component for managing inventory status filters
- *
- * @component
- * @example
- * ```tsx
- * import { ProductList, ProductListFilters } from '@wix/stores/components';
- *
- * function InventoryStatusFilter() {
- *   return (
- *     <ProductList.Root
- *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
- *       productsListSearchConfig={{ customizations: [] }}
- *     >
- *       <ProductListFilters.InventoryStatus>
- *         {({ availableInventoryStatuses, selectedInventoryStatuses, toggleInventoryStatus }) => (
- *           <div>
- *             <h4>Inventory Status:</h4>
- *             {availableInventoryStatuses.map(status => (
- *               <label key={status}>
- *                 <input
- *                   type="checkbox"
- *                   checked={selectedInventoryStatuses.includes(status)}
- *                   onChange={() => toggleInventoryStatus(status)}
- *                 />
- *                 {status}
- *               </label>
- *             ))}
- *           </div>
- *         )}
- *       </ProductListFilters.InventoryStatus>
- *     </ProductList.Root>
- *   );
- * }
- * ```
- */
-export function InventoryStatus(props: InventoryStatusProps) {
-  const service = useService(ProductsListSearchServiceDefinition);
-  const availableInventoryStatuses = service.availableInventoryStatuses.get();
-  const selectedInventoryStatuses = service.selectedInventoryStatuses.get();
-  const toggleInventoryStatus = service.toggleInventoryStatus;
+    // Product options (colors, sizes, etc.) - individual filters for each option type
+    ...availableOptions.map((option) => ({
+      key: option.id,
+      label: String(option.name),
+      type: 'multi' as const,
+      displayType:
+        option.optionRenderType === 'SWATCH_CHOICES'
+          ? ('color' as const)
+          : ('text' as const),
+      fieldName: 'options.choicesSettings.choices.choiceId',
+      fieldType: 'array' as const,
+      validValues: option.choices.map((choice: ProductChoice) => choice.id),
+      valueFormatter: (value: string | number) => {
+        const choice = option.choices.find(
+          (c: ProductChoice) => c.id === value,
+        );
+        const name = choice?.name || String(value);
+        return option.optionRenderType === 'SWATCH_CHOICES'
+          ? name.toLowerCase()
+          : name;
+      },
+      valueBgColorFormatter: (value: string | number) => {
+        const choice = option.choices.find(
+          (c: ProductChoice) => c.id === value,
+        );
+        return choice?.colorCode || null;
+      },
+    })),
 
-  return typeof props.children === 'function'
-    ? props.children({
-        availableInventoryStatuses,
-        selectedInventoryStatuses,
-        toggleInventoryStatus,
-      })
-    : props.children;
+    // Inventory status - use actual search field name
+    {
+      key: 'inventory.availabilityStatus',
+      label: 'Availability',
+      type: 'multi',
+      displayType: 'text',
+      fieldName: 'inventory.availabilityStatus',
+      fieldType: 'singular' as const,
+      validValues: availableInventoryStatuses,
+      valueFormatter: (value: string | number) =>
+        getInventoryStatusLabel(value as InventoryStatusType),
+    },
+  ];
+
+  return { filterOptions };
 }
 
 /**
@@ -127,103 +148,12 @@ export interface ResetTriggerRenderProps {
  * ```
  */
 export function ResetTrigger(props: ResetTriggerProps) {
-  const service = useService(ProductsListSearchServiceDefinition);
-  const resetFilters = service.reset;
-  const isFiltered = service.isFiltered.get();
+  const service = useService(ProductsListServiceDefinition);
+  const resetFilters = service.resetFilter;
+  const isFiltered = service.isFiltered().get();
 
   return typeof props.children === 'function'
     ? props.children({ resetFilters, isFiltered })
-    : props.children;
-}
-
-/**
- * Props for PriceRange headless component
- */
-export interface PriceRangeProps {
-  /** Content to display (can be a render function receiving price range controls or ReactNode) */
-  children: ((props: PriceRangeRenderProps) => ReactNode) | ReactNode;
-}
-
-/**
- * Render props for PriceRange component
- */
-export interface PriceRangeRenderProps {
-  /** Current minimum price filter value */
-  selectedMinPrice: number;
-  /** Current maximum price filter value */
-  selectedMaxPrice: number;
-  /** Catalog minimum price */
-  availableMinPrice: number;
-  /** Catalog maximum price */
-  availableMaxPrice: number;
-  /** Function to update the minimum price filter */
-  setSelectedMinPrice: (minPrice: number) => void;
-  /** Function to update the maximum price filter */
-  setSelectedMaxPrice: (maxPrice: number) => void;
-}
-
-/**
- * Headless component for managing price range filters (combined min/max)
- *
- * @component
- * @example
- * ```tsx
- * import { ProductList, ProductListFilters } from '@wix/stores/components';
- *
- * function PriceRangeFilter() {
- *   return (
- *     <ProductList.Root
- *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
- *       productsListSearchConfig={{ customizations: [] }}
- *     >
- *       <ProductListFilters.PriceRange>
- *         {({ minPrice, maxPrice, setSelectedMinPrice, setSelectedMaxPrice }) => (
- *           <div className="price-range">
- *             <h4>Price Range:</h4>
- *             <div className="price-inputs">
- *               <input
- *                 type="number"
- *                 value={minPrice}
- *                 onChange={(e) => setSelectedMinPrice(Number(e.target.value))}
- *                 placeholder="Min"
- *               />
- *               <span>to</span>
- *               <input
- *                 type="number"
- *                 value={maxPrice}
- *                 onChange={(e) => setSelectedMaxPrice(Number(e.target.value))}
- *                 placeholder="Max"
- *               />
- *             </div>
- *           </div>
- *         )}
- *       </ProductListFilters.PriceRange>
- *     </ProductList.Root>
- *   );
- * }
- * ```
- */
-export function PriceRange(props: PriceRangeProps) {
-  const service = useService(ProductsListSearchServiceDefinition);
-
-  const selectedMinPrice = service.selectedMinPrice.get();
-  const selectedMaxPrice = service.selectedMaxPrice.get();
-
-  const availableMinPrice = service.availableMinPrice.get();
-  const availableMaxPrice = service.availableMaxPrice.get();
-
-  const setSelectedMinPrice = service.setSelectedMinPrice;
-  const setSelectedMaxPrice = service.setSelectedMaxPrice;
-
-  return typeof props.children === 'function'
-    ? props.children({
-        availableMinPrice,
-        selectedMinPrice,
-        selectedMaxPrice,
-        availableMaxPrice,
-        setSelectedMinPrice,
-        setSelectedMaxPrice,
-      })
     : props.children;
 }
 
@@ -238,9 +168,33 @@ export interface CategoryFilterProps {
 }
 
 export function CategoryFilter(props: CategoryFilterProps) {
-  const service = useService(ProductsListSearchServiceDefinition);
-  const selectedCategory = service.selectedCategory.get();
-  const setSelectedCategory = service.setSelectedCategory;
+  const categoriesService = useService(CategoriesListServiceDefinition);
+  const productListService = useService(ProductsListServiceDefinition);
+
+  const categories = categoriesService.categories.get();
+
+  const setSelectedCategory = (category: Category | null) => {
+    const currentFilter = productListService.searchOptions.get().filter || {};
+    if (!category) {
+      delete (currentFilter as any)['allCategoriesInfo.categories'];
+      productListService.setFilter(currentFilter);
+      return;
+    }
+
+    productListService.setFilter({
+      ...currentFilter,
+      'allCategoriesInfo.categories': {
+        $matchItems: [{ id: { $in: [category._id!] } }],
+      },
+    });
+  };
+
+  const selectedCategoryId = (
+    productListService.searchOptions.get().filter as any
+  )['allCategoriesInfo.categories']?.$matchItems?.[0]?.id
+    ?.$in?.[0] as Category | null;
+  const selectedCategory =
+    categories?.find((c) => c._id === selectedCategoryId) || null;
 
   return typeof props.children === 'function'
     ? props.children({ selectedCategory, setSelectedCategory })
@@ -248,87 +202,191 @@ export function CategoryFilter(props: CategoryFilterProps) {
 }
 
 /**
- * Props for ProductOptions headless component
+ * Props for AllFilters consolidated headless component
  */
-export interface ProductOptionsProps {
-  /** Content to display (can be a render function receiving product option data or ReactNode) */
-  children: ((props: ProductOptionRenderProps) => ReactNode) | ReactNode;
+interface AllFiltersProps {
+  /** Content to display (can be a render function receiving all filter data or ReactNode) */
+  children: ((props: AllFiltersRenderProps) => ReactNode) | ReactNode;
 }
 
 /**
- * Render props for ProductOption component
+ * Render props for AllFilters component - provides platform-compatible filter data
  */
-export interface ProductOptionRenderProps {
-  /** Product option data */
-  option: ProductOption;
-  /** Currently selected choice IDs for this option */
-  selectedChoices: string[];
-  /** Function to toggle a choice selection */
-  toggleChoice: (choiceId: string) => void;
+interface AllFiltersRenderProps {
+  searchFilter: {
+    /** Current filter values in search format */
+    filterValue: productsV3.V3ProductSearch['filter'];
+    /** Filter options configuration for filter components */
+    filterOptions: FilterOption[];
+    /** Update filters using search format */
+    updateFilter: (newFilter: productsV3.V3ProductSearch['filter']) => void;
+    /** Clear all filters */
+    clearFilters: () => void;
+    /** Whether any filters are currently applied */
+    hasFilters: boolean;
+  };
 }
 
 /**
- * Headless component that renders content for each product option in the list.
- * Maps over all available product options and provides each option through a render prop.
- * Only renders when options are available (not loading, no error, and has options).
- * This follows the same collection pattern as ProductList.ItemContent and CategoryList.ItemContent.
+ * Internal component that provides filter data for the Filter component.
+ * Consolidates data from both search and list services.
+ */
+function AllFilters(props: AllFiltersProps) {
+  const listService = useService(ProductsListServiceDefinition);
+
+  // Get current filter state
+  const currentSearchOptions = listService.searchOptions.get();
+  const currentFilter = currentSearchOptions.filter;
+
+  // Get available filter data
+  const availableOptions = listService.availableProductOptions.get();
+  const availableInventoryStatuses =
+    listService.availableInventoryStatuses.get();
+  const availableMinPrice = listService.minPrice.get();
+  const availableMaxPrice = listService.maxPrice.get();
+
+  // Get filter state
+  const resetFilters = listService.resetFilter;
+  const isFiltered = listService.isFiltered().get();
+
+  // Build filter options and handlers
+  const searchFilterData = useMemo(() => {
+    const { filterOptions } = buildSearchFilterData(
+      availableOptions,
+      availableInventoryStatuses,
+      availableMinPrice,
+      availableMaxPrice,
+    );
+
+    const updateFilter = (newFilter: productsV3.V3ProductSearch['filter']) => {
+      listService.setFilter(newFilter);
+    };
+
+    return {
+      filterValue: currentFilter,
+      filterOptions,
+      updateFilter,
+      clearFilters: resetFilters,
+      hasFilters: isFiltered,
+    };
+  }, [
+    availableOptions,
+    availableInventoryStatuses,
+    availableMinPrice,
+    availableMaxPrice,
+    currentFilter,
+    resetFilters,
+    isFiltered,
+    listService,
+  ]);
+
+  return typeof props.children === 'function'
+    ? props.children({ searchFilter: searchFilterData })
+    : props.children;
+}
+
+/**
+ * Props for the ProductList Filter component
+ */
+export interface FilterProps {
+  /**
+   * Child components that will have access to filter functionality.
+   * Typically contains Filter primitive components like FilterOptions,
+   * FilterOptionRepeater, etc.
+   */
+  children: ReactNode;
+
+  /**
+   * When true, the component will not render its own div wrapper but will
+   * delegate rendering to its child component. Useful for custom containers.
+   *
+   * @default false
+   */
+  asChild?: boolean;
+
+  /**
+   * CSS classes to apply to the filter container.
+   * Only used when asChild is false (default).
+   */
+  className?: string;
+}
+
+/**
+ * Filter component that provides comprehensive filtering functionality for product lists.
+ *
+ * This component acts as a provider that integrates with the ProductList service to offer
+ * predefined filter options including:
+ * - **Price Range**: Min/max price filtering with currency formatting
+ * - **Product Options**: Dynamic filters for colors, sizes, and other product variants
+ * - **Inventory Status**: Filter by availability (In Stock, Out of Stock, Limited Stock)
+ *
+ * The component automatically extracts available filter options from the current product set
+ * and provides them to child Filter primitive components for rendering.
  *
  * @component
  * @example
  * ```tsx
- * import { ProductList, ProductListFilters } from '@wix/stores/components';
+ * // Basic usage with styled filter components
+ * <ProductList.Filter>
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.Label />
+ *       <Filter.FilterOption.MultiFilter />
+ *       <Filter.FilterOption.RangeFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </ProductList.Filter>
  *
- * function ProductOptionsFilter() {
- *   return (
- *     <ProductList.Root
- *       productsListConfig={{ products: [], searchOptions: {}, pagingMetadata: {}, aggregations: {} }}
- *       productsListSearchConfig={{ customizations: [] }}
- *     >
- *       <ProductListFilters.ProductOptions>
- *         {({ option, selectedChoices, toggleChoice }) => (
- *           <div key={option.id}>
- *             <h4>{option.name}</h4>
- *             {option.choices.map(choice => (
- *               <label key={choice.id}>
- *                 <input
- *                   type="checkbox"
- *                   checked={selectedChoices.includes(choice.id)}
- *                   onChange={() => toggleChoice(choice.id)}
- *                 />
- *                 {choice.name}
- *               </label>
- *             ))}
- *           </div>
- *         )}
- *       </ProductListFilters.ProductOptions>
- *     </ProductList.Root>
- *   );
- * }
+ * // With custom container using asChild
+ * <ProductList.Filter asChild>
+ *   <aside className="filter-sidebar">
+ *     <Filter.FilterOptions>
+ *       <Filter.FilterOptionRepeater>
+ *         <Filter.FilterOption.Label />
+ *         <Filter.FilterOption.MultiFilter />
+ *       </Filter.FilterOptionRepeater>
+ *     </Filter.FilterOptions>
+ *   </aside>
+ * </ProductList.Filter>
+ *
+ * // With reset functionality
+ * <ProductList.Filter className="filters-container">
+ *   <Filter.Action.Clear label="Clear All" />
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.Label />
+ *       <Filter.FilterOption.MultiFilter />
+ *       <Filter.FilterOption.RangeFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </ProductList.Filter>
  * ```
+ *
+ * @see {@link AllFilters} for the underlying filter data logic
+ * @see {@link FilterPrimitive.Root} for the primitive filter component
+ * @see {@link ResetTrigger} for filter reset functionality
  */
-export function ProductOptions(props: ProductOptionsProps) {
-  const service = useService(ProductsListSearchServiceDefinition);
-  const availableOptions = service.availableProductOptions.get();
-  const selectedProductOptions = service.selectedProductOptions.get();
+export const FilterRoot = React.forwardRef<HTMLDivElement, FilterProps>(
+  ({ children, className, asChild }, ref) => {
+    const Comp = asChild ? Slot : 'div';
+    return (
+      <AllFilters>
+        {({ searchFilter }) => {
+          return (
+            <FilterPrimitive.Root
+              value={searchFilter.filterValue!}
+              onChange={searchFilter.updateFilter}
+              filterOptions={searchFilter.filterOptions}
+            >
+              <Comp className={className} ref={ref}>
+                {children}
+              </Comp>
+            </FilterPrimitive.Root>
+          );
+        }}
+      </AllFilters>
+    );
+  },
+);
 
-  // Don't render if no options are available
-  if (availableOptions.length === 0) {
-    return null;
-  }
-
-  // Map over options and create render prop for each
-  return (
-    <>
-      {availableOptions.map((option) => {
-        const selectedChoices = selectedProductOptions[option.id] || [];
-        const toggleChoice = (choiceId: string) => {
-          service.toggleProductOption(option.id, choiceId);
-        };
-
-        return typeof props.children === 'function'
-          ? props.children({ option, selectedChoices, toggleChoice })
-          : props.children;
-      })}
-    </>
-  );
-}
+FilterRoot.displayName = 'ProductList.Filter';

@@ -348,6 +348,8 @@ export interface StockRenderProps {
   incrementQuantity: () => void;
   /** Function to decrement quantity */
   decrementQuantity: () => void;
+  /** Function to set selected quantity */
+  setSelectedQuantity: (quantity: number) => void;
 }
 
 /**
@@ -406,6 +408,10 @@ export function Stock(props: StockProps) {
     variantService.decrementQuantity();
   };
 
+  const setSelectedQuantity = (quantity: number) => {
+    variantService.setSelectedQuantity(quantity);
+  };
+
   return props.children({
     inStock,
     availableQuantity,
@@ -415,6 +421,7 @@ export function Stock(props: StockProps) {
     trackInventory,
     selectedQuantity,
     incrementQuantity,
+    setSelectedQuantity,
     decrementQuantity,
   });
 }

@@ -1,19 +1,14 @@
-import { CategoryList, Category } from '@wix/headless-stores/react';
+import { CategoryList, Category, type Category as CategoryType } from '@wix/headless-stores/react';
 import type {
   CategoriesListServiceConfig,
-  Category as CategoryType,
 } from '@wix/headless-stores/services';
 
 interface CategoryPickerProps {
-  onCategorySelect: (category: CategoryType) => void;
   categoriesListConfig: CategoriesListServiceConfig;
-  currentCategorySlug: string;
 }
 
 export function CategoryPicker({
-  onCategorySelect,
   categoriesListConfig,
-  currentCategorySlug,
 }: CategoryPickerProps) {
   return (
     <CategoryList.Root categoriesListConfig={categoriesListConfig}>
@@ -27,18 +22,10 @@ export function CategoryPicker({
         {/* Category Navigation - Horizontal scrollable for mobile */}
         <div className="flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
           <CategoryList.CategoryRepeater>
-            <Category.Trigger asChild onSelect={(category) => onCategorySelect(category)}>
-                {({ category }) => (
-                  <button
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                      currentCategorySlug === category.slug
-                        ? 'text-content-primary shadow-lg transform scale-105 btn-primary'
-                        : 'bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary'
-                    }`}
-                  >
-                    <Category.Label></Category.Label>
-                  </button>
-                )}
+            <Category.Trigger asChild>
+              <button className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap bg-surface-primary text-content-secondary hover:bg-brand-light hover:text-content-primary data-[selected=true]:[background:var(--theme-btn-primary)] data-[selected=true]:text-[var(--theme-btn-primary-text)] data-[selected=true]:border-[var(--theme-btn-primary-border)] data-[selected=true]:shadow-lg data-[selected=true]:transform data-[selected=true]:scale-105">
+                <Category.Label />
+              </button>
             </Category.Trigger>
           </CategoryList.CategoryRepeater>
         </div>

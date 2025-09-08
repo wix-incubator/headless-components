@@ -1,7 +1,10 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
+import { InventoryAvailabilityStatus } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
-import { renderAsChild, type AsChildProps } from '../utils/index.js';
+import { Commerce } from '@wix/headless-ecom/react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
+import { Quantity as QuantityComponent } from '@wix/headless-components/react';
 import * as CoreProduct from './core/Product.js';
 import * as ProductVariantSelector from './core/ProductVariantSelector.js';
 import * as ProductModifiers from './core/ProductModifiers.js';
@@ -57,6 +60,16 @@ export function useModifiersContext(): ModifiersContextValue {
   return context;
 }
 
+/**
+ * Basic stock status type for product availability states
+ */
+export type BasicStockStatus = 'in-stock' | 'limited-stock' | 'out-of-stock';
+
+/**
+ * Extended stock status type including pre-order capability
+ */
+export type StockStatus = BasicStockStatus | 'can-pre-order';
+
 enum TestIds {
   productRoot = 'product-root',
   productName = 'product-name',
@@ -65,13 +78,29 @@ enum TestIds {
   productCompareAtPrice = 'product-compare-at-price',
   productSlug = 'product-slug',
   productRaw = 'product-raw',
+  productRibbon = 'product-ribbon',
+  productStock = 'product-stock',
   productVariants = 'product-variants',
   productVariantOptions = 'product-variant-options',
+  productVariantSelectorReset = 'product-variant-selector-reset',
   productVariantOption = 'product-variant-option',
+  productVariant = 'product-variant',
+  productVariantSku = 'product-variant-sku',
+  productVariantWeight = 'product-variant-weight',
+  productVariantStock = 'product-variant-stock',
   productModifiers = 'product-modifiers',
   productModifierOptions = 'product-modifier-options',
   productModifierOption = 'product-modifier-option',
   productMediaGallery = 'product-media-gallery',
+  productAddToCart = 'product-add-to-cart',
+  productActionAddToCart = 'product-action-add-to-cart',
+  productActionBuyNow = 'product-action-buy-now',
+  productActionPreOrder = 'product-action-can-pre-order',
+  productQuantity = 'product-quantity',
+  productQuantityDecrement = 'product-quantity-decrement',
+  productQuantityInput = 'product-quantity-input',
+  productQuantityIncrement = 'product-quantity-increment',
+  productQuantityRaw = 'product-quantity-raw',
 }
 
 /**
@@ -104,11 +133,10 @@ export interface ProductRootProps {
  * ```
  */
 export function Root(props: ProductRootProps): React.ReactNode {
+  const { children, product, ...attrs } = props;
+
   return (
-    <CoreProduct.Root
-      productServiceConfig={{ product: props.product }}
-      data-testid={TestIds.productRoot}
-    >
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
       <MediaGallery.Root
         mediaGalleryServiceConfig={{
           media: props.product.media?.itemsInfo?.items ?? [],
@@ -116,7 +144,9 @@ export function Root(props: ProductRootProps): React.ReactNode {
       >
         <ProductVariantSelector.Root>
           <ProductModifiers.Root>
-            <SelectedVariant.Root>{props.children}</SelectedVariant.Root>
+            <SelectedVariant.Root>
+              <AsChildSlot {...attrs}>{children}</AsChildSlot>
+            </SelectedVariant.Root>
           </ProductModifiers.Root>
         </ProductVariantSelector.Root>
       </MediaGallery.Root>
@@ -127,7 +157,14 @@ export function Root(props: ProductRootProps): React.ReactNode {
 /**
  * Props for Product Name component
  */
-export interface NameProps extends AsChildProps<{ name: string }> {}
+export interface NameProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ name: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the product name with customizable rendering following the documented API.
@@ -154,30 +191,24 @@ export interface NameProps extends AsChildProps<{ name: string }> {}
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProduct.Name>
       {({ name }) => {
-        const attributes = {
-          'data-testid': TestIds.productName,
-        };
-
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { name },
-            ref,
-            content: name,
-            attributes,
-          });
-          if (rendered) return rendered;
-        }
-
         return (
-          <div className={className} {...attributes}>
-            {name}
-          </div>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productName}
+            customElement={children}
+            customElementProps={{ name }}
+            content={name}
+            {...otherProps}
+          >
+            <div>{name}</div>
+          </AsChildSlot>
         );
       }}
     </CoreProduct.Name>
@@ -187,8 +218,15 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 /**
  * Props for Product Description component
  */
-export interface DescriptionProps
-  extends AsChildProps<{ description: string }> {
+export interface DescriptionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    description: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
   /** Format of the description content */
   as?: `${AsContent}`;
 }
@@ -218,15 +256,17 @@ export interface DescriptionProps
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className, as = AsContent.Plain } = props;
+    const {
+      asChild,
+      children,
+      className,
+      as = AsContent.Plain,
+      ...otherProps
+    } = props;
 
     return (
       <CoreProduct.Description>
         {({ description: richDescription, plainDescription }) => {
-          const attributes = {
-            'data-testid': TestIds.productDescription,
-          };
-
           // Determine which description to use based on the 'as' prop
           let description: string;
 
@@ -246,32 +286,33 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
               break;
           }
 
-          if (asChild) {
-            const rendered = renderAsChild({
-              children,
-              props: { description },
-              ref,
-              content: description,
-              attributes,
-            });
-            if (rendered) return rendered;
-          }
-
-          // Default rendering based on format
-          if (as === AsContent.Html) {
-            return (
-              <div
-                className={className}
-                {...attributes}
-                dangerouslySetInnerHTML={{ __html: description }}
-              />
-            );
+          // Handle default rendering based on format
+          if (!asChild || !children) {
+            if (as === AsContent.Html) {
+              return (
+                <div
+                  ref={ref as React.Ref<HTMLDivElement>}
+                  className={className}
+                  data-testid={TestIds.productDescription}
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+              );
+            }
           }
 
           return (
-            <div className={className} {...attributes}>
-              {description}
-            </div>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productDescription}
+              customElement={children}
+              customElementProps={{ description }}
+              content={description}
+              {...otherProps}
+            >
+              <div>{description}</div>
+            </AsChildSlot>
           );
         }}
       </CoreProduct.Description>
@@ -282,8 +323,17 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 /**
  * Props for Product Price component
  */
-export interface PriceProps
-  extends AsChildProps<{ price: string; formattedPrice: string }> {}
+export interface PriceProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    price: string;
+    formattedPrice: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the current product price with customizable rendering following the documented API.
@@ -310,36 +360,28 @@ export interface PriceProps
  * ```
  */
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <SelectedVariant.Price>
       {({ price, compareAtPrice }) => {
-        const attributes = {
-          'data-testid': TestIds.productPrice,
-          'data-discounted': compareAtPrice !== null,
-        };
-
-        const priceData = {
-          price,
-          formattedPrice: price,
-        };
-
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: priceData,
-            ref,
-            content: price,
-            attributes,
-          });
-          if (rendered) return rendered;
-        }
-
         return (
-          <span className={className} {...attributes} ref={ref}>
-            {price}
-          </span>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productPrice}
+            data-discounted={compareAtPrice !== null}
+            customElement={children}
+            customElementProps={{
+              price,
+              formattedPrice: price,
+            }}
+            content={price}
+            {...otherProps}
+          >
+            <span>{price}</span>
+          </AsChildSlot>
         );
       }}
     </SelectedVariant.Price>
@@ -349,8 +391,17 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
 /**
  * Props for Product CompareAtPrice component
  */
-export interface CompareAtPriceProps
-  extends AsChildProps<{ price: string; formattedPrice: string }> {}
+export interface CompareAtPriceProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    price: string;
+    formattedPrice: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the compare-at (original) price when on sale with customizable rendering following the documented API.
@@ -384,42 +435,34 @@ export const CompareAtPrice = React.forwardRef<
   HTMLElement,
   CompareAtPriceProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const testId = TestIds.productCompareAtPrice;
 
   return (
     <SelectedVariant.Price>
       {({ compareAtPrice }) => {
-        const attributes = {
-          'data-testid': testId,
-          'data-discounted': compareAtPrice !== null,
-        };
-
         // Don't render anything if there's no compare-at price
         if (!compareAtPrice) {
           return null;
         }
 
-        const priceData = {
-          price: compareAtPrice,
-          formattedPrice: compareAtPrice,
-        };
-
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: priceData,
-            ref,
-            content: compareAtPrice,
-            attributes,
-          });
-          if (rendered) return rendered;
-        }
-
         return (
-          <span className={className} {...attributes} ref={ref}>
-            {compareAtPrice}
-          </span>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={testId}
+            data-discounted={compareAtPrice !== null}
+            customElement={children}
+            customElementProps={{
+              price: compareAtPrice,
+              formattedPrice: compareAtPrice,
+            }}
+            content={compareAtPrice}
+            {...otherProps}
+          >
+            <span>{compareAtPrice}</span>
+          </AsChildSlot>
         );
       }}
     </SelectedVariant.Price>
@@ -430,7 +473,16 @@ export const CompareAtPrice = React.forwardRef<
  * Props for Slug component
  * @interface SlugProps
  */
-export interface SlugProps extends AsChildProps<{ slug: string }> {}
+export interface SlugProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    slug: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Product Slug component that displays the product's slug
@@ -455,33 +507,25 @@ export interface SlugProps extends AsChildProps<{ slug: string }> {}
  * ```
  */
 export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
-  const { asChild, children } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const testId = TestIds.productSlug;
 
   return (
     <CoreProduct.Slug>
       {({ slug }) => {
-        const attributes = {
-          'data-testid': testId,
-        };
-
-        const slugData = { slug };
-
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: slugData,
-            ref,
-            content: slug,
-            attributes,
-          });
-          if (rendered) return rendered;
-        }
-
         return (
-          <span {...attributes} ref={ref}>
-            {slug}
-          </span>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={testId}
+            customElement={children}
+            customElementProps={{ slug }}
+            content={slug}
+            {...otherProps}
+          >
+            <span>{slug}</span>
+          </AsChildSlot>
         );
       }}
     </CoreProduct.Slug>
@@ -491,7 +535,16 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
 /**
  * Props for Product Raw component
  */
-export interface RawProps extends AsChildProps<{ product: V3Product }> {}
+export interface RawProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    product: V3Product;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Provides access to the raw product data for advanced use cases.
@@ -513,28 +566,224 @@ export interface RawProps extends AsChildProps<{ product: V3Product }> {}
  * ```
  */
 export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
-  const { asChild, children } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProduct.Content>
       {({ product }) => {
-        const attributes = {
-          'data-testid': TestIds.productRaw,
-        };
-
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { product },
-            ref,
-            content: null,
-            attributes,
-          });
-          if (rendered) return rendered;
+        // Raw component should not render anything by default when not using asChild
+        if (!asChild || !children) {
+          return null;
         }
 
-        // Raw component should not render anything by default when not using asChild
-        return null;
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productRaw}
+            customElement={children}
+            customElementProps={{ product }}
+            {...otherProps}
+          />
+        );
+      }}
+    </CoreProduct.Content>
+  );
+});
+
+/**
+ * Props for Product Ribbon component
+ */
+export interface RibbonProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    ribbon: string | null;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the product ribbon with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Ribbon className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs rounded" />
+ *
+ * // asChild with primitive
+ * <Product.Ribbon asChild>
+ *   <span className="ribbon-badge" />
+ * </Product.Ribbon>
+ *
+ * // asChild with react component
+ * <Product.Ribbon asChild>
+ *   {React.forwardRef(({ribbon, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="ribbon-badge">
+ *       {ribbon}
+ *     </div>
+ *   ))}
+ * </Product.Ribbon>
+ * ```
+ */
+export const Ribbon = React.forwardRef<HTMLElement, RibbonProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+
+    return (
+      <CoreProduct.Ribbon>
+        {({ ribbon, hasRibbon }) => {
+          // Don't render anything if there's no ribbon
+          if (!hasRibbon) {
+            return null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productRibbon}
+              customElement={children}
+              customElementProps={{ ribbon }}
+              content={ribbon}
+            >
+              <span>{ribbon}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreProduct.Ribbon>
+    );
+  },
+);
+
+/**
+ * Props for Product Stock component
+ */
+export interface StockProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    status: BasicStockStatus;
+    label: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Custom labels for different stock states */
+  labels?: {
+    /** Label for in stock state */
+    inStock?: string;
+    /** Label for limited stock state (when quantity is low) */
+    limitedStock?: string;
+    /** Label for out of stock state */
+    outOfStock?: string;
+  };
+}
+
+/**
+ * Displays the product stock status with customizable rendering and labels following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.Stock
+ *   className="stock-indicator"
+ *   labels={{
+ *     inStock: 'In Stock',
+ *     limitedStock: 'Limited Stock',
+ *     outOfStock: 'Out of Stock'
+ *   }}
+ * />
+ *
+ * // asChild with primitive
+ * <Product.Stock asChild>
+ *   <div className="stock-status" />
+ * </Product.Stock>
+ *
+ * // asChild with react component
+ * <Product.Stock
+ *   labels={{
+ *     inStock: 'Available',
+ *     limitedStock: 'Low Stock',
+ *     outOfStock: 'Sold Out'
+ *   }}
+ *   asChild
+ * >
+ *   {React.forwardRef(({status, label, ...props}, ref) => (
+ *     <div
+ *       ref={ref}
+ *       {...props}
+ *       className="flex items-center gap-1 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600"
+ *     >
+ *       <div className="w-2 h-2 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500" />
+ *       <span className="text-xs font-medium">
+ *         {label}
+ *       </span>
+ *     </div>
+ *   ))}
+ * </Product.Stock>
+ * ```
+ */
+export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
+  const { asChild, children, className, labels } = props;
+
+  return (
+    <CoreProduct.Content>
+      {({ product }) => {
+        const availabilityStatus = product.inventory?.availabilityStatus;
+
+        // Default labels
+        const defaultLabels = {
+          inStock: 'In Stock',
+          limitedStock: 'Partially Out of Stock',
+          outOfStock: 'Out of Stock',
+        };
+
+        const finalLabels = { ...defaultLabels, ...labels };
+
+        // Determine status based on availabilityStatus
+        let status: BasicStockStatus;
+        let label: string;
+
+        switch (availabilityStatus) {
+          case InventoryAvailabilityStatus.IN_STOCK:
+            status = 'in-stock';
+            label = finalLabels.inStock;
+            break;
+          case InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK:
+            status = 'limited-stock';
+            label = finalLabels.limitedStock;
+            break;
+          case InventoryAvailabilityStatus.OUT_OF_STOCK:
+          default:
+            status = 'out-of-stock';
+            label = finalLabels.outOfStock;
+            break;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productStock}
+            data-state={status}
+            customElement={children}
+            customElementProps={{
+              status,
+              label,
+            }}
+            content={label}
+          >
+            <span>{label}</span>
+          </AsChildSlot>
+        );
       }}
     </CoreProduct.Content>
   );
@@ -543,7 +792,14 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
 /**
  * Props for Product Variants container
  */
-export interface VariantsProps extends AsChildProps<{ hasOptions: boolean }> {}
+export interface VariantsProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Container for product variant selection system.
@@ -589,7 +845,7 @@ export interface VariantsProps extends AsChildProps<{ hasOptions: boolean }> {}
  */
 export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     return (
       <ProductVariantSelector.Options>
@@ -601,33 +857,18 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
             options,
           };
 
-          const attributes = {
-            'data-testid': TestIds.productVariants,
-          };
-
-          const content = (
-            <VariantsContext.Provider value={contextValue}>
-              {typeof children === 'function'
-                ? null
-                : (children as React.ReactNode)}
-            </VariantsContext.Provider>
-          );
-
-          if (asChild) {
-            const rendered = renderAsChild({
-              children,
-              props: { hasOptions },
-              ref,
-              content,
-              attributes,
-            });
-            if (rendered) return rendered;
-          }
-
           return (
-            <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-              {content}
-            </div>
+            <VariantsContext.Provider value={contextValue}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productVariants}
+                customElement={children}
+              >
+                <div>{React.isValidElement(children) ? children : null}</div>
+              </AsChildSlot>
+            </VariantsContext.Provider>
           );
         }}
       </ProductVariantSelector.Options>
@@ -672,7 +913,7 @@ export interface VariantOptionsProps {
  * ```
  */
 export const VariantOptions = React.forwardRef<
-  HTMLElement,
+  HTMLDivElement,
   VariantOptionsProps
 >((props, ref) => {
   const { children, emptyState } = props;
@@ -687,7 +928,7 @@ export const VariantOptions = React.forwardRef<
   };
 
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+    <div {...attributes} ref={ref}>
       {children}
     </div>
   );
@@ -739,8 +980,14 @@ export const VariantOptionRepeater = React.forwardRef<
 /**
  * Props for Product Modifiers container
  */
-export interface ModifiersProps
-  extends AsChildProps<{ hasModifiers: boolean }> {}
+export interface ModifiersProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Container for product modifier system.
@@ -787,7 +1034,7 @@ export interface ModifiersProps
  */
 export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
   (props, ref) => {
-    const { asChild, children } = props;
+    const { asChild, children, className } = props;
 
     return (
       <ProductModifiers.Modifiers>
@@ -799,33 +1046,18 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
             modifiers,
           };
 
-          const attributes = {
-            'data-testid': TestIds.productModifiers,
-          };
-
-          const content = (
-            <ModifiersContext.Provider value={contextValue}>
-              {typeof children === 'function'
-                ? null
-                : (children as React.ReactNode)}
-            </ModifiersContext.Provider>
-          );
-
-          if (asChild) {
-            const rendered = renderAsChild({
-              children,
-              props: { hasModifiers },
-              ref,
-              content,
-              attributes,
-            });
-            if (rendered) return rendered;
-          }
-
           return (
-            <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-              {content}
-            </div>
+            <ModifiersContext.Provider value={contextValue}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productModifiers}
+                customElement={children}
+              >
+                <div>{React.isValidElement(children) ? children : null}</div>
+              </AsChildSlot>
+            </ModifiersContext.Provider>
           );
         }}
       </ProductModifiers.Modifiers>
@@ -872,7 +1104,7 @@ export interface ModifierOptionsProps {
  * ```
  */
 export const ModifierOptions = React.forwardRef<
-  HTMLElement,
+  HTMLDivElement,
   ModifierOptionsProps
 >((props, ref) => {
   const { children, emptyState } = props;
@@ -887,7 +1119,7 @@ export const ModifierOptions = React.forwardRef<
   };
 
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+    <div {...attributes} ref={ref}>
       {children}
     </div>
   );
@@ -978,7 +1210,7 @@ export interface ProductMediaGalleryProps {
  * ```
  */
 export const ProductMediaGallery = React.forwardRef<
-  HTMLElement,
+  HTMLDivElement,
   ProductMediaGalleryProps
 >((props, ref) => {
   const { children, infinite, autoPlay, ...otherProps } = props;
@@ -1000,11 +1232,7 @@ export const ProductMediaGallery = React.forwardRef<
         };
 
         return (
-          <div
-            {...attributes}
-            ref={ref as React.Ref<HTMLDivElement>}
-            {...otherProps}
-          >
+          <div {...attributes} ref={ref} {...otherProps}>
             <MediaGallery.Root
               mediaGalleryServiceConfig={mediaGalleryServiceConfig}
             >
@@ -1021,3 +1249,987 @@ export const ProductMediaGallery = React.forwardRef<
  * Alias for ProductMediaGallery to match the documented API
  */
 export { ProductMediaGallery as MediaGallery };
+
+/**
+ * Props for Product Quantity component
+ */
+export interface ProductQuantityProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    selectedQuantity: number;
+    availableQuantity: number | null;
+    inStock: boolean;
+    isPreOrderEnabled: boolean;
+    setSelectedQuantity: (quantity: number) => void;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Props for Product Quantity sub-components
+ */
+export interface ProductQuantitySubComponentProps {
+  /** CSS classes to apply to the element */
+  className?: string;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    disabled: boolean;
+  }>;
+  /** Whether the component is disabled */
+  disabled?: boolean;
+}
+
+/**
+ * Product quantity selector component that integrates with the selected variant.
+ * Provides quantity controls with stock validation and can-pre-order support.
+ * Uses a compound component pattern with Root, Decrement, Input, Increment, and Raw sub-components.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Compound component usage (recommended)
+ * <Product.Quantity.Root className="flex items-center gap-3">
+ *   <div className="flex items-center border border-brand-light rounded-lg">
+ *     <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ *     <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+ *     <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ *   </div>
+ *   <Product.Quantity.Raw asChild>
+ *     {({ availableQuantity, inStock, isPreOrderEnabled }) => (
+ *       <div>
+ *         {!inStock && isPreOrderEnabled && availableQuantity && (
+ *           <span className="text-content-muted text-sm">
+ *             Max: {availableQuantity} Pre Order
+ *           </span>
+ *         )}
+ *         {inStock && availableQuantity && availableQuantity < 10 && (
+ *           <span className="text-content-muted text-sm">
+ *             Only {availableQuantity} left in stock
+ *           </span>
+ *         )}
+ *       </div>
+ *     )}
+ *   </Product.Quantity.Raw>
+ * </Product.Quantity.Root>
+ *
+ * // Legacy asChild usage (still supported)
+ * <Product.Quantity asChild>
+ *   {({ selectedQuantity, availableQuantity, inStock, setSelectedQuantity }) => (
+ *     <div className="flex items-center gap-3">
+ *       <div className="flex items-center border border-brand-light rounded-lg">
+ *         <button
+ *           onClick={() => setSelectedQuantity(selectedQuantity - 1)}
+ *           disabled={selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled)}
+ *           className="px-3 py-2 hover:bg-surface-primary disabled:opacity-50"
+ *         >
+ *           -
+ *         </button>
+ *         <span className="px-4 py-2 border-x border-brand-light min-w-[3rem] text-center">
+ *           {selectedQuantity}
+ *         </span>
+ *         <button
+ *           onClick={() => setSelectedQuantity(selectedQuantity + 1)}
+ *           disabled={availableQuantity && selectedQuantity >= availableQuantity}
+ *           className="px-3 py-2 hover:bg-surface-primary disabled:opacity-50"
+ *         >
+ *           +
+ *         </button>
+ *       </div>
+ *     </div>
+ *   )}
+ * </Product.Quantity>
+ * ```
+ */
+export const ProductQuantity = React.forwardRef<
+  HTMLDivElement,
+  ProductQuantityProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {({
+        inStock,
+        isPreOrderEnabled,
+        availableQuantity,
+        selectedQuantity,
+        setSelectedQuantity,
+      }) => {
+        const renderProps = {
+          selectedQuantity,
+          availableQuantity,
+          inStock,
+          isPreOrderEnabled,
+          setSelectedQuantity,
+        };
+
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productQuantity}
+              customElement={children}
+              customElementProps={renderProps}
+            />
+          );
+        }
+
+        return (
+          <QuantityComponent.Root
+            initialValue={selectedQuantity}
+            onValueChange={setSelectedQuantity}
+            className={className}
+            ref={ref as React.Ref<HTMLDivElement>}
+            data-testid={TestIds.productQuantity}
+          >
+            {React.isValidElement(children) ? children : null}
+          </QuantityComponent.Root>
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Product Quantity Decrement component.
+ * Automatically handles disabled state based on stock and can-pre-order settings.
+ * Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Decrement className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ * ```
+ */
+export const ProductQuantityDecrement = React.forwardRef<
+  HTMLButtonElement,
+  ProductQuantitySubComponentProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {({ selectedQuantity, inStock, isPreOrderEnabled }) => {
+        const disabled =
+          selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled);
+
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productQuantityDecrement}
+              customElement={children}
+              customElementProps={{ disabled }}
+            />
+          );
+        }
+
+        return (
+          <QuantityComponent.Decrement
+            className={className}
+            ref={ref as React.Ref<HTMLButtonElement>}
+            data-testid={TestIds.productQuantityDecrement}
+            {...{ disabled }}
+          />
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Product Quantity Input component.
+ * Displays the current quantity value. Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Input className="w-16 text-center py-1 border-x border-brand-light focus:outline-none focus:ring-2 focus:ring-brand-primary" />
+ * ```
+ */
+export const ProductQuantityInput = React.forwardRef<
+  HTMLInputElement,
+  ProductQuantitySubComponentProps
+>((props, ref) => {
+  const { asChild, children, className, disabled = true } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {() => {
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              disabled={disabled}
+              data-testid={TestIds.productQuantityInput}
+              customElement={children}
+              customElementProps={{}}
+            />
+          );
+        }
+
+        return (
+          <QuantityComponent.Input
+            className={className}
+            disabled={disabled}
+            ref={ref as React.Ref<HTMLInputElement>}
+            data-testid={TestIds.productQuantityInput}
+          />
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Product Quantity Increment component.
+ * Automatically handles disabled state based on stock availability.
+ * Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Increment className="px-3 py-1 hover:bg-surface-primary transition-colors" />
+ * ```
+ */
+export const ProductQuantityIncrement = React.forwardRef<
+  HTMLButtonElement,
+  ProductQuantitySubComponentProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {({
+        selectedQuantity,
+        availableQuantity,
+        inStock,
+        isPreOrderEnabled,
+      }) => {
+        const disabled =
+          (!!availableQuantity && selectedQuantity >= availableQuantity) ||
+          (!inStock && !isPreOrderEnabled);
+
+        if (asChild && children) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.productQuantityIncrement}
+              customElement={children}
+              customElementProps={{ disabled }}
+            />
+          );
+        }
+
+        return (
+          <QuantityComponent.Increment
+            className={className}
+            ref={ref as React.Ref<HTMLButtonElement>}
+            data-testid={TestIds.productQuantityIncrement}
+            {...{ disabled }}
+          />
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Props for Product Action components following the documented API
+ */
+export interface ProductActionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Text label for the button */
+  label: string;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    disabled: boolean;
+    isLoading: boolean;
+    onClick: () => Promise<void>;
+  }>;
+  /** CSS classes to apply to the button */
+  className?: string;
+  /** Content to display when loading */
+  loadingState?: string | React.ReactNode;
+}
+
+/**
+ * Props for Product Quantity Raw component
+ */
+export interface ProductQuantityRawSubComponentProps {
+  /** CSS classes to apply to the element */
+  className?: string;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    selectedQuantity: number;
+    availableQuantity: number;
+    inStock: boolean;
+    isPreOrderEnabled: boolean;
+    setSelectedQuantity: (quantity: number) => void;
+  }>;
+}
+
+/**
+ * Product Quantity Raw component.
+ * Provides access to raw quantity data for custom stock messages and advanced use cases.
+ * Must be used within Product.Quantity.Root.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Product.Quantity.Raw asChild>
+ *   {({ availableQuantity, inStock, isPreOrderEnabled }) => (
+ *     <div>
+ *       {!inStock && isPreOrderEnabled && availableQuantity && (
+ *         <span className="text-content-muted text-sm">
+ *           Max: {availableQuantity} Pre Order
+ *         </span>
+ *       )}
+ *       {inStock && availableQuantity && availableQuantity < 10 && (
+ *         <span className="text-content-muted text-sm">
+ *           Only {availableQuantity} left in stock
+ *         </span>
+ *       )}
+ *     </div>
+ *   )}
+ * </Product.Quantity.Raw>
+ * ```
+ */
+export const ProductQuantityRaw = React.forwardRef<
+  HTMLElement,
+  ProductQuantityRawSubComponentProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {(renderProps) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            customElement={children}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productQuantityRaw}
+            customElementProps={renderProps}
+          />
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+export interface ProductVariantSelectorResetProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    reset: () => void;
+    hasSelections: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the reset button */
+  label?: string;
+}
+
+export const ProductVariantSelectorReset = React.forwardRef<
+  HTMLButtonElement,
+  ProductVariantSelectorResetProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <ProductVariantSelector.Reset>
+      {(renderProps) => {
+        if (!renderProps.hasSelections) {
+          return null;
+        }
+
+        const label = props.label || 'Reset Selections';
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            customElement={children}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantSelectorReset}
+            customElementProps={renderProps}
+          >
+            <button onClick={renderProps.reset}>{label}</button>
+          </AsChildSlot>
+        );
+      }}
+    </ProductVariantSelector.Reset>
+  );
+});
+
+/**
+ * Add to cart action button component following the documented API.
+ * Automatically integrates with the selected variant and handles loading states.
+ */
+export const ProductActionAddToCart = React.forwardRef<
+  HTMLButtonElement,
+  ProductActionProps
+>((props, ref) => {
+  const { asChild, children, className, label, loadingState } = props;
+
+  return (
+    <SelectedVariant.Actions>
+      {({
+        lineItems,
+        canAddToCart,
+        isLoading,
+        addToCart,
+        isPreOrderEnabled,
+      }) => {
+        if (isPreOrderEnabled) {
+          return null;
+        }
+
+        const onClick = addToCart;
+        const disabled = !canAddToCart || isLoading;
+
+        if (asChild && children) {
+          return (
+            <Commerce.Actions.AddToCart lineItems={lineItems} asChild={asChild}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productActionAddToCart}
+                data-in-progress={isLoading}
+                customElement={children}
+                customElementProps={{
+                  disabled,
+                  isLoading,
+                  onClick,
+                }}
+              />
+            </Commerce.Actions.AddToCart>
+          );
+        }
+
+        return (
+          <Commerce.Actions.AddToCart
+            ref={ref}
+            label={label}
+            lineItems={lineItems}
+            className={className}
+            disabled={disabled}
+            loadingState={loadingState}
+            data-testid={TestIds.productActionAddToCart}
+            data-in-progress={isLoading}
+          />
+        );
+      }}
+    </SelectedVariant.Actions>
+  );
+});
+
+/**
+ * Buy Now action button component following the documented API.
+ * Bypasses the cart and redirects directly to checkout.
+ */
+export const ProductActionBuyNow = React.forwardRef<
+  HTMLButtonElement,
+  ProductActionProps
+>((props, ref) => {
+  const { asChild, children, className, label, loadingState } = props;
+
+  return (
+    <SelectedVariant.Actions>
+      {({
+        lineItems,
+        canAddToCart,
+        isLoading,
+        buyNow,
+        inStock,
+        isPreOrderEnabled,
+      }) => {
+        if (!inStock || isPreOrderEnabled) {
+          return null;
+        }
+
+        const onClick = buyNow;
+        const disabled = !canAddToCart || isLoading;
+
+        if (asChild && children) {
+          return (
+            <Commerce.Actions.BuyNow lineItems={lineItems} asChild={asChild}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productActionBuyNow}
+                data-in-progress={isLoading}
+                customElement={children}
+                customElementProps={{
+                  disabled,
+                  isLoading,
+                  onClick,
+                }}
+              />
+            </Commerce.Actions.BuyNow>
+          );
+        }
+
+        return (
+          <Commerce.Actions.BuyNow
+            ref={ref}
+            label={label}
+            lineItems={lineItems}
+            className={className}
+            disabled={disabled}
+            loadingState={loadingState}
+            data-testid={TestIds.productActionBuyNow}
+            data-in-progress={isLoading}
+          />
+        );
+      }}
+    </SelectedVariant.Actions>
+  );
+});
+
+/**
+ * Pre-Order action button component following the documented API.
+ * Handles can-pre-order functionality when products are not in stock.
+ */
+export const ProductActionPreOrder = React.forwardRef<
+  HTMLButtonElement,
+  ProductActionProps
+>((props, ref) => {
+  const { asChild, children, className, label, loadingState } = props;
+
+  return (
+    <SelectedVariant.Actions>
+      {({ lineItems, isLoading, addToCart, isPreOrderEnabled }) => {
+        if (!isPreOrderEnabled) {
+          return null;
+        }
+
+        const canPreOrder = !isLoading;
+        const onClick = addToCart;
+        const disabled = !canPreOrder;
+
+        if (asChild && children) {
+          return (
+            <Commerce.Actions.AddToCart lineItems={lineItems} asChild={asChild}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.productActionPreOrder}
+                data-in-progress={isLoading}
+                customElement={children}
+                customElementProps={{
+                  disabled,
+                  isLoading,
+                  onClick,
+                }}
+              />
+            </Commerce.Actions.AddToCart>
+          );
+        }
+
+        return (
+          <Commerce.Actions.AddToCart
+            ref={ref}
+            label={label}
+            lineItems={lineItems}
+            className={className}
+            disabled={disabled}
+            loadingState={loadingState}
+            data-testid={TestIds.productActionPreOrder}
+            data-in-progress={isLoading}
+          />
+        );
+      }}
+    </SelectedVariant.Actions>
+  );
+});
+
+/**
+ * Actions namespace containing all product action components
+ * following the documented API: Product.Action.AddToCart, Product.Action.BuyNow, Product.Action.PreOrder
+ */
+export const Action = {
+  /** Add to cart action button */
+  AddToCart: ProductActionAddToCart,
+  /** Buy now action button */
+  BuyNow: ProductActionBuyNow,
+  /** Pre-order action button */
+  PreOrder: ProductActionPreOrder,
+} as const;
+
+/**
+ * Helper function to determine stock status and label based on availability and can-pre-order settings
+ */
+function getStockStatusMessage(
+  inStock: boolean,
+  isPreOrderEnabled: boolean,
+  availabilityStatus: string,
+  labels: {
+    inStock: string;
+    limitedStock: string;
+    outOfStock: string;
+    preOrder: string;
+  },
+): {
+  status: StockStatus;
+  label: string;
+} {
+  // Pre-order takes precedence
+  if (isPreOrderEnabled && !inStock) {
+    return {
+      status: 'can-pre-order',
+      label: labels.preOrder,
+    };
+  }
+
+  // Handle stock status based on availability
+  if (inStock) {
+    switch (availabilityStatus) {
+      case InventoryAvailabilityStatus.IN_STOCK:
+        return {
+          status: 'in-stock',
+          label: labels.inStock,
+        };
+      case InventoryAvailabilityStatus.PARTIALLY_OUT_OF_STOCK:
+        return {
+          status: 'limited-stock',
+          label: labels.limitedStock,
+        };
+      default:
+        return {
+          status: 'in-stock',
+          label: labels.inStock,
+        };
+    }
+  }
+
+  return {
+    status: 'out-of-stock',
+    label: labels.outOfStock,
+  };
+}
+
+/**
+ * Props for ProductVariantStock component
+ */
+export interface ProductVariantStockProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    status: StockStatus;
+    label: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Custom labels for different stock states */
+  labels?: {
+    /** Label for in stock state */
+    inStock?: string;
+    /** Label for limited stock state (when quantity is low) */
+    limitedStock?: string;
+    /** Label for out of stock state */
+    outOfStock?: string;
+    /** Label for can-pre-order state */
+    preOrder?: string;
+  };
+}
+
+/**
+ * Displays the selected variant stock status with customizable rendering and labels,
+ * including can-pre-order support. Similar to Product.Stock but for the selected variant.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.ProductVariant.Stock
+ *   className="stock-indicator"
+ *   labels={{
+ *     inStock: 'In Stock',
+ *     limitedStock: 'Limited Stock',
+ *     outOfStock: 'Out of Stock',
+ *     preOrder: 'Available for Pre-order'
+ *   }}
+ * />
+ *
+ * // asChild with primitive
+ * <Product.ProductVariant.Stock asChild>
+ *   <div className="variant-stock-status" />
+ * </Product.ProductVariant.Stock>
+ *
+ * // asChild with react component
+ * <Product.ProductVariant.Stock
+ *   labels={{
+ *     inStock: 'Available',
+ *     limitedStock: 'Low Stock',
+ *     outOfStock: 'Sold Out',
+ *     preOrder: 'Pre-order Now'
+ *   }}
+ *   asChild
+ * >
+ *   {React.forwardRef(({status, label, ...props}, ref) => (
+ *     <div
+ *       ref={ref}
+ *       {...props}
+ *       className="flex items-center gap-2 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600 data-[state='can-pre-order']:text-blue-600"
+ *     >
+ *       <div className="w-3 h-3 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500 data-[state='can-pre-order']:bg-blue-500" />
+ *       <span className="text-sm font-medium">
+ *         {label}
+ *       </span>
+ *     </div>
+ *   ))}
+ * </Product.ProductVariant.Stock>
+ * ```
+ */
+export const ProductVariantStock = React.forwardRef<
+  HTMLElement,
+  ProductVariantStockProps
+>((props, ref) => {
+  const { asChild, children, className, labels } = props;
+
+  return (
+    <ProductVariantSelector.Stock>
+      {({
+        inStock,
+        isPreOrderEnabled,
+        availabilityStatus,
+        currentVariantId,
+      }) => {
+        // Only render if we have a current variant selected
+        if (!currentVariantId && !availabilityStatus) {
+          return null;
+        }
+
+        // Default labels
+        const defaultLabels = {
+          inStock: 'In Stock',
+          limitedStock: 'Limited Stock',
+          outOfStock: 'Out of Stock',
+          preOrder: 'Available for Pre-order',
+        };
+
+        const finalLabels = { ...defaultLabels, ...labels };
+
+        // Get status and label using the helper function
+        const { status, label } = getStockStatusMessage(
+          inStock,
+          isPreOrderEnabled,
+          availabilityStatus,
+          finalLabels,
+        );
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantStock}
+            data-state={status}
+            customElement={children}
+            customElementProps={{
+              status,
+              label,
+            }}
+            content={label}
+          >
+            <span>{label}</span>
+          </AsChildSlot>
+        );
+      }}
+    </ProductVariantSelector.Stock>
+  );
+});
+
+/**
+ * Props for ProductVariantSKU component
+ */
+export interface ProductVariantSKUProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    sku: string | null;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the selected variant SKU with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.ProductVariant.SKU className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Product.ProductVariant.SKU asChild>
+ *   <span className="sku-value" />
+ * </Product.ProductVariant.SKU>
+ *
+ * // asChild with react component
+ * <Product.ProductVariant.SKU asChild>
+ *   {React.forwardRef(({sku, ...props}, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {sku}
+ *     </span>
+ *   ))}
+ * </Product.ProductVariant.SKU>
+ * ```
+ */
+export const ProductVariantSKU = React.forwardRef<
+  HTMLElement,
+  ProductVariantSKUProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <SelectedVariant.Details>
+      {({ sku }) => {
+        // Don't render anything if there's no SKU
+        if (!sku) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantSku}
+            customElement={children}
+            customElementProps={{ sku }}
+            content={sku}
+          >
+            <span>{sku}</span>
+          </AsChildSlot>
+        );
+      }}
+    </SelectedVariant.Details>
+  );
+});
+
+/**
+ * Props for ProductVariantWeight component
+ */
+export interface ProductVariantWeightProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    weight: string | null;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the selected variant weight with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Product.ProductVariant.Weight className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Product.ProductVariant.Weight asChild>
+ *   <span className="weight-value" />
+ * </Product.ProductVariant.Weight>
+ *
+ * // asChild with react component
+ * <Product.ProductVariant.Weight asChild>
+ *   {React.forwardRef(({weight, ...props}, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {weight}
+ *     </span>
+ *   ))}
+ * </Product.ProductVariant.Weight>
+ * ```
+ */
+export const ProductVariantWeight = React.forwardRef<
+  HTMLElement,
+  ProductVariantWeightProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  return (
+    <SelectedVariant.Details>
+      {({ weight }) => {
+        // Don't render anything if there's no weight
+        if (!weight) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.productVariantWeight}
+            customElement={children}
+            customElementProps={{ weight }}
+            content={weight}
+          >
+            <span>{weight}</span>
+          </AsChildSlot>
+        );
+      }}
+    </SelectedVariant.Details>
+  );
+});
+
+/**
+ * ProductVariant namespace containing product variant components
+ * following the compound component pattern: Product.ProductVariant.Stock, Product.ProductVariant.SKU, Product.ProductVariant.Weight
+ */
+export const ProductVariant = {
+  /** Product variant stock component */
+  Stock: ProductVariantStock,
+  /** Product variant SKU component */
+  SKU: ProductVariantSKU,
+  /** Product variant weight component */
+  Weight: ProductVariantWeight,
+} as const;
+
+/**
+ * Quantity namespace containing all product quantity components
+ * following the compound component pattern: Product.Quantity.Root, Product.Quantity.Decrement, etc.
+ */
+export const Quantity = {
+  /** Product quantity selector component */
+  Root: ProductQuantity,
+  /** Product quantity decrement component */
+  Decrement: ProductQuantityDecrement,
+  /** Product quantity input component */
+  Input: ProductQuantityInput,
+  /** Product quantity increment component */
+  Increment: ProductQuantityIncrement,
+  /** Product quantity raw component */
+  Raw: ProductQuantityRaw,
+} as const;

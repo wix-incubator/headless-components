@@ -1,13 +1,28 @@
 import React from 'react';
-import { Slot } from '@radix-ui/react-slot';
-import * as CoreCategory from './core/Category.js';
-import { type Category } from '../services/category-service.js';
-import {
-  type CategoryServiceConfig,
-  CategoryServiceDefinition,
-} from '../services/category-service.js';
-import { useService } from '@wix/services-manager-react';
-import { renderChildren } from '../utils/renderChildren.js';
+import { categories } from '@wix/categories';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import * as CoreProductListFilters from './core/ProductListFilters.js';
+
+export type Category = categories.Category;
+
+// Context to provide category data and filter functions to child components
+interface CategoryContextValue
+  extends CoreProductListFilters.CategoryFilterRenderProps {
+  category: Category;
+  isSelected: boolean;
+}
+
+const CategoryContext = React.createContext<CategoryContextValue | null>(null);
+
+function useCategoryContext(): CategoryContextValue {
+  const context = React.useContext(CategoryContext);
+  if (!context) {
+    throw new Error(
+      'useCategoryContext must be used within a Category.Root component',
+    );
+  }
+  return context;
+}
 
 enum TestIds {
   categoryItem = 'category-item',
@@ -15,18 +30,15 @@ enum TestIds {
   categoryLabel = 'category-label',
   categoryId = 'category-id',
   categoryRaw = 'category-raw',
+  categoryFilter = 'category-filter',
 }
 
 /**
  * Props for Category.Root component
  */
 export interface CategoryRootProps {
-  /** Category object to initialize the service with */
-  category?: Category;
-  /** Configuration for the category service */
-  categoryServiceConfig?: CategoryServiceConfig;
-  /** Whether the category is currently selected */
-  isSelected?: boolean;
+  /** Category data */
+  category: Category;
   /** Child components */
   children: React.ReactNode;
 }
@@ -38,16 +50,12 @@ export interface CategoryTriggerProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLButtonElement,
-        {
-          category: Category;
-          isSelected: boolean;
-          onSelect: () => void;
-        }
-      >;
+  children?: AsChildChildren<{
+    category: Category;
+    isSelected: boolean;
+    onSelect: () => void;
+    setIsSelected: (isSelected: boolean) => void;
+  }>;
   /** Callback when category is selected */
   onSelect?: (category: Category) => void;
   /** CSS classes to apply to the default element */
@@ -61,15 +69,10 @@ export interface CategoryLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          name: string;
-          category: Category;
-        }
-      >;
+  children?: AsChildChildren<{
+    name: string;
+    category: Category;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -81,15 +84,10 @@ export interface CategoryIDProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          id: string;
-          category: Category;
-        }
-      >;
+  children?: AsChildChildren<{
+    id: string;
+    category: Category;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -101,17 +99,29 @@ export interface CategoryRawProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          category: Category;
-          isSelected: boolean;
-        }
-      >;
+  children?: AsChildChildren<{
+    category: Category;
+    isSelected: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
+}
+
+/**
+ * Props for CategoryFilter component
+ */
+export interface CategoryFilterProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    selectedCategory: Category | null;
+    setSelectedCategory: (category: Category | null) => void;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the selected category display */
+  label?: string;
 }
 
 /**
@@ -133,23 +143,28 @@ export interface CategoryRawProps {
  * ```
  */
 export function Root(props: CategoryRootProps): React.ReactNode {
-  const { category, categoryServiceConfig, isSelected, children } = props;
-
-  if (!category && !categoryServiceConfig) {
-    throw new Error(
-      'Category.Root: category or categoryServiceConfig is required',
-    );
-  }
-
-  const serviceConfig = categoryServiceConfig || {
-    category: category!,
-    isSelected,
-  };
+  const { category, children } = props;
 
   return (
-    <CoreCategory.Root categoryServiceConfig={serviceConfig}>
-      {children}
-    </CoreCategory.Root>
+    <CoreProductListFilters.CategoryFilter>
+      {({ selectedCategory, setSelectedCategory }) => {
+        // Determine if this category is selected by comparing with selectedCategory
+        const isSelected = selectedCategory?._id === category._id;
+
+        const contextValue: CategoryContextValue = {
+          category,
+          isSelected,
+          selectedCategory,
+          setSelectedCategory,
+        };
+
+        return (
+          <CategoryContext.Provider value={contextValue}>
+            {children}
+          </CategoryContext.Provider>
+        );
+      }}
+    </CoreProductListFilters.CategoryFilter>
   );
 }
 
@@ -186,36 +201,44 @@ export const Trigger = React.forwardRef<
   HTMLButtonElement,
   CategoryTriggerProps
 >((props, ref) => {
-  const { asChild, children, onSelect, className } = props;
+  const { asChild, children, onSelect, className, ...otherProps } = props;
 
-  const categoryService = useService(CategoryServiceDefinition);
-  const category = categoryService.category.get();
-  const isSelected = categoryService.isSelected.get();
+  const { category, isSelected, setSelectedCategory } = useCategoryContext();
 
   const handleSelect = () => {
+    // Use CategoryFilter's setSelectedCategory function
+    if (isSelected) {
+      // Deselect by passing null
+      setSelectedCategory(null);
+    } else {
+      // Select this category
+      setSelectedCategory(category);
+    }
+
     if (onSelect) {
       onSelect(category);
     }
   };
 
-  const Comp = asChild && children ? Slot : 'button';
-
   return (
-    <Comp
+    <AsChildSlot
       ref={ref}
+      asChild={asChild}
       className={className}
       onClick={handleSelect}
       data-testid={TestIds.categoryTrigger}
       data-selected={isSelected ? 'true' : 'false'}
+      customElement={children}
+      customElementProps={{
+        category,
+        isSelected,
+        onSelect: handleSelect,
+      }}
+      content={category.name}
+      {...otherProps}
     >
-      {asChild && children
-        ? renderChildren({
-            children,
-            props: { category, isSelected, onSelect: handleSelect },
-            ref,
-          })
-        : category.name}
-    </Comp>
+      <button>{category.name}</button>
+    </AsChildSlot>
   );
 });
 
@@ -248,29 +271,21 @@ export const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const categoryService = useService(CategoryServiceDefinition);
-    const category = categoryService.category.get();
-    const isSelected = categoryService.isSelected.get();
+    const { category, isSelected } = useCategoryContext();
 
     return (
-      <CoreCategory.Name>
-        {({ name }) => {
-          const Comp = asChild && children ? Slot : 'span';
-
-          return (
-            <Comp
-              ref={ref}
-              className={className}
-              data-testid={TestIds.categoryLabel}
-              data-selected={isSelected ? 'true' : 'false'}
-            >
-              {asChild && children
-                ? renderChildren({ children, props: { name, category }, ref })
-                : name}
-            </Comp>
-          );
-        }}
-      </CoreCategory.Name>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.categoryLabel}
+        data-selected={isSelected ? 'true' : 'false'}
+        customElement={children}
+        customElementProps={{ name: category.name!, category }}
+        content={category.name!}
+      >
+        <span>{category.name}</span>
+      </AsChildSlot>
     );
   },
 );
@@ -304,24 +319,22 @@ export const ID = React.forwardRef<HTMLElement, CategoryIDProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const categoryService = useService(CategoryServiceDefinition);
-    const category = categoryService.category.get();
-    const isSelected = categoryService.isSelected.get();
+    const { category, isSelected } = useCategoryContext();
     const id = category._id || '';
 
-    const Comp = asChild && children ? Slot : 'span';
-
     return (
-      <Comp
+      <AsChildSlot
         ref={ref}
+        asChild={asChild}
         className={className || 'sr-only'}
         data-testid={TestIds.categoryId}
         data-selected={isSelected ? 'true' : 'false'}
+        customElement={children}
+        customElementProps={{ id, category }}
+        content={id}
       >
-        {asChild && children
-          ? renderChildren({ children, props: { id, category }, ref })
-          : id}
-      </Comp>
+        <span>{id}</span>
+      </AsChildSlot>
     );
   },
 );
@@ -352,23 +365,88 @@ export const Raw = React.forwardRef<HTMLElement, CategoryRawProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const categoryService = useService(CategoryServiceDefinition);
-    const category = categoryService.category.get();
-    const isSelected = categoryService.isSelected.get();
-
-    const Comp = asChild && children ? Slot : 'span';
+    const { category, isSelected } = useCategoryContext();
 
     return (
-      <Comp
+      <AsChildSlot
         ref={ref}
+        asChild={asChild}
         className={className || 'sr-only'}
         data-testid={TestIds.categoryRaw}
         data-selected={isSelected ? 'true' : 'false'}
+        customElement={children}
+        customElementProps={{ category, isSelected }}
       >
-        {asChild && children
-          ? renderChildren({ children, props: { category, isSelected }, ref })
-          : JSON.stringify(category)}
-      </Comp>
+        <span>{JSON.stringify(category)}</span>
+      </AsChildSlot>
     );
   },
 );
+
+/**
+ * Category filter component that provides category selection functionality.
+ * Provides selected category state and selection controls to custom render functions.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <CategoryFilter className="category-filter" />
+ *
+ * // With custom label
+ * <CategoryFilter label="Current Category:" />
+ *
+ * // Custom rendering with forwardRef
+ * <CategoryFilter asChild>
+ *   {React.forwardRef(({selectedCategory, setSelectedCategory, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="custom-category-filter">
+ *       {selectedCategory && (
+ *         <span>Selected: {selectedCategory.name}</span>
+ *       )}
+ *       <button onClick={() => setSelectedCategory(null)}>
+ *         Clear Selection
+ *       </button>
+ *     </div>
+ *   ))}
+ * </CategoryFilter>
+ * ```
+ */
+export const CategoryFilter = React.forwardRef<
+  HTMLElement,
+  CategoryFilterProps
+>((props, ref) => {
+  const { asChild, children, className } = props;
+
+  const label = props.label || 'Selected:';
+
+  return (
+    <CoreProductListFilters.CategoryFilter>
+      {({ selectedCategory, setSelectedCategory }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.categoryFilter}
+            data-selected={selectedCategory ? 'true' : 'false'}
+            customElement={children}
+            customElementProps={{
+              selectedCategory,
+              setSelectedCategory,
+            }}
+          >
+            <div>
+              {selectedCategory && (
+                <span>
+                  {label} {selectedCategory.name}
+                </span>
+              )}
+            </div>
+          </AsChildSlot>
+        );
+      }}
+    </CoreProductListFilters.CategoryFilter>
+  );
+});
+
+CategoryFilter.displayName = 'CategoryFilter';

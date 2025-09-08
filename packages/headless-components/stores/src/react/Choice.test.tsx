@@ -308,10 +308,6 @@ describe('Choice Components', () => {
         expect.objectContaining({
           id: 'large-choice',
           value: 'Large',
-          'data-testid': 'choice-text',
-          'data-selected': 'false',
-          disabled: false,
-          onClick: expect.any(Function),
         }),
         expect.any(Object),
       );
@@ -450,10 +446,6 @@ describe('Choice Components', () => {
           colorCode: '#ff0000',
           name: 'Red',
           id: 'red-choice',
-          'data-testid': 'choice-color',
-          'data-selected': 'true',
-          disabled: false,
-          onClick: expect.any(Function),
         }),
         expect.any(Object),
       );
@@ -587,8 +579,6 @@ describe('Choice Components', () => {
           defaultAddedPrice: '$5.00',
           title: 'Custom Text',
           onChange: expect.any(Function),
-          'data-testid': 'choice-freetext',
-          'data-selected': 'false',
         }),
         expect.any(Object),
       );
@@ -779,8 +769,6 @@ describe('Choice Components', () => {
           defaultAddedPrice: '$10.00',
           title: 'Custom Engraving',
           onChange: expect.any(Function),
-          'data-testid': 'choice-freetext',
-          'data-selected': 'false',
         }),
         expect.any(Object),
       );

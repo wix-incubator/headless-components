@@ -3,194 +3,603 @@ Components which are not specific to a single vertical, serves as utilities for 
 
 ### Sort.Root
 
-Container for sort controls.
+Container for sort controls that provides sort context and manages sort state. Supports both declarative (sortOptions prop) and programmatic (children) APIs.
+
+**Type Definitions**
+```tsx
+/** Wix SDK sort array format - the only sort format we support */
+export type SortValue = Array<{
+  fieldName?: string;
+  order?: string; // Wix SDK format (typically 'ASC'/'DESC')
+}>;
+
+interface SortFieldOption {
+  fieldName: string;
+  label: string;
+}
+
+interface SortOrderOption {
+  order: 'ASC' | 'DESC';
+  label: string;
+}
+
+interface FullSortOption {
+  fieldName: string;
+  order: 'ASC' | 'DESC';
+  label: string;
+}
+
+/** Sort option configuration */
+export type SortOption = SortFieldOption | SortOrderOption | FullSortOption;
+```
 
 **Props**
 ```tsx
-interface Sort {
-  fieldName: string;
-  order: 'asc' | 'desc';
-}
-
 interface SortRootProps {
-  sortOptions: Array<{
-    label: string;
-    fieldName: string;
-  }>;
+  /** Predefined sort options for declarative API */
+  sortOptions?: Array<SortOption>;
+  /** Current sort value - Wix SDK array format */
+  value?: SortValue;
+  /** Function called when sort changes - receives Wix SDK array format */
+  onChange: (value: SortValue) => void;
+  /** Render mode - 'select' uses native HTML select, 'list' provides custom controls (default: 'select') */
+  as?: 'select' | 'list';
+  /** Children components */
   children?: React.ReactNode;
-  value: Sort; // platform sort object, same one sent as query.sort
-  onChange: (value: Sort) => void;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    sortingOptions: Array<SortOptionProps>;
-    onChange: (value: Sort) => void;
-    value: Sort;
-  }>;
-  as: 'select' | 'list'; // default is 'select'
-}
-
-interface SortOptionProps {
-  fieldName?: string;
-  order?: 'asc' | 'desc';
-  label?: string;
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
 }
 ```
 
-#### Sort.Option
-
-Single sort option, sets the sort field and/or order
+**Data Attributes**
+- `data-testid="sort-root"` - Applied to root container
 
 **Example**
 ```tsx
-const sortOptions = [
-  { fieldName: 'price', label: 'Price: Low to High', order: 'asc' },
-  { fieldName: 'price', label: 'Price: High to Low', order: 'desc' },
-];
+// Declarative API with native select
+<Sort.Root
+  value={sort}
+  onChange={setSort}
+  sortOptions={[
+    { fieldName: 'price', label: 'Price: Low to High', order: 'ASC' },
+    { fieldName: 'price', label: 'Price: High to Low', order: 'DESC' },
+    { fieldName: 'name', label: 'Name: A to Z', order: 'ASC' },
+    { fieldName: 'name', label: 'Name: Z to A', order: 'DESC' },
+  ]}
+  as="select"
+  className="w-full"
+/>
 
-<Sort.Root value={sort} onChange={setSort} sortOptions={sortOptions} as='select' className="w-full" />
-
-// set the options programmatically
-<Sort.Root value={sort} onChange={setSort} className="w-full">
-  <Sort.Option fieldName="price" order="asc" label="Price: Low to High" />
-  <Sort.Option fieldName="price" order="desc" label="Price: High to Low" />
+// Custom component replacing the entire Sort root
+<Sort.Root
+  value={sort}
+  onChange={setSort}
+  sortOptions={sortOptions}
+  asChild
+>
+  <CustomSortComponent />
 </Sort.Root>
 
-// set the options programmatically, using asChild
-<Sort.Root value={sort} onChange={setSort} className="w-full">
-  <Sort.Option fieldName="price" label="Price" />
-  <Sort.Option fieldName="name" label="Name" />
-  <Sort.Option order="asc" asChild>
-    <button>Ascending</button>
-  </Sort.Option>
-  <Sort.Option order="desc" asChild>
-    <button>Descending</button>
-  </Sort.Option>
+// List mode with custom buttons (programmatic API)
+<Sort.Root value={sort} onChange={setSort} as="list">
+  <Sort.Option fieldName="price" order="ASC" label="Price ↑" />
+  <Sort.Option fieldName="price" order="DESC" label="Price ↓" />
+  <Sort.Option fieldName="name" order="ASC" label="Name A-Z" />
+</Sort.Root>
+
+// Custom list container with asChild
+<Sort.Root value={sort} onChange={setSort} as="list" asChild>
+  <div className="custom-sort-container">
+    <Sort.Option fieldName="price" order="ASC" label="Price ↑" />
+    <Sort.Option fieldName="price" order="DESC" label="Price ↓" />
+  </div>
 </Sort.Root>
 ```
 
 ---
 
-### Filter.Root
+### Sort.Option
 
-Container for filter controls.
+Single sort option component that represents a sort option. Can be used to set field name, order, or both. Only works within Sort.Root context.
 
 **Props**
 ```tsx
-interface FilterRootProps {
+interface SortOptionProps extends ButtonProps {
+  /** Field name to sort by (required) */
+  fieldName: string;
+  /** Sort order (required) */
+  order: 'ASC' | 'DESC';
+  /** Display label */
+  label: string;
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Children components */
   children?: React.ReactNode;
-  value: Filter; // platform filter object, same one sent as query.filter
-  onChange: (value: Filter) => void;
-  onFilterChange: ({ value?: string; key: string }) => Filter;
-  filterOptions: Array<{
-    label: string;
-    key: string;
-    value?: any; // number[] (for range) | string[] (for multi) | string (for single)
-    valueFormatter?: (value: string | number) => string;
-    validValues?: Array<string | number>;
-    type: 'single' | 'multi' | 'range';
-    displayType: 'color' | 'text' | 'range';
-  }>;
-}
-
-interface FilterOptions {
-  allowedDisplayTypes: Array<'color' | 'text' | 'range'>; // use in case the 
-  allowedTypes: Array<'single' | 'multi' | 'range'>;
-}
-
-interface FilterOptionsLabel {
-  children?: React.ForwardRefRenderFunction<HTMLDivElement, {
-    label: string;
-  }>;
-  asChild?: boolean;
-}
-
-interface FilterOptionRepeaterProps {
-  children?: React.ForwardRefRenderFunction<HTMLDivElement, {
-    label: string;
-    key: string;
-    value: string;
-    onChange: (value: string) => void;
-    onFilterChange: ({ value?: string; key: string }) => Filter;
-    filterOptions: Array<{
-      label: string;
-      key: string;
-    }>;
-  }>;
-}
-
-interface SingleFilterProps {
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLDivElement, {
-    label: string;
-    key: string;
-    value: string;
-    onChange: (value: string) => void;
-    onFilterChange: ({ value?: string; key: string }) => Filter;
-    filterOptions: Array<{
-      label: string;
-      key: string;
-    }>;
-  }>; 
-}
-
-interface MultiFilterProps {
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLDivElement, {
-    label: string;
-    key: string;
-    value: string[];
-    onChange: (value: string[]) => void;
-    onFilterChange: ({ value?: string; key: string }) => Filter;
-    filterOptions: Array<{
-      label: string;
-      key: string;
-    }>;
-  }>;
-}
-
-interface RangeFilterProps {
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    label: string;
-    key: string;
-    value: number[];
-    onChange: (value: number[]) => void;
-    onFilterChange: ({ value?: string; key: string }) => Filter;
-    filterOptions: number[];
-  }>;
 }
 ```
 
+**Data Attributes**
+- `data-testid="sort-option"` - Applied to option element
+- `data-selected` - Boolean indicating if this option is currently selected
+- `data-field-name` - The field name of this option
+- `data-order` - The sort order of this option
+
 **Example**
 ```tsx
-<Filter.Root value={filter} onChange={setFilter}>
+// Set both field and order
+<Sort.Option fieldName="price" order="ASC" label="Price: Low to High" />
+
+// Custom rendering with asChild
+<Sort.Option fieldName="price" order="ASC" label="Price" asChild>
+  <button className="sort-option-btn">
+    📈 Price (Low to High)
+  </button>
+</Sort.Option>
+
+// With children override
+<Sort.Option fieldName="name" order="DESC" label="Name Z-A">
+  <span className="sort-icon">🔤</span>
+  Name: Z to A
+</Sort.Option>
+```
+
+---
+
+## Sort Architecture
+
+The Sort components follow a streamlined architecture pattern that provides flexibility and platform compatibility:
+
+### Component Hierarchy
+
+```
+Sort.Root (Provider & Renderer)
+└── Sort.Option (Individual options)
+```
+
+### Key Design Principles
+
+#### 1. **Dual API Pattern**
+- **Declarative API**: Use `sortOptions` prop for quick setup with predefined options
+- **Programmatic API**: Use child `Sort.Option` components for granular control
+- **Automatic Selection**: Components choose the appropriate API based on props provided
+
+#### 2. **Wix SDK Compatibility**
+- Sort values use Wix SDK array format: `[{fieldName: 'price', order: 'ASC'}]`
+- Direct compatibility with `query.sort` parameter
+- Support for 'ASC'/'DESC' order values (uppercase as per Wix standards)
+
+#### 3. **Flexible Rendering Modes**
+- **Select Mode** (`as="select"`): Renders native HTML select dropdown (default)
+- **List Mode** (`as="list"`): Renders as unordered list with button options
+- **AsChild Pattern**: Complete control over DOM structure via Slot forwarding
+
+#### 4. **Context-Driven Data Flow**
+- SortContext provides current sort state and change handlers
+- Automatic option selection state management
+- Type-safe option handling with union types
+
+#### 5. **Union Type Flexibility**
+- **SortFieldOption**: Set only field name (keeps current order)
+- **SortOrderOption**: Set only order (keeps current field)
+- **FullSortOption**: Set both field name and order
+- Enables granular control over sort behavior
+
+### Integration Examples
+
+#### With Stores Package
+```tsx
+import { ProductList } from '@wix/stores/react';
+import { Sort } from '@wix/headless-components/react';
+
+// Store-specific sort integration
+<ProductList.Sort as="select" className="w-full" />
+
+// Custom implementation using ProductList context
+<ProductList.Sort asChild>
+  {({ currentSort, sortOptions, setSort }) => (
+    <Sort.Root
+      value={currentSort}
+      onChange={setSort}
+      sortOptions={sortOptions}
+      as="list"
+    />
+  )}
+</ProductList.Sort>
+```
+
+#### Custom Implementation
+```tsx
+// Platform-agnostic usage
+<Sort.Root
+  value={currentSort}
+  onChange={handleSortChange}
+  sortOptions={[
+    { fieldName: 'createdAt', order: 'DESC', label: 'Newest First' },
+    { fieldName: 'createdAt', order: 'ASC', label: 'Oldest First' },
+    { fieldName: 'title', order: 'ASC', label: 'Title A-Z' },
+  ]}
+  as="select"
+/>
+```
+
+### Performance Considerations
+
+- **Lightweight Context**: Minimal context overhead with only essential state
+- **Native Elements**: Uses native HTML select for better performance and accessibility
+- **Memoized Handlers**: Option selection handlers are automatically memoized
+
+---
+
+### Filter.Root
+
+Container for filter controls that provides filter context and manages filter state.
+
+**Type Definitions**
+```tsx
+/** Filter operators that match Wix query.filter format */
+interface FilterOperators<T = any> {
+  $eq?: T;
+  $ne?: T;
+  $gt?: T;
+  $gte?: T;
+  $lt?: T;
+  $lte?: T;
+  $in?: T[];
+  $nin?: T[];
+  $exists?: boolean;
+  $regex?: string;
+  $options?: string;
+  // Array operators
+  $size?: number;
+  $elemMatch?: Record<string, any>;
+  $all?: T[];
+  // Wix-specific operators
+  $hasSome?: T[];
+  $hasAll?: T[];
+  $startsWith?: string;
+  $endsWith?: string;
+  $contains?: string;
+  $urlized?: string;
+  $isEmpty?: boolean;
+  $matchItems?: Array<Record<string, any>>;
+}
+
+/** Valid filter value types */
+type FilterValue<T = any> =
+  | T
+  | FilterOperators<T>
+  | Array<Record<string, any>>;
+
+/** Platform filter object interface - matches query.filter format */
+type Filter = {
+  [fieldPath: string]: FilterValue;
+} | null;
+```
+
+**Props**
+```tsx
+interface FilterOption {
+  /** Display label for the filter */
+  label: string;
+  /** Filter key/field name - used as fallback if fieldName is not specified */
+  key: string;
+  /**
+   * Target field name(s) in the filter object:
+   * - For single/multi: string (e.g., 'inventory.status')
+   * - For range: string[] with [minField, maxField] (e.g., ['price.min', 'price.max'])
+   * - If not specified, uses key as fieldName
+   */
+  fieldName?: string | string[];
+  /**
+   * Field type determines which operators to use for multi-select filters:
+   * - 'array': uses $hasSome operator (for array fields like choices)
+   * - 'singular': uses $in operator (for single fields with multiple values)
+   * - If not specified, defaults to 'singular'
+   */
+  fieldType?: 'array' | 'singular';
+  /** Current filter value */
+  value?: any; // number[] (for range) | string[] (for multi) | string (for single)
+  /** Function to format values for display */
+  valueFormatter?: (value: string | number) => string;
+  /** Valid values for this filter (for validation and shared field logic) */
+  validValues?: Array<string | number>;
+  /** Filter input type */
+  type: 'single' | 'multi' | 'range';
+  /** Display type for styling/rendering */
+  displayType: 'color' | 'text' | 'range';
+  /** Function to format background color for color filters */
+  valueBgColorFormatter?: (value: string | number) => string | null;
+}
+
+interface FilterRootProps {
+  /** Current complete filter value */
+  value: Filter;
+  /** Function called when the complete filter changes */
+  onChange: (value: Filter) => void;
+  /**
+   * Function called when a single filter option changes.
+   * Should merge the single change into the complete filter and return the updated filter.
+   * Optional - if not provided, components will handle conversions automatically using fieldName and fieldType.
+   */
+  onFilterChange?: ({
+    value,
+    key,
+  }: {
+    value: FilterValue;
+    key: string;
+  }) => Filter;
+  /** Available filter options */
+  filterOptions: FilterOption[];
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Children components */
+  children?: React.ReactNode;
+}
+```
+
+**Data Attributes**
+- `data-testid="filter-root"` - Applied to root container
+- `data-has-filters` - Boolean indicating if any filters are active
+
+**Example**
+```tsx
+<Filter.Root
+  value={filter}
+  onChange={setFilter}
+  filterOptions={[
+    {
+      key: 'category',
+      label: 'Category',
+      type: 'single',
+      displayType: 'text',
+      fieldName: 'category.id',
+      validValues: ['electronics', 'clothing', 'books']
+    },
+    {
+      key: 'price',
+      label: 'Price Range',
+      type: 'range',
+      displayType: 'range',
+      fieldName: ['price.min', 'price.max'],
+      validValues: [0, 1000],
+      valueFormatter: (value) => `$${value}`
+    },
+    {
+      key: 'colors',
+      label: 'Colors',
+      type: 'multi',
+      displayType: 'color',
+      fieldName: 'options.choicesSettings.choices.choiceId',
+      fieldType: 'array',
+      validValues: ['red', 'blue', 'green'],
+      valueBgColorFormatter: (value) => value.toLowerCase()
+    }
+  ]}
+  className="space-y-4"
+>
   <Filter.Filtered>
-    <Filter.Action.Clear label="Clear Filters" />
+    <Filter.Action.Clear label="Clear All" />
   </Filter.Filtered>
   <Filter.FilterOptions>
     <Filter.FilterOptionRepeater>
-      <FilterOption.Label>
-      <FilterOption.SingleFilter/> // define how to render a single filter (i.e. radio button)
-      <FilterOption.MultiFilter/> // define how to render a multi filter (i.e. checkbox)
-      <FilterOption.RangeFilter/> // define how to render a range filter (i.e. slider)
-    </FilterOption.Label>
-  </Filter.FilterOptionRepeater>
+      <div className="mb-4">
+        <Filter.FilterOption.Label className="block font-medium mb-2" />
+        <Filter.FilterOption.SingleFilter className="w-full" />
+        <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2" />
+        <Filter.FilterOption.RangeFilter className="w-full" />
+      </div>
+    </Filter.FilterOptionRepeater>
   </Filter.FilterOptions>
 </Filter.Root>
 ```
 
-The props are probably a bit off but the idea is that the user of the filter provides it with a platformized filter object and a function to update the filter.
+---
 
-The filter object is the same one sent as query.filter.
+### Filter.FilterOptions
 
-The function to update the filter is a function that takes a filter object and returns a filter object.
+Container for filter option components that provides structural organization for filter controls.
 
-The filter object is the same one sent as query.filter.
+**Props**
+```tsx
+interface FilterOptionsProps {
+  /** Child components, typically containing FilterOptionRepeater */
+  children: React.ReactNode;
+}
+```
 
-The function to update the filter is a function that takes a filter object and returns a filter object.
+**Data Attributes**
+- `data-testid="filter-options"` - Applied to options container
 
-When presenting the values for example in a range filter, it can use the value formatter in order to convert 10 to 10$
-The allowed types/display types are used in order to be able to set different styles for different types of filters, so the label can be rendered differently.
-the headless components can include just the renderprops mode for each filter type, but using shadcn we should provide basic implementations for each filter type. for example for a single filter we can have a radio button group, for a multi filter we can have a checkbox group, and for a range filter we can have a slider.
+**Example**
+```tsx
+<Filter.FilterOptions className="space-y-4">
+  <Filter.FilterOptionRepeater>
+    <div className="filter-group">
+      <Filter.FilterOption.Label className="font-semibold mb-2" />
+      <Filter.FilterOption.SingleFilter />
+      <Filter.FilterOption.MultiFilter />
+      <Filter.FilterOption.RangeFilter />
+    </div>
+  </Filter.FilterOptionRepeater>
+</Filter.FilterOptions>
+```
+
+---
+
+### Filter.FilterOptionRepeater
+
+Repeater component that renders a template for each filter option. Maps over the filterOptions array and provides FilterOptionContext to each rendered template.
+
+**Props**
+```tsx
+interface FilterOptionRepeaterProps {
+  /** Template to repeat for each filter option defined in filterOptions */
+  children: React.ReactNode;
+}
+```
+
+**Data Attributes**
+- `data-testid="filter-option-repeater"` - Applied to repeater container
+- `data-testid="filter-option"` - Applied to each option wrapper
+- `data-filter-key` - The key of the current filter option
+
+**Example**
+```tsx
+<Filter.FilterOptionRepeater>
+  <div className="mb-6">
+    <Filter.FilterOption.Label className="block text-sm font-medium mb-2" />
+    {/* These components automatically show/hide based on option.type */}
+    <Filter.FilterOption.SingleFilter className="w-full" />
+    <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2" />
+    <Filter.FilterOption.RangeFilter className="space-y-2" />
+  </div>
+</Filter.FilterOptionRepeater>
+```
+
+---
+
+### Filter.FilterOption.Label
+
+Label component for filter options that displays the option.label from the FilterOptionContext.
+
+**Props**
+```tsx
+interface FilterOptionLabelProps {
+  /** When true, delegates rendering to child component using Slot pattern */
+  asChild?: boolean;
+  /** Custom content to render instead of the default option label */
+  children?: React.ReactNode;
+}
+```
+
+**Data Attributes**
+- `data-testid="filter-option-label"` - Applied to label element
+
+**Example**
+```tsx
+// Default label rendering
+<Filter.FilterOption.Label className="block text-sm font-medium text-gray-700 mb-1" />
+
+// Custom label with asChild pattern
+<Filter.FilterOption.Label asChild>
+  <h3 className="text-lg font-semibold" />
+</Filter.FilterOption.Label>
+
+// Custom content overriding the label
+<Filter.FilterOption.Label>
+  <span className="text-blue-600">Custom Label Text</span>
+</Filter.FilterOption.Label>
+```
+
+---
+
+### Filter.FilterOption.SingleFilter
+
+Single selection filter component that renders when option.type is 'single'. Uses Radix ToggleGroup by default for better UX and accessibility.
+
+**Props**
+```tsx
+interface SingleFilterProps {
+  /** When true, enables asChild pattern for custom styling */
+  asChild?: boolean;
+  /** Custom content for the filter component */
+  children?: React.ReactNode;
+}
+```
+
+**Data Attributes**
+- `data-testid="filter-option-single"` - Applied to filter element
+- `data-filter-type="single"` - Filter type identifier
+- `data-display-type` - The displayType from option configuration
+
+**Example**
+```tsx
+// Default ToggleGroup rendering
+<Filter.FilterOption.SingleFilter className="flex gap-2" />
+
+// Custom select dropdown with asChild
+<Filter.FilterOption.SingleFilter asChild>
+  <select className="form-select" />
+</Filter.FilterOption.SingleFilter>
+
+// Custom styling with children
+<Filter.FilterOption.SingleFilter>
+  <option value="">All Categories</option>
+</Filter.FilterOption.SingleFilter>
+```
+
+---
+
+### Filter.FilterOption.MultiFilter
+
+Multi-selection filter component that renders when option.type is 'multi'. Uses Radix ToggleGroup in multiple mode by default and supports color swatches.
+
+**Props**
+```tsx
+interface MultiFilterProps {
+  /** When true, enables asChild pattern for custom styling */
+  asChild?: boolean;
+  /** Custom content for the multi-filter component */
+  children?: React.ReactNode;
+}
+```
+
+**Data Attributes**
+- `data-testid="filter-option-multi"` - Applied to filter element
+- `data-filter-type="multi"` - Filter type identifier
+- `data-display-type` - The displayType from option configuration
+- `data-color` - Color value when displayType is 'color'
+
+**Example**
+```tsx
+// Default ToggleGroup rendering
+<Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2" />
+
+// Color swatch display (when displayType='color')
+<Filter.FilterOption.MultiFilter className="grid grid-cols-6 gap-2" />
+
+// Custom checkbox list with asChild
+<Filter.FilterOption.MultiFilter asChild>
+  <div className="space-y-2" />
+</Filter.FilterOption.MultiFilter>
+```
+
+---
+
+### Filter.FilterOption.RangeFilter
+
+Range filter component for numeric ranges that renders when option.type is 'range'. Uses Radix Slider with dual thumbs by default for smooth interaction.
+
+**Props**
+```tsx
+interface RangeFilterProps {
+  /** When true, enables asChild pattern for custom styling */
+  asChild?: boolean;
+  /** Custom content for the range filter component */
+  children?: React.ReactNode;
+}
+```
+
+**Data Attributes**
+- `data-testid="filter-option-range"` - Applied to filter element
+- `data-filter-type="range"` - Filter type identifier
+- `data-display-type` - The displayType from option configuration
+- `data-range-value="min|max"` - Applied to min/max value displays
+
+**Example**
+```tsx
+// Default Radix Slider rendering
+<Filter.FilterOption.RangeFilter className="w-full px-4 py-2" />
+
+// Custom dual number inputs with asChild
+<Filter.FilterOption.RangeFilter asChild>
+  <div className="flex items-center gap-2">
+    <input type="number" placeholder="Min" className="form-input" />
+    <span>to</span>
+    <input type="number" placeholder="Max" className="form-input" />
+  </div>
+</Filter.FilterOption.RangeFilter>
+```
 
 ---
 
@@ -224,17 +633,15 @@ interface FilterFilteredProps {
 
 ### Filter.Action.Clear
 
-Button to clear all active filters.
+Button to clear all active filters. Automatically disables when no filters are active.
 
 **Props**
 ```tsx
-interface FilterActionClearProps {
+interface FilterActionClearProps extends ButtonProps {
+  /** Label text for the clear button */
   label: string;
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    onClick: () => void;
-    disabled: boolean;
-  }>;
+  /** Children for custom rendering */
+  children?: React.ReactNode;
 }
 ```
 
@@ -245,26 +652,121 @@ interface FilterActionClearProps {
 **Example**
 ```tsx
 // Default usage
-<Filter.Action.Clear 
-  label="Clear Filters" 
+<Filter.Action.Clear
+  label="Clear Filters"
   className="btn-secondary text-sm px-3 py-1"
 />
 
-// Custom rendering with forwardRef
+// Custom rendering with asChild
 <Filter.Action.Clear label="Reset All" asChild>
-  {React.forwardRef(({onClick, disabled, ...props}, ref) => (
-    <button 
-      ref={ref}
-      {...props}
-      onClick={onClick}
-      disabled={disabled}
-      className="text-status-danger hover:text-status-danger-hover underline disabled:text-content-muted disabled:no-underline"
-    >
-      ✕ Reset All Filters
-    </button>
-  ))}
+  <button className="text-status-danger hover:text-status-danger-hover underline disabled:text-content-muted disabled:no-underline">
+    ✕ Reset All Filters
+  </button>
+</Filter.Action.Clear>
+
+// Override button content with children
+<Filter.Action.Clear label="Clear All">
+  Clear All Filters
 </Filter.Action.Clear>
 ```
+
+---
+
+## Filter Architecture
+
+The Filter components follow a structured architecture pattern that provides flexibility, type safety, and platform compatibility:
+
+### Component Hierarchy
+
+```
+Filter.Root (Provider)
+├── Filter.Filtered (Conditional container)
+│   └── Filter.Action.Clear (Clear button)
+└── Filter.FilterOptions (Options container)
+    └── Filter.FilterOptionRepeater (Template repeater)
+        ├── Filter.FilterOption.Label (Option label)
+        ├── Filter.FilterOption.SingleFilter (Single selection)
+        ├── Filter.FilterOption.MultiFilter (Multi selection)
+        └── Filter.FilterOption.RangeFilter (Range selection)
+```
+
+### Key Design Principles
+
+#### 1. **Platform Compatibility**
+- Filter objects match Wix `query.filter` format exactly
+- Support for all Wix filter operators (`$hasSome`, `$in`, `$gte`, `$lte`, etc.)
+- Handles both singular and array field types appropriately
+
+#### 2. **Headless/Unstyled Pattern**
+- Components provide functionality without default styling
+- Uses Radix UI primitives for accessibility and better UX
+- Complete control over visual appearance via CSS classes
+
+#### 3. **AsChild Pattern**
+- All components support `asChild` for flexible DOM structure
+- Uses Radix Slot for prop forwarding
+- Enables custom elements while preserving functionality
+
+#### 4. **Context-Driven Data Flow**
+- FilterContext provides global filter state and options
+- FilterOptionContext provides per-option data and update functions
+- Automatic type detection and appropriate component rendering
+
+#### 5. **Field Type Flexibility**
+- **Single fields**: Direct field assignment (e.g., `{category: 'electronics'}`)
+- **Dual fields**: Separate min/max fields (e.g., `{'price.min': {$gte: 10}, 'price.max': {$lte: 100}}`)
+- **Array fields**: Uses `$hasSome` operator for array-based filtering
+- **Singular fields**: Uses `$in` operator for multiple values in single fields
+
+#### 6. **Enhanced UX Features**
+- **Color swatches**: Automatic color display when `displayType: 'color'`
+- **Value formatting**: Custom display formatting via `valueFormatter`
+- **Smooth interactions**: Range sliders use local state during dragging
+- **Accessibility**: Full keyboard navigation and ARIA attributes
+
+### Integration Examples
+
+#### With Stores Package
+```tsx
+import { ProductList } from '@wix/stores/react';
+import { Filter } from '@wix/headless-components/react';
+
+// Store-specific filter integration
+<ProductList.Filter>
+  <Filter.FilterOptions>
+    <Filter.FilterOptionRepeater>
+      <Filter.FilterOption.Label />
+      <Filter.FilterOption.MultiFilter />
+      <Filter.FilterOption.RangeFilter />
+    </Filter.FilterOptionRepeater>
+  </Filter.FilterOptions>
+</ProductList.Filter>
+```
+
+#### Custom Implementation
+```tsx
+// Platform-agnostic usage
+<Filter.Root
+  value={filter}
+  onChange={handleFilterChange}
+  filterOptions={filterOptions}
+>
+  <Filter.Filtered>
+    <Filter.Action.Clear label="Clear All" />
+  </Filter.Filtered>
+  <Filter.FilterOptions>
+    <Filter.FilterOptionRepeater>
+      <CustomFilterTemplate />
+    </Filter.FilterOptionRepeater>
+  </Filter.FilterOptions>
+</Filter.Root>
+```
+
+### Performance Considerations
+
+- **Optimized Updates**: Components only re-render when their specific filter values change
+- **Local State**: Range sliders use local state during interaction to prevent excessive API calls
+- **Memoization**: Filter conversion functions are memoized to prevent unnecessary recalculations
 
 ---
 
@@ -324,8 +826,8 @@ interface QuantityDecrementProps {
 // Custom rendering with forwardRef
 <Quantity.Increment asChild>
   {React.forwardRef((props, ref) => (
-    <button 
-      ref={ref} 
+    <button
+      ref={ref}
       {...props}
       className="px-3 py-2 border rounded hover:bg-surface-primary transition-colors"
     >
@@ -336,8 +838,8 @@ interface QuantityDecrementProps {
 
 <Quantity.Decrement asChild>
   {React.forwardRef((props, ref) => (
-    <button 
-      ref={ref} 
+    <button
+      ref={ref}
       {...props}
       className="px-3 py-2 border rounded hover:bg-surface-primary transition-colors"
     >
@@ -377,7 +879,7 @@ interface QuantityInputProps {
 // Custom rendering with forwardRef
 <Quantity.Input asChild>
   {React.forwardRef(({value, onChange, ...props}, ref) => (
-    <input 
+    <input
       ref={ref}
       {...props}
       type="number"

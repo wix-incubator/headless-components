@@ -44,7 +44,7 @@ export default function ProductDetailPage({
                 </a>
               </div>
 
-              <ProductDetails product={productServiceConfig.product} />
+              <ProductDetails product={productServiceConfig.product!} />
             </div>
           </div>
         </StoreLayout>

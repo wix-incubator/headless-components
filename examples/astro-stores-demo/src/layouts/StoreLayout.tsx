@@ -1,7 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { MiniCartContent, MiniCartIcon } from '../components/ecom/MiniCart';
-import { CurrentCart } from '@wix/headless-ecom/react';
+import { CurrentCart, Cart, Commerce } from '@wix/headless-ecom/react';
 import type { CurrentCartServiceConfig } from '@wix/headless-ecom/services';
+import {
+  MiniCartModalProvider,
+  useMiniCartModal,
+} from '../components/MiniCartModal';
 
 interface StoreLayoutProps {
   children: ReactNode;
@@ -17,13 +21,17 @@ export function StoreLayout({
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   return (
-    <CurrentCart.Root currentCartServiceConfig={currentCartServiceConfig}>
-      <StoreLayoutContent
-        children={children}
-        showSuccessMessage={showSuccessMessage}
-        setShowSuccessMessage={setShowSuccessMessage}
-      />
-    </CurrentCart.Root>
+    <MiniCartModalProvider>
+      <Commerce.Root checkoutServiceConfig={{}}>
+        <CurrentCart.Root currentCartServiceConfig={currentCartServiceConfig}>
+          <StoreLayoutContent
+            children={children}
+            showSuccessMessage={showSuccessMessage}
+            setShowSuccessMessage={setShowSuccessMessage}
+          />
+        </CurrentCart.Root>
+      </Commerce.Root>
+    </MiniCartModalProvider>
   );
 }
 
@@ -36,29 +44,26 @@ function StoreLayoutContent({
   showSuccessMessage: boolean;
   setShowSuccessMessage: (show: boolean) => void;
 }) {
+  const { open } = useMiniCartModal();
   return (
     <>
-      <CurrentCart.OpenTrigger>
-        {({ open }) => (
-          <CurrentCart.LineItemAdded>
-            {({ onAddedToCart }) => {
-              useEffect(
-                () =>
-                  onAddedToCart(() => {
-                    setShowSuccessMessage(true);
-                    setTimeout(() => {
-                      setShowSuccessMessage(false);
-                      open();
-                    }, 3000);
-                  }),
-                [onAddedToCart]
-              );
+      <Cart.LineItemAdded>
+        {({ onAddedToCart }) => {
+          useEffect(
+            () =>
+              onAddedToCart(() => {
+                setShowSuccessMessage(true);
+                setTimeout(() => {
+                  setShowSuccessMessage(false);
+                  open();
+                }, 3000);
+              }),
+            [onAddedToCart]
+          );
 
-              return null;
-            }}
-          </CurrentCart.LineItemAdded>
-        )}
-      </CurrentCart.OpenTrigger>
+          return null;
+        }}
+      </Cart.LineItemAdded>
 
       {/* Success Message */}
       {showSuccessMessage && (

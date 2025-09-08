@@ -3,10 +3,10 @@ import {
   type ConnectedOptionChoice,
 } from '@wix/auto_sdk_stores_products-v-3';
 import React from 'react';
-import { renderAsChild, type AsChildProps } from '../utils/index.js';
 import * as Choice from './Choice.js';
 import * as ProductModifiersPrimitive from './core/ProductModifiers.js';
 import * as ProductVariantSelectorPrimitive from './core/ProductVariantSelector.js';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
 enum TestIds {
   optionRoot = 'option-root',
@@ -26,12 +26,17 @@ export interface Option {
 /**
  * Root props with asChild support
  */
-export interface RootProps
-  extends AsChildProps<{
+export interface RootProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
     option: Option;
     onValueChange?: (value: string) => void;
     allowedTypes?: ('color' | 'text' | 'free-text')[];
-  }> {
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
   option: Option;
   onValueChange?: (value: string) => void;
   allowedTypes?: ('color' | 'text' | 'free-text')[];
@@ -119,7 +124,15 @@ export interface RootProps
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { asChild, children, option, onValueChange, allowedTypes } = props;
+  const {
+    asChild,
+    children,
+    option,
+    onValueChange,
+    allowedTypes,
+    className,
+    ...otherProps
+  } = props;
 
   // Determine the option type based on the option name and available choices
   const getOptionType = (): 'color' | 'text' | 'free-text' => {
@@ -150,32 +163,21 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
     mandatory: option?.mandatory || false,
   };
 
-  const attributes = {
-    'data-testid': TestIds.optionRoot,
-    'data-type': optionType,
-  };
-
-  const content = (
-    <OptionContext.Provider value={contextValue}>
-      {typeof children === 'function' ? null : (children as React.ReactNode)}
-    </OptionContext.Provider>
-  );
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { option, onValueChange, allowedTypes },
-      ref,
-      content,
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
-
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-      {content}
-    </div>
+    <OptionContext.Provider value={contextValue}>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.optionRoot}
+        data-type={optionType}
+        customElement={children}
+        customElementProps={{ option, onValueChange, allowedTypes }}
+        {...otherProps}
+      >
+        <div>{React.isValidElement(children) ? children : null}</div>
+      </AsChildSlot>
+    </OptionContext.Provider>
   );
 });
 
@@ -185,7 +187,14 @@ export const OptionContext = React.createContext<any>(null);
 /**
  * Props for Option Name component
  */
-export interface NameProps extends AsChildProps<{ name: string }> {}
+export interface NameProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ name: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the option name.
@@ -211,44 +220,40 @@ export interface NameProps extends AsChildProps<{ name: string }> {}
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const optionData = React.useContext(OptionContext);
 
   if (!optionData) return null;
 
   const name = optionData.name || '';
 
-  const attributes = {
-    'data-testid': TestIds.optionName,
-  };
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { name },
-      ref,
-      content: name,
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
-
   return (
-    <div
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
       className={className}
-      {...attributes}
-      ref={ref as React.Ref<HTMLDivElement>}
+      data-testid={TestIds.optionName}
+      customElement={children}
+      customElementProps={{ name }}
+      content={name}
+      {...otherProps}
     >
-      {name}
-    </div>
+      <div>{name}</div>
+    </AsChildSlot>
   );
 });
 
 /**
  * Props for Option MandatoryIndicator component
  */
-export interface MandatoryIndicatorProps
-  extends AsChildProps<{ mandatory: boolean }> {}
+export interface MandatoryIndicatorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ mandatory: boolean }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays the mandatory indicator (asterisk) when the option is required.
@@ -282,29 +287,18 @@ export const MandatoryIndicator = React.forwardRef<
   // Don't render anything if not mandatory
   if (!mandatory) return null;
 
-  const attributes = {
-    'data-testid': TestIds.optionMandatoryIndicator,
-  };
-
-  if (asChild) {
-    const rendered = renderAsChild({
-      children,
-      props: { mandatory },
-      ref,
-      content: '*',
-      attributes,
-    });
-    if (rendered) return rendered;
-  }
-
   return (
-    <span
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
       className={className}
-      {...attributes}
-      ref={ref as React.Ref<HTMLSpanElement>}
+      data-testid={TestIds.optionMandatoryIndicator}
+      customElement={children}
+      customElementProps={{ mandatory }}
+      content={'*'}
     >
-      *
-    </span>
+      <span>*</span>
+    </AsChildSlot>
   );
 });
 
