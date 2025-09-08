@@ -14,7 +14,7 @@ const FileUpload = ({
   description,
   required,
   readOnly,
-  actionText,
+  buttonText,
   maxFiles,
   allowedFileFormats,
   explanationText,
@@ -64,12 +64,12 @@ const FileUpload = ({
         onBlur={() => onBlur()}
         onFocus={() => onFocus()}
       />
-      {actionText && (
+      {buttonText && (
         <button
           type="button"
           onClick={() => document.getElementById(id)?.click()}
         >
-          {actionText}
+          {buttonText}
         </button>
       )}
       {description && (

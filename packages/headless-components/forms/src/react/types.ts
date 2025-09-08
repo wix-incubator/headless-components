@@ -739,7 +739,7 @@ type FileFormat = 'Video' | 'Image' | 'Audio' | 'Document' | 'Archive';
  * @property {string} label - The display label for the form field
  * @property {boolean} showLabel - Whether to display the field label
  * @property {forms.RichContent} [description] - Optional rich content description for the field
- * @property {string} [actionText] - Optional custom text for the upload button
+ * @property {string} [buttonText] - Optional custom text for the upload button
  * @property {number} [maxFiles] - Optional maximum number of files allowed
  * @property {FileFormat[]} [allowedFileFormats] - Optional array of allowed file format extensions (e.g., [".pdf", ".doc", ".docx"])
  * @property {string} [explanationText] - Optional explanatory text to display below the upload area
@@ -757,7 +757,7 @@ type FileFormat = 'Video' | 'Image' | 'Audio' | 'Document' | 'Archive';
  *   label: 'Upload Documents',
  *   showLabel: true,
  *   description: { nodes: [{ type: 'text', text: 'Upload your documents (PDF, DOC, DOCX)' }] },
- *   actionText: 'Choose Files',
+ *   buttonText: 'Choose Files',
  *   allowedFileFormats: ['.pdf', '.doc', '.docx'],
  *   explanationText: 'Maximum file size: 10MB',
  *   maxFiles: 5,
@@ -772,7 +772,7 @@ export interface FileUploadProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   description?: forms.RichContent;
-  actionText?: string;
+  buttonText?: string;
   maxFiles?: number;
   allowedFileFormats?: FileFormat[];
   explanationText?: string;
