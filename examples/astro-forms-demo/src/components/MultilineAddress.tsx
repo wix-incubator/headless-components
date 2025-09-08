@@ -7,6 +7,7 @@ const MultilineAddress = ({
   required,
   readOnly,
   showAddressLine2,
+  addressLine2Required,
   onChange,
   onBlur,
   onFocus,
@@ -72,6 +73,7 @@ const MultilineAddress = ({
             id={`${id}-addressLine2`}
             type="text"
             value={value?.addressLine2 || ''}
+            required={addressLine2Required}
             readOnly={readOnly}
             onChange={e => handleFieldChange('addressLine2', e.target.value)}
             onBlur={() => onBlur()}

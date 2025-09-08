@@ -348,6 +348,7 @@ type MultilineAddressValue = {
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
  * @property {boolean} showAddressLine2 - Whether to show the address line 2 field
+ * @property {boolean} addressLine2Required - Whether the address line 2 field is required
  *
  * @example
  * ```tsx
@@ -357,6 +358,8 @@ type MultilineAddressValue = {
  *   required: true,
  *   readOnly: false,
  *   label: 'Full Address',
+ *   showAddressLine2: true,
+ *   addressLine2Required: false,
  *   onChange: (value) => console.log('Value changed:', value),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
@@ -367,6 +370,7 @@ export interface MultilineAddressProps extends BaseFieldProps {
   label?: string;
   value: MultilineAddressValue;
   showAddressLine2: boolean;
+  addressLine2Required?: boolean;
 }
 
 /**
