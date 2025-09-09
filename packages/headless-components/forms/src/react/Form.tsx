@@ -33,6 +33,7 @@ import {
   RatingInputProps,
   RichTextProps,
   SignatureProps,
+  SubmitButtonProps,
   TagsProps,
   TextAreaProps,
   TextInputProps,
@@ -123,6 +124,7 @@ export function Root(props: RootProps): React.ReactNode {
  * @property {React.ComponentType<TextAreaProps>} TEXT_AREA - Component for textarea fields
  * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for number input fields
  * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
+ * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for submit button fields
  *
  * @example
  * ```tsx
@@ -145,6 +147,7 @@ export function Root(props: RootProps): React.ReactNode {
  *   TEXT_AREA: TextArea,
  *   NUMBER_INPUT: NumberInput,
  *   CHECKBOX: Checkbox,
+ *   SUBMIT_BUTTON: SubmitButton,
  * };
  * ```
  */
@@ -178,6 +181,7 @@ interface FieldMap {
   TIME_INPUT: React.ComponentType<TimeInputProps>;
   HEADER: React.ComponentType<HeaderProps>;
   RICH_TEXT: React.ComponentType<RichTextProps>;
+  SUBMIT_BUTTON: React.ComponentType<SubmitButtonProps>;
 }
 
 /**

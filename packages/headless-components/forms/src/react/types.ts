@@ -1245,3 +1245,26 @@ export interface RichTextProps {
   content: forms.RichContent;
   maxShownParagraphs: number;
 }
+
+/**
+ * Props for submit button field.
+ * The field is used to render a submit button for the form.
+ * Used with fieldMap key: SUBMIT_BUTTON
+ *
+ * @interface SubmitButtonProps
+ *
+ * @property {string} id - The unique identifier for the submit button
+ * @property {string} text - The text to display on the submit button
+ *
+ * @example
+ * ```tsx
+ * const submitButton: SubmitButtonProps = {
+ *   id: 'submit',
+ *   text: 'Submit Form'
+ * };
+ * ```
+ */
+export interface SubmitButtonProps {
+  id: string;
+  text: string;
+}
