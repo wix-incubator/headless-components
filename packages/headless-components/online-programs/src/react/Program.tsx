@@ -1,5 +1,6 @@
 import React from 'react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import * as programs from '@wix/auto_sdk_online-programs_programs';
 
 import * as CoreProgram from './core/Program.js';
 
@@ -11,7 +12,7 @@ enum TestIds {
 
 export interface ProgramRootProps {
   children: React.ReactNode;
-  program: any; // TODO: replace with Program type
+  program: programs.Program;
 }
 
 /**
@@ -45,7 +46,7 @@ export function Root(props: ProgramRootProps): React.ReactNode {
 }
 
 /**
- * Props for Product Name component
+ * Props for Program Title component
  */
 export interface TitleProps {
   /** Whether to render as a child component */
@@ -97,10 +98,12 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
             content={title}
             {...otherProps}
           >
-            <div>{title}</div>
+            <h1>{title}</h1>
           </AsChildSlot>
         );
       }}
     </CoreProgram.Title>
   );
 });
+
+Title.displayName = 'Program.Title';

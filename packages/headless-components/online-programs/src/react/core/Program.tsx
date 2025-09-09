@@ -40,6 +40,8 @@ export interface ProgramTitleProps {
 export interface ProgramTitleRenderProps {
   /** Program title */
   title: string;
+  /** Program image */
+  image: any; // TODO: replace with Image type
 }
 
 /**
@@ -68,8 +70,10 @@ export function Title(props: ProgramTitleProps) {
 
   const program = service.program.get() as any; // TODO: replace with Program type
   const title = program.config.program.description.title;
+  const image = program.config.program.description.image;
 
   return props.children({
     title,
+    image,
   });
 }

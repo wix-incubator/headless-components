@@ -32,9 +32,6 @@ export default function OnlineProgramsPage({ onlineProgramsGetProgramServiceConf
       <Program.Root program={onlineProgramsGetProgramServiceConfig}>
         <Program.Title />
       </Program.Root>
-      {/* <Program.Root program={onlineProgramsGetProgramServiceConfig}>
-        <Program.Title />
-      </Program.Root> */}
     </ServicesManagerProvider>
   );
 }
