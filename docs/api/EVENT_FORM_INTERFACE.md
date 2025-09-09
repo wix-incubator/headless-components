@@ -50,7 +50,8 @@ interface ControlsProps {
 <Form.Controls className="space-y-4">
   <Form.ControlRepeater>
     <Control.Label />
-    <Control.Name />
+    <Control.FirstName />
+    <Control.LastName />
     <Control.Email />
     <Control.Input />
     <Control.Textarea />
@@ -88,7 +89,8 @@ interface ControlRepeaterProps {
 ```tsx
 <Form.ControlRepeater>
   <Control.Label />
-  <Control.Name />
+  <Control.FirstName />
+  <Control.LastName />
   <Control.Email />
   <Control.Input />
   <Control.Textarea />
