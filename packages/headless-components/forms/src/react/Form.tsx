@@ -42,6 +42,7 @@ import {
   ProductListProps,
   FixedPaymentProps,
   PaymentInputProps,
+  DonationProps,
 } from './types.js';
 
 export interface RootProps {
@@ -130,6 +131,7 @@ export function Root(props: RootProps): React.ReactNode {
  * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for submit button fields
  * @property {React.ComponentType<FixedPaymentProps>} FIXED_PAYMENT - Component for fixed payment fields
  * @property {React.ComponentType<PaymentInputProps>} PAYMENT_INPUT - Component for payment input fields
+ * @property {React.ComponentType<DonationProps>} DONATION - Component for donation fields
  *
  * @example
  * ```tsx
@@ -190,6 +192,7 @@ interface FieldMap {
   PRODUCT_LIST: React.ComponentType<ProductListProps>;
   FIXED_PAYMENT: React.ComponentType<FixedPaymentProps>;
   PAYMENT_INPUT: React.ComponentType<PaymentInputProps>;
+  DONATION: React.ComponentType<DonationProps>;
 }
 
 /**

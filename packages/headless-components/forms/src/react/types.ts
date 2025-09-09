@@ -13,6 +13,11 @@ interface ChoiceOption {
   default: boolean;
 }
 
+interface CustomOption {
+  label: string;
+  placeholder: string;
+}
+
 interface BaseFieldProps {
   id: string;
   required: boolean;
@@ -873,10 +878,7 @@ export interface RadioGroupProps extends BaseFieldProps {
   options: ChoiceOption[];
   description?: forms.RichContent;
   numberOfColumns: 1 | 2 | 3;
-  customOption: {
-    label: string;
-    placeholder: string;
-  };
+  customOption: CustomOption;
 }
 
 /**
@@ -911,10 +913,7 @@ export interface CheckboxGroupProps extends BaseFieldProps {
   options: ChoiceOption[];
   description?: forms.RichContent;
   numberOfColumns: 1 | 2 | 3;
-  customOption: {
-    label: string;
-    placeholder: string;
-  };
+  customOption: CustomOption;
   maxItems?: number;
   minItems?: number;
 }
@@ -979,10 +978,7 @@ export interface TagsProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   description?: forms.RichContent;
-  customOption?: {
-    label: string;
-    placeholder: string;
-  };
+  customOption?: CustomOption;
   numberOfColumns: 0 | 1 | 2 | 3;
   minItems?: number;
   maxItems?: number;
@@ -1355,6 +1351,59 @@ export interface PaymentInputProps extends BaseFieldProps {
   currency: string;
   minValue: string;
   maxValue?: string;
+}
+
+/**
+ * Props for donation field.
+ * Field allows users to select a donation amount.
+ * Used with fieldMap key: DONATION
+ *
+ * @interface DonationProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
+ * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
+ * @property {string[]} options - Array of predefined donation amounts
+ * @property {CustomOption} [customOption] - Optional configuration for custom donation amount input
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const donationField: DonationProps = {
+ *   id: 'donation',
+ *   value: '50.00',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Donation Amount',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Choose a donation amount' }] },
+ *   numberOfColumns: 2,
+ *   currency: '$',
+ *   options: ['25.00', '50.00', '100.00', '250.00'],
+ *   customOption: { label: 'Other Amount', placeholder: 'Enter custom amount' },
+ *   onChange: (value) => console.log('Donation changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DonationProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  numberOfColumns: 1 | 2 | 3;
+  currency: string;
+  options: string[];
+  customOption?: CustomOption;
 }
 
 interface ProductOption extends ChoiceOption {
