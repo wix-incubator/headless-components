@@ -24,7 +24,9 @@ interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
 }
 
+// TODO: narrow types, e.g. CONTACTS_FIRST_NAME + CONTACTS_LAST_NAME = both text inputs
 const FIELD_MAP = {
+  // TODO: inject data attributes like data-field-type, disabled
   TEXT_INPUT: TextInput,
   URL_INPUT: UrlInput,
   FILE_UPLOAD: FileUpload,
