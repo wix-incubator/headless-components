@@ -33,7 +33,6 @@ The root container that provides the cms item context to all child components.
 interface CmsItemRootProps {
   item: ItemData;
   children: React.ReactNode;
-  invalidateKey?: string // a key for invalidating the data
 }
 ```
 

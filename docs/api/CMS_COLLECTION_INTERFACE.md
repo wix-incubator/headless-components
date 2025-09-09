@@ -7,6 +7,8 @@ A comprehensive CMS collection display component system built with composable pr
 ### Components
 
 - [CmsCollection.Root](#cmscollectionroot)
+- [CmsCollection.Sort/CmsCollection.SortOption](#cmscollectionsortcmscollectionsortoption)
+- [CmsCollection.Filters](#cmscollectionfilters)
 - [CmsCollection.Items](#cmscollectionitems)
 - [CmsCollection.ItemRepeater](#cmscollectionitemrepeater)
 - [CmsCollection.ShowMoreAction](#cmscollectionshowmoreaction)
@@ -33,7 +35,6 @@ The root container that provides CMS collection context to all child components.
 interface CmsCollectionProps {
   collection: CollectionData;
   children: React.ReactNode;
-  invalidateKey?: string; // a key for invalidating the data
 }
 ```
 
@@ -47,6 +48,106 @@ interface CmsCollectionProps {
 **Data Attributes**
 - `data-testid="cms-collection"` - Applied to line cms container
 - `data-collection-id`="collection-id"` - Collection id
+---
+
+### CmsCollection.Sort/CmsCollection.SortOption
+
+Displays sorting controls for the collection items.
+Plain wrappers for Sort.Root and Sort.Option.
+
+**Props**
+```tsx
+interface CmsCollectionSortProps {
+  children?: React.ForwardRefRenderFunction<HTMLElement, {
+    sortingOptions: Array<SortOptionProps>;
+    onChange: (value: Sort) => void;
+    value: Sort;
+  }>;
+  asChild?: boolean;
+  valueFormatter?: ({sortBy, sortDirection}) => string; // used to format the value for the select, i.e. to translate the values, mandatory when rendering as select
+  as: 'select' | 'list'; // default is 'select'
+}
+
+interface CmsCollectionSortOptionProps = SortOptionProps & {
+  fieldName?: 'title' | 'created' | 'modified' | 'slug'; // CMS-specific field names
+}
+```
+
+**Important**
+The implementation should generate a plain Sort object (we should go over cms implementation and update it).
+
+See [Sort.Root](./PLATFORM_INTERFACE.md#sortroot) and [Sort.Option](./PLATFORM_INTERFACE.md#sortoption) for more details.
+
+**Example**
+```tsx
+<CmsCollection.Sort as="select" valueFormatter={({sortBy, sortDirection}) => `Sort by ${sortBy} (${sortDirection === 'asc' ? 'A-Z' : 'Z-A'})`} />
+
+<CmsCollection.Sort className="w-full">
+  <CmsCollection.SortOption fieldName="title" label="Title" />
+  <CmsCollection.SortOption fieldName="created" label="Date Created" />
+  <CmsCollection.SortOption order="asc" asChild>
+    <button>Ascending</button>
+  </CmsCollection.SortOption>
+  <CmsCollection.SortOption order="desc" asChild>
+    <button>Descending</button>
+  </CmsCollection.SortOption>
+</CmsCollection.Sort>
+
+<CmsCollection.Sort asChild>
+  {React.forwardRef(({value, onChange, sortingOptions, ...props}, ref) => (
+    <select defaultValue={`${value.fieldName}_${value.order}`} ref={ref} {...props} onChange={(e) => {
+      const [by, direction] = e.target.value.split('_');
+      onChange({fieldName: by, order: direction});
+    }}>
+      <option value="created_desc">Newest First</option>
+      <option value="title_asc">Title (A-Z)</option>
+      <option value="title_desc">Title (Z-A)</option>
+      <option value="modified_desc">Recently Modified</option>
+    </select>
+  ))}
+</CmsCollection.Sort>
+```
+
+**Data Attributes**
+- `data-testid="cms-collection-sorting"` - Applied to sorting container
+- `data-filtered` - Is collection currently filtered
+- `data-sorted-by` - Current sorting field
+- `data-sort-direction` - Current sort direction
+
+---
+
+### CmsCollection.Filters
+
+Container for collection item filters and controls (we should go over cms implementation and update it).
+
+**Props**
+```tsx
+interface CmsCollectionFiltersProps {
+  children?: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+}
+```
+
+**Example**
+```tsx
+<CmsCollection.Filters className="flex gap-4"> // defines the <Filter.Root value={filter} onChange={setFilter}>
+  <Filter.FilterOptions>
+    <Filter.FilterOptionRepeater>
+      <Filter.SingleFilter/> // define how to render a single filter (i.e. radio button)
+      <Filter.MultiFilter/> // define how to render a multi filter (i.e. checkbox)
+      <Filter.RangeFilter/> // define how to render a range filter (i.e. slider)
+    </Filter.FilterOptionRepeater>
+  </Filter.FilterOptions>
+</CmsCollection.Filters>
+```
+
+Refer to [Filter.Root](./PLATFORM_INTERFACE.md#filterroot) for more details.
+
+**Data Attributes**
+- `data-testid="cms-collection-filters"` - Applied to filters container
+- `data-has-active-filters` - Present when filters are active
+
 ---
 
 ### CmsCollection.Items
@@ -320,6 +421,8 @@ interface CmsCollectionBulkUpdateActionProps {
 |-----------|------------|---------|
 | `data-testid="cms-collection"` | CmsCollection.Root | Collection root container |
 | `data-collection-id="collection-id"` | CmsCollection.Root | Collection identifier |
+| `data-testid="cms-collection-sorting"` | CmsCollection.Sort | Sorting container |
+| `data-testid="cms-collection-filters"` | CmsCollection.Filters | Filters container |
 | `data-testid="cms-collection-items"` | CmsCollection.Items | Items container |
 | `data-testid="cms-collection-item"` | CmsCollection.ItemRepeater | Individual collection item |
 | `data-testid="cms-collection-load-more"` | CmsCollection.ShowMoreAction | Load more button |
@@ -329,6 +432,10 @@ interface CmsCollectionBulkUpdateActionProps {
 | `data-testid="cms-collection-bulk-update"` | CmsCollection.BulkUpdateAction | Bulk update button |
 | `data-testid="cms-collection-items-totals"` | CmsCollection.Totals.Count/Displayed | Totals container |
 | `data-empty` | CmsCollection.Items | Empty collection status |
+| `data-filtered` | CmsCollection.Sort | Collection currently filtered status |
+| `data-sorted-by` | CmsCollection.Sort | Current sorting field |
+| `data-sort-direction` | CmsCollection.Sort | Current sort direction |
+| `data-has-active-filters` | CmsCollection.Filters | Active filters present |
 | `data-infinite-scroll` | CmsCollection.Items | Infinite scroll mode |
 | `data-page-size` | CmsCollection.Items | Current page size setting |
 | `data-total` | CmsCollection.Totals.Count | Total number of items |
@@ -341,12 +448,160 @@ interface CmsCollectionBulkUpdateActionProps {
 
 
 
-Form
+## Usage Examples
 
-next prev maybe be generic
+### Basic CMS Collection with Sort and Filters
+```tsx
+function CmsCollectionDisplay() {
+  const collection = useCmsCollection();
 
-service to refreash data
+  return (
+    <CmsCollection.Root collection={collection}>
+      <div className="space-y-6">
+        {/* Header with Sorting and Filters */}
+        <div className="flex justify-between items-center bg-surface-card p-4 rounded-lg">
+          <div className="flex items-center gap-4">
+            <span>Showing <CmsCollection.Totals.Displayed /> of <CmsCollection.Totals.Count /> items</span>
+          </div>
 
-ecom buttons (add to cart etc)
+          <div className="flex gap-4">
+            <CmsCollection.Sort
+              as="select"
+              valueFormatter={({sortBy, sortDirection}) =>
+                `${sortBy === 'title' ? 'Title' : sortBy === 'created' ? 'Date Created' : 'Modified'} (${sortDirection === 'asc' ? 'A-Z' : 'Z-A'})`
+              }
+            />
 
-search filter etc
+            <CmsCollection.Filters>
+              <Filter.FilterOptions>
+                <Filter.FilterOptionRepeater>
+                  <Filter.SingleFilter />
+                  <Filter.MultiFilter />
+                  <Filter.RangeFilter />
+                </Filter.FilterOptionRepeater>
+              </Filter.FilterOptions>
+            </CmsCollection.Filters>
+          </div>
+        </div>
+
+        {/* Items Grid */}
+        <CmsCollection.Items
+          emptyState={<div className="text-center py-12">No items found</div>}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          <CmsCollection.ItemRepeater className="bg-surface-card p-4 rounded-lg border border-surface-subtle hover:shadow-lg transition-shadow">
+            <CmsItem.TextField fieldKey="title" className="text-lg font-semibold text-content-primary mb-2" />
+            <CmsItem.ImageField fieldKey="image" className="aspect-video rounded-lg mb-4" />
+            <CmsItem.DateField fieldKey="created" className="text-sm text-content-muted" />
+
+            <div className="mt-4 space-y-2">
+              <CmsItem.Action.Edit label="Edit Item" className="w-full btn-primary" />
+              <CmsItem.Action.Delete label="Delete Item" className="w-full btn-secondary" />
+            </div>
+          </CmsCollection.ItemRepeater>
+        </CmsCollection.Items>
+
+        {/* Load More */}
+        <CmsCollection.ShowMoreAction className="w-full btn-outline">
+          Load More Items
+        </CmsCollection.ShowMoreAction>
+      </div>
+    </CmsCollection.Root>
+  );
+}
+```
+
+### Advanced Example with Custom Sort Options
+```tsx
+function AdvancedCmsCollection() {
+  return (
+    <CmsCollection.Root collection={collection}>
+      <div className="space-y-8">
+        {/* Enhanced Header */}
+        <Card className="bg-surface-card border-surface-subtle">
+          <CardContent className="p-6">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <h2 className="text-2xl font-bold text-content-primary">
+                Collection Items (<CmsCollection.Totals.Displayed />)
+              </h2>
+
+              <div className="flex flex-wrap gap-3">
+                <CmsCollection.Sort as="list" className="flex gap-2">
+                  <CmsCollection.SortOption fieldName="title" order="asc">
+                    Title (A-Z)
+                  </CmsCollection.SortOption>
+                  <CmsCollection.SortOption fieldName="created" order="desc">
+                    Newest First
+                  </CmsCollection.SortOption>
+                  <CmsCollection.SortOption fieldName="modified" order="desc">
+                    Recently Modified
+                  </CmsCollection.SortOption>
+                </CmsCollection.Sort>
+
+                <CmsCollection.Filters>
+                  <Filter.Filtered>
+                    <div className="bg-surface-card border-surface-primary p-4 rounded">
+                      <p className="text-content-secondary">Active filters:</p>
+                      <Filter.Action.Clear label="Clear All" />
+                    </div>
+                  </Filter.Filtered>
+                </CmsCollection.Filters>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Items with Management Actions */}
+        <CmsCollection.Items
+          emptyState={
+            <Card className="text-center py-16">
+              <CardContent>
+                <h3 className="text-2xl font-bold text-content-primary mb-4">
+                  No Items Available
+                </h3>
+                <p className="text-content-muted mb-6">
+                  Create your first item to get started.
+                </p>
+                <CmsCollection.CreateItemAction label="Create Item" className="btn-primary" />
+              </CardContent>
+            </Card>
+          }
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <CmsCollection.ItemRepeater className="group">
+              <Card className="h-full bg-surface-card border-surface-subtle hover:shadow-xl transition-all">
+                <CardContent className="p-6">
+                  <CmsItem.TextField fieldKey="title" className="text-lg font-semibold mb-4" />
+                  <CmsItem.TextField fieldKey="description" className="text-content-muted mb-4 line-clamp-3" />
+                  <CmsItem.DateField fieldKey="modified" className="text-xs text-content-muted" />
+                </CardContent>
+
+                <CardFooter className="p-6 pt-0 space-y-2">
+                  <div className="flex gap-2 w-full">
+                    <CmsItem.Action.Edit label="Edit" className="flex-1 btn-secondary" />
+                    <CmsItem.Action.Delete label="Delete" className="btn-outline text-status-error" />
+                  </div>
+                </CardFooter>
+              </Card>
+            </CmsCollection.ItemRepeater>
+          </div>
+        </CmsCollection.Items>
+
+        {/* Bulk Actions */}
+        <div className="flex justify-between items-center">
+          <CmsCollection.BulkUpdateAction
+            label="Update Selected"
+            className="btn-secondary"
+            loadingState="Updating..."
+          />
+
+          <div className="flex gap-2">
+            <CmsCollection.PrevAction className="btn-outline">Previous</CmsCollection.PrevAction>
+            <CmsCollection.NextAction className="btn-outline">Next</CmsCollection.NextAction>
+          </div>
+        </div>
+      </div>
+    </CmsCollection.Root>
+  );
+}
+```
