@@ -13,6 +13,7 @@ The Product component follows a compound component pattern where each part can b
 The root container that provides product context to all child components.
 
 **Props**
+
 ```tsx
 interface ProductRootProps {
   product: ProductData;
@@ -22,20 +23,21 @@ interface ProductRootProps {
 ```
 
 **Example**
+
 ```tsx
-<Product.Root product={product}>
-  {/* All product components */}
-</Product.Root>
+<Product.Root product={product}>{/* All product components */}</Product.Root>
 ```
 
 ---
 
 ### Product.Loading
+
 // OPEN ISSUE: how do we define the loading state?
 
 Displays loading state while product data is being fetched.
 
 **Props**
+
 ```tsx
 interface ProductLoadingProps {
   children: React.ReactNode;
@@ -43,6 +45,7 @@ interface ProductLoadingProps {
 ```
 
 **Example**
+
 ```tsx
 <Product.Loading>
   <div className="animate-pulse">Loading product...</div>
@@ -59,25 +62,32 @@ Also, need to see how we use skeleton especially in list.
 Provides direct access to product context data. Should be used only in rare cases and never by Wix implementations
 
 **Props**
+
 ```tsx
 interface ProductRawProps {
-  children: React.ForwardRefRenderFunction<HTMLElement, {
-    isLoading: boolean;
-    product: Product;
-    selectedVariant: SelectedVariant;
-  }>;
+  children: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      isLoading: boolean;
+      product: Product;
+      selectedVariant: SelectedVariant;
+    }
+  >;
   asChild?: boolean;
 }
 ```
 
 **Example**
+
 ```tsx
 <Product.Raw>
-  {React.forwardRef(({product, selectedVariant, isLoading, ...props}, ref) => (
-    <div ref={ref} {...props}>
-      Custom product implementation
-    </div>
-  ))}
+  {React.forwardRef(
+    ({ product, selectedVariant, isLoading, ...props }, ref) => (
+      <div ref={ref} {...props}>
+        Custom product implementation
+      </div>
+    ),
+  )}
 </Product.Raw>
 ```
 
@@ -88,17 +98,20 @@ interface ProductRawProps {
 Displays the product name with customizable rendering.
 
 **Props**
+
 ```tsx
 interface ProductNameProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {name: string}>;
+  children?: React.ForwardRefRenderFunction<HTMLElement, { name: string }>;
 }
 ```
 
 **Data Attributes**
+
 - `data-testid="product-name"` - Applied to name element
 
 **Example**
+
 ```tsx
 // plain
 <Product.Name className="text-4xl font-bold">
@@ -120,6 +133,7 @@ interface ProductNameProps {
 
 Note - this approach applies to all text nodes (should probably )
 helper Component
+
 ---
 
 ### Product.Description
@@ -127,17 +141,22 @@ helper Component
 Renders the product description with HTML content support.
 
 **Props**
+
 ```tsx
 interface ProductDescriptionProps {
   as?: 'plain' | 'html' | 'ricos'; // default 'plain'
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    description: string;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      description: string;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 <Product.Description as="plain" className="text-content-secondary" />
 
@@ -146,7 +165,7 @@ interface ProductDescriptionProps {
 
 <Product.Description as="html">
   {({description}) => (
-    <div 
+    <div
       className="text-content-secondary"
       dangerouslySetInnerHTML={{__html: description}}
     />
@@ -162,17 +181,22 @@ interface ProductDescriptionProps {
 Displays the current product price.
 
 **Props**
+
 ```tsx
 interface ProductPriceProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    price: string;
-    formattedPrice: string;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      price: string;
+      formattedPrice: string;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <Product.Price className="text-3xl font-bold text-content-primary data-[discounted]:bold" />
@@ -197,17 +221,22 @@ interface ProductPriceProps {
 Displays the compare-at (original) price when on sale.
 
 **Props**
+
 ```tsx
 interface ProductCompareAtPriceProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    price: Money;
-    formattedPrice: string;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      price: Money;
+      formattedPrice: string;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage (only shows when on sale)
 <Product.CompareAtPrice className="text-lg text-content-faded line-through hidden data-[discounted]:inline" />
@@ -215,9 +244,9 @@ interface ProductCompareAtPriceProps {
 // Custom rendering with forwardRef
 <Product.CompareAtPrice asChild>
   {React.forwardRef(({formattedPrice, ...props}, ref) => (
-    <span 
-      ref={ref} 
-      {...props} 
+    <span
+      ref={ref}
+      {...props}
       className="hidden data-[discounted]:inline text-lg text-content-faded line-through"
     >
       Was: {formattedPrice}
@@ -227,6 +256,7 @@ interface ProductCompareAtPriceProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="product-compare-at-price"` - Applied to variants container
 - `data-discounted` - Is price discounted
 
@@ -238,18 +268,24 @@ Container for product variant selection system.
 Does not render when there are no variants
 
 **Props**
+
 ```tsx
 interface ProductVariantsProps {
   children: React.ReactNode;
 }
 interface ProductVariantOptionsProps {
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    options: Option[];
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      options: Option[];
+    }
+  >;
   emptyState?: React.ReactNode;
 }
 ```
+
 **Example**
+
 ```tsx
 <Product.Variants>
   <Product.VariantOptions>
@@ -259,6 +295,7 @@ interface ProductVariantOptionsProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="product-variants"` - Applied to variants container
 
 ---
@@ -269,15 +306,20 @@ Individual variant option (e.g., Color, Size).
 It renders a generic Option.Root element
 
 **Props**
+
 ```tsx
 interface ProductVariantOptionProps {
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    option: Option;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      option: Option;
+    }
+  >;
 }
 ```
 
 **Data Attributes**
+
 - `data-testid="product-variant-option"` - Applied to option container
 
 ---
@@ -288,21 +330,30 @@ Container for product variant selection system.
 Does not render when there are no variants
 
 **Props**
+
 ```tsx
 interface ProductModifiersProps {
   children: React.ReactNode;
 }
 interface ProductModifierOptionsProps {
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    options: Option[];
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      options: Option[];
+    }
+  >;
   emptyState?: React.ReactNode;
 }
 interface ProductModifierOptionRepeaterProps {
-  children?: React.ForwardRefRenderFunction<HTMLElement, Omit<Option, 'option'>>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    Omit<Option, 'option'>
+  >;
 }
 ```
+
 **Example**
+
 ```tsx
 <Product.Modifiers>
   <Product.ModifierOptions>
@@ -321,6 +372,7 @@ interface ProductModifierOptionRepeaterProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="product-modifiers"` - Applied to Modifiers container
 
 ---
@@ -331,29 +383,35 @@ Individual variant option (e.g., Color, Size).
 It renders a generic Option.Root element
 
 **Props**
+
 ```tsx
 interface ProductModifierOptionProps {
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    option: Option;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      option: Option;
+    }
+  >;
 }
 ```
 
 **Data Attributes**
+
 - `data-testid="product-variant-option"` - Applied to option container
 
 **Contains:**
+
 - Option.Name
 - Option.FreeText
 - Option.Text
 - Option.Color
-
 
 ### Option.Root / Option.Raw
 
 A container for a single option (variant or modifier)
 
 **Props**
+
 ```tsx
 interface OptionProps {
   option: Option;
@@ -365,14 +423,18 @@ interface OptionProps {
 interface Option {
   name: string;
 }
-
 ```
 
 **Example**
+
 ```tsx
-<Option.Root option={option} onValueChange={() => {}} allowedTypes={['color', 'text']}>
+<Option.Root
+  option={option}
+  onValueChange={() => {}}
+  allowedTypes={['color', 'text']}
+>
   <Option.Raw asChild>
-    {React.forwardRef(({option, onValueChange, ...props}, ref) => (
+    {React.forwardRef(({ option, onValueChange, ...props }, ref) => (
       <div ref={ref} {...props}>
         {option.name}
       </div>
@@ -382,6 +444,7 @@ interface Option {
 ```
 
 **Data Attributes**
+
 - `data-testid="option"` - Applied to choice buttons
 - `data-type` - The type of the option 'color' | 'text' | 'free-text'
 
@@ -392,6 +455,7 @@ interface Option {
 Displays the name of a variant option.
 
 **Props**
+
 ```tsx
 interface OptionNameProps {
   asChild?: boolean;
@@ -400,6 +464,7 @@ interface OptionNameProps {
 ```
 
 **Example**
+
 ```tsx
 <Option.Name asChild>
   <h3 className="text-lg font-semibold">Color</h3>
@@ -407,7 +472,6 @@ interface OptionNameProps {
 ```
 
 ---
-
 
 ### Option.Choices
 
@@ -417,12 +481,15 @@ It does not render any UI by itself, but is used to group the available choices 
 It is used to render the choices for an option, and is used to render the choices for an option.
 
 **Props**
+
 ```tsx
 interface OptionChoicesProps {
   children: React.ReactNode;
 }
 ```
+
 **Data Attributes**
+
 - `data-testid="option-choices"` - Applied to choices container
 - `data-type` - The type of the option 'color' | 'text' | 'free-text'
 
@@ -435,6 +502,7 @@ The Choice.Root acts as a trigger for the choice (selecting it).
 (renders a button)
 
 **Props**
+
 ```tsx
 interface Choice {
   colorCode?: string;
@@ -446,15 +514,19 @@ interface Choice {
   addedPrice?: string | null;
 }
 interface ChoiceRootProps {
-  children: React.ForwardRefRenderFunction<HTMLElement, {
-    choice: Choice;
-    onValueChange: (value: string) => void;
-  }>;
+  children: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      choice: Choice;
+      onValueChange: (value: string) => void;
+    }
+  >;
   asChild?: boolean;
 }
 ```
 
 **Example**
+
 ```tsx
 <Choice.Root>
   <Choice.FreeText />
@@ -462,6 +534,7 @@ interface ChoiceRootProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="choice"` - Applied to choice container
 - `data-type` - The type of the option 'color' | 'text' | 'free-text'
 
@@ -472,24 +545,29 @@ interface ChoiceRootProps {
 Provides a free text input for variant selection.
 
 **Props**
+
 ```tsx
 interface FreeTextSettings {
-    minCharCount?: number;
-    
-    maxCharCount?: number;
-    
-    defaultAddedPrice?: string | null;
-    
-    title?: string;
+  minCharCount?: number;
+
+  maxCharCount?: number;
+
+  defaultAddedPrice?: string | null;
+
+  title?: string;
 }
 
 interface ChoiceFreeTextProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLTextAreaElement, FreeTextSettings>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLTextAreaElement,
+    FreeTextSettings
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <Choice.FreeText className="p-3 border rounded-lg" />
@@ -497,7 +575,7 @@ interface ChoiceFreeTextProps {
 // Custom rendering with forwardRef
 <Choice.FreeText asChild>
   {React.forwardRef(({value, minCharCount, maxCharCount, ...props}, ref) => (
-    <textarea 
+    <textarea
       ref={ref}
       {...props}
       className="p-3 border rounded-lg resize-none"
@@ -508,6 +586,7 @@ interface ChoiceFreeTextProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="choice-free-text"` - Applied to free text input
 - `data-selected` - Is Choice selected
 - `disabled` - Is Choice disabled (not in stock)
@@ -519,27 +598,32 @@ interface ChoiceFreeTextProps {
 Text-based choice button.
 
 **Props**
+
 ```tsx
 interface ChoiceTextProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    id: string;
-    value: string;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLButtonElement,
+    {
+      id: string;
+      value: string;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <Choice.Text className="px-4 py-2 border rounded-lg" />
 ```
 
 **Data Attributes**
+
 - `data-testid="choice-text"` - Applied to choice buttons
 - `data-selected` - Is Choice selected
 - `disabled` - Is Choice disabled (not in stock)
-
 
 ---
 
@@ -548,23 +632,29 @@ interface ChoiceTextProps {
 Color swatch choice.
 
 **Props**
+
 ```tsx
 interface ChoiceColorProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    colorCode: string;
-    name: string;
-    id: string;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLButtonElement,
+    {
+      colorCode: string;
+      name: string;
+      id: string;
+    }
+  >;
 }
 ```
 
 **Data Attributes**
+
 - `data-testid="choice-color"` - Applied to color swatches
 - `data-selected` - Is Choice selected
 - `disabled` - Is Choice disabled (not in stock)
 
 **Example**
+
 ```tsx
 // Default usage
 <Choice.Color className="w-10 h-10 rounded-full border-4" />
@@ -572,7 +662,7 @@ interface ChoiceColorProps {
 // Custom rendering with forwardRef
 <Choice.Color asChild>
   {React.forwardRef(({colorCode, name, ...props}, ref) => (
-    <button 
+    <button
       ref={ref}
       {...props}
       style={{backgroundColor: colorCode}}
@@ -590,14 +680,16 @@ interface ChoiceColorProps {
 Container for quantity selection controls.
 
 **Props**
+
 ```tsx
 interface ProductQuantityProps {
   children: React.ReactNode;
-  steps?: number; // default - 1 - how much to increment/decrement 
+  steps?: number; // default - 1 - how much to increment/decrement
 }
 ```
 
 **Example**
+
 ```tsx
 <Product.Quantity steps={10}>
   <Quantity.Decrement />
@@ -613,6 +705,7 @@ interface ProductQuantityProps {
 Container for quantity selection controls.
 
 **Props**
+
 ```tsx
 interface ProductQuantityProps {
   children: React.ReactNode;
@@ -622,6 +715,7 @@ interface ProductQuantityProps {
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <Quantity.Root steps={10} onValueChange={() => {}}>
@@ -630,6 +724,7 @@ interface ProductQuantityProps {
   <Quantity.Decrement />
 </Quantity.Root>
 ```
+
 ---
 
 ### Quantity.Increment/Quantity.Decrement
@@ -637,6 +732,7 @@ interface ProductQuantityProps {
 Increment/Decrement quantity button.
 
 **Props**
+
 ```tsx
 interface QuantityIncrementProps {
   asChild?: boolean;
@@ -649,6 +745,7 @@ interface QuantityIncrementProps {
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <Quantity.Increment className="px-3 py-2 border rounded" />
@@ -657,8 +754,8 @@ interface QuantityIncrementProps {
 // Custom rendering with forwardRef
 <Quantity.Increment asChild>
   {React.forwardRef(({increment, ...props}, ref) => (
-    <button 
-      ref={ref} 
+    <button
+      ref={ref}
       {...props}
       className="px-3 py-2 border rounded hover:bg-surface-primary"
     >
@@ -669,6 +766,7 @@ interface QuantityIncrementProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="quantity-increment|quantity-decrement"` - Applied to increment/decrement button
 - `disabled` - Is option disabled
 
@@ -679,6 +777,7 @@ interface QuantityIncrementProps {
 Displays current quantity value.
 
 **Props**
+
 ```tsx
 interface QuantityInputValueProps {
   asChild?: boolean;
@@ -688,6 +787,7 @@ interface QuantityInputValueProps {
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <Quantity.Input className="px-4 py-2 border text-center min-w-16" editable={false} />
@@ -695,7 +795,7 @@ interface QuantityInputValueProps {
 // Custom rendering with forwardRef
 <Quantity.Input asChild>
   {React.forwardRef((props, ref) => (
-    <input 
+    <input
       ref={ref}
       {...props}
       type="number"
@@ -706,8 +806,162 @@ interface QuantityInputValueProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="quantity-input"` - Applied to input
 - `disabled` - Is input disabled
+
+---
+
+### Product.Variant.Stock
+
+Displays the selected variant stock status with customizable rendering and labels, including can-pre-order support. Similar to Product.Stock but for the selected variant.
+
+**Props**
+
+```tsx
+interface ProductVariantStockProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'can-pre-order';
+      label: string;
+    }
+  >;
+  className?: string;
+  labels?: {
+    inStock?: string;
+    limitedStock?: string;
+    outOfStock?: string;
+    preOrder?: string;
+  };
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<Product.Variant.Stock
+  className="stock-indicator"
+  labels={{
+    inStock: 'In Stock',
+    limitedStock: 'Limited Stock',
+    outOfStock: 'Out of Stock',
+    preOrder: 'Pre-Order Available'
+  }}
+/>
+
+// Custom rendering with forwardRef
+<Product.Variant.Stock asChild>
+  {React.forwardRef(({status, label, ...props}, ref) => (
+    <div
+      ref={ref}
+      {...props}
+      className="flex items-center gap-2 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600 data-[state='can-pre-order']:text-blue-600"
+    >
+      <div className="w-3 h-3 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500 data-[state='can-pre-order']:bg-blue-500" />
+      <span className="text-sm font-medium">
+        {label}
+      </span>
+    </div>
+  ))}
+</Product.Variant.Stock>
+```
+
+**Data Attributes**
+
+- `data-testid="product-variant-stock"` - Applied to stock element
+- `data-state` - Current stock status ('in-stock' | 'limited-stock' | 'out-of-stock' | 'can-pre-order')
+
+---
+
+### Product.Variant.SKU
+
+Displays the selected variant SKU (Stock Keeping Unit) identifier.
+
+**Props**
+
+```tsx
+interface ProductVariantSKUProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      sku: string;
+    }
+  >;
+  className?: string;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<Product.Variant.SKU className="text-sm text-content-secondary font-mono" />
+
+// Custom rendering with forwardRef
+<Product.Variant.SKU asChild>
+  {React.forwardRef(({sku, ...props}, ref) => (
+    <div ref={ref} {...props} className="flex items-center gap-2">
+      <span className="text-xs text-content-muted">SKU:</span>
+      <code className="text-sm font-mono bg-surface-secondary px-2 py-1 rounded">
+        {sku}
+      </code>
+    </div>
+  ))}
+</Product.Variant.SKU>
+```
+
+**Data Attributes**
+
+- `data-testid="product-variant-sku"` - Applied to SKU element
+
+---
+
+### Product.Variant.Weight
+
+Displays the selected variant weight with customizable formatting.
+
+**Props**
+
+```tsx
+interface ProductVariantWeightProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      weight: number;
+      formattedWeight: string;
+    }
+  >;
+  className?: string;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<Product.Variant.Weight className="text-sm text-content-secondary" />
+
+// Custom rendering with forwardRef
+<Product.Variant.Weight asChild>
+  {React.forwardRef(({weight, formattedWeight, ...props}, ref) => (
+    <div ref={ref} {...props} className="flex items-center gap-2">
+      <span className="text-xs text-content-muted">Weight:</span>
+      <span className="text-sm font-medium">
+        {formattedWeight}
+      </span>
+    </div>
+  ))}
+</Product.Variant.Weight>
+```
+
+**Data Attributes**
+
+- `data-testid="product-variant-weight"` - Applied to weight element
 
 ---
 
@@ -717,15 +971,18 @@ Container for product media gallery.
 Renders a MediaGallery.Root with the product media items.
 
 **Props**
+
 ```tsx
-interface ProductMediaGalleryProps extends Omit<MediaGalleryRootProps, 'items'> {}
+interface ProductMediaGalleryProps
+  extends Omit<MediaGalleryRootProps, 'items'> {}
 ```
 
 **Example**
+
 ```tsx
 <Product.MediaGallery
-  infinite={true} 
-  autoPlay={true} 
+  infinite={true}
+  autoPlay={true}
   autoPlayInterval={5000}
   direction="forward"
 >
@@ -745,19 +1002,21 @@ interface ProductMediaGalleryProps extends Omit<MediaGalleryRootProps, 'items'> 
 Media gallery root container.
 
 **Props**
+
 ```tsx
 interface MediaGalleryRootProps {
   items: MediaItem[];
   children: React.ReactNode;
   infinite?: boolean; // default - false - if true, the gallery will loop back to the first item when the user reaches the end
   autoPlay: {
-     direction?: 'forward' | 'backward'; // default - 'forward' - the direction of the gallery (removed top/bottom, has no meaning, we call next/prev, the actual advancement is a style issue.)
-     intervalMs?: number; // default - 5000 - the interval in milliseconds between auto-advances
-  } // if falsy, no autplay
+    direction?: 'forward' | 'backward'; // default - 'forward' - the direction of the gallery (removed top/bottom, has no meaning, we call next/prev, the actual advancement is a style issue.)
+    intervalMs?: number; // default - 5000 - the interval in milliseconds between auto-advances
+  }; // if falsy, no autplay
 }
 ```
 
 **Example**
+
 ```tsx
 <MediaGallery.Root items={media}>
   <MediaGallery.Viewport />
@@ -771,13 +1030,18 @@ interface MediaGalleryRootProps {
 Main media display area.
 
 **Props**
+
 ```tsx
 interface MediaGalleryViewportProps {
-  children?: React.ForwardRefRenderFunction<HTMLImageElement, {currentIndex: number}>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLImageElement,
+    { currentIndex: number }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 <MediaGallery.Viewport className="w-full h-full" />
 
@@ -795,6 +1059,7 @@ interface MediaGalleryViewportProps {
 Previous media navigation button.
 
 **Props**
+
 ```tsx
 interface MediaGalleryPreviousProps {
   asChild?: boolean;
@@ -803,11 +1068,14 @@ interface MediaGalleryPreviousProps {
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <MediaGallery.Previous className="absolute left-4 top-1/2 -translate-y-1/2" />
 ```
+
 **Data Attributes**
+
 - `data-testid="media-gallery-previous"` - Applied to previous button
 - `disabled` - Is previous button disabled
 
@@ -818,6 +1086,7 @@ interface MediaGalleryPreviousProps {
 Next media navigation button.
 
 **Props**
+
 ```tsx
 interface MediaGalleryNextProps {
   asChild?: boolean;
@@ -826,12 +1095,14 @@ interface MediaGalleryNextProps {
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <MediaGallery.Next className="absolute right-4 top-1/2 -translate-y-1/2" />
 ```
 
 **Data Attributes**
+
 - `data-testid="media-gallery-next"` - Applied to next button
 - `disabled` - Is next button disabled
 
@@ -843,6 +1114,7 @@ Container for media thumbnails.
 This can be used to either render a small images or just small circles for navigation.
 
 **Props**
+
 ```tsx
 interface MediaGalleryThumbnailsProps {
   children: React.ReactNode;
@@ -850,6 +1122,7 @@ interface MediaGalleryThumbnailsProps {
 ```
 
 **Example**
+
 ```tsx
 <MediaGallery.Thumbnails>
   <MediaGallery.ThumbnailRepeater />
@@ -857,16 +1130,19 @@ interface MediaGalleryThumbnailsProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="media-gallery-thumbnails"` - Applied to thumbnails container
 
 ---
 
 ### MediaGallery.ThumbnailRepeater
+
 Renders a list of thumbnails. (list of <MediaGallery.Thumbnail />)
 
 Media gallery thumbnail.
 
 **Props**
+
 ```tsx
 interface MediaGalleryThumbnailProps {
   asChild?: boolean;
@@ -876,6 +1152,7 @@ interface MediaGalleryThumbnailProps {
 ```
 
 **Example**
+
 ```tsx
 <MediaGallery.Thumbnail className="w-10 h-10 rounded-full border-4" />
 
@@ -887,6 +1164,7 @@ interface MediaGalleryThumbnailProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="media-gallery-thumbnail"` - Applied to thumbnail
 - `data-selected` - Is thumbnail selected
 - `data-index` - thumbnail index
@@ -900,16 +1178,21 @@ interface MediaGalleryThumbnailProps {
 Provides product URL for sharing.
 
 **Props**
+
 ```tsx
 interface ProductUrlProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    url: string;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      url: string;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // default usage
 <Product.Url asChild>
@@ -938,19 +1221,24 @@ interface ProductUrlProps {
 Add to cart action button.
 
 **Props**
+
 ```tsx
 interface ProductActionProps {
   asChild?: boolean;
   label: string;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    disabled: boolean;
-    isLoading: boolean;
-    onClick: () => Promise<void>;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLButtonElement,
+    {
+      disabled: boolean;
+      isLoading: boolean;
+      onClick: () => Promise<void>;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <Product.Action.AddToCart label="add to cart" className="w-full btn-primary" />
@@ -982,6 +1270,7 @@ interface ProductInfoSectionRootProps {
 ```
 
 **Example**
+
 ```tsx
 <Product.InfoSections>
   <Product.InfoSectionRepeater> // renders InfoSection.Root
@@ -1008,6 +1297,7 @@ interface ProductInfoSectionRootProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="info-section"` - Applied to info section container
 - `data-testid="info-section-title"` - Applied to info section title
 - `data-testid="info-section-content"` - Applied to info section content
@@ -1025,38 +1315,41 @@ interface SubscriptionRootProps {
   subscription: Subscription;
 }
 ```
+
 **Example**
+
 ```tsx
 <Product.Subscriptions emptyState={<p>No subscriptions available</p>}>
   <Product.SubscriptionRepeater>
-    <Subscription.Title/>
+    <Subscription.Title />
   </Product.SubscriptionRepeater>
 </Product.Subscriptions>
 ```
 
 **Data Attributes**
+
 - `data-testid="subscription"` - Applied to subscription container
 - `data-testid="subscription-title"` - Applied to subscription title
 
 ---
 
-
-| Attribute | Applied To | Purpose |
-|-----------|------------|---------|
-| `data-testid="product-name"` | Product.Name | Product name element |
-| `data-testid="product-options"` | Product.Variants | Variant options container |
-| `data-testid="product-option"` | Product.Variants.Option | Individual option container |
-| `data-testid="product-modifiers"` | Product.Modifiers | Modifiers container |
-| `data-testid="product-modifier-choice-button"` | Option buttons/swatches | Choice interaction elements |
-| `data-testid="product-modifier-free-text-input"` | Free text inputs | Text input elements |
-| `data-testid="product-modifier-free-text"` | Free text containers | Free text wrapper |
-| `data-testid="view-cart-button"` | Cart navigation | Cart view button |
+| Attribute                                        | Applied To              | Purpose                     |
+| ------------------------------------------------ | ----------------------- | --------------------------- |
+| `data-testid="product-name"`                     | Product.Name            | Product name element        |
+| `data-testid="product-options"`                  | Product.Variants        | Variant options container   |
+| `data-testid="product-option"`                   | Product.Variants.Option | Individual option container |
+| `data-testid="product-modifiers"`                | Product.Modifiers       | Modifiers container         |
+| `data-testid="product-modifier-choice-button"`   | Option buttons/swatches | Choice interaction elements |
+| `data-testid="product-modifier-free-text-input"` | Free text inputs        | Text input elements         |
+| `data-testid="product-modifier-free-text"`       | Free text containers    | Free text wrapper           |
+| `data-testid="view-cart-button"`                 | Cart navigation         | Cart view button            |
 
 ## CSS Custom Properties
 
 ## Usage Examples
 
 ### Basic Usage (Default Components) - how should Kitchensink look like
+
 ```tsx
 function BasicProduct() {
   const product = useProduct();
@@ -1083,43 +1376,69 @@ function BasicProduct() {
         {/* Product Info */}
         <div className="space-y-6">
           <Product.Name className="text-4xl font-bold text-content-primary" />
-          
+
           {/* Price Section */}
           <div className="flex items-center gap-3">
             <Product.Price className="text-3xl font-bold text-content-primary data-[discounted]:text-brand-primary" />
             <Product.CompareAtPrice className="text-lg text-content-faded line-through hidden data-[discounted]:inline" />
           </div>
-          
-          <Product.Description as="html" className="text-content-secondary prose max-w-none" />
-          
+
+          <Product.Description
+            as="html"
+            className="text-content-secondary prose max-w-none"
+          />
+
           {/* Product Variants */}
           <Product.Variants>
             <Product.VariantOptions>
               <Product.VariantOptionRepeater>
-                  <Option.Name className="text-lg font-medium mb-3" />
-                  <Option.Choices>
-                    <Option.ChoiceRepeater>
-                      <Choice.FreeText className="w-full p-3 border rounded-lg resize-none" rows={3} />
-                      <Choice.Text className="px-4 py-2 border rounded-lg transition-colors data-[selected]:bg-brand-primary data-[selected]:text-white" />
-                      <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all data-[selected]:border-brand-primary data-[selected]:shadow-lg" />
-                    </Option.ChoiceRepeater>
-                  </Option.Choices>
+                <Option.Name className="text-lg font-medium mb-3" />
+                <Option.Choices>
+                  <Option.ChoiceRepeater>
+                    <Choice.FreeText
+                      className="w-full p-3 border rounded-lg resize-none"
+                      rows={3}
+                    />
+                    <Choice.Text className="px-4 py-2 border rounded-lg transition-colors data-[selected]:bg-brand-primary data-[selected]:text-white" />
+                    <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all data-[selected]:border-brand-primary data-[selected]:shadow-lg" />
+                  </Option.ChoiceRepeater>
+                </Option.Choices>
               </Product.VariantOptionRepeater>
             </Product.VariantOptions>
           </Product.Variants>
 
+          {/* Variant Information */}
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <Product.Variant.Stock
+              className="flex items-center gap-2"
+              labels={{
+                inStock: 'In Stock',
+                limitedStock: 'Limited Stock',
+                outOfStock: 'Out of Stock',
+                preOrder: 'Pre-Order Available',
+              }}
+            />
+            <Product.Variant.SKU className="text-content-secondary font-mono" />
+            <Product.Variant.Weight className="text-content-secondary" />
+          </div>
+
           {/* Product Modifiers */}
           <Product.Modifiers>
             <Product.ModifierOptions>
-              <Product.ModifierOptionRepeater allowedTypes={['color', 'text', 'free-text']}>
-                  <Option.Name className="text-lg font-medium mb-3" />
-                  <Option.Choices>
-                    <Option.ChoiceRepeater>
-                      <Choice.FreeText className="w-full p-3 border rounded-lg resize-none" rows={3} />
-                      <Choice.Text className="px-4 py-2 border rounded-lg transition-colors data-[selected]:bg-brand-primary data-[selected]:text-white" />
-                      <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all data-[selected]:border-brand-primary data-[selected]:shadow-lg" />
-                    </Option.ChoiceRepeater>
-                  </Option.Choices>
+              <Product.ModifierOptionRepeater
+                allowedTypes={['color', 'text', 'free-text']}
+              >
+                <Option.Name className="text-lg font-medium mb-3" />
+                <Option.Choices>
+                  <Option.ChoiceRepeater>
+                    <Choice.FreeText
+                      className="w-full p-3 border rounded-lg resize-none"
+                      rows={3}
+                    />
+                    <Choice.Text className="px-4 py-2 border rounded-lg transition-colors data-[selected]:bg-brand-primary data-[selected]:text-white" />
+                    <Choice.Color className="w-10 h-10 rounded-full border-4 transition-all data-[selected]:border-brand-primary data-[selected]:shadow-lg" />
+                  </Option.ChoiceRepeater>
+                </Option.Choices>
               </Product.ModifierOptionRepeater>
             </Product.ModifierOptions>
           </Product.Modifiers>
@@ -1134,9 +1453,15 @@ function BasicProduct() {
           </Product.Quantity>
 
           {/* Product Subscriptions */}
-          <Product.Subscriptions emptyState={<p className="text-content-muted">No subscriptions available</p>}>
+          <Product.Subscriptions
+            emptyState={
+              <p className="text-content-muted">No subscriptions available</p>
+            }
+          >
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-content-primary">Available Subscriptions</h3>
+              <h3 className="text-lg font-semibold text-content-primary">
+                Available Subscriptions
+              </h3>
               <Product.SubscriptionRepeater>
                 <div className="p-3 border border-brand-light rounded-lg">
                   <Subscription.Title className="font-medium text-content-primary" />
@@ -1148,11 +1473,11 @@ function BasicProduct() {
           {/* Product Actions */}
           <div className="space-y-3">
             <Product.Action.AddToCart
-              label="Add to Cart" 
+              label="Add to Cart"
               className="w-full btn-primary py-3 text-lg font-semibold"
             />
             <Product.Action.BuyNow
-              label="Buy Now" 
+              label="Buy Now"
               className="w-full btn-secondary py-3 text-lg font-semibold"
             />
           </div>
@@ -1160,7 +1485,9 @@ function BasicProduct() {
           {/* Product Info Sections */}
           <Product.InfoSections>
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-content-primary">Product Information</h3>
+              <h3 className="text-lg font-semibold text-content-primary">
+                Product Information
+              </h3>
               <Product.InfoSectionRepeater>
                 <div className="border-b border-brand-subtle pb-4">
                   <InfoSection.Title className="text-base font-medium text-content-primary mb-2" />
@@ -1187,6 +1514,7 @@ function BasicProduct() {
 ```
 
 ### Advanced Usage (Custom Components with forwardRef)
+
 ```tsx
 function CustomizedProduct() {
   const product = useProduct();
@@ -1195,15 +1523,19 @@ function CustomizedProduct() {
     <Product.Root product={product}>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Custom Media Gallery */}
-        <Product.MediaGallery 
+        <Product.MediaGallery
           infinite={true}
           autoPlay={true}
           autoPlayInterval={3000}
           direction="forward"
         >
           <MediaGallery.Viewport asChild>
-            {React.forwardRef(({currentIndex, ...props}, ref) => (
-              <div ref={ref} {...props} className="aspect-square bg-gradient-to-br from-surface-primary to-surface-secondary rounded-2xl overflow-hidden relative">
+            {React.forwardRef(({ currentIndex, ...props }, ref) => (
+              <div
+                ref={ref}
+                {...props}
+                className="aspect-square bg-gradient-to-br from-surface-primary to-surface-secondary rounded-2xl overflow-hidden relative"
+              >
                 <div className="absolute top-4 right-4 bg-surface-tooltip text-nav px-2 py-1 rounded-full text-sm">
                   {currentIndex + 1} / {product.media?.length || 1}
                 </div>
@@ -1211,11 +1543,11 @@ function CustomizedProduct() {
               </div>
             ))}
           </MediaGallery.Viewport>
-          
+
           <MediaGallery.Thumbnails className="mt-4 flex gap-2 justify-center">
-            <MediaGallery.Thumbnail 
-              as="div" 
-              className="w-3 h-3 rounded-full border-2 transition-all data-[selected]:bg-brand-primary data-[selected]:border-brand-primary cursor-pointer" 
+            <MediaGallery.Thumbnail
+              as="div"
+              className="w-3 h-3 rounded-full border-2 transition-all data-[selected]:bg-brand-primary data-[selected]:border-brand-primary cursor-pointer"
             />
           </MediaGallery.Thumbnails>
         </Product.MediaGallery>
@@ -1223,9 +1555,11 @@ function CustomizedProduct() {
         <div className="space-y-8">
           {/* Enhanced Product Name */}
           <Product.Name asChild>
-            {React.forwardRef(({name, ...props}, ref) => (
+            {React.forwardRef(({ name, ...props }, ref) => (
               <div ref={ref} {...props}>
-                <Badge variant="outline" className="mb-2">Premium Collection</Badge>
+                <Badge variant="outline" className="mb-2">
+                  Premium Collection
+                </Badge>
                 <h1 className="text-5xl font-bold text-content-primary leading-tight">
                   {name}
                 </h1>
@@ -1237,24 +1571,30 @@ function CustomizedProduct() {
           <div className="p-4 bg-surface-card rounded-lg border border-brand-subtle">
             <div className="flex items-center gap-4">
               <Product.Price asChild>
-                {React.forwardRef(({formattedPrice, ...props}, ref) => (
-                  <span 
-                    ref={ref} 
-                    {...props} 
+                {React.forwardRef(({ formattedPrice, ...props }, ref) => (
+                  <span
+                    ref={ref}
+                    {...props}
                     className="text-4xl font-bold text-brand-primary data-[discounted]:text-status-success"
                   >
                     {formattedPrice}
                   </span>
                 ))}
               </Product.Price>
-              
+
               <Product.CompareAtPrice asChild>
-                {React.forwardRef(({formattedPrice, ...props}, ref) => (
-                  <div ref={ref} {...props} className="hidden data-[discounted]:flex flex-col items-start">
+                {React.forwardRef(({ formattedPrice, ...props }, ref) => (
+                  <div
+                    ref={ref}
+                    {...props}
+                    className="hidden data-[discounted]:flex flex-col items-start"
+                  >
                     <span className="text-lg text-content-muted line-through">
                       {formattedPrice}
                     </span>
-                    <Badge variant="destructive" className="text-xs">SALE</Badge>
+                    <Badge variant="destructive" className="text-xs">
+                      SALE
+                    </Badge>
                   </div>
                 ))}
               </Product.CompareAtPrice>
@@ -1263,10 +1603,12 @@ function CustomizedProduct() {
 
           {/* Rich Product Description */}
           <Product.Description asChild>
-            {React.forwardRef(({description, ...props}, ref) => (
+            {React.forwardRef(({ description, ...props }, ref) => (
               <div ref={ref} {...props} className="space-y-3">
-                <h3 className="text-xl font-semibold text-content-primary">About this product</h3>
-                <div 
+                <h3 className="text-xl font-semibold text-content-primary">
+                  About this product
+                </h3>
+                <div
                   className="prose prose-sm max-w-none text-content-secondary"
                   dangerouslySetInnerHTML={{ __html: description }}
                 />
@@ -1278,22 +1620,25 @@ function CustomizedProduct() {
           <Product.Variants>
             <Product.VariantOptions>
               <Product.VariantOptionRepeater>
-                  <Option.Name asChild>
-                    {React.forwardRef(({option, ...props}, ref) => (
-                      <div ref={ref} {...props} className="mb-4">
-                        <h4 className="text-lg font-semibold text-content-primary">
-                          Choose {option.name}
-                        </h4>
-                        <p className="text-sm text-content-muted">Select your preferred {option.name.toLowerCase()}</p>
-                      </div>
-                    ))}
-                  </Option.Name>
-                  
-                  <Option.Choices>
-                    <div className="grid grid-cols-4 gap-3">
-                      <Option.ChoiceRepeater>
-                        <Choice.Color asChild>
-                          {React.forwardRef(({colorCode, name, id, ...props}, ref) => (
+                <Option.Name asChild>
+                  {React.forwardRef(({ option, ...props }, ref) => (
+                    <div ref={ref} {...props} className="mb-4">
+                      <h4 className="text-lg font-semibold text-content-primary">
+                        Choose {option.name}
+                      </h4>
+                      <p className="text-sm text-content-muted">
+                        Select your preferred {option.name.toLowerCase()}
+                      </p>
+                    </div>
+                  ))}
+                </Option.Name>
+
+                <Option.Choices>
+                  <div className="grid grid-cols-4 gap-3">
+                    <Option.ChoiceRepeater>
+                      <Choice.Color asChild>
+                        {React.forwardRef(
+                          ({ colorCode, name, id, ...props }, ref) => (
                             <div className="text-center">
                               <button
                                 ref={ref}
@@ -1303,50 +1648,120 @@ function CustomizedProduct() {
                                 title={name}
                                 data-testid="product-modifier-choice-button"
                               />
-                              <span className="text-xs text-content-secondary mt-1 block">{name}</span>
+                              <span className="text-xs text-content-secondary mt-1 block">
+                                {name}
+                              </span>
                             </div>
-                          ))}
-                        </Choice.Color>
-                        <Choice.Text asChild>
-                          {React.forwardRef(({name, ...props}, ref) => (
-                            <Button
-                              ref={ref}
-                              {...props}
-                              variant="outline"
-                              className="data-[selected]:bg-brand-primary data-[selected]:text-white data-[selected]:border-brand-primary"
-                            >
-                              {name}
-                            </Button>
-                          ))}
-                        </Choice.Text>
-                      </Option.ChoiceRepeater>
-                    </div>
-                  </Option.Choices>
+                          ),
+                        )}
+                      </Choice.Color>
+                      <Choice.Text asChild>
+                        {React.forwardRef(({ name, ...props }, ref) => (
+                          <Button
+                            ref={ref}
+                            {...props}
+                            variant="outline"
+                            className="data-[selected]:bg-brand-primary data-[selected]:text-white data-[selected]:border-brand-primary"
+                          >
+                            {name}
+                          </Button>
+                        ))}
+                      </Choice.Text>
+                    </Option.ChoiceRepeater>
+                  </div>
+                </Option.Choices>
               </Product.VariantOptionRepeater>
             </Product.VariantOptions>
           </Product.Variants>
-          
+
+          {/* Enhanced Variant Information */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-surface-card rounded-lg border border-brand-subtle">
+            <Product.Variant.Stock asChild>
+              {React.forwardRef(({ status, label, ...props }, ref) => (
+                <div ref={ref} {...props} className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded-full data-[state='in-stock']:bg-status-success data-[state='limited-stock']:bg-status-warning data-[state='out-of-stock']:bg-status-error data-[state='can-pre-order']:bg-status-info" />
+                  <div>
+                    <p className="text-xs text-content-muted uppercase tracking-wide">
+                      Availability
+                    </p>
+                    <p className="text-sm font-medium text-content-primary">
+                      {label}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </Product.Variant.Stock>
+
+            <Product.Variant.SKU asChild>
+              {React.forwardRef(({ sku, ...props }, ref) => (
+                <div ref={ref} {...props} className="flex items-center gap-3">
+                  <div className="w-4 h-4 rounded bg-surface-secondary flex items-center justify-center">
+                    <span className="text-xs text-content-secondary">#</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-content-muted uppercase tracking-wide">
+                      SKU
+                    </p>
+                    <p className="text-sm font-mono text-content-primary">
+                      {sku}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </Product.Variant.SKU>
+
+            <Product.Variant.Weight asChild>
+              {React.forwardRef(
+                ({ weight, formattedWeight, ...props }, ref) => (
+                  <div ref={ref} {...props} className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded bg-surface-secondary flex items-center justify-center">
+                      <span className="text-xs text-content-secondary">⚖</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-content-muted uppercase tracking-wide">
+                        Weight
+                      </p>
+                      <p className="text-sm font-medium text-content-primary">
+                        {formattedWeight}
+                      </p>
+                    </div>
+                  </div>
+                ),
+              )}
+            </Product.Variant.Weight>
+          </div>
+
           {/* Enhanced Modifiers */}
           <Product.Modifiers>
             <Product.ModifierOptions>
-              <Product.ModifierOptionRepeater allowedTypes={['color', 'text', 'free-text']}>
-                  <Option.Name asChild>
-                    {React.forwardRef(({option, ...props}, ref) => (
-                      <div ref={ref} {...props} className="mb-4">
-                        <h4 className="text-lg font-semibold text-content-primary">
-                          {option.name}
-                        </h4>
-                        <p className="text-sm text-content-muted">Customize your {option.name.toLowerCase()}</p>
-                      </div>
-                    ))}
-                  </Option.Name>
-                  
-                  <Option.Choices>
-                    <Option.ChoiceRepeater>
-                      <Choice.FreeText asChild>
-                        {React.forwardRef(({minCharCount, maxCharCount, title, ...props}, ref) => (
+              <Product.ModifierOptionRepeater
+                allowedTypes={['color', 'text', 'free-text']}
+              >
+                <Option.Name asChild>
+                  {React.forwardRef(({ option, ...props }, ref) => (
+                    <div ref={ref} {...props} className="mb-4">
+                      <h4 className="text-lg font-semibold text-content-primary">
+                        {option.name}
+                      </h4>
+                      <p className="text-sm text-content-muted">
+                        Customize your {option.name.toLowerCase()}
+                      </p>
+                    </div>
+                  ))}
+                </Option.Name>
+
+                <Option.Choices>
+                  <Option.ChoiceRepeater>
+                    <Choice.FreeText asChild>
+                      {React.forwardRef(
+                        (
+                          { minCharCount, maxCharCount, title, ...props },
+                          ref,
+                        ) => (
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-content-primary">{title}</label>
+                            <label className="text-sm font-medium text-content-primary">
+                              {title}
+                            </label>
                             <textarea
                               ref={ref}
                               {...props}
@@ -1355,10 +1770,12 @@ function CustomizedProduct() {
                               placeholder={`Enter your custom text (${minCharCount}-${maxCharCount} characters)`}
                             />
                           </div>
-                        ))}
-                      </Choice.FreeText>
-                      <Choice.Text asChild>
-                        {React.forwardRef(({name, addedPrice, ...props}, ref) => (
+                        ),
+                      )}
+                    </Choice.FreeText>
+                    <Choice.Text asChild>
+                      {React.forwardRef(
+                        ({ name, addedPrice, ...props }, ref) => (
                           <Button
                             ref={ref}
                             {...props}
@@ -1366,12 +1783,16 @@ function CustomizedProduct() {
                             className="flex justify-between items-center data-[selected]:bg-brand-primary data-[selected]:text-white data-[selected]:border-brand-primary"
                           >
                             <span>{name}</span>
-                            {addedPrice && <span className="text-xs">{addedPrice}</span>}
+                            {addedPrice && (
+                              <span className="text-xs">{addedPrice}</span>
+                            )}
                           </Button>
-                        ))}
-                      </Choice.Text>
-                      <Choice.Color asChild>
-                        {React.forwardRef(({colorCode, name, addedPrice, ...props}, ref) => (
+                        ),
+                      )}
+                    </Choice.Text>
+                    <Choice.Color asChild>
+                      {React.forwardRef(
+                        ({ colorCode, name, addedPrice, ...props }, ref) => (
                           <div className="text-center">
                             <button
                               ref={ref}
@@ -1381,14 +1802,21 @@ function CustomizedProduct() {
                               title={name}
                             />
                             <div className="mt-1">
-                              <span className="text-xs text-content-secondary block">{name}</span>
-                              {addedPrice && <span className="text-xs text-brand-primary">{addedPrice}</span>}
+                              <span className="text-xs text-content-secondary block">
+                                {name}
+                              </span>
+                              {addedPrice && (
+                                <span className="text-xs text-brand-primary">
+                                  {addedPrice}
+                                </span>
+                              )}
                             </div>
                           </div>
-                        ))}
-                      </Choice.Color>
-                    </Option.ChoiceRepeater>
-                  </Option.Choices>
+                        ),
+                      )}
+                    </Choice.Color>
+                  </Option.ChoiceRepeater>
+                </Option.Choices>
               </Product.ModifierOptionRepeater>
             </Product.ModifierOptions>
           </Product.Modifiers>
@@ -1396,12 +1824,14 @@ function CustomizedProduct() {
           {/* Custom Quantity with Stock Info */}
           <Product.Quantity steps={1}>
             <div className="space-y-3">
-              <h4 className="text-lg font-semibold text-content-primary">Quantity</h4>
+              <h4 className="text-lg font-semibold text-content-primary">
+                Quantity
+              </h4>
               <div className="flex items-center gap-4">
                 <div className="flex items-center border-2 border-brand-light rounded-lg overflow-hidden">
                   <Quantity.Decrement asChild>
                     {React.forwardRef((props, ref) => (
-                      <Button 
+                      <Button
                         ref={ref}
                         {...props}
                         variant="ghost"
@@ -1412,14 +1842,12 @@ function CustomizedProduct() {
                       </Button>
                     ))}
                   </Quantity.Decrement>
-                  
-                  <Quantity.Input 
-                    className="w-20 text-center py-3 border-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
-                  />
-                  
+
+                  <Quantity.Input className="w-20 text-center py-3 border-0 focus-visible:ring-0 focus-visible:ring-offset-0" />
+
                   <Quantity.Increment asChild>
                     {React.forwardRef((props, ref) => (
-                      <Button 
+                      <Button
                         ref={ref}
                         {...props}
                         variant="ghost"
@@ -1437,19 +1865,37 @@ function CustomizedProduct() {
           </Product.Quantity>
 
           {/* Enhanced Subscriptions */}
-          <Product.Subscriptions emptyState={<div className="text-center py-8 text-content-muted">No subscription options available for this product</div>}>
+          <Product.Subscriptions
+            emptyState={
+              <div className="text-center py-8 text-content-muted">
+                No subscription options available for this product
+              </div>
+            }
+          >
             <div className="space-y-4">
-              <h4 className="text-lg font-semibold text-content-primary">Subscription Options</h4>
+              <h4 className="text-lg font-semibold text-content-primary">
+                Subscription Options
+              </h4>
               <Product.SubscriptionRepeater>
                 <div className="p-4 border-2 border-brand-light rounded-lg hover:border-brand-primary transition-colors cursor-pointer data-[selected]:border-brand-primary data-[selected]:bg-brand-light/5">
                   <Subscription.Title asChild>
-                    {React.forwardRef(({subscription, ...props}, ref) => (
-                      <div ref={ref} {...props} className="flex justify-between items-center">
+                    {React.forwardRef(({ subscription, ...props }, ref) => (
+                      <div
+                        ref={ref}
+                        {...props}
+                        className="flex justify-between items-center"
+                      >
                         <div>
-                          <h5 className="font-semibold text-content-primary">{subscription.title}</h5>
-                          <p className="text-sm text-content-secondary">{subscription.description}</p>
+                          <h5 className="font-semibold text-content-primary">
+                            {subscription.title}
+                          </h5>
+                          <p className="text-sm text-content-secondary">
+                            {subscription.description}
+                          </p>
                         </div>
-                        <Badge variant="secondary">Save {subscription.discount}%</Badge>
+                        <Badge variant="secondary">
+                          Save {subscription.discount}%
+                        </Badge>
                       </div>
                     ))}
                   </Subscription.Title>
@@ -1461,14 +1907,21 @@ function CustomizedProduct() {
           {/* Enhanced Action Buttons */}
           <div className="space-y-3">
             <Product.Action.AddToCart asChild>
-              <Button size="lg" className="w-full text-lg py-4 bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90">
+              <Button
+                size="lg"
+                className="w-full text-lg py-4 bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90"
+              >
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
               </Button>
             </Product.Action.AddToCart>
-            
+
             <Product.Action.BuyNow asChild>
-              <Button variant="outline" size="lg" className="w-full text-lg py-4">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full text-lg py-4"
+              >
                 <Zap className="mr-2 h-5 w-5" />
                 Buy Now
               </Button>
@@ -1478,7 +1931,9 @@ function CustomizedProduct() {
           {/* Enhanced Product Info Sections with Accordion */}
           <Product.InfoSections>
             <div className="space-y-6">
-              <h4 className="text-lg font-semibold text-content-primary">Detailed Information</h4>
+              <h4 className="text-lg font-semibold text-content-primary">
+                Detailed Information
+              </h4>
               <Accordion type="multiple" className="w-full">
                 <Product.InfoSectionRepeater>
                   <Accordion.Item value="info-section" className="border-b">
@@ -1488,10 +1943,10 @@ function CustomizedProduct() {
                     </Accordion.Trigger>
                     <Accordion.Content className="pb-4 pt-0">
                       <InfoSection.Content asChild>
-                        {React.forwardRef(({content, ...props}, ref) => (
-                          <div 
-                            ref={ref} 
-                            {...props} 
+                        {React.forwardRef(({ content, ...props }, ref) => (
+                          <div
+                            ref={ref}
+                            {...props}
                             className="prose prose-sm max-w-none text-content-secondary"
                             dangerouslySetInnerHTML={{ __html: content }}
                           />
@@ -1506,26 +1961,36 @@ function CustomizedProduct() {
 
           {/* Custom Social Sharing */}
           <div className="border-t border-brand-subtle pt-6">
-            <h4 className="text-lg font-semibold text-content-primary mb-3">Share this product</h4>
+            <h4 className="text-lg font-semibold text-content-primary mb-3">
+              Share this product
+            </h4>
             <div className="flex gap-3">
               <Product.Url asChild>
-                <Button variant="outline" size="sm" className="social-btn facebook">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="social-btn facebook"
+                >
                   <Facebook className="h-4 w-4 mr-2" />
                   Facebook
                 </Button>
               </Product.Url>
               <Product.Url asChild>
-                <Button variant="outline" size="sm" className="social-btn twitter">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="social-btn twitter"
+                >
                   <Twitter className="h-4 w-4 mr-2" />
                   Twitter
                 </Button>
               </Product.Url>
               <Product.Url>
-                {React.forwardRef(({url, ...props}, ref) => (
-                  <Button 
-                    ref={ref} 
+                {React.forwardRef(({ url, ...props }, ref) => (
+                  <Button
+                    ref={ref}
                     {...props}
-                    variant="outline" 
+                    variant="outline"
                     size="sm"
                     onClick={() => navigator.clipboard.writeText(url)}
                   >
@@ -1544,6 +2009,7 @@ function CustomizedProduct() {
 ```
 
 ### Minimal Example (Essential Components Only)
+
 ```tsx
 function MinimalProduct() {
   const product = useProduct();
@@ -1555,14 +2021,17 @@ function MinimalProduct() {
           <MediaGallery.Viewport className="aspect-square rounded-lg" />
           <MediaGallery.Thumbnails>
             <MediaGallery.ThumbnailRepeater>
-              <MediaGallery.Thumbnail as="div" className="w-2 h-2 rounded-full cursor-pointer" />
+              <MediaGallery.Thumbnail
+                as="div"
+                className="w-2 h-2 rounded-full cursor-pointer"
+              />
             </MediaGallery.ThumbnailRepeater>
           </MediaGallery.Thumbnails>
         </Product.MediaGallery>
-        
+
         <Product.Name className="text-2xl font-bold text-content-primary" />
         <Product.Price className="text-xl font-semibold text-brand-primary" />
-        
+
         {/* Basic Variants */}
         <Product.Variants>
           <Product.VariantOptions>
@@ -1577,7 +2046,14 @@ function MinimalProduct() {
             </Product.VariantOptionRepeater>
           </Product.VariantOptions>
         </Product.Variants>
-        
+
+        {/* Simple Variant Info */}
+        <div className="flex gap-2 text-xs text-content-secondary">
+          <Product.Variant.Stock />
+          <Product.Variant.SKU />
+          <Product.Variant.Weight />
+        </div>
+
         <Product.Quantity steps={1}>
           <div className="flex items-center border rounded">
             <Quantity.Decrement className="px-3 py-2" />
@@ -1585,7 +2061,7 @@ function MinimalProduct() {
             <Quantity.Increment className="px-3 py-2" />
           </div>
         </Product.Quantity>
-        
+
         {/* Simple Subscriptions */}
         <Product.Subscriptions>
           <Product.SubscriptionRepeater>
@@ -1594,9 +2070,12 @@ function MinimalProduct() {
             </div>
           </Product.SubscriptionRepeater>
         </Product.Subscriptions>
-        
-        <Product.Action.AddToCart label="Add to Cart" className="w-full btn-primary" />
-        
+
+        <Product.Action.AddToCart
+          label="Add to Cart"
+          className="w-full btn-primary"
+        />
+
         {/* Basic Info Sections */}
         <Product.InfoSections>
           <Product.InfoSectionRepeater>

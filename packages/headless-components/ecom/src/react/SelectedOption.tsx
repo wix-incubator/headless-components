@@ -8,7 +8,8 @@ import {
   isColorOption,
 } from '../services/selected-option-service.js';
 import { createServicesMap } from '@wix/services-manager';
-import { type AsChildProps, renderAsChild } from '../utils/asChild.js';
+
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
 enum TestIds {
   selectedOptionText = 'selected-option-text',
@@ -54,7 +55,14 @@ Root.displayName = 'SelectedOption.Root';
 /**
  * Props for SelectedOption Text component
  */
-export interface SelectedOptionTextProps extends AsChildProps {}
+export interface SelectedOptionTextProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ name: string; value: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays text-based selected option.
@@ -91,24 +99,18 @@ export const Text = React.forwardRef<HTMLElement, SelectedOptionTextProps>(
     const value = selectedOption.value;
     const defaultContent = `${name}: ${value}`;
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { name, value },
-        ref,
-        content: defaultContent,
-        attributes: {
-          'data-testid': TestIds.selectedOptionText,
-          ...otherProps,
-        },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <span ref={ref} data-testid={TestIds.selectedOptionText} {...otherProps}>
-        {defaultContent}
-      </span>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        data-testid={TestIds.selectedOptionText}
+        customElement={children}
+        customElementProps={{ name, value }}
+        content={defaultContent}
+        {...otherProps}
+      >
+        <span>{defaultContent}</span>
+      </AsChildSlot>
     );
   },
 );
@@ -118,7 +120,17 @@ Text.displayName = 'SelectedOption.Text';
 /**
  * Props for SelectedOption Color component
  */
-export interface SelectedOptionColorProps extends AsChildProps {}
+export interface SelectedOptionColorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    name: string;
+    colorCode: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
 
 /**
  * Displays color-based selected option.
@@ -160,24 +172,18 @@ export const Color = React.forwardRef<HTMLElement, SelectedOptionColorProps>(
     const colorCode = selectedOption.value.code;
     const defaultContent = `${name}: ${colorName}`;
 
-    if (asChild) {
-      const rendered = renderAsChild({
-        children,
-        props: { name, colorCode, colorName },
-        ref,
-        content: defaultContent,
-        attributes: {
-          'data-testid': TestIds.selectedOptionColor,
-          ...otherProps,
-        },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <span ref={ref} data-testid={TestIds.selectedOptionColor} {...otherProps}>
-        {defaultContent}
-      </span>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        data-testid={TestIds.selectedOptionColor}
+        customElement={children}
+        customElementProps={{ name, colorCode }}
+        content={defaultContent}
+        {...otherProps}
+      >
+        <span>{defaultContent}</span>
+      </AsChildSlot>
     );
   },
 );

@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-stores",
-  "version": "0.0.80",
+  "version": "0.0.88",
   "type": "module",
   "scripts": {
     "prebuild": "cd ../media && yarn build && cd ../ecom && yarn build",
@@ -62,12 +62,14 @@
     "@wix/auto_sdk_stores_read-only-variants-v-3": "^1.0.23",
     "@wix/ecom": "^1.0.1278",
     "@wix/essentials": "^0.1.24",
-    "@wix/headless-components": "workspace:*",
     "@wix/headless-ecom": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
+  },
+  "peerDependencies": {
+    "@wix/headless-components": "workspace:*"
   }
 }

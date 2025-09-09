@@ -66,10 +66,11 @@
  * @module Commerce
  */
 
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { Slot } from '@radix-ui/react-slot';
 import { Checkout as CoreCurrentCartCheckout } from './core/CurrentCart.js';
 import {
-  Trigger as CoreCheckout,
+  Trigger as CoreCheckoutTrigger,
   Root as CoreCheckoutRoot,
 } from './core/Checkout.js';
 import React from 'react';
@@ -135,19 +136,14 @@ export interface ActionCheckoutProps
    * Content to render inside the button.
    * Can be static content or a render function for custom behavior.
    */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLButtonElement,
-        {
-          /** Function to proceed to checkout */
-          proceedToCheckout: () => Promise<void>;
-          /** Whether checkout is available */
-          canCheckout: boolean;
-          /** Whether checkout action is loading */
-          isLoading: boolean;
-        }
-      >;
+  children?: AsChildChildren<{
+    /** Function to proceed to checkout */
+    proceedToCheckout: () => Promise<void>;
+    /** Whether checkout is available */
+    canCheckout: boolean;
+    /** Whether checkout action is loading */
+    isLoading: boolean;
+  }>;
   /** Text or content to display when not loading */
   label?: string | React.ReactNode;
   /** Text or content to display when loading */
@@ -220,41 +216,39 @@ const ActionCheckout = React.forwardRef<HTMLButtonElement, ActionCheckoutProps>(
       className,
       label = 'Checkout',
       loadingState = '...',
-      ...props
+      ...otherProps
     },
     ref,
   ) => {
     return (
       <CoreCurrentCartCheckout>
         {(renderProps) => {
-          if (asChild && children && typeof children === 'function') {
-            return children(
-              {
-                proceedToCheckout: renderProps.proceedToCheckout,
-                canCheckout: renderProps.canCheckout,
-                isLoading: renderProps.isLoading,
-              },
-              ref,
-            );
-          }
-          const Comp = asChild ? Slot : 'button';
+          const defaultContent = children
+            ? (children as React.ReactNode)
+            : renderProps.isLoading
+              ? loadingState
+              : label;
+
           return (
-            <Comp
+            <AsChildSlot
               ref={ref}
+              asChild={asChild}
               className={className}
               onClick={renderProps.proceedToCheckout}
               disabled={!renderProps.canCheckout || renderProps.isLoading}
               data-testid={TestIds.actionCheckout}
               data-in-progress={renderProps.isLoading}
-              {...props}
-              children={
-                children
-                  ? (children as React.ReactNode)
-                  : renderProps.isLoading
-                    ? loadingState
-                    : label
-              }
-            />
+              customElement={children}
+              customElementProps={{
+                proceedToCheckout: renderProps.proceedToCheckout,
+                canCheckout: renderProps.canCheckout,
+                isLoading: renderProps.isLoading,
+              }}
+              content={defaultContent}
+              {...otherProps}
+            >
+              <button>{defaultContent}</button>
+            </AsChildSlot>
           );
         }}
       </CoreCurrentCartCheckout>
@@ -288,6 +282,8 @@ export interface ActionAddToCartProps
           onClick: () => Promise<void>;
           /** Line items that will be processed */
           lineItems: LineItem[];
+          /** Error message if any */
+          error?: string | null;
         }
       >;
   /** Text or content to display when not loading */
@@ -379,7 +375,7 @@ const ActionBuyNow = React.forwardRef<
     ref,
   ) => {
     return (
-      <CoreCheckout>
+      <CoreCheckoutTrigger>
         {(renderProps) => {
           const onClick = () => {
             return renderProps.createCheckout(lineItems);
@@ -391,6 +387,7 @@ const ActionBuyNow = React.forwardRef<
                 disabled: renderProps.isLoading || disabled,
                 isLoading: renderProps.isLoading,
                 lineItems,
+                error: renderProps.error,
               },
               ref,
             );
@@ -415,7 +412,7 @@ const ActionBuyNow = React.forwardRef<
             />
           );
         }}
-      </CoreCheckout>
+      </CoreCheckoutTrigger>
     );
   },
 );
@@ -546,6 +543,58 @@ const ActionAddToCart = React.forwardRef<
     );
   },
 );
+
+/**
+ * Props for the CheckoutTrigger component.
+ * Wraps CheckoutCore.Trigger for use in other packages.
+ */
+export interface CheckoutTriggerProps {
+  /** Content to render inside the trigger */
+  children: (props: {
+    createCheckout: (lineItems: LineItem[]) => Promise<void>;
+    isLoading: boolean;
+    error: string | null;
+  }) => React.ReactNode;
+}
+
+/**
+ * CheckoutTrigger component that wraps CheckoutCore.Trigger.
+ * This wrapper provides a consistent interface for other packages to use.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CheckoutTrigger lineItems={lineItems}>
+ *   {({ createCheckout, isLoading, error }) => (
+ *     <button onClick={() => createCheckout(lineItems)}>
+ *       {isLoading ? 'Processing...' : 'Checkout'}
+ *     </button>
+ *   )}
+ * </CheckoutTrigger>
+ * ```
+ */
+export const CheckoutTrigger = React.forwardRef<
+  HTMLDivElement,
+  CheckoutTriggerProps
+>((props) => {
+  const { children } = props;
+
+  return (
+    <CoreCheckoutTrigger>
+      {(renderProps) => {
+        return (
+          <React.Fragment>
+            {children({
+              createCheckout: renderProps.createCheckout,
+              isLoading: renderProps.isLoading,
+              error: renderProps.error,
+            })}
+          </React.Fragment>
+        );
+      }}
+    </CoreCheckoutTrigger>
+  );
+});
 
 /**
  * Namespace containing all commerce action components.
