@@ -1036,3 +1036,52 @@ export interface DateInputProps extends BaseFieldProps {
   acceptedDates?: 'all' | 'past' | 'future';
   description?: forms.RichContent;
 }
+
+/**
+ * Props for date picker field.
+ * Used with fieldMap key: DATE_PICKER
+ * The field MUST render a calendar-style date picker interface.
+ *
+ * @interface DatePickerProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO date string format: YYYY-MM-DD)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Placeholder text for the date picker input
+ * @property {'SUNDAY' | 'MONDAY'} [firstDayOfWeek] - The first day of the week for the calendar (defaults to 'SUNDAY')
+ * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const dateField: DatePickerProps = {
+ *   id: 'appointment-date',
+ *   value: '2024-12-25',
+ *   label: 'Appointment Date',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   placeholder: 'Select a date',
+ *   firstDayOfWeek: 'MONDAY',
+ *   acceptedDates: 'future',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DatePickerProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  placeholder?: string;
+  firstDayOfWeek?: 'SUNDAY' | 'MONDAY';
+  acceptedDates?: 'all' | 'past' | 'future';
+  description?: forms.RichContent;
+}

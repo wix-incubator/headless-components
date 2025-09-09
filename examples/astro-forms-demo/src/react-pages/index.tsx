@@ -26,6 +26,7 @@ import CheckboxGroup from '../components/CheckboxGroup';
 import Dropdown from '../components/Dropdown';
 import Tags from '../components/Tags';
 import DateInput from '../components/DateInput';
+import DatePicker from '../components/DatePicker';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -58,6 +59,7 @@ const FIELD_MAP = {
   DROPDOWN: Dropdown,
   TAGS: Tags,
   DATE_INPUT: DateInput,
+  DATE_PICKER: DatePicker,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
