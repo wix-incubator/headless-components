@@ -39,6 +39,7 @@ import {
   TextInputProps,
   TimeInputProps,
   UrlInputProps,
+  ProductListProps,
 } from './types.js';
 
 export interface RootProps {
@@ -182,6 +183,7 @@ interface FieldMap {
   HEADER: React.ComponentType<HeaderProps>;
   RICH_TEXT: React.ComponentType<RichTextProps>;
   SUBMIT_BUTTON: React.ComponentType<SubmitButtonProps>;
+  PRODUCT_LIST: React.ComponentType<ProductListProps>;
 }
 
 /**

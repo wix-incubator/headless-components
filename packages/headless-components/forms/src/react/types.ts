@@ -1268,3 +1268,83 @@ export interface SubmitButtonProps {
   id: string;
   text: string;
 }
+
+interface ProductOption extends ChoiceOption {
+  price: string;
+  minAmount: number;
+  maxAmount: number;
+  image: {
+    alt: string | undefined;
+    id: string;
+  };
+}
+
+interface ProductValue {
+  productId: string;
+  price: string | number;
+  quantity: number;
+};
+
+/**
+ * Props for product list field.
+ * Field allows to display and select products from a list.
+ * Used with fieldMap key: PRODUCT_LIST
+ *
+ * @interface ProductListProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {ProductValue | null | undefined} value - The current value of the form field (selected product data)
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {ProductOption[]} options - Array of product options with id, value, label, price, quantity limits, and image
+ * @property {number | undefined} minItems - Optional minimum number of products that must be selected
+ * @property {number | undefined} maxItems - Optional maximum number of products that can be selected
+ * @property {string} currency - The price currency symbol
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const productListField: ProductListProps = {
+ *   id: 'products',
+ *   value: [{ productId: 'prod_123', quantity: 2 }],
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Select Products',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Choose your desired products' }] },
+ *   options: [
+ *     {
+ *       id: 'prod_123',
+ *       value: 'prod_123',
+ *       label: 'Premium Widget',
+ *       default: false,
+ *       price: '29.99',
+ *       minAmount: 1,
+ *       maxAmount: 10,
+ *       image: { alt: 'Premium Widget', id: 'img_123' }
+ *     }
+ *   ],
+ *   currency: '$',
+ *   minItems: 1,
+ *   maxItems: 5,
+ *   onChange: (value) => console.log('Product selection changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ProductListProps extends BaseFieldProps {
+  value: ProductValue | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  options: ProductOption[];
+  minItems: number | undefined;
+  maxItems: number | undefined;
+  currency: string;
+}
