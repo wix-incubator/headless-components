@@ -3,11 +3,9 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prebuild": "cd ../utils && yarn build && cd ../components && yarn build && cd ../media && yarn build",
-    "build": "npm run build:esm && npm run build:cjs && npm run copy-assets",
+    "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "copy-assets": "cp src/react/styles.css dist/react/styles.css",
     "test": "vitest",
     "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
     "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
@@ -26,7 +24,6 @@
       "import": "./dist/react/index.js",
       "require": "./cjs/dist/react/index.js"
     },
-    "./react/styles.css": "./dist/react/styles.css",
     "./services": {
       "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.js",

@@ -1,4 +1,4 @@
-// import { getProgramBySlug } from '@wix/online-programs';
+// import { getProgram } from '@wix/online-programs';
 import {
   defineService,
   implementService,
@@ -7,24 +7,31 @@ import {
 } from '@wix/services-definitions';
 import type { Signal } from '@wix/services-definitions/core-services/signals';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-// import {
-//   enhancePosts,
-//   type PostWithResolvedFields,
-// } from './blog-feed-service.js';
 
 export interface Program {
   id: string;
+  description: {
+    title: string;
+    details: string;
+    image: {
+      id: string;
+      url: string;
+      height: number;
+      width: number;
+      altText: string;
+    };
+  };
 }
 
-export const OnlineProgramsProgramServiceDefinition = defineService<{
+export const OnlineProgramsGetProgramServiceDefinition = defineService<{
   program: Signal<Program>;
-}>('onlineProgramsProgramService');
+}>('OnlineProgramsGetProgramService');
 
-export type OnlineProgramsProgramServiceAPIServiceAPI = ServiceAPI<typeof OnlineProgramsProgramServiceDefinition>;
+export type OnlineProgramsGetProgramServiceAPIServiceAPI = ServiceAPI<typeof OnlineProgramsGetProgramServiceDefinition>;
 
-export const OnlineProgramsProgramService = implementService.withConfig<{
+export const OnlineProgramsGetProgramService = implementService.withConfig<{
   program: Program;
-}>()(OnlineProgramsProgramServiceDefinition, ({ getService, config }) => {
+}>()(OnlineProgramsGetProgramServiceDefinition, ({ getService, config }) => {
   const signalsService = getService(SignalsServiceDefinition);
 
   const programSignal = signalsService.signal<Program>(config.program);
@@ -34,32 +41,32 @@ export const OnlineProgramsProgramService = implementService.withConfig<{
   };
 });
 
-export type OnlineProgramsProgramServiceConfig = ServiceFactoryConfig<
-  typeof OnlineProgramsProgramService
+export type OnlineProgramsGetProgramServiceConfig = ServiceFactoryConfig<
+  typeof OnlineProgramsGetProgramService
 >;
 
-export type OnlineProgramsProgramServiceConfigResult =
+export type OnlineProgramsGetProgramServiceConfigResult =
   | {
       type: 'success';
-      config: OnlineProgramsProgramServiceConfig;
+      config: OnlineProgramsGetProgramServiceConfig;
     }
   | { type: 'notFound' };
 
-type BlogPostServiceConfigParams = {
-  programSlug: string;
+type OnlineProgramsGetProgramServiceConfigParams = {
+  programId: string;
 };
 
-export async function loadBlogPostServiceConfig(
-  params: BlogPostServiceConfigParams,
-): Promise<OnlineProgramsProgramServiceConfigResult> {
-  const { programSlug } = params;
+export async function loadOnlineProgramsGetProgramServiceConfig(
+  params: OnlineProgramsGetProgramServiceConfigParams,
+): Promise<OnlineProgramsGetProgramServiceConfigResult> {
+  const { programId } = params;
 
-  if (!programSlug) {
+  if (!programId) {
     return { type: 'notFound' };
   }
 
   try {
-    // const { program } = await programs.getProgramBySlug(programSlug);
+    // const { program } = await programs.getProgram(programId);
     const program =  await new Promise<Program>(resolve => setTimeout(() => {
           resolve({
           id: "123",
@@ -106,7 +113,7 @@ export async function loadBlogPostServiceConfig(
       },
     };
   } catch (error) {
-    console.error('Failed to load initial program for slug', programSlug, error);
+    console.error('Failed to load initial program for slug', programId, error);
     return { type: 'notFound' };
   }
 }
