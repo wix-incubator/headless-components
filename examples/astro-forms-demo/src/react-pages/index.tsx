@@ -29,6 +29,7 @@ import DateInput from '../components/DateInput';
 import DatePicker from '../components/DatePicker';
 import DateTimeInput from '../components/DateTimeInput';
 import TimeInput from '../components/TimeInput';
+import Header from '../components/Header';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -64,6 +65,7 @@ const FIELD_MAP = {
   DATE_PICKER: DatePicker,
   DATE_TIME_INPUT: DateTimeInput,
   TIME_INPUT: TimeInput,
+  HEADER: Header,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {

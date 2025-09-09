@@ -32,7 +32,9 @@ const TimeInput = ({
       {showLabel && (
         <label htmlFor={id}>
           {label}
-          {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
+          {required && (
+            <span style={{ color: 'red', marginLeft: '4px' }}>*</span>
+          )}
         </label>
       )}
 
@@ -48,7 +50,7 @@ const TimeInput = ({
         onBlur={onBlur}
         onFocus={onFocus}
         aria-describedby={descriptionId}
-        step={showSeconds ? "1" : undefined}
+        step={showSeconds ? '1' : undefined}
         style={{
           width: '100%',
           maxWidth: '200px',

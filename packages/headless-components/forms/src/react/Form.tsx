@@ -26,6 +26,7 @@ import {
   DateTimeInputProps,
   DropdownProps,
   FileUploadProps,
+  HeaderProps,
   MultilineAddressProps,
   NumberInputProps,
   RadioGroupProps,
@@ -174,6 +175,7 @@ interface FieldMap {
   DATE_PICKER: React.ComponentType<DatePickerProps>;
   DATE_TIME_INPUT: React.ComponentType<DateTimeInputProps>;
   TIME_INPUT: React.ComponentType<TimeInputProps>;
+  HEADER: React.ComponentType<HeaderProps>;
 }
 
 /**

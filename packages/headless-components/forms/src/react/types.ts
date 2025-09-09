@@ -1182,3 +1182,34 @@ export interface TimeInputProps extends BaseFieldProps {
   use24HourFormat: boolean;
   description?: forms.RichContent;
 }
+
+/**
+ * Props for header field.
+ * The field is used to identify different sections of the form.
+ * Used with fieldMap key: HEADER
+ *
+ * @interface HeaderProps
+ *
+ * @property {forms.RichContent} content - The rich content to display as the header
+ * @property {number} maxShownParagraphs - Maximum number of paragraphs to display before truncating
+ *
+ * @example
+ * ```tsx
+ * const headerField: HeaderProps = {
+ *   content: {
+ *     nodes: [
+ *       {
+ *         type: 'text',
+ *         text: 'Personal Information',
+ *         marks: [{ type: 'bold' }]
+ *       }
+ *     ]
+ *   },
+ *   maxShownParagraphs: 3
+ * };
+ * ```
+ */
+export interface HeaderProps {
+  content: forms.RichContent;
+  maxShownParagraphs: number;
+}

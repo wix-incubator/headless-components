@@ -29,7 +29,9 @@ const DateTimeInput = ({
       {showLabel && (
         <label htmlFor={id}>
           {label}
-          {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
+          {required && (
+            <span style={{ color: 'red', marginLeft: '4px' }}>*</span>
+          )}
         </label>
       )}
 
