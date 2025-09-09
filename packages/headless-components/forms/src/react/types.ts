@@ -1213,3 +1213,34 @@ export interface HeaderProps {
   content: forms.RichContent;
   maxShownParagraphs: number;
 }
+
+/**
+ * Props for rich text field.
+ * The field is used to display text in the form.
+ * Used with fieldMap key: RICH_TEXT
+ *
+ * @interface RichTextProps
+ *
+ * @property {forms.RichContent} content - The textrich content to display
+ * @property {number} maxShownParagraphs - Maximum number of paragraphs to display before truncating
+ *
+ * @example
+ * ```tsx
+ * const richTextField: RichTextProps = {
+ *   content: {
+ *     nodes: [
+ *       {
+ *         type: 'text',
+ *         text: 'Please fill out all required fields marked with an asterisk (*).',
+ *         marks: [{ type: 'bold' }]
+ *       }
+ *     ]
+ *   },
+ *   maxShownParagraphs: 2
+ * };
+ * ```
+ */
+export interface RichTextProps {
+  content: forms.RichContent;
+  maxShownParagraphs: number;
+}

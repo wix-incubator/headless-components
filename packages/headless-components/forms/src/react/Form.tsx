@@ -31,6 +31,7 @@ import {
   NumberInputProps,
   RadioGroupProps,
   RatingInputProps,
+  RichTextProps,
   SignatureProps,
   TagsProps,
   TextAreaProps,
@@ -176,6 +177,7 @@ interface FieldMap {
   DATE_TIME_INPUT: React.ComponentType<DateTimeInputProps>;
   TIME_INPUT: React.ComponentType<TimeInputProps>;
   HEADER: React.ComponentType<HeaderProps>;
+  RICH_TEXT: React.ComponentType<RichTextProps>;
 }
 
 /**
