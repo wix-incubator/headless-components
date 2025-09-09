@@ -31,6 +31,7 @@ interface RootProps {
 
 **Data Attributes**
 
+- `data-testid="ticket-definition"` - Applied to ticket definition element
 - `data-sold-out` - Is ticket sold out
 
 ---
@@ -336,7 +337,7 @@ interface SaleEndDateProps {
 
 ### TicketDefinition.Quantity
 
-Displays a quantity select for the ticket. Only renders for tickets without pricing options and when the sale has started.
+Displays a quantity selector for the ticket. Only renders for tickets without pricing options and when the sale has started.
 
 **Props**
 
@@ -442,6 +443,7 @@ interface PricingOptionRepeaterProps {
 
 | Attribute                                         | Applied To                      | Purpose                               |
 | ------------------------------------------------- | ------------------------------- | ------------------------------------- |
+| `data-testid="ticket-definition"`                 | TicketDefinition.Root           | Ticket definition element             |
 | `data-testid="ticket-definition-name"`            | TicketDefinition.Name           | Ticket definition name element        |
 | `data-testid="ticket-definition-description"`     | TicketDefinition.Description    | Ticket definition description element |
 | `data-testid="ticket-definition-fixed-pricing"`   | TicketDefinition.FixedPricing   | Fixed pricing element                 |

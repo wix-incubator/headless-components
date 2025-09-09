@@ -27,6 +27,10 @@ interface RootProps {
 <Event.Root event={event}>{/* All event components */}</Event.Root>
 ```
 
+**Data Attributes**
+
+- `data-testid="event"` - Applied to event element
+
 ---
 
 ### Event.Image
@@ -517,6 +521,7 @@ interface AddToIcsCalendarProps {
 
 | Attribute                                    | Applied To                | Purpose                              |
 | -------------------------------------------- | ------------------------- | ------------------------------------ |
+| `data-testid="event"`                        | Event.Root                | Event element                        |
 | `data-testid="event-image"`                  | Event.Image               | Event image element                  |
 | `data-testid="event-title"`                  | Event.Title               | Event title element                  |
 | `data-testid="event-date"`                   | Event.Date                | Event date element                   |
