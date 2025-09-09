@@ -847,7 +847,6 @@ export interface RatingInputProps extends BaseFieldProps {
  *
  * @property {string} id - The unique identifier for the form field
  * @property {string | null | undefined} value - The current value of the radio group (selected option value)
- * @property {string} [defaultValue] - The default value for the radio group
  * @property {string} label - The display label for the form field
  * @property {boolean} showLabel - Whether to display the field label
  * @property {boolean} required - Whether the field is required for form submission
@@ -864,7 +863,6 @@ export interface RatingInputProps extends BaseFieldProps {
  */
 export interface RadioGroupProps extends BaseFieldProps {
   value: string | null | undefined;
-  defaultValue?: string;
   label: string;
   showLabel: boolean;
   options: ChoiceOption[];
@@ -885,7 +883,6 @@ export interface RadioGroupProps extends BaseFieldProps {
  *
  * @property {string} id - The unique identifier for the form field
  * @property {string[] | null | undefined} value - The current values of the checkbox group (array of selected option values)
- * @property {string[]} [defaultValue] - The default values for the checkbox group
  * @property {string} label - The display label for the form field
  * @property {boolean} showLabel - Whether to display the field label
  * @property {boolean} required - Whether the field is required for form submission
@@ -904,7 +901,6 @@ export interface RadioGroupProps extends BaseFieldProps {
  */
 export interface CheckboxGroupProps extends BaseFieldProps {
   value: string[] | null | undefined;
-  defaultValue?: string[];
   label: string;
   showLabel: boolean;
   options: ChoiceOption[];
@@ -927,7 +923,6 @@ export interface CheckboxGroupProps extends BaseFieldProps {
  *
  * @property {string} id - The unique identifier for the form field
  * @property {string | null | undefined} value - The current value of the dropdown (selected option value)
- * @property {string} [defaultValue] - The default value for the dropdown
  * @property {string} label - The display label for the form field
  * @property {boolean} showLabel - Whether to display the field label
  * @property {boolean} required - Whether the field is required for form submission
