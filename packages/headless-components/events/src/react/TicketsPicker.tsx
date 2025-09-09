@@ -125,7 +125,6 @@ export const TicketDefinitions = React.forwardRef<
 
   const attributes = {
     'data-testid': TestIds.ticketsPickerTickets,
-    'data-empty': !hasTickets,
     className,
   };
 

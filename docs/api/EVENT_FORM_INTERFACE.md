@@ -68,7 +68,6 @@ interface ControlsProps {
 **Data Attributes**
 
 - `data-testid="form-controls"` - Applied to controls container
-- `data-submitting` - Is form being submitted
 
 ---
 
@@ -143,7 +142,7 @@ interface SubmitTriggerProps {
 
 **Data Attributes**
 
-- `data-testid="form-submit"` - Applied to submit button element
+- `data-testid="form-submit"` - Applied to submit element
 - `data-submitting` - Is form being submitted
 
 ---
@@ -196,5 +195,4 @@ interface ErrorProps {
 | `data-testid="form-controls"` | Form.Controls      | Form element      |
 | `data-testid="form-submit"`   | Form.SubmitTrigger | Submit element    |
 | `data-testid="form-error"`    | Form.Error         | Error element     |
-| `data-submitting`             | Form.Controls      | Submission status |
 | `data-submitting`             | Form.SubmitTrigger | Submission status |
