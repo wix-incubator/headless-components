@@ -81,10 +81,19 @@ const Tags = ({
   return (
     <div>
       {showLabel && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '8px',
+          }}
+        >
           <label>
             {label}
-            {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
+            {required && (
+              <span style={{ color: 'red', marginLeft: '4px' }}>*</span>
+            )}
           </label>
           <span
             style={{
@@ -109,8 +118,12 @@ const Tags = ({
         {Array.from({ length: numberOfColumns || 1 }, (_, columnIndex) => (
           <div key={columnIndex} style={getColumnStyle()}>
             {options
-              .filter((_, index) => numberOfColumns === 0 || index % numberOfColumns === columnIndex)
-              .map((option) => {
+              .filter(
+                (_, index) =>
+                  numberOfColumns === 0 ||
+                  index % numberOfColumns === columnIndex
+              )
+              .map(option => {
                 const isSelected = currentValues.includes(option.value);
                 const isDisabled = readOnly;
 
@@ -132,13 +145,13 @@ const Tags = ({
                       opacity: isDisabled ? 0.5 : 1,
                       transition: 'all 0.2s ease',
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={e => {
                       if (!isDisabled && !isSelected) {
                         e.currentTarget.style.backgroundColor = '#f8f9fa';
                         e.currentTarget.style.borderColor = '#007bff';
                       }
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseLeave={e => {
                       if (!isDisabled && !isSelected) {
                         e.currentTarget.style.backgroundColor = 'white';
                         e.currentTarget.style.borderColor = '#ccc';
@@ -159,17 +172,29 @@ const Tags = ({
           <button
             type="button"
             onClick={handleCustomTagToggle}
-            disabled={readOnly || (maxItems !== undefined && currentValues.length >= maxItems && !currentValues.includes('custom'))}
+            disabled={
+              readOnly ||
+              (maxItems !== undefined &&
+                currentValues.length >= maxItems &&
+                !currentValues.includes('custom'))
+            }
             style={{
               padding: '6px 12px',
               margin: '2px',
               border: '1px solid #ccc',
               borderRadius: '16px',
-              backgroundColor: currentValues.includes('custom') ? '#007bff' : 'white',
+              backgroundColor: currentValues.includes('custom')
+                ? '#007bff'
+                : 'white',
               color: currentValues.includes('custom') ? 'white' : '#333',
               cursor: readOnly ? 'not-allowed' : 'pointer',
               fontSize: '14px',
-              opacity: (maxItems !== undefined && currentValues.length >= maxItems && !currentValues.includes('custom')) ? 0.5 : 1,
+              opacity:
+                maxItems !== undefined &&
+                currentValues.length >= maxItems &&
+                !currentValues.includes('custom')
+                  ? 0.5
+                  : 1,
             }}
             onFocus={onFocus}
           >
@@ -179,7 +204,7 @@ const Tags = ({
             <input
               type="text"
               value={customValue}
-              onChange={(e) => handleCustomValueChange(e.target.value)}
+              onChange={e => handleCustomValueChange(e.target.value)}
               placeholder={customOption.placeholder}
               disabled={readOnly}
               style={{

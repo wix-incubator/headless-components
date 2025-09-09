@@ -30,7 +30,10 @@ const Dropdown = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -63,7 +66,9 @@ const Dropdown = ({
       {showLabel && (
         <label htmlFor={id}>
           {label}
-          {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
+          {required && (
+            <span style={{ color: 'red', marginLeft: '4px' }}>*</span>
+          )}
         </label>
       )}
 
@@ -137,7 +142,7 @@ const Dropdown = ({
                 No options available
               </div>
             ) : (
-              options.map((option) => (
+              options.map(option => (
                 <button
                   key={option.id}
                   type="button"
@@ -146,7 +151,8 @@ const Dropdown = ({
                     width: '100%',
                     padding: '8px 12px',
                     border: 'none',
-                    backgroundColor: option.value === value ? '#e3f2fd' : 'transparent',
+                    backgroundColor:
+                      option.value === value ? '#e3f2fd' : 'transparent',
                     cursor: 'pointer',
                     textAlign: 'left',
                     fontSize: '14px',
@@ -155,12 +161,12 @@ const Dropdown = ({
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}
-                  onMouseEnter={(e) => {
+                  onMouseEnter={e => {
                     if (option.value !== value) {
                       e.currentTarget.style.backgroundColor = '#f5f5f5';
                     }
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={e => {
                     if (option.value !== value) {
                       e.currentTarget.style.backgroundColor = 'transparent';
                     }
@@ -170,7 +176,9 @@ const Dropdown = ({
                 >
                   <span>{option.label}</span>
                   {option.value === value && (
-                    <span style={{ fontSize: '12px', color: '#1976d2' }}>✓</span>
+                    <span style={{ fontSize: '12px', color: '#1976d2' }}>
+                      ✓
+                    </span>
                   )}
                 </button>
               ))

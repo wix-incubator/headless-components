@@ -21,6 +21,7 @@ import {
   ContactsPositionProps,
   ContactsTaxIdProps,
   ContactsSubscribeProps,
+  DateInputProps,
   DropdownProps,
   FileUploadProps,
   MultilineAddressProps,
@@ -166,6 +167,7 @@ interface FieldMap {
   CHECKBOX_GROUP: React.ComponentType<CheckboxGroupProps>;
   DROPDOWN: React.ComponentType<DropdownProps>;
   TAGS: React.ComponentType<TagsProps>;
+  DATE_INPUT: React.ComponentType<DateInputProps>;
 }
 
 /**

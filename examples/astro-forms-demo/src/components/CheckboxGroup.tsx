@@ -59,8 +59,12 @@ const CheckboxGroup = ({
     setCustomValue(customText);
 
     // Remove old custom value and add new one
-    const filteredValues = currentValues.filter(v => v !== 'custom' && v !== customValue);
-    const newValues = customText ? [...filteredValues, customText] : filteredValues;
+    const filteredValues = currentValues.filter(
+      v => v !== 'custom' && v !== customValue
+    );
+    const newValues = customText
+      ? [...filteredValues, customText]
+      : filteredValues;
     onChange(newValues);
   };
 
@@ -71,7 +75,9 @@ const CheckboxGroup = ({
     if (isChecked) {
       newValues = [...currentValues, 'custom'];
     } else {
-      newValues = currentValues.filter(v => v !== 'custom' && v !== customValue);
+      newValues = currentValues.filter(
+        v => v !== 'custom' && v !== customValue
+      );
     }
 
     onChange(newValues);
@@ -83,7 +89,8 @@ const CheckboxGroup = ({
   };
 
   const getColumnStyle = () => {
-    const columnWidth = numberOfColumns === 1 ? '100%' : numberOfColumns === 2 ? '50%' : '33.33%';
+    const columnWidth =
+      numberOfColumns === 1 ? '100%' : numberOfColumns === 2 ? '50%' : '33.33%';
     return {
       display: 'flex',
       flexDirection: 'column' as const,
@@ -98,7 +105,9 @@ const CheckboxGroup = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <label>
             {label}
-            {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
+            {required && (
+              <span style={{ color: 'red', marginLeft: '4px' }}>*</span>
+            )}
           </label>
           <span
             style={{
@@ -139,10 +148,13 @@ const CheckboxGroup = ({
             <div key={columnIndex} style={getColumnStyle()}>
               {options
                 .filter((_, index) => index % numberOfColumns === columnIndex)
-                .map((option) => {
+                .map(option => {
                   const optionId = `${id}-option-${option.id}`;
                   const isChecked = currentValues.includes(option.value);
-                  const isMaxReached = maxItems !== undefined && currentValues.length >= maxItems && !isChecked;
+                  const isMaxReached =
+                    maxItems !== undefined &&
+                    currentValues.length >= maxItems &&
+                    !isChecked;
                   const isDisabled = readOnly || isMaxReached;
 
                   return (
@@ -161,7 +173,9 @@ const CheckboxGroup = ({
                         name={id}
                         value={option.value}
                         checked={isChecked}
-                        onChange={(e) => handleCheckboxChange(option.value, e.target.checked)}
+                        onChange={e =>
+                          handleCheckboxChange(option.value, e.target.checked)
+                        }
                         onFocus={handleCheckboxFocus}
                         disabled={isDisabled}
                         style={{
@@ -194,7 +208,12 @@ const CheckboxGroup = ({
                 display: 'flex',
                 alignItems: 'center',
                 marginBottom: '8px',
-                opacity: maxItems !== undefined && currentValues.length >= maxItems && !isCustomSelected ? 0.5 : 1,
+                opacity:
+                  maxItems !== undefined &&
+                  currentValues.length >= maxItems &&
+                  !isCustomSelected
+                    ? 0.5
+                    : 1,
               }}
             >
               <input
@@ -203,12 +222,23 @@ const CheckboxGroup = ({
                 name={id}
                 value="custom"
                 checked={isCustomSelected}
-                onChange={(e) => handleCustomCheckboxChange(e.target.checked)}
+                onChange={e => handleCustomCheckboxChange(e.target.checked)}
                 onFocus={handleCheckboxFocus}
-                disabled={readOnly || (maxItems !== undefined && currentValues.length >= maxItems && !isCustomSelected)}
+                disabled={
+                  readOnly ||
+                  (maxItems !== undefined &&
+                    currentValues.length >= maxItems &&
+                    !isCustomSelected)
+                }
                 style={{
                   marginRight: '8px',
-                  cursor: readOnly || (maxItems !== undefined && currentValues.length >= maxItems && !isCustomSelected) ? 'not-allowed' : 'pointer',
+                  cursor:
+                    readOnly ||
+                    (maxItems !== undefined &&
+                      currentValues.length >= maxItems &&
+                      !isCustomSelected)
+                      ? 'not-allowed'
+                      : 'pointer',
                 }}
                 aria-describedby={descriptionId}
               />
@@ -226,7 +256,7 @@ const CheckboxGroup = ({
               <input
                 type="text"
                 value={customValue}
-                onChange={(e) => handleCustomValueChange(e.target.value)}
+                onChange={e => handleCustomValueChange(e.target.value)}
                 placeholder={customOption.placeholder}
                 disabled={readOnly}
                 style={{

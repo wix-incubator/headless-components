@@ -46,7 +46,8 @@ const RadioGroup = ({
   };
 
   const getColumnStyle = () => {
-    const columnWidth = numberOfColumns === 1 ? '100%' : numberOfColumns === 2 ? '50%' : '33.33%';
+    const columnWidth =
+      numberOfColumns === 1 ? '100%' : numberOfColumns === 2 ? '50%' : '33.33%';
     return {
       display: 'flex',
       flexDirection: 'column' as const,
@@ -60,7 +61,9 @@ const RadioGroup = ({
       {showLabel && (
         <label>
           {label}
-          {required && <span style={{ color: 'red', marginLeft: '4px' }}>*</span>}
+          {required && (
+            <span style={{ color: 'red', marginLeft: '4px' }}>*</span>
+          )}
         </label>
       )}
 
@@ -86,7 +89,7 @@ const RadioGroup = ({
             <div key={columnIndex} style={getColumnStyle()}>
               {options
                 .filter((_, index) => index % numberOfColumns === columnIndex)
-                .map((option) => {
+                .map(option => {
                   const optionId = `${id}-option-${option.id}`;
                   const isChecked = currentValue === option.value;
 
@@ -169,7 +172,7 @@ const RadioGroup = ({
               <input
                 type="text"
                 value={customValue}
-                onChange={(e) => handleCustomValueChange(e.target.value)}
+                onChange={e => handleCustomValueChange(e.target.value)}
                 placeholder={customOption.placeholder}
                 disabled={readOnly}
                 style={{

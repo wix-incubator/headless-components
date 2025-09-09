@@ -987,3 +987,52 @@ export interface TagsProps extends BaseFieldProps {
   minItems?: number;
   maxItems?: number;
 }
+
+/**
+ * Props for date input field.
+ * Used with fieldMap key: DATE_INPUT
+ * The field MUST render 3 separate number inputs on the UI for day, month and year.
+ *
+ * @interface DateInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO date string format: YYYY-MM-DD)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} showPlaceholder - Whether to show placeholder text for the date inputs
+ * @property {'SUNDAY' | 'MONDAY'} [firstDayOfWeek] - The first day of the week for date calculations (defaults to 'SUNDAY')
+ * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const dateField: DateInputProps = {
+ *   id: 'event-date',
+ *   value: '2024-12-25',
+ *   label: 'Event Date',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   showPlaceholder: true,
+ *   firstDayOfWeek: 'MONDAY',
+ *   acceptedDates: 'future',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DateInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  showPlaceholder: boolean;
+  firstDayOfWeek?: 'SUNDAY' | 'MONDAY';
+  acceptedDates?: 'all' | 'past' | 'future';
+  description?: forms.RichContent;
+}

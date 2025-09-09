@@ -25,6 +25,7 @@ import RadioGroup from '../components/RadioGroup';
 import CheckboxGroup from '../components/CheckboxGroup';
 import Dropdown from '../components/Dropdown';
 import Tags from '../components/Tags';
+import DateInput from '../components/DateInput';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -56,6 +57,7 @@ const FIELD_MAP = {
   CHECKBOX_GROUP: CheckboxGroup,
   DROPDOWN: Dropdown,
   TAGS: Tags,
+  DATE_INPUT: DateInput,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
