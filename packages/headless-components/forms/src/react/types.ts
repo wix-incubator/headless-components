@@ -511,6 +511,7 @@ export interface ContactsTaxIdProps
 
 /**
  * Props for text area field.
+ * Field allows to give a multi-line answer.
  * Used with fieldMap key: TEXT_AREA
  *
  * @interface TextAreaProps
@@ -552,6 +553,7 @@ export interface TextAreaProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for text input field.
+ * Field allows to give a single line for a brief answer.
  * Used with fieldMap key: TEXT_INPUT
  *
  * @interface TextInputProps
@@ -593,6 +595,7 @@ export interface TextInputProps extends BaseTextFieldProps, MinMaxLengthProps {}
 
 /**
  * Props for number input field.
+ * Field allows to give a numerical answer.
  * Used with fieldMap key: NUMBER_INPUT
  *
  * @interface NumberInputProps
@@ -636,6 +639,7 @@ export interface NumberInputProps extends BaseFieldProps {
 
 /**
  * Props for checkbox field.
+ * Field allows to collect a boolean answer.
  * Used with fieldMap key: CHECKBOX
  *
  * @interface CheckboxProps
@@ -814,6 +818,7 @@ export interface SignatureProps extends BaseFieldProps {
 
 /**
  * Props for rating input field from 1 to 5.
+ * Field allows to collect feedback on products, services and etc by choosing a rating from 1 to 5.
  * Used with fieldMap key: RATING_INPUT
  *
  * @interface RatingInputProps
@@ -1034,8 +1039,8 @@ export interface DateInputProps extends BaseFieldProps {
 
 /**
  * Props for date picker field.
+ * Field allows to select a date from a calendar.
  * Used with fieldMap key: DATE_PICKER
- * The field MUST render a calendar-style date picker interface.
  *
  * @interface DatePickerProps
  *
@@ -1083,8 +1088,8 @@ export interface DatePickerProps extends BaseFieldProps {
 
 /**
  * Props for date time input field.
+ * Field allows to enter a date and time.
  * Used with fieldMap key: DATE_TIME_INPUT
- * The field MUST render separate date and time inputs for capturing both date and time.
  *
  * @interface DateTimeInputProps
  *
@@ -1135,6 +1140,7 @@ export interface DateTimeInputProps extends BaseFieldProps {
 
 /**
  * Props for time input field.
+ * Field allows to enetr a time.
  * Used with fieldMap key: TIME_INPUT
  *
  * @interface TimeInputProps
