@@ -35,14 +35,15 @@ export default function Donation({
       )}
 
       <div>
-        {options.map((option) => (
+        {options.map(option => (
           <button
             key={option}
             type="button"
             onClick={() => handleOptionSelect(option)}
             disabled={readOnly}
           >
-            {currency}{option}
+            {currency}
+            {option}
           </button>
         ))}
 
