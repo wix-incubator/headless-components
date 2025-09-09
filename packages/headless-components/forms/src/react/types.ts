@@ -777,3 +777,30 @@ export interface FileUploadProps extends BaseFieldProps {
   allowedFileFormats?: FileFormat[];
   explanationText?: string;
 }
+
+/**
+ * Props for signature field.
+ * Used with fieldMap key: SIGNATURE
+ * The field MUST render a signature pad/canvas for capturing user signatures.
+ *
+ * @interface SignatureProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {FileData | null | undefined} value - The current value of the signature field (FileData object containing signature image data)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {boolean} imageUploadEnabled - Whether image upload functionality is enabled for the signature field
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the signature value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface SignatureProps extends BaseFieldProps {
+  value: FileData | null | undefined;
+  label: string;
+  showLabel: boolean;
+  imageUploadEnabled: boolean;
+  description?: forms.RichContent;
+}

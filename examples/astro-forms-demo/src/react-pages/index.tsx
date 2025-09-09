@@ -19,6 +19,7 @@ import ContactsSubscribe from '../components/ContactsSubscribe';
 import TextArea from '../components/TextArea';
 import NumberInput from '../components/NumberInput';
 import Checkbox from '../components/Checkbox';
+import Signature from '../components/Signature';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -44,6 +45,7 @@ const FIELD_MAP = {
   TEXT_AREA: TextArea,
   NUMBER_INPUT: NumberInput,
   CHECKBOX: Checkbox,
+  SIGNATURE: Signature,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
