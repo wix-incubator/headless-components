@@ -107,6 +107,7 @@ export const Root = (props: RootProps): React.ReactNode => {
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   /** Whether to render as a child component */
   asChild?: boolean;
+  children?: React.ReactNode;
 }
 
 /**
