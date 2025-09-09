@@ -9,6 +9,7 @@ import {
   type FormServiceConfig,
 } from '../services/form-service.js';
 import {
+  CheckboxGroupProps,
   CheckboxProps,
   ContactsAddressProps,
   ContactsBirthdateProps,
@@ -20,11 +21,22 @@ import {
   ContactsPositionProps,
   ContactsTaxIdProps,
   ContactsSubscribeProps,
+  DateInputProps,
+  DatePickerProps,
+  DateTimeInputProps,
+  DropdownProps,
   FileUploadProps,
+  HeaderProps,
   MultilineAddressProps,
   NumberInputProps,
+  RadioGroupProps,
+  RatingInputProps,
+  RichTextProps,
+  SignatureProps,
+  TagsProps,
   TextAreaProps,
   TextInputProps,
+  TimeInputProps,
   UrlInputProps,
 } from './types.js';
 
@@ -154,6 +166,18 @@ interface FieldMap {
   TEXT_AREA: React.ComponentType<TextAreaProps>;
   NUMBER_INPUT: React.ComponentType<NumberInputProps>;
   CHECKBOX: React.ComponentType<CheckboxProps>;
+  SIGNATURE: React.ComponentType<SignatureProps>;
+  RATING_INPUT: React.ComponentType<RatingInputProps>;
+  RADIO_GROUP: React.ComponentType<RadioGroupProps>;
+  CHECKBOX_GROUP: React.ComponentType<CheckboxGroupProps>;
+  DROPDOWN: React.ComponentType<DropdownProps>;
+  TAGS: React.ComponentType<TagsProps>;
+  DATE_INPUT: React.ComponentType<DateInputProps>;
+  DATE_PICKER: React.ComponentType<DatePickerProps>;
+  DATE_TIME_INPUT: React.ComponentType<DateTimeInputProps>;
+  TIME_INPUT: React.ComponentType<TimeInputProps>;
+  HEADER: React.ComponentType<HeaderProps>;
+  RICH_TEXT: React.ComponentType<RichTextProps>;
 }
 
 /**

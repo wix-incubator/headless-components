@@ -19,12 +19,26 @@ import ContactsSubscribe from '../components/ContactsSubscribe';
 import TextArea from '../components/TextArea';
 import NumberInput from '../components/NumberInput';
 import Checkbox from '../components/Checkbox';
+import Signature from '../components/Signature';
+import RatingInput from '../components/RatingInput';
+import RadioGroup from '../components/RadioGroup';
+import CheckboxGroup from '../components/CheckboxGroup';
+import Dropdown from '../components/Dropdown';
+import Tags from '../components/Tags';
+import DateInput from '../components/DateInput';
+import DatePicker from '../components/DatePicker';
+import DateTimeInput from '../components/DateTimeInput';
+import TimeInput from '../components/TimeInput';
+import Header from '../components/Header';
+import RichText from '../components/RichText';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
 }
 
+// TODO: narrow types, e.g. CONTACTS_FIRST_NAME + CONTACTS_LAST_NAME = both text inputs
 const FIELD_MAP = {
+  // TODO: inject data attributes like data-field-type, disabled
   TEXT_INPUT: TextInput,
   URL_INPUT: UrlInput,
   FILE_UPLOAD: FileUpload,
@@ -42,6 +56,18 @@ const FIELD_MAP = {
   TEXT_AREA: TextArea,
   NUMBER_INPUT: NumberInput,
   CHECKBOX: Checkbox,
+  SIGNATURE: Signature,
+  RATING_INPUT: RatingInput,
+  RADIO_GROUP: RadioGroup,
+  CHECKBOX_GROUP: CheckboxGroup,
+  DROPDOWN: Dropdown,
+  TAGS: Tags,
+  DATE_INPUT: DateInput,
+  DATE_PICKER: DatePicker,
+  DATE_TIME_INPUT: DateTimeInput,
+  TIME_INPUT: TimeInput,
+  HEADER: Header,
+  RICH_TEXT: RichText,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
