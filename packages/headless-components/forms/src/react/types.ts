@@ -6,6 +6,13 @@ interface MinMaxLengthProps {
   maxLength: number | undefined;
 }
 
+interface ChoiceOption {
+  id: string;
+  value: string;
+  label: string;
+  default: boolean;
+}
+
 interface BaseFieldProps {
   id: string;
   required: boolean;
@@ -831,13 +838,6 @@ export interface RatingInputProps extends BaseFieldProps {
   description?: forms.RichContent;
 }
 
-interface RadioOption {
-  id: string;
-  value: string;
-  label: string;
-  default: boolean;
-}
-
 /**
  * Props for radio group field.
  * Ask people to choose one option from a list.
@@ -852,7 +852,7 @@ interface RadioOption {
  * @property {boolean} showLabel - Whether to display the field label
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
- * @property {RadioOption[]} options - Array of radio button options with id, value, label, and default properties
+ * @property {ChoiceOption[]} options - Array of radio button options with id, value, label, and default properties
  * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
  * @property {Object} customOption - Configuration for custom "Other" option with text input
  * @property {string} customOption.label - Label for the custom option radio button
@@ -867,20 +867,13 @@ export interface RadioGroupProps extends BaseFieldProps {
   defaultValue?: string;
   label: string;
   showLabel: boolean;
-  options: RadioOption[];
+  options: ChoiceOption[];
   description?: forms.RichContent;
   numberOfColumns: 1 | 2 | 3;
   customOption: {
     label: string;
     placeholder: string;
   };
-}
-
-interface CheckboxOption {
-  id: string;
-  value: string;
-  label: string;
-  default: boolean;
 }
 
 /**
@@ -897,7 +890,7 @@ interface CheckboxOption {
  * @property {boolean} showLabel - Whether to display the field label
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
- * @property {CheckboxOption[]} options - Array of checkbox options with id, value, label, and default properties
+ * @property {ChoiceOption[]} options - Array of checkbox options with id, value, label, and default properties
  * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
  * @property {Object} customOption - Configuration for custom "Other" option with text input
  * @property {string} customOption.label - Label for the custom option checkbox
@@ -914,7 +907,7 @@ export interface CheckboxGroupProps extends BaseFieldProps {
   defaultValue?: string[];
   label: string;
   showLabel: boolean;
-  options: CheckboxOption[];
+  options: ChoiceOption[];
   description?: forms.RichContent;
   numberOfColumns: 1 | 2 | 3;
   customOption: {
@@ -923,4 +916,34 @@ export interface CheckboxGroupProps extends BaseFieldProps {
   };
   maxItems?: number;
   minItems?: number;
+}
+
+/**
+ * Props for dropdown field.
+ * Field allows to choose one option from a dropdown list.
+ * Used with fieldMap key: DROPDOWN
+ *
+ * @interface DropdownProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the dropdown (selected option value)
+ * @property {string} [defaultValue] - The default value for the dropdown
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {ChoiceOption[]} options - Array of dropdown options with id, value, label, and default properties
+ * @property {string} [placeholder] - Placeholder text for the dropdown when no option is selected
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the dropdown value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface DropdownProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  options: ChoiceOption[];
+  placeholder?: string;
+  description?: forms.RichContent;
 }

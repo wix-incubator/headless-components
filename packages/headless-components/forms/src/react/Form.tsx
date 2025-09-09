@@ -21,6 +21,7 @@ import {
   ContactsPositionProps,
   ContactsTaxIdProps,
   ContactsSubscribeProps,
+  DropdownProps,
   FileUploadProps,
   MultilineAddressProps,
   NumberInputProps,
@@ -162,6 +163,7 @@ interface FieldMap {
   RATING_INPUT: React.ComponentType<RatingInputProps>;
   RADIO_GROUP: React.ComponentType<RadioGroupProps>;
   CHECKBOX_GROUP: React.ComponentType<CheckboxGroupProps>;
+  DROPDOWN: React.ComponentType<DropdownProps>;
 }
 
 /**

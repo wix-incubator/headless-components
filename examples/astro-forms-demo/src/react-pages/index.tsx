@@ -23,6 +23,7 @@ import Signature from '../components/Signature';
 import RatingInput from '../components/RatingInput';
 import RadioGroup from '../components/RadioGroup';
 import CheckboxGroup from '../components/CheckboxGroup';
+import Dropdown from '../components/Dropdown';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -52,6 +53,7 @@ const FIELD_MAP = {
   RATING_INPUT: RatingInput,
   RADIO_GROUP: RadioGroup,
   CHECKBOX_GROUP: CheckboxGroup,
+  DROPDOWN: Dropdown,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
