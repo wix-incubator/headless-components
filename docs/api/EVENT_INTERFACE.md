@@ -313,7 +313,6 @@ interface RsvpButtonProps {
 - `data-event-upcoming` - Is event upcoming
 - `data-event-started` - Is event started
 - `data-event-ended` - Is event ended
-- `data-event-canceled` - Is event canceled
 - `data-sold-out` - Is event sold out
 - `data-registration-closed` - Is registration closed
 
@@ -533,6 +532,5 @@ interface AddToIcsCalendarProps {
 | `data-event-upcoming`                        | Event.RsvpButton          | Event status                         |
 | `data-event-started`                         | Event.RsvpButton          | Event status                         |
 | `data-event-ended`                           | Event.RsvpButton          | Event status                         |
-| `data-event-canceled`                        | Event.RsvpButton          | Event status                         |
 | `data-sold-out`                              | Event.RsvpButton          | Event ticketing status               |
 | `data-registration-closed`                   | Event.RsvpButton          | Event registration status            |
