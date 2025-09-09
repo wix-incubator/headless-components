@@ -830,3 +830,48 @@ export interface RatingInputProps extends BaseFieldProps {
   showLabel: boolean;
   description?: forms.RichContent;
 }
+
+interface RadioOption {
+  id: string;
+  value: string;
+  label: string;
+  default: boolean;
+}
+
+/**
+ * Props for radio group field.
+ * Ask people to choose one option from a list.
+ * Used with fieldMap key: RADIO_GROUP
+ *
+ * @interface RadioGroupProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the radio group (selected option value)
+ * @property {string} [defaultValue] - The default value for the radio group
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {RadioOption[]} options - Array of radio button options with id, value, label, and default properties
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
+ * @property {Object} customOption - Configuration for custom "Other" option with text input
+ * @property {string} customOption.label - Label for the custom option radio button
+ * @property {string} customOption.placeholder - Placeholder text for the custom option input
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the radio group value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface RadioGroupProps extends BaseFieldProps {
+  value: string | null | undefined;
+  defaultValue?: string;
+  label: string;
+  showLabel: boolean;
+  options: RadioOption[];
+  description?: forms.RichContent;
+  numberOfColumns: 1 | 2 | 3;
+  customOption: {
+    label: string;
+    placeholder: string;
+  };
+}
