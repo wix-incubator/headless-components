@@ -1301,6 +1301,62 @@ export interface FixedPaymentProps {
   description?: forms.RichContent;
 }
 
+/**
+ * Props for payment input field.
+ * Field allows users to enter a custom payment amount.
+ * Used with fieldMap key: PAYMENT_INPUT
+ *
+ * @interface PaymentInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
+ * @property {string} minValue - Minimum payment amount as string
+ * @property {string} [maxValue] - Optional maximum payment amount as string
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const paymentInputField: PaymentInputProps = {
+ *   id: 'payment',
+ *   value: '25.50',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Payment Amount',
+ *   showLabel: true,
+ *   required: true,
+ *   placeholder: 'Enter amount',
+ *   description: { nodes: [{ type: 'text', text: 'Enter your payment amount' }] },
+ *   currency: '$',
+ *   minValue: '1.00',
+ *   maxValue: '1000.00',
+ *   onChange: (value) => console.log('Payment changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface PaymentInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  required: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+  currency: string;
+  minValue: string;
+  maxValue?: string;
+}
+
 interface ProductOption extends ChoiceOption {
   price: string;
   minAmount: number;

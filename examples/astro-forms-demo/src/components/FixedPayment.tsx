@@ -13,7 +13,8 @@ export default function FixedPayment({
       {showLabel && <label className="field-label">{label}</label>}
 
       <div className="payment-amount">
-        {currency}{amount.toFixed(2)}
+        {currency}
+        {amount.toFixed(2)}
       </div>
     </div>
   );

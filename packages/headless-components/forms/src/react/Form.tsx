@@ -41,6 +41,7 @@ import {
   UrlInputProps,
   ProductListProps,
   FixedPaymentProps,
+  PaymentInputProps,
 } from './types.js';
 
 export interface RootProps {
@@ -128,6 +129,7 @@ export function Root(props: RootProps): React.ReactNode {
  * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
  * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for submit button fields
  * @property {React.ComponentType<FixedPaymentProps>} FIXED_PAYMENT - Component for fixed payment fields
+ * @property {React.ComponentType<PaymentInputProps>} PAYMENT_INPUT - Component for payment input fields
  *
  * @example
  * ```tsx
@@ -187,6 +189,7 @@ interface FieldMap {
   SUBMIT_BUTTON: React.ComponentType<SubmitButtonProps>;
   PRODUCT_LIST: React.ComponentType<ProductListProps>;
   FIXED_PAYMENT: React.ComponentType<FixedPaymentProps>;
+  PAYMENT_INPUT: React.ComponentType<PaymentInputProps>;
 }
 
 /**
