@@ -148,7 +148,7 @@ interface SubmitTriggerProps {
 
 ---
 
-### EventForm.Error
+### Form.Error
 
 Displays an error message when the form submission fails.
 
@@ -166,21 +166,21 @@ interface ErrorProps {
 
 ```tsx
 // Default usage
-<EventForm.Error className="text-red-500" />
+<Form.Error className="text-red-500" />
 
 // asChild with primitive
-<EventForm.Error asChild>
+<Form.Error asChild>
   <span className="text-red-500" />
-</EventForm.Error>
+</Form.Error>
 
 // asChild with react component
-<EventForm.Error asChild>
+<Form.Error asChild>
   {React.forwardRef(({ error, ...props }, ref) => (
     <div ref={ref} {...props} className="text-red-500 bg-red-50 p-3 rounded">
       {error}
     </div>
   ))}
-</EventForm.Error>
+</Form.Error>
 ```
 
 **Data Attributes**
@@ -191,10 +191,10 @@ interface ErrorProps {
 
 ## Data Attributes Summary
 
-| Attribute                     | Applied To              | Purpose           |
-| ----------------------------- | ----------------------- | ----------------- |
-| `data-testid="form-controls"` | EventForm.Controls      | Form element      |
-| `data-testid="form-submit"`   | EventForm.SubmitTrigger | Submit element    |
-| `data-testid="form-error"`    | EventForm.Error         | Error element     |
-| `data-submitting`             | EventForm.Controls      | Submission status |
-| `data-submitting`             | EventForm.SubmitTrigger | Submission status |
+| Attribute                     | Applied To         | Purpose           |
+| ----------------------------- | ------------------ | ----------------- |
+| `data-testid="form-controls"` | Form.Controls      | Form element      |
+| `data-testid="form-submit"`   | Form.SubmitTrigger | Submit element    |
+| `data-testid="form-error"`    | Form.Error         | Error element     |
+| `data-submitting`             | Form.Controls      | Submission status |
+| `data-submitting`             | Form.SubmitTrigger | Submission status |
