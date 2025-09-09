@@ -59,6 +59,7 @@ interface EventsProps {
 **Data Attributes**
 
 - `data-testid="event-list-events"` - Applied to events container
+- `data-filtered` - Is list filtered
 
 ---
 
@@ -83,7 +84,7 @@ interface EventRepeaterProps {
   <Event.Date />
   <Event.Location />
   <Event.Description />
-  <Event.RsvpButton />
+  <Event.RsvpButton label="RSVP" />
 </EventList.EventRepeater>
 ```
 
@@ -175,10 +176,115 @@ interface ErrorProps {
 
 ---
 
+### EventList.CategoryFilters
+
+Container for the event list category filters. Not rendered if there are no categories.
+
+**Props**
+
+```tsx
+interface CategoryFilters {
+  children: React.ReactNode;
+  className?: string;
+}
+```
+
+**Example**
+
+```tsx
+<EventList.CategoryFilters>
+  <EventList.CategoryFilterRepeater>
+    <CategoryFilter.Name />
+  </EventList.CategoryFilterRepeater>
+</EventList.CategoryFilters>
+```
+
+**Data Attributes**
+
+- `data-testid="event-list-category-filters"` - Applied to category filters container
+
+---
+
+### EventList.CategoryFilterRepeater
+
+Repeater component that renders CategoryFilter.Root for each category.
+
+**Props**
+
+```tsx
+interface CategoryFilterRepeaterProps {
+  children: React.ReactNode;
+}
+```
+
+**Example**
+
+```tsx
+<EventList.CategoryFilterRepeater>
+  <CategoryFilter.Name />
+</EventList.CategoryFilterRepeater>
+```
+
+---
+
+### EventList.StatusFilters
+
+Container for the event list status filters.
+
+**Props**
+
+```tsx
+interface StatusFilters {
+  children: React.ReactNode;
+  className?: string;
+}
+```
+
+**Example**
+
+```tsx
+<EventList.StatusFilters>
+  <EventList.StatusFilterRepeater>
+    <StatusFilter.Name />
+  </EventList.StatusFilterRepeater>
+</EventList.StatusFilters>
+```
+
+**Data Attributes**
+
+- `data-testid="event-list-status-filters"` - Applied to status filters container
+
+---
+
+### EventList.StatusFilterRepeater
+
+Repeater component that renders StatusFilter.Root for each category.
+
+**Props**
+
+```tsx
+interface StatusFilterRepeaterProps {
+  children: React.ReactNode;
+}
+```
+
+**Example**
+
+```tsx
+<EventList.StatusFilterRepeater>
+  <StatusFilter.Name />
+</EventList.StatusFilterRepeater>
+```
+
+---
+
 ## Data Attributes Summary
 
-| Attribute                            | Applied To                | Purpose           |
-| ------------------------------------ | ------------------------- | ----------------- |
-| `data-testid="event-list-events"`    | EventList.Events          | Events container  |
-| `data-testid="event-list-load-more"` | EventList.LoadMoreTrigger | Load more element |
-| `data-testid="event-list-error"`     | EventList.Error           | Error element     |
+| Attribute                                   | Applied To                | Purpose                    |
+| ------------------------------------------- | ------------------------- | -------------------------- |
+| `data-testid="event-list-events"`           | EventList.Events          | Events container           |
+| `data-testid="event-list-load-more"`        | EventList.LoadMoreTrigger | Load more element          |
+| `data-testid="event-list-error"`            | EventList.Error           | Error element              |
+| `data-testid="event-list-category-filters"` | EventList.CategoryFilters | Category filters container |
+| `data-testid="event-list-status-filters"`   | EventList.StatusFilters   | Status filters container   |
+| `data-filtered`                             | EventList.Events          | Filtering status           |
