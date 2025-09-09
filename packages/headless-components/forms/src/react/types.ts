@@ -1032,8 +1032,8 @@ export interface DateInputProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   showPlaceholder: boolean;
-  firstDayOfWeek?: 'SUNDAY' | 'MONDAY';
-  acceptedDates?: 'all' | 'past' | 'future';
+  firstDayOfWeek: 'SUNDAY' | 'MONDAY';
+  acceptedDates: 'all' | 'past' | 'future';
   description?: forms.RichContent;
 }
 
@@ -1082,6 +1082,58 @@ export interface DatePickerProps extends BaseFieldProps {
   showLabel: boolean;
   placeholder?: string;
   firstDayOfWeek?: 'SUNDAY' | 'MONDAY';
-  acceptedDates?: 'all' | 'past' | 'future';
+  acceptedDates: 'all' | 'past' | 'future';
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for date time input field.
+ * Used with fieldMap key: DATE_TIME_INPUT
+ * The field MUST render separate date and time inputs for capturing both date and time.
+ *
+ * @interface DateTimeInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO datetime string format: YYYY-MM-DDTHH:mm)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} showDateLabels - Whether to display individual labels for date and time inputs
+ * @property {boolean} showPlaceholder - Whether to show placeholder text in the inputs
+ * @property {boolean} use24HourFormat - Whether to use 24-hour format for time input (defaults to true)
+ * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const dateTimeField: DateTimeInputProps = {
+ *   id: 'appointment-datetime',
+ *   value: '2024-12-25T14:30',
+ *   label: 'Appointment Date & Time',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   showDateLabels: true,
+ *   showPlaceholder: true,
+ *   use24HourFormat: true,
+ *   acceptedDates: 'future',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DateTimeInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  showDateLabels: boolean;
+  showPlaceholder: boolean;
+  use24HourFormat: boolean;
+  acceptedDates: 'all' | 'past' | 'future';
   description?: forms.RichContent;
 }

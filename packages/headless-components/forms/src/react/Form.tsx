@@ -23,6 +23,7 @@ import {
   ContactsSubscribeProps,
   DateInputProps,
   DatePickerProps,
+  DateTimeInputProps,
   DropdownProps,
   FileUploadProps,
   MultilineAddressProps,
@@ -170,6 +171,7 @@ interface FieldMap {
   TAGS: React.ComponentType<TagsProps>;
   DATE_INPUT: React.ComponentType<DateInputProps>;
   DATE_PICKER: React.ComponentType<DatePickerProps>;
+  DATE_TIME_INPUT: React.ComponentType<DateTimeInputProps>;
 }
 
 /**
