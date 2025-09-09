@@ -804,3 +804,29 @@ export interface SignatureProps extends BaseFieldProps {
   imageUploadEnabled: boolean;
   description?: forms.RichContent;
 }
+
+/**
+ * Props for rating input field from 1 to 5.
+ * Used with fieldMap key: RATING_INPUT
+ *
+ * @interface RatingInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {number | null | undefined} value - The current value of the rating field (number between 1 and 5)
+ * @property {number} [defaultValue] - The default value for the rating field (number between 1 and 5)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the rating value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface RatingInputProps extends BaseFieldProps {
+  value: number | null | undefined;
+  defaultValue: number | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+}

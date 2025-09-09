@@ -20,6 +20,7 @@ import TextArea from '../components/TextArea';
 import NumberInput from '../components/NumberInput';
 import Checkbox from '../components/Checkbox';
 import Signature from '../components/Signature';
+import RatingInput from '../components/RatingInput';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -46,6 +47,7 @@ const FIELD_MAP = {
   NUMBER_INPUT: NumberInput,
   CHECKBOX: Checkbox,
   SIGNATURE: Signature,
+  RATING_INPUT: RatingInput,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {

@@ -23,6 +23,7 @@ import {
   FileUploadProps,
   MultilineAddressProps,
   NumberInputProps,
+  RatingInputProps,
   SignatureProps,
   TextAreaProps,
   TextInputProps,
@@ -156,6 +157,7 @@ interface FieldMap {
   NUMBER_INPUT: React.ComponentType<NumberInputProps>;
   CHECKBOX: React.ComponentType<CheckboxProps>;
   SIGNATURE: React.ComponentType<SignatureProps>;
+  RATING_INPUT: React.ComponentType<RatingInputProps>;
 }
 
 /**
