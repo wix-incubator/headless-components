@@ -36,6 +36,7 @@ import ProductList from '../components/ProductList';
 import FixedPayment from '../components/FixedPayment';
 import PaymentInput from '../components/PaymentInput';
 import Donation from '../components/Donation';
+import Appointment from '../components/Appointment';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -78,6 +79,7 @@ const FIELD_MAP = {
   FIXED_PAYMENT: FixedPayment,
   PAYMENT_INPUT: PaymentInput,
   DONATION: Donation,
+  APPOINTMENT: Appointment,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {

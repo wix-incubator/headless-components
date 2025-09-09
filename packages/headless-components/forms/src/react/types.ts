@@ -1406,6 +1406,47 @@ export interface DonationProps extends BaseFieldProps {
   customOption?: CustomOption;
 }
 
+/**
+ * Props for appointment field.
+ * Field allows users to select a date and time for an appointment.
+ * Used with fieldMap key: APPOINTMENT
+ *
+ * @interface AppointmentProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO datetime string format: YYYY-MM-DDTHH:mm)
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the appointment value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const appointmentField: AppointmentProps = {
+ *   id: 'appointment',
+ *   value: '2024-12-25T14:30',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Appointment Date & Time',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Choose your preferred appointment time' }] },
+ *   onChange: (value) => console.log('Appointment changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface AppointmentProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+}
+
 interface ProductOption extends ChoiceOption {
   price: string;
   minAmount: number;
