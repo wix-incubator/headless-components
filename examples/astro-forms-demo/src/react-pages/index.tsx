@@ -33,6 +33,7 @@ import Header from '../components/Header';
 import RichText from '../components/RichText';
 import SubmitButton from '../components/SubmitButton';
 import ProductList from '../components/ProductList';
+import FixedPayment from '../components/FixedPayment';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -72,6 +73,7 @@ const FIELD_MAP = {
   RICH_TEXT: RichText,
   SUBMIT_BUTTON: SubmitButton,
   PRODUCT_LIST: ProductList,
+  FIXED_PAYMENT: FixedPayment,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {

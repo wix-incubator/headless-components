@@ -40,6 +40,7 @@ import {
   TimeInputProps,
   UrlInputProps,
   ProductListProps,
+  FixedPaymentProps,
 } from './types.js';
 
 export interface RootProps {
@@ -126,6 +127,7 @@ export function Root(props: RootProps): React.ReactNode {
  * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for number input fields
  * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
  * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for submit button fields
+ * @property {React.ComponentType<FixedPaymentProps>} FIXED_PAYMENT - Component for fixed payment fields
  *
  * @example
  * ```tsx
@@ -184,6 +186,7 @@ interface FieldMap {
   RICH_TEXT: React.ComponentType<RichTextProps>;
   SUBMIT_BUTTON: React.ComponentType<SubmitButtonProps>;
   PRODUCT_LIST: React.ComponentType<ProductListProps>;
+  FIXED_PAYMENT: React.ComponentType<FixedPaymentProps>;
 }
 
 /**

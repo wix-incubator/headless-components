@@ -1269,6 +1269,38 @@ export interface SubmitButtonProps {
   text: string;
 }
 
+/**
+ * Props for fixed payment field.
+ * Field displays a fixed payment amount with currency.
+ * Used with fieldMap key: FIXED_PAYMENT
+ *
+ * @interface FixedPaymentProps
+ *
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {number} amount - The fixed payment amount
+ * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ *
+ * @example
+ * ```tsx
+ * const fixedPaymentField: FixedPaymentProps = {
+ *   label: 'Payment Amount',
+ *   showLabel: true,
+ *   amount: 29.99,
+ *   currency: '$',
+ *   description: { nodes: [{ type: 'text', text: 'This is a one-time payment' }] }
+ * };
+ * ```
+ */
+export interface FixedPaymentProps {
+  label: string;
+  showLabel: boolean;
+  amount: number;
+  currency: string;
+  description?: forms.RichContent;
+}
+
 interface ProductOption extends ChoiceOption {
   price: string;
   minAmount: number;
@@ -1283,7 +1315,7 @@ interface ProductValue {
   productId: string;
   price: string | number;
   quantity: number;
-};
+}
 
 /**
  * Props for product list field.
