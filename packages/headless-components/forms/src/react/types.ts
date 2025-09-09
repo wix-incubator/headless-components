@@ -1137,3 +1137,48 @@ export interface DateTimeInputProps extends BaseFieldProps {
   acceptedDates: 'all' | 'past' | 'future';
   description?: forms.RichContent;
 }
+
+/**
+ * Props for time input field.
+ * Used with fieldMap key: TIME_INPUT
+ *
+ * @interface TimeInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (time string format: HH:mm or HH:mm:ss)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} showPlaceholder - Whether to show placeholder text in the input
+ * @property {boolean} use24HourFormat - Whether to use 24-hour format for time input (defaults to true)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function callezqd when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const timeField: TimeInputProps = {
+ *   id: 'appointment-time',
+ *   value: '14:30',
+ *   label: 'Appointment Time',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   showPlaceholder: true,
+ *   use24HourFormat: true,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface TimeInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  showPlaceholder: boolean;
+  use24HourFormat: boolean;
+  description?: forms.RichContent;
+}

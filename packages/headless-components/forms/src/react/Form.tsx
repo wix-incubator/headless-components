@@ -34,6 +34,7 @@ import {
   TagsProps,
   TextAreaProps,
   TextInputProps,
+  TimeInputProps,
   UrlInputProps,
 } from './types.js';
 
@@ -172,6 +173,7 @@ interface FieldMap {
   DATE_INPUT: React.ComponentType<DateInputProps>;
   DATE_PICKER: React.ComponentType<DatePickerProps>;
   DATE_TIME_INPUT: React.ComponentType<DateTimeInputProps>;
+  TIME_INPUT: React.ComponentType<TimeInputProps>;
 }
 
 /**
