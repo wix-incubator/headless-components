@@ -18,8 +18,6 @@ export interface ProgramRootProps {
 
 /**
  * Root component that provides all necessary service contexts for a complete program experience.
- * This composite component combines Program ...
- * functionality following the documented API patterns with proper data attributes.
  *
  * @order 1
  * @component
