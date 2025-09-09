@@ -51,6 +51,11 @@ interface CmsItemRootProps {
 
 ---
 
+# *IMPORTANT!: We should implement Field (same as the custom field component) first and then see if we need additional fields*
+
+
+---
+
 ### CmsItem.TextField
 
 Displays an item textual field with customizable rendering.

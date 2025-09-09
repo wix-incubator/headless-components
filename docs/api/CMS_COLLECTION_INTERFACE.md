@@ -163,36 +163,86 @@ interface CmsCollectionItemsProps {
   className?: string;
   infiniteScroll?: boolean;
   pageSize?: number;
+  variant?: 'list' | 'grid' | 'table' | 'card'; // Layout variant (default: 'list')
+  gridColumns?: number; // Number of columns for grid variant
+  tableHeaders?: string[]; // Column headers for table variant
 }
 ```
 **Example**
 ```tsx
-// show just 3 items
+// Grid layout with 3 columns
 <CmsCollection.Items
+  variant="grid"
+  gridColumns={3}
   emptyState={<div>No items found</div>}
-  className="grid grid-cols-1 md:grid-cols-3 gap-4"
-  infiniteScroll={false}
-  pageSize={3}
+  className="gap-6"
+  pageSize={9}
 >
   <CmsCollection.ItemRepeater>
-    {/* Collection Item template */}
+    <CmsItem.ImageField fieldKey="image" className="aspect-square rounded-lg mb-4" />
+    <CmsItem.TextField fieldKey="title" className="font-semibold mb-2" />
+    <CmsItem.TextField fieldKey="description" className="text-sm text-muted" />
   </CmsCollection.ItemRepeater>
 </CmsCollection.Items>
 
+// Table layout with headers
 <CmsCollection.Items
+  variant="table"
+  tableHeaders={['Title', 'Status', 'Created', 'Actions']}
+  emptyState={<div>No data available</div>}
+>
+  <CmsCollection.ItemRepeater>
+    <CmsItem.TextField fieldKey="title" />
+    <CmsItem.TextField fieldKey="status" />
+    <CmsItem.DateField fieldKey="created" />
+    <CmsItem.Action.Edit label="Edit" />
+  </CmsCollection.ItemRepeater>
+</CmsCollection.Items>
+
+// List layout (default)
+<CmsCollection.Items
+  variant="list"
   emptyState={<div>No items found</div>}
-  className="grid grid-cols-1 md:grid-cols-3 gap-4"
   infiniteScroll
 >
   <CmsCollection.ItemRepeater>
-    {/* Collection Item template */}
+    <div className="flex items-center gap-4 p-4 border-b">
+      <CmsItem.ImageField fieldKey="thumbnail" className="w-16 h-16 rounded" />
+      <div className="flex-1">
+        <CmsItem.TextField fieldKey="title" className="font-medium mb-1" />
+        <CmsItem.TextField fieldKey="description" className="text-sm text-muted" />
+      </div>
+      <CmsItem.DateField fieldKey="modified" className="text-xs" />
+    </div>
+  </CmsCollection.ItemRepeater>
+</CmsCollection.Items>
+
+// Card layout
+<CmsCollection.Items
+  variant="card"
+  emptyState={<div>No items found</div>}
+  className="gap-4"
+>
+  <CmsCollection.ItemRepeater>
+    <div className="bg-white rounded-lg shadow-sm border p-6">
+      <CmsItem.TextField fieldKey="title" className="text-xl font-bold mb-4" />
+      <CmsItem.ImageField fieldKey="image" className="w-full aspect-video rounded mb-4" />
+      <CmsItem.TextField fieldKey="description" className="mb-4" />
+      <div className="flex gap-2">
+        <CmsItem.Action.Edit label="Edit" className="btn-primary" />
+        <CmsItem.Action.Delete label="Delete" className="btn-secondary" />
+      </div>
+    </div>
   </CmsCollection.ItemRepeater>
 </CmsCollection.Items>
 ```
 
 **Data Attributes**
-- `data-testid="cms-collecion-items"`
+- `data-testid="cms-collection-items"` - Applied to items container
 - `data-empty` - Is collection empty
+- `data-variant` - Current layout variant (list/grid/table/card)
+- `data-grid-columns` - Number of columns (grid variant only)
+- `data-has-table-headers` - Present when table headers are provided
 
 ---
 
@@ -432,6 +482,9 @@ interface CmsCollectionBulkUpdateActionProps {
 | `data-testid="cms-collection-bulk-update"` | CmsCollection.BulkUpdateAction | Bulk update button |
 | `data-testid="cms-collection-items-totals"` | CmsCollection.Totals.Count/Displayed | Totals container |
 | `data-empty` | CmsCollection.Items | Empty collection status |
+| `data-variant` | CmsCollection.Items | Current layout variant |
+| `data-grid-columns` | CmsCollection.Items | Number of grid columns |
+| `data-has-table-headers` | CmsCollection.Items | Table headers present |
 | `data-filtered` | CmsCollection.Sort | Collection currently filtered status |
 | `data-sorted-by` | CmsCollection.Sort | Current sorting field |
 | `data-sort-direction` | CmsCollection.Sort | Current sort direction |
@@ -484,15 +537,17 @@ function CmsCollectionDisplay() {
           </div>
         </div>
 
-        {/* Items Grid */}
+        {/* Items Grid with Variant Support */}
         <CmsCollection.Items
+          variant="grid"
+          gridColumns={3}
           emptyState={<div className="text-center py-12">No items found</div>}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="gap-6"
         >
           <CmsCollection.ItemRepeater className="bg-surface-card p-4 rounded-lg border border-surface-subtle hover:shadow-lg transition-shadow">
-            <CmsItem.TextField fieldKey="title" className="text-lg font-semibold text-content-primary mb-2" />
             <CmsItem.ImageField fieldKey="image" className="aspect-video rounded-lg mb-4" />
-            <CmsItem.DateField fieldKey="created" className="text-sm text-content-muted" />
+            <CmsItem.TextField fieldKey="title" className="text-lg font-semibold text-content-primary mb-2" />
+            <CmsItem.DateField fieldKey="created" className="text-sm text-content-muted mb-4" />
 
             <div className="mt-4 space-y-2">
               <CmsItem.Action.Edit label="Edit Item" className="w-full btn-primary" />
@@ -551,8 +606,10 @@ function AdvancedCmsCollection() {
           </CardContent>
         </Card>
 
-        {/* Items with Management Actions */}
+        {/* Items with Table Layout for Management */}
         <CmsCollection.Items
+          variant="table"
+          tableHeaders={['Title', 'Status', 'Modified', 'Actions']}
           emptyState={
             <Card className="text-center py-16">
               <CardContent>
@@ -567,24 +624,15 @@ function AdvancedCmsCollection() {
             </Card>
           }
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <CmsCollection.ItemRepeater className="group">
-              <Card className="h-full bg-surface-card border-surface-subtle hover:shadow-xl transition-all">
-                <CardContent className="p-6">
-                  <CmsItem.TextField fieldKey="title" className="text-lg font-semibold mb-4" />
-                  <CmsItem.TextField fieldKey="description" className="text-content-muted mb-4 line-clamp-3" />
-                  <CmsItem.DateField fieldKey="modified" className="text-xs text-content-muted" />
-                </CardContent>
-
-                <CardFooter className="p-6 pt-0 space-y-2">
-                  <div className="flex gap-2 w-full">
-                    <CmsItem.Action.Edit label="Edit" className="flex-1 btn-secondary" />
-                    <CmsItem.Action.Delete label="Delete" className="btn-outline text-status-error" />
-                  </div>
-                </CardFooter>
-              </Card>
-            </CmsCollection.ItemRepeater>
-          </div>
+          <CmsCollection.ItemRepeater className="hover:bg-surface-hover transition-colors">
+            <CmsItem.TextField fieldKey="title" className="font-medium text-content-primary" />
+            <CmsItem.TextField fieldKey="status" className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-status-success-light text-status-success" />
+            <CmsItem.DateField fieldKey="modified" className="text-content-muted text-sm" />
+            <div className="flex gap-2">
+              <CmsItem.Action.Edit label="Edit" className="btn-sm btn-secondary" />
+              <CmsItem.Action.Delete label="Delete" className="btn-sm btn-outline text-status-error" />
+            </div>
+          </CmsCollection.ItemRepeater>
         </CmsCollection.Items>
 
         {/* Bulk Actions */}
@@ -600,6 +648,132 @@ function AdvancedCmsCollection() {
             <CmsCollection.NextAction className="btn-outline">Next</CmsCollection.NextAction>
           </div>
         </div>
+      </div>
+    </CmsCollection.Root>
+  );
+}
+```
+
+### Complete Variant Examples
+```tsx
+function CmsCollectionWithVariants() {
+  const [viewMode, setViewMode] = useState<'grid' | 'table' | 'list' | 'card'>('grid');
+  const collection = useCmsCollection();
+
+  return (
+    <CmsCollection.Root collection={collection}>
+      <div className="space-y-6">
+        {/* View Mode Selector */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Collection Items</h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`btn ${viewMode === 'grid' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              Grid
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`btn ${viewMode === 'table' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              Table
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`btn ${viewMode === 'list' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              List
+            </button>
+            <button
+              onClick={() => setViewMode('card')}
+              className={`btn ${viewMode === 'card' ? 'btn-primary' : 'btn-outline'}`}
+            >
+              Card
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic Variant Rendering */}
+        {viewMode === 'grid' && (
+          <CmsCollection.Items variant="grid" gridColumns={3} className="gap-6">
+            <CmsCollection.ItemRepeater>
+              <div className="bg-white rounded-lg border p-4 hover:shadow-lg transition-shadow">
+                <CmsItem.ImageField fieldKey="image" className="w-full aspect-square rounded mb-3" />
+                <CmsItem.TextField fieldKey="title" className="font-semibold mb-2" />
+                <CmsItem.TextField fieldKey="description" className="text-sm text-gray-600 mb-3" />
+                <div className="flex gap-2">
+                  <CmsItem.Action.Edit label="Edit" className="btn-sm btn-primary" />
+                  <CmsItem.Action.Delete label="Delete" className="btn-sm btn-outline" />
+                </div>
+              </div>
+            </CmsCollection.ItemRepeater>
+          </CmsCollection.Items>
+        )}
+
+        {viewMode === 'table' && (
+          <CmsCollection.Items
+            variant="table"
+            tableHeaders={['Image', 'Title', 'Status', 'Created', 'Actions']}
+            className="bg-white rounded-lg border"
+          >
+            <CmsCollection.ItemRepeater className="border-b hover:bg-gray-50 transition-colors">
+              <CmsItem.ImageField fieldKey="image" className="w-12 h-12 rounded object-cover" />
+              <CmsItem.TextField fieldKey="title" className="font-medium" />
+              <CmsItem.TextField fieldKey="status" />
+              <CmsItem.DateField fieldKey="created" className="text-sm text-gray-500" />
+              <div className="flex gap-1">
+                <CmsItem.Action.Edit label="Edit" className="btn-xs btn-secondary" />
+                <CmsItem.Action.Delete label="Delete" className="btn-xs btn-outline" />
+              </div>
+            </CmsCollection.ItemRepeater>
+          </CmsCollection.Items>
+        )}
+
+        {viewMode === 'list' && (
+          <CmsCollection.Items variant="list" className="bg-white rounded-lg border divide-y">
+            <CmsCollection.ItemRepeater className="p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <CmsItem.ImageField fieldKey="image" className="w-16 h-16 rounded object-cover" />
+                <div className="flex-1">
+                  <CmsItem.TextField fieldKey="title" className="font-semibold mb-1" />
+                  <CmsItem.TextField fieldKey="description" className="text-sm text-gray-600" />
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <CmsItem.DateField fieldKey="modified" className="text-xs text-gray-500" />
+                  <div className="flex gap-1">
+                    <CmsItem.Action.Edit label="Edit" className="btn-xs btn-primary" />
+                    <CmsItem.Action.Delete label="Delete" className="btn-xs btn-outline" />
+                  </div>
+                </div>
+              </div>
+            </CmsCollection.ItemRepeater>
+          </CmsCollection.Items>
+        )}
+
+        {viewMode === 'card' && (
+          <CmsCollection.Items variant="card" className="gap-6">
+            <CmsCollection.ItemRepeater>
+              <div className="bg-white rounded-xl shadow-sm border p-8">
+                <CmsItem.TextField fieldKey="title" className="text-2xl font-bold mb-6" />
+                <CmsItem.ImageField fieldKey="image" className="w-full aspect-video rounded-lg mb-6" />
+                <CmsItem.TextField fieldKey="description" className="text-gray-700 leading-relaxed mb-6" />
+                <div className="flex items-center justify-between">
+                  <CmsItem.DateField fieldKey="created" className="text-sm text-gray-500" />
+                  <div className="flex gap-3">
+                    <CmsItem.Action.Edit label="Edit Item" className="btn btn-primary" />
+                    <CmsItem.Action.Delete label="Delete" className="btn btn-outline" />
+                  </div>
+                </div>
+              </div>
+            </CmsCollection.ItemRepeater>
+          </CmsCollection.Items>
+        )}
+
+        {/* Load More */}
+        <CmsCollection.ShowMoreAction className="w-full btn-outline">
+          Load More Items
+        </CmsCollection.ShowMoreAction>
       </div>
     </CmsCollection.Root>
   );
