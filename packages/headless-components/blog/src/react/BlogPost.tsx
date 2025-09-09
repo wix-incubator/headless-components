@@ -4,10 +4,27 @@ import * as CoreBlogPost from './core/BlogPost.js';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import { posts, tags } from '@wix/blog';
 import {
-  quickStartViewerPlugins,
+  pluginCodeBlockViewer,
+  pluginIndentViewer,
+  pluginLineSpacingViewer,
+  pluginLinkViewer,
+  pluginTextColorViewer,
+  pluginTextHighlightViewer,
+  pluginAudioViewer,
+  pluginLinkButtonViewer,
+  pluginCollapsibleListViewer,
+  pluginDividerViewer,
+  pluginGalleryViewer,
+  pluginGiphyViewer,
+  pluginHtmlViewer,
+  pluginImageViewer,
+  pluginLinkPreviewViewer,
+  pluginTableViewer,
+  pluginVideoViewer,
   RicosViewer,
   type RicosCustomStyles,
 } from '@wix/ricos';
+
 import { createAuthorName } from './helpers.js';
 
 interface PostContextValue {
@@ -219,7 +236,6 @@ export interface ContentProps {
   children?: AsChildChildren<{ ricosViewerContent: any }> | React.ReactNode;
   customStyles?: RicosCustomStyles;
 }
-
 /**
  * Displays the blog post rich content using Wix Ricos viewer.
  *
@@ -263,14 +279,34 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
   (props, ref) => {
     const { asChild, children, className, customStyles } = props;
 
+    const attributes = {
+      'data-testid': TestIds.blogPostContent,
+    };
+
+    const ricosPluginsForBlog = [
+      pluginAudioViewer(),
+      pluginCodeBlockViewer(),
+      pluginCollapsibleListViewer(),
+      pluginDividerViewer(),
+      pluginGalleryViewer(),
+      pluginGiphyViewer(),
+      pluginHtmlViewer(),
+      pluginImageViewer(),
+      pluginIndentViewer(),
+      pluginLineSpacingViewer(),
+      pluginLinkViewer(),
+      pluginLinkButtonViewer(),
+      pluginLinkPreviewViewer(),
+      pluginTableViewer(),
+      pluginTextColorViewer(),
+      pluginTextHighlightViewer(),
+      pluginVideoViewer(),
+    ];
+
     return (
       <CoreBlogPost.RichContent>
         {({ ricosViewerContent }) => {
           if (!ricosViewerContent) return null;
-
-          const attributes = {
-            'data-testid': TestIds.blogPostContent,
-          };
 
           return (
             <AsChildSlot
@@ -284,10 +320,8 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
               <div>
                 <RicosViewer
                   content={ricosViewerContent}
-                  plugins={quickStartViewerPlugins()}
-                  theme={{
-                    customStyles,
-                  }}
+                  plugins={ricosPluginsForBlog}
+                  theme={{ customStyles }}
                 />
               </div>
             </AsChildSlot>
@@ -421,14 +455,17 @@ export function usePostCategoriesContext(): PostCategoriesContextValue {
   return context;
 }
 
-interface CategoryContextValue {
+interface CategoryRepeaterContextValue {
   category: posts.Category;
+  index: number;
+  amount: number;
 }
 
-const CategoryContext = React.createContext<CategoryContextValue | null>(null);
+const CategoryRepeaterContext =
+  React.createContext<CategoryRepeaterContextValue | null>(null);
 
-function useCategoryContext(): CategoryContextValue {
-  const context = React.useContext(CategoryContext);
+export function useCategoryRepeaterContext(): CategoryRepeaterContextValue {
+  const context = React.useContext(CategoryRepeaterContext);
   if (!context) {
     throw new Error(
       'useCategoryContext must be used within a BlogPost.CategoryRepeater component',
@@ -453,14 +490,18 @@ export function usePostTagsContext(): PostTagsContextValue {
   return context;
 }
 
-interface TagContextValue {
+interface TagRepeaterContextValue {
   tag: tags.BlogTag;
+  index: number;
+  amount: number;
 }
 
-const TagContext = React.createContext<TagContextValue | null>(null);
+const TagRepeaterContext = React.createContext<TagRepeaterContextValue | null>(
+  null,
+);
 
-export function useTagContext(): TagContextValue {
-  const context = React.useContext(TagContext);
+export function useTagRepeaterContext(): TagRepeaterContextValue {
+  const context = React.useContext(TagRepeaterContext);
   if (!context) {
     throw new Error(
       'useTagContext must be used within a BlogPost.TagRepeater component',
@@ -543,15 +584,20 @@ export const CategoryRepeater = React.forwardRef<
 
   return (
     <>
-      {categories.map((category) => {
-        const contextValue: CategoryContextValue = {
+      {categories.map((category, index) => {
+        const contextValue: CategoryRepeaterContextValue = {
           category,
+          index,
+          amount: categories.length,
         };
 
         return (
-          <CategoryContext.Provider key={category._id} value={contextValue}>
+          <CategoryRepeaterContext.Provider
+            key={category._id}
+            value={contextValue}
+          >
             {children}
-          </CategoryContext.Provider>
+          </CategoryRepeaterContext.Provider>
         );
       })}
     </>
@@ -570,7 +616,7 @@ export interface CategoryLinkProps {
 export const CategoryLink = React.forwardRef<HTMLElement, CategoryLinkProps>(
   (props, ref) => {
     const { asChild, children, className, baseUrl = '' } = props;
-    const { category } = useCategoryContext();
+    const { category } = useCategoryRepeaterContext();
 
     if (!category?.label) return null;
 
@@ -605,7 +651,7 @@ export interface CategoryLabelProps {
 export const CategoryLabel = React.forwardRef<HTMLElement, CategoryLabelProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
-    const { category } = useCategoryContext();
+    const { category } = useCategoryRepeaterContext();
 
     if (!category?.label) return null;
 
@@ -699,15 +745,17 @@ export const TagRepeater = React.forwardRef<HTMLElement, TagRepeaterProps>(
 
     return (
       <>
-        {tags.map((tag) => {
-          const contextValue: TagContextValue = {
+        {tags.map((tag, index) => {
+          const contextValue: TagRepeaterContextValue = {
             tag,
+            index,
+            amount: tags.length,
           };
 
           return (
-            <TagContext.Provider key={tag._id} value={contextValue}>
+            <TagRepeaterContext.Provider key={tag._id} value={contextValue}>
               {children}
-            </TagContext.Provider>
+            </TagRepeaterContext.Provider>
           );
         })}
       </>
@@ -723,7 +771,7 @@ export interface TagProps {
 
 export const Tag = React.forwardRef<HTMLElement, TagProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const { tag } = useTagContext();
+  const { tag } = useTagRepeaterContext();
 
   if (!tag?.label) return null;
 

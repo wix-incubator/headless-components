@@ -213,7 +213,7 @@ export default function ProductDetails({
       {/* Current Cart Summary */}
       {!isQuickView && (
         <div className="mt-12 pt-8 border-t border-brand-subtle">
-          <Cart.Summary>
+          <Cart.Summary asChild>
             {({ subtotal, totalItems }) => (
               <>
                 {totalItems > 0 && (

@@ -5622,6 +5622,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
+    "@wix/headless-utils": "workspace:*"
     "@wix/sdk": "npm:^1.15.26"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
