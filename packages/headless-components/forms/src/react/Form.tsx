@@ -28,6 +28,7 @@ import {
   RadioGroupProps,
   RatingInputProps,
   SignatureProps,
+  TagsProps,
   TextAreaProps,
   TextInputProps,
   UrlInputProps,
@@ -164,6 +165,7 @@ interface FieldMap {
   RADIO_GROUP: React.ComponentType<RadioGroupProps>;
   CHECKBOX_GROUP: React.ComponentType<CheckboxGroupProps>;
   DROPDOWN: React.ComponentType<DropdownProps>;
+  TAGS: React.ComponentType<TagsProps>;
 }
 
 /**

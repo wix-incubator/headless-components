@@ -947,3 +947,43 @@ export interface DropdownProps extends BaseFieldProps {
   placeholder?: string;
   description?: forms.RichContent;
 }
+
+/**
+ * Props for tags field.
+ * Field allows to choose options by selecting tags.
+ * Used with fieldMap key: TAGS
+ *
+ * @interface TagsProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string[] | null | undefined} value - The current values of the tags field (array of selected option values)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {ChoiceOption[]} options - Array of tag options with id, value, label, and default properties
+ * @property {0 | 1 | 2 | 3} numberOfColumns - Number of columns for layout (0 for auto, 1, 2, or 3)
+ * @property {Object} customOption - Configuration for custom "Other" option with text input
+ * @property {string} customOption.label - Label for the custom option
+ * @property {string} customOption.placeholder - Placeholder text for the custom option input
+ * @property {number} [minItems] - Minimum number of tags that must be selected
+ * @property {number} [maxItems] - Maximum number of tags that can be selected
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {function} onChange - Callback function called when the tags values change
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface TagsProps extends BaseFieldProps {
+  value: string[] | null | undefined;
+  options: ChoiceOption[];
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  customOption?: {
+    label: string;
+    placeholder: string;
+  };
+  numberOfColumns: 0 | 1 | 2 | 3;
+  minItems?: number;
+  maxItems?: number;
+}
