@@ -6,36 +6,33 @@ import {
 import { ServicesManagerProvider } from '@wix/services-manager-react';
 import * as Program from '@wix/headless-online-programs/react';
 import {
-  OnlineProgramsGetProgramServiceDefinition,
-  OnlineProgramsGetProgramService,
+  ProgramServiceDefinition,
+  ProgramService,
 } from '@wix/headless-online-programs/services';
-import type { OnlineProgramsGetProgramServiceConfig } from '@wix/headless-online-programs/services';
+import type { ProgramServiceConfig } from '@wix/headless-online-programs/services';
 
 interface OnlineProgramsPageProps {
-  onlineProgramsGetProgramServiceConfig: OnlineProgramsGetProgramServiceConfig;
+  programServiceConfig: ProgramServiceConfig;
 }
 
-export default function OnlineProgramsPage({ onlineProgramsGetProgramServiceConfig }: OnlineProgramsPageProps) {
+export default function OnlineProgramsPage({
+  programServiceConfig,
+}: OnlineProgramsPageProps) {
   const [servicesManager] = useState(() =>
     createServicesManager(
-      createServicesMap()
-        .addService(
-          OnlineProgramsGetProgramServiceDefinition,
-          OnlineProgramsGetProgramService,
-          onlineProgramsGetProgramServiceConfig,
-        )
+      createServicesMap().addService(
+        ProgramServiceDefinition,
+        ProgramService,
+        programServiceConfig,
+      ),
     ),
   );
 
   return (
     <ServicesManagerProvider servicesManager={servicesManager}>
-      <Program.Root program={onlineProgramsGetProgramServiceConfig}>
+      <Program.Root program={programServiceConfig.program!}>
         <Program.Title />
       </Program.Root>
-      {/* <Program.Root program={onlineProgramsGetProgramServiceConfig}>
-        <Program.Title />
-      </Program.Root> */}
     </ServicesManagerProvider>
   );
 }
-

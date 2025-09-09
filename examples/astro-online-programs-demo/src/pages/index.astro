@@ -1,16 +1,20 @@
 ---
-import { loadOnlineProgramsGetProgramServiceConfig } from '@wix/headless-online-programs/services';
+import { loadProgramServiceConfig } from '@wix/headless-online-programs/services';
+
 import OnlineProgramsPage from '../react-pages/online-programs/index';
 
-// Load program by id
-const onlineProgramsGetProgramServiceConfig = await loadOnlineProgramsGetProgramServiceConfig({
-	programId: '123'
-})
+const programServiceConfigResult = await loadProgramServiceConfig('52faa246-b62d-4daa-8644-8293fe61bf6d')
+
+if (programServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+
+const programServiceConfig = programServiceConfigResult.config;
 
 ---
 
 <OnlineProgramsPage
   client:load
-	onlineProgramsGetProgramServiceConfig={onlineProgramsGetProgramServiceConfig}
+	programServiceConfig={programServiceConfig}
   slot="body"
 />
