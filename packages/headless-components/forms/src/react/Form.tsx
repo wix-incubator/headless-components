@@ -9,6 +9,7 @@ import {
   type FormServiceConfig,
 } from '../services/form-service.js';
 import {
+  CheckboxGroupProps,
   CheckboxProps,
   ContactsAddressProps,
   ContactsBirthdateProps,
@@ -160,6 +161,7 @@ interface FieldMap {
   SIGNATURE: React.ComponentType<SignatureProps>;
   RATING_INPUT: React.ComponentType<RatingInputProps>;
   RADIO_GROUP: React.ComponentType<RadioGroupProps>;
+  CHECKBOX_GROUP: React.ComponentType<CheckboxGroupProps>;
 }
 
 /**
