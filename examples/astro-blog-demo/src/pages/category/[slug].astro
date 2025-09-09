@@ -1,7 +1,7 @@
 ---
 import { loadBlogFeedServiceConfig, loadBlogCategoriesServiceConfig } from '@wix/headless-blog/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BlogFeedPage from '../../react-pages/blog/index';
+import BlogFeedPage from '../../react-pages/blog/feed-page';
 import { loadSEOTagsServiceConfig, type SEOTagsServiceConfig } from '@wix/headless-seo/services';
 import { SEO } from '@wix/headless-seo/react';
 
@@ -21,7 +21,7 @@ try {
   [blogFeedServiceConfig, blogCategoriesServiceConfig] = await Promise.all([
     loadBlogFeedServiceConfig({
       categorySlug: slug,
-      pageSize: 3,
+      pageSize: 10,
       sort: [
         {
           fieldName: 'firstPublishedDate',
@@ -57,6 +57,10 @@ try {
     pathname={Astro.url.pathname}
     blogFeedServiceConfig={blogFeedServiceConfig}
     blogCategoriesServiceConfig={blogCategoriesServiceConfig}
+    feedPageHref="/"
+    postPageBaseUrl="/"
+    categoryPageBaseUrl="/category/"
+    dateLocale="en-US"
     slot="body"
   />
 </BaseLayout>

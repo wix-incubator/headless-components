@@ -1,13 +1,12 @@
 import type { Sort as SortPrimitive } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
+import React from 'react';
 import type {
   BlogFeedServiceAPI,
-  PostWithResolvedFields,
   BlogFeedServiceConfig,
   QueryPostsSort,
 } from '../../services/blog-feed-service.js';
 import { BlogFeedServiceDefinition } from '../../services/blog-feed-service.js';
-import React from 'react';
 
 /**
  * Props for BlogFeed Root core component
@@ -30,6 +29,8 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     return <div ref={ref}>{children}</div>;
   },
 );
+
+Root.displayName = 'Blog.Feed.Root (core)';
 
 /**
  * Props for BlogFeed Posts core component
@@ -67,63 +68,7 @@ export const Posts = (props: PostsProps) => {
   });
 };
 
-/**
- * Props for BlogFeed ItemContent core component
- */
-export interface ItemContentProps {
-  children: (props: ItemContentRenderProps) => React.ReactNode;
-}
-
-export interface ItemContentRenderProps {
-  post: PostWithResolvedFields;
-}
-
-/**
- * Core ItemContent component that maps over posts and provides individual post context.
- * This is used by the repeater to provide post data to each item.
- */
-export const ItemContent = (props: ItemContentProps) => {
-  const service = useService(BlogFeedServiceDefinition);
-  const posts = service.posts.get();
-
-  if (!posts || posts.length === 0) {
-    return null;
-  }
-
-  return (
-    <>
-      {posts.map((post: PostWithResolvedFields) => (
-        <React.Fragment key={post._id}>
-          {props.children({ post })}
-        </React.Fragment>
-      ))}
-    </>
-  );
-};
-
-/**
- * Props for BlogFeed EmptyState core component
- */
-export interface EmptyStateProps {
-  children: React.ReactNode;
-}
-
-/**
- * Core EmptyState component that renders when no posts are available
- */
-export const EmptyState = React.forwardRef<HTMLElement, EmptyStateProps>(
-  (props, ref) => {
-    const { children } = props;
-    const service = useService(BlogFeedServiceDefinition);
-    const isEmpty = service.isEmpty();
-
-    if (!isEmpty) {
-      return null;
-    }
-
-    return <div ref={ref as React.Ref<HTMLDivElement>}>{children}</div>;
-  },
-);
+Posts.displayName = 'Blog.Feed.Posts (core)';
 
 /**
  * Props for BlogFeed LoadMore core component
@@ -150,6 +95,8 @@ export const LoadMore = (props: LoadMoreProps) => {
     loadNextPage: service.loadNextPage,
   });
 };
+
+LoadMore.displayName = 'Blog.Feed.LoadMore (core)';
 
 export interface SortProps {
   children: (props: {
@@ -184,3 +131,5 @@ export const Sort = (props: SortProps) => {
     },
   });
 };
+
+Sort.displayName = 'Blog.Feed.Sort/Core';
