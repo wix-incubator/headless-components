@@ -146,7 +146,7 @@ export function EventDetails({
                     <div className="flex items-center gap-2 mb-5 w-full justify-between">
                       <div>
                         <TicketDefinitionPrimitive.FixedPricing className="font-medium text-content-primary" />
-                        <TicketDefinitionPrimitive.GuestPricing className="font-medium text-red-600" />
+                        <TicketDefinitionPrimitive.GuestPricing className="border border-gray-200 font-medium text-content-primary py-2 px-2" />
                         <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium block">
                           Sold Out
                         </TicketDefinitionPrimitive.SoldOut>

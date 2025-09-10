@@ -1,12 +1,7 @@
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import { useService, WixServices } from '@wix/services-manager-react';
-import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
-import {
-  EventListService,
-  EventListServiceDefinition,
-  type EventListServiceConfig,
-} from '../services/event-list-service.js';
+import { type EventListServiceConfig } from '../services/event-list-service.js';
+import * as CoreEventList from './core/EventList.js';
 import * as Event from './Event.js';
 
 enum TestIds {
@@ -19,13 +14,13 @@ enum TestIds {
  * Props for the EventList Root component.
  */
 export interface RootProps {
+  children: React.ReactNode;
   /** Configuration for the event list service */
   eventListServiceConfig: EventListServiceConfig;
-  children: React.ReactNode;
 }
 
 /**
- * Root container that provides event list context to all child components.
+ * Root container that provides event list service context to all child components.
  *
  * @order 1
  * @component
@@ -52,18 +47,12 @@ export interface RootProps {
  * ```
  */
 export const Root = (props: RootProps): React.ReactNode => {
-  const { eventListServiceConfig, children } = props;
+  const { children, eventListServiceConfig } = props;
 
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        EventListServiceDefinition,
-        EventListService,
-        eventListServiceConfig,
-      )}
-    >
+    <CoreEventList.Root eventListServiceConfig={eventListServiceConfig}>
       {children}
-    </WixServices>
+    </CoreEventList.Root>
   );
 };
 
@@ -97,23 +86,25 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
   (props, ref) => {
     const { children, emptyState, className } = props;
 
-    const eventListService = useService(EventListServiceDefinition);
-    const events = eventListService.events.get();
-    const hasEvents = !!events.length;
-
-    if (!hasEvents) {
-      return emptyState || null;
-    }
-
-    const attributes = {
-      className,
-      'data-testid': TestIds.eventListEvents,
-    };
-
     return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {children}
-      </div>
+      <CoreEventList.Events>
+        {({ hasEvents }) => {
+          if (!hasEvents) {
+            return emptyState || null;
+          }
+
+          const attributes = {
+            className,
+            'data-testid': TestIds.eventListEvents,
+          };
+
+          return (
+            <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+              {children}
+            </div>
+          );
+        }}
+      </CoreEventList.Events>
     );
   },
 );
@@ -142,22 +133,20 @@ export interface EventRepeaterProps {
 export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
   const { children } = props;
 
-  const eventListService = useService(EventListServiceDefinition);
-  const events = eventListService.events.get();
-  const hasEvents = !!events.length;
-
-  if (!hasEvents) {
-    return null;
-  }
-
   return (
-    <>
-      {events.map((event) => (
-        <Event.Root key={event._id} event={event}>
-          {children}
-        </Event.Root>
-      ))}
-    </>
+    <CoreEventList.EventRepeater>
+      {({ events, hasEvents }) => {
+        if (!hasEvents) {
+          return null;
+        }
+
+        return events.map((event) => (
+          <Event.Root key={event._id} event={event}>
+            {children}
+          </Event.Root>
+        ));
+      }}
+    </CoreEventList.EventRepeater>
   );
 };
 
@@ -208,31 +197,27 @@ export const LoadMoreTrigger = React.forwardRef<
 >((props, ref) => {
   const { asChild, children, className, label } = props;
 
-  const eventListService = useService(EventListServiceDefinition);
-  const isLoading = eventListService.isLoading.get();
-  const hasMoreEvents = eventListService.hasMoreEvents.get();
-
-  const loadMoreEvents = () => {
-    eventListService.loadMoreEvents();
-  };
-
-  if (!hasMoreEvents) {
-    return null;
-  }
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.eventListLoadMore}
-      customElement={children}
-      customElementProps={{ isLoading, loadMoreEvents }}
-      disabled={isLoading}
-      onClick={loadMoreEvents}
-    >
-      <button>{label}</button>
-    </AsChildSlot>
+    <CoreEventList.LoadMoreTrigger>
+      {({ isLoading, hasMoreEvents, loadMoreEvents }) => {
+        if (!hasMoreEvents) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventListLoadMore}
+            customElement={children}
+            customElementProps={{ isLoading, loadMoreEvents }}
+          >
+            <button>{label}</button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreEventList.LoadMoreTrigger>
   );
 });
 
@@ -275,24 +260,27 @@ export interface ErrorProps {
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const eventListService = useService(EventListServiceDefinition);
-  const error = eventListService.error.get();
-
-  if (!error) {
-    return null;
-  }
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.eventListError}
-      customElement={children}
-      customElementProps={{ error }}
-      content={error}
-    >
-      <span>{error}</span>
-    </AsChildSlot>
+    <CoreEventList.Error>
+      {({ error }) => {
+        if (!error) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventListError}
+            customElement={children}
+            customElementProps={{ error }}
+            content={error}
+          >
+            <span>{error}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreEventList.Error>
   );
 });
