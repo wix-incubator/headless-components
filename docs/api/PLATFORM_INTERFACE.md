@@ -164,8 +164,6 @@ Sort.Root (Provider & Renderer)
 └── Sort.Option (Individual options)
 ```
 
-### Key Design Principles
-
 #### 1. **Dual API Pattern**
 
 - **Declarative API**: Use `sortOptions` prop for quick setup with predefined options
@@ -729,8 +727,6 @@ Filter.Root (Provider)
         ├── Filter.FilterOption.MultiFilter (Multi selection)
         └── Filter.FilterOption.RangeFilter (Range selection)
 ```
-
-### Key Design Principles
 
 #### 1. **Platform Compatibility**
 
@@ -1335,8 +1331,6 @@ GenericList.Root (Provider & Data Manager)
     ├── GenericList.Pagination.Info (Page info)
     └── GenericList.Pagination.Next (Next page)
 ```
-
-### Key Design Principles
 
 #### 1. **Platform Agnostic**
 
