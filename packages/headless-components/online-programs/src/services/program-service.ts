@@ -18,8 +18,8 @@ export interface ProgramServiceAPI {
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
-  /** Function to load a program by its ID */
-  loadProgram: (id: string) => Promise<void>;
+  /** Function to get a program by its ID */
+  getProgram: (id: string) => Promise<void>;
 }
 
 /**
@@ -84,16 +84,16 @@ export const ProgramService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const program: Signal<programs.Program> = signalsService.signal(
-        config.program as any,
+        config.program!,
       );
       const isLoading: Signal<boolean> = signalsService.signal(
-        !!config.programId as any,
+        !!config.programId,
       );
       const error: Signal<string | null> = signalsService.signal(null as any);
 
-      const loadProgram = async (id: string) => {
+      const getProgram = async (id: string) => {
         isLoading.set(true);
-        const programResponse = await loadProgramById(id!);
+        const programResponse = await getProgramById(id!);
 
         if (!programResponse) {
           error.set('Program not found');
@@ -106,14 +106,14 @@ export const ProgramService =
       };
 
       if (config.programId) {
-        loadProgramById(config.programId);
+        getProgramById(config.programId);
       }
 
       return {
         program,
         isLoading,
         error,
-        loadProgram,
+        getProgram,
       };
     },
   );
@@ -150,7 +150,7 @@ export interface NotFoundProgramServiceConfigResult {
  * @param {string} id - The program ID to load
  * @returns {Promise} Program response from the API
  */
-const loadProgramById = async (id: string) => {
+const getProgramById = async (id: string) => {
   const programResponse = await programs.getProgram(id);
 
   return programResponse;
@@ -238,7 +238,7 @@ export async function loadProgramServiceConfig(
   SuccessProgramServiceConfigResult | NotFoundProgramServiceConfigResult
 > {
   try {
-    const programResponse = await loadProgramById(programId);
+    const programResponse = await getProgramById(programId);
 
     if (!programResponse) {
       return { type: 'notFound' };

@@ -1,25 +1,26 @@
-# Program Interface Documentation
+# Program Interface — Headless Components Documentation ✨
 
-A comprehensive program display component system built with composable primitives, similar to Radix UI architecture.
+A comprehensive, composable, and headless API for rendering Online Program entities. This spec follows the established documentation style for headless components in this repository, inspired by Radix UI compound patterns and the conventions outlined in the API docs.
+
+## Open questions
+- public sdk doesn't support alt text for image
+- do we need `label` prop for [<Program.StepsCounter/>](#programstepscounter)
+- [<Program.Description/>](#programdescription) only in plain text
 
 ## Table of Contents
 
-- [Architecture](#architecture)
 - [Components](#components)
   - [Program.Root](#programroot)
   - [Program.Raw](#programraw)
-  - [Program.Image](#programimage)
   - [Program.Title](#programtitle)
+  - [Program.Image](#programimage)
+  - [Program.StepsCounter](#programstepscounter)
   - [Program.Description](#programdescription)
+
   - [Program.Days](#programdays)
   - [Program.Participants](#programparticipants)
-  - [Program.Steps](#programsteps)
   - [Program.Price](#programprice)
 - [Usage Examples](#usage-examples) _(soon...)_
-
-## Architecture
-
-The `Program` component follows a compound component pattern where each part can be composed together to create flexible program displays.
 
 ## Components
 
@@ -76,53 +77,9 @@ interface ProgramRawProps {
 
 ---
 
-### Program.Image
-
-Displays the program image using `WixMediaImage` component with customizable rendering.
-
-**Props**
-
-```tsx
-interface ProgramImageProps {
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLImageElement,
-    {
-      src: string;
-      alt: string;
-    }
-  >;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="program-image"` - Applied to program image element
-
-**Example**
-
-```tsx
-// Default usage
-<Program.Image className="w-full h-48 object-cover rounded-lg" />
-
-// asChild with primitive
-<Program.Image asChild>
-  <img className="w-full h-48 object-cover rounded-lg" />
-</Program.Image>
-
-// asChild with react component
-<Program.Image asChild>
-  {React.forwardRef(({ src, alt }, ref) => (
-    <img ref={ref} src={src} alt={alt} className="w-full h-48 object-cover rounded-lg" />
-  ))}
-</Program.Image>
-```
-
----
-
 ### Program.Title
 
-Displays the program title with customizable rendering.
+Displays the program title with customizable rendering. Data source: program.description.title.
 
 **Props**
 
@@ -163,16 +120,116 @@ interface ProgramTitleProps {
 </Program.Title>
 ```
 
+**Notes**
+- The React wrapper provides default `<h1>` fallback and test id.
+
+---
+
+### Program.Image
+
+Displays the program image using `WixMediaImage` component with customizable rendering. Data source: program.description.image
+
+**Props**
+
+```tsx
+interface ProgramImageProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLImageElement,
+    {
+      src: string;
+      alt: string;
+    }
+  >;
+  className?: string;
+}
+```
+
+**Data Attributes**
+
+- `data-testid="program-image"` - Applied to program image element
+
+**Example**
+
+```tsx
+// Default usage
+<Program.Image className="w-full h-48 object-cover rounded-lg" />
+
+// asChild with primitive
+<Program.Image asChild>
+  <img className="w-full h-48 object-cover rounded-lg" />
+</Program.Image>
+
+// asChild with react component
+<Program.Image asChild>
+  {React.forwardRef(({ src, alt }, ref) => (
+    <img ref={ref} src={src} alt={alt} className="w-full h-48 object-cover rounded-lg" />
+  ))}
+</Program.Image>
+```
+
+**Notes**
+- Uses `WixMediaImage` for optimized image rendering
+- Supports asChild pattern with `src` and `alt` props
+- Image source comes from `program.description.image`
+- Alt text defaults to program title
+---
+
+### Program.StepsCounter
+
+Displays the number of steps in the program. Data source: program.contentSummary.stepCount
+
+**Props**
+
+```tsx
+interface ProgramStepsCounterProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      steps: number;
+    }
+  >;
+  label?: string; // e.g. "Steps", "Lessons", "Modules" ????
+}
+```
+
+**Data Attributes**
+
+- `data-testid="program-steps-counter"` - Applied to program steps element
+
+**Example**
+
+```tsx
+// Default usage
+<Program.Steps className="text-content-secondary" />
+
+// asChild with primitive
+<Program.Steps asChild>
+  <p className="text-content-secondary">
+</Program.Steps>
+
+// Custom rendering
+<Program.Steps asChild>
+  {React.forwardRef(({ steps, ...props }, ref) => (
+    <p ref={ref} {...props} className="text-content-secondary">
+      {steps}
+    </p>
+  ))}
+</Program.Steps>
+```
+
 ---
 
 ### Program.Description
 
-Displays the program description with customizable rendering.
+Displays the program description text. Data source: program.description.details
 
 **Props**
 
 ```tsx
 interface ProgramDescriptionProps {
+  as?: 'plain' | 'ricos' //    ????
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
@@ -198,7 +255,7 @@ interface ProgramDescriptionProps {
   <p className="text-content-secondary">
 </Program.Description>
 
-// asChild with react component
+// Custom render
 <Program.Description asChild>
   {React.forwardRef(({ description, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
@@ -209,6 +266,23 @@ interface ProgramDescriptionProps {
 ```
 
 ---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### Program.Days
 
@@ -296,51 +370,6 @@ interface ProgramParticipantsProps {
     </p>
   ))}
 </Program.Participants>
-```
-
----
-
-### Program.Steps
-
-Displays the program steps with customizable rendering.
-
-**Props**
-
-```tsx
-interface ProgramStepsProps {
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLElement,
-    {
-      steps: number;
-    }
-  >;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="program-steps"` - Applied to program steps element
-
-**Example**
-
-```tsx
-// Default usage
-<Program.Steps className="text-content-secondary" />
-
-// asChild with primitive
-<Program.Steps asChild>
-  <p className="text-content-secondary">
-</Program.Steps>
-
-// asChild with react component
-<Program.Steps asChild>
-  {React.forwardRef(({ steps, ...props }, ref) => (
-    <p ref={ref} {...props} className="text-content-secondary">
-      {steps}
-    </p>
-  ))}
-</Program.Steps>
 ```
 
 ---

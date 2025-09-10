@@ -104,3 +104,55 @@ export function Title(props: ProgramTitleProps) {
     title,
   });
 }
+
+/**
+ * Props for ProgramImage headless component
+ */
+export interface ProgramImageProps {
+  /** Render prop function that receives program image data */
+  children: (props: ProgramImageRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProgramImage component
+ */
+export interface ProgramImageRenderProps {
+  /** Program image URL */
+  src: string;
+  /** Program image alt text */
+  alt: string;
+}
+
+/**
+ * Headless component for program image display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramImage() {
+ *   return (
+ *     <Program.Image>
+ *       {({ src, alt }) => (
+ *         <img src={src} alt={alt} />
+ *       )}
+ *     </Program.Image>
+ *   );
+ * }
+ * ```
+ */
+export function Image(props: ProgramImageProps) {
+  const service = useService(ProgramServiceDefinition) as ServiceAPI<
+    typeof ProgramServiceDefinition
+  >;
+
+  const program = service.program.get();
+  const src = program.description?.image || '';
+  const alt = program.description?.title || 'Program image';
+
+  return props.children({
+    src,
+    alt,
+  });
+}

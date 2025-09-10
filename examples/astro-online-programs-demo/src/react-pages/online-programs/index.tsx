@@ -32,6 +32,7 @@ export default function OnlineProgramsPage({
     <ServicesManagerProvider servicesManager={servicesManager}>
       <Program.Root program={programServiceConfig.program!}>
         <Program.Title />
+        <Program.Image />
       </Program.Root>
     </ServicesManagerProvider>
   );
