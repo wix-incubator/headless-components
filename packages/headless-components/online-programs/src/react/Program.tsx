@@ -1,15 +1,16 @@
 import React from 'react';
+import { programs } from '@wix/online-programs';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import * as programs from '@wix/auto_sdk_online-programs_programs';
 
 import * as CoreProgram from './core/Program.js';
 
 enum TestIds {
-  programRoot = 'program-root',
   programTitle = 'program-title',
-  programImage = 'program-image',
 }
 
+/**
+ * Props for the Program root component following the documented API
+ */
 export interface ProgramRootProps {
   children: React.ReactNode;
   program: programs.Program;
@@ -17,20 +18,18 @@ export interface ProgramRootProps {
 
 /**
  * Root component that provides all necessary service contexts for a complete program experience.
- * This composite component combines Product, ProductVariantSelector, ProductModifiers, and SelectedVariant
- * functionality following the documented API patterns with proper data attributes.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { Product } from '@wix/stores/components';
+ * import { Program } from '@wix/online-programs/components';
  *
- * function ProductPage({ product }) {
+ * function ProgramPage({ program }) {
  *   return (
- *     <Product.Root product={product}>
- *       <Product.Name className="text-4xl font-bold" />
- *     </Product.Root>
+ *     <Program.Root program={program}>
+ *       <Program.Title className="text-4xl font-bold" />
+ *     </Program.Root>
  *   );
  * }
  * ```
@@ -39,7 +38,7 @@ export function Root(props: ProgramRootProps): React.ReactNode {
   const { children, program, ...attrs } = props;
 
   return (
-    <CoreProgram.Root programServiceConfig={{ program: props.program }}>
+    <CoreProgram.Root programServiceConfig={{ program }}>
       <AsChildSlot {...attrs}>{children}</AsChildSlot>
     </CoreProgram.Root>
   );
@@ -53,36 +52,34 @@ export interface TitleProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{ title: string }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 /**
- * Displays the product name with customizable rendering following the documented API.
+ * Displays the program title with customizable rendering following the documented API.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Product.Name className="text-4xl font-bold" />
+ * <Program.Title className="text-4xl font-bold" />
  *
  * // asChild with primitive
- * <Product.Name asChild>
+ * <Program.Title asChild>
  *   <h1 className="text-4xl font-bold" />
- * </Product.Name>
+ * </Program.Title>
  *
  * // asChild with react component
- * <Product.Name asChild>
- *   {React.forwardRef(({name, ...props}, ref) => (
- *     <h1 ref={ref} {...props} className="text-4xl font-bold">
- *       {name}
+ * <Program.Title asChild>
+ *   {React.forwardRef(({ title, ...props }, ref) => (
+ *     <h1 ref={ref} { ...props } className="text-4xl font-bold">
+ *       {title}
  *     </h1>
  *   ))}
- * </Product.Name>
+ * </Program.Title>
  * ```
  */
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, ...otherProps } = props;
 
   return (
     <CoreProgram.Title>
@@ -91,7 +88,6 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
           <AsChildSlot
             ref={ref}
             asChild={asChild}
-            className={className}
             data-testid={TestIds.programTitle}
             customElement={children}
             customElementProps={{ title }}

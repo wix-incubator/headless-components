@@ -1,1 +1,1 @@
-export * from './online-programs-get-program-service.js';
+export * from './program-service.js';
