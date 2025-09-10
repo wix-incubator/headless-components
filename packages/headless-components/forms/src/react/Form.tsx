@@ -1,13 +1,7 @@
 import React from 'react';
 import { forms } from '@wix/forms';
-import { WixServices } from '@wix/services-manager-react';
-import { createServicesMap } from '@wix/services-manager';
 
-import {
-  FormServiceDefinition,
-  FormService,
-  type FormServiceConfig,
-} from '../services/form-service.js';
+import * as CoreForm from './core/Form.js';
 import {
   CheckboxGroupProps,
   CheckboxProps,
@@ -35,101 +29,60 @@ import {
   AppointmentProps,
 } from './types.js';
 
+
+/**
+ * Props for the Form root component following the documented API
+ */
 export interface RootProps {
   children: React.ReactNode;
   form: forms.Form;
 }
 
-// TODO: use single Form component instead of Root and Container
 /**
- * Root container that provides form context to all child components.
+ * Root component that provides all necessary service contexts for a complete form experience.
+ * This component sets up the Form service and provides context to child components.
  *
  * @order 1
  * @component
- *
- * @param {forms.Form} form - The form configuration object
- * @param {React.ReactNode} children - Child components that will have access to form context
- *
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
  * const FIELD_MAP = {
  *   TEXT_INPUT: TextInput,
- *   CONTACTS_BIRTHDATE: ContactsBirthdate,
- *   // ... remaining field components
+ *   TEXT_AREA: TextArea,
+ *   CHECKBOX: Checkbox,
+ *   // ... other field components
  * };
  *
  * function FormPage({ form }) {
  *   return (
  *     <Form.Root form={form}>
- *       <Form.Container
- *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
- *         fieldMap={FIELD_MAP}
- *       />
+ *       <Form.Container fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
  * }
  * ```
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { children, form } = props;
-
-  const formServiceConfig: FormServiceConfig = {
-    form,
-  };
+  const { children } = props;
 
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        FormServiceDefinition,
-        FormService,
-        formServiceConfig,
-      )}
-    >
+    <CoreForm.Root formServiceConfig={{ form: props.form }}>
       {children}
-    </WixServices>
+    </CoreForm.Root>
   );
 }
 
 /**
  * Mapping of form field types to their corresponding React components.
- *
  * This interface defines the structure for the fieldMap prop, allowing you to specify
- * which React component should be used to render each type of form field. Each field
- * type maps to a React component that accepts the appropriate props for that field type.
+ * which React component should be used to render each type of form field.
  *
  * @interface FieldMap
  *
- * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for text input fields
- * @property {React.ComponentType<TextAreaProps>} TEXT_AREA - Component for textarea fields
- * @property {React.ComponentType<ContactsPhoneProps>} PHONE_INPUT - Component for phone number input fields
- * @property {React.ComponentType<MultilineAddressProps>} MULTILINE_ADDRESS - Component for multi-line address input fields
- * @property {React.ComponentType<DateInputProps>} DATE_INPUT - Component for date input fields
- * @property {React.ComponentType<DatePickerProps>} DATE_PICKER - Component for date picker fields
- * @property {React.ComponentType<DateTimeInputProps>} DATE_TIME_INPUT - Component for date and time input fields
- * @property {React.ComponentType<FileUploadProps>} FILE_UPLOAD - Component for file upload fields
- * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for number input fields
- * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
- * @property {React.ComponentType<SignatureProps>} SIGNATURE - Component for signature fields
- * @property {React.ComponentType<RatingInputProps>} RATING_INPUT - Component for rating input fields
- * @property {React.ComponentType<RadioGroupProps>} RADIO_GROUP - Component for radio group fields
- * @property {React.ComponentType<CheckboxGroupProps>} CHECKBOX_GROUP - Component for checkbox group fields
- * @property {React.ComponentType<DropdownProps>} DROPDOWN - Component for dropdown fields
- * @property {React.ComponentType<TagsProps>} TAGS - Component for tags fields
- * @property {React.ComponentType<TimeInputProps>} TIME_INPUT - Component for time input fields
- * @property {React.ComponentType<RichTextProps>} TEXT - Component for rich text and header fields
- * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for submit button fields
- * @property {React.ComponentType<ProductListProps>} PRODUCT_LIST - Component for product list fields
- * @property {React.ComponentType<FixedPaymentProps>} FIXED_PAYMENT - Component for fixed payment fields
- * @property {React.ComponentType<PaymentInputProps>} PAYMENT_INPUT - Component for payment input fields
- * @property {React.ComponentType<DonationProps>} DONATION - Component for donation fields
- * @property {React.ComponentType<AppointmentProps>} APPOINTMENT - Component for appointment fields
- * @property {React.ComponentType<unknown>} IMAGE_CHOICE - Component for image choice fields (TODO: define proper props)
- *
  * @example
  * ```tsx
- * // Example fieldMap - replace with your actual component implementations
  * const FIELD_MAP: FieldMap = {
  *   TEXT_INPUT: TextInput,
  *   TEXT_AREA: TextArea,
@@ -219,7 +172,8 @@ export interface ContainerProps {
 }
 
 /**
- * Headless component for displaying a form with custom field renderers.
+ * Container component for rendering a form with custom field renderers.
+ * This component handles the rendering of form fields based on the provided fieldMap.
  *
  * @component
  * @param {string} formId - The unique identifier of the form to render
@@ -228,15 +182,13 @@ export interface ContainerProps {
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
- * import { TextInput, ContactsBirthdate, Checkbox } from './field-components';
+ * import { TextInput, TextArea, Checkbox } from './field-components';
  *
  * const FIELD_MAP = {
  *   TEXT_INPUT: TextInput,
- *   CONTACTS_BIRTHDATE: ContactsBirthdate,
- *   CONTACTS_SUBSCRIBE: ContactsSubscribe,
  *   TEXT_AREA: TextArea,
- *   NUMBER_INPUT: NumberInput,
  *   CHECKBOX: Checkbox,
+ *   NUMBER_INPUT: NumberInput,
  *   // ... remaining field components
  * };
  *
@@ -252,6 +204,7 @@ export interface ContainerProps {
  * }
  * ```
  */
+
 export const Container = React.forwardRef<HTMLElement, ContainerProps>(
   ({ formId, fieldMap }) => {
     // TODO: render real viewer
