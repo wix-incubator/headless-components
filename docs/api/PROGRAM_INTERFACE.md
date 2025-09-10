@@ -4,8 +4,9 @@ A comprehensive, composable, and headless API for rendering Online Program entit
 
 ## Open questions
 - public sdk doesn't support alt text for image
-- do we need `label` prop for [<Program.StepsCounter/>](#programstepscounter)
-- [<Program.Description/>](#programdescription) only in plain text
+- do we need `label` prop for counters like steps [<Program.StepsCount/>](#programstepscount)
+- the instructors list should be fetch together with the program, right? (Separate service form program)
+- program instructor link to members area, how?
 
 ## Table of Contents
 
@@ -14,13 +15,20 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.Raw](#programraw)
   - [Program.Title](#programtitle)
   - [Program.Image](#programimage)
-  - [Program.StepsCounter](#programstepscounter)
+  - [Program.StepsCount](#programstepscount)
   - [Program.Description](#programdescription)
   - [Program.Duration](#programduration)
+  - [Program.Instructors](#programinstructors)
+  - [Program.Instructor](#programinstructor)
+    - [Program.Instructor.Name](#programinstructorname)
+    - [Program.Instructor.Avatar](#programinstructoravatar)
+    - [Program.Instructor.Description](#programinstructordescription)
 
-  - [Program.Participants](#programparticipants)
-  - [Program.Price](#programprice)
+- [Drafts](#drafts)
+  - [Program.Participants.Stats.ParticipantsCount] ???
+
 - [Usage Examples](#usage-examples) _(soon...)_
+
 
 ## Components
 
@@ -175,14 +183,14 @@ interface ProgramImageProps {
 - Alt text defaults to program title
 ---
 
-### Program.StepsCounter
+### Program.StepsCount
 
 Displays the number of steps in the program. Data source: program.contentSummary.stepCount
 
 **Props**
 
 ```tsx
-interface ProgramStepsCounterProps {
+interface ProgramStepsCountProps {
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
@@ -190,33 +198,32 @@ interface ProgramStepsCounterProps {
       steps: number;
     }
   >;
-  label?: string; // e.g. "Steps", "Lessons", "Modules" ????
 }
 ```
 
 **Data Attributes**
 
-- `data-testid="program-steps-counter"` - Applied to program steps element
+- `data-testid="program-steps-count"` - Applied to program steps element
 
 **Example**
 
 ```tsx
 // Default usage
-<Program.Steps className="text-content-secondary" />
+<Program.StepsCount className="text-content-secondary" />
 
 // asChild with primitive
-<Program.Steps asChild>
+<Program.StepsCount asChild>
   <p className="text-content-secondary">
-</Program.Steps>
+</Program.StepsCount>
 
 // Custom rendering
-<Program.Steps asChild>
+<Program.StepsCount asChild>
   {React.forwardRef(({ steps, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
-      {steps}
+      {steps} Steps
     </p>
   ))}
-</Program.Steps>
+</Program.StepsCount>
 ```
 
 ---
@@ -229,7 +236,6 @@ Displays the program description text. Data source: program.description.details
 
 ```tsx
 interface ProgramDescriptionProps {
-  as?: 'plain' | 'ricos' //    ????
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
@@ -313,50 +319,219 @@ interface ProgramDurationProps {
 ```
 ---
 
-### Program.Participants
+### Program.Instructors
 
-Displays the program participants with customizable rendering.
+Displays the list of program instructors with customizable rendering. Data source: program.instructors (fetched via instructors service).
 
 **Props**
 
 ```tsx
-interface ProgramParticipantsProps {
+interface ProgramInstructorsProps {
+  instructors?: Instructors[];
+  children?: React.ReactNode; // will wrap InstructorRepeater
+  className?: string;
+}
+```
+
+**Example**
+```tsx
+<Program.Instructors instructors={instructors}>
+  {/* All instructor list components */}
+</Program.Instructors>
+```
+
+**Data Attributes**
+- `data-testid="program-instructors"` - Applied to instructors container
+- `data-testid="program-instructor"` - Applied to each instructor item
+
+**Example**
+
+```tsx
+// Default usage
+<Program.Instructors />
+
+// asChild with custom layout
+<Program.Instructors asChild>
+  <div className="grid grid-cols-3 gap-4">
+    <Program.Instructors.InstructorRepeater>
+      <Program.Instructor>
+        <Program.Instructor.Avatar className="w-16 h-16 rounded-full" />
+        <Program.Instructor.Name className="font-semibold" />
+      </Program.Instructor>
+    </Program.Instructors.InstructorRepeater>
+  </div>
+</Program.Instructors>
+```
+
+---
+
+### Program.Instructor
+
+Individual instructor component that provides instructor context to child components.
+
+**Props**
+
+```tsx
+interface ProgramInstructorProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  instructor: Instructor; // passed from InstructorRepeater
+}
+```
+
+**Data Attributes**
+- `data-testid="program-instructor"` - Applied to instructor element
+- `data-instructor-id` - Instructor ID
+
+**Example**
+
+```tsx
+<Program.Instructor instructor={instructor}>
+  <Program.Instructor.Avatar />
+  <Program.Instructor.Name />
+  <Program.Instructor.Description />
+</Program.Instructor>
+```
+
+---
+
+### Program.Instructor.Name
+
+Displays the instructor's name with customizable rendering. Data source: instructor.name.
+
+**Props**
+
+```tsx
+interface ProgramInstructorNameProps {
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
     {
-      participants: number;
+      name: string;
+      slug?: string | null;
     }
   >;
 }
 ```
 
 **Data Attributes**
-
-- `data-testid="program-participants"` - Applied to program participants element
+- `data-testid="program-instructor-name"` - Applied to instructor name element
 
 **Example**
 
 ```tsx
 // Default usage
-<Program.Participants className="text-content-secondary" />
+<Program.Instructor.Name className="font-semibold text-lg" />
 
-// asChild with primitive
-<Program.Participants asChild>
-  <p className="text-content-secondary">
-</Program.Participants>
-
-// asChild with react component
-<Program.Participants asChild>
-  {React.forwardRef(({ participants, ...props }, ref) => (
-    <p ref={ref} {...props} className="text-content-secondary">
-      {participants}
-    </p>
+// asChild with link
+<Program.Instructor.Name asChild>
+  {React.forwardRef(({ name, slug, ...props }, ref) => (
+    <a
+      ref={ref}
+      href={slug ? `/instructors/${slug}` : '#'}
+      {...props}
+      className="font-semibold text-lg hover:underline"
+    >
+      {name}
+    </a>
   ))}
-</Program.Participants>
+</Program.Instructor.Name>
 ```
 
 ---
+
+### Program.Instructor.Avatar
+
+Displays the instructor's profile photo with customizable rendering. Data source: instructor.photo and instructor.photoAltText.
+
+**Props**
+
+```tsx
+interface ProgramInstructorAvatarProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLImageElement,
+    {
+      src: string;
+      alt: string;
+      width?: number; // ??
+      height?: number; // ??
+    }
+  >;
+  className?: string;
+}
+```
+
+**Data Attributes**
+- `data-testid="program-instructor-avatar"` - Applied to instructor avatar element
+
+**Example**
+
+```tsx
+// Default usage
+<Program.Instructor.Avatar className="rounded-full" />
+
+// asChild with custom styling
+<Program.Instructor.Avatar asChild size="lg">
+  {React.forwardRef(({ src, alt, width, height, ...props }, ref) => (
+    <img
+      ref={ref}
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      {...props}
+      className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+    />
+  ))}
+</Program.Instructor.Avatar>
+```
+
+---
+
+### Program.Instructor.Description
+
+Displays the instructor's bio/description with customizable rendering. Data source: instructor.description.
+
+**Props**
+
+```tsx
+interface ProgramInstructorDescriptionProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      description: string;
+    }
+  >;
+}
+```
+
+**Data Attributes**
+- `data-testid="program-instructor-description"` - Applied to instructor description element
+
+**Example**
+
+```tsx
+// Default usage
+<Program.Instructor.Description className="text-gray-600" />
+
+// asChild with custom truncation
+<Program.Instructor.Description asChild >
+  {React.forwardRef(({ description, ...props }, ref) => (
+    <p ref={ref} {...props} className="text-gray-600 text-sm">
+      {description.length > 100 ? `${description.substring(0, 100)}...` : description}
+    </p>
+  ))}
+</Program.Instructor.Description>
+```
+
+**Notes**
+- Avatar uses WixMediaImage for optimization when not using asChild
+- Instructor data is fetched via instructor service based on program ID
+- Empty state is not possible because program must have at least one instructor
+---
+
 
 ### Program.Price
 
@@ -400,3 +575,9 @@ interface ProgramPriceProps {
   ))}
 </Program.Price>
 ```
+
+
+## Drafts
+
+### Program.ParticipantsCount
+No public API yet 😭
