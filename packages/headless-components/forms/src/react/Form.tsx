@@ -1,7 +1,7 @@
 import React from 'react';
-import { forms } from '@wix/forms';
 
 import * as CoreForm from './core/Form.js';
+import { FormServiceConfig } from '../services/form-service.js';
 import {
   CheckboxGroupProps,
   CheckboxProps,
@@ -34,7 +34,7 @@ import {
  */
 export interface RootProps {
   children: React.ReactNode;
-  form: forms.Form;
+  formServiceConfig: FormServiceConfig;
 }
 
 /**
@@ -44,10 +44,11 @@ export interface RootProps {
  *
  * @order 1
  * @component
- * @param {forms.Form} form - The form configuration object
+ * @param {FormServiceConfig} formServiceConfig - The form service configuration object
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
+ * import { loadFormServiceConfig } from '@wix/headless-forms/services';
  *
  * const FIELD_MAP = {
  *   TEXT_INPUT: TextInput,
@@ -56,9 +57,27 @@ export interface RootProps {
  *   // ... other field components
  * };
  *
- * function FormPage({ form }) {
+ * function FormPage({ formId }) {
+ *   const [formServiceConfig, setFormServiceConfig] = useState(null);
+ *   const [isLoading, setIsLoading] = useState(true);
+ *
+ *   useEffect(() => {
+ *     loadFormServiceConfig(formId).then(result => {
+ *       if (result.type === 'success') {
+ *         setFormServiceConfig(result.config);
+ *       } else {
+ *         // Handle 404 case
+ *         console.error('Form not found');
+ *       }
+ *       setIsLoading(false);
+ *     });
+ *   }, [formId]);
+ *
+ *   if (isLoading) return <div>Loading...</div>;
+ *   if (!formServiceConfig) return <div>Form not found</div>;
+ *
  *   return (
- *     <Form.Root form={form}>
+ *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading>
  *         {() => (
  *           <div className="flex justify-center p-4">
@@ -80,10 +99,10 @@ export interface RootProps {
  * ```
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { children } = props;
+  const { children, formServiceConfig } = props;
 
   return (
-    <CoreForm.Root formServiceConfig={{ form: props.form }}>
+    <CoreForm.Root formServiceConfig={formServiceConfig}>
       {children}
     </CoreForm.Root>
   );
@@ -478,10 +497,29 @@ const MockViewer = ({
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
+ * import { loadFormServiceConfig } from '@wix/headless-forms/services';
  *
- * function MyForm({ form }) {
+ * function MyForm({ formId }) {
+ *   const [formServiceConfig, setFormServiceConfig] = useState(null);
+ *   const [isLoading, setIsLoading] = useState(true);
+ *
+ *   useEffect(() => {
+ *     loadFormServiceConfig(formId).then(result => {
+ *       if (result.type === 'success') {
+ *         setFormServiceConfig(result.config);
+ *       } else {
+ *         // Handle 404 case
+ *         console.error('Form not found');
+ *       }
+ *       setIsLoading(false);
+ *     });
+ *   }, [formId]);
+ *
+ *   if (isLoading) return <div>Loading...</div>;
+ *   if (!formServiceConfig) return <div>Form not found</div>;
+ *
  *   return (
- *     <Form.Root form={form}>
+ *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading>
  *         {() => <div>Loading form...</div>}
  *       </Form.Loading>

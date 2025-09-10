@@ -34,12 +34,26 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
   },
 );
 
+export type FormServiceConfigResult =
+  | { type: 'success'; config: FormServiceConfig }
+  | { type: 'notFound' };
+
 export async function loadFormServiceConfig(
   id: string,
-): Promise<FormServiceConfig> {
-  const form = await forms.getForm(id);
+): Promise<FormServiceConfigResult> {
+  try {
+    const form = await forms.getForm(id);
 
-  return {
-    form,
-  };
+    if (!form) {
+      return { type: 'notFound' };
+    }
+
+    return {
+      type: 'success',
+      config: { form },
+    };
+  } catch (error) {
+    console.error('Failed to load form:', error);
+    return { type: 'notFound' };
+  }
 }
