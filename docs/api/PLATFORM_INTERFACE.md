@@ -947,7 +947,6 @@ interface GenericListItemsProps {
 </GenericList.Items>
 ```
 
-
 ### GenericList.LoadMore
 
 Load more button component that appears when more items can be loaded. Automatically handles loading state and disables when no more items are available.
@@ -1043,22 +1042,23 @@ GenericList.Root (Provider & Data Manager)
 - Enables complete visual customization while preserving functionality
 - Uses Radix Slot for proper prop forwarding
 
-#### 6. **Morning Approach Integration**
+#### 6. **Vertical Integration Strategy**
 
-- Designed to render inside other model contexts (e.g., ProductList)
-- Delegates item rendering to entity components (e.g., Product.Root)
-- Provides data context without imposing specific rendering patterns
+- **Internal Usage**: Designed to be used internally by vertical-specific components (ProductList, CategoryList, etc.)
+- **Service Integration**: Vertical components wrap GenericList and provide service-specific data
+- **API Preservation**: Vertical components maintain their existing APIs while using GenericList under the hood
+- **Non-Breaking Migration**: Existing consumers see no changes during internal refactoring
 
 ### Integration Examples
 
-#### With Stores Package
+#### Internal Usage by Vertical Components
 
 ```tsx
-import { ProductList } from '@wix/stores/react';
-import { GenericList } from '@wix/headless-components/react';
-
-// Store-specific list integration
-function ProductListRoot({ children }: { children: React.ReactNode }) {
+// ProductList.Root internally uses GenericList.Root
+export const ProductListRoot = React.forwardRef<
+  HTMLElement,
+  ProductListRootProps
+>((props, ref) => {
   const productsListService = useService(ProductsListServiceDefinition);
 
   return (
@@ -1068,22 +1068,59 @@ function ProductListRoot({ children }: { children: React.ReactNode }) {
       hasMore={productsListService.hasMoreProducts.get()}
       isLoading={productsListService.isLoading.get()}
       variant="grid"
+      className={props.className}
+      ref={ref}
     >
-      {children}
+      {props.children}
     </GenericList.Root>
   );
-}
+});
 
-// Usage within ProductList context
+// ProductList.Products internally uses GenericList.Items
+export const ProductListProducts = React.forwardRef<HTMLElement, ProductsProps>(
+  (props, ref) => {
+    return (
+      <GenericList.Items
+        emptyState={props.emptyState}
+        className={props.className}
+        ref={ref}
+      >
+        {props.children}
+      </GenericList.Items>
+    );
+  },
+);
+
+// ProductList.LoadMoreTrigger internally uses GenericList.LoadMore
+export const ProductListLoadMoreTrigger = React.forwardRef<
+  HTMLButtonElement,
+  LoadMoreTriggerProps
+>((props, ref) => {
+  return (
+    <GenericList.LoadMore
+      label={props.label}
+      loadingLabel={props.loadingState}
+      className={props.className}
+      asChild={props.asChild}
+      ref={ref}
+    >
+      {props.children}
+    </GenericList.LoadMore>
+  );
+});
+
+// Consumer usage remains unchanged - no breaking changes
 <ProductList.Root>
-  <GenericList.Items emptyState={<EmptyProductsState />}>
+  <ProductList.Products emptyState={<EmptyProductsState />}>
+    <ProductList.ProductRepeater>
       <Product.Root>
         <Product.Name />
         <Product.Price />
         <Product.AddToCart />
       </Product.Root>
-  </GenericList.Items>
-  <GenericList.LoadMore label="Load More Products" />
+    </ProductList.ProductRepeater>
+  </ProductList.Products>
+  <ProductList.LoadMoreTrigger label="Load More Products" />
 </ProductList.Root>;
 ```
 
@@ -1099,11 +1136,86 @@ function ProductListRoot({ children }: { children: React.ReactNode }) {
   variant="grid"
 >
   <GenericList.Items emptyState={<NoProducts />}>
-      <ProductCard />
+    <ProductCard />
   </GenericList.Items>
   <GenericList.LoadMore />
 </GenericList.Root>
 ```
+
+### Migration Strategy
+
+The GenericList components are designed to enable a **non-breaking internal refactoring** of existing vertical components:
+
+#### **Phase 0: API Documentation**
+
+- Document GenericList API aligned with vertical component usage patterns
+- Define integration strategy and component mapping
+- Establish migration phases and success criteria
+
+#### **Phase 1: GenericList Implementation**
+
+- Implement GenericList.Root, GenericList.Items, GenericList.LoadMore components
+- Add comprehensive tests covering all use cases
+- Ensure compatibility with existing vertical service patterns
+
+#### **Phase 2: Internal Migration (Non-Breaking)**
+
+- Migrate ProductList components to use GenericList internally
+- Maintain exact same external APIs and behavior
+- Preserve all existing props, data attributes, and functionality
+- Validate no behavioral changes through comprehensive testing
+
+#### **Phase 3: Validation & Testing**
+
+- Run full regression tests on ProductList functionality
+- Verify performance characteristics remain the same
+- Confirm accessibility and UX patterns unchanged
+- Test edge cases and error scenarios
+
+#### **Phase 4: Extension to Other Verticals**
+
+- Apply same migration pattern to CategoryList, BlogList, etc.
+- Leverage shared GenericList optimizations across all list implementations
+- Consolidate common list patterns and behaviors
+
+#### **Component Mapping Strategy**
+
+Each vertical component maps to GenericList components while preserving its unique API:
+
+| **Vertical Component**        | **Maps To**            | **Service Integration**                        |
+| ----------------------------- | ---------------------- | ---------------------------------------------- |
+| `ProductList.Root`            | `GenericList.Root`     | `productsListService.products.get()` → `items` |
+| `ProductList.Products`        | `GenericList.Items`    | Preserves `emptyState` prop                    |
+| `ProductList.LoadMoreTrigger` | `GenericList.LoadMore` | `productsListService.loadMore` → `onLoadMore`  |
+| `CategoryList.Root`           | `GenericList.Root`     | `categoryService.categories.get()` → `items`   |
+| `BlogList.Root`               | `GenericList.Root`     | `blogService.posts.get()` → `items`            |
+
+#### **Data Flow Integration**
+
+```tsx
+// ProductList service data maps directly to GenericList props
+const serviceToGenericListProps = {
+  items: productsListService.products.get(),
+  onLoadMore: productsListService.loadMore,
+  hasMore: productsListService.hasMoreProducts.get(),
+  isLoading: productsListService.isLoading.get(),
+};
+
+// Vertical-specific props are preserved
+const verticalSpecificProps = {
+  emptyState: props.emptyState, // ProductList.Products specific
+  infiniteScroll: props.infiniteScroll, // ProductList.Products specific
+  pageSize: props.pageSize, // ProductList.Products specific
+};
+```
+
+#### **Benefits of This Strategy**
+
+1. **Zero Breaking Changes**: Consumers continue using existing APIs
+2. **Incremental Adoption**: Each vertical can migrate independently
+3. **Shared Optimizations**: Performance improvements benefit all list types
+4. **Consistent Behavior**: All list components follow same patterns
+5. **Reduced Maintenance**: Bug fixes and features implemented once in GenericList
 
 ### Performance Considerations
 
@@ -1111,6 +1223,7 @@ function ProductListRoot({ children }: { children: React.ReactNode }) {
 - **Memoized Rendering**: Item templates are automatically memoized by key
 - **Lazy Loading**: Supports progressive loading patterns
 - **Context Optimization**: Minimal context re-renders with focused state updates
+- **Shared Logic**: Common list operations implemented once and reused
 
 ### TestIds Convention
 
