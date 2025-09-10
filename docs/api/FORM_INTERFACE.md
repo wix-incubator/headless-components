@@ -17,40 +17,16 @@ The root container that provides form service context to all child components. T
 ```tsx
 interface RootProps {
   children: React.ReactNode;
-  formServiceConfig: FormServiceConfig;
+  form: forms.Form;
 }
 ```
 
 **Example**
 
 ```tsx
-<Form.Root formServiceConfig={formServiceConfig}>
+<Form.Root form={form}>
   {/* All form components */}
 </Form.Root>
-```
-
-### Form.Loading
-
-Component that renders content during loading state. Only displays its children when the form is currently loading.
-
-**Props**
-
-```tsx
-interface LoadingProps {
-  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
-}
-```
-
-**Example**
-
-```tsx
-<Form.Loading>
-  {() => (
-    <div className="loading-spinner">
-      <div>Loading form...</div>
-    </div>
-  )}
-</Form.Loading>
 ```
 
 ### Form.Error
@@ -80,6 +56,79 @@ interface ErrorRenderProps {
     </div>
   )}
 </Form.Error>
+```
+
+### Form.ThankYouMessage
+
+Component that renders content after successful form submission. Only displays its children when the form has been successfully submitted.
+
+**Props**
+
+```tsx
+interface ThankYouMessageProps {
+  children: ((props: ThankYouMessageRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+interface ThankYouMessageRenderProps {
+  isSubmitted: boolean;
+}
+```
+
+**Example**
+
+```tsx
+<Form.ThankYouMessage>
+  {({ isSubmitted }) => (
+    isSubmitted ? (
+      <div className="bg-background border-foreground text-foreground p-6 rounded-lg">
+        <h2 className="text-2xl font-heading mb-4">Thank You!</h2>
+        <p className="font-paragraph">
+          Your form has been submitted successfully. We'll get back to you soon.
+        </p>
+      </div>
+    ) : null
+  )}
+</Form.ThankYouMessage>
+```
+
+### Form.SubmitError
+
+Component that renders content when there's an error during form submission. Only displays its children when a submission error has occurred.
+
+**Props**
+
+```tsx
+interface SubmitErrorProps {
+  children: ((props: SubmitErrorRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+interface SubmitErrorRenderProps {
+  submitError: string | null;
+  hasSubmitError: boolean;
+}
+```
+
+**Example**
+
+```tsx
+<Form.SubmitError>
+  {({ submitError, hasSubmitError }) => (
+    hasSubmitError ? (
+      <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
+        <h3 className="text-lg font-heading mb-2">Submission Failed</h3>
+        <p className="font-paragraph">
+          {submitError || 'There was an error submitting your form. Please try again.'}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-primary text-primary-foreground px-4 py-2 rounded mt-2"
+        >
+          Try Again
+        </button>
+      </div>
+    ) : null
+  )}
+</Form.SubmitError>
 ```
 
 ### Form.Container
@@ -308,16 +357,9 @@ const FIELD_MAP = {
   // ... other field components
 };
 
-function FormPage({ formServiceConfig }) {
+function FormPage({ form }) {
   return (
-    <Form.Root formServiceConfig={formServiceConfig}>
-      <Form.Loading>
-        {() => (
-          <div className="flex justify-center p-4">
-            <div>Loading form...</div>
-          </div>
-        )}
-      </Form.Loading>
+    <Form.Root form={form}>
       <Form.Error>
         {({ error }) => (
           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
@@ -325,6 +367,30 @@ function FormPage({ formServiceConfig }) {
           </div>
         )}
       </Form.Error>
+      <Form.SubmitError>
+        {({ submitError, hasSubmitError }) => (
+          hasSubmitError ? (
+            <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
+              <h3 className="text-lg font-heading mb-2">Submission Failed</h3>
+              <p className="font-paragraph">
+                {submitError || 'There was an error submitting your form. Please try again.'}
+              </p>
+            </div>
+          ) : null
+        )}
+      </Form.SubmitError>
+      <Form.ThankYouMessage>
+        {({ isSubmitted }) => (
+          isSubmitted ? (
+            <div className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4">
+              <h2 className="text-2xl font-heading mb-4">Thank You!</h2>
+              <p className="font-paragraph">
+                Your form has been submitted successfully. We'll get back to you soon.
+              </p>
+            </div>
+          ) : null
+        )}
+      </Form.ThankYouMessage>
       <Form.Container fieldMap={FIELD_MAP} />
     </Form.Root>
   );
@@ -336,8 +402,9 @@ function FormPage({ formServiceConfig }) {
 The Form component integrates with Wix services through the `FormService` which provides:
 
 - **Form data management**: Access to form configuration and field definitions
-- **Loading state**: Signal for form loading status
-- **Error handling**: Signal for form errors
+- **Error handling**: Signal for form loading errors
+- **Submit error handling**: Signal for form submission errors
+- **Submission state**: Signal for form submission status
 - **State management**: Reactive state updates using signals
 
 The service can be loaded using the `loadFormServiceConfig` function which handles form fetching and error cases.
