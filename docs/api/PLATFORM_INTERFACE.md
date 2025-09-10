@@ -829,27 +829,6 @@ export interface ListItem {
   id: string | number;
   [key: string]: any;
 }
-
-/** Pagination information */
-export interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  itemsPerPage: number;
-  totalItems: number;
-  currentPageItemCount: number;
-  startIndex: number;
-  endIndex: number;
-}
-
-/** Load more information */
-export interface LoadMoreInfo {
-  hasMore: boolean;
-  isLoading: boolean;
-  totalItems: number;
-  currentItemCount: number;
-}
 ```
 
 **Props**
@@ -860,10 +839,6 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
   items: T[];
   /** Function called to load more items (infinite scroll/load more pattern) */
   onLoadMore?: () => void;
-  /** Function called for next page navigation */
-  onNextPage?: () => void;
-  /** Function called for previous page navigation */
-  onPreviousPage?: () => void;
   /** Whether more items can be loaded */
   hasMore?: boolean;
   /** Whether items are currently loading */
@@ -874,10 +849,8 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
   asChild?: boolean;
   /** Children components */
   children?: React.ReactNode;
-  /** Pagination information (optional, for paginated lists) */
-  pagination?: PaginationInfo;
-  /** Load more information (optional, for infinite scroll lists) */
-  loadMore?: LoadMoreInfo;
+  /** CSS classes */
+  className?: string;
 }
 ```
 
@@ -899,8 +872,6 @@ export function ProductListRoot({ children }: { children: React.ReactNode }) {
     <GenericList.Root
       items={productsListService.products.get()}
       onLoadMore={productsListService.loadMore}
-      onNextPage={productsListService.nextPage}
-      onPreviousPage={productsListService.previousPage}
       hasMore={productsListService.hasMoreProducts.get()}
       isLoading={productsListService.isLoading.get()}
       variant="grid"
@@ -963,74 +934,19 @@ interface GenericListItemsProps {
   }
   className="space-y-4"
 >
-  <GenericList.ItemRepeater>
     <div className="border rounded p-4">
       {/* Item content */}
     </div>
-  </GenericList.ItemRepeater>
 </GenericList.Items>
 
 // Custom container with asChild
 <GenericList.Items emptyState={<EmptyState />} asChild>
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    <GenericList.ItemRepeater>
       <ProductCard />
-    </GenericList.ItemRepeater>
   </div>
 </GenericList.Items>
 ```
 
----
-
-### GenericList.ItemRepeater
-
-Repeater component that maps over items and renders the provided template for each item. Provides ItemContext to each rendered template with current item data.
-
-**Props**
-
-```tsx
-interface GenericListItemRepeaterProps<T extends ListItem = ListItem> {
-  /** Template to repeat for each item */
-  children: React.ReactNode;
-  /** Custom key extractor function (defaults to item.id) */
-  keyExtractor?: (item: T, index: number) => string | number;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="generic-list-item-repeater"` - Applied to repeater container
-- `data-testid="generic-list-item"` - Applied to each item wrapper
-- `data-item-id` - The ID of the current item
-- `data-item-index` - The index of the current item
-
-**Example**
-
-```tsx
-// Basic usage
-<GenericList.ItemRepeater>
-  <div className="list-item p-4 border-b">
-    <h3 className="font-semibold">{/* Access item data via context */}</h3>
-    <p className="text-sm text-content-secondary">{/* Item description */}</p>
-  </div>
-</GenericList.ItemRepeater>
-
-// Custom key extractor
-<GenericList.ItemRepeater keyExtractor={(item, index) => `${item.slug}-${index}`}>
-  <ProductCard />
-</GenericList.ItemRepeater>
-
-// Delegating to entity Root component
-<GenericList.ItemRepeater>
-  <Product.Root>
-    <Product.Name />
-    <Product.Price />
-    <Product.AddToCart />
-  </Product.Root>
-</GenericList.ItemRepeater>
-```
-
----
 
 ### GenericList.LoadMore
 
@@ -1084,236 +1000,6 @@ interface GenericListLoadMoreProps extends ButtonProps {
 </GenericList.LoadMore>
 ```
 
----
-
-### GenericList.Pagination
-
-Pagination controls container that provides navigation between pages when using paginated data.
-
-**Props**
-
-```tsx
-interface GenericListPaginationProps {
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children components */
-  children?: React.ReactNode;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="generic-list-pagination"` - Applied to pagination container
-- `data-current-page` - Current page number
-- `data-total-pages` - Total number of pages
-- `data-has-next` - Boolean indicating if next page is available
-- `data-has-previous` - Boolean indicating if previous page is available
-
-**Example**
-
-```tsx
-// Basic usage
-<GenericList.Pagination className="flex items-center justify-between mt-6">
-  <GenericList.Pagination.Previous />
-  <GenericList.Pagination.Info />
-  <GenericList.Pagination.Next />
-</GenericList.Pagination>
-
-// Custom layout with asChild
-<GenericList.Pagination asChild>
-  <nav className="flex items-center justify-center space-x-4 mt-8">
-    <GenericList.Pagination.Previous />
-    <GenericList.Pagination.Info />
-    <GenericList.Pagination.Next />
-  </nav>
-</GenericList.Pagination>
-```
-
----
-
-### GenericList.Pagination.Previous
-
-Previous page navigation button. Automatically disables when on first page.
-
-**Props**
-
-```tsx
-interface GenericListPaginationPreviousProps extends ButtonProps {
-  /** Label text for the previous button */
-  label?: string;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children for custom rendering */
-  children?: React.ReactNode;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="generic-list-pagination-previous"` - Applied to previous button
-- `disabled` - Boolean indicating if button is disabled
-
-**Example**
-
-```tsx
-// Default usage
-<GenericList.Pagination.Previous
-  label="Previous"
-  className="btn-secondary px-4 py-2"
-/>
-
-// Custom rendering with icon
-<GenericList.Pagination.Previous label="Previous" asChild>
-  <button className="flex items-center gap-2 px-3 py-2 border rounded hover:bg-gray-50 disabled:opacity-50">
-    <ChevronLeftIcon className="h-4 w-4" />
-    Previous
-  </button>
-</GenericList.Pagination.Previous>
-```
-
----
-
-### GenericList.Pagination.Next
-
-Next page navigation button. Automatically disables when on last page.
-
-**Props**
-
-```tsx
-interface GenericListPaginationNextProps extends ButtonProps {
-  /** Label text for the next button */
-  label?: string;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children for custom rendering */
-  children?: React.ReactNode;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="generic-list-pagination-next"` - Applied to next button
-- `disabled` - Boolean indicating if button is disabled
-
-**Example**
-
-```tsx
-// Default usage
-<GenericList.Pagination.Next
-  label="Next"
-  className="btn-secondary px-4 py-2"
-/>
-
-// Custom rendering with icon
-<GenericList.Pagination.Next label="Next" asChild>
-  <button className="flex items-center gap-2 px-3 py-2 border rounded hover:bg-gray-50 disabled:opacity-50">
-    Next
-    <ChevronRightIcon className="h-4 w-4" />
-  </button>
-</GenericList.Pagination.Next>
-```
-
----
-
-### GenericList.Pagination.Info
-
-Displays pagination information including current page, total pages, and item counts.
-
-**Props**
-
-```tsx
-interface GenericListPaginationInfoProps {
-  /** Custom format function for pagination text */
-  formatText?: (info: PaginationInfo) => string;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children for custom rendering */
-  children?: React.ReactNode;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="generic-list-pagination-info"` - Applied to info container
-
-**Example**
-
-```tsx
-// Default usage
-<GenericList.Pagination.Info className="text-sm text-content-secondary" />
-
-// Custom format
-<GenericList.Pagination.Info
-  formatText={(info) => `${info.startIndex}-${info.endIndex} of ${info.totalItems}`}
-  className="text-center text-sm font-medium"
-/>
-
-// Custom rendering with asChild
-<GenericList.Pagination.Info asChild>
-  <div className="flex flex-col items-center text-xs text-gray-500">
-    <span>Page {/* current page */} of {/* total pages */}</span>
-    <span>{/* start */}-{/* end */} of {/* total */} items</span>
-  </div>
-</GenericList.Pagination.Info>
-```
-
----
-
-### GenericList.Totals
-
-Displays total item count and current view information. Shows when there are items in the list.
-
-**Props**
-
-```tsx
-interface GenericListTotalsProps {
-  /** Custom format function for totals text */
-  formatText?: (info: {
-    totalItems: number;
-    currentItemCount: number;
-    isLoading: boolean;
-    hasMore: boolean;
-  }) => string;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children for custom rendering */
-  children?: React.ReactNode;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="generic-list-totals"` - Applied to totals container
-- `data-total-items` - Total number of items
-- `data-current-items` - Current number of loaded items
-
-**Example**
-
-```tsx
-// Default usage
-<GenericList.Totals className="text-sm text-content-secondary mb-4" />
-
-// Custom format
-<GenericList.Totals
-  formatText={({ totalItems, currentItemCount, hasMore }) =>
-    hasMore
-      ? `Showing ${currentItemCount} of ${totalItems} items`
-      : `${totalItems} items total`
-  }
-  className="font-medium"
-/>
-
-// Custom rendering with asChild
-<GenericList.Totals asChild>
-  <div className="flex items-center justify-between text-sm text-gray-600">
-    <span>{/* total items text */}</span>
-    <span className="text-xs">{/* additional info */}</span>
-  </div>
-</GenericList.Totals>
-```
-
----
-
 ## GenericList Architecture
 
 The GenericList components follow the established architecture pattern while providing maximum flexibility for different list implementations:
@@ -1322,14 +1008,8 @@ The GenericList components follow the established architecture pattern while pro
 
 ```
 GenericList.Root (Provider & Data Manager)
-├── GenericList.Totals (Item count display)
 ├── GenericList.Items (Container with empty state)
-│   └── GenericList.ItemRepeater (Template repeater)
-├── GenericList.LoadMore (Load more button)
-└── GenericList.Pagination (Pagination container)
-    ├── GenericList.Pagination.Previous (Previous page)
-    ├── GenericList.Pagination.Info (Page info)
-    └── GenericList.Pagination.Next (Next page)
+└── GenericList.LoadMore (Load more button)
 ```
 
 #### 1. **Platform Agnostic**
@@ -1396,15 +1076,12 @@ function ProductListRoot({ children }: { children: React.ReactNode }) {
 
 // Usage within ProductList context
 <ProductList.Root>
-  <GenericList.Totals />
   <GenericList.Items emptyState={<EmptyProductsState />}>
-    <GenericList.ItemRepeater>
       <Product.Root>
         <Product.Name />
         <Product.Price />
         <Product.AddToCart />
       </Product.Root>
-    </GenericList.ItemRepeater>
   </GenericList.Items>
   <GenericList.LoadMore label="Load More Products" />
 </ProductList.Root>;
@@ -1413,29 +1090,18 @@ function ProductListRoot({ children }: { children: React.ReactNode }) {
 #### Platform-Agnostic Usage
 
 ```tsx
-// Blog posts list
+// Simple load more list
 <GenericList.Root
-  items={blogPosts}
-  onNextPage={handleNextPage}
-  onPreviousPage={handlePreviousPage}
-  pagination={paginationInfo}
-  variant="list"
+  items={products}
+  onLoadMore={handleLoadMore}
+  hasMore={hasMoreProducts}
+  isLoading={isLoading}
+  variant="grid"
 >
-  <GenericList.Totals />
-  <GenericList.Items emptyState={<NoBlogPosts />}>
-    <GenericList.ItemRepeater>
-      <BlogPost.Root>
-        <BlogPost.Title />
-        <BlogPost.Excerpt />
-        <BlogPost.ReadMore />
-      </BlogPost.Root>
-    </GenericList.ItemRepeater>
+  <GenericList.Items emptyState={<NoProducts />}>
+      <ProductCard />
   </GenericList.Items>
-  <GenericList.Pagination>
-    <GenericList.Pagination.Previous />
-    <GenericList.Pagination.Info />
-    <GenericList.Pagination.Next />
-  </GenericList.Pagination>
+  <GenericList.LoadMore />
 </GenericList.Root>
 ```
 
