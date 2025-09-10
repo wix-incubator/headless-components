@@ -6,7 +6,7 @@ import {
 import { SEO } from '@wix/headless-seo/react';
 import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import BlogPostPage from '../react-pages/blog/[slug]';
+import BlogPostPage from '../react-pages/blog/post-page.tsx';
 
 const { slug } = Astro.params;
 export const prerender = false;
@@ -49,6 +49,10 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
     blogPostServiceConfig={blogPostServiceConfig}
     recentPostsServiceConfig={recentPostsServiceConfig}
     href={Astro.url.href}
+    feedPageHref="/"
+    postPageBaseUrl="/"
+    categoryPageBaseUrl="/category/"
+    dateLocale="en-US"
     slot="body"
   />
 </BaseLayout>

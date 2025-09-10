@@ -61,7 +61,7 @@ export async function loadBlogCategoriesServiceConfig(): Promise<BlogCategoriesS
   }
 }
 
-function enhanceCategories(
+export function enhanceCategories(
   categories: categories.Category[],
 ): EnhancedCategory[] {
   return categories.map((category) => {

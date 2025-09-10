@@ -1,6 +1,7 @@
 import React from 'react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import * as CoreBlogPost from './core/BlogPost.js';
+import * as CoreBlogPost from './core/Post.js';
+import * as BlogCategories from './Categories.js';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import { posts, tags } from '@wix/blog';
 import {
@@ -25,13 +26,15 @@ import {
   type RicosCustomStyles,
 } from '@wix/ricos';
 
-import { createAuthorName } from './helpers.js';
+import { createAuthorName, isValidChildren } from './helpers.js';
 
 interface PostContextValue {
   post: PostWithResolvedFields | null;
 }
 
 const PostContext = React.createContext<PostContextValue | null>(null);
+
+PostContext.displayName = 'Blog.Post.PostContext';
 
 export function usePostContext(): PostContextValue {
   const context = React.useContext(PostContext);
@@ -45,7 +48,9 @@ export function usePostContext(): PostContextValue {
 
 const enum TestIds {
   blogPostRoot = 'blog-post-root',
+  blogPostLink = 'blog-post-link',
   blogPostTitle = 'blog-post-title',
+  blogPostExcerpt = 'blog-post-excerpt',
   blogPostContent = 'blog-post-content',
   blogPostCoverImage = 'blog-post-cover-image',
   blogPostAuthor = 'blog-post-author',
@@ -54,9 +59,7 @@ const enum TestIds {
   blogPostPublishDate = 'blog-post-publish-date',
   blogPostReadingTime = 'blog-post-reading-time',
   blogPostCategories = 'blog-post-categories',
-  blogPostCategory = 'blog-post-category',
   blogPostTags = 'blog-post-tags',
-  blogPostTag = 'blog-post-tag',
 }
 
 export interface BlogPostRootProps {
@@ -77,49 +80,49 @@ export interface BlogPostRootProps {
  * ```tsx
  * import '@wix/headless-blog/react/styles.css';
  * ```
- * The CSS is required for proper rendering of BlogPost.Content and other styled components.
+ * The CSS is required for proper rendering of Blog.Post.Content and other styled components.
  *
  * @component
  * @example
  * ```tsx
- * import { BlogPost } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/headless-blog/react';
  *
  * // Service-driven (gets post from BlogPostService)
  * function BlogPostPage() {
  *   return (
- *     <BlogPost.Root emptyState={<div>Post not found</div>}>
+ *     <Blog.Post.Root emptyState={<div>Post not found</div>}>
  *       <article>
- *         <BlogPost.Title />
- *         <BlogPost.PublishDate locale="en-US" />
- *         <BlogPost.Content />
- *         <BlogPost.Tags>
- *           <BlogPost.TagRepeater>
- *             <BlogPost.Tag />
- *           </BlogPost.TagRepeater>
- *         </BlogPost.Tags>
- *         <BlogPost.Categories>
- *           <BlogPost.CategoryRepeater>
- *             <BlogPost.CategoryLink baseUrl="/category/" />
- *           </BlogPost.CategoryRepeater>
- *         </BlogPost.Categories>
- *         <BlogPost.AuthorName />
- *         <BlogPost.AuthorAvatar />
- *         <BlogPost.ShareUrlToFacebook href={location.href} />
- *         <BlogPost.ShareUrlToX href={location.href} />
- *         <BlogPost.ShareUrlToLinkedIn href={location.href} />
+ *         <Blog.Post.Title />
+ *         <Blog.Post.PublishDate locale="en-US" />
+ *         <Blog.Post.Content />
+ *         <Blog.Post.Tags>
+ *           <Blog.Post.TagRepeater>
+ *             <Blog.Post.Tag />
+ *           </Blog.Post.TagRepeater>
+ *         </Blog.Post.Tags>
+ *         <Blog.Post.Categories>
+ *           <Blog.Post.CategoryRepeater>
+ *             <Blog.Categories.Link baseUrl="/category/" />
+ *           </Blog.Post.CategoryRepeater>
+ *         </Blog.Post.Categories>
+ *         <Blog.Post.AuthorName />
+ *         <Blog.Post.AuthorAvatar />
+ *         <Blog.Post.ShareUrlToFacebook href={location.href} />
+ *         <Blog.Post.ShareUrlToX href={location.href} />
+ *         <Blog.Post.ShareUrlToLinkedIn href={location.href} />
  *       </article>
- *     </BlogPost.Root>
+ *     </Blog.Post.Root>
  *   );
  * }
  *
  * // Prop-driven (provide post data directly)
  * function BlogPostCard({ post }) {
  *   return (
- *     <BlogPost.Root post={post} emptyState={<div>Post not found</div>}>
+ *     <Blog.Post.Root post={post} emptyState={<div>Post not found</div>}>
  *       <article>
  *         ... same as service-driven example
  *       </article>
- *     </BlogPost.Root>
+ *     </Blog.Post.Root>
  *   );
  * }
  * ```
@@ -167,7 +170,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
 
     // Otherwise, use service to get post data
     return (
-      <CoreBlogPost.Content>
+      <CoreBlogPost.Root>
         {({ post }) => {
           if (!post) {
             return emptyState || null;
@@ -175,10 +178,168 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
 
           return renderRoot(post);
         }}
-      </CoreBlogPost.Content>
+      </CoreBlogPost.Root>
     );
   },
 );
+
+Root.displayName = 'Blog.Post.Root';
+
+export interface CoverImageProps {
+  asChild?: boolean;
+  className?: string;
+  children?:
+    | AsChildChildren<{ imageUrl: string; alt: string }>
+    | React.ReactNode;
+}
+
+export const CoverImage = React.forwardRef<HTMLElement, CoverImageProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+    const { post } = usePostContext();
+
+    const imageUrl = post?.resolvedFields?.coverImageUrl;
+    const alt =
+      post?.resolvedFields?.coverImageAlt || post?.title || 'Blog post cover';
+
+    if (!imageUrl) return null;
+
+    const attributes = {
+      'data-testid': TestIds.blogPostCoverImage,
+    };
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...attributes}
+        customElement={children}
+        customElementProps={{ imageUrl, alt }}
+      >
+        <img src={imageUrl} alt={alt} />
+      </AsChildSlot>
+    );
+  },
+);
+
+CoverImage.displayName = 'Blog.Post.CoverImage';
+
+export interface LinkProps {
+  asChild?: boolean;
+  className?: string;
+  /** Prepended to the slug to form the full URL */
+  baseUrl?: string;
+  children?: AsChildChildren<{ href: string; slug: string }> | React.ReactNode;
+}
+
+/**
+ * Creates a link to the full blog post with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default link
+ * <Blog.Post.Link baseUrl="/blog/" />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Link baseUrl="/blog/" asChild>
+ *   {({ href }) => (
+ *     <Link to={href} className="block hover:shadow-lg transition-shadow">
+ *       <Blog.Post.Title />
+ *       <Blog.Post.Excerpt />
+ *     </Link>
+ *   )}
+ * </Blog.Post.Link>
+ * ```
+ */
+export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
+  (props, ref) => {
+    const { asChild, children, className, baseUrl = '' } = props;
+    const { post } = usePostContext();
+
+    const slug = post?.slug;
+    if (!slug) return null;
+
+    const href = `${baseUrl}${slug}`;
+
+    const attributes = {
+      'data-testid': TestIds.blogPostLink,
+    };
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...attributes}
+        customElement={children}
+        customElementProps={{ href, slug }}
+        content={children}
+      >
+        <a href={href}>{isValidChildren(children) ? children : slug}</a>
+      </AsChildSlot>
+    );
+  },
+);
+
+Link.displayName = 'Blog.Post.Link';
+
+export interface ExcerptProps {
+  asChild?: boolean;
+  className?: string;
+  children?: AsChildChildren<{ excerpt: string }> | React.ReactNode;
+}
+
+/**
+ * Displays the post excerpt within feed context.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Excerpt />
+ *
+ * // Custom styling with line clamping
+ * <Blog.Post.Excerpt className="text-gray-600 line-clamp-3" />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Excerpt asChild>
+ *   {({ excerpt }) => (
+ *     <p className="post-excerpt">{excerpt.substring(0, 100)}...</p>
+ *   )}
+ * </Blog.Post.Excerpt>
+ * ```
+ */
+export const Excerpt = React.forwardRef<HTMLElement, ExcerptProps>(
+  (props, ref) => {
+    const { asChild, children, className } = props;
+    const { post } = usePostContext();
+
+    if (!post?.excerpt) return null;
+
+    const excerpt = post.excerpt;
+    const attributes = {
+      'data-testid': TestIds.blogPostExcerpt,
+    };
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...attributes}
+        customElement={children}
+        customElementProps={{ excerpt }}
+        content={excerpt}
+      >
+        <p>{excerpt}</p>
+      </AsChildSlot>
+    );
+  },
+);
+
+Excerpt.displayName = 'Blog.Post.Excerpt';
 
 export interface TitleProps {
   asChild?: boolean;
@@ -193,15 +354,15 @@ export interface TitleProps {
  * @example
  * ```tsx
  * // Default rendering
- * <BlogPost.Title />
+ * <Blog.Post.Title />
  *
  * // Custom styling
- * <BlogPost.Title className="text-4xl font-bold text-gray-900" />
+ * <Blog.Post.Title className="text-4xl font-bold text-gray-900" />
  *
  * // Custom rendering with asChild
- * <BlogPost.Title asChild>
+ * <Blog.Post.Title asChild>
  *   {({ title }) => <h1 className="blog-title">{title}</h1>}
- * </BlogPost.Title>
+ * </Blog.Post.Title>
  * ```
  */
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
@@ -230,6 +391,8 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   );
 });
 
+Title.displayName = 'Blog.Post.Title';
+
 export interface ContentProps {
   asChild?: boolean;
   className?: string;
@@ -249,13 +412,13 @@ export interface ContentProps {
  * @example
  * ```tsx
  * // Default rendering with built-in Ricos viewer
- * <BlogPost.Content />
+ * <Blog.Post.Content />
  *
  * // Custom styling
- * <BlogPost.Content className="prose max-w-[60ch] mx-auto" />
+ * <Blog.Post.Content className="prose max-w-[60ch] mx-auto" />
  *
  * // Custom Ricos styles using CSS custom properties
- * <BlogPost.Content
+ * <Blog.Post.Content
  *   customStyles={{
  *     p: {
  *       fontSize: 'var(--text-lg)',
@@ -266,13 +429,13 @@ export interface ContentProps {
  * />
  *
  * // Custom rendering with asChild
- * <BlogPost.Content asChild>
+ * <Blog.Post.Content asChild>
  *   {({ ricosViewerContent }) => (
  *     <div className="custom-content-wrapper">
  *       <RicosViewer content={ricosViewerContent} plugins={customPlugins()} />
  *     </div>
  *   )}
- * </BlogPost.Content>
+ * </Blog.Post.Content>
  * ```
  */
 export const Content = React.forwardRef<HTMLElement, ContentProps>(
@@ -332,6 +495,8 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
   },
 );
 
+Content.displayName = 'Blog.Post.Content';
+
 export interface PublishDateProps {
   asChild?: boolean;
   className?: string;
@@ -348,22 +513,22 @@ export interface PublishDateProps {
  * @example
  * ```tsx
  * // Default rendering
- * <BlogPost.PublishDate locale="en-US" />
+ * <Blog.Post.PublishDate locale="en-US" />
  *
  * // Custom styling and locale
- * <BlogPost.PublishDate
+ * <Blog.Post.PublishDate
  *   locale="fr-FR"
  *   className="text-gray-500 text-sm"
  * />
  *
  * // Custom rendering with asChild
- * <BlogPost.PublishDate locale="en-US" asChild>
+ * <Blog.Post.PublishDate locale="en-US" asChild>
  *   {({ formattedDate, publishDate }) => (
  *     <time dateTime={publishDate} className="published-date">
  *       Published on {formattedDate}
  *     </time>
  *   )}
- * </BlogPost.PublishDate>
+ * </Blog.Post.PublishDate>
  * ```
  */
 export const PublishDate = React.forwardRef<HTMLElement, PublishDateProps>(
@@ -404,6 +569,8 @@ export const PublishDate = React.forwardRef<HTMLElement, PublishDateProps>(
   },
 );
 
+PublishDate.displayName = 'Blog.Post.PublishDate';
+
 export interface ReadingTimeProps {
   asChild?: boolean;
   className?: string;
@@ -438,12 +605,16 @@ export const ReadingTime = React.forwardRef<HTMLElement, ReadingTimeProps>(
   },
 );
 
+ReadingTime.displayName = 'Blog.Post.ReadingTime';
+
 interface PostCategoriesContextValue {
   categories: posts.Category[];
 }
 
 const PostCategoriesContext =
   React.createContext<PostCategoriesContextValue | null>(null);
+
+PostCategoriesContext.displayName = 'Blog.Post.PostCategoriesContext';
 
 export function usePostCategoriesContext(): PostCategoriesContextValue {
   const context = React.useContext(PostCategoriesContext);
@@ -464,6 +635,8 @@ interface CategoryRepeaterContextValue {
 const CategoryRepeaterContext =
   React.createContext<CategoryRepeaterContextValue | null>(null);
 
+CategoryRepeaterContext.displayName = 'Blog.Post.CategoryRepeaterContext';
+
 export function useCategoryRepeaterContext(): CategoryRepeaterContextValue {
   const context = React.useContext(CategoryRepeaterContext);
   if (!context) {
@@ -479,6 +652,8 @@ interface PostTagsContextValue {
 }
 
 const PostTagsContext = React.createContext<PostTagsContextValue | null>(null);
+
+PostTagsContext.displayName = 'Blog.Post.PostTagsContext';
 
 export function usePostTagsContext(): PostTagsContextValue {
   const context = React.useContext(PostTagsContext);
@@ -500,6 +675,8 @@ const TagRepeaterContext = React.createContext<TagRepeaterContextValue | null>(
   null,
 );
 
+TagRepeaterContext.displayName = 'Blog.Post.TagRepeaterContext';
+
 export function useTagRepeaterContext(): TagRepeaterContextValue {
   const context = React.useContext(TagRepeaterContext);
   if (!context) {
@@ -510,7 +687,7 @@ export function useTagRepeaterContext(): TagRepeaterContextValue {
   return context;
 }
 
-export interface CategoriesProps {
+export interface CategoryItemsProps {
   className?: string;
   children: React.ReactNode;
 }
@@ -523,14 +700,14 @@ export interface CategoriesProps {
  * @component
  * @example
  * ```tsx
- * <BlogPost.Categories>
- *   <BlogPost.CategoryRepeater>
- *     <BlogPost.Category />
- *   </BlogPost.CategoryRepeater>
- * </BlogPost.Categories>
+ * <Blog.Post.CategoryItems>
+ *   <Blog.Post.CategoryRepeater>
+ *     <Blog.Categories.Label />
+ *   </Blog.Post.CategoryRepeater>
+ * </Blog.Post.CategoryItems>
  * ```
  */
-export const Categories = React.forwardRef<HTMLElement, CategoriesProps>(
+export const CategoryItems = React.forwardRef<HTMLElement, CategoryItemsProps>(
   (props, ref) => {
     const { children, className } = props;
     const { post } = usePostContext();
@@ -550,132 +727,23 @@ export const Categories = React.forwardRef<HTMLElement, CategoriesProps>(
 
     return (
       <PostCategoriesContext.Provider value={contextValue}>
-        <div
-          {...attributes}
-          ref={ref as React.Ref<HTMLDivElement>}
-          className={className}
-        >
-          {children}
-        </div>
+        <BlogCategories.Root categories={categories} asChild>
+          <div
+            {...attributes}
+            ref={ref as React.Ref<HTMLDivElement>}
+            className={className}
+          >
+            {children}
+          </div>
+        </BlogCategories.Root>
       </PostCategoriesContext.Provider>
     );
   },
 );
 
-export interface CategoryRepeaterProps {
-  children: React.ReactNode;
-}
+CategoryItems.displayName = 'Blog.Post.Categories';
 
-/**
- * Repeater component that creates individual category contexts for each category.
- * Follows Repeater Level pattern from architecture rules.
- * Note: Repeater components do NOT support asChild as per architecture rules.
- *
- * @component
- */
-export const CategoryRepeater = React.forwardRef<
-  HTMLElement,
-  CategoryRepeaterProps
->((props, _ref) => {
-  const { children } = props;
-  const { categories } = usePostCategoriesContext();
-
-  if (categories.length === 0) return null;
-
-  return (
-    <>
-      {categories.map((category, index) => {
-        const contextValue: CategoryRepeaterContextValue = {
-          category,
-          index,
-          amount: categories.length,
-        };
-
-        return (
-          <CategoryRepeaterContext.Provider
-            key={category._id}
-            value={contextValue}
-          >
-            {children}
-          </CategoryRepeaterContext.Provider>
-        );
-      })}
-    </>
-  );
-});
-
-export interface CategoryLinkProps {
-  asChild?: boolean;
-  className?: string;
-  baseUrl?: string;
-  children?:
-    | AsChildChildren<{ category: posts.Category; href: string }>
-    | React.ReactNode;
-}
-
-export const CategoryLink = React.forwardRef<HTMLElement, CategoryLinkProps>(
-  (props, ref) => {
-    const { asChild, children, className, baseUrl = '' } = props;
-    const { category } = useCategoryRepeaterContext();
-
-    if (!category?.label) return null;
-
-    const href = `${baseUrl}${category.slug}`;
-
-    const attributes = {
-      'data-testid': TestIds.blogPostCategory,
-    };
-
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ category, href }}
-        content={category.label}
-      >
-        <a href={href}>{category.label}</a>
-      </AsChildSlot>
-    );
-  },
-);
-
-export interface CategoryLabelProps {
-  asChild?: boolean;
-  className?: string;
-  children?: AsChildChildren<{ category: posts.Category }> | React.ReactNode;
-}
-
-export const CategoryLabel = React.forwardRef<HTMLElement, CategoryLabelProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-    const { category } = useCategoryRepeaterContext();
-
-    if (!category?.label) return null;
-
-    const attributes = {
-      'data-testid': TestIds.blogPostCategory,
-    };
-
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ category }}
-        content={category.label}
-      >
-        <span>{category.label}</span>
-      </AsChildSlot>
-    );
-  },
-);
-
-export interface TagsProps {
+export interface TagItemsProps {
   className?: string;
   children: React.ReactNode;
 }
@@ -688,44 +756,48 @@ export interface TagsProps {
  * @component
  * @example
  * ```tsx
- * <BlogPost.Tags>
- *   <BlogPost.TagRepeater>
- *     <BlogPost.Tag />
- *   </BlogPost.TagRepeater>
- * </BlogPost.Tags>
+ * <Blog.Post.TagItems>
+ *   <Blog.Post.TagRepeater>
+ *     <Blog.Tag.Label />
+ *   </Blog.Post.TagRepeater>
+ * </Blog.Post.TagItems>
  * ```
  */
-export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
-  const { children, className } = props;
-  const { post } = usePostContext();
+export const TagItems = React.forwardRef<HTMLElement, TagItemsProps>(
+  (props, ref) => {
+    const { children, className } = props;
+    const { post } = usePostContext();
 
-  const postTags = post?.resolvedFields?.tags || [];
-  const hasTags = postTags.length > 0;
+    const postTags = post?.resolvedFields?.tags || [];
+    const hasTags = postTags.length > 0;
 
-  if (!hasTags) return null;
+    if (!hasTags) return null;
 
-  const contextValue: PostTagsContextValue = {
-    tags: postTags,
-  };
+    const contextValue: PostTagsContextValue = {
+      tags: postTags,
+    };
 
-  const attributes = {
-    'data-testid': TestIds.blogPostTags,
-  };
+    const attributes = {
+      'data-testid': TestIds.blogPostTags,
+    };
 
-  return (
-    <PostTagsContext.Provider value={contextValue}>
-      <div
-        {...attributes}
-        ref={ref as React.Ref<HTMLDivElement>}
-        className={className}
-      >
-        {children}
-      </div>
-    </PostTagsContext.Provider>
-  );
-});
+    return (
+      <PostTagsContext.Provider value={contextValue}>
+        <div
+          {...attributes}
+          ref={ref as React.Ref<HTMLDivElement>}
+          className={className}
+        >
+          {children}
+        </div>
+      </PostTagsContext.Provider>
+    );
+  },
+);
 
-export interface TagRepeaterProps {
+TagItems.displayName = 'Blog.Post.Tags';
+
+export interface TagItemRepeaterProps {
   children: React.ReactNode;
 }
 
@@ -735,64 +807,44 @@ export interface TagRepeaterProps {
  * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
+ * @example
+ * ```tsx
+ * <Blog.Post.TagItems>
+ *   <Blog.Post.TagItemRepeater>
+ *     <Blog.Tag.Label />
+ *   </Blog.Post.TagItemRepeater>
+ * </Blog.Post.TagItems>
+ * ```
  */
-export const TagRepeater = React.forwardRef<HTMLElement, TagRepeaterProps>(
-  (props, _ref) => {
-    const { children } = props;
-    const { tags } = usePostTagsContext();
+export const TagItemRepeater = React.forwardRef<
+  HTMLElement,
+  TagItemRepeaterProps
+>((props, _ref) => {
+  const { children } = props;
+  const { tags } = usePostTagsContext();
 
-    if (tags.length === 0) return null;
-
-    return (
-      <>
-        {tags.map((tag, index) => {
-          const contextValue: TagRepeaterContextValue = {
-            tag,
-            index,
-            amount: tags.length,
-          };
-
-          return (
-            <TagRepeaterContext.Provider key={tag._id} value={contextValue}>
-              {children}
-            </TagRepeaterContext.Provider>
-          );
-        })}
-      </>
-    );
-  },
-);
-
-export interface TagProps {
-  asChild?: boolean;
-  className?: string;
-  children?: AsChildChildren<{ tag: tags.BlogTag }> | React.ReactNode;
-}
-
-export const Tag = React.forwardRef<HTMLElement, TagProps>((props, ref) => {
-  const { asChild, children, className } = props;
-  const { tag } = useTagRepeaterContext();
-
-  if (!tag?.label) return null;
-
-  const attributes = {
-    'data-testid': TestIds.blogPostTag,
-  };
+  if (tags.length === 0) return null;
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      {...attributes}
-      customElement={children}
-      customElementProps={{ tag }}
-      content={tag.label}
-    >
-      <span>{tag.label}</span>
-    </AsChildSlot>
+    <>
+      {tags.map((tag, index) => {
+        const contextValue: TagRepeaterContextValue = {
+          tag,
+          index,
+          amount: tags.length,
+        };
+
+        return (
+          <TagRepeaterContext.Provider key={tag._id} value={contextValue}>
+            {children}
+          </TagRepeaterContext.Provider>
+        );
+      })}
+    </>
   );
 });
+
+TagItemRepeater.displayName = 'Blog.Post.TagRepeater';
 
 export interface AuthorNameProps {
   asChild?: boolean;
@@ -833,6 +885,8 @@ export const AuthorName = React.forwardRef<HTMLElement, AuthorNameProps>(
   },
 );
 
+AuthorName.displayName = 'Blog.Post.AuthorName';
+
 export interface AuthorAvatarProps {
   asChild?: boolean;
   className?: string;
@@ -848,11 +902,12 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
     const { post } = usePostContext();
+    const [error, setError] = React.useState(false);
+    const onError = React.useCallback(() => setError(true), []);
 
     const owner = post?.resolvedFields?.owner;
     if (!owner) return null;
 
-    const [error, setError] = React.useState(false);
     const { authorAvatarInitials } = createAuthorName(owner);
     const authorAvatarUrl = owner.profile?.photo?.url;
 
@@ -878,7 +933,7 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
           <img
             src={authorAvatarUrl}
             alt={authorAvatarInitials}
-            onError={() => setError(true)}
+            onError={onError}
           />
         ) : (
           <span>{authorAvatarInitials}</span>
@@ -888,116 +943,4 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
   },
 );
 
-export interface ShareUrlToFacebookProps {
-  href: string;
-  children: (props: ShareUrlToFacebookRenderProps) => React.ReactNode;
-}
-
-export interface ShareUrlToFacebookRenderProps {
-  url: string;
-}
-
-/**
- * Generates a Facebook share URL for the current blog post.
- * Follows render prop pattern for maximum flexibility.
- *
- * @component
- * @example
- * ```tsx
- * <BlogPost.ShareUrlToFacebook href={window.location.href}>
- *   {({ url }) => (
- *     <a
- *       href={url}
- *       target="_blank"
- *       rel="noopener noreferrer"
- *       className="btn-social facebook"
- *     >
- *       Share on Facebook
- *     </a>
- *   )}
- * </BlogPost.ShareUrlToFacebook>
- * ```
- */
-export const ShareUrlToFacebook = (props: ShareUrlToFacebookProps) => {
-  const { href } = props;
-
-  return props.children({
-    url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(href)}`,
-  });
-};
-
-export interface ShareUrlToXProps {
-  href: string;
-  children: (props: ShareUrlToXRenderProps) => React.ReactNode;
-}
-
-export interface ShareUrlToXRenderProps {
-  url: string;
-}
-
-/**
- * Generates an X (formerly Twitter) share URL for the current blog post.
- * Follows render prop pattern for maximum flexibility.
- *
- * @component
- * @example
- * ```tsx
- * <BlogPost.ShareUrlToX href={window.location.href}>
- *   {({ url }) => (
- *     <a
- *       href={url}
- *       target="_blank"
- *       rel="noopener noreferrer"
- *       className="btn-social twitter"
- *     >
- *       Share on X
- *     </a>
- *   )}
- * </BlogPost.ShareUrlToX>
- * ```
- */
-export const ShareUrlToX = (props: ShareUrlToXProps) => {
-  const { href } = props;
-
-  return props.children({
-    url: `https://x.com/share?url=${encodeURIComponent(href)}`,
-  });
-};
-
-export interface ShareUrlToLinkedInProps {
-  href: string;
-  children: (props: ShareUrlToLinkedInRenderProps) => React.ReactNode;
-}
-
-export interface ShareUrlToLinkedInRenderProps {
-  url: string;
-}
-
-/**
- * Generates a LinkedIn share URL for the current blog post.
- * Follows render prop pattern for maximum flexibility.
- *
- * @component
- * @example
- * ```tsx
- * <BlogPost.ShareUrlToLinkedIn href={window.location.href}>
- *   {({ url }) => (
- *     <a
- *       href={url}
- *       target="_blank"
- *       rel="noopener noreferrer"
- *       className="btn-social linkedin"
- *     >
- *       Share on LinkedIn
- *     </a>
- *   )}
- * </BlogPost.ShareUrlToLinkedIn>
- * ```
- */
-export const ShareUrlToLinkedIn = (props: ShareUrlToLinkedInProps) => {
-  const { href } = props;
-
-  return props.children({
-    url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(href)}`,
-  });
-};
+AuthorAvatar.displayName = 'Blog.Post.AuthorAvatar';
