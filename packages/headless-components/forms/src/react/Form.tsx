@@ -33,11 +33,17 @@ import {
   RatingInputProps,
   RichTextProps,
   SignatureProps,
+  SubmitButtonProps,
   TagsProps,
   TextAreaProps,
   TextInputProps,
   TimeInputProps,
   UrlInputProps,
+  ProductListProps,
+  FixedPaymentProps,
+  PaymentInputProps,
+  DonationProps,
+  AppointmentProps,
 } from './types.js';
 
 export interface RootProps {
@@ -123,6 +129,11 @@ export function Root(props: RootProps): React.ReactNode {
  * @property {React.ComponentType<TextAreaProps>} TEXT_AREA - Component for textarea fields
  * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for number input fields
  * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
+ * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for submit button fields
+ * @property {React.ComponentType<FixedPaymentProps>} FIXED_PAYMENT - Component for fixed payment fields
+ * @property {React.ComponentType<PaymentInputProps>} PAYMENT_INPUT - Component for payment input fields
+ * @property {React.ComponentType<DonationProps>} DONATION - Component for donation fields
+ * @property {React.ComponentType<AppointmentProps>} APPOINTMENT - Component for appointment fields
  *
  * @example
  * ```tsx
@@ -145,6 +156,7 @@ export function Root(props: RootProps): React.ReactNode {
  *   TEXT_AREA: TextArea,
  *   NUMBER_INPUT: NumberInput,
  *   CHECKBOX: Checkbox,
+ *   SUBMIT_BUTTON: SubmitButton,
  * };
  * ```
  */
@@ -178,6 +190,12 @@ interface FieldMap {
   TIME_INPUT: React.ComponentType<TimeInputProps>;
   HEADER: React.ComponentType<HeaderProps>;
   RICH_TEXT: React.ComponentType<RichTextProps>;
+  SUBMIT_BUTTON: React.ComponentType<SubmitButtonProps>;
+  PRODUCT_LIST: React.ComponentType<ProductListProps>;
+  FIXED_PAYMENT: React.ComponentType<FixedPaymentProps>;
+  PAYMENT_INPUT: React.ComponentType<PaymentInputProps>;
+  DONATION: React.ComponentType<DonationProps>;
+  APPOINTMENT: React.ComponentType<AppointmentProps>;
 }
 
 /**

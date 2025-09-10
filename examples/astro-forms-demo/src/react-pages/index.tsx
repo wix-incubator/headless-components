@@ -31,6 +31,12 @@ import DateTimeInput from '../components/DateTimeInput';
 import TimeInput from '../components/TimeInput';
 import Header from '../components/Header';
 import RichText from '../components/RichText';
+import SubmitButton from '../components/SubmitButton';
+import ProductList from '../components/ProductList';
+import FixedPayment from '../components/FixedPayment';
+import PaymentInput from '../components/PaymentInput';
+import Donation from '../components/Donation';
+import Appointment from '../components/Appointment';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -68,6 +74,12 @@ const FIELD_MAP = {
   TIME_INPUT: TimeInput,
   HEADER: Header,
   RICH_TEXT: RichText,
+  SUBMIT_BUTTON: SubmitButton,
+  PRODUCT_LIST: ProductList,
+  FIXED_PAYMENT: FixedPayment,
+  PAYMENT_INPUT: PaymentInput,
+  DONATION: Donation,
+  APPOINTMENT: Appointment,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
