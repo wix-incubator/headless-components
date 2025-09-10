@@ -1,10 +1,10 @@
 import { useService } from '@wix/services-manager-react';
+import React from 'react';
 import type {
   BlogCategoriesServiceAPI,
   BlogCategoriesServiceConfig,
 } from '../../services/blog-categories-service.js';
 import { BlogCategoriesServiceDefinition } from '../../services/blog-categories-service.js';
-import React from 'react';
 
 /**
  * Props for BlogCategories Root core component

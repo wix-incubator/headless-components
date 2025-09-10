@@ -1,19 +1,25 @@
 import { Sort as SortPrimitive } from '@wix/headless-components/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { createServicesMap } from '@wix/services-manager';
+import { WixServices } from '@wix/services-manager-react';
 import React from 'react';
-import type {
-  BlogFeedServiceConfig,
-  PostWithResolvedFields,
-  QueryPostsSort,
+import {
+  BlogFeedService,
+  BlogFeedServiceDefinition,
+  type BlogFeedServiceConfig,
+  type PostWithResolvedFields,
+  type QueryPostsSort,
 } from '../services/blog-feed-service.js';
 import * as CoreFeed from './core/Feed.js';
-import * as Post from './Post.js';
 import { isValidChildren } from './helpers.js';
+import * as Post from './Post.js';
 
 interface PostsContextValue {
   hasPosts: boolean;
   posts: PostWithResolvedFields[];
   totalPosts: number;
+  isLoading: boolean;
+  fallbackImageUrl?: string;
 }
 
 const PostsContext = React.createContext<PostsContextValue | null>(null);
@@ -78,7 +84,8 @@ export interface BlogFeedRootProps {
   asChild?: boolean;
   className?: string;
   children: AsChildChildren<{ hasPosts: boolean }> | React.ReactNode;
-  blogFeedConfig?: BlogFeedServiceConfig;
+  blogFeedServiceConfig: BlogFeedServiceConfig;
+  fallbackImageUrl?: string;
 }
 
 /**
@@ -107,38 +114,55 @@ export interface BlogFeedRootProps {
  */
 export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const {
+      asChild,
+      children,
+      className,
+      blogFeedServiceConfig,
+      fallbackImageUrl,
+    } = props;
 
     return (
-      <CoreFeed.Posts>
-        {({ posts, hasPosts, totalPosts }) => {
-          const contextValue: PostsContextValue = {
-            hasPosts,
-            posts,
-            totalPosts,
-          };
+      <WixServices
+        servicesMap={createServicesMap().addService(
+          BlogFeedServiceDefinition,
+          BlogFeedService,
+          blogFeedServiceConfig,
+        )}
+      >
+        <CoreFeed.Posts>
+          {({ posts, hasPosts, totalPosts, isLoading }) => {
+            const contextValue: PostsContextValue = {
+              hasPosts,
+              posts,
+              totalPosts,
+              isLoading,
+              fallbackImageUrl,
+            };
 
-          const attributes = {
-            'data-testid': TestIds.blogFeedRoot,
-            'data-has-posts': hasPosts,
-          };
+            const attributes = {
+              'data-testid': TestIds.blogFeedRoot,
+              'data-has-posts': hasPosts,
+              'data-loading': isLoading,
+            };
 
-          return (
-            <PostsContext.Provider value={contextValue}>
-              <AsChildSlot
-                ref={ref}
-                asChild={asChild}
-                className={className}
-                {...attributes}
-                customElement={children}
-                customElementProps={{ hasPosts }}
-              >
-                <div>{isValidChildren(children) ? children : null}</div>
-              </AsChildSlot>
-            </PostsContext.Provider>
-          );
-        }}
-      </CoreFeed.Posts>
+            return (
+              <PostsContext.Provider value={contextValue}>
+                <AsChildSlot
+                  ref={ref}
+                  asChild={asChild}
+                  className={className}
+                  {...attributes}
+                  customElement={children}
+                  customElementProps={{ hasPosts }}
+                >
+                  <div>{isValidChildren(children) ? children : null}</div>
+                </AsChildSlot>
+              </PostsContext.Provider>
+            );
+          }}
+        </CoreFeed.Posts>
+      </WixServices>
     );
   },
 );
@@ -169,7 +193,7 @@ export interface PostItemsProps {
 export const PostItems = React.forwardRef<HTMLElement, PostItemsProps>(
   (props, ref) => {
     const { children, emptyState, className } = props;
-    const { hasPosts } = usePostsContext();
+    const { hasPosts, isLoading } = usePostsContext();
 
     if (!hasPosts) {
       return emptyState || null;
@@ -177,6 +201,7 @@ export const PostItems = React.forwardRef<HTMLElement, PostItemsProps>(
 
     const attributes = {
       'data-testid': TestIds.blogFeedPosts,
+      'data-loading': isLoading,
     };
 
     return (
@@ -338,7 +363,7 @@ export const PostItemRepeater = React.forwardRef<
   PostItemRepeaterProps
 >((props, _ref) => {
   const { children, offset = 0, limit = Infinity } = props;
-  const { hasPosts, posts } = usePostsContext();
+  const { hasPosts, posts, fallbackImageUrl } = usePostsContext();
 
   if (!hasPosts) return null;
 
@@ -355,7 +380,7 @@ export const PostItemRepeater = React.forwardRef<
 
         return (
           <FeedPostRepeaterContext.Provider key={post._id} value={contextValue}>
-            <Post.Root post={post} asChild>
+            <Post.Root post={post} asChild fallbackImageUrl={fallbackImageUrl}>
               {children}
             </Post.Root>
           </FeedPostRepeaterContext.Provider>
@@ -370,7 +395,7 @@ PostItemRepeater.displayName = 'Blog.Feed.PostItemRepeater';
 export interface LoadMoreProps {
   asChild?: boolean;
   className?: string;
-  loading?: React.ReactNode;
+  loadingState?: React.ReactNode;
   children?:
     | AsChildChildren<{
         isLoading: boolean;
@@ -399,7 +424,7 @@ export interface LoadMoreProps {
  */
 export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>(
   (props, ref) => {
-    const { asChild, children, className, loading } = props;
+    const { asChild, children, className, loadingState } = props;
 
     return (
       <CoreFeed.LoadMore>
@@ -424,7 +449,7 @@ export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>(
               className={className}
               {...attributes}
               customElement={children}
-              content={isLoading ? loading : undefined}
+              content={isLoading && loadingState ? loadingState : undefined}
               customElementProps={{
                 isLoading,
                 loadNextPage,

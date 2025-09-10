@@ -1,10 +1,10 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
+import React from 'react';
 import {
   BlogPostServiceDefinition,
   type BlogPostServiceAPI,
 } from '../../services/blog-post-service.js';
-import React from 'react';
 
 export interface RootProps {
   children: (props: RootRenderProps) => React.ReactNode;

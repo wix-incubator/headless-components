@@ -1,35 +1,44 @@
-import React from 'react';
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import * as CoreBlogPost from './core/Post.js';
-import * as BlogCategories from './Categories.js';
-import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import { posts, tags } from '@wix/blog';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import type { members } from '@wix/members';
 import {
-  pluginCodeBlockViewer,
-  pluginIndentViewer,
-  pluginLineSpacingViewer,
-  pluginLinkViewer,
-  pluginTextColorViewer,
-  pluginTextHighlightViewer,
   pluginAudioViewer,
-  pluginLinkButtonViewer,
+  pluginCodeBlockViewer,
   pluginCollapsibleListViewer,
   pluginDividerViewer,
   pluginGalleryViewer,
   pluginGiphyViewer,
   pluginHtmlViewer,
   pluginImageViewer,
+  pluginIndentViewer,
+  pluginLineSpacingViewer,
+  pluginLinkButtonViewer,
   pluginLinkPreviewViewer,
+  pluginLinkViewer,
   pluginTableViewer,
+  pluginTextColorViewer,
+  pluginTextHighlightViewer,
   pluginVideoViewer,
   RicosViewer,
   type RicosCustomStyles,
 } from '@wix/ricos';
+import React from 'react';
+import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
+import * as BlogCategories from './Categories.js';
+import * as CoreBlogPost from './core/Post.js';
 
-import { createAuthorName, isValidChildren } from './helpers.js';
+import { createServicesMap } from '@wix/services-manager';
+import { WixServices } from '@wix/services-manager-react';
+import {
+  BlogPostService,
+  BlogPostServiceDefinition,
+  type BlogPostServiceConfig,
+} from '../services/blog-post-service.js';
+import { isValidChildren } from './helpers.js';
 
 interface PostContextValue {
   post: PostWithResolvedFields | null;
+  coverImageUrl?: string;
 }
 
 const PostContext = React.createContext<PostContextValue | null>(null);
@@ -67,6 +76,9 @@ export interface BlogPostRootProps {
   className?: string;
   children: AsChildChildren<{ post: PostWithResolvedFields }> | React.ReactNode;
   post?: PostWithResolvedFields;
+  blogPostServiceConfig?: BlogPostServiceConfig;
+  /** Fallback image url to use when the post cover image is not available */
+  fallbackImageUrl?: string;
   /** Content to render when no post is available */
   emptyState?: React.ReactNode;
 }
@@ -135,16 +147,20 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
       className,
       post: providedPost,
       emptyState,
+      fallbackImageUrl,
+      blogPostServiceConfig,
     } = props;
 
     const renderRoot = (post: PostWithResolvedFields) => {
       const contextValue: PostContextValue = {
         post,
+        coverImageUrl: post?.resolvedFields?.coverImageUrl || fallbackImageUrl,
       };
       const attributes = {
         'data-testid': TestIds.blogPostRoot,
         'data-post-id': post._id,
         'data-post-slug': post.slug,
+        'data-has-cover-image': !!contextValue.coverImageUrl,
       };
 
       return (
@@ -170,15 +186,23 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
 
     // Otherwise, use service to get post data
     return (
-      <CoreBlogPost.Root>
-        {({ post }) => {
-          if (!post) {
-            return emptyState || null;
-          }
+      <WixServices
+        servicesMap={createServicesMap().addService(
+          BlogPostServiceDefinition,
+          BlogPostService,
+          blogPostServiceConfig,
+        )}
+      >
+        <CoreBlogPost.Root>
+          {({ post }) => {
+            if (!post) {
+              return emptyState || null;
+            }
 
-          return renderRoot(post);
-        }}
-      </CoreBlogPost.Root>
+            return renderRoot(post);
+          }}
+        </CoreBlogPost.Root>
+      </WixServices>
     );
   },
 );
@@ -196,13 +220,11 @@ export interface CoverImageProps {
 export const CoverImage = React.forwardRef<HTMLElement, CoverImageProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
-    const { post } = usePostContext();
+    const { post, coverImageUrl } = usePostContext();
 
-    const imageUrl = post?.resolvedFields?.coverImageUrl;
-    const alt =
-      post?.resolvedFields?.coverImageAlt || post?.title || 'Blog post cover';
+    const alt = post?.resolvedFields?.coverImageAlt || post?.title || '';
 
-    if (!imageUrl) return null;
+    if (!coverImageUrl) return null;
 
     const attributes = {
       'data-testid': TestIds.blogPostCoverImage,
@@ -215,9 +237,9 @@ export const CoverImage = React.forwardRef<HTMLElement, CoverImageProps>(
         className={className}
         {...attributes}
         customElement={children}
-        customElementProps={{ imageUrl, alt }}
+        customElementProps={{ imageUrl: coverImageUrl, alt }}
       >
-        <img src={imageUrl} alt={alt} />
+        <img src={coverImageUrl} alt={alt} />
       </AsChildSlot>
     );
   },
@@ -944,3 +966,31 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
 );
 
 AuthorAvatar.displayName = 'Blog.Post.AuthorAvatar';
+
+/**
+ * Helper function to create author name from member data
+ */
+function createAuthorName(owner: members.Member | null | undefined): {
+  authorName: string;
+  authorAvatarInitials: string;
+} {
+  const formattedFirstName = owner?.contact?.firstName?.trim();
+  const formattedLastName = owner?.contact?.lastName?.trim();
+  const nickname = owner?.profile?.nickname?.trim();
+
+  const authorName =
+    nickname ||
+    `${formattedFirstName || ''} ${formattedLastName || ''}`.trim() ||
+    '';
+
+  const authorAvatarInitials = authorName
+    ?.split(' ')
+    .map((name) => name[0]?.toLocaleUpperCase())
+    .filter((char) => char && /[A-Z]/i.test(char))
+    .join('');
+
+  return {
+    authorName,
+    authorAvatarInitials,
+  };
+}
