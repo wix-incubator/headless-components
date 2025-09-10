@@ -212,6 +212,8 @@ export const LoadMoreTrigger = React.forwardRef<
             data-testid={TestIds.eventListLoadMore}
             customElement={children}
             customElementProps={{ isLoading, loadMoreEvents }}
+            disabled={isLoading}
+            onClick={loadMoreEvents}
           >
             <button>{label}</button>
           </AsChildSlot>
@@ -263,10 +265,6 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
   return (
     <CoreEventList.Error>
       {({ error }) => {
-        if (!error) {
-          return null;
-        }
-
         return (
           <AsChildSlot
             ref={ref}

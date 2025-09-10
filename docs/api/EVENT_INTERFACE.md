@@ -29,7 +29,12 @@ interface RootProps {
 
 **Data Attributes**
 
-- `data-testid="event"` - Applied to event element
+- `data-testid="event-root"` - Applied to event root element
+- `data-upcoming` - Is event upcoming
+- `data-started` - Is event started
+- `data-ended` - Is event ended
+- `data-sold-out` - Is event sold out
+- `data-registration-closed` - Is registration closed
 
 ---
 
@@ -314,11 +319,6 @@ interface RsvpButtonProps {
 **Data Attributes**
 
 - `data-testid="event-rsvp-button"` - Applied to RSVP button element
-- `data-event-upcoming` - Is event upcoming
-- `data-event-started` - Is event started
-- `data-event-ended` - Is event ended
-- `data-sold-out` - Is event sold out
-- `data-registration-closed` - Is registration closed
 
 ---
 
@@ -521,7 +521,7 @@ interface AddToIcsCalendarProps {
 
 | Attribute                                    | Applied To                | Purpose                              |
 | -------------------------------------------- | ------------------------- | ------------------------------------ |
-| `data-testid="event"`                        | Event.Root                | Event element                        |
+| `data-testid="event-root"`                   | Event.Root                | Event root element                   |
 | `data-testid="event-image"`                  | Event.Image               | Event image element                  |
 | `data-testid="event-title"`                  | Event.Title               | Event title element                  |
 | `data-testid="event-date"`                   | Event.Date                | Event date element                   |
@@ -534,8 +534,8 @@ interface AddToIcsCalendarProps {
 | `data-testid="event-x-share"`                | Event.XShare              | Event X share element                |
 | `data-testid="event-add-to-google-calendar"` | Event.AddToGoogleCalendar | Event add to Google calendar element |
 | `data-testid="event-add-to-ics-calendar"`    | Event.AddToIcsCalendar    | Event add to ICS calendar element    |
-| `data-event-upcoming`                        | Event.RsvpButton          | Event status                         |
-| `data-event-started`                         | Event.RsvpButton          | Event status                         |
-| `data-event-ended`                           | Event.RsvpButton          | Event status                         |
-| `data-sold-out`                              | Event.RsvpButton          | Event ticketing status               |
-| `data-registration-closed`                   | Event.RsvpButton          | Event registration status            |
+| `data-upcoming`                              | Event.Root                | Event status                         |
+| `data-started`                               | Event.Root                | Event status                         |
+| `data-ended`                                 | Event.Root                | Event status                         |
+| `data-sold-out`                              | Event.Root                | Event ticketing status               |
+| `data-registration-closed`                   | Event.Root                | Event registration status            |

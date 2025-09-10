@@ -121,17 +121,21 @@ export interface ErrorProps {
 
 export interface ErrorRenderProps {
   /** Event list error message */
-  error: string | null;
+  error: string;
 }
 
 /**
- * EventList Error core component that provides event list error.
+ * EventList Error core component that provides event list error. Not rendered if there is no error.
  *
  * @component
  */
 export function Error(props: ErrorProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
   const error = eventListService.error.get();
+
+  if (!error) {
+    return null;
+  }
 
   return props.children({ error });
 }

@@ -21,26 +21,21 @@ import {
   pluginLinkPreviewViewer,
   pluginSpoilerViewer,
   pluginVideoViewer,
-  isRichContentEmpty,
   type RicosCustomStyles,
 } from '@wix/ricos';
-import { useService, WixServices } from '@wix/services-manager-react';
-import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
-import {
-  EventService,
-  EventServiceDefinition,
-  type EventServiceConfig,
-  type Event,
-} from '../services/event-service.js';
+import { type Event } from '../services/event-service.js';
+import * as CoreEvent from './core/Event.js';
 import '@wix/ricos/css/ricos-viewer.global.css';
 import '@wix/ricos/css/all-plugins-viewer.css';
 
 enum TestIds {
+  eventRoot = 'event-root',
   eventImage = 'event-image',
   eventTitle = 'event-title',
   eventDate = 'event-date',
   eventLocation = 'event-location',
+  eventShortDescription = 'event-short-description',
   eventDescription = 'event-description',
   eventRsvpButton = 'event-rsvp-button',
   eventFacebookShare = 'event-facebook-share',
@@ -54,8 +49,12 @@ enum TestIds {
  * Props for the Event Root component.
  */
 export interface RootProps {
+  /** Event */
   event: Event;
+  /** Child components that will have access to the event */
   children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
@@ -81,25 +80,29 @@ export interface RootProps {
  * }
  * ```
  */
-export const Root = (props: RootProps): React.ReactNode => {
-  const { event, children } = props;
+export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
+  const { event, children, className } = props;
 
-  const eventServiceConfig: EventServiceConfig = {
-    event,
+  const attributes = {
+    className,
+    'data-testid': TestIds.eventRoot,
+    'data-upcoming': event.status === 'UPCOMING',
+    'data-started': event.status === 'STARTED',
+    'data-ended': event.status === 'ENDED',
+    'data-sold-out': !!event.registration?.tickets?.soldOut,
+    'data-registration-closed':
+      event.registration?.status === 'CLOSED_MANUALLY' ||
+      event.registration?.status === 'CLOSED_AUTOMATICALLY',
   };
 
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        EventServiceDefinition,
-        EventService,
-        eventServiceConfig,
-      )}
-    >
-      {children}
-    </WixServices>
+    <CoreEvent.Root event={event}>
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+        {children}
+      </div>
+    </CoreEvent.Root>
   );
-};
+});
 
 /**
  * Props for the Event Image component.
@@ -111,7 +114,7 @@ export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 }
 
 /**
- * Displays the event image using WixMediaImage component with customizable rendering following the documented API.
+ * Displays the event image using WixMediaImage component with customizable rendering.
  *
  * @component
  * @example
@@ -129,21 +132,21 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
 
-    const eventService = useService(EventServiceDefinition);
-    const event = eventService.event.get();
-    const image = event.mainImage;
-
     return (
-      <WixMediaImage
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventImage}
-        media={{ image }}
-        {...otherProps}
-      >
-        {children}
-      </WixMediaImage>
+      <CoreEvent.Image>
+        {({ image }) => (
+          <WixMediaImage
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventImage}
+            media={{ image }}
+            {...otherProps}
+          >
+            {children}
+          </WixMediaImage>
+        )}
+      </CoreEvent.Image>
     );
   },
 );
@@ -161,7 +164,7 @@ export interface TitleProps {
 }
 
 /**
- * Displays the event title with customizable rendering following the documented API.
+ * Displays the event title with customizable rendering.
  *
  * @component
  * @example
@@ -187,22 +190,22 @@ export interface TitleProps {
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const eventService = useService(EventServiceDefinition);
-  const event = eventService.event.get();
-  const title = event.title!;
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.eventTitle}
-      customElement={children}
-      customElementProps={{ title }}
-      content={title}
-    >
-      <span>{title}</span>
-    </AsChildSlot>
+    <CoreEvent.Title>
+      {({ title }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventTitle}
+          customElement={children}
+          customElementProps={{ title }}
+          content={title}
+        >
+          <span>{title}</span>
+        </AsChildSlot>
+      )}
+    </CoreEvent.Title>
   );
 });
 
@@ -221,7 +224,7 @@ export interface DateProps {
 }
 
 /**
- * Displays the event date with customizable rendering and format options following the documented API.
+ * Displays the event date with customizable rendering and format options.
  *
  * @component
  * @example
@@ -247,26 +250,22 @@ export interface DateProps {
 export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
   const { asChild, children, className, format = 'short' } = props;
 
-  const eventService = useService(EventServiceDefinition);
-  const event = eventService.event.get();
-  const date = event.dateAndTimeSettings!.dateAndTimeTbd
-    ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
-    : format === 'short'
-      ? event.dateAndTimeSettings!.formatted!.startDate!
-      : event.dateAndTimeSettings!.formatted!.dateAndTime!;
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.eventDate}
-      customElement={children}
-      customElementProps={{ date }}
-      content={date}
-    >
-      <span>{date}</span>
-    </AsChildSlot>
+    <CoreEvent.Date format={format}>
+      {({ date }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventDate}
+          customElement={children}
+          customElementProps={{ date }}
+          content={date}
+        >
+          <span>{date}</span>
+        </AsChildSlot>
+      )}
+    </CoreEvent.Date>
   );
 });
 
@@ -285,7 +284,7 @@ export interface LocationProps {
 }
 
 /**
- * Displays the event location with customizable rendering and format options following the documented API.
+ * Displays the event location with customizable rendering and format options.
  *
  * @component
  * @example
@@ -312,26 +311,22 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
   (props, ref) => {
     const { asChild, children, className, format = 'short' } = props;
 
-    const eventService = useService(EventServiceDefinition);
-    const event = eventService.event.get();
-    const location =
-      event.location!.locationTbd || format === 'short'
-        ? event.location!.name!
-        : // @ts-expect-error
-          `${event.location!.name}, ${event.location!.address!.formatted}`;
-
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventLocation}
-        customElement={children}
-        customElementProps={{ location }}
-        content={location}
-      >
-        <span>{location}</span>
-      </AsChildSlot>
+      <CoreEvent.Location format={format}>
+        {({ location }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventLocation}
+            customElement={children}
+            customElementProps={{ location }}
+            content={location}
+          >
+            <span>{location}</span>
+          </AsChildSlot>
+        )}
+      </CoreEvent.Location>
     );
   },
 );
@@ -349,7 +344,7 @@ export interface ShortDescriptionProps {
 }
 
 /**
- * Displays the event short description with customizable rendering following the documented API.
+ * Displays the event short description with customizable rendering.
  *
  * @component
  * @example
@@ -378,26 +373,24 @@ export const ShortDescription = React.forwardRef<
 >((props, ref) => {
   const { asChild, children, className } = props;
 
-  const eventService = useService(EventServiceDefinition);
-  const event = eventService.event.get();
-  const shortDescription = event.shortDescription;
-
-  if (!shortDescription) {
-    return null;
-  }
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.eventDescription}
-      customElement={children}
-      customElementProps={{ shortDescription }}
-      content={shortDescription}
-    >
-      <span>{shortDescription}</span>
-    </AsChildSlot>
+    <CoreEvent.ShortDescription>
+      {({ shortDescription }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventShortDescription}
+            customElement={children}
+            customElementProps={{ shortDescription }}
+            content={shortDescription}
+          >
+            <span>{shortDescription}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreEvent.ShortDescription>
   );
 });
 
@@ -411,12 +404,12 @@ export interface DescriptionProps {
   children?: AsChildChildren<{ description: RichContent }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Theme custom styles */
+  /** Ricos viewer custom styles */
   customStyles?: RicosCustomStyles;
 }
 
 /**
- * Displays the event description following the documented API.
+ * Displays the event description using RicosViewer component.
  *
  * @component
  * @example
@@ -436,53 +429,53 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, className, customStyles } = props;
 
-    const eventService = useService(EventServiceDefinition);
-    const event = eventService.event.get();
-    const description = event.description as RichContent | undefined;
-
-    if (!description || isRichContentEmpty(description)) {
-      return null;
-    }
-
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventDescription}
-        customElement={children}
-        customElementProps={{ description }}
-      >
-        <RicosViewer
-          content={description}
-          theme={{ customStyles }}
-          plugins={[
-            pluginAudioViewer(),
-            pluginCodeBlockViewer(),
-            pluginCollapsibleListViewer(),
-            pluginDividerViewer(),
-            pluginEmojiViewer(),
-            pluginFileUploadViewer(),
-            pluginGalleryViewer(),
-            pluginGiphyViewer(),
-            pluginHashtagViewer(),
-            pluginHtmlViewer(),
-            pluginImageViewer(),
-            pluginIndentViewer(),
-            pluginLineSpacingViewer(),
-            pluginLinkViewer(),
-            pluginLinkPreviewViewer({
-              exposeEmbedButtons: [
-                LinkPreviewProviders.Instagram,
-                LinkPreviewProviders.Twitter,
-                LinkPreviewProviders.TikTok,
-              ],
-            }),
-            pluginSpoilerViewer(),
-            pluginVideoViewer(),
-          ]}
-        />
-      </AsChildSlot>
+      <CoreEvent.Description>
+        {({ description }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.eventDescription}
+              customElement={children}
+              customElementProps={{ description }}
+            >
+              <div>
+                <RicosViewer
+                  content={description}
+                  theme={{ customStyles }}
+                  plugins={[
+                    pluginAudioViewer(),
+                    pluginCodeBlockViewer(),
+                    pluginCollapsibleListViewer(),
+                    pluginDividerViewer(),
+                    pluginEmojiViewer(),
+                    pluginFileUploadViewer(),
+                    pluginGalleryViewer(),
+                    pluginGiphyViewer(),
+                    pluginHashtagViewer(),
+                    pluginHtmlViewer(),
+                    pluginImageViewer(),
+                    pluginIndentViewer(),
+                    pluginLineSpacingViewer(),
+                    pluginLinkViewer(),
+                    pluginLinkPreviewViewer({
+                      exposeEmbedButtons: [
+                        LinkPreviewProviders.Instagram,
+                        LinkPreviewProviders.Twitter,
+                        LinkPreviewProviders.TikTok,
+                      ],
+                    }),
+                    pluginSpoilerViewer(),
+                    pluginVideoViewer(),
+                  ]}
+                />
+              </div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreEvent.Description>
     );
   },
 );
@@ -502,7 +495,7 @@ export interface RsvpButtonProps {
 }
 
 /**
- * Displays button for RSVP functionality with customizable rendering following the documented API.
+ * Displays the event RSVP button with customizable rendering.
  *
  * @component
  * @example
@@ -529,20 +522,21 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
   (props, ref) => {
     const { asChild, children, className, label } = props;
 
-    const eventService = useService(EventServiceDefinition);
-    const event = eventService.event.get();
-
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventRsvpButton}
-        customElement={children}
-        customElementProps={{ event }}
-      >
-        <button>{label}</button>
-      </AsChildSlot>
+      <CoreEvent.RsvpButton>
+        {({ event }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventRsvpButton}
+            customElement={children}
+            customElementProps={{ event }}
+          >
+            <button>{label}</button>
+          </AsChildSlot>
+        )}
+      </CoreEvent.RsvpButton>
     );
   },
 );
@@ -560,7 +554,7 @@ export interface FacebookShareProps {
 }
 
 /**
- * Displays Facebook share element with customizable rendering following the documented API.
+ * Displays Facebook share element with customizable rendering.
  *
  * @component
  * @example
@@ -585,23 +579,28 @@ export const FacebookShare = React.forwardRef<HTMLElement, FacebookShareProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const eventUrl = 'https://www.wix.com';
-    const href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventUrl)}`;
-
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventFacebookShare}
-        customElement={children}
-        customElementProps={{ eventUrl }}
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <a />
-      </AsChildSlot>
+      <CoreEvent.Share>
+        {({ eventUrl }) => {
+          const href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventUrl)}`;
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.eventFacebookShare}
+              customElement={children}
+              customElementProps={{ eventUrl }}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <a />
+            </AsChildSlot>
+          );
+        }}
+      </CoreEvent.Share>
     );
   },
 );
@@ -619,7 +618,7 @@ export interface LinkedInShareProps {
 }
 
 /**
- * Displays LinkedIn share element with customizable rendering following the documented API.
+ * Displays LinkedIn share element with customizable rendering.
  *
  * @component
  * @example
@@ -644,23 +643,28 @@ export const LinkedInShare = React.forwardRef<HTMLElement, LinkedInShareProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const eventUrl = 'https://www.wix.com';
-    const href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(eventUrl)}`;
-
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventLinkedInShare}
-        customElement={children}
-        customElementProps={{ eventUrl }}
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <a />
-      </AsChildSlot>
+      <CoreEvent.Share>
+        {({ eventUrl }) => {
+          const href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(eventUrl)}`;
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.eventLinkedInShare}
+              customElement={children}
+              customElementProps={{ eventUrl }}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <a />
+            </AsChildSlot>
+          );
+        }}
+      </CoreEvent.Share>
     );
   },
 );
@@ -678,7 +682,7 @@ export interface XShareProps {
 }
 
 /**
- * Displays X share element with customizable rendering following the documented API.
+ * Displays X share element with customizable rendering.
  *
  * @component
  * @example
@@ -703,27 +707,35 @@ export const XShare = React.forwardRef<HTMLElement, XShareProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const eventUrl = 'https://www.wix.com';
-    const href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(eventUrl)}`;
-
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.eventXShare}
-        customElement={children}
-        customElementProps={{ eventUrl }}
-        href={href}
-        target="_blank"
-        rel="noreferrer"
-      >
-        <a />
-      </AsChildSlot>
+      <CoreEvent.Share>
+        {({ eventUrl }) => {
+          const href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(eventUrl)}`;
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.eventXShare}
+              customElement={children}
+              customElementProps={{ eventUrl }}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <a />
+            </AsChildSlot>
+          );
+        }}
+      </CoreEvent.Share>
     );
   },
 );
 
+/**
+ * Props for the Event AddToGoogleCalendar component.
+ */
 export interface AddToGoogleCalendarProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -733,37 +745,60 @@ export interface AddToGoogleCalendarProps {
   className?: string;
 }
 
+/**
+ * Displays the event add to Google calendar link with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.AddToGoogleCalendar />
+ *
+ * // asChild with primitive
+ * <Event.AddToGoogleCalendar asChild>
+ *   <a />
+ * </Event.AddToGoogleCalendar>
+ *
+ * // asChild with react component
+ * <Event.AddToGoogleCalendar asChild>
+ *   {React.forwardRef(({ url, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(url, '_blank')} />
+ *   ))}
+ * </Event.AddToGoogleCalendar>
+ * ```
+ */
 export const AddToGoogleCalendar = React.forwardRef<
   HTMLElement,
   AddToGoogleCalendarProps
 >((props, ref) => {
   const { asChild, children, className } = props;
 
-  const eventService = useService(EventServiceDefinition);
-  const event = eventService.event.get();
-  const url = event.calendarUrls?.google;
-
-  if (!url) {
-    return null;
-  }
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.eventAddToGoogleCalendar}
-      customElement={children}
-      customElementProps={{ url }}
-      href={url}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <a />
-    </AsChildSlot>
+    <CoreEvent.AddToGoogleCalendar>
+      {({ url }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventAddToGoogleCalendar}
+            customElement={children}
+            customElementProps={{ url }}
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <a />
+          </AsChildSlot>
+        );
+      }}
+    </CoreEvent.AddToGoogleCalendar>
   );
 });
 
+/**
+ * Props for the Event AddToIcsCalendar component.
+ */
 export interface AddToIcsCalendarProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -773,33 +808,53 @@ export interface AddToIcsCalendarProps {
   className?: string;
 }
 
+/**
+ * Displays the event add to ICS calendar link with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Event.AddToIcsCalendar />
+ *
+ * // asChild with primitive
+ * <Event.AddToIcsCalendar asChild>
+ *   <a />
+ * </Event.AddToIcsCalendar>
+ *
+ * // asChild with react component
+ * <Event.AddToIcsCalendar asChild>
+ *   {React.forwardRef(({ url, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(url, '_blank')} />
+ *   ))}
+ * </Event.AddToIcsCalendar>
+ * ```
+ */
 export const AddToIcsCalendar = React.forwardRef<
   HTMLElement,
   AddToIcsCalendarProps
 >((props, ref) => {
   const { asChild, children, className } = props;
 
-  const eventService = useService(EventServiceDefinition);
-  const event = eventService.event.get();
-  const url = event.calendarUrls?.ics;
-
-  if (!url) {
-    return null;
-  }
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.eventAddToIcsCalendar}
-      customElement={children}
-      customElementProps={{ url }}
-      href={url}
-      target="_blank"
-      rel="noreferrer"
-    >
-      <a />
-    </AsChildSlot>
+    <CoreEvent.AddToIcsCalendar>
+      {({ url }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventAddToIcsCalendar}
+            customElement={children}
+            customElementProps={{ url }}
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <a />
+          </AsChildSlot>
+        );
+      }}
+    </CoreEvent.AddToIcsCalendar>
   );
 });
