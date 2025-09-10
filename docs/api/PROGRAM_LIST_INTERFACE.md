@@ -1,19 +1,6 @@
 # ProgramList Interface Documentation
 
-A comprehensive program list display component system built with composable primitives, similar to Radix UI architecture, for displaying and filtering collections of programs.
-
-## Table of Contents
-
-- [Architecture](#architecture)
-- [Components](#components)
-  - [ProgramList.Root](#programlistroot)
-  - [ProgramList.Programs](#programlistprograms)
-  - [ProgramList.ProgramRepeater](#programlistprogramrepeater)
-  - [ProgramList.CategoryList.Root](#programlistcategorylistroot)
-  - [ProgramList.CategoryList.Categories](#programlistcategorylistcategories)
-  - [ProgramList.CategoryList.CategoryRepeater](#programlistcategorylistcategoryrepeater)
-  - [ProgramList.Category.Root](#programlistcategoryroot)
-  - [ProgramList.Category.Label](#programlistcategorylabel)
+A comprehensive program list display component system built with composable primitives, similar to Radix UI architecture, for displaying collections of programs.
 
 ## Architecture
 
@@ -30,7 +17,6 @@ The root container that provides program list context to all child components.
 ```tsx
 interface ProgramListRootProps {
   programs?: Program[];
-  programListConfig?: ProgramListServiceConfig;
   children: React.ReactNode;
 }
 ```
@@ -102,150 +88,65 @@ interface ProgramListProgramRepeaterProps {
 </ProgramList.ProgramRepeater>
 ```
 
----
+## Usage Examples
 
-### ProgramList.CategoryList.Root
-
-The root container that provides category list context to all child components.
-
-**Props**
+### Program List with Category Tabs
 
 ```tsx
-interface ProgramListCategoryListRootProps {
-  asChild?: boolean;
-  categories?: Category[];
-  children: React.ReactNode;
+function ProgramListWithCategoryTabs() {
+  const programs = usePrograms();
+  const categories = useCategories();
+
+  return (
+    <ProgramCategoryList.Root categories={categories}>
+      <ProgramCategoryList.Categories>
+        <Tabs.Root defaultValue="all">
+          <Tabs.List>
+            <Tabs.Trigger value="all">All</Tabs.Trigger>
+
+            <ProgramCategoryList.CategoryRepeater asChild>
+              {React.forwardRef(({ category, ...rest }, ref) => (
+                <Tabs.Trigger ref={ref} {...rest} value={category._id}>
+                  <ProgramCategory.Label />
+                </Tabs.Trigger>
+              ))}
+            </ProgramCategoryList.CategoryRepeater>
+          </Tabs.List>
+
+          <Tabs.Content value="all">
+            <ProgramList.Root programs={programs}>
+              <ProgramList.Programs>
+                <ProgramList.ProgramRepeater>
+                  <Program.Image />
+                  <Program.Title />
+                  <Program.Price />
+                </ProgramList.ProgramRepeater>
+              </ProgramList.Programs>
+            </ProgramList.Root>
+          </Tabs.Content>
+
+          <ProgramCategoryList.CategoryRepeater asChild>
+            {React.forwardRef(({ category, ...rest }, ref) => (
+              <Tabs.Content ref={ref} {...rest} value={category._id}>
+                <ProgramList.Root
+                  programs={programs.filter((program) =>
+                    program.categoryIds.includes(category._id),
+                  )}
+                >
+                  <ProgramList.Programs>
+                    <ProgramList.ProgramRepeater>
+                      <Program.Image />
+                      <Program.Title />
+                      <Program.Price />
+                    </ProgramList.ProgramRepeater>
+                  </ProgramList.Programs>
+                </ProgramList.Root>
+              </Tabs.Content>
+            ))}
+          </ProgramCategoryList.CategoryRepeater>
+        </Tabs.Root>
+      </ProgramCategoryList.Categories>
+    </ProgramCategoryList.Root>
+  );
 }
-```
-
-**Example**
-
-```tsx
-<ProgramList.CategoryList.Root categories={categories}>
-  {/* All category list components */}
-</ProgramList.CategoryList.Root>
-```
-
----
-
-### ProgramList.CategoryList.Categories
-
-Displays a list of categories with support for empty states and custom layouts.
-
-**Props**
-
-```tsx
-interface ProgramListCategoryListProps {
-  asChild?: boolean;
-  emptyState?: React.ReactNode;
-  children: React.ReactNode;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="program-list-categories"` - Applied to categories container
-- `data-empty` - Is list empty
-
-**Example**
-
-```tsx
-<ProgramList.CategoryList emptyState={<div>No categories found</div>}>
-  <ProgramList.CategoryListRepeater>
-    <ProgramList.Category.Label />
-  </ProgramList.CategoryListRepeater>
-</ProgramList.CategoryList>
-```
-
----
-
-### ProgramList.CategoryList.CategoryRepeater
-
-Repeats for each category in the list, providing individual category context.
-
-**Props**
-
-```tsx
-interface ProgramListCategoryListRepeaterProps {
-  children: React.ReactNode;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="program-list-category"` - Applied to repeater container
-
-**Example**
-
-```tsx
-<ProgramList.CategoryList.CategoryRepeater>
-  {/* ProgramList.Category template */}
-</ProgramList.CategoryList.CategoryRepeater>
-```
-
----
-
-### ProgramList.Category.Root
-
-Displays a single category with support for custom layouts.
-
-**Props**
-
-```tsx
-interface ProgramListCategoryRootProps {
-  asChild?: boolean;
-  category: Category;
-  children: React.ReactNode;
-}
-```
-
-**Example**
-
-```tsx
-<ProgramList.Category.Root>
-  {/* ProgramList.Category template */}
-</ProgramList.Category.Root>
-```
-
----
-
-### ProgramList.Category.Label
-
-Displays the category label.
-
-**Props**
-
-```tsx
-interface ProgramListCategoryLabelProps {
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLElement,
-    {
-      label: string;
-    }
-  >;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="program-list-category-label"` - Applied to label element
-
-**Example**
-
-```tsx
-// Default usage
-<ProgramList.Category.Label />
-
-// asChild with primitive
-<ProgramList.Category.Label asChild>
-  <span className="text-lg font-bold">{label}</span>
-</ProgramList.Category.Label>
-
-// asChild with react component
-<ProgramList.Category.Label asChild>
-  {React.forwardRef(({label, ...props}, ref) => (
-    <span ref={ref} {...props} className="text-lg font-bold">{label}</span>
-  ))}
-</ProgramList.Category.Label>
 ```
