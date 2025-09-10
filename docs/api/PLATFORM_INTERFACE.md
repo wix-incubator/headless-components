@@ -1062,6 +1062,69 @@ export const ProductListTotalsDisplayed = React.forwardRef<
 });
 ```
 
+---
+
+### GenericList.Totals
+
+Displays totals information about the list (total items and displayed items). Provides data for custom rendering patterns and supports asChild for flexible styling.
+
+**Props**
+
+```tsx
+interface GenericListTotalsProps {
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | ((
+        props: { totalItems: number; displayedItems: number },
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
+  /** CSS classes */
+  className?: string;
+}
+```
+
+**Data Attributes**
+
+- `data-testid="generic-list-totals"` - Applied to totals element
+- `data-total-items` - Total number of items in the list
+- `data-displayed-items` - Number of items currently displayed
+
+**Example**
+
+```tsx
+// Default usage - renders "{displayedItems} items"
+<GenericList.Totals className="text-sm text-content-secondary" />
+
+// Custom rendering with asChild
+<GenericList.Totals asChild>
+  <span className="font-medium text-content-primary" />
+</GenericList.Totals>
+
+// Render function pattern for custom display
+<GenericList.Totals>
+  {({ totalItems, displayedItems }, ref) => (
+    <div ref={ref} className="flex items-center gap-2">
+      <span className="text-content-primary font-medium">
+        Showing {displayedItems} of {totalItems} items
+      </span>
+      {displayedItems < totalItems && (
+        <span className="text-content-secondary text-sm">
+          ({totalItems - displayedItems} more available)
+        </span>
+      )}
+    </div>
+  )}
+</GenericList.Totals>
+
+// Override default content with children
+<GenericList.Totals className="text-lg font-semibold">
+  {displayedItems} Products Found
+</GenericList.Totals>
+```
+
 ## GenericList Architecture
 
 The GenericList components follow the established architecture pattern while providing maximum flexibility for different list implementations:

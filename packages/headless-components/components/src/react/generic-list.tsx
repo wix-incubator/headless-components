@@ -19,6 +19,7 @@ enum TestIds {
   genericListRoot = 'generic-list-root',
   genericListItems = 'generic-list-items',
   genericListLoadMore = 'generic-list-load-more',
+  genericListTotals = 'generic-list-totals',
 }
 
 // ============================================================================
@@ -96,6 +97,20 @@ export interface GenericListLoadMoreProps {
   className?: string;
 }
 
+export interface GenericListTotalsProps {
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?:
+    | React.ReactNode
+    | ((
+        props: { totalItems: number; displayedItems: number },
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
+  /** CSS classes */
+  className?: string;
+}
+
 // ============================================================================
 // GenericList.Root Component
 // ============================================================================
@@ -103,7 +118,7 @@ export interface GenericListLoadMoreProps {
 /**
  * Container for list components that provides data context and manages list state.
  * Renders items inside another model's context and supports multiple display variants,
- * empty states, and load more functionality.
+ * empty states, load more functionality, and totals display.
  */
 export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
   <T extends ListItem = ListItem>(
@@ -283,6 +298,56 @@ export const LoadMore = React.forwardRef<
 LoadMore.displayName = 'GenericList.LoadMore';
 
 // ============================================================================
+// GenericList.Totals Component
+// ============================================================================
+
+/**
+ * Displays totals information about the list (total items and displayed items).
+ * Provides data for custom rendering patterns and supports asChild for flexible styling.
+ */
+export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
+  (props, ref) => {
+    const { asChild = false, children, className, ...otherProps } = props;
+    const { items } = useGenericListContext();
+
+    const totalItems = items.length;
+    const displayedItems = items.length; // In GenericList, all items are displayed
+
+    const attributes = {
+      'data-testid': TestIds.genericListTotals,
+      'data-total-items': totalItems,
+      'data-displayed-items': displayedItems,
+      className,
+      ...otherProps,
+    };
+
+    const totalsData = { totalItems, displayedItems };
+    const content = `${displayedItems} items`;
+
+    // Handle render function pattern
+    if (typeof children === 'function') {
+      return (children as any)(totalsData, ref);
+    }
+
+    if (asChild) {
+      return (
+        <Slot ref={ref} {...attributes}>
+          {children || content}
+        </Slot>
+      );
+    }
+
+    return (
+      <span {...attributes} ref={ref as React.Ref<HTMLSpanElement>}>
+        {children || content}
+      </span>
+    );
+  },
+);
+
+Totals.displayName = 'GenericList.Totals';
+
+// ============================================================================
 // GenericList Compound Component Export
 // ============================================================================
 
@@ -290,6 +355,7 @@ export const GenericList = {
   Root,
   Items,
   LoadMore,
+  Totals,
 };
 
 // ============================================================================
