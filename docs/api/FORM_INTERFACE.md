@@ -273,9 +273,31 @@ const FIELD_MAP = {
 
 ## Complete Example
 
+### Server-Side Loading (Astro/SSR)
+
 ```tsx
-import { Form } from '@wix/headless-forms/react';
+// pages/form.astro
+---
 import { loadFormServiceConfig } from '@wix/headless-forms/services';
+import FormPage from '../components/FormPage';
+
+const formServiceConfigResult = await loadFormServiceConfig('form-id');
+
+if (formServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+
+const formServiceConfig = formServiceConfigResult.config;
+---
+
+<FormPage formServiceConfig={formServiceConfig} />
+```
+
+### React Component
+
+```tsx
+// components/FormPage.tsx
+import { Form } from '@wix/headless-forms/react';
 
 // Define your custom field components
 const FIELD_MAP = {
@@ -286,24 +308,7 @@ const FIELD_MAP = {
   // ... other field components
 };
 
-function FormPage({ formId }) {
-  const [formServiceConfig, setFormServiceConfig] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    loadFormServiceConfig(formId).then(result => {
-      if (result.type === 'success') {
-        setFormServiceConfig(result.config);
-      } else {
-        console.error('Form not found');
-      }
-      setIsLoading(false);
-    });
-  }, [formId]);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (!formServiceConfig) return <div>Form not found</div>;
-
+function FormPage({ formServiceConfig }) {
   return (
     <Form.Root formServiceConfig={formServiceConfig}>
       <Form.Loading>

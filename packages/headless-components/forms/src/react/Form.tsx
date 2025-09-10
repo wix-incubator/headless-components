@@ -60,25 +60,7 @@ export interface RootProps {
  *   // ... other field components
  * };
  *
- * function FormPage({ formId }) {
- *   const [formServiceConfig, setFormServiceConfig] = useState(null);
- *   const [isLoading, setIsLoading] = useState(true);
- *
- *   useEffect(() => {
- *     loadFormServiceConfig(formId).then(result => {
- *       if (result.type === 'success') {
- *         setFormServiceConfig(result.config);
- *       } else {
- *         // Handle 404 case
- *         console.error('Form not found');
- *       }
- *       setIsLoading(false);
- *     });
- *   }, [formId]);
- *
- *   if (isLoading) return <div>Loading...</div>;
- *   if (!formServiceConfig) return <div>Form not found</div>;
- *
+ * function FormPage({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading>
@@ -90,7 +72,7 @@ export interface RootProps {
  *       </Form.Loading>
  *       <Form.Error>
  *         {({ error }) => (
- *           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+ *           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
  *             {error}
  *           </div>
  *         )}
@@ -344,9 +326,9 @@ export interface ContainerProps {
  *   // ... remaining field components
  * };
  *
- * function ContactForm({ form }) {
+ * function ContactForm({ formServiceConfig }) {
  *   return (
- *     <Form.Root form={form}>
+ *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading>
  *         {() => (
  *           <div className="flex justify-center p-4">
@@ -356,7 +338,7 @@ export interface ContainerProps {
  *       </Form.Loading>
  *       <Form.Error>
  *         {({ error }) => (
- *           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+ *           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
  *             {error}
  *           </div>
  *         )}
@@ -511,25 +493,7 @@ const MockViewer = ({
  * import { Form } from '@wix/headless-forms/react';
  * import { loadFormServiceConfig } from '@wix/headless-forms/services';
  *
- * function MyForm({ formId }) {
- *   const [formServiceConfig, setFormServiceConfig] = useState(null);
- *   const [isLoading, setIsLoading] = useState(true);
- *
- *   useEffect(() => {
- *     loadFormServiceConfig(formId).then(result => {
- *       if (result.type === 'success') {
- *         setFormServiceConfig(result.config);
- *       } else {
- *         // Handle 404 case
- *         console.error('Form not found');
- *       }
- *       setIsLoading(false);
- *     });
- *   }, [formId]);
- *
- *   if (isLoading) return <div>Loading...</div>;
- *   if (!formServiceConfig) return <div>Form not found</div>;
- *
+ * function MyForm({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading>
