@@ -469,3 +469,38 @@ const MockViewer = ({
     </>
   );
 };
+
+/**
+ * Main Form namespace containing all form components
+ * following the compound component pattern: Form.Root, Form.Loading, Form.Error, Form.Container
+ *
+ * @namespace Form
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function MyForm({ form }) {
+ *   return (
+ *     <Form.Root form={form}>
+ *       <Form.Loading>
+ *         {() => <div>Loading form...</div>}
+ *       </Form.Loading>
+ *       <Form.Error>
+ *         {({ error }) => <div>Error: {error}</div>}
+ *       </Form.Error>
+ *       <Form.Container fieldMap={FIELD_MAP} />
+ *     </Form.Root>
+ *   );
+ * }
+ * ```
+ */
+export const Form = {
+  /** Form root component that provides service context */
+  Root,
+  /** Form loading state component */
+  Loading,
+  /** Form error state component */
+  Error,
+  /** Form container component for rendering form fields */
+  Container,
+} as const;
