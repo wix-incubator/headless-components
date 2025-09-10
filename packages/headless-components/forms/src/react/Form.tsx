@@ -11,22 +11,12 @@ import {
 import {
   CheckboxGroupProps,
   CheckboxProps,
-  ContactsAddressProps,
-  ContactsBirthdateProps,
-  ContactsCompanyProps,
-  ContactsEmailProps,
-  ContactsFirstNameProps,
-  ContactsLastNameProps,
   ContactsPhoneProps,
-  ContactsPositionProps,
-  ContactsTaxIdProps,
-  ContactsSubscribeProps,
   DateInputProps,
   DatePickerProps,
   DateTimeInputProps,
   DropdownProps,
   FileUploadProps,
-  HeaderProps,
   MultilineAddressProps,
   NumberInputProps,
   RadioGroupProps,
@@ -38,7 +28,6 @@ import {
   TextAreaProps,
   TextInputProps,
   TimeInputProps,
-  UrlInputProps,
   ProductListProps,
   FixedPaymentProps,
   PaymentInputProps,
@@ -112,51 +101,61 @@ export function Root(props: RootProps): React.ReactNode {
  *
  * @interface FieldMap
  *
- * @property {React.ComponentType<ContactsFirstNameProps>} CONTACTS_FIRST_NAME - Component for first name input fields
- * @property {React.ComponentType<ContactsLastNameProps>} CONTACTS_LAST_NAME - Component for last name input fields
- * @property {React.ComponentType<ContactsEmailProps>} CONTACTS_EMAIL - Component for email input fields
- * @property {React.ComponentType<ContactsPhoneProps>} CONTACTS_PHONE - Component for phone number input fields
- * @property {React.ComponentType<ContactsCompanyProps>} CONTACTS_COMPANY - Component for company name input fields
- * @property {React.ComponentType<ContactsPositionProps>} CONTACTS_POSITION - Component for job position input fields
- * @property {React.ComponentType<ContactsAddressProps>} CONTACTS_ADDRESS - Component for single-line address input fields
- * @property {React.ComponentType<MultilineAddressProps>} MULTILINE_ADDRESS - Component for multi-line address input fields
- * @property {React.ComponentType<ContactsBirthdateProps>} CONTACTS_BIRTHDATE - Component for birthdate input fields
- * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for general text input fields
- * @property {React.ComponentType<UrlInputProps>} URL_INPUT - Component for URL input fields
- * @property {React.ComponentType<FileUploadProps>} FILE_UPLOAD - Component for file upload fields
- * @property {React.ComponentType<ContactsSubscribeProps>} CONTACTS_SUBSCRIBE - Component for subscription checkbox fields
- * @property {React.ComponentType<ContactsTaxIdProps>} CONTACTS_TAX_ID - Component for tax ID input fields
+ * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for text input fields
  * @property {React.ComponentType<TextAreaProps>} TEXT_AREA - Component for textarea fields
+ * @property {React.ComponentType<ContactsPhoneProps>} PHONE_INPUT - Component for phone number input fields
+ * @property {React.ComponentType<MultilineAddressProps>} MULTILINE_ADDRESS - Component for multi-line address input fields
+ * @property {React.ComponentType<DateInputProps>} DATE_INPUT - Component for date input fields
+ * @property {React.ComponentType<DatePickerProps>} DATE_PICKER - Component for date picker fields
+ * @property {React.ComponentType<DateTimeInputProps>} DATE_TIME_INPUT - Component for date and time input fields
+ * @property {React.ComponentType<FileUploadProps>} FILE_UPLOAD - Component for file upload fields
  * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for number input fields
  * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for checkbox fields
+ * @property {React.ComponentType<SignatureProps>} SIGNATURE - Component for signature fields
+ * @property {React.ComponentType<RatingInputProps>} RATING_INPUT - Component for rating input fields
+ * @property {React.ComponentType<RadioGroupProps>} RADIO_GROUP - Component for radio group fields
+ * @property {React.ComponentType<CheckboxGroupProps>} CHECKBOX_GROUP - Component for checkbox group fields
+ * @property {React.ComponentType<DropdownProps>} DROPDOWN - Component for dropdown fields
+ * @property {React.ComponentType<TagsProps>} TAGS - Component for tags fields
+ * @property {React.ComponentType<TimeInputProps>} TIME_INPUT - Component for time input fields
+ * @property {React.ComponentType<RichTextProps>} TEXT - Component for rich text and header fields
  * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for submit button fields
+ * @property {React.ComponentType<ProductListProps>} PRODUCT_LIST - Component for product list fields
  * @property {React.ComponentType<FixedPaymentProps>} FIXED_PAYMENT - Component for fixed payment fields
  * @property {React.ComponentType<PaymentInputProps>} PAYMENT_INPUT - Component for payment input fields
  * @property {React.ComponentType<DonationProps>} DONATION - Component for donation fields
  * @property {React.ComponentType<AppointmentProps>} APPOINTMENT - Component for appointment fields
+ * @property {React.ComponentType<unknown>} IMAGE_CHOICE - Component for image choice fields (TODO: define proper props)
  *
  * @example
  * ```tsx
  * // Example fieldMap - replace with your actual component implementations
  * const FIELD_MAP: FieldMap = {
- *   CONTACTS_FIRST_NAME: ContactsFirstName,
- *   CONTACTS_LAST_NAME: ContactsLastName,
- *   CONTACTS_EMAIL: ContactsEmail,
- *   CONTACTS_PHONE: ContactsPhone,
- *   CONTACTS_COMPANY: ContactsCompany,
- *   CONTACTS_POSITION: ContactsPosition,
- *   CONTACTS_ADDRESS: ContactsAddress,
- *   MULTILINE_ADDRESS: MultilineAddress,
- *   CONTACTS_BIRTHDATE: ContactsBirthdate,
  *   TEXT_INPUT: TextInput,
- *   URL_INPUT: UrlInput,
- *   FILE_UPLOAD: FileUpload,
- *   CONTACTS_SUBSCRIBE: ContactsSubscribe,
- *   CONTACTS_TAX_ID: ContactsTaxId,
  *   TEXT_AREA: TextArea,
+ *   PHONE_INPUT: PhoneInput,
+ *   MULTILINE_ADDRESS: MultilineAddress,
+ *   DATE_INPUT: DateInput,
+ *   DATE_PICKER: DatePicker,
+ *   DATE_TIME_INPUT: DateTimeInput,
+ *   FILE_UPLOAD: FileUpload,
  *   NUMBER_INPUT: NumberInput,
  *   CHECKBOX: Checkbox,
+ *   SIGNATURE: Signature,
+ *   RATING_INPUT: RatingInput,
+ *   RADIO_GROUP: RadioGroup,
+ *   CHECKBOX_GROUP: CheckboxGroup,
+ *   DROPDOWN: Dropdown,
+ *   TAGS: Tags,
+ *   TIME_INPUT: TimeInput,
+ *   TEXT: RichText,
  *   SUBMIT_BUTTON: SubmitButton,
+ *   PRODUCT_LIST: ProductList,
+ *   FIXED_PAYMENT: FixedPayment,
+ *   PAYMENT_INPUT: PaymentInput,
+ *   DONATION: Donation,
+ *   APPOINTMENT: Appointment,
+ *   IMAGE_CHOICE: ImageChoice,
  * };
  * ```
  */
@@ -253,114 +252,115 @@ export interface ContainerProps {
  * }
  * ```
  */
-export const Container = React.forwardRef<HTMLElement, ContainerProps>(({ formId, fieldMap }) => {
-  const formService = useService(FormServiceDefinition);
-  formService.form.get();
+export const Container = React.forwardRef<HTMLElement, ContainerProps>(
+  ({ formId, fieldMap }) => {
+    const formService = useService(FormServiceDefinition);
+    formService.form.get();
 
-  const schemaFields = {
-    // CONTACTS_FIELD_TYPES
-    CONTACTS_COMPANY: fieldMap.TEXT_INPUT,
-    CONTACTS_POSITION: fieldMap.TEXT_INPUT,
-    CONTACTS_TAX_ID: fieldMap.TEXT_INPUT,
-    CONTACTS_FIRST_NAME: fieldMap.TEXT_INPUT,
-    CONTACTS_LAST_NAME: fieldMap.TEXT_INPUT,
-    CONTACTS_EMAIL: fieldMap.TEXT_INPUT,
-    CONTACTS_BIRTHDATE: fieldMap.DATE_INPUT,
-    CONTACTS_PHONE: fieldMap.PHONE_INPUT,
-    CONTACTS_ADDRESS: fieldMap.TEXT_INPUT,
-    CONTACTS_SUBSCRIBE: fieldMap.CHECKBOX,
+    const schemaFields = {
+      // CONTACTS_FIELD_TYPES
+      CONTACTS_COMPANY: fieldMap.TEXT_INPUT,
+      CONTACTS_POSITION: fieldMap.TEXT_INPUT,
+      CONTACTS_TAX_ID: fieldMap.TEXT_INPUT,
+      CONTACTS_FIRST_NAME: fieldMap.TEXT_INPUT,
+      CONTACTS_LAST_NAME: fieldMap.TEXT_INPUT,
+      CONTACTS_EMAIL: fieldMap.TEXT_INPUT,
+      CONTACTS_BIRTHDATE: fieldMap.DATE_INPUT,
+      CONTACTS_PHONE: fieldMap.PHONE_INPUT,
+      CONTACTS_ADDRESS: fieldMap.TEXT_INPUT,
+      CONTACTS_SUBSCRIBE: fieldMap.CHECKBOX,
 
-    // QUIZ_FIELD_TYPES
-    QUIZ_MULTI_CHOICE: fieldMap.CHECKBOX_GROUP,
-    QUIZ_SINGLE_CHOICE: fieldMap.RADIO_GROUP,
-    QUIZ_SHORT_TEXT: fieldMap.TEXT_INPUT,
-    QUIZ_LONG_TEXT: fieldMap.TEXT_AREA,
-    QUIZ_NUMBER: fieldMap.NUMBER_INPUT,
-    QUIZ_FILE_UPLOAD: fieldMap.FILE_UPLOAD,
-    QUIZ_IMAGE_CHOICE: fieldMap.IMAGE_CHOICE, // TODO: add
+      // QUIZ_FIELD_TYPES
+      QUIZ_MULTI_CHOICE: fieldMap.CHECKBOX_GROUP,
+      QUIZ_SINGLE_CHOICE: fieldMap.RADIO_GROUP,
+      QUIZ_SHORT_TEXT: fieldMap.TEXT_INPUT,
+      QUIZ_LONG_TEXT: fieldMap.TEXT_AREA,
+      QUIZ_NUMBER: fieldMap.NUMBER_INPUT,
+      QUIZ_FILE_UPLOAD: fieldMap.FILE_UPLOAD,
+      QUIZ_IMAGE_CHOICE: fieldMap.IMAGE_CHOICE, // TODO: add
 
-    // DEXT_FIELD_TYPES
-    DEXT_TEXT_INPUT: fieldMap.TEXT_INPUT,
-    DEXT_TEXT_AREA: fieldMap.TEXT_AREA,
-    DEXT_DROPDOWN: fieldMap.DROPDOWN,
-    DEXT_URL_INPUT: fieldMap.TEXT_INPUT,
-    DEXT_RADIO_GROUP: fieldMap.RADIO_GROUP,
-    DEXT_NUMBER_INPUT: fieldMap.NUMBER_INPUT,
-    DEXT_CHECKBOX: fieldMap.CHECKBOX,
-    DEXT_CHECKBOX_GROUP: fieldMap.CHECKBOX_GROUP,
-    DEXT_EMAIL: fieldMap.TEXT_INPUT,
-    DEXT_PHONE: fieldMap.PHONE_INPUT,
-    DEXT_RATING_INPUT: fieldMap.RATING_INPUT,
-    DEXT_DATE_PICKER: fieldMap.DATE_PICKER,
-    DEXT_TAGS: fieldMap.TAGS,
+      // DEXT_FIELD_TYPES
+      DEXT_TEXT_INPUT: fieldMap.TEXT_INPUT,
+      DEXT_TEXT_AREA: fieldMap.TEXT_AREA,
+      DEXT_DROPDOWN: fieldMap.DROPDOWN,
+      DEXT_URL_INPUT: fieldMap.TEXT_INPUT,
+      DEXT_RADIO_GROUP: fieldMap.RADIO_GROUP,
+      DEXT_NUMBER_INPUT: fieldMap.NUMBER_INPUT,
+      DEXT_CHECKBOX: fieldMap.CHECKBOX,
+      DEXT_CHECKBOX_GROUP: fieldMap.CHECKBOX_GROUP,
+      DEXT_EMAIL: fieldMap.TEXT_INPUT,
+      DEXT_PHONE: fieldMap.PHONE_INPUT,
+      DEXT_RATING_INPUT: fieldMap.RATING_INPUT,
+      DEXT_DATE_PICKER: fieldMap.DATE_PICKER,
+      DEXT_TAGS: fieldMap.TAGS,
 
-    // SCHEDULING_FIELD_TYPES
-    APPOINTMENT: fieldMap.APPOINTMENT,
-    SERVICES_DROPDOWN: fieldMap.DROPDOWN,
+      // SCHEDULING_FIELD_TYPES
+      APPOINTMENT: fieldMap.APPOINTMENT,
+      SERVICES_DROPDOWN: fieldMap.DROPDOWN,
 
-    // ECOM_FIELD_TYPES
-    ECOM_ADDITIONAL_INFO: fieldMap.TEXT_AREA,
-    ECOM_ADDRESS: fieldMap.TEXT_INPUT , // TODO: add to fieldMap
-    ECOM_FULL_NAME: fieldMap.TEXT_INPUT,
-    ECOM_PHONE: fieldMap.PHONE_INPUT,
-    ECOM_COMPANY_NAME: fieldMap.TEXT_INPUT,
-    ECOM_EMAIL: fieldMap.TEXT_INPUT,
-    ECOM_SUBSCRIPTION: fieldMap.CHECKBOX,
+      // ECOM_FIELD_TYPES
+      ECOM_ADDITIONAL_INFO: fieldMap.TEXT_AREA,
+      ECOM_ADDRESS: fieldMap.TEXT_INPUT, // TODO: add to fieldMap
+      ECOM_FULL_NAME: fieldMap.TEXT_INPUT,
+      ECOM_PHONE: fieldMap.PHONE_INPUT,
+      ECOM_COMPANY_NAME: fieldMap.TEXT_INPUT,
+      ECOM_EMAIL: fieldMap.TEXT_INPUT,
+      ECOM_SUBSCRIPTION: fieldMap.CHECKBOX,
 
-    // BOOKINGS_FIELD_TYPES
-    BOOKINGS_FIRST_NAME: fieldMap.TEXT_INPUT,
-    BOOKINGS_LAST_NAME: fieldMap.TEXT_INPUT,
-    BOOKINGS_EMAIL: fieldMap.TEXT_INPUT,
-    BOOKINGS_PHONE: fieldMap.PHONE_INPUT,
-    BOOKINGS_ADDRESS: fieldMap.TEXT_INPUT,
+      // BOOKINGS_FIELD_TYPES
+      BOOKINGS_FIRST_NAME: fieldMap.TEXT_INPUT,
+      BOOKINGS_LAST_NAME: fieldMap.TEXT_INPUT,
+      BOOKINGS_EMAIL: fieldMap.TEXT_INPUT,
+      BOOKINGS_PHONE: fieldMap.PHONE_INPUT,
+      BOOKINGS_ADDRESS: fieldMap.TEXT_INPUT,
 
-    // PAYMENTS_FIELD_TYPES
-    PRODUCT_LIST: fieldMap.PRODUCT_LIST,
-    DONATION: fieldMap.DONATION,
-    PAYMENT_INPUT: fieldMap.PAYMENT_INPUT, // could be TEXT_INPUT?
-    FIXED_PAYMENT: fieldMap.FIXED_PAYMENT,  // could be TAGS?
+      // PAYMENTS_FIELD_TYPES
+      PRODUCT_LIST: fieldMap.PRODUCT_LIST,
+      DONATION: fieldMap.DONATION,
+      PAYMENT_INPUT: fieldMap.PAYMENT_INPUT, // could be TEXT_INPUT?
+      FIXED_PAYMENT: fieldMap.FIXED_PAYMENT, // could be TAGS?
 
-    // COMMON_FIELD_TYPES
-    TEXT_INPUT: fieldMap.TEXT_INPUT,
-    NUMBER_INPUT: fieldMap.NUMBER_INPUT,
-    URL_INPUT: fieldMap.TEXT_INPUT,
-    TEXT_AREA: fieldMap.TEXT_AREA,
-    DATE_INPUT: fieldMap.DATE_INPUT,
-    DATE_TIME_INPUT: fieldMap.DATE_TIME_INPUT,
-    TIME_INPUT: fieldMap.TIME_INPUT,
-    RADIO_GROUP: fieldMap.RADIO_GROUP,
-    CHECKBOX_GROUP: fieldMap.CHECKBOX_GROUP,
-    FILE_UPLOAD: fieldMap.FILE_UPLOAD,
-    CHECKBOX: fieldMap.CHECKBOX,
-    DROPDOWN: fieldMap.DROPDOWN,
-    // NESTED_FORM: 'NESTED_FORM',
-    MULTILINE_ADDRESS: fieldMap.MULTILINE_ADDRESS,
-    // are these relevant for headless?
-    MLA_COUNTRY: fieldMap.DROPDOWN,
-    MLA_CITY: fieldMap.TEXT_INPUT,
-    MLA_ADDRESS_LINE: fieldMap.TEXT_INPUT, // dropdown if autocomplete disabled?
-    MLA_ADDRESS_LINE_2: fieldMap.TEXT_INPUT,
-    MLA_POSTAL_CODE: fieldMap.TEXT_INPUT,
-    MLA_SUBDIVISION: fieldMap.DROPDOWN,
-    MLA_STREET_NAME: fieldMap.TEXT_INPUT,
-    MLA_STREET_NUMBER: fieldMap.TEXT_INPUT,
-    MLA_APARTMENT: fieldMap.TEXT_INPUT,
-    FULL_NAME_FIRST_NAME: fieldMap.TEXT_INPUT,
-    FULL_NAME_LAST_NAME: fieldMap.TEXT_INPUT,
-    FULL_NAME: fieldMap.TEXT_INPUT,
-    VAT_ID: fieldMap.TEXT_INPUT,
-    SIGNATURE: fieldMap.SIGNATURE,
-    RATING_INPUT: fieldMap.RATING_INPUT,
-    TAGS: fieldMap.TAGS,
-    DATE_PICKER: fieldMap.DATE_PICKER,
+      // COMMON_FIELD_TYPES
+      TEXT_INPUT: fieldMap.TEXT_INPUT,
+      NUMBER_INPUT: fieldMap.NUMBER_INPUT,
+      URL_INPUT: fieldMap.TEXT_INPUT,
+      TEXT_AREA: fieldMap.TEXT_AREA,
+      DATE_INPUT: fieldMap.DATE_INPUT,
+      DATE_TIME_INPUT: fieldMap.DATE_TIME_INPUT,
+      TIME_INPUT: fieldMap.TIME_INPUT,
+      RADIO_GROUP: fieldMap.RADIO_GROUP,
+      CHECKBOX_GROUP: fieldMap.CHECKBOX_GROUP,
+      FILE_UPLOAD: fieldMap.FILE_UPLOAD,
+      CHECKBOX: fieldMap.CHECKBOX,
+      DROPDOWN: fieldMap.DROPDOWN,
+      // NESTED_FORM: 'NESTED_FORM',
+      MULTILINE_ADDRESS: fieldMap.MULTILINE_ADDRESS,
+      // are these relevant for headless?
+      MLA_COUNTRY: fieldMap.DROPDOWN,
+      MLA_CITY: fieldMap.TEXT_INPUT,
+      MLA_ADDRESS_LINE: fieldMap.TEXT_INPUT, // dropdown if autocomplete disabled?
+      MLA_ADDRESS_LINE_2: fieldMap.TEXT_INPUT,
+      MLA_POSTAL_CODE: fieldMap.TEXT_INPUT,
+      MLA_SUBDIVISION: fieldMap.DROPDOWN,
+      MLA_STREET_NAME: fieldMap.TEXT_INPUT,
+      MLA_STREET_NUMBER: fieldMap.TEXT_INPUT,
+      MLA_APARTMENT: fieldMap.TEXT_INPUT,
+      FULL_NAME_FIRST_NAME: fieldMap.TEXT_INPUT,
+      FULL_NAME_LAST_NAME: fieldMap.TEXT_INPUT,
+      FULL_NAME: fieldMap.TEXT_INPUT,
+      VAT_ID: fieldMap.TEXT_INPUT,
+      SIGNATURE: fieldMap.SIGNATURE,
+      RATING_INPUT: fieldMap.RATING_INPUT,
+      TAGS: fieldMap.TAGS,
+      DATE_PICKER: fieldMap.DATE_PICKER,
 
-    // READONLY_FIELD_TYPES
-    HEADER: fieldMap.TEXT,
-    RICH_TEXT: fieldMap.TEXT,
-    SUBMIT_BUTTON: fieldMap.SUBMIT_BUTTON,
-  }
+      // READONLY_FIELD_TYPES
+      HEADER: fieldMap.TEXT,
+      RICH_TEXT: fieldMap.TEXT,
+      SUBMIT_BUTTON: fieldMap.SUBMIT_BUTTON,
+    };
 
-  // TODO: render viewer
-  return null;
-});
-
+    // TODO: render viewer
+    return null;
+  },
+);
