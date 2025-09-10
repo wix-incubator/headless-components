@@ -16,8 +16,8 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.Image](#programimage)
   - [Program.StepsCounter](#programstepscounter)
   - [Program.Description](#programdescription)
+  - [Program.Duration](#programduration)
 
-  - [Program.Days](#programdays)
   - [Program.Participants](#programparticipants)
   - [Program.Price](#programprice)
 - [Usage Examples](#usage-examples) _(soon...)_
@@ -247,7 +247,7 @@ interface ProgramDescriptionProps {
 **Example**
 
 ```tsx
-// Default usage
+// Default usage N or null
 <Program.Description className="text-content-secondary" />
 
 // asChild with primitive
@@ -267,36 +267,19 @@ interface ProgramDescriptionProps {
 
 ---
 
+### Program.Duration
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Program.Days
-
-Displays the program days with customizable rendering.
+Displays the program duration in days with customizable rendering. Data source: program.timeline field. If the program is self-placed, duration has no limit.
 
 **Props**
 
 ```tsx
-interface ProgramDaysProps {
+interface ProgramDurationProps {
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
     {
-      days: number;
+      durationInDays: number | null;  // null represents "no limit"
     }
   >;
 }
@@ -304,29 +287,30 @@ interface ProgramDaysProps {
 
 **Data Attributes**
 
-- `data-testid="program-days"` - Applied to program days element
+- `data-testid="program-duration"` - Applied to program duration element
+- `data-type="self-paced"` - Applied when program is self-paced
+- `data-type="time-limited"` - Applied when program has specific duration
 
 **Example**
 
 ```tsx
-// Default usage
-<Program.Days className="text-content-secondary" />
+// Default usage N or null
+<Program.Duration className="text-content-secondary" />
 
 // asChild with primitive
-<Program.Days asChild>
+<Program.Duration asChild>
   <p className="text-content-secondary">
-</Program.Days>
+</Program.Duration>
 
-// asChild with react component
-<Program.Days asChild>
-  {React.forwardRef(({ days, ...props }, ref) => (
+// Custom rendering with format
+<Program.Duration asChild format="long">
+  {React.forwardRef(({ durationInDays, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
-      {days}
+      {durationInDays ? `${durationInDays} days ` : 'No Time Limit' }
     </p>
   ))}
-</Program.Days>
+</Program.Duration>
 ```
-
 ---
 
 ### Program.Participants
