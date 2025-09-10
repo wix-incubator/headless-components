@@ -591,6 +591,44 @@ export interface TagsProps extends BaseFieldProps {
 }
 
 /**
+ * Data structure for image choice option.
+ * Extends the base ChoiceOption with image-specific properties.
+ *
+ * @interface ImageChoiceOption
+ *
+ * @property {string} id - Unique identifier for the option
+ * @property {string} value - The value that will be submitted when this option is selected
+ * @property {string} label - Display label for the option
+ * @property {boolean} default - Whether this option is selected by default
+ * @property {Object} image - Image data for the option
+ * @property {string | undefined} image.alt - Alt text for accessibility (can be undefined)
+ * @property {string} image.id - Unique identifier for the image
+ * @property {string} [image.url] - Optional URL for the image source. If not provided, a placeholder will be shown.
+ *
+ * @example
+ * ```tsx
+ * const imageOption: ImageChoiceOption = {
+ *   id: 'red-color',
+ *   value: 'red',
+ *   label: 'Red',
+ *   default: false,
+ *   image: {
+ *     alt: 'Red color swatch',
+ *     id: 'img_red_001',
+ *     url: 'https://example.com/images/red-swatch.jpg'
+ *   }
+ * };
+ * ```
+ */
+interface ImageChoiceOption extends ChoiceOption {
+  image: {
+    alt: string | undefined;
+    id: string;
+    url?: string;
+  };
+}
+
+/**
  * Props for image choice field.
  * Field allows users to select one or multiple options by clicking on images.
  * Used with fieldMap key: IMAGE_CHOICE
@@ -598,25 +636,26 @@ export interface TagsProps extends BaseFieldProps {
  * @interface ImageChoiceProps
  *
  * @property {string} id - The unique identifier for the form field
- * @property {string | string[] | null | undefined} value - The current value(s) of the image choice field (selected option value(s))
+ * @property {string | string[] | null | undefined} value - The current value(s) of the image choice field. For single selection, this is a string. For multiple selection, this is an array of strings.
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {string} label - The display label for the form field
  * @property {boolean} showLabel - Whether to display the field label
- * @property {ImageChoiceOption[]} options - Array of image choice options with id, value, label, default, and image properties
- * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
- * @property {boolean} [multiple] - Whether multiple selections are allowed (defaults to false for single selection)
- * @property {number} [minItems] - Minimum number of items that must be selected (only applicable when multiple is true)
- * @property {number} [maxItems] - Maximum number of items that can be selected (only applicable when multiple is true)
- * @property {forms.RichContent} [description] - Optional rich content description for the field
- * @property {string} [error] - Error message to display when validation fails (undefined when valid)
- * @property {function} onChange - Callback function called when the image choice value(s) change
+ * @property {ImageChoiceOption[]} options - Array of image choice options. Each option must include an image object with alt text, id, and optional URL.
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for the grid layout. Determines how many options are displayed per row.
+ * @property {boolean} [multiple=false] - Whether multiple selections are allowed. When true, users can select multiple options. When false, only one option can be selected at a time.
+ * @property {number} [minItems] - Minimum number of items that must be selected. Only applicable when multiple is true. Used for validation.
+ * @property {number} [maxItems] - Maximum number of items that can be selected. Only applicable when multiple is true. Used for validation.
+ * @property {forms.RichContent} [description] - Optional rich content description for the field. Can include formatted text, links, etc.
+ * @property {string} [error] - Error message to display when validation fails. Undefined when the field is valid.
+ * @property {function} onChange - Callback function called when the image choice value(s) change. Receives the new value(s) as parameter.
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
  *
  * @example
  * ```tsx
- * const imageChoiceField: ImageChoiceProps = {
+ * // Single selection example
+ * const singleImageChoice: ImageChoiceProps = {
  *   id: 'preferred-color',
  *   value: 'red',
  *   required: true,
@@ -629,20 +668,85 @@ export interface TagsProps extends BaseFieldProps {
  *       value: 'red',
  *       label: 'Red',
  *       default: false,
- *       image: { alt: 'Red color option', id: 'img_red', url: 'https://example.com/red.jpg' }
+ *       image: {
+ *         alt: 'Red color option',
+ *         id: 'img_red',
+ *         url: 'https://example.com/red.jpg'
+ *       }
  *     },
  *     {
  *       id: 'blue',
  *       value: 'blue',
  *       label: 'Blue',
  *       default: false,
- *       image: { alt: 'Blue color option', id: 'img_blue', url: 'https://example.com/blue.jpg' }
+ *       image: {
+ *         alt: 'Blue color option',
+ *         id: 'img_blue',
+ *         url: 'https://example.com/blue.jpg'
+ *       }
  *     }
  *   ],
  *   numberOfColumns: 2,
  *   multiple: false,
- *   description: { nodes: [{ type: 'text', text: 'Select your favorite color' }] },
+ *   description: {
+ *     nodes: [{ type: 'text', text: 'Select your favorite color from the options below' }]
+ *   },
  *   onChange: (value) => console.log('Color selection changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ *
+ * // Multiple selection example
+ * const multipleImageChoice: ImageChoiceProps = {
+ *   id: 'preferred-features',
+ *   value: ['feature1', 'feature3'],
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Select Your Preferred Features',
+ *   showLabel: true,
+ *   options: [
+ *     {
+ *       id: 'feature1',
+ *       value: 'feature1',
+ *       label: 'Fast Loading',
+ *       default: false,
+ *       image: {
+ *         alt: 'Fast loading icon',
+ *         id: 'img_fast',
+ *         url: 'https://example.com/fast.jpg'
+ *       }
+ *     },
+ *     {
+ *       id: 'feature2',
+ *       value: 'feature2',
+ *       label: 'Mobile Friendly',
+ *       default: false,
+ *       image: {
+ *         alt: 'Mobile friendly icon',
+ *         id: 'img_mobile',
+ *         url: 'https://example.com/mobile.jpg'
+ *       }
+ *     },
+ *     {
+ *       id: 'feature3',
+ *       value: 'feature3',
+ *       label: 'Secure',
+ *       default: false,
+ *       image: {
+ *         alt: 'Security icon',
+ *         id: 'img_secure',
+ *         url: 'https://example.com/secure.jpg'
+ *       }
+ *     }
+ *   ],
+ *   numberOfColumns: 3,
+ *   multiple: true,
+ *   minItems: 1,
+ *   maxItems: 2,
+ *   description: {
+ *     nodes: [{ type: 'text', text: 'Choose up to 2 features that matter most to you' }]
+ *   },
+ *   onChange: (values) => console.log('Feature selection changed:', values),
  *   onBlur: () => console.log('Field blurred'),
  *   onFocus: () => console.log('Field focused')
  * };
@@ -654,10 +758,9 @@ export interface ImageChoiceProps extends BaseFieldProps {
   showLabel: boolean;
   options: ImageChoiceOption[];
   numberOfColumns: 1 | 2 | 3;
-  multiple?: boolean;
-  minItems?: number;
-  maxItems?: number;
+  multiple: boolean;
   description?: forms.RichContent;
+  imageAspectRatio: 'contain' | 'cover';
 }
 
 /**
@@ -1097,14 +1200,6 @@ export interface AppointmentProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   description?: forms.RichContent;
-}
-
-interface ImageChoiceOption extends ChoiceOption {
-  image: {
-    alt: string | undefined;
-    id: string;
-    url?: string;
-  };
 }
 
 interface ProductOption extends ChoiceOption {
