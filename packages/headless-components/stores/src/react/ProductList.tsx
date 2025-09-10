@@ -1,5 +1,8 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
-import { Sort as SortPrimitive } from '@wix/headless-components/react';
+import {
+  Sort as SortPrimitive,
+  GenericList,
+} from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import type { ProductsListServiceConfig } from '../services/products-list-service.js';
@@ -7,7 +10,6 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import { productsV3 } from '@wix/stores';
 
 import * as CoreProductList from './core/ProductList.js';
-import * as CoreProductListPagination from './core/ProductListPagination.js';
 import { ProductListSort as ProductListSortPrimitive } from './core/ProductListSort.js';
 import * as CoreProductListFilters from './core/ProductListFilters.js';
 import * as Product from './Product.js';
@@ -107,18 +109,32 @@ const RootContent = React.forwardRef<
   const totalProducts = pagingMetadata.count || contextProducts.length;
   const isFiltered = false; // TODO: Implement filtering detection
 
-  const attributes = {
-    'data-testid': TestIds.productListRoot,
-    'data-total-products': totalProducts,
-    'data-displayed-products': displayedProducts,
-    'data-filtered': isFiltered,
-    className,
+  // Map products to GenericList items (ensure id property)
+  const items = contextProducts.map((product) => ({
+    ...product,
+    id: product._id || 'unknown', // Ensure id property for GenericList
+  }));
+
+  // Wrapper for loadMore to match GenericList signature
+  const handleLoadMore = () => {
+    productsListService.loadMore(10); // Default page size
   };
 
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+    <GenericList.Root
+      items={items}
+      onLoadMore={handleLoadMore}
+      hasMore={productsListService.hasMoreProducts.get()}
+      isLoading={productsListService.isLoading.get()}
+      className={className}
+      ref={ref}
+      data-testid={TestIds.productListRoot}
+      data-total-products={totalProducts}
+      data-displayed-products={displayedProducts}
+      data-filtered={isFiltered}
+    >
       {children}
-    </div>
+    </GenericList.Root>
   );
 });
 
@@ -201,26 +217,18 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
       pageSize = 0,
       className,
     } = props;
-    const productsListService = useService(ProductsListServiceDefinition);
-    const products = productsListService.products.get();
-    const hasProducts = products.length > 0;
-
-    if (!hasProducts) {
-      return emptyState || null;
-    }
-
-    const attributes = {
-      'data-testid': TestIds.productListProducts,
-      'data-empty': !hasProducts,
-      'data-infinite-scroll': infiniteScroll,
-      'data-page-size': pageSize,
-      className,
-    };
 
     return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      <GenericList.Items
+        emptyState={emptyState}
+        className={className}
+        ref={ref}
+        data-testid={TestIds.productListProducts}
+        data-infinite-scroll={infiniteScroll}
+        data-page-size={pageSize}
+      >
         {children as React.ReactNode}
-      </div>
+      </GenericList.Items>
     );
   },
 );
@@ -338,33 +346,18 @@ export const LoadMoreTrigger = React.forwardRef<
   } = props;
 
   return (
-    <CoreProductListPagination.LoadMoreTrigger>
-      {({ loadMore, hasMoreProducts, isLoading }) => {
-        // Don't render if no more products to load
-        if (!hasMoreProducts) return null;
-
-        const handleClick = () => loadMore(10);
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            onClick={handleClick}
-            disabled={isLoading}
-            data-testid={TestIds.productListLoadMore}
-            customElement={children}
-            customElementProps={{
-              loadMore,
-              hasMoreProducts,
-              isLoading,
-            }}
-          >
-            <button>{isLoading ? loadingState : label}</button>
-          </AsChildSlot>
-        );
-      }}
-    </CoreProductListPagination.LoadMoreTrigger>
+    <GenericList.LoadMore
+      label={label}
+      loadingLabel={
+        typeof loadingState === 'string' ? loadingState : 'Loading...'
+      }
+      className={className}
+      asChild={asChild}
+      ref={ref}
+      data-testid={TestIds.productListLoadMore}
+    >
+      {typeof children === 'function' ? undefined : children}
+    </GenericList.LoadMore>
   );
 });
 

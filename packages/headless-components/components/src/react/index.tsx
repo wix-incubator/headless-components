@@ -40,3 +40,13 @@ export type {
   QuantityInputProps,
   QuantityResetProps,
 } from './quantity.js';
+
+// GenericList Components
+export * as GenericList from './generic-list.js';
+export type {
+  ListVariant,
+  ListItem,
+  GenericListRootProps,
+  GenericListItemsProps,
+  GenericListLoadMoreProps,
+} from './generic-list.js';
