@@ -18,6 +18,8 @@ export interface RootProps {
  *
  * @order 1
  * @component
+ * @param {React.ReactNode} children - Child components that will have access to form context
+ * @param {FormServiceConfig} formServiceConfig - Configuration object containing form data
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -71,6 +73,8 @@ export interface FormLoadingRenderProps {
  * Headless component for form loading state access
  *
  * @component
+ * @param {FormLoadingProps} props - Component props
+ * @param {FormLoadingProps['children']} props.children - Render prop function that receives loading state
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -122,6 +126,8 @@ export interface FormErrorRenderProps {
  * Headless component for form error state access
  *
  * @component
+ * @param {FormErrorProps} props - Component props
+ * @param {FormErrorProps['children']} props.children - Render prop function that receives error state
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';

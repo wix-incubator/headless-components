@@ -44,7 +44,9 @@ export interface RootProps {
  *
  * @order 1
  * @component
- * @param {FormServiceConfig} formServiceConfig - The form service configuration object
+ * @param {RootProps} props - Component props
+ * @param {React.ReactNode} props.children - Child components that will have access to form context
+ * @param {FormServiceConfig} props.formServiceConfig - The form service configuration object
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -126,6 +128,8 @@ export interface LoadingRenderProps {}
  * Only displays its children when the form is currently loading.
  *
  * @component
+ * @param {LoadingProps} props - Component props
+ * @param {LoadingProps['children']} props.children - Content to display during loading (can be a render function or ReactNode)
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -181,6 +185,8 @@ export interface ErrorRenderProps {
  * Only displays its children when an error has occurred.
  *
  * @component
+ * @param {ErrorProps} props - Component props
+ * @param {ErrorProps['children']} props.children - Content to display during error state (can be a render function or ReactNode)
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -321,8 +327,9 @@ export interface ContainerProps {
  * Must be used within Form.Root to access form context.
  *
  * @component
- * @param {string} formId - The unique identifier of the form to render
- * @param {FieldMap} fieldMap - A mapping of field types to their corresponding React components
+ * @param {ContainerProps} props - Component props
+ * @param {string} props.formId - The unique identifier of the form to render
+ * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -494,6 +501,10 @@ const MockViewer = ({
  * following the compound component pattern: Form.Root, Form.Loading, Form.Error, Form.Container
  *
  * @namespace Form
+ * @property {typeof Root} Root - Form root component that provides service context
+ * @property {typeof Loading} Loading - Form loading state component
+ * @property {typeof Error} Error - Form error state component
+ * @property {typeof Container} Container - Form container component for rendering form fields
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
