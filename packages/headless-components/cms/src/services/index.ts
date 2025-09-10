@@ -2,4 +2,4 @@
  * @file Services index file for CMS package
  */
 
-export {}
+export * from './cms-collection-service.js';
