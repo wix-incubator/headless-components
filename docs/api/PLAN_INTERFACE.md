@@ -14,15 +14,19 @@ The root container that provides plan context to all child components.
 
 **Props**
 ```tsx
-interface PlanRootProps {
+interface PlanServiceConfig {
   plan: Plan;
+}
+
+interface PlanRootProps {
+  planServiceConfig: PlanServiceConfig;
   children: React.ReactNode;
 }
 ```
 
 **Example**
 ```tsx
-<Plan.Root plan={plan}>
+<Plan.Root planServiceConfig={planServiceConfig}>
   {/* All plan components */}
 </Plan.Root>
 ```
@@ -184,8 +188,7 @@ Displays the plan additional fees.
 **Props**
 ```tsx
 interface PlanAdditionalFeesProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ additionalFees: string; }>;
+  children: React.ReactNode;
 }
 ```
 

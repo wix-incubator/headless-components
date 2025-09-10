@@ -41,12 +41,13 @@ interface PlanListPlansProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
   loadingState?: React.ReactNode;
+  errorState?: React.ReactNode;
 }
 ```
 
 **Example**
 ```tsx
-<PlanList.Plans emptyState={<div>No plans found</div>} loadingState={<div>Loading...</div>} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+<PlanList.Plans emptyState={<div>No plans found</div>} loadingState={<div>Loading...</div>} errorState={<div>Error</div>} className="grid grid-cols-1 md:grid-cols-3 gap-4">
   <PlanList.PlanRepeater>
     <Plan.Name />
     <Plan.Price />
