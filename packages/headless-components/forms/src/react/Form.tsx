@@ -5,7 +5,7 @@ import { FormServiceConfig } from '../services/form-service.js';
 import {
   CheckboxGroupProps,
   CheckboxProps,
-  ContactsPhoneProps,
+  PhoneInputProps,
   DateInputProps,
   DatePickerProps,
   DateTimeInputProps,
@@ -27,6 +27,7 @@ import {
   PaymentInputProps,
   DonationProps,
   AppointmentProps,
+  ImageChoiceProps,
 } from './types.js';
 
 /**
@@ -265,7 +266,7 @@ export function Error(props: ErrorProps) {
 interface FieldMap {
   TEXT_INPUT: React.ComponentType<TextInputProps>;
   TEXT_AREA: React.ComponentType<TextAreaProps>;
-  PHONE_INPUT: React.ComponentType<ContactsPhoneProps>;
+  PHONE_INPUT: React.ComponentType<PhoneInputProps>;
   MULTILINE_ADDRESS: React.ComponentType<MultilineAddressProps>;
   DATE_INPUT: React.ComponentType<DateInputProps>;
   DATE_PICKER: React.ComponentType<DatePickerProps>;
@@ -287,7 +288,7 @@ interface FieldMap {
   PAYMENT_INPUT: React.ComponentType<PaymentInputProps>;
   DONATION: React.ComponentType<DonationProps>;
   APPOINTMENT: React.ComponentType<AppointmentProps>;
-  IMAGE_CHOICE: React.ComponentType<unknown>;
+  IMAGE_CHOICE: React.ComponentType<ImageChoiceProps>;
 }
 
 /**

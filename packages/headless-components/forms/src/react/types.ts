@@ -46,7 +46,7 @@ interface BaseCheckboxProps extends BaseFieldProps {
  * Props for contacts phone field.
  * Used with fieldMap key: CONTACTS_PHONE
  *
- * @interface ContactsPhoneProps
+ * @interface PhoneInputProps
  *
  * @property {string} id - The unique identifier for the form field
  * @property {string | null | undefined} value - The current value of the form field
@@ -65,7 +65,7 @@ interface BaseCheckboxProps extends BaseFieldProps {
  *
  * @example
  * ```tsx
- * const phoneField: ContactsPhoneProps = {
+ * const phoneField: PhoneInputProps = {
  *   id: 'phone',
  *   value: '+1-555-123-4567',
  *   required: true,
@@ -82,7 +82,7 @@ interface BaseCheckboxProps extends BaseFieldProps {
  * };
  * ```
  */
-export interface ContactsPhoneProps extends BaseTextFieldProps {
+export interface PhoneInputProps extends BaseTextFieldProps {
   allowedCountryCodes: CallingCountryCode[];
   defaultCountryCode?: CallingCountryCode;
 }
@@ -591,6 +591,76 @@ export interface TagsProps extends BaseFieldProps {
 }
 
 /**
+ * Props for image choice field.
+ * Field allows users to select one or multiple options by clicking on images.
+ * Used with fieldMap key: IMAGE_CHOICE
+ *
+ * @interface ImageChoiceProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | string[] | null | undefined} value - The current value(s) of the image choice field (selected option value(s))
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {ImageChoiceOption[]} options - Array of image choice options with id, value, label, default, and image properties
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
+ * @property {boolean} [multiple] - Whether multiple selections are allowed (defaults to false for single selection)
+ * @property {number} [minItems] - Minimum number of items that must be selected (only applicable when multiple is true)
+ * @property {number} [maxItems] - Maximum number of items that can be selected (only applicable when multiple is true)
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the image choice value(s) change
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const imageChoiceField: ImageChoiceProps = {
+ *   id: 'preferred-color',
+ *   value: 'red',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Choose Your Preferred Color',
+ *   showLabel: true,
+ *   options: [
+ *     {
+ *       id: 'red',
+ *       value: 'red',
+ *       label: 'Red',
+ *       default: false,
+ *       image: { alt: 'Red color option', id: 'img_red', url: 'https://example.com/red.jpg' }
+ *     },
+ *     {
+ *       id: 'blue',
+ *       value: 'blue',
+ *       label: 'Blue',
+ *       default: false,
+ *       image: { alt: 'Blue color option', id: 'img_blue', url: 'https://example.com/blue.jpg' }
+ *     }
+ *   ],
+ *   numberOfColumns: 2,
+ *   multiple: false,
+ *   description: { nodes: [{ type: 'text', text: 'Select your favorite color' }] },
+ *   onChange: (value) => console.log('Color selection changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ImageChoiceProps extends BaseFieldProps {
+  value: string | string[] | null | undefined;
+  label: string;
+  showLabel: boolean;
+  options: ImageChoiceOption[];
+  numberOfColumns: 1 | 2 | 3;
+  multiple?: boolean;
+  minItems?: number;
+  maxItems?: number;
+  description?: forms.RichContent;
+}
+
+/**
  * Props for date input field.
  * Used with fieldMap key: DATE_INPUT
  * The field MUST render 3 separate number inputs on the UI for day, month and year.
@@ -1027,6 +1097,14 @@ export interface AppointmentProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   description?: forms.RichContent;
+}
+
+interface ImageChoiceOption extends ChoiceOption {
+  image: {
+    alt: string | undefined;
+    id: string;
+    url?: string;
+  };
 }
 
 interface ProductOption extends ChoiceOption {

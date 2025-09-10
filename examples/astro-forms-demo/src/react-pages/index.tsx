@@ -26,6 +26,7 @@ import FixedPayment from '../components/FixedPayment';
 import PaymentInput from '../components/PaymentInput';
 import Donation from '../components/Donation';
 import Appointment from '../components/Appointment';
+import ImageChoice from '../components/ImageChoice';
 
 interface FormsPageProps {
   formServiceConfig: FormServiceConfig;
@@ -57,7 +58,7 @@ const FIELD_MAP = {
   PAYMENT_INPUT: PaymentInput,
   DONATION: Donation,
   APPOINTMENT: Appointment,
-  IMAGE_CHOICE: () => <div>Image Choice (TODO: implement)</div>,
+  IMAGE_CHOICE: ImageChoice,
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
