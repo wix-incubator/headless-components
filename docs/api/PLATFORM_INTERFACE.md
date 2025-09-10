@@ -822,7 +822,7 @@ Container for list components that provides data context and manages list state.
 
 ```tsx
 /** List display variants */
-export type ListVariant = 'list' | 'table' | 'grid';
+export type ListVariant = 'list' | 'grid';
 
 /** List item interface - generic item with id */
 export interface ListItem {
@@ -857,7 +857,7 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
 **Data Attributes**
 
 - `data-testid="generic-list-root"` - Applied to root container
-- `data-variant` - Current display variant ('list', 'table', 'grid')
+- `data-variant` - Current display variant ('list', 'grid')
 - `data-has-items` - Boolean indicating if items are present
 - `data-is-loading` - Boolean indicating loading state
 - `data-has-more` - Boolean indicating if more items can be loaded
@@ -887,7 +887,7 @@ export function ProductListRoot({ children }: { children: React.ReactNode }) {
   onLoadMore={handleLoadMore}
   hasMore={hasMore}
   isLoading={isLoading}
-  variant="table"
+  variant="list"
   asChild
 >
   <div className="custom-list-container">
@@ -1011,44 +1011,6 @@ GenericList.Root (Provider & Data Manager)
 └── GenericList.LoadMore (Load more button)
 ```
 
-#### 1. **Platform Agnostic**
-
-- Works with any data source or API
-- No assumptions about data fetching or state management
-- Compatible with various pagination strategies (offset, cursor, infinite scroll)
-
-#### 2. **Variant-Based Layout**
-
-- **List Variant**: Vertical stack layout (default)
-- **Table Variant**: Structured table layout with headers
-- **Grid Variant**: Grid-based layout for cards/tiles
-- Variants affect styling hints, not functionality
-
-#### 3. **Flexible Data Patterns**
-
-- **Load More Pattern**: Infinite scroll or click-to-load more items
-- **Pagination Pattern**: Traditional page-based navigation
-- **Hybrid Pattern**: Support both patterns simultaneously
-
-#### 4. **Context-Driven Data Flow**
-
-- GenericListContext provides items array and pagination state
-- ItemContext provides individual item data to templates
-- Automatic loading state management and button disable/enable
-
-#### 5. **AsChild Pattern Throughout**
-
-- All components support `asChild` for custom DOM structure
-- Enables complete visual customization while preserving functionality
-- Uses Radix Slot for proper prop forwarding
-
-#### 6. **Vertical Integration Strategy**
-
-- **Internal Usage**: Designed to be used internally by vertical-specific components (ProductList, CategoryList, etc.)
-- **Service Integration**: Vertical components wrap GenericList and provide service-specific data
-- **API Preservation**: Vertical components maintain their existing APIs while using GenericList under the hood
-- **Non-Breaking Migration**: Existing consumers see no changes during internal refactoring
-
 ### Integration Examples
 
 #### Internal Usage by Vertical Components
@@ -1141,99 +1103,6 @@ export const ProductListLoadMoreTrigger = React.forwardRef<
   <GenericList.LoadMore />
 </GenericList.Root>
 ```
-
-### Migration Strategy
-
-The GenericList components are designed to enable a **non-breaking internal refactoring** of existing vertical components:
-
-#### **Phase 0: API Documentation**
-
-- Document GenericList API aligned with vertical component usage patterns
-- Define integration strategy and component mapping
-- Establish migration phases and success criteria
-
-#### **Phase 1: GenericList Implementation**
-
-- Implement GenericList.Root, GenericList.Items, GenericList.LoadMore components
-- Add comprehensive tests covering all use cases
-- Ensure compatibility with existing vertical service patterns
-
-#### **Phase 2: Internal Migration (Non-Breaking)**
-
-- Migrate ProductList components to use GenericList internally
-- Maintain exact same external APIs and behavior
-- Preserve all existing props, data attributes, and functionality
-- Validate no behavioral changes through comprehensive testing
-
-#### **Phase 3: Validation & Testing**
-
-- Run full regression tests on ProductList functionality
-- Verify performance characteristics remain the same
-- Confirm accessibility and UX patterns unchanged
-- Test edge cases and error scenarios
-
-#### **Phase 4: Extension to Other Verticals**
-
-- Apply same migration pattern to CategoryList, BlogList, etc.
-- Leverage shared GenericList optimizations across all list implementations
-- Consolidate common list patterns and behaviors
-
-#### **Component Mapping Strategy**
-
-Each vertical component maps to GenericList components while preserving its unique API:
-
-| **Vertical Component**        | **Maps To**            | **Service Integration**                        |
-| ----------------------------- | ---------------------- | ---------------------------------------------- |
-| `ProductList.Root`            | `GenericList.Root`     | `productsListService.products.get()` → `items` |
-| `ProductList.Products`        | `GenericList.Items`    | Preserves `emptyState` prop                    |
-| `ProductList.LoadMoreTrigger` | `GenericList.LoadMore` | `productsListService.loadMore` → `onLoadMore`  |
-| `CategoryList.Root`           | `GenericList.Root`     | `categoryService.categories.get()` → `items`   |
-| `BlogList.Root`               | `GenericList.Root`     | `blogService.posts.get()` → `items`            |
-
-#### **Data Flow Integration**
-
-```tsx
-// ProductList service data maps directly to GenericList props
-const serviceToGenericListProps = {
-  items: productsListService.products.get(),
-  onLoadMore: productsListService.loadMore,
-  hasMore: productsListService.hasMoreProducts.get(),
-  isLoading: productsListService.isLoading.get(),
-};
-
-// Vertical-specific props are preserved
-const verticalSpecificProps = {
-  emptyState: props.emptyState, // ProductList.Products specific
-  infiniteScroll: props.infiniteScroll, // ProductList.Products specific
-  pageSize: props.pageSize, // ProductList.Products specific
-};
-```
-
-#### **Benefits of This Strategy**
-
-1. **Zero Breaking Changes**: Consumers continue using existing APIs
-2. **Incremental Adoption**: Each vertical can migrate independently
-3. **Shared Optimizations**: Performance improvements benefit all list types
-4. **Consistent Behavior**: All list components follow same patterns
-5. **Reduced Maintenance**: Bug fixes and features implemented once in GenericList
-
-### Performance Considerations
-
-- **Virtualization Ready**: Structure supports virtual scrolling implementations
-- **Memoized Rendering**: Item templates are automatically memoized by key
-- **Lazy Loading**: Supports progressive loading patterns
-- **Context Optimization**: Minimal context re-renders with focused state updates
-- **Shared Logic**: Common list operations implemented once and reused
-
-### TestIds Convention
-
-Following the established pattern:
-
-- **Container Level**: `generic-list-root`
-- **Items Container**: `generic-list-items`
-- **Repeater Level**: `generic-list-item-repeater`
-- **Individual Items**: `generic-list-item`
-- **Navigation**: `generic-list-load-more`, `generic-list-pagination-next`, etc.
 
 ---
 
