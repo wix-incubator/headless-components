@@ -29,7 +29,6 @@ import {
   AppointmentProps,
 } from './types.js';
 
-
 /**
  * Props for the Form root component following the documented API
  */
@@ -41,9 +40,11 @@ export interface RootProps {
 /**
  * Root component that provides all necessary service contexts for a complete form experience.
  * This component sets up the Form service and provides context to child components.
+ * Must be used as the top-level component for all form functionality.
  *
  * @order 1
  * @component
+ * @param {forms.Form} form - The form configuration object
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -58,6 +59,20 @@ export interface RootProps {
  * function FormPage({ form }) {
  *   return (
  *     <Form.Root form={form}>
+ *       <Form.Loading>
+ *         {() => (
+ *           <div className="flex justify-center p-4">
+ *             <div>Loading form...</div>
+ *           </div>
+ *         )}
+ *       </Form.Loading>
+ *       <Form.Error>
+ *         {({ error }) => (
+ *           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+ *             {error}
+ *           </div>
+ *         )}
+ *       </Form.Error>
  *       <Form.Container fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
@@ -71,6 +86,116 @@ export function Root(props: RootProps): React.ReactNode {
     <CoreForm.Root formServiceConfig={{ form: props.form }}>
       {children}
     </CoreForm.Root>
+  );
+}
+
+/**
+ * Props for Form Loading component
+ */
+export interface LoadingProps {
+  /** Content to display during loading (can be a render function or ReactNode) */
+  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for Loading component
+ */
+export interface LoadingRenderProps {}
+
+/**
+ * Component that renders content during loading state.
+ * Only displays its children when the form is currently loading.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormLoading() {
+ *   return (
+ *     <Form.Loading>
+ *       {() => (
+ *         <div className="loading-spinner">
+ *           <div>Loading form...</div>
+ *           <div className="spinner"></div>
+ *         </div>
+ *       )}
+ *     </Form.Loading>
+ *   );
+ * }
+ * ```
+ */
+export function Loading(props: LoadingProps) {
+  return (
+    <CoreForm.Loading>
+      {({ isLoading }) => {
+        if (isLoading) {
+          return typeof props.children === 'function'
+            ? props.children({})
+            : props.children;
+        }
+
+        return null;
+      }}
+    </CoreForm.Loading>
+  );
+}
+
+/**
+ * Props for Form Error component
+ */
+export interface ErrorProps {
+  /** Content to display during error state (can be a render function or ReactNode) */
+  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for Error component
+ */
+export interface ErrorRenderProps {
+  /** Error message */
+  error: string | null;
+}
+
+/**
+ * Component that renders content when there's an error loading the form.
+ * Only displays its children when an error has occurred.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormError() {
+ *   return (
+ *     <Form.Error>
+ *       {({ error }) => (
+ *         <div className="error-state">
+ *           <h3>Error loading form</h3>
+ *           <p>{error}</p>
+ *           <button onClick={() => window.location.reload()}>
+ *             Try Again
+ *           </button>
+ *         </div>
+ *       )}
+ *     </Form.Error>
+ *   );
+ * }
+ * ```
+ */
+export function Error(props: ErrorProps) {
+  return (
+    <CoreForm.Error>
+      {({ error, hasError }) => {
+        if (hasError) {
+          return typeof props.children === 'function'
+            ? props.children({ error })
+            : props.children;
+        }
+
+        return null;
+      }}
+    </CoreForm.Error>
   );
 }
 
@@ -174,11 +299,11 @@ export interface ContainerProps {
 /**
  * Container component for rendering a form with custom field renderers.
  * This component handles the rendering of form fields based on the provided fieldMap.
+ * Must be used within Form.Root to access form context.
  *
  * @component
  * @param {string} formId - The unique identifier of the form to render
  * @param {FieldMap} fieldMap - A mapping of field types to their corresponding React components
- *
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -195,6 +320,20 @@ export interface ContainerProps {
  * function ContactForm({ form }) {
  *   return (
  *     <Form.Root form={form}>
+ *       <Form.Loading>
+ *         {() => (
+ *           <div className="flex justify-center p-4">
+ *             <div>Loading form...</div>
+ *           </div>
+ *         )}
+ *       </Form.Loading>
+ *       <Form.Error>
+ *         {({ error }) => (
+ *           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+ *             {error}
+ *           </div>
+ *         )}
+ *       </Form.Error>
  *       <Form.Container
  *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
  *         fieldMap={FIELD_MAP}
