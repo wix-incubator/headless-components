@@ -22,6 +22,7 @@ interface BaseFieldProps {
   id: string;
   required: boolean;
   readOnly: boolean;
+  error: string | undefined;
   onChange: (value: unknown) => void;
   onBlur: () => void;
   onFocus: () => void;
@@ -57,6 +58,7 @@ interface BaseCheckboxProps extends BaseFieldProps {
  * @property {forms.RichContent} [description] - Optional rich content description for the field
  * @property {CallingCountryCode[]} [allowedCountryCodes] - Optional array of allowed country codes for phone number validation
  * @property {CallingCountryCode} [defaultCountryCode] - Optional default country code to pre-select
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -119,6 +121,7 @@ type MultilineAddressValue = {
  * @property {function} onFocus - Callback function called when the field gains focus
  * @property {boolean} showAddressLine2 - Whether to show the address line 2 field
  * @property {boolean} addressLine2Required - Whether the address line 2 field is required
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  *
  * @example
  * ```tsx
@@ -160,6 +163,7 @@ export interface MultilineAddressProps extends BaseFieldProps {
  * @property {forms.RichContent} [description] - Optional rich content description for the field
  * @property {number} [minLength] - Optional minimum number of characters required
  * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -202,6 +206,7 @@ export interface TextAreaProps extends BaseTextFieldProps, MinMaxLengthProps {}
  * @property {forms.RichContent} [description] - Optional rich content description for the field
  * @property {number} [minLength] - Optional minimum number of characters required
  * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -242,6 +247,7 @@ export interface TextInputProps extends BaseTextFieldProps, MinMaxLengthProps {}
  * @property {boolean} showLabel - Whether to display the field label
  * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -284,6 +290,7 @@ export interface NumberInputProps extends BaseFieldProps {
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} label - The display label for the form field
  * @property {boolean} defaultValue - The default checked state for the checkbox
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -351,6 +358,7 @@ type FileFormat = 'Video' | 'Image' | 'Audio' | 'Document' | 'Archive';
  * @property {number} [maxFiles] - Optional maximum number of files allowed
  * @property {FileFormat[]} [allowedFileFormats] - Optional array of allowed file format extensions (e.g., [".pdf", ".doc", ".docx"])
  * @property {string} [explanationText] - Optional explanatory text to display below the upload area
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -401,6 +409,7 @@ export interface FileUploadProps extends BaseFieldProps {
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {boolean} imageUploadEnabled - Whether image upload functionality is enabled for the signature field
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the signature value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -428,6 +437,7 @@ export interface SignatureProps extends BaseFieldProps {
  * @property {boolean} required - Whether the field is required for form submission
  * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the rating value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -459,6 +469,7 @@ export interface RatingInputProps extends BaseFieldProps {
  * @property {string} customOption.label - Label for the custom option radio button
  * @property {string} customOption.placeholder - Placeholder text for the custom option input
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the radio group value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -494,6 +505,7 @@ export interface RadioGroupProps extends BaseFieldProps {
  * @property {number} [minItems] - Minimum number of items that must be selected
  * @property {number} [maxItems] - Maximum number of items that can be selected
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the checkbox group values change
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -526,6 +538,7 @@ export interface CheckboxGroupProps extends BaseFieldProps {
  * @property {ChoiceOption[]} options - Array of dropdown options with id, value, label, and default properties
  * @property {string} [placeholder] - Placeholder text for the dropdown when no option is selected
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the dropdown value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -560,6 +573,7 @@ export interface DropdownProps extends BaseFieldProps {
  * @property {number} [minItems] - Minimum number of tags that must be selected
  * @property {number} [maxItems] - Maximum number of tags that can be selected
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the tags values change
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -593,6 +607,7 @@ export interface TagsProps extends BaseFieldProps {
  * @property {boolean} showPlaceholder - Whether to show placeholder text for the date inputs
  * @property {'SUNDAY' | 'MONDAY'} [firstDayOfWeek] - The first day of the week for date calculations (defaults to 'SUNDAY')
  * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -642,6 +657,7 @@ export interface DateInputProps extends BaseFieldProps {
  * @property {string} [placeholder] - Placeholder text for the date picker input
  * @property {'SUNDAY' | 'MONDAY'} [firstDayOfWeek] - The first day of the week for the calendar (defaults to 'SUNDAY')
  * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -692,6 +708,7 @@ export interface DatePickerProps extends BaseFieldProps {
  * @property {boolean} showPlaceholder - Whether to show placeholder text in the inputs
  * @property {boolean} use24HourFormat - Whether to use 24-hour format for time input (defaults to true)
  * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -742,6 +759,7 @@ export interface DateTimeInputProps extends BaseFieldProps {
  * @property {boolean} showLabel - Whether to display the field label
  * @property {boolean} showPlaceholder - Whether to show placeholder text in the input
  * @property {boolean} use24HourFormat - Whether to use 24-hour format for time input (defaults to true)
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function callezqd when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -877,6 +895,7 @@ export interface FixedPaymentProps {
  * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
  * @property {string} minValue - Minimum payment amount as string
  * @property {string} [maxValue] - Optional maximum payment amount as string
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -932,6 +951,7 @@ export interface PaymentInputProps extends BaseFieldProps {
  * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
  * @property {string[]} options - Array of predefined donation amounts
  * @property {CustomOption} [customOption] - Optional configuration for custom donation amount input
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -981,6 +1001,7 @@ export interface DonationProps extends BaseFieldProps {
  * @property {string} label - The display label for the form field
  * @property {boolean} showLabel - Whether to display the field label
  * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the appointment value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
@@ -1042,6 +1063,7 @@ interface ProductValue {
  * @property {number | undefined} minItems - Optional minimum number of products that must be selected
  * @property {number | undefined} maxItems - Optional maximum number of products that can be selected
  * @property {string} currency - The price currency symbol
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
  * @property {function} onChange - Callback function called when the field value changes
  * @property {function} onBlur - Callback function called when the field loses focus
  * @property {function} onFocus - Callback function called when the field gains focus
