@@ -1,4 +1,4 @@
-import { defineService, implementService, type ServiceFactoryConfig } from '@wix/services-definitions';
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
@@ -34,11 +34,27 @@ export const CmsCollectionServiceDefinition = defineService<{
 }>('CmsCollection');
 
 /**
+ * Shared function to load collection items from Wix Data
+ */
+const loadCollectionItems = async (
+  collectionId: string,
+): Promise<WixDataItem[]> => {
+  if (!collectionId) {
+    throw new Error('No collection ID provided');
+  }
+
+  const result = await items.query(collectionId).find();
+  return result.items;
+};
+
+/**
  * Configuration interface required to initialize the CmsCollectionService.
  */
 export interface CmsCollectionServiceConfig {
   /** The collection ID to load items from */
   collectionId: string;
+  /** Optional pre-loaded collection items to initialize the service with */
+  collection?: WixDataItem[];
 }
 
 /**
@@ -50,35 +66,44 @@ export const CmsCollectionServiceImplementation =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const itemsSignal = signalsService.signal<WixDataItem[]>([]);
+      // Initialize with pre-loaded collection if provided
+      const itemsSignal = signalsService.signal<WixDataItem[]>(
+        config.collection || [],
+      );
       const loadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
 
       const loadItems = async () => {
-        if (!config.collectionId) {
-          errorSignal.set('No collection ID provided');
-          return;
-        }
-
         loadingSignal.set(true);
         errorSignal.set(null);
 
         try {
-          const result = await items.query(config.collectionId).find();
-          itemsSignal.set(result.items);
+          const collectionItems = await loadCollectionItems(
+            config.collectionId,
+          );
+          itemsSignal.set(collectionItems);
         } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Failed to load collection items';
+          const errorMessage =
+            err instanceof Error
+              ? err.message
+              : 'Failed to load collection items';
           errorSignal.set(errorMessage);
-          console.error(`Failed to load items from collection "${config.collectionId}":`, err);
+          console.error(
+            `Failed to load items from collection "${config.collectionId}":`,
+            err,
+          );
         } finally {
           loadingSignal.set(false);
         }
       };
 
-      // Auto-load items on service initialization
-      loadItems();
+      // Auto-load items on service initialization only if not pre-loaded
+      if (!config.collection) {
+        loadItems();
+      }
 
       return {
+        loadItems,
         itemsSignal,
         loadingSignal,
         errorSignal,
@@ -89,9 +114,9 @@ export const CmsCollectionServiceImplementation =
 /**
  * Result type for loading CMS collection service configuration.
  */
-export type CmsCollectionServiceConfigResult =
-  | { type: 'success'; config: CmsCollectionServiceConfig }
-  | { type: 'notFound' };
+export type CmsCollectionServiceConfigResult = {
+  [CmsCollectionServiceDefinition]: CmsCollectionServiceConfig;
+};
 
 /**
  * Loads initial data for the CMS Collection service.
@@ -101,36 +126,42 @@ export const loadCmsCollectionServiceInitialData = async (
 ): Promise<CmsCollectionServiceConfigResult> => {
   try {
     if (!collectionId) {
-      return { type: 'notFound' };
+      throw new Error('No collection ID provided');
     }
 
-    // Return config object keyed by service definition (following README pattern)
+    // Load collection items on the server using shared function
+    const collection = await loadCollectionItems(collectionId);
+
     return {
-      type: 'success',
-      config: { collectionId },
+      [CmsCollectionServiceDefinition]: {
+        collectionId,
+        collection,
+      },
     };
   } catch (error) {
-    console.error(`Failed to load collection config for "${collectionId}":`, error);
-    return { type: 'notFound' };
+    console.error(
+      `Failed to load collection config for "${collectionId}":`,
+      error,
+    );
+    throw error; // Re-throw to let caller handle 404 logic
   }
 };
 
 /**
  * Service binding helper that bundles everything together for the service manager.
- * Function name follows pattern: [serviceName]ServiceBinding
  */
 export const cmsCollectionServiceBinding = <
   T extends {
-    [key: string]: CmsCollectionServiceConfig;
-  }
+    [key: string]: Awaited<
+      ReturnType<typeof loadCmsCollectionServiceInitialData>
+    >[typeof CmsCollectionServiceDefinition];
+  },
 >(
-  servicesConfigs: T
+  servicesConfigs: T,
 ) => {
   return [
     CmsCollectionServiceDefinition,
     CmsCollectionServiceImplementation,
-    servicesConfigs[CmsCollectionServiceDefinition] as ServiceFactoryConfig<
-      typeof CmsCollectionServiceImplementation
-    >,
+    servicesConfigs[CmsCollectionServiceDefinition],
   ] as const;
 };

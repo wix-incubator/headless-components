@@ -5,7 +5,7 @@ import {
   CmsCollectionServiceConfig,
   CmsCollectionServiceImplementation,
   type WixDataItem,
-} from '../../services/cms-collection-service.js';
+} from '../../services/cms-collection-service';
 import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
@@ -14,30 +14,8 @@ export interface RootProps {
 }
 
 /**
- * Root component that provides the CMS Collection service context to its children.
+ * Core Root component that provides the CMS Collection service context to its children.
  * This component sets up the necessary services for rendering and managing collection data.
- *
- * @component
- * @example
- * ```tsx
- * import { CmsCollection } from '@wix/cms/components';
- *
- * function CollectionPage() {
- *   return (
- *     <CmsCollection.Root collectionServiceConfig={{ collectionId: 'MyCollection' }}>
- *       <CmsCollection.Items>
- *         {({ items, isLoading, error }) => (
- *           <div>
- *             {error && <div>Error: {error}</div>}
- *             {isLoading && <div>Loading...</div>}
- *             {items.map(item => <div key={item._id}>{item.title}</div>)}
- *           </div>
- *         )}
- *       </CmsCollection.Items>
- *     </CmsCollection.Root>
- *   );
- * }
- * ```
  */
 export function Root(props: RootProps): React.ReactNode {
   return (
@@ -74,32 +52,8 @@ export interface ItemsRenderProps {
 }
 
 /**
- * Headless component for collection items display with loading and error states
- *
- * @component
- * @example
- * ```tsx
- * import { CmsCollection } from '@wix/cms/components';
- *
- * function CollectionItemsView() {
- *   return (
- *     <CmsCollection.Items>
- *       {({ items, isLoading, error }) => (
- *         <div>
- *           {error && <div>Error: {error}</div>}
- *           {isLoading && <div>Loading...</div>}
- *           {!isLoading && !error && items.length === 0 && <div>No items found</div>}
- *           {items.map(item => (
- *             <div key={item._id}>{item.title}</div>
- *           ))}
- *         </div>
- *       )}
- *     </CmsCollection.Items>
- *   );
- * }
- * ```
+ * Core headless component for collection items display with loading and error states
  */
-// TODO: this is just for POC, need to update to follow real design
 export function Items(props: ItemsProps) {
   const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
     typeof CmsCollectionServiceDefinition

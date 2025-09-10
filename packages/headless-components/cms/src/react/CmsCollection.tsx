@@ -1,43 +1,15 @@
 import React from 'react';
-import * as CoreCmsCollection from './core/CmsCollection.js';
+import * as CoreCmsCollection from './core/CmsCollection';
 import {
   CmsCollectionServiceDefinition,
   type CmsCollectionServiceConfig,
   type WixDataItem,
-} from '../services/cms-collection-service.js';
+} from '../services/cms-collection-service';
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 
-/**
- * Context for sharing collection state between components
- */
-interface CmsCollectionContextValue {
-  items: WixDataItem[];
-  isLoading: boolean;
-  error: string | null;
-  hasItems: boolean;
-}
-
-const CmsCollectionContext = React.createContext<CmsCollectionContextValue | null>(null);
-
-/**
- * Hook to access CMS collection context
- */
-function useCmsCollectionContext(): CmsCollectionContextValue {
-  const context = React.useContext(CmsCollectionContext);
-  if (!context) {
-    throw new Error(
-      'useCmsCollectionContext must be used within a CmsCollection.Root component',
-    );
-  }
-  return context;
-}
-
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
-  cmsCollectionItems = 'cms-collection-items',
-  cmsCollectionItemRepeater = 'cms-collection-item-repeater',
-  cmsCollectionItem = 'cms-collection-item',
 }
 
 /**
@@ -51,8 +23,30 @@ export interface RootProps {
 }
 
 /**
- * Root component that provides the CMS Collection context to its children.
- * Sets up the collection data and makes it available to child components.
+ * Root component that provides the CMS Collection service context to its children.
+ * This component sets up the necessary services for rendering and managing collection data.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * function CollectionPage() {
+ *   return (
+ *     <CmsCollection.Root collection={{ id: 'MyCollection' }}>
+ *       <CmsCollection.Items>
+ *         {({ items, isLoading, error }) => (
+ *           <div>
+ *             {error && <div>Error: {error}</div>}
+ *             {isLoading && <div>Loading...</div>}
+ *             {items.map(item => <div key={item._id}>{item.title}</div>)}
+ *           </div>
+ *         )}
+ *       </CmsCollection.Items>
+ *     </CmsCollection.Root>
+ *   );
+ * }
+ * ```
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   (props, ref) => {
@@ -62,25 +56,68 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       collectionId: collection.id,
     };
 
+    const attributes = {
+      'data-testid': TestIds.cmsCollectionRoot,
+      'data-collection-id': collection.id,
+    };
+
     return (
       <CoreCmsCollection.Root collectionServiceConfig={collectionServiceConfig}>
-        <CmsCollectionContextProvider collectionId={collection.id} ref={ref}>
+        <div {...attributes} ref={ref}>
           {children}
-        </CmsCollectionContextProvider>
+        </div>
       </CoreCmsCollection.Root>
     );
   },
 );
 
 /**
- * Internal context provider component that wraps the service data for composed components
+ * Props for CmsCollection.Items headless component
  */
-const CmsCollectionContextProvider = React.forwardRef<
-  HTMLDivElement,
-  { children: React.ReactNode; collectionId: string }
->((props, ref) => {
-  const { children, collectionId } = props;
+export interface ItemsProps {
+  /** Render prop function that receives collection items data */
+  children: (props: ItemsRenderProps) => React.ReactNode;
+}
 
+/**
+ * Render props for CmsCollection.Items component
+ */
+export interface ItemsRenderProps {
+  /** Array of collection items */
+  items: WixDataItem[];
+  /** Whether the collection is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
+}
+
+/**
+ * Headless component for collection items display with loading and error states
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * function CollectionItemsView() {
+ *   return (
+ *     <CmsCollection.Items>
+ *       {({ items, isLoading, error }) => (
+ *         <div>
+ *           {error && <div>Error: {error}</div>}
+ *           {isLoading && <div>Loading...</div>}
+ *           {!isLoading && !error && items.length === 0 && <div>No items found</div>}
+ *           {items.map(item => (
+ *             <div key={item._id}>{item.title}</div>
+ *           ))}
+ *         </div>
+ *       )}
+ *     </CmsCollection.Items>
+ *   );
+ * }
+ * ```
+ */
+export function Items(props: ItemsProps) {
   const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
     typeof CmsCollectionServiceDefinition
   >;
@@ -88,209 +125,10 @@ const CmsCollectionContextProvider = React.forwardRef<
   const items = service.itemsSignal.get();
   const isLoading = service.loadingSignal.get();
   const error = service.errorSignal.get();
-  const hasItems = items.length > 0;
 
-  const contextValue: CmsCollectionContextValue = {
+  return props.children({
     items,
     isLoading,
     error,
-    hasItems,
-  };
-
-  const attributes = {
-    'data-testid': TestIds.cmsCollectionRoot,
-    'data-collection-id': collectionId,
-    'data-has-items': hasItems,
-    'data-loading': isLoading,
-    'data-error': Boolean(error),
-  };
-
-  return (
-    <CmsCollectionContext.Provider value={contextValue}>
-      <div {...attributes} ref={ref}>
-        {children}
-      </div>
-    </CmsCollectionContext.Provider>
-  );
-});
-
-/**
- * Props for CmsCollection.Items component
- */
-export interface ItemsProps {
-  children: React.ReactNode;
-  emptyState?: React.ReactNode;
-  className?: string;
-}
-
-/**
- * Container for the collection items with empty state support.
- * Renders emptyState when no items are available, otherwise renders children.
- */
-export const Items = React.forwardRef<HTMLDivElement, ItemsProps>(
-  (props, ref) => {
-    const { children, emptyState, className } = props;
-    const { hasItems, isLoading } = useCmsCollectionContext();
-
-    const attributes = {
-      'data-testid': TestIds.cmsCollectionItems,
-      'data-empty': !hasItems && !isLoading,
-      className,
-    };
-
-    if (!hasItems && !isLoading) {
-      return emptyState || null;
-    }
-
-    return (
-      <div {...attributes} ref={ref}>
-        {children}
-      </div>
-    );
-  },
-);
-
-/**
- * Props for CmsCollection.ItemRepeater component
- */
-export interface ItemRepeaterProps {
-  children: React.ReactNode;
-}
-
-/**
- * Repeater component that renders children for each collection item.
- * Maps over items and provides CmsCollectionItem.Root for each.
- */
-export const ItemRepeater = React.forwardRef<HTMLElement, ItemRepeaterProps>(
-  (props, _ref) => {
-    const { children } = props;
-    const { hasItems, items } = useCmsCollectionContext();
-
-    if (!hasItems) return null;
-
-    return (
-      <>
-        {items.map((item: WixDataItem) => (
-          <CmsCollectionItem.Root
-            key={item._id}
-            item={item}
-            data-testid={TestIds.cmsCollectionItem}
-          >
-            {children}
-          </CmsCollectionItem.Root>
-        ))}
-      </>
-    );
-  },
-);
-
-/**
- * Context for sharing individual item data between components
- */
-interface CmsCollectionItemContextValue {
-  item: WixDataItem;
-}
-
-const CmsCollectionItemContext = React.createContext<CmsCollectionItemContextValue | null>(null);
-
-/**
- * Hook to access CMS collection item context
- */
-function useCmsCollectionItemContext(): CmsCollectionItemContextValue {
-  const context = React.useContext(CmsCollectionItemContext);
-  if (!context) {
-    throw new Error(
-      'useCmsCollectionItemContext must be used within a CmsCollectionItem.Root component',
-    );
-  }
-  return context;
-}
-
-/**
- * CmsCollectionItem namespace for individual item components
- */
-export namespace CmsCollectionItem {
-  /**
-   * Props for CmsCollectionItem.Root component
-   */
-  export interface RootProps {
-    children: React.ReactNode;
-    item: WixDataItem;
-    'data-testid'?: string;
-  }
-
-  /**
-   * Root component for individual collection items.
-   * Provides item context to child components.
-   */
-  export const Root = React.forwardRef<HTMLDivElement, RootProps>(
-    (props, ref) => {
-      const { children, item, ...attributes } = props;
-
-      const contextValue: CmsCollectionItemContextValue = {
-        item,
-      };
-
-      return (
-        <CmsCollectionItemContext.Provider value={contextValue}>
-          <div {...attributes} ref={ref}>
-            {children}
-          </div>
-        </CmsCollectionItemContext.Provider>
-      );
-    },
-  );
-
-  /**
-   * Props for CmsCollectionItem.Field component
-   */
-  export interface FieldProps {
-    field: string;
-    className?: string;
-    fallback?: React.ReactNode;
-  }
-
-  /**
-   * Component for rendering individual item fields.
-   * Displays the value of the specified field from the current item.
-   */
-  export const Field = React.forwardRef<HTMLDivElement, FieldProps>(
-    (props, ref) => {
-      const { field, className, fallback } = props;
-      const { item } = useCmsCollectionItemContext();
-
-      const value = item[field];
-      const displayValue = value != null ? String(value) : fallback;
-
-      const attributes = {
-        'data-testid': `cms-collection-item-field-${field}`,
-        'data-field': field,
-        className,
-      };
-
-      return (
-        <div {...attributes} ref={ref}>
-          {displayValue}
-        </div>
-      );
-    },
-  );
-
-  /**
-   * Props for CmsCollectionItem.Raw component
-   */
-  export interface RawProps {
-    children: (item: WixDataItem) => React.ReactNode;
-  }
-
-  /**
-   * Raw component that provides direct access to the item data via render prop.
-   * Use this when you need custom rendering logic that doesn't fit the standard patterns.
-   */
-  export const Raw = (props: RawProps) => {
-    const { children } = props;
-    const { item } = useCmsCollectionItemContext();
-
-    return children(item);
-  };
+  });
 }

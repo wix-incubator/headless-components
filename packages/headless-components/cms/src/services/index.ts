@@ -2,4 +2,9 @@
  * @file Services index file for CMS package
  */
 
-export * from './cms-collection-service.js';
+export {
+  CmsCollectionServiceDefinition,
+  CmsCollectionServiceConfig,
+  CmsCollectionServiceImplementation,
+  loadCmsCollectionServiceInitialData,
+} from './cms-collection-service';
