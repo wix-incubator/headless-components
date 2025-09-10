@@ -26,6 +26,8 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   return <div ref={ref as React.Ref<HTMLDivElement>}>{children}</div>;
 });
 
+Root.displayName = 'Blog.Categories.Root/Core';
+
 /**
  * Props for BlogCategories Categories core component
  */
@@ -51,3 +53,5 @@ export const Categories = (props: CategoriesProps) => {
     hasCategories,
   });
 };
+
+Categories.displayName = 'Blog.Categories.Categories/Core';
