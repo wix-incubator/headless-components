@@ -16,7 +16,7 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.Image](#programimage)
   - [Program.StepsCount](#programstepscount)
   - [Program.Description](#programdescription)
-  - [Program.Duration](#programduration)
+  - [Program.DurationInDays](#programdurationindays)
 
   - [Program.Instructors](#programinstructors)
   - [Program.Instructor](#programinstructor)
@@ -291,9 +291,11 @@ interface ProgramDescriptionProps {
 
 ---
 
-### Program.Duration
+### Program.DurationInDays
 
-Displays the program duration in days with customizable rendering. Data source: program.timeline field. If the program is self-paced, duration has no limit.
+Displays the program duration in days with customizable rendering.
+Data source: program.timeline field. If the program is self-paced, duration has no limit.
+Default content: Shows raw `durationInDays` value (no automatic formatting)
 
 **Props**
 
@@ -317,11 +319,6 @@ interface ProgramDurationProps {
 - `data-testid="program-duration"` - Applied to program duration element
 - `data-type="self-paced"` - Applied when program is self-paced
 - `data-type="time-limited"` - Applied when program has specific duration
-
-**Implementation Notes**
-
-- Default content: Shows raw `durationInDays` value (no automatic formatting)
-- Custom rendering: Provides both `durationInDays` and `isSelfPaced` for flexible formatting
 
 **Example**
 
