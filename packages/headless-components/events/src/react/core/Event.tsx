@@ -242,7 +242,11 @@ export interface ShareRenderProps {
  * @component
  */
 export function Share(props: ShareProps): React.ReactNode {
-  const eventUrl = window.location.href;
+  // TODO: fix this
+  const eventUrl =
+    typeof window !== 'undefined'
+      ? window.location.href
+      : 'https://www.wix.com';
 
   return props.children({ eventUrl });
 }

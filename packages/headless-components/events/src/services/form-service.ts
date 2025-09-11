@@ -43,6 +43,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
           form: getFormResponse(event, formData),
           ...getRequiredRsvpData(event, formData),
         });
+        window.location.href = `/events/${event.slug}/thank-you`;
       } catch (err) {
         error.set(getErrorMessage(err));
       } finally {

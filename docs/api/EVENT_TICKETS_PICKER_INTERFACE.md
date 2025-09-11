@@ -16,9 +16,10 @@ Root container that provides tickets picker context to all child components.
 
 ```tsx
 interface RootProps {
-  ticketListServiceConfig: TicketListServiceConfig;
   eventServiceConfig: EventServiceConfig;
+  ticketListServiceConfig: TicketListServiceConfig;
   children: React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -26,12 +27,16 @@ interface RootProps {
 
 ```tsx
 <TicketsPicker.Root
-  ticketListServiceConfig={ticketListServiceConfig}
   eventServiceConfig={eventServiceConfig}
+  ticketListServiceConfig={ticketListServiceConfig}
 >
   {/* All tickets picker components */}
 </TicketsPicker.Root>
 ```
+
+**Data Attributes**
+
+- `data-testid="tickets-picker-root"` - Applied to tickets picker root element
 
 ---
 
@@ -143,7 +148,7 @@ interface CheckoutTriggerProps {
   children?: AsChildChildren<{
     isLoading: boolean;
     error: string | null;
-    hasSelectedTickets: boolean;
+    hasSelectedTicketDefinitions: boolean;
     checkout: () => Promise<void>;
   }>;
   className?: string;
@@ -181,9 +186,10 @@ interface CheckoutTriggerProps {
 
 ## Data Attributes Summary
 
-| Attribute                                         | Applied To                      | Purpose                 |
-| ------------------------------------------------- | ------------------------------- | ----------------------- |
-| `data-testid="tickets-picker-ticket-definitions"` | TicketsPicker.TicketDefinitions | Ticket definitions list |
-| `data-testid="tickets-picker-checkout-error"`     | TicketsPicker.CheckoutError     | Checkout error element  |
-| `data-testid="tickets-picker-checkout-trigger"`   | TicketsPicker.CheckoutTrigger   | Checkout element        |
-| `data-in-progress`                                | TicketsPicker.CheckoutTrigger   | Checkout status         |
+| Attribute                                         | Applied To                      | Purpose                     |
+| ------------------------------------------------- | ------------------------------- | --------------------------- |
+| `data-testid="tickets-picker-root"`               | TicketsPicker.Root              | Tickets picker root element |
+| `data-testid="tickets-picker-ticket-definitions"` | TicketsPicker.TicketDefinitions | Ticket definitions list     |
+| `data-testid="tickets-picker-checkout-error"`     | TicketsPicker.CheckoutError     | Checkout error element      |
+| `data-testid="tickets-picker-checkout-trigger"`   | TicketsPicker.CheckoutTrigger   | Checkout element            |
+| `data-in-progress`                                | TicketsPicker.CheckoutTrigger   | Checkout status             |

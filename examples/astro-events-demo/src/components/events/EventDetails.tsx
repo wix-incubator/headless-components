@@ -116,7 +116,7 @@ export function EventDetails({
             ticketListServiceConfig={ticketListServiceConfig}
             eventServiceConfig={eventServiceConfig}
           >
-            <TicketsPickerPrimitive.TicketDefinitions className="space-y-6">
+            <TicketsPickerPrimitive.TicketDefinitions className="space-y-6 mb-6">
               <h2
                 id="tickets"
                 className="text-3xl font-light text-content-primary mb-6"
@@ -168,29 +168,28 @@ export function EventDetails({
                 </div>
               </TicketsPickerPrimitive.TicketDefinitionRepeater>
             </TicketsPickerPrimitive.TicketDefinitions>
-            {/* Checkout Section */}
-            <TicketsPickerPrimitive.Checkout noTicketsErrorMessage="Please select at least one ticket">
-              {({ isLoading, error, checkout }) => (
-                <div className="mt-6">
-                  {!!error && (
-                    <div className="mb-6 p-4 bg-status-danger-medium border border-status-danger text-center">
-                      <p className="font-light text-status-error">{error}</p>
-                    </div>
-                  )}
-                  <button
-                    className={`block font-light py-3 px-20 ml-auto ${
-                      isLoading
-                        ? 'bg-gray-300 text-content-faded'
-                        : 'btn-primary'
-                    }`}
-                    disabled={isLoading}
-                    onClick={checkout}
-                  >
-                    {isLoading ? 'Processing...' : 'Checkout'}
-                  </button>
+            <TicketsPickerPrimitive.CheckoutError asChild>
+              {({ error }) => (
+                <div className="mb-6 p-4 bg-status-danger-medium border border-status-danger text-center">
+                  <p className="font-light text-status-error">{error}</p>
                 </div>
               )}
-            </TicketsPickerPrimitive.Checkout>
+            </TicketsPickerPrimitive.CheckoutError>
+            <TicketsPickerPrimitive.CheckoutTrigger asChild>
+              {({ isLoading, hasSelectedTicketDefinitions, checkout }) => (
+                <button
+                  className={`block font-light py-3 px-20 ml-auto ${
+                    isLoading || !hasSelectedTicketDefinitions
+                      ? 'bg-gray-300 text-content-faded'
+                      : 'btn-primary'
+                  }`}
+                  disabled={isLoading || !hasSelectedTicketDefinitions}
+                  onClick={checkout}
+                >
+                  {isLoading ? 'Processing...' : 'Checkout'}
+                </button>
+              )}
+            </TicketsPickerPrimitive.CheckoutTrigger>
           </TicketsPickerPrimitive.Root>
         </div>
 

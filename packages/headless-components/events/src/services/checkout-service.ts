@@ -5,6 +5,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { ticketReservations } from '@wix/events';
 import { redirects } from '@wix/redirects';
+import { getErrorMessage } from '../utils/errors.js';
 import { TicketReservationQuantity } from './ticket-list-service.js';
 
 /**
@@ -14,7 +15,7 @@ export interface CheckoutServiceAPI {
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
 
-  createCheckout: (
+  checkout: (
     eventId: string,
     eventSlug: string,
     ticketQuantities: TicketReservationQuantity[],
@@ -37,10 +38,10 @@ export const CheckoutService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const isLoading: Signal<boolean> = signalsService.signal(false);
-      const error: Signal<string | null> = signalsService.signal(null as any);
+      const isLoading = signalsService.signal(false);
+      const error = signalsService.signal<string | null>(null);
 
-      const createCheckout = async (
+      const checkout = async (
         eventId: string,
         eventSlug: string,
         ticketQuantities: TicketReservationQuantity[],
@@ -48,6 +49,7 @@ export const CheckoutService =
         try {
           isLoading.set(true);
           error.set(null);
+
           const { _id: reservationId } =
             await ticketReservations.createTicketReservation({
               tickets: ticketQuantities
@@ -103,17 +105,16 @@ export const CheckoutService =
             throw new Error('Failed to create redirect session');
           }
         } catch (err) {
+          error.set(getErrorMessage(err));
+        } finally {
           isLoading.set(false);
-          error.set(
-            err instanceof Error ? err.message : 'Failed to create checkout',
-          );
         }
       };
 
       return {
         isLoading,
         error,
-        createCheckout,
+        checkout,
       };
     },
   );

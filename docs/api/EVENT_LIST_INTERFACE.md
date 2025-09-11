@@ -72,6 +72,7 @@ Repeater component that renders [Event.Root](./EVENT_INTERFACE.md#eventroot) for
 ```tsx
 interface EventRepeaterProps {
   children: React.ReactNode;
+  className?: string;
 }
 ```
 

@@ -14,6 +14,7 @@ enum TestIds {
  * Props for the EventList Root component.
  */
 export interface RootProps {
+  /** Child components */
   children: React.ReactNode;
   /** Configuration for the event list service */
   eventListServiceConfig: EventListServiceConfig;
@@ -60,6 +61,7 @@ export const Root = (props: RootProps): React.ReactNode => {
  * Props for the EventList Events component.
  */
 export interface EventsProps {
+  /** Child components */
   children: React.ReactNode;
   /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
@@ -113,7 +115,10 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
  * Props for the EventList EventRepeater component.
  */
 export interface EventRepeaterProps {
+  /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the event element */
+  className?: string;
 }
 
 /**
@@ -131,7 +136,7 @@ export interface EventRepeaterProps {
  * ```
  */
 export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
-  const { children } = props;
+  const { children, className } = props;
 
   return (
     <CoreEventList.EventRepeater>
@@ -141,7 +146,7 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
         }
 
         return events.map((event) => (
-          <Event.Root key={event._id} event={event}>
+          <Event.Root key={event._id} event={event} className={className}>
             {children}
           </Event.Root>
         ));
