@@ -24,9 +24,7 @@ interface RootProps {
 **Example**
 
 ```tsx
-<Form.Root form={form}>
-  {/* All form components */}
-</Form.Root>
+<Form.Root form={form}>{/* All form components */}</Form.Root>
 ```
 
 ### Form.Error
@@ -66,7 +64,9 @@ Component that renders content after successful form submission. Only displays i
 
 ```tsx
 interface ThankYouMessageProps {
-  children: ((props: ThankYouMessageRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: ThankYouMessageRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 interface ThankYouMessageRenderProps {
@@ -78,7 +78,7 @@ interface ThankYouMessageRenderProps {
 
 ```tsx
 <Form.ThankYouMessage>
-  {({ isSubmitted }) => (
+  {({ isSubmitted }) =>
     isSubmitted ? (
       <div className="bg-background border-foreground text-foreground p-6 rounded-lg">
         <h2 className="text-2xl font-heading mb-4">Thank You!</h2>
@@ -87,7 +87,7 @@ interface ThankYouMessageRenderProps {
         </p>
       </div>
     ) : null
-  )}
+  }
 </Form.ThankYouMessage>
 ```
 
@@ -99,7 +99,9 @@ Component that renders content when there's an error during form submission. Onl
 
 ```tsx
 interface SubmitErrorProps {
-  children: ((props: SubmitErrorRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: SubmitErrorRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 interface SubmitErrorRenderProps {
@@ -112,22 +114,13 @@ interface SubmitErrorRenderProps {
 
 ```tsx
 <Form.SubmitError>
-  {({ submitError, hasSubmitError }) => (
+  {({ submitError, hasSubmitError }) =>
     hasSubmitError ? (
       <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
-        <h3 className="text-lg font-heading mb-2">Submission Failed</h3>
-        <p className="font-paragraph">
-          {submitError || 'There was an error submitting your form. Please try again.'}
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="bg-primary text-primary-foreground px-4 py-2 rounded mt-2"
-        >
-          Try Again
-        </button>
+        Submission Failed
       </div>
     ) : null
-  )}
+  }
 </Form.SubmitError>
 ```
 
@@ -147,6 +140,7 @@ interface ContainerProps {
 **Behavior**
 
 The Container component:
+
 - Renders form fields in the order and layout defined by the form configuration
 - Maps each field type to its corresponding React component using the provided fieldMap
 - Handles form validation
@@ -201,6 +195,7 @@ interface FieldMap {
 The Form component supports a comprehensive set of field types:
 
 ### Text Input Fields
+
 - **TEXT_INPUT**: Single-line text input
 - **TEXT_AREA**: Multi-line text input
 - **NUMBER_INPUT**: Numerical input
@@ -208,12 +203,14 @@ The Form component supports a comprehensive set of field types:
 - **MULTILINE_ADDRESS**: Complex address input with multiple fields
 
 ### Date and Time Fields
+
 - **DATE_INPUT**: Date input with separate day/month/year fields
 - **DATE_PICKER**: Calendar-based date selection
 - **DATE_TIME_INPUT**: Combined date and time input
 - **TIME_INPUT**: Time-only input
 
 ### Choice Fields
+
 - **RADIO_GROUP**: Single selection from multiple options
 - **CHECKBOX_GROUP**: Multiple selection from multiple options
 - **DROPDOWN**: Dropdown selection
@@ -221,18 +218,21 @@ The Form component supports a comprehensive set of field types:
 - **IMAGE_CHOICE**: Image-based selection (single or multiple)
 
 ### Specialized Fields
+
 - **CHECKBOX**: Boolean checkbox
 - **FILE_UPLOAD**: File upload with format restrictions
 - **SIGNATURE**: Digital signature capture
 - **RATING_INPUT**: 1-5 star rating input
 
 ### Payment Fields
+
 - **FIXED_PAYMENT**: Display fixed payment amount
 - **PAYMENT_INPUT**: Custom payment amount input
 - **DONATION**: Donation amount selection
 - **PRODUCT_LIST**: Product selection with quantities
 
 ### Other Fields
+
 - **TEXT**: Rich text display (headers, descriptions)
 - **SUBMIT_BUTTON**: Form submission button
 - **APPOINTMENT**: Appointment scheduling
@@ -290,7 +290,10 @@ const RadioGroup = ({ value, onChange, options, label, error, ...props }) => (
     <fieldset>
       <legend className="text-foreground font-paragraph">{label}</legend>
       {options.map((option) => (
-        <label key={option.id} className="flex items-center text-foreground font-paragraph">
+        <label
+          key={option.id}
+          className="flex items-center text-foreground font-paragraph"
+        >
           <input
             type="radio"
             name={props.name}
@@ -368,19 +371,16 @@ function FormPage({ form }) {
         )}
       </Form.Error>
       <Form.SubmitError>
-        {({ submitError, hasSubmitError }) => (
+        {({ submitError, hasSubmitError }) =>
           hasSubmitError ? (
             <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
-              <h3 className="text-lg font-heading mb-2">Submission Failed</h3>
-              <p className="font-paragraph">
-                {submitError || 'There was an error submitting your form. Please try again.'}
-              </p>
+              Submission Failed
             </div>
           ) : null
-        )}
+        }
       </Form.SubmitError>
       <Form.ThankYouMessage>
-        {({ isSubmitted }) => (
+        {({ isSubmitted }) =>
           isSubmitted ? (
             <div className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4">
               <h2 className="text-2xl font-heading mb-4">Thank You!</h2>
@@ -389,7 +389,7 @@ function FormPage({ form }) {
               </p>
             </div>
           ) : null
-        )}
+        }
       </Form.ThankYouMessage>
       <Form.Container fieldMap={FIELD_MAP} />
     </Form.Root>
