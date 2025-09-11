@@ -17,14 +17,19 @@ The root container that provides form service context to all child components. T
 ```tsx
 interface RootProps {
   children: React.ReactNode;
-  form: forms.Form;
+  /** Form service configuration */
+  formServiceConfig: FormServiceConfig;
+  /** CSS classes to apply to the root element */
+  className?: string;
 }
 ```
 
 **Example**
 
 ```tsx
-<Form.Root form={form}>{/* All form components */}</Form.Root>
+<Form.Root formServiceConfig={formServiceConfig}>
+  {/* All form components */}
+</Form.Root>
 ```
 
 ### Form.LoadingError
@@ -395,9 +400,9 @@ const FIELD_MAP = {
   // ... other field components
 };
 
-function FormPage({ form }) {
+function FormPage({ formServiceConfig }) {
   return (
-    <Form.Root form={form}>
+    <Form.Root formServiceConfig={formServiceConfig}>
       <Form.LoadingError className="text-foreground px-4 py-3 rounded mb-4" />
       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
       <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />

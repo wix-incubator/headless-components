@@ -1,8 +1,8 @@
 import React from 'react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
+import { type FormServiceConfig } from '../services/form-service';
 import * as CoreForm from './core/Form.js';
-import { FormServiceConfig } from '../services/form-service.js';
 import {
   CheckboxGroupProps,
   CheckboxProps,
@@ -42,7 +42,9 @@ enum TestIds {
  */
 export interface RootProps {
   children: React.ReactNode;
+  /** Form service configuration */
   formServiceConfig: FormServiceConfig;
+  className?: string;
 }
 
 /**
@@ -54,11 +56,11 @@ export interface RootProps {
  * @component
  * @param {RootProps} props - Component props
  * @param {React.ReactNode} props.children - Child components that will have access to form context
- * @param {FormServiceConfig} props.formServiceConfig - The form service configuration object
+ * @param {forms.Form} props.form - Form object
+ * @param {string} [props.className] - CSS classes to apply to the root element
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
- * import { loadFormServiceConfig } from '@wix/headless-forms/services';
  *
  * const FIELD_MAP = {
  *   TEXT_INPUT: TextInput,
@@ -90,15 +92,36 @@ export interface RootProps {
  * }
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
-  const { children, formServiceConfig } = props;
+export const Root = React.forwardRef<HTMLDivElement, RootProps>(
+  (props, ref) => {
+    const { children, formServiceConfig, className } = props;
 
-  return (
-    <CoreForm.Root formServiceConfig={formServiceConfig}>
-      {children}
-    </CoreForm.Root>
-  );
-}
+    return (
+      <CoreForm.Root formServiceConfig={formServiceConfig}>
+        <RootContent
+          children={children as any}
+          className={className}
+          ref={ref}
+        />
+      </CoreForm.Root>
+    );
+  },
+);
+
+/**
+ * Internal component to handle the Root content with service access
+ */
+const RootContent = React.forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string }>(
+  (props, ref) => {
+    const { children, className } = props;
+
+    return (
+      <div ref={ref} className={className}>
+        {children}
+      </div>
+    );
+  },
+);
 
 /**
  * Props for Form Loading component
