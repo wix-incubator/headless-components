@@ -52,15 +52,15 @@ export interface RootProps {
  * This component sets up the Form service and provides context to child components.
  * Must be used as the top-level component for all form functionality.
  *
- * @order 1
  * @component
- * @param {RootProps} props - Component props
+ * @param {RootProps} props - The component props
  * @param {React.ReactNode} props.children - Child components that will have access to form context
- * @param {forms.Form} props.form - Form object
+ * @param {FormServiceConfig} props.formServiceConfig - Form service configuration object
  * @param {string} [props.className] - CSS classes to apply to the root element
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
+ * import { loadFormServiceConfig } from '@wix/headless-forms/services';
  *
  * const FIELD_MAP = {
  *   TEXT_INPUT: TextInput,
@@ -79,14 +79,10 @@ export interface RootProps {
  *           </div>
  *         )}
  *       </Form.Loading>
- *       <Form.LoadingError>
- *         {({ error }) => (
- *           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
- *             {error}
- *           </div>
- *         )}
- *       </Form.LoadingError>
+ *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+ *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
  *     </Form.Root>
  *   );
  * }
@@ -98,31 +94,41 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     return (
       <CoreForm.Root formServiceConfig={formServiceConfig}>
-        <RootContent
-          children={children as any}
-          className={className}
-          ref={ref}
-        />
+        <RootContent children={children} className={className} ref={ref} />
       </CoreForm.Root>
     );
   },
 );
 
 /**
- * Internal component to handle the Root content with service access
+ * Props for RootContent internal component
  */
-const RootContent = React.forwardRef<
-  HTMLDivElement,
-  { children: React.ReactNode; className?: string }
->((props, ref) => {
-  const { children, className } = props;
+interface RootContentProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-  return (
-    <div ref={ref} className={className}>
-      {children}
-    </div>
-  );
-});
+/**
+ * Internal component to handle the Root content with service access.
+ * This component wraps the children with the necessary div container and applies styling.
+ *
+ * @internal
+ * @param {RootContentProps} props - Component props
+ * @param {React.ReactNode} props.children - Child components to render
+ * @param {string} [props.className] - CSS classes to apply to the container
+ * @returns {JSX.Element} The wrapped content
+ */
+const RootContent = React.forwardRef<HTMLDivElement, RootContentProps>(
+  (props, ref) => {
+    const { children, className } = props;
+
+    return (
+      <div ref={ref} className={className}>
+        {children}
+      </div>
+    );
+  },
+);
 
 /**
  * Props for Form Loading component
@@ -142,7 +148,7 @@ export interface LoadingRenderProps {}
  * Only displays its children when the form is currently loading.
  *
  * @component
- * @param {LoadingProps} props - Component props
+ * @param {LoadingProps} props - The component props
  * @param {LoadingProps['children']} props.children - Content to display during loading (can be a render function or ReactNode)
  * @example
  * ```tsx
@@ -152,9 +158,9 @@ export interface LoadingRenderProps {}
  *   return (
  *     <Form.Loading>
  *       {() => (
- *         <div className="loading-spinner">
- *           <div>Loading form...</div>
- *           <div className="spinner"></div>
+ *         <div className="flex justify-center items-center p-4">
+ *           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+ *           <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
  *         </div>
  *       )}
  *     </Form.Loading>
@@ -162,21 +168,23 @@ export interface LoadingRenderProps {}
  * }
  * ```
  */
-export function Loading(props: LoadingProps) {
-  return (
-    <CoreForm.Loading>
-      {({ isLoading }) => {
-        if (isLoading) {
-          return typeof props.children === 'function'
-            ? props.children({})
-            : props.children;
-        }
+export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
+  (props, _ref) => {
+    return (
+      <CoreForm.Loading>
+        {({ isLoading }) => {
+          if (isLoading) {
+            return typeof props.children === 'function'
+              ? props.children({})
+              : props.children;
+          }
 
-        return null;
-      }}
-    </CoreForm.Loading>
-  );
-}
+          return null;
+        }}
+      </CoreForm.Loading>
+    );
+  },
+);
 
 /**
  * Props for Form LoadingError component
@@ -205,33 +213,45 @@ export interface LoadingErrorRenderProps {
  * Only displays its children when an error has occurred.
  *
  * @component
- * @param {LoadingErrorProps} props - Component props
- * @param {LoadingErrorProps['children']} props.children - Content to display during error state (can be a render function or ReactNode)
+ * @param {LoadingErrorProps} props - The component props
+ * @param {boolean} [props.asChild] - Whether to render as a child component
+ * @param {AsChildChildren<LoadingErrorRenderProps>} [props.children] - Content to display during error state (can be a render function or ReactNode)
+ * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
+ * // Default usage with className
  * function FormLoadingError() {
+ *   return (
+ *     <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
+ *   );
+ * }
+ *
+ * // Custom rendering with render function
+ * function CustomLoadingError() {
  *   return (
  *     <Form.LoadingError>
  *       {({ error, hasError }) => (
- *         <div className="error-state">
- *           <h3>Error loading form</h3>
- *           <p>{error}</p>
- *         </div>
+ *         hasError ? (
+ *           <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded mb-4">
+ *             <h3 className="font-heading text-lg">Error loading form</h3>
+ *             <p className="font-paragraph">{error}</p>
+ *           </div>
+ *         ) : null
  *       )}
  *     </Form.LoadingError>
  *   );
  * }
  *
- * // With asChild
- * function CustomLoadingError() {
+ * // With asChild for custom components
+ * function CustomLoadingErrorAsChild() {
  *   return (
  *     <Form.LoadingError asChild>
  *       {React.forwardRef(({ error, hasError }, ref) => (
- *         <div ref={ref} className="custom-error">
- *           <h3>Custom Error Display</h3>
- *           <p>{error}</p>
+ *         <div ref={ref} className="custom-error-container">
+ *           <h3 className="font-heading">Custom Error Display</h3>
+ *           <p className="font-paragraph">{error}</p>
  *         </div>
  *       ))}
  *     </Form.LoadingError>
@@ -298,29 +318,51 @@ export interface ErrorRenderProps {
  * Provides error data to custom render functions.
  *
  * @component
- * @param {ErrorProps} props - Component props
- * @param {ErrorProps['asChild']} props.asChild - Whether to render as a child component
- * @param {ErrorProps['children']} props.children - Content to display during submit error state (can be a render function or ReactNode)
- * @param {ErrorProps['className']} props.className - CSS classes to apply to the default element
+ * @param {ErrorProps} props - The component props
+ * @param {boolean} [props.asChild] - Whether to render as a child component
+ * @param {AsChildChildren<ErrorRenderProps>} [props.children] - Content to display during submit error state (can be a render function or ReactNode)
+ * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
- * // Default usage
- * <Form.Error className="error-message" />
+ * // Default usage with className
+ * function FormError() {
+ *   return <Form.Error className="text-destructive p-4 rounded-lg mb-4" />;
+ * }
  *
- * // Custom rendering with forwardRef
- * <Form.Error asChild>
- *   {React.forwardRef(({ error, hasError }, ref) => (
- *     <div
- *       ref={ref}
- *       className="custom-error-container"
- *     >
- *       <h3>Submission Failed</h3>
- *       <p>{error}</p>
- *     </div>
- *   ))}
- * </Form.Error>
+ * // Custom rendering with render function
+ * function CustomFormError() {
+ *   return (
+ *     <Form.Error>
+ *       {({ error, hasError }) => (
+ *         hasError ? (
+ *           <div className="bg-destructive/10 border border-destructive text-destructive p-4 rounded-lg mb-4">
+ *             <h3 className="font-heading text-lg">Submission Failed</h3>
+ *             <p className="font-paragraph">{error}</p>
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Error>
+ *   );
+ * }
+ *
+ * // Custom rendering with forwardRef and asChild
+ * function CustomFormErrorAsChild() {
+ *   return (
+ *     <Form.Error asChild>
+ *       {React.forwardRef(({ error, hasError }, ref) => (
+ *         <div
+ *           ref={ref}
+ *           className="custom-error-container"
+ *         >
+ *           <h3 className="font-heading">Submission Failed</h3>
+ *           <p className="font-paragraph">{error}</p>
+ *         </div>
+ *       ))}
+ *     </Form.Error>
+ *   );
+ * }
  * ```
  */
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
@@ -380,29 +422,51 @@ export interface SubmittedRenderProps {
  * Provides submission data to custom render functions.
  *
  * @component
- * @param {SubmittedProps} props - Component props
- * @param {SubmittedProps['asChild']} props.asChild - Whether to render as a child component
- * @param {SubmittedProps['children']} props.children - Content to display after successful submission (can be a render function or ReactNode)
- * @param {SubmittedProps['className']} props.className - CSS classes to apply to the default element
+ * @param {SubmittedProps} props - The component props
+ * @param {boolean} [props.asChild] - Whether to render as a child component
+ * @param {AsChildChildren<SubmittedRenderProps>} [props.children] - Content to display after successful submission (can be a render function or ReactNode)
+ * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
- * // Default usage
- * <Form.Submitted className="success-message" />
+ * // Default usage with className
+ * function FormSubmitted() {
+ *   return <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />;
+ * }
  *
- * // Custom rendering with forwardRef
- * <Form.Submitted asChild>
- *   {React.forwardRef(({ isSubmitted }, ref) => (
- *     <div
- *       ref={ref}
- *       className="custom-success-container"
- *     >
- *       <h2>Thank You!</h2>
- *       <p>Your form has been submitted successfully.</p>
- *     </div>
- *   ))}
- * </Form.Submitted>
+ * // Custom rendering with render function
+ * function CustomFormSubmitted() {
+ *   return (
+ *     <Form.Submitted>
+ *       {({ isSubmitted }) => (
+ *         isSubmitted ? (
+ *           <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg mb-4">
+ *             <h2 className="font-heading text-xl mb-2">Thank You!</h2>
+ *             <p className="font-paragraph">Your form has been submitted successfully.</p>
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Submitted>
+ *   );
+ * }
+ *
+ * // Custom rendering with forwardRef and asChild
+ * function CustomFormSubmittedAsChild() {
+ *   return (
+ *     <Form.Submitted asChild>
+ *       {React.forwardRef(({ isSubmitted }, ref) => (
+ *         <div
+ *           ref={ref}
+ *           className="custom-success-container"
+ *         >
+ *           <h2 className="font-heading">Thank You!</h2>
+ *           <p className="font-paragraph">Your form has been submitted successfully.</p>
+ *         </div>
+ *       ))}
+ *     </Form.Submitted>
+ *   );
+ * }
  * ```
  */
 export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
@@ -444,7 +508,6 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
  * which React component should be used to render each type of form field.
  *
  * @interface FieldMap
- *
  * @example
  * ```tsx
  * const FIELD_MAP: FieldMap = {
@@ -508,9 +571,7 @@ interface FieldMap {
  * Props for the Form Fields component.
  *
  * @interface FieldsProps
- *
  * @property {FieldMap} fieldMap - A mapping of field types to their corresponding React components
- *
  * @example
  * ```tsx
  * const FIELD_MAP = {
@@ -576,6 +637,49 @@ export interface FieldsProps {
  * ```
  */
 
+/**
+ * Fields component for rendering a form with custom field renderers.
+ * This component handles the rendering of form fields based on the provided fieldMap.
+ * Must be used within Form.Root to access form context.
+ *
+ * @component
+ * @param {FieldsProps} props - The component props
+ * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ * import { TextInput, TextArea, Checkbox, RadioGroup } from './field-components';
+ *
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   TEXT_AREA: TextArea,
+ *   CHECKBOX: Checkbox,
+ *   RADIO_GROUP: RadioGroup,
+ *   NUMBER_INPUT: NumberInput,
+ *   PHONE_INPUT: PhoneInput,
+ *   DATE_PICKER: DatePicker,
+ *   // ... other field components
+ * };
+ *
+ * function ContactForm({ formServiceConfig }) {
+ *   return (
+ *     <Form.Root formServiceConfig={formServiceConfig}>
+ *       <Form.Loading>
+ *         {() => (
+ *           <div className="flex justify-center p-4">
+ *             <div>Loading form...</div>
+ *           </div>
+ *         )}
+ *       </Form.Loading>
+ *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
+ *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+ *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
+ *     </Form.Root>
+ *   );
+ * }
+ * ```
+ */
 export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
   ({ fieldMap }) => {
     // TODO: render real viewer
@@ -697,33 +801,43 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
 };
 
 /**
- * Main Form namespace containing all form components
- * following the compound component pattern: Form.Root, Form.Loading, Form.LoadingError, Form.Error, Form.Submitted, Form.Fields
+ * Main Form namespace containing all form components following the compound component pattern.
+ * Provides a headless, flexible way to render and manage forms with custom field components.
  *
  * @namespace Form
- * @property {typeof Root} Root - Form root component that provides service context
- * @property {typeof Loading} Loading - Form loading state component
- * @property {typeof LoadingError} LoadingError - Form loading error state component
- * @property {typeof Error} Error - Form submit error state component
- * @property {typeof Submitted} Submitted - Form submitted state component
- * @property {typeof Fields} Fields - Form fields component for rendering form fields
+ * @property {typeof Root} Root - Form root component that provides service context to all child components
+ * @property {typeof Loading} Loading - Form loading state component that displays content during form loading
+ * @property {typeof LoadingError} LoadingError - Form loading error state component for handling form loading errors
+ * @property {typeof Error} Error - Form submit error state component for handling form submission errors
+ * @property {typeof Submitted} Submitted - Form submitted state component for displaying success messages
+ * @property {typeof Fields} Fields - Form fields component for rendering form fields with custom field renderers
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  * import { loadFormServiceConfig } from '@wix/headless-forms/services';
+ * import { TextInput, TextArea, Checkbox } from './field-components';
+ *
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: TextInput,
+ *   TEXT_AREA: TextArea,
+ *   CHECKBOX: Checkbox,
+ *   // ... other field components
+ * };
  *
  * function MyForm({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading>
- *         {() => <div>Loading form...</div>}
+ *         {() => (
+ *           <div className="flex justify-center p-4">
+ *             <div>Loading form...</div>
+ *           </div>
+ *         )}
  *       </Form.Loading>
- *       <Form.LoadingError>
- *         {({ error }) => <div>Error: {error}</div>}
- *       </Form.LoadingError>
+ *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
- *       <Form.Error className="submit-error" />
- *       <Form.Submitted className="success-message" />
+ *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+ *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
  *     </Form.Root>
  *   );
  * }
