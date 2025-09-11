@@ -156,3 +156,61 @@ export function Image(props: ProgramImageProps) {
     alt,
   });
 }
+
+/**
+ * Props for ProgramDuration headless component
+ */
+export interface ProgramDurationProps {
+  /** Render prop function that receives program duration data */
+  children: (props: ProgramDurationRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProgramDuration component
+ */
+export interface ProgramDurationRenderProps {
+  /** Program duration in days, null if self-paced */
+  durationInDays: number | null;
+  /** Whether the program is self-paced (no time limit) */
+  isSelfPaced: boolean;
+}
+
+/**
+ * Headless component for program duration display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramDuration() {
+ *   return (
+ *     <Program.Duration>
+ *       {({ durationInDays, isSelfPaced }) => (
+ *         <p>
+ *           {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
+ *         </p>
+ *       )}
+ *     </Program.Duration>
+ *   );
+ * }
+ * ```
+ */
+export function Duration(props: ProgramDurationProps) {
+  const service = useService(ProgramServiceDefinition) as ServiceAPI<
+    typeof ProgramServiceDefinition
+  >;
+
+  const program = service.program.get();
+
+  // Extract duration from timeline field
+  // If timeline is null/undefined or has no duration, it's self-paced
+  const timeline = program.timeline;
+  const durationInDays = timeline?.durationInDays || null;
+  const isSelfPaced = timeline?.selfPaced || false;
+
+  return props.children({
+    durationInDays,
+    isSelfPaced,
+  });
+}

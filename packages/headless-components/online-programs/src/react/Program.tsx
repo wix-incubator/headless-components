@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { programs } from '@wix/online-programs';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
@@ -8,6 +9,7 @@ import * as CoreProgram from './core/Program.js';
 enum TestIds {
   programTitle = 'program-title',
   programImage = 'program-image',
+  programDuration = 'program-duration',
 }
 
 /**
@@ -171,3 +173,84 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
 );
 
 Image.displayName = 'Program.Image';
+
+/**
+ * Props for Program Duration component
+ */
+export interface DurationProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ durationInDays: number | null; isSelfPaced: boolean }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+/**
+ * Displays the program duration in days with customizable rendering.
+ * Data source: program.timeline field. If the program is self-paced, duration has no limit.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Program.Duration className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Program.Duration asChild>
+ *   <p className="text-content-secondary" />
+ * </Program.Duration>
+ *
+ * // Custom rendering with format
+ * <Program.Duration asChild>
+ *   {React.forwardRef(({ durationInDays, isSelfPaced, ...props }, ref) => (
+ *     <p ref={ref} {...props} className="text-content-secondary">
+ *       {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
+ *     </p>
+ *   ))}
+ * </Program.Duration>
+ * ```
+ */
+export const Duration = React.forwardRef<HTMLElement, DurationProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    return (
+      <CoreProgram.Duration>
+        {({ durationInDays, isSelfPaced }) => {
+          const dataAttributes = {
+            'data-testid': TestIds.programDuration,
+            'data-type': isSelfPaced ? 'self-paced' : 'time-limited',
+          };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              customElement={children}
+              customElementProps={{ durationInDays, isSelfPaced }}
+              {...dataAttributes}
+              {...otherProps}
+            >
+              <p>{durationInDays}</p>
+            </AsChildSlot>
+          );
+        }}
+      </CoreProgram.Duration>
+    );
+  },
+);
+
+Duration.displayName = 'Program.Duration';
+
+/**
+ * Compound component for Program with all sub-components
+ */
+export const Program = {
+  Root,
+  Title,
+  Image,
+  Duration,
+} as const;

@@ -32,6 +32,13 @@ export default function OnlineProgramPage({
     <ServicesManagerProvider servicesManager={servicesManager}>
       <Program.Root program={programServiceConfig.program!}>
         <Program.Title />
+        <Program.Duration asChild>
+          {({ durationInDays, isSelfPaced }) => (
+            <div>
+              {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
+            </div>
+          )}
+        </Program.Duration>
         <Program.Image />
       </Program.Root>
     </ServicesManagerProvider>
