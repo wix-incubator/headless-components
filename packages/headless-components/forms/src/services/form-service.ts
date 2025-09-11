@@ -42,6 +42,32 @@ export type FormServiceConfigResult =
   | { type: 'success'; config: FormServiceConfig }
   | { type: 'notFound' };
 
+/**
+ * Loads form service configuration by form ID.
+ * This function fetches form data from the Wix Forms API and returns a configuration
+ * object that can be used to initialize the Form service.
+ *
+ * @param {string} id - The unique identifier of the form to load
+ * @returns {Promise<FormServiceConfigResult>} A promise that resolves to either:
+ *   - `{ type: 'success', config: FormServiceConfig }` if the form is found and loaded successfully
+ *   - `{ type: 'notFound' }` if the form doesn't exist or an error occurs during loading
+ *
+ * @example
+ * ```tsx
+ * import { loadFormServiceConfig } from '@wix/headless-forms/services';
+ *
+ * // Server-side loading (Astro/SSR)
+ * const formServiceConfigResult = await loadFormServiceConfig('form-id');
+ *
+ * if (formServiceConfigResult.type === 'notFound') {
+ *   return Astro.redirect('/404');
+ * }
+ *
+ * const formServiceConfig = formServiceConfigResult.config;
+ * ```
+ *
+ * @throws {Error} Logs errors to console but returns 'notFound' result instead of throwing
+ */
 export async function loadFormServiceConfig(
   id: string,
 ): Promise<FormServiceConfigResult> {

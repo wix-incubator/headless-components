@@ -515,11 +515,12 @@ interface FieldMap {
  * ```tsx
  * const FIELD_MAP = {
  *   TEXT_INPUT: TextInput,
- *   CONTACTS_BIRTHDATE: ContactsBirthdate,
- *   CONTACTS_SUBSCRIBE: ContactsSubscribe,
  *   TEXT_AREA: TextArea,
  *   NUMBER_INPUT: NumberInput,
  *   CHECKBOX: Checkbox,
+ *   RADIO_GROUP: RadioGroup,
+ *   CHECKBOX_GROUP: CheckboxGroup,
+ *   DROPDOWN: Dropdown,
  *   // ... remaining field components
  * };
  *
