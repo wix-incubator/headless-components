@@ -2,7 +2,9 @@
 import {
   loadProgramServiceConfig
 } from '@wix/headless-online-programs/services';
+
 import OnlineProgramPage from '../react-pages/online-programs/program';
+import Layout from '../layouts/Layout.astro';
 
 const { programId } = Astro.params;
 export const prerender = false;
@@ -19,7 +21,10 @@ if (programServiceConfig.type === 'notFound') {
 
 ---
 
-<OnlineProgramPage
-  programServiceConfig={programServiceConfig.config}
-  client:load
-/>
+<Layout>
+  <OnlineProgramPage
+    client:load
+    programServiceConfig={programServiceConfig.config}
+  />
+</Layout>
+
