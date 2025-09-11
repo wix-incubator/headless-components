@@ -33,7 +33,7 @@ export interface RootProps {
  *       <Form.Error>
  *         {({ error, hasError }) => hasError ? <div>{error}</div> : null}
  *       </Form.Error>
- *       <Form.Container fieldMap={FIELD_MAP} />
+ *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
  * }

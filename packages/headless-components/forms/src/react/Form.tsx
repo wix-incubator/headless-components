@@ -77,7 +77,7 @@ export interface RootProps {
  *           </div>
  *         )}
  *       </Form.Error>
- *       <Form.Container fieldMap={FIELD_MAP} />
+ *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
  * }
@@ -274,9 +274,9 @@ interface FieldMap {
 }
 
 /**
- * Props for the Form Container component.
+ * Props for the Form Fields component.
  *
- * @interface ContainerProps
+ * @interface FieldsProps
  *
  * @property {string} formId - The unique identifier of the form to render
  * @property {FieldMap} fieldMap - A mapping of field types to their corresponding React components
@@ -293,24 +293,24 @@ interface FieldMap {
  *   // ... remaining field components
  * };
  *
- * <Form.Container
+ * <Form.Fields
  *   formId="491ce063-931e-47c9-aad9-4845d9271c30"
  *   fieldMap={FIELD_MAP}
  * />
  * ```
  */
-export interface ContainerProps {
+export interface FieldsProps {
   formId: string;
   fieldMap: FieldMap;
 }
 
 /**
- * Container component for rendering a form with custom field renderers.
+ * Fields component for rendering a form with custom field renderers.
  * This component handles the rendering of form fields based on the provided fieldMap.
  * Must be used within Form.Root to access form context.
  *
  * @component
- * @param {ContainerProps} props - Component props
+ * @param {FieldsProps} props - Component props
  * @param {string} props.formId - The unique identifier of the form to render
  * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components
  * @example
@@ -343,7 +343,7 @@ export interface ContainerProps {
  *           </div>
  *         )}
  *       </Form.Error>
- *       <Form.Container
+ *       <Form.Fields
  *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
  *         fieldMap={FIELD_MAP}
  *       />
@@ -353,7 +353,7 @@ export interface ContainerProps {
  * ```
  */
 
-export const Container = React.forwardRef<HTMLElement, ContainerProps>(
+export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
   ({ formId, fieldMap }) => {
     // TODO: render real viewer
     return <MockViewer formId={formId} fieldMap={fieldMap} />;
@@ -481,13 +481,13 @@ const MockViewer = ({
 
 /**
  * Main Form namespace containing all form components
- * following the compound component pattern: Form.Root, Form.Loading, Form.Error, Form.Container
+ * following the compound component pattern: Form.Root, Form.Loading, Form.Error, Form.Fields
  *
  * @namespace Form
  * @property {typeof Root} Root - Form root component that provides service context
  * @property {typeof Loading} Loading - Form loading state component
  * @property {typeof Error} Error - Form error state component
- * @property {typeof Container} Container - Form container component for rendering form fields
+ * @property {typeof Fields} Fields - Form fields component for rendering form fields
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -502,7 +502,7 @@ const MockViewer = ({
  *       <Form.Error>
  *         {({ error }) => <div>Error: {error}</div>}
  *       </Form.Error>
- *       <Form.Container fieldMap={FIELD_MAP} />
+ *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
  * }
@@ -515,6 +515,6 @@ export const Form = {
   Loading,
   /** Form error state component */
   Error,
-  /** Form container component for rendering form fields */
-  Container,
+  /** Form fields component for rendering form fields */
+  Fields,
 } as const;
