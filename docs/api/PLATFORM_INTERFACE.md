@@ -816,7 +816,7 @@ import { Filter } from '@wix/headless-components/react';
 
 ### GenericList.Root
 
-Container for list components that renders items and supports multiple display variants, empty states, load more functionality, and totals display.
+Container for list components that renders items and supports multiple display variants, empty states, load more functionality, infinite scroll, and totals display.
 
 **Type Definitions**
 
@@ -845,6 +845,8 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
   isLoading?: boolean;
   /** Display variant - affects layout structure (default: 'list') */
   variant?: ListVariant;
+  /** Enable infinite scroll - automatically triggers onLoadMore when reaching the end (default: false) */
+  infinite?: boolean;
   /** Children components */
   children?: React.ReactNode;
   /** CSS classes */
@@ -859,6 +861,7 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
 - `data-has-items` - Boolean indicating if items are present
 - `data-is-loading` - Boolean indicating loading state
 - `data-has-more` - Boolean indicating if more items can be loaded
+- `data-infinite` - Boolean indicating if infinite scroll is enabled
 
 **Example**
 
