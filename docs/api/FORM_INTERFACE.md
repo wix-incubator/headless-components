@@ -27,7 +27,7 @@ interface RootProps {
 <Form.Root form={form}>{/* All form components */}</Form.Root>
 ```
 
-### Form.Error
+### Form.LoadingError
 
 Component that renders content when there's an error loading the form. Only displays its children when an error has occurred.
 
@@ -46,14 +46,14 @@ interface ErrorRenderProps {
 **Example**
 
 ```tsx
-<Form.Error>
+<Form.LoadingError>
   {({ error }) => (
     <div className="bg-background border-foreground text-foreground">
       <h3>Error loading form</h3>
       <p>{error}</p>
     </div>
   )}
-</Form.Error>
+</Form.LoadingError>
 ```
 
 ### Form.ThankYouMessage
@@ -359,13 +359,13 @@ const FIELD_MAP = {
 function FormPage({ form }) {
   return (
     <Form.Root form={form}>
-      <Form.Error>
+      <Form.LoadingError>
         {({ error }) => (
           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
-      </Form.Error>
+      </Form.LoadingError>
       <Form.SubmitError>
         {({ submitError, hasSubmitError }) =>
           hasSubmitError ? (

@@ -30,9 +30,9 @@ export interface RootProps {
  *       <Form.Loading>
  *         {({ isLoading }) => isLoading ? <div>Loading form...</div> : null}
  *       </Form.Loading>
- *       <Form.Error>
+ *       <Form.LoadingError>
  *         {({ error, hasError }) => hasError ? <div>{error}</div> : null}
- *       </Form.Error>
+ *       </Form.LoadingError>
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
@@ -134,7 +134,7 @@ export interface FormErrorRenderProps {
  *
  * function FormErrorDisplay() {
  *   return (
- *     <Form.Error>
+ *     <Form.LoadingError>
  *       {({ error, hasError }) => (
  *         hasError ? (
  *           <div className="error-message">
@@ -142,12 +142,12 @@ export interface FormErrorRenderProps {
  *           </div>
  *         ) : null
  *       )}
- *     </Form.Error>
+ *     </Form.LoadingError>
  *   );
  * }
  * ```
  */
-export function Error(props: FormErrorProps) {
+export function LoadingError(props: FormErrorProps) {
   const service = useService(FormServiceDefinition) as ServiceAPI<
     typeof FormServiceDefinition
   >;

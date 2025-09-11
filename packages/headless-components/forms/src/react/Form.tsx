@@ -70,13 +70,13 @@ export interface RootProps {
  *           </div>
  *         )}
  *       </Form.Loading>
- *       <Form.Error>
+ *       <Form.LoadingError>
  *         {({ error }) => (
  *           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
  *             {error}
  *           </div>
  *         )}
- *       </Form.Error>
+ *       </Form.LoadingError>
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
@@ -148,17 +148,19 @@ export function Loading(props: LoadingProps) {
 }
 
 /**
- * Props for Form Error component
+ * Props for Form LoadingError component
  */
-export interface ErrorProps {
+export interface LoadingErrorProps {
   /** Content to display during error state (can be a render function or ReactNode) */
-  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: LoadingErrorRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
- * Render props for Error component
+ * Render props for LoadingError component
  */
-export interface ErrorRenderProps {
+export interface LoadingErrorRenderProps {
   /** Error message */
   error: string | null;
 }
@@ -168,15 +170,15 @@ export interface ErrorRenderProps {
  * Only displays its children when an error has occurred.
  *
  * @component
- * @param {ErrorProps} props - Component props
- * @param {ErrorProps['children']} props.children - Content to display during error state (can be a render function or ReactNode)
+ * @param {LoadingErrorProps} props - Component props
+ * @param {LoadingErrorProps['children']} props.children - Content to display during error state (can be a render function or ReactNode)
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
- * function FormError() {
+ * function FormLoadingError() {
  *   return (
- *     <Form.Error>
+ *     <Form.LoadingError>
  *       {({ error }) => (
  *         <div className="error-state">
  *           <h3>Error loading form</h3>
@@ -186,14 +188,14 @@ export interface ErrorRenderProps {
  *           </button>
  *         </div>
  *       )}
- *     </Form.Error>
+ *     </Form.LoadingError>
  *   );
  * }
  * ```
  */
-export function Error(props: ErrorProps) {
+export function LoadingError(props: LoadingErrorProps) {
   return (
-    <CoreForm.Error>
+    <CoreForm.LoadingError>
       {({ error, hasError }) => {
         if (hasError) {
           return typeof props.children === 'function'
@@ -203,7 +205,7 @@ export function Error(props: ErrorProps) {
 
         return null;
       }}
-    </CoreForm.Error>
+    </CoreForm.LoadingError>
   );
 }
 
@@ -330,13 +332,13 @@ export interface FieldsProps {
  *           </div>
  *         )}
  *       </Form.Loading>
- *       <Form.Error>
+ *       <Form.LoadingError>
  *         {({ error }) => (
  *           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
  *             {error}
  *           </div>
  *         )}
- *       </Form.Error>
+ *       </Form.LoadingError>
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
@@ -466,12 +468,12 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
 
 /**
  * Main Form namespace containing all form components
- * following the compound component pattern: Form.Root, Form.Loading, Form.Error, Form.Fields
+ * following the compound component pattern: Form.Root, Form.Loading, Form.LoadingError, Form.Fields
  *
  * @namespace Form
  * @property {typeof Root} Root - Form root component that provides service context
  * @property {typeof Loading} Loading - Form loading state component
- * @property {typeof Error} Error - Form error state component
+ * @property {typeof LoadingError} LoadingError - Form loading error state component
  * @property {typeof Fields} Fields - Form fields component for rendering form fields
  * @example
  * ```tsx
@@ -484,9 +486,9 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
  *       <Form.Loading>
  *         {() => <div>Loading form...</div>}
  *       </Form.Loading>
- *       <Form.Error>
+ *       <Form.LoadingError>
  *         {({ error }) => <div>Error: {error}</div>}
- *       </Form.Error>
+ *       </Form.LoadingError>
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
@@ -498,8 +500,8 @@ export const Form = {
   Root,
   /** Form loading state component */
   Loading,
-  /** Form error state component */
-  Error,
+  /** Form loading error state component */
+  LoadingError,
   /** Form fields component for rendering form fields */
   Fields,
 } as const;
