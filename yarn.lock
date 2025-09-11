@@ -5530,7 +5530,7 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/headless-utils": "workspace:*"
-    "@wix/sdk": "npm:^1.15.26"
+    "@wix/sdk": "npm:^1.17.1"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
@@ -5677,13 +5677,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/image-kit@npm:^1.111.0, @wix/image-kit@npm:^1.112.0, @wix/image-kit@npm:^1.93.0":
-  version: 1.112.0
-  resolution: "@wix/image-kit@npm:1.112.0"
+"@wix/image-kit@npm:^1.111.0, @wix/image-kit@npm:^1.113.0, @wix/image-kit@npm:^1.93.0":
+  version: 1.113.0
+  resolution: "@wix/image-kit@npm:1.113.0"
   dependencies:
     "@babel/runtime": "npm:^7.26.0"
     tslib: "npm:^2.8.1"
-  checksum: 10c0/e656fdb61432179601cccd640e45f6878cf304bf20f779358d8baae62b54a7e86df36e9c1962ca7d4d35f0b8e065e6c04188e2baded66e6442648ff0450c90c8
+  checksum: 10c0/0014b5c938bc559ad983c3d83e148b3afc1022ddde81e6776bf8fbc21caec4464be8d8ab798d4787ff17e4c679431e08778c5bcd37ffb484c4e6e40ce773d33e
   languageName: node
   linkType: hard
 
@@ -5929,7 +5929,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk-runtime@npm:0.3.62, @wix/sdk-runtime@npm:^0.3.52, @wix/sdk-runtime@npm:^0.3.55":
+"@wix/sdk-runtime@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@wix/sdk-runtime@npm:0.4.0"
+  dependencies:
+    "@wix/sdk-context": "npm:0.0.1"
+    "@wix/sdk-types": "npm:1.14.0"
+  checksum: 10c0/74b9e2e64b74d9d27471dcd463a1c06c55f98a586b40c5001baf10c631560b5d896a9d431a8696bebc5e261bebfb9e4209413fc3b1179d4ee63afbc57193424f
+  languageName: node
+  linkType: hard
+
+"@wix/sdk-runtime@npm:^0.3.52, @wix/sdk-runtime@npm:^0.3.55":
   version: 0.3.62
   resolution: "@wix/sdk-runtime@npm:0.3.62"
   dependencies:
@@ -5939,34 +5949,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk-types@npm:^1.13.28, @wix/sdk-types@npm:^1.13.31, @wix/sdk-types@npm:^1.13.35, @wix/sdk-types@npm:^1.13.41":
-  version: 1.13.41
-  resolution: "@wix/sdk-types@npm:1.13.41"
+"@wix/sdk-types@npm:1.14.0, @wix/sdk-types@npm:^1.13.28, @wix/sdk-types@npm:^1.13.31, @wix/sdk-types@npm:^1.13.35, @wix/sdk-types@npm:^1.13.41":
+  version: 1.14.0
+  resolution: "@wix/sdk-types@npm:1.14.0"
   dependencies:
     "@wix/error-handler-types": "npm:^1.19.0"
     "@wix/monitoring-types": "npm:^0.12.0"
     type-fest: "npm:^4.41.0"
-  checksum: 10c0/f9df85b10755f41fe8bfe4044f3186189574bcf179850c99b919fba2f983409a288da1e57fd3bc4e1a9a1d8ece61f460ffca22931e35630d8dcbaebe3d19eb64
+  checksum: 10c0/e108529ff78c90cdba2265a26e024368b8fd5b3a98bd5a0da5cbfe37b5e6e37fc18a2d5dceb800a42f6a64c1f397101e30ca39806538a7d23cb9740f5176ed7e
   languageName: node
   linkType: hard
 
-"@wix/sdk@npm:^1.14.3, @wix/sdk@npm:^1.15.24, @wix/sdk@npm:^1.15.26, @wix/sdk@npm:^1.15.27":
-  version: 1.15.27
-  resolution: "@wix/sdk@npm:1.15.27"
+"@wix/sdk@npm:^1.14.3, @wix/sdk@npm:^1.15.24, @wix/sdk@npm:^1.15.27, @wix/sdk@npm:^1.17.1":
+  version: 1.17.1
+  resolution: "@wix/sdk@npm:1.17.1"
   dependencies:
     "@wix/identity": "npm:^1.0.104"
-    "@wix/image-kit": "npm:^1.112.0"
+    "@wix/image-kit": "npm:^1.113.0"
     "@wix/redirects": "npm:^1.0.70"
     "@wix/sdk-context": "npm:0.0.1"
-    "@wix/sdk-runtime": "npm:0.3.62"
-    "@wix/sdk-types": "npm:^1.13.41"
+    "@wix/sdk-runtime": "npm:0.4.0"
+    "@wix/sdk-types": "npm:1.14.0"
     graphql: "npm:^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
     jose: "npm:^5.10.0"
     type-fest: "npm:^4.41.0"
   dependenciesMeta:
     graphql:
       optional: true
-  checksum: 10c0/6d6d0ed59b7f4e5dde3009426b0262a2fac6f5fd0d245f0563a0816a304ec67005c03ac26aee5219071645fe1dc4d42d1a09be624f885fe3339cf4870aea63cf
+  checksum: 10c0/dd5f4c4800178725f72a6de55863098ca3d4bbbf7a61790c556913471e7ec472eab653269aeec289a83ecb64db569171f3a8cc3823447b9ab842e1f4ec878a92
   languageName: node
   linkType: hard
 
