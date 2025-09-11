@@ -34,6 +34,7 @@ import {
 enum TestIds {
   formLoadingError = 'form-loading-error',
   formError = 'form-error',
+  formSubmitted = 'form-submitted',
 }
 
 /**
@@ -330,6 +331,90 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 });
 
 /**
+ * Props for Form Submitted component
+ */
+export interface SubmittedProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display after successful submission (can be a render function or ReactNode) */
+  children?: AsChildChildren<SubmittedRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Render props for Submitted component
+ */
+export interface SubmittedRenderProps {
+  /** Whether the form has been submitted */
+  isSubmitted: boolean;
+}
+
+/**
+ * Component that renders content after successful form submission.
+ * Only displays its children when the form has been successfully submitted.
+ * Provides submission data to custom render functions.
+ *
+ * @component
+ * @param {SubmittedProps} props - Component props
+ * @param {SubmittedProps['asChild']} props.asChild - Whether to render as a child component
+ * @param {SubmittedProps['children']} props.children - Content to display after successful submission (can be a render function or ReactNode)
+ * @param {SubmittedProps['className']} props.className - CSS classes to apply to the default element
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * // Default usage
+ * <Form.Submitted className="success-message" />
+ *
+ * // Custom rendering with forwardRef
+ * <Form.Submitted asChild>
+ *   {React.forwardRef(({ isSubmitted }, ref) => (
+ *     <div
+ *       ref={ref}
+ *       className="custom-success-container"
+ *     >
+ *       <h2>Thank You!</h2>
+ *       <p>Your form has been submitted successfully.</p>
+ *     </div>
+ *   ))}
+ * </Form.Submitted>
+ * ```
+ */
+export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreForm.Submitted>
+        {({ isSubmitted }) => {
+          if (!isSubmitted) return null;
+
+          const submittedData = { isSubmitted };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.formSubmitted}
+              customElement={children}
+              customElementProps={submittedData}
+              content="Form submitted successfully"
+              {...otherProps}
+            >
+              <div className="text-green-500 text-sm sm:text-base">
+                Form submitted successfully
+              </div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreForm.Submitted>
+    );
+  },
+);
+
+/**
  * Mapping of form field types to their corresponding React components.
  * This interface defines the structure for the fieldMap prop, allowing you to specify
  * which React component should be used to render each type of form field.
@@ -588,13 +673,14 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
 
 /**
  * Main Form namespace containing all form components
- * following the compound component pattern: Form.Root, Form.Loading, Form.LoadingError, Form.Error, Form.Fields
+ * following the compound component pattern: Form.Root, Form.Loading, Form.LoadingError, Form.Error, Form.Submitted, Form.Fields
  *
  * @namespace Form
  * @property {typeof Root} Root - Form root component that provides service context
  * @property {typeof Loading} Loading - Form loading state component
  * @property {typeof LoadingError} LoadingError - Form loading error state component
  * @property {typeof Error} Error - Form submit error state component
+ * @property {typeof Submitted} Submitted - Form submitted state component
  * @property {typeof Fields} Fields - Form fields component for rendering form fields
  * @example
  * ```tsx
@@ -611,6 +697,7 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
  *         {({ error }) => <div>Error: {error}</div>}
  *       </Form.LoadingError>
  *       <Form.Error className="submit-error" />
+ *       <Form.Submitted className="success-message" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
@@ -626,6 +713,8 @@ export const Form = {
   LoadingError,
   /** Form error state component */
   Error,
+  /** Form submitted state component */
+  Submitted,
   /** Form fields component for rendering form fields */
   Fields,
 } as const;

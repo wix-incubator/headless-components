@@ -217,3 +217,53 @@ export function Error(props: FormSubmitErrorProps) {
     hasError,
   });
 }
+
+/**
+ * Props for Form Submitted headless component
+ */
+export interface FormSubmittedProps {
+  /** Render prop function that receives submission state data */
+  children: (props: FormSubmittedRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for Form Submitted component
+ */
+export interface FormSubmittedRenderProps {
+  /** Whether the form has been submitted */
+  isSubmitted: boolean;
+}
+
+/**
+ * Headless component for form submission state access
+ *
+ * @component
+ * @param {FormSubmittedProps} props - Component props
+ * @param {FormSubmittedProps['children']} props.children - Render prop function that receives submission state
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormSubmittedDisplay() {
+ *   return (
+ *     <Form.Submitted>
+ *       {({ isSubmitted }) => (
+ *         isSubmitted ? (
+ *           <div className="success-message">
+ *             <h2>Thank You!</h2>
+ *             <p>Your form has been submitted successfully.</p>
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Submitted>
+ *   );
+ * }
+ * ```
+ */
+export function Submitted(props: FormSubmittedProps) {
+  const isSubmitted = false; // TODO: Implement actual submission state tracking
+
+  return props.children({
+    isSubmitted,
+  });
+}

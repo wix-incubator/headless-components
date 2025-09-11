@@ -66,6 +66,7 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
     <Form.Root formServiceConfig={formServiceConfig}>
       <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+      <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
       <Form.Fields fieldMap={FIELD_MAP} />
     </Form.Root>
   );

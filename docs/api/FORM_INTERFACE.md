@@ -73,20 +73,26 @@ interface LoadingErrorRenderProps {
 </Form.LoadingError>
 ```
 
-### Form.ThankYouMessage
+### Form.Submitted
 
-Component that renders content after successful form submission. Only displays its children when the form has been successfully submitted.
+Component that renders content after successful form submission. Only displays its children when the form has been successfully submitted. Provides submission data to custom render functions.
 
 **Props**
 
 ```tsx
-interface ThankYouMessageProps {
-  children:
-    | ((props: ThankYouMessageRenderProps) => React.ReactNode)
-    | React.ReactNode;
+import { AsChildChildren } from '@wix/headless-utils/react';
+
+interface SubmittedProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display after successful submission (can be a render function or ReactNode) */
+  children?: AsChildChildren<SubmittedRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
-interface ThankYouMessageRenderProps {
+interface SubmittedRenderProps {
+  /** Whether the form has been submitted */
   isSubmitted: boolean;
 }
 ```
@@ -94,18 +100,21 @@ interface ThankYouMessageRenderProps {
 **Example**
 
 ```tsx
-<Form.ThankYouMessage>
-  {({ isSubmitted }) =>
-    isSubmitted ? (
-      <div className="bg-background border-foreground text-foreground p-6 rounded-lg">
-        <h2 className="text-2xl font-heading mb-4">Thank You!</h2>
-        <p className="font-paragraph">
-          Your form has been submitted successfully. We'll get back to you soon.
-        </p>
-      </div>
-    ) : null
-  }
-</Form.ThankYouMessage>
+// Default usage
+<Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg" />
+
+// Custom rendering with forwardRef
+<Form.Submitted asChild>
+  {React.forwardRef(({ isSubmitted }, ref) => (
+    <div
+      ref={ref}
+      className="custom-success-container"
+    >
+      <h2>Thank You!</h2>
+      <p>Your form has been submitted successfully.</p>
+    </div>
+  ))}
+</Form.Submitted>
 ```
 
 ### Form.Error
@@ -391,18 +400,7 @@ function FormPage({ form }) {
     <Form.Root form={form}>
       <Form.LoadingError className="text-foreground px-4 py-3 rounded mb-4" />
       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
-      <Form.ThankYouMessage>
-        {({ isSubmitted }) =>
-          isSubmitted ? (
-            <div className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4">
-              <h2 className="text-2xl font-heading mb-4">Thank You!</h2>
-              <p className="font-paragraph">
-                Your form has been submitted successfully. We'll get back to you soon.
-              </p>
-            </div>
-          ) : null
-        }
-      </Form.ThankYouMessage>
+      <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
       <Form.Fields fieldMap={FIELD_MAP} />
     </Form.Root>
   );
