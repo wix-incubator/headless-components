@@ -42,8 +42,6 @@ export default function OnlineProgramPage({
     return createServicesManager(servicesMap);
   });
 
-  console.log(programServiceConfig, instructorsServiceConfig);
-
   return (
     <ServicesManagerProvider servicesManager={servicesManager}>
       <Program.Root program={programServiceConfig.program!}>
@@ -61,9 +59,7 @@ export default function OnlineProgramPage({
         <Program.Instructors instructors={instructorsServiceConfig?.instructors}>
           <Program.Instructors.InstructorRepeater>
             <Program.Instructor>
-              <Program.Instructor.Avatar className="w-16 h-16 rounded-full" />
               <Program.Instructor.Name className="font-semibold" />
-              <Program.Instructor.Description className="text-sm text-gray-600" />
             </Program.Instructor>
           </Program.Instructors.InstructorRepeater>
         </Program.Instructors>

@@ -210,7 +210,7 @@ interface ProgramStepsCountProps {
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
     {
-      steps: number;
+      stepsCount: number;
     }
   >;
 }
@@ -233,9 +233,9 @@ interface ProgramStepsCountProps {
 
 // Custom rendering
 <Program.StepsCount asChild>
-  {React.forwardRef(({ steps, ...props }, ref) => (
+  {React.forwardRef(({ stepsCount, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
-      {steps} Steps
+      {stepsCount} Steps
     </p>
   ))}
 </Program.StepsCount>
@@ -380,7 +380,7 @@ interface ProgramInstructorsProps {
 <Program.Instructors asChild>
   <div className="grid grid-cols-3 gap-4">
     <Program.Instructors.InstructorRepeater> // <Instructor.Root
-      <Instructor.Avatar className="w-16 h-16 rounded-full" />
+      <Instructor.Image className="w-16 h-16 rounded-full" />
       <Instructor.Name className="font-semibold" />
     </Program.Instructors.InstructorRepeater>
   </div>
