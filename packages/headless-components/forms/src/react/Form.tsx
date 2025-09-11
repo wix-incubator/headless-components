@@ -111,17 +111,18 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 /**
  * Internal component to handle the Root content with service access
  */
-const RootContent = React.forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string }>(
-  (props, ref) => {
-    const { children, className } = props;
+const RootContent = React.forwardRef<
+  HTMLDivElement,
+  { children: React.ReactNode; className?: string }
+>((props, ref) => {
+  const { children, className } = props;
 
-    return (
-      <div ref={ref} className={className}>
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+});
 
 /**
  * Props for Form Loading component
@@ -626,7 +627,7 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
 
     // ECOM_FIELD_TYPES
     ECOM_ADDITIONAL_INFO: fieldMap.TEXT_AREA,
-    ECOM_ADDRESS: fieldMap.TEXT_INPUT, // TODO: add to fieldMap
+    ECOM_ADDRESS: fieldMap.TEXT_INPUT,
     ECOM_FULL_NAME: fieldMap.TEXT_INPUT,
     ECOM_PHONE: fieldMap.PHONE_INPUT,
     ECOM_COMPANY_NAME: fieldMap.TEXT_INPUT,
