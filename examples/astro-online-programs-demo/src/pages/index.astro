@@ -1,20 +1,5 @@
 ---
-import { loadProgramServiceConfig } from '@wix/headless-online-programs/services';
-
-import OnlineProgramsPage from '../react-pages/online-programs/index';
-
-const programServiceConfigResult = await loadProgramServiceConfig('871cbf99-ee47-421f-a155-418d36704380')
-
-if (programServiceConfigResult.type === 'notFound') {
-  return Astro.redirect('/404');
-}
-
-const programServiceConfig = programServiceConfigResult.config;
 
 ---
 
-<OnlineProgramsPage
-  client:load
-	programServiceConfig={programServiceConfig}
-  slot="body"
-/>
+<div>Online Programs list should be here</div>

@@ -18,6 +18,7 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.StepsCount](#programstepscount)
   - [Program.Description](#programdescription)
   - [Program.Duration](#programduration)
+
   - [Program.Instructors](#programinstructors)
   - [Program.Instructor](#programinstructor)
     - [Program.Instructor.Name](#programinstructorname)
@@ -26,6 +27,8 @@ A comprehensive, composable, and headless API for rendering Online Program entit
 
 - [Drafts](#drafts)
   - [Program.Participants.Stats.ParticipantsCount] ???
+  - [Program.Action.View]
+  - [Program.Action.Join]
 
 - [Usage Examples](#usage-examples) _(soon...)_
 
@@ -363,6 +366,44 @@ interface ProgramInstructorsProps {
 </Program.Instructors>
 ```
 
+---
+
+### Program.Instructors.InstructorRepeater
+
+Repeats over the list of instructors and renders `Program.Instructor` for each one. This component follows the established repeater pattern used throughout the headless components.
+
+**Props**
+
+```tsx
+interface ProgramInstructorsInstructorRepeaterProps {
+  children: React.ReactNode; // will be passed to each Program.Instructor
+}
+```
+
+**Data Attributes**
+- `data-testid="program-instructors-repeater"` - Applied to repeater container
+
+**Example**
+
+```tsx
+// Basic usage
+<Program.Instructors.InstructorRepeater>
+  <Program.Instructor>
+    <Program.Instructor.Avatar />
+    <Program.Instructor.Name />
+  </Program.Instructor>
+</Program.Instructors.InstructorRepeater>
+
+// With custom layout
+<Program.Instructors.InstructorRepeater>
+  <div className="flex flex-wrap gap-4">
+    <Program.Instructor>
+      <Program.Instructor.Avatar className="w-12 h-12" />
+      <Program.Instructor.Name className="text-sm" />
+    </Program.Instructor>
+  </div>
+</Program.Instructors.InstructorRepeater>
+```
 ---
 
 ### Program.Instructor

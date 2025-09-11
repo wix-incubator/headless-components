@@ -1,0 +1,25 @@
+---
+import {
+  loadProgramServiceConfig
+} from '@wix/headless-online-programs/services';
+import OnlineProgramPage from '../react-pages/online-programs/program';
+
+const { programId } = Astro.params;
+export const prerender = false;
+
+if (!programId) {
+  return Astro.redirect('/');
+}
+
+const programServiceConfig = await loadProgramServiceConfig(programId);
+
+if (programServiceConfig.type === 'notFound') {
+  return Astro.rewrite('/404');
+}
+
+---
+
+<OnlineProgramPage
+  programServiceConfig={programServiceConfig.config}
+  client:load
+/>

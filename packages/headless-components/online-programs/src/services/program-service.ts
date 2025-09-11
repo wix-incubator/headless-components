@@ -41,6 +41,7 @@ export interface ProgramServiceConfig {
   /** The initial program data to configure the service with */
   program?: programs.Program;
 
+  /** The ID of the program to load */
   programId?: string;
 }
 
