@@ -721,9 +721,9 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
  *       <Form.LoadingError>
  *         {({ error }) => <div>Error: {error}</div>}
  *       </Form.LoadingError>
+ *       <Form.Fields fieldMap={FIELD_MAP} />
  *       <Form.Error className="submit-error" />
  *       <Form.Submitted className="success-message" />
- *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
  * }
