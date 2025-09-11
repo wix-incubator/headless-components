@@ -1,0 +1,340 @@
+import React from 'react';
+import { useService } from '@wix/services-manager-react';
+import { TestIds } from './test-ids';
+import { AsChildSlot } from '@wix/headless-utils/react';
+import * as CoreServiceList from './core/ServiceList';
+import { ServicesListServiceConfig, ServicesListServiceDefinition } from '../services/services-list-service.js';
+import { services } from '@wix/bookings';
+
+/**
+ * Props for the ServiceList root component following the documented API
+ */
+export interface ServiceListRootProps {
+  children: ((props: { services: services.Service[] }) => React.ReactNode) | React.ReactNode;
+  services?: services.Service[];
+  servicesListConfig?: ServicesListServiceConfig;
+  className?: string;
+}
+
+/**
+ * Root component that provides the ServiceList context for rendering service lists.
+ * This component manages the service data and provides it to child components through context.
+ */
+export const List = React.forwardRef<HTMLElement, ServiceListRootProps>(
+  (props, ref) => {
+    const { children, services = [], servicesListConfig, className } = props;
+
+    const serviceConfig = servicesListConfig || {
+      services: services,
+      searchOptions: {
+        cursorPaging: { limit: 10 },
+      },
+      pagingMetadata: {
+        count: services?.length || 0,
+      },
+      aggregations: {
+        results: [],
+      },
+      customizations: [],
+    };
+
+    return (
+      <CoreServiceList.Root servicesListConfig={serviceConfig}>
+        <ListContent
+          children={children}
+          className={className}
+          ref={ref}
+        />
+      </CoreServiceList.Root>
+    );
+  }
+);
+
+List.displayName = 'Services.List';
+
+const ListContent = React.forwardRef<
+  HTMLElement,
+  {
+    children: ((props: { services: services.Service[] }) => React.ReactNode) | React.ReactNode;
+    className?: string;
+  }
+>((props, ref) => {
+  const { children, className } = props;
+  const servicesListService = useService(ServicesListServiceDefinition);
+  const services = servicesListService.services.get();
+  const pagingMetadata = servicesListService.pagingMetadata.get();
+
+  const displayedServices = services.length;
+  const totalServices = pagingMetadata?.count || services.length;
+  const isFiltered = Object.keys(servicesListService.filters.get()).length > 0;
+
+  const attributes = {
+    'data-testid': TestIds.servicesList,
+    'data-total-services': totalServices,
+    'data-displayed-services': displayedServices,
+    'data-filtered': isFiltered,
+    className,
+  };
+
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {typeof children === 'function' ? children({ services }) : children}
+    </div>
+  );
+});
+
+export interface ServiceOptionsProps {
+  children: ((props: { services: services.Service[] }) => React.ReactNode) | React.ReactNode;
+  emptyState?: React.ReactNode;
+  infiniteScroll?: boolean;
+  pageSize?: number;
+  className?: string;
+}
+
+export const Options = React.forwardRef<HTMLElement, ServiceOptionsProps>(
+  (props, ref) => {
+    const { children, emptyState, infiniteScroll = true, pageSize = 0, className } = props;
+    const servicesListService = useService(ServicesListServiceDefinition);
+    const services = servicesListService.services.get();
+    const hasServices = services.length > 0;
+
+    if (!hasServices) {
+      return emptyState || null;
+    }
+
+    const attributes = {
+      'data-testid': TestIds.servicesOptions,
+      'data-empty': !hasServices,
+      'data-infinite-scroll': infiniteScroll,
+      'data-page-size': pageSize,
+      className,
+    };
+
+    return (
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+        {typeof children === 'function' ? children({ services }) : children}
+      </div>
+    );
+  }
+);
+
+Options.displayName = 'Services.Options';
+
+export interface ServiceRepeaterProps {
+  children: ((props: { service: services.Service }) => React.ReactNode) | React.ReactNode;
+}
+
+export const ServiceRepeater = React.forwardRef<HTMLElement, ServiceRepeaterProps>(
+  (props) => {
+    const { children } = props;
+    const servicesListService = useService(ServicesListServiceDefinition);
+    const services = servicesListService.services.get();
+    const hasServices = services.length > 0;
+
+    if (!hasServices) return null;
+
+    return (
+      <>
+        {services.map((service) => (
+          <Service.Root
+            key={service._id}
+            service={service}
+            data-testid={TestIds.serviceRepeater}
+            data-service-id={service._id}
+          >
+            {typeof children === 'function' ? children({ service }) : children}
+          </Service.Root>
+        ))}
+      </>
+    );
+  }
+);
+
+ServiceRepeater.displayName = 'Services.ServiceRepeater';
+
+export interface RawProps {
+  children:
+    | ((props: {
+        totalServices: number;
+        displayedServices: number;
+        isFiltered: boolean;
+      }) => React.ReactNode)
+    | React.ReactNode;
+}
+
+export const Raw = React.forwardRef<HTMLElement, RawProps>((props, _ref) => {
+  const { children } = props;
+  const servicesListService = useService(ServicesListServiceDefinition);
+  const services = servicesListService.services.get();
+  const pagingMetadata = servicesListService.pagingMetadata.get();
+  const displayedServices = services.length;
+  const totalServices = pagingMetadata?.count || services.length;
+  const isFiltered = Object.keys(servicesListService.filters.get()).length > 0;
+
+  return typeof children === 'function'
+    ? children({ totalServices, displayedServices, isFiltered })
+    : children;
+});
+
+Raw.displayName = 'Services.Raw';
+
+export interface ErrorProps {
+  asChild?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreServiceList.Error>
+      {({ error }) => {
+        if (!error) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.serviceError}
+            data-error={error}
+            customElement={children}
+            customElementProps={{
+              error,
+            }}
+            content={error}
+            {...otherProps}
+          >
+            <div className="text-status-error text-sm sm:text-base">
+              {error}
+            </div>
+          </AsChildSlot>
+        );
+      }}
+    </CoreServiceList.Error>
+  );
+});
+
+Error.displayName = 'Services.Error';
+
+export const Service = {
+  Root: React.forwardRef<HTMLElement, { service: services.Service; children: ((props: { service: services.Service }) => React.ReactNode) | React.ReactNode }>(
+    (props, ref) => {
+      const { service, children, ...rest } = props;
+
+      return (
+        <ServiceContext.Provider value={{ service }}>
+          <div data-testid={TestIds.serviceRoot} ref={ref as React.Ref<HTMLDivElement>} {...rest}>
+            {typeof children === 'function' ? children({ service }) : children}
+          </div>
+        </ServiceContext.Provider>
+      );
+    }
+  ),
+
+  Name: React.forwardRef<HTMLElement, { className?: string }>(
+    (props, ref) => {
+      const { service } = React.useContext(ServiceContext);
+      const { className } = props;
+
+      return (
+        <div data-testid={TestIds.serviceName} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+          {service.name}
+        </div>
+      );
+    }
+  ),
+
+  Description: React.forwardRef<HTMLElement, { className?: string }>(
+    (props, ref) => {
+      const { service } = React.useContext(ServiceContext);
+      const { className } = props;
+
+      if (!service.description) return null;
+
+      return (
+        <div data-testid={TestIds.serviceDescription} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+          {service.description}
+        </div>
+      );
+    }
+  ),
+
+  Price: React.forwardRef<HTMLElement, { className?: string }>(
+    (props, ref) => {
+      const { service } = React.useContext(ServiceContext);
+      const { className } = props;
+
+      if (!service.payment?.fixed?.price) return null;
+
+      return (
+        <div data-testid={TestIds.servicePrice} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+          {service.payment?.fixed?.price.value} {service.payment?.fixed?.price.currency}
+        </div>
+      );
+    }
+  ),
+
+  Duration: React.forwardRef<HTMLElement, { className?: string }>(
+    (props, ref) => {
+      const { service } = React.useContext(ServiceContext);
+      const { className } = props;
+
+      if (!service?.schedule?.availabilityConstraints?.durations?.[0]) return null;
+
+      return (
+        <div data-testid={TestIds.serviceDuration} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+          {service?.schedule?.availabilityConstraints?.durations?.[0]+''}
+        </div>
+      );
+    }
+  ),
+
+  Image: React.forwardRef<HTMLImageElement, { className?: string }>(
+    (props, ref) => {
+      const { service } = React.useContext(ServiceContext);
+      const { className } = props;
+
+      if (!service.media?.mainMedia?.image) return null;
+
+      return (
+        <img
+          src={service.media?.mainMedia?.image?.url}
+          alt={service.name || ''}
+          data-testid={TestIds.serviceImage}
+          ref={ref as React.Ref<HTMLImageElement>}
+          className={className}
+        />
+      );
+    }
+  ),
+
+  Category: React.forwardRef<HTMLElement, { className?: string }>(
+    (props, ref) => {
+      const { service } = React.useContext(ServiceContext);
+      const { className } = props;
+
+      if (!service.category) return null;
+
+      return (
+        <div data-testid={TestIds.serviceCategory} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+          {service.category?.name}
+        </div>
+      );
+    }
+  )
+};
+
+// Create a Service Context for individual service components
+const ServiceContext = React.createContext<{ service: services.Service }>(null as any);
+
+Service.Root.displayName = 'Service.Root';
+Service.Name.displayName = 'Service.Name';
+Service.Description.displayName = 'Service.Description';
+Service.Price.displayName = 'Service.Price';
+Service.Duration.displayName = 'Service.Duration';
+Service.Image.displayName = 'Service.Image';
+Service.Category.displayName = 'Service.Category';
