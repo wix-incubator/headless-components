@@ -11,17 +11,17 @@ const ImageChoice = ({
   options,
   numberOfColumns = 1,
   multiple = false,
-  minItems,
-  maxItems,
   onChange,
   onBlur,
   onFocus,
 }: ImageChoiceProps) => {
-
   return (
     <div>
       {showLabel && (
-        <label htmlFor={id} style={{ fontWeight: 'bold', marginBottom: '8px', display: 'block' }}>
+        <label
+          htmlFor={id}
+          style={{ fontWeight: 'bold', marginBottom: '8px', display: 'block' }}
+        >
           {label}
           {required && <span style={{ color: 'red' }}> *</span>}
         </label>

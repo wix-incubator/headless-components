@@ -278,7 +278,6 @@ interface FieldMap {
  *
  * @interface FieldsProps
  *
- * @property {string} formId - The unique identifier of the form to render
  * @property {FieldMap} fieldMap - A mapping of field types to their corresponding React components
  *
  * @example
@@ -293,14 +292,10 @@ interface FieldMap {
  *   // ... remaining field components
  * };
  *
- * <Form.Fields
- *   formId="491ce063-931e-47c9-aad9-4845d9271c30"
- *   fieldMap={FIELD_MAP}
- * />
+ * <Form.Fields fieldMap={FIELD_MAP} />
  * ```
  */
 export interface FieldsProps {
-  formId: string;
   fieldMap: FieldMap;
 }
 
@@ -311,7 +306,6 @@ export interface FieldsProps {
  *
  * @component
  * @param {FieldsProps} props - Component props
- * @param {string} props.formId - The unique identifier of the form to render
  * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components
  * @example
  * ```tsx
@@ -343,10 +337,7 @@ export interface FieldsProps {
  *           </div>
  *         )}
  *       </Form.Error>
- *       <Form.Fields
- *         formId="491ce063-931e-47c9-aad9-4845d9271c30"
- *         fieldMap={FIELD_MAP}
- *       />
+ *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
  * }
@@ -354,19 +345,13 @@ export interface FieldsProps {
  */
 
 export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
-  ({ formId, fieldMap }) => {
+  ({ fieldMap }) => {
     // TODO: render real viewer
-    return <MockViewer formId={formId} fieldMap={fieldMap} />;
+    return <MockViewer fieldMap={fieldMap} />;
   },
 );
 
-const MockViewer = ({
-  formId,
-  fieldMap,
-}: {
-  formId: string;
-  fieldMap: FieldMap;
-}) => {
+const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
   // This is how fieldMap is expected to be used in the viewer
   const schemaFields = {
     // CONTACTS_FIELD_TYPES
@@ -473,7 +458,7 @@ const MockViewer = ({
 
   return (
     <>
-      <div>Form {formId}</div>
+      <div>Form Fields</div>
       <div>{JSON.stringify(schemaFields)}</div>
     </>
   );

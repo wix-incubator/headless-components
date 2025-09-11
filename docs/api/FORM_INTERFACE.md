@@ -124,22 +124,21 @@ interface SubmitErrorRenderProps {
 </Form.SubmitError>
 ```
 
-### Form.Container
+### Form.Fields
 
-Container component for rendering a form with custom field renderers. This component handles the rendering of form fields based on the provided fieldMap and displays them in the configured form grid layout.
+Fields component for rendering a form with custom field renderers. This component handles the rendering of form fields based on the provided fieldMap and displays them in the configured form grid layout.
 
 **Props**
 
 ```tsx
-interface ContainerProps {
-  formId: string;
+interface FieldsProps {
   fieldMap: FieldMap;
 }
 ```
 
 **Behavior**
 
-The Container component:
+The Fields component:
 
 - Renders form fields in the order and layout defined by the form configuration
 - Maps each field type to its corresponding React component using the provided fieldMap
@@ -148,10 +147,7 @@ The Container component:
 **Example**
 
 ```tsx
-<Form.Container
-  formId="491ce063-931e-47c9-aad9-4845d9271c30"
-  fieldMap={FIELD_MAP}
-/>
+<Form.Fields fieldMap={FIELD_MAP} />
 ```
 
 ## Field Mapping System
@@ -391,7 +387,7 @@ function FormPage({ form }) {
           ) : null
         }
       </Form.ThankYouMessage>
-      <Form.Container fieldMap={FIELD_MAP} />
+      <Form.Fields fieldMap={FIELD_MAP} />
     </Form.Root>
   );
 }

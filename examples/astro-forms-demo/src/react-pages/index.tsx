@@ -64,10 +64,7 @@ const FIELD_MAP = {
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
   return (
     <Form.Root formServiceConfig={formServiceConfig}>
-      <Form.Fields
-        formId="491ce063-931e-47c9-aad9-4845d9271c30"
-        fieldMap={FIELD_MAP}
-      />
+      <Form.Fields fieldMap={FIELD_MAP} />
     </Form.Root>
   );
 }
