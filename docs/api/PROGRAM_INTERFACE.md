@@ -4,7 +4,6 @@ A comprehensive, composable, and headless API for rendering Online Program entit
 
 ## Open questions
 - public sdk doesn't support alt text for image
-- do we need `label` prop for counters like steps [<Program.StepsCount/>](#programstepscount)
 - the instructors list should be fetch together with the program, right? (Separate service form program)
 - program instructor link to members area, how?
 
