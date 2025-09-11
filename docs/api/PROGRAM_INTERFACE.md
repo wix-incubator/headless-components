@@ -278,7 +278,7 @@ interface ProgramDescriptionProps {
 
 ### Program.Duration
 
-Displays the program duration in days with customizable rendering. Data source: program.timeline field. If the program is self-placed, duration has no limit.
+Displays the program duration in days with customizable rendering. Data source: program.timeline field. If the program is self-paced, duration has no limit.
 
 **Props**
 
@@ -289,8 +289,11 @@ interface ProgramDurationProps {
     HTMLElement,
     {
       durationInDays: number | null;  // null represents "no limit"
+      isSelfPaced: boolean;          // whether program is self-paced
     }
   >;
+  className?: string;
+  [key: string]: any;
 }
 ```
 
@@ -300,22 +303,27 @@ interface ProgramDurationProps {
 - `data-type="self-paced"` - Applied when program is self-paced
 - `data-type="time-limited"` - Applied when program has specific duration
 
+**Implementation Notes**
+
+- Default content: Shows raw `durationInDays` value (no automatic formatting)
+- Custom rendering: Provides both `durationInDays` and `isSelfPaced` for flexible formatting
+
 **Example**
 
 ```tsx
-// Default usage N or null
+// Default usage - shows raw durationInDays value
 <Program.Duration className="text-content-secondary" />
 
 // asChild with primitive
 <Program.Duration asChild>
-  <p className="text-content-secondary">
+  <p className="text-content-secondary" />
 </Program.Duration>
 
-// Custom rendering with format
-<Program.Duration asChild format="long">
-  {React.forwardRef(({ durationInDays, ...props }, ref) => (
+// Custom rendering with proper formatting
+<Program.Duration asChild>
+  {React.forwardRef(({ durationInDays, isSelfPaced, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
-      {durationInDays ? `${durationInDays} days ` : 'No Time Limit' }
+      {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
     </p>
   ))}
 </Program.Duration>

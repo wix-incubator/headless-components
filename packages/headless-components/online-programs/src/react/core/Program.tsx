@@ -203,8 +203,6 @@ export function Duration(props: ProgramDurationProps) {
 
   const program = service.program.get();
 
-  // Extract duration from timeline field
-  // If timeline is null/undefined or has no duration, it's self-paced
   const timeline = program.timeline;
   const durationInDays = timeline?.durationInDays || null;
   const isSelfPaced = timeline?.selfPaced || false;
