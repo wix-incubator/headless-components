@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServicesPage from '../../react-pages/services';
+import { loadServicesListServiceConfig } from '@wix/headless-services/services';
+
+// Load services with pagination and sorting
+const servicesConfig = await loadServicesListServiceConfig({
+  cursorPaging: { limit: 12 },
+  sort: [{ fieldName: 'name', order: 'ASC' }]
+});
+
+console.log('Services config:', {
+  serviceCount: servicesConfig.services.length,
+  services: servicesConfig.services,
+  pagingMetadata: servicesConfig.pagingMetadata
+});
+---
+
+<BaseLayout>
+  <title>Our Services | Book Now</title>
+  <meta name="description" content="Browse and book our professional services" />
+
+  <ServicesPage client:load servicesConfig={servicesConfig} slot="body" />
+</BaseLayout>
