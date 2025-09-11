@@ -91,37 +91,38 @@ interface ThankYouMessageRenderProps {
 </Form.ThankYouMessage>
 ```
 
-### Form.SubmitError
+### Form.Error
 
 Component that renders content when there's an error during form submission. Only displays its children when a submission error has occurred.
 
 **Props**
 
 ```tsx
-interface SubmitErrorProps {
+interface ErrorProps {
   children:
-    | ((props: SubmitErrorRenderProps) => React.ReactNode)
+    | ((props: ErrorRenderProps) => React.ReactNode)
     | React.ReactNode;
 }
 
-interface SubmitErrorRenderProps {
-  submitError: string | null;
-  hasSubmitError: boolean;
+interface ErrorRenderProps {
+  error: string | null;
+  hasError: boolean;
 }
 ```
 
 **Example**
 
 ```tsx
-<Form.SubmitError>
-  {({ submitError, hasSubmitError }) =>
-    hasSubmitError ? (
+<Form.Error>
+  {({ error, hasError }) =>
+    hasError ? (
       <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
-        Submission Failed
+        <h3>Submission Failed</h3>
+        <p>{error}</p>
       </div>
     ) : null
   }
-</Form.SubmitError>
+</Form.Error>
 ```
 
 ### Form.Fields
@@ -366,15 +367,16 @@ function FormPage({ form }) {
           </div>
         )}
       </Form.LoadingError>
-      <Form.SubmitError>
-        {({ submitError, hasSubmitError }) =>
-          hasSubmitError ? (
+      <Form.Error>
+        {({ error, hasError }) =>
+          hasError ? (
             <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
-              Submission Failed
+              <h3>Submission Failed</h3>
+              <p>{error}</p>
             </div>
           ) : null
         }
-      </Form.SubmitError>
+      </Form.Error>
       <Form.ThankYouMessage>
         {({ isSubmitted }) =>
           isSubmitted ? (

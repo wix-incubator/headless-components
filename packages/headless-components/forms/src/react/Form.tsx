@@ -183,9 +183,6 @@ export interface LoadingErrorRenderProps {
  *         <div className="error-state">
  *           <h3>Error loading form</h3>
  *           <p>{error}</p>
- *           <button onClick={() => window.location.reload()}>
- *             Try Again
- *           </button>
  *         </div>
  *       )}
  *     </Form.LoadingError>
@@ -207,6 +204,56 @@ export function LoadingError(props: LoadingErrorProps) {
       }}
     </CoreForm.LoadingError>
   );
+}
+
+/**
+ * Props for Form Error component
+ */
+export interface ErrorProps {
+  /** Content to display during submit error state (can be a render function or ReactNode) */
+  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for Error component
+ */
+export interface ErrorRenderProps {
+  /** Error message */
+  error: string | null;
+  /** Whether there's an error */
+  hasError: boolean;
+}
+
+/**
+ * Component that renders content when there's an error during form submission.
+ * Only displays its children when a submission error has occurred.
+ *
+ * @component
+ * @param {ErrorProps} props - Component props
+ * @param {ErrorProps['children']} props.children - Content to display during submit error state (can be a render function or ReactNode)
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormError() {
+ *   return (
+ *     <Form.Error>
+ *       {({ error, hasError }) => (
+ *         hasError ? (
+ *           <div className="error-state">
+ *             <h3>Submission Failed</h3>
+ *             <p>{error}</p>
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Error>
+ *   );
+ * }
+ * ```
+ */
+export function Error(_props: ErrorProps) {
+  // TODO: Implement submit error handling
+  return null;
 }
 
 /**
@@ -502,6 +549,8 @@ export const Form = {
   Loading,
   /** Form loading error state component */
   LoadingError,
+  /** Form error state component */
+  Error,
   /** Form fields component for rendering form fields */
   Fields,
 } as const;
