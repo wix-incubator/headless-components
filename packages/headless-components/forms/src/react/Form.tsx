@@ -1,4 +1,5 @@
 import React from 'react';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
 import * as CoreForm from './core/Form.js';
 import { FormServiceConfig } from '../services/form-service.js';
@@ -29,6 +30,10 @@ import {
   AppointmentProps,
   ImageChoiceProps,
 } from './types.js';
+
+enum TestIds {
+  formLoadingError = "form-loading-error",
+}
 
 /**
  * Props for the Form root component following the documented API
@@ -151,10 +156,12 @@ export function Loading(props: LoadingProps) {
  * Props for Form LoadingError component
  */
 export interface LoadingErrorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
   /** Content to display during error state (can be a render function or ReactNode) */
-  children:
-    | ((props: LoadingErrorRenderProps) => React.ReactNode)
-    | React.ReactNode;
+  children?: AsChildChildren<LoadingErrorRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
@@ -163,6 +170,8 @@ export interface LoadingErrorProps {
 export interface LoadingErrorRenderProps {
   /** Error message */
   error: string | null;
+  /** Whether there's an error */
+  hasError: boolean;
 }
 
 /**
@@ -179,7 +188,7 @@ export interface LoadingErrorRenderProps {
  * function FormLoadingError() {
  *   return (
  *     <Form.LoadingError>
- *       {({ error }) => (
+ *       {({ error, hasError }) => (
  *         <div className="error-state">
  *           <h3>Error loading form</h3>
  *           <p>{error}</p>
@@ -188,30 +197,61 @@ export interface LoadingErrorRenderProps {
  *     </Form.LoadingError>
  *   );
  * }
+ *
+ * // With asChild
+ * function CustomLoadingError() {
+ *   return (
+ *     <Form.LoadingError asChild>
+ *       {React.forwardRef(({ error, hasError }, ref) => (
+ *         <div ref={ref} className="custom-error">
+ *           <h3>Custom Error Display</h3>
+ *           <p>{error}</p>
+ *         </div>
+ *       ))}
+ *     </Form.LoadingError>
+ *   );
+ * }
  * ```
  */
-export function LoadingError(props: LoadingErrorProps) {
-  return (
-    <CoreForm.LoadingError>
-      {({ error, hasError }) => {
-        if (hasError) {
-          return typeof props.children === 'function'
-            ? props.children({ error })
-            : props.children;
-        }
+export const LoadingError = React.forwardRef<HTMLElement, LoadingErrorProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-        return null;
-      }}
-    </CoreForm.LoadingError>
-  );
-}
+    return (
+      <CoreForm.LoadingError>
+        {({ error, hasError }) => {
+          if (!hasError) return null;
+
+          const errorData = { error, hasError };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.formLoadingError}
+              customElement={children}
+              customElementProps={errorData}
+              content={error}
+              {...otherProps}
+            >
+              <div>{error}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreForm.LoadingError>
+    );
+  },
+);
 
 /**
  * Props for Form Error component
  */
 export interface ErrorProps {
   /** Content to display during submit error state (can be a render function or ReactNode) */
-  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: ErrorRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
