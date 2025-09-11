@@ -170,7 +170,14 @@ interface ErrorRenderProps {
 
 ### Form.Fields
 
-Fields component for rendering a form with custom field renderers. This component handles the rendering of form fields based on the provided fieldMap and displays them in the configured form grid layout.
+Fields component for rendering a form with custom field renderers. It maps each field type from the form configuration to its corresponding React component and renders them in the order and layout defined by the form structure.
+
+The component automatically handles:
+- Field validation and error display
+- Form state management
+- Field value updates
+
+Must be used within Form.Root to access form context.
 
 **Props**
 
@@ -186,7 +193,8 @@ The Fields component:
 
 - Renders form fields in the order and layout defined by the form configuration
 - Maps each field type to its corresponding React component using the provided fieldMap
-- Handles form validation
+- Handles form validation and error display
+- Manages form state and field value updates
 
 **Example**
 
@@ -354,12 +362,29 @@ const RadioGroup = ({ value, onChange, options, label, error, ...props }) => (
 const FIELD_MAP = {
   TEXT_INPUT: TextInput,
   TEXT_AREA: TextArea,
-  CHECKBOX: Checkbox,
-  RADIO_GROUP: RadioGroup,
-  NUMBER_INPUT: NumberInput,
   PHONE_INPUT: PhoneInput,
+  MULTILINE_ADDRESS: MultilineAddress,
+  DATE_INPUT: DateInput,
   DATE_PICKER: DatePicker,
-  // ... other field components
+  DATE_TIME_INPUT: DateTimeInput,
+  FILE_UPLOAD: FileUpload,
+  NUMBER_INPUT: NumberInput,
+  CHECKBOX: Checkbox,
+  SIGNATURE: Signature,
+  RATING_INPUT: RatingInput,
+  RADIO_GROUP: RadioGroup,
+  CHECKBOX_GROUP: CheckboxGroup,
+  DROPDOWN: Dropdown,
+  TAGS: Tags,
+  TIME_INPUT: TimeInput,
+  TEXT: RichText,
+  SUBMIT_BUTTON: SubmitButton,
+  PRODUCT_LIST: ProductList,
+  FIXED_PAYMENT: FixedPayment,
+  PAYMENT_INPUT: PaymentInput,
+  DONATION: Donation,
+  APPOINTMENT: Appointment,
+  IMAGE_CHOICE: ImageChoice,
 };
 ```
 
@@ -390,23 +415,78 @@ const formServiceConfig = formServiceConfigResult.config;
 ```tsx
 // components/FormPage.tsx
 import { Form } from '@wix/headless-forms/react';
+import { loadFormServiceConfig } from '@wix/headless-forms/services';
+import {
+  TextInput,
+  TextArea,
+  PhoneInput,
+  MultilineAddress,
+  DateInput,
+  DatePicker,
+  DateTimeInput,
+  FileUpload,
+  NumberInput,
+  Checkbox,
+  Signature,
+  RatingInput,
+  RadioGroup,
+  CheckboxGroup,
+  Dropdown,
+  Tags,
+  TimeInput,
+  RichText,
+  SubmitButton,
+  ProductList,
+  FixedPayment,
+  PaymentInput,
+  Donation,
+  Appointment,
+  ImageChoice
+} from './components';
 
-// Define your custom field components
+// Define your field mapping - this tells the Fields component which React component to use for each field type
 const FIELD_MAP = {
   TEXT_INPUT: TextInput,
   TEXT_AREA: TextArea,
+  PHONE_INPUT: PhoneInput,
+  MULTILINE_ADDRESS: MultilineAddress,
+  DATE_INPUT: DateInput,
+  DATE_PICKER: DatePicker,
+  DATE_TIME_INPUT: DateTimeInput,
+  FILE_UPLOAD: FileUpload,
+  NUMBER_INPUT: NumberInput,
   CHECKBOX: Checkbox,
+  SIGNATURE: Signature,
+  RATING_INPUT: RatingInput,
   RADIO_GROUP: RadioGroup,
-  // ... other field components
+  CHECKBOX_GROUP: CheckboxGroup,
+  DROPDOWN: Dropdown,
+  TAGS: Tags,
+  TIME_INPUT: TimeInput,
+  TEXT: RichText,
+  SUBMIT_BUTTON: SubmitButton,
+  PRODUCT_LIST: ProductList,
+  FIXED_PAYMENT: FixedPayment,
+  PAYMENT_INPUT: PaymentInput,
+  DONATION: Donation,
+  APPOINTMENT: Appointment,
+  IMAGE_CHOICE: ImageChoice,
 };
 
 function FormPage({ formServiceConfig }) {
   return (
     <Form.Root formServiceConfig={formServiceConfig}>
-      <Form.LoadingError className="text-foreground px-4 py-3 rounded mb-4" />
-      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
-      <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
+      <Form.Loading>
+        {() => (
+          <div className="flex justify-center p-4">
+            <div>Loading form...</div>
+          </div>
+        )}
+      </Form.Loading>
+      <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
       <Form.Fields fieldMap={FIELD_MAP} />
+      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+      <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
     </Form.Root>
   );
 }

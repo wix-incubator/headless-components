@@ -504,10 +504,42 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
 
 /**
  * Mapping of form field types to their corresponding React components.
- * This interface defines the structure for the fieldMap prop, allowing you to specify
- * which React component should be used to render each type of form field.
+ *
+ * Each key represents a field type identifier that matches the field types defined
+ * in the form configuration, and each value is a React component that will receive
+ * the field's props and render the appropriate UI element.
+ *
+ * The field components must accept the corresponding props interface for their field type.
+ * For example, TEXT_INPUT components should accept TextInputProps, CHECKBOX components
+ * should accept CheckboxProps, etc.
  *
  * @interface FieldMap
+ * @property {React.ComponentType<TextInputProps>} TEXT_INPUT - Component for single-line text input fields
+ * @property {React.ComponentType<TextAreaProps>} TEXT_AREA - Component for multi-line text input fields
+ * @property {React.ComponentType<PhoneInputProps>} PHONE_INPUT - Component for phone number input fields
+ * @property {React.ComponentType<MultilineAddressProps>} MULTILINE_ADDRESS - Component for complex address input fields
+ * @property {React.ComponentType<DateInputProps>} DATE_INPUT - Component for date input fields (day/month/year)
+ * @property {React.ComponentType<DatePickerProps>} DATE_PICKER - Component for calendar-based date selection
+ * @property {React.ComponentType<DateTimeInputProps>} DATE_TIME_INPUT - Component for combined date and time input
+ * @property {React.ComponentType<FileUploadProps>} FILE_UPLOAD - Component for file upload fields
+ * @property {React.ComponentType<NumberInputProps>} NUMBER_INPUT - Component for numerical input fields
+ * @property {React.ComponentType<CheckboxProps>} CHECKBOX - Component for boolean checkbox fields
+ * @property {React.ComponentType<SignatureProps>} SIGNATURE - Component for digital signature capture
+ * @property {React.ComponentType<RatingInputProps>} RATING_INPUT - Component for 1-5 star rating input
+ * @property {React.ComponentType<RadioGroupProps>} RADIO_GROUP - Component for single selection from multiple options
+ * @property {React.ComponentType<CheckboxGroupProps>} CHECKBOX_GROUP - Component for multiple selection from multiple options
+ * @property {React.ComponentType<DropdownProps>} DROPDOWN - Component for dropdown selection fields
+ * @property {React.ComponentType<TagsProps>} TAGS - Component for tag-based selection fields
+ * @property {React.ComponentType<TimeInputProps>} TIME_INPUT - Component for time-only input fields
+ * @property {React.ComponentType<RichTextProps>} TEXT - Component for rich text display fields
+ * @property {React.ComponentType<SubmitButtonProps>} SUBMIT_BUTTON - Component for form submission button
+ * @property {React.ComponentType<ProductListProps>} PRODUCT_LIST - Component for product selection fields
+ * @property {React.ComponentType<FixedPaymentProps>} FIXED_PAYMENT - Component for fixed payment amount display
+ * @property {React.ComponentType<PaymentInputProps>} PAYMENT_INPUT - Component for custom payment amount input
+ * @property {React.ComponentType<DonationProps>} DONATION - Component for donation amount selection
+ * @property {React.ComponentType<AppointmentProps>} APPOINTMENT - Component for appointment scheduling
+ * @property {React.ComponentType<ImageChoiceProps>} IMAGE_CHOICE - Component for image-based selection
+ *
  * @example
  * ```tsx
  * const FIELD_MAP: FieldMap = {
@@ -639,26 +671,79 @@ export interface FieldsProps {
 
 /**
  * Fields component for rendering a form with custom field renderers.
- * This component handles the rendering of form fields based on the provided fieldMap.
+ * It maps each field type from the form configuration to its corresponding React component
+ * and renders them in the order and layout defined by the form structure.
+ *
+ * The component automatically handles:
+ * - Field validation and error display
+ * - Form state management
+ * - Field value updates
+ *
  * Must be used within Form.Root to access form context.
  *
  * @component
  * @param {FieldsProps} props - The component props
- * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components
+ * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components. Each key represents a field type (e.g., 'TEXT_INPUT', 'CHECKBOX') and the value is the React component that should render that field type.
+ *
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
- * import { TextInput, TextArea, Checkbox, RadioGroup } from './field-components';
+ * import { loadFormServiceConfig } from '@wix/headless-forms/services';
+ * import {
+ *   TextInput,
+ *   TextArea,
+ *   PhoneInput,
+ *   MultilineAddress,
+ *   DateInput,
+ *   DatePicker,
+ *   DateTimeInput,
+ *   FileUpload,
+ *   NumberInput,
+ *   Checkbox,
+ *   Signature,
+ *   RatingInput,
+ *   RadioGroup,
+ *   CheckboxGroup,
+ *   Dropdown,
+ *   Tags,
+ *   TimeInput,
+ *   RichText,
+ *   SubmitButton,
+ *   ProductList,
+ *   FixedPayment,
+ *   PaymentInput,
+ *   Donation,
+ *   Appointment,
+ *   ImageChoice
+ * } from './components';
  *
+ * // Define your field mapping - this tells the Fields component which React component to use for each field type
  * const FIELD_MAP = {
  *   TEXT_INPUT: TextInput,
  *   TEXT_AREA: TextArea,
- *   CHECKBOX: Checkbox,
- *   RADIO_GROUP: RadioGroup,
- *   NUMBER_INPUT: NumberInput,
  *   PHONE_INPUT: PhoneInput,
+ *   MULTILINE_ADDRESS: MultilineAddress,
+ *   DATE_INPUT: DateInput,
  *   DATE_PICKER: DatePicker,
- *   // ... other field components
+ *   DATE_TIME_INPUT: DateTimeInput,
+ *   FILE_UPLOAD: FileUpload,
+ *   NUMBER_INPUT: NumberInput,
+ *   CHECKBOX: Checkbox,
+ *   SIGNATURE: Signature,
+ *   RATING_INPUT: RatingInput,
+ *   RADIO_GROUP: RadioGroup,
+ *   CHECKBOX_GROUP: CheckboxGroup,
+ *   DROPDOWN: Dropdown,
+ *   TAGS: Tags,
+ *   TIME_INPUT: TimeInput,
+ *   TEXT: RichText,
+ *   SUBMIT_BUTTON: SubmitButton,
+ *   PRODUCT_LIST: ProductList,
+ *   FIXED_PAYMENT: FixedPayment,
+ *   PAYMENT_INPUT: PaymentInput,
+ *   DONATION: Donation,
+ *   APPOINTMENT: Appointment,
+ *   IMAGE_CHOICE: ImageChoice,
  * };
  *
  * function ContactForm({ formServiceConfig }) {
@@ -678,6 +763,28 @@ export interface FieldsProps {
  *     </Form.Root>
  *   );
  * }
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Advanced usage with custom field components
+ * const CustomTextField = ({ value, onChange, label, error, ...props }) => (
+ *   <div className="form-field">
+ *     <label className="text-foreground font-paragraph">{label}</label>
+ *     <input
+ *       value={value || ''}
+ *       onChange={(e) => onChange(e.target.value)}
+ *       className="bg-background border-foreground text-foreground"
+ *       {...props}
+ *     />
+ *     {error && <span className="text-destructive">{error}</span>}
+ *   </div>
+ * );
+ *
+ * const FIELD_MAP = {
+ *   TEXT_INPUT: CustomTextField,
+ *   // ... other field components
+ * };
  * ```
  */
 export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
