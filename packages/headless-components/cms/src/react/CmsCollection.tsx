@@ -1,10 +1,10 @@
 import React from 'react';
-import * as CoreCmsCollection from './core/CmsCollection';
+import * as CoreCmsCollection from './core/CmsCollection.js';
 import {
   CmsCollectionServiceDefinition,
   type CmsCollectionServiceConfig,
   type WixDataItem,
-} from '../services/cms-collection-service';
+} from '../services/cms-collection-service.js';
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 

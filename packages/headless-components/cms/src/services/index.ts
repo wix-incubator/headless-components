@@ -7,4 +7,4 @@ export {
   CmsCollectionServiceConfig,
   CmsCollectionServiceImplementation,
   loadCmsCollectionServiceInitialData,
-} from './cms-collection-service';
+} from './cms-collection-service.js';

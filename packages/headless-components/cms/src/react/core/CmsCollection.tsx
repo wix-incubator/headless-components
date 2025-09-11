@@ -5,7 +5,7 @@ import {
   CmsCollectionServiceConfig,
   CmsCollectionServiceImplementation,
   type WixDataItem,
-} from '../../services/cms-collection-service';
+} from '../../services/cms-collection-service.js';
 import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
