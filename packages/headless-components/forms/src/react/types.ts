@@ -1,0 +1,1284 @@
+import { forms } from '@wix/forms';
+import { CallingCountryCode } from './constants/calling-country-codes';
+
+interface MinMaxLengthProps {
+  minLength: number | undefined;
+  maxLength: number | undefined;
+}
+
+interface ChoiceOption {
+  id: string;
+  value: string;
+  label: string;
+  default: boolean;
+}
+
+interface CustomOption {
+  label: string;
+  placeholder: string;
+}
+
+interface BaseFieldProps {
+  id: string;
+  required: boolean;
+  readOnly: boolean;
+  error: string | undefined;
+  onChange: (value: unknown) => void;
+  onBlur: () => void;
+  onFocus: () => void;
+}
+
+interface BaseTextFieldProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+}
+
+interface BaseCheckboxProps extends BaseFieldProps {
+  value: boolean;
+  label: forms.RichContent;
+  defaultValue: boolean;
+}
+
+/**
+ * Props for contacts phone field.
+ * Used with fieldMap key: CONTACTS_PHONE
+ *
+ * @interface PhoneInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {CallingCountryCode[]} [allowedCountryCodes] - Optional array of allowed country codes for phone number validation
+ * @property {CallingCountryCode} [defaultCountryCode] - Optional default country code to pre-select
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const phoneField: PhoneInputProps = {
+ *   id: 'phone',
+ *   value: '+1-555-123-4567',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Phone Number',
+ *   showLabel: true,
+ *   placeholder: 'Enter your phone number',
+ *   description: { nodes: [{ type: 'text', text: 'Include country code' }] },
+ *   allowedCountryCodes: ['US', 'CA', 'GB'],
+ *   defaultCountryCode: 'US',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface PhoneInputProps extends BaseTextFieldProps {
+  allowedCountryCodes: CallingCountryCode[];
+  defaultCountryCode?: CallingCountryCode;
+}
+
+type MultilineAddressValue = {
+  country?: CallingCountryCode;
+  subdivision?: string;
+  city?: string;
+  addressLine?: string;
+  addressLine2?: string;
+  postalCode?: string;
+  streetName?: string;
+  streetNumber?: string;
+  apartment?: string;
+};
+
+/**
+ * Props for multiline address field.
+ * Used with fieldMap key: MULTILINE_ADDRESS
+ * The field MUST render separate inputs on the UI for these values:
+ * 1. Country/Region
+ * 2. Address
+ * 3. Address - line 2 (if showAddressLine2 is true)
+ * 4. City
+ * 5. Zip / Postal Code
+ *
+ * @interface MultilineAddressProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {MultilineAddressValue | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ * @property {boolean} showAddressLine2 - Whether to show the address line 2 field
+ * @property {boolean} addressLine2Required - Whether the address line 2 field is required
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ *
+ * @example
+ * ```tsx
+ * const multilineAddressField: MultilineAddressProps = {
+ *   id: 'multilineAddress',
+ *   value: '123 Main Street\nApt 4B\nNew York, NY 10001\nUnited States',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Full Address',
+ *   showAddressLine2: true,
+ *   addressLine2Required: false,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface MultilineAddressProps extends BaseFieldProps {
+  label?: string;
+  value: MultilineAddressValue;
+  showAddressLine2: boolean;
+  addressLine2Required?: boolean;
+}
+
+/**
+ * Props for text area field.
+ * Field allows to give a multi-line answer.
+ * Used with fieldMap key: TEXT_AREA
+ *
+ * @interface TextAreaProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const textAreaField: TextAreaProps = {
+ *   id: 'message',
+ *   value: 'Hello world!',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Your Message',
+ *   showLabel: true,
+ *   placeholder: 'Enter your message here...',
+ *   description: { nodes: [{ type: 'text', text: 'Please provide detailed information' }] },
+ *   minLength: 10,
+ *   maxLength: 1000,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface TextAreaProps extends BaseTextFieldProps, MinMaxLengthProps {}
+
+/**
+ * Props for text input field.
+ * Field allows to give a single line for a brief answer.
+ * Used with fieldMap key: TEXT_INPUT
+ *
+ * @interface TextInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {number} [minLength] - Optional minimum number of characters required
+ * @property {number} [maxLength] - Optional maximum number of characters allowed
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const textInputField: TextInputProps = {
+ *   id: 'firstName',
+ *   value: 'John',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'First Name',
+ *   showLabel: true,
+ *   placeholder: 'Enter your first name',
+ *   description: { nodes: [{ type: 'text', text: 'Your given name' }] },
+ *   minLength: 1,
+ *   maxLength: 50,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface TextInputProps extends BaseTextFieldProps, MinMaxLengthProps {}
+
+/**
+ * Props for number input field.
+ * Field allows to give a numerical answer.
+ * Used with fieldMap key: NUMBER_INPUT
+ *
+ * @interface NumberInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | number | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const numberInputField: NumberInputProps = {
+ *   id: 'age',
+ *   value: 25,
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Age',
+ *   showLabel: true,
+ *   placeholder: 'Enter your age',
+ *   description: { nodes: [{ type: 'text', text: 'Must be 18 or older' }] },
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface NumberInputProps extends BaseFieldProps {
+  value: string | number | null | undefined;
+  label: string;
+  showLabel: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for checkbox field.
+ * Field allows to collect a boolean answer.
+ * Used with fieldMap key: CHECKBOX
+ *
+ * @interface CheckboxProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {boolean} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} label - The display label for the form field
+ * @property {boolean} defaultValue - The default checked state for the checkbox
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const checkboxField: CheckboxProps = {
+ *   id: 'agree',
+ *   value: true,
+ *   required: true,
+ *   readOnly: false,
+ *   label: { nodes: [{ type: 'text', text: 'I agree to the terms and conditions' }] },
+ *   defaultValue: false,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface CheckboxProps extends BaseCheckboxProps {}
+
+/**
+ * Data structure for uploaded file information.
+ *
+ * @interface FileData
+ *
+ * @property {string} fileId - Unique identifier for the uploaded file
+ * @property {string} displayName - Human-readable name for the file
+ * @property {string} url - URL where the file can be accessed
+ * @property {string} fileType - MIME type or file extension of the uploaded file
+ *
+ * @example
+ * ```tsx
+ * const fileData: FileData = {
+ *   fileId: 'file_123456789',
+ *   displayName: 'document.pdf',
+ *   url: 'https://example.com/uploads/document.pdf',
+ *   fileType: 'application/pdf'
+ * };
+ * ```
+ */
+interface FileData {
+  fileId: string;
+  displayName: string;
+  url: string;
+  fileType: string;
+}
+
+type FileFormat = 'Video' | 'Image' | 'Audio' | 'Document' | 'Archive';
+
+/**
+ * Props for file upload field.
+ * Used with fieldMap key: FILE_UPLOAD
+ *
+ * @interface FileUploadProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {FileData[] | null | undefined} value - The current value of the form field (array of uploaded file data)
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [buttonText] - Optional custom text for the upload button
+ * @property {number} [maxFiles] - Optional maximum number of files allowed
+ * @property {FileFormat[]} [allowedFileFormats] - Optional array of allowed file format extensions (e.g., [".pdf", ".doc", ".docx"])
+ * @property {string} [explanationText] - Optional explanatory text to display below the upload area
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const fileUploadField: FileUploadProps = {
+ *   id: 'documents',
+ *   value: null,
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Upload Documents',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Upload your documents (PDF, DOC, DOCX)' }] },
+ *   buttonText: 'Choose Files',
+ *   allowedFileFormats: ['.pdf', '.doc', '.docx'],
+ *   explanationText: 'Maximum file size: 10MB',
+ *   maxFiles: 5,
+ *   onChange: (files) => console.log('Files changed:', files),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface FileUploadProps extends BaseFieldProps {
+  value: FileData[] | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  buttonText?: string;
+  maxFiles?: number;
+  allowedFileFormats?: FileFormat[];
+  explanationText?: string;
+}
+
+/**
+ * Props for signature field.
+ * Used with fieldMap key: SIGNATURE
+ * The field MUST render a signature pad/canvas for capturing user signatures.
+ *
+ * @interface SignatureProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {FileData | null | undefined} value - The current value of the signature field (FileData object containing signature image data)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {boolean} imageUploadEnabled - Whether image upload functionality is enabled for the signature field
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the signature value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface SignatureProps extends BaseFieldProps {
+  value: FileData | null | undefined;
+  label: string;
+  showLabel: boolean;
+  imageUploadEnabled: boolean;
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for rating input field from 1 to 5.
+ * Field allows to collect feedback on products, services and etc by choosing a rating from 1 to 5.
+ * Used with fieldMap key: RATING_INPUT
+ *
+ * @interface RatingInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {number | null | undefined} value - The current value of the rating field (number between 1 and 5)
+ * @property {number} [defaultValue] - The default value for the rating field (number between 1 and 5)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the rating value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface RatingInputProps extends BaseFieldProps {
+  value: number | null | undefined;
+  defaultValue: number | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for radio group field.
+ * Ask people to choose one option from a list.
+ * Used with fieldMap key: RADIO_GROUP
+ *
+ * @interface RadioGroupProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the radio group (selected option value)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {ChoiceOption[]} options - Array of radio button options with id, value, label, and default properties
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
+ * @property {Object} customOption - Configuration for custom "Other" option with text input
+ * @property {string} customOption.label - Label for the custom option radio button
+ * @property {string} customOption.placeholder - Placeholder text for the custom option input
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the radio group value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface RadioGroupProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  options: ChoiceOption[];
+  description?: forms.RichContent;
+  numberOfColumns: 1 | 2 | 3;
+  customOption: CustomOption;
+}
+
+/**
+ * Props for checkbox group field.
+ * Field allows to choose multiple options from a list.
+ * Used with fieldMap key: CHECKBOX_GROUP
+ *
+ * @interface CheckboxGroupProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string[] | null | undefined} value - The current values of the checkbox group (array of selected option values)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {ChoiceOption[]} options - Array of checkbox options with id, value, label, and default properties
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
+ * @property {Object} customOption - Configuration for custom "Other" option with text input
+ * @property {string} customOption.label - Label for the custom option checkbox
+ * @property {string} customOption.placeholder - Placeholder text for the custom option input
+ * @property {number} [minItems] - Minimum number of items that must be selected
+ * @property {number} [maxItems] - Maximum number of items that can be selected
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the checkbox group values change
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface CheckboxGroupProps extends BaseFieldProps {
+  value: string[] | null | undefined;
+  label: string;
+  showLabel: boolean;
+  options: ChoiceOption[];
+  description?: forms.RichContent;
+  numberOfColumns: 1 | 2 | 3;
+  customOption: CustomOption;
+  maxItems?: number;
+  minItems?: number;
+}
+
+/**
+ * Props for dropdown field.
+ * Field allows to choose one option from a dropdown list.
+ * Used with fieldMap key: DROPDOWN
+ *
+ * @interface DropdownProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the dropdown (selected option value)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {ChoiceOption[]} options - Array of dropdown options with id, value, label, and default properties
+ * @property {string} [placeholder] - Placeholder text for the dropdown when no option is selected
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the dropdown value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface DropdownProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  options: ChoiceOption[];
+  placeholder?: string;
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for tags field.
+ * Field allows to choose options by selecting tags.
+ * Used with fieldMap key: TAGS
+ *
+ * @interface TagsProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string[] | null | undefined} value - The current values of the tags field (array of selected option values)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {ChoiceOption[]} options - Array of tag options with id, value, label, and default properties
+ * @property {0 | 1 | 2 | 3} numberOfColumns - Number of columns for layout (0 for auto, 1, 2, or 3)
+ * @property {Object} customOption - Configuration for custom "Other" option with text input
+ * @property {string} customOption.label - Label for the custom option
+ * @property {string} customOption.placeholder - Placeholder text for the custom option input
+ * @property {number} [minItems] - Minimum number of tags that must be selected
+ * @property {number} [maxItems] - Maximum number of tags that can be selected
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the tags values change
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ */
+export interface TagsProps extends BaseFieldProps {
+  value: string[] | null | undefined;
+  options: ChoiceOption[];
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  customOption?: CustomOption;
+  numberOfColumns: 0 | 1 | 2 | 3;
+  minItems?: number;
+  maxItems?: number;
+}
+
+/**
+ * Data structure for image choice option.
+ * Extends the base ChoiceOption with image-specific properties.
+ *
+ * @interface ImageChoiceOption
+ *
+ * @property {string} id - Unique identifier for the option
+ * @property {string} value - The value that will be submitted when this option is selected
+ * @property {string} label - Display label for the option
+ * @property {boolean} default - Whether this option is selected by default
+ * @property {Object} image - Image data for the option
+ * @property {string | undefined} image.alt - Alt text for accessibility (can be undefined)
+ * @property {string} image.id - Unique identifier for the image
+ * @property {string} [image.url] - Optional URL for the image source. If not provided, a placeholder will be shown.
+ *
+ * @example
+ * ```tsx
+ * const imageOption: ImageChoiceOption = {
+ *   id: 'red-color',
+ *   value: 'red',
+ *   label: 'Red',
+ *   default: false,
+ *   image: {
+ *     alt: 'Red color swatch',
+ *     id: 'img_red_001',
+ *     url: 'https://example.com/images/red-swatch.jpg'
+ *   }
+ * };
+ * ```
+ */
+interface ImageChoiceOption extends ChoiceOption {
+  image: {
+    alt: string | undefined;
+    id: string;
+    url?: string;
+  };
+}
+
+/**
+ * Props for image choice field.
+ * Field allows users to select one or multiple options by clicking on images.
+ * Used with fieldMap key: IMAGE_CHOICE
+ *
+ * @interface ImageChoiceProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | string[] | null | undefined} value - The current value(s) of the image choice field. For single selection, this is a string. For multiple selection, this is an array of strings.
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {ImageChoiceOption[]} options - Array of image choice options. Each option must include an image object with alt text, id, and optional URL.
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for the grid layout. Determines how many options are displayed per row.
+ * @property {boolean} [multiple=false] - Whether multiple selections are allowed. When true, users can select multiple options. When false, only one option can be selected at a time.
+ * @property {number} [minItems] - Minimum number of items that must be selected. Only applicable when multiple is true. Used for validation.
+ * @property {number} [maxItems] - Maximum number of items that can be selected. Only applicable when multiple is true. Used for validation.
+ * @property {forms.RichContent} [description] - Optional rich content description for the field. Can include formatted text, links, etc.
+ * @property {string} [error] - Error message to display when validation fails. Undefined when the field is valid.
+ * @property {function} onChange - Callback function called when the image choice value(s) change. Receives the new value(s) as parameter.
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * // Single selection example
+ * const singleImageChoice: ImageChoiceProps = {
+ *   id: 'preferred-color',
+ *   value: 'red',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Choose Your Preferred Color',
+ *   showLabel: true,
+ *   options: [
+ *     {
+ *       id: 'red',
+ *       value: 'red',
+ *       label: 'Red',
+ *       default: false,
+ *       image: {
+ *         alt: 'Red color option',
+ *         id: 'img_red',
+ *         url: 'https://example.com/red.jpg'
+ *       }
+ *     },
+ *     {
+ *       id: 'blue',
+ *       value: 'blue',
+ *       label: 'Blue',
+ *       default: false,
+ *       image: {
+ *         alt: 'Blue color option',
+ *         id: 'img_blue',
+ *         url: 'https://example.com/blue.jpg'
+ *       }
+ *     }
+ *   ],
+ *   numberOfColumns: 2,
+ *   multiple: false,
+ *   description: {
+ *     nodes: [{ type: 'text', text: 'Select your favorite color from the options below' }]
+ *   },
+ *   onChange: (value) => console.log('Color selection changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ *
+ * // Multiple selection example
+ * const multipleImageChoice: ImageChoiceProps = {
+ *   id: 'preferred-features',
+ *   value: ['feature1', 'feature3'],
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Select Your Preferred Features',
+ *   showLabel: true,
+ *   options: [
+ *     {
+ *       id: 'feature1',
+ *       value: 'feature1',
+ *       label: 'Fast Loading',
+ *       default: false,
+ *       image: {
+ *         alt: 'Fast loading icon',
+ *         id: 'img_fast',
+ *         url: 'https://example.com/fast.jpg'
+ *       }
+ *     },
+ *     {
+ *       id: 'feature2',
+ *       value: 'feature2',
+ *       label: 'Mobile Friendly',
+ *       default: false,
+ *       image: {
+ *         alt: 'Mobile friendly icon',
+ *         id: 'img_mobile',
+ *         url: 'https://example.com/mobile.jpg'
+ *       }
+ *     },
+ *     {
+ *       id: 'feature3',
+ *       value: 'feature3',
+ *       label: 'Secure',
+ *       default: false,
+ *       image: {
+ *         alt: 'Security icon',
+ *         id: 'img_secure',
+ *         url: 'https://example.com/secure.jpg'
+ *       }
+ *     }
+ *   ],
+ *   numberOfColumns: 3,
+ *   multiple: true,
+ *   minItems: 1,
+ *   maxItems: 2,
+ *   description: {
+ *     nodes: [{ type: 'text', text: 'Choose up to 2 features that matter most to you' }]
+ *   },
+ *   onChange: (values) => console.log('Feature selection changed:', values),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ImageChoiceProps extends BaseFieldProps {
+  value: string | string[] | null | undefined;
+  label: string;
+  showLabel: boolean;
+  options: ImageChoiceOption[];
+  numberOfColumns: 1 | 2 | 3;
+  multiple: boolean;
+  description?: forms.RichContent;
+  imageAspectRatio: 'contain' | 'cover';
+}
+
+/**
+ * Props for date input field.
+ * Used with fieldMap key: DATE_INPUT
+ * The field MUST render 3 separate number inputs on the UI for day, month and year.
+ *
+ * @interface DateInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO date string format: YYYY-MM-DD)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} showPlaceholder - Whether to show placeholder text for the date inputs
+ * @property {'SUNDAY' | 'MONDAY'} [firstDayOfWeek] - The first day of the week for date calculations (defaults to 'SUNDAY')
+ * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const dateField: DateInputProps = {
+ *   id: 'event-date',
+ *   value: '2024-12-25',
+ *   label: 'Event Date',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   showPlaceholder: true,
+ *   firstDayOfWeek: 'MONDAY',
+ *   acceptedDates: 'future',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DateInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  showPlaceholder: boolean;
+  firstDayOfWeek: 'SUNDAY' | 'MONDAY';
+  acceptedDates: 'all' | 'past' | 'future';
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for date picker field.
+ * Field allows to select a date from a calendar.
+ * Used with fieldMap key: DATE_PICKER
+ *
+ * @interface DatePickerProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO date string format: YYYY-MM-DD)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {string} [placeholder] - Placeholder text for the date picker input
+ * @property {'SUNDAY' | 'MONDAY'} [firstDayOfWeek] - The first day of the week for the calendar (defaults to 'SUNDAY')
+ * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const dateField: DatePickerProps = {
+ *   id: 'appointment-date',
+ *   value: '2024-12-25',
+ *   label: 'Appointment Date',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   placeholder: 'Select a date',
+ *   firstDayOfWeek: 'MONDAY',
+ *   acceptedDates: 'future',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DatePickerProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  placeholder?: string;
+  firstDayOfWeek?: 'SUNDAY' | 'MONDAY';
+  acceptedDates: 'all' | 'past' | 'future';
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for date time input field.
+ * Field allows to enter a date and time.
+ * Used with fieldMap key: DATE_TIME_INPUT
+ *
+ * @interface DateTimeInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO datetime string format: YYYY-MM-DDTHH:mm)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} showDateLabels - Whether to display individual labels for date and time inputs
+ * @property {boolean} showPlaceholder - Whether to show placeholder text in the inputs
+ * @property {boolean} use24HourFormat - Whether to use 24-hour format for time input (defaults to true)
+ * @property {'all' | 'past' | 'future'} [acceptedDates] - Which dates are accepted for selection (defaults to 'all')
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const dateTimeField: DateTimeInputProps = {
+ *   id: 'appointment-datetime',
+ *   value: '2024-12-25T14:30',
+ *   label: 'Appointment Date & Time',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   showDateLabels: true,
+ *   showPlaceholder: true,
+ *   use24HourFormat: true,
+ *   acceptedDates: 'future',
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DateTimeInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  showDateLabels: boolean;
+  showPlaceholder: boolean;
+  use24HourFormat: boolean;
+  acceptedDates: 'all' | 'past' | 'future';
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for time input field.
+ * Field allows to enetr a time.
+ * Used with fieldMap key: TIME_INPUT
+ *
+ * @interface TimeInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (time string format: HH:mm or HH:mm:ss)
+ * @property {string} label - The display label for the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} showPlaceholder - Whether to show placeholder text in the input
+ * @property {boolean} use24HourFormat - Whether to use 24-hour format for time input (defaults to true)
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function callezqd when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const timeField: TimeInputProps = {
+ *   id: 'appointment-time',
+ *   value: '14:30',
+ *   label: 'Appointment Time',
+ *   required: true,
+ *   readOnly: false,
+ *   showLabel: true,
+ *   showPlaceholder: true,
+ *   use24HourFormat: true,
+ *   onChange: (value) => console.log('Value changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface TimeInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  showPlaceholder: boolean;
+  use24HourFormat: boolean;
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for rich text field.
+ * The field is used to display text in the form.
+ * Used with fieldMap key: RICH_TEXT
+ *
+ * @interface RichTextProps
+ *
+ * @property {forms.RichContent} content - The textrich content to display
+ * @property {number} maxShownParagraphs - Maximum number of paragraphs to display before truncating
+ *
+ * @example
+ * ```tsx
+ * const richTextField: RichTextProps = {
+ *   content: {
+ *     nodes: [
+ *       {
+ *         type: 'text',
+ *         text: 'Please fill out all required fields marked with an asterisk (*).',
+ *         marks: [{ type: 'bold' }]
+ *       }
+ *     ]
+ *   },
+ *   maxShownParagraphs: 2
+ * };
+ * ```
+ */
+export interface RichTextProps {
+  content: forms.RichContent;
+  maxShownParagraphs: number;
+}
+
+/**
+ * Props for submit button field.
+ * The field is used to render a submit button for the form.
+ * Used with fieldMap key: SUBMIT_BUTTON
+ *
+ * @interface SubmitButtonProps
+ *
+ * @property {string} id - The unique identifier for the submit button
+ * @property {string} text - The text to display on the submit button
+ *
+ * @example
+ * ```tsx
+ * const submitButton: SubmitButtonProps = {
+ *   id: 'submit',
+ *   text: 'Submit Form'
+ * };
+ * ```
+ */
+export interface SubmitButtonProps {
+  id: string;
+  text: string;
+}
+
+/**
+ * Props for fixed payment field.
+ * Field displays a fixed payment amount with currency.
+ * Used with fieldMap key: FIXED_PAYMENT
+ *
+ * @interface FixedPaymentProps
+ *
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {number} amount - The fixed payment amount
+ * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ *
+ * @example
+ * ```tsx
+ * const fixedPaymentField: FixedPaymentProps = {
+ *   label: 'Payment Amount',
+ *   showLabel: true,
+ *   amount: 29.99,
+ *   currency: '$',
+ *   description: { nodes: [{ type: 'text', text: 'This is a one-time payment' }] }
+ * };
+ * ```
+ */
+export interface FixedPaymentProps {
+  label: string;
+  showLabel: boolean;
+  amount: number;
+  currency: string;
+  description?: forms.RichContent;
+}
+
+/**
+ * Props for payment input field.
+ * Field allows users to enter a custom payment amount.
+ * Used with fieldMap key: PAYMENT_INPUT
+ *
+ * @interface PaymentInputProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {string} [placeholder] - Optional placeholder text to display when the field is empty
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
+ * @property {string} minValue - Minimum payment amount as string
+ * @property {string} [maxValue] - Optional maximum payment amount as string
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const paymentInputField: PaymentInputProps = {
+ *   id: 'payment',
+ *   value: '25.50',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Payment Amount',
+ *   showLabel: true,
+ *   required: true,
+ *   placeholder: 'Enter amount',
+ *   description: { nodes: [{ type: 'text', text: 'Enter your payment amount' }] },
+ *   currency: '$',
+ *   minValue: '1.00',
+ *   maxValue: '1000.00',
+ *   onChange: (value) => console.log('Payment changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface PaymentInputProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  required: boolean;
+  placeholder?: string;
+  description?: forms.RichContent;
+  currency: string;
+  minValue: string;
+  maxValue?: string;
+}
+
+/**
+ * Props for donation field.
+ * Field allows users to select a donation amount.
+ * Used with fieldMap key: DONATION
+ *
+ * @interface DonationProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {1 | 2 | 3} numberOfColumns - Number of columns for layout (1, 2, or 3)
+ * @property {string} currency - The currency symbol (e.g., '$', '€', '£')
+ * @property {string[]} options - Array of predefined donation amounts
+ * @property {CustomOption} [customOption] - Optional configuration for custom donation amount input
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const donationField: DonationProps = {
+ *   id: 'donation',
+ *   value: '50.00',
+ *   required: false,
+ *   readOnly: false,
+ *   label: 'Donation Amount',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Choose a donation amount' }] },
+ *   numberOfColumns: 2,
+ *   currency: '$',
+ *   options: ['25.00', '50.00', '100.00', '250.00'],
+ *   customOption: { label: 'Other Amount', placeholder: 'Enter custom amount' },
+ *   onChange: (value) => console.log('Donation changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface DonationProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  numberOfColumns: 1 | 2 | 3;
+  currency: string;
+  options: string[];
+  customOption?: CustomOption;
+}
+
+/**
+ * Props for appointment field.
+ * Field allows users to select a date and time for an appointment.
+ * Used with fieldMap key: APPOINTMENT
+ *
+ * @interface AppointmentProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {string | null | undefined} value - The current value of the form field (ISO datetime string format: YYYY-MM-DDTHH:mm)
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the appointment value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const appointmentField: AppointmentProps = {
+ *   id: 'appointment',
+ *   value: '2024-12-25T14:30',
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Appointment Date & Time',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Choose your preferred appointment time' }] },
+ *   onChange: (value) => console.log('Appointment changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface AppointmentProps extends BaseFieldProps {
+  value: string | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+}
+
+interface ProductOption extends ChoiceOption {
+  price: string;
+  minAmount: number;
+  maxAmount: number;
+  image: {
+    alt: string | undefined;
+    id: string;
+  };
+}
+
+interface ProductValue {
+  productId: string;
+  price: string | number;
+  quantity: number;
+}
+
+/**
+ * Props for product list field.
+ * Field allows to display and select products from a list.
+ * Used with fieldMap key: PRODUCT_LIST
+ *
+ * @interface ProductListProps
+ *
+ * @property {string} id - The unique identifier for the form field
+ * @property {ProductValue | null | undefined} value - The current value of the form field (selected product data)
+ * @property {boolean} required - Whether the field is required for form submission
+ * @property {boolean} readOnly - Whether the field is read-only and cannot be edited by the user
+ * @property {string} label - The display label for the form field
+ * @property {boolean} showLabel - Whether to display the field label
+ * @property {forms.RichContent} [description] - Optional rich content description for the field
+ * @property {ProductOption[]} options - Array of product options with id, value, label, price, quantity limits, and image
+ * @property {number | undefined} minItems - Optional minimum number of products that must be selected
+ * @property {number | undefined} maxItems - Optional maximum number of products that can be selected
+ * @property {string} currency - The price currency symbol
+ * @property {string} [error] - Error message to display when validation fails (undefined when valid)
+ * @property {function} onChange - Callback function called when the field value changes
+ * @property {function} onBlur - Callback function called when the field loses focus
+ * @property {function} onFocus - Callback function called when the field gains focus
+ *
+ * @example
+ * ```tsx
+ * const productListField: ProductListProps = {
+ *   id: 'products',
+ *   value: [{ productId: 'prod_123', quantity: 2 }],
+ *   required: true,
+ *   readOnly: false,
+ *   label: 'Select Products',
+ *   showLabel: true,
+ *   description: { nodes: [{ type: 'text', text: 'Choose your desired products' }] },
+ *   options: [
+ *     {
+ *       id: 'prod_123',
+ *       value: 'prod_123',
+ *       label: 'Premium Widget',
+ *       default: false,
+ *       price: '29.99',
+ *       minAmount: 1,
+ *       maxAmount: 10,
+ *       image: { alt: 'Premium Widget', id: 'img_123' }
+ *     }
+ *   ],
+ *   currency: '$',
+ *   minItems: 1,
+ *   maxItems: 5,
+ *   onChange: (value) => console.log('Product selection changed:', value),
+ *   onBlur: () => console.log('Field blurred'),
+ *   onFocus: () => console.log('Field focused')
+ * };
+ * ```
+ */
+export interface ProductListProps extends BaseFieldProps {
+  value: ProductValue | null | undefined;
+  label: string;
+  showLabel: boolean;
+  description?: forms.RichContent;
+  options: ProductOption[];
+  minItems: number | undefined;
+  maxItems: number | undefined;
+  currency: string;
+}
