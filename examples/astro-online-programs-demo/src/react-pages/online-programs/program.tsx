@@ -8,25 +8,41 @@ import * as Program from '@wix/headless-online-programs/react';
 import {
   ProgramServiceDefinition,
   ProgramService,
+  InstructorsServiceDefinition,
+  InstructorsService,
 } from '@wix/headless-online-programs/services';
-import type { ProgramServiceConfig } from '@wix/headless-online-programs/services';
+import type { ProgramServiceConfig, InstructorsServiceConfig } from '@wix/headless-online-programs/services';
 
 interface OnlineProgramPageProps {
   programServiceConfig: ProgramServiceConfig;
+  instructorsServiceConfig?: InstructorsServiceConfig;
 }
 
 export default function OnlineProgramPage({
   programServiceConfig,
+  instructorsServiceConfig,
 }: OnlineProgramPageProps) {
-  const [servicesManager] = useState(() =>
-    createServicesManager(
-      createServicesMap().addService(
+  const [servicesManager] = useState(() => {
+    const servicesMap = createServicesMap()
+      .addService(
         ProgramServiceDefinition,
         ProgramService,
         programServiceConfig,
-      ),
-    ),
-  );
+      );
+
+    // Add instructors service if config is provided
+    if (instructorsServiceConfig) {
+      servicesMap.addService(
+        InstructorsServiceDefinition,
+        InstructorsService,
+        instructorsServiceConfig,
+      );
+    }
+
+    return createServicesManager(servicesMap);
+  });
+
+  console.log(programServiceConfig, instructorsServiceConfig);
 
   return (
     <ServicesManagerProvider servicesManager={servicesManager}>
@@ -40,6 +56,18 @@ export default function OnlineProgramPage({
             </div>
           )}
         </Program.Duration>
+
+        <h3>Instructors:</h3>
+        <Program.Instructors instructors={instructorsServiceConfig?.instructors}>
+          <Program.Instructors.InstructorRepeater>
+            <Program.Instructor>
+              <Program.Instructor.Avatar className="w-16 h-16 rounded-full" />
+              <Program.Instructor.Name className="font-semibold" />
+              <Program.Instructor.Description className="text-sm text-gray-600" />
+            </Program.Instructor>
+          </Program.Instructors.InstructorRepeater>
+        </Program.Instructors>
+
         <Program.Image />
       </Program.Root>
     </ServicesManagerProvider>

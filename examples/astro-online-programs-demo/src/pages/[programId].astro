@@ -1,6 +1,7 @@
 ---
 import {
-  loadProgramServiceConfig
+  loadProgramServiceConfig,
+  loadInstructorsServiceConfig
 } from '@wix/headless-online-programs/services';
 
 import OnlineProgramPage from '../react-pages/online-programs/program';
@@ -14,6 +15,7 @@ if (!programId) {
 }
 
 const programServiceConfig = await loadProgramServiceConfig(programId);
+const instructorsServiceConfig = await loadInstructorsServiceConfig([programId]);
 
 if (programServiceConfig.type === 'notFound') {
   return Astro.rewrite('/404');
@@ -25,6 +27,6 @@ if (programServiceConfig.type === 'notFound') {
   <OnlineProgramPage
     client:load
     programServiceConfig={programServiceConfig.config}
+    instructorsServiceConfig={instructorsServiceConfig.type === 'success' ? instructorsServiceConfig.config : undefined}
   />
 </Layout>
-

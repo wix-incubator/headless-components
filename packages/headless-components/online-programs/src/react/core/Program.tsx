@@ -1,6 +1,7 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
+import { instructors } from '@wix/online-programs';
 
 import {
   ProgramServiceDefinition,
@@ -258,5 +259,71 @@ export function Description(props: ProgramDescriptionProps) {
 
   return props.children({
     description,
+  });
+}
+
+/**
+ * Props for ProgramInstructors headless component
+ */
+export interface ProgramInstructorsProps {
+  /** Render prop function that receives instructors data */
+  children: (props: ProgramInstructorsRenderProps) => React.ReactNode;
+  /** Optional instructors data to use instead of fetching */
+  instructors?: instructors.Instructor[];
+}
+
+/**
+ * Render props for ProgramInstructors component
+ */
+export interface ProgramInstructorsRenderProps {
+  /** List of instructors */
+  instructors: instructors.Instructor[];
+  /** Whether there are instructors */
+  hasInstructors: boolean;
+}
+
+/**
+ * Headless component for program instructors display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramInstructors() {
+ *   return (
+ *     <Program.Instructors>
+ *       {({ instructors, hasInstructors }) => (
+ *         <div>
+ *           {hasInstructors ? (
+ *             instructors.map(instructor => (
+ *               <div key={instructor._id}>{instructor.name}</div>
+ *             ))
+ *           ) : (
+ *             <div>No instructors</div>
+ *           )}
+ *         </div>
+ *       )}
+ *     </Program.Instructors>
+ *   );
+ * }
+ * ```
+ */
+export function Instructors(props: ProgramInstructorsProps) {
+  const { children, instructors: providedInstructors } = props;
+
+  // If instructors are provided directly, use them
+  if (providedInstructors) {
+    return children({
+      instructors: providedInstructors,
+      hasInstructors: providedInstructors.length > 0,
+    });
+  }
+
+  // Otherwise, we would need to fetch from instructors service
+  // For now, return empty state
+  return children({
+    instructors: [],
+    hasInstructors: false,
   });
 }
