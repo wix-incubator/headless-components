@@ -878,6 +878,28 @@ export function ProductListRoot({ children }: { children: React.ReactNode }) {
     </GenericList.Root>
   );
 }
+
+// Used internally by Blog.Feed.Root
+export function BlogFeedRoot({ children }: { children: React.ReactNode }) {
+  const blogFeedService = useService(BlogFeedServiceDefinition);
+
+  // Internal logic for slicing items (not exposed as props)
+  const offset = 0;
+  const limit = 10;
+  const slicedPosts = blogFeedService.posts.get().slice(offset, offset + limit);
+
+  return (
+    <GenericList.Root
+      items={slicedPosts}
+      onLoadMore={blogFeedService.loadNextPage}
+      hasMore={blogFeedService.hasNextPage()}
+      isLoading={blogFeedService.isLoading.get()}
+      variant="list"
+    >
+      {children}
+    </GenericList.Root>
+  );
+}
 ```
 
 ---
@@ -920,6 +942,21 @@ export const ProductListProducts = React.forwardRef<HTMLElement, ProductsProps>(
     );
   },
 );
+
+// Used internally by Blog.Feed.PostItems
+export const BlogFeedPostItems = React.forwardRef<
+  HTMLElement,
+  {
+    emptyState?: React.ReactNode;
+    children: React.ReactNode;
+  }
+>((props, ref) => {
+  return (
+    <GenericList.Items emptyState={props.emptyState} ref={ref}>
+      {props.children}
+    </GenericList.Items>
+  );
+});
 ```
 
 ### GenericList.Actions.LoadMore
