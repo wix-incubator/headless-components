@@ -2,4 +2,4 @@
  * @file React components index file for CMS package
  */
 
-export {}
+export * as CmsCollection from './CmsCollection.js';
