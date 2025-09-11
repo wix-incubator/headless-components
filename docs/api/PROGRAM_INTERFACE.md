@@ -379,11 +379,9 @@ interface ProgramInstructorsProps {
 // asChild with custom layout
 <Program.Instructors asChild>
   <div className="grid grid-cols-3 gap-4">
-    <Program.Instructors.InstructorRepeater>
-      <Program.Instructor>
-        <Program.Instructor.Avatar className="w-16 h-16 rounded-full" />
-        <Program.Instructor.Name className="font-semibold" />
-      </Program.Instructor>
+    <Program.Instructors.InstructorRepeater> // <Instructor.Root
+      <Instructor.Avatar className="w-16 h-16 rounded-full" />
+      <Instructor.Name className="font-semibold" />
     </Program.Instructors.InstructorRepeater>
   </div>
 </Program.Instructors>
