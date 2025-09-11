@@ -9,6 +9,7 @@ export interface FormServiceAPI {
   form: Signal<forms.Form>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
+  submitError: Signal<string | null>;
 }
 
 export const FormServiceDefinition =
@@ -29,8 +30,11 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     const error: Signal<string | null> = signalsService.signal<string | null>(
       null,
     );
+    const submitError: Signal<string | null> = signalsService.signal<string | null>(
+      null,
+    );
 
-    return { form, isLoading, error };
+    return { form, isLoading, error, submitError };
   },
 );
 

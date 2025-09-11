@@ -33,6 +33,7 @@ import {
 
 enum TestIds {
   formLoadingError = "form-loading-error",
+  formError = "form-error",
 }
 
 /**
@@ -248,10 +249,12 @@ export const LoadingError = React.forwardRef<HTMLElement, LoadingErrorProps>(
  * Props for Form Error component
  */
 export interface ErrorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
   /** Content to display during submit error state (can be a render function or ReactNode) */
-  children:
-    | ((props: ErrorRenderProps) => React.ReactNode)
-    | React.ReactNode;
+  children?: AsChildChildren<ErrorRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
@@ -275,26 +278,60 @@ export interface ErrorRenderProps {
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
+ * // Default usage
  * function FormError() {
  *   return (
- *     <Form.Error>
- *       {({ error, hasError }) => (
- *         hasError ? (
- *           <div className="error-state">
- *             <h3>Submission Failed</h3>
- *             <p>{error}</p>
- *           </div>
- *         ) : null
- *       )}
+ *     <Form.Error className="error-message" />
+ *   );
+ * }
+ *
+ * // Custom rendering with forwardRef
+ * function CustomFormError() {
+ *   return (
+ *     <Form.Error asChild>
+ *       {React.forwardRef(({ error, hasError }, ref) => (
+ *         <div ref={ref} className="custom-error-container">
+ *           <h3>Submission Failed</h3>
+ *           <p>{error}</p>
+ *         </div>
+ *       ))}
  *     </Form.Error>
  *   );
  * }
  * ```
  */
-export function Error(_props: ErrorProps) {
-  // TODO: Implement submit error handling
-  return null;
-}
+export const Error = React.forwardRef<HTMLElement, ErrorProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreForm.Error>
+        {({ error, hasError }) => {
+          if (!hasError) return null;
+
+          const errorData = { error, hasError };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.formError}
+              customElement={children}
+              customElementProps={errorData}
+              content={error}
+              {...otherProps}
+            >
+              <div className="text-status-error text-sm sm:text-base">
+                {error}
+              </div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreForm.Error>
+    );
+  },
+);
 
 /**
  * Mapping of form field types to their corresponding React components.
@@ -555,12 +592,13 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
 
 /**
  * Main Form namespace containing all form components
- * following the compound component pattern: Form.Root, Form.Loading, Form.LoadingError, Form.Fields
+ * following the compound component pattern: Form.Root, Form.Loading, Form.LoadingError, Form.Error, Form.Fields
  *
  * @namespace Form
  * @property {typeof Root} Root - Form root component that provides service context
  * @property {typeof Loading} Loading - Form loading state component
  * @property {typeof LoadingError} LoadingError - Form loading error state component
+ * @property {typeof Error} Error - Form submit error state component
  * @property {typeof Fields} Fields - Form fields component for rendering form fields
  * @example
  * ```tsx
@@ -576,6 +614,7 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
  *       <Form.LoadingError>
  *         {({ error }) => <div>Error: {error}</div>}
  *       </Form.LoadingError>
+ *       <Form.Error className="submit-error" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );

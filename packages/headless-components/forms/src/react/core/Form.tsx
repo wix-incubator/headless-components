@@ -160,3 +160,60 @@ export function LoadingError(props: FormErrorProps) {
     hasError,
   });
 }
+
+/**
+ * Props for Form Error headless component
+ */
+export interface FormSubmitErrorProps {
+  /** Render prop function that receives submit error state data */
+  children: (props: FormSubmitErrorRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for Form Error component
+ */
+export interface FormSubmitErrorRenderProps {
+  /** Submit error message */
+  error: string | null;
+  /** Whether there's a submit error */
+  hasError: boolean;
+}
+
+/**
+ * Headless component for form submit error state access
+ *
+ * @component
+ * @param {FormSubmitErrorProps} props - Component props
+ * @param {FormSubmitErrorProps['children']} props.children - Render prop function that receives submit error state
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormSubmitErrorDisplay() {
+ *   return (
+ *     <Form.Error>
+ *       {({ error, hasError }) => (
+ *         hasError ? (
+ *           <div className="error-message">
+ *             {error}
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Error>
+ *   );
+ * }
+ * ```
+ */
+export function Error(props: FormSubmitErrorProps) {
+  const service = useService(FormServiceDefinition) as ServiceAPI<
+    typeof FormServiceDefinition
+  >;
+
+  const error = service.submitError?.get() || null;
+  const hasError = !!error;
+
+  return props.children({
+    error,
+    hasError,
+  });
+}
