@@ -2,7 +2,7 @@
 import {
   loadEventServiceConfig,
   loadEventListServiceConfig,
-  loadTicketListServiceConfig,
+  loadTicketDefinitionListServiceConfig,
 } from '@wix/headless-events/services';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import EventDetailsPage from '../../../react-pages/event-details';
@@ -18,7 +18,7 @@ const [eventServiceConfig, eventListServiceConfig] = await Promise.all([
   loadEventServiceConfig(slug),
   loadEventListServiceConfig(),
 ]);
-const ticketListServiceConfig = await loadTicketListServiceConfig(
+const ticketDefinitionListServiceConfig = await loadTicketDefinitionListServiceConfig(
   eventServiceConfig.event._id
 );
 ---
@@ -32,6 +32,6 @@ const ticketListServiceConfig = await loadTicketListServiceConfig(
     slot="body"
     eventServiceConfig={eventServiceConfig}
     eventListServiceConfig={eventListServiceConfig}
-    ticketListServiceConfig={ticketListServiceConfig}
+    ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
   />
 </BaseLayout>

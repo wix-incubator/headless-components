@@ -27,7 +27,7 @@ export interface RootProps {
 }
 
 /**
- * TicketsPicker Root core component that provides event, ticket list and checkout services context.
+ * TicketsPicker Root core component that provides event, ticket definition list and checkout services context.
  *
  * @component
  */

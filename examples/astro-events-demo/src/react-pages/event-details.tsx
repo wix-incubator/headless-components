@@ -2,7 +2,7 @@ import '../styles/theme-1.css';
 import {
   type EventServiceConfig,
   type EventListServiceConfig,
-  type TicketListServiceConfig,
+  type TicketDefinitionListServiceConfig,
 } from '@wix/headless-events/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { EventDetails } from '../components/events/EventDetails';
@@ -10,13 +10,13 @@ import { EventDetails } from '../components/events/EventDetails';
 interface EventDetailsPageProps {
   eventServiceConfig: EventServiceConfig;
   eventListServiceConfig: EventListServiceConfig;
-  ticketListServiceConfig: TicketListServiceConfig;
+  ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
 }
 
 export default function EventDetailsPage({
   eventServiceConfig,
   eventListServiceConfig,
-  ticketListServiceConfig,
+  ticketDefinitionListServiceConfig,
 }: EventDetailsPageProps) {
   return (
     <KitchensinkLayout>
@@ -24,7 +24,7 @@ export default function EventDetailsPage({
         <EventDetails
           eventServiceConfig={eventServiceConfig}
           eventListServiceConfig={eventListServiceConfig}
-          ticketListServiceConfig={ticketListServiceConfig}
+          ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
         />
       </div>
     </KitchensinkLayout>

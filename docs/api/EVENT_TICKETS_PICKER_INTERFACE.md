@@ -17,7 +17,7 @@ Root container that provides tickets picker context to all child components.
 ```tsx
 interface RootProps {
   eventServiceConfig: EventServiceConfig;
-  ticketListServiceConfig: TicketListServiceConfig;
+  ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   children: React.ReactNode;
   className?: string;
 }
@@ -28,7 +28,7 @@ interface RootProps {
 ```tsx
 <TicketsPicker.Root
   eventServiceConfig={eventServiceConfig}
-  ticketListServiceConfig={ticketListServiceConfig}
+  ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
 >
   {/* All tickets picker components */}
 </TicketsPicker.Root>

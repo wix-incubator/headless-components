@@ -7,20 +7,20 @@ import {
 import {
   type EventServiceConfig,
   type EventListServiceConfig,
-  type TicketListServiceConfig,
+  type TicketDefinitionListServiceConfig,
 } from '@wix/headless-events/services';
 import { EventList } from './EventList';
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
   eventListServiceConfig: EventListServiceConfig;
-  ticketListServiceConfig: TicketListServiceConfig;
+  ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
 }
 
 export function EventDetails({
   eventServiceConfig,
   eventListServiceConfig,
-  ticketListServiceConfig,
+  ticketDefinitionListServiceConfig,
 }: EventDetailsProps) {
   const currentEventId = eventServiceConfig.event._id;
   const otherUpcomingEvents = eventListServiceConfig.events
@@ -113,7 +113,9 @@ export function EventDetails({
           </div>
 
           <TicketsPickerPrimitive.Root
-            ticketListServiceConfig={ticketListServiceConfig}
+            ticketDefinitionListServiceConfig={
+              ticketDefinitionListServiceConfig
+            }
             eventServiceConfig={eventServiceConfig}
           >
             <TicketsPickerPrimitive.TicketDefinitions className="space-y-6 mb-6">
