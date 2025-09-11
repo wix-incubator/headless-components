@@ -7,6 +7,7 @@ type MediaItem = { image?: string };
 export interface WixMediaImageProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
   media?: MediaItem;
+  isShape?: boolean;
   asChild?: boolean;
   children?: AsChildChildren<{
     src: string;
@@ -23,6 +24,7 @@ export const WixMediaImage = React.forwardRef<
   (
     {
       media,
+      isShape,
       width,
       height,
       className,
@@ -35,7 +37,9 @@ export const WixMediaImage = React.forwardRef<
   ) => {
     if (!media?.image) return null;
 
-    const parsed = wixMedia.getImageUrl(media.image);
+    const getUrl = isShape ? wixMedia.getShapeUrl : wixMedia.getImageUrl;
+
+    const parsed = getUrl(media.image);
     const src = parsed.url;
     const derivedWidth = width || parsed.width;
     const derivedHeight = height || parsed.height;
