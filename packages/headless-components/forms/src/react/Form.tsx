@@ -72,13 +72,7 @@ export interface RootProps {
  * function FormPage({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
- *       <Form.Loading>
- *         {() => (
- *           <div className="flex justify-center p-4">
- *             <div>Loading form...</div>
- *           </div>
- *         )}
- *       </Form.Loading>
+ *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
@@ -134,14 +128,21 @@ const RootContent = React.forwardRef<HTMLDivElement, RootContentProps>(
  * Props for Form Loading component
  */
 export interface LoadingProps {
-  /** Content to display during loading (can be a render function or ReactNode) */
-  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display during loading state (can be a render function or ReactNode) */
+  children?: AsChildChildren<LoadingRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
  * Render props for Loading component
  */
-export interface LoadingRenderProps {}
+export interface LoadingRenderProps {
+  /** Whether the form is currently loading */
+  isLoading: boolean;
+}
 
 /**
  * Component that renders content during loading state.
@@ -149,37 +150,76 @@ export interface LoadingRenderProps {}
  *
  * @component
  * @param {LoadingProps} props - The component props
- * @param {LoadingProps['children']} props.children - Content to display during loading (can be a render function or ReactNode)
+ * @param {boolean} [props.asChild] - Whether to render as a child component
+ * @param {AsChildChildren<LoadingRenderProps>} [props.children] - Content to display during loading state (can be a render function or ReactNode)
+ * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
+ * // Default usage with className
  * function FormLoading() {
  *   return (
+ *     <Form.Loading className="flex justify-center p-4" />
+ *   );
+ * }
+ *
+ * // Custom rendering with render function
+ * function CustomFormLoading() {
+ *   return (
  *     <Form.Loading>
- *       {() => (
- *         <div className="flex justify-center items-center p-4">
+ *       {({ isLoading }) => (
+ *         isLoading ? (
+ *           <div className="flex justify-center items-center p-4">
+ *             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+ *             <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Loading>
+ *   );
+ * }
+ *
+ * // With asChild for custom components
+ * function CustomFormLoadingAsChild() {
+ *   return (
+ *     <Form.Loading asChild>
+ *       {React.forwardRef(({ isLoading }, ref) => (
+ *         <div ref={ref} className="custom-loading-container">
  *           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
  *           <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
  *         </div>
- *       )}
+ *       ))}
  *     </Form.Loading>
  *   );
  * }
  * ```
  */
 export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
-  (props, _ref) => {
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
     return (
       <CoreForm.Loading>
         {({ isLoading }) => {
-          if (isLoading) {
-            return typeof props.children === 'function'
-              ? props.children({})
-              : props.children;
-          }
+          if (!isLoading) return null;
 
-          return null;
+          const loadingData = { isLoading };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid="form-loading"
+              customElement={children}
+              customElementProps={loadingData}
+              content="Loading form..."
+              {...otherProps}
+            >
+              <div>Loading form...</div>
+            </AsChildSlot>
+          );
         }}
       </CoreForm.Loading>
     );
@@ -648,13 +688,7 @@ export interface FieldsProps {
  * function ContactForm({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
- *       <Form.Loading>
- *         {() => (
- *           <div className="flex justify-center p-4">
- *             <div>Loading form...</div>
- *           </div>
- *         )}
- *       </Form.Loading>
+ *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError>
  *         {({ error }) => (
  *           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
@@ -749,13 +783,7 @@ export interface FieldsProps {
  * function ContactForm({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
- *       <Form.Loading>
- *         {() => (
- *           <div className="flex justify-center p-4">
- *             <div>Loading form...</div>
- *           </div>
- *         )}
- *       </Form.Loading>
+ *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
@@ -934,13 +962,7 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
  * function MyForm({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
- *       <Form.Loading>
- *         {() => (
- *           <div className="flex justify-center p-4">
- *             <div>Loading form...</div>
- *           </div>
- *         )}
- *       </Form.Loading>
+ *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />

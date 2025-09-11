@@ -32,6 +32,50 @@ interface RootProps {
 </Form.Root>
 ```
 
+### Form.Loading
+
+Component that renders content during loading state. Only displays its children when the form is currently loading. Provides loading data to custom render functions.
+
+**Props**
+
+```tsx
+import { AsChildChildren } from '@wix/headless-utils/react';
+
+interface LoadingProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display during loading state (can be a render function or ReactNode) */
+  children?: AsChildChildren<LoadingRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+interface LoadingRenderProps {
+  /** Whether the form is currently loading */
+  isLoading: boolean;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<Form.Loading className="flex justify-center p-4" />
+
+// Custom rendering with forwardRef
+<Form.Loading asChild>
+  {React.forwardRef(({ isLoading }, ref) => (
+    <div
+      ref={ref}
+      className="custom-loading-container"
+    >
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
+    </div>
+  ))}
+</Form.Loading>
+```
+
 ### Form.LoadingError
 
 Component that renders content when there's an error loading the form. Only displays its children when an error has occurred. Provides error data to custom render functions.
@@ -476,13 +520,7 @@ const FIELD_MAP = {
 function FormPage({ formServiceConfig }) {
   return (
     <Form.Root formServiceConfig={formServiceConfig}>
-      <Form.Loading>
-        {() => (
-          <div className="flex justify-center p-4">
-            <div>Loading form...</div>
-          </div>
-        )}
-      </Form.Loading>
+      <Form.Loading className="flex justify-center p-4" />
       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
       <Form.Fields fieldMap={FIELD_MAP} />
       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
