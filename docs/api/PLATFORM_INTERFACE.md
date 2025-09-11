@@ -892,7 +892,7 @@ export function ProductListRoot({ children }: { children: React.ReactNode }) {
 >
   <div className="custom-list-container">
     <GenericList.Items />
-    <GenericList.LoadMore />
+    <GenericList.Actions.LoadMore />
   </div>
 </GenericList.Root>;
 ```
@@ -947,7 +947,7 @@ interface GenericListItemsProps {
 </GenericList.Items>
 ```
 
-### GenericList.LoadMore
+### GenericList.Actions.LoadMore
 
 Load more button component that appears when more items can be loaded. Automatically handles loading state and disables when no more items are available.
 
@@ -977,26 +977,26 @@ interface GenericListLoadMoreProps extends ButtonProps {
 
 ```tsx
 // Default usage
-<GenericList.LoadMore
+<GenericList.Actions.LoadMore
   label="Load More Items"
   loadingLabel="Loading..."
   className="btn-primary w-full mt-4"
 />
 
 // Custom rendering with asChild
-<GenericList.LoadMore label="Load More" asChild>
+<GenericList.Actions.LoadMore label="Load More" asChild>
   <button className="bg-brand-primary text-white px-6 py-2 rounded hover:bg-brand-primary-hover disabled:opacity-50">
     Load More Products
   </button>
-</GenericList.LoadMore>
+</GenericList.Actions.LoadMore>
 
 // Override button content with children
-<GenericList.LoadMore label="Load More">
+<GenericList.Actions.LoadMore label="Load More">
   <span className="flex items-center gap-2">
     <RefreshIcon className="h-4 w-4" />
     Load More Items
   </span>
-</GenericList.LoadMore>
+</GenericList.Actions.LoadMore>
 ```
 
 ---
@@ -1071,7 +1071,7 @@ The GenericList components follow the established architecture pattern while pro
 ```
 GenericList.Root (Provider & Data Manager)
 ├── GenericList.Items (Container with empty state)
-├── GenericList.LoadMore (Load more button)
+├── GenericList.Actions.LoadMore (Load more button)
 └── GenericList.Totals (Totals display)
 ```
 
@@ -1117,13 +1117,13 @@ export const ProductListProducts = React.forwardRef<HTMLElement, ProductsProps>(
   },
 );
 
-// ProductList.LoadMoreTrigger internally uses GenericList.LoadMore
+// ProductList.LoadMoreTrigger internally uses GenericList.Actions.LoadMore
 export const ProductListLoadMoreTrigger = React.forwardRef<
   HTMLButtonElement,
   LoadMoreTriggerProps
 >((props, ref) => {
   return (
-    <GenericList.LoadMore
+    <GenericList.Actions.LoadMore
       label={props.label}
       loadingLabel={props.loadingState}
       className={props.className}
@@ -1131,7 +1131,7 @@ export const ProductListLoadMoreTrigger = React.forwardRef<
       ref={ref}
     >
       {props.children}
-    </GenericList.LoadMore>
+    </GenericList.Actions.LoadMore>
   );
 });
 
