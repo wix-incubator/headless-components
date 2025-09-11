@@ -27,9 +27,7 @@ export const FormControlService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const control: Signal<FormControl> = signalsService.signal(
-        config.control,
-      );
+      const control = signalsService.signal<FormControl>(config.control);
 
       return {
         control,

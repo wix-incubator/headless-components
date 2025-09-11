@@ -25,7 +25,7 @@ export const EventService = implementService.withConfig<EventServiceConfig>()(
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
-    const event: Signal<Event> = signalsService.signal(config.event);
+    const event = signalsService.signal<Event>(config.event);
 
     return {
       event,

@@ -45,7 +45,7 @@ export const EventListService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const events: Signal<Event[]> = signalsService.signal(config.events);
+      const events = signalsService.signal<Event[]>(config.events);
       const isLoading = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
       const pageSize = signalsService.signal<number>(config.pageSize);

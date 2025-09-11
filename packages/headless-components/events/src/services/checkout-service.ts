@@ -6,7 +6,7 @@ import {
 import { ticketReservations } from '@wix/events';
 import { redirects } from '@wix/redirects';
 import { getErrorMessage } from '../utils/errors.js';
-import { TicketReservationQuantity } from './ticket-list-service.js';
+import { TicketReservationQuantity } from './ticket-definition-list-service.js';
 
 /**
  * API interface for the Checkout service
@@ -14,16 +14,12 @@ import { TicketReservationQuantity } from './ticket-list-service.js';
 export interface CheckoutServiceAPI {
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
-
   checkout: (
     eventId: string,
     eventSlug: string,
-    ticketQuantities: TicketReservationQuantity[],
+    ticketReservationQuantities: TicketReservationQuantity[],
   ) => Promise<void>;
 }
-
-export const CheckoutServiceDefinition =
-  defineService<CheckoutServiceAPI>('checkout');
 
 /**
  * Configuration options for the Checkout service
@@ -32,19 +28,24 @@ export interface CheckoutServiceConfig {
   postFlowUrl?: string;
 }
 
+export const CheckoutServiceDefinition = defineService<
+  CheckoutServiceAPI,
+  CheckoutServiceConfig
+>('checkout');
+
 export const CheckoutService =
   implementService.withConfig<CheckoutServiceConfig>()(
     CheckoutServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const isLoading = signalsService.signal(false);
+      const isLoading = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
 
       const checkout = async (
         eventId: string,
         eventSlug: string,
-        ticketQuantities: TicketReservationQuantity[],
+        ticketReservationQuantities: TicketReservationQuantity[],
       ) => {
         try {
           isLoading.set(true);
@@ -52,7 +53,7 @@ export const CheckoutService =
 
           const { _id: reservationId } =
             await ticketReservations.createTicketReservation({
-              tickets: ticketQuantities
+              tickets: ticketReservationQuantities
                 .map(
                   ({
                     quantity,
@@ -68,13 +69,13 @@ export const CheckoutService =
                         ticketInfo:
                           priceOverride || pricingOptionId
                             ? {
-                                guestPrice: priceOverride,
                                 pricingOptionId,
-                                quantity,
+                                guestPrice: priceOverride,
                               }
                             : undefined,
                       };
                     }
+
                     return null;
                   },
                 )
@@ -87,7 +88,7 @@ export const CheckoutService =
 
           const { redirectSession } = await redirects.createRedirectSession({
             eventsCheckout: {
-              reservationId: reservationId,
+              reservationId,
               eventSlug,
             },
             callbacks: {
@@ -118,47 +119,3 @@ export const CheckoutService =
       };
     },
   );
-
-export type CheckoutServiceConfigResult = {
-  [CheckoutServiceDefinition]: CheckoutServiceConfig;
-};
-
-/**
- * Load initial configuration for the Checkout service.
- * This function prepares the configuration for checkout creation.
- *
- * @param postFlowUrl - Optional URL to redirect after checkout completion
- * @returns Promise resolving to service configuration
- */
-export const loadCheckoutServiceInitialData = async (
-  postFlowUrl?: string,
-): Promise<CheckoutServiceConfigResult> => {
-  return {
-    [CheckoutServiceDefinition]: {
-      ...(postFlowUrl && { postFlowUrl }),
-    },
-  };
-};
-
-/**
- * Creates a service binding for the Checkout service with the provided configuration.
- * This utility function helps integrate the checkout service into the services manager.
- *
- * @param servicesConfigs - Configuration object containing checkout service settings
- * @returns Tuple containing service definition, implementation, and configuration
- */
-export const checkoutServiceBinding = <
-  T extends {
-    [key: string]: Awaited<
-      ReturnType<typeof loadCheckoutServiceInitialData>
-    >[typeof CheckoutServiceDefinition];
-  },
->(
-  servicesConfigs: T,
-) => {
-  return [
-    CheckoutServiceDefinition,
-    CheckoutService,
-    servicesConfigs[CheckoutServiceDefinition] as any,
-  ] as const;
-};

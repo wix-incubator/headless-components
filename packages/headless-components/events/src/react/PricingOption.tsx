@@ -1,15 +1,15 @@
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
+import { WixServices, useService } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import React from 'react';
 import {
   PricingOption,
   PricingOptionService,
   PricingOptionServiceConfig,
   PricingOptionServiceDefinition,
 } from '../services/pricing-option-service.js';
-import { WixServices, useService } from '@wix/services-manager-react';
-import { createServicesMap } from '@wix/services-manager';
-import React from 'react';
-import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TicketDefinitionServiceDefinition } from '../services/ticket-service.js';
-import { TicketDefinitionListServiceDefinition } from '../services/ticket-list-service.js';
+import { TicketDefinitionServiceDefinition } from '../services/ticket-definition-service.js';
+import { TicketDefinitionListServiceDefinition } from '../services/ticket-definition-list-service.js';
 
 enum TestIds {
   pricingOptionName = 'pricing-option-name',
@@ -51,8 +51,8 @@ export interface NameProps {
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className } = props;
 
-  const service = useService(PricingOptionServiceDefinition);
-  const pricingOption = service.pricingOption.get();
+  const pricingOptionService = useService(PricingOptionServiceDefinition);
+  const pricingOption = pricingOptionService.pricingOption.get();
   const name = pricingOption.name ?? '';
 
   return (
@@ -80,8 +80,8 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
 
-    const service = useService(PricingOptionServiceDefinition);
-    const pricingOption = service.pricingOption.get();
+    const pricingOptionService = useService(PricingOptionServiceDefinition);
+    const pricingOption = pricingOptionService.pricingOption.get();
     const { value, currency } = pricingOption.price!;
     const pricing = `${value} ${currency}`;
 

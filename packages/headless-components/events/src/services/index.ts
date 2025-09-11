@@ -31,17 +31,17 @@ export {
 } from './form-control-service.js';
 
 export {
-  TicketService,
-  TicketDefinitionServiceDefinition as TicketServiceDefinition,
-  type TicketServiceAPI,
-  type TicketServiceConfig,
+  TicketDefinitionService,
+  TicketDefinitionServiceDefinition,
+  type TicketDefinitionServiceAPI,
+  type TicketDefinitionServiceConfig,
   type TicketDefinition,
-} from './ticket-service.js';
+} from './ticket-definition-service.js';
 
 export {
-  TicketListService,
-  TicketDefinitionListServiceDefinition as TicketListServiceDefinition,
-  loadTicketListServiceConfig,
-  type TicketListServiceAPI,
-  type TicketListServiceConfig,
-} from './ticket-list-service.js';
+  TicketDefinitionListService,
+  TicketDefinitionListServiceDefinition,
+  loadTicketDefinitionListServiceConfig,
+  type TicketDefinitionListServiceAPI,
+  type TicketDefinitionListServiceConfig,
+} from './ticket-definition-list-service.js';

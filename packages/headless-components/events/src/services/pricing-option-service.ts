@@ -18,7 +18,7 @@ export interface PricingOptionServiceConfig {
 export const PricingOptionServiceDefinition = defineService<
   PricingOptionServiceAPI,
   PricingOptionServiceConfig
->('pricing-option');
+>('pricingOption');
 
 export const PricingOptionService =
   implementService.withConfig<PricingOptionServiceConfig>()(
@@ -26,10 +26,12 @@ export const PricingOptionService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const pricingOption: Signal<PricingOption> = signalsService.signal(
+      const pricingOption = signalsService.signal<PricingOption>(
         config.pricingOption,
       );
 
-      return { pricingOption };
+      return {
+        pricingOption,
+      };
     },
   );

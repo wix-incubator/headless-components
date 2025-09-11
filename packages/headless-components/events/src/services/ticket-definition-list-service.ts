@@ -4,9 +4,9 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 import { ticketDefinitionsV2 } from '@wix/events';
-import { type TicketDefinition } from './ticket-service.js';
+import { type TicketDefinition } from './ticket-definition-service.js';
 
-export interface TicketListServiceAPI {
+export interface TicketDefinitionListServiceAPI {
   ticketDefinitions: Signal<TicketDefinition[]>;
   selectedQuantities: Signal<TicketReservationQuantity[]>;
   setQuantity: (params: {
@@ -24,35 +24,40 @@ export interface TicketListServiceAPI {
 }
 
 export interface TicketReservationQuantity {
-  ticketDefinitionId?: string;
+  ticketDefinitionId: string;
   quantity?: number;
   priceOverride?: string;
   pricingOptionId?: string;
 }
 
-export interface TicketListServiceConfig {
+export interface TicketDefinitionListServiceConfig {
   ticketDefinitions: TicketDefinition[];
-  initialSelectedQuantities?: TicketReservationQuantity[];
 }
 
 export const TicketDefinitionListServiceDefinition = defineService<
-  TicketListServiceAPI,
-  TicketListServiceConfig
->('ticketList');
+  TicketDefinitionListServiceAPI,
+  TicketDefinitionListServiceConfig
+>('ticketDefinitionList');
 
-export const TicketListService =
-  implementService.withConfig<TicketListServiceConfig>()(
+export const TicketDefinitionListService =
+  implementService.withConfig<TicketDefinitionListServiceConfig>()(
     TicketDefinitionListServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const ticketDefinitions: Signal<TicketDefinition[]> =
-        signalsService.signal(config.ticketDefinitions);
-      const selectedQuantities: Signal<TicketReservationQuantity[]> =
-        signalsService.signal(config.initialSelectedQuantities ?? []);
+      const ticketDefinitions = signalsService.signal<TicketDefinition[]>(
+        config.ticketDefinitions,
+      );
+      const selectedQuantities = signalsService.signal<
+        TicketReservationQuantity[]
+      >([]);
 
       const findTicketDefinition = (ticketDefinitionId: string) =>
-        ticketDefinitions.get().find((d) => d._id === ticketDefinitionId);
+        ticketDefinitions
+          .get()
+          .find(
+            (ticketDefinition) => ticketDefinition._id === ticketDefinitionId,
+          );
 
       const findTicketReservation = (
         ticketDefinitionId: string,
@@ -61,12 +66,22 @@ export const TicketListService =
         if (pricingOptionId) {
           return selectedQuantities
             .get()
-            .filter((d) => d.ticketDefinitionId === ticketDefinitionId)
-            .find((d) => d.pricingOptionId === pricingOptionId);
+            .filter(
+              (selectedQuantity) =>
+                selectedQuantity.ticketDefinitionId === ticketDefinitionId,
+            )
+            .find(
+              (selectedQuantity) =>
+                selectedQuantity.pricingOptionId === pricingOptionId,
+            );
         }
+
         return selectedQuantities
           .get()
-          .find((d) => d.ticketDefinitionId === ticketDefinitionId);
+          .find(
+            (selectedQuantity) =>
+              selectedQuantity.ticketDefinitionId === ticketDefinitionId,
+          );
       };
 
       const getMaxQuantity = (ticketDefinitionId: string) => {
@@ -83,13 +98,14 @@ export const TicketListService =
           ticketDefinitionId,
           pricingOptionId,
         );
+
         return selectedQuantity?.quantity ?? 0;
       };
 
-      const getCurrentPriceOverride = (ticketDefinitionId: string): string => {
+      const getCurrentPriceOverride = (ticketDefinitionId: string) => {
         const selectedQuantity = findTicketReservation(ticketDefinitionId);
 
-        return selectedQuantity?.priceOverride ?? '';
+        return selectedQuantity?.priceOverride;
       };
 
       const isSoldOut = (ticketDefinitionId: string) =>
@@ -97,20 +113,14 @@ export const TicketListService =
 
       const setQuantity = ({
         ticketDefinitionId,
-        priceOverride = getCurrentPriceOverride(ticketDefinitionId),
         pricingOptionId,
+        priceOverride = getCurrentPriceOverride(ticketDefinitionId),
         quantity = getCurrentSelectedQuantity(
           ticketDefinitionId,
           pricingOptionId,
         ),
-      }: {
-        ticketDefinitionId: string;
-        quantity?: number;
-        priceOverride?: string;
-        pricingOptionId?: string;
-      }) => {
+      }: TicketReservationQuantity) => {
         const max = getMaxQuantity(ticketDefinitionId);
-
         const newQuantity = Math.max(0, Math.min(quantity, max));
         const newSelectedQuantity: TicketReservationQuantity = {
           ticketDefinitionId,
@@ -120,14 +130,15 @@ export const TicketListService =
         };
 
         const newSelectedQuantities = [
-          ...selectedQuantities.get().filter((selected) => {
+          ...selectedQuantities.get().filter((selectedQuantity) => {
             if (pricingOptionId) {
               return !(
-                selected.ticketDefinitionId === ticketDefinitionId &&
-                selected.pricingOptionId === pricingOptionId
+                selectedQuantity.ticketDefinitionId === ticketDefinitionId &&
+                selectedQuantity.pricingOptionId === pricingOptionId
               );
             }
-            return selected.ticketDefinitionId !== ticketDefinitionId;
+
+            return selectedQuantity.ticketDefinitionId !== ticketDefinitionId;
           }),
           newSelectedQuantity,
         ];
@@ -146,9 +157,9 @@ export const TicketListService =
     },
   );
 
-export async function loadTicketListServiceConfig(
+export async function loadTicketDefinitionListServiceConfig(
   eventId: string,
-): Promise<TicketListServiceConfig> {
+): Promise<TicketDefinitionListServiceConfig> {
   const query = { filter: { eventId } };
   const response =
     await ticketDefinitionsV2.queryAvailableTicketDefinitions(query);

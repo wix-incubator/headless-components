@@ -2,11 +2,11 @@ import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
 import {
-  TicketListService,
+  TicketDefinitionListService,
   TicketDefinitionListServiceDefinition,
-  type TicketListServiceConfig,
-} from '../../services/ticket-list-service.js';
-import { type TicketDefinition } from '../../services/ticket-service.js';
+  type TicketDefinitionListServiceConfig,
+} from '../../services/ticket-definition-list-service.js';
+import { type TicketDefinition } from '../../services/ticket-definition-service.js';
 import {
   EventServiceDefinition,
   EventService,
@@ -18,12 +18,12 @@ import {
 } from '../../services/checkout-service.js';
 
 export interface RootProps {
-  /** Child components that will have access to the event, ticket list and checkout services */
+  /** Child components that will have access to the event, ticket definition list and checkout services */
   children: React.ReactNode;
   /** Event service configuration */
   eventServiceConfig: EventServiceConfig;
-  /** Ticket list service configuration */
-  ticketListServiceConfig: TicketListServiceConfig;
+  /** Ticket definition list service configuration */
+  ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
 }
 
 /**
@@ -32,7 +32,8 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { eventServiceConfig, ticketListServiceConfig, children } = props;
+  const { eventServiceConfig, ticketDefinitionListServiceConfig, children } =
+    props;
 
   return (
     <WixServices
@@ -40,8 +41,8 @@ export function Root(props: RootProps): React.ReactNode {
         .addService(EventServiceDefinition, EventService, eventServiceConfig)
         .addService(
           TicketDefinitionListServiceDefinition,
-          TicketListService,
-          ticketListServiceConfig,
+          TicketDefinitionListService,
+          ticketDefinitionListServiceConfig,
         )
         .addService(CheckoutServiceDefinition, CheckoutService, {})}
     >
@@ -70,8 +71,10 @@ export interface TicketDefinitionsRenderProps {
 export function TicketDefinitions(
   props: TicketDefinitionsProps,
 ): React.ReactNode {
-  const service = useService(TicketDefinitionListServiceDefinition);
-  const ticketDefinitions = service.ticketDefinitions.get();
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+  const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const hasTicketDefinitions = !!ticketDefinitions.length;
 
   return props.children({ ticketDefinitions, hasTicketDefinitions });
@@ -97,8 +100,10 @@ export interface TicketDefinitionRepeaterRenderProps {
 export function TicketDefinitionRepeater(
   props: TicketDefinitionRepeaterProps,
 ): React.ReactNode {
-  const service = useService(TicketDefinitionListServiceDefinition);
-  const ticketDefinitions = service.ticketDefinitions.get();
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+  const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const hasTicketDefinitions = !!ticketDefinitions.length;
 
   return props.children({ ticketDefinitions, hasTicketDefinitions });
@@ -147,23 +152,32 @@ export interface CheckoutTriggerRenderProps {
 }
 
 /**
- * TicketsPicker CheckoutTrigger core component that provides checkout functionality.
+ * TicketsPicker CheckoutTrigger core component that provides checkout functionality. Not rendered if there are no ticket definitions.
  *
  * @component
  */
 export function CheckoutTrigger(props: CheckoutTriggerProps): React.ReactNode {
-  const ticketListService = useService(TicketDefinitionListServiceDefinition);
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
   const eventService = useService(EventServiceDefinition);
   const checkoutService = useService(CheckoutServiceDefinition);
 
   const event = eventService.event.get();
-  const selectedQuantities = ticketListService.selectedQuantities.get();
+  const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
+  const selectedQuantities =
+    ticketDefinitionListService.selectedQuantities.get();
   const isLoading = checkoutService.isLoading.get();
   const error = checkoutService.error.get();
+  const hasTicketDefinitions = !!ticketDefinitions.length;
   const hasSelectedTicketDefinitions = !!selectedQuantities.length;
 
   const checkout = () =>
     checkoutService.checkout(event._id!, event.slug!, selectedQuantities);
+
+  if (!hasTicketDefinitions) {
+    return null;
+  }
 
   return props.children({
     isLoading,

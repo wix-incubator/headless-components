@@ -1,7 +1,7 @@
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type EventServiceConfig } from '../services/event-service.js';
-import { type TicketListServiceConfig } from '../services/ticket-list-service.js';
+import { type TicketDefinitionListServiceConfig } from '../services/ticket-definition-list-service.js';
 import * as TicketDefinition from './TicketDefinition.js';
 import * as CoreTicketsPicker from './core/TicketsPicker.js';
 
@@ -18,8 +18,8 @@ enum TestIds {
 export interface RootProps {
   /** Event service configuration */
   eventServiceConfig: EventServiceConfig;
-  /** Ticket list service configuration */
-  ticketListServiceConfig: TicketListServiceConfig;
+  /** Ticket definition list service configuration */
+  ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   /** Child components */
   children: React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -34,9 +34,9 @@ export interface RootProps {
  * ```tsx
  * import { TicketsPicker } from '@wix/headless-events/react';
  *
- * function TicketsPickerComponent({ eventServiceConfig, ticketListServiceConfig }) {
+ * function TicketsPickerComponent({ eventServiceConfig, ticketDefinitionListServiceConfig }) {
  *   return (
- *     <TicketsPicker.Root eventServiceConfig={eventServiceConfig} ticketListServiceConfig={ticketListServiceConfig}>
+ *     <TicketsPicker.Root eventServiceConfig={eventServiceConfig} ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}>
  *       <TicketsPicker.TicketDefinitions>
  *         <TicketsPicker.TicketDefinitionRepeater>
  *           <TicketDefinition.Name />
@@ -49,8 +49,12 @@ export interface RootProps {
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { eventServiceConfig, ticketListServiceConfig, children, className } =
-    props;
+  const {
+    eventServiceConfig,
+    ticketDefinitionListServiceConfig,
+    children,
+    className,
+  } = props;
 
   const attributes = {
     className,
@@ -60,7 +64,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   return (
     <CoreTicketsPicker.Root
       eventServiceConfig={eventServiceConfig}
-      ticketListServiceConfig={ticketListServiceConfig}
+      ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
     >
       <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
         {children}
