@@ -10,6 +10,7 @@ enum TestIds {
   programTitle = 'program-title',
   programImage = 'program-image',
   programDuration = 'program-duration',
+  programDescription = 'program-description',
 }
 
 /**
@@ -231,6 +232,7 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
               asChild={asChild}
               customElement={children}
               customElementProps={{ durationInDays, isSelfPaced }}
+              content={durationInDays}
               {...dataAttributes}
               {...otherProps}
             >
@@ -246,6 +248,77 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
 Duration.displayName = 'Program.Duration';
 
 /**
+ * Props for Program Description component
+ */
+export interface DescriptionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ description: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+/**
+ * Displays the program description text with customizable rendering.
+ * Data source: program.description.details
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Program.Description className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Program.Description asChild>
+ *   <p className="text-content-secondary" />
+ * </Program.Description>
+ *
+ * // Custom rendering
+ * <Program.Description asChild>
+ *   {React.forwardRef(({ description, ...props }, ref) => (
+ *     <p ref={ref} {...props} className="text-content-secondary">
+ *       {description}
+ *     </p>
+ *   ))}
+ * </Program.Description>
+ * ```
+ */
+export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    return (
+      <CoreProgram.Description>
+        {({ description }) => {
+          const dataAttributes = {
+            'data-testid': TestIds.programDescription,
+          };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              customElement={children}
+              customElementProps={{ description }}
+              content={description}
+              {...dataAttributes}
+              {...otherProps}
+            >
+              <p>{description}</p>
+            </AsChildSlot>
+          );
+        }}
+      </CoreProgram.Description>
+    );
+  },
+);
+
+Description.displayName = 'Program.Description';
+
+/**
  * Compound component for Program with all sub-components
  */
 export const Program = {
@@ -253,4 +326,5 @@ export const Program = {
   Title,
   Image,
   Duration,
+  Description,
 } as const;

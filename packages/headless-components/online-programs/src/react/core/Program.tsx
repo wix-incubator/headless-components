@@ -212,3 +212,51 @@ export function Duration(props: ProgramDurationProps) {
     isSelfPaced,
   });
 }
+
+/**
+ * Props for ProgramDescription headless component
+ */
+export interface ProgramDescriptionProps {
+  /** Render prop function that receives program description data */
+  children: (props: ProgramDescriptionRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProgramDescription component
+ */
+export interface ProgramDescriptionRenderProps {
+  /** Program description text */
+  description: string;
+}
+
+/**
+ * Headless component for program description display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramDescription() {
+ *   return (
+ *     <Program.Description>
+ *       {({ description }) => (
+ *         <p>{description}</p>
+ *       )}
+ *     </Program.Description>
+ *   );
+ * }
+ * ```
+ */
+export function Description(props: ProgramDescriptionProps) {
+  const service = useService(ProgramServiceDefinition) as ServiceAPI<
+    typeof ProgramServiceDefinition
+  >;
+
+  const program = service.program.get();
+  const description = program.description?.details || '';
+
+  return props.children({
+    description,
+  });
+}

@@ -233,7 +233,7 @@ interface ProgramStepsCountProps {
 
 ### Program.Description
 
-Displays the program description text. Data source: program.description.details
+Displays the program description text with customizable rendering. Data source: program.description.details
 
 **Props**
 
@@ -246,6 +246,8 @@ interface ProgramDescriptionProps {
       description: string;
     }
   >;
+  className?: string;
+  [key: string]: any;
 }
 ```
 
@@ -256,20 +258,29 @@ interface ProgramDescriptionProps {
 **Example**
 
 ```tsx
-// Default usage N or null
+// Default usage
 <Program.Description className="text-content-secondary" />
 
 // asChild with primitive
 <Program.Description asChild>
-  <p className="text-content-secondary">
+  <p className="text-content-secondary" />
 </Program.Description>
 
-// Custom render
+// Custom rendering with truncation
 <Program.Description asChild>
   {React.forwardRef(({ description, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
-      {description}
+      {description.length > 100 ? `${description.substring(0, 100)}...` : description}
     </p>
+  ))}
+</Program.Description>
+
+// Custom rendering with HTML parsing
+<Program.Description asChild>
+  {React.forwardRef(({ description, ...props }, ref) => (
+    <div ref={ref} {...props} className="prose">
+      <div dangerouslySetInnerHTML={{ __html: description }} />
+    </div>
   ))}
 </Program.Description>
 ```
