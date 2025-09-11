@@ -863,7 +863,7 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
 **Example**
 
 ```tsx
-// Basic usage within ProductList context
+// Used internally by ProductList.Root
 export function ProductListRoot({ children }: { children: React.ReactNode }) {
   const productsListService = useService(ProductsListServiceDefinition);
   return (
@@ -878,19 +878,6 @@ export function ProductListRoot({ children }: { children: React.ReactNode }) {
     </GenericList.Root>
   );
 }
-
-// Custom implementation with className
-<GenericList.Root
-  items={items}
-  onLoadMore={handleLoadMore}
-  hasMore={hasMore}
-  isLoading={isLoading}
-  variant="list"
-  className="custom-list-container"
->
-  <GenericList.Items />
-  <GenericList.Actions.LoadMore />
-</GenericList.Root>;
 ```
 
 ---
@@ -919,27 +906,20 @@ interface GenericListItemsProps {
 **Example**
 
 ```tsx
-// Basic usage with empty state
-<GenericList.Items
-  emptyState={
-    <div className="text-center py-8">
-      <p className="text-content-secondary">No items found</p>
-    </div>
-  }
-  className="space-y-4"
->
-    <div className="border rounded p-4">
-      {/* Item content */}
-    </div>
-</GenericList.Items>
-
-// Custom container with className
-<GenericList.Items
-  emptyState={<EmptyState />}
-  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
->
-  <ProductCard />
-</GenericList.Items>
+// Used internally by ProductList.Products
+export const ProductListProducts = React.forwardRef<HTMLElement, ProductsProps>(
+  (props, ref) => {
+    return (
+      <GenericList.Items
+        emptyState={props.emptyState}
+        className={props.className}
+        ref={ref}
+      >
+        {props.children}
+      </GenericList.Items>
+    );
+  },
+);
 ```
 
 ### GenericList.Actions.LoadMore
@@ -971,27 +951,23 @@ interface GenericListLoadMoreProps extends ButtonProps {
 **Example**
 
 ```tsx
-// Default usage
-<GenericList.Actions.LoadMore
-  label="Load More Items"
-  loadingLabel="Loading..."
-  className="btn-primary w-full mt-4"
-/>
-
-// Custom rendering with asChild
-<GenericList.Actions.LoadMore label="Load More" asChild>
-  <button className="bg-brand-primary text-white px-6 py-2 rounded hover:bg-brand-primary-hover disabled:opacity-50">
-    Load More Products
-  </button>
-</GenericList.Actions.LoadMore>
-
-// Override button content with children
-<GenericList.Actions.LoadMore label="Load More">
-  <span className="flex items-center gap-2">
-    <RefreshIcon className="h-4 w-4" />
-    Load More Items
-  </span>
-</GenericList.Actions.LoadMore>
+// Used internally by ProductList.LoadMoreTrigger
+export const ProductListLoadMoreTrigger = React.forwardRef<
+  HTMLButtonElement,
+  LoadMoreTriggerProps
+>((props, ref) => {
+  return (
+    <GenericList.Actions.LoadMore
+      label={props.label}
+      loadingLabel={props.loadingState}
+      className={props.className}
+      asChild={props.asChild}
+      ref={ref}
+    >
+      {props.children}
+    </GenericList.Actions.LoadMore>
+  );
+});
 ```
 
 ---
@@ -1025,32 +1001,17 @@ interface GenericListTotalsProps {
 **Example**
 
 ```tsx
-// Default usage - renders "{displayedItems} items"
-<GenericList.Totals className="text-sm text-content-secondary" />
-
-// Custom styling with className
-<GenericList.Totals className="font-medium text-content-primary" />
-
-// Render function pattern for custom display
-<GenericList.Totals>
-  {({ totalItems, displayedItems }, ref) => (
-    <div ref={ref} className="flex items-center gap-2">
-      <span className="text-content-primary font-medium">
-        Showing {displayedItems} of {totalItems} items
-      </span>
-      {displayedItems < totalItems && (
-        <span className="text-content-secondary text-sm">
-          ({totalItems - displayedItems} more available)
-        </span>
-      )}
-    </div>
-  )}
-</GenericList.Totals>
-
-// Override default content with children
-<GenericList.Totals className="text-lg font-semibold">
-  {displayedItems} Products Found
-</GenericList.Totals>
+// Used internally by ProductList.TotalsDisplayed
+export const ProductListTotalsDisplayed = React.forwardRef<
+  HTMLElement,
+  TotalsDisplayedProps
+>((props, ref) => {
+  return (
+    <GenericList.Totals className={props.className} ref={ref}>
+      {props.children}
+    </GenericList.Totals>
+  );
+});
 ```
 
 ## GenericList Architecture
