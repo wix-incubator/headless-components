@@ -45,18 +45,31 @@ The root container that provides program context to all child components.
 interface ProgramRootProps {
   program: Program;
   children: React.ReactNode;
+  [key: string]: any;
 }
 ```
 
 **Example**
 
 ```tsx
-<Program.Root program={program}>{/* All program components */}</Program.Root>
+// Basic usage
+<Program.Root program={program}>
+  <Program.Title />
+  <Program.Description />
+</Program.Root>
+
+// With additional attributes
+<Program.Root program={program} className="program-container" data-testid="program-root">
+  <Program.Title />
+  <Program.Description />
+</Program.Root>
 ```
 
 ---
 
 ### Program.Raw
+
+**Status: Not Implemented**
 
 Provides direct access to program context data. Should be used only in rare cases and never by Wix implementations.
 
@@ -90,7 +103,8 @@ interface ProgramRawProps {
 
 ### Program.Title
 
-Displays the program title with customizable rendering. Data source: program.description.title.
+Displays the program title with customizable rendering.
+Data source: program.description.title.
 
 **Props**
 
@@ -103,6 +117,8 @@ interface ProgramTitleProps {
       title: string;
     }
   >;
+  className?: string;
+  [key: string]: any;
 }
 ```
 
@@ -114,25 +130,22 @@ interface ProgramTitleProps {
 
 ```tsx
 // Default usage
-<Program.Title className="text-4xl font-bold">
+<Program.Title className="text-4xl font-bold" />
 
 // asChild with primitive
 <Program.Title asChild>
-  <h1 className="text-4xl font-bold">
+  <h1 className="text-4xl font-bold" />
 </Program.Title>
 
 // asChild with react component
 <Program.Title asChild>
   {React.forwardRef(({ title, ...props }, ref) => (
-    <h1 ref={ref} { ...props } className="text-4xl font-bold">
+    <h1 ref={ref} {...props} className="text-4xl font-bold">
       {title}
     </h1>
   ))}
 </Program.Title>
 ```
-
-**Notes**
-- The React wrapper provides default `<h1>` fallback and test id.
 
 ---
 
