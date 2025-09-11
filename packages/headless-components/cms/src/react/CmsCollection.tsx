@@ -19,6 +19,7 @@ export interface RootProps {
   children: React.ReactNode;
   collection: {
     id: string;
+    items?: WixDataItem[];
   };
 }
 
@@ -54,6 +55,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     const collectionServiceConfig: CmsCollectionServiceConfig = {
       collectionId: collection.id,
+      collection: collection.items,
     };
 
     const attributes = {
