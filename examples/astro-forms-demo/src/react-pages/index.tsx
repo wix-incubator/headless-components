@@ -64,6 +64,8 @@ const FIELD_MAP = {
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
   return (
     <Form.Root formServiceConfig={formServiceConfig}>
+      <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
+      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
       <Form.Fields fieldMap={FIELD_MAP} />
     </Form.Root>
   );

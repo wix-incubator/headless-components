@@ -30,9 +30,9 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     const error: Signal<string | null> = signalsService.signal<string | null>(
       null,
     );
-    const submitError: Signal<string | null> = signalsService.signal<string | null>(
-      null,
-    );
+    const submitError: Signal<string | null> = signalsService.signal<
+      string | null
+    >(null);
 
     return { form, isLoading, error, submitError };
   },

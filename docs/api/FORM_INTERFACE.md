@@ -29,30 +29,47 @@ interface RootProps {
 
 ### Form.LoadingError
 
-Component that renders content when there's an error loading the form. Only displays its children when an error has occurred.
+Component that renders content when there's an error loading the form. Only displays its children when an error has occurred. Provides error data to custom render functions.
 
 **Props**
 
 ```tsx
-interface ErrorProps {
-  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+import { AsChildChildren } from '@wix/headless-utils/react';
+
+interface LoadingErrorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display during error state (can be a render function or ReactNode) */
+  children?: AsChildChildren<LoadingErrorRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
-interface ErrorRenderProps {
+interface LoadingErrorRenderProps {
+  /** Error message */
   error: string | null;
+  /** Whether there's an error */
+  hasError: boolean;
 }
 ```
 
 **Example**
 
 ```tsx
-<Form.LoadingError>
-  {({ error }) => (
-    <div className="bg-background border-foreground text-foreground">
+// Default usage
+<Form.LoadingError className="error-message" />
+
+// Custom rendering with forwardRef
+<Form.LoadingError asChild>
+  {React.forwardRef(({ error, hasError }, ref) => (
+    <div
+      ref={ref}
+      className="custom-error-container"
+    >
       <h3>Error loading form</h3>
       <p>{error}</p>
     </div>
-  )}
+  ))}
 </Form.LoadingError>
 ```
 
@@ -93,19 +110,26 @@ interface ThankYouMessageRenderProps {
 
 ### Form.Error
 
-Component that renders content when there's an error during form submission. Only displays its children when a submission error has occurred.
+Component that renders content when there's an error during form submission. Only displays its children when a submission error has occurred. Provides error data to custom render functions.
 
 **Props**
 
 ```tsx
+import { AsChildChildren } from '@wix/headless-utils/react';
+
 interface ErrorProps {
-  children:
-    | ((props: ErrorRenderProps) => React.ReactNode)
-    | React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Content to display during submit error state (can be a render function or ReactNode) */
+  children?: AsChildChildren<ErrorRenderProps>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 interface ErrorRenderProps {
+  /** Error message */
   error: string | null;
+  /** Whether there's an error */
   hasError: boolean;
 }
 ```
@@ -113,15 +137,20 @@ interface ErrorRenderProps {
 **Example**
 
 ```tsx
-<Form.Error>
-  {({ error, hasError }) =>
-    hasError ? (
-      <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
-        <h3>Submission Failed</h3>
-        <p>{error}</p>
-      </div>
-    ) : null
-  }
+// Default usage
+<Form.Error className="error-message" />
+
+// Custom rendering with forwardRef
+<Form.Error asChild>
+  {React.forwardRef(({ error, hasError }, ref) => (
+    <div
+      ref={ref}
+      className="custom-error-container"
+    >
+      <h3>Submission Failed</h3>
+      <p>{error}</p>
+    </div>
+  ))}
 </Form.Error>
 ```
 
@@ -360,23 +389,8 @@ const FIELD_MAP = {
 function FormPage({ form }) {
   return (
     <Form.Root form={form}>
-      <Form.LoadingError>
-        {({ error }) => (
-          <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-      </Form.LoadingError>
-      <Form.Error>
-        {({ error, hasError }) =>
-          hasError ? (
-            <div className="bg-background border-foreground text-destructive p-4 rounded-lg mb-4">
-              <h3>Submission Failed</h3>
-              <p>{error}</p>
-            </div>
-          ) : null
-        }
-      </Form.Error>
+      <Form.LoadingError className="text-foreground px-4 py-3 rounded mb-4" />
+      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
       <Form.ThankYouMessage>
         {({ isSubmitted }) =>
           isSubmitted ? (

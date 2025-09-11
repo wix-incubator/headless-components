@@ -32,8 +32,8 @@ import {
 } from './types.js';
 
 enum TestIds {
-  formLoadingError = "form-loading-error",
-  formError = "form-error",
+  formLoadingError = 'form-loading-error',
+  formError = 'form-error',
 }
 
 /**
@@ -270,68 +270,64 @@ export interface ErrorRenderProps {
 /**
  * Component that renders content when there's an error during form submission.
  * Only displays its children when a submission error has occurred.
+ * Provides error data to custom render functions.
  *
  * @component
  * @param {ErrorProps} props - Component props
+ * @param {ErrorProps['asChild']} props.asChild - Whether to render as a child component
  * @param {ErrorProps['children']} props.children - Content to display during submit error state (can be a render function or ReactNode)
+ * @param {ErrorProps['className']} props.className - CSS classes to apply to the default element
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
  * // Default usage
- * function FormError() {
- *   return (
- *     <Form.Error className="error-message" />
- *   );
- * }
+ * <Form.Error className="error-message" />
  *
  * // Custom rendering with forwardRef
- * function CustomFormError() {
- *   return (
- *     <Form.Error asChild>
- *       {React.forwardRef(({ error, hasError }, ref) => (
- *         <div ref={ref} className="custom-error-container">
- *           <h3>Submission Failed</h3>
- *           <p>{error}</p>
- *         </div>
- *       ))}
- *     </Form.Error>
- *   );
- * }
+ * <Form.Error asChild>
+ *   {React.forwardRef(({ error, hasError }, ref) => (
+ *     <div
+ *       ref={ref}
+ *       className="custom-error-container"
+ *     >
+ *       <h3>Submission Failed</h3>
+ *       <p>{error}</p>
+ *     </div>
+ *   ))}
+ * </Form.Error>
  * ```
  */
-export const Error = React.forwardRef<HTMLElement, ErrorProps>(
-  (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
 
-    return (
-      <CoreForm.Error>
-        {({ error, hasError }) => {
-          if (!hasError) return null;
+  return (
+    <CoreForm.Error>
+      {({ error, hasError }) => {
+        if (!hasError) return null;
 
-          const errorData = { error, hasError };
+        const errorData = { error, hasError };
 
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.formError}
-              customElement={children}
-              customElementProps={errorData}
-              content={error}
-              {...otherProps}
-            >
-              <div className="text-status-error text-sm sm:text-base">
-                {error}
-              </div>
-            </AsChildSlot>
-          );
-        }}
-      </CoreForm.Error>
-    );
-  },
-);
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.formError}
+            customElement={children}
+            customElementProps={errorData}
+            content={error}
+            {...otherProps}
+          >
+            <div className="text-status-error text-sm sm:text-base">
+              {error}
+            </div>
+          </AsChildSlot>
+        );
+      }}
+    </CoreForm.Error>
+  );
+});
 
 /**
  * Mapping of form field types to their corresponding React components.
