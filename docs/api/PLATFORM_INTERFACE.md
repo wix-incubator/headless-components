@@ -845,8 +845,6 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
   isLoading?: boolean;
   /** Display variant - affects layout structure (default: 'list') */
   variant?: ListVariant;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
   /** Children components */
   children?: React.ReactNode;
   /** CSS classes */
@@ -881,19 +879,17 @@ export function ProductListRoot({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Custom implementation with asChild
+// Custom implementation with className
 <GenericList.Root
   items={items}
   onLoadMore={handleLoadMore}
   hasMore={hasMore}
   isLoading={isLoading}
   variant="list"
-  asChild
+  className="custom-list-container"
 >
-  <div className="custom-list-container">
-    <GenericList.Items />
-    <GenericList.Actions.LoadMore />
-  </div>
+  <GenericList.Items />
+  <GenericList.Actions.LoadMore />
 </GenericList.Root>;
 ```
 
@@ -909,8 +905,6 @@ Container for list items that handles empty state display and provides structure
 interface GenericListItemsProps {
   /** Content to display when no items are available */
   emptyState?: React.ReactNode;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
   /** Children components, typically containing ItemRepeater */
   children?: React.ReactNode;
 }
@@ -939,11 +933,12 @@ interface GenericListItemsProps {
     </div>
 </GenericList.Items>
 
-// Custom container with asChild
-<GenericList.Items emptyState={<EmptyState />} asChild>
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <ProductCard />
-  </div>
+// Custom container with className
+<GenericList.Items
+  emptyState={<EmptyState />}
+  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+>
+  <ProductCard />
 </GenericList.Items>
 ```
 
@@ -1003,15 +998,13 @@ interface GenericListLoadMoreProps extends ButtonProps {
 
 ### GenericList.Totals
 
-Displays totals information about the list (total items and displayed items). Provides data for custom rendering patterns and supports asChild for flexible styling.
+Displays totals information about the list (total items and displayed items). Provides data for custom rendering patterns.
 
 **Props**
 
 ```tsx
 interface GenericListTotalsProps {
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
+  /** Custom render function */
   children?:
     | React.ReactNode
     | ((
@@ -1035,10 +1028,8 @@ interface GenericListTotalsProps {
 // Default usage - renders "{displayedItems} items"
 <GenericList.Totals className="text-sm text-content-secondary" />
 
-// Custom rendering with asChild
-<GenericList.Totals asChild>
-  <span className="font-medium text-content-primary" />
-</GenericList.Totals>
+// Custom styling with className
+<GenericList.Totals className="font-medium text-content-primary" />
 
 // Render function pattern for custom display
 <GenericList.Totals>
