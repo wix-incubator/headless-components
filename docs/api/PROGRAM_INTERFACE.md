@@ -287,14 +287,6 @@ interface ProgramDescriptionProps {
   ))}
 </Program.Description>
 
-// Custom rendering with HTML parsing
-<Program.Description asChild>
-  {React.forwardRef(({ description, ...props }, ref) => (
-    <div ref={ref} {...props} className="prose">
-      <div dangerouslySetInnerHTML={{ __html: description }} />
-    </div>
-  ))}
-</Program.Description>
 ```
 
 ---
