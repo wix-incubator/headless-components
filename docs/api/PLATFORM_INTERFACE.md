@@ -816,7 +816,7 @@ import { Filter } from '@wix/headless-components/react';
 
 ### GenericList.Root
 
-Container for list components that renders items and supports multiple display variants, empty states, load more functionality, infinite scroll, and totals display.
+Container for list components that renders items and supports multiple display variants, empty states, load more functionality, infinite scroll, pagination navigation, and totals display.
 
 **Type Definitions**
 
@@ -847,6 +847,10 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
   variant?: ListVariant;
   /** Enable infinite scroll - automatically triggers onLoadMore when reaching the end (default: false) */
   infinite?: boolean;
+  /** Function called to navigate to next page */
+  onNextPage?: () => void;
+  /** Function called to navigate to previous page */
+  onPreviousPage?: () => void;
   /** Children components */
   children?: React.ReactNode;
   /** CSS classes */
@@ -874,6 +878,8 @@ export function ProductListRoot({ children }: { children: React.ReactNode }) {
       items={productsListService.products.get()}
       onLoadMore={productsListService.loadMore}
       hasMore={productsListService.hasMoreProducts.get()}
+      onNextPage={productsListService.nextPage}
+      onPreviousPage={productsListService.previousPage}
       isLoading={productsListService.isLoading.get()}
       variant="grid"
     >
@@ -896,6 +902,8 @@ export function BlogFeedRoot({ children }: { children: React.ReactNode }) {
       items={slicedPosts}
       onLoadMore={blogFeedService.loadNextPage}
       hasMore={blogFeedService.hasNextPage()}
+      onNextPage={blogFeedService.nextPage}
+      onPreviousPage={blogFeedService.previousPage}
       isLoading={blogFeedService.isLoading.get()}
       variant="list"
     >
