@@ -1,9 +1,20 @@
 ---
-import { loadBlogFeedServiceConfig, loadBlogCategoriesServiceConfig } from '@wix/headless-blog/services';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import BlogFeedPage from '../../react-pages/blog/feed-page';
-import { loadSEOTagsServiceConfig, type SEOTagsServiceConfig } from '@wix/headless-seo/services';
+import FeedPage from '@/components/blog/FeedPage';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { KitchensinkLayout } from '@/layouts/KitchensinkLayout';
+import {
+  createCustomCategory,
+  loadBlogCategoriesServiceConfig,
+  loadBlogFeedServiceConfig,
+} from '@wix/headless-blog/services';
 import { SEO } from '@wix/headless-seo/react';
+import {
+  loadSEOTagsServiceConfig,
+  type SEOTagsServiceConfig,
+} from '@wix/headless-seo/services';
+import BlogCategoriesSection from '@/components/blog/BlogCategoriesSection';
+
+import '../theme.css';
 
 const { slug } = Astro.params;
 export const prerender = false;
@@ -25,11 +36,11 @@ try {
       sort: [
         {
           fieldName: 'firstPublishedDate',
-          order: 'DESC'
+          order: 'DESC',
         },
-      ]
+      ],
     }),
-    loadBlogCategoriesServiceConfig()
+    loadBlogCategoriesServiceConfig(),
   ]);
 
   // Get the category name for the page title
@@ -47,20 +58,38 @@ try {
   // If category not found, redirect to 404
   return Astro.rewrite('/404');
 }
+
+const customCategoriesToPrepend = [
+  createCustomCategory({
+    label: 'All posts',
+    slug: '/',
+    description:
+      'Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.',
+  }),
+];
 ---
 
 <BaseLayout>
   <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />
 
-  <BlogFeedPage
-    client:load
-    pathname={Astro.url.pathname}
-    blogFeedServiceConfig={blogFeedServiceConfig}
-    blogCategoriesServiceConfig={blogCategoriesServiceConfig}
-    feedPageHref="/"
-    postPageBaseUrl="/"
-    categoryPageBaseUrl="/category/"
-    dateLocale="en-US"
-    slot="body"
-  />
+  <KitchensinkLayout>
+    <div class="bg-background min-h-screen">
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <BlogCategoriesSection
+          client:load
+          pathname={Astro.url.pathname}
+          categoryPageBaseUrl="/category/"
+          blogCategoriesServiceConfig={blogCategoriesServiceConfig}
+          customCategoriesToPrepend={customCategoriesToPrepend}
+        />
+        <FeedPage
+          client:load
+          blogFeedServiceConfig={blogFeedServiceConfig}
+          postPageBaseUrl="/"
+          categoryPageBaseUrl="/category/"
+          dateLocale="en-US"
+        />
+      </div>
+    </div>
+  </KitchensinkLayout>
 </BaseLayout>

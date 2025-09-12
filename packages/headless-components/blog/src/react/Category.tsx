@@ -42,6 +42,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   const label = category.label;
   const attributes = {
     'data-testid': TestIds.blogCategoryLabel,
+    'data-has-image': !!category.imageUrl,
   };
 
   return (
@@ -88,13 +89,14 @@ export interface DescriptionProps {
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
-    const { category } = useCategoryItemRepeaterContext();
+    const { category, imageUrl } = useCategoryItemRepeaterContext();
 
     if (!category?.description) return null;
 
     const description = category.description;
     const attributes = {
       'data-testid': TestIds.blogCategoryDescription,
+      'data-has-image': !!imageUrl,
     };
 
     return (
@@ -149,12 +151,13 @@ export interface LinkProps {
  */
 export const Link = React.forwardRef<HTMLElement, LinkProps>((props, ref) => {
   const { asChild, children, className, baseUrl = '' } = props;
-  const { category } = useCategoryItemRepeaterContext();
+  const { category, imageUrl } = useCategoryItemRepeaterContext();
 
   const href = category.isCustom ? category.slug : `${baseUrl}${category.slug}`;
   const attributes = {
     'data-testid': TestIds.blogCategoryLink,
     'data-href': href,
+    'data-has-image': !!imageUrl,
   };
 
   return (
@@ -205,13 +208,13 @@ export interface ImageProps {
  */
 export const Image = React.forwardRef<HTMLElement, ImageProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const { category } = useCategoryItemRepeaterContext();
+  const { category, imageUrl } = useCategoryItemRepeaterContext();
 
-  if (!category?.imageUrl) return null;
+  if (!imageUrl) return null;
 
-  const imageUrl = category.imageUrl;
   const attributes = {
     'data-testid': TestIds.blogCategoryImageUrl,
+    'data-has-image': !!imageUrl,
   };
 
   return (

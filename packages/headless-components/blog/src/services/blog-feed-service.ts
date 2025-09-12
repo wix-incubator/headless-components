@@ -236,7 +236,6 @@ async function fetchPosts(
     excludePostIds,
     postIds,
   } = params;
-
   let query = posts.queryPosts().limit(pageSize);
 
   if (skipTo) {
