@@ -248,14 +248,6 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>(
 
 Error.displayName = 'Services.Error';
 
-export const ServiceRoot = Service.Root;
-export const ServiceName = Service.Name;
-export const ServiceDescription = Service.Description;
-export const ServicePrice = Service.Price;
-export const ServiceDuration = Service.Duration;
-export const ServiceImage = Service.Image;
-export const ServiceCategory = Service.Category;
-
 export const Service = {
   Root: React.forwardRef<
     HTMLElement,
@@ -463,3 +455,12 @@ Service.Price.displayName = 'Service.Price';
 Service.Duration.displayName = 'Service.Duration';
 Service.Image.displayName = 'Service.Image';
 Service.Category.displayName = 'Service.Category';
+
+// Export individual components for better tree-shaking
+export const ServiceRoot = Service.Root;
+export const ServiceName = Service.Name;
+export const ServiceDescription = Service.Description;
+export const ServicePrice = Service.Price;
+export const ServiceDuration = Service.Duration;
+export const ServiceImage = Service.Image;
+export const ServiceCategory = Service.Category;
