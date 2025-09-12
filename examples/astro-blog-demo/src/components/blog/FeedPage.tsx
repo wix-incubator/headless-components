@@ -16,6 +16,21 @@ interface FeedPageProps {
   dateLocale: string;
 }
 
+/**
+ * A complete blog feed page component that displays blog posts in a grid layout.
+ * Features sorting controls, different card layouts for the first post vs others,
+ * empty state handling, and load more functionality.
+ *
+ * @example
+ * ```tsx
+ * <FeedPage
+ *   blogFeedServiceConfig={feedConfig}
+ *   postPageBaseUrl="/post/"
+ *   categoryPageBaseUrl="/category/"
+ *   dateLocale="en-US"
+ * />
+ * ```
+ */
 export default function FeedPage({
   blogFeedServiceConfig,
   postPageBaseUrl,

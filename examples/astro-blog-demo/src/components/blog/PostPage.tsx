@@ -1,4 +1,3 @@
-import { useNavigation } from '@/components/NavigationContext';
 import { Chip } from '@/components/ui/blog/Chip';
 import { EmptyState } from '@/components/ui/blog/EmptyState';
 import { PostAuthorAvatar } from '@/components/ui/blog/PostAuthorAvatar';
@@ -10,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon } from '@radix-ui/react-icons';
 import { Blog } from '@wix/headless-blog/react';
 import { type BlogPostServiceConfig } from '@wix/headless-blog/services';
+import { useNavigation } from './NavigationContext';
 import { SharePostActions } from './SharePostActions';
 
 interface PostPageProps {
@@ -25,6 +25,22 @@ interface PostPageProps {
   dateLocale: string;
 }
 
+/**
+ * A complete blog post page component that displays a single blog post with full content.
+ * Features a back navigation button, post header with metadata, rich content display,
+ * post tags, and social sharing actions.
+ *
+ * @example
+ * ```tsx
+ * <PostPage
+ *   blogPostServiceConfig={postConfig}
+ *   href="https://example.com/post/my-post"
+ *   feedPageHref="/blog"
+ *   categoryPageBaseUrl="/category/"
+ *   dateLocale="en-US"
+ * />
+ * ```
+ */
 export default function PostPage({
   blogPostServiceConfig,
   href,

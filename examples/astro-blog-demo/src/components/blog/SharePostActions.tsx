@@ -104,6 +104,16 @@ type SharePostActionsProps = {
   className?: string;
 };
 
+/**
+ * A social sharing component that provides buttons to share a blog post on various platforms.
+ * Includes share buttons for X (Twitter), Facebook, LinkedIn, and a copy-to-clipboard link.
+ * Each button shows a tooltip on hover with platform-specific messaging.
+ *
+ * @example
+ * ```tsx
+ * <SharePostActions href="https://example.com/post/my-post" />
+ * ```
+ */
 export const SharePostActions = React.forwardRef<
   HTMLDivElement,
   SharePostActionsProps

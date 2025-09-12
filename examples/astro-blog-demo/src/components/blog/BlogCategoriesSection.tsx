@@ -1,4 +1,3 @@
-import { useNavigation } from '@/components/NavigationContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Blog } from '@wix/headless-blog/react';
@@ -6,6 +5,7 @@ import {
   createCustomCategory,
   type BlogCategoriesServiceConfig,
 } from '@wix/headless-blog/services';
+import { useNavigation } from './NavigationContext';
 
 interface BlogCategoriesSectionProps {
   className?: string;
@@ -19,6 +19,20 @@ interface BlogCategoriesSectionProps {
   customCategoriesToPrepend?: ReturnType<typeof createCustomCategory>[];
 }
 
+/**
+ * Displays a section with blog categories, featuring an active category with image background
+ * and navigation buttons for all available categories.
+ *
+ * @example
+ * ```tsx
+ * <BlogCategoriesSection
+ *   pathname="/category/tech"
+ *   categoryPageBaseUrl="/category/"
+ *   blogCategoriesServiceConfig={categoriesConfig}
+ *   customCategoriesToPrepend={[createCustomCategory("All", "/blog")]}
+ * />
+ * ```
+ */
 export default function BlogCategoriesSection({
   className,
   pathname,
