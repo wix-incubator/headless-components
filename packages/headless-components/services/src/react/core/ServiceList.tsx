@@ -106,9 +106,11 @@ export interface EmptyStateRenderProps {}
  * ```
  */
 export function EmptyState(props: EmptyStateProps): React.ReactNode {
-  const { isLoading, error, services: servicesList } = useService(
-    ServicesListServiceDefinition,
-  );
+  const {
+    isLoading,
+    error,
+    services: servicesList,
+  } = useService(ServicesListServiceDefinition);
   const isLoadingValue = isLoading.get();
   const errorValue = error.get();
   const servicesValue = servicesList.get();
@@ -271,9 +273,11 @@ export interface ItemContentRenderProps {
  * ```
  */
 export function ItemContent(props: ItemContentProps): React.ReactNode {
-  const { services: servicesList, isLoading, error } = useService(
-    ServicesListServiceDefinition,
-  );
+  const {
+    services: servicesList,
+    isLoading,
+    error,
+  } = useService(ServicesListServiceDefinition);
   const servicesValue = servicesList.get();
 
   if (isLoading.get() || error.get() || servicesValue.length === 0) {
@@ -281,10 +285,7 @@ export function ItemContent(props: ItemContentProps): React.ReactNode {
   }
 
   return servicesValue.map((service: services.Service) => (
-    <WixServices
-      key={service._id}
-      servicesMap={createServicesMap()}
-    >
+    <WixServices key={service._id} servicesMap={createServicesMap()}>
       {typeof props.children === 'function'
         ? props.children({ service })
         : props.children}
