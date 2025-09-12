@@ -1,11 +1,11 @@
 import React from 'react';
 import { useService } from '@wix/services-manager-react';
-import { TestIds } from './test-ids';
+import { TestIds } from './test-ids.js';
 import { AsChildSlot } from '@wix/headless-utils/react';
 import {
   Root as CoreServiceListRoot,
   Error as CoreServiceListError,
-} from './core/ServiceList';
+} from './core/ServiceList.js';
 
 import {
   ServicesListServiceConfig,
@@ -224,7 +224,7 @@ export const Error = React.forwardRef<HTMLDivElement, ErrorProps>(
 
     return (
       <CoreServiceListError>
-        {({ error }) => {
+        {({ error }: { error: string | null }) => {
           if (!error) {
             return null;
           }
