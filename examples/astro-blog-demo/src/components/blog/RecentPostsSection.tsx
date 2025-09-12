@@ -14,6 +14,20 @@ interface RecentPostsSectionProps {
   dateLocale: string;
 }
 
+/**
+ * A section component that displays recent blog posts in a grid layout.
+ * Features a section title, separator, and editorial-style post cards.
+ *
+ * @example
+ * ```tsx
+ * <RecentPostsSection
+ *   recentPostsServiceConfig={recentPostsConfig}
+ *   postPageBaseUrl="/post/"
+ *   categoryPageBaseUrl="/category/"
+ *   dateLocale="en-US"
+ * />
+ * ```
+ */
 export default function RecentPostsSection({
   recentPostsServiceConfig,
   postPageBaseUrl,

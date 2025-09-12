@@ -1,4 +1,3 @@
-import { useNavigation } from '@/components/NavigationContext';
 import { PostCategories } from '@/components/ui/blog/PostCategories';
 import { PostExcerpt } from '@/components/ui/blog/PostExcerpt';
 import { PostTitle } from '@/components/ui/blog/PostTitle';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Blog } from '@wix/headless-blog/react';
+import { useNavigation } from './NavigationContext';
 
 interface BlogFeedCardProps {
   className?: string;
@@ -17,6 +17,20 @@ interface BlogFeedCardProps {
   readMoreText?: string;
 }
 
+/**
+ * A side-by-side blog feed card layout with the cover image on the left and content on the right.
+ * Displays post categories, title, excerpt, publish date, reading time, and optional read more button.
+ *
+ * @example
+ * ```tsx
+ * <BlogFeedCardSideBySide
+ *   postPageBaseUrl="/post/"
+ *   categoryPageBaseUrl="/category/"
+ *   dateLocale="en-US"
+ *   readMoreText="Read more"
+ * />
+ * ```
+ */
 export function BlogFeedCardSideBySide({
   className,
   postPageBaseUrl,
@@ -78,6 +92,20 @@ export function BlogFeedCardSideBySide({
   );
 }
 
+/**
+ * An editorial-style blog feed card layout with a vertical stack layout.
+ * Displays post categories, title, excerpt, publish date, reading time, and optional read more button.
+ *
+ * @example
+ * ```tsx
+ * <BlogFeedCardEditorial
+ *   postPageBaseUrl="/post/"
+ *   categoryPageBaseUrl="/category/"
+ *   dateLocale="en-US"
+ *   readMoreText="Read more"
+ * />
+ * ```
+ */
 export function BlogFeedCardEditorial({
   className,
   postPageBaseUrl,
