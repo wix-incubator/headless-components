@@ -6,11 +6,19 @@ import {
   Root as CoreServiceListRoot,
   Error as CoreServiceListError,
 } from './core/ServiceList';
+
 import {
   ServicesListServiceConfig,
   ServicesListServiceDefinition,
 } from '../services/services-list-service.js';
 import { services } from '@wix/bookings';
+
+class ServiceComponentError extends globalThis.Error {
+  name = 'ServiceComponentError';
+  constructor(message: string) {
+    super(message);
+  }
+}
 
 /**
  * Props for the ServiceList root component following the documented API
@@ -28,8 +36,8 @@ export interface ServiceListRootProps {
  * Root component that provides the ServiceList context for rendering service lists.
  * This component manages the service data and provides it to child components through context.
  */
-export const List = React.forwardRef<HTMLElement, ServiceListRootProps>(
-  (props: ServiceListRootProps, ref: React.Ref<HTMLElement>) => {
+export const List = React.forwardRef<HTMLDivElement, ServiceListRootProps>(
+  (props: ServiceListRootProps, ref: React.Ref<HTMLDivElement>) => {
     const { children, services = [], servicesListConfig, className } = props;
 
     const serviceConfig = servicesListConfig || {
@@ -63,8 +71,8 @@ interface ListContentProps {
   className?: string;
 }
 
-const ListContent = React.forwardRef<HTMLElement, ListContentProps>(
-  (props: ListContentProps, ref: React.Ref<HTMLElement>) => {
+const ListContent = React.forwardRef<HTMLDivElement, ListContentProps>(
+  (props: ListContentProps, ref: React.Ref<HTMLDivElement>) => {
     const { children, className } = props;
     const servicesListService = useService(ServicesListServiceDefinition);
     const services = servicesListService.services.get();
@@ -101,8 +109,8 @@ export interface ServiceOptionsProps {
   className?: string;
 }
 
-export const Options = React.forwardRef<HTMLElement, ServiceOptionsProps>(
-  (props: ServiceOptionsProps, ref: React.Ref<HTMLElement>) => {
+export const Options = React.forwardRef<HTMLDivElement, ServiceOptionsProps>(
+  (props: ServiceOptionsProps, ref: React.Ref<HTMLDivElement>) => {
     const {
       children,
       emptyState,
@@ -143,9 +151,9 @@ export interface ServiceRepeaterProps {
 }
 
 export const ServiceRepeater = React.forwardRef<
-  HTMLElement,
+  HTMLDivElement,
   ServiceRepeaterProps
->((props: ServiceRepeaterProps, ref: React.Ref<HTMLElement>) => {
+>((props: ServiceRepeaterProps, ref: React.Ref<HTMLDivElement>) => {
   const { children } = props;
   const servicesListService = useService(ServicesListServiceDefinition);
   const services = servicesListService.services.get();
@@ -181,8 +189,8 @@ export interface RawProps {
     | React.ReactNode;
 }
 
-export const Raw = React.forwardRef<HTMLElement, RawProps>(
-  (props: RawProps, ref: React.Ref<HTMLElement>) => {
+export const Raw = React.forwardRef<HTMLDivElement, RawProps>(
+  (props: RawProps, ref: React.Ref<HTMLDivElement>) => {
     const { children } = props;
     const servicesListService = useService(ServicesListServiceDefinition);
     const services = servicesListService.services.get();
@@ -210,8 +218,8 @@ export interface ErrorProps {
   className?: string;
 }
 
-export const Error = React.forwardRef<HTMLElement, ErrorProps>(
-  (props: ErrorProps, ref: React.Ref<HTMLElement>) => {
+export const Error = React.forwardRef<HTMLDivElement, ErrorProps>(
+  (props: ErrorProps, ref: React.Ref<HTMLDivElement>) => {
     const { asChild, children, className, ...otherProps } = props;
 
     return (
@@ -250,7 +258,7 @@ Error.displayName = 'Services.Error';
 
 export const Service = {
   Root: React.forwardRef<
-    HTMLElement,
+    HTMLDivElement,
     {
       service: services.Service;
       children:
@@ -258,17 +266,7 @@ export const Service = {
         | React.ReactNode;
       [key: string]: any; // For additional props like data-testid
     }
-  >(
-    (
-      props: {
-        service: services.Service;
-        children:
-          | ((props: { service: services.Service }) => React.ReactNode)
-          | React.ReactNode;
-        [key: string]: any;
-      },
-      ref: React.Ref<HTMLElement>,
-    ) => {
+  >((props, ref) => {
       const { service, children, ...rest } = props;
 
       return (
@@ -285,13 +283,11 @@ export const Service = {
     },
   ),
 
-  Name: React.forwardRef<HTMLElement, { className?: string }>(
-    (props: { className?: string }, ref: React.Ref<HTMLElement>) => {
+  Name: React.forwardRef<HTMLDivElement, { className?: string }>(
+    (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new Error(
-          'Service components must be used within a Service.Root component',
-        );
+        throw new ServiceComponentError('Service components must be used within a Service.Root component');
       }
       const { service } = context;
       const { className } = props;
@@ -308,13 +304,11 @@ export const Service = {
     },
   ),
 
-  Description: React.forwardRef<HTMLElement, { className?: string }>(
-    (props: { className?: string }, ref: React.Ref<HTMLElement>) => {
+  Description: React.forwardRef<HTMLDivElement, { className?: string }>(
+    (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new Error(
-          'Service components must be used within a Service.Root component',
-        );
+        throw new ServiceComponentError('Service components must be used within a Service.Root component');
       }
       const { service } = context;
       const { className } = props;
@@ -333,13 +327,11 @@ export const Service = {
     },
   ),
 
-  Price: React.forwardRef<HTMLElement, { className?: string }>(
-    (props: { className?: string }, ref: React.Ref<HTMLElement>) => {
+  Price: React.forwardRef<HTMLDivElement, { className?: string }>(
+    (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new Error(
-          'Service components must be used within a Service.Root component',
-        );
+        throw new ServiceComponentError('Service components must be used within a Service.Root component');
       }
       const { service } = context;
       const { className } = props;
@@ -359,13 +351,11 @@ export const Service = {
     },
   ),
 
-  Duration: React.forwardRef<HTMLElement, { className?: string }>(
-    (props: { className?: string }, ref: React.Ref<HTMLElement>) => {
+  Duration: React.forwardRef<HTMLDivElement, { className?: string }>(
+    (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new Error(
-          'Service components must be used within a Service.Root component',
-        );
+        throw new ServiceComponentError('Service components must be used within a Service.Root component');
       }
       const { service } = context;
       const { className } = props;
@@ -389,9 +379,7 @@ export const Service = {
     (props: { className?: string }, ref: React.Ref<HTMLImageElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new Error(
-          'Service components must be used within a Service.Root component',
-        );
+        throw new ServiceComponentError('Service components must be used within a Service.Root component');
       }
       const { service } = context;
       const { className } = props;
@@ -413,13 +401,11 @@ export const Service = {
     },
   ),
 
-  Category: React.forwardRef<HTMLElement, { className?: string }>(
-    (props: { className?: string }, ref: React.Ref<HTMLElement>) => {
+  Category: React.forwardRef<HTMLDivElement, { className?: string }>(
+    (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new Error(
-          'Service components must be used within a Service.Root component',
-        );
+        throw new ServiceComponentError('Service components must be used within a Service.Root component');
       }
       const { service } = context;
       const { className } = props;
