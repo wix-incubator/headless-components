@@ -4,7 +4,7 @@ import {
   ServicesListService,
   ServicesListServiceDefinition,
   type ServicesListServiceConfig,
-} from '../../services/services-list-service';
+} from '../../services/services-list-service.js';
 import { services } from '@wix/bookings';
 
 /**

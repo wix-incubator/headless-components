@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -17,11 +16,7 @@
     "declaration": true,
     "strict": true,
     "noEmitOnError": false,
-    "jsx": "react-jsx",
-    "baseUrl": "./src",
-    "paths": {
-      "@wix/headless-utils/react": ["../../../utils/src/react"]
-    }
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*"],
   "exclude": [
