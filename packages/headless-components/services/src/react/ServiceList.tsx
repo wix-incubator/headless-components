@@ -267,27 +267,28 @@ export const Service = {
       [key: string]: any; // For additional props like data-testid
     }
   >((props, ref) => {
-      const { service, children, ...rest } = props;
+    const { service, children, ...rest } = props;
 
-      return (
-        <ServiceContext.Provider value={{ service }}>
-          <div
-            data-testid={TestIds.serviceRoot}
-            ref={ref as React.Ref<HTMLDivElement>}
-            {...rest}
-          >
-            {typeof children === 'function' ? children({ service }) : children}
-          </div>
-        </ServiceContext.Provider>
-      );
-    },
-  ),
+    return (
+      <ServiceContext.Provider value={{ service }}>
+        <div
+          data-testid={TestIds.serviceRoot}
+          ref={ref as React.Ref<HTMLDivElement>}
+          {...rest}
+        >
+          {typeof children === 'function' ? children({ service }) : children}
+        </div>
+      </ServiceContext.Provider>
+    );
+  }),
 
   Name: React.forwardRef<HTMLDivElement, { className?: string }>(
     (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new ServiceComponentError('Service components must be used within a Service.Root component');
+        throw new ServiceComponentError(
+          'Service components must be used within a Service.Root component',
+        );
       }
       const { service } = context;
       const { className } = props;
@@ -308,7 +309,9 @@ export const Service = {
     (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new ServiceComponentError('Service components must be used within a Service.Root component');
+        throw new ServiceComponentError(
+          'Service components must be used within a Service.Root component',
+        );
       }
       const { service } = context;
       const { className } = props;
@@ -331,7 +334,9 @@ export const Service = {
     (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new ServiceComponentError('Service components must be used within a Service.Root component');
+        throw new ServiceComponentError(
+          'Service components must be used within a Service.Root component',
+        );
       }
       const { service } = context;
       const { className } = props;
@@ -355,7 +360,9 @@ export const Service = {
     (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new ServiceComponentError('Service components must be used within a Service.Root component');
+        throw new ServiceComponentError(
+          'Service components must be used within a Service.Root component',
+        );
       }
       const { service } = context;
       const { className } = props;
@@ -379,7 +386,9 @@ export const Service = {
     (props: { className?: string }, ref: React.Ref<HTMLImageElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new ServiceComponentError('Service components must be used within a Service.Root component');
+        throw new ServiceComponentError(
+          'Service components must be used within a Service.Root component',
+        );
       }
       const { service } = context;
       const { className } = props;
@@ -405,7 +414,9 @@ export const Service = {
     (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
       const context = React.useContext(ServiceContext);
       if (!context) {
-        throw new ServiceComponentError('Service components must be used within a Service.Root component');
+        throw new ServiceComponentError(
+          'Service components must be used within a Service.Root component',
+        );
       }
       const { service } = context;
       const { className } = props;
