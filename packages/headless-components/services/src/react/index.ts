@@ -17,6 +17,6 @@ export {
   type ServiceRepeaterProps,
   type RawProps,
   type ErrorProps,
-} from './ServiceList';
-export * from './context';
-export * from './test-ids';
+} from './ServiceList.js';
+export * from './context.js';
+export * from './test-ids.js';
