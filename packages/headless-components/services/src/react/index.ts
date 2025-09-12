@@ -20,3 +20,6 @@ export {
 } from './ServiceList';
 export * from './context';
 export * from './test-ids';
+
+// Re-export Service as default for backward compatibility
+export { Service as default } from './ServiceList';
