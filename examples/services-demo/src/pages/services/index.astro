@@ -2,6 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ServicesPage from '../../react-pages/services';
 import { loadServicesListServiceConfig } from '@wix/headless-services/services';
+import { services } from '@wix/bookings';
+
+console.log('[Astro] Starting to load services...');
 
 // Load services with pagination and sorting
 const servicesConfig = await loadServicesListServiceConfig({
@@ -9,16 +12,21 @@ const servicesConfig = await loadServicesListServiceConfig({
   sort: [{ fieldName: 'name', order: 'ASC' }]
 });
 
-console.log('Services config:', {
+console.log('[Astro] Services loaded:', {
   serviceCount: servicesConfig.services.length,
-  services: servicesConfig.services,
+  firstService: servicesConfig.services[0] ? {
+    id: servicesConfig.services[0]._id,
+    name: servicesConfig.services[0].name,
+    image: servicesConfig.services[0].media?.mainMedia?.image,
+    category: servicesConfig.services[0].category?.name,
+  } : null,
   pagingMetadata: servicesConfig.pagingMetadata
 });
 ---
 
 <BaseLayout>
-  <title>Our Services | Book Now</title>
-  <meta name="description" content="Browse and book our professional services" />
+  <title>Design Studio | Professional Interior Design Services</title>
+  <meta name="description" content="Transform your space with our expert interior design services. From concept to completion, we create beautiful, functional spaces that reflect your style." />
 
   <ServicesPage client:load servicesConfig={servicesConfig} slot="body" />
 </BaseLayout>
