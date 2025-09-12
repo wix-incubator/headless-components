@@ -46,7 +46,9 @@ export declare const List: React.ForwardRefExoticComponent<any>;
  * </Services.Options>
  * ```
  */
-export declare const Options: React.ForwardRefExoticComponent<Omit<ServiceOptionsProps, "ref"> & React.RefAttributes<HTMLElement>>;
+export declare const Options: React.ForwardRefExoticComponent<
+  Omit<ServiceOptionsProps, 'ref'> & React.RefAttributes<HTMLElement>
+>;
 /**
  * Repeater component that renders Service.Root for each service.
  * Follows Repeater Level pattern.
@@ -64,7 +66,9 @@ export declare const Options: React.ForwardRefExoticComponent<Omit<ServiceOption
  * </Services.ServiceRepeater>
  * ```
  */
-export declare const ServiceRepeater: React.ForwardRefExoticComponent<Omit<ServiceRepeaterProps, "ref"> & React.RefAttributes<HTMLElement>>;
+export declare const ServiceRepeater: React.ForwardRefExoticComponent<
+  Omit<ServiceRepeaterProps, 'ref'> & React.RefAttributes<HTMLElement>
+>;
 /**
  * Raw component that provides direct access to service list data.
  * Similar to Service.Raw, this should only be used when you need custom access to list data.
@@ -83,13 +87,17 @@ export declare const ServiceRepeater: React.ForwardRefExoticComponent<Omit<Servi
  * ```
  */
 export interface RawProps {
-    children: ((props: {
+  children:
+    | ((props: {
         totalServices: number;
         displayedServices: number;
         isFiltered: boolean;
-    }) => React.ReactNode) | React.ReactNode;
+      }) => React.ReactNode)
+    | React.ReactNode;
 }
-export declare const Raw: React.ForwardRefExoticComponent<RawProps & React.RefAttributes<HTMLElement>>;
+export declare const Raw: React.ForwardRefExoticComponent<
+  RawProps & React.RefAttributes<HTMLElement>
+>;
 /**
  * Error component that displays service list errors.
  * Provides error data to custom render functions.
@@ -116,11 +124,13 @@ export declare const Raw: React.ForwardRefExoticComponent<RawProps & React.RefAt
  * ```
  */
 export interface ErrorProps {
-    asChild?: boolean;
-    children?: React.ReactNode;
-    className?: string;
+  asChild?: boolean;
+  children?: React.ReactNode;
+  className?: string;
 }
-export declare const Error: React.ForwardRefExoticComponent<ErrorProps & React.RefAttributes<HTMLElement>>;
+export declare const Error: React.ForwardRefExoticComponent<
+  ErrorProps & React.RefAttributes<HTMLElement>
+>;
 /**
  * Service components namespace containing all service-specific components.
  * Each component handles a specific aspect of service display.
@@ -139,14 +149,18 @@ export declare const Error: React.ForwardRefExoticComponent<ErrorProps & React.R
  * ```
  */
 export declare const Service: {
-    Root: React.ForwardRefExoticComponent<{
-        service: Service;
-        children: React.ReactNode;
-    } & React.RefAttributes<HTMLElement>>;
-    Name: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
-    Description: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
-    Price: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
-    Duration: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
-    Image: React.ForwardRefExoticComponent<React.RefAttributes<HTMLImageElement>>;
-    Category: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
+  Root: React.ForwardRefExoticComponent<
+    {
+      service: Service;
+      children: React.ReactNode;
+    } & React.RefAttributes<HTMLElement>
+  >;
+  Name: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
+  Description: React.ForwardRefExoticComponent<
+    React.RefAttributes<HTMLElement>
+  >;
+  Price: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
+  Duration: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
+  Image: React.ForwardRefExoticComponent<React.RefAttributes<HTMLImageElement>>;
+  Category: React.ForwardRefExoticComponent<React.RefAttributes<HTMLElement>>;
 };

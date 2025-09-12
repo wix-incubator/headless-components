@@ -1,4 +1,7 @@
-import { type Signal, type ReadOnlySignal } from '@wix/services-definitions/core-services/signals';
+import {
+  type Signal,
+  type ReadOnlySignal,
+} from '@wix/services-definitions/core-services/signals';
 import { services } from '@wix/bookings';
 export declare const DEFAULT_QUERY_LIMIT = 100;
 /**
@@ -8,28 +11,28 @@ export declare const DEFAULT_QUERY_LIMIT = 100;
  * @interface ServicesListServiceConfig
  */
 export interface ServicesListServiceConfig {
-    /** Array of service objects to initialize the service with */
-    services: services.Service[];
-    /** Search options used to fetch the services */
-    searchOptions?: {
-        cursorPaging?: {
-            limit: number;
-        };
-        filter?: Record<string, any>;
-        sort?: Array<{
-            fieldName: string;
-            order: 'ASC' | 'DESC';
-        }>;
+  /** Array of service objects to initialize the service with */
+  services: services.Service[];
+  /** Search options used to fetch the services */
+  searchOptions?: {
+    cursorPaging?: {
+      limit: number;
     };
-    /** Pagination metadata from the search response */
-    pagingMetadata?: {
-        count: number;
-        cursors?: {
-            next?: () => Promise<services.ServicesQueryResult>;
-            prev?: () => Promise<services.ServicesQueryResult>;
-        };
-        hasNext?: boolean;
+    filter?: Record<string, any>;
+    sort?: Array<{
+      fieldName: string;
+      order: 'ASC' | 'DESC';
+    }>;
+  };
+  /** Pagination metadata from the search response */
+  pagingMetadata?: {
+    count: number;
+    cursors?: {
+      next?: () => Promise<services.ServicesQueryResult>;
+      prev?: () => Promise<services.ServicesQueryResult>;
     };
+    hasNext?: boolean;
+  };
 }
 /**
  * Service definition for the Services List service.
@@ -38,61 +41,31 @@ export interface ServicesListServiceConfig {
  * @constant
  */
 export declare const ServicesListServiceDefinition: string & {
-    __api: {
-        /** Reactive signal containing the list of services */
-        services: Signal<services.Service[]>;
-        /** Reactive signal containing pagination metadata */
-        pagingMetadata: Signal<ServicesListServiceConfig["pagingMetadata"]>;
-        /** Reactive signal indicating if services are currently being loaded */
-        isLoading: Signal<boolean>;
-        /** Reactive signal containing any error message, or null if no error*/
-        error: Signal<string | null>;
-        /** Reactive signal containing the current sort configuration */
-        sort: Signal<{
-            fieldName: string;
-            order: "ASC" | "DESC";
-        }[]>;
-        /** Reactive signal containing the current filter configuration */
-        filters: Signal<Record<string, any>>;
-        /** Function to update sort configuration */
-        setSort: (sort: {
-            fieldName: string;
-            order: "ASC" | "DESC";
-        }[]) => void;
-        /** Function to update filter configuration */
-        setFilter: (filter: Record<string, any>) => void;
-        /** Function to reset filter configuration */
-        resetFilter: () => void;
-        /** Reactive signal indicating if any filters are currently applied */
-        isFiltered: () => ReadOnlySignal<boolean>;
-        /** Function to load more services */
-        loadMore: (count: number) => void;
-        /** Reactive signal indicating if there are more services to load */
-        hasMoreServices: ReadOnlySignal<boolean>;
-    };
-    __config: ServicesListServiceConfig;
-    isServiceDefinition?: boolean;
-} & {
+  __api: {
     /** Reactive signal containing the list of services */
     services: Signal<services.Service[]>;
     /** Reactive signal containing pagination metadata */
-    pagingMetadata: Signal<ServicesListServiceConfig["pagingMetadata"]>;
+    pagingMetadata: Signal<ServicesListServiceConfig['pagingMetadata']>;
     /** Reactive signal indicating if services are currently being loaded */
     isLoading: Signal<boolean>;
     /** Reactive signal containing any error message, or null if no error*/
     error: Signal<string | null>;
     /** Reactive signal containing the current sort configuration */
-    sort: Signal<{
+    sort: Signal<
+      {
         fieldName: string;
-        order: "ASC" | "DESC";
-    }[]>;
+        order: 'ASC' | 'DESC';
+      }[]
+    >;
     /** Reactive signal containing the current filter configuration */
     filters: Signal<Record<string, any>>;
     /** Function to update sort configuration */
-    setSort: (sort: {
+    setSort: (
+      sort: {
         fieldName: string;
-        order: "ASC" | "DESC";
-    }[]) => void;
+        order: 'ASC' | 'DESC';
+      }[],
+    ) => void;
     /** Function to update filter configuration */
     setFilter: (filter: Record<string, any>) => void;
     /** Function to reset filter configuration */
@@ -103,6 +76,44 @@ export declare const ServicesListServiceDefinition: string & {
     loadMore: (count: number) => void;
     /** Reactive signal indicating if there are more services to load */
     hasMoreServices: ReadOnlySignal<boolean>;
+  };
+  __config: ServicesListServiceConfig;
+  isServiceDefinition?: boolean;
+} & {
+  /** Reactive signal containing the list of services */
+  services: Signal<services.Service[]>;
+  /** Reactive signal containing pagination metadata */
+  pagingMetadata: Signal<ServicesListServiceConfig['pagingMetadata']>;
+  /** Reactive signal indicating if services are currently being loaded */
+  isLoading: Signal<boolean>;
+  /** Reactive signal containing any error message, or null if no error*/
+  error: Signal<string | null>;
+  /** Reactive signal containing the current sort configuration */
+  sort: Signal<
+    {
+      fieldName: string;
+      order: 'ASC' | 'DESC';
+    }[]
+  >;
+  /** Reactive signal containing the current filter configuration */
+  filters: Signal<Record<string, any>>;
+  /** Function to update sort configuration */
+  setSort: (
+    sort: {
+      fieldName: string;
+      order: 'ASC' | 'DESC';
+    }[],
+  ) => void;
+  /** Function to update filter configuration */
+  setFilter: (filter: Record<string, any>) => void;
+  /** Function to reset filter configuration */
+  resetFilter: () => void;
+  /** Reactive signal indicating if any filters are currently applied */
+  isFiltered: () => ReadOnlySignal<boolean>;
+  /** Function to load more services */
+  loadMore: (count: number) => void;
+  /** Reactive signal indicating if there are more services to load */
+  hasMoreServices: ReadOnlySignal<boolean>;
 };
 /**
  * Implementation of the Services List service that manages reactive services data.
@@ -146,62 +157,71 @@ export declare const ServicesListServiceDefinition: string & {
  * }
  * ```
  */
-export declare const ServicesListService: import("@wix/services-definitions").ServiceFactory<string & {
+export declare const ServicesListService: import('@wix/services-definitions').ServiceFactory<
+  string & {
     __api: {
-        /** Reactive signal containing the list of services */
-        services: Signal<services.Service[]>;
-        /** Reactive signal containing pagination metadata */
-        pagingMetadata: Signal<ServicesListServiceConfig["pagingMetadata"]>;
-        /** Reactive signal indicating if services are currently being loaded */
-        isLoading: Signal<boolean>;
-        /** Reactive signal containing any error message, or null if no error*/
-        error: Signal<string | null>;
-        /** Reactive signal containing the current sort configuration */
-        sort: Signal<{
-            fieldName: string;
-            order: "ASC" | "DESC";
-        }[]>;
-        /** Reactive signal containing the current filter configuration */
-        filters: Signal<Record<string, any>>;
-        /** Function to update sort configuration */
-        setSort: (sort: {
-            fieldName: string;
-            order: "ASC" | "DESC";
-        }[]) => void;
-        /** Function to update filter configuration */
-        setFilter: (filter: Record<string, any>) => void;
-        /** Function to reset filter configuration */
-        resetFilter: () => void;
-        /** Reactive signal indicating if any filters are currently applied */
-        isFiltered: () => ReadOnlySignal<boolean>;
-        /** Function to load more services */
-        loadMore: (count: number) => void;
-        /** Reactive signal indicating if there are more services to load */
-        hasMoreServices: ReadOnlySignal<boolean>;
+      /** Reactive signal containing the list of services */
+      services: Signal<services.Service[]>;
+      /** Reactive signal containing pagination metadata */
+      pagingMetadata: Signal<ServicesListServiceConfig['pagingMetadata']>;
+      /** Reactive signal indicating if services are currently being loaded */
+      isLoading: Signal<boolean>;
+      /** Reactive signal containing any error message, or null if no error*/
+      error: Signal<string | null>;
+      /** Reactive signal containing the current sort configuration */
+      sort: Signal<
+        {
+          fieldName: string;
+          order: 'ASC' | 'DESC';
+        }[]
+      >;
+      /** Reactive signal containing the current filter configuration */
+      filters: Signal<Record<string, any>>;
+      /** Function to update sort configuration */
+      setSort: (
+        sort: {
+          fieldName: string;
+          order: 'ASC' | 'DESC';
+        }[],
+      ) => void;
+      /** Function to update filter configuration */
+      setFilter: (filter: Record<string, any>) => void;
+      /** Function to reset filter configuration */
+      resetFilter: () => void;
+      /** Reactive signal indicating if any filters are currently applied */
+      isFiltered: () => ReadOnlySignal<boolean>;
+      /** Function to load more services */
+      loadMore: (count: number) => void;
+      /** Reactive signal indicating if there are more services to load */
+      hasMoreServices: ReadOnlySignal<boolean>;
     };
     __config: ServicesListServiceConfig;
     isServiceDefinition?: boolean;
-} & {
+  } & {
     /** Reactive signal containing the list of services */
     services: Signal<services.Service[]>;
     /** Reactive signal containing pagination metadata */
-    pagingMetadata: Signal<ServicesListServiceConfig["pagingMetadata"]>;
+    pagingMetadata: Signal<ServicesListServiceConfig['pagingMetadata']>;
     /** Reactive signal indicating if services are currently being loaded */
     isLoading: Signal<boolean>;
     /** Reactive signal containing any error message, or null if no error*/
     error: Signal<string | null>;
     /** Reactive signal containing the current sort configuration */
-    sort: Signal<{
+    sort: Signal<
+      {
         fieldName: string;
-        order: "ASC" | "DESC";
-    }[]>;
+        order: 'ASC' | 'DESC';
+      }[]
+    >;
     /** Reactive signal containing the current filter configuration */
     filters: Signal<Record<string, any>>;
     /** Function to update sort configuration */
-    setSort: (sort: {
+    setSort: (
+      sort: {
         fieldName: string;
-        order: "ASC" | "DESC";
-    }[]) => void;
+        order: 'ASC' | 'DESC';
+      }[],
+    ) => void;
     /** Function to update filter configuration */
     setFilter: (filter: Record<string, any>) => void;
     /** Function to reset filter configuration */
@@ -212,7 +232,9 @@ export declare const ServicesListService: import("@wix/services-definitions").Se
     loadMore: (count: number) => void;
     /** Reactive signal indicating if there are more services to load */
     hasMoreServices: ReadOnlySignal<boolean>;
-}, ServicesListServiceConfig>;
+  },
+  ServicesListServiceConfig
+>;
 /**
  * Loads services list service configuration from the Wix Bookings API for SSR initialization.
  * This function is designed to be used during Server-Side Rendering (SSR) to preload
@@ -244,4 +266,6 @@ export declare const ServicesListService: import("@wix/services-definitions").Se
  * </Services.List>
  * ```
  */
-export declare function loadServicesListServiceConfig(searchOptions?: ServicesListServiceConfig['searchOptions']): Promise<ServicesListServiceConfig>;
+export declare function loadServicesListServiceConfig(
+  searchOptions?: ServicesListServiceConfig['searchOptions'],
+): Promise<ServicesListServiceConfig>;

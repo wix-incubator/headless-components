@@ -43,7 +43,9 @@ export interface ServicesListServiceConfig {
  * @param searchOptions - The search options for querying services
  * @returns Promise that resolves to the search result
  */
-const fetchServices = async (searchOptions: ServicesListServiceConfig['searchOptions'] = {}) => {
+const fetchServices = async (
+  searchOptions: ServicesListServiceConfig['searchOptions'] = {},
+) => {
   try {
     console.log('Fetching services with options:', searchOptions);
     const query = services.queryServices();
@@ -77,12 +79,14 @@ const fetchServices = async (searchOptions: ServicesListServiceConfig['searchOpt
     console.log('Query result:', {
       totalCount: result.totalCount,
       itemCount: result.items?.length,
-      firstItem: result.items?.[0] ? {
-        id: result.items[0]._id,
-        name: result.items[0].name,
-        image: result.items[0].media?.mainMedia?.image,
-        category: result.items[0].category?.name,
-      } : null,
+      firstItem: result.items?.[0]
+        ? {
+            id: result.items[0]._id,
+            name: result.items[0].name,
+            image: result.items[0].media?.mainMedia?.image,
+            category: result.items[0].category?.name,
+          }
+        : null,
     });
 
     return result;
@@ -133,134 +137,140 @@ export const ServicesListServiceDefinition = defineService<
  * This service provides signals for services data, search options, pagination,
  * loading state, and error handling.
  */
-export const ServicesListService = implementService.withConfig<ServicesListServiceConfig>()(
-  ServicesListServiceDefinition,
-  ({ getService, config }) => {
-    let firstRun = true;
-    const signalsService = getService(SignalsServiceDefinition);
+export const ServicesListService =
+  implementService.withConfig<ServicesListServiceConfig>()(
+    ServicesListServiceDefinition,
+    ({ getService, config }) => {
+      let firstRun = true;
+      const signalsService = getService(SignalsServiceDefinition);
 
-    console.log('Initializing ServicesListService with config:', {
-      serviceCount: config.services.length,
-      firstService: config.services[0] ? {
-        id: config.services[0]._id,
-        name: config.services[0].name,
-        image: config.services[0].media?.mainMedia?.image,
-        category: config.services[0].category?.name,
-      } : null,
-      searchOptions: config.searchOptions,
-    });
+      console.log('Initializing ServicesListService with config:', {
+        serviceCount: config.services.length,
+        firstService: config.services[0]
+          ? {
+              id: config.services[0]._id,
+              name: config.services[0].name,
+              image: config.services[0].media?.mainMedia?.image,
+              category: config.services[0].category?.name,
+            }
+          : null,
+        searchOptions: config.searchOptions,
+      });
 
-    const servicesSignal = signalsService.signal<services.Service[]>(
-      config.services
-    );
+      const servicesSignal = signalsService.signal<services.Service[]>(
+        config.services,
+      );
 
-    const pagingMetadataSignal = signalsService.signal<ServicesListServiceConfig['pagingMetadata']>(
-      config.pagingMetadata || { count: 0 }
-    );
+      const pagingMetadataSignal = signalsService.signal<
+        ServicesListServiceConfig['pagingMetadata']
+      >(config.pagingMetadata || { count: 0 });
 
-    const isLoadingSignal = signalsService.signal<boolean>(false);
-    const errorSignal = signalsService.signal<string | null>(null);
-    const sortSignal = signalsService.signal<{ fieldName: string; order: 'ASC' | 'DESC' }[]>(
-      config.searchOptions?.sort || []
-    );
-    const filtersSignal = signalsService.signal<Record<string, any>>(
-      config.searchOptions?.filter || {}
-    );
+      const isLoadingSignal = signalsService.signal<boolean>(false);
+      const errorSignal = signalsService.signal<string | null>(null);
+      const sortSignal = signalsService.signal<
+        { fieldName: string; order: 'ASC' | 'DESC' }[]
+      >(config.searchOptions?.sort || []);
+      const filtersSignal = signalsService.signal<Record<string, any>>(
+        config.searchOptions?.filter || {},
+      );
 
-    if (typeof window !== 'undefined') {
-      signalsService.effect(async () => {
-        // Read signals to establish dependencies
-        const sort = sortSignal.get();
-        const filters = filtersSignal.get();
+      if (typeof window !== 'undefined') {
+        signalsService.effect(async () => {
+          // Read signals to establish dependencies
+          const sort = sortSignal.get();
+          const filters = filtersSignal.get();
 
-        if (firstRun) {
-          firstRun = false;
-          return;
-        }
+          if (firstRun) {
+            firstRun = false;
+            return;
+          }
 
+          try {
+            isLoadingSignal.set(true);
+
+            const result = await fetchServices({
+              cursorPaging: { limit: DEFAULT_QUERY_LIMIT },
+              sort,
+              filter: filters,
+            });
+
+            servicesSignal.set(result.items);
+            pagingMetadataSignal.set({
+              count: result.totalCount || 0,
+              cursors: {
+                next: result.next,
+                prev: result.prev,
+              },
+              hasNext: result.hasNext(),
+            });
+          } catch (error) {
+            errorSignal.set(
+              error instanceof Error ? error.message : 'Unknown error',
+            );
+          } finally {
+            isLoadingSignal.set(false);
+          }
+        });
+      }
+
+      firstRun = false;
+
+      const loadMoreServices = async () => {
         try {
           isLoadingSignal.set(true);
 
-          const result = await fetchServices({
-            cursorPaging: { limit: DEFAULT_QUERY_LIMIT },
-            sort,
-            filter: filters
-          });
+          const result = await pagingMetadataSignal?.peek()?.cursors?.next?.();
 
-          servicesSignal.set(result.items);
+          servicesSignal.set([
+            ...servicesSignal.peek(),
+            ...(result?.items ?? []),
+          ]);
           pagingMetadataSignal.set({
-            count: result.totalCount || 0,
+            count: result?.totalCount || 0,
             cursors: {
-              next: result.next,
-              prev: result.prev
+              next: result?.next,
+              prev: result?.prev,
             },
-            hasNext: result.hasNext()
+            hasNext: result?.hasNext(),
           });
         } catch (error) {
           errorSignal.set(
-            error instanceof Error ? error.message : 'Unknown error'
+            error instanceof Error ? error.message : 'Unknown error',
           );
         } finally {
           isLoadingSignal.set(false);
         }
-      });
-    }
+      };
 
-    firstRun = false;
-
-    const loadMoreServices = async () => {
-      try {
-        isLoadingSignal.set(true);
-
-        const result = await pagingMetadataSignal?.peek()?.cursors?.next?.()
-
-        servicesSignal.set([...servicesSignal.peek(), ...(result?.items ?? [])]);
-        pagingMetadataSignal.set({
-          count: result?.totalCount || 0,
-          cursors: {
-            next: result?.next,
-            prev: result?.prev
-          },
-          hasNext: result?.hasNext()
-        });
-      } catch (error) {
-        errorSignal.set(
-          error instanceof Error ? error.message : 'Unknown error'
-        );
-      } finally {
-        isLoadingSignal.set(false);
-      }
-    };
-
-    return {
-      services: servicesSignal,
-      pagingMetadata: pagingMetadataSignal,
-      isLoading: isLoadingSignal,
-      error: errorSignal,
-      sort: sortSignal,
-      filters: filtersSignal,
-      setSort: (sort: { fieldName: string; order: 'ASC' | 'DESC' }[]) => {
-        sortSignal.set(sort);
-      },
-      setFilter: (filter: Record<string, any>) => {
-        filtersSignal.set(filter);
-      },
-      resetFilter: () => {
-        filtersSignal.set({});
-      },
-      isFiltered: () => {
-        return signalsService.computed(() => {
-          const filters = filtersSignal.peek();
-          return Object.keys(filters).length > 0;
-        });
-      },
-      loadMore: loadMoreServices,
-      hasMoreServices: signalsService.computed(
-        () => pagingMetadataSignal.get()?.hasNext ?? false
-      ),
-    };
-  }
-);
+      return {
+        services: servicesSignal,
+        pagingMetadata: pagingMetadataSignal,
+        isLoading: isLoadingSignal,
+        error: errorSignal,
+        sort: sortSignal,
+        filters: filtersSignal,
+        setSort: (sort: { fieldName: string; order: 'ASC' | 'DESC' }[]) => {
+          sortSignal.set(sort);
+        },
+        setFilter: (filter: Record<string, any>) => {
+          filtersSignal.set(filter);
+        },
+        resetFilter: () => {
+          filtersSignal.set({});
+        },
+        isFiltered: () => {
+          return signalsService.computed(() => {
+            const filters = filtersSignal.peek();
+            return Object.keys(filters).length > 0;
+          });
+        },
+        loadMore: loadMoreServices,
+        hasMoreServices: signalsService.computed(
+          () => pagingMetadataSignal.get()?.hasNext ?? false,
+        ),
+      };
+    },
+  );
 
 /**
  * Loads services list service configuration from the Wix Bookings API for SSR initialization.
@@ -268,7 +278,7 @@ export const ServicesListService = implementService.withConfig<ServicesListServi
  * a list of services based on search criteria.
  */
 export async function loadServicesListServiceConfig(
-  searchOptions?: ServicesListServiceConfig['searchOptions']
+  searchOptions?: ServicesListServiceConfig['searchOptions'],
 ): Promise<ServicesListServiceConfig> {
   try {
     console.log('Loading services config with options:', searchOptions);
@@ -277,12 +287,14 @@ export async function loadServicesListServiceConfig(
     console.log('Services config loaded:', {
       totalCount: result.totalCount,
       itemCount: result.items?.length,
-      firstItem: result.items?.[0] ? {
-        id: result.items[0]._id,
-        name: result.items[0].name,
-        image: result.items[0].media?.mainMedia?.image,
-        category: result.items[0].category?.name,
-      } : null,
+      firstItem: result.items?.[0]
+        ? {
+            id: result.items[0]._id,
+            name: result.items[0].name,
+            image: result.items[0].media?.mainMedia?.image,
+            category: result.items[0].category?.name,
+          }
+        : null,
     });
 
     return {
@@ -292,11 +304,11 @@ export async function loadServicesListServiceConfig(
         count: result.totalCount ?? 0,
         cursors: {
           next: result.next,
-          prev: result.prev
+          prev: result.prev,
         },
-        hasNext: result.hasNext()
-      }
-    }
+        hasNext: result.hasNext(),
+      },
+    };
   } catch (error) {
     console.error('Error loading services configuration:', error);
     throw error;

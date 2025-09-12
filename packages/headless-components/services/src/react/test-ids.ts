@@ -23,5 +23,5 @@ export enum TestIds {
   serviceTotalsDisplayed = 'service-totals-displayed',
   serviceSort = 'service-sort',
   serviceFilter = 'service-filter',
-  serviceFilterResetTrigger = 'service-filter-reset-trigger'
+  serviceFilterResetTrigger = 'service-filter-reset-trigger',
 }
