@@ -19,9 +19,10 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.DurationInDays](#programdurationindays)
 
   - [Program.Instructors](#programinstructors)
+  - [Program.InstructorRepeater](#programinstructorrepeater)
   - [Program.Instructor](#programinstructor)
     - [Program.Instructor.Name](#programinstructorname)
-    - [Program.Instructor.Avatar](#programinstructoravatar)
+    - [Program.Instructor.Image](#programinstructorimage)
     - [Program.Instructor.Description](#programinstructordescription)
 
 - [Drafts](#drafts)
@@ -300,7 +301,7 @@ Default content: Shows raw `durationInDays` value (no automatic formatting)
 **Props**
 
 ```tsx
-interface ProgramDurationProps {
+interface ProgramDurationInDaysProps {
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
@@ -324,117 +325,140 @@ interface ProgramDurationProps {
 
 ```tsx
 // Default usage - shows raw durationInDays value
-<Program.Duration className="text-content-secondary" />
+<Program.DurationInDays className="text-content-secondary" />
 
 // asChild with primitive
-<Program.Duration asChild>
+<Program.DurationInDays asChild>
   <p className="text-content-secondary" />
-</Program.Duration>
+</Program.DurationInDays>
 
 // Custom rendering with proper formatting
-<Program.Duration asChild>
+<Program.DurationInDays asChild>
   {React.forwardRef(({ durationInDays, isSelfPaced, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
       {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
     </p>
   ))}
-</Program.Duration>
+</Program.DurationInDays>
 ```
 ---
 
 ### Program.Instructors
 
-Displays the list of program instructors with customizable rendering. Data source: program.instructors (fetched via instructors service).
+Container for program instructors that provides context and conditional rendering. Does not render when there are no instructors.
 
 **Props**
 
 ```tsx
 interface ProgramInstructorsProps {
-  instructors?: Instructors[];
-  children?: React.ReactNode; // will wrap InstructorRepeater
+  /** Optional instructors data to use instead of fetching */
+  instructors?: instructors.Instructor[];
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ instructors: instructors.Instructor[]; hasInstructors: boolean }>;
+  /** CSS classes to apply to the default element */
   className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
 }
-```
-
-**Example**
-```tsx
-<Program.Instructors instructors={instructors}>
-  {/* All instructor list components */}
-</Program.Instructors>
 ```
 
 **Data Attributes**
 - `data-testid="program-instructors"` - Applied to instructors container
-- `data-testid="program-instructor"` - Applied to each instructor item
 
 **Example**
 
 ```tsx
 // Default usage
-<Program.Instructors />
+<Program.Instructors instructors={instructors} />
 
-// asChild with custom layout
+// asChild with primitive
 <Program.Instructors asChild>
-  <div className="grid grid-cols-3 gap-4">
-    <Program.Instructors.InstructorRepeater> // <Instructor.Root
-      <Instructor.Image className="w-16 h-16 rounded-full" />
-      <Instructor.Name className="font-semibold" />
-    </Program.Instructors.InstructorRepeater>
-  </div>
+  <div className="instructors-grid" />
+</Program.Instructors>
+
+// Custom rendering with render props
+<Program.Instructors asChild>
+  {React.forwardRef(({ instructors, hasInstructors, ...props }, ref) => (
+    <div ref={ref} {...props} className="instructors-container">
+      {hasInstructors ? (
+        instructors.map(instructor => (
+          <div key={instructor._id}>{instructor.name}</div>
+        ))
+      ) : (
+        <div>No instructors</div>
+      )}
+    </div>
+  ))}
 </Program.Instructors>
 ```
 
 ---
 
-### Program.Instructors.InstructorRepeater
+### Program.InstructorRepeater
 
-Repeats over the list of instructors and renders `Program.Instructor` for each one. This component follows the established repeater pattern used throughout the headless components.
+Repeater component that renders children for each instructor. Supports both React elements and render functions.
 
 **Props**
 
 ```tsx
-interface ProgramInstructorsInstructorRepeaterProps {
-  children: React.ReactNode; // will be passed to each Program.Instructor
+interface ProgramInstructorRepeaterProps {
+  /** Children to render for each instructor - can be React elements or a render function */
+  children: ((props: {
+    instructor: instructors.Instructor;
+  }) => React.ReactNode) | React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
 }
 ```
 
 **Data Attributes**
-- `data-testid="program-instructors-repeater"` - Applied to repeater container
+- `data-testid="program-instructor-repeater"` - Applied to repeater container
 
 **Example**
 
 ```tsx
-// Basic usage
-<Program.Instructors.InstructorRepeater>
-  <Program.Instructor>
-    <Program.Instructor.Avatar />
-    <Program.Instructor.Name />
-  </Program.Instructor>
-</Program.Instructors.InstructorRepeater>
+// With React elements
+<Program.InstructorRepeater>
+  <Program.Instructor.Name />
+  <Program.Instructor.Image />
+</Program.InstructorRepeater>
 
-// With custom layout
-<Program.Instructors.InstructorRepeater>
-  <div className="flex flex-wrap gap-4">
-    <Program.Instructor>
-      <Program.Instructor.Avatar className="w-12 h-12" />
-      <Program.Instructor.Name className="text-sm" />
-    </Program.Instructor>
-  </div>
-</Program.Instructors.InstructorRepeater>
+// With render function
+<Program.InstructorRepeater>
+  {({ instructor }) => (
+    <div key={instructor.userId}>
+      <h3>{instructor.name}</h3>
+      <p>{instructor.bio}</p>
+    </div>
+  )}
+</Program.InstructorRepeater>
+
+// With custom styling
+<Program.InstructorRepeater className="grid grid-cols-3 gap-4">
+  <Program.Instructor.Name className="font-semibold" />
+  <Program.Instructor.Image className="w-16 h-16 rounded-full" />
+</Program.InstructorRepeater>
 ```
 ---
 
 ### Program.Instructor
 
-Individual instructor component that provides instructor context to child components.
+Individual instructor component that provides instructor context to child components. Used within `Program.InstructorRepeater` or directly with instructor data.
 
 **Props**
 
 ```tsx
 interface ProgramInstructorProps {
+  /** Whether to render as a child component */
   asChild?: boolean;
+  /** Children to render within the instructor context */
   children?: React.ReactNode;
-  instructor: Instructor; // passed from InstructorRepeater
+  /** Instructor data - passed from InstructorRepeater or provided directly */
+  instructor: instructors.Instructor;
 }
 ```
 
@@ -445,8 +469,16 @@ interface ProgramInstructorProps {
 **Example**
 
 ```tsx
+// Used within InstructorRepeater (automatic context)
+<Program.InstructorRepeater>
+  <Program.Instructor.Name />
+  <Program.Instructor.Image />
+  <Program.Instructor.Description />
+</Program.InstructorRepeater>
+
+// Direct usage with instructor data
 <Program.Instructor instructor={instructor}>
-  <Program.Instructor.Avatar />
+  <Program.Instructor.Image />
   <Program.Instructor.Name />
   <Program.Instructor.Description />
 </Program.Instructor>
@@ -454,7 +486,7 @@ interface ProgramInstructorProps {
 
 ---
 
-### Program.Instructor.Name
+### Program.InstructorName
 
 Displays the instructor's name with customizable rendering. Data source: instructor.name.
 
@@ -462,6 +494,7 @@ Displays the instructor's name with customizable rendering. Data source: instruc
 
 ```tsx
 interface ProgramInstructorNameProps {
+  instructor: Instructor;
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
@@ -480,10 +513,10 @@ interface ProgramInstructorNameProps {
 
 ```tsx
 // Default usage
-<Program.Instructor.Name className="font-semibold text-lg" />
+<Program.InstructorName instructor={instructor} className="font-semibold text-lg" />
 
 // asChild with link
-<Program.Instructor.Name asChild>
+<Program.InstructorName instructor={instructor} asChild>
   {React.forwardRef(({ name, slug, ...props }, ref) => (
     <a
       ref={ref}
@@ -494,27 +527,28 @@ interface ProgramInstructorNameProps {
       {name}
     </a>
   ))}
-</Program.Instructor.Name>
+</Program.InstructorName>
 ```
 
 ---
 
-### Program.Instructor.Avatar
+### Program.InstructorImage
 
 Displays the instructor's profile photo with customizable rendering. Data source: instructor.photo and instructor.photoAltText.
 
 **Props**
 
 ```tsx
-interface ProgramInstructorAvatarProps {
+interface ProgramInstructorImageProps {
+  instructor: Instructor;
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLImageElement,
     {
       src: string;
       alt: string;
-      width?: number; // ??
-      height?: number; // ??
+      width?: number;
+      height?: number;
     }
   >;
   className?: string;
@@ -528,10 +562,10 @@ interface ProgramInstructorAvatarProps {
 
 ```tsx
 // Default usage
-<Program.Instructor.Avatar className="rounded-full" />
+<Program.InstructorImage instructor={instructor} className="rounded-full" />
 
 // asChild with custom styling
-<Program.Instructor.Avatar asChild size="lg">
+<Program.InstructorImage instructor={instructor} asChild>
   {React.forwardRef(({ src, alt, width, height, ...props }, ref) => (
     <img
       ref={ref}
@@ -543,7 +577,7 @@ interface ProgramInstructorAvatarProps {
       className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
     />
   ))}
-</Program.Instructor.Avatar>
+</Program.InstructorImage>
 ```
 
 ---
@@ -586,9 +620,11 @@ interface ProgramInstructorDescriptionProps {
 ```
 
 **Notes**
-- Avatar uses WixMediaImage for optimization when not using asChild
+- Image uses WixMediaImage for optimization when not using asChild
 - Instructor data is fetched via instructor service based on program ID
-- Empty state is not possible because program must have at least one instructor
+- `Program.Instructors` provides context and conditional rendering - does not render when no instructors
+- `Program.InstructorRepeater` supports both React elements and render functions for children
+- Empty state is handled by `Program.Instructors` not rendering when no instructors are available
 ---
 
 

@@ -5,6 +5,7 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { WixMediaImage } from '@wix/headless-media/react';
 
 import * as CoreProgram from './core/Program.js';
+import { Instructor } from './Instructor.js';
 
 enum TestIds {
   programTitle = 'program-title',
@@ -12,16 +13,13 @@ enum TestIds {
   programDuration = 'program-duration',
   programDescription = 'program-description',
   programInstructors = 'program-instructors',
-  programInstructor = 'program-instructor',
-  programInstructorName = 'program-instructor-name',
-  programInstructorAvatar = 'program-instructor-avatar',
-  programInstructorDescription = 'program-instructor-description',
+  programInstructorRepeater = 'program-instructor-repeater',
 }
 
 /**
  * Props for the Program root component following the documented API
  */
-export interface ProgramRootProps {
+interface ProgramRootProps {
   children: React.ReactNode;
   program: programs.Program;
 }
@@ -44,7 +42,7 @@ export interface ProgramRootProps {
  * }
  * ```
  */
-export function Root(props: ProgramRootProps): React.ReactNode {
+function Root(props: ProgramRootProps): React.ReactNode {
   const { children, program, ...attrs } = props;
 
   return (
@@ -57,7 +55,7 @@ export function Root(props: ProgramRootProps): React.ReactNode {
 /**
  * Props for Program Title component
  */
-export interface TitleProps {
+interface TitleProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -88,7 +86,7 @@ export interface TitleProps {
  * </Program.Title>
  * ```
  */
-export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
+const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
   const { asChild, children, ...otherProps } = props;
 
   return (
@@ -117,7 +115,7 @@ Title.displayName = 'Program.Title';
 /**
  * Props for Program Image component
  */
-export interface ImageProps {
+interface ImageProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -151,7 +149,7 @@ export interface ImageProps {
  * </Program.Image>
  * ```
  */
-export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
+const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
     const { asChild, children, ...otherProps } = props;
 
@@ -181,9 +179,9 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
 Image.displayName = 'Program.Image';
 
 /**
- * Props for Program Duration component
+ * Props for Program DurationInDays component
  */
-export interface DurationProps {
+interface DurationInDaysProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -202,29 +200,29 @@ export interface DurationProps {
  * @example
  * ```tsx
  * // Default usage
- * <Program.Duration className="text-content-secondary" />
+ * <Program.DurationInDays className="text-content-secondary" />
  *
  * // asChild with primitive
- * <Program.Duration asChild>
+ * <Program.DurationInDays asChild>
  *   <p className="text-content-secondary" />
- * </Program.Duration>
+ * </Program.DurationInDays>
  *
  * // Custom rendering with format
- * <Program.Duration asChild>
+ * <Program.DurationInDays asChild>
  *   {React.forwardRef(({ durationInDays, isSelfPaced, ...props }, ref) => (
  *     <p ref={ref} {...props} className="text-content-secondary">
  *       {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
  *     </p>
  *   ))}
- * </Program.Duration>
+ * </Program.DurationInDays>
  * ```
  */
-export const Duration = React.forwardRef<HTMLElement, DurationProps>(
+const DurationInDays = React.forwardRef<HTMLElement, DurationInDaysProps>(
   (props, ref) => {
     const { asChild, children, ...otherProps } = props;
 
     return (
-      <CoreProgram.Duration>
+      <CoreProgram.DurationInDays>
         {({ durationInDays, isSelfPaced }) => {
           const dataAttributes = {
             'data-testid': TestIds.programDuration,
@@ -245,17 +243,17 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
             </AsChildSlot>
           );
         }}
-      </CoreProgram.Duration>
+      </CoreProgram.DurationInDays>
     );
   },
 );
 
-Duration.displayName = 'Program.Duration';
+DurationInDays.displayName = 'Program.DurationInDays';
 
 /**
  * Props for Program Description component
  */
-export interface DescriptionProps {
+interface DescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -291,7 +289,7 @@ export interface DescriptionProps {
  * </Program.Description>
  * ```
  */
-export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
+const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
     const { asChild, children, ...otherProps } = props;
 
@@ -326,7 +324,7 @@ Description.displayName = 'Program.Description';
 /**
  * Props for Program Instructors component
  */
-export interface InstructorsProps {
+interface InstructorsProps {
   /** Optional instructors data to use instead of fetching */
   instructors?: instructors.Instructor[];
   /** Whether to render as a child component */
@@ -340,8 +338,8 @@ export interface InstructorsProps {
 }
 
 /**
- * Displays the list of program instructors with customizable rendering.
- * Data source: instructors prop or instructors service.
+ * Container for program instructors that provides context and conditional rendering.
+ * Does not render when there are no instructors.
  *
  * @component
  * @example
@@ -354,7 +352,7 @@ export interface InstructorsProps {
  *   <div className="instructors-grid" />
  * </Program.Instructors>
  *
- * // Custom rendering
+ * // Custom rendering with render props
  * <Program.Instructors asChild>
  *   {React.forwardRef(({ instructors, hasInstructors, ...props }, ref) => (
  *     <div ref={ref} {...props} className="instructors-container">
@@ -370,111 +368,45 @@ export interface InstructorsProps {
  * </Program.Instructors>
  * ```
  */
-export const Instructors = React.forwardRef<HTMLElement, InstructorsProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-
-    return (
-      <CoreProgram.Instructors instructors={props['instructors']}>
-        {({ instructors, hasInstructors }) => {
-          const dataAttributes = {
-            'data-testid': TestIds.programInstructors,
-          };
-
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              customElement={children}
-              customElementProps={{ instructors, hasInstructors }}
-              content={hasInstructors ? `${instructors.length} instructors` : 'No instructors'}
-              {...dataAttributes}
-              {...otherProps}
-            >
-              <div>
-                {hasInstructors ? (
-                  instructors.map(instructor => (
-                    <div key={instructor._id} data-testid={TestIds.programInstructor}>
-                      {instructor.name}
-                    </div>
-                  ))
-                ) : (
-                  <div>No instructors</div>
-                )}
-              </div>
-            </AsChildSlot>
-          );
-        }}
-      </CoreProgram.Instructors>
-    );
-  },
-);
-
-Instructors.displayName = 'Program.Instructors';
-
-/**
- * Props for Program InstructorRepeater component
- */
-export interface InstructorRepeaterProps {
-  /** Children to render for each instructor */
-  children: React.ReactNode;
-}
-
-/**
- * Repeater component that renders Program.Instructor for each instructor.
- * Follows Repeater Level pattern.
- *
- * @component
- * @example
- * ```tsx
- * <Program.Instructors.InstructorRepeater>
- *   <Program.Instructor>
- *     <Program.Instructor.Avatar />
- *     <Program.Instructor.Name />
- *   </Program.Instructor>
- * </Program.Instructors.InstructorRepeater>
- * ```
- */
-export const InstructorRepeater = React.forwardRef<
-  HTMLElement,
-  InstructorRepeaterProps
->((props, _ref) => {
-  const { children } = props;
-
+const Instructors = React.forwardRef<
+  HTMLDivElement,
+  InstructorsProps
+>(({ asChild, children, ...props }, ref) => {
   return (
-    <CoreProgram.Instructors>
-      {({ instructors, hasInstructors }) => {
-        if (!hasInstructors) return null;
+    <CoreProgram.Instructors instructors={props['instructors']}>
+      {(renderProps) => {
+        if (!renderProps.hasInstructors) {
+          return null;
+        }
 
         return (
-          <div data-testid="program-instructors-repeater">
-            {instructors.map((instructor) => (
-              <Instructor
-                key={instructor._id}
-                instructor={instructor}
-              >
-                {children}
-              </Instructor>
-            ))}
-          </div>
+          <AsChildSlot
+            asChild={asChild}
+            customElement={children}
+            customElementProps={renderProps}
+            ref={ref}
+            data-testid={TestIds.programInstructors}
+            {...props}
+          >
+            {children ? children : null}
+          </AsChildSlot>
         );
       }}
     </CoreProgram.Instructors>
   );
 });
 
-InstructorRepeater.displayName = 'Program.Instructors.InstructorRepeater';
+Instructors.displayName = 'Program.Instructors';
 
 /**
- * Props for Program Instructor component
+ * Props for Program InstructorRepeater component
  */
-export interface InstructorProps {
-  /** Instructor data */
-  instructor: instructors.Instructor;
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ instructor: instructors.Instructor }>;
+interface InstructorRepeaterProps {
+  /** Children to render for each instructor - can be React elements or a render function */
+  children: ((props: {
+    instructor: instructors.Instructor;
+  }) => React.ReactNode)
+| React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -482,253 +414,52 @@ export interface InstructorProps {
 }
 
 /**
- * Individual instructor component that provides instructor context to child components.
+ * Repeater component that renders children for each instructor.
+ * Supports both React elements and render functions.
  *
  * @component
  * @example
  * ```tsx
- * <Program.Instructor instructor={instructor}>
- *   <Program.Instructor.Avatar />
+ * // With React elements
+ * <Program.InstructorRepeater>
  *   <Program.Instructor.Name />
- *   <Program.Instructor.Description />
- * </Program.Instructor>
+ *   <Program.Instructor.Image />
+ * </Program.InstructorRepeater>
+ *
+ * // With render function
+ * <Program.InstructorRepeater>
+ *   {({ instructor }) => (
+ *     <div key={instructor.userId}>
+ *       <h3>{instructor.name}</h3>
+ *       <p>{instructor.bio}</p>
+ *     </div>
+ *   )}
+ * </Program.InstructorRepeater>
  * ```
  */
-export const Instructor = React.forwardRef<HTMLElement, InstructorProps>(
-  (props, ref) => {
-    const { asChild, children, instructor, ...otherProps } = props;
+const InstructorRepeater = React.forwardRef<
+  HTMLElement,
+  InstructorRepeaterProps
+>((props, ref) => {
+  const { children, className,...otherProps } = props;
 
-    const dataAttributes = {
-      'data-testid': TestIds.programInstructor,
-      'data-instructor-id': instructor._id,
-    };
+  return props['instructors']?.map((instructor: instructors.Instructor, index: number) => (
+    <AsChildSlot
+      ref={ref}
+      className={className}
+      data-testid={TestIds.programInstructorRepeater}
+      customElement={children}
+      customElementProps={{ instructor }}
+      {...otherProps}
+    >
+      <Instructor.Root key={instructor.userId || index} instructor={instructor}>
+        {typeof children === 'function' ? children({ instructor }) : children}
+      </Instructor.Root>
+    </AsChildSlot>
+  ));
+});
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        customElement={children}
-        customElementProps={{ instructor }}
-        content={instructor.name || 'Instructor'}
-        {...dataAttributes}
-        {...otherProps}
-      >
-        <div>
-          <div>{instructor.name}</div>
-        </div>
-      </AsChildSlot>
-    );
-  },
-);
-
-Instructor.displayName = 'Program.Instructor';
-
-/**
- * Props for Program Instructor Name component
- */
-export interface InstructorNameProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string; slug?: string | null }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
-}
-
-/**
- * Displays the instructor's name with customizable rendering.
- * Data source: instructor.name and instructor.slug.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Program.Instructor.Name className="font-semibold text-lg" />
- *
- * // asChild with link
- * <Program.Instructor.Name asChild>
- *   {React.forwardRef(({ name, slug, ...props }, ref) => (
- *     <a
- *       ref={ref}
- *       href={slug ? `/instructors/${slug}` : '#'}
- *       {...props}
- *       className="font-semibold text-lg hover:underline"
- *     >
- *       {name}
- *     </a>
- *   ))}
- * </Program.Instructor.Name>
- * ```
- */
-export const InstructorName = React.forwardRef<HTMLElement, InstructorNameProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-
-    // This would need to be used within Program.Instructor context
-    // For now, we'll use a placeholder
-    const name = 'Instructor Name';
-    const slug = null;
-
-    const dataAttributes = {
-      'data-testid': TestIds.programInstructorName,
-    };
-
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        customElement={children}
-        customElementProps={{ name, slug }}
-        content={name}
-        {...dataAttributes}
-        {...otherProps}
-      >
-        <div>{name}</div>
-      </AsChildSlot>
-    );
-  },
-);
-
-InstructorName.displayName = 'Program.Instructor.Name';
-
-/**
- * Props for Program Instructor Avatar component
- */
-export interface InstructorAvatarProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ src: string; alt: string; width?: number; height?: number }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
-}
-
-/**
- * Displays the instructor's profile photo with customizable rendering.
- * Data source: instructor.photo and instructor.photoAltText.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Program.Instructor.Avatar className="rounded-full" />
- *
- * // asChild with custom styling
- * <Program.Instructor.Avatar asChild>
- *   {React.forwardRef(({ src, alt, width, height, ...props }, ref) => (
- *     <img
- *       ref={ref}
- *       src={src}
- *       alt={alt}
- *       width={width}
- *       height={height}
- *       {...props}
- *       className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
- *     />
- *   ))}
- * </Program.Instructor.Avatar>
- * ```
- */
-export const InstructorAvatar = React.forwardRef<HTMLImageElement, InstructorAvatarProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-
-    // This would need to be used within Program.Instructor context
-    // For now, we'll use placeholders
-    const src = '';
-    const alt = 'Instructor photo';
-    const width = undefined;
-    const height = undefined;
-
-    const dataAttributes = {
-      'data-testid': TestIds.programInstructorAvatar,
-    };
-
-    if (asChild && children) {
-      return children({ src, alt, width, height }, ref);
-    }
-
-    return (
-      <WixMediaImage
-        ref={ref}
-        media={{ image: src }}
-        alt={alt}
-        {...dataAttributes}
-        {...otherProps}
-      />
-    );
-  },
-);
-
-InstructorAvatar.displayName = 'Program.Instructor.Avatar';
-
-/**
- * Props for Program Instructor Description component
- */
-export interface InstructorDescriptionProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ description: string }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
-}
-
-/**
- * Displays the instructor's bio/description with customizable rendering.
- * Data source: instructor.description.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Program.Instructor.Description className="text-gray-600" />
- *
- * // asChild with custom truncation
- * <Program.Instructor.Description asChild>
- *   {React.forwardRef(({ description, ...props }, ref) => (
- *     <p ref={ref} {...props} className="text-gray-600 text-sm">
- *       {description.length > 100 ? `${description.substring(0, 100)}...` : description}
- *     </p>
- *   ))}
- * </Program.Instructor.Description>
- * ```
- */
-export const InstructorDescription = React.forwardRef<HTMLElement, InstructorDescriptionProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-
-    // This would need to be used within Program.Instructor context
-    // For now, we'll use a placeholder
-    const description = 'Instructor description';
-
-    const dataAttributes = {
-      'data-testid': TestIds.programInstructorDescription,
-    };
-
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        customElement={children}
-        customElementProps={{ description }}
-        content={description}
-        {...dataAttributes}
-        {...otherProps}
-      >
-        <div>{description}</div>
-      </AsChildSlot>
-    );
-  },
-);
-
-InstructorDescription.displayName = 'Program.Instructor.Description';
+InstructorRepeater.displayName = 'Program.InstructorRepeater';
 
 /**
  * Compound component for Program with all sub-components
@@ -737,16 +468,8 @@ export const Program = {
   Root,
   Title,
   Image,
-  Duration,
+  DurationInDays,
   Description,
-  Instructors: {
-    ...Instructors,
-    InstructorRepeater,
-  },
-  Instructor: {
-    ...Instructor,
-    Name: InstructorName,
-    Avatar: InstructorAvatar,
-    Description: InstructorDescription,
-  },
+  Instructors,
+  InstructorRepeater,
 } as const;

@@ -99,7 +99,7 @@ export const ProgramService =
         if (!programResponse) {
           error.set('Program not found');
         } else {
-          program.set(programResponse!);
+          program.set(programResponse);
           error.set(null);
         }
 

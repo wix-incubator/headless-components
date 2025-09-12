@@ -8,10 +8,15 @@ import {
   ProgramServiceConfig,
   ProgramService,
 } from '../../services/program-service.js';
+import { InstructorsService, InstructorsServiceConfig, InstructorsServiceDefinition } from '../../services/instructors-service.js';
 
 export interface RootProps {
+  /** Child components that will have access to the Program service */
   children: React.ReactNode;
+  /** Configuration for the Program service */
   programServiceConfig: ProgramServiceConfig;
+  /** Configuration for the Instructors service */
+  instructorsServiceConfig: InstructorsServiceConfig;
 }
 
 /**
@@ -26,7 +31,10 @@ export interface RootProps {
  *
  * function ProgramPage() {
  *   return (
- *     <Program.Root programServiceConfig={{ program: myProgram }}>
+ *     <Program.Root
+ *      programServiceConfig={{ program: myProgram }}
+ *      instructorsServiceConfig={{ instructors: myInstructors }}
+ *     >
  *       <div>
  *         <Program.Title>
  *           {({ title }) => (
@@ -51,6 +59,11 @@ export function Root(props: RootProps): React.ReactNode {
         ProgramServiceDefinition,
         ProgramService,
         props.programServiceConfig,
+      )
+      .addService(
+        InstructorsServiceDefinition,
+        InstructorsService,
+        props.instructorsServiceConfig,
       )}
     >
       {props.children}
@@ -159,17 +172,17 @@ export function Image(props: ProgramImageProps) {
 }
 
 /**
- * Props for ProgramDuration headless component
+ * Props for ProgramDurationInDays headless component
  */
-export interface ProgramDurationProps {
+export interface ProgramDurationInDaysProps {
   /** Render prop function that receives program duration data */
-  children: (props: ProgramDurationRenderProps) => React.ReactNode;
+  children: (props: ProgramDurationInDaysRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for ProgramDuration component
+ * Render props for ProgramDurationInDays component
  */
-export interface ProgramDurationRenderProps {
+export interface ProgramDurationInDaysRenderProps {
   /** Program duration in days, null if self-paced */
   durationInDays: number | null;
   /** Whether the program is self-paced (no time limit) */
@@ -184,20 +197,20 @@ export interface ProgramDurationRenderProps {
  * ```tsx
  * import { Program } from '@wix/online-programs/components';
  *
- * function ProgramDuration() {
+ * function ProgramDurationInDays() {
  *   return (
- *     <Program.Duration>
+ *     <Program.DurationInDays>
  *       {({ durationInDays, isSelfPaced }) => (
  *         <p>
  *           {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
  *         </p>
  *       )}
- *     </Program.Duration>
+ *     </Program.DurationInDays>
  *   );
  * }
  * ```
  */
-export function Duration(props: ProgramDurationProps) {
+export function DurationInDays(props: ProgramDurationInDaysProps) {
   const service = useService(ProgramServiceDefinition) as ServiceAPI<
     typeof ProgramServiceDefinition
   >;
@@ -310,20 +323,9 @@ export interface ProgramInstructorsRenderProps {
  * ```
  */
 export function Instructors(props: ProgramInstructorsProps) {
-  const { children, instructors: providedInstructors } = props;
-
-  // If instructors are provided directly, use them
-  if (providedInstructors) {
-    return children({
-      instructors: providedInstructors,
-      hasInstructors: providedInstructors.length > 0,
-    });
-  }
-
-  // Otherwise, we would need to fetch from instructors service
-  // For now, return empty state
-  return children({
-    instructors: [],
-    hasInstructors: false,
+  const providedInstructors = props.instructors || [];
+  return props.children({
+    instructors: providedInstructors,
+    hasInstructors: providedInstructors?.length > 0,
   });
 }

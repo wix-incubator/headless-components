@@ -4,7 +4,7 @@ import {
   createServicesMap,
 } from '@wix/services-manager';
 import { ServicesManagerProvider } from '@wix/services-manager-react';
-import * as Program from '@wix/headless-online-programs/react';
+import { Program, Instructor } from '@wix/headless-online-programs/react';
 import {
   ProgramServiceDefinition,
   ProgramService,
@@ -47,23 +47,29 @@ export default function OnlineProgramPage({
       <Program.Root program={programServiceConfig.program!}>
         <Program.Title />
         <Program.Description />
-        <Program.Duration asChild>
-          {({ durationInDays, isSelfPaced }) => (
+        <Program.DurationInDays asChild>
+          {({ durationInDays, isSelfPaced }: { durationInDays: number, isSelfPaced: boolean }) => (
             <div>
               {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
             </div>
           )}
-        </Program.Duration>
+        </Program.DurationInDays>
 
-        <h3>Instructors:</h3>
+        <h3>Instructors default usage:</h3>
         <Program.Instructors instructors={instructorsServiceConfig?.instructors}>
-          <Program.Instructors.InstructorRepeater>
-            <Program.Instructor>
-              <Program.Instructor.Name className="font-semibold" />
-            </Program.Instructor>
-          </Program.Instructors.InstructorRepeater>
+          <Program.InstructorRepeater>
+            <Instructor.Name />
+          </Program.InstructorRepeater>
         </Program.Instructors>
 
+        <h3>Instructors custom usage:</h3>
+        <ul>
+        <Program.Instructors instructors={instructorsServiceConfig?.instructors}>
+          <Program.InstructorRepeater>
+            <li><Instructor.Name /></li>
+          </Program.InstructorRepeater>
+        </Program.Instructors>
+        </ul>
         <Program.Image />
       </Program.Root>
     </ServicesManagerProvider>
