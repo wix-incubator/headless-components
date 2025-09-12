@@ -1,0 +1,11 @@
+{
+  "development": {
+    "id": "61e21bbadaf8485197c95f74f625c300",
+    "site": {
+      "main": "http://localhost:4321/"
+    },
+    "dashboard": {
+      "main": "https://manage.wix.com/dashboard/36c925c3-70f6-49b3-acd5-31941df34312?apps-override=61e21bbadaf8485197c95f74f625c300"
+    }
+  }
+}

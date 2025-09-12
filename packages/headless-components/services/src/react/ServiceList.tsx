@@ -5,6 +5,7 @@ import { AsChildSlot } from '@wix/headless-utils/react';
 import * as CoreServiceList from './core/ServiceList';
 import { ServicesListServiceConfig, ServicesListServiceDefinition } from '../services/services-list-service.js';
 import { services } from '@wix/bookings';
+import { media as wixMedia } from '@wix/sdk';
 
 /**
  * Props for the ServiceList root component following the documented API
@@ -298,11 +299,12 @@ export const Service = {
       const { service } = React.useContext(ServiceContext);
       const { className } = props;
 
-      if (!service.media?.mainMedia?.image) return null;
+      //if (!service.media?.mainMedia?.image) return null;
+      //const src = wixMedia.getScaledToFillImageUrl('11062b_c127c132f14e41a1a4a9182888bf05ba~mv2.jpg', 2048, 2048, {});
 
       return (
         <img
-          src={service.media?.mainMedia?.image?.url}
+          src={'https://static.wixstatic.com/media/11062b_c127c132f14e41a1a4a9182888bf05ba~mv2.jpg'}
           alt={service.name || ''}
           data-testid={TestIds.serviceImage}
           ref={ref as React.Ref<HTMLImageElement>}
