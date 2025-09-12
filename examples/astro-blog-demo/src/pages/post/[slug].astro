@@ -10,7 +10,7 @@ import {
 import { SEO } from '@wix/headless-seo/react';
 import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
 
-import './theme.css';
+import '../theme.css';
 
 const { slug } = Astro.params;
 export const prerender = false;
@@ -40,7 +40,7 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
     pageUrl: Astro.url.href,
     itemData: {
       slug,
-      pageName: 'Post',
+      pageName: blogPostServiceConfig.post.title || 'Post',
       seoData: blogPostServiceConfig.post.seoData,
     },
   }),
@@ -58,16 +58,16 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
             client:load
             blogPostServiceConfig={blogPostServiceConfig}
             href={Astro.url.href}
-            feedPageHref="/"
-            categoryPageBaseUrl="/category/"
+            feedPageHref="/blog/"
+            categoryPageBaseUrl="/blog/category/"
             dateLocale="en-US"
           />
         </div>
         <RecentPostsSection
           client:load
           recentPostsServiceConfig={recentPostsServiceConfig}
-          postPageBaseUrl="/"
-          categoryPageBaseUrl="/category/"
+          postPageBaseUrl="/blog/post/"
+          categoryPageBaseUrl="/blog/category/"
           dateLocale="en-US"
         />
       </div>

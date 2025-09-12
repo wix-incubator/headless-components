@@ -11,7 +11,7 @@ interface FeedPageProps {
   /** The base url of the post page, commonly end with trailing slash, e.g. "/post/" */
   postPageBaseUrl: string;
   /** The base url of the category page, commonly end with trailing slash, e.g. "/category/" */
-  categoryPageBaseUrl: string;
+  categoryPageBaseUrl?: string;
   /** The date locale to use for the dates */
   dateLocale: string;
 }
