@@ -1,10 +1,7 @@
 import React from 'react';
 export { WixMediaImage } from '@wix/headless-media/react';
-// eslint-disable-next-line import/named
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import {
-  PlanDuration,
-  PlanRecurrence,
   PlanServiceConfig,
   PlanServiceDefinition,
 } from '../services/PlanService.js';
