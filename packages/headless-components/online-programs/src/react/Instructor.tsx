@@ -19,16 +19,20 @@ function useInstructorContext(): InstructorContextValue {
 }
 
 enum TestIds {
-  instructorName = 'instructor-name',
+  programInstructor = 'program-instructor',
+  programName = 'program-instructor-name',
+  instructorDescription = 'instructor-description',
 }
 
 /**
  * Props for the Instructor root component following the documented API
  */
 interface InstructorRootProps {
-  /** Child components that will have access to the Instructor service */
-  children: React.ReactNode;
-  /** Instructor data */
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Children to render within the instructor context */
+  children?: React.ReactNode;
+  /** Instructor data - passed from InstructorRepeater or provided directly */
   instructor: instructors.Instructor;
 }
 
@@ -45,17 +49,31 @@ interface InstructorRootProps {
  *   return (
  *     <Instructor.Root instructor={instructor}>
  *       <Instructor.Name className="text-4xl font-bold" />
+ *       <Instructor.Description className="text-content-secondary" />
  *     </Instructor.Root>
  *   );
  * }
  * ```
  */
 function Root(props: InstructorRootProps): React.ReactNode {
-  const { children, instructor } = props;
+  const { asChild, children, instructor, ...otherProps } = props;
+
+  const dataAttributes = {
+    'data-testid': TestIds.programInstructor,
+    'data-instructor-id': instructor.userId,
+  };
 
   return (
     <InstructorContext.Provider value={{ instructor }}>
-      {children}
+      <AsChildSlot
+        asChild={asChild}
+        customElement={children}
+        customElementProps={{ instructor }}
+        {...dataAttributes}
+        {...otherProps}
+      >
+        {children}
+      </AsChildSlot>
     </InstructorContext.Provider>
   );
 }
@@ -64,10 +82,12 @@ function Root(props: InstructorRootProps): React.ReactNode {
  * Props for Instructor Name component
  */
 interface NameProps {
+  /** Instructor data - can be provided directly or from context */
+  instructor?: instructors.Instructor;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{ name: string; slug?: string | null }>;
 }
 
 /**
@@ -77,36 +97,44 @@ interface NameProps {
  * @example
  * ```tsx
  * // Default usage
- * <Instructor.Name className="text-4xl font-bold" />
+ * <Instructor.Name instructor={instructor} className="text-4xl font-bold" />
  *
  * // asChild with primitive
- * <Instructor.Name asChild>
+ * <Instructor.Name instructor={instructor} asChild>
  *   <p className="text-4xl font-bold" />
  * </Instructor.Name>
  *
  * // asChild with react component
- * <Instructor.Name asChild>
- *   {React.forwardRef(({ title, ...props }, ref) => (
- *     <p ref={ref} { ...props } className="text-4xl font-bold">
- *       {title}
+ * <Instructor.Name instructor={instructor} asChild>
+ *   {React.forwardRef(({ name, slug, ...props }, ref) => (
+ *     <p ref={ref} {...props} className="text-4xl font-bold">
+ *       {name}
  *     </p>
  *   ))}
  * </Instructor.Name>
  * ```
  */
 const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
-  const { instructor } = useInstructorContext();
+  const { asChild, children, instructor: propInstructor, ...otherProps } = props;
+
+  // Use provided instructor or get from context
+  const contextInstructor = useInstructorContext();
+  const instructor = propInstructor || contextInstructor?.instructor;
+
+  if (!instructor) {
+    throw new Error('Instructor.Name must be used within an Instructor.Root component or have instructor prop provided');
+  }
 
   const name = instructor.name || '';
+  const slug = instructor.slug || null;
 
   return (
     <AsChildSlot
       ref={ref}
       asChild={asChild}
-      data-testid={TestIds.instructorName}
+      data-testid={TestIds.programName}
       customElement={children}
-      customElementProps={{ name }}
+      customElementProps={{ name, slug }}
       content={name}
       {...otherProps}
     >
@@ -118,9 +146,67 @@ const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 Name.displayName = 'Instructor.Name';
 
 /**
+ * Props for Instructor Description component
+ */
+interface DescriptionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ description: string }>;
+}
+
+/**
+ * Displays the instructor description with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Instructor.Description className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Instructor.Description asChild>
+ *   <p className="text-content-secondary" />
+ * </Instructor.Description>
+ *
+ * // asChild with react component
+ * <Instructor.Description asChild>
+ *   {React.forwardRef(({ description, ...props }, ref) => (
+ *     <p ref={ref} {...props} className="text-content-secondary">
+ *       {description}
+ *     </p>
+ *   ))}
+ * </Instructor.Description>
+ * ```
+ */
+const Description = React.forwardRef<HTMLElement, DescriptionProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+  const { instructor } = useInstructorContext();
+
+  const description = instructor.description || '';
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      data-testid={TestIds.instructorDescription}
+      customElement={children}
+      customElementProps={{ description }}
+      content={description}
+      {...otherProps}
+    >
+      <p>{description}</p>
+    </AsChildSlot>
+  );
+});
+
+Description.displayName = 'Instructor.Description';
+
+/**
  * Compound component for Instructor with all sub-components
  */
 export const Instructor = {
   Root,
   Name,
+  Description,
 } as const;

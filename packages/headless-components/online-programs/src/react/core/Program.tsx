@@ -16,7 +16,7 @@ export interface RootProps {
   /** Configuration for the Program service */
   programServiceConfig: ProgramServiceConfig;
   /** Configuration for the Instructors service */
-  instructorsServiceConfig: InstructorsServiceConfig;
+  instructorsServiceConfig?: InstructorsServiceConfig;
 }
 
 /**

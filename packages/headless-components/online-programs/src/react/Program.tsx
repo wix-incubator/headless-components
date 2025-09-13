@@ -333,13 +333,15 @@ interface InstructorsProps {
   children?: AsChildChildren<{ instructors: instructors.Instructor[]; hasInstructors: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Empty state to display when there are no instructors */
+  emptyState?: React.ReactNode;
   /** Additional HTML attributes */
   [key: string]: any;
 }
 
 /**
  * Container for program instructors that provides context and conditional rendering.
- * Does not render when there are no instructors.
+ * Renders emptyState when there are no instructors, otherwise renders children.
  *
  * @component
  * @example
@@ -347,6 +349,12 @@ interface InstructorsProps {
  * // Default usage
  * <Program.Instructors instructors={instructors} />
  *
+ * // With empty state
+ * <Program.Instructors
+ *   instructors={instructors}
+ *   emptyState={<div>No instructors available for this program</div>}
+ * />
+
  * // asChild with primitive
  * <Program.Instructors asChild>
  *   <div className="instructors-grid" />
@@ -371,12 +379,12 @@ interface InstructorsProps {
 const Instructors = React.forwardRef<
   HTMLDivElement,
   InstructorsProps
->(({ asChild, children, ...props }, ref) => {
+>(({ asChild, children, emptyState, ...props }, ref) => {
   return (
     <CoreProgram.Instructors instructors={props['instructors']}>
       {(renderProps) => {
         if (!renderProps.hasInstructors) {
-          return null;
+          return emptyState || null;
         }
 
         return (
@@ -422,8 +430,8 @@ interface InstructorRepeaterProps {
  * ```tsx
  * // With React elements
  * <Program.InstructorRepeater>
- *   <Program.Instructor.Name />
- *   <Program.Instructor.Image />
+ *   <Instructor.Name />
+ *   <Instructor.Description />
  * </Program.InstructorRepeater>
  *
  * // With render function
@@ -431,7 +439,7 @@ interface InstructorRepeaterProps {
  *   {({ instructor }) => (
  *     <div key={instructor.userId}>
  *       <h3>{instructor.name}</h3>
- *       <p>{instructor.bio}</p>
+ *       <p>{instructor.description}</p>
  *     </div>
  *   )}
  * </Program.InstructorRepeater>
@@ -450,6 +458,7 @@ const InstructorRepeater = React.forwardRef<
       data-testid={TestIds.programInstructorRepeater}
       customElement={children}
       customElementProps={{ instructor }}
+      key={instructor.userId || index}
       {...otherProps}
     >
       <Instructor.Root key={instructor.userId || index} instructor={instructor}>

@@ -55,18 +55,14 @@ export default function OnlineProgramPage({
           )}
         </Program.DurationInDays>
 
-        <h3>Instructors default usage:</h3>
-        <Program.Instructors instructors={instructorsServiceConfig?.instructors}>
-          <Program.InstructorRepeater>
-            <Instructor.Name />
-          </Program.InstructorRepeater>
-        </Program.Instructors>
-
-        <h3>Instructors custom usage:</h3>
+        <h3>Instructors:</h3>
         <ul>
-        <Program.Instructors instructors={instructorsServiceConfig?.instructors}>
+        <Program.Instructors instructors={instructorsServiceConfig?.instructors} emptyState={<li>No instructors</li>}>
           <Program.InstructorRepeater>
-            <li><Instructor.Name /></li>
+            <li>
+              <Instructor.Name />
+              <Instructor.Description />
+            </li>
           </Program.InstructorRepeater>
         </Program.Instructors>
         </ul>
