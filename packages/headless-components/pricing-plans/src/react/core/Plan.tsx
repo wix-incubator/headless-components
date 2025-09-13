@@ -10,6 +10,11 @@ import {
   PlanWithEnhancedData,
 } from '../../services/PlanService.js';
 import { plansV3 } from '@wix/pricing-plans';
+import {
+  ChannelType,
+  CheckoutService,
+  CheckoutServiceDefinition,
+} from '@wix/headless-ecom/services';
 
 interface RootProps {
   planServiceConfig: PlanServiceConfig;
@@ -27,11 +32,13 @@ interface RootProps {
 export function Root({ planServiceConfig, children }: RootProps) {
   return (
     <WixServices
-      servicesMap={createServicesMap().addService(
-        PlanServiceDefinition,
-        PlanService,
-        planServiceConfig,
-      )}
+      servicesMap={createServicesMap()
+        .addService(PlanServiceDefinition, PlanService, planServiceConfig)
+        .addService(CheckoutServiceDefinition, CheckoutService, {
+          channelType: ChannelType.WEB,
+          // TODO: Perhaps we can add postFlowUrl?
+          // postFlowUrl: ''
+        })}
     >
       {children}
     </WixServices>

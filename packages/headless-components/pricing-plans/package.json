@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
+    "@wix/headless-ecom": "workspace:^",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/members": "^1.0.322",

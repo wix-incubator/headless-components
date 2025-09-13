@@ -58,7 +58,18 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
       isLoadingSignal.set(true);
       errorSignal.set(null);
       try {
-        const plan = await plansV3.getPlan(planId);
+        // TODO: Should use `getPlan` but that gets 403
+        const result = await plansV3
+          .queryPlans()
+          .eq('_id', planId)
+          .eq('visibility', 'PUBLIC')
+          .find();
+        const [plan] = result.items;
+
+        if (!plan) {
+          throw new Error(`Plan ${planId} not found`);
+        }
+
         planSignal.set(enhancePlan(plan));
       } catch (error) {
         // TODO: Fix types
@@ -199,3 +210,8 @@ function getPlanDuration(
     period: billingTerms.billingCycle?.period as ValidPeriod,
   };
 }
+
+// TODO: Implement
+// export async function loadPlanServiceConfig(planId: string) {
+//   const plan = await plansV3.getPlan(planId);
+// }

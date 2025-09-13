@@ -75,6 +75,7 @@ Displays the plan image using WixMediaImage
 <!-- TODO: Double check child children props -->
 **Props**
 ```tsx
+// Should probably export AsChildChildren props interface, so consumer doesn't lose typings when not inlining the component
 interface PlanImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   asChild?: boolean;
   children?: AsChildChildren<{ image: string; }>;

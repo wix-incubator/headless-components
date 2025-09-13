@@ -6,6 +6,7 @@ import {
   PlanDuration,
   PlanRecurrence,
   PlanServiceConfig,
+  PlanServiceDefinition,
 } from '../services/PlanService.js';
 import {
   Root as CoreRoot,
@@ -24,6 +25,8 @@ import {
   Duration as CoreDuration,
 } from './core/Plan.js';
 import { WixMediaImage } from '@wix/headless-media/react';
+import { Commerce } from '@wix/headless-ecom/react';
+import { useService } from '@wix/services-manager-react';
 
 enum PlanTestId {
   Container = 'plan-container',
@@ -38,94 +41,89 @@ enum PlanTestId {
   Duration = 'plan-duration',
 }
 
-interface RootProps {
-  planServiceConfig: PlanServiceConfig;
-  children: React.ReactNode;
-}
+type WithAsChild<Props, RenderProps> = Props &
+  (
+    | { asChild?: false; children?: React.ReactNode }
+    | { asChild: true; children: AsChildChildren<RenderProps> }
+  );
 
-export function Root({ planServiceConfig, children }: RootProps) {
-  return <CoreRoot planServiceConfig={planServiceConfig}>{children}</CoreRoot>;
-}
+type RootProps = WithAsChild<
+  {
+    planServiceConfig: PlanServiceConfig;
+    loadingState?: React.ReactNode;
+    errorState?: React.ReactNode;
+    className?: string;
+  },
+  ContainerRenderProps
+>;
 
-interface ContainerProps {
-  asChild?: boolean;
-  children?: AsChildChildren<ContainerRenderProps>;
-  loadingState?: React.ReactNode;
-  errorState?: React.ReactNode;
-  className?: string;
-}
-
-export const Container = React.forwardRef<HTMLElement, ContainerProps>(
-  ({ children, loadingState, errorState, className }, ref) => {
+export const Root = React.forwardRef<HTMLElement, RootProps>(
+  (
+    {
+      planServiceConfig,
+      children,
+      asChild,
+      className,
+      loadingState,
+      errorState,
+    }: RootProps,
+    ref,
+  ) => {
     return (
-      <CoreContainer>
-        {(renderProps) => (
-          <AsChildSlot
-            ref={ref}
-            className={className}
-            data-testid={PlanTestId.Container}
-            data-is-loading={renderProps.isLoading}
-            data-has-error={renderProps.error !== null}
-            customElement={children}
-            customElementProps={{
-              isLoading: renderProps.isLoading,
-              error: renderProps.error,
-              plan: renderProps.plan,
-            }}
-          >
-            <div>
-              <ContainerContent
-                {...renderProps}
-                loadingState={loadingState}
-                // TODO: Pass error data to the error state
-                errorState={errorState}
-              >
-                {children}
-              </ContainerContent>
-            </div>
-          </AsChildSlot>
-        )}
-      </CoreContainer>
+      <CoreRoot planServiceConfig={planServiceConfig}>
+        <CoreContainer>
+          {(renderProps) => (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={PlanTestId.Container}
+              data-is-loading={renderProps.isLoading}
+              data-has-error={renderProps.error !== null}
+              customElement={children}
+              customElementProps={{
+                isLoading: renderProps.isLoading,
+                error: renderProps.error,
+                plan: renderProps.plan,
+              }}
+            >
+              <div>
+                {renderProps.isLoading
+                  ? loadingState
+                  : renderProps.error
+                    ? errorState
+                    : (children as React.ReactNode)}
+              </div>
+            </AsChildSlot>
+          )}
+        </CoreContainer>
+      </CoreRoot>
     );
   },
 );
 
-function ContainerContent(
-  props: ContainerRenderProps &
-    Pick<ContainerProps, 'loadingState' | 'errorState' | 'children'>,
-) {
-  if (props.isLoading) {
-    return <>{props.loadingState}</>;
-  }
+type ImageProps = Omit<
+  React.ComponentProps<typeof WixMediaImage>,
+  'src' | 'media'
+>;
 
-  if (props.error) {
-    return <>props.errorState</>;
-  }
+// interface ImageProps {
+//   asChild?: boolean;
+//   children?: AsChildChildren<{ image: string }> | React.ReactNode;
+//   className?: string;
+// }
 
-  return <>{props.children as React.ReactNode}</>;
-}
-
-interface ImageProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ image: string }>;
-  className?: string;
-}
-
-export const Image = React.forwardRef<HTMLElement, ImageProps>(
-  ({ children, asChild, className }, ref) => {
+export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
+  (props, ref) => {
     return (
       <CoreImage>
         {(renderProps) => (
-          <AsChildSlot
+          <WixMediaImage
+            {...props}
             ref={ref}
-            asChild={asChild}
-            customElement={children}
-            customElementProps={renderProps}
-            className={className}
+            media={{ image: renderProps.image }}
             data-testid={PlanTestId.Image}
-          >
-            <WixMediaImage media={{ image: renderProps.image }} />
-          </AsChildSlot>
+          />
         )}
       </CoreImage>
     );
@@ -134,7 +132,7 @@ export const Image = React.forwardRef<HTMLElement, ImageProps>(
 
 interface NameProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{ name: string }> | React.ReactNode;
   className?: string;
 }
 
@@ -161,7 +159,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>(
 
 interface DescriptionProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ description: string }>;
+  children?: AsChildChildren<{ description: string }> | React.ReactNode;
   className?: string;
 }
 
@@ -188,7 +186,9 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 
 interface PriceProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ price: { amount: number; currency: string } }>;
+  children?:
+    | AsChildChildren<{ price: { amount: number; currency: string } }>
+    | React.ReactNode;
   className?: string;
 }
 
@@ -273,7 +273,7 @@ export const AdditionalFeesRepeater = ({
 
 interface AdditionalFeeNameProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{ name: string }> | React.ReactNode;
   className?: string;
 }
 
@@ -301,7 +301,7 @@ export const AdditionalFeeName = React.forwardRef<
 
 interface AdditionalFeeAmountProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ amount: string }>;
+  children?: AsChildChildren<{ amount: string }> | React.ReactNode;
   className?: string;
 }
 
@@ -362,3 +362,36 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
     );
   },
 );
+
+type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
+
+const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowProps>(
+  (props, ref) => {
+    const { planSignal } = useService(PlanServiceDefinition);
+
+    return (
+      <Commerce.Actions.BuyNow
+        {...props}
+        lineItems={[
+          {
+            quantity: 1,
+            catalogReference: {
+              // TODO: Move to a constant
+              appId: '1522827f-c56c-a5c9-2ac9-00f9e6ae12d3',
+              catalogItemId: planSignal.get()!._id!,
+              options: {
+                type: 'PLAN',
+                // TODO: planOptions will be needed once start date or forms can be supported
+              },
+            },
+          },
+        ]}
+        ref={ref}
+      />
+    );
+  },
+);
+
+export const Action = {
+  BuyNow: ActionBuyNow,
+};

@@ -2,64 +2,67 @@ import React, { useState, useEffect } from 'react';
 import PlanCard from './PlanCard';
 import { useWixClient } from '../hooks/useWixClient';
 import type { PlanData } from '../utils/types';
+import { PricingPlans } from '@wix/headless-pricing-plans/react';
+
+const FEATURED_PLAN_ID = '2665235f-7ba7-42f9-a663-fdc4b08e41b4';
 
 const WelcomeComponent: React.FC = () => {
-  const [featuredPlan, setFeaturedPlan] = useState<PlanData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const { fetchPlans, login } = useWixClient();
+  // const [featuredPlan, setFeaturedPlan] = useState<PlanData | null>(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(false);
+  // const { login } = useWixClient();
 
-  useEffect(() => {
-    initializeComponent();
-  }, []);
+  // useEffect(() => {
+  //   initializeComponent();
+  // }, []);
 
-  const initializeComponent = async () => {
-    try {
-      await loadFeaturedPlan();
-    } catch (error) {
-      console.error('Failed to initialize featured plan:', error);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const initializeComponent = async () => {
+  //   try {
+  //     await loadFeaturedPlan();
+  //   } catch (error) {
+  //     console.error('Failed to initialize featured plan:', error);
+  //     setError(true);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const loadFeaturedPlan = async () => {
-    try {
-      const publicPlans = await fetchPlans();
-      setFeaturedPlan(publicPlans[0] ?? null);
-    } catch (error) {
-      console.error('Error loading featured plan:', error);
-      setError(true);
-    }
-  };
+  // const loadFeaturedPlan = async () => {
+  //   try {
+  //     const publicPlans = await fetchPlans();
+  //     setFeaturedPlan(publicPlans[0] ?? null);
+  //   } catch (error) {
+  //     console.error('Error loading featured plan:', error);
+  //     setError(true);
+  //   }
+  // };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-secondary-600">Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+  //       <div className="container mx-auto px-6 py-4">
+  //         <div className="text-center py-20">
+  //           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
+  //           <p className="mt-4 text-secondary-600">Loading...</p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="text-center py-20">
-            <p className="text-red-600">
-              Unable to load featured plan. Please try again later.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+  //       <div className="container mx-auto px-6 py-4">
+  //         <div className="text-center py-20">
+  //           <p className="text-red-600">
+  //             Unable to load featured plan. Please try again later.
+  //           </p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
@@ -102,7 +105,7 @@ const WelcomeComponent: React.FC = () => {
               </li>
               <li id="auth-link">
                 <button
-                  onClick={login}
+                  onClick={() => {}}
                   className="px-6 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-lg hover:shadow-medium transition-all duration-200 font-semibold"
                 >
                   Login
@@ -115,7 +118,7 @@ const WelcomeComponent: React.FC = () => {
 
       <main className="container mx-auto px-6 py-12">
         {/* Hero Section */}
-        <section className="text-center py-20">
+        {/* <section className="text-center py-20">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-primary-600 via-secondary-700 to-accent-600 bg-clip-text text-transparent leading-tight">
               Master the Art of{' '}
@@ -144,7 +147,7 @@ const WelcomeComponent: React.FC = () => {
               </a>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Features Section */}
         <section className="py-20">
@@ -195,20 +198,18 @@ const WelcomeComponent: React.FC = () => {
         </section>
 
         {/* Featured Plan Section */}
-        {featuredPlan && (
-          <section className="py-20">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl font-bold text-center mb-16 text-secondary-800">
-                Featured Course Plan
-              </h2>
-              <PlanCard
-                planData={featuredPlan}
-                buttonText="View All Plans"
-                onSelectPlan={() => (window.location.href = '/pricing')}
-              />
-            </div>
-          </section>
-        )}
+
+        <PricingPlans.Plan.Root
+          planServiceConfig={{ planId: FEATURED_PLAN_ID }}
+          className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 mx-auto flex gap-3"
+        >
+          <div className="-my-6 -ml-6">
+            <PricingPlans.Plan.Image className="w-96 h-60 object-cover object-center rounded-l-2xl" />
+          </div>
+          <PricingPlans.Plan.Name />
+          <PricingPlans.Plan.Description />
+          <PricingPlans.Plan.Action.BuyNow label="Buy" />
+        </PricingPlans.Plan.Root>
 
         {/* CTA Section */}
         <section className="py-20 text-center">
@@ -234,3 +235,9 @@ const WelcomeComponent: React.FC = () => {
 };
 
 export default WelcomeComponent;
+
+const TestComp = React.forwardRef<HTMLDivElement, any>((props, ref) => {
+  console.log('As child test: ', props, ref);
+
+  return <div ref={ref}>Rendering as child</div>;
+});
