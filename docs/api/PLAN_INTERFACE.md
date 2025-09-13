@@ -10,7 +10,7 @@ The Plan component follows a compound component pattern where each part can be c
 
 ### Plan.Root
 
-The root container that provides plan context to all child components.
+The root container that provides plan context to child components and handles loading/error states plan loading.
 
 **Props**
 ```tsx
@@ -18,36 +18,12 @@ type PlanServiceConfig = { plan: Plan } | { planId: string }
 
 interface PlanRootProps {
   planServiceConfig: PlanServiceConfig;
-  children: React.ReactNode;
-}
-```
-
-**Example**
-```tsx
-<Plan.Root planServiceConfig={planServiceConfig}>
-  {/* All plan components */}
-</Plan.Root>
-```
-
-**Data Attributes**
-- `data-testid="plan"` - Applied to root container
----
-
-### Plan.Container
-
-Container for the plan with support for loading and error states.
-
-**Props**
-<!-- TODO: Figure out how to pass error data to error state -->
-<!-- TODO: Update props with className etc -->
-```tsx
-interface PlanContainerProps {
   asChild?: boolean;
-  children: AsChildChildren<
-  | { isLoading: true; error: null; plan: null }
-  | { isLoading: false; error: null; plan: Plan }
-  | { isLoading: false; error: Error; plan: null }
-  >;
+  children?: AsChildChildren<
+    | { isLoading: true; error: null; plan: null }
+    | { isLoading: false; error: null; plan: Plan }
+    | { isLoading: false; error: Error; plan: null }
+  > | React.ReactNode;
   className?: string;
   loadingState?: React.ReactNode;
   errorState?: React.ReactNode;
@@ -56,29 +32,38 @@ interface PlanContainerProps {
 
 **Example**
 ```tsx
-<Plan.Container loadingState={<div>Loading...</div>} errorState={<div>Error</div>}>
+<Plan.Root
+  planServiceConfig={planServiceConfig}
+  loadingState={<div>Loading...</div>}
+  errorState={<div>Error</div>}
+>
   {/* All plan components */}
-</Plan.Container>
+</Plan.Root>
+
+// With asChild
+<Plan.Root planServiceConfig={planServiceConfig} asChild>
+  {({ isLoading, error, plan }) => (
+    <div className="plan-container">
+      {isLoading ? 'Loading...' : error ? 'Error!' : `Plan ${plan.name} loaded`}
+    </div>
+  )}
+</Plan.Root>
 ```
 
 **Data Attributes**
-- `data-testid="plan-container"` - Applied to container
+- `data-testid="plan-container"` - Applied to root container
 - `data-is-loading` - Applied to container when loading
+- `data-has-error` - Applied to container when error occurs
 ---
 
 ### Plan.Image
 
 Displays the plan image using WixMediaImage
 
-<!-- TODO: Maybe extend the WixMediaImageProps? -->
-<!-- TODO: Check if we have alt text -->
-<!-- TODO: Double check child children props -->
 **Props**
 ```tsx
-// Should probably export AsChildChildren props interface, so consumer doesn't lose typings when not inlining the component
-interface PlanImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  asChild?: boolean;
-  children?: AsChildChildren<{ image: string; }>;
+interface PlanImageProps extends Omit<React.ComponentProps<typeof WixMediaImage>, 'src' | 'media'> {
+  // Inherits all WixMediaImage props except 'src' and 'media' which are provided by the plan data
 }
 ```
 
@@ -94,8 +79,8 @@ interface PlanImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 
 // asChild with react component
 <Plan.Image asChild>
-  {React.forwardRef(({image, ...props}, ref) => (
-    <img ref={ref} {...props} src={image} className="w-full h-full object-cover" />
+  {React.forwardRef(({src, ...props}, ref) => (
+    <img ref={ref} {...props} src={src} className="w-full h-full object-cover" />
   ))}
 </Plan.Image>
 ```
@@ -112,7 +97,8 @@ Displays the plan name.
 ```tsx
 interface PlanNameProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ name: string; }>;
+  children?: AsChildChildren<{ name: string; }> | React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -148,7 +134,8 @@ Displays the plan description.
 ```tsx
 interface PlanDescriptionProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ description: string; }>;
+  children?: AsChildChildren<{ description: string; }> | React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -178,22 +165,21 @@ interface PlanDescriptionProps {
 
 ### Plan.Price
 
-<!-- TODO: Likely to use generic price formatting component that will be provided by the platform -->
-<!-- TODO: Should this include formatting options? -->
-<!-- TODO: Should this return a formatted price string? -->
-<!-- TODO: Perhaps the component should be `Pricing` and include all pricing related data? -->
 Displays formatted price and currency
 
 **Props**
 ```tsx
 interface PlanPriceProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ amount: string; currency: string; }>;
+  // TODO: Adjust
+  children?: AsChildChildren<{ price: { amount: number; currency: string; formattedPrice: string; } }> | React.ReactNode;
+  className?: string;
 }
 ```
 
 **Example**
 ```tsx
+// Default usage
 <Plan.Price className="text-2xl font-bold" />
 
 // asChild with primitive
@@ -203,9 +189,9 @@ interface PlanPriceProps {
 
 // asChild with react component
 <Plan.Price asChild>
-  {React.forwardRef(({amount, currency, ...props}, ref) => (
+  {React.forwardRef(({price, ...props}, ref) => (
     <span ref={ref} {...props} className="text-2xl font-bold">
-      {amount} {currency}
+      {price.formattedPrice}
     </span>
   ))}
 </Plan.Price>
@@ -217,12 +203,21 @@ interface PlanPriceProps {
 
 ### Plan.AdditionalFees
 
-Displays the plan additional fees.
+Container for plan additional fees.
 
 **Props**
 ```tsx
 interface PlanAdditionalFeesProps {
-  children: React.ReactNode;
+  asChild?: boolean;
+  children?: AsChildChildren<{
+    additionalFees: {
+      name: string;
+      amount: number;
+      currency: string;
+      formattedPrice: string;
+    }[];
+  }> | React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -233,6 +228,15 @@ interface PlanAdditionalFeesProps {
     <Plan.AdditionalFeeName />
     <Plan.AdditionalFeeAmount />
   </Plan.AdditionalFeesRepeater>
+</Plan.AdditionalFees>
+
+// asChild with react component
+<Plan.AdditionalFees asChild>
+  {React.forwardRef(({additionalFees, ...props}, ref) => (
+    <div ref={ref} {...props} className="fees-container">
+      {additionalFees.length > 0 && 'Additional fees apply'}
+    </div>
+  ))}
 </Plan.AdditionalFees>
 ```
 
@@ -260,7 +264,7 @@ interface PlanAdditionalFeesRepeaterProps {
 ```
 
 **Data Attributes**
-- `data-testid="plan-additional-fees-repeater"` - Applied to repeater container
+- No data attributes (renders as React fragment)
 ---
 
 ### Plan.AdditionalFeeName
@@ -271,7 +275,8 @@ Displays the additional fee name.
 ```tsx
 interface PlanAdditionalFeeNameProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ name: string; }>;
+  children?: AsChildChildren<{ name: string; }> | React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -307,7 +312,8 @@ Displays the additional fee amount.
 ```tsx
 interface PlanAdditionalFeeAmountProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ amount: string; }>;
+  children?: AsChildChildren<{ amount: string; }> | React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -347,24 +353,21 @@ interface PlanRecurrence {
   period: 'day' | 'week' | 'month' | 'year';
 }
 interface PlanRecurrenceProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ recurrence: PlanRecurrence }>;
+  children: React.ForwardRefRenderFunction<HTMLElement, { recurrence: PlanRecurrence | null }>;
 }
 ```
 
 **Example**
 ```tsx
-// Default usage
-// Should not exist
-// <Plan.Recurrence className="text-sm" />
-
-// asChild with react component
-<Plan.Recurrence asChild>
-  {React.forwardRef(({recurrence, ...props}, ref) => (
-    <span ref={ref} {...props} className="text-content-secondary">
-      Renews every {recurrence.count} {recurrence.period}(s)
-    </span>
-  ))}
+<Plan.Recurrence>
+  {React.forwardRef(({ recurrence }, ref) => {
+    if (!recurrence) return null;
+    return (
+      <span ref={ref} className="text-content-secondary" data-testid="plan-recurrence">
+        Renews every {recurrence.count} {recurrence.period}(s)
+      </span>
+    );
+  })}
 </Plan.Recurrence>
 ```
 
@@ -374,8 +377,6 @@ interface PlanRecurrenceProps {
 
 
 ### Plan.Duration
-
-<!-- TODO: How to handle unlimited duration? -->
 
 Displays the plan duration.
 
@@ -387,23 +388,21 @@ interface PlanDuration {
 }
 
 interface PlanDurationProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ duration: PlanDuration; }>;
+  children: React.ForwardRefRenderFunction<HTMLElement, { duration: PlanDuration | null }>;
 }
 ```
 
 **Example**
 ```tsx
-// Should not exist
-// <Plan.Duration className="text-sm" />
-
-// asChild with react component
-<Plan.Duration asChild>
-  {React.forwardRef(({duration, ...props}, ref) => (
-    <span ref={ref} {...props} className="text-sm">
-      Valid for {duration.count} {duration.period}(s)
-    </span>
-  ))}
+<Plan.Duration>
+  {React.forwardRef(({ duration }, ref) => {
+    if (!duration) return <span>Valid until canceled</span>;
+    return (
+      <span ref={ref} className="text-sm" data-testid="plan-duration">
+        Valid for {duration.count} {duration.period}(s)
+      </span>
+    );
+  })}
 </Plan.Duration>
 ```
 
@@ -411,127 +410,33 @@ interface PlanDurationProps {
 - `data-testid="plan-duration"` - Applied to duration element
 ---
 
-<!-- TODO: Rename -->
 ### Plan.Action.BuyNow
 
-Displays the plan selection button with support for loading state.
+Wraps the Commerce.Actions.BuyNow component for plan purchases.
 
 **Props**
 ```tsx
-interface PlanButtonProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ plan: Plan; isLoading: boolean; }>;
-  label?: string;
-  loadingState?: React.ReactNode;
-}
-```
-
-**Example**
-```tsx
-// TODO: Wrap BuyNow from ecom
-// Default usage
-<Plan.Button className="text-sm" label="Select" loadingState="Setting up your plan..." />
-
-// asChild with primitive
-<Plan.Button asChild>
-  <button className="text-sm">
-    Select
-  </button>
-</Plan.Button>
-
-// asChild with react component
-<Plan.Button asChild>
-  {React.forwardRef(({plan, isLoading, ...props}, ref) => (
-    <button ref={ref} {...props} className="text-sm">
-      {isLoading ? 'Setting up your plan...' : `Buy ${plan.name} now`}
-    </button>
-  ))}
-</Plan.Button>
-```
-
-**Data Attributes**
-- `data-testid="plan-button"` - Applied to button element
-- `data-is-loading` - Applied to button element when loading
----
-
-### Plan.Perks
-
-Displays the plan perks.
-
-**Props**
-```tsx
-interface PlanPerksProps {
-  children?: React.ReactNode;
-}
-```
-
-**Example**
-```tsx
-<Plan.Perks className="text-sm">
-  <Plan.PerksRepeater>
-    <Plan.PerkLabel />
-  </Plan.PerksRepeater>
-</Plan.Perks>
-```
-
-**Data Attributes**
-- `data-testid="plan-perks"` - Applied to perks element
----
-
-### Plan.PerksRepeater
-
-Repeats for each perk in the list
-
-**Props**
-```tsx
-interface PlanPerksRepeaterProps {
-  children: React.ReactNode;
-}
-```
-
-**Example**
-```tsx
-<Plan.PerksRepeater>
-  <Plan.PerkLabel />
-</Plan.PerksRepeater>
-```
-
-**Data Attributes**
-- `data-testid="plan-perks-repeater"` - Applied to repeater container
----
-
-### Plan.PerkLabel
-
-Displays the perk label.
-
-**Props**
-```tsx
-interface PlanPerkLabelProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ label: string; }>;
+interface PlanActionBuyNowProps extends Omit<Commerce.ActionAddToCartProps, 'lineItems'> {
+  // Inherits all Commerce.Actions.BuyNow props except 'lineItems' which is automatically provided from plan data
 }
 ```
 
 **Example**
 ```tsx
 // Default usage
-<Plan.PerkLabel className="text-sm" />
+<Plan.Action.BuyNow className="btn-primary">
+  Buy Now
+</Plan.Action.BuyNow>
 
-// asChild with primitive
-<Plan.PerkLabel asChild>
-  <span className="text-sm" />
-</Plan.PerkLabel>
-
-// asChild with react component
-<Plan.PerkLabel asChild>
-  {React.forwardRef(({label, ...props}, ref) => (
-    <span ref={ref} {...props} className="text-sm">
-      {label}
-    </span>
-  ))}
-</Plan.PerkLabel>
+// With custom loading state
+<Plan.Action.BuyNow
+  className="btn-primary"
+  loadingState={<span>Processing...</span>}
+>
+  Purchase Plan
+</Plan.Action.BuyNow>
 ```
 
 **Data Attributes**
-- `data-testid="plan-perk-label"` - Applied to label element
+- Inherits data attributes from Commerce.Actions.BuyNow component
 ---

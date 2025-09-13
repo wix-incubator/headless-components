@@ -24,7 +24,7 @@ export interface PlanWithEnhancedData extends plansV3.Plan {
       name: string;
       amount: number;
       currency: string;
-      formattedPrice: string;
+      formattedFee: string;
     }[];
     recurrence: PlanRecurrence | null;
     duration: PlanDuration | null;
@@ -138,7 +138,7 @@ function getFormattedAdditionalFeesData(
         return null;
       }
 
-      const formattedPrice = new Intl.NumberFormat('en-US', {
+      const formattedFee = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: plan.currency,
       }).format(amount);
@@ -147,7 +147,7 @@ function getFormattedAdditionalFeesData(
         name: additionalFee.name ?? '',
         amount: amount,
         currency: plan.currency!,
-        formattedPrice,
+        formattedFee,
       };
     })
     .filter((fee): fee is NonNullable<typeof fee> => !!fee);

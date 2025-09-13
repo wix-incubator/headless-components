@@ -11,7 +11,7 @@ import {
 import {
   Root as CoreRoot,
   Container as CoreContainer,
-  ContainerRenderProps,
+  ContainerData,
   Image as CoreImage,
   Name as CoreName,
   Description as CoreDescription,
@@ -23,13 +23,21 @@ import {
   AdditionalFeeRoot as CoreAdditionalFeeRoot,
   Recurrence as CoreRecurrence,
   Duration as CoreDuration,
+  NameData,
+  DescriptionData,
+  PriceData,
+  AdditionalFeesData,
+  AdditionalFeeNameData,
+  AdditionalFeeAmountData,
+  RecurrenceData,
+  DurationData,
 } from './core/Plan.js';
 import { WixMediaImage } from '@wix/headless-media/react';
 import { Commerce } from '@wix/headless-ecom/react';
 import { useService } from '@wix/services-manager-react';
 
 enum PlanTestId {
-  Container = 'plan-container',
+  Root = 'plan-root',
   Image = 'plan-image',
   Name = 'plan-name',
   Description = 'plan-description',
@@ -54,8 +62,10 @@ type RootProps = WithAsChild<
     errorState?: React.ReactNode;
     className?: string;
   },
-  ContainerRenderProps
+  ContainerData
 >;
+
+export type PlanRootData = ContainerData;
 
 export const Root = React.forwardRef<HTMLElement, RootProps>(
   (
@@ -77,7 +87,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>(
               ref={ref}
               asChild={asChild}
               className={className}
-              data-testid={PlanTestId.Container}
+              data-testid={PlanTestId.Root}
               data-is-loading={renderProps.isLoading}
               data-has-error={renderProps.error !== null}
               customElement={children}
@@ -107,12 +117,6 @@ type ImageProps = Omit<
   'src' | 'media'
 >;
 
-// interface ImageProps {
-//   asChild?: boolean;
-//   children?: AsChildChildren<{ image: string }> | React.ReactNode;
-//   className?: string;
-// }
-
 export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   (props, ref) => {
     return (
@@ -130,11 +134,9 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
   },
 );
 
-interface NameProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ name: string }> | React.ReactNode;
-  className?: string;
-}
+type NameProps = WithAsChild<{ className?: string }, NameData>;
+
+export type PlanNameData = NameData;
 
 export const Name = React.forwardRef<HTMLElement, NameProps>(
   ({ children, asChild, className }, ref) => {
@@ -157,11 +159,9 @@ export const Name = React.forwardRef<HTMLElement, NameProps>(
   },
 );
 
-interface DescriptionProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ description: string }> | React.ReactNode;
-  className?: string;
-}
+type DescriptionProps = WithAsChild<{ className?: string }, DescriptionData>;
+
+export type PlanDescriptionData = DescriptionData;
 
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   ({ children, asChild, className }, ref) => {
@@ -184,13 +184,9 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   },
 );
 
-interface PriceProps {
-  asChild?: boolean;
-  children?:
-    | AsChildChildren<{ price: { amount: number; currency: string } }>
-    | React.ReactNode;
-  className?: string;
-}
+type PriceProps = WithAsChild<{ className?: string }, PriceData>;
+
+export type PlanPriceData = PriceData;
 
 export const Price = React.forwardRef<HTMLElement, PriceProps>(
   ({ children, asChild, className }, ref) => {
@@ -214,18 +210,12 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>(
   },
 );
 
-interface AdditionalFeesProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{
-    additionalFees: {
-      name: string;
-      amount: number;
-      currency: string;
-      formattedPrice: string;
-    }[];
-  }>;
-  className?: string;
-}
+type AdditionalFeesProps = WithAsChild<
+  { className?: string },
+  AdditionalFeesData
+>;
+
+export type PlanAdditionalFeesData = AdditionalFeesData;
 
 export const AdditionalFees = React.forwardRef<
   HTMLElement,
@@ -271,11 +261,12 @@ export const AdditionalFeesRepeater = ({
   );
 };
 
-interface AdditionalFeeNameProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ name: string }> | React.ReactNode;
-  className?: string;
-}
+type AdditionalFeeNameProps = WithAsChild<
+  { className?: string },
+  AdditionalFeeNameData
+>;
+
+export type PlanAdditionalFeeNameData = AdditionalFeeNameData;
 
 export const AdditionalFeeName = React.forwardRef<
   HTMLElement,
@@ -299,11 +290,12 @@ export const AdditionalFeeName = React.forwardRef<
   );
 });
 
-interface AdditionalFeeAmountProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ amount: string }> | React.ReactNode;
-  className?: string;
-}
+type AdditionalFeeAmountProps = WithAsChild<
+  { className?: string },
+  AdditionalFeeAmountData
+>;
+
+export type PlanAdditionalFeeAmountData = AdditionalFeeAmountData;
 
 export const AdditionalFeeAmount = React.forwardRef<
   HTMLElement,
@@ -311,16 +303,16 @@ export const AdditionalFeeAmount = React.forwardRef<
 >(({ children, asChild, className }, ref) => {
   return (
     <CoreAdditionalFeeAmount>
-      {({ amount }) => (
+      {(data) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           customElement={children}
-          customElementProps={{ amount }}
+          customElementProps={data}
           className={className}
           data-testid={PlanTestId.AdditionalFeeAmount}
         >
-          <span>{amount}</span>
+          <span>{data.formattedFee}</span>
         </AsChildSlot>
       )}
     </CoreAdditionalFeeAmount>
@@ -329,11 +321,10 @@ export const AdditionalFeeAmount = React.forwardRef<
 
 interface RecurrenceProps {
   // TODO: Is this the correct way to accept children that has to be a component?
-  children: React.ForwardRefRenderFunction<
-    HTMLElement,
-    { recurrence: PlanRecurrence | null }
-  >;
+  children: React.ForwardRefRenderFunction<HTMLElement, RecurrenceData>;
 }
+
+export type PlanRecurrenceData = RecurrenceData;
 
 // TODO: forwardRef seems kind of unnecessary - consumer could just assign ref to the children manually (in which case children shouldn't be forward ref function)
 export const Recurrence = React.forwardRef<HTMLElement, RecurrenceProps>(
@@ -347,11 +338,10 @@ export const Recurrence = React.forwardRef<HTMLElement, RecurrenceProps>(
 );
 
 interface DurationProps {
-  children: React.ForwardRefRenderFunction<
-    HTMLElement,
-    { duration: PlanDuration | null }
-  >;
+  children: React.ForwardRefRenderFunction<HTMLElement, DurationData>;
 }
+
+export type PlanDurationData = DurationData;
 
 export const Duration = React.forwardRef<HTMLElement, DurationProps>(
   ({ children }, ref) => {

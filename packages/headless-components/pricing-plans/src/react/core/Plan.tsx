@@ -45,13 +45,13 @@ export function Root({ planServiceConfig, children }: RootProps) {
   );
 }
 
-export type ContainerRenderProps =
+export type ContainerData =
   | { isLoading: true; error: null; plan: null }
   | { isLoading: false; error: null; plan: plansV3.Plan }
   | { isLoading: false; error: Error; plan: null };
 
 interface ContainerProps {
-  children: (props: ContainerRenderProps) => React.ReactNode;
+  children: (props: ContainerData) => React.ReactNode;
 }
 
 export function Container({ children }: ContainerProps) {
@@ -94,12 +94,12 @@ export function Image({ children }: ImageProps) {
   return children({ image: plan.image });
 }
 
-interface NameRenderProps {
+export interface NameData {
   name: string;
 }
 
 interface NameProps {
-  children: (props: NameRenderProps) => React.ReactNode;
+  children: (props: NameData) => React.ReactNode;
 }
 
 export function Name({ children }: NameProps) {
@@ -113,12 +113,12 @@ export function Name({ children }: NameProps) {
   return children({ name: plan.name! });
 }
 
-interface DescriptionRenderProps {
+export interface DescriptionData {
   description: string;
 }
 
 interface DescriptionProps {
-  children: (props: DescriptionRenderProps) => React.ReactNode;
+  children: (props: DescriptionData) => React.ReactNode;
 }
 
 export function Description({ children }: DescriptionProps) {
@@ -132,12 +132,12 @@ export function Description({ children }: DescriptionProps) {
   return children({ description: plan.description ?? '' });
 }
 
-interface PriceRenderProps {
+export interface PriceData {
   price: { amount: number; currency: string; formattedPrice: string };
 }
 
 interface PriceProps {
-  children: (props: PriceRenderProps) => React.ReactNode;
+  children: (props: PriceData) => React.ReactNode;
 }
 
 export function Price({ children }: PriceProps) {
@@ -151,17 +151,14 @@ export function Price({ children }: PriceProps) {
   return children({ price: plan.enhancedData.price });
 }
 
-interface AdditionalFeesRenderProps {
-  additionalFees: {
-    name: string;
-    amount: number;
-    currency: string;
-    formattedPrice: string;
-  }[];
+type FeeData = PlanWithEnhancedData['enhancedData']['additionalFees'][number];
+
+export interface AdditionalFeesData {
+  additionalFees: FeeData[];
 }
 
 interface AdditionalFeesProps {
-  children: (props: AdditionalFeesRenderProps) => React.ReactNode;
+  children: (props: AdditionalFeesData) => React.ReactNode;
 }
 
 export function AdditionalFees({ children }: AdditionalFeesProps) {
@@ -176,7 +173,7 @@ export function AdditionalFees({ children }: AdditionalFeesProps) {
 }
 
 interface AdditionalFeesRepeaterRenderProps {
-  additionalFees: FeeValue[];
+  additionalFees: FeeData[];
 }
 
 interface AdditionalFeesRepeaterProps {
@@ -197,12 +194,10 @@ export function AdditionalFeesRepeater({
 }
 
 // Context for sharing current fee data between repeater and individual fee components
-type FeeValue = PlanWithEnhancedData['enhancedData']['additionalFees'][number];
-
-const FeeContext = createContext<FeeValue | null>(null);
+const FeeContext = createContext<FeeData | null>(null);
 
 interface AdditionalFeeRootProps {
-  fee: FeeValue;
+  fee: FeeData;
   children: React.ReactNode;
 }
 
@@ -210,12 +205,12 @@ export function AdditionalFeeRoot({ fee, children }: AdditionalFeeRootProps) {
   return <FeeContext.Provider value={fee}>{children}</FeeContext.Provider>;
 }
 
-interface AdditionalFeeNameRenderProps {
+export interface AdditionalFeeNameData {
   name: string;
 }
 
 interface AdditionalFeeNameProps {
-  children: (props: AdditionalFeeNameRenderProps) => React.ReactNode;
+  children: (props: AdditionalFeeNameData) => React.ReactNode;
 }
 
 export function AdditionalFeeName({ children }: AdditionalFeeNameProps) {
@@ -228,12 +223,13 @@ export function AdditionalFeeName({ children }: AdditionalFeeNameProps) {
   return children({ name: fee.name });
 }
 
-interface AdditionalFeeAmountRenderProps {
-  amount: string;
-}
+export type AdditionalFeeAmountData = Pick<
+  FeeData,
+  'amount' | 'currency' | 'formattedFee'
+>;
 
 interface AdditionalFeeAmountProps {
-  children: (props: AdditionalFeeAmountRenderProps) => React.ReactNode;
+  children: (props: AdditionalFeeAmountData) => React.ReactNode;
 }
 
 export function AdditionalFeeAmount({ children }: AdditionalFeeAmountProps) {
@@ -243,15 +239,19 @@ export function AdditionalFeeAmount({ children }: AdditionalFeeAmountProps) {
     return null;
   }
 
-  return children({ amount: fee.formattedPrice });
+  return children({
+    amount: fee.amount,
+    currency: fee.currency,
+    formattedFee: fee.formattedFee,
+  });
 }
 
-interface RecurrenceRenderProps {
+export interface RecurrenceData {
   recurrence: PlanRecurrence | null;
 }
 
 interface RecurrenceProps {
-  children: (renderProps: RecurrenceRenderProps) => React.ReactNode;
+  children: (renderProps: RecurrenceData) => React.ReactNode;
 }
 
 export function Recurrence({ children }: RecurrenceProps) {
@@ -265,12 +265,12 @@ export function Recurrence({ children }: RecurrenceProps) {
   return children({ recurrence: plan.enhancedData.recurrence });
 }
 
-interface DurationRenderProps {
+export interface DurationData {
   duration: PlanDuration | null;
 }
 
 interface DurationProps {
-  children: (renderProps: DurationRenderProps) => React.ReactNode;
+  children: (renderProps: DurationData) => React.ReactNode;
 }
 
 export function Duration({ children }: DurationProps) {
