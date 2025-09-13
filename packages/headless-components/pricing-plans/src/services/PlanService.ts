@@ -58,22 +58,13 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
       isLoadingSignal.set(true);
       errorSignal.set(null);
       try {
-        // TODO: Should use `getPlan` but that gets 403
-        const result = await plansV3
-          .queryPlans()
-          .eq('_id', planId)
-          .eq('visibility', 'PUBLIC')
-          .find();
-        const [plan] = result.items;
-
-        if (!plan) {
-          throw new Error(`Plan ${planId} not found`);
-        }
-
+        const plan = await fetchPlan(planId);
         planSignal.set(enhancePlan(plan));
       } catch (error) {
-        // TODO: Fix types
-        errorSignal.set(error as Error);
+        // TODO: Better typing
+        errorSignal.set(
+          error instanceof Error ? error : new Error(error as any),
+        );
       } finally {
         isLoadingSignal.set(false);
       }
@@ -211,7 +202,26 @@ function getPlanDuration(
   };
 }
 
-// TODO: Implement
-// export async function loadPlanServiceConfig(planId: string) {
-//   const plan = await plansV3.getPlan(planId);
-// }
+async function fetchPlan(planId: string): Promise<plansV3.Plan> {
+  // TODO: Should use `getPlan` but that gets 403
+  const result = await plansV3
+    .queryPlans()
+    .eq('_id', planId)
+    .eq('visibility', 'PUBLIC')
+    .find();
+  const [plan] = result.items;
+
+  if (!plan) {
+    // TODO: Is there an HttpError class where we could set status code?
+    throw new Error(`Plan ${planId} not found`);
+  }
+
+  return plan;
+}
+
+export async function loadPlanServiceConfig(
+  planId: string,
+): Promise<PlanServiceConfig> {
+  const plan = await plansV3.getPlan(planId);
+  return { plan };
+}
