@@ -4,7 +4,6 @@ A comprehensive, composable, and headless API for rendering Online Program entit
 
 ## Open questions
 - public sdk doesn't support alt text for image
-- the instructors list should be fetch together with the program, right? (Separate service form program)
 - program instructor link to members area, how?
 
 ## Table of Contents
@@ -17,6 +16,7 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.StepsCount](#programstepscount)
   - [Program.Description](#programdescription)
   - [Program.DurationInDays](#programdurationindays)
+  - [Program.Price](#programprice)
   - [Program.Instructors](#programinstructors)
   - [Program.InstructorRepeater](#programinstructorrepeater)
   - [Instructor](#instructor)
@@ -341,6 +341,63 @@ interface ProgramDurationInDaysProps {
 </Program.DurationInDays>
 ```
 ---
+
+### Program.Price
+
+Displays the program price with customizable rendering. Data source: program.price with value and currency.
+
+**Props**
+
+```tsx
+interface ProgramPriceProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    formattedPrice: string; // combine price and currency together
+    price: string;
+    currency: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+```
+
+**Data Attributes**
+- `data-testid="program-price"` - Applied to program price element
+
+**Example**
+
+```tsx
+// Default usage - formatted price or null
+<Program.Price className="text-3xl font-bold text-content-primary" />
+
+// asChild with primitive
+<Program.Price asChild>
+  <span className="text-3xl font-bold text-content-primary" />
+</Program.Price>
+
+// With custom formatting
+<Program.Price asChild>
+  {React.forwardRef(({ value, currency, ...props }, ref) => (
+    <div ref={ref} {...props} className="flex items-baseline gap-2">
+      <span className="text-2xl font-bold">{value}</span>
+      <span className="text-sm text-content-secondary">{currency}</span>
+    </div>
+  ))}
+</Program.Price>
+
+// With free program handling
+<Program.Price asChild>
+  {React.forwardRef(({ price, formattedPrice, ...props }, ref) => (
+    <span ref={ref} {...props} className="text-2xl font-bold text-brand-primary">
+      {price ? formattedPrice :  'Free'}
+    </span>
+  ))}
+</Program.Price>
+```
 
 ### Program.Instructors
 

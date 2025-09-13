@@ -67,6 +67,13 @@ export default function OnlineProgramPage({
           </Program.InstructorRepeater>
         </Program.Instructors>
         </ul>
+
+        <h3>Price</h3>
+        <Program.Price asChild>
+          {({ price, formattedPrice }: { price: number; formattedPrice: string }) => (
+            <div>{price ? formattedPrice : 'Free'}</div>
+          )}
+        </Program.Price>
         <Program.Image />
       </Program.Root>
     </ServicesManagerProvider>
