@@ -12,6 +12,7 @@ The PlanList component follows a compound component pattern where each part can 
 
 ## Components
 
+<!-- IMPLEMENT SIMPLE APPROACH, THERE WILL BE A GENERIC COMPONENT FOR LISTS -->
 ### PlanList.Root
 
 The root container that provides plan list context to all child components.

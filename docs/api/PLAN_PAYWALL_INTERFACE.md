@@ -39,22 +39,35 @@ Container for the paywalled content.
 ```tsx
 interface PlanPaywallRestrictedContentProps {
   children: React.ReactNode;
-  fallback?: React.ReactNode;
+  // TODO: Make this its own headless component PlanPaywall.Action.BuyPlan
+  // fallback?: React.ReactNode;
 }
 ```
 
 **Example**
 ```tsx
 // Fallback component will receive `plan` as a prop
-<PlanPaywall.RestrictedContent fallback={
-  <Plan.Root plan={plan}>
+<PlanPaywall.RestrictedContent requiredPlanIds={['planId']} fallback={
+  <Plan.Root planId={planId}>
     <Plan.Button label="Buy to unlock content" />
   </Plan.Root>
 }>
+
   {/* Paywalled content */}
+
+</PlanPaywall.RestrictedContent>
+
+
+<PlanPaywall.RestrictedContent requiredPlanIds={['planid1', 'planid2']} fallback={
+  // Somehow display the plans or redirect
+}>
+
+  {/* Paywalled content */}
+
 </PlanPaywall.RestrictedContent>
 ```
 
+<!-- TODO: Define data-attributes for states in all components -->
 **Data Attributes**
 - `data-testid="plan-paywall-restricted-content"` - Applied to content container
 ---

@@ -14,9 +14,7 @@ The root container that provides plan context to all child components.
 
 **Props**
 ```tsx
-interface PlanServiceConfig {
-  plan: Plan;
-}
+type PlanServiceConfig = { plan: Plan } | { planId: string }
 
 interface PlanRootProps {
   planServiceConfig: PlanServiceConfig;
@@ -33,6 +31,39 @@ interface PlanRootProps {
 
 **Data Attributes**
 - `data-testid="plan"` - Applied to root container
+---
+
+### Plan.Container
+
+Container for the plan with support for loading and error states.
+
+**Props**
+<!-- TODO: Figure out how to pass error data to error state -->
+<!-- TODO: Update props with className etc -->
+```tsx
+interface PlanContainerProps {
+  asChild?: boolean;
+  children: AsChildChildren<
+  | { isLoading: true; error: null; plan: null }
+  | { isLoading: false; error: null; plan: Plan }
+  | { isLoading: false; error: Error; plan: null }
+  >;
+  className?: string;
+  loadingState?: React.ReactNode;
+  errorState?: React.ReactNode;
+}
+```
+
+**Example**
+```tsx
+<Plan.Container loadingState={<div>Loading...</div>} errorState={<div>Error</div>}>
+  {/* All plan components */}
+</Plan.Container>
+```
+
+**Data Attributes**
+- `data-testid="plan-container"` - Applied to container
+- `data-is-loading` - Applied to container when loading
 ---
 
 ### Plan.Image
@@ -148,6 +179,8 @@ interface PlanDescriptionProps {
 
 <!-- TODO: Likely to use generic price formatting component that will be provided by the platform -->
 <!-- TODO: Should this include formatting options? -->
+<!-- TODO: Should this return a formatted price string? -->
+<!-- TODO: Perhaps the component should be `Pricing` and include all pricing related data? -->
 Displays formatted price and currency
 
 **Props**
@@ -301,6 +334,44 @@ interface PlanAdditionalFeeAmountProps {
 - `data-testid="plan-additional-fee-amount"` - Applied to amount element
 ---
 
+
+### Plan.Recurrence
+
+Displays the plan recurrence. Not rendered for one-time plans.
+
+**Props**
+```tsx
+interface PlanRecurrence {
+  count: number;
+  period: 'day' | 'week' | 'month' | 'year';
+}
+interface PlanRecurrenceProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ recurrence: PlanRecurrence }>;
+}
+```
+
+**Example**
+```tsx
+// Default usage
+// Should not exist
+// <Plan.Recurrence className="text-sm" />
+
+// asChild with react component
+<Plan.Recurrence asChild>
+  {React.forwardRef(({recurrence, ...props}, ref) => (
+    <span ref={ref} {...props} className="text-content-secondary">
+      Renews every {recurrence.count} {recurrence.period}(s)
+    </span>
+  ))}
+</Plan.Recurrence>
+```
+
+**Data Attributes**
+- `data-testid="plan-recurrence"` - Applied to recurrence element
+---
+
+
 ### Plan.Duration
 
 <!-- TODO: How to handle unlimited duration? -->
@@ -322,7 +393,8 @@ interface PlanDurationProps {
 
 **Example**
 ```tsx
-<Plan.Duration className="text-sm" />
+// Should not exist
+// <Plan.Duration className="text-sm" />
 
 // asChild with react component
 <Plan.Duration asChild>
@@ -338,42 +410,8 @@ interface PlanDurationProps {
 - `data-testid="plan-duration"` - Applied to duration element
 ---
 
-### Plan.Recurrence
-
-Displays the plan recurrence. Not rendered for one-time plans.
-
-**Props**
-```tsx
-interface PlanRecurrence {
-  count: number;
-  period: 'day' | 'week' | 'month' | 'year';
-}
-interface PlanRecurrenceProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ recurrence: PlanRecurrence }>;
-}
-```
-
-**Example**
-```tsx
-// Default usage
-<Plan.Recurrence className="text-sm" />
-
-// asChild with react component
-<Plan.Recurrence asChild>
-  {React.forwardRef(({recurrence, ...props}, ref) => (
-    <span ref={ref} {...props} className="text-content-secondary">
-      Renews every {recurrence.count} {recurrence.period}(s)
-    </span>
-  ))}
-</Plan.Recurrence>
-```
-
-**Data Attributes**
-- `data-testid="plan-recurrence"` - Applied to recurrence element
----
-
-### Plan.Button
+<!-- TODO: Rename -->
+### Plan.Action.BuyNow
 
 Displays the plan selection button with support for loading state.
 
@@ -389,6 +427,7 @@ interface PlanButtonProps {
 
 **Example**
 ```tsx
+// TODO: Wrap BuyNow from ecom
 // Default usage
 <Plan.Button className="text-sm" label="Select" loadingState="Setting up your plan..." />
 
@@ -411,6 +450,7 @@ interface PlanButtonProps {
 
 **Data Attributes**
 - `data-testid="plan-button"` - Applied to button element
+- `data-is-loading` - Applied to button element when loading
 ---
 
 ### Plan.Perks
