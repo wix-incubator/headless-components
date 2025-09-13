@@ -22,6 +22,7 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Instructor](#instructor)
     - [Instructor.Name](#instructorinstructorname)
     - [Instructor.Description](#instructordescription)
+    - [Instructor.Image](#instructorimage)
 
 - [Drafts](#drafts)
   - [Program.Participants.Stats.ParticipantsCount] ???
@@ -595,6 +596,67 @@ interface InstructorDescriptionProps {
     </p>
   ))}
 </Instructor.Description>
+```
+
+---
+
+### Instructor.Image
+
+Displays the instructor's profile photo with customizable rendering. Data source: instructor.photo and instructor.photoAltText.
+
+**Props**
+
+```tsx
+interface InstructorImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    src: string;
+    altText: string;
+  }>;
+}
+```
+
+**Data Attributes**
+- `data-testid="instructor-image"` - Applied to instructor image element
+
+**Example**
+
+```tsx
+// Default usage
+<Instructor.Image className="w-16 h-16 rounded-full object-cover" />
+
+// asChild with primitive
+<Instructor.Image asChild>
+  <img className="w-16 h-16 rounded-full object-cover" />
+</Instructor.Image>
+
+// asChild with react component
+<Instructor.Image asChild>
+  {React.forwardRef(({ src, altText, ...props }, ref) => (
+    <img
+      ref={ref}
+      src={src}
+      alt={altText}
+      {...props}
+      className="w-16 h-16 rounded-full object-cover"
+    />
+  ))}
+</Instructor.Image>
+
+// With custom sizing
+<Instructor.Image asChild>
+  {React.forwardRef(({ src, altText, ...props }, ref) => (
+    <img
+      ref={ref}
+      src={src}
+      alt={altText}
+      {...props}
+      className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
+    />
+  ))}
+</Instructor.Image>
 ```
 
 ## Drafts

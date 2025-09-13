@@ -62,6 +62,7 @@ export default function OnlineProgramPage({
             <li>
               <Instructor.Name />
               <Instructor.Description />
+              <Instructor.Image />
             </li>
           </Program.InstructorRepeater>
         </Program.Instructors>

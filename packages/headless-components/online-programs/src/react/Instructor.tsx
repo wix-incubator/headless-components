@@ -1,6 +1,7 @@
 import React from 'react';
 import { instructors } from '@wix/online-programs';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+// import { WixMediaImage } from '@wix/headless-media/react';
 
 interface InstructorContextValue {
   instructor: instructors.Instructor;
@@ -19,9 +20,10 @@ function useInstructorContext(): InstructorContextValue {
 }
 
 enum TestIds {
-  programInstructor = 'program-instructor',
-  programName = 'program-instructor-name',
+  instructor = 'instructor',
+  instructorName = 'instructor-name',
   instructorDescription = 'instructor-description',
+  instructorImage = 'instructor-image',
 }
 
 /**
@@ -59,7 +61,7 @@ function Root(props: InstructorRootProps): React.ReactNode {
   const { asChild, children, instructor, ...otherProps } = props;
 
   const dataAttributes = {
-    'data-testid': TestIds.programInstructor,
+    'data-testid': TestIds.instructor,
     'data-instructor-id': instructor.userId,
   };
 
@@ -132,7 +134,7 @@ const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
     <AsChildSlot
       ref={ref}
       asChild={asChild}
-      data-testid={TestIds.programName}
+      data-testid={TestIds.instructorName}
       customElement={children}
       customElementProps={{ name, slug }}
       content={name}
@@ -203,10 +205,91 @@ const Description = React.forwardRef<HTMLElement, DescriptionProps>((props, ref)
 Description.displayName = 'Instructor.Description';
 
 /**
+ * Props for Instructor Image component
+ */
+interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    src: string;
+    altText: string;
+  }>;
+}
+
+/**
+ * Displays the instructor's profile photo with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Instructor.Image className="w-16 h-16 rounded-full object-cover" />
+ *
+ * // asChild with primitive
+ * <Instructor.Image asChild>
+ *   <img className="w-16 h-16 rounded-full object-cover" />
+ * </Instructor.Image>
+ *
+ * // asChild with react component
+ * <Instructor.Image asChild>
+ *   {React.forwardRef(({ src, altText, ...props }, ref) => (
+ *     <img
+ *       ref={ref}
+ *       src={src}
+ *       alt={altText}
+ *       {...props}
+ *       className="w-16 h-16 rounded-full object-cover"
+ *     />
+ *   ))}
+ * </Instructor.Image>
+ * ```
+ */
+const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+  const { instructor } = useInstructorContext();
+
+  // Return null if no photo is available
+  if (!instructor.photo) {
+    return null;
+  }
+
+  const src = instructor.photo.url || '';
+  const altText = instructor.photoAltText || '';
+
+  const attributes = {
+    'data-testid': TestIds.instructorImage,
+  };
+
+  return (
+    <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...attributes}
+        customElement={children}
+        customElementProps={{
+          src,
+          altText,
+        }}
+      >
+        <img
+          src={src}
+          alt={altText}
+          {...otherProps}
+        />
+    </AsChildSlot>
+  );
+});
+
+Image.displayName = 'Instructor.Image';
+
+/**
  * Compound component for Instructor with all sub-components
  */
 export const Instructor = {
   Root,
   Name,
   Description,
+  Image,
 } as const;
