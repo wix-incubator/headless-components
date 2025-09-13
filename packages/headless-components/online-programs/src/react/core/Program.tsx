@@ -228,6 +228,69 @@ export function DurationInDays(props: ProgramDurationInDaysProps) {
 }
 
 /**
+ * Props for ProgramPrice headless component
+ */
+export interface ProgramPriceProps {
+  /** Render prop function that receives program price data */
+  children: (props: ProgramPriceRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProgramPrice component
+ */
+export interface ProgramPriceRenderProps {
+  /** Program price */
+  price: string | null;
+  /** Combined price and currency */
+  formattedPrice: string;
+  /** Currency code */
+  currency: string;
+}
+
+/**
+ * Headless component for program price display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramPrice() {
+ *   return (
+ *     <Program.Price>
+ *       {({ price, formattedPrice }) => (
+ *         <div>
+ *           {price ? (
+ *             <span>{formattedPrice}</span>
+ *           ) : (
+ *             <span>Free</span>
+ *           )}
+ *         </div>
+ *       )}
+ *     </Program.Price>
+ *   );
+ * }
+ * ```
+ */
+export function Price(props: ProgramPriceProps) {
+  const service = useService(ProgramServiceDefinition) as ServiceAPI<
+    typeof ProgramServiceDefinition
+  >;
+
+  const program = service.program.get();
+  const price = program.price?.value || null;
+  const currency = program.price?.currency || '';
+  // TODO: use formatCurrency from stores
+  const formattedPrice = price && currency ? `${price} ${currency}` : '';
+
+  return props.children({
+    price,
+    formattedPrice,
+    currency,
+  });
+}
+
+/**
  * Props for ProgramDescription headless component
  */
 export interface ProgramDescriptionProps {

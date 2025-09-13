@@ -12,6 +12,7 @@ enum TestIds {
   programImage = 'program-image',
   programDuration = 'program-duration',
   programDescription = 'program-description',
+  programPrice = 'program-price',
   programInstructors = 'program-instructors',
   programInstructorRepeater = 'program-instructor-repeater',
 }
@@ -251,6 +252,89 @@ const DurationInDays = React.forwardRef<HTMLElement, DurationInDaysProps>(
 DurationInDays.displayName = 'Program.DurationInDays';
 
 /**
+ * Props for Program Price component
+ */
+interface PriceProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    formattedPrice: string; // combine price and currency together
+    price: string;
+    currency: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+/**
+ * Displays the program price with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage - formatted price or null
+ * <Program.Price className="text-3xl font-bold text-content-primary" />
+ *
+ * // asChild with primitive
+ * <Program.Price asChild>
+ *   <span className="text-3xl font-bold text-content-primary" />
+ * </Program.Price>
+ *
+ * // With custom formatting
+ * <Program.Price asChild>
+ *   {React.forwardRef(({ value, currency, ...props }, ref) => (
+ *     <div ref={ref} {...props} className="flex items-baseline gap-2">
+ *       <span className="text-2xl font-bold">{value}</span>
+ *       <span className="text-sm text-content-secondary">{currency}</span>
+ *     </div>
+ *   ))}
+ * </Program.Price>
+ *
+ * // With free program handling
+ * <Program.Price asChild>
+ *   {React.forwardRef(({ price, formattedPrice, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-2xl font-bold text-brand-primary">
+ *       {price ? formattedPrice : 'Free'}
+ *     </span>
+ *   ))}
+ * </Program.Price>
+ * ```
+ */
+const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreProgram.Price>
+      {({ price, formattedPrice, currency }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.programPrice}
+            customElement={children}
+            customElementProps={{
+              formattedPrice,
+              price,
+              currency,
+            }}
+            content={formattedPrice}
+            {...otherProps}
+          >
+            <span>{formattedPrice}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreProgram.Price>
+  );
+});
+
+Price.displayName = 'Program.Price';
+
+/**
  * Props for Program Description component
  */
 interface DescriptionProps {
@@ -478,6 +562,7 @@ export const Program = {
   Title,
   Image,
   DurationInDays,
+  Price,
   Description,
   Instructors,
   InstructorRepeater,
