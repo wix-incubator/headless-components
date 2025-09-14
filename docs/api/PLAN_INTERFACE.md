@@ -12,6 +12,10 @@ The Plan component follows a compound component pattern where each part can be c
 
 The root container that provides plan context to child components and handles loading/error states for plan loading.
 
+Accepts a `planServiceConfig` prop with one of the following options:
+- `planId`: Plan ID to load
+- `plan`: Plan to add to context (if loaded externally)
+
 **Props**
 ```tsx
 type PlanServiceConfig = { plan: Plan } | { planId: string }
@@ -24,7 +28,8 @@ interface RootProps {
 
 **Example**
 ```tsx
-<Plan.Root planServiceConfig={planServiceConfig}>
+// Load specific plan
+<Plan.Root planServiceConfig={{ planId: 'planId' }}>
   <Plan.Plan>
     <Plan.Image />
     <Plan.Name />
@@ -33,6 +38,15 @@ interface RootProps {
     <Plan.Recurrence />
     <Plan.Duration />
     <Plan.Action.BuyNow label="Select Plan" />
+  </Plan.Plan>
+</Plan.Root>
+
+// Load plan externally
+const { plan } = await loadPlanServiceConfig('planId');
+
+<Plan.Root planServiceConfig={{ plan: plan }}>
+  <Plan.Plan>
+    {/* Plan components */}
   </Plan.Plan>
 </Plan.Root>
 ```

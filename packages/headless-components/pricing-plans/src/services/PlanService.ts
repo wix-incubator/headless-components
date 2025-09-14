@@ -37,7 +37,9 @@ export const PlanServiceDefinition = defineService<{
   errorSignal: ReadOnlySignal<Error | null>;
 }>('planService');
 
-export type PlanServiceConfig = { planId: string } | { plan: plansV3.Plan };
+export type PlanServiceConfig =
+  | { planId: string }
+  | { plan: PlanWithEnhancedData };
 
 export const PlanService = implementService.withConfig<PlanServiceConfig>()(
   PlanServiceDefinition,
@@ -47,7 +49,7 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
     const errorSignal = signalsService.signal<Error | null>(null);
     const configHasPlan = 'plan' in config;
     const planSignal = signalsService.signal<PlanWithEnhancedData | null>(
-      configHasPlan ? enhancePlan(config.plan) : null,
+      configHasPlan ? config.plan : null,
     );
 
     if (!configHasPlan) {
@@ -58,11 +60,9 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
       isLoadingSignal.set(true);
       errorSignal.set(null);
       try {
-        const plan = await fetchPlan(planId);
-        planSignal.set(enhancePlan(plan));
+        const plan = await fetchAndEnhancePlan(planId);
+        planSignal.set(plan);
       } catch (error) {
-        console.error('Error loading plan:', error);
-        // TODO: Better typing
         errorSignal.set(
           error instanceof Error ? error : new Error(error as any),
         );
@@ -79,7 +79,7 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
   },
 );
 
-function enhancePlan(plan: plansV3.Plan): PlanWithEnhancedData {
+export function enhancePlanData(plan: plansV3.Plan): PlanWithEnhancedData {
   return {
     ...plan,
     enhancedData: {
@@ -203,26 +203,32 @@ function getPlanDuration(
   };
 }
 
-async function fetchPlan(planId: string): Promise<plansV3.Plan> {
-  // TODO: Should use `getPlan` but that gets 403
-  const result = await plansV3
-    .queryPlans()
-    .eq('_id', planId)
-    .eq('visibility', 'PUBLIC')
-    .find();
-  const [plan] = result.items;
+async function fetchAndEnhancePlan(
+  planId: string,
+): Promise<PlanWithEnhancedData> {
+  try {
+    const result = await plansV3
+      .queryPlans()
+      .eq('_id', planId)
+      .eq('visibility', 'PUBLIC')
+      .find();
+    const [plan] = result.items;
 
-  if (!plan) {
-    // TODO: Is there an HttpError class where we could set status code?
-    throw new Error(`Plan ${planId} not found`);
+    if (!plan) {
+      // TODO: Is there an HttpError class where we could set status code?
+      throw new Error(`Plan ${planId} not found`);
+    }
+
+    return enhancePlanData(plan);
+  } catch (error) {
+    console.log('Error fetching and enhancing plan data:', error);
+    throw error;
   }
-
-  return plan;
 }
 
 export async function loadPlanServiceConfig(
   planId: string,
 ): Promise<PlanServiceConfig> {
-  const plan = await plansV3.getPlan(planId);
+  const plan = await fetchAndEnhancePlan(planId);
   return { plan };
 }
