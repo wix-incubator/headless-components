@@ -1,89 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import PlanCard from './PlanCard';
+import React from 'react';
+import { PlanCardContent } from './PlanCard';
 import { useWixClient } from '../hooks/useWixClient';
-import type { PlanData } from '../utils/types';
+import { PricingPlans } from '@wix/headless-pricing-plans/react';
 
 const PricingPageComponent: React.FC = () => {
-  const [plans, setPlans] = useState<PlanData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const { fetchPlans, goToPlanCheckout, login } = useWixClient();
-
-  useEffect(() => {
-    initializeComponent();
-  }, []);
-
-  const initializeComponent = async () => {
-    try {
-      await loadPlans();
-    } catch (error) {
-      console.error('Failed to initialize pricing page:', error);
-      setError(true);
-      setLoading(false);
-    }
-  };
-
-  const loadPlans = async () => {
-    try {
-      const publicPlans = await fetchPlans();
-      setPlans(publicPlans);
-    } catch (error) {
-      console.error('Error loading plans:', error);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSelectPlan = async (planId: string) => {
-    const button = document.getElementById(`plan-button-${planId}`);
-    if (button) {
-      button.innerHTML = `
-        <div class="flex items-center justify-center">
-          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-          <span>Loading...</span>
-        </div>
-      `;
-    }
-
-    try {
-      await goToPlanCheckout(planId);
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      alert('Failed to start checkout. Please try again.');
-
-      if (button) {
-        button.innerHTML = 'Select Plan';
-      }
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-secondary-600">Loading pricing plans...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="text-center py-20">
-            <p className="text-red-600">
-              Unable to load pricing plans. Please try again later.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { login } = useWixClient();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
@@ -154,25 +75,30 @@ const PricingPageComponent: React.FC = () => {
 
         {/* Plans Grid */}
         <section className="py-12">
-          {plans.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-secondary-600">
-                No pricing plans available at the moment.
-              </p>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {plans.map((plan, index) => (
-                <PlanCard
-                  key={plan.id}
-                  planData={plan}
-                  isPopular={index === 1}
-                  onSelectPlan={handleSelectPlan}
-                  buttonText="Select Plan"
-                />
-              ))}
-            </div>
-          )}
+          <PricingPlans.PlanList.Root planListServiceConfig={{}}>
+            <PricingPlans.PlanList.Plans
+              loadingState={
+                <div className="text-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                  <p className="mt-4 text-secondary-600">
+                    Loading pricing plans...
+                  </p>
+                </div>
+              }
+              emptyState={
+                <div className="text-center py-20">
+                  <p className="text-secondary-600">
+                    No pricing plans available at the moment.
+                  </p>
+                </div>
+              }
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+            >
+              <PricingPlans.PlanList.PlanRepeater>
+                <PlanCardContent buttonText="Select Plan" showButton />
+              </PricingPlans.PlanList.PlanRepeater>
+            </PricingPlans.PlanList.Plans>
+          </PricingPlans.PlanList.Root>
         </section>
 
         {/* FAQ Section */}

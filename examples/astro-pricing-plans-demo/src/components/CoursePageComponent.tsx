@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useWixClient } from '../hooks/useWixClient';
-import { getLevelBadgeClass } from '../utils/planUtils';
+import { getLevelBadgeClass } from '../utils/course-utils';
 import { RestrictedContentComponent } from './RestrictedContentComponent';
-import { PlanList } from './PlanList';
-import PlanCard from './PlanCard';
+import { PlanCardContent } from './PlanCard';
 import type { Course } from '../utils/demo-courses';
-import type { PlanData } from '../utils/types';
+import { PricingPlans } from '@wix/headless-pricing-plans/react';
 
 interface CoursePageComponentProps {
   course: Course;
 }
 
 export const CoursePageComponent = (props: CoursePageComponentProps) => {
-  console.log(props.course);
   if (
     props.course.accessedByPlanIds &&
     props.course.accessedByPlanIds.length > 0
@@ -33,7 +31,7 @@ export const CoursePageComponent = (props: CoursePageComponentProps) => {
 const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
   course,
 }) => {
-  const { getIsLoggedIn, login, logout, goToPlanCheckout } = useWixClient();
+  const { getIsLoggedIn, login, logout } = useWixClient();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
@@ -49,29 +47,6 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
       logout();
     } else {
       login();
-    }
-  };
-
-  const handleSelectPlan = async (planId: string) => {
-    const button = document.getElementById(`plan-button-${planId}`);
-    if (button) {
-      button.innerHTML = `
-        <div class="flex items-center justify-center">
-          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-          <span>Loading...</span>
-        </div>
-      `;
-    }
-
-    try {
-      await goToPlanCheckout(planId);
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      alert('Failed to start checkout. Please try again.');
-
-      if (button) {
-        button.innerHTML = 'Get Started';
-      }
     }
   };
 
@@ -147,7 +122,7 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
                     <div className="flex flex-wrap items-center gap-4 mb-4">
                       <span
                         className={`px-4 py-2 rounded-full text-sm font-semibold ${getLevelBadgeClass(
-                          course.level
+                          course.level,
                         )}`}
                       >
                         {course.level}
@@ -203,74 +178,38 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
           </div>
         </section>
 
-        {/* Upgrade Banner */}
-        {/* <section className="py-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-8 text-center shadow-large">
-              <div className="flex items-center justify-center mb-4">
-                <span className="text-white text-2xl mr-3">🔒</span>
-                <h2 className="text-2xl font-bold text-white">
-                  Upgrade to Beginner Access to access this course
-                </h2>
-              </div>
-              <p className="text-orange-100 text-lg">
-                Join thousands of craftsmen mastering their skills with Master
-                Craft Carpentry Academy
-              </p>
-            </div>
-          </div>
-        </section> */}
-
         {/* Pricing Plans */}
         <section className="py-12">
           <div className="max-w-6xl mx-auto text-center">
-            <PlanList planIds={course.accessedByPlanIds || []}>
-              {({ plans, isLoading }) => {
-                if (isLoading) {
-                  return (
-                    <div className="text-center py-20">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-                      <p className="mt-4 text-secondary-600">
-                        Loading pricing plans...
-                      </p>
-                    </div>
-                  );
-                }
-
-                if (plans.length === 0) {
-                  return (
-                    <div className="text-center py-20">
-                      <p className="text-secondary-600">
-                        No pricing plans available for this course.
-                      </p>
-                    </div>
-                  );
-                }
-
-                return (
-                  <>
-                    <h2 className="text-4xl font-bold mb-4 text-secondary-800">
-                      Choose Your Learning Path
-                    </h2>
-                    <p className="text-xl text-secondary-600 mb-12">
-                      Build your carpentry skills with our expert-led courses
-                    </p>
-
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                      {plans.map((plan, index) => (
-                        <PlanCard
-                          key={plan.id}
-                          planData={plan}
-                          isPopular={index === 1}
-                          onSelectPlan={handleSelectPlan}
-                          buttonText="Get Started"
-                        />
-                      ))}
-                    </div>
-                  </>
-                );
+            <PricingPlans.PlanList.Root
+              planListServiceConfig={{
+                // TODO: Don't render plans if user has access to the course
+                planIds: course.accessedByPlanIds || [],
               }}
-            </PlanList>
+            >
+              <PricingPlans.PlanList.Plans
+                className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+                loadingState={
+                  <div className="text-center py-20">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+                    <p className="mt-4 text-secondary-600">
+                      Loading pricing plans...
+                    </p>
+                  </div>
+                }
+                emptyState={
+                  <div className="text-center py-20">
+                    <p className="text-secondary-600">
+                      No pricing plans available for this course.
+                    </p>
+                  </div>
+                }
+              >
+                <PricingPlans.PlanList.PlanRepeater>
+                  <PlanCardContent buttonText="Get Started" showButton />
+                </PricingPlans.PlanList.PlanRepeater>
+              </PricingPlans.PlanList.Plans>
+            </PricingPlans.PlanList.Root>
           </div>
         </section>
       </main>
@@ -279,9 +218,8 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
 };
 
 const CourseData: React.FC<CoursePageComponentProps> = ({ course }) => {
-  const { goToPlanCheckout, getIsLoggedIn, login, logout } = useWixClient();
+  const { getIsLoggedIn, login, logout } = useWixClient();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [showPlans, setShowPlans] = useState(false);
 
   useEffect(() => {
     getIsLoggedIn().then((isLoggedIn) => {
@@ -301,7 +239,6 @@ const CourseData: React.FC<CoursePageComponentProps> = ({ course }) => {
 This would navigate to the course content in a real implementation.`);
     } else {
       // Course requires subscription
-      setShowPlans(true);
     }
   };
 
@@ -385,7 +322,7 @@ This would navigate to the course content in a real implementation.`);
                   <div className="flex flex-wrap items-center gap-4 mb-4">
                     <span
                       className={`px-4 py-2 rounded-full text-sm font-semibold ${getLevelBadgeClass(
-                        course.level
+                        course.level,
                       )}`}
                     >
                       {course.level}

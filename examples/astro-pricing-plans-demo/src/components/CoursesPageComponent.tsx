@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { createClient, OAuthStrategy } from '@wix/sdk';
-import { members } from '@wix/members';
-import { orders } from '@wix/pricing-plans';
-import { getLevelBadgeClass } from '../utils/planUtils';
+import { getLevelBadgeClass } from '../utils/course-utils';
 import { useWixClient } from '../hooks/useWixClient';
 import { RestrictedContentComponent } from './RestrictedContentComponent';
-import { PlanList } from './PlanList';
-import type { PlanData } from '../utils/types';
 import { getAllCourses, type Course } from '../utils/demo-courses';
+import { PricingPlans } from '@wix/headless-pricing-plans/react';
 
 // Separate component for locked course card to properly manage state
 const LockedCourseCard: React.FC<{
   course: Course;
   planIds: string[];
-  onPlanCheckout: (planId: string) => void;
-}> = ({ course, planIds, onPlanCheckout }) => {
+}> = ({ course, planIds }) => {
   const [showPlans, setShowPlans] = React.useState(false);
 
   const handleCourseClick = () => {
@@ -44,7 +39,7 @@ const LockedCourseCard: React.FC<{
           <div className="flex items-center justify-between">
             <span
               className={`px-3 py-1 rounded-full text-sm font-semibold ${getLevelBadgeClass(
-                course.level
+                course.level,
               )}`}
             >
               {course.level}
@@ -71,106 +66,90 @@ const LockedCourseCard: React.FC<{
         </div>
       </div>
 
-      <PlanList planIds={planIds}>
-        {({ plans }) =>
-          showPlans && (
-            <div
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-              onClick={() => setShowPlans(false)}
-            >
+      <PricingPlans.PlanList.Root planListServiceConfig={{ planIds }}>
+        <PricingPlans.PlanList.Plans asChild>
+          {({ plans, isLoading, error }, ref) =>
+            !isLoading &&
+            !error &&
+            showPlans && (
               <div
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-large text-center max-w-sm mx-4"
-                onClick={(e) => e.stopPropagation()}
+                ref={ref as React.RefObject<HTMLDivElement>}
+                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                onClick={() => setShowPlans(false)}
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-white text-xl">🔒</span>
-                </div>
-                <h4 className="font-bold text-secondary-800 mb-2">
-                  Premium Course
-                </h4>
+                <div
+                  className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-large text-center max-w-sm mx-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-400 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-white text-xl">🔒</span>
+                  </div>
+                  <h4 className="font-bold text-secondary-800 mb-2">
+                    Premium Course
+                  </h4>
 
-                {plans.length === 1 ? (
-                  <>
-                    <p className="text-sm text-secondary-600 mb-4">
-                      Unlock this course with a subscription
-                    </p>
-                    <button
-                      className="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-lg font-medium text-sm hover:shadow-medium transition-all duration-200"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onPlanCheckout(plans[0].id);
-                      }}
+                  {plans.length === 1 ? (
+                    <PricingPlans.Plan.Root
+                      planServiceConfig={{ plan: plans[0] }}
                     >
-                      Get "{plans[0].name}" plan
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm text-secondary-600 mb-4">
-                      Choose a plan to unlock this course:
-                    </p>
+                      <p className="text-sm text-secondary-600 mb-4">
+                        Unlock this course with a subscription
+                      </p>
+                      <PricingPlans.Plan.Action.BuyNow
+                        className="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-lg font-medium text-sm hover:shadow-medium transition-all duration-200"
+                        label={`Get "${plans[0].name}" plan`}
+                      />
+                    </PricingPlans.Plan.Root>
+                  ) : (
+                    <>
+                      <p className="text-sm text-secondary-600 mb-4">
+                        Choose a plan to unlock this course:
+                      </p>
+                      <div className="space-y-2">
+                        <PricingPlans.PlanList.PlanRepeater>
+                          <div className="bg-white/50 rounded-lg p-3 border border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <PricingPlans.Plan.Name className="font-medium text-sm text-gray-900" />
+                              <PricingPlans.Plan.Price className="text-sm font-semibold text-gray-900" />
+                              <PricingPlans.Plan.Recurrence>
+                                {({ recurrence }, ref) => {
+                                  if (!recurrence) return null;
 
-                    <div className="space-y-2">
-                      {plans.map((plan) => (
-                        <div
-                          key={plan.id}
-                          className="bg-white/50 rounded-lg p-3 border border-gray-200"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm text-gray-900">
-                              {plan.name}
-                            </span>
-                            <span className="text-sm font-semibold text-gray-900">
-                              {plan.currency}
-                              {plan.price}
-                              {plan.recurrence && (
-                                <span className="text-xs text-gray-500 ml-1">
-                                  /
-                                  {plan.recurrence.cycleDuration.period.toLowerCase()}
-                                </span>
-                              )}
-                            </span>
+                                  return (
+                                    <span
+                                      ref={ref}
+                                      className="text-xs text-gray-500 ml-1"
+                                    >
+                                      /{recurrence.period.toLowerCase()}
+                                    </span>
+                                  );
+                                }}
+                              </PricingPlans.Plan.Recurrence>
+                            </div>
+                            <PricingPlans.Plan.Action.BuyNow
+                              className="w-full px-3 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-md font-medium text-xs hover:shadow-md transition-all duration-200"
+                              label="Get plan now"
+                            />
                           </div>
-                          <button
-                            className="w-full px-3 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-md font-medium text-xs hover:shadow-md transition-all duration-200"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onPlanCheckout(plan.id);
-                            }}
-                          >
-                            Get "{plan.name}" plan
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
+                        </PricingPlans.PlanList.PlanRepeater>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          )
-        }
-      </PlanList>
+            )
+          }
+        </PricingPlans.PlanList.Plans>
+      </PricingPlans.PlanList.Root>
     </>
   );
 };
 
 const CoursesPageComponent: React.FC = () => {
-  const { goToPlanCheckout, getIsLoggedIn, login, logout } = useWixClient();
+  const { getIsLoggedIn, login, logout } = useWixClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
-  const [wixClient] = useState(() => {
-    return createClient({
-      modules: {
-        members: members,
-        orders: orders,
-      },
-      auth: OAuthStrategy({
-        clientId: import.meta.env.PUBLIC_WIX_CLIENT_ID || 'your_client_id_here',
-      }),
-    });
-  });
 
   const courses = getAllCourses();
 
@@ -344,7 +323,7 @@ const CoursesPageComponent: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-semibold ${getLevelBadgeClass(
-                          course.level
+                          course.level,
                         )}`}
                       >
                         {course.level}
@@ -385,7 +364,7 @@ const CoursesPageComponent: React.FC = () => {
                 <LockedCourseCard
                   course={course}
                   planIds={course.accessedByPlanIds}
-                  onPlanCheckout={goToPlanCheckout}
+                  // onPlanCheckout={goToPlanCheckout}
                 />
               );
 

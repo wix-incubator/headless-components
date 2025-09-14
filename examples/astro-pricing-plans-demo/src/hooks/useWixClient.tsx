@@ -1,18 +1,15 @@
 import { createClient, OAuthStrategy } from '@wix/sdk';
-import { plansV3, orders } from '@wix/pricing-plans';
+import { orders } from '@wix/pricing-plans';
 import { members } from '@wix/members';
 import { useCallback, useState } from 'react';
-import { resolvePlanData } from '../utils/planUtils';
-import type { PlanData } from '../utils/types';
 import { redirects } from '@wix/redirects';
 
 const MEMBER_STORAGE_KEY = 'member-store';
 
 export function useWixClient() {
-  const [client] = useState(() => {
-    return createClient({
+  const [client] = useState(() =>
+    createClient({
       modules: {
-        plansApi: plansV3,
         membersApi: members,
         ordersApi: orders,
         redirectsApi: redirects,
@@ -20,37 +17,8 @@ export function useWixClient() {
       auth: OAuthStrategy({
         clientId: import.meta.env.PUBLIC_WIX_CLIENT_ID || 'your_client_id_here',
       }),
-    });
-  });
-
-  const fetchPlans = useCallback((planIds?: string[]): Promise<PlanData[]> => {
-    if (!planIds) {
-      return client.plansApi
-        .queryPlans()
-        .find()
-        .then((plans) => plans.items?.map(resolvePlanData));
-    }
-
-    return client.plansApi
-      .queryPlans()
-      .in('_id', planIds)
-      .find()
-      .then((plans) => plans.items?.map(resolvePlanData));
-  }, []);
-
-  const goToPlanCheckout = useCallback(async (planId: string) => {
-    const { redirectSession } = await client.redirectsApi.createRedirectSession(
-      {
-        paidPlansCheckout: { planId },
-      }
-    );
-
-    if (redirectSession?.fullUrl) {
-      window.location.href = redirectSession.fullUrl;
-    } else {
-      throw new Error('Failed to create checkout session');
-    }
-  }, []);
+    }),
+  );
 
   const getMemberHasPlansAccess = useCallback(async (planIds: string[]) => {
     try {
@@ -79,12 +47,12 @@ export function useWixClient() {
     const returnUrl = encodeURIComponent(window.location.pathname);
     const loginUrl = `/api/auth/login?returnToUrl=${returnUrl}`;
 
-    // const insideIframe = window.self !== window.top;
-    // if (!insideIframe) {
-    //   // dev machine url has been opened outside the picasso iframe
-    //   window.location.href = loginUrl;
-    //   return;
-    // }
+    const insideIframe = window.self !== window.top;
+    if (!insideIframe) {
+      // dev machine url has been opened outside the picasso iframe
+      window.location.href = loginUrl;
+      return;
+    }
 
     // we are on a different domain, we need to ask for storage access,
     // otherwise we won't be able to access session cookie
@@ -148,8 +116,6 @@ export function useWixClient() {
   }, []);
 
   return {
-    fetchPlans,
-    goToPlanCheckout,
     getMemberHasPlansAccess,
     getIsLoggedIn,
     login,
