@@ -165,7 +165,7 @@ export function AdditionalFees({ children }: AdditionalFeesProps) {
   const { planSignal } = useService(PlanServiceDefinition);
   const plan = planSignal.get();
 
-  if (!plan) {
+  if (!plan || !plan.enhancedData.additionalFees.length) {
     return null;
   }
 
@@ -288,13 +288,11 @@ export interface PerksData {
   perks: string[];
 }
 
-export interface PerkDescriptionData {
-  perkDescription: string;
+export interface PerkItemData {
+  perk: string;
 }
 
-export const PerkDescriptionContext = createContext<PerkDescriptionData | null>(
-  null,
-);
+export const PerkItemContext = createContext<PerkItemData | null>(null);
 
 interface PerksProps {
   children: (props: PerksData) => React.ReactNode;
@@ -304,7 +302,7 @@ export function Perks({ children }: PerksProps) {
   const { planSignal } = useService(PlanServiceDefinition);
 
   const plan = planSignal.get();
-  if (!plan) {
+  if (!plan || !plan.perks?.length) {
     return null;
   }
 
@@ -329,16 +327,16 @@ export function PerksRepeater({ children }: PerksRepeaterProps) {
   });
 }
 
-interface PerkDescriptionProps {
-  children: (props: PerkDescriptionData) => React.ReactNode;
+interface PerkItemProps {
+  children: (props: PerkItemData) => React.ReactNode;
 }
 
-export function PerkDescription({ children }: PerkDescriptionProps) {
-  const perkDescription = useContext(PerkDescriptionContext);
+export function PerkItem({ children }: PerkItemProps) {
+  const perkItem = useContext(PerkItemContext);
 
-  if (!perkDescription) {
+  if (!perkItem) {
     return null;
   }
 
-  return children({ perkDescription: perkDescription.perkDescription });
+  return children({ perk: perkItem.perk });
 }

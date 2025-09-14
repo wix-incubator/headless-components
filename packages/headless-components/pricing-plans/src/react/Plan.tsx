@@ -31,9 +31,9 @@ import {
   Perks as CorePerks,
   PerksData,
   PerksRepeater as CorePerksRepeater,
-  PerkDescriptionContext,
-  PerkDescriptionData,
-  PerkDescription as CorePerkDescription,
+  PerkItemContext,
+  PerkItemData,
+  PerkItem as CorePerkItem,
 } from './core/Plan.js';
 import { WixMediaImage } from '@wix/headless-media/react';
 import { Commerce } from '@wix/headless-ecom/react';
@@ -49,7 +49,7 @@ enum PlanTestId {
   AdditionalFeeName = 'plan-additional-fee-name',
   AdditionalFeeAmount = 'plan-additional-fee-amount',
   Perks = 'plan-perks',
-  PerkDescription = 'plan-perk-description',
+  PerkItem = 'plan-perk-item',
   ActionBuyNow = 'plan-action-buy-now',
 }
 
@@ -628,7 +628,7 @@ interface PerksProps {
  * // Default usage
  * <Plan.Perks className="flex flex-col gap-2">
  *   <Plan.PerksRepeater>
- *     <Plan.PerkDescription className="text-sm" />
+ *     <Plan.PerkItem className="text-sm" />
  *   </Plan.PerksRepeater>
  * </Plan.Perks>
  *
@@ -668,13 +668,13 @@ interface PerksRepeaterProps {
 }
 
 /**
- * Repeater component that renders children for each perk with the perk description context.
+ * Repeater component that renders children for each perk with the perk item context.
  *
  * @component
  * @example
  * ```tsx
  * <Plan.PerksRepeater>
- *   <Plan.PerkDescription className="text-sm" />
+ *   <Plan.PerkItem className="text-sm" />
  * </Plan.PerksRepeater>
  * ```
  */
@@ -684,12 +684,9 @@ export const PerksRepeater = ({ children }: PerksRepeaterProps) => {
       {(perksData) => (
         <>
           {perksData.perks.map((perk) => (
-            <PerkDescriptionContext.Provider
-              value={{ perkDescription: perk }}
-              key={perk}
-            >
+            <PerkItemContext.Provider value={{ perk: perk }} key={perk}>
               {children}
-            </PerkDescriptionContext.Provider>
+            </PerkItemContext.Provider>
           ))}
         </>
       )}
@@ -697,57 +694,56 @@ export const PerksRepeater = ({ children }: PerksRepeaterProps) => {
   );
 };
 
-export type PlanPerkDescriptionData = PerkDescriptionData;
+export type PlanPerkItemData = PerkItemData;
 
-interface PerkDescriptionProps {
+interface PerkItemProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanPerkDescriptionData>;
+  children: AsChildChildren<PlanPerkItemData>;
   className?: string;
 }
 
 /**
- * Displays the perk description. Must be used within a PerksRepeater.
+ * Displays the perk item. Must be used within a PerksRepeater.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Plan.PerkDescription className="text-sm" />
+ * <Plan.PerkItem className="text-sm" />
  *
  * // asChild with primitive
- * <Plan.PerkDescription asChild>
+ * <Plan.PerkItem asChild>
  *   <span className="text-sm" />
- * </Plan.PerkDescription>
+ * </Plan.PerkItem>
  *
  * // asChild with react component
- * <Plan.PerkDescription asChild>
- *   {React.forwardRef(({perkDescription, ...props}, ref) => (
+ * <Plan.PerkItem asChild>
+ *   {React.forwardRef(({perk, ...props}, ref) => (
  *     <span ref={ref} {...props} className="text-sm">
- *       {perkDescription}
+ *       {perk}
  *     </span>
  *   ))}
- * </Plan.PerkDescription>
+ * </Plan.PerkItem>
  * ```
  */
-export const PerkDescription = React.forwardRef<
-  HTMLElement,
-  PerkDescriptionProps
->(({ children, asChild, className }, ref) => (
-  <CorePerkDescription>
-    {(perkDescriptionData) => (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        customElement={children}
-        customElementProps={perkDescriptionData}
-        className={className}
-        data-testid={PlanTestId.PerkDescription}
-      >
-        <span>{perkDescriptionData.perkDescription}</span>
-      </AsChildSlot>
-    )}
-  </CorePerkDescription>
-));
+export const PerkItem = React.forwardRef<HTMLElement, PerkItemProps>(
+  ({ children, asChild, className }, ref) => (
+    <CorePerkItem>
+      {(perkItemData) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          customElement={children}
+          customElementProps={perkItemData}
+          className={className}
+          data-testid={PlanTestId.PerkItem}
+        >
+          <span>{perkItemData.perk}</span>
+        </AsChildSlot>
+      )}
+    </CorePerkItem>
+  ),
+);
 
 type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
 

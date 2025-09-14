@@ -38,6 +38,59 @@ interface RootProps {
 ```
 ---
 
+### Plan.Plan
+
+Displays the plan data with support for loading state.
+
+**Props**
+```tsx
+interface PlanProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanData>;
+  className?: string;
+  loadingState?: React.ReactNode;
+}
+
+type PlanData =
+  | { isLoading: true; error: null; plan: null }
+  | { isLoading: false; error: null; plan: plansV3.Plan }
+  | { isLoading: false; error: Error; plan: null };
+```
+
+**Example**
+```tsx
+// Default usage with loading state
+<Plan.Plan className="flex flex-col gap-4" loadingState={<div>Loading...</div>}>
+  <Plan.Image />
+  <Plan.Name />
+  <Plan.Price />
+</Plan.Plan>
+
+// asChild with react component
+<Plan.Plan asChild>
+  {React.forwardRef(({isLoading, error, plan}, ref) => {
+    if (isLoading) {
+      return <div ref={ref}>Loading plan...</div>;
+    }
+    if (error) {
+      return <div ref={ref}>Error loading plan: {error.message}</div>;
+    }
+    return (
+      <div ref={ref} className="flex flex-col gap-4">
+        <h2>Plan: {plan.name}</h2>
+        <p>ID: {plan._id}</p>
+      </div>
+    );
+  })}
+</Plan.Plan>
+```
+
+**Data Attributes**
+- `data-testid="plan-plan"` - Applied to plan element
+- `data-is-loading="true|false"` - Indicates loading state
+- `data-has-error="true|false"` - Indicates error state
+---
+
 ### Plan.Image
 
 Displays the plan image using WixMediaImage
@@ -78,7 +131,15 @@ Displays the plan name.
 
 **Props**
 ```tsx
-type NameProps = WithAsChild<{ className?: string }, PlanNameData>;
+interface NameProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanNameData>;
+  className?: string;
+}
+
+interface PlanNameData {
+  name: string;
+};
 ```
 
 **Example**
@@ -111,10 +172,15 @@ Displays the plan description.
 
 **Props**
 ```tsx
-type DescriptionProps = WithAsChild<
-  { className?: string },
-  PlanDescriptionData
->;
+interface DescriptionProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanDescriptionData>;
+  className?: string;
+}
+
+interface PlanDescriptionData {
+  description: string;
+}
 ```
 
 **Example**
@@ -147,7 +213,15 @@ Displays plan price.
 
 **Props**
 ```tsx
-type PriceProps = WithAsChild<{ className?: string }, PlanPriceData>;
+interface PriceProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanPriceData>;
+  className?: string;
+}
+
+interface PlanPriceData {
+  price: { amount: number; currency: string; formattedPrice: string };
+}
 ```
 
 **Example**
@@ -183,10 +257,20 @@ Container for plan additional fees.
 
 **Props**
 ```tsx
-type AdditionalFeesProps = WithAsChild<
-  { className?: string },
-  PlanAdditionalFeesData
->;
+interface AdditionalFeesProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanAdditionalFeesData>;
+  className?: string;
+}
+
+interface PlanAdditionalFeesData {
+  additionalFees: {
+    name: string;
+    amount: number;
+    currency: string;
+    formattedFee: string;
+  }[];
+}
 ```
 
 **Example**
@@ -239,10 +323,15 @@ Displays the additional fee name. Must be used within an AdditionalFeesRepeater.
 
 **Props**
 ```tsx
-type AdditionalFeeNameProps = WithAsChild<
-  { className?: string },
-  PlanAdditionalFeeNameData
->;
+interface AdditionalFeeNameProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanAdditionalFeeNameData>;
+  className?: string;
+}
+
+interface PlanAdditionalFeeNameData {
+  name: string;
+}
 ```
 
 **Example**
@@ -275,10 +364,17 @@ Displays the additional fee amount. Must be used within an AdditionalFeesRepeate
 
 **Props**
 ```tsx
-type AdditionalFeeAmountProps = WithAsChild<
-  { className?: string },
-  PlanAdditionalFeeAmountData
->;
+interface AdditionalFeeAmountProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanAdditionalFeeAmountData>;
+  className?: string;
+}
+
+interface PlanAdditionalFeeAmountData {
+  amount: number;
+  currency: string;
+  formattedFee: string;
+}
 ```
 
 **Example**
@@ -318,6 +414,13 @@ Provides the child component with the recurrence data. It will be null for one-t
 interface RecurrenceProps {
   children: React.ForwardRefRenderFunction<HTMLElement, PlanRecurrenceData>;
 }
+
+interface PlanRecurrenceData {
+  recurrence: {
+    count: number;
+    period: 'DAY' | 'WEEK' | 'MONTH' | 'YEAR';
+  } | null;
+}
 ```
 
 **Example**
@@ -344,6 +447,13 @@ Provides the child component with the duration data. It will be `null` for unlim
 interface DurationProps {
   children: React.ForwardRefRenderFunction<HTMLElement, PlanDurationData>;
 }
+
+interface PlanDurationData {
+  duration: {
+    count: number;
+    period: 'DAY' | 'WEEK' | 'MONTH' | 'YEAR';
+  } | null;
+}
 ```
 
 **Example**
@@ -366,7 +476,15 @@ Container for plan perks.
 
 **Props**
 ```tsx
-type PerksProps = WithAsChild<{ className?: string }, PlanPerksData>;
+interface PerksProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanPerksData>;
+  className?: string;
+}
+
+interface PlanPerksData {
+  perks: string[];
+}
 ```
 
 **Example**
@@ -374,7 +492,7 @@ type PerksProps = WithAsChild<{ className?: string }, PlanPerksData>;
 // Default usage
 <Plan.Perks className="flex flex-col gap-2">
   <Plan.PerksRepeater>
-    <Plan.PerkDescription className="text-sm" />
+    <Plan.PerkItem className="text-sm" />
   </Plan.PerksRepeater>
 </Plan.Perks>
 
@@ -394,7 +512,7 @@ type PerksProps = WithAsChild<{ className?: string }, PlanPerksData>;
 
 ### Plan.PerksRepeater
 
-Repeater component that renders children for each perk with the perk description context
+Repeater component that renders children for each perk with the perk item context
 
 **Props**
 ```tsx
@@ -406,45 +524,50 @@ interface PlanPerksRepeaterProps {
 **Example**
 ```tsx
 <Plan.PerksRepeater>
-  <Plan.PerkDescription className="text-sm" />
+  <Plan.PerkItem className="text-sm" />
 </Plan.PerksRepeater>
 ```
 ---
 
-### Plan.PerkDescription
+### Plan.PerkItem
 
-Displays the perk description. Must be used within a PerksRepeater.
+Displays the perk item. Must be used within a PerksRepeater.
 
 **Props**
 ```tsx
-type PerkDescriptionProps = WithAsChild<
-  { className?: string },
-  PlanPerkDescriptionData
->;
+interface PerkItemProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanPerkItemData>;
+  className?: string;
+}
+
+interface PlanPerkItemData {
+  perk: string;
+}
 ```
 
 **Example**
 ```tsx
 // Default usage
-<Plan.PerkDescription className="text-sm" />
+<Plan.PerkItem className="text-sm" />
 
 // asChild with primitive
-<Plan.PerkDescription asChild>
+<Plan.PerkItem asChild>
   <span className="text-sm" />
-</Plan.PerkDescription>
+</Plan.PerkItem>
 
 // asChild with react component
-<Plan.PerkDescription asChild>
-  {React.forwardRef(({perkDescription, ...props}, ref) => (
+<Plan.PerkItem asChild>
+  {React.forwardRef(({perk, ...props}, ref) => (
     <span ref={ref} {...props} className="text-sm">
-      {perkDescription}
+      {perk}
     </span>
   ))}
-</Plan.PerkDescription>
+</Plan.PerkItem>
 ```
 
 **Data Attributes**
-- `data-testid="plan-perk-description"` - Applied to perk description element
+- `data-testid="plan-perk-item"` - Applied to perk item element
 ---
 
 ### Plan.Action.BuyNow
