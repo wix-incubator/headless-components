@@ -165,7 +165,7 @@ export function AdditionalFees({ children }: AdditionalFeesProps) {
   const { planSignal } = useService(PlanServiceDefinition);
   const plan = planSignal.get();
 
-  if (!plan || !plan.enhancedData.additionalFees.length) {
+  if (!plan) {
     return null;
   }
 
@@ -282,4 +282,63 @@ export function Duration({ children }: DurationProps) {
   }
 
   return children({ duration: plan.enhancedData.duration });
+}
+
+export interface PerksData {
+  perks: string[];
+}
+
+export interface PerkDescriptionData {
+  perkDescription: string;
+}
+
+export const PerkDescriptionContext = createContext<PerkDescriptionData | null>(
+  null,
+);
+
+interface PerksProps {
+  children: (props: PerksData) => React.ReactNode;
+}
+
+export function Perks({ children }: PerksProps) {
+  const { planSignal } = useService(PlanServiceDefinition);
+
+  const plan = planSignal.get();
+  if (!plan) {
+    return null;
+  }
+
+  return children({
+    perks: plan.perks?.map((perk) => perk.description!) ?? [],
+  });
+}
+
+interface PerksRepeaterProps {
+  children: (perksData: PerksData) => React.ReactNode;
+}
+
+export function PerksRepeater({ children }: PerksRepeaterProps) {
+  const { planSignal } = useService(PlanServiceDefinition);
+  const plan = planSignal.get();
+  if (!plan) {
+    return null;
+  }
+
+  return children({
+    perks: plan.perks?.map((perk) => perk.description!) ?? [],
+  });
+}
+
+interface PerkDescriptionProps {
+  children: (props: PerkDescriptionData) => React.ReactNode;
+}
+
+export function PerkDescription({ children }: PerkDescriptionProps) {
+  const perkDescription = useContext(PerkDescriptionContext);
+
+  if (!perkDescription) {
+    return null;
+  }
+
+  return children({ perkDescription: perkDescription.perkDescription });
 }
