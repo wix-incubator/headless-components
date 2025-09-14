@@ -41,7 +41,6 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@wix/auto_sdk_forms_forms": "^1.0.46",
     "@wix/forms": "^1.0.292",
     "@wix/headless-utils": "workspace:*",
     "@wix/services-definitions": "^0.1.4",

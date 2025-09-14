@@ -4719,7 +4719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_forms_forms@npm:1.0.49, @wix/auto_sdk_forms_forms@npm:^1.0.46":
+"@wix/auto_sdk_forms_forms@npm:1.0.49":
   version: 1.0.49
   resolution: "@wix/auto_sdk_forms_forms@npm:1.0.49"
   dependencies:
@@ -5680,7 +5680,6 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/auto_sdk_forms_forms": "npm:^1.0.46"
     "@wix/forms": "npm:^1.0.292"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
