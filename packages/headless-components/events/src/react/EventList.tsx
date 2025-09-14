@@ -22,12 +22,13 @@ export interface RootProps {
 
 /**
  * Root container that provides event list service context to all child components.
+ * Must be used as the top-level component for event list functionality.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { EventList } from '@wix/headless-events/react';
+ * import { EventList } from '@wix/events/components';
  *
  * function EventListPage({ eventListServiceConfig }) {
  *   return (
@@ -61,8 +62,10 @@ export const Root = (props: RootProps): React.ReactNode => {
  * Props for the EventList Events component.
  */
 export interface EventsProps {
-  /** Child components */
-  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
+  children: AsChildChildren<{ events: Event[] }>;
   /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -86,24 +89,27 @@ export interface EventsProps {
  */
 export const Events = React.forwardRef<HTMLElement, EventsProps>(
   (props, ref) => {
-    const { children, emptyState, className } = props;
+    const { asChild, children, emptyState, className, ...otherProps } = props;
 
     return (
       <CoreEventList.Events>
-        {({ hasEvents }) => {
+        {({ events, hasEvents }) => {
           if (!hasEvents) {
             return emptyState || null;
           }
 
-          const attributes = {
-            className,
-            'data-testid': TestIds.eventListEvents,
-          };
-
           return (
-            <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-              {children}
-            </div>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.eventListEvents}
+              customElement={children}
+              customElementProps={{ events }}
+              {...otherProps}
+            >
+              <div>{children as React.ReactNode}</div>
+            </AsChildSlot>
           );
         }}
       </CoreEventList.Events>
@@ -140,11 +146,7 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
 
   return (
     <CoreEventList.EventRepeater>
-      {({ events, hasEvents }) => {
-        if (!hasEvents) {
-          return null;
-        }
-
+      {({ events }) => {
         return events.map((event) => (
           <Event.Root key={event._id} event={event} className={className}>
             {children}
@@ -200,7 +202,7 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { asChild, children, className, label } = props;
+  const { asChild, children, className, label, ...otherProps } = props;
 
   return (
     <CoreEventList.LoadMoreTrigger>
@@ -219,6 +221,7 @@ export const LoadMoreTrigger = React.forwardRef<
             customElementProps={{ isLoading, loadMoreEvents }}
             disabled={isLoading}
             onClick={loadMoreEvents}
+            {...otherProps}
           >
             <button>{label}</button>
           </AsChildSlot>
@@ -265,7 +268,7 @@ export interface ErrorProps {
  * ```
  */
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreEventList.Error>
@@ -279,6 +282,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
             customElement={children}
             customElementProps={{ error }}
             content={error}
+            {...otherProps}
           >
             <span>{error}</span>
           </AsChildSlot>

@@ -66,12 +66,10 @@ export interface EventRepeaterProps {
 export interface EventRepeaterRenderProps {
   /** List of events */
   events: Event[];
-  /** Indicates whether there are any events in the list */
-  hasEvents: boolean;
 }
 
 /**
- * EventList EventRepeater core component that provides event list data.
+ * EventList EventRepeater core component that provides event list. Not rendered if there are no events.
  *
  * @component
  */
@@ -80,7 +78,11 @@ export function EventRepeater(props: EventRepeaterProps): React.ReactNode {
   const events = eventListService.events.get();
   const hasEvents = !!events.length;
 
-  return props.children({ events, hasEvents });
+  if (!hasEvents) {
+    return null;
+  }
+
+  return props.children({ events });
 }
 
 export interface LoadMoreTriggerProps {
