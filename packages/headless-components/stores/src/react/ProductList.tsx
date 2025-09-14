@@ -211,22 +211,13 @@ export interface ProductsProps {
  */
 export const Products = React.forwardRef<HTMLElement, ProductsProps>(
   (props, ref) => {
-    const {
-      children,
-      emptyState,
-      infiniteScroll = true,
-      pageSize = 0,
-      className,
-    } = props;
+    const { children, ...otherProps } = props;
 
     return (
       <GenericList.Items
-        emptyState={emptyState}
-        className={className}
         ref={ref}
         data-testid={TestIds.productListProducts}
-        data-infinite-scroll={infiniteScroll}
-        data-page-size={pageSize}
+        {...otherProps}
       >
         {children as React.ReactNode}
       </GenericList.Items>
