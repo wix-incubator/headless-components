@@ -1,5 +1,10 @@
 ---
-export const prerender = false;
+import { loadProgramListServiceConfig } from '@wix/headless-online-programs/services';
+
+import ProgramsPage from '../react-pages/online-programs/programs';
+
+const programListServiceConfig = await loadProgramListServiceConfig();
+
 ---
 
-<div>Online Programs list should be here</div>
+<ProgramsPage programListServiceConfig={programListServiceConfig} />
