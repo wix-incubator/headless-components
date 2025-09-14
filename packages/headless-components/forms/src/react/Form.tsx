@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import { AsChildSlot } from '@wix/headless-utils/react';
 
 import { type FormServiceConfig } from '../services/form-service';
 import * as CoreForm from './core/Form.js';
@@ -249,20 +249,10 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
 export interface LoadingErrorProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Content to display during error state (can be a render function or ReactNode) */
-  children?: AsChildChildren<LoadingErrorRenderProps>;
+  /** Content to display during error state (can be a ReactNode) */
+  children?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-/**
- * Render props for LoadingError component
- */
-export interface LoadingErrorRenderProps {
-  /** Error message */
-  error: string | null;
-  /** Whether there's an error */
-  hasError: boolean;
 }
 
 /**
@@ -272,7 +262,7 @@ export interface LoadingErrorRenderProps {
  * @component
  * @param {LoadingErrorProps} props - The component props
  * @param {boolean} [props.asChild] - Whether to render as a child component
- * @param {AsChildChildren<LoadingErrorRenderProps>} [props.children] - Content to display during error state (can be a render function or ReactNode)
+ * @param {React.ReactNode} [props.children] - Content to display during error state
  * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
@@ -285,18 +275,14 @@ export interface LoadingErrorRenderProps {
  *   );
  * }
  *
- * // Custom rendering with render function
+ * // Custom content
  * function CustomLoadingError() {
  *   return (
  *     <Form.LoadingError>
- *       {({ error, hasError }) => (
- *         hasError ? (
- *           <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded mb-4">
- *             <h3 className="font-heading text-lg">Error loading form</h3>
- *             <p className="font-paragraph">{error}</p>
- *           </div>
- *         ) : null
- *       )}
+ *       <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded mb-4">
+ *         <h3 className="font-heading text-lg">Error loading form</h3>
+ *         <p className="font-paragraph">Something went wrong. Please try again.</p>
+ *       </div>
  *     </Form.LoadingError>
  *   );
  * }
@@ -305,12 +291,14 @@ export interface LoadingErrorRenderProps {
  * function CustomLoadingErrorAsChild() {
  *   return (
  *     <Form.LoadingError asChild>
- *       {React.forwardRef(({ error, hasError }, ref) => (
- *         <div ref={ref} className="custom-error-container">
- *           <h3 className="font-heading">Custom Error Display</h3>
- *           <p className="font-paragraph">{error}</p>
- *         </div>
- *       ))}
+ *       {React.forwardRef<HTMLDivElement, { error: string | null; hasError: boolean }>(
+ *         ({ error }, ref) => (
+ *           <div ref={ref} className="custom-error-container">
+ *             <h3 className="font-heading">Error Loading Form</h3>
+ *             <p className="font-paragraph">{error}</p>
+ *           </div>
+ *         )
+ *       )}
  *     </Form.LoadingError>
  *   );
  * }
@@ -353,31 +341,20 @@ export const LoadingError = React.forwardRef<HTMLElement, LoadingErrorProps>(
 export interface ErrorProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Content to display during submit error state (can be a render function or ReactNode) */
-  children?: AsChildChildren<ErrorRenderProps>;
+  /** Content to display during submit error state (can be a ReactNode) */
+  children?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Render props for Error component
- */
-export interface ErrorRenderProps {
-  /** Error message */
-  error: string | null;
-  /** Whether there's an error */
-  hasError: boolean;
-}
-
-/**
  * Component that renders content when there's an error during form submission.
  * Only displays its children when a submission error has occurred.
- * Provides error data to custom render functions.
  *
  * @component
  * @param {ErrorProps} props - The component props
  * @param {boolean} [props.asChild] - Whether to render as a child component
- * @param {AsChildChildren<ErrorRenderProps>} [props.children] - Content to display during submit error state (can be a render function or ReactNode)
+ * @param {React.ReactNode} [props.children] - Content to display during submit error state
  * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
@@ -388,35 +365,30 @@ export interface ErrorRenderProps {
  *   return <Form.Error className="text-destructive p-4 rounded-lg mb-4" />;
  * }
  *
- * // Custom rendering with render function
+ * // Custom content
  * function CustomFormError() {
  *   return (
  *     <Form.Error>
- *       {({ error, hasError }) => (
- *         hasError ? (
- *           <div className="bg-destructive/10 border border-destructive text-destructive p-4 rounded-lg mb-4">
- *             <h3 className="font-heading text-lg">Submission Failed</h3>
- *             <p className="font-paragraph">{error}</p>
- *           </div>
- *         ) : null
- *       )}
+ *       <div className="bg-destructive/10 border border-destructive text-destructive p-4 rounded-lg mb-4">
+ *         <h3 className="font-heading text-lg">Submission Failed</h3>
+ *         <p className="font-paragraph">Please check your input and try again.</p>
+ *       </div>
  *     </Form.Error>
  *   );
  * }
  *
- * // Custom rendering with forwardRef and asChild
+ * // With asChild for custom components
  * function CustomFormErrorAsChild() {
  *   return (
  *     <Form.Error asChild>
- *       {React.forwardRef(({ error, hasError }, ref) => (
- *         <div
- *           ref={ref}
- *           className="custom-error-container"
- *         >
- *           <h3 className="font-heading">Submission Failed</h3>
- *           <p className="font-paragraph">{error}</p>
- *         </div>
- *       ))}
+ *       {React.forwardRef<HTMLDivElement, { error: string | null; hasError: boolean }>(
+ *         ({ error }, ref) => (
+ *           <div ref={ref} className="custom-error-container">
+ *             <h3 className="font-heading">Submission Failed</h3>
+ *             <p className="font-paragraph">{error}</p>
+ *           </div>
+ *         )
+ *       )}
  *     </Form.Error>
  *   );
  * }
@@ -457,31 +429,20 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 export interface SubmittedProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Content to display after successful submission (can be a render function or ReactNode) */
-  children?: AsChildChildren<SubmittedRenderProps>;
+  /** Content to display after successful submission (can be a ReactNode) */
+  children?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Render props for Submitted component
- */
-export interface SubmittedRenderProps {
-  /** Whether the form has been submitted */
-  isSubmitted: boolean;
-  /** Success message */
-  message: string;
-}
-
-/**
  * Component that renders content after successful form submission.
  * Only displays its children when the form has been successfully submitted.
- * Provides submission data to custom render functions.
  *
  * @component
  * @param {SubmittedProps} props - The component props
  * @param {boolean} [props.asChild] - Whether to render as a child component
- * @param {AsChildChildren<SubmittedRenderProps>} [props.children] - Content to display after successful submission (can be a render function or ReactNode)
+ * @param {React.ReactNode} [props.children] - Content to display after successful submission
  * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
@@ -492,35 +453,30 @@ export interface SubmittedRenderProps {
  *   return <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />;
  * }
  *
- * // Custom rendering with render function
+ * // Custom content
  * function CustomFormSubmitted() {
  *   return (
  *     <Form.Submitted>
- *       {({ isSubmitted, message }) => (
- *         isSubmitted ? (
- *           <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg mb-4">
- *             <h2 className="font-heading text-xl mb-2">Thank You!</h2>
- *             <p className="font-paragraph">{message}</p>
- *           </div>
- *         ) : null
- *       )}
+ *       <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg mb-4">
+ *         <h2 className="font-heading text-xl mb-2">Thank You!</h2>
+ *         <p className="font-paragraph">Your form has been submitted successfully.</p>
+ *       </div>
  *     </Form.Submitted>
  *   );
  * }
  *
- * // Custom rendering with forwardRef and asChild
+ * // With asChild for custom components
  * function CustomFormSubmittedAsChild() {
  *   return (
  *     <Form.Submitted asChild>
- *       {React.forwardRef(({ isSubmitted, message }, ref) => (
- *         <div
- *           ref={ref}
- *           className="custom-success-container"
- *         >
- *           <h2 className="font-heading">Thank You!</h2>
- *           <p className="font-paragraph">{message}</p>
- *         </div>
- *       ))}
+ *       {React.forwardRef<HTMLDivElement, { isSubmitted: boolean; message: string }>(
+ *         ({ message }, ref) => (
+ *           <div ref={ref} className="custom-success-container">
+ *             <h2 className="font-heading">Thank You!</h2>
+ *             <p className="font-paragraph">{message}</p>
+ *           </div>
+ *         )
+ *       )}
  *     </Form.Submitted>
  *   );
  * }
@@ -706,13 +662,7 @@ export interface FieldsProps {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading className="flex justify-center p-4" />
- *       <Form.LoadingError>
- *         {({ error }) => (
- *           <div className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4">
- *             {error}
- *           </div>
- *         )}
- *       </Form.LoadingError>
+ *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
  *     </Form.Root>
  *   );
