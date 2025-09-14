@@ -1,5 +1,5 @@
 import React from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import { AsChildSlot } from '@wix/headless-utils/react';
 
 /** List display variants */
 export type ListVariant = 'list' | 'table' | 'grid';
@@ -102,6 +102,8 @@ export interface GenericListLoadMoreProps {
  * Props for the GenericList Totals component
  */
 export interface GenericListTotalsProps {
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
   /** Custom render function */
   children?:
     | React.ReactNode
@@ -267,9 +269,14 @@ export const LoadMore = React.forwardRef<
 
   if (asChild) {
     return (
-      <Slot ref={ref} {...attributes}>
-        {children || buttonContent}
-      </Slot>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        {...attributes}
+        customElement={children}
+      >
+        <button>{children || buttonContent}</button>
+      </AsChildSlot>
     );
   }
 
@@ -290,19 +297,11 @@ LoadMore.displayName = 'GenericList.LoadMore';
  */
 export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
   (props, ref) => {
-    const { children, className, ...otherProps } = props;
+    const { asChild, children, className, ...otherProps } = props;
     const { items } = useGenericListContext();
 
     const totalItems = items.length;
     const displayedItems = items.length; // In GenericList, all items are displayed
-
-    const attributes = {
-      'data-testid': TestIds.genericListTotals,
-      'data-total-items': totalItems,
-      'data-displayed-items': displayedItems,
-      className,
-      ...otherProps,
-    };
 
     const totalsData = { totalItems, displayedItems };
     const content = `${displayedItems} items`;
@@ -313,9 +312,19 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
     }
 
     return (
-      <span {...attributes} ref={ref as React.Ref<HTMLSpanElement>}>
-        {children || content}
-      </span>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.genericListTotals}
+        data-total-items={totalItems}
+        data-displayed-items={displayedItems}
+        customElement={children}
+        customElementProps={totalsData}
+        {...otherProps}
+      >
+        <span>{children || content}</span>
+      </AsChildSlot>
     );
   },
 );

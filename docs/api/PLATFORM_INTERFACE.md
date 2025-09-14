@@ -1028,6 +1028,8 @@ Displays totals information about the list (total items and displayed items). Pr
 
 ```tsx
 interface GenericListTotalsProps {
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
   /** Custom render function */
   children?:
     | React.ReactNode
