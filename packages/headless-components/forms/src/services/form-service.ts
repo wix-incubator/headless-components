@@ -35,9 +35,8 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     const error: Signal<string | null> = signalsService.signal<string | null>(
       null,
     );
-    const submitResponse: Signal<SubmitResponse> = signalsService.signal<SubmitResponse>(
-      { type: 'idle' }
-    );
+    const submitResponse: Signal<SubmitResponse> =
+      signalsService.signal<SubmitResponse>({ type: 'idle' });
 
     return { form, isLoading, error, submitResponse };
   },

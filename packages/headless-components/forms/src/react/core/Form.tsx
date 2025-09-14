@@ -272,9 +272,10 @@ export function Submitted(props: FormSubmittedProps) {
 
   const submitResponse = service.submitResponse?.get() || { type: 'idle' };
   const isSubmitted = submitResponse.type === 'success';
-  const message = submitResponse.type === 'success'
-    ? (submitResponse.message || DEFAULT_SUCCESS_MESSAGE)
-    : DEFAULT_SUCCESS_MESSAGE;
+  const message =
+    submitResponse.type === 'success'
+      ? submitResponse.message || DEFAULT_SUCCESS_MESSAGE
+      : DEFAULT_SUCCESS_MESSAGE;
 
   return props.children({
     isSubmitted,

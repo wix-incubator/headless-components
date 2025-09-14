@@ -446,9 +446,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
             content={error}
             {...otherProps}
           >
-            <div className="text-destructive text-sm sm:text-base">
-              {error}
-            </div>
+            <div className="text-destructive text-sm sm:text-base">{error}</div>
           </AsChildSlot>
         );
       }}
