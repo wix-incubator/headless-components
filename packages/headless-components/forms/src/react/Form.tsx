@@ -32,6 +32,7 @@ import {
 } from './types.js';
 
 enum TestIds {
+  formRoot = 'form-root',
   formLoadingError = 'form-loading-error',
   formError = 'form-error',
   formSubmitted = 'form-submitted',
@@ -44,6 +45,9 @@ export interface RootProps {
   children: React.ReactNode;
   /** Form service configuration */
   formServiceConfig: FormServiceConfig;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the root element */
   className?: string;
 }
 
@@ -84,11 +88,13 @@ export interface RootProps {
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   (props, ref) => {
-    const { children, formServiceConfig, className } = props;
+    const { children, formServiceConfig, asChild, ...otherProps } = props;
 
     return (
       <CoreForm.Root formServiceConfig={formServiceConfig}>
-        <RootContent children={children} className={className} ref={ref} />
+        <RootContent asChild={asChild} ref={ref} {...otherProps}>
+          {children}
+        </RootContent>
       </CoreForm.Root>
     );
   },
@@ -98,7 +104,11 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
  * Props for RootContent internal component
  */
 interface RootContentProps {
-  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components to render */
+  children?: React.ReactNode;
+  /** CSS classes to apply to the container */
   className?: string;
 }
 
@@ -110,16 +120,25 @@ interface RootContentProps {
  * @param {RootContentProps} props - Component props
  * @param {React.ReactNode} props.children - Child components to render
  * @param {string} [props.className] - CSS classes to apply to the container
+ * @param {boolean} [props.asChild] - Whether to render as a child component
  * @returns {JSX.Element} The wrapped content
  */
 const RootContent = React.forwardRef<HTMLDivElement, RootContentProps>(
   (props, ref) => {
-    const { children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <div ref={ref} className={className}>
-        {children}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.formRoot}
+        customElement={children}
+        customElementProps={{}}
+        {...otherProps}
+      >
+        <div>{React.isValidElement(children) ? children : null}</div>
+      </AsChildSlot>
     );
   },
 );
@@ -426,7 +445,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
             content={error}
             {...otherProps}
           >
-            <div className="text-status-error text-sm sm:text-base">
+            <div className="text-destructive text-sm sm:text-base">
               {error}
             </div>
           </AsChildSlot>
