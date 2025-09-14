@@ -5979,7 +5979,7 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/headless-utils": "workspace:*"
-    "@wix/sdk": "npm:^1.15.26"
+    "@wix/sdk": "npm:^1.17.1"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
@@ -6448,7 +6448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk@npm:^1.14.3, @wix/sdk@npm:^1.15.23, @wix/sdk@npm:^1.15.24, @wix/sdk@npm:^1.15.26, @wix/sdk@npm:^1.15.27":
+"@wix/sdk@npm:^1.14.3, @wix/sdk@npm:^1.15.23, @wix/sdk@npm:^1.15.24, @wix/sdk@npm:^1.15.27, @wix/sdk@npm:^1.17.1":
   version: 1.17.1
   resolution: "@wix/sdk@npm:1.17.1"
   dependencies:
