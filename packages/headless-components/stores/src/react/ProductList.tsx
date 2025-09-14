@@ -338,17 +338,15 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLButtonElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { className, label, loadingState } = props;
+  const { children = <button />, ...otherProps } = props;
 
   return (
     <GenericList.Actions.LoadMore
-      label={label}
-      loadingState={loadingState}
-      className={className}
       ref={ref}
       data-testid={TestIds.productListLoadMore}
+      {...otherProps}
     >
-      <button />
+      {children as React.ReactNode}
     </GenericList.Actions.LoadMore>
   );
 });
@@ -388,16 +386,15 @@ export const TotalsDisplayed = React.forwardRef<
   HTMLElement,
   TotalsDisplayedProps
 >((props, ref) => {
-  const { className, ...otherProps } = props;
+  const { children = <span />, ...otherProps } = props;
 
   return (
     <GenericList.Totals
-      className={className}
       ref={ref}
       data-testid={TestIds.productListTotalsDisplayed}
       {...otherProps}
     >
-      <span />
+      {children as React.ReactNode}
     </GenericList.Totals>
   );
 });
