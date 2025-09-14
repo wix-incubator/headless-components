@@ -426,7 +426,7 @@ interface ProgramInstructorsProps {
 **Example**
 
 ```tsx
-// Default usage with 3-level architecture
+// Default usage
 <Program.Instructors instructors={instructors}>
   <Program.InstructorRepeater>
     <Instructor.Name />

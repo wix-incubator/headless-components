@@ -47,6 +47,21 @@ export default function OnlineProgramPage({
       </Program.Instructors>
       </ul>
 
+
+      <Program.Instructors asChild>
+        {({ instructors }) => (
+          <div>
+            <h4>Instructors custom rendering:</h4>
+            <ul>
+            {instructors.map((instructor) => (
+              <li key={instructor._id}>{instructor.name}</li>
+            ))}
+          </ul>
+          </div>
+
+        )}
+      </Program.Instructors>
+
       <h3>Price</h3>
       <Program.Price asChild>
         {({ price, formattedPrice }: { price: number; formattedPrice: string }) => (
