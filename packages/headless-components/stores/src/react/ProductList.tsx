@@ -339,7 +339,6 @@ export const LoadMoreTrigger = React.forwardRef<
   LoadMoreTriggerProps
 >((props, ref) => {
   const {
-    asChild,
     children,
     className,
     label = 'Load More',
@@ -353,7 +352,6 @@ export const LoadMoreTrigger = React.forwardRef<
         typeof loadingState === 'string' ? loadingState : 'Loading...'
       }
       className={className}
-      asChild={asChild}
       ref={ref}
       data-testid={TestIds.productListLoadMore}
     >
@@ -397,40 +395,16 @@ export const TotalsDisplayed = React.forwardRef<
   HTMLElement,
   TotalsDisplayedProps
 >((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
-  const productsListService = useService(ProductsListServiceDefinition);
-  const products = productsListService.products.get();
-  const displayedProducts = products.length;
+  const { className, ...otherProps } = props;
 
-  // If using asChild pattern, use AsChildSlot for backward compatibility
-  if (asChild) {
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.productListTotalsDisplayed}
-        data-displayed={displayedProducts}
-        customElement={children}
-        customElementProps={{ displayedProducts }}
-        content={displayedProducts}
-        {...otherProps}
-      >
-        <span>{displayedProducts}</span>
-      </AsChildSlot>
-    );
-  }
-
-  // Use GenericList.Totals for default rendering
   return (
     <GenericList.Totals
       className={className}
       ref={ref}
       data-testid={TestIds.productListTotalsDisplayed}
-      data-displayed={displayedProducts}
       {...otherProps}
     >
-      {displayedProducts}
+      {({ displayedItems }) => <span>{displayedItems}</span>}
     </GenericList.Totals>
   );
 });

@@ -93,8 +93,8 @@ export interface GenericListLoadMoreProps {
  * Props for the GenericList Totals component
  */
 export interface GenericListTotalsProps {
-  /** Custom render function or content - required */
-  children:
+  /** Custom render function or content - optional, defaults to displaying item count */
+  children?:
     | React.ReactNode
     | ((
         props: { totalItems: number; displayedItems: number },
@@ -294,31 +294,22 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
     const { children, className, ...otherProps } = props;
     const { items } = useGenericListContext();
 
-    if (!children) {
-      throw new Error('GenericList.Totals requires children');
-    }
+    const displayedItems = items.length;
 
-    const totalItems = items.length;
-    const displayedItems = items.length; // In GenericList, all items are displayed
-
-    const totalsData = { totalItems, displayedItems };
-
-    // Handle render function pattern
-    if (typeof children === 'function') {
-      return (children as any)(totalsData, ref);
-    }
+    // Determine what content to render - either children or displayedItems
+    const content = children || displayedItems;
 
     return (
       <AsChildSlot
         ref={ref}
         className={className}
-        data-total-items={totalItems}
         data-displayed-items={displayedItems}
         customElement={children}
-        customElementProps={totalsData}
+        customElementProps={{ displayedItems }}
+        asChild
         {...otherProps}
       >
-        {children}
+        {content}
       </AsChildSlot>
     );
   },

@@ -1025,8 +1025,8 @@ Displays totals information about the list (total items and displayed items). Pr
 
 ```tsx
 interface GenericListTotalsProps {
-  /** Custom render function or content - required */
-  children:
+  /** Custom render function or content - optional, defaults to displaying item count */
+  children?:
     | React.ReactNode
     | ((
         props: { totalItems: number; displayedItems: number },
