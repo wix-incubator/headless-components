@@ -10,13 +10,6 @@ export interface ListItem {
   [key: string]: any;
 }
 
-enum TestIds {
-  genericListRoot = 'generic-list-root',
-  genericListItems = 'generic-list-items',
-  genericListLoadMore = 'generic-list-load-more',
-  genericListTotals = 'generic-list-totals',
-}
-
 interface GenericListContextValue<T extends ListItem = ListItem> {
   items: T[];
   hasMore: boolean;
@@ -64,8 +57,8 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   onNextPage?: () => void;
   /** Function called to navigate to previous page */
   onPreviousPage?: () => void;
-  /** Children components */
-  children?: React.ReactNode;
+  /** Children components - required */
+  children: React.ReactNode;
   /** CSS classes */
   className?: string;
 }
@@ -76,8 +69,8 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
 export interface GenericListItemsProps {
   /** Content to display when no items are available */
   emptyState?: React.ReactNode;
-  /** Children components */
-  children?: React.ReactNode;
+  /** Children components - required */
+  children: React.ReactNode;
   /** CSS classes */
   className?: string;
 }
@@ -90,9 +83,7 @@ export interface GenericListLoadMoreProps {
   label?: string;
   /** Loading label text */
   loadingLabel?: string;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children for custom rendering */
+  /** Children for custom rendering - optional but either children or label must be provided */
   children?: React.ReactNode;
   /** CSS classes */
   className?: string;
@@ -102,10 +93,8 @@ export interface GenericListLoadMoreProps {
  * Props for the GenericList Totals component
  */
 export interface GenericListTotalsProps {
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Custom render function */
-  children?:
+  /** Custom render function or content - required */
+  children:
     | React.ReactNode
     | ((
         props: { totalItems: number; displayedItems: number },
@@ -141,6 +130,10 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       ...otherProps
     } = props;
 
+    if (!children) {
+      throw new Error('GenericList.Root requires children');
+    }
+
     const contextValue: GenericListContextValue<T> = React.useMemo(
       () => ({
         items,
@@ -164,23 +157,22 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       ],
     );
 
-    const attributes = {
-      'data-testid': TestIds.genericListRoot,
-      'data-variant': variant,
-      'data-has-items': items.length > 0,
-      'data-is-loading': isLoading,
-      'data-has-more': hasMore,
-      'data-infinite': infinite,
-      className,
-      ...otherProps,
-    };
-
     return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        <GenericListContext.Provider value={contextValue}>
+      <GenericListContext.Provider value={contextValue}>
+        <AsChildSlot
+          ref={ref}
+          className={className}
+          data-variant={variant}
+          data-has-items={items.length > 0}
+          data-is-loading={isLoading}
+          data-has-more={hasMore}
+          data-infinite={infinite}
+          customElement={children}
+          {...otherProps}
+        >
           {children}
-        </GenericListContext.Provider>
-      </div>
+        </AsChildSlot>
+      </GenericListContext.Provider>
     );
   },
 );
@@ -198,6 +190,10 @@ export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
     const { emptyState, children, className, ...otherProps } = props;
     const { items, variant } = useGenericListContext();
 
+    if (!children) {
+      throw new Error('GenericList.Items requires children');
+    }
+
     const hasItems = items.length > 0;
 
     // Show empty state if no items and emptyState is provided
@@ -205,18 +201,17 @@ export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
       return emptyState || null;
     }
 
-    const attributes = {
-      'data-testid': TestIds.genericListItems,
-      'data-variant': variant,
-      'data-empty': !hasItems,
-      className,
-      ...otherProps,
-    };
-
     return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      <AsChildSlot
+        ref={ref}
+        className={className}
+        data-variant={variant}
+        data-empty={!hasItems}
+        customElement={children}
+        {...otherProps}
+      >
         {children}
-      </div>
+      </AsChildSlot>
     );
   },
 );
@@ -236,13 +231,17 @@ export const LoadMore = React.forwardRef<
   const {
     label = 'Load More',
     loadingLabel = 'Loading...',
-    asChild = false,
     children,
     className,
     ...otherProps
   } = props;
 
   const { hasMore, isLoading, onLoadMore } = useGenericListContext();
+
+  // Either children or label must be provided
+  if (!children && !label) {
+    throw new Error('GenericList.LoadMore requires either children or label');
+  }
 
   // Don't render if no more items to load
   if (!hasMore) {
@@ -255,35 +254,30 @@ export const LoadMore = React.forwardRef<
     }
   };
 
-  const attributes = {
-    'data-testid': TestIds.genericListLoadMore,
-    'data-has-more': hasMore,
-    'data-is-loading': isLoading,
-    disabled: isLoading,
-    onClick: handleClick,
-    className,
-    ...otherProps,
-  };
-
+  // Determine what content to render
   const buttonContent = isLoading ? loadingLabel : label;
-
-  if (asChild) {
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        {...attributes}
-        customElement={children}
-      >
-        <button>{children || buttonContent}</button>
-      </AsChildSlot>
-    );
-  }
+  const content = buttonContent || children;
 
   return (
-    <button {...attributes} ref={ref}>
-      {children || buttonContent}
-    </button>
+    <AsChildSlot
+      ref={ref}
+      className={className}
+      data-has-more={hasMore}
+      data-is-loading={isLoading}
+      disabled={isLoading}
+      onClick={handleClick}
+      customElement={children}
+      customElementProps={{
+        label,
+        loadingLabel,
+        isLoading,
+        hasMore,
+        onLoadMore,
+      }}
+      {...otherProps}
+    >
+      {content}
+    </AsChildSlot>
   );
 });
 
@@ -297,14 +291,17 @@ LoadMore.displayName = 'GenericList.LoadMore';
  */
 export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { children, className, ...otherProps } = props;
     const { items } = useGenericListContext();
+
+    if (!children) {
+      throw new Error('GenericList.Totals requires children');
+    }
 
     const totalItems = items.length;
     const displayedItems = items.length; // In GenericList, all items are displayed
 
     const totalsData = { totalItems, displayedItems };
-    const content = `${displayedItems} items`;
 
     // Handle render function pattern
     if (typeof children === 'function') {
@@ -314,16 +311,14 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
     return (
       <AsChildSlot
         ref={ref}
-        asChild={asChild}
         className={className}
-        data-testid={TestIds.genericListTotals}
         data-total-items={totalItems}
         data-displayed-items={displayedItems}
         customElement={children}
         customElementProps={totalsData}
         {...otherProps}
       >
-        <span>{children || content}</span>
+        {children}
       </AsChildSlot>
     );
   },
