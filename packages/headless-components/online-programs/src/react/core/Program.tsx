@@ -362,12 +362,12 @@ export interface ProgramInstructorsProps {
 export function Instructors(props: ProgramInstructorsProps) {
   const instructors = props.instructors || [];
   return <WixServices
-  servicesMap={createServicesMap().addService(
-    InstructorsServiceDefinition,
-    InstructorsService,
-    {instructors},
-  )}
->
+    servicesMap={createServicesMap().addService(
+      InstructorsServiceDefinition,
+      InstructorsService,
+      {instructors},
+    )}
+  >
     {props.children({
       instructors,
       hasInstructors: instructors.length > 0
