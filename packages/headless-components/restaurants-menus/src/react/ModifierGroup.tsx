@@ -1,8 +1,15 @@
-import React from "react";
-import type { EnhancedModifierGroup, Modifier } from "../../../components/restaurants-menus/types";
+import React from 'react';
+import type {
+  EnhancedModifierGroup,
+  Modifier,
+} from '../services/types';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from "./TestIds";
-import { CoreModifierGroup, ModifierGroupName, useModifierGroupContext } from "./core";
+import { TestIds } from './TestIds';
+import {
+  CoreModifierGroup,
+  ModifierGroupName,
+  useModifierGroupContext,
+} from './core';
 import * as ModifierComponent from './Modifier';
 
 export interface ModifierGroupRootProps {
@@ -14,7 +21,7 @@ export const Root = (props: ModifierGroupRootProps) => {
   if (!props.modifierGroup) {
     return null;
   }
-  
+
   return (
     <CoreModifierGroup modifierGroup={props.modifierGroup}>
       {props.children}
@@ -59,37 +66,43 @@ export interface ModifierGroupModifiersRepeaterProps {
  * </ModifierGroup.Name>
  * ```
  */
-export const Name = React.forwardRef<HTMLElement, ModifierGroupNameProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Name = React.forwardRef<HTMLElement, ModifierGroupNameProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <ModifierGroupName>
-      {({ name }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.modifierGroupName}
-            customElement={children}
-            customElementProps={{ name }}
-            content={name}
-            {...otherProps}
-          >
-            <div>{name}</div>
-          </AsChildSlot>
-        );
-      }}
-    </ModifierGroupName>
-  );
-});
+    return (
+      <ModifierGroupName>
+        {({ name }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.modifierGroupName}
+              customElement={children}
+              customElementProps={{ name }}
+              content={name}
+              {...otherProps}
+            >
+              <div>{name}</div>
+            </AsChildSlot>
+          );
+        }}
+      </ModifierGroupName>
+    );
+  },
+);
 
-Name.displayName = "ModifierGroup.Name";
+Name.displayName = 'ModifierGroup.Name';
 
-export const ModifiersRepeater = (props: ModifierGroupModifiersRepeaterProps) => {
+export const ModifiersRepeater = (
+  props: ModifierGroupModifiersRepeaterProps,
+) => {
   const { children } = props;
   const { modifierGroup } = useModifierGroupContext();
-  const hasModifiers = !!(modifierGroup.modifiers && modifierGroup.modifiers.length > 0);
+  const hasModifiers = !!(
+    modifierGroup.modifiers && modifierGroup.modifiers.length > 0
+  );
 
   if (!hasModifiers) {
     return null;
@@ -99,24 +112,25 @@ export const ModifiersRepeater = (props: ModifierGroupModifiersRepeaterProps) =>
 
   return (
     <>
-      {modifierGroupModifiers.map((modifier: Modifier & {
-        additionalChargeInfo?: {
-          additionalCharge?: string;
-          formattedAdditionalCharge?: string;
-        };
-      }) => (
-        <ModifierComponent.Root
-          key={modifier._id}
-          modifier={modifier}
-        >
-          {children}
-        </ModifierComponent.Root>
-      ))}
+      {modifierGroupModifiers.map(
+        (
+          modifier: Modifier & {
+            additionalChargeInfo?: {
+              additionalCharge?: string;
+              formattedAdditionalCharge?: string;
+            };
+          },
+        ) => (
+          <ModifierComponent.Root key={modifier._id} modifier={modifier}>
+            {children}
+          </ModifierComponent.Root>
+        ),
+      )}
     </>
   );
 };
 
-ModifiersRepeater.displayName = "ModifierGroup.ModifiersRepeater";
+ModifiersRepeater.displayName = 'ModifierGroup.ModifiersRepeater';
 
 /**
  * ModifierGroup namespace containing all modifier group components

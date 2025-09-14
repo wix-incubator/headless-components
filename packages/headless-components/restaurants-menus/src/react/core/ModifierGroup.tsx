@@ -1,5 +1,8 @@
 import React, { createContext, useContext } from 'react';
-import type { ModifierGroup, EnhancedModifierGroup } from "../../../../components/restaurants-menus/types";
+import type {
+  ModifierGroup,
+  EnhancedModifierGroup,
+} from '../../services/types';
 
 export interface ModifierGroupProps {
   children: React.ReactNode;
@@ -10,7 +13,9 @@ interface ModifierGroupContextValue {
   modifierGroup: EnhancedModifierGroup;
 }
 
-const ModifierGroupContext = createContext<ModifierGroupContextValue | null>(null);
+const ModifierGroupContext = createContext<ModifierGroupContextValue | null>(
+  null,
+);
 
 export function ModifierGroup(props: ModifierGroupProps) {
   const contextValue: ModifierGroupContextValue = {
@@ -27,7 +32,9 @@ export function ModifierGroup(props: ModifierGroupProps) {
 export function useModifierGroupContext() {
   const context = useContext(ModifierGroupContext);
   if (!context) {
-    throw new Error('useModifierGroupContext must be used within ModifierGroup');
+    throw new Error(
+      'useModifierGroupContext must be used within ModifierGroup',
+    );
   }
   return context;
 }
@@ -38,6 +45,6 @@ export interface ModifierGroupNameProps {
 
 export function Name(props: ModifierGroupNameProps) {
   const { modifierGroup } = useModifierGroupContext();
-  
-  return props.children({ name: modifierGroup.name ?? "" });
+
+  return props.children({ name: modifierGroup.name ?? '' });
 }

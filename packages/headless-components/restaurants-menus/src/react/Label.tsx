@@ -1,10 +1,13 @@
-import React from "react";
-import type { Label } from "../../../components/restaurants-menus/types";
-import { WixMediaImage } from "@wix/headless-media/react";
-import { AsChildSlot } from "@wix/headless-utils/react";
-import type { AsChildChildren, AsChildRenderFunction } from "@wix/headless-utils/react";
-import { TestIds } from "./TestIds";
-import { CoreLabel, LabelName, LabelIcon } from "./core";
+import React from 'react';
+import type { Label } from '../services/types';
+import { WixMediaImage } from '@wix/headless-media/react';
+import { AsChildSlot } from '@wix/headless-utils/react';
+import type {
+  AsChildChildren,
+  AsChildRenderFunction,
+} from '@wix/headless-utils/react';
+import { TestIds } from './TestIds';
+import { CoreLabel, LabelName, LabelIcon } from './core';
 
 export interface LabelRootProps {
   label?: Label;
@@ -76,10 +79,10 @@ export const Name = React.forwardRef<HTMLElement, LabelNameProps>(
         }}
       </LabelName>
     );
-  }
+  },
 );
 
-Name.displayName = "Label.Name";
+Name.displayName = 'Label.Name';
 
 export interface LabelIconProps {
   /** Whether to render as a child component */
@@ -153,7 +156,7 @@ export const Icon = React.forwardRef<HTMLImageElement, LabelIconProps>(
           return (
             <WixMediaImage
               ref={ref}
-              media={{ image: icon }}
+              media={{ image: icon ?? '' }}
               isShape
               alt={altText}
               data-testid={TestIds.labelIcon}
@@ -163,10 +166,10 @@ export const Icon = React.forwardRef<HTMLImageElement, LabelIconProps>(
         }}
       </LabelIcon>
     );
-  }
+  },
 );
 
-Icon.displayName = "Label.Icon";
+Icon.displayName = 'Label.Icon';
 
 /**
  * Label namespace containing all label components

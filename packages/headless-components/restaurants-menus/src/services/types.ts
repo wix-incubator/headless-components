@@ -1,4 +1,12 @@
-import { menus, sections, items, itemVariants, itemLabels, itemModifierGroups, itemModifiers } from '@wix/restaurants';
+import {
+  menus,
+  sections,
+  items,
+  itemVariants,
+  itemLabels,
+  itemModifierGroups,
+  itemModifiers,
+} from '@wix/restaurants';
 
 export type Menu = menus.Menu;
 export type Section = sections.Section;
@@ -10,18 +18,22 @@ export type Modifier = itemModifiers.Modifier;
 export type CursorPagingMetadata = menus.CursorPagingMetadata;
 
 // Enhanced types with connected entities
-export interface EnhancedItem extends Omit<Item, 'labels' | 'modifierGroups' | 'priceVariants'> {
+export interface EnhancedItem
+  extends Omit<Item, 'labels' | 'modifierGroups' | 'priceVariants'> {
   labels: Label[];
   modifierGroups: EnhancedModifierGroup[];
-  priceVariants?: Array<Variant & {
-    priceInfo?: {
-      price?: string;
-      formattedPrice?: string;
-    };
-  }>;
+  priceVariants?: Array<
+    Variant & {
+      priceInfo?: {
+        price?: string;
+        formattedPrice?: string;
+      };
+    }
+  >;
 }
 
-export interface EnhancedModifierGroup extends Omit<ModifierGroup, 'modifiers'> {
+export interface EnhancedModifierGroup
+  extends Omit<ModifierGroup, 'modifiers'> {
   modifiers: Array<EnhancedModifier>;
 }
 

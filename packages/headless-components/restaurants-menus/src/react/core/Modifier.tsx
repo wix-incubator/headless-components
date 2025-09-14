@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { Modifier } from "../../../../components/restaurants-menus/types";
+import type { Modifier } from '../../services/types';
 
 export interface ModifierProps {
   children: React.ReactNode;
@@ -47,7 +47,7 @@ export interface ModifierNameProps {
 }
 
 export interface ModifierPriceProps {
-  children: (props: { 
+  children: (props: {
     additionalCharge?: string;
     formattedAdditionalCharge?: string;
     hasAdditionalCharge: boolean;
@@ -56,20 +56,21 @@ export interface ModifierPriceProps {
 
 export function Name(props: ModifierNameProps) {
   const { modifier } = useModifierContext();
-  
-  return props.children({ name: modifier.name || "" });
+
+  return props.children({ name: modifier.name || '' });
 }
 
 export function Price(props: ModifierPriceProps) {
   const { modifier } = useModifierContext();
-  
+
   const additionalCharge = modifier.additionalChargeInfo?.additionalCharge;
-  const formattedAdditionalCharge = modifier.additionalChargeInfo?.formattedAdditionalCharge;
+  const formattedAdditionalCharge =
+    modifier.additionalChargeInfo?.formattedAdditionalCharge;
   const hasAdditionalCharge = !!(additionalCharge || formattedAdditionalCharge);
-  
-  return props.children({ 
+
+  return props.children({
     additionalCharge,
     formattedAdditionalCharge,
-    hasAdditionalCharge
+    hasAdditionalCharge,
   });
 }

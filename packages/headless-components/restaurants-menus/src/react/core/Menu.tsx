@@ -1,5 +1,5 @@
-import React, { createContext, useContext } from "react";
-import type { Menu } from "../../../../components/restaurants-menus/types";
+import React, { createContext, useContext } from 'react';
+import type { Menu } from '../../services/types';
 
 export interface MenuProps {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ export function Menu(props: MenuProps) {
 export function useMenuContext() {
   const context = useContext(MenuContext);
   if (!context) {
-    throw new Error("useMenuContext must be used within Menu");
+    throw new Error('useMenuContext must be used within Menu');
   }
   return context;
 }
@@ -43,11 +43,11 @@ export interface MenuDescriptionProps {
 export function Name(props: MenuNameProps) {
   const { menu } = useMenuContext();
 
-  return props.children({ name: menu.name || "" });
+  return props.children({ name: menu.name ?? '' });
 }
 
 export function Description(props: MenuDescriptionProps) {
   const { menu } = useMenuContext();
 
-  return props.children({ description: menu.description || "" });
+  return props.children({ description: menu.description ?? '' });
 }

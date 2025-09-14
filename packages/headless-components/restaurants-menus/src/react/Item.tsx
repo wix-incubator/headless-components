@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Item as CoreItem,
   ItemName,
@@ -6,19 +6,22 @@ import {
   Price as CorePrice,
   Image as CoreImage,
   useItemContext,
-} from "./core";
+} from './core';
 import type {
   EnhancedItem,
   Label,
   EnhancedModifierGroup,
-} from "../services/types";
-import { AsChildSlot } from "@wix/headless-utils/react";
-import type { AsChildChildren, AsChildRenderFunction } from "@wix/headless-utils/react";
-import { TestIds } from "./TestIds";
-import { WixMediaImage } from "@wix/headless-media/react";
-import * as VariantComponent from "./Variant";
-import * as LabelComponent from "./Label";
-import * as ModifierGroupComponent from "./ModifierGroup";
+} from '../services/types';
+import { AsChildSlot } from '@wix/headless-utils/react';
+import type {
+  AsChildChildren,
+  AsChildRenderFunction,
+} from '@wix/headless-utils/react';
+import { TestIds } from './TestIds';
+import { WixMediaImage } from '@wix/headless-media/react';
+import * as VariantComponent from './Variant';
+import * as LabelComponent from './Label';
+import * as ModifierGroupComponent from './ModifierGroup';
 
 export interface ItemRootProps {
   children: React.ReactNode;
@@ -143,7 +146,7 @@ export const Name = React.forwardRef<HTMLElement, ItemNameProps>(
         }}
       </ItemName>
     );
-  }
+  },
 );
 
 /**
@@ -194,7 +197,7 @@ export const Description = React.forwardRef<HTMLElement, ItemDescriptionProps>(
         }}
       </ItemDescription>
     );
-  }
+  },
 );
 
 /**
@@ -245,7 +248,7 @@ export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
         }}
       </CorePrice>
     );
-  }
+  },
 );
 
 /**
@@ -298,7 +301,7 @@ export const Image = React.forwardRef<HTMLImageElement, ItemImageProps>(
             <WixMediaImage
               ref={ref}
               media={{ image: image }}
-              alt={altText ?? ""}
+              alt={altText ?? ''}
               data-testid={TestIds.itemImage}
               {...otherProps}
             />
@@ -306,7 +309,7 @@ export const Image = React.forwardRef<HTMLImageElement, ItemImageProps>(
         }}
       </CoreImage>
     );
-  }
+  },
 );
 
 /**
@@ -356,11 +359,11 @@ export const VariantsRepeater = React.forwardRef<
   );
 });
 
-Name.displayName = "Item.Name";
-Description.displayName = "Item.Description";
-Price.displayName = "Item.Price";
-Image.displayName = "Item.Image";
-VariantsRepeater.displayName = "Item.VariantsRepeater";
+Name.displayName = 'Item.Name';
+Description.displayName = 'Item.Description';
+Price.displayName = 'Item.Price';
+Image.displayName = 'Item.Image';
+VariantsRepeater.displayName = 'Item.VariantsRepeater';
 
 export const LabelsRepeater = (props: ItemLabelsRepeaterProps) => {
   const { children } = props;
@@ -385,7 +388,7 @@ export const LabelsRepeater = (props: ItemLabelsRepeaterProps) => {
 };
 
 export const ModifierGroupsRepeater = (
-  props: ItemModifierGroupsRepeaterProps
+  props: ItemModifierGroupsRepeaterProps,
 ) => {
   const { children } = props;
   const { item } = useItemContext();
@@ -409,8 +412,8 @@ export const ModifierGroupsRepeater = (
   ));
 };
 
-LabelsRepeater.displayName = "Item.LabelsRepeater";
-ModifierGroupsRepeater.displayName = "Item.ModifierGroupsRepeater";
+LabelsRepeater.displayName = 'Item.LabelsRepeater';
+ModifierGroupsRepeater.displayName = 'Item.ModifierGroupsRepeater';
 
 /**
  * Item namespace containing all item components

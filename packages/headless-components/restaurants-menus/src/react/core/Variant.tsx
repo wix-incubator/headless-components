@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { Variant } from "../../../../components/restaurants-menus/types";
+import type { Variant } from '../../services/types';
 
 export interface VariantProps {
   children: React.ReactNode;
@@ -47,7 +47,7 @@ export interface VariantNameProps {
 }
 
 export interface VariantPriceProps {
-  children: (props: { 
+  children: (props: {
     price: string;
     formattedPrice?: string;
     hasPrice: boolean;
@@ -56,20 +56,20 @@ export interface VariantPriceProps {
 
 export function Name(props: VariantNameProps) {
   const { variant } = useVariantContext();
-  
-  return props.children({ name: variant.name ?? "" });
+
+  return props.children({ name: variant.name ?? '' });
 }
 
 export function Price(props: VariantPriceProps) {
   const { variant } = useVariantContext();
-  
+
   const price = variant.priceInfo?.price ?? '';
   const formattedPrice = variant.priceInfo?.formattedPrice;
   const hasPrice = !!(price || formattedPrice);
-  
-  return props.children({ 
+
+  return props.children({
     price,
     formattedPrice,
-    hasPrice
+    hasPrice,
   });
 }

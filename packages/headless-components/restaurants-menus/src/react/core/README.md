@@ -5,6 +5,7 @@ This directory contains the core context-based components for the restaurants-me
 ## Components
 
 ### App
+
 The root component that provides the entire app context. This should wrap your entire application.
 
 ```tsx
@@ -28,47 +29,38 @@ function App() {
 ```
 
 ### Menu
+
 Provides context for a specific menu and its related data.
 
 ```tsx
 import { Menu } from './core';
 
 function MenuPage({ menu }) {
-  return (
-    <Menu menu={menu}>
-      {/* Menu content */}
-    </Menu>
-  );
+  return <Menu menu={menu}>{/* Menu content */}</Menu>;
 }
 ```
 
 ### Section
+
 Provides context for a specific section and its items.
 
 ```tsx
 import { Section } from './core';
 
 function SectionComponent({ section }) {
-  return (
-    <Section section={section}>
-      {/* Section content */}
-    </Section>
-  );
+  return <Section section={section}>{/* Section content */}</Section>;
 }
 ```
 
 ### Item
+
 Provides context for a specific item and its related data.
 
 ```tsx
 import { Item } from './core';
 
 function ItemComponent({ item }) {
-  return (
-    <Item item={item}>
-      {/* Item content */}
-    </Item>
-  );
+  return <Item item={item}>{/* Item content */}</Item>;
 }
 ```
 

@@ -1,12 +1,15 @@
-import React from "react";
-import { Menu as CoreMenu, MenuName, MenuDescription } from "./core";
-import type { Menu, Section } from "../../../components/restaurants-menus/types";
+import React from 'react';
+import { Menu as CoreMenu, MenuName, MenuDescription } from './core';
+import type {
+  Menu,
+  Section,
+} from '../services/types';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from "./TestIds";
-import { useMenuContext } from "./core/Menu";
-import * as SectionComponent from "./Section";
-import { useService } from "@wix/services-manager-react";
-import { MenusServiceDefinition } from "../services/menus-service";
+import { TestIds } from './TestIds';
+import { useMenuContext } from './core/Menu';
+import * as SectionComponent from './Section';
+import { useService } from '@wix/services-manager-react';
+import { MenusServiceDefinition } from '../services/menus-service';
 export interface MenuRootProps {
   children: React.ReactNode;
   menu?: Menu;
@@ -40,12 +43,8 @@ export function Root(props: MenuRootProps) {
   if (!props.menu) {
     return null;
   }
-  
-  return (
-    <CoreMenu menu={props.menu}>
-      {props.children}
-    </CoreMenu>
-  );
+
+  return <CoreMenu menu={props.menu}>{props.children}</CoreMenu>;
 }
 
 /**
@@ -72,30 +71,32 @@ export function Root(props: MenuRootProps) {
  * </Menu.Name>
  * ```
  */
-export const Name = React.forwardRef<HTMLElement, MenuNameProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Name = React.forwardRef<HTMLElement, MenuNameProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <MenuName>
-      {({ name }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.menuName}
-            customElement={children}
-            customElementProps={{ name }}
-            content={name}
-            {...otherProps}
-          >
-            <div>{name}</div>
-          </AsChildSlot>
-        );
-      }}
-    </MenuName>
-  );
-});
+    return (
+      <MenuName>
+        {({ name }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.menuName}
+              customElement={children}
+              customElementProps={{ name }}
+              content={name}
+              {...otherProps}
+            >
+              <div>{name}</div>
+            </AsChildSlot>
+          );
+        }}
+      </MenuName>
+    );
+  },
+);
 
 /**
  * Displays the menu description with customizable rendering following the documented API.
@@ -121,33 +122,35 @@ export const Name = React.forwardRef<HTMLElement, MenuNameProps>((props, ref) =>
  * </Menu.Description>
  * ```
  */
-export const Description = React.forwardRef<HTMLElement, MenuDescriptionProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Description = React.forwardRef<HTMLElement, MenuDescriptionProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <MenuDescription>
-      {({ description }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.menuDescription}
-            customElement={children}
-            customElementProps={{ description }}
-            content={description}
-            {...otherProps}
-          >
-            <div>{description}</div>
-          </AsChildSlot>
-        );
-      }}
-    </MenuDescription>
-  );
-});
+    return (
+      <MenuDescription>
+        {({ description }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.menuDescription}
+              customElement={children}
+              customElementProps={{ description }}
+              content={description}
+              {...otherProps}
+            >
+              <div>{description}</div>
+            </AsChildSlot>
+          );
+        }}
+      </MenuDescription>
+    );
+  },
+);
 
-Name.displayName = "Menu.Name";
-Description.displayName = "Menu.Description";
+Name.displayName = 'Menu.Name';
+Description.displayName = 'Menu.Description';
 
 export const SectionsRepeater = React.forwardRef<
   HTMLElement,
@@ -158,11 +161,11 @@ export const SectionsRepeater = React.forwardRef<
   const { sections } = useService(MenusServiceDefinition);
 
   const menuSections = menu.sectionIds
-    .map((sectionId) =>
-      sections.get().find((section) => section._id === sectionId)
+    .map((sectionId: string) =>
+      sections.get().find((section) => section._id === sectionId),
     )
-    .filter((section): section is Section => section !== undefined);
-    
+    .filter((section: Section): section is Section => section !== undefined);
+
   const hasSections = menuSections.length > 0;
 
   if (!hasSections) return null;
@@ -183,7 +186,7 @@ export const SectionsRepeater = React.forwardRef<
   );
 });
 
-SectionsRepeater.displayName = "Menu.SectionsRepeater";
+SectionsRepeater.displayName = 'Menu.SectionsRepeater';
 
 /**
  * Menu namespace containing all menu components

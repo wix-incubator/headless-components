@@ -1,4 +1,4 @@
-import { defineService, implementService } from "@wix/services-definitions";
+import { defineService, implementService } from '@wix/services-definitions';
 import {
   menus,
   sections,
@@ -7,7 +7,7 @@ import {
   itemLabels,
   itemModifierGroups,
   itemModifiers,
-} from "@wix/restaurants";
+} from '@wix/restaurants';
 import type {
   Menu,
   Section,
@@ -20,11 +20,11 @@ import type {
   EnhancedModifierGroup,
   CursorPagingMetadata,
   EnhancedModifier,
-} from "./types";
+} from './types';
 import {
   SignalsServiceDefinition,
   type Signal,
-} from "@wix/services-definitions/core-services/signals";
+} from '@wix/services-definitions/core-services/signals';
 
 export interface MenusServiceConfig {
   autoLoad?: boolean;
@@ -51,24 +51,24 @@ export interface MenusServiceAPI {
 export const MenusServiceDefinition = defineService<
   MenusServiceAPI,
   MenusServiceConfig
->("MenusService");
+>('MenusService');
 
 type Result<T> = {
   [key in
-    | "menus"
-    | "sections"
-    | "items"
-    | "variants"
-    | "labels"
-    | "modifierGroups"
-    | "modifiers"]?: T[];
+    | 'menus'
+    | 'sections'
+    | 'items'
+    | 'variants'
+    | 'labels'
+    | 'modifierGroups'
+    | 'modifiers']?: T[];
 } & {
   pagingMetadata?: CursorPagingMetadata;
 };
 
 async function fetchAllPaginated<T>(
   apiCall: (paging?: { cursor?: string }) => Promise<Result<T>>,
-  dataKey: keyof Result<T>
+  dataKey: keyof Result<T>,
 ): Promise<T[]> {
   const allData: T[] = [];
   let cursor: string | null | undefined;
@@ -94,13 +94,13 @@ function createEnhancedEntities(
   variants: Variant[],
   labels: Label[],
   modifierGroups: ModifierGroup[],
-  modifiers: Modifier[]
+  modifiers: Modifier[],
 ) {
   const enhancedModifierGroups: EnhancedModifierGroup[] = modifierGroups.map(
     (modifierGroup) => ({
       ...modifierGroup,
       modifiers:
-        modifierGroup.modifiers
+        (modifierGroup.modifiers
           ?.map((modifierRef) => {
             const modifier = modifiers.find((m) => m._id === modifierRef._id);
             return modifier
@@ -110,26 +110,26 @@ function createEnhancedEntities(
                 }
               : null;
           })
-          .filter(Boolean) as EnhancedModifier[] ?? [],
-    })
+          .filter(Boolean) as EnhancedModifier[]) ?? [],
+    }),
   );
 
   const enhancedItems: EnhancedItem[] = items.map((item) => {
     let mappedLabels: Label[] = [];
     if (item.labels && Array.isArray(item.labels)) {
       if (item.labels.length > 0) {
-        if (typeof item.labels[0] === "string") {
+        if (typeof item.labels[0] === 'string') {
           mappedLabels = item.labels
             .map((labelId) => labels.find((label) => label._id === labelId))
             .filter(Boolean) as Label[];
         } else if (
           item.labels[0] &&
-          typeof item.labels[0] === "object" &&
-          "_id" in item.labels[0]
+          typeof item.labels[0] === 'object' &&
+          '_id' in item.labels[0]
         ) {
           mappedLabels = item.labels
             .map((labelRef: Label) =>
-              labels.find((label) => label._id === labelRef._id)
+              labels.find((label) => label._id === labelRef._id),
             )
             .filter(Boolean) as Label[];
         } else {
@@ -142,11 +142,13 @@ function createEnhancedEntities(
       ...item,
       labels: mappedLabels,
       modifierGroups:
-        item.modifierGroups
+        (item.modifierGroups
           ?.map((modifierGroupRef: ModifierGroup) =>
-            enhancedModifierGroups.find((mg) => mg._id === modifierGroupRef._id)
+            enhancedModifierGroups.find(
+              (mg) => mg._id === modifierGroupRef._id,
+            ),
           )
-          .filter(Boolean) as EnhancedModifierGroup[] ?? [],
+          .filter(Boolean) as EnhancedModifierGroup[]) ?? [],
       priceVariants: item.priceVariants
         ? item.priceVariants.variants?.map((variant) => {
             const variantObj =
@@ -174,20 +176,20 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
 
     const menusSignal = signalsService.signal<Menu[]>(config.menus || []);
     const sectionsSignal = signalsService.signal<Section[]>(
-      config.sections || []
+      config.sections || [],
     );
     const itemsSignal = signalsService.signal<EnhancedItem[]>(
-      config.items || []
+      config.items || [],
     );
     const variantsSignal = signalsService.signal<Variant[]>(
-      config.variants || []
+      config.variants || [],
     );
     const labelsSignal = signalsService.signal<Label[]>(config.labels || []);
     const modifierGroupsSignal = signalsService.signal<EnhancedModifierGroup[]>(
-      config.modifierGroups || []
+      config.modifierGroups || [],
     );
     const modifiersSignal = signalsService.signal<Modifier[]>(
-      config.modifiers || []
+      config.modifiers || [],
     );
     const loadingSignal = signalsService.signal<boolean>(false);
     const errorSignal = signalsService.signal<string | null>(null);
@@ -203,7 +205,7 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
       loading: loadingSignal,
       error: errorSignal,
     };
-  }
+  },
 );
 
 export async function loadMenusServiceConfig(): Promise<MenusServiceConfig> {
@@ -219,25 +221,25 @@ export async function loadMenusServiceConfig(): Promise<MenusServiceConfig> {
     ] = await Promise.all([
       fetchAllPaginated<Menu>(
         (paging) => menus.listMenus({ onlyVisible: true, paging }),
-        "menus"
+        'menus',
       ),
       fetchAllPaginated<Section>(
         (paging) => sections.listSections({ paging }),
-        "sections"
+        'sections',
       ),
-      fetchAllPaginated<Item>((paging) => items.listItems({ paging }), "items"),
+      fetchAllPaginated<Item>((paging) => items.listItems({ paging }), 'items'),
       fetchAllPaginated<Variant>(
         (paging) => itemVariants.listVariants({ paging }),
-        "variants"
+        'variants',
       ),
-      fetchAllPaginated<Label>(() => itemLabels.listLabels(), "labels"),
+      fetchAllPaginated<Label>(() => itemLabels.listLabels(), 'labels'),
       fetchAllPaginated<ModifierGroup>(
         (paging) => itemModifierGroups.listModifierGroups({ paging }),
-        "modifierGroups"
+        'modifierGroups',
       ),
       fetchAllPaginated<Modifier>(
         (paging) => itemModifiers.listModifiers({ paging }),
-        "modifiers"
+        'modifiers',
       ),
     ]);
 
@@ -246,7 +248,7 @@ export async function loadMenusServiceConfig(): Promise<MenusServiceConfig> {
       allVariants,
       allLabels,
       allModifierGroups,
-      allModifiers
+      allModifiers,
     );
 
     return {

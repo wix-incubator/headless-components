@@ -1,12 +1,16 @@
-import React from "react";
-import { Loading as CoreLoading, ErrorState as CoreErrorState, Menus } from "./core";
-import type { Menu } from "../../../components/restaurants-menus/types";
+import React from 'react';
+import {
+  Loading as CoreLoading,
+  ErrorState as CoreErrorState,
+  Menus,
+} from './core';
+import type { Menu } from '../services/types';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from "./TestIds";
-import { useService } from "@wix/services-manager-react";
-import { MenusServiceConfig, MenusServiceDefinition } from "../services";
-import type { ServiceAPI } from "@wix/services-definitions";
-import * as MenuComponent from "./Menu";
+import { TestIds } from './TestIds';
+import { useService } from '@wix/services-manager-react';
+import { MenusServiceConfig, MenusServiceDefinition } from '../services';
+import type { ServiceAPI } from '@wix/services-definitions';
+import * as MenuComponent from './Menu';
 
 export interface MenusRootProps {
   children: React.ReactNode;
@@ -22,41 +26,38 @@ export interface MenusRepeaterProps {
 }
 
 export function Root(props: MenusRootProps) {
-  return (
-    <Menus config={props.config}>
-      {props.children}
-    </Menus>
-  );
+  return <Menus config={props.config}>{props.children}</Menus>;
 }
 
-export const MenusRepeater = React.forwardRef<
-  HTMLElement,
-  MenusRepeaterProps
->((props, _ref) => {
-  const { children } = props;
-  const menusService = useService(MenusServiceDefinition) as ServiceAPI<typeof MenusServiceDefinition>;
-  const menus = menusService.menus.get();
-  const hasMenus = menus.length > 0;
+export const MenusRepeater = React.forwardRef<HTMLElement, MenusRepeaterProps>(
+  (props, _ref) => {
+    const { children } = props;
+    const menusService = useService(MenusServiceDefinition) as ServiceAPI<
+      typeof MenusServiceDefinition
+    >;
+    const menus = menusService.menus.get();
+    const hasMenus = menus.length > 0;
 
-  if (!hasMenus) return null;
+    if (!hasMenus) return null;
 
-  return (
-    <>
-      {menus.map((menu: Menu) => (
-        <MenuComponent.Root
-          key={menu._id}
-          menu={menu}
-          data-testid={TestIds.itemName}
-          data-menu-id={menu._id}
-        >
-          {children}
-        </MenuComponent.Root>
-      ))}
-    </>
-  );
-});
+    return (
+      <>
+        {menus.map((menu: Menu) => (
+          <MenuComponent.Root
+            key={menu._id}
+            menu={menu}
+            data-testid={TestIds.itemName}
+            data-menu-id={menu._id}
+          >
+            {children}
+          </MenuComponent.Root>
+        ))}
+      </>
+    );
+  },
+);
 
-MenusRepeater.displayName = "Menus.Repeater";
+MenusRepeater.displayName = 'Menus.Repeater';
 
 export interface LoadingProps {
   /** Whether to render as a child component */
@@ -100,30 +101,32 @@ export interface ErrorProps {
  * </Menus.Loading>
  * ```
  */
-export const Loading = React.forwardRef<HTMLElement, LoadingProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreLoading>
-      {({ loading }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.menusLoading}
-            customElement={children}
-            customElementProps={{ loading }}
-            content={loading ? "Loading..." : null}
-            {...otherProps}
-          >
-            <div>{loading ? "Loading..." : null}</div>
-          </AsChildSlot>
-        );
-      }}
-    </CoreLoading>
-  );
-});
+    return (
+      <CoreLoading>
+        {({ loading }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.menusLoading}
+              customElement={children}
+              customElementProps={{ loading }}
+              content={loading ? 'Loading...' : null}
+              {...otherProps}
+            >
+              <div>{loading ? 'Loading...' : null}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreLoading>
+    );
+  },
+);
 
 /**
  * Displays error state with customizable rendering following the documented API.
@@ -174,8 +177,8 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
   );
 });
 
-Loading.displayName = "Menus.Loading";
-Error.displayName = "Menus.Error";
+Loading.displayName = 'Menus.Loading';
+Error.displayName = 'Menus.Error';
 
 /**
  * Menus namespace containing all menus components

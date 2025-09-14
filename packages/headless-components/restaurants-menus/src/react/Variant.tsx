@@ -1,12 +1,8 @@
-import React from "react";
-import {
-  CoreVariant,
-  VariantName,
-  VariantPrice,
-} from "./core";
-import type { Variant } from "../../../components/restaurants-menus/types";
-import { AsChildSlot, type AsChildChildren } from "@wix/headless-utils/react";
-import { TestIds } from "./TestIds";
+import React from 'react';
+import { CoreVariant, VariantName, VariantPrice } from './core';
+import type { Variant } from '../services/types';
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
+import { TestIds } from './TestIds';
 
 export interface VariantRootProps {
   children: React.ReactNode;
@@ -96,7 +92,7 @@ export const Name = React.forwardRef<HTMLElement, VariantNameProps>(
         }}
       </VariantName>
     );
-  }
+  },
 );
 
 /**
@@ -131,7 +127,7 @@ export const Price = React.forwardRef<HTMLElement, VariantPriceProps>(
       <VariantPrice>
         {({ price, formattedPrice, hasPrice }) => {
           const displayPrice = formattedPrice || price || 'No price';
-          
+
           return (
             <AsChildSlot
               ref={ref}
@@ -149,11 +145,11 @@ export const Price = React.forwardRef<HTMLElement, VariantPriceProps>(
         }}
       </VariantPrice>
     );
-  }
+  },
 );
 
-Name.displayName = "Variant.Name";
-Price.displayName = "Variant.Price";
+Name.displayName = 'Variant.Name';
+Price.displayName = 'Variant.Price';
 
 /**
  * Variant namespace containing all variant components

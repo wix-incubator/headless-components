@@ -1,5 +1,5 @@
-import React, { createContext, useContext } from "react";
-import type { Label } from "../../../../components/restaurants-menus/types";
+import React, { createContext, useContext } from 'react';
+import type { Label } from '../../services/types';
 
 export interface LabelProps {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ export function Label(props: LabelProps) {
 export function useLabelContext() {
   const context = useContext(LabelContext);
   if (!context) {
-    throw new Error("useLabelContext must be used within Label");
+    throw new Error('useLabelContext must be used within Label');
   }
   return context;
 }
@@ -47,7 +47,7 @@ export interface LabelIconProps {
 export function Name(props: LabelNameProps) {
   const { label } = useLabelContext();
 
-  return props.children({ name: label.name ?? "" });
+  return props.children({ name: label.name ?? '' });
 }
 
 export function Icon(props: LabelIconProps) {
@@ -60,6 +60,6 @@ export function Icon(props: LabelIconProps) {
   return props.children({
     icon,
     hasIcon,
-    altText: label.name ?? "",
+    altText: label.name ?? '',
   });
 }

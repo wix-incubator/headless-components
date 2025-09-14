@@ -1,5 +1,5 @@
-import React, { createContext, useContext } from "react";
-import type { Section } from "../../../../components/restaurants-menus/types";
+import React, { createContext, useContext } from 'react';
+import type { Section } from '../../services/types';
 
 export interface SectionProps {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ export function Section(props: SectionProps) {
 export function useSectionContext() {
   const context = useContext(SectionContext);
   if (!context) {
-    throw new Error("useSectionContext must be used within Section");
+    throw new Error('useSectionContext must be used within Section');
   }
   return context;
 }
@@ -43,11 +43,11 @@ export interface SectionDescriptionProps {
 export function Name(props: SectionNameProps) {
   const { section } = useSectionContext();
 
-  return props.children({ name: section.name ?? "" });
+  return props.children({ name: section.name ?? '' });
 }
 
 export function Description(props: SectionDescriptionProps) {
   const { section } = useSectionContext();
 
-  return props.children({ description: section.description ?? "" });
+  return props.children({ description: section.description ?? '' });
 }

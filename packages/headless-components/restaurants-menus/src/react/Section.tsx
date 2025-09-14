@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react';
 import {
   Section as CoreSection,
   SectionName,
   SectionDescription,
-} from "./core";
+} from './core';
 import type {
   Section,
   EnhancedItem,
-} from "../../../components/restaurants-menus/types";
-import { AsChildSlot, type AsChildChildren } from "@wix/headless-utils/react";
-import { TestIds } from "./TestIds";
-import { useSectionContext } from "./core/Section";
-import * as ItemComponent from "./Item";
-import { MenusServiceDefinition } from "../services";
-import { useService } from "@wix/services-manager-react";
+} from '../services/types';
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
+import { TestIds } from './TestIds';
+import { useSectionContext } from './core/Section';
+import * as ItemComponent from './Item';
+import { MenusServiceDefinition } from '../services';
+import { useService } from '@wix/services-manager-react';
 
 export interface SectionRootProps {
   children: React.ReactNode;
@@ -98,7 +98,7 @@ export const Name = React.forwardRef<HTMLElement, SectionNameProps>(
         }}
       </SectionName>
     );
-  }
+  },
 );
 
 /**
@@ -153,8 +153,8 @@ export const Description = React.forwardRef<
   );
 });
 
-Name.displayName = "Section.Name";
-Description.displayName = "Section.Description";
+Name.displayName = 'Section.Name';
+Description.displayName = 'Section.Description';
 
 export const ItemsRepeater = React.forwardRef<
   HTMLElement,
@@ -163,8 +163,8 @@ export const ItemsRepeater = React.forwardRef<
   const { children } = props;
   const menusService = useService(MenusServiceDefinition);
   const { section } = useSectionContext();
-  const items = section.itemIds.map((itemId) =>
-    menusService.items.get().find((item) => item._id === itemId)
+  const items = section.itemIds.map((itemId: string) =>
+    menusService.items.get().find((item) => item._id === itemId),
   );
   const hasItems = items.length > 0;
 
@@ -182,7 +182,7 @@ export const ItemsRepeater = React.forwardRef<
   ));
 });
 
-ItemsRepeater.displayName = "Section.ItemsRepeater";
+ItemsRepeater.displayName = 'Section.ItemsRepeater';
 
 /**
  * Section namespace containing all section components
