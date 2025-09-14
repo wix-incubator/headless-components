@@ -2,11 +2,11 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type EventServiceConfig } from '../services/event-service.js';
 import { type TicketDefinitionListServiceConfig } from '../services/ticket-definition-list-service.js';
+import { type TicketDefinition as TicketDefinitionType } from '../services/ticket-definition-service.js';
 import * as TicketDefinition from './TicketDefinition.js';
 import * as CoreTicketsPicker from './core/TicketsPicker.js';
 
 enum TestIds {
-  ticketsPickerRoot = 'tickets-picker-root',
   ticketsPickerTicketDefinitions = 'tickets-picker-ticket-definitions',
   ticketsPickerCheckoutError = 'tickets-picker-checkout-error',
   ticketsPickerCheckoutTrigger = 'tickets-picker-checkout-trigger',
@@ -16,23 +16,23 @@ enum TestIds {
  * Props for the TicketsPicker Root component.
  */
 export interface RootProps {
+  /** Child components */
+  children: React.ReactNode;
   /** Event service configuration */
   eventServiceConfig: EventServiceConfig;
   /** Ticket definition list service configuration */
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
-  /** Child components */
-  children: React.ReactNode;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 /**
- * Root component that provides the TicketList service context for rendering ticket definition lists.
+ * Root container that provides necessary services context to all child components.
+ * Must be used as the top-level component for tickets picker functionality.
  *
+ * @order 1
  * @component
  * @example
  * ```tsx
- * import { TicketsPicker } from '@wix/headless-events/react';
+ * import { TicketsPicker } from '@wix/events/components';
  *
  * function TicketsPickerComponent({ eventServiceConfig, ticketDefinitionListServiceConfig }) {
  *   return (
@@ -40,7 +40,20 @@ export interface RootProps {
  *       <TicketsPicker.TicketDefinitions>
  *         <TicketsPicker.TicketDefinitionRepeater>
  *           <TicketDefinition.Name />
- *           <TicketDefinition.Price />
+ *           <TicketDefinition.Description />
+ *           <TicketDefinition.FixedPricing />
+ *           <TicketDefinition.GuestPricing />
+ *           <TicketDefinition.PricingOptions>
+ *             <TicketDefinition.PricingOptionRepeater>
+ *               <PricingOption.Name />
+ *               <PricingOption.Pricing />
+ *               <PricingOption.Quantity />
+ *             </TicketDefinition.PricingOptionRepeater>
+ *           </TicketDefinition.PricingOptions>
+ *           <TicketDefinition.Remaining />
+ *           <TicketDefinition.SaleStartDate />
+ *           <TicketDefinition.SaleEndDate />
+ *           <TicketDefinition.Quantity />
  *         </TicketsPicker.TicketDefinitionRepeater>
  *       </TicketsPicker.TicketDefinitions>
  *     </TicketsPicker.Root>
@@ -48,38 +61,29 @@ export interface RootProps {
  * }
  * ```
  */
-export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const {
-    eventServiceConfig,
-    ticketDefinitionListServiceConfig,
-    children,
-    className,
-  } = props;
-
-  const attributes = {
-    className,
-    'data-testid': TestIds.ticketsPickerRoot,
-  };
+export const Root = (props: RootProps) => {
+  const { children, eventServiceConfig, ticketDefinitionListServiceConfig } =
+    props;
 
   return (
     <CoreTicketsPicker.Root
       eventServiceConfig={eventServiceConfig}
       ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
     >
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {children}
-      </div>
+      {children}
     </CoreTicketsPicker.Root>
   );
-});
+};
 
 /**
  * Props for the TicketsPicker TicketDefinitions component.
  */
 export interface TicketDefinitionsProps {
-  /** Child components */
-  children: React.ReactNode;
-  /** Empty state to display when no tickets are available */
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
+  children: AsChildChildren<{ ticketDefinitions: TicketDefinitionType[] }>;
+  /** Empty state to display when no ticket definitions are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -95,7 +99,7 @@ export interface TicketDefinitionsProps {
  * <TicketsPicker.TicketDefinitions emptyState={<div>No tickets found</div>}>
  *   <TicketsPicker.TicketDefinitionRepeater>
  *     <TicketDefinition.Name />
- *     <TicketDefinition.Price />
+ *     <TicketDefinition.Description />
  *   </TicketsPicker.TicketDefinitionRepeater>
  * </TicketsPicker.TicketDefinitions>
  * ```
@@ -104,24 +108,27 @@ export const TicketDefinitions = React.forwardRef<
   HTMLElement,
   TicketDefinitionsProps
 >((props, ref) => {
-  const { children, emptyState, className } = props;
+  const { asChild, children, emptyState, className, ...otherProps } = props;
 
   return (
     <CoreTicketsPicker.TicketDefinitions>
-      {({ hasTicketDefinitions }) => {
+      {({ ticketDefinitions, hasTicketDefinitions }) => {
         if (!hasTicketDefinitions) {
           return emptyState || null;
         }
 
-        const attributes = {
-          className,
-          'data-testid': TestIds.ticketsPickerTicketDefinitions,
-        };
-
         return (
-          <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-            {children}
-          </div>
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketsPickerTicketDefinitions}
+            customElement={children}
+            customElementProps={{ ticketDefinitions }}
+            {...otherProps}
+          >
+            <div>{children as React.ReactNode}</div>
+          </AsChildSlot>
         );
       }}
     </CoreTicketsPicker.TicketDefinitions>
@@ -146,7 +153,7 @@ export interface TicketDefinitionRepeaterProps {
  * ```tsx
  * <TicketsPicker.TicketDefinitionRepeater>
  *   <TicketDefinition.Name />
- *   <TicketDefinition.Price />
+ *   <TicketDefinition.Description />
  * </TicketsPicker.TicketDefinitionRepeater>
  * ```
  */
@@ -157,11 +164,7 @@ export const TicketDefinitionRepeater = (
 
   return (
     <CoreTicketsPicker.TicketDefinitionRepeater>
-      {({ ticketDefinitions, hasTicketDefinitions }) => {
-        if (!hasTicketDefinitions) {
-          return null;
-        }
-
+      {({ ticketDefinitions }) => {
         return ticketDefinitions.map((ticketDefinition) => (
           <TicketDefinition.Root
             key={ticketDefinition._id}
@@ -213,7 +216,7 @@ export interface CheckoutErrorProps {
  */
 export const CheckoutError = React.forwardRef<HTMLElement, CheckoutErrorProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreTicketsPicker.CheckoutError>
@@ -227,6 +230,7 @@ export const CheckoutError = React.forwardRef<HTMLElement, CheckoutErrorProps>(
               customElement={children}
               customElementProps={{ error }}
               content={error}
+              {...otherProps}
             >
               <span>{error}</span>
             </AsChildSlot>
@@ -284,7 +288,7 @@ export const CheckoutTrigger = React.forwardRef<
   HTMLElement,
   CheckoutTriggerProps
 >((props, ref) => {
-  const { asChild, children, className, label } = props;
+  const { asChild, children, className, label, ...otherProps } = props;
 
   return (
     <CoreTicketsPicker.CheckoutTrigger>
@@ -304,6 +308,7 @@ export const CheckoutTrigger = React.forwardRef<
               hasSelectedTicketDefinitions,
               checkout,
             }}
+            {...otherProps}
           >
             <button>{label}</button>
           </AsChildSlot>

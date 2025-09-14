@@ -88,12 +88,10 @@ export interface TicketDefinitionRepeaterProps {
 export interface TicketDefinitionRepeaterRenderProps {
   /** List of ticket definitions */
   ticketDefinitions: TicketDefinition[];
-  /** Indicates whether there are any ticket definitions */
-  hasTicketDefinitions: boolean;
 }
 
 /**
- * TicketsPicker TicketDefinitionRepeater core component that provides ticket definitions data.
+ * TicketsPicker TicketDefinitionRepeater core component that provides ticket definitions. Not rendered if there are no ticket definitions.
  *
  * @component
  */
@@ -106,7 +104,11 @@ export function TicketDefinitionRepeater(
   const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const hasTicketDefinitions = !!ticketDefinitions.length;
 
-  return props.children({ ticketDefinitions, hasTicketDefinitions });
+  if (!hasTicketDefinitions) {
+    return null;
+  }
+
+  return props.children({ ticketDefinitions });
 }
 
 export interface CheckoutErrorProps {
