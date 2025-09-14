@@ -1,9 +1,6 @@
 import React from 'react';
 import { Menu as CoreMenu, MenuName, MenuDescription } from './core';
-import type {
-  Menu,
-  Section,
-} from '../services/types';
+import type { Menu, Section } from '../services/types';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds';
 import { useMenuContext } from './core/Menu';
@@ -160,11 +157,17 @@ export const SectionsRepeater = React.forwardRef<
   const { menu } = useMenuContext();
   const { sections } = useService(MenusServiceDefinition);
 
-  const menuSections = menu.sectionIds
-    .map((sectionId: string) =>
-      sections.get().find((section) => section._id === sectionId),
-    )
-    .filter((section: Section): section is Section => section !== undefined);
+  const menuSections =
+    menu.sectionIds ??
+    []
+      .map((sectionId: string) =>
+        sections.get().find((section) => section._id === sectionId),
+      )
+      .filter(
+        (section: Section | undefined): section is Section =>
+          section !== undefined,
+      ) ??
+    [];
 
   const hasSections = menuSections.length > 0;
 

@@ -1,8 +1,5 @@
 import React from 'react';
-import type {
-  EnhancedModifierGroup,
-  Modifier,
-} from '../services/types';
+import type { EnhancedModifierGroup, Modifier } from '../services/types';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds';
 import {

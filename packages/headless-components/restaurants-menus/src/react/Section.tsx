@@ -4,10 +4,7 @@ import {
   SectionName,
   SectionDescription,
 } from './core';
-import type {
-  Section,
-  EnhancedItem,
-} from '../services/types';
+import type { Section, EnhancedItem } from '../services/types';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds';
 import { useSectionContext } from './core/Section';
@@ -163,9 +160,15 @@ export const ItemsRepeater = React.forwardRef<
   const { children } = props;
   const menusService = useService(MenusServiceDefinition);
   const { section } = useSectionContext();
-  const items = section.itemIds.map((itemId: string) =>
-    menusService.items.get().find((item) => item._id === itemId),
-  );
+  const items =
+    (section.itemIds ?? [])
+      .map((itemId: string) =>
+        menusService.items.get().find((item) => item._id === itemId),
+      )
+      .filter(
+        (item: EnhancedItem | undefined): item is EnhancedItem =>
+          item !== undefined,
+      ) ?? [];
   const hasItems = items.length > 0;
 
   if (!hasItems) return null;
