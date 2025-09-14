@@ -46,7 +46,7 @@ Displays the plan data with support for loading state.
 ```tsx
 interface PlanProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanData>;
+  children: AsChildChildren<PlanData> | React.ReactNode;
   className?: string;
   loadingState?: React.ReactNode;
 }

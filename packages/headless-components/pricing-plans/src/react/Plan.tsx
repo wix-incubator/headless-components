@@ -83,7 +83,7 @@ export const Root = ({ planServiceConfig, children }: RootProps) => (
 
 interface PlanProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanData>;
+  children: AsChildChildren<PlanData> | React.ReactNode;
   className?: string;
   loadingState?: React.ReactNode;
 }
@@ -191,7 +191,7 @@ export type PlanNameData = NameData;
 
 interface NameProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanNameData>;
+  children?: AsChildChildren<PlanNameData>;
   className?: string;
 }
 
@@ -244,7 +244,7 @@ export type PlanDescriptionData = DescriptionData;
 
 interface DescriptionProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanDescriptionData>;
+  children?: AsChildChildren<PlanDescriptionData>;
   className?: string;
 }
 
@@ -297,7 +297,7 @@ export type PlanPriceData = PriceData;
 
 interface PriceProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanPriceData>;
+  children?: AsChildChildren<PlanPriceData>;
   className?: string;
 }
 
@@ -442,7 +442,7 @@ export type PlanAdditionalFeeNameData = AdditionalFeeNameData;
 
 interface AdditionalFeeNameProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanAdditionalFeeNameData>;
+  children?: AsChildChildren<PlanAdditionalFeeNameData>;
   className?: string;
 }
 
@@ -496,7 +496,7 @@ export type PlanAdditionalFeeAmountData = AdditionalFeeAmountData;
 
 interface AdditionalFeeAmountProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanAdditionalFeeAmountData>;
+  children?: AsChildChildren<PlanAdditionalFeeAmountData>;
   className?: string;
 }
 
@@ -698,7 +698,7 @@ export type PlanPerkItemData = PerkItemData;
 
 interface PerkItemProps {
   asChild?: boolean;
-  children: AsChildChildren<PlanPerkItemData>;
+  children?: AsChildChildren<PlanPerkItemData>;
   className?: string;
 }
 
