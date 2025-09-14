@@ -47,19 +47,16 @@ const fetchServices = async (
   searchOptions: ServicesListServiceConfig['searchOptions'] = {},
 ) => {
   try {
-    console.log('Fetching services with options:', searchOptions);
     let query = services.queryServices();
 
     // Apply pagination
     if (searchOptions.cursorPaging?.limit) {
-      console.log('Applying limit:', searchOptions.cursorPaging.limit);
       query = query.limit(searchOptions.cursorPaging.limit);
     }
 
     // Apply sorting
     if (searchOptions.sort?.length) {
       const { order, fieldName } = searchOptions.sort[0]!;
-      console.log('Applying sort:', { fieldName, order });
       if (order === 'ASC') {
         query = query.ascending(fieldName as any);
       } else {
@@ -68,18 +65,6 @@ const fetchServices = async (
     }
 
     const result = await query.find();
-    console.log('Query result:', {
-      totalCount: result.totalCount,
-      itemCount: result.items?.length,
-      firstItem: result.items?.[0]
-        ? {
-            id: result.items[0]._id,
-            name: result.items[0].name,
-            image: result.items[0].media?.mainMedia?.image,
-            category: result.items[0].category?.name,
-          }
-        : null,
-    });
 
     return result;
   } catch (error) {
@@ -135,19 +120,6 @@ export const ServicesListService =
     ({ getService, config }) => {
       let firstRun = true;
       const signalsService = getService(SignalsServiceDefinition);
-
-      console.log('Initializing ServicesListService with config:', {
-        serviceCount: config.services.length,
-        firstService: config.services[0]
-          ? {
-              id: config.services[0]._id,
-              name: config.services[0].name,
-              image: config.services[0].media?.mainMedia?.image,
-              category: config.services[0].category?.name,
-            }
-          : null,
-        searchOptions: config.searchOptions,
-      });
 
       const servicesSignal = signalsService.signal<services.Service[]>(
         config.services,
@@ -273,21 +245,7 @@ export async function loadServicesListServiceConfig(
   searchOptions?: ServicesListServiceConfig['searchOptions'],
 ): Promise<ServicesListServiceConfig> {
   try {
-    console.log('Loading services config with options:', searchOptions);
     const result = await fetchServices(searchOptions);
-
-    console.log('Services config loaded:', {
-      totalCount: result.totalCount,
-      itemCount: result.items?.length,
-      firstItem: result.items?.[0]
-        ? {
-            id: result.items[0]._id,
-            name: result.items[0].name,
-            image: result.items[0].media?.mainMedia?.image,
-            category: result.items[0].category?.name,
-          }
-        : null,
-    });
 
     return {
       services: result.items ?? [],
