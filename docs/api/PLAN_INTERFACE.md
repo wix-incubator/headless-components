@@ -16,46 +16,26 @@ The root container that provides plan context to child components and handles lo
 ```tsx
 type PlanServiceConfig = { plan: Plan } | { planId: string }
 
-// TODO: Should add `WithAsChild` type here, so it's known exactly what is the data that is being passed to the component?
-type RootProps = WithAsChild<
-  {
-    planServiceConfig: PlanServiceConfig;
-    loadingState?: React.ReactNode;
-    errorState?: React.ReactNode;
-    className?: string;
-  },
-  PlanRootData
->;
+interface RootProps {
+  planServiceConfig: PlanServiceConfig;
+  children: React.ReactNode;
+}
 ```
 
 **Example**
 ```tsx
-  // Default usage
-  <Plan.Root className="flex flex-col gap-4" planServiceConfig={planServiceConfig} loadingState={<div>Loading...</div>} errorState={<div>Error</div>}>
+<Plan.Root planServiceConfig={planServiceConfig}>
+  <Plan.Plan>
     <Plan.Image />
     <Plan.Name />
-    <Plan.Description />
     <Plan.Price />
     <Plan.AdditionalFees />
     <Plan.Recurrence />
     <Plan.Duration />
     <Plan.Action.BuyNow label="Select Plan" />
-  </Plan.Root>
-
-  // With asChild
-  <Plan.Root planServiceConfig={planServiceConfig} asChild>
-    {React.forwardRef(({ isLoading, error, plan }, ref) => (
-      <div ref={ref} className="text-center">
-        {isLoading ? 'Loading...' : error ? 'Error!' : `Plan ${plan.name} loaded`}
-      </div>
-    ))}
-  </Plan.Root>
+  </Plan.Plan>
+</Plan.Root>
 ```
-
-**Data Attributes**
-- `data-testid="plan-root"` - Applied to root container
-- `data-is-loading` - Applied to container when loading
-- `data-has-error` - Applied to container when error occurs
 ---
 
 ### Plan.Image

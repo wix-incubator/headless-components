@@ -7,8 +7,8 @@ import {
 } from '../services/PlanService.js';
 import {
   Root as CoreRoot,
-  Container as CoreContainer,
-  ContainerData,
+  Plan as CorePlan,
+  PlanData,
   Image as CoreImage,
   Name as CoreName,
   Description as CoreDescription,
@@ -40,7 +40,7 @@ import { Commerce } from '@wix/headless-ecom/react';
 import { useService } from '@wix/services-manager-react';
 
 enum PlanTestId {
-  Root = 'plan-root',
+  Plan = 'plan-plan',
   Image = 'plan-image',
   Name = 'plan-name',
   Description = 'plan-description',
@@ -53,93 +53,94 @@ enum PlanTestId {
   ActionBuyNow = 'plan-action-buy-now',
 }
 
-type WithAsChild<Props, RenderProps> = Props &
-  (
-    | { asChild?: false; children?: React.ReactNode }
-    | { asChild: true; children: AsChildChildren<RenderProps> }
-  );
-
-export type PlanRootData = ContainerData;
-
-type RootProps = WithAsChild<
-  {
-    planServiceConfig: PlanServiceConfig;
-    loadingState?: React.ReactNode;
-    errorState?: React.ReactNode;
-    className?: string;
-  },
-  PlanRootData
->;
+interface RootProps {
+  planServiceConfig: PlanServiceConfig;
+  children: React.ReactNode;
+}
 
 /**
- * The root container that provides plan context to child components and handles loading/error states for plan loading.
+ * The root container that provides plan context to child components
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Plan.Root planServiceConfig={planServiceConfig}>
+ *   <Plan.Plan>
+ *     <Plan.Image />
+ *     <Plan.Name />
+ *     <Plan.Price />
+ *     <Plan.AdditionalFees />
+ *     <Plan.Recurrence />
+ *     <Plan.Duration />
+ *     <Plan.Action.BuyNow label="Select Plan" />
+ *   </Plan.Plan>
+ * </Plan.Root>
+ * ```
+ */
+export const Root = ({ planServiceConfig, children }: RootProps) => (
+  <CoreRoot planServiceConfig={planServiceConfig}>{children}</CoreRoot>
+);
+
+interface PlanProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanData>;
+  className?: string;
+  loadingState?: React.ReactNode;
+}
+
+/**
+ * Displays the plan data with support for loading state
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Plan.Root className="flex flex-col gap-4" planServiceConfig={planServiceConfig} loadingState={<div>Loading...</div>} errorState={<div>Error</div>}>
+ * <Plan.Plan className="flex flex-col gap-4" loadingState={<div>Loading...</div>}>
  *   <Plan.Image />
  *   <Plan.Name />
- *   <Plan.Description />
- *   <Plan.Price />
- *   <Plan.AdditionalFees />
- *   <Plan.Recurrence />
- *   <Plan.Duration />
- *   <Plan.Action.BuyNow label="Select Plan" />
- * </Plan.Root>
+ * </Plan.Plan>
  *
  * // With asChild
- * <Plan.Root planServiceConfig={planServiceConfig} asChild>
- *   {React.forwardRef(({ isLoading, error, plan }, ref) => (
- *     <div ref={ref} className="text-center">
- *       {isLoading ? 'Loading...' : error ? 'Error!' : `Plan ${plan.name} loaded`}
- *     </div>
- *   ))}
- * </Plan.Root>
- * ```
+ * <Plan.Plan asChild>
+ *   {React.forwardRef(({isLoading, error, plan}, ref) => {
+ *     if (isLoading) {
+ *       return <div>Loading...</div>;
+ *     }
+ *     if (error) {
+ *       return <div>Error!</div>;
+ *     }
+ *     return (
+ *       <div ref={ref} className="flex flex-col gap-4">
+ *         Plan {plan.name}
+ *       </div>
+ *     );
+ *   })}
+ * </Plan.Plan>
+ *
  */
-export const Root = React.forwardRef<HTMLElement, RootProps>(
-  (
-    {
-      planServiceConfig,
-      children,
-      asChild,
-      className,
-      loadingState,
-      errorState,
-    }: RootProps,
-    ref,
-  ) => {
+export const Plan = React.forwardRef<HTMLElement, PlanProps>(
+  ({ children, asChild, className, loadingState }, ref) => {
     return (
-      <CoreRoot planServiceConfig={planServiceConfig}>
-        <CoreContainer>
-          {(planRootData) => (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={PlanTestId.Root}
-              data-is-loading={planRootData.isLoading}
-              data-has-error={planRootData.error !== null}
-              customElement={children}
-              customElementProps={{
-                isLoading: planRootData.isLoading,
-                error: planRootData.error,
-                plan: planRootData.plan,
-              }}
-            >
-              <div>
-                {planRootData.isLoading
-                  ? loadingState
-                  : planRootData.error
-                    ? errorState
-                    : (children as React.ReactNode)}
-              </div>
-            </AsChildSlot>
-          )}
-        </CoreContainer>
-      </CoreRoot>
+      <CorePlan>
+        {(planData) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={PlanTestId.Plan}
+            data-is-loading={planData.isLoading}
+            data-has-error={planData.error !== null}
+            customElement={children}
+            customElementProps={planData}
+          >
+            <div>
+              {planData.isLoading
+                ? loadingState
+                : (children as React.ReactNode)}
+            </div>
+          </AsChildSlot>
+        )}
+      </CorePlan>
     );
   },
 );
@@ -188,7 +189,11 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
 
 export type PlanNameData = NameData;
 
-type NameProps = WithAsChild<{ className?: string }, PlanNameData>;
+interface NameProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanNameData>;
+  className?: string;
+}
 
 /**
  * Displays the plan name.
@@ -237,10 +242,11 @@ export const Name = React.forwardRef<HTMLElement, NameProps>(
 
 export type PlanDescriptionData = DescriptionData;
 
-type DescriptionProps = WithAsChild<
-  { className?: string },
-  PlanDescriptionData
->;
+interface DescriptionProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanDescriptionData>;
+  className?: string;
+}
 
 /**
  * Displays the plan description.
@@ -289,7 +295,11 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 
 export type PlanPriceData = PriceData;
 
-type PriceProps = WithAsChild<{ className?: string }, PlanPriceData>;
+interface PriceProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanPriceData>;
+  className?: string;
+}
 
 /**
  * Displays the plan price.
@@ -342,10 +352,11 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>(
 
 export type PlanAdditionalFeesData = AdditionalFeesData;
 
-type AdditionalFeesProps = WithAsChild<
-  { className?: string },
-  PlanAdditionalFeesData
->;
+interface AdditionalFeesProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanAdditionalFeesData>;
+  className?: string;
+}
 
 /**
  * Container for plan additional fees.
@@ -429,10 +440,11 @@ export const AdditionalFeesRepeater = ({
 
 export type PlanAdditionalFeeNameData = AdditionalFeeNameData;
 
-type AdditionalFeeNameProps = WithAsChild<
-  { className?: string },
-  PlanAdditionalFeeNameData
->;
+interface AdditionalFeeNameProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanAdditionalFeeNameData>;
+  className?: string;
+}
 
 /**
  * Displays the additional fee name. Must be used within an AdditionalFeesRepeater.
@@ -482,10 +494,11 @@ export const AdditionalFeeName = React.forwardRef<
 
 export type PlanAdditionalFeeAmountData = AdditionalFeeAmountData;
 
-type AdditionalFeeAmountProps = WithAsChild<
-  { className?: string },
-  PlanAdditionalFeeAmountData
->;
+interface AdditionalFeeAmountProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanAdditionalFeeAmountData>;
+  className?: string;
+}
 
 /**
  * Displays the additional fee amount. Must be used within an AdditionalFeesRepeater.
@@ -593,18 +606,18 @@ interface DurationProps {
  * ```
  */
 export const Duration = React.forwardRef<HTMLElement, DurationProps>(
-  ({ children }, ref) => {
-    return (
-      <CoreDuration>
-        {({ duration }) => children({ duration }, ref)}
-      </CoreDuration>
-    );
-  },
+  ({ children }, ref) => (
+    <CoreDuration>{({ duration }) => children({ duration }, ref)}</CoreDuration>
+  ),
 );
 
 export type PlanPerksData = PerksData;
 
-type PerksProps = WithAsChild<{ className?: string }, PlanPerksData>;
+interface PerksProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanPerksData>;
+  className?: string;
+}
 
 /**
  * Container for plan perks.
@@ -686,10 +699,11 @@ export const PerksRepeater = ({ children }: PerksRepeaterProps) => {
 
 export type PlanPerkDescriptionData = PerkDescriptionData;
 
-type PerkDescriptionProps = WithAsChild<
-  { className?: string },
-  PlanPerkDescriptionData
->;
+interface PerkDescriptionProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanPerkDescriptionData>;
+  className?: string;
+}
 
 /**
  * Displays the perk description. Must be used within a PerksRepeater.

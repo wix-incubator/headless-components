@@ -45,16 +45,16 @@ export function Root({ planServiceConfig, children }: RootProps) {
   );
 }
 
-export type ContainerData =
+export type PlanData =
   | { isLoading: true; error: null; plan: null }
   | { isLoading: false; error: null; plan: plansV3.Plan }
   | { isLoading: false; error: Error; plan: null };
 
-interface ContainerProps {
-  children: (props: ContainerData) => React.ReactNode;
+interface PlanProps {
+  children: (props: PlanData) => React.ReactNode;
 }
 
-export function Container({ children }: ContainerProps) {
+export function Plan({ children }: PlanProps) {
   const { isLoadingSignal, planSignal, errorSignal } = useService(
     PlanServiceDefinition,
   );
