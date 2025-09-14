@@ -49,4 +49,5 @@ export type {
   GenericListRootProps,
   GenericListItemsProps,
   GenericListLoadMoreProps,
+  GenericListTotalsProps,
 } from './generic-list.js';

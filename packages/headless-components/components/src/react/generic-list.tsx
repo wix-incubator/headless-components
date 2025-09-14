@@ -351,12 +351,19 @@ Totals.displayName = 'GenericList.Totals';
 // GenericList Compound Component Export
 // ============================================================================
 
+export const Actions = {
+  LoadMore,
+};
+
 export const GenericList = {
   Root,
   Items,
-  LoadMore,
+  Actions,
   Totals,
 };
+
+// Also export Actions as a named export for better TypeScript support
+export { Actions as GenericListActions };
 
 // ============================================================================
 // Type Exports (already exported above with interfaces)

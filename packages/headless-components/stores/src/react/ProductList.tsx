@@ -126,6 +126,7 @@ const RootContent = React.forwardRef<
       onLoadMore={handleLoadMore}
       hasMore={productsListService.hasMoreProducts.get()}
       isLoading={productsListService.isLoading.get()}
+      variant="grid"
       className={className}
       ref={ref}
       data-testid={TestIds.productListRoot}
@@ -346,7 +347,7 @@ export const LoadMoreTrigger = React.forwardRef<
   } = props;
 
   return (
-    <GenericList.LoadMore
+    <GenericList.Actions.LoadMore
       label={label}
       loadingLabel={
         typeof loadingState === 'string' ? loadingState : 'Loading...'
@@ -357,7 +358,7 @@ export const LoadMoreTrigger = React.forwardRef<
       data-testid={TestIds.productListLoadMore}
     >
       {typeof children === 'function' ? undefined : children}
-    </GenericList.LoadMore>
+    </GenericList.Actions.LoadMore>
   );
 });
 
@@ -401,20 +402,36 @@ export const TotalsDisplayed = React.forwardRef<
   const products = productsListService.products.get();
   const displayedProducts = products.length;
 
+  // If using asChild pattern, use AsChildSlot for backward compatibility
+  if (asChild) {
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.productListTotalsDisplayed}
+        data-displayed={displayedProducts}
+        customElement={children}
+        customElementProps={{ displayedProducts }}
+        content={displayedProducts}
+        {...otherProps}
+      >
+        <span>{displayedProducts}</span>
+      </AsChildSlot>
+    );
+  }
+
+  // Use GenericList.Totals for default rendering
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
+    <GenericList.Totals
       className={className}
+      ref={ref}
       data-testid={TestIds.productListTotalsDisplayed}
       data-displayed={displayedProducts}
-      customElement={children}
-      customElementProps={{ displayedProducts }}
-      content={displayedProducts}
       {...otherProps}
     >
-      <span>{displayedProducts}</span>
-    </AsChildSlot>
+      {displayedProducts}
+    </GenericList.Totals>
   );
 });
 
