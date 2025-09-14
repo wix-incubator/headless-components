@@ -209,8 +209,9 @@ export function Error(props: FormSubmitErrorProps) {
     typeof FormServiceDefinition
   >;
 
-  const error = service.submitError?.get() || null;
-  const hasError = !!error;
+  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
+  const error = submitResponse.type === 'error' ? submitResponse.message : null;
+  const hasError = submitResponse.type === 'error';
 
   return props.children({
     error,
@@ -232,6 +233,8 @@ export interface FormSubmittedProps {
 export interface FormSubmittedRenderProps {
   /** Whether the form has been submitted */
   isSubmitted: boolean;
+  /** Success message if available */
+  message?: string;
 }
 
 /**
@@ -261,9 +264,16 @@ export interface FormSubmittedRenderProps {
  * ```
  */
 export function Submitted(props: FormSubmittedProps) {
-  const isSubmitted = false; // TODO: Implement actual submission state tracking
+  const service = useService(FormServiceDefinition) as ServiceAPI<
+    typeof FormServiceDefinition
+  >;
+
+  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
+  const isSubmitted = submitResponse.type === 'success';
+  const message = submitResponse.type === 'success' ? submitResponse.message : undefined;
 
   return props.children({
     isSubmitted,
+    message,
   });
 }

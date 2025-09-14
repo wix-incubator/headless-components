@@ -5,11 +5,16 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 
+export type SubmitResponse =
+  | { type: 'success'; message?: string }
+  | { type: 'error'; message: string }
+  | { type: 'idle' };
+
 export interface FormServiceAPI {
   form: Signal<forms.Form>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
-  submitError: Signal<string | null>;
+  submitResponse: Signal<SubmitResponse>;
 }
 
 export const FormServiceDefinition =
@@ -30,11 +35,11 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     const error: Signal<string | null> = signalsService.signal<string | null>(
       null,
     );
-    const submitError: Signal<string | null> = signalsService.signal<
-      string | null
-    >(null);
+    const submitResponse: Signal<SubmitResponse> = signalsService.signal<SubmitResponse>(
+      { type: 'idle' }
+    );
 
-    return { form, isLoading, error, submitError };
+    return { form, isLoading, error, submitResponse };
   },
 );
 
