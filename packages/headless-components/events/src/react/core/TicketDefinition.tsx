@@ -100,8 +100,8 @@ export interface FixedPricingProps {
 export interface FixedPricingRenderProps {
   /** Whether ticket definition is free */
   free: boolean;
-  /** Fixed price value */
-  value: string;
+  /** Fixed price */
+  price: number;
   /** Price currency */
   currency: string;
 }
@@ -122,7 +122,7 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
 
   return props.children({
     free: ticketDefinition.pricingMethod!.free!,
-    value: fixedPrice.value!,
+    price: Number(fixedPrice.value!),
     currency: fixedPrice.currency!,
   });
 }
@@ -133,12 +133,12 @@ export interface GuestPricingProps {
 }
 
 export interface GuestPricingRenderProps {
-  /** Minimum price value */
-  min: string;
+  /** Minimum price */
+  minPrice: number;
   /** Price currency */
   currency: string;
-  /** Function to handle price changes */
-  onChange: (value: string) => void;
+  /** Function to set price */
+  setPrice: (price: string) => void;
 }
 
 /**
@@ -158,17 +158,17 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
     return null;
   }
 
-  const onChange = (value: string) => {
+  const setPrice = (price: string) => {
     ticketDefinitionListService.setQuantity({
       ticketDefinitionId: ticketDefinition._id!,
-      priceOverride: value,
+      priceOverride: price,
     });
   };
 
   return props.children({
-    min: guestPrice.value!,
+    minPrice: Number(guestPrice.value!),
     currency: guestPrice.currency!,
-    onChange,
+    setPrice,
   });
 }
 
@@ -241,6 +241,8 @@ export interface SaleEndDateRenderProps {
   endDate: string;
   /** Formatted sale end date */
   endDateFormatted: string;
+  /** Whether sale has ended */
+  saleEnded: boolean;
 }
 
 /**
@@ -254,6 +256,7 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
   const saleScheduled =
     ticketDefinition.saleStatus === 'SALE_SCHEDULED' &&
     !!ticketDefinition.salePeriod?.endDate;
+  const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
 
   if (saleScheduled) {
     return null;
@@ -264,7 +267,7 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
     new Date(endDate),
   );
 
-  return props.children({ endDate, endDateFormatted });
+  return props.children({ endDate, endDateFormatted, saleEnded });
 }
 
 export interface QuantityProps {
