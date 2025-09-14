@@ -26,8 +26,8 @@ The root container that provides program list data to all child components.
 
 ```tsx
 interface ProgramListRootProps {
-  programListConfig?: ProgramListServiceConfig;
   children: React.ReactNode;
+  programListConfig?: ProgramListServiceConfig;
 }
 ```
 
@@ -57,8 +57,9 @@ Main container for the program list display with support for empty states and cu
 
 ```tsx
 interface ProgramListProgramsProps {
-  emptyState?: React.ReactNode;
   children: React.ReactNode;
+  className?: string;
+  emptyState?: React.ReactNode;
 }
 ```
 

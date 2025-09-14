@@ -72,13 +72,14 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, _ref) => {
 
 export interface ProgramsProps {
   children: React.ReactNode;
+  className?: string;
   emptyState?: React.ReactNode;
 }
 
 // TODO: Add example
 export const Programs = React.forwardRef<HTMLElement, ProgramsProps>(
   (props, ref) => {
-    const { children, emptyState } = props;
+    const { children, className, emptyState } = props;
 
     const programListService = useService(ProgramListServiceDefinition);
 
@@ -94,7 +95,11 @@ export const Programs = React.forwardRef<HTMLElement, ProgramsProps>(
     };
 
     return (
-      <div ref={ref as React.Ref<HTMLDivElement>} {...attributes}>
+      <div
+        ref={ref as React.Ref<HTMLDivElement>}
+        className={className}
+        {...attributes}
+      >
         {children as React.ReactNode}
       </div>
     );
