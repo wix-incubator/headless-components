@@ -51,6 +51,8 @@ enum TestIds {
 export interface RootProps {
   /** Event */
   event: Event;
+  /** Whether to render as a child component */
+  asChild?: boolean;
   /** Child components that will have access to the event */
   children: React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -59,12 +61,13 @@ export interface RootProps {
 
 /**
  * Root container that provides event context to all child components.
+ * Must be used as the top-level Event component.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { Event } from '@wix/headless-events/react';
+ * import { Event } from '@wix/events/components';
  *
  * function EventPage({ event }) {
  *   return (
@@ -81,25 +84,29 @@ export interface RootProps {
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { event, children, className } = props;
-
-  const attributes = {
-    className,
-    'data-testid': TestIds.eventRoot,
-    'data-upcoming': event.status === 'UPCOMING',
-    'data-started': event.status === 'STARTED',
-    'data-ended': event.status === 'ENDED',
-    'data-sold-out': !!event.registration?.tickets?.soldOut,
-    'data-registration-closed':
-      event.registration?.status === 'CLOSED_MANUALLY' ||
-      event.registration?.status === 'CLOSED_AUTOMATICALLY',
-  };
+  const { event, asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreEvent.Root event={event}>
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {children}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.eventRoot}
+        data-upcoming={event.status === 'UPCOMING'}
+        data-started={event.status === 'STARTED'}
+        data-ended={event.status === 'ENDED'}
+        data-sold-out={!!event.registration?.tickets?.soldOut}
+        data-registration-closed={
+          event.registration?.status === 'CLOSED_MANUALLY' ||
+          event.registration?.status === 'CLOSED_AUTOMATICALLY'
+        }
+        customElement={children}
+        customElementProps={{}}
+        {...otherProps}
+      >
+        <div>{children}</div>
+      </AsChildSlot>
     </CoreEvent.Root>
   );
 });
@@ -110,6 +117,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Child components */
   children?: React.ReactNode;
 }
 
@@ -188,7 +196,7 @@ export interface TitleProps {
  * ```
  */
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreEvent.Title>
@@ -201,6 +209,7 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
           customElement={children}
           customElementProps={{ title }}
           content={title}
+          {...otherProps}
         >
           <span>{title}</span>
         </AsChildSlot>
@@ -248,7 +257,13 @@ export interface DateProps {
  * ```
  */
 export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
-  const { asChild, children, className, format = 'short' } = props;
+  const {
+    asChild,
+    children,
+    className,
+    format = 'short',
+    ...otherProps
+  } = props;
 
   return (
     <CoreEvent.Date format={format}>
@@ -261,6 +276,7 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
           customElement={children}
           customElementProps={{ date }}
           content={date}
+          {...otherProps}
         >
           <span>{date}</span>
         </AsChildSlot>
@@ -309,7 +325,13 @@ export interface LocationProps {
  */
 export const Location = React.forwardRef<HTMLElement, LocationProps>(
   (props, ref) => {
-    const { asChild, children, className, format = 'short' } = props;
+    const {
+      asChild,
+      children,
+      className,
+      format = 'short',
+      ...otherProps
+    } = props;
 
     return (
       <CoreEvent.Location format={format}>
@@ -322,6 +344,7 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
             customElement={children}
             customElementProps={{ location }}
             content={location}
+            {...otherProps}
           >
             <span>{location}</span>
           </AsChildSlot>
@@ -371,7 +394,7 @@ export const ShortDescription = React.forwardRef<
   HTMLElement,
   ShortDescriptionProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreEvent.ShortDescription>
@@ -385,6 +408,7 @@ export const ShortDescription = React.forwardRef<
             customElement={children}
             customElementProps={{ shortDescription }}
             content={shortDescription}
+            {...otherProps}
           >
             <span>{shortDescription}</span>
           </AsChildSlot>
@@ -402,7 +426,7 @@ export interface DescriptionProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{ description: RichContent }>;
-  /** CSS classes to apply to the default element */
+  /** CSS classes to apply to the container element */
   className?: string;
   /** Ricos viewer custom styles */
   customStyles?: RicosCustomStyles;
@@ -427,7 +451,7 @@ export interface DescriptionProps {
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className, customStyles } = props;
+    const { asChild, children, className, customStyles, ...otherProps } = props;
 
     return (
       <CoreEvent.Description>
@@ -440,6 +464,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
               data-testid={TestIds.eventDescription}
               customElement={children}
               customElementProps={{ description }}
+              {...otherProps}
             >
               <div>
                 <RicosViewer
@@ -520,7 +545,7 @@ export interface RsvpButtonProps {
  */
 export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
   (props, ref) => {
-    const { asChild, children, className, label } = props;
+    const { asChild, children, className, label, ...otherProps } = props;
 
     return (
       <CoreEvent.RsvpButton>
@@ -532,6 +557,7 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
             data-testid={TestIds.eventRsvpButton}
             customElement={children}
             customElementProps={{ event }}
+            {...otherProps}
           >
             <button>{label}</button>
           </AsChildSlot>
@@ -577,7 +603,7 @@ export interface FacebookShareProps {
  */
 export const FacebookShare = React.forwardRef<HTMLElement, FacebookShareProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreEvent.Share>
@@ -595,6 +621,7 @@ export const FacebookShare = React.forwardRef<HTMLElement, FacebookShareProps>(
               href={href}
               target="_blank"
               rel="noreferrer"
+              {...otherProps}
             >
               <a />
             </AsChildSlot>
@@ -641,7 +668,7 @@ export interface LinkedInShareProps {
  */
 export const LinkedInShare = React.forwardRef<HTMLElement, LinkedInShareProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreEvent.Share>
@@ -659,6 +686,7 @@ export const LinkedInShare = React.forwardRef<HTMLElement, LinkedInShareProps>(
               href={href}
               target="_blank"
               rel="noreferrer"
+              {...otherProps}
             >
               <a />
             </AsChildSlot>
@@ -705,7 +733,7 @@ export interface XShareProps {
  */
 export const XShare = React.forwardRef<HTMLElement, XShareProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreEvent.Share>
@@ -723,6 +751,7 @@ export const XShare = React.forwardRef<HTMLElement, XShareProps>(
               href={href}
               target="_blank"
               rel="noreferrer"
+              {...otherProps}
             >
               <a />
             </AsChildSlot>
@@ -771,7 +800,7 @@ export const AddToGoogleCalendar = React.forwardRef<
   HTMLElement,
   AddToGoogleCalendarProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreEvent.AddToGoogleCalendar>
@@ -787,6 +816,7 @@ export const AddToGoogleCalendar = React.forwardRef<
             href={url}
             target="_blank"
             rel="noreferrer"
+            {...otherProps}
           >
             <a />
           </AsChildSlot>
@@ -834,7 +864,7 @@ export const AddToIcsCalendar = React.forwardRef<
   HTMLElement,
   AddToIcsCalendarProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreEvent.AddToIcsCalendar>
@@ -850,6 +880,7 @@ export const AddToIcsCalendar = React.forwardRef<
             href={url}
             target="_blank"
             rel="noreferrer"
+            {...otherProps}
           >
             <a />
           </AsChildSlot>
