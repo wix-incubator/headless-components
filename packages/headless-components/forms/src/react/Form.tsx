@@ -74,9 +74,23 @@ export interface RootProps {
  *   // ... other field components
  * };
  *
+ * // Pattern 1: Pre-loaded form data (SSR/SSG)
  * function FormPage({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
+ *       <Form.Loading className="flex justify-center p-4" />
+ *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
+ *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+ *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
+ *     </Form.Root>
+ *   );
+ * }
+ *
+ * // Pattern 2: Lazy loading with formId (Client-side)
+ * function DynamicFormPage({ formId }) {
+ *   return (
+ *     <Form.Root formServiceConfig={{ formId }}>
  *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />
@@ -150,18 +164,10 @@ const RootContent = React.forwardRef<HTMLDivElement, RootContentProps>(
 export interface LoadingProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Content to display during loading state (can be a render function or ReactNode) */
-  children?: AsChildChildren<LoadingRenderProps>;
+  /** Content to display during loading state (can be a ReactNode) */
+  children?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-/**
- * Render props for Loading component
- */
-export interface LoadingRenderProps {
-  /** Whether the form is currently loading */
-  isLoading: boolean;
 }
 
 /**
@@ -171,7 +177,7 @@ export interface LoadingRenderProps {
  * @component
  * @param {LoadingProps} props - The component props
  * @param {boolean} [props.asChild] - Whether to render as a child component
- * @param {AsChildChildren<LoadingRenderProps>} [props.children] - Content to display during loading state (can be a render function or ReactNode)
+ * @param {React.ReactNode} [props.children] - Content to display during loading state
  * @param {string} [props.className] - CSS classes to apply to the default element
  * @example
  * ```tsx
@@ -184,18 +190,14 @@ export interface LoadingRenderProps {
  *   );
  * }
  *
- * // Custom rendering with render function
+ * // Custom content
  * function CustomFormLoading() {
  *   return (
  *     <Form.Loading>
- *       {({ isLoading }) => (
- *         isLoading ? (
- *           <div className="flex justify-center items-center p-4">
- *             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
- *             <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
- *           </div>
- *         ) : null
- *       )}
+ *       <div className="flex justify-center items-center p-4">
+ *         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+ *         <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
+ *       </div>
  *     </Form.Loading>
  *   );
  * }
@@ -204,12 +206,10 @@ export interface LoadingRenderProps {
  * function CustomFormLoadingAsChild() {
  *   return (
  *     <Form.Loading asChild>
- *       {React.forwardRef(({ isLoading }, ref) => (
- *         <div ref={ref} className="custom-loading-container">
- *           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
- *           <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
- *         </div>
- *       ))}
+ *       <div className="custom-loading-container">
+ *         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+ *         <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
+ *       </div>
  *     </Form.Loading>
  *   );
  * }
@@ -224,8 +224,6 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
         {({ isLoading }) => {
           if (!isLoading) return null;
 
-          const loadingData = { isLoading };
-
           return (
             <AsChildSlot
               ref={ref}
@@ -233,7 +231,6 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
               className={className}
               data-testid="form-loading"
               customElement={children}
-              customElementProps={loadingData}
               content="Loading form..."
               {...otherProps}
             >
@@ -979,9 +976,23 @@ const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
  *   // ... other field components
  * };
  *
+ * // Pattern 1: Pre-loaded form data (SSR/SSG)
  * function MyForm({ formServiceConfig }) {
  *   return (
  *     <Form.Root formServiceConfig={formServiceConfig}>
+ *       <Form.Loading className="flex justify-center p-4" />
+ *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
+ *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+ *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
+ *     </Form.Root>
+ *   );
+ * }
+ *
+ * // Pattern 2: Lazy loading with formId (Client-side)
+ * function DynamicForm({ formId }) {
+ *   return (
+ *     <Form.Root formServiceConfig={{ formId }}>
  *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
  *       <Form.Fields fieldMap={FIELD_MAP} />

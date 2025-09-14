@@ -26,17 +26,55 @@ interface RootProps {
 }
 ```
 
-**Example**
+**FormServiceConfig**
+
+The `FormServiceConfig` supports two distinct patterns for providing form data:
+
+- **Pre-loaded Form Data (SSR/SSG)**: Use when you have form data available at service initialization
+- **Lazy Loading with Form ID (Client-side)**: Use when you only have a form ID and need to load form data asynchronously
 
 ```tsx
-<Form.Root formServiceConfig={formServiceConfig}>
+interface FormServiceConfig {
+  /** Pre-loaded form data. When provided, the service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios. */
+  form?: forms.Form;
+  /** Form ID for lazy loading. When provided (and no form data), the service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing. */
+  formId?: string;
+}
+```
+
+**Examples**
+
+```tsx
+// Pattern 1: Pre-loaded form data (SSR/SSG)
+<Form.Root formServiceConfig={{ form: myForm }}>
+  {/* All form components */}
+</Form.Root>
+
+// Pattern 2: Lazy loading with formId (Client-side)
+<Form.Root formServiceConfig={{ formId: 'form-123' }}>
+  <Form.Loading>
+    {() => (
+      <div className="flex items-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
+      </div>
+    )}
+  </Form.Loading>
+  <Form.LoadingError>
+    {({ error }) => (
+      <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded">
+        <h3 className="font-heading font-semibold">Error loading form</h3>
+        <p className="font-paragraph">{error}</p>
+      </div>
+    )}
+  </Form.LoadingError>
   {/* All form components */}
 </Form.Root>
 ```
 
 ### Form.Loading
 
-Component that renders content during loading state. Only displays its children when the form is currently loading. Provides loading data to custom render functions.
+Component that renders content during loading state. Only displays its children when the form is currently loading.
 
 **Props**
 
@@ -64,6 +102,16 @@ interface LoadingRenderProps {
 // Default usage
 <Form.Loading className="flex justify-center p-4" />
 
+// Custom rendering with render function
+<Form.Loading>
+  {() => (
+    <div className="flex items-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
+    </div>
+  )}
+</Form.Loading>
+
 // Custom rendering with forwardRef
 <Form.Loading asChild>
   {React.forwardRef(({ isLoading }, ref) => (
@@ -80,7 +128,7 @@ interface LoadingRenderProps {
 
 ### Form.LoadingError
 
-Component that renders content when there's an error loading the form. Only displays its children when an error has occurred. Provides error data to custom render functions.
+Component that renders content when there's an error loading the form. Only displays its children when an error has occurred.
 
 **Props**
 
@@ -110,6 +158,16 @@ interface LoadingErrorRenderProps {
 // Default usage
 <Form.LoadingError className="error-message" />
 
+// Custom rendering with render function
+<Form.LoadingError>
+  {({ error }) => (
+    <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded">
+      <h3 className="font-heading font-semibold">Error loading form</h3>
+      <p className="font-paragraph">{error}</p>
+    </div>
+  )}
+</Form.LoadingError>
+
 // Custom rendering with forwardRef
 <Form.LoadingError asChild>
   {React.forwardRef(({ error, hasError }, ref) => (
@@ -126,7 +184,9 @@ interface LoadingErrorRenderProps {
 
 ### Form.Submitted
 
-Component that renders content after successful form submission. Only displays its children when the form has been successfully submitted. Provides submission data to custom render functions.
+Component that renders content after successful form submission. Only displays its children when the form has been successfully submitted.
+
+**Important**: The component automatically handles conditional rendering for regular usage. When using `asChild`, you can use `isSubmitted` to customize the success state behavior and `message` to display the success message.
 
 **Props**
 
@@ -156,9 +216,19 @@ interface SubmittedRenderProps {
 // Default usage
 <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg" />
 
+// Custom rendering with render function
+<Form.Submitted>
+  {({ message }) => (
+    <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg">
+      <h2 className="font-heading text-xl mb-2">Thank You!</h2>
+      <p className="font-paragraph">{message}</p>
+    </div>
+  )}
+</Form.Submitted>
+
 // Custom rendering with forwardRef
 <Form.Submitted asChild>
-  {React.forwardRef(({ isSubmitted, message }, ref) => (
+  {React.forwardRef(({ message }, ref) => (
     <div
       ref={ref}
       className="custom-success-container"
@@ -172,7 +242,7 @@ interface SubmittedRenderProps {
 
 ### Form.Error
 
-Component that renders content when there's an error during form submission. Only displays its children when a submission error has occurred. Provides error data to custom render functions.
+Component that renders content when there's an error during form submission. Only displays its children when a submission error has occurred.
 
 **Props**
 
@@ -202,9 +272,19 @@ interface ErrorRenderProps {
 // Default usage
 <Form.Error className="error-message" />
 
+// Custom rendering with render function
+<Form.Error>
+  {({ error }) => (
+    <div className="bg-destructive/10 border border-destructive text-destructive p-4 rounded-lg">
+      <h3 className="font-heading text-lg">Submission Failed</h3>
+      <p className="font-paragraph">{error}</p>
+    </div>
+  )}
+</Form.Error>
+
 // Custom rendering with forwardRef
 <Form.Error asChild>
-  {React.forwardRef(({ error, hasError }, ref) => (
+  {React.forwardRef(({ error }, ref) => (
     <div
       ref={ref}
       className="custom-error-container"
@@ -436,9 +516,9 @@ const FIELD_MAP = {
 };
 ```
 
-## Complete Example
+## Complete Examples
 
-### Server-Side Loading (Astro/SSR)
+### Pattern 1: Server-Side Loading (Astro/SSR)
 
 ```tsx
 // pages/form.astro
@@ -458,12 +538,23 @@ const formServiceConfig = formServiceConfigResult.config;
 <FormPage formServiceConfig={formServiceConfig} />
 ```
 
-### React Component
+### Pattern 2: Client-Side Loading
 
 ```tsx
-// components/FormPage.tsx
+// pages/dynamic-form.astro
+---
+import DynamicFormPage from '../components/DynamicFormPage';
+const formId = 'form-123';
+---
+
+<DynamicFormPage formId={formId} />
+```
+
+### React Components
+
+```tsx
+// components/FormPage.tsx (Pattern 1: Pre-loaded form data)
 import { Form } from '@wix/headless-forms/react';
-import { loadFormServiceConfig } from '@wix/headless-forms/services';
 import {
   TextInput,
   TextArea,
@@ -521,6 +612,7 @@ const FIELD_MAP = {
   IMAGE_CHOICE: ImageChoice,
 };
 
+// Pattern 1: Pre-loaded form data (SSR/SSG)
 function FormPage({ formServiceConfig }) {
   return (
     <Form.Root formServiceConfig={formServiceConfig}>
@@ -532,6 +624,46 @@ function FormPage({ formServiceConfig }) {
     </Form.Root>
   );
 }
+
+// Pattern 2: Lazy loading with formId (Client-side)
+function DynamicFormPage({ formId }) {
+  return (
+    <Form.Root formServiceConfig={{ formId }}>
+      <Form.Loading className="flex justify-center p-4">
+        {() => (
+          <div className="flex items-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ml-2 text-foreground font-paragraph">Loading form...</span>
+          </div>
+        )}
+      </Form.Loading>
+      <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4">
+        {({ error }) => (
+          <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded">
+            <h3 className="font-heading font-semibold">Error loading form</h3>
+            <p className="font-paragraph">{error}</p>
+          </div>
+        )}
+      </Form.LoadingError>
+      <Form.Fields fieldMap={FIELD_MAP} />
+      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+      <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
+    </Form.Root>
+  );
+}
+```
+
+## FormServiceConfig Interface
+
+The `FormServiceConfig` interface defines how form data is provided to the Form service. It supports two distinct patterns:
+
+```tsx
+interface FormServiceConfig {
+  /** Pre-loaded form data. When provided, the service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios. */
+  form?: forms.Form;
+  /** Form ID for lazy loading. When provided (and no form data), the service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing. */
+  formId?: string;
+}
 ```
 
 ## Service Integration
@@ -539,9 +671,10 @@ function FormPage({ formServiceConfig }) {
 The Form component integrates with Wix services through the `FormService` which provides:
 
 - **Form data management**: Access to form configuration and field definitions
+- **Dual loading patterns**: Support for both pre-loaded form data and lazy loading with form IDs
 - **Error handling**: Signal for form loading errors
 - **Submit response handling**: Signal for form submission responses (success/error)
 - **Submission state**: Signal for form submission status
 - **State management**: Reactive state updates using signals
+- **Loading states**: Built-in loading indicators for async form loading
 
-The service can be loaded using the `loadFormServiceConfig` function which handles form fetching and error cases.

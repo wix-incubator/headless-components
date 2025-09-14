@@ -25,10 +25,27 @@ export interface RootProps {
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
+ * import { loadFormServiceConfig } from '@wix/headless-forms/services';
  *
- * function FormPage() {
+ * // Pattern 1: Pre-loaded form data (SSR/SSG)
+ * function FormPage({ formServiceConfig }) {
  *   return (
- *     <Form.Root formServiceConfig={{ form: myForm }}>
+ *     <Form.Root formServiceConfig={formServiceConfig}>
+ *       <Form.Loading>
+ *         {({ isLoading }) => isLoading ? <div>Loading form...</div> : null}
+ *       </Form.Loading>
+ *       <Form.LoadingError>
+ *         {({ error, hasError }) => hasError ? <div>{error}</div> : null}
+ *       </Form.LoadingError>
+ *       <Form.Fields fieldMap={FIELD_MAP} />
+ *     </Form.Root>
+ *   );
+ * }
+ *
+ * // Pattern 2: Lazy loading with formId (Client-side)
+ * function DynamicFormPage({ formId }) {
+ *   return (
+ *     <Form.Root formServiceConfig={{ formId }}>
  *       <Form.Loading>
  *         {({ isLoading }) => isLoading ? <div>Loading form...</div> : null}
  *       </Form.Loading>
