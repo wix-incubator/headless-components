@@ -142,11 +142,17 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
 
     // Validation: ensure either form or formId is provided
     if (!initialForm && !formId) {
-      throw new Error('FormServiceConfig must provide either "form" or "formId"');
+      throw new Error(
+        'FormServiceConfig must provide either "form" or "formId"',
+      );
     }
 
-    const form: Signal<forms.Form | null> = signalsService.signal(initialForm || null);
-    const isLoading: Signal<boolean> = signalsService.signal(!!formId && !initialForm);
+    const form: Signal<forms.Form | null> = signalsService.signal(
+      initialForm || null,
+    );
+    const isLoading: Signal<boolean> = signalsService.signal(
+      !!formId && !initialForm,
+    );
     const error: Signal<string | null> = signalsService.signal<string | null>(
       null,
     );
@@ -156,7 +162,8 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     // Client-side form loading for formId case
     if (formId && !initialForm) {
       // Load form asynchronously
-      forms.getForm(formId)
+      forms
+        .getForm(formId)
         .then((loadedForm) => {
           if (loadedForm) {
             form.set(loadedForm);
