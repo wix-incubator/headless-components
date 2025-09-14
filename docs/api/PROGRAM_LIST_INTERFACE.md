@@ -7,6 +7,7 @@ A comprehensive program list display component system built with composable prim
 - [Architecture](#architecture)
 - [Components](#components)
   - [ProgramList.Root](#programlistroot)
+  - [ProgramList.Raw](#programlistraw)
   - [ProgramList.Programs](#programlistprograms)
   - [ProgramList.ProgramRepeater](#programlistprogramrepeater)
 - [Usage Examples](#usage-examples) _(soon...)_
@@ -19,7 +20,7 @@ The ProgramList component follows a compound component pattern where each part c
 
 ### ProgramList.Root
 
-The root container that provides program list context to all child components.
+The root container that provides program list data to all child components.
 
 **Props**
 
@@ -29,6 +30,10 @@ interface ProgramListRootProps {
   children: React.ReactNode;
 }
 ```
+
+### ProgramList.Raw
+
+Provides direct access to program list data. Should be used only when need custom access to list data.
 
 **Example**
 
@@ -71,7 +76,7 @@ interface ProgramListProgramsProps {
 
 ### ProgramList.ProgramRepeater
 
-Repeats for each program in the list, providing individual program context.
+Repeats for each program in the list, providing individual program data.
 
 **Props**
 
