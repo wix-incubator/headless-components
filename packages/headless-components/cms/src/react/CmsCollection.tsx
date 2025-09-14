@@ -1,12 +1,9 @@
 import React from 'react';
 import * as CoreCmsCollection from './core/CmsCollection.js';
 import {
-  CmsCollectionServiceDefinition,
   type CmsCollectionServiceConfig,
   type WixDataItem,
 } from '../services/cms-collection-service.js';
-import type { ServiceAPI } from '@wix/services-definitions';
-import { useService } from '@wix/services-manager-react';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -120,17 +117,6 @@ export interface ItemsRenderProps {
  * ```
  */
 export function Items(props: ItemsProps) {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-
-  const items = service.itemsSignal.get();
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-
-  return props.children({
-    items,
-    isLoading,
-    error,
-  });
+  return <CoreCmsCollection.Items>{props.children}</CoreCmsCollection.Items>;
 }
+

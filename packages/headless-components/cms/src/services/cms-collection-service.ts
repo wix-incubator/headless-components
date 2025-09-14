@@ -5,21 +5,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { items } from '@wix/data';
 
-/**
- * Wix Data item interface with base properties and dynamic fields
- */
-export interface WixDataItem {
-  /** The item ID */
-  _id: string;
-  /** The item owner */
-  _owner?: string;
-  /** Creation date */
-  _createdDate?: Date;
-  /** Last updated date */
-  _updatedDate?: Date;
-  /** Additional item fields */
-  [key: string]: any;
-}
+export type WixDataItem = items.WixDataItem;
 
 /**
  * Service definition for the CMS Collection service.
@@ -31,7 +17,7 @@ export const CmsCollectionServiceDefinition = defineService<{
   loadingSignal: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   errorSignal: Signal<string | null>;
-}>('CmsCollection');
+}>('cms-collection');
 
 /**
  * Shared function to load collection items from Wix Data
