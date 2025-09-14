@@ -15,8 +15,6 @@ export interface RootProps {
   children: React.ReactNode;
   /** Configuration for the Program service */
   programServiceConfig: ProgramServiceConfig;
-  /** Configuration for the Instructors service */
-  instructorsServiceConfig?: InstructorsServiceConfig;
 }
 
 /**
@@ -33,7 +31,6 @@ export interface RootProps {
  *   return (
  *     <Program.Root
  *      programServiceConfig={{ program: myProgram }}
- *      instructorsServiceConfig={{ instructors: myInstructors }}
  *     >
  *       <div>
  *         <Program.Title>
@@ -59,11 +56,6 @@ export function Root(props: RootProps): React.ReactNode {
         ProgramServiceDefinition,
         ProgramService,
         props.programServiceConfig,
-      )
-      .addService(
-        InstructorsServiceDefinition,
-        InstructorsService,
-        props.instructorsServiceConfig,
       )}
     >
       {props.children}
@@ -341,11 +333,11 @@ export function Description(props: ProgramDescriptionProps) {
 /**
  * Props for ProgramInstructors headless component
  */
-export interface ProgramInstructorsProps {
+export interface ProgramInstructorsRootProps {
   /** Render prop function that receives instructors data */
-  children: (props: ProgramInstructorsRenderProps) => React.ReactNode;
+  children: React.ReactNode;
   /** Optional instructors data to use instead of fetching */
-  instructors?: instructors.Instructor[];
+  instructorsServiceConfig: InstructorsServiceConfig;
 }
 
 /**
@@ -359,36 +351,28 @@ export interface ProgramInstructorsRenderProps {
 }
 
 /**
- * Headless component for program instructors display
- *
- * @component
- * @example
- * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramInstructors() {
- *   return (
- *     <Program.Instructors>
- *       {({ instructors, hasInstructors }) => (
- *         <div>
- *           {hasInstructors ? (
- *             instructors.map(instructor => (
- *               <div key={instructor._id}>{instructor.name}</div>
- *             ))
- *           ) : (
- *             <div>No instructors</div>
- *           )}
- *         </div>
- *       )}
- *     </Program.Instructors>
- *   );
- * }
- * ```
+ * Props for ProgramInstructors headless component
  */
-export function Instructors(props: ProgramInstructorsProps) {
-  const providedInstructors = props.instructors || [];
-  return props.children({
-    instructors: providedInstructors,
-    hasInstructors: providedInstructors?.length > 0,
-  });
+export interface ProgramInstructorsProps {
+  /** Render prop function that receives instructors data */
+  children: (props: ProgramInstructorsRenderProps) => React.ReactNode;
+  /** Optional instructors data to use instead of fetching */
+  instructors?: instructors.Instructor[];
 }
+export function Instructors(props: ProgramInstructorsProps) {
+  const instructors = props.instructors || [];
+  return <WixServices
+  servicesMap={createServicesMap().addService(
+    InstructorsServiceDefinition,
+    InstructorsService,
+    {instructors},
+  )}
+>
+    {props.children({
+      instructors,
+      hasInstructors: instructors.length > 0
+    })}
+  </WixServices>
+}
+
+

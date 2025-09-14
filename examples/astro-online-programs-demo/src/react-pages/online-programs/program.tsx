@@ -22,60 +22,38 @@ export default function OnlineProgramPage({
   programServiceConfig,
   instructorsServiceConfig,
 }: OnlineProgramPageProps) {
-  const [servicesManager] = useState(() => {
-    const servicesMap = createServicesMap()
-      .addService(
-        ProgramServiceDefinition,
-        ProgramService,
-        programServiceConfig,
-      );
-
-    // Add instructors service if config is provided
-    if (instructorsServiceConfig) {
-      servicesMap.addService(
-        InstructorsServiceDefinition,
-        InstructorsService,
-        instructorsServiceConfig,
-      );
-    }
-
-    return createServicesManager(servicesMap);
-  });
-
   return (
-    <ServicesManagerProvider servicesManager={servicesManager}>
-      <Program.Root program={programServiceConfig.program!}>
-        <Program.Title />
-        <Program.Description />
-        <Program.DurationInDays asChild>
-          {({ durationInDays, isSelfPaced }: { durationInDays: number, isSelfPaced: boolean }) => (
-            <div>
-              {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
-            </div>
-          )}
-        </Program.DurationInDays>
+    <Program.Root program={programServiceConfig.program!}>
+      <Program.Title />
+      <Program.Description />
+      <Program.DurationInDays asChild>
+        {({ durationInDays, isSelfPaced }: { durationInDays: number, isSelfPaced: boolean }) => (
+          <div>
+            {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
+          </div>
+        )}
+      </Program.DurationInDays>
 
-        <h3>Instructors:</h3>
-        <ul>
-        <Program.Instructors instructors={instructorsServiceConfig?.instructors} emptyState={<li>No instructors</li>}>
-          <Program.InstructorRepeater>
-            <li>
-              <Instructor.Name />
-              <Instructor.Description />
-              <Instructor.Image />
-            </li>
-          </Program.InstructorRepeater>
-        </Program.Instructors>
-        </ul>
+      <h3>Instructors:</h3>
+      <ul>
+      <Program.Instructors instructors={instructorsServiceConfig?.instructors} emptyState={<li>No instructors</li>}>
+        <Program.InstructorRepeater>
+          <li>
+            <Instructor.Name />
+            <Instructor.Description />
+            <Instructor.Image />
+          </li>
+        </Program.InstructorRepeater>
+      </Program.Instructors>
+      </ul>
 
-        <h3>Price</h3>
-        <Program.Price asChild>
-          {({ price, formattedPrice }: { price: number; formattedPrice: string }) => (
-            <div>{price ? formattedPrice : 'Free'}</div>
-          )}
-        </Program.Price>
-        <Program.Image />
-      </Program.Root>
-    </ServicesManagerProvider>
+      <h3>Price</h3>
+      <Program.Price asChild>
+        {({ price, formattedPrice }: { price: number; formattedPrice: string }) => (
+          <div>{price ? formattedPrice : 'Free'}</div>
+        )}
+      </Program.Price>
+      <Program.Image />
+    </Program.Root>
   );
 }

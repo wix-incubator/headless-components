@@ -18,8 +18,8 @@ export interface InstructorsServiceAPI {
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
-  /** Function to get instructors by program IDs */
-  getInstructorsByProgramIds: (programIds: string[]) => Promise<void>;
+  /** Function to load instructors by program IDs */
+  loadInstructorsByProgramIds: (programIds: string[]) => Promise<void>;
 }
 
 /**
@@ -97,7 +97,7 @@ export const InstructorsService =
       );
       const error: Signal<string | null> = signalsService.signal(null as any);
 
-      const getInstructorsByProgramIds = async (programIds: string[]) => {
+      const loadInstructorsByProgramIds = async (programIds: string[]) => {
         isLoading.set(true);
         error.set(null);
 
@@ -115,14 +115,14 @@ export const InstructorsService =
 
       // Load instructors on initialization if programIds are provided
       if (config.programIds && config.programIds.length > 0) {
-        getInstructorsByProgramIds(config.programIds);
+        loadInstructorsByProgramIds(config.programIds);
       }
 
       return {
         instructors,
         isLoading,
         error,
-        getInstructorsByProgramIds,
+        loadInstructorsByProgramIds,
       };
     },
   );

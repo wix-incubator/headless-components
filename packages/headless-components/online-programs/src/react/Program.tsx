@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { programs, instructors } from '@wix/online-programs';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
@@ -6,6 +5,8 @@ import { WixMediaImage } from '@wix/headless-media/react';
 
 import * as CoreProgram from './core/Program.js';
 import { Instructor } from './Instructor.js';
+import { InstructorsServiceDefinition } from '../services/instructors-service.js';
+import { useService } from '@wix/services-manager-react';
 
 enum TestIds {
   programTitle = 'program-title',
@@ -406,7 +407,7 @@ const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 Description.displayName = 'Program.Description';
 
 /**
- * Props for Program Instructors component
+ * Props for Program Instructors component (Container Level)
  */
 interface InstructorsProps {
   /** Optional instructors data to use instead of fetching */
@@ -417,28 +418,25 @@ interface InstructorsProps {
   children?: AsChildChildren<{ instructors: instructors.Instructor[]; hasInstructors: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Empty state to display when there are no instructors */
-  emptyState?: React.ReactNode;
   /** Additional HTML attributes */
   [key: string]: any;
 }
 
 /**
- * Container for program instructors that provides context and conditional rendering.
- * Renders emptyState when there are no instructors, otherwise renders children.
+ * Container component for program instructors that provides context and conditional rendering.
+ * Does NOT render if there are no instructors (follows Container Level pattern).
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Program.Instructors instructors={instructors} />
+ * <Program.Instructors instructors={instructors}>
+ *     <Program.InstructorRepeater>
+ *       <Instructor.Name />
+ *       <Instructor.Description />
+ *     </Program.InstructorRepeater>
+ * </Program.Instructors>
  *
- * // With empty state
- * <Program.Instructors
- *   instructors={instructors}
- *   emptyState={<div>No instructors available for this program</div>}
- * />
-
  * // asChild with primitive
  * <Program.Instructors asChild>
  *   <div className="instructors-grid" />
@@ -463,27 +461,28 @@ interface InstructorsProps {
 const Instructors = React.forwardRef<
   HTMLDivElement,
   InstructorsProps
->(({ asChild, children, emptyState, ...props }, ref) => {
-  return (
-    <CoreProgram.Instructors instructors={props['instructors']}>
-      {(renderProps) => {
-        if (!renderProps.hasInstructors) {
-          return emptyState || null;
-        }
+>(({ asChild, children, instructors = [], ...props }, ref) => {
+  const hasInstructors = instructors.length > 0;
 
-        return (
-          <AsChildSlot
-            asChild={asChild}
-            customElement={children}
-            customElementProps={renderProps}
-            ref={ref}
-            data-testid={TestIds.programInstructors}
-            {...props}
-          >
-            {children ? children : null}
-          </AsChildSlot>
-        );
-      }}
+  // Don't render if no instructors (Container Level pattern)
+  if (!hasInstructors) {
+    return null;
+  }
+
+  return (
+    <CoreProgram.Instructors instructors={instructors}>
+      {({ instructors, hasInstructors }) => (
+        <AsChildSlot
+        asChild={asChild}
+        customElement={children}
+        customElementProps={{ instructors, hasInstructors }}
+        ref={ref}
+        data-testid={TestIds.programInstructors}
+        {...props}
+        >
+        {children}
+        </AsChildSlot>
+              )}
     </CoreProgram.Instructors>
   );
 });
@@ -491,14 +490,13 @@ const Instructors = React.forwardRef<
 Instructors.displayName = 'Program.Instructors';
 
 /**
- * Props for Program InstructorRepeater component
+ * Props for Program InstructorRepeater component (Repeater Level)
  */
 interface InstructorRepeaterProps {
-  /** Children to render for each instructor - can be React elements or a render function */
-  children: ((props: {
-    instructor: instructors.Instructor;
-  }) => React.ReactNode)
-| React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Children to render for each instructor */
+  children?: AsChildChildren<{}>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -507,7 +505,7 @@ interface InstructorRepeaterProps {
 
 /**
  * Repeater component that renders children for each instructor.
- * Supports both React elements and render functions.
+ * Maps over instructors and renders Instructor.Root for each.
  *
  * @component
  * @example
@@ -518,14 +516,12 @@ interface InstructorRepeaterProps {
  *   <Instructor.Description />
  * </Program.InstructorRepeater>
  *
- * // With render function
+ * // With custom wrapper
  * <Program.InstructorRepeater>
- *   {({ instructor }) => (
- *     <div key={instructor.userId}>
- *       <h3>{instructor.name}</h3>
- *       <p>{instructor.description}</p>
- *     </div>
- *   )}
+ *   <div className="instructor-card">
+ *     <Instructor.Name />
+ *     <Instructor.Description />
+ *   </div>
  * </Program.InstructorRepeater>
  * ```
  */
@@ -533,23 +529,33 @@ const InstructorRepeater = React.forwardRef<
   HTMLElement,
   InstructorRepeaterProps
 >((props, ref) => {
-  const { children, className,...otherProps } = props;
 
-  return props['instructors']?.map((instructor: instructors.Instructor, index: number) => (
+  const { asChild, children, className, ...otherProps } = props;
+
+  const service = useService(InstructorsServiceDefinition);
+  const instructors = service.instructors.get();
+
+  return (
     <AsChildSlot
       ref={ref}
+      asChild={asChild}
       className={className}
       data-testid={TestIds.programInstructorRepeater}
       customElement={children}
-      customElementProps={{ instructor }}
-      key={instructor.userId || index}
+      customElementProps={{}}
       {...otherProps}
     >
-      <Instructor.Root key={instructor.userId || index} instructor={instructor}>
-        {typeof children === 'function' ? children({ instructor }) : children}
-      </Instructor.Root>
+       {instructors.map((instructor: instructors.Instructor, index: number) => (
+        <Instructor.Root
+          key={instructor.userId || index}
+          instructor={instructor}
+        >
+          {children}
+        </Instructor.Root>
+      ))}
+
     </AsChildSlot>
-  ));
+  );
 });
 
 InstructorRepeater.displayName = 'Program.InstructorRepeater';

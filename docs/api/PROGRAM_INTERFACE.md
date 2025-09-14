@@ -401,7 +401,7 @@ interface ProgramPriceProps {
 
 ### Program.Instructors
 
-Container for program instructors that provides context and conditional rendering. Renders emptyState when there are no instructors, otherwise renders children.
+Container component for program instructors that provides context and conditional rendering. Does NOT render if there are no instructors (follows Container Level pattern).
 
 **Props**
 
@@ -415,8 +415,6 @@ interface ProgramInstructorsProps {
   children?: AsChildChildren<{ instructors: instructors.Instructor[]; hasInstructors: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Empty state to display when there are no instructors */
-  emptyState?: React.ReactNode;
   /** Additional HTML attributes */
   [key: string]: any;
 }
@@ -428,25 +426,13 @@ interface ProgramInstructorsProps {
 **Example**
 
 ```tsx
-// Default usage
-<Program.Instructors instructors={instructors} />
-
-// With empty state
-<Program.Instructors
-  instructors={instructors}
-  emptyState={<div>No instructors available for this program</div>}
-/>
-
-// With styled empty state
-<Program.Instructors
-  instructors={instructors}
-  emptyState={
-    <div className="text-center py-8 text-gray-500">
-      <h3>No Instructors</h3>
-      <p>This program doesn't have any instructors assigned yet.</p>
-    </div>
-  }
-/>
+// Default usage with 3-level architecture
+<Program.Instructors instructors={instructors}>
+  <Program.InstructorRepeater>
+    <Instructor.Name />
+    <Instructor.Description />
+  </Program.InstructorRepeater>
+</Program.Instructors>
 
 // asChild with primitive
 <Program.Instructors asChild>
@@ -473,16 +459,16 @@ interface ProgramInstructorsProps {
 
 ### Program.InstructorRepeater
 
-Repeater component that renders children for each instructor. Supports both React elements and render functions.
+Repeater component that renders children for each instructor. Maps over instructors from the service and renders `Instructor.Root` for each.
 
 **Props**
 
 ```tsx
-interface ProgramInstructorRepeaterProps {
-  /** Children to render for each instructor - can be React elements or a render function */
-  children: ((props: {
-    instructor: instructors.Instructor;
-  }) => React.ReactNode) | React.ReactNode;
+interface InstructorRepeaterProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Children to render for each instructor */
+  children?: AsChildChildren<{}>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -502,18 +488,17 @@ interface ProgramInstructorRepeaterProps {
   <Instructor.Description />
 </Program.InstructorRepeater>
 
-// With render function
+// With custom wrapper
 <Program.InstructorRepeater>
-  {({ instructor }) => (
-    <div key={instructor.userId}>
-      <h3>{instructor.name}</h3>
-    </div>
-  )}
+  <div className="instructor-card">
+    <Instructor.Name />
+    <Instructor.Description />
+  </div>
 </Program.InstructorRepeater>
 
-// With custom styling
-<Program.InstructorRepeater className="grid grid-cols-3 gap-4">
-  <Instructor.Name className="font-semibold" />
+// With asChild
+<Program.InstructorRepeater asChild>
+  <div className="instructors-grid" />
 </Program.InstructorRepeater>
 ```
 ---

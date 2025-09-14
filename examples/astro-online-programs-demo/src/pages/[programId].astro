@@ -14,8 +14,10 @@ if (!programId) {
   return Astro.redirect('/');
 }
 
-const programServiceConfig = await loadProgramServiceConfig(programId);
-const instructorsServiceConfig = await loadInstructorsServiceConfig([programId]);
+const [programServiceConfig, instructorsServiceConfig] = await Promise.all([
+  loadProgramServiceConfig(programId),
+  loadInstructorsServiceConfig([programId]),
+]);
 
 if (programServiceConfig.type === 'notFound') {
   return Astro.rewrite('/404');

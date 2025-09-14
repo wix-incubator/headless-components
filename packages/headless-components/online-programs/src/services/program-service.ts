@@ -18,8 +18,8 @@ export interface ProgramServiceAPI {
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
-  /** Function to get a program by its ID */
-  getProgram: (id: string) => Promise<void>;
+  /** Function to load a program by its ID */
+  loadProgram: (id: string) => Promise<void>;
 }
 
 /**
@@ -92,7 +92,7 @@ export const ProgramService =
       );
       const error: Signal<string | null> = signalsService.signal(null as any);
 
-      const getProgram = async (id: string) => {
+      const loadProgram = async (id: string) => {
         isLoading.set(true);
         const programResponse = await getProgramById(id!);
 
@@ -107,14 +107,14 @@ export const ProgramService =
       };
 
       if (config.programId) {
-        getProgramById(config.programId);
+        loadProgram(config.programId);
       }
 
       return {
         program,
         isLoading,
         error,
-        getProgram,
+        loadProgram,
       };
     },
   );
@@ -248,7 +248,7 @@ export async function loadProgramServiceConfig(
     return {
       type: 'success',
       config: {
-        program: programResponse!,
+        program: programResponse,
       },
     };
   } catch (error) {
