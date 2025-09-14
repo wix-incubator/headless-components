@@ -1,48 +1,31 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
+import React from 'react';
 import {
   BlogPostServiceDefinition,
   type BlogPostServiceAPI,
 } from '../../services/blog-post-service.js';
-import React from 'react';
 
 export interface RootProps {
-  children: React.ReactNode;
-  postId?: string;
+  children: (props: RootRenderProps) => React.ReactNode;
 }
 
-/**
- * Core BlogPost Root component that provides BlogPost service context.
- * This is the service-connected component that should be wrapped by the public API.
- *
- * @component
- */
-export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { children } = props;
-
-  // For now, use the existing service structure
-  // In future, this could be enhanced to support specific post loading by ID
-  return <div ref={ref as React.Ref<HTMLDivElement>}>{children}</div>;
-});
-
-export interface ContentProps {
-  children: (props: ContentRenderProps) => React.ReactNode;
-}
-
-export interface ContentRenderProps {
+export interface RootRenderProps {
   post: ReturnType<BlogPostServiceAPI['post']['get']>;
 }
 
 /**
  * Core Content component that provides post data access
  */
-export const Content = (props: ContentProps) => {
+export const Root = (props: RootProps) => {
   const service = useService(BlogPostServiceDefinition);
 
   return props.children({
     post: service.post.get(),
   });
 };
+
+Root.displayName = 'Blog.Post.Root/Core';
 
 export interface RichContentProps {
   children: (props: RichContentRenderProps) => React.ReactNode;
@@ -72,3 +55,5 @@ export const RichContent = (props: RichContentProps) => {
     ricosViewerContent: richContent,
   });
 };
+
+RichContent.displayName = 'Blog.Post.RichContent/Core';

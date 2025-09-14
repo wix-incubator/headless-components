@@ -48,20 +48,21 @@ export async function loadBlogCategoriesServiceConfig(): Promise<BlogCategoriesS
       .queryCategories()
       .gt('postCount', 0)
       .limit(100)
-      .ascending('displayPosition', 'label')
+      .ascending('displayPosition')
       .find();
 
     return {
       initialCategories: enhanceCategories(result.items || []),
     };
   } catch (error) {
+    console.error('Error loading blog categories service config', error);
     return {
       initialCategories: [],
     };
   }
 }
 
-function enhanceCategories(
+export function enhanceCategories(
   categories: categories.Category[],
 ): EnhancedCategory[] {
   return categories.map((category) => {
