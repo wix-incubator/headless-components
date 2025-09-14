@@ -81,8 +81,8 @@ export interface GenericListItemsProps {
 export interface GenericListLoadMoreProps {
   /** Label text for the load more button */
   label?: string;
-  /** Loading label text */
-  loadingLabel?: string;
+  /** Loading state content */
+  loadingState?: React.ReactNode;
   /** Children for custom rendering - optional but either children or label must be provided */
   children?: React.ReactNode;
   /** CSS classes */
@@ -228,13 +228,7 @@ export const LoadMore = React.forwardRef<
   HTMLButtonElement,
   GenericListLoadMoreProps
 >((props, ref) => {
-  const {
-    label = 'Load More',
-    loadingLabel = 'Loading...',
-    children,
-    className,
-    ...otherProps
-  } = props;
+  const { label, loadingState, children, className, ...otherProps } = props;
 
   const { hasMore, isLoading, onLoadMore } = useGenericListContext();
 
@@ -255,12 +249,13 @@ export const LoadMore = React.forwardRef<
   };
 
   // Determine what content to render
-  const buttonContent = isLoading ? loadingLabel : label;
-  const content = buttonContent || children;
+  const buttonContent = isLoading ? loadingState : label;
+  const content = buttonContent;
 
   return (
     <AsChildSlot
       ref={ref}
+      asChild
       className={className}
       data-has-more={hasMore}
       data-is-loading={isLoading}
@@ -269,11 +264,12 @@ export const LoadMore = React.forwardRef<
       customElement={children}
       customElementProps={{
         label,
-        loadingLabel,
+        loadingState,
         isLoading,
         hasMore,
         onLoadMore,
       }}
+      content={content}
       {...otherProps}
     >
       {content}
@@ -296,8 +292,7 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
 
     const displayedItems = items.length;
 
-    // Determine what content to render - either children or displayedItems
-    const content = children || displayedItems;
+    const content = displayedItems;
 
     return (
       <AsChildSlot
@@ -307,6 +302,7 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
         customElement={children}
         customElementProps={{ displayedItems }}
         asChild
+        content={content}
         {...otherProps}
       >
         {content}
