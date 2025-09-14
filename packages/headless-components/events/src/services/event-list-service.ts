@@ -11,8 +11,8 @@ import { type Event } from './event-service.js';
 export interface EventListServiceAPI {
   /** Reactive signal containing the list of events */
   events: Signal<Event[]>;
-  /** Reactive signal indicating if events are currently being loaded */
-  isLoading: Signal<boolean>;
+  /** Reactive signal indicating if more events are currently being loaded */
+  isLoadingMore: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
   /** Reactive signal containing the number of events per page */
@@ -46,7 +46,7 @@ export const EventListService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const events = signalsService.signal<Event[]>(config.events);
-      const isLoading = signalsService.signal<boolean>(false);
+      const isLoadingMore = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
       const pageSize = signalsService.signal<number>(config.pageSize);
       const currentPage = signalsService.signal<number>(config.currentPage);
@@ -56,7 +56,7 @@ export const EventListService =
       );
 
       const loadMoreEvents = async () => {
-        isLoading.set(true);
+        isLoadingMore.set(true);
         error.set(null);
 
         try {
@@ -70,13 +70,13 @@ export const EventListService =
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
-          isLoading.set(false);
+          isLoadingMore.set(false);
         }
       };
 
       return {
         events,
-        isLoading,
+        isLoadingMore,
         error,
         pageSize,
         currentPage,

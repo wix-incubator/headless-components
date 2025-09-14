@@ -18,7 +18,7 @@ import {
 } from '../../services/checkout-service.js';
 
 export interface RootProps {
-  /** Child components that will have access to the event, ticket definition list and checkout services */
+  /** Child components that will have access to necessary services */
   children: React.ReactNode;
   /** Event service configuration */
   eventServiceConfig: EventServiceConfig;
@@ -27,7 +27,7 @@ export interface RootProps {
 }
 
 /**
- * TicketsPicker Root core component that provides event, ticket definition list and checkout services context.
+ * TicketsPicker Root core component that provides necessary services context.
  *
  * @component
  */

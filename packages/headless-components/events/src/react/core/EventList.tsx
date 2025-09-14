@@ -104,7 +104,7 @@ export interface LoadMoreTriggerRenderProps {
  */
 export function LoadMoreTrigger(props: LoadMoreTriggerProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
-  const isLoading = eventListService.isLoading.get();
+  const isLoading = eventListService.isLoadingMore.get();
   const hasMoreEvents = eventListService.hasMoreEvents.get();
 
   return props.children({

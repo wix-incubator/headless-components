@@ -6,7 +6,11 @@ import ThankYouPage from '../../../react-pages/thank-you';
 const { slug } = Astro.params;
 
 // Load initial data server-side
-const eventServiceConfig = await loadEventServiceConfig(slug);
+const eventServiceConfigResult = await loadEventServiceConfig(slug);
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
 ---
 
 <BaseLayout>
@@ -19,6 +23,6 @@ const eventServiceConfig = await loadEventServiceConfig(slug);
   <ThankYouPage
     client:load
     slot="body"
-    eventServiceConfig={eventServiceConfig}
+    eventServiceConfig={eventServiceConfigResult.config}
   />
 </BaseLayout>

@@ -14,12 +14,17 @@ if (!slug || slug.includes('site-bi-navigation')) {
 }
 
 // Load initial data server-side
-const [eventServiceConfig, eventListServiceConfig] = await Promise.all([
+const [eventServiceConfigResult, eventListServiceConfig] = await Promise.all([
   loadEventServiceConfig(slug),
   loadEventListServiceConfig(),
 ]);
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+
 const ticketDefinitionListServiceConfig = await loadTicketDefinitionListServiceConfig(
-  eventServiceConfig.event._id
+  eventServiceConfigResult.config.event._id
 );
 ---
 
@@ -30,7 +35,7 @@ const ticketDefinitionListServiceConfig = await loadTicketDefinitionListServiceC
   <EventDetailsPage
     client:load
     slot="body"
-    eventServiceConfig={eventServiceConfig}
+    eventServiceConfig={eventServiceConfigResult.config}
     eventListServiceConfig={eventListServiceConfig}
     ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
   />

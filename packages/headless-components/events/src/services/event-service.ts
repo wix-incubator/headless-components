@@ -15,6 +15,10 @@ export interface EventServiceConfig {
   event: Event;
 }
 
+export type EventServiceConfigResult =
+  | { type: 'success'; config: EventServiceConfig }
+  | { type: 'notFound' };
+
 export const EventServiceDefinition = defineService<
   EventServiceAPI,
   EventServiceConfig
@@ -35,17 +39,30 @@ export const EventService = implementService.withConfig<EventServiceConfig>()(
 
 export async function loadEventServiceConfig(
   slug: string,
-): Promise<EventServiceConfig> {
-  const { event } = await wixEventsV2.getEventBySlug(slug, {
-    fields: [
-      wixEventsV2.RequestedFields.DETAILS,
-      wixEventsV2.RequestedFields.REGISTRATION,
-      wixEventsV2.RequestedFields.TEXTS,
-      wixEventsV2.RequestedFields.FORM,
-    ],
-  });
+): Promise<EventServiceConfigResult> {
+  try {
+    const { event } = await wixEventsV2.getEventBySlug(slug, {
+      fields: [
+        wixEventsV2.RequestedFields.DETAILS,
+        wixEventsV2.RequestedFields.REGISTRATION,
+        wixEventsV2.RequestedFields.TEXTS,
+        wixEventsV2.RequestedFields.FORM,
+      ],
+    });
+
+    if (event) {
+      return {
+        type: 'success',
+        config: {
+          event,
+        },
+      };
+    }
+  } catch (error) {
+    console.error(`Failed to load event with "${slug}" slug`, error);
+  }
 
   return {
-    event: event!,
+    type: 'notFound',
   };
 }

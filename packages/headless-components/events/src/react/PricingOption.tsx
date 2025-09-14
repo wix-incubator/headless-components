@@ -130,7 +130,7 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     const pricingOptionId = pricingOption.optionId ?? undefined;
 
     const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-    const ticketDefinitionId = ticketDefinition._id ?? '';
+    const ticketDefinitionId = ticketDefinition._id!;
     const currentQuantity =
       ticketDefinitionListService.getCurrentSelectedQuantity(
         ticketDefinitionId,
