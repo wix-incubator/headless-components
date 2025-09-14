@@ -6585,6 +6585,7 @@ __metadata:
     "@types/react-dom": "npm:^18.2.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/bookings": "npm:^1.0.122"
+    "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
