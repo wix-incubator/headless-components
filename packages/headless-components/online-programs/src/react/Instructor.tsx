@@ -71,10 +71,11 @@ function Root(props: InstructorRootProps): React.ReactNode {
         asChild={asChild}
         customElement={children}
         customElementProps={{ instructor }}
+        content={instructor.name}
         {...dataAttributes}
         {...otherProps}
       >
-        {children}
+        <div>{children}</div>
       </AsChildSlot>
     </InstructorContext.Provider>
   );

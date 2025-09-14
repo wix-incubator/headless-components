@@ -410,6 +410,7 @@ Description.displayName = 'Program.Description';
  * Props for Program Instructors component (Container Level)
  */
 interface InstructorsProps {
+  emptyState?: React.ReactNode;
   /** Optional instructors data to use instead of fetching */
   instructors?: instructors.Instructor[];
   /** Whether to render as a child component */
@@ -461,28 +462,29 @@ interface InstructorsProps {
 const Instructors = React.forwardRef<
   HTMLDivElement,
   InstructorsProps
->(({ asChild, children, instructors = [], ...props }, ref) => {
-  const hasInstructors = instructors.length > 0;
-
-  // Don't render if no instructors (Container Level pattern)
-  if (!hasInstructors) {
-    return null;
-  }
+>((props, ref) => {
+  const { asChild, children, instructors = [], emptyState, ...otherProps } = props;
 
   return (
     <CoreProgram.Instructors instructors={instructors}>
-      {({ instructors, hasInstructors }) => (
-        <AsChildSlot
-        asChild={asChild}
-        customElement={children}
-        customElementProps={{ instructors, hasInstructors }}
-        ref={ref}
-        data-testid={TestIds.programInstructors}
-        {...props}
-        >
-        {children}
-        </AsChildSlot>
-              )}
+      {({ instructors, hasInstructors }) => {
+        if (!hasInstructors) {
+          return emptyState;
+        }
+
+        return (
+          <AsChildSlot
+            asChild={asChild}
+            customElement={children}
+            customElementProps={{ instructors, hasInstructors }}
+            ref={ref}
+            data-testid={TestIds.programInstructors}
+            {...otherProps}
+          >
+            {children}
+          </AsChildSlot>
+        );
+      }}
     </CoreProgram.Instructors>
   );
 });
@@ -529,7 +531,6 @@ const InstructorRepeater = React.forwardRef<
   HTMLElement,
   InstructorRepeaterProps
 >((props, ref) => {
-
   const { asChild, children, className, ...otherProps } = props;
 
   const service = useService(InstructorsServiceDefinition);
@@ -545,15 +546,18 @@ const InstructorRepeater = React.forwardRef<
       customElementProps={{}}
       {...otherProps}
     >
-       {instructors.map((instructor: instructors.Instructor, index: number) => (
-        <Instructor.Root
-          key={instructor.userId || index}
-          instructor={instructor}
-        >
-          {children}
-        </Instructor.Root>
-      ))}
-
+      <div>
+        {instructors.map((instructor: instructors.Instructor, index: number) => {
+          return (
+            <Instructor.Root
+              key={instructor.userId || index}
+              instructor={instructor}
+            >
+              {children}
+            </Instructor.Root>
+          );
+        })}
+      </div>
     </AsChildSlot>
   );
 });

@@ -1,16 +1,4 @@
-import { useState } from 'react';
-import {
-  createServicesManager,
-  createServicesMap,
-} from '@wix/services-manager';
-import { ServicesManagerProvider } from '@wix/services-manager-react';
 import { Program, Instructor } from '@wix/headless-online-programs/react';
-import {
-  ProgramServiceDefinition,
-  ProgramService,
-  InstructorsServiceDefinition,
-  InstructorsService,
-} from '@wix/headless-online-programs/services';
 import type { ProgramServiceConfig, InstructorsServiceConfig } from '@wix/headless-online-programs/services';
 
 interface OnlineProgramPageProps {
@@ -46,21 +34,6 @@ export default function OnlineProgramPage({
         </Program.InstructorRepeater>
       </Program.Instructors>
       </ul>
-
-
-      <Program.Instructors asChild>
-        {({ instructors }) => (
-          <div>
-            <h4>Instructors custom rendering:</h4>
-            <ul>
-            {instructors.map((instructor) => (
-              <li key={instructor._id}>{instructor.name}</li>
-            ))}
-          </ul>
-          </div>
-
-        )}
-      </Program.Instructors>
 
       <h3>Price</h3>
       <Program.Price asChild>
