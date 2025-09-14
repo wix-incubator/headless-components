@@ -31,6 +31,19 @@ interface ProgramListRootProps {
 }
 ```
 
+**Example**
+
+```tsx
+<ProgramList.Root programListConfig={{ programs: myPrograms }}>
+  <ProgramList.Programs>
+    <ProgramList.ProgramRepeater>
+      <Program.Title />
+      <Program.Description />
+    </ProgramList.ProgramRepeater>
+  </ProgramList.Programs>
+</ProgramList.Root>
+```
+
 ### ProgramList.Raw
 
 Provides direct access to program list data. Should be used only when need custom access to list data.
@@ -39,7 +52,17 @@ Provides direct access to program list data. Should be used only when need custo
 
 ```tsx
 <ProgramList.Root programListConfig={{ programs: myPrograms }}>
-  {/* All program list components */}
+  <ProgramList.Raw>
+    {({ programs }) => (
+      <div>
+        {programs.map((program) => (
+          <div key={program._id}>
+            {program.description?.title || 'No title'}
+          </div>
+        ))}
+      </div>
+    )}
+  </ProgramList.Raw>
 </ProgramList.Root>
 ```
 
@@ -68,7 +91,8 @@ interface ProgramListProgramsProps {
 ```tsx
 <ProgramList.Programs emptyState={<div>No programs found</div>}>
   <ProgramList.ProgramRepeater>
-    {/* Program template */}
+    <Program.Title />
+    <Program.Description />
   </ProgramList.ProgramRepeater>
 </ProgramList.Programs>
 ```

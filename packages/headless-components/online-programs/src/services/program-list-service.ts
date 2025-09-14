@@ -17,7 +17,7 @@ export type ProgramListServiceConfig = {
 };
 
 /**
- * Service definition for the Categories List service.
+ * Service definition for the Program List service.
  * This defines the reactive API contract for managing a list of programs.
  *
  * @constant
@@ -57,7 +57,7 @@ export const ProgramListService =
 
 // TODO: Add example
 export async function loadProgramListServiceConfig(): Promise<ProgramListServiceConfig> {
-  // TODO: E data fetching approach
+  // TODO: Improve data fetching approach
   const programsResponse = await programs.searchPrograms({});
 
   const fetchedPrograms = programsResponse.programs || [];
