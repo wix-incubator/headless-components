@@ -78,7 +78,7 @@ type RootProps = WithAsChild<
  * @example
  * ```tsx
  * // Default usage
- * <Plan.Root planServiceConfig={planServiceConfig} loadingState={<div>Loading...</div>} errorState={<div>Error</div>}>
+ * <Plan.Root className="flex flex-col gap-4" planServiceConfig={planServiceConfig} loadingState={<div>Loading...</div>} errorState={<div>Error</div>}>
  *   <Plan.Image />
  *   <Plan.Name />
  *   <Plan.Description />
@@ -92,7 +92,7 @@ type RootProps = WithAsChild<
  * // With asChild
  * <Plan.Root planServiceConfig={planServiceConfig} asChild>
  *   {React.forwardRef(({ isLoading, error, plan }, ref) => (
- *     <div ref={ref}>
+ *     <div ref={ref} className="text-center">
  *       {isLoading ? 'Loading...' : error ? 'Error!' : `Plan ${plan.name} loaded`}
  *     </div>
  *   ))}
@@ -354,7 +354,7 @@ type AdditionalFeesProps = WithAsChild<
  * @example
  * ```tsx
  * // Default usage
- * <Plan.AdditionalFees>
+ * <Plan.AdditionalFees className="flex flex-col gap-2">
  *   <Plan.AdditionalFeesRepeater>
  *     <Plan.AdditionalFeeName />
  *     <Plan.AdditionalFeeAmount />
