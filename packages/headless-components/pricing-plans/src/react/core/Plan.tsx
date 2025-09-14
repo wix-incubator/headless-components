@@ -8,7 +8,7 @@ import {
   PlanServiceConfig,
   PlanServiceDefinition,
   PlanWithEnhancedData,
-} from '../../services/PlanService.js';
+} from '../../services/index.js';
 import { plansV3 } from '@wix/pricing-plans';
 import {
   ChannelType,

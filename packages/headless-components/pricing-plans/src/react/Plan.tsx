@@ -1,10 +1,7 @@
 import React from 'react';
 export { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import {
-  PlanServiceConfig,
-  PlanServiceDefinition,
-} from '../services/PlanService.js';
+import { PlanServiceConfig, PlanServiceDefinition } from '../services/index.js';
 import {
   Root as CoreRoot,
   Plan as CorePlan,

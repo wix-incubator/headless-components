@@ -1,6 +1,6 @@
 import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import { PlanListServiceConfig } from '../services/PlanListService.js';
+import { PlanListServiceConfig } from '../services/index.js';
 import {
   PlansData as CorePlansData,
   Root as CoreRoot,

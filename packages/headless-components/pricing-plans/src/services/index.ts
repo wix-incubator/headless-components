@@ -4,4 +4,12 @@ export {
   loadPlanServiceConfig,
   PlanServiceConfig,
   PlanWithEnhancedData,
-} from './PlanService.js';
+  PlanRecurrence,
+  PlanDuration,
+} from './plan-service.js';
+export {
+  PlanListService,
+  PlanListServiceDefinition,
+  loadPlanListServiceConfig,
+  PlanListServiceConfig,
+} from './plan-list-service.js';

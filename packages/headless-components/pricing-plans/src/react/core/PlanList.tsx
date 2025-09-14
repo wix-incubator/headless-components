@@ -4,8 +4,8 @@ import {
   PlanListService,
   PlanListServiceConfig,
   PlanListServiceDefinition,
-} from '../../services/PlanListService.js';
-import { PlanWithEnhancedData } from '../../services/PlanService.js';
+  PlanWithEnhancedData,
+} from '../../services/index.js';
 
 interface RootProps {
   children: React.ReactNode;

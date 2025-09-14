@@ -4,7 +4,7 @@ import {
   SignalsServiceDefinition,
 } from '@wix/services-definitions/core-services/signals';
 import { plansV3 } from '@wix/pricing-plans';
-import { enhancePlanData, PlanWithEnhancedData } from './PlanService.js';
+import { enhancePlanData, PlanWithEnhancedData } from './plan-service.js';
 
 export const PlanListServiceDefinition = defineService<{
   planListSignal: ReadOnlySignal<PlanWithEnhancedData[]>;
