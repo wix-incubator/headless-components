@@ -1,7 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { TestIds } from './test-ids.js';
-import { List, Options, ServiceRepeater, Service, Error } from './ServiceList.tsx';
+import {
+  List,
+  Options,
+  ServiceRepeater,
+  Service,
+  Error,
+} from './ServiceList.tsx';
 import { services } from '@wix/bookings';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';

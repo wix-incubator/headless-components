@@ -380,7 +380,8 @@ export const Service = {
       return (
         <div
           data-testid={TestIds.serviceDuration}
-          ref={ref as React.Ref<HTMLDivElement>}x
+          ref={ref as React.Ref<HTMLDivElement>}
+          x
           className={className}
         >
           {`${service?.schedule?.availabilityConstraints?.durations?.[0].minutes!} minutes`}
@@ -402,7 +403,10 @@ export const Service = {
 
       if (!service.media?.mainMedia?.image) return null;
       //WA until the issue with media will be solved
-     const image = service.media?.mainMedia?.image?.replace(/v1\/[\w-]+\//, 'v1/');
+      const image = service.media?.mainMedia?.image?.replace(
+        /v1\/[\w-]+\//,
+        'v1/',
+      );
       return (
         <WixMediaImage
           media={{ image: image || service.media?.mainMedia?.image }}
