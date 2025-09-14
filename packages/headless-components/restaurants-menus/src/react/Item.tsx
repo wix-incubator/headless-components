@@ -1,269 +1,436 @@
-import React from 'react';
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import { Item as CoreItem } from './core/Item';
-import { Item } from '../services/common-types';
-
-enum TestIds {
-  itemRoot = 'item-root',
-  itemName = 'item-name',
-  itemDescription = 'item-description',
-  itemPrice = 'item-price',
-}
-
-// Item Context
-interface ItemContextValue {
-  item: Item;
-}
-
-const ItemContext = React.createContext<ItemContextValue | null>(null);
-
-function useItemContext(): ItemContextValue {
-  const context = React.useContext(ItemContext);
-
-  if (!context) {
-    throw new Error(
-      'useItemContext must be used within a Item.Root component',
-    );
-  }
-
-  return context;
-}
+import React from "react";
+import {
+  Item as CoreItem,
+  ItemName,
+  ItemDescription,
+  Price as CorePrice,
+  Image as CoreImage,
+  useItemContext,
+} from "./core";
+import type {
+  EnhancedItem,
+  Label,
+  EnhancedModifierGroup,
+} from "../services/types";
+import { AsChildSlot } from "@wix/headless-utils/react";
+import type { AsChildChildren, AsChildRenderFunction } from "@wix/headless-utils/react";
+import { TestIds } from "./TestIds";
+import { WixMediaImage } from "@wix/headless-media/react";
+import * as VariantComponent from "./Variant";
+import * as LabelComponent from "./Label";
+import * as ModifierGroupComponent from "./ModifierGroup";
 
 export interface ItemRootProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children: AsChildChildren<{ item: Item }>;
-  /** The line item data */
-  item: Item;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
+  children: React.ReactNode;
+  item?: EnhancedItem;
 }
 
-/**
- * Root component for a item that provides the Item context to its children
- *
- * @example
- * ```tsx
- * <Item.Root item={item}>
- * </Item.Root>
- * ```
- */
-export const Root = React.forwardRef<HTMLElement, ItemRootProps>(
-  (props, ref) => {
-    const { asChild, children, item, ...otherProps } = props;
-
-    const contextValue: ItemContextValue = {
-      item,
-    };
-
-
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        data-testid={TestIds.itemRoot}
-        customElement={children}
-        customElementProps={{ item }}
-        {...otherProps}
-      >
-        <ItemContext.Provider value={contextValue}>
-          <div>{children}</div>
-        </ItemContext.Provider>
-      </AsChildSlot>
-    );
-  },
-);
-
-Root.displayName = 'Item.Root';
-
-/**
- * Props for Item Name component
- */
-export interface NameProps {
+export interface ItemNameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{ name: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
 }
 
-/**
- * Displays the item name with customizable rendering options following the V2 API.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Item.Name className="text-lg font-medium" />
- *
- * // asChild with primitive element
- * <Item.Name asChild>
- *   <h3 className="text-lg font-medium" />
- * </Item.Name>
- *
- * // asChild with React component
- * <Item.Name asChild>
- *   {React.forwardRef(({name, ...props}, ref) => (
- *     <h3 ref={ref} {...props} className="text-lg font-medium">
- *       {name}
- *     </h3>
- *   ))}
- * </Item.Name>
- * ```
- */
-export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
-  const { item } = useItemContext();
-
-  return (
-    <CoreItem item={item}>
-      {({ name }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          data-testid={TestIds.itemName}
-          customElement={children}
-          customElementProps={{ name }}
-          content={name}
-          {...otherProps}
-        >
-          <span>{name}</span>
-        </AsChildSlot>
-      )}
-    </CoreItem>
-  );
-});
-
-Name.displayName = 'Item.Name';
-
-/**
- * Props for Item Description component
- */
-export interface DescriptionProps {
+export interface ItemDescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{ description: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
+}
+
+export interface ItemPriceProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    price: number;
+    currency: string;
+    formattedPrice?: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export interface ItemImageProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /**
+   * Custom render function when using asChild.
+   * Receives an object with:
+   * - hasImage: boolean - whether the item has an image
+   * - image: string - the actual image element (WixMediaImage)
+   * - altText: string - the alt text for the image
+   */
+  children?: AsChildRenderFunction<{
+    hasImage: boolean;
+    image?: string;
+    altText: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export interface ItemVariantsRepeaterProps {
+  children: React.ReactNode;
+}
+
+export interface ItemLabelsRepeaterProps {
+  children: React.ReactNode;
+}
+
+export interface ItemModifierGroupsRepeaterProps {
+  children: React.ReactNode;
+}
+
+export function Root(props: ItemRootProps) {
+  if (!props.item) {
+    return null;
+  }
+
+  return <CoreItem item={props.item}>{props.children}</CoreItem>;
 }
 
 /**
- * Displays the item description with customizable rendering options following the V2 API.
+ * Displays the item name with customizable rendering following the documented API.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Item.Description className="text-sm text-gray-600" />
+ * <Item.Name className="text-lg font-semibold" />
  *
- * // asChild with primitive element
+ * // asChild with primitive
+ * <Item.Name asChild>
+ *   <h2 className="text-lg font-semibold" />
+ * </Item.Name>
+ *
+ * // asChild with react component
+ * <Item.Name asChild>
+ *   {React.forwardRef(({name, ...props}, ref) => (
+ *     <h2 ref={ref} {...props} className="text-lg font-semibold">
+ *       {name}
+ *     </h2>
+ *   ))}
+ * </Item.Name>
+ * ```
+ */
+export const Name = React.forwardRef<HTMLElement, ItemNameProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <ItemName>
+        {({ name }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.itemName}
+              customElement={children}
+              customElementProps={{ name }}
+              content={name}
+              {...otherProps}
+            >
+              <div>{name}</div>
+            </AsChildSlot>
+          );
+        }}
+      </ItemName>
+    );
+  }
+);
+
+/**
+ * Displays the item description with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Item.Description className="text-sm text-muted-foreground" />
+ *
+ * // asChild with primitive
  * <Item.Description asChild>
- *   <p className="text-sm text-gray-600" />
+ *   <p className="text-sm text-muted-foreground" />
  * </Item.Description>
  *
- * // asChild with React component
+ * // asChild with react component
  * <Item.Description asChild>
  *   {React.forwardRef(({description, ...props}, ref) => (
- *     <p ref={ref} {...props} className="text-sm text-gray-600">
+ *     <p ref={ref} {...props} className="text-sm text-muted-foreground">
  *       {description}
  *     </p>
  *   ))}
  * </Item.Description>
  * ```
  */
-export const Description = React.forwardRef<HTMLElement, DescriptionProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
-  const { item } = useItemContext();
+export const Description = React.forwardRef<HTMLElement, ItemDescriptionProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreItem item={item}>
-      {({ description }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          data-testid={TestIds.itemDescription}
-          customElement={children}
-          customElementProps={{ description }}
-          content={description}
-          {...otherProps}
-        >
-          <span>{description}</span>
-        </AsChildSlot>
-      )}
-    </CoreItem>
-  );
-});
-
-Description.displayName = 'Item.Description';
-
-/**
- * Props for Item Price component
- */
-export interface PriceProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ price: string }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
-}
+    return (
+      <ItemDescription>
+        {({ description }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.itemDescription}
+              customElement={children}
+              customElementProps={{ description }}
+              content={description}
+              {...otherProps}
+            >
+              <div>{description}</div>
+            </AsChildSlot>
+          );
+        }}
+      </ItemDescription>
+    );
+  }
+);
 
 /**
- * Displays the item price with customizable rendering options following the V2 API.
+ * Displays the item price with customizable rendering following the documented API.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Item.Price className="text-lg font-semibold" />
+ * <Item.Price className="text-lg font-bold text-primary" />
  *
- * // asChild with primitive element
+ * // asChild with primitive
  * <Item.Price asChild>
- *   <span className="text-lg font-semibold" />
+ *   <span className="text-lg font-bold text-primary" />
  * </Item.Price>
  *
- * // asChild with React component
+ * // asChild with react component
  * <Item.Price asChild>
- *   {React.forwardRef(({price, ...props}, ref) => (
- *     <span ref={ref} {...props} className="text-lg font-semibold">
- *       {price}
+ *   {React.forwardRef(({price, currency, formattedPrice, ...props}, ref) => (
+ *     <span ref={ref} {...props} className="text-lg font-bold text-primary">
+ *       {formattedPrice || `${currency} ${price}`}
  *     </span>
  *   ))}
  * </Item.Price>
  * ```
  */
-export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CorePrice>
+        {({ price, formattedPrice }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.itemPrice}
+              customElement={children}
+              customElementProps={{ price, formattedPrice }}
+              content={formattedPrice || price}
+              {...otherProps}
+            >
+              <div>{formattedPrice || price}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CorePrice>
+    );
+  }
+);
+
+/**
+ * Displays the item image with customizable rendering following the documented API.
+ * Provides both the actual image element and a fallback element for when no image is available.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Item.Image className="w-20 h-20 object-cover rounded-lg" />
+ *
+ * // asChild with primitive
+ * <Item.Image asChild>
+ *   <img className="w-20 h-20 object-cover rounded-lg" />
+ * </Item.Image>
+ *
+ * // asChild with custom component
+ * <Item.Image asChild>
+ *   {React.forwardRef(({hasImage, imageElement, fallbackElement, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="w-20 h-20">
+ *       {hasImage ? imageElement : fallbackElement}
+ *     </div>
+ *   ))}
+ * </Item.Image>
+ *
+ * // Custom render function
+ * <Item.Image>
+ *   {({ hasImage, imageElement, fallbackElement }) => (
+ *     <div className="w-20 h-20 flex-shrink-0">
+ *       {hasImage ? imageElement : fallbackElement}
+ *     </div>
+ *   )}
+ * </Item.Image>
+ * ```
+ */
+export const Image = React.forwardRef<HTMLImageElement, ItemImageProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    return (
+      <CoreImage>
+        {({ image, hasImage, altText }) => {
+          if (asChild && children) {
+            // Call the ForwardRefRenderFunction with the specific props
+            return children({ hasImage, image, altText }, ref);
+          }
+
+          return (
+            <WixMediaImage
+              ref={ref}
+              media={{ image: image }}
+              alt={altText ?? ""}
+              data-testid={TestIds.itemImage}
+              {...otherProps}
+            />
+          );
+        }}
+      </CoreImage>
+    );
+  }
+);
+
+/**
+ * Repeater component for rendering individual variants.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Item.VariantsRepeater>
+ *   {({ variant, index }) => (
+ *     <div key={variant._id} className="flex justify-between p-2 border rounded">
+ *       <span className="font-medium">{variant.name}</span>
+ *       <span className="text-primary">
+ *         {variant.priceInfo?.formattedPrice || 'No price'}
+ *       </span>
+ *     </div>
+ *   )}
+ * </Item.VariantsRepeater>
+ * ```
+ */
+export const VariantsRepeater = React.forwardRef<
+  HTMLElement,
+  ItemVariantsRepeaterProps
+>((props, ref) => {
+  const { children } = props;
   const { item } = useItemContext();
 
+  const variants = item.priceVariants || [];
+  const hasVariants = !!(variants && variants.length > 0);
+
+  if (!hasVariants) {
+    return null;
+  }
   return (
-    <CoreItem item={item}>
-      {({ price }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          data-testid={TestIds.itemPrice}
-          customElement={children}
-          customElementProps={{ price }}
-          content={price}
-          {...otherProps}
+    <>
+      {variants.map((variant) => (
+        <VariantComponent.Root
+          key={variant._id}
+          variant={variant}
+          data-testid={TestIds.itemName}
+          data-variant-id={variant._id}
         >
-          <span>{price}</span>
-        </AsChildSlot>
-      )}
-    </CoreItem>
+          {children}
+        </VariantComponent.Root>
+      ))}
+    </>
   );
 });
 
-Price.displayName = 'Item.Price';
+Name.displayName = "Item.Name";
+Description.displayName = "Item.Description";
+Price.displayName = "Item.Price";
+Image.displayName = "Item.Image";
+VariantsRepeater.displayName = "Item.VariantsRepeater";
+
+export const LabelsRepeater = (props: ItemLabelsRepeaterProps) => {
+  const { children } = props;
+  const { item } = useItemContext();
+  const hasLabels = !!(item.labels && item.labels.length > 0);
+
+  if (!hasLabels) {
+    return null;
+  }
+
+  const itemLabels = item.labels!;
+
+  return (
+    <>
+      {itemLabels.map((label: Label) => (
+        <LabelComponent.Root key={label._id} label={label}>
+          {children}
+        </LabelComponent.Root>
+      ))}
+    </>
+  );
+};
+
+export const ModifierGroupsRepeater = (
+  props: ItemModifierGroupsRepeaterProps
+) => {
+  const { children } = props;
+  const { item } = useItemContext();
+  const hasModifierGroups = !!(
+    item.modifierGroups && item.modifierGroups.length > 0
+  );
+
+  if (!hasModifierGroups) {
+    return null;
+  }
+
+  const itemModifierGroups = item.modifierGroups!;
+
+  return itemModifierGroups.map((modifierGroup: EnhancedModifierGroup) => (
+    <ModifierGroupComponent.Root
+      key={modifierGroup._id}
+      modifierGroup={modifierGroup}
+    >
+      {children}
+    </ModifierGroupComponent.Root>
+  ));
+};
+
+LabelsRepeater.displayName = "Item.LabelsRepeater";
+ModifierGroupsRepeater.displayName = "Item.ModifierGroupsRepeater";
+
+/**
+ * Item namespace containing all item components
+ * following the compound component pattern: Item.Root, Item.Name, Item.Description, etc.
+ */
+export const Item = {
+  /** Item root component */
+  Root,
+  /** Item name component */
+  Name,
+  /** Item description component */
+  Description,
+  /** Item price component */
+  Price,
+  /** Item image component */
+  Image,
+  /** Item variants repeater component */
+  VariantsRepeater,
+  /** Item labels repeater component */
+  LabelsRepeater,
+  /** Item modifier groups repeater component */
+  ModifierGroupsRepeater,
+} as const;
