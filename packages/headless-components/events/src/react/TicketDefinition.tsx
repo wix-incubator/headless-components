@@ -628,7 +628,9 @@ export interface PricingOptionsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: AsChildChildren<{ pricingOptions: PricingOptionType[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ pricingOptions: PricingOptionType[] }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

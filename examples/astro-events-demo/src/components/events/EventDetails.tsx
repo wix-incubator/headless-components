@@ -133,29 +133,34 @@ export function EventDetails({
                         Ticket type
                       </div>
                       <TicketDefinitionPrimitive.Name className="font-light text-content-primary" />
-                      <TicketDefinitionPrimitive.SaleEnded className="block font-light text-content-primary" />
-                      <TicketDefinitionPrimitive.SaleStarts
-                        className="block font-light text-content-primary"
+                      <TicketDefinitionPrimitive.SaleStartDate
                         asChild
+                        className="block font-light text-content-primary"
                       >
                         {({ startDateFormatted }) => (
-                          <div className="text-sm font-light text-content-primary">
-                            Sale starts on: {startDateFormatted}
-                          </div>
+                          <span>Sale starts on: {startDateFormatted}</span>
                         )}
-                      </TicketDefinitionPrimitive.SaleStarts>
+                      </TicketDefinitionPrimitive.SaleStartDate>
+                      <TicketDefinitionPrimitive.SaleEndDate
+                        asChild
+                        className="block font-light text-content-primary"
+                      >
+                        {({ endDateFormatted, saleEnded }) => (
+                          <span>
+                            {saleEnded ? 'Sale ended on' : 'Sale ends on'}:{' '}
+                            {endDateFormatted}
+                          </span>
+                        )}
+                      </TicketDefinitionPrimitive.SaleEndDate>
                     </div>
                     <div className="flex items-center gap-2 mb-5 w-full justify-between">
                       <div>
                         <TicketDefinitionPrimitive.FixedPricing className="font-medium text-content-primary" />
                         <TicketDefinitionPrimitive.GuestPricing className="border border-gray-200 font-medium text-content-primary py-2 px-2" />
-                        <TicketDefinitionPrimitive.SoldOut className="text-red-600 font-medium block">
-                          Sold Out
-                        </TicketDefinitionPrimitive.SoldOut>
                       </div>
                       <TicketDefinitionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
                       <TicketDefinitionPrimitive.PricingOptions className="flex flex-col w-full">
-                        <TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
+                        <TicketDefinitionPrimitive.PricingOptionRepeater>
                           <div className="flex items-center gap-2 mb-5 w-full justify-between">
                             <div>
                               <PricingOptionPrimitive.Name className="text-content-primary" />{' '}
@@ -163,7 +168,7 @@ export function EventDetails({
                             </div>
                             <PricingOptionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
                           </div>
-                        </TicketDefinitionPrimitive.PricingOptionsPricingRepeater>
+                        </TicketDefinitionPrimitive.PricingOptionRepeater>
                       </TicketDefinitionPrimitive.PricingOptions>
                     </div>
                   </div>

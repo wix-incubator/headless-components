@@ -65,7 +65,7 @@ export interface EventsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: AsChildChildren<{ events: Event[] }>;
+  children: React.ReactNode | AsChildChildren<{ events: Event[] }>;
   /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */

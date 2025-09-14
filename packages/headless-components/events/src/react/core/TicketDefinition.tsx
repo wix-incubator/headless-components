@@ -223,10 +223,9 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
     return null;
   }
 
-  const startDate = ticketDefinition.salePeriod!.startDate!.toISOString();
-  const startDateFormatted = new Intl.DateTimeFormat('en-US').format(
-    new Date(startDate),
-  );
+  const dateObj = new Date(ticketDefinition.salePeriod!.startDate!);
+  const startDate = dateObj.toISOString();
+  const startDateFormatted = new Intl.DateTimeFormat('en-US').format(dateObj);
 
   return props.children({ startDate, startDateFormatted });
 }
@@ -258,14 +257,13 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
     !!ticketDefinition.salePeriod?.endDate;
   const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
 
-  if (saleScheduled) {
+  if (saleScheduled || !ticketDefinition.salePeriod) {
     return null;
   }
 
-  const endDate = ticketDefinition.salePeriod!.endDate!.toISOString();
-  const endDateFormatted = new Intl.DateTimeFormat('en-US').format(
-    new Date(endDate),
-  );
+  const dateObj = new Date(ticketDefinition.salePeriod!.endDate!);
+  const endDate = dateObj.toISOString();
+  const endDateFormatted = new Intl.DateTimeFormat('en-US').format(dateObj);
 
   return props.children({ endDate, endDateFormatted, saleEnded });
 }

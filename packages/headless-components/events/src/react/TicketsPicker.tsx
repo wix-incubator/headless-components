@@ -82,7 +82,9 @@ export interface TicketDefinitionsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: AsChildChildren<{ ticketDefinitions: TicketDefinitionType[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ ticketDefinitions: TicketDefinitionType[] }>;
   /** Empty state to display when no ticket definitions are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
