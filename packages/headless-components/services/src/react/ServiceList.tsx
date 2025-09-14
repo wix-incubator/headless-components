@@ -398,7 +398,10 @@ export const Service = {
 
       if (!service.media?.mainMedia?.image) return null;
       //WA until the issue with media will be solved
-     const image = service.media?.mainMedia?.image?.replace(/v1\/[\w-]+\//, 'v1/');
+      const image = service.media?.mainMedia?.image?.replace(
+        /v1\/[\w-]+\//,
+        'v1/',
+      );
       return (
         <WixMediaImage
           media={{ image: image || service.media?.mainMedia?.image }}
