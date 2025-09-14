@@ -20,3 +20,4 @@ export {
 } from './ServiceList.js';
 export * from './context.js';
 export * from './test-ids.js';
+export * from './ServiceListSort.js';

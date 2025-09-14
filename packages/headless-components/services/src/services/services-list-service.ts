@@ -48,12 +48,12 @@ const fetchServices = async (
 ) => {
   try {
     console.log('Fetching services with options:', searchOptions);
-    const query = services.queryServices();
+    let query = services.queryServices();
 
     // Apply pagination
     if (searchOptions.cursorPaging?.limit) {
       console.log('Applying limit:', searchOptions.cursorPaging.limit);
-      query.limit(searchOptions.cursorPaging.limit);
+      query = query.limit(searchOptions.cursorPaging.limit);
     }
 
     // Apply sorting
@@ -61,17 +61,9 @@ const fetchServices = async (
       const { order, fieldName } = searchOptions.sort[0]!;
       console.log('Applying sort:', { fieldName, order });
       if (order === 'ASC') {
-        query.ascending(fieldName as any);
+        query = query.ascending(fieldName as any);
       } else {
-        query.descending(fieldName as any);
-      }
-    }
-
-    // Apply filtering
-    if (searchOptions.filter) {
-      console.log('Applying filters:', searchOptions.filter);
-      if (searchOptions.filter['category']) {
-        query.eq('category.name', searchOptions.filter['category']);
+        query = query.descending(fieldName as any);
       }
     }
 
