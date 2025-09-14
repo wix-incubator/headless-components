@@ -1,42 +1,108 @@
-# Services Demo
+# Wix Services Demo
 
-This is a demo project showcasing the Wix Services headless components with Astro integration.
+This demo showcases how to use Wix Services headless components to create a fully functional services listing and booking experience.
 
-## Features
+## 🚀 Quick Start
 
-- Services listing with filtering and sorting
-- Individual service pages
-- Booking functionality
-- Responsive design
-- Server-side rendering
-- SEO optimization
-
-## Getting Started
-
-1. Install dependencies:
 ```bash
+# Install dependencies
 yarn install
-```
 
-2. Start the development server:
-```bash
+# Start development server
 yarn dev
-```
 
-3. Build for production:
-```bash
+# Build for production
 yarn build
-```
 
-4. Preview production build:
-```bash
+# Preview production build
 yarn preview
 ```
 
-## Project Structure
+## 🎯 Features
 
-- `src/pages/` - Astro pages
-- `src/react-pages/` - React components for pages
-- `src/components/` - Reusable React components
-- `src/layouts/` - Layout components
-- `src/styles/` - Global styles and Tailwind configuration
+- **Services Listing**: Display your services in a responsive grid layout
+- **Filtering & Sorting**: Filter services by category and sort by name or price
+- **Service Details**: Show comprehensive service information including:
+  - Service name and description
+  - Pricing information
+  - Duration details
+  - Category information
+  - Service images
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Server-Side Rendering**: Fast initial page loads with Astro
+- **SEO Optimization**: Built-in SEO best practices
+
+## 🏗️ Project Structure
+
+```
+src/
+├── components/          # Reusable React components
+├── layouts/            # Layout components
+│   ├── BaseLayout.astro
+│   └── ServicesLayout.tsx
+├── pages/             # Astro pages
+│   └── services/
+├── react-pages/       # React page components
+│   └── services/
+└── styles/           # Global styles and Tailwind config
+```
+
+## 💻 Usage Example
+
+```tsx
+import { List, Options, ServiceRepeater, Service } from '@wix/headless-services/react';
+
+function ServicesList({ servicesConfig }) {
+  return (
+    <List servicesListConfig={servicesConfig}>
+      <Options>
+        <ServiceRepeater>
+          {({ service }) => (
+            <Service.Root service={service}>
+              <Service.Name />
+              <Service.Description />
+              <Service.Price />
+              <Service.Duration />
+              <Service.Category />
+              <Service.Image />
+            </Service.Root>
+          )}
+        </ServiceRepeater>
+      </Options>
+    </List>
+  );
+}
+```
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_WIX_CLIENT_ID=your-client-id
+VITE_WIX_INSTANCE_ID=your-instance-id
+```
+
+### Tailwind Configuration
+
+The demo uses Tailwind CSS for styling. Configuration can be found in `tailwind.config.js`.
+
+## 📚 Component Documentation
+
+For detailed documentation of the headless components, refer to:
+- [Services List Component](../../packages/headless-components/services/README.md)
+- [Service Component](../../packages/headless-components/services/README.md#service-component)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
