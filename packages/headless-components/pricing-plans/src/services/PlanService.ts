@@ -61,6 +61,7 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
         const plan = await fetchPlan(planId);
         planSignal.set(enhancePlan(plan));
       } catch (error) {
+        console.error('Error loading plan:', error);
         // TODO: Better typing
         errorSignal.set(
           error instanceof Error ? error : new Error(error as any),

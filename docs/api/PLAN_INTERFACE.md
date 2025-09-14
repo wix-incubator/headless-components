@@ -343,13 +343,13 @@ interface RecurrenceProps {
 **Example**
 ```tsx
 <Plan.Recurrence>
-  {React.forwardRef(({ recurrence }, ref) => {
+  {({ recurrence }, ref) => {
     if (!recurrence) return null;
 
     return <span ref={ref} className="text-content-secondary" data-testid="plan-recurrence">
       Renews every {recurrence.count} {recurrence.period}(s)
     </span>
-  })}
+  }}
 </Plan.Recurrence>
 ```
 ---
@@ -369,13 +369,13 @@ interface DurationProps {
 **Example**
 ```tsx
 <Plan.Duration>
-  {React.forwardRef(({ duration }, ref) => {
+  {({ duration }, ref) => {
     if (!duration) return <span>Valid until canceled</span>;
 
     return <span ref={ref} className="text-sm" data-testid="plan-duration">
       Valid for {duration.count} {duration.period}(s)
     </span>
-  })}
+  }}
 </Plan.Duration>
 ```
 ---

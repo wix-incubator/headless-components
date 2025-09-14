@@ -549,26 +549,24 @@ interface RecurrenceProps {
  * @example
  * ```tsx
  * <Plan.Recurrence>
- *   {React.forwardRef(({ recurrence }, ref) => {
+ *   {({ recurrence }, ref) => {
  *     if (!recurrence) return null;
  *
  *     return <span ref={ref} className="text-content-secondary" data-testid="plan-recurrence">
  *       Renews every {recurrence.count} {recurrence.period}(s)
  *     </span>
- *   })}
+ *   }}
  * </Plan.Recurrence>
  * ```
  * @todo: Decide if forwardRef is necessary here
  * @todo: Decide if there's a better way to design a component that will only work with a provided child component
  */
 export const Recurrence = React.forwardRef<HTMLElement, RecurrenceProps>(
-  ({ children }, ref) => {
-    return (
-      <CoreRecurrence>
-        {({ recurrence }) => children({ recurrence }, ref)}
-      </CoreRecurrence>
-    );
-  },
+  ({ children }, ref) => (
+    <CoreRecurrence>
+      {({ recurrence }) => children({ recurrence }, ref)}
+    </CoreRecurrence>
+  ),
 );
 
 export type PlanDurationData = DurationData;
@@ -584,13 +582,13 @@ interface DurationProps {
  * @example
  * ```tsx
  * <Plan.Duration>
- *   {React.forwardRef(({ duration }, ref) => {
+ *   {({ duration }, ref) => {
  *     if (!duration) return <span>Valid until canceled</span>;
  *
  *     return <span ref={ref} className="text-sm" data-testid="plan-duration">
  *       Valid for {duration.count} {duration.period}(s)
  *     </span>
- *   })}
+ *   }}
  * </Plan.Duration>
  * ```
  */
@@ -731,7 +729,7 @@ export const PerkDescription = React.forwardRef<
         className={className}
         data-testid={PlanTestId.PerkDescription}
       >
-        {children}
+        <span>{perkDescriptionData.perkDescription}</span>
       </AsChildSlot>
     )}
   </CorePerkDescription>
