@@ -19,6 +19,8 @@ interface RootProps {
   children: React.ReactNode;
   /** Form service configuration */
   formServiceConfig: FormServiceConfig;
+  /** Whether to render as a child component */
+  asChild?: boolean;
   /** CSS classes to apply to the root element */
   className?: string;
 }
@@ -143,6 +145,8 @@ interface SubmittedProps {
 interface SubmittedRenderProps {
   /** Whether the form has been submitted */
   isSubmitted: boolean;
+  /** Success message */
+  message: string;
 }
 ```
 
@@ -154,13 +158,13 @@ interface SubmittedRenderProps {
 
 // Custom rendering with forwardRef
 <Form.Submitted asChild>
-  {React.forwardRef(({ isSubmitted }, ref) => (
+  {React.forwardRef(({ isSubmitted, message }, ref) => (
     <div
       ref={ref}
       className="custom-success-container"
     >
       <h2>Thank You!</h2>
-      <p>Your form has been submitted successfully.</p>
+      <p>{message}</p>
     </div>
   ))}
 </Form.Submitted>
@@ -536,7 +540,7 @@ The Form component integrates with Wix services through the `FormService` which 
 
 - **Form data management**: Access to form configuration and field definitions
 - **Error handling**: Signal for form loading errors
-- **Submit error handling**: Signal for form submission errors
+- **Submit response handling**: Signal for form submission responses (success/error)
 - **Submission state**: Signal for form submission status
 - **State management**: Reactive state updates using signals
 

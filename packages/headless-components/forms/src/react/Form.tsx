@@ -3,6 +3,7 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 
 import { type FormServiceConfig } from '../services/form-service';
 import * as CoreForm from './core/Form.js';
+
 import {
   CheckboxGroupProps,
   CheckboxProps,
@@ -473,8 +474,8 @@ export interface SubmittedProps {
 export interface SubmittedRenderProps {
   /** Whether the form has been submitted */
   isSubmitted: boolean;
-  /** Success message if available */
-  message?: string;
+  /** Success message */
+  message: string;
 }
 
 /**
@@ -504,7 +505,7 @@ export interface SubmittedRenderProps {
  *         isSubmitted ? (
  *           <div className="bg-green-50 border border-green-200 text-green-800 p-6 rounded-lg mb-4">
  *             <h2 className="font-heading text-xl mb-2">Thank You!</h2>
- *             <p className="font-paragraph">{message || "Your form has been submitted successfully."}</p>
+ *             <p className="font-paragraph">{message}</p>
  *           </div>
  *         ) : null
  *       )}
@@ -522,7 +523,7 @@ export interface SubmittedRenderProps {
  *           className="custom-success-container"
  *         >
  *           <h2 className="font-heading">Thank You!</h2>
- *           <p className="font-paragraph">{message || "Your form has been submitted successfully."}</p>
+ *           <p className="font-paragraph">{message}</p>
  *         </div>
  *       ))}
  *     </Form.Submitted>
@@ -540,7 +541,6 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
           if (!isSubmitted) return null;
 
           const submittedData = { isSubmitted, message };
-          const displayMessage = message || "Form submitted successfully";
 
           return (
             <AsChildSlot
@@ -550,11 +550,11 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
               data-testid={TestIds.formSubmitted}
               customElement={children}
               customElementProps={submittedData}
-              content={displayMessage}
+              content={message}
               {...otherProps}
             >
               <div className="text-green-500 text-sm sm:text-base">
-                {displayMessage}
+                {message}
               </div>
             </AsChildSlot>
           );
