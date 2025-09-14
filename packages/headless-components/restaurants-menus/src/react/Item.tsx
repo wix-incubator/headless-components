@@ -333,7 +333,7 @@ export const Image = React.forwardRef<HTMLImageElement, ItemImageProps>(
 export const VariantsRepeater = React.forwardRef<
   HTMLElement,
   ItemVariantsRepeaterProps
->((props, ref) => {
+>((props, _ref) => {
   const { children } = props;
   const { item } = useItemContext();
 
