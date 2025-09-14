@@ -32,6 +32,9 @@ interface GenericListContextValue<T extends ListItem = ListItem> {
   isLoading: boolean;
   onLoadMore?: () => void;
   variant: ListVariant;
+  infinite: boolean;
+  onNextPage?: () => void;
+  onPreviousPage?: () => void;
 }
 
 const GenericListContext = React.createContext<GenericListContextValue | null>(
@@ -65,6 +68,12 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   isLoading?: boolean;
   /** Display variant - affects layout structure (default: 'list') */
   variant?: ListVariant;
+  /** Enable infinite scroll - automatically triggers onLoadMore when reaching the end (default: false) */
+  infinite?: boolean;
+  /** Function called to navigate to next page */
+  onNextPage?: () => void;
+  /** Function called to navigate to previous page */
+  onPreviousPage?: () => void;
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
   /** Children components */
@@ -76,8 +85,6 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
 export interface GenericListItemsProps {
   /** Content to display when no items are available */
   emptyState?: React.ReactNode;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
   /** Children components */
   children?: React.ReactNode;
   /** CSS classes */
@@ -98,9 +105,7 @@ export interface GenericListLoadMoreProps {
 }
 
 export interface GenericListTotalsProps {
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
+  /** Custom render function */
   children?:
     | React.ReactNode
     | ((
@@ -131,6 +136,9 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       hasMore = false,
       isLoading = false,
       variant = 'list',
+      infinite = false,
+      onNextPage,
+      onPreviousPage,
       asChild = false,
       children,
       className,
@@ -144,8 +152,20 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
         isLoading,
         onLoadMore,
         variant,
+        infinite,
+        onNextPage,
+        onPreviousPage,
       }),
-      [items, hasMore, isLoading, onLoadMore, variant],
+      [
+        items,
+        hasMore,
+        isLoading,
+        onLoadMore,
+        variant,
+        infinite,
+        onNextPage,
+        onPreviousPage,
+      ],
     );
 
     const attributes = {
@@ -154,6 +174,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       'data-has-items': items.length > 0,
       'data-is-loading': isLoading,
       'data-has-more': hasMore,
+      'data-infinite': infinite,
       className,
       ...otherProps,
     };
@@ -192,13 +213,7 @@ Root.displayName = 'GenericList.Root';
  */
 export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
   (props, ref) => {
-    const {
-      emptyState,
-      asChild = false,
-      children,
-      className,
-      ...otherProps
-    } = props;
+    const { emptyState, children, className, ...otherProps } = props;
     const { items, variant } = useGenericListContext();
 
     const hasItems = items.length > 0;
@@ -215,14 +230,6 @@ export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
       className,
       ...otherProps,
     };
-
-    if (asChild) {
-      return (
-        <Slot ref={ref} {...attributes}>
-          {children}
-        </Slot>
-      );
-    }
 
     return (
       <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
@@ -303,11 +310,11 @@ LoadMore.displayName = 'GenericList.LoadMore';
 
 /**
  * Displays totals information about the list (total items and displayed items).
- * Provides data for custom rendering patterns and supports asChild for flexible styling.
+ * Provides data for custom rendering patterns.
  */
 export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
   (props, ref) => {
-    const { asChild = false, children, className, ...otherProps } = props;
+    const { children, className, ...otherProps } = props;
     const { items } = useGenericListContext();
 
     const totalItems = items.length;
@@ -327,14 +334,6 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
     // Handle render function pattern
     if (typeof children === 'function') {
       return (children as any)(totalsData, ref);
-    }
-
-    if (asChild) {
-      return (
-        <Slot ref={ref} {...attributes}>
-          {children || content}
-        </Slot>
-      );
     }
 
     return (
