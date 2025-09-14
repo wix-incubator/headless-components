@@ -21,7 +21,7 @@ export const ServiceListSort = (props: ServiceListSortProps) => {
   // Define sort options
   const sortOptions = [
     { fieldName: 'name', order: 'ASC' as const, label: 'Name (A-Z)' },
-    { fieldName: 'name', order: 'DESC' as const, label: 'Name (Z-A)' }
+    { fieldName: 'name', order: 'DESC' as const, label: 'Name (Z-A)' },
   ];
 
   return props.children({
@@ -52,9 +52,7 @@ export function ServiceListSeparateSort(props: ServiceListSeparateSortProps) {
   const servicesListService = useService(ServicesListServiceDefinition);
   const currentSort = servicesListService.sort.get();
 
-  const sortFieldOptions = [
-    { fieldName: 'name', label: 'Name' }
-  ];
+  const sortFieldOptions = [{ fieldName: 'name', label: 'Name' }];
 
   const sortOrderOptions = [
     { order: 'ASC' as const, label: 'Ascending' },
