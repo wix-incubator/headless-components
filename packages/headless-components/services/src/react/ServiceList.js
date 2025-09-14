@@ -250,22 +250,22 @@ export const Service = {
   }),
   Price: React.forwardRef((props, ref) => {
     const { service } = React.useContext(ServiceContext);
-    if (!service.price) return null;
+    if (!service.payment?.fixed?.price) return null;
     return React.createElement(
       'div',
       { 'data-testid': TestIds.servicePrice, ref: ref },
-      service.price.amount,
+      service.payment?.fixed?.price.value,
       ' ',
-      service.price.currency,
+      service.payment?.fixed?.price.currency,
     );
   }),
   Duration: React.forwardRef((props, ref) => {
     const { service } = React.useContext(ServiceContext);
-    if (!service.duration) return null;
+    if (!service.schedule?.availabilityConstraints?.durations) return null;
     return React.createElement(
       'div',
       { 'data-testid': TestIds.serviceDuration, ref: ref },
-      service.duration,
+      service.schedule?.availabilityConstraints?.durations[0].durationInMinutes,
       ' minutes',
     );
   }),
@@ -291,10 +291,3 @@ export const Service = {
 };
 // Create a Service Context for individual service components
 const ServiceContext = React.createContext(null);
-Service.Root.displayName = 'Service.Root';
-Service.Name.displayName = 'Service.Name';
-Service.Description.displayName = 'Service.Description';
-Service.Price.displayName = 'Service.Price';
-Service.Duration.displayName = 'Service.Duration';
-Service.Image.displayName = 'Service.Image';
-Service.Category.displayName = 'Service.Category';

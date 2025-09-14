@@ -12,6 +12,7 @@ import {
   ServicesListServiceDefinition,
 } from '../services/services-list-service.js';
 import { services } from '@wix/bookings';
+import { WixMediaImage } from '@wix/headless-media/react';
 
 class ServiceComponentError extends globalThis.Error {
   name = 'ServiceComponentError';
@@ -148,13 +149,14 @@ export interface ServiceRepeaterProps {
   children:
     | ((props: { service: services.Service }) => React.ReactNode)
     | React.ReactNode;
+  className?: string;
 }
 
 export const ServiceRepeater = React.forwardRef<
   HTMLDivElement,
   ServiceRepeaterProps
->((props: ServiceRepeaterProps, ref: React.Ref<HTMLDivElement>) => {
-  const { children } = props;
+>((props: ServiceRepeaterProps, _ref: React.Ref<HTMLDivElement>) => {
+  const { children, className } = props;
   const servicesListService = useService(ServicesListServiceDefinition);
   const services = servicesListService.services.get();
   const hasServices = services.length > 0;
@@ -162,18 +164,19 @@ export const ServiceRepeater = React.forwardRef<
   if (!hasServices) return null;
 
   return (
-    <div ref={ref}>
+    <>
       {services.map((service) => (
         <Service.Root
           key={service._id}
           service={service}
           data-testid={TestIds.serviceRepeater}
           data-service-id={service._id}
+          className={className}
         >
           {typeof children === 'function' ? children({ service }) : children}
         </Service.Root>
       ))}
-    </div>
+    </>
   );
 });
 
@@ -358,7 +361,9 @@ export const Service = {
 
   Duration: React.forwardRef<HTMLDivElement, { className?: string }>(
     (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
+      console.log('Duration');
       const context = React.useContext(ServiceContext);
+      console.log(context);
       if (!context) {
         throw new ServiceComponentError(
           'Service components must be used within a Service.Root component',
@@ -367,16 +372,18 @@ export const Service = {
       const { service } = context;
       const { className } = props;
 
+      console.log(service);
+
       if (!service?.schedule?.availabilityConstraints?.durations?.[0])
         return null;
 
       return (
         <div
           data-testid={TestIds.serviceDuration}
-          ref={ref as React.Ref<HTMLDivElement>}
+          ref={ref as React.Ref<HTMLDivElement>}x
           className={className}
         >
-          {service?.schedule?.availabilityConstraints?.durations?.[0] + ''}
+          {`${service?.schedule?.availabilityConstraints?.durations?.[0].minutes!} minutes`}
         </div>
       );
     },
@@ -393,14 +400,12 @@ export const Service = {
       const { service } = context;
       const { className } = props;
 
-      //if (!service.media?.mainMedia?.image) return null;
-      //const src = wixMedia.getScaledToFillImageUrl('11062b_c127c132f14e41a1a4a9182888bf05ba~mv2.jpg', 2048, 2048, {});
-
+      if (!service.media?.mainMedia?.image) return null;
+      //WA until the issue with media will be solved
+     const image = service.media?.mainMedia?.image?.replace(/v1\/[\w-]+\//, 'v1/');
       return (
-        <img
-          src={
-            'https://static.wixstatic.com/media/11062b_c127c132f14e41a1a4a9182888bf05ba~mv2.jpg'
-          }
+        <WixMediaImage
+          media={{ image: image || service.media?.mainMedia?.image }}
           alt={service.name || ''}
           data-testid={TestIds.serviceImage}
           ref={ref as React.Ref<HTMLImageElement>}
