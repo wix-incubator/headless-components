@@ -33,7 +33,6 @@ interface FormsPageProps {
 }
 
 const FIELD_MAP = {
-  // TODO: inject data attributes like data-field-type, disabled
   TEXT_INPUT: TextInput,
   TEXT_AREA: TextArea,
   PHONE_INPUT: ContactsPhone,

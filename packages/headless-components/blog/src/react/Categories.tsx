@@ -1,16 +1,23 @@
 import type { categories } from '@wix/blog';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { createServicesMap } from '@wix/services-manager';
+import { WixServices } from '@wix/services-manager-react';
 import React from 'react';
 import {
+  BlogCategoriesService,
+  BlogCategoriesServiceDefinition,
   enhanceCategories,
+  type BlogCategoriesServiceConfig,
   type EnhancedCategory,
 } from '../services/blog-categories-service.js';
+import type { createCustomCategory } from '../services/helpers.js';
 import * as CoreCategories from './core/Categories.js';
 import { isValidChildren } from './helpers.js';
 
 interface CategoriesContextValue {
   categories: EnhancedCategory[];
   hasCategories: boolean;
+  fallbackImageUrl?: string;
 }
 
 const CategoriesContext = React.createContext<CategoriesContextValue | null>(
@@ -39,9 +46,15 @@ export interface BlogCategoriesRootProps {
   asChild?: boolean;
   className?: string;
   children: AsChildChildren<{ hasCategories: boolean }> | React.ReactNode;
+
+  /** Loaded result of `loadBlogCategoriesServiceConfig` */
+  blogCategoriesServiceConfig?: BlogCategoriesServiceConfig;
+  /** Categories to use instead of loading from the service */
   categories?: categories.Category[];
   /** Custom categories to prepend to the real categories (e.g., "All posts"). @see {@link createCustomCategory} */
-  customCategories?: EnhancedCategory[];
+  customCategoriesToPrepend?: ReturnType<typeof createCustomCategory>[];
+  /** Fallback image url to use when the category image is not available */
+  fallbackImageUrl?: string;
 }
 
 /**
@@ -75,8 +88,10 @@ export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>(
       asChild,
       children,
       className,
-      categories,
-      customCategories = [],
+      categories: categoriesProp,
+      customCategoriesToPrepend = [],
+      blogCategoriesServiceConfig,
+      fallbackImageUrl,
     } = props;
 
     const renderRoot = (
@@ -85,6 +100,7 @@ export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>(
     ) => {
       const contextValue: CategoriesContextValue = {
         categories,
+        fallbackImageUrl,
         hasCategories,
       };
 
@@ -109,23 +125,37 @@ export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>(
       );
     };
 
-    if (categories) {
-      return renderRoot(enhanceCategories(categories), categories.length > 0);
+    if (categoriesProp) {
+      return renderRoot(
+        enhanceCategories(categoriesProp),
+        categoriesProp.length > 0,
+      );
     }
 
     return (
-      <CoreCategories.Categories>
-        {({ categories: realCategories, hasCategories: hasRealCategories }) => {
-          const allCategories: EnhancedCategory[] = [
-            ...customCategories,
-            ...realCategories,
-          ];
+      <WixServices
+        servicesMap={createServicesMap().addService(
+          BlogCategoriesServiceDefinition,
+          BlogCategoriesService,
+          blogCategoriesServiceConfig,
+        )}
+      >
+        <CoreCategories.Categories>
+          {({
+            categories: realCategories,
+            hasCategories: hasRealCategories,
+          }) => {
+            const allCategories: EnhancedCategory[] = [
+              ...customCategoriesToPrepend,
+              ...realCategories,
+            ];
 
-          const hasCategories = hasRealCategories;
+            const hasCategories = hasRealCategories;
 
-          return renderRoot(allCategories, hasCategories);
-        }}
-      </CoreCategories.Categories>
+            return renderRoot(allCategories, hasCategories);
+          }}
+        </CoreCategories.Categories>
+      </WixServices>
     );
   },
 );
@@ -202,15 +232,17 @@ export const CategoryItemRepeater = React.forwardRef<
   CategoryItemRepeaterProps
 >((props, _ref) => {
   const { children, offset = 0, limit = Infinity } = props;
-  const { categories } = useCategoriesContext();
+  const { categories, fallbackImageUrl } = useCategoriesContext();
 
   const categoriesSlice = categories.slice(offset, offset + limit);
 
   return (
     <>
       {categoriesSlice.map((category) => {
+        const imageUrl = category.imageUrl || fallbackImageUrl;
         const contextValue: CategoryItemRepeaterContextValue = {
           category,
+          imageUrl,
         };
 
         return (
@@ -230,6 +262,7 @@ CategoryItemRepeater.displayName = 'Blog.Categories.CategoryItemRepeater';
 
 interface CategoryItemRepeaterContextValue {
   category: EnhancedCategory;
+  imageUrl?: string;
 }
 
 const CategoryItemRepeaterContext =
@@ -280,7 +313,7 @@ export const ActiveCategory = React.forwardRef<
   ActiveCategoryProps
 >((props, ref) => {
   const { asChild, className, currentPath, baseUrl = '', children } = props;
-  const { categories } = useCategoriesContext();
+  const { categories, fallbackImageUrl } = useCategoriesContext();
 
   const activeCategory = categories.find(
     (category) =>
@@ -292,10 +325,12 @@ export const ActiveCategory = React.forwardRef<
 
   const contextValue: CategoryItemRepeaterContextValue = {
     category: activeCategory,
+    imageUrl: activeCategory.imageUrl || fallbackImageUrl,
   };
 
   const attributes = {
     'data-testid': TestIds.blogActiveCategory,
+    'data-has-image': !!contextValue.imageUrl,
   };
 
   return (
@@ -315,46 +350,3 @@ export const ActiveCategory = React.forwardRef<
 });
 
 ActiveCategory.displayName = 'Blog.Categories.ActiveCategory';
-
-/**
- * Helper function to create custom categories (e.g., "All posts").
- * Custom categories are typically used for navigation purposes and don't correspond to actual blog categories.
- *
- * @param label - Display name for the category
- * @param slug - URL slug for the category (can be a full path like "/" for home)
- * @param options - Optional category properties (description, imageUrl)
- * @returns Enhanced category object that can be used with Blog.Categories.Root
- *
- * @example
- * ```tsx
- * import { Blog, createCustomCategory } from '@wix/headless-blog/react';
- *
- * const customCategories = [
- *   createCustomCategory('All Posts', '/', {
- *     description: 'View all blog posts across all categories'
- *   })
- * ];
- *
- * <Blog.Categories.Root customCategories={customCategories}>
- *   <Blog.Categories.CategoryItems>
- *     <Blog.Categories.CategoryItemRepeater>
- *       <Blog.Categories.Link baseUrl="/category/" />
- *     </Blog.Categories.CategoryItemRepeater>
- *   </Blog.Categories.CategoryItems>
- * </Blog.Categories.Root>
- * ```
- */
-export function createCustomCategory(
-  label: string,
-  slug: string,
-  options: Partial<Pick<EnhancedCategory, 'description' | 'imageUrl'>> = {},
-): EnhancedCategory {
-  return {
-    _id: `custom-${slug}`,
-    label,
-    slug,
-    isCustom: true,
-    imageUrl: null,
-    ...options,
-  };
-}
