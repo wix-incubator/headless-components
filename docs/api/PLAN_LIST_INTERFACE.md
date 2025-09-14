@@ -1,7 +1,5 @@
 # Plan List Interface
 
-<!-- TODO: "Load more" button, pagination should be added -->
-
 ## Overview
 
 A comprehensive plan list display component system built with composable primitives, similar to Radix UI architecture.
@@ -12,23 +10,54 @@ The PlanList component follows a compound component pattern where each part can 
 
 ## Components
 
-<!-- IMPLEMENT SIMPLE APPROACH, THERE WILL BE A GENERIC COMPONENT FOR LISTS -->
 ### PlanList.Root
 
 The root container that provides plan list context to all child components.
 
+Accepts a `planListServiceConfig` prop with one of the following options:
+- `planIds`: Array of plan IDs to load
+- `plans`: Array of plans to add to context (if loaded externally)
+
+Omitting these options will load all plans.
+
+
 **Props**
 ```tsx
+type PlanListServiceConfig = { planIds?: string[] } | { plans: PlanWithEnhancedData[] };
+
 interface PlanListRootProps {
-  planListServiceConfig?: PlanListServiceConfig;
+  planListServiceConfig: PlanListServiceConfig;
   children: React.ReactNode;
 }
 ```
 
 **Example**
 ```tsx
-<PlanList.Root planListServiceConfig={planListServiceConfig}>
-  {/* All plan list components */}
+// Load specific plans
+<PlanList.Root planListServiceConfig={{ planIds: ['planId1', 'planId2'] }}>
+  <PlanList.Plans emptyState={<div>No plans found</div>} loadingState={<div>Loading...</div>}>
+    <PlanList.PlanRepeater>
+      <Plan.Name />
+      <Plan.Price />
+      <Plan.Action.BuyNow label="Select Plan" />
+    </PlanList.PlanRepeater>
+  </PlanList.Plans>
+</PlanList.Root>
+
+// Load all plans
+<PlanList.Root planListServiceConfig={{}}>
+  <PlanList.Plans>
+    {/* Plan list components */}
+  </PlanList.Plans>
+</PlanList.Root>
+
+// Load plans externally
+const { plans } = await loadPlanListServiceConfig(['planId1', 'planId2']);
+
+<PlanList.Root planListServiceConfig={{ plans: plans }}>
+  <PlanList.Plans>
+    {/* Plan list components */}
+  </PlanList.Plans>
 </PlanList.Root>
 ```
 
@@ -42,13 +71,14 @@ interface PlanListPlansProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
   loadingState?: React.ReactNode;
-  errorState?: React.ReactNode;
+  asChild?: boolean;
+  children?: AsChildChildren<PlansData>;
 }
 ```
 
 **Example**
 ```tsx
-<PlanList.Plans emptyState={<div>No plans found</div>} loadingState={<div>Loading...</div>} errorState={<div>Error</div>} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+<PlanList.Plans emptyState={<div>No plans found</div>} loadingState={<div>Loading...</div>} className="grid grid-cols-1 md:grid-cols-3 gap-4">
   <PlanList.PlanRepeater>
     <Plan.Name />
     <Plan.Price />
@@ -79,7 +109,4 @@ interface PlanListPlanRepeaterProps {
   <Plan.Button />
 </PlanList.PlanRepeater>
 ```
-
-**Data Attributes**
-- `data-testid="plan-list-plan-repeater"` - Applied to repeater container
 ---
