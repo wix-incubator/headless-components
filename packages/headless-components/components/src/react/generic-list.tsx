@@ -1,10 +1,6 @@
 import React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 
-// ============================================================================
-// Types and Interfaces
-// ============================================================================
-
 /** List display variants */
 export type ListVariant = 'list' | 'table' | 'grid';
 
@@ -14,17 +10,12 @@ export interface ListItem {
   [key: string]: any;
 }
 
-/** Test IDs for all GenericList components */
 enum TestIds {
   genericListRoot = 'generic-list-root',
   genericListItems = 'generic-list-items',
   genericListLoadMore = 'generic-list-load-more',
   genericListTotals = 'generic-list-totals',
 }
-
-// ============================================================================
-// Context Setup
-// ============================================================================
 
 interface GenericListContextValue<T extends ListItem = ListItem> {
   items: T[];
@@ -53,10 +44,9 @@ function useGenericListContext<
   return context as GenericListContextValue<T>;
 }
 
-// ============================================================================
-// Component Interfaces
-// ============================================================================
-
+/**
+ * Props for the GenericList Root component
+ */
 export interface GenericListRootProps<T extends ListItem = ListItem> {
   /** Array of items to display */
   items: T[];
@@ -82,6 +72,9 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   className?: string;
 }
 
+/**
+ * Props for the GenericList Items component
+ */
 export interface GenericListItemsProps {
   /** Content to display when no items are available */
   emptyState?: React.ReactNode;
@@ -91,6 +84,9 @@ export interface GenericListItemsProps {
   className?: string;
 }
 
+/**
+ * Props for the GenericList LoadMore component
+ */
 export interface GenericListLoadMoreProps {
   /** Label text for the load more button */
   label?: string;
@@ -104,6 +100,9 @@ export interface GenericListLoadMoreProps {
   className?: string;
 }
 
+/**
+ * Props for the GenericList Totals component
+ */
 export interface GenericListTotalsProps {
   /** Custom render function */
   children?:
@@ -116,14 +115,12 @@ export interface GenericListTotalsProps {
   className?: string;
 }
 
-// ============================================================================
-// GenericList.Root Component
-// ============================================================================
-
 /**
  * Container for list components that provides data context and manages list state.
  * Renders items inside another model's context and supports multiple display variants,
  * empty states, load more functionality, and totals display.
+ *
+ * @component
  */
 export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
   <T extends ListItem = ListItem>(
@@ -203,13 +200,11 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
 
 Root.displayName = 'GenericList.Root';
 
-// ============================================================================
-// GenericList.Items Component
-// ============================================================================
-
 /**
  * Container for list items that handles empty state display and provides structure
  * for item rendering. Does not render if list is empty unless emptyState is provided.
+ *
+ * @component
  */
 export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
   (props, ref) => {
@@ -241,13 +236,11 @@ export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
 
 Items.displayName = 'GenericList.Items';
 
-// ============================================================================
-// GenericList.LoadMore Component
-// ============================================================================
-
 /**
  * Load more button component that appears when more items can be loaded.
  * Automatically handles loading state and disables when no more items are available.
+ *
+ * @component
  */
 export const LoadMore = React.forwardRef<
   HTMLButtonElement,
@@ -304,13 +297,11 @@ export const LoadMore = React.forwardRef<
 
 LoadMore.displayName = 'GenericList.LoadMore';
 
-// ============================================================================
-// GenericList.Totals Component
-// ============================================================================
-
 /**
  * Displays totals information about the list (total items and displayed items).
  * Provides data for custom rendering patterns.
+ *
+ * @component
  */
 export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
   (props, ref) => {
@@ -346,10 +337,6 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
 
 Totals.displayName = 'GenericList.Totals';
 
-// ============================================================================
-// GenericList Compound Component Export
-// ============================================================================
-
 export const Actions = {
   LoadMore,
 };
@@ -361,9 +348,4 @@ export const GenericList = {
   Totals,
 };
 
-// Also export Actions as a named export for better TypeScript support
 export { Actions as GenericListActions };
-
-// ============================================================================
-// Type Exports (already exported above with interfaces)
-// ============================================================================
