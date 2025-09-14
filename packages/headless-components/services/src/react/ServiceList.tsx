@@ -361,9 +361,7 @@ export const Service = {
 
   Duration: React.forwardRef<HTMLDivElement, { className?: string }>(
     (props: { className?: string }, ref: React.Ref<HTMLDivElement>) => {
-      console.log('Duration');
       const context = React.useContext(ServiceContext);
-      console.log(context);
       if (!context) {
         throw new ServiceComponentError(
           'Service components must be used within a Service.Root component',
@@ -372,8 +370,6 @@ export const Service = {
       const { service } = context;
       const { className } = props;
 
-      console.log(service);
-
       if (!service?.schedule?.availabilityConstraints?.durations?.[0])
         return null;
 
@@ -381,7 +377,6 @@ export const Service = {
         <div
           data-testid={TestIds.serviceDuration}
           ref={ref as React.Ref<HTMLDivElement>}
-          x
           className={className}
         >
           {`${service?.schedule?.availabilityConstraints?.durations?.[0].minutes!} minutes`}
@@ -403,10 +398,7 @@ export const Service = {
 
       if (!service.media?.mainMedia?.image) return null;
       //WA until the issue with media will be solved
-      const image = service.media?.mainMedia?.image?.replace(
-        /v1\/[\w-]+\//,
-        'v1/',
-      );
+     const image = service.media?.mainMedia?.image?.replace(/v1\/[\w-]+\//, 'v1/');
       return (
         <WixMediaImage
           media={{ image: image || service.media?.mainMedia?.image }}
