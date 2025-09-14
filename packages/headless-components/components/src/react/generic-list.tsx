@@ -64,8 +64,6 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   onNextPage?: () => void;
   /** Function called to navigate to previous page */
   onPreviousPage?: () => void;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
   /** Children components */
   children?: React.ReactNode;
   /** CSS classes */
@@ -136,7 +134,6 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       infinite = false,
       onNextPage,
       onPreviousPage,
-      asChild = false,
       children,
       className,
       ...otherProps
@@ -176,23 +173,11 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       ...otherProps,
     };
 
-    const content = (
-      <GenericListContext.Provider value={contextValue}>
-        {children}
-      </GenericListContext.Provider>
-    );
-
-    if (asChild) {
-      return (
-        <Slot ref={ref} {...attributes}>
-          {content}
-        </Slot>
-      );
-    }
-
     return (
       <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {content}
+        <GenericListContext.Provider value={contextValue}>
+          {children}
+        </GenericListContext.Provider>
       </div>
     );
   },
