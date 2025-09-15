@@ -2,68 +2,71 @@
 
 A comprehensive program category display component system built with composable primitives, similar to Radix UI architecture.
 
+## Table of Contents
+
+- [Architecture](#architecture)
+- [Components](#components)
+  - [Category.Root](#categoryroot)
+  - [Category.Id](#categoryid)
+  - [Category.Label](#categorylabel)
+- [Usage Examples](#usage-examples) _(soon...)_
+
 ## Architecture
 
-The ProgramCategory component follows a compound component pattern where each part can be composed together to create flexible program category displays.
+The Category component follows a compound component pattern where each part can be composed together to create flexible category displays.
 
 ## Components
 
-### ProgramCategory.Root
+### Category.Root
 
 The root container that provides category context to all child components.
 
 **Props**
 
 ```tsx
-interface ProgramCategoryRootProps {
-  category: ProgramCategory;
+interface CategoryRootProps {
   children: React.ReactNode;
+  category: Category;
 }
 ```
 
 **Example**
 
 ```tsx
-<ProgramCategory.Root category={category}>
-  {/* All category components */}
-</ProgramCategory.Root>
+<Category.Root category={category}>
+  <Category.Id />
+  <Category.Label />
+</Category.Root>
 ```
 
 ---
 
-### ProgramCategory.Raw
+### Category.Id
 
-Provides direct access to category context data. Should be used only in rare cases and never by Wix implementations.
+Displays the category ID with customizable rendering.
 
 **Props**
 
 ```tsx
-interface ProgramCategoryRawProps {
+interface CategoryIdProps {
   asChild?: boolean;
-  children: React.ForwardRefRenderFunction<
-    HTMLElement,
-    {
-      category: ProgramCategory;
-    }
-  >;
+  children?: React.ForwardRefRenderFunction<HTMLElement, { id: string }>;
 }
 ```
+
+**Data Attributes**
+
+- `data-testid="program-category-id"` - Applied to category element
 
 **Example**
 
 ```tsx
-<ProgramCategory.Raw>
-  {React.forwardRef(({ category, ...rest }, ref) => (
-    <div ref={ref} {...rest}>
-      Custom category implementation.
-    </div>
-  ))}
-</ProgramCategory.Raw>
+<Category.Id />
 ```
 
 ---
 
-### ProgramCategory.Label
+### Category.Label
 
 Displays the category label with customizable rendering.
 
@@ -89,21 +92,23 @@ interface ProgramCategoryLabelProps {
 
 ```tsx
 // Default usage
-<ProgramCategory.Label />
+<Category.Label />
 
 // asChild with primitive
-<ProgramCategory.Label asChild>
+<Category.Label asChild>
   <span />
-</ProgramCategory.Label>
+</Category.Label>
 
-// asChild with react component
-<ProgramCategory.Label asChild>
+// asChild with React component
+<Category.Label asChild>
   {React.forwardRef(({ label, ...props }, ref) => (
     <span ref={ref} { ...props }>
       {label}
     </span>
   ))}
-</ProgramCategory.Label>
+</Category.Label>
 ```
 
----
+## Usage Examples
+
+_(soon...)_
