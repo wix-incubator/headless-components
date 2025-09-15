@@ -7,7 +7,9 @@ interface InstructorContextValue {
   instructor: instructors.Instructor;
 }
 
-const InstructorContext = React.createContext<InstructorContextValue | null>(null);
+const InstructorContext = React.createContext<InstructorContextValue | null>(
+  null,
+);
 
 function useInstructorContext(): InstructorContextValue {
   const context = React.useContext(InstructorContext);
@@ -118,14 +120,21 @@ interface NameProps {
  * ```
  */
 const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, instructor: propInstructor, ...otherProps } = props;
+  const {
+    asChild,
+    children,
+    instructor: propInstructor,
+    ...otherProps
+  } = props;
 
   // Use provided instructor or get from context
   const contextInstructor = useInstructorContext();
   const instructor = propInstructor || contextInstructor?.instructor;
 
   if (!instructor) {
-    throw new Error('Instructor.Name must be used within an Instructor.Root component or have instructor prop provided');
+    throw new Error(
+      'Instructor.Name must be used within an Instructor.Root component or have instructor prop provided',
+    );
   }
 
   const name = instructor.name || '';
@@ -182,33 +191,36 @@ interface DescriptionProps {
  * </Instructor.Description>
  * ```
  */
-const Description = React.forwardRef<HTMLElement, DescriptionProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
-  const { instructor } = useInstructorContext();
+const Description = React.forwardRef<HTMLElement, DescriptionProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+    const { instructor } = useInstructorContext();
 
-  const description = instructor.description || '';
+    const description = instructor.description || '';
 
-  return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      data-testid={TestIds.instructorDescription}
-      customElement={children}
-      customElementProps={{ description }}
-      content={description}
-      {...otherProps}
-    >
-      <p>{description}</p>
-    </AsChildSlot>
-  );
-});
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        data-testid={TestIds.instructorDescription}
+        customElement={children}
+        customElementProps={{ description }}
+        content={description}
+        {...otherProps}
+      >
+        <p>{description}</p>
+      </AsChildSlot>
+    );
+  },
+);
 
 Description.displayName = 'Instructor.Description';
 
 /**
  * Props for Instructor Image component
  */
-interface ImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
+interface ImageProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -264,21 +276,17 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
 
   return (
     <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{
-          src,
-          altText,
-        }}
-      >
-        <img
-          src={src}
-          alt={altText}
-          {...otherProps}
-        />
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{
+        src,
+        altText,
+      }}
+    >
+      <img src={src} alt={altText} {...otherProps} />
     </AsChildSlot>
   );
 });

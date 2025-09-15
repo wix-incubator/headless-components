@@ -153,32 +153,30 @@ interface ImageProps {
  * </Program.Image>
  * ```
  */
-const Image = React.forwardRef<HTMLImageElement, ImageProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
+const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
 
-    return (
-      <CoreProgram.Image>
-        {({ src, alt }) => {
-          if (asChild && children) {
-            // Call the ForwardRefRenderFunction with the specific props
-            return children({ src, alt }, ref);
-          }
+  return (
+    <CoreProgram.Image>
+      {({ src, alt }) => {
+        if (asChild && children) {
+          // Call the ForwardRefRenderFunction with the specific props
+          return children({ src, alt }, ref);
+        }
 
-          return (
-            <WixMediaImage
-              ref={ref}
-              media={{ image: src }}
-              alt={alt}
-              data-testid={TestIds.programImage}
-              {...otherProps}
-            />
-          );
-        }}
-      </CoreProgram.Image>
-    );
-  },
-);
+        return (
+          <WixMediaImage
+            ref={ref}
+            media={{ image: src }}
+            alt={alt}
+            data-testid={TestIds.programImage}
+            {...otherProps}
+          />
+        );
+      }}
+    </CoreProgram.Image>
+  );
+});
 
 Image.displayName = 'Program.Image';
 
@@ -189,7 +187,10 @@ interface DurationInDaysProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ durationInDays: number | null; isSelfPaced: boolean }>;
+  children?: AsChildChildren<{
+    durationInDays: number | null;
+    isSelfPaced: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -560,7 +561,10 @@ interface InstructorsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ instructors: instructors.Instructor[]; hasInstructors: boolean }>;
+  children?: AsChildChildren<{
+    instructors: instructors.Instructor[];
+    hasInstructors: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -603,35 +607,40 @@ interface InstructorsProps {
  * </Program.Instructors>
  * ```
  */
-const Instructors = React.forwardRef<
-  HTMLDivElement,
-  InstructorsProps
->((props, ref) => {
-  const { asChild, children, instructors = [], emptyState, ...otherProps } = props;
+const Instructors = React.forwardRef<HTMLDivElement, InstructorsProps>(
+  (props, ref) => {
+    const {
+      asChild,
+      children,
+      instructors = [],
+      emptyState,
+      ...otherProps
+    } = props;
 
-  return (
-    <CoreProgram.Instructors instructorsServiceConfig={{ instructors }}>
-      {({ instructors, hasInstructors }) => {
-        if (!hasInstructors) {
-          return emptyState;
-        }
+    return (
+      <CoreProgram.Instructors instructorsServiceConfig={{ instructors }}>
+        {({ instructors, hasInstructors }) => {
+          if (!hasInstructors) {
+            return emptyState;
+          }
 
-        return (
-          <AsChildSlot
-            asChild={asChild}
-            customElement={children}
-            customElementProps={{ instructors, hasInstructors }}
-            ref={ref}
-            data-testid={TestIds.programInstructors}
-            {...otherProps}
-          >
-            {children}
-          </AsChildSlot>
-        );
-      }}
-    </CoreProgram.Instructors>
-  );
-});
+          return (
+            <AsChildSlot
+              asChild={asChild}
+              customElement={children}
+              customElementProps={{ instructors, hasInstructors }}
+              ref={ref}
+              data-testid={TestIds.programInstructors}
+              {...otherProps}
+            >
+              {children}
+            </AsChildSlot>
+          );
+        }}
+      </CoreProgram.Instructors>
+    );
+  },
+);
 
 Instructors.displayName = 'Program.Instructors';
 
@@ -691,16 +700,18 @@ const InstructorRepeater = React.forwardRef<
       {...otherProps}
     >
       <div>
-        {instructors.map((instructor: instructors.Instructor, index: number) => {
-          return (
-            <Instructor.Root
-              key={instructor.userId || index}
-              instructor={instructor}
-            >
-              {children}
-            </Instructor.Root>
-          );
-        })}
+        {instructors.map(
+          (instructor: instructors.Instructor, index: number) => {
+            return (
+              <Instructor.Root
+                key={instructor.userId || index}
+                instructor={instructor}
+              >
+                {children}
+              </Instructor.Root>
+            );
+          },
+        )}
       </div>
     </AsChildSlot>
   );

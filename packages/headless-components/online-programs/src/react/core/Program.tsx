@@ -8,7 +8,11 @@ import {
   ProgramServiceConfig,
   ProgramService,
 } from '../../services/program-service.js';
-import { InstructorsService, InstructorsServiceConfig, InstructorsServiceDefinition } from '../../services/instructors-service.js';
+import {
+  InstructorsService,
+  InstructorsServiceConfig,
+  InstructorsServiceDefinition,
+} from '../../services/instructors-service.js';
 
 export interface RootProps {
   /** Child components that will have access to the Program service */
@@ -457,18 +461,18 @@ export interface ProgramInstructorsProps {
 }
 export function Instructors(props: ProgramInstructorsProps) {
   const instructors = props.instructorsServiceConfig?.instructors || [];
-  return <WixServices
-    servicesMap={createServicesMap().addService(
-      InstructorsServiceDefinition,
-      InstructorsService,
-      props.instructorsServiceConfig,
-    )}
-  >
-    {props.children({
-      instructors,
-      hasInstructors: instructors.length > 0
-    })}
-  </WixServices>
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        InstructorsServiceDefinition,
+        InstructorsService,
+        props.instructorsServiceConfig,
+      )}
+    >
+      {props.children({
+        instructors,
+        hasInstructors: instructors.length > 0,
+      })}
+    </WixServices>
+  );
 }
-
-

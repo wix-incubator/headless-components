@@ -1,5 +1,8 @@
 import { Program, Instructor } from '@wix/headless-online-programs/react';
-import type { ProgramServiceConfig, InstructorsServiceConfig } from '@wix/headless-online-programs/services';
+import type {
+  ProgramServiceConfig,
+  InstructorsServiceConfig,
+} from '@wix/headless-online-programs/services';
 
 interface OnlineProgramPageProps {
   programServiceConfig: ProgramServiceConfig;
@@ -15,18 +18,20 @@ export default function OnlineProgramPage({
       <Program.Title />
       <Program.Description />
       <Program.DurationInDays asChild>
-        {({ durationInDays, isSelfPaced }: { durationInDays: number, isSelfPaced: boolean }) => (
-          <div>
-            {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
-          </div>
+        {({
+          durationInDays,
+          isSelfPaced,
+        }: {
+          durationInDays: number;
+          isSelfPaced: boolean;
+        }) => (
+          <div>{isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}</div>
         )}
       </Program.DurationInDays>
 
       <h3>Steps</h3>
       <Program.StepCount asChild>
-        {({ stepCount }: { stepCount: number }) => (
-          <div>{stepCount} Steps</div>
-        )}
+        {({ stepCount }: { stepCount: number }) => <div>{stepCount} Steps</div>}
       </Program.StepCount>
 
       <h3>Steps (Default)</h3>
@@ -39,25 +44,31 @@ export default function OnlineProgramPage({
         )}
       </Program.SectionCount>
 
-
       <h3>Instructors:</h3>
       <ul>
-      <Program.Instructors instructors={instructorsServiceConfig?.instructors} emptyState={<li>No instructors</li>}>
-        <Program.InstructorRepeater>
-          <li>
-            <Instructor.Name />
-            <Instructor.Description />
-            <Instructor.Image />
-          </li>
-        </Program.InstructorRepeater>
-      </Program.Instructors>
+        <Program.Instructors
+          instructors={instructorsServiceConfig?.instructors}
+          emptyState={<li>No instructors</li>}
+        >
+          <Program.InstructorRepeater>
+            <li>
+              <Instructor.Name />
+              <Instructor.Description />
+              <Instructor.Image />
+            </li>
+          </Program.InstructorRepeater>
+        </Program.Instructors>
       </ul>
 
       <h3>Price</h3>
       <Program.Price asChild>
-        {({ price, formattedPrice }: { price: number; formattedPrice: string }) => (
-          <div>{price ? formattedPrice : 'Free'}</div>
-        )}
+        {({
+          price,
+          formattedPrice,
+        }: {
+          price: number;
+          formattedPrice: string;
+        }) => <div>{price ? formattedPrice : 'Free'}</div>}
       </Program.Price>
       <Program.Image />
     </Program.Root>

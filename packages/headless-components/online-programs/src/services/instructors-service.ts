@@ -89,9 +89,8 @@ export const InstructorsService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const instructors: Signal<instructors.Instructor[]> = signalsService.signal(
-        config.instructors!,
-      );
+      const instructors: Signal<instructors.Instructor[]> =
+        signalsService.signal(config.instructors!);
       const isLoading: Signal<boolean> = signalsService.signal(
         !!config.programIds,
       );
@@ -99,7 +98,8 @@ export const InstructorsService =
 
       const loadInstructorsByProgramIds = async (programIds: string[]) => {
         isLoading.set(true);
-        const instructorsResponse = await listInstructorsByProgramIds(programIds);
+        const instructorsResponse =
+          await listInstructorsByProgramIds(programIds);
 
         if (!instructorsResponse) {
           instructors.set([]);
@@ -262,7 +262,10 @@ export async function loadInstructorsServiceConfig(
       },
     };
   } catch (error) {
-    console.error(`Failed to load instructors for program IDs "${programIds.join(', ')}":`, error);
+    console.error(
+      `Failed to load instructors for program IDs "${programIds.join(', ')}":`,
+      error,
+    );
     return { type: 'notFound' };
   }
 }
