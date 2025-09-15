@@ -71,6 +71,17 @@ export default function OnlineProgramPage({
         }) => <div>{price ? formattedPrice : 'Free'}</div>}
       </Program.Price>
       <Program.Image />
+
+      <h2>Program Raw</h2>
+      <Program.Raw asChild>
+        {({ program, ...props }, ref) => (
+          <div ref={ref} {...props} className="program-debug">
+            <div>Program ID: {program._id}</div>
+            <div>Title: {program.description?.title}</div>
+            <div>Price: {program.price?.value}</div>
+          </div>
+        )}
+      </Program.Raw>
     </Program.Root>
   );
 }

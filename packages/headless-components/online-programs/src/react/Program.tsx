@@ -18,6 +18,7 @@ enum TestIds {
   programSectionCount = 'program-section-count',
   programInstructors = 'program-instructors',
   programInstructorRepeater = 'program-instructor-repeater',
+  programRaw = 'program-raw',
 }
 
 /**
@@ -55,6 +56,67 @@ function Root(props: ProgramRootProps): React.ReactNode {
     </CoreProgram.Root>
   );
 }
+
+/**
+ * Props for Program Raw component
+ */
+interface RawProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    program: programs.Program;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Provides direct access to program context data. Should be used only in rare cases and never by Wix implementations.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Custom rendering with forwardRef
+ * <Program.Raw asChild>
+ *   {React.forwardRef(({ program, ...props }, ref) => (
+ *     <div ref={ref} {...props} className="program-debug">
+ *       <span>Program ID: {program._id}</span>
+ *       <span>Title: {program.description?.title}</span>
+ *       <span>Price: {program.price?.value}</span>
+ *     </div>
+ *   ))}
+ * </Program.Raw>
+ * ```
+ */
+const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreProgram.Raw>
+      {({ program }) => {
+        // Raw component should not render anything by default when not using asChild
+        if (!asChild || !children) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.programRaw}
+            customElement={children}
+            customElementProps={{ program }}
+            {...otherProps}
+          />
+        );
+      }}
+    </CoreProgram.Raw>
+  );
+});
+
+Raw.displayName = 'Program.Raw';
 
 /**
  * Props for Program Title component
@@ -724,6 +786,7 @@ InstructorRepeater.displayName = 'Program.InstructorRepeater';
  */
 export const Program = {
   Root,
+  Raw,
   Title,
   Image,
   DurationInDays,

@@ -1,7 +1,7 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import { instructors } from '@wix/online-programs';
+import { programs, instructors } from '@wix/online-programs';
 
 import {
   ProgramServiceDefinition,
@@ -427,6 +427,56 @@ export function SectionCount(props: ProgramSectionCountProps) {
 
   return props.children({
     sectionCount,
+  });
+}
+
+/**
+ * Props for ProgramContent headless component
+ */
+export interface ProgramRawProps {
+  /** Render prop function that receives program data */
+  children: (props: ProgramRawRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProgramContent component
+ */
+export interface ProgramRawRenderProps {
+  /** Complete program data */
+  program: programs.Program;
+}
+
+/**
+ * Headless component that provides access to the complete program data
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramDebug() {
+ *   return (
+ *     <Program.Content>
+ *       {({ program }) => (
+ *         <div>
+ *           <p>Program ID: {program._id}</p>
+ *           <p>Title: {program.description?.title}</p>
+ *         </div>
+ *       )}
+ *     </Program.Content>
+ *   );
+ * }
+ * ```
+ */
+export function Raw(props: ProgramRawProps) {
+  const service = useService(ProgramServiceDefinition) as ServiceAPI<
+    typeof ProgramServiceDefinition
+  >;
+
+  const program = service.program.get();
+
+  return props.children({
+    program,
   });
 }
 
