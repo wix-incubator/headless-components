@@ -271,9 +271,7 @@ export const LoadMore = React.forwardRef<
       }}
       content={content}
       {...otherProps}
-    >
-      {content}
-    </AsChildSlot>
+    />
   );
 });
 
@@ -304,9 +302,7 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
         asChild
         content={content}
         {...otherProps}
-      >
-        {content}
-      </AsChildSlot>
+      />
     );
   },
 );
