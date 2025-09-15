@@ -1,13 +1,13 @@
 import React from 'react';
-import type { EnhancedModifierGroup, Modifier } from '../services/types';
+import type { EnhancedModifierGroup, Modifier } from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
+import { TestIds } from './TestIds.js';
 import {
   CoreModifierGroup,
   ModifierGroupName,
   useModifierGroupContext,
-} from './core';
-import * as ModifierComponent from './Modifier';
+} from './core/index.js';
+import * as ModifierComponent from './Modifier.js';
 
 export interface ModifierGroupRootProps {
   modifierGroup?: EnhancedModifierGroup;

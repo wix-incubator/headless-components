@@ -3,14 +3,14 @@ import {
   Loading as CoreLoading,
   ErrorState as CoreErrorState,
   Menus,
-} from './core';
-import type { Menu } from '../services/types';
+} from './core/index.js';
+import type { Menu } from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
+import { TestIds } from './TestIds.js';
 import { useService } from '@wix/services-manager-react';
-import { MenusServiceConfig, MenusServiceDefinition } from '../services';
+import { MenusServiceConfig, MenusServiceDefinition } from '../services/index.js';
 import type { ServiceAPI } from '@wix/services-definitions';
-import * as MenuComponent from './Menu';
+import * as MenuComponent from './Menu.js';
 
 export interface MenusRootProps {
   children: React.ReactNode;

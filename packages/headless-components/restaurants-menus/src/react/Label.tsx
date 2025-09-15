@@ -1,13 +1,13 @@
 import React from 'react';
-import type { Label } from '../services/types';
+import type { Label } from '../services/types.js';
 import { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 import type {
   AsChildChildren,
   AsChildRenderFunction,
 } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
-import { CoreLabel, LabelName, LabelIcon } from './core';
+import { TestIds } from './TestIds.js';
+import { CoreLabel, LabelName, LabelIcon } from './core/index.js';
 
 export interface LabelRootProps {
   label?: Label;

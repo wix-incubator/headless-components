@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { EnhancedItem } from '../../services/types';
+import type { EnhancedItem } from '../../services/types.js';
 
 export interface ItemProps {
   children: React.ReactNode;

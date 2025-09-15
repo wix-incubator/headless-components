@@ -1,8 +1,8 @@
 import React from 'react';
-import type { Modifier } from '../services/types';
+import type { Modifier } from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
-import { CoreModifier, ModifierName, ModifierPrice } from './core';
+import { TestIds } from './TestIds.js';
+import { CoreModifier, ModifierName, ModifierPrice } from './core/index.js';
 
 export interface ModifierRootProps {
   modifier?: Modifier & {

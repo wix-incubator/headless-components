@@ -3,13 +3,13 @@ import {
   Section as CoreSection,
   SectionName,
   SectionDescription,
-} from './core';
-import type { Section, EnhancedItem } from '../services/types';
+} from './core/index.js';
+import type { Section, EnhancedItem } from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
-import { useSectionContext } from './core/Section';
-import * as ItemComponent from './Item';
-import { MenusServiceDefinition } from '../services';
+import { TestIds } from './TestIds.js';
+import { useSectionContext } from './core/Section.js';
+import * as ItemComponent from './Item.js';
+import { MenusServiceDefinition } from '../services/index.js';
 import { useService } from '@wix/services-manager-react';
 
 export interface SectionRootProps {

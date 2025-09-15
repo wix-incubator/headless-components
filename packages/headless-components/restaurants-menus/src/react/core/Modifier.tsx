@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { Modifier } from '../../services/types';
+import type { Modifier } from '../../services/types.js';
 
 export interface ModifierProps {
   children: React.ReactNode;

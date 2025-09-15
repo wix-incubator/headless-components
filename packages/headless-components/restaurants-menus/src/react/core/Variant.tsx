@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { Variant } from '../../services/types';
+import type { Variant } from '../../services/types.js';
 
 export interface VariantProps {
   children: React.ReactNode;

@@ -1,8 +1,8 @@
 import React from 'react';
-import { CoreVariant, VariantName, VariantPrice } from './core';
-import type { Variant } from '../services/types';
+import { CoreVariant, VariantName, VariantPrice } from './core/index.js';
+import type { Variant } from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
+import { TestIds } from './TestIds.js';
 
 export interface VariantRootProps {
   children: React.ReactNode;

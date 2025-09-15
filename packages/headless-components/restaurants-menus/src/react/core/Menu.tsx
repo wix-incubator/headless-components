@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { Menu } from '../../services/types';
+import type { Menu } from '../../services/types.js';
 
 export interface MenuProps {
   children: React.ReactNode;

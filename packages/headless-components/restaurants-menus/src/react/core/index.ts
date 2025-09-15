@@ -1,16 +1,16 @@
-export { Menus, Loading, ErrorState } from './Menus';
+export { Menus, Loading, ErrorState } from './Menus.js';
 export {
   Menu,
   useMenuContext,
   Name as MenuName,
   Description as MenuDescription,
-} from './Menu';
+} from './Menu.js';
 export {
   Section,
   useSectionContext,
   Name as SectionName,
   Description as SectionDescription,
-} from './Section';
+} from './Section.js';
 export {
   Item,
   useItemContext,
@@ -18,27 +18,27 @@ export {
   Description as ItemDescription,
   Price,
   Image,
-} from './Item';
+} from './Item.js';
 export {
   Label as CoreLabel,
   useLabelContext,
   Name as LabelName,
   Icon as LabelIcon,
-} from './Label';
+} from './Label.js';
 export {
   ModifierGroup as CoreModifierGroup,
   useModifierGroupContext,
   Name as ModifierGroupName,
-} from './ModifierGroup';
+} from './ModifierGroup.js';
 export {
   Modifier as CoreModifier,
   useModifierContext,
   Name as ModifierName,
   Price as ModifierPrice,
-} from './Modifier';
+} from './Modifier.js';
 export {
   Variant as CoreVariant,
   useVariantContext,
   Name as VariantName,
   Price as VariantPrice,
-} from './Variant';
+} from './Variant.js';

@@ -6,22 +6,22 @@ import {
   Price as CorePrice,
   Image as CoreImage,
   useItemContext,
-} from './core';
+} from './core/index.js';
 import type {
   EnhancedItem,
   Label,
   EnhancedModifierGroup,
-} from '../services/types';
+} from '../services/types.js';
 import { AsChildSlot } from '@wix/headless-utils/react';
 import type {
   AsChildChildren,
   AsChildRenderFunction,
 } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
+import { TestIds } from './TestIds.js';
 import { WixMediaImage } from '@wix/headless-media/react';
-import * as VariantComponent from './Variant';
-import * as LabelComponent from './Label';
-import * as ModifierGroupComponent from './ModifierGroup';
+import * as VariantComponent from './Variant.js';
+import * as LabelComponent from './Label.js';
+import * as ModifierGroupComponent from './ModifierGroup.js';
 
 export interface ItemRootProps {
   children: React.ReactNode;

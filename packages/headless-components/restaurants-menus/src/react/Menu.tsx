@@ -1,12 +1,12 @@
 import React from 'react';
-import { Menu as CoreMenu, MenuName, MenuDescription } from './core';
-import type { Menu, Section } from '../services/types';
+import { Menu as CoreMenu, MenuName, MenuDescription } from './core/index.js';
+import type { Menu, Section } from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { TestIds } from './TestIds';
-import { useMenuContext } from './core/Menu';
-import * as SectionComponent from './Section';
+import { TestIds } from './TestIds.js';
+import { useMenuContext } from './core/Menu.js';
+import * as SectionComponent from './Section.js';
 import { useService } from '@wix/services-manager-react';
-import { MenusServiceDefinition } from '../services/menus-service';
+import { MenusServiceDefinition } from '../services/index.js';
 export interface MenuRootProps {
   children: React.ReactNode;
   menu?: Menu;

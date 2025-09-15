@@ -2,7 +2,7 @@ import React, { createContext, useContext } from 'react';
 import type {
   ModifierGroup,
   EnhancedModifierGroup,
-} from '../../services/types';
+} from '../../services/types.js';
 
 export interface ModifierGroupProps {
   children: React.ReactNode;

@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { Label } from '../../services/types';
+import type { Label } from '../../services/types.js';
 
 export interface LabelProps {
   children: React.ReactNode;

@@ -20,7 +20,7 @@ import type {
   EnhancedModifierGroup,
   CursorPagingMetadata,
   EnhancedModifier,
-} from './types';
+} from './types.js';
 import {
   SignalsServiceDefinition,
   type Signal,

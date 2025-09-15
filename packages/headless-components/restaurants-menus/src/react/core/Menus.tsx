@@ -7,7 +7,7 @@ import {
   MenusService,
   MenusServiceConfig,
   MenusServiceDefinition,
-} from '../../services';
+} from '../../services/index.js';
 import {
   createServicesManager,
   createServicesMap,

@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import type { Section } from '../../services/types';
+import type { Section } from '../../services/types.js';
 
 export interface SectionProps {
   children: React.ReactNode;
