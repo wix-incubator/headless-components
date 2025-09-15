@@ -149,10 +149,9 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
             className={className}
             data-testid={TestIds.eventImage}
             media={{ image }}
+            children={children}
             {...otherProps}
-          >
-            {children}
-          </WixMediaImage>
+          />
         )}
       </CoreEvent.Image>
     );
