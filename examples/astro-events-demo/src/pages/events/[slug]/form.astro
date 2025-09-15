@@ -1,0 +1,28 @@
+---
+import { loadEventServiceConfig } from '@wix/headless-events/services';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FormPage from '../../../react-pages/form';
+
+const { slug } = Astro.params;
+
+// Load initial data server-side
+const eventServiceConfigResult = await loadEventServiceConfig(slug);
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout>
+  <title>RSVP Form</title>
+  <meta name="description" content="RSVP Form" />
+
+  <FormPage
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfigResult.config}
+    formServiceConfig={{
+      postFlowUrl: `/events/${slug}/thank-you`,
+    }}
+  />
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+import { loadFormServiceConfig } from '@wix/headless-forms/services';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormsPage from '../../react-pages/index';
+
+const { slug } = Astro.params;
+
+const guidRegex =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+if (typeof slug !== 'string' || !guidRegex.test(slug)) {
+  return Astro.redirect('/404');
+}
+
+const formServiceConfig = await loadFormServiceConfig(slug);
+---
+
+<BaseLayout>
+  <title>Form</title>
+  <meta name="description" content="Form" />
+
+  <FormsPage formServiceConfig={formServiceConfig} />
+</BaseLayout>
