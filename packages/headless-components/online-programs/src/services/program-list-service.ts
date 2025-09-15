@@ -55,7 +55,7 @@ export const ProgramListServiceDefinition = defineService<
  *
  * function ProgramsDisplay() {
  *   const programListService = useService(ProgramListServiceDefinition);
- * 
+ *
  *   const programs = programListService.programs.get();
  *   const isLoading = programListService.isLoading.get();
  *   const error = programListService.error.get();
@@ -129,12 +129,18 @@ export const ProgramListService =
  * ```
  */
 export async function loadProgramListServiceConfig(): Promise<ProgramListServiceConfig> {
-  // TODO: Improve data fetching approach
-  const programsResponse = await programs.searchPrograms({});
+  try {
+    // TODO: Improve data fetching approach
+    const programsResponse = await programs.searchPrograms({});
 
-  const fetchedPrograms = programsResponse.programs || [];
+    const fetchedPrograms = programsResponse.programs || [];
 
-  return {
-    programs: fetchedPrograms,
-  };
+    return {
+      programs: fetchedPrograms,
+    };
+  } catch (_) {
+    return {
+      programs: [],
+    };
+  }
 }

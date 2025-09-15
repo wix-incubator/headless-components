@@ -129,12 +129,18 @@ export const CategoryListService =
  * ```
  */
 export async function loadCategoryListServiceConfig(): Promise<CategoryListServiceConfig> {
-  // TODO: Improve data fetching approach
-  const categoriesResponse = await categories.listCategories();
+  try {
+    // TODO: Improve data fetching approach
+    const categoriesResponse = await categories.listCategories();
 
-  const fetchedCategories = categoriesResponse.categories || [];
+    const fetchedCategories = categoriesResponse.categories || [];
 
-  return {
-    categories: fetchedCategories,
-  };
+    return {
+      categories: fetchedCategories,
+    };
+  } catch (_) {
+    return {
+      categories: [],
+    };
+  }
 }
