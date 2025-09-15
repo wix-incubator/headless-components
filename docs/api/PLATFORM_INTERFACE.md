@@ -816,13 +816,21 @@ import { Filter } from '@wix/headless-components/react';
 
 ### GenericList.Root
 
+**TODO: the following features are missing:**
+
+- [ ] add `ListVariant` type definition and all variant-related functionality
+- [ ] add `variant` prop from GenericListRootProps interface
+- [ ] add `infinite` prop and infinite scroll functionality
+- [ ] add `onNextPage` and `onPreviousPage` pagination props
+- [ ] add `data-variant` and `data-infinite` data attributes
+
 Container for list components that renders items and supports multiple display variants, empty states, load more functionality, infinite scroll, pagination navigation, and totals display.
 
 **Type Definitions**
 
 ```tsx
 /** List display variants */
-export type ListVariant = 'list' | 'grid';
+export type ListVariant = 'list' | 'table' | 'grid';
 
 /** List item interface - generic item with id */
 export interface ListItem {
@@ -851,8 +859,8 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
   onNextPage?: () => void;
   /** Function called to navigate to previous page */
   onPreviousPage?: () => void;
-  /** Children components */
-  children?: React.ReactNode;
+  /** Children components - required */
+  children: React.ReactNode;
   /** CSS classes */
   className?: string;
 }
@@ -860,7 +868,6 @@ interface GenericListRootProps<T extends ListItem = ListItem> {
 
 **Data Attributes**
 
-- `data-testid="generic-list-root"` - Applied to root container
 - `data-variant` - Current display variant ('list', 'grid')
 - `data-has-items` - Boolean indicating if items are present
 - `data-is-loading` - Boolean indicating loading state
@@ -925,14 +932,15 @@ Container for list items that handles empty state display and provides structure
 interface GenericListItemsProps {
   /** Content to display when no items are available */
   emptyState?: React.ReactNode;
-  /** Children components, typically containing ItemRepeater */
-  children?: React.ReactNode;
+  /** Children components - required */
+  children: React.ReactNode;
+  /** CSS classes */
+  className?: string;
 }
 ```
 
 **Data Attributes**
 
-- `data-testid="generic-list-items"` - Applied to items container
 - `data-variant` - Inherited display variant from root context
 - `data-empty` - Boolean indicating if list is empty
 
@@ -977,21 +985,20 @@ Load more button component that appears when more items can be loaded. Automatic
 **Props**
 
 ```tsx
-interface GenericListLoadMoreProps extends ButtonProps {
+interface GenericListLoadMoreProps {
   /** Label text for the load more button */
   label?: string;
-  /** Loading label text */
-  loadingLabel?: string;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children for custom rendering */
+  /** Loading state content */
+  loadingState?: React.ReactNode;
+  /** Children for custom rendering - optional but either children or label must be provided */
   children?: React.ReactNode;
+  /** CSS classes */
+  className?: string;
 }
 ```
 
 **Data Attributes**
 
-- `data-testid="generic-list-load-more"` - Applied to load more button
 - `data-has-more` - Boolean indicating if more items can be loaded
 - `data-is-loading` - Boolean indicating loading state
 - `disabled` - Boolean indicating if button is disabled
@@ -1007,9 +1014,8 @@ export const ProductListLoadMoreTrigger = React.forwardRef<
   return (
     <GenericList.Actions.LoadMore
       label={props.label}
-      loadingLabel={props.loadingState}
+      loadingState={props.loadingState}
       className={props.className}
-      asChild={props.asChild}
       ref={ref}
     >
       {props.children}
@@ -1022,13 +1028,13 @@ export const ProductListLoadMoreTrigger = React.forwardRef<
 
 ### GenericList.Totals
 
-Displays totals information about the list (total items and displayed items). Provides data for custom rendering patterns.
+Displays totals information about the list (displayed items count). Provides data for custom rendering patterns.
 
 **Props**
 
 ```tsx
 interface GenericListTotalsProps {
-  /** Custom render function */
+  /** Custom render function or content - optional, defaults to displaying item count */
   children?:
     | React.ReactNode
     | ((
@@ -1042,8 +1048,6 @@ interface GenericListTotalsProps {
 
 **Data Attributes**
 
-- `data-testid="generic-list-totals"` - Applied to totals element
-- `data-total-items` - Total number of items in the list
 - `data-displayed-items` - Number of items currently displayed
 
 **Example**
@@ -1061,6 +1065,8 @@ export const ProductListTotalsDisplayed = React.forwardRef<
   );
 });
 ```
+
+---
 
 ## GenericList Architecture
 
@@ -1125,9 +1131,8 @@ export const ProductListLoadMoreTrigger = React.forwardRef<
   return (
     <GenericList.Actions.LoadMore
       label={props.label}
-      loadingLabel={props.loadingState}
+      loadingState={props.loadingState}
       className={props.className}
-      asChild={props.asChild}
       ref={ref}
     >
       {props.children}

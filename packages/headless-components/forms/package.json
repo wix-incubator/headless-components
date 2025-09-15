@@ -1,12 +1,12 @@
 {
-  "name": "@wix/headless-stores",
-  "version": "0.0.89",
+  "name": "@wix/headless-forms",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "prebuild": "cd ../media && yarn build && cd ../ecom && yarn build",
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "tsc -p tsconfig.json --watch",
     "test": "vitest",
     "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
     "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
@@ -15,9 +15,7 @@
     "dist",
     "cjs",
     "react",
-    "services",
-    "server-actions",
-    "astro"
+    "services"
   ],
   "exports": {
     "./react": {
@@ -29,16 +27,6 @@
       "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.js",
       "require": "./cjs/dist/services/index.js"
-    },
-    "./server-actions": {
-      "types": "./dist/server-actions/index.d.ts",
-      "import": "./dist/server-actions/index.js",
-      "require": "./cjs/dist/server-actions/index.js"
-    },
-    "./astro/actions": {
-      "types": "./dist/astro/actions/index.d.ts",
-      "import": "./dist/astro/actions/index.js",
-      "require": "./cjs/dist/astro/actions/index.js"
     }
   },
   "devDependencies": {
@@ -53,23 +41,9 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.2.3",
-    "@wix/auto_sdk_bookings_availability-calendar": "^1.0.155",
-    "@wix/auto_sdk_categories_categories": "^1.0.62",
-    "@wix/auto_sdk_stores_customizations-v-3": "^1.0.26",
-    "@wix/auto_sdk_stores_inventory-items-v-3": "^1.0.26",
-    "@wix/auto_sdk_stores_products-v-3": "^1.0.53",
-    "@wix/auto_sdk_stores_read-only-variants-v-3": "^1.0.23",
-    "@wix/ecom": "^1.0.1278",
-    "@wix/essentials": "^0.1.24",
-    "@wix/headless-ecom": "workspace:*",
-    "@wix/headless-media": "workspace:*",
+    "@wix/forms": "^1.0.292",
     "@wix/headless-utils": "workspace:*",
-    "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
-  },
-  "peerDependencies": {
-    "@wix/headless-components": "workspace:*"
   }
 }
