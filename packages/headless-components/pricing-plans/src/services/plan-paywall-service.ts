@@ -16,9 +16,10 @@ export const PlanPaywallServiceDefinition = defineService<{
   hasAccessSignal: ReadOnlySignal<boolean>;
 }>('planPaywallService');
 
-export type PlanPaywallServiceConfig =
-  | { requiredPlanIds: string[] }
-  | { memberOrders: orders.Order[] };
+export interface PlanPaywallServiceConfig {
+  requiredPlanIds: string[];
+  memberOrders?: orders.Order[];
+}
 
 export type PlanPaywallServiceAPI = ServiceAPI<
   typeof PlanPaywallServiceDefinition
@@ -31,15 +32,24 @@ export const PlanPaywallService =
       const signalsService = getService(SignalsServiceDefinition);
       const isLoadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<Error | null>(null);
-      const configHasMemberOrders = 'memberOrders' in config;
       const memberOrdersSignal = signalsService.signal<orders.Order[] | null>(
-        configHasMemberOrders ? config.memberOrders : null,
+        config.memberOrders ?? null,
       );
-      const hasAccessSignal = signalsService.computed(
-        () => !!memberOrdersSignal.get()?.length,
-      );
+      const hasAccessSignal = signalsService.computed(() => {
+        const memberOrders = memberOrdersSignal.get();
+        if (memberOrders) {
+          // Additional filtering in case provided orders are not only active
+          const activePlanOrders = memberOrders.filter(
+            (order) =>
+              order.status === 'ACTIVE' &&
+              config.requiredPlanIds.includes(order.planId!),
+          );
+          return activePlanOrders.length > 0;
+        }
+        return !!memberOrdersSignal.get()?.length;
+      });
 
-      if (!configHasMemberOrders) {
+      if (!config.memberOrders) {
         loadMemberOrders(config.requiredPlanIds);
       }
 
@@ -98,5 +108,5 @@ export async function loadPlanPaywallServiceConfig(
   requiredPlanIds: string[],
 ): Promise<PlanPaywallServiceConfig> {
   const memberOrders = await fetchMemberOrders(requiredPlanIds);
-  return { memberOrders: memberOrders ?? [] };
+  return { memberOrders: memberOrders ?? [], requiredPlanIds };
 }

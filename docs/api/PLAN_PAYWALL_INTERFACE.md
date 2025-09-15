@@ -14,7 +14,10 @@ The root container that provides plan paywall context to all child components.
 
 **Props**
 ```tsx
-type PlanPaywallServiceConfig = { requiredPlanIds: string[] } | { memberOrders: orders.Order[] };
+interface PlanPaywallServiceConfig {
+  requiredPlanIds: string[];
+  memberOrders?: orders.Order[];
+}
 
 interface RootProps {
   children: React.ReactNode;
@@ -32,7 +35,7 @@ interface RootProps {
 // Load member orders externally
 const { memberOrders } = await loadPlanPaywallServiceConfig(['planId']);
 
-<PlanPaywall.Root planPaywallServiceConfig={{ memberOrders: memberOrders }}>
+<PlanPaywall.Root planPaywallServiceConfig={{ memberOrders: memberOrders, requiredPlanIds: ['planId'] }}>
   {/* All plan paywall components */}
 </PlanPaywall.Root>
 ```
