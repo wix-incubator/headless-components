@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-restaurants-menus",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
-    "@wix/auto_sdk_restaurants_items": "^1.0.48",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/redirects": "^1.0.0",
