@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  ServicesManagerProvider,
   useService,
+  WixServices,
 } from '@wix/services-manager-react';
 import {
   MenusService,
@@ -9,7 +9,6 @@ import {
   MenusServiceDefinition,
 } from '../../services/index.js';
 import {
-  createServicesManager,
   createServicesMap,
 } from '@wix/services-manager';
 
@@ -20,17 +19,15 @@ export interface AppProps {
 
 export function Menus(props: AppProps) {
   return (
-    <ServicesManagerProvider
-      servicesManager={createServicesManager(
-        createServicesMap().addService(
-          MenusServiceDefinition,
-          MenusService,
-          props.config,
-        ),
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        MenusServiceDefinition,
+        MenusService,
+        props.config,
       )}
     >
       {props.children}
-    </ServicesManagerProvider>
+    </WixServices>
   );
 }
 
