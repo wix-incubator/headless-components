@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-restaurants-menus",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
