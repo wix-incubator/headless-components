@@ -138,7 +138,9 @@ export async function loadCategoryListServiceConfig(): Promise<CategoryListServi
     return {
       categories: fetchedCategories,
     };
-  } catch (_) {
+  } catch (error) {
+    console.error('Failed to load category list:', error);
+
     return {
       categories: [],
     };

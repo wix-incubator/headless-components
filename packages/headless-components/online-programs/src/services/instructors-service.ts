@@ -29,7 +29,7 @@ export interface InstructorsServiceAPI {
  * @constant
  */
 export const InstructorsServiceDefinition =
-  defineService<InstructorsServiceAPI>('instructors');
+  defineService<InstructorsServiceAPI>('program-instructors');
 
 /**
  * Configuration interface required to initialize the InstructorsService.

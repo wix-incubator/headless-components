@@ -68,6 +68,8 @@ function Root(props: CategoryRootProps): React.ReactNode {
   );
 }
 
+Root.displayName = 'Category.Root';
+
 /**
  * Props for Category.Id component
  */
@@ -128,6 +130,8 @@ const Id = React.forwardRef<HTMLElement, CategoryIdProps>((props, ref) => {
   );
 });
 
+Id.displayName = 'Category.Id';
+
 /**
  * Props for Category.Label component
  */
@@ -185,6 +189,8 @@ const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
     );
   },
 );
+
+Label.displayName = 'Category.Label';
 
 /**
  * Compound component for Category with all sub-components

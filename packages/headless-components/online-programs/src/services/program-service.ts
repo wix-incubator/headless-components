@@ -67,12 +67,18 @@ export interface ProgramServiceConfig {
  *
  * function ProgramDisplay() {
  *   const programService = useService(ProgramServiceDefinition);
+ *
  *   const program = programService.program.get();
  *   const isLoading = programService.isLoading.get();
  *   const error = programService.error.get();
  *
- *   if (isLoading) return <div>Loading...</div>;
- *   if (error) return <div>Error: {error}</div>;
+ *   if (isLoading) {
+ *     return <div>Loading...</div>;
+ *   }
+ *
+ *   if (error) {
+ *     return <div>Error: {error}</div>;
+ *   }
  *
  *   return <h1>{program.name}</h1>;
  * }
@@ -144,7 +150,7 @@ export interface NotFoundProgramServiceConfigResult {
 }
 
 /**
- * Internal helper function to load a program by its ID from the Wix Programs API.
+ * Internal helper function to load a program by it's ID from the Wix Programs API.
  * Fetches comprehensive program data including title, description, etc.
  *
  * @private
@@ -185,52 +191,10 @@ const getProgramById = async (id: string) => {
  * ---
  *
  * <Program.Root program={programServiceConfigResult.config.program!}>
- *   <Program.Title>
+ *   <Program.Title asChild>
  *     {({ title }) => <h1>{title}</h1>}
  *   </Program.Title>
  * </Program.Root>
- * ```
- *
- * @example
- * ```tsx
- * // Next.js page example - pages/program/[id].tsx
- * import { GetServerSideProps } from 'next';
- * import { loadProgramServiceConfig } from '@wix/online-programs/services';
- * import { Program } from '@wix/online-programs/components';
- *
- * interface ProgramPageProps {
- *   programServiceConfig: ProgramServiceConfig;
- * }
- *
- * export const getServerSideProps: GetServerSideProps<ProgramPageProps> = async ({ params }) => {
- *   const id = params?.id as string;
- *
- *   // Load program data during SSR
- *   const programServiceConfigResult = await loadProgramServiceConfig(id);
- *
- *   // Handle not found case
- *   if (programServiceConfigResult.type === 'notFound') {
- *     return {
- *       notFound: true,
- *     };
- *   }
- *
- *   return {
- *     props: {
- *       programServiceConfig: programServiceConfigResult.config,
- *     },
- *   };
- * };
- *
- * export default function ProgramPage({ programServiceConfig }: ProgramPageProps) {
- *   return (
- *     <Program.Root program={programServiceConfig.program!}>
- *       <Program.Title>
- *         {({ title }) => <h1>{title}</h1>}
- *       </Program.Title>
- *     </Program.Root>
- *   );
- * }
  * ```
  */
 export async function loadProgramServiceConfig(
@@ -253,6 +217,7 @@ export async function loadProgramServiceConfig(
     };
   } catch (error) {
     console.error(`Failed to load program for ID "${programId}":`, error);
+
     return { type: 'notFound' };
   }
 }

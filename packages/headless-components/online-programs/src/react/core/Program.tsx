@@ -1,4 +1,3 @@
-import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import { programs, instructors } from '@wix/online-programs';
@@ -23,7 +22,6 @@ export interface RootProps {
 
 /**
  * Root component that provides the Program service context to its children.
- * This component sets up the necessary services for rendering and managing a single program's data.
  *
  * @order 1
  * @component
@@ -32,24 +30,11 @@ export interface RootProps {
  * import { Program } from '@wix/online-programs/components';
  *
  * function ProgramPage() {
- *   return (
- *     <Program.Root
- *      programServiceConfig={{ program: myProgram }}
- *     >
- *       <div>
- *         <Program.Title>
- *           {({ title }) => (
- *             <h1
- *               className="text-4xl font-bold text-content-primary mb-4"
- *               data-testid="program-title"
- *             >
- *               {title}
- *             </h1>
- *           )}
- *         </Program.Title>
- *       </div>
- *     </Program.Root>
- *   );
+ *  return (
+ *    <Program.Root programServiceConfig={{ program: myProgram }}>
+ *      <Program.Title />
+ *    </Program.Root>
+ *  );
  * }
  * ```
  */
@@ -68,7 +53,51 @@ export function Root(props: RootProps): React.ReactNode {
 }
 
 /**
- * Props for ProgramTitle headless component
+ * Props for Program.Raw headless component
+ */
+export interface ProgramRawProps {
+  /** Render prop function that receives program data */
+  children: (props: ProgramRawRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for Program.Raw component
+ */
+export interface ProgramRawRenderProps {
+  /** Complete program data */
+  program: programs.Program;
+}
+
+/**
+ * Headless component that provides access to the complete program data
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Program.Root programServiceConfig={{ program: myProgram }}>
+ *  <Program.Raw asChild>
+ *    {({ program }) => (
+ *      <div>
+ *        <p>Program ID: {program._id}</p>
+ *        <p>Title: {program.description?.title}</p>
+ *      </div>
+ *    )}
+ *  </Program.Raw>
+ * </Program.Root>
+ * ```
+ */
+export function Raw(props: ProgramRawProps) {
+  const service = useService(ProgramServiceDefinition);
+
+  const program = service.program.get();
+
+  return props.children({
+    program,
+  });
+}
+
+/**
+ * Props for Program.Title headless component
  */
 export interface ProgramTitleProps {
   /** Render prop function that receives program title data */
@@ -76,7 +105,7 @@ export interface ProgramTitleProps {
 }
 
 /**
- * Render props for ProgramTitle component
+ * Render props for Program.Title component
  */
 export interface ProgramTitleRenderProps {
   /** Program title */
@@ -89,23 +118,15 @@ export interface ProgramTitleRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramHeader() {
- *   return (
- *     <Program.Title>
- *       {({ title }) => (
- *         <h1>{title}</h1>
- *       )}
- *     </Program.Title>
- *   );
- * }
+ *  <Program.Title asChild>
+ *    {({ title }) => (
+ *      <h1>{title}</h1>
+ *    )}
+ *  </Program.Title>
  * ```
  */
 export function Title(props: ProgramTitleProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
+  const service = useService(ProgramServiceDefinition);
 
   const program = service.program.get();
   const title = program.description?.title || '';
@@ -116,7 +137,47 @@ export function Title(props: ProgramTitleProps) {
 }
 
 /**
- * Props for ProgramImage headless component
+ * Props for Program.Description headless component
+ */
+export interface ProgramDescriptionProps {
+  /** Render prop function that receives program description data */
+  children: (props: ProgramDescriptionRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for Program.Description component
+ */
+export interface ProgramDescriptionRenderProps {
+  /** Program description text */
+  description: string;
+}
+
+/**
+ * Headless component for program description display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Program.Description>
+ *  {({ description }) => (
+ *    <p>{description}</p>
+ *  )}
+ * </Program.Description>
+ * ```
+ */
+export function Description(props: ProgramDescriptionProps) {
+  const service = useService(ProgramServiceDefinition);
+
+  const program = service.program.get();
+  const description = program.description?.details || '';
+
+  return props.children({
+    description,
+  });
+}
+
+/**
+ * Props for Program.Image headless component
  */
 export interface ProgramImageProps {
   /** Render prop function that receives program image data */
@@ -124,7 +185,7 @@ export interface ProgramImageProps {
 }
 
 /**
- * Render props for ProgramImage component
+ * Render props for Program.Image component
  */
 export interface ProgramImageRenderProps {
   /** Program image URL */
@@ -139,27 +200,20 @@ export interface ProgramImageRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramImage() {
- *   return (
- *     <Program.Image>
- *       {({ src, alt }) => (
- *         <img src={src} alt={alt} />
- *       )}
- *     </Program.Image>
- *   );
- * }
+ * <Program.Image asChild>
+ *  {({ src, alt }) => (
+ *    <img src={src} alt={alt} />
+ *  )}
+ * </Program.Image>
  * ```
  */
 export function Image(props: ProgramImageProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
+  const service = useService(ProgramServiceDefinition);
 
   const program = service.program.get();
+
   const src = program.description?.image || '';
-  const alt = program.description?.title || 'Program image';
+  const alt = program.description?.title || '';
 
   return props.children({
     src,
@@ -168,7 +222,7 @@ export function Image(props: ProgramImageProps) {
 }
 
 /**
- * Props for ProgramDurationInDays headless component
+ * Props for Program.DurationInDays headless component
  */
 export interface ProgramDurationInDaysProps {
   /** Render prop function that receives program duration data */
@@ -191,25 +245,17 @@ export interface ProgramDurationInDaysRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramDurationInDays() {
- *   return (
- *     <Program.DurationInDays>
- *       {({ durationInDays, isSelfPaced }) => (
- *         <p>
- *           {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
- *         </p>
- *       )}
- *     </Program.DurationInDays>
- *   );
- * }
+ * <Program.DurationInDays asChild>
+ *  {({ durationInDays, isSelfPaced }) => (
+ *    <p>
+ *      {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
+ *    </p>
+ *  )}
+ * </Program.DurationInDays>
  * ```
  */
 export function DurationInDays(props: ProgramDurationInDaysProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
+  const service = useService(ProgramServiceDefinition);
 
   const program = service.program.get();
 
@@ -224,7 +270,7 @@ export function DurationInDays(props: ProgramDurationInDaysProps) {
 }
 
 /**
- * Props for ProgramPrice headless component
+ * Props for Program.Price headless component
  */
 export interface ProgramPriceProps {
   /** Render prop function that receives program price data */
@@ -232,7 +278,7 @@ export interface ProgramPriceProps {
 }
 
 /**
- * Render props for ProgramPrice component
+ * Render props for Program.Price component
  */
 export interface ProgramPriceRenderProps {
   /** Program price */
@@ -249,33 +295,27 @@ export interface ProgramPriceRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramPrice() {
- *   return (
- *     <Program.Price>
- *       {({ price, formattedPrice }) => (
- *         <div>
- *           {price ? (
- *             <span>{formattedPrice}</span>
- *           ) : (
- *             <span>Free</span>
- *           )}
- *         </div>
- *       )}
- *     </Program.Price>
- *   );
- * }
+ * <Program.Price asChild>
+ *  {({ price, formattedPrice }) => (
+ *    <div>
+ *      {price ? (
+ *        <span>{formattedPrice}</span>
+ *      ) : (
+ *        <span>Free</span>
+ *      )}
+ *    </div>
+ *  )}
+ * </Program.Price>
  * ```
  */
 export function Price(props: ProgramPriceProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
+  const service = useService(ProgramServiceDefinition);
 
   const program = service.program.get();
+
   const price = program.price?.value || null;
   const currency = program.price?.currency || '';
+
   // TODO: use formatCurrency from stores
   const formattedPrice = price && currency ? `${price} ${currency}` : '';
 
@@ -287,55 +327,7 @@ export function Price(props: ProgramPriceProps) {
 }
 
 /**
- * Props for ProgramDescription headless component
- */
-export interface ProgramDescriptionProps {
-  /** Render prop function that receives program description data */
-  children: (props: ProgramDescriptionRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for ProgramDescription component
- */
-export interface ProgramDescriptionRenderProps {
-  /** Program description text */
-  description: string;
-}
-
-/**
- * Headless component for program description display
- *
- * @component
- * @example
- * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramDescription() {
- *   return (
- *     <Program.Description>
- *       {({ description }) => (
- *         <p>{description}</p>
- *       )}
- *     </Program.Description>
- *   );
- * }
- * ```
- */
-export function Description(props: ProgramDescriptionProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
-
-  const program = service.program.get();
-  const description = program.description?.details || '';
-
-  return props.children({
-    description,
-  });
-}
-
-/**
- * Props for ProgramStepCount headless component
+ * Props for Program.StepCount headless component
  */
 export interface ProgramStepCountProps {
   /** Render prop function that receives program steps count data */
@@ -343,7 +335,7 @@ export interface ProgramStepCountProps {
 }
 
 /**
- * Render props for ProgramStepCount component
+ * Render props for Program.StepCount component
  */
 export interface ProgramStepCountRenderProps {
   /** Number of steps in the program */
@@ -356,25 +348,18 @@ export interface ProgramStepCountRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramStepCount() {
- *   return (
- *     <Program.StepCount>
- *       {({ stepCount }) => (
- *         <p>{stepCount} Steps</p>
- *       )}
- *     </Program.StepCount>
- *   );
- * }
+ * <Program.StepCount asChild>
+ *  {({ stepCount }) => (
+ *    <p>{stepCount} Steps</p>
+ *  )}
+ * </Program.StepCount>
  * ```
  */
 export function StepCount(props: ProgramStepCountProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
+  const service = useService(ProgramServiceDefinition);
 
   const program = service.program.get();
+
   const stepCount = program.contentSummary?.stepCount || 0;
 
   return props.children({
@@ -383,7 +368,7 @@ export function StepCount(props: ProgramStepCountProps) {
 }
 
 /**
- * Props for ProgramSectionCount headless component
+ * Props for Program.SectionCount headless component
  */
 export interface ProgramSectionCountProps {
   /** Render prop function that receives program section count data */
@@ -391,7 +376,7 @@ export interface ProgramSectionCountProps {
 }
 
 /**
- * Render props for ProgramSectionCount component
+ * Render props for Program.SectionCount component
  */
 export interface ProgramSectionCountRenderProps {
   /** Number of sections in the program */
@@ -404,25 +389,18 @@ export interface ProgramSectionCountRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramSectionCount() {
- *   return (
- *     <Program.SectionCount>
- *       {({ sectionCount }) => (
- *         <p>{sectionCount} Sections</p>
- *       )}
- *     </Program.SectionCount>
- *   );
- * }
+ * <Program.SectionCount asChild>
+ *  {({ sectionCount }) => (
+ *    <p>{sectionCount} Sections</p>
+ *  )}
+ * </Program.SectionCount>
  * ```
  */
 export function SectionCount(props: ProgramSectionCountProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
+  const service = useService(ProgramServiceDefinition);
 
   const program = service.program.get();
+
   const sectionCount = program.contentSummary?.sectionCount || 0;
 
   return props.children({
@@ -431,63 +409,15 @@ export function SectionCount(props: ProgramSectionCountProps) {
 }
 
 /**
- * Props for ProgramContent headless component
- */
-export interface ProgramRawProps {
-  /** Render prop function that receives program data */
-  children: (props: ProgramRawRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for ProgramContent component
- */
-export interface ProgramRawRenderProps {
-  /** Complete program data */
-  program: programs.Program;
-}
-
-/**
- * Headless component that provides access to the complete program data
- *
- * @component
- * @example
- * ```tsx
- * import { Program } from '@wix/online-programs/components';
- *
- * function ProgramDebug() {
- *   return (
- *     <Program.Content>
- *       {({ program }) => (
- *         <div>
- *           <p>Program ID: {program._id}</p>
- *           <p>Title: {program.description?.title}</p>
- *         </div>
- *       )}
- *     </Program.Content>
- *   );
- * }
- * ```
- */
-export function Raw(props: ProgramRawProps) {
-  const service = useService(ProgramServiceDefinition) as ServiceAPI<
-    typeof ProgramServiceDefinition
-  >;
-
-  const program = service.program.get();
-
-  return props.children({
-    program,
-  });
-}
-
-/**
  * Props for ProgramInstructors headless component
  */
-export interface ProgramInstructorsRootProps {
+export interface ProgramInstructorsProps {
   /** Render prop function that receives instructors data */
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: ProgramInstructorsRenderProps) => React.ReactNode);
   /** Optional instructors data to use instead of fetching */
-  instructorsServiceConfig: InstructorsServiceConfig;
+  instructorsServiceConfig?: InstructorsServiceConfig;
 }
 
 /**
@@ -496,21 +426,11 @@ export interface ProgramInstructorsRootProps {
 export interface ProgramInstructorsRenderProps {
   /** List of instructors */
   instructors: instructors.Instructor[];
-  /** Whether there are instructors */
-  hasInstructors: boolean;
 }
 
-/**
- * Props for ProgramInstructors headless component
- */
-export interface ProgramInstructorsProps {
-  /** Render prop function that receives instructors data */
-  children: (props: ProgramInstructorsRenderProps) => React.ReactNode;
-  /** Optional instructors data to use instead of fetching */
-  instructorsServiceConfig?: InstructorsServiceConfig;
-}
 export function Instructors(props: ProgramInstructorsProps) {
   const instructors = props.instructorsServiceConfig?.instructors || [];
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -519,10 +439,11 @@ export function Instructors(props: ProgramInstructorsProps) {
         props.instructorsServiceConfig,
       )}
     >
-      {props.children({
-        instructors,
-        hasInstructors: instructors.length > 0,
-      })}
+      {typeof props.children === 'function'
+        ? props.children({
+            instructors,
+          })
+        : props.children}
     </WixServices>
   );
 }

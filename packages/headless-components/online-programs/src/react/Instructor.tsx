@@ -1,7 +1,6 @@
 import React from 'react';
 import { instructors } from '@wix/online-programs';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-// import { WixMediaImage } from '@wix/headless-media/react';
 
 interface InstructorContextValue {
   instructor: instructors.Instructor;
@@ -13,19 +12,21 @@ const InstructorContext = React.createContext<InstructorContextValue | null>(
 
 function useInstructorContext(): InstructorContextValue {
   const context = React.useContext(InstructorContext);
+
   if (!context) {
     throw new Error(
       'useInstructorContext must be used within a Instructor.Root component',
     );
   }
+
   return context;
 }
 
 enum TestIds {
-  instructor = 'instructor',
-  instructorName = 'instructor-name',
-  instructorDescription = 'instructor-description',
-  instructorImage = 'instructor-image',
+  instructor = 'program-instructor',
+  instructorName = 'program-instructor-name',
+  instructorDescription = 'program-instructor-description',
+  instructorImage = 'program-instructor-image',
 }
 
 /**
@@ -52,30 +53,24 @@ interface InstructorRootProps {
  * function InstructorCard({ instructor }) {
  *   return (
  *     <Instructor.Root instructor={instructor}>
- *       <Instructor.Name className="text-4xl font-bold" />
- *       <Instructor.Description className="text-content-secondary" />
+ *       <Instructor.Name />
+ *       <Instructor.Description />
  *     </Instructor.Root>
  *   );
  * }
  * ```
  */
 function Root(props: InstructorRootProps): React.ReactNode {
-  const { asChild, children, instructor, ...otherProps } = props;
-
-  const dataAttributes = {
-    'data-testid': TestIds.instructor,
-    'data-instructor-id': instructor.userId,
-  };
+  const { asChild, children, instructor } = props;
 
   return (
     <InstructorContext.Provider value={{ instructor }}>
       <AsChildSlot
         asChild={asChild}
+        data-testid={TestIds.instructor}
         customElement={children}
         customElementProps={{ instructor }}
         content={instructor.name}
-        {...dataAttributes}
-        {...otherProps}
       >
         <div>{children}</div>
       </AsChildSlot>
@@ -84,11 +79,9 @@ function Root(props: InstructorRootProps): React.ReactNode {
 }
 
 /**
- * Props for Instructor Name component
+ * Props for Instructor.Name component
  */
 interface NameProps {
-  /** Instructor data - can be provided directly or from context */
-  instructor?: instructors.Instructor;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -102,17 +95,17 @@ interface NameProps {
  * @example
  * ```tsx
  * // Default usage
- * <Instructor.Name instructor={instructor} className="text-4xl font-bold" />
+ * <Instructor.Name />
  *
  * // asChild with primitive
- * <Instructor.Name instructor={instructor} asChild>
- *   <p className="text-4xl font-bold" />
+ * <Instructor.Name asChild>
+ *   <p />
  * </Instructor.Name>
  *
- * // asChild with react component
- * <Instructor.Name instructor={instructor} asChild>
- *   {React.forwardRef(({ name, slug, ...props }, ref) => (
- *     <p ref={ref} {...props} className="text-4xl font-bold">
+ * // asChild with React component
+ * <Instructor.Name asChild>
+ *   {React.forwardRef(({ name, slug }, ref) => (
+ *     <p ref={ref}>
  *       {name}
  *     </p>
  *   ))}
@@ -120,22 +113,9 @@ interface NameProps {
  * ```
  */
 const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const {
-    asChild,
-    children,
-    instructor: propInstructor,
-    ...otherProps
-  } = props;
+  const { asChild, children } = props;
 
-  // Use provided instructor or get from context
-  const contextInstructor = useInstructorContext();
-  const instructor = propInstructor || contextInstructor?.instructor;
-
-  if (!instructor) {
-    throw new Error(
-      'Instructor.Name must be used within an Instructor.Root component or have instructor prop provided',
-    );
-  }
+  const { instructor } = useInstructorContext();
 
   const name = instructor.name || '';
   const slug = instructor.slug || null;
@@ -148,7 +128,6 @@ const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
       customElement={children}
       customElementProps={{ name, slug }}
       content={name}
-      {...otherProps}
     >
       <p>{name}</p>
     </AsChildSlot>
@@ -158,7 +137,7 @@ const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 Name.displayName = 'Instructor.Name';
 
 /**
- * Props for Instructor Description component
+ * Props for Instructor.Description component
  */
 interface DescriptionProps {
   /** Whether to render as a child component */
@@ -174,17 +153,17 @@ interface DescriptionProps {
  * @example
  * ```tsx
  * // Default usage
- * <Instructor.Description className="text-content-secondary" />
+ * <Instructor.Description />
  *
  * // asChild with primitive
  * <Instructor.Description asChild>
- *   <p className="text-content-secondary" />
+ *   <ps />
  * </Instructor.Description>
  *
- * // asChild with react component
+ * // asChild with React component
  * <Instructor.Description asChild>
- *   {React.forwardRef(({ description, ...props }, ref) => (
- *     <p ref={ref} {...props} className="text-content-secondary">
+ *   {React.forwardRef(({ description }, ref) => (
+ *     <p ref={ref}>
  *       {description}
  *     </p>
  *   ))}
@@ -193,7 +172,8 @@ interface DescriptionProps {
  */
 const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
+    const { asChild, children } = props;
+
     const { instructor } = useInstructorContext();
 
     const description = instructor.description || '';
@@ -206,7 +186,6 @@ const Description = React.forwardRef<HTMLElement, DescriptionProps>(
         customElement={children}
         customElementProps={{ description }}
         content={description}
-        {...otherProps}
       >
         <p>{description}</p>
       </AsChildSlot>
@@ -217,7 +196,7 @@ const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 Description.displayName = 'Instructor.Description';
 
 /**
- * Props for Instructor Image component
+ * Props for Instructor.Image component
  */
 interface ImageProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
@@ -237,32 +216,29 @@ interface ImageProps
  * @example
  * ```tsx
  * // Default usage
- * <Instructor.Image className="w-16 h-16 rounded-full object-cover" />
+ * <Instructor.Image />
  *
  * // asChild with primitive
  * <Instructor.Image asChild>
- *   <img className="w-16 h-16 rounded-full object-cover" />
+ *   <img />
  * </Instructor.Image>
  *
- * // asChild with react component
+ * // asChild with React component
  * <Instructor.Image asChild>
- *   {React.forwardRef(({ src, altText, ...props }, ref) => (
+ *   {React.forwardRef(({ src, altText }, ref) => (
  *     <img
  *       ref={ref}
  *       src={src}
  *       alt={altText}
- *       {...props}
- *       className="w-16 h-16 rounded-full object-cover"
  *     />
  *   ))}
  * </Instructor.Image>
  * ```
  */
 const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className } = props;
   const { instructor } = useInstructorContext();
 
-  // Return null if no photo is available
   if (!instructor.photo) {
     return null;
   }
@@ -270,23 +246,19 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
   const src = instructor.photo.url || '';
   const altText = instructor.photoAltText || '';
 
-  const attributes = {
-    'data-testid': TestIds.instructorImage,
-  };
-
   return (
     <AsChildSlot
       ref={ref}
       asChild={asChild}
       className={className}
-      {...attributes}
+      data-testid={TestIds.instructorImage}
       customElement={children}
       customElementProps={{
         src,
         altText,
       }}
     >
-      <img src={src} alt={altText} {...otherProps} />
+      <img src={src} alt={altText} />
     </AsChildSlot>
   );
 });

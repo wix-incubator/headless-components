@@ -8,19 +8,23 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.Root](#programroot)
   - [Program.Raw](#programraw)
   - [Program.Title](#programtitle)
+  - [Program.Description](#programdescription)
   - [Program.Image](#programimage)
   - [Program.StepCount](#programstepcount)
   - [Program.SectionCount](#programsectionscount)
-  - [Program.Description](#programdescription)
   - [Program.DurationInDays](#programdurationindays)
   - [Program.Price](#programprice)
   - [Program.Instructors](#programinstructors)
   - [Program.InstructorRepeater](#programinstructorrepeater)
-  - [Instructor](#instructor)
-    - [Instructor.Name](#instructorinstructorname)
+  - [Instructor.Root](#instructorroot)
+    - [Instructor.Name](#instructorname)
     - [Instructor.Description](#instructordescription)
     - [Instructor.Image](#instructorimage)
-  - [Program.Action.View] ??
+  - [Usage Examples](#usage-examples)
+
+## Architecture
+
+The Program component follows a compound component pattern where each part can be composed together to create flexible program displays.
 
 ## Components
 
@@ -44,7 +48,6 @@ interface ProgramRootProps {
 <Program.Root program={program}>
   <Program.Title />
   <Program.Description />
-  {/* The rest program component */}
 </Program.Root>
 ```
 
@@ -58,7 +61,7 @@ Provides direct access to program context data. Should be used only in rare case
 
 ```tsx
 interface ProgramRawProps {
-  asChild?: boolean;
+  asChild: boolean;
   children: React.ForwardRefRenderFunction<
     HTMLElement,
     {
@@ -71,13 +74,17 @@ interface ProgramRawProps {
 **Example**
 
 ```tsx
-<Program.Raw>
-  {React.forwardRef(({ program, ...props }, ref) => (
-    <div ref={ref} {...props}>
-      Custom program implementation
-    </div>
-  ))}
-</Program.Raw>
+<Program.Root program={program}>
+  <Program.Raw asChild>
+    {React.forwardRef(({ program }, ref) => (
+      <div ref={ref}>
+        <p>Program ID: {program._id}</p>
+        <p>Title: {program.description?.title || 'No title'}</p>
+        <p>Price: {program.price?.value || 'No price'}</p>
+      </div>
+    ))}
+  </Program.Raw>
+</Program.Root>
 ```
 
 ---
@@ -110,21 +117,69 @@ interface ProgramTitleProps {
 
 ```tsx
 // Default usage
-<Program.Title className="text-4xl font-bold" />
+<Program.Title />
 
 // asChild with primitive
 <Program.Title asChild>
-  <h1 className="text-4xl font-bold" />
+  <h1  />
 </Program.Title>
 
-// asChild with react component
+// asChild with React component
 <Program.Title asChild>
-  {React.forwardRef(({ title, ...props }, ref) => (
-    <h1 ref={ref} {...props} className="text-4xl font-bold">
+  {React.forwardRef(({ title }, ref) => (
+    <h1 ref={ref}>
       {title}
     </h1>
   ))}
 </Program.Title>
+```
+
+---
+
+### Program.Description
+
+Displays the program description text with customizable rendering.
+Data source: program.description.details
+
+**Props**
+
+```tsx
+interface ProgramDescriptionProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      description: string;
+    }
+  >;
+  className?: string;
+}
+```
+
+**Data Attributes**
+
+- `data-testid="program-description"` - Applied to program description element
+
+**Example**
+
+```tsx
+// Default usage
+<Program.Description />
+
+// asChild with primitive
+<Program.Description asChild>
+  <p  />
+</Program.Description>
+
+// asChild with React component
+<Program.Description asChild>
+  {React.forwardRef(({ description }, ref) => (
+    <p ref={ref}>
+      {description.length > 100 ? `${description.substring(0, 100)}...` : description}
+    </p>
+  ))}
+</Program.Description>
+
 ```
 
 ---
@@ -158,17 +213,17 @@ interface ProgramImageProps {
 
 ```tsx
 // Default usage
-<Program.Image className="w-full h-48 object-cover rounded-lg" />
+<Program.Image />
 
 // asChild with primitive
 <Program.Image asChild>
-  <img className="w-full h-48 object-cover rounded-lg" />
+  <img  />
 </Program.Image>
 
 // asChild with react component
 <Program.Image asChild>
   {React.forwardRef(({ src, alt }, ref) => (
-    <img ref={ref} src={src} alt={alt} className="w-full h-48 object-cover rounded-lg" />
+    <img ref={ref} src={src} alt={alt} />
   ))}
 </Program.Image>
 ```
@@ -203,17 +258,17 @@ interface ProgramStepCountProps {
 
 ```tsx
 // Default usage
-<Program.StepCount className="text-content-secondary" />
+<Program.StepCount />
 
 // asChild with primitive
 <Program.StepCount asChild>
-  <p className="text-content-secondary">
+  <p />
 </Program.StepCount>
 
-// Custom rendering
+// asChild with React component
 <Program.StepCount asChild>
-  {React.forwardRef(({ stepCount, ...props }, ref) => (
-    <p ref={ref} {...props} className="text-content-secondary">
+  {React.forwardRef(({ stepCount }, ref) => (
+    <p ref={ref}>
       {stepCount} Steps
     </p>
   ))}
@@ -269,54 +324,6 @@ interface ProgramSectionCountProps {
 
 ---
 
-### Program.Description
-
-Displays the program description text with customizable rendering.
-Data source: program.description.details
-
-**Props**
-
-```tsx
-interface ProgramDescriptionProps {
-  asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLElement,
-    {
-      description: string;
-    }
-  >;
-  className?: string;
-}
-```
-
-**Data Attributes**
-
-- `data-testid="program-description"` - Applied to program description element
-
-**Example**
-
-```tsx
-// Default usage
-<Program.Description className="text-content-secondary" />
-
-// asChild with primitive
-<Program.Description asChild>
-  <p className="text-content-secondary" />
-</Program.Description>
-
-// Custom rendering with truncation
-<Program.Description asChild>
-  {React.forwardRef(({ description, ...props }, ref) => (
-    <p ref={ref} {...props} className="text-content-secondary">
-      {description.length > 100 ? `${description.substring(0, 100)}...` : description}
-    </p>
-  ))}
-</Program.Description>
-
-```
-
----
-
 ### Program.DurationInDays
 
 Displays the program duration in days with customizable rendering.
@@ -331,12 +338,11 @@ interface ProgramDurationInDaysProps {
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
     {
-      durationInDays: number | null;  // null represents "no limit"
-      isSelfPaced: boolean;          // whether program is self-paced
+      durationInDays: number | null; // null represents "no limit"
+      isSelfPaced: boolean; // whether program is self-paced
     }
   >;
   className?: string;
-  [key: string]: any;
 }
 ```
 
@@ -350,22 +356,23 @@ interface ProgramDurationInDaysProps {
 
 ```tsx
 // Default usage - shows raw durationInDays value
-<Program.DurationInDays className="text-content-secondary" />
+<Program.DurationInDays />
 
 // asChild with primitive
 <Program.DurationInDays asChild>
-  <p className="text-content-secondary" />
+  <p />
 </Program.DurationInDays>
 
-// Custom rendering with proper formatting
+// asChild with React component
 <Program.DurationInDays asChild>
-  {React.forwardRef(({ durationInDays, isSelfPaced, ...props }, ref) => (
-    <p ref={ref} {...props} className="text-content-secondary">
+  {React.forwardRef(({ durationInDays, isSelfPaced }, ref) => (
+    <p ref={ref}>
       {isSelfPaced ? 'No Time Limit' : `${durationInDays} days`}
     </p>
   ))}
 </Program.DurationInDays>
 ```
+
 ---
 
 ### Program.Price
@@ -387,39 +394,28 @@ interface ProgramPriceProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
 }
 ```
 
 **Data Attributes**
+
 - `data-testid="program-price"` - Applied to program price element
 
 **Example**
 
 ```tsx
-// Default usage - formatted price or null
-<Program.Price className="text-3xl font-bold text-content-primary" />
+// Default usage
+<Program.Price />
 
 // asChild with primitive
 <Program.Price asChild>
   <span className="text-3xl font-bold text-content-primary" />
 </Program.Price>
 
-// With custom formatting
+// asChild with React component
 <Program.Price asChild>
-  {React.forwardRef(({ value, currency, ...props }, ref) => (
-    <div ref={ref} {...props} className="flex items-baseline gap-2">
-      <span className="text-2xl font-bold">{value}</span>
-      <span className="text-sm text-content-secondary">{currency}</span>
-    </div>
-  ))}
-</Program.Price>
-
-// With free program handling
-<Program.Price asChild>
-  {React.forwardRef(({ price, formattedPrice, ...props }, ref) => (
-    <span ref={ref} {...props} className="text-2xl font-bold text-brand-primary">
+  {React.forwardRef(({ price, formattedPrice }, ref) => (
+    <span ref={ref}>
       {price ? formattedPrice :  'Free'}
     </span>
   ))}
@@ -434,36 +430,29 @@ Container component for program instructors that provides context and conditiona
 
 ```tsx
 interface ProgramInstructorsProps {
-  /** Optional instructors data to use instead of fetching */
-  instructors?: instructors.Instructor[];
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ instructors: instructors.Instructor[]; hasInstructors: boolean }>;
-  /** Content to show when there are no instructors */
-  emptyState?: React.ReactNode;
+  children?: AsChildChildren<{
+    instructors: instructors.Instructor[];
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
+  /** Optional instructors data to use instead of fetching */
+  instructors?: instructors.Instructor[];
+  /** Content to show when there are no instructors */
+  emptyState?: React.ReactNode;
 }
 ```
 
 **Data Attributes**
+
 - `data-testid="program-instructors"` - Applied to instructors container
 
 **Example**
 
 ```tsx
 // Default usage
-<Program.Instructors instructors={instructors}>
-  <Program.InstructorRepeater>
-    <Instructor.Name />
-    <Instructor.Description />
-  </Program.InstructorRepeater>
-</Program.Instructors>
-
-// With empty state
 <Program.Instructors instructors={instructors} emptyState={<div>No instructors available</div>}>
   <Program.InstructorRepeater>
     <Instructor.Name />
@@ -476,17 +465,13 @@ interface ProgramInstructorsProps {
   <div className="instructors-grid" />
 </Program.Instructors>
 
-// Custom rendering with render props
+// asChild with React component
 <Program.Instructors asChild>
-  {React.forwardRef(({ instructors, hasInstructors, ...props }, ref) => (
-    <div ref={ref} {...props} className="instructors-container">
-      {hasInstructors ? (
-        instructors.map(instructor => (
-          <div key={instructor._id}>{instructor.name}</div>
-        ))
-      ) : (
-        <div>No instructors</div>
-      )}
+  {React.forwardRef(({ instructors }, ref) => (
+    <div ref={ref}>
+      {instructors.map(instructor => (
+        <div key={instructor._id}>{instructor.name}</div>
+      ))}
     </div>
   ))}
 </Program.Instructors>
@@ -512,6 +497,7 @@ interface InstructorRepeaterProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="program-instructor-repeater"` - Applied to repeater container
 
 **Example**
@@ -522,23 +508,11 @@ interface InstructorRepeaterProps {
   <Instructor.Name />
   <Instructor.Description />
 </Program.InstructorRepeater>
-
-// With custom wrapper
-<Program.InstructorRepeater>
-  <div className="instructor-card">
-    <Instructor.Name />
-    <Instructor.Description />
-  </div>
-</Program.InstructorRepeater>
-
-// With asChild
-<Program.InstructorRepeater asChild>
-  <div className="instructors-grid" />
-</Program.InstructorRepeater>
 ```
+
 ---
 
-### Instructor
+### Instructor.Root
 
 Individual instructor component that provides instructor context to child components. Used within `Program.InstructorRepeater` or directly with instructor data.
 
@@ -556,8 +530,8 @@ interface InstructorProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="program-instructor"` - Applied to instructor element
-- `data-instructor-id` - Instructor ID
 
 **Example**
 
@@ -599,6 +573,7 @@ interface NameProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="program-instructor-name"` - Applied to instructor name element
 
 **Example**
@@ -642,6 +617,7 @@ interface InstructorDescriptionProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="instructor-description"` - Applied to instructor description element
 
 **Example**
@@ -684,7 +660,8 @@ Data source: instructor.photo and instructor.photoAltText.
 **Props**
 
 ```tsx
-interface InstructorImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
+interface InstructorImageProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -696,6 +673,7 @@ interface InstructorImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageEle
 ```
 
 **Data Attributes**
+
 - `data-testid="instructor-image"` - Applied to instructor image element
 
 **Example**
@@ -734,4 +712,38 @@ interface InstructorImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageEle
     />
   ))}
 </Instructor.Image>
+```
+
+## Usage Examples
+
+### Default usage
+
+```tsx
+function DefaultProgramCard(props) {
+  const { program } = props;
+
+  return (
+    <Program.Root program={program}>
+      <Program.Title />
+      <Program.Description />
+    </Program.Root>
+  );
+}
+```
+
+### Advanced usage
+
+```tsx
+function AdvancedProgramCard(props) {
+  const { category } = props;
+
+  return (
+    <Program.Root program={program}>
+      <Program.Title asChild>{({ title }) => <h1>{title}</h1>}</Program.Title>
+      <Program.Description asChild>
+        {({ description }) => <p>{description}</p>}
+      </Program.Description>
+    </Program.Root>
+  );
+}
 ```

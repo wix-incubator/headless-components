@@ -138,7 +138,9 @@ export async function loadProgramListServiceConfig(): Promise<ProgramListService
     return {
       programs: fetchedPrograms,
     };
-  } catch (_) {
+  } catch (error) {
+    console.error('Failed to load program list:', error);
+
     return {
       programs: [],
     };
