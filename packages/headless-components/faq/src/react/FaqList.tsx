@@ -1,31 +1,29 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { useService } from '@wix/services-manager-react';
 import {
   type FaqServiceConfig,
   type FaqCategory,
   type FaqEntry,
-  FaqServiceDefinition,
 } from '../services/index.js';
-import * as CoreFaqCategory from './core/FaqCategory.js';
+import * as CoreFaqList from './core/FaqList.js';
 import * as Faq from './Faq.js';
 
 enum TestIds {
   // Entity Root
-  faqCategoryRoot = 'faq-category-root',
-  faqCategoryName = 'faq-category-name',
+  faqListRoot = 'faq-list-root',
+  faqListName = 'faq-list-name',
 
   // List Container Level
-  faqCategoryFaqs = 'faq-category-faqs',
+  faqListFaqs = 'faq-list-faqs',
 
   // Repeater Level (individual items)
-  faqCategoryFaq = 'faq-category-faq',
+  faqListFaq = 'faq-list-faq',
 }
 
 /**
- * Props for FaqCategory Root component
+ * Props for FaqList Root component
  */
-export interface FaqCategoryRootProps {
+export interface FaqListRootProps {
   children: React.ReactNode;
   category: FaqCategory;
   className?: string;
@@ -41,18 +39,18 @@ export interface FaqCategoryRootProps {
  * @example
  * ```tsx
  * // Default usage
- * <FaqCategory.Root category={category}>
- *   <FaqCategory.Name />
- *   <FaqCategory.Faqs>
- *     <FaqCategory.FaqRepeater>
+ * <FaqList.Root category={category}>
+ *   <FaqList.Name />
+ *   <FaqList.Faqs>
+ *     <FaqList.FaqRepeater>
  *       <Faq.Name />
  *       <Faq.Answer />
- *     </FaqCategory.FaqRepeater>
- *   </FaqCategory.Faqs>
- * </FaqCategory.Root>
+ *     </FaqList.FaqRepeater>
+ *   </FaqList.Faqs>
+ * </FaqList.Root>
  * ```
  */
-export function Root(props: FaqCategoryRootProps): React.ReactNode {
+export function Root(props: FaqListRootProps): React.ReactNode {
   const { children, category, className, faqConfig, ...attrs } = props;
 
   // Default FAQ config for this category
@@ -66,17 +64,19 @@ export function Root(props: FaqCategoryRootProps): React.ReactNode {
   );
 
   return (
-    <CoreFaqCategory.Root faqServiceConfig={defaultFaqConfig}>
-      <div
-        {...attrs}
-        className={className}
-        data-testid={TestIds.faqCategoryRoot}
-        data-category-id={category._id}
-        data-category-name={category.title}
-      >
-        <CategoryContext category={category}>{children}</CategoryContext>
-      </div>
-    </CoreFaqCategory.Root>
+    <CoreFaqList.Root faqServiceConfig={defaultFaqConfig}>
+      <CategoryContext category={category}>
+        <div
+          {...attrs}
+          className={className}
+          data-testid={TestIds.faqListRoot}
+          data-category-id={category._id}
+          data-category-name={category.title}
+        >
+          {children}
+        </div>
+      </CategoryContext>
+    </CoreFaqList.Root>
   );
 }
 
@@ -102,14 +102,14 @@ function useCategoryData(): FaqCategory {
   const category = React.useContext(CategoryDataContext);
   if (!category) {
     throw new Error(
-      'useCategoryData must be used within a FaqCategory.Root component',
+      'useCategoryData must be used within a FaqList.Root component',
     );
   }
   return category;
 }
 
 /**
- * Props for FaqCategory Name component
+ * Props for FaqList Name component
  */
 export interface NameProps {
   /** Whether to render as a child component */
@@ -127,21 +127,21 @@ export interface NameProps {
  * @example
  * ```tsx
  * // Default usage
- * <FaqCategory.Name className="text-2xl font-bold" />
+ * <FaqList.Name className="text-2xl font-bold" />
  *
  * // asChild with primitive
- * <FaqCategory.Name asChild>
+ * <FaqList.Name asChild>
  *   <h2 className="text-2xl font-bold" />
- * </FaqCategory.Name>
+ * </FaqList.Name>
  *
  * // asChild with react component
- * <FaqCategory.Name asChild>
+ * <FaqList.Name asChild>
  *   {React.forwardRef(({name, ...props}, ref) => (
  *     <h2 ref={ref} {...props} className="text-2xl font-bold">
  *       {name}
  *     </h2>
  *   ))}
- * </FaqCategory.Name>
+ * </FaqList.Name>
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
@@ -155,7 +155,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
       ref={ref}
       asChild={asChild}
       className={className}
-      data-testid={TestIds.faqCategoryName}
+      data-testid={TestIds.faqListName}
       customElement={children}
       customElementProps={{ name }}
       content={name}
@@ -167,7 +167,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 });
 
 /**
- * Props for FaqCategory Faqs component
+ * Props for FaqList Faqs component
  */
 export interface FaqsProps {
   children: React.ReactNode;
@@ -182,22 +182,22 @@ export interface FaqsProps {
  * @example
  * ```tsx
  * // Default usage
- * <FaqCategory.Faqs emptyState={<div>No FAQs available</div>}>
- *   <FaqCategory.FaqRepeater>
+ * <FaqList.Faqs emptyState={<div>No FAQs available</div>}>
+ *   <FaqList.FaqRepeater>
  *     <Faq.Name />
  *     <Faq.Answer />
- *   </FaqCategory.FaqRepeater>
- * </FaqCategory.Faqs>
+ *   </FaqList.FaqRepeater>
+ * </FaqList.Faqs>
  *
  * // Simple container usage
- * <FaqCategory.Faqs emptyState={<div>No FAQs</div>}>
+ * <FaqList.Faqs emptyState={<div>No FAQs</div>}>
  *   <div className="faqs-container">
- *     <FaqCategory.FaqRepeater>
+ *     <FaqList.FaqRepeater>
  *       <Faq.Name />
  *       <Faq.Answer />
- *     </FaqCategory.FaqRepeater>
+ *     </FaqList.FaqRepeater>
  *   </div>
- * </FaqCategory.Faqs>
+ * </FaqList.Faqs>
  * ```
  */
 export const Faqs = React.forwardRef<HTMLDivElement, FaqsProps>(
@@ -205,14 +205,14 @@ export const Faqs = React.forwardRef<HTMLDivElement, FaqsProps>(
     const { children, emptyState } = props;
 
     return (
-      <CoreFaqCategory.Faqs>
+      <CoreFaqList.Items>
         {({ hasFaqs, faqs }) => {
           if (!hasFaqs) {
             return emptyState || null;
           }
 
           const attributes = {
-            'data-testid': TestIds.faqCategoryFaqs,
+            'data-testid': TestIds.faqListFaqs,
           };
 
           return (
@@ -221,13 +221,13 @@ export const Faqs = React.forwardRef<HTMLDivElement, FaqsProps>(
             </div>
           );
         }}
-      </CoreFaqCategory.Faqs>
+      </CoreFaqList.Items>
     );
   },
 );
 
 /**
- * Props for FaqCategory FaqRepeater component
+ * Props for FaqList FaqRepeater component
  */
 export interface FaqRepeaterProps {
   children: React.ReactNode;
@@ -240,10 +240,10 @@ export interface FaqRepeaterProps {
  * @component
  * @example
  * ```tsx
- * <FaqCategory.FaqRepeater>
+ * <FaqList.FaqRepeater>
  *   <Faq.Name />
  *   <Faq.Answer />
- * </FaqCategory.FaqRepeater>
+ * </FaqList.FaqRepeater>
  * ```
  */
 export const FaqRepeater = React.forwardRef<HTMLElement, FaqRepeaterProps>(
@@ -251,10 +251,9 @@ export const FaqRepeater = React.forwardRef<HTMLElement, FaqRepeaterProps>(
     const { children } = props;
 
     return (
-      <CoreFaqCategory.Faqs>
+      <CoreFaqList.Items>
         {({ hasFaqs, faqs }) => {
           if (!hasFaqs) return null;
-          console.log('faqs in FaqRepeater', faqs);
 
           return (
             <>
@@ -262,7 +261,7 @@ export const FaqRepeater = React.forwardRef<HTMLElement, FaqRepeaterProps>(
                 <Faq.Root
                   key={faq._id}
                   faq={faq}
-                  data-testid={TestIds.faqCategoryFaq}
+                  data-testid={TestIds.faqListFaq}
                 >
                   {children}
                 </Faq.Root>
@@ -270,7 +269,7 @@ export const FaqRepeater = React.forwardRef<HTMLElement, FaqRepeaterProps>(
             </>
           );
         }}
-      </CoreFaqCategory.Faqs>
+      </CoreFaqList.Items>
     );
   },
 );

@@ -1,14 +1,12 @@
 import React from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
-import { useService } from '@wix/services-manager-react';
 import {
-  FaqCategoriesServiceDefinition,
   type FaqCategoriesServiceConfig,
   type FaqCategory,
   type FaqServiceConfig,
 } from '../services/index.js';
 import * as CoreFaqCategories from './core/FaqCategories.js';
-import * as FaqCategoryComponents from './FaqCategory.js';
+import * as FaqCategoryComponents from './FaqList.js';
 
 enum TestIds {
   // Container Level
@@ -119,7 +117,7 @@ export const Categories = React.forwardRef<HTMLDivElement, CategoriesProps>(
 
     return (
       <CoreFaqCategories.Categories>
-        {({ hasCategories, categories }) => {
+        {({ hasCategories }) => {
           if (!hasCategories) {
             return emptyState || null;
           }

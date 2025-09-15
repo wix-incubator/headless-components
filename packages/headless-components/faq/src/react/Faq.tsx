@@ -8,6 +8,7 @@ enum TestIds {
   faqRoot = 'faq-root',
   faqName = 'faq-name',
   faqAnswer = 'faq-answer',
+  faqItem = 'faq-item',
 }
 
 /**
@@ -161,7 +162,7 @@ export const Item = React.forwardRef<HTMLElement, ItemProps>((props, ref) => {
             ref={ref}
             asChild={asChild}
             className={className}
-            data-testid={TestIds.faqRoot}
+            data-testid={TestIds.faqItem}
             data-faq-id={id}
             customElement={children}
             customElementProps={{ id }}

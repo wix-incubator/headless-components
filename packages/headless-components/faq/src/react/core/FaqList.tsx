@@ -5,7 +5,6 @@ import {
   FaqServiceDefinition,
   FaqService,
   type FaqServiceConfig,
-  type FaqCategory,
   type FaqEntry,
 } from '../../services/index.js';
 
@@ -21,17 +20,17 @@ export interface RootProps {
  * @component
  * @example
  * ```tsx
- * import { FaqCategory } from '@wix/faq/components';
+ * import { FaqList } from '@wix/faq/components';
  *
- * function FaqCategoryPage() {
+ * function FaqListPage() {
  *   return (
- *     <FaqCategory.Root faqServiceConfig={{ faqs: categoryFaqs, categoryId: 'cat-1' }}>
- *       <FaqCategory.Faqs>
+ *     <FaqList.Root faqServiceConfig={{ faqs: categoryFaqs, categoryId: 'cat-1' }}>
+ *       <FaqList.Items>
  *         {({ hasFaqs, faqs }) => (
  *           <div>{hasFaqs ? `${faqs.length} FAQs` : 'No FAQs'}</div>
  *         )}
- *       </FaqCategory.Faqs>
- *     </FaqCategory.Root>
+ *       </FaqList.Items>
+ *     </FaqList.Root>
  *   );
  * }
  * ```
@@ -51,17 +50,17 @@ export function Root(props: RootProps): React.ReactNode {
 }
 
 /**
- * Props for FaqCategoryFaqs headless component
+ * Props for FaqListFaqs headless component
  */
-export interface FaqCategoryFaqsProps {
+export interface FaqListFaqsProps {
   /** Render prop function that receives FAQ data */
-  children: (props: FaqCategoryFaqsRenderProps) => React.ReactNode;
+  children: (props: FaqListFaqsRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for FaqCategoryFaqs component
+ * Render props for FaqListFaqs component
  */
-export interface FaqCategoryFaqsRenderProps {
+export interface FaqListFaqsRenderProps {
   /** Whether there are FAQs to display */
   hasFaqs: boolean;
   /** Array of FAQ entries */
@@ -74,11 +73,11 @@ export interface FaqCategoryFaqsRenderProps {
  * @component
  * @example
  * ```tsx
- * import { FaqCategory } from '@wix/faq/components';
+ * import { FaqList } from '@wix/faq/components';
  *
- * function FaqCategoryFaqsList() {
+ * function FaqsListItems() {
  *   return (
- *     <FaqCategory.Faqs>
+ *     <FaqList.Items>
  *       {({ hasFaqs, faqs }) => (
  *         <div>
  *           {hasFaqs ? (
@@ -92,12 +91,12 @@ export interface FaqCategoryFaqsRenderProps {
  *           )}
  *         </div>
  *       )}
- *     </FaqCategory.Faqs>
+ *     </FaqList.Items>
  *   );
  * }
  * ```
  */
-export function Faqs(props: FaqCategoryFaqsProps) {
+export function Items(props: FaqListFaqsProps) {
   const service = useService(FaqServiceDefinition) as ServiceAPI<
     typeof FaqServiceDefinition
   >;
