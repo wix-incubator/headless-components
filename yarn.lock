@@ -4918,6 +4918,236 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/auto_sdk_restaurants_availability-exceptions@npm:1.0.29":
+  version: 1.0.29
+  resolution: "@wix/auto_sdk_restaurants_availability-exceptions@npm:1.0.29"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/74be0180362692728ea51709285092d65f4282a83c96d94df0258e2762f64ee992e3d443603c82e595cecca01814c4e5f772a66ed89a372697b6c41dd69a0af3
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_catalogs@npm:1.0.34":
+  version: 1.0.34
+  resolution: "@wix/auto_sdk_restaurants_catalogs@npm:1.0.34"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/948c533cdab9a0ea8a61776af1ad77e031e5de7d7e489ceb2ad0bd88a0d593902681885076e5c4d8ce65382077c2051fd4d6584a9837498179d7f7f6e49a7347
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_discount@npm:1.0.29":
+  version: 1.0.29
+  resolution: "@wix/auto_sdk_restaurants_discount@npm:1.0.29"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/26a74f736a7e3672f9edbc8af6ebfb7d4df6eef3826c4436a9273cef907886b2ca39e92ddfe6453f57021325b6ab3e82f0a6135c65f5a77a217d6fdbe2d64ff0
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_fulfillemt-methods@npm:1.0.21":
+  version: 1.0.21
+  resolution: "@wix/auto_sdk_restaurants_fulfillemt-methods@npm:1.0.21"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/4f539e3c4d0ec7e88029ff0b7dcc10984f401dda79426c411c07a3f0a26c3d0e8602479b7cda8dd84c2fd0f613ba31892d24c1481b8198961dec1a044654fbc4
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_fulfillment-methods@npm:1.0.37":
+  version: 1.0.37
+  resolution: "@wix/auto_sdk_restaurants_fulfillment-methods@npm:1.0.37"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/25864f890924e34e72045097e4d8f3b3b7367bdabec1f350d60c34671a33da187288e26cf9ae7874cda0bd7a0a68f77aec83e749d0c5e46b76a70cc891d0871c
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_item-labels@npm:1.0.36":
+  version: 1.0.36
+  resolution: "@wix/auto_sdk_restaurants_item-labels@npm:1.0.36"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/0b63a661500045a3702ee818c6577ea90add66ddc05f45fe2b83992ab87f5fc2180af57fb06a56d4b96cdd3d25fcc073282afa964fd83aec649c428530d23ab4
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_item-modifier-groups@npm:1.0.38":
+  version: 1.0.38
+  resolution: "@wix/auto_sdk_restaurants_item-modifier-groups@npm:1.0.38"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/cffcb875db6cc04cb88cabf9ba2f1b2a6d770508beffe99a63b47a90a21147023133600b3376f8959ac0c9b99749ace3427b0dc37c39b85c914f98f2c43276e6
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_item-modifiers@npm:1.0.36":
+  version: 1.0.36
+  resolution: "@wix/auto_sdk_restaurants_item-modifiers@npm:1.0.36"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/3c0906700cc0609a7bb9989fc1011d4c70789d9ae6db5deb4afd85c5d196384071e3b7b3956e506f1de785a4a89765e1d8400b37bffcda5fdcf6fd762cda25df
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_item-variants@npm:1.0.34":
+  version: 1.0.34
+  resolution: "@wix/auto_sdk_restaurants_item-variants@npm:1.0.34"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/025f5f1d0ba3a4dfb936d552199746c14ea45f9d411c3c4a2301c549b1195e5bb51122fbe941945454c3e49ad977b4811068d4509dfb2fc4874e422da06229fd
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_items@npm:1.0.48, @wix/auto_sdk_restaurants_items@npm:^1.0.48":
+  version: 1.0.48
+  resolution: "@wix/auto_sdk_restaurants_items@npm:1.0.48"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/b5b2b32f284795fe07802da468928709129c4c9f43895ef70c66b1f6511b8cdc88a1b2240919f6090d9e8c9d8f996e338baf596f55a37f07eb425ad7b0af005a
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_local-delivery-spi@npm:1.0.26":
+  version: 1.0.26
+  resolution: "@wix/auto_sdk_restaurants_local-delivery-spi@npm:1.0.26"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/b9b75b6a4efed5c114e8006dfb46882b7a5ef72ee73127c69483a4e4784128aad53b7ca3950140a70547c35e775946daee541cc3a45598a90b251414c07c15e8
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_menu-ordering-settings@npm:1.0.29":
+  version: 1.0.29
+  resolution: "@wix/auto_sdk_restaurants_menu-ordering-settings@npm:1.0.29"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/9dd1cd4c4030ed9e80cce403e6d96db99feb5c729b7ad78c5f6ba6be1c06511258eff00fbfdf144ee748951d5f15f4aed2103baa487256308167559a60bfe770
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_menus@npm:1.0.37":
+  version: 1.0.37
+  resolution: "@wix/auto_sdk_restaurants_menus@npm:1.0.37"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/fe8d8e6aa37c498e51054749de4553141f7375d0f1e074d1635cf1adbd4cfa3ed3f3c93f7e212badc84f62b34ffc3ebdf6ace286e5e3806966fcf8faf7db3a8f
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_operation-groups@npm:1.0.32":
+  version: 1.0.32
+  resolution: "@wix/auto_sdk_restaurants_operation-groups@npm:1.0.32"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/e6e364102694c8002882efd61cd9f2c8caf4fe641c3bcf223dce24694f86e2e27e7b9aace58e66227da27f86203318513bbdd96b1c4a057d4d8d76d204dda061
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_operations@npm:1.0.52":
+  version: 1.0.52
+  resolution: "@wix/auto_sdk_restaurants_operations@npm:1.0.52"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/199c61608426b1fb5dd65893c6c2a883512754be55883859ece44fb87c24930bd3e57cfa207acc69fcc82f660cda17e78e3b78eb4ffa2048a2227e31a273cad4
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_order-pacing-order@npm:1.0.19":
+  version: 1.0.19
+  resolution: "@wix/auto_sdk_restaurants_order-pacing-order@npm:1.0.19"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/7365726c7a873bcb43c3458a84f9854e2c9ebec85d0962f297387a3e94b12621b5282e13d54ab64481caacfcd066ea309ae5ab6613d9ec5686e5c0201a3af3d6
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_order-pacing-policy@npm:1.0.23":
+  version: 1.0.23
+  resolution: "@wix/auto_sdk_restaurants_order-pacing-policy@npm:1.0.23"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/ade888f80667919e1c7d1e4cbb67bec42e1837c99edfa20ef8b707931f3b6fc21602c61d46272eeb7678803d128433faad91bb02e903183b4dfe974f7cf633dd
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_order-settings@npm:1.0.19":
+  version: 1.0.19
+  resolution: "@wix/auto_sdk_restaurants_order-settings@npm:1.0.19"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/85883d219292e0c7cbacab16d6a3f88dafee9c9f0442d92cb30e5854baa0f3ff73d734441c012a3ab968de183706fb406124cfe20d9b782a1922c9be39f2effd
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_orders@npm:1.0.26":
+  version: 1.0.26
+  resolution: "@wix/auto_sdk_restaurants_orders@npm:1.0.26"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/2974f077a5ac91228d33a48f527e96144e0393d0454914379d387541b22f84f973ac2c824021b80c5251f0a90530015634edb0329f61c7ec46cb2c19ab098391
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_pos-tpa@npm:1.0.22":
+  version: 1.0.22
+  resolution: "@wix/auto_sdk_restaurants_pos-tpa@npm:1.0.22"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/98b93510ae3bc03eee7fccf3cefcd63eb85ebaadcf7b769ccfd6b96ec03f17d0ba6bee9b072697b413963f448365f20c38116f06a50818452de3689404a1f41f
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_restaurant-locations@npm:1.0.19":
+  version: 1.0.19
+  resolution: "@wix/auto_sdk_restaurants_restaurant-locations@npm:1.0.19"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/a3123c49ff4b7fe4e9c9ce391864e3178d0aa25769eb41f4b3aa2dc395d5eb21db3881750897ac8aad357d5a8341f014cace568633bc19dbb8ec0fb8e2761488
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_sections@npm:1.0.39":
+  version: 1.0.39
+  resolution: "@wix/auto_sdk_restaurants_sections@npm:1.0.39"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/33f5cb1ae01d5dc3ab42f05270ecd17e94c5b7471d5c77efbcacf5cb436f5a182d8f54116194c1f3fdd7bab9a908646cd638bee2d92f41b5ee2e642f80dceabc
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_restaurants_service-fees@npm:1.0.26":
+  version: 1.0.26
+  resolution: "@wix/auto_sdk_restaurants_service-fees@npm:1.0.26"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/204a0f196028e488b5a8a0e7d2367917f89a73b2da4c6968267fdd8818729500229417e66fb5ef68929d6c006f1d2bce89a664121e649cc0e54ece4b44f7c60e
+  languageName: node
+  linkType: hard
+
 "@wix/auto_sdk_seo_robots-txt@npm:1.0.6":
   version: 1.0.6
   resolution: "@wix/auto_sdk_seo_robots-txt@npm:1.0.6"
@@ -5618,6 +5848,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.1.0"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/auto_sdk_restaurants_items": "npm:^1.0.48"
+    "@wix/headless-media": "workspace:*"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/redirects": "npm:^1.0.0"
+    "@wix/restaurants": "npm:^1.0.396"
+    "@wix/sdk": "npm:^1.15.24"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  peerDependencies:
+    "@wix/headless-components": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@wix/headless-seo@npm:0.0.10":
   version: 0.0.10
   resolution: "@wix/headless-seo@npm:0.0.10"
@@ -5890,6 +6147,48 @@ __metadata:
   dependencies:
     "@wix/auto_sdk_redirects_redirects": "npm:1.0.21"
   checksum: 10c0/85b104b0c7a1bdf91035e22f0cc2a402a0bf6ac69c8d9d8e6360bf6c3df41f33fa8469fe4c6878b29852877510dc3d037b585d59cc910ce8d554ab93d73684f0
+  languageName: node
+  linkType: hard
+
+"@wix/restaurants@npm:^1.0.396":
+  version: 1.0.396
+  resolution: "@wix/restaurants@npm:1.0.396"
+  dependencies:
+    "@wix/auto_sdk_restaurants_availability-exceptions": "npm:1.0.29"
+    "@wix/auto_sdk_restaurants_catalogs": "npm:1.0.34"
+    "@wix/auto_sdk_restaurants_discount": "npm:1.0.29"
+    "@wix/auto_sdk_restaurants_fulfillemt-methods": "npm:1.0.21"
+    "@wix/auto_sdk_restaurants_fulfillment-methods": "npm:1.0.37"
+    "@wix/auto_sdk_restaurants_item-labels": "npm:1.0.36"
+    "@wix/auto_sdk_restaurants_item-modifier-groups": "npm:1.0.38"
+    "@wix/auto_sdk_restaurants_item-modifiers": "npm:1.0.36"
+    "@wix/auto_sdk_restaurants_item-variants": "npm:1.0.34"
+    "@wix/auto_sdk_restaurants_items": "npm:1.0.48"
+    "@wix/auto_sdk_restaurants_local-delivery-spi": "npm:1.0.26"
+    "@wix/auto_sdk_restaurants_menu-ordering-settings": "npm:1.0.29"
+    "@wix/auto_sdk_restaurants_menus": "npm:1.0.37"
+    "@wix/auto_sdk_restaurants_operation-groups": "npm:1.0.32"
+    "@wix/auto_sdk_restaurants_operations": "npm:1.0.52"
+    "@wix/auto_sdk_restaurants_order-pacing-order": "npm:1.0.19"
+    "@wix/auto_sdk_restaurants_order-pacing-policy": "npm:1.0.23"
+    "@wix/auto_sdk_restaurants_order-settings": "npm:1.0.19"
+    "@wix/auto_sdk_restaurants_orders": "npm:1.0.26"
+    "@wix/auto_sdk_restaurants_pos-tpa": "npm:1.0.22"
+    "@wix/auto_sdk_restaurants_restaurant-locations": "npm:1.0.19"
+    "@wix/auto_sdk_restaurants_sections": "npm:1.0.39"
+    "@wix/auto_sdk_restaurants_service-fees": "npm:1.0.26"
+    "@wix/restaurants_app-extensions": "npm:1.0.30"
+  checksum: 10c0/e0515492c7466c928c3ae74877a650d183ba68a7b24c172d684b589f0e078b52432e95a3550ac758c8399e5eda75ff6e9c24fe0fbfe2bd5b9b9ca4f1a6e947ff
+  languageName: node
+  linkType: hard
+
+"@wix/restaurants_app-extensions@npm:1.0.30":
+  version: 1.0.30
+  resolution: "@wix/restaurants_app-extensions@npm:1.0.30"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/7640422ed372142cef7a77614d36f6f2beac1b1a3b9be352d48e3f3ac4f985b6adf16b7f364bcd3bda0999ce331b6b4817ed2e67091aade3804e1595738640e4
   languageName: node
   linkType: hard
 
