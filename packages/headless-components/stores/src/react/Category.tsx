@@ -201,7 +201,7 @@ export const Trigger = React.forwardRef<
   HTMLButtonElement,
   CategoryTriggerProps
 >((props, ref) => {
-  const { asChild, children, onSelect, className } = props;
+  const { asChild, children, onSelect, className, ...otherProps } = props;
 
   const { category, isSelected, setSelectedCategory } = useCategoryContext();
 
@@ -235,6 +235,7 @@ export const Trigger = React.forwardRef<
         onSelect: handleSelect,
       }}
       content={category.name}
+      {...otherProps}
     >
       <button>{category.name}</button>
     </AsChildSlot>

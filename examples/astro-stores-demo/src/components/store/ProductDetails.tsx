@@ -185,15 +185,7 @@ export default function ProductDetails({
             <div className="space-y-4">
               <ProductActionButtons showBuyNow={true} />
 
-              <Product.ProductVariant.Stock
-                labels={{
-                  inStock: 'In Stock',
-                  limitedStock: 'In Stock',
-                  outOfStock: 'Out of Stock',
-                  preOrder: 'Available for Pre-order',
-                }}
-                className="flex items-center gap-2 data-[state='out-of-stock']:text-status-error data-[state='in-stock']:text-status-success data-[state='limited-stock']:text-status-success data-[state='pre-order']:text-status-success"
-              />
+              <Product.ProductVariant.Stock className="flex items-center gap-2 data-[state='out-of-stock']:text-status-error data-[state='in-stock']:text-status-success data-[state='limited-stock']:text-status-success data-[state='can-pre-order']:text-status-success" />
             </div>
 
             {/* Product Details */}
@@ -221,7 +213,7 @@ export default function ProductDetails({
       {/* Current Cart Summary */}
       {!isQuickView && (
         <div className="mt-12 pt-8 border-t border-brand-subtle">
-          <Cart.Summary>
+          <Cart.Summary asChild>
             {({ subtotal, totalItems }) => (
               <>
                 {totalItems > 0 && (

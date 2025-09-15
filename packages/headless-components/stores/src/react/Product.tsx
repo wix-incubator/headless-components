@@ -60,6 +60,16 @@ export function useModifiersContext(): ModifiersContextValue {
   return context;
 }
 
+/**
+ * Basic stock status type for product availability states
+ */
+export type BasicStockStatus = 'in-stock' | 'limited-stock' | 'out-of-stock';
+
+/**
+ * Extended stock status type including pre-order capability
+ */
+export type StockStatus = BasicStockStatus | 'can-pre-order';
+
 enum TestIds {
   productRoot = 'product-root',
   productName = 'product-name',
@@ -85,7 +95,7 @@ enum TestIds {
   productAddToCart = 'product-add-to-cart',
   productActionAddToCart = 'product-action-add-to-cart',
   productActionBuyNow = 'product-action-buy-now',
-  productActionPreOrder = 'product-action-pre-order',
+  productActionPreOrder = 'product-action-can-pre-order',
   productQuantity = 'product-quantity',
   productQuantityDecrement = 'product-quantity-decrement',
   productQuantityInput = 'product-quantity-input',
@@ -181,7 +191,7 @@ export interface NameProps {
  * ```
  */
 export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProduct.Name>
@@ -195,6 +205,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
             customElement={children}
             customElementProps={{ name }}
             content={name}
+            {...otherProps}
           >
             <div>{name}</div>
           </AsChildSlot>
@@ -245,7 +256,13 @@ export interface DescriptionProps {
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className, as = AsContent.Plain } = props;
+    const {
+      asChild,
+      children,
+      className,
+      as = AsContent.Plain,
+      ...otherProps
+    } = props;
 
     return (
       <CoreProduct.Description>
@@ -292,6 +309,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
               customElement={children}
               customElementProps={{ description }}
               content={description}
+              {...otherProps}
             >
               <div>{description}</div>
             </AsChildSlot>
@@ -342,7 +360,7 @@ export interface PriceProps {
  * ```
  */
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <SelectedVariant.Price>
@@ -360,6 +378,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
               formattedPrice: price,
             }}
             content={price}
+            {...otherProps}
           >
             <span>{price}</span>
           </AsChildSlot>
@@ -416,7 +435,7 @@ export const CompareAtPrice = React.forwardRef<
   HTMLElement,
   CompareAtPriceProps
 >((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const testId = TestIds.productCompareAtPrice;
 
   return (
@@ -440,6 +459,7 @@ export const CompareAtPrice = React.forwardRef<
               formattedPrice: compareAtPrice,
             }}
             content={compareAtPrice}
+            {...otherProps}
           >
             <span>{compareAtPrice}</span>
           </AsChildSlot>
@@ -487,7 +507,7 @@ export interface SlugProps {
  * ```
  */
 export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
   const testId = TestIds.productSlug;
 
   return (
@@ -502,6 +522,7 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
             customElement={children}
             customElementProps={{ slug }}
             content={slug}
+            {...otherProps}
           >
             <span>{slug}</span>
           </AsChildSlot>
@@ -545,7 +566,7 @@ export interface RawProps {
  * ```
  */
 export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
-  const { asChild, children, className } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreProduct.Content>
@@ -563,6 +584,7 @@ export const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
             data-testid={TestIds.productRaw}
             customElement={children}
             customElementProps={{ product }}
+            {...otherProps}
           />
         );
       }}
@@ -647,7 +669,7 @@ export interface StockProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+    status: BasicStockStatus;
     label: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -726,7 +748,7 @@ export const Stock = React.forwardRef<HTMLElement, StockProps>((props, ref) => {
         const finalLabels = { ...defaultLabels, ...labels };
 
         // Determine status based on availabilityStatus
-        let status: 'in-stock' | 'limited-stock' | 'out-of-stock';
+        let status: BasicStockStatus;
         let label: string;
 
         switch (availabilityStatus) {
@@ -1264,7 +1286,7 @@ export interface ProductQuantitySubComponentProps {
 
 /**
  * Product quantity selector component that integrates with the selected variant.
- * Provides quantity controls with stock validation and pre-order support.
+ * Provides quantity controls with stock validation and can-pre-order support.
  * Uses a compound component pattern with Root, Decrement, Input, Increment, and Raw sub-components.
  *
  * @component
@@ -1377,7 +1399,7 @@ export const ProductQuantity = React.forwardRef<
 
 /**
  * Product Quantity Decrement component.
- * Automatically handles disabled state based on stock and pre-order settings.
+ * Automatically handles disabled state based on stock and can-pre-order settings.
  * Must be used within Product.Quantity.Root.
  *
  * @component
@@ -1788,7 +1810,7 @@ export const ProductActionBuyNow = React.forwardRef<
 
 /**
  * Pre-Order action button component following the documented API.
- * Handles pre-order functionality when products are not in stock.
+ * Handles can-pre-order functionality when products are not in stock.
  */
 export const ProductActionPreOrder = React.forwardRef<
   HTMLButtonElement,
@@ -1858,7 +1880,7 @@ export const Action = {
 } as const;
 
 /**
- * Helper function to determine stock status and label based on availability and pre-order settings
+ * Helper function to determine stock status and label based on availability and can-pre-order settings
  */
 function getStockStatusMessage(
   inStock: boolean,
@@ -1871,13 +1893,13 @@ function getStockStatusMessage(
     preOrder: string;
   },
 ): {
-  status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'pre-order';
+  status: StockStatus;
   label: string;
 } {
   // Pre-order takes precedence
-  if (isPreOrderEnabled) {
+  if (isPreOrderEnabled && !inStock) {
     return {
-      status: 'pre-order',
+      status: 'can-pre-order',
       label: labels.preOrder,
     };
   }
@@ -1917,7 +1939,7 @@ export interface ProductVariantStockProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    status: 'in-stock' | 'limited-stock' | 'out-of-stock' | 'pre-order';
+    status: StockStatus;
     label: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -1930,14 +1952,14 @@ export interface ProductVariantStockProps {
     limitedStock?: string;
     /** Label for out of stock state */
     outOfStock?: string;
-    /** Label for pre-order state */
+    /** Label for can-pre-order state */
     preOrder?: string;
   };
 }
 
 /**
  * Displays the selected variant stock status with customizable rendering and labels,
- * including pre-order support. Similar to Product.Stock but for the selected variant.
+ * including can-pre-order support. Similar to Product.Stock but for the selected variant.
  *
  * @component
  * @example
@@ -1972,9 +1994,9 @@ export interface ProductVariantStockProps {
  *     <div
  *       ref={ref}
  *       {...props}
- *       className="flex items-center gap-2 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600 data-[state='pre-order']:text-blue-600"
+ *       className="flex items-center gap-2 data-[state='in-stock']:text-green-600 data-[state='limited-stock']:text-yellow-600 data-[state='out-of-stock']:text-red-600 data-[state='can-pre-order']:text-blue-600"
  *     >
- *       <div className="w-3 h-3 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500 data-[state='pre-order']:bg-blue-500" />
+ *       <div className="w-3 h-3 rounded-full data-[state='in-stock']:bg-green-500 data-[state='limited-stock']:bg-yellow-500 data-[state='out-of-stock']:bg-red-500 data-[state='can-pre-order']:bg-blue-500" />
  *       <span className="text-sm font-medium">
  *         {label}
  *       </span>

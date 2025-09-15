@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-ecom",
-  "version": "0.0.27",
+  "version": "0.0.30",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -45,11 +45,13 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@wix/auto_sdk_ecom_checkout": "^1.0.61",
     "@wix/auto_sdk_ecom_current-cart": "^1.0.56",
-    "@wix/headless-components": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/redirects": "^1.0.0",
     "@wix/sdk": "^1.15.24",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
+  },
+  "peerDependencies": {
+    "@wix/headless-components": "workspace:*"
   }
 }

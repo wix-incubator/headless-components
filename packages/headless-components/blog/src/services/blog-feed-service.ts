@@ -38,7 +38,7 @@ export const BlogFeedServiceDefinition = defineService<{
   sort: Signal<QueryPostsSort[]>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
-  totalPosts: number;
+  totalPosts: Signal<number>;
   isEmpty: () => boolean;
   hasNextPage: () => boolean;
   loadNextPage: () => Promise<void>;
@@ -75,10 +75,12 @@ export const BlogFeedService =
 
       let nextPageCursor: string | undefined = config.nextPageCursor;
 
-      const totalPosts = config.totalPostCount || 0;
+      const totalPostsSignal = signalsService.signal<number>(
+        config.totalPostCount || 0,
+      );
 
       const isEmpty = (): boolean => {
-        return !isLoadingSignal.get() && totalPosts === 0;
+        return !isLoadingSignal.get() && totalPostsSignal.get() === 0;
       };
 
       const hasNextPage = (): boolean => {
@@ -137,7 +139,7 @@ export const BlogFeedService =
         category: categorySignal,
         isLoading: isLoadingSignal,
         error: errorSignal,
-        totalPosts,
+        totalPosts: totalPostsSignal,
         isEmpty,
         hasNextPage,
         loadNextPage: loadNextPage,
@@ -234,7 +236,6 @@ async function fetchPosts(
     excludePostIds,
     postIds,
   } = params;
-
   let query = posts.queryPosts().limit(pageSize);
 
   if (skipTo) {

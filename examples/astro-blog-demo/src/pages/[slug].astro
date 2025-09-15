@@ -1,12 +1,16 @@
 ---
+import PostPage from '@/components/blog/PostPage';
+import RecentPostsSection from '@/components/blog/RecentPostsSection';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { KitchensinkLayout } from '@/layouts/KitchensinkLayout';
 import {
   loadBlogFeedServiceConfig,
   loadBlogPostServiceConfig,
 } from '@wix/headless-blog/services';
 import { SEO } from '@wix/headless-seo/react';
 import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import BlogPostPage from '../react-pages/blog/[slug]';
+
+import './theme.css';
 
 const { slug } = Astro.params;
 export const prerender = false;
@@ -15,7 +19,9 @@ if (!slug) {
   return Astro.redirect('/');
 }
 
-const blogPostServiceConfigResult = await loadBlogPostServiceConfig({ postSlug: slug});
+const blogPostServiceConfigResult = await loadBlogPostServiceConfig({
+  postSlug: slug,
+});
 
 if (blogPostServiceConfigResult.type === 'notFound') {
   return Astro.rewrite('/404');
@@ -44,11 +50,27 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
 <BaseLayout>
   <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />
 
-  <BlogPostPage
-    client:load
-    blogPostServiceConfig={blogPostServiceConfig}
-    recentPostsServiceConfig={recentPostsServiceConfig}
-    href={Astro.url.href}
-    slot="body"
-  />
+  <KitchensinkLayout>
+    <div class="bg-background min-h-screen">
+      <div class="space-y-14 px-6 py-12">
+        <div class="mx-auto max-w-3xl">
+          <PostPage
+            client:load
+            blogPostServiceConfig={blogPostServiceConfig}
+            href={Astro.url.href}
+            feedPageHref="/"
+            categoryPageBaseUrl="/category/"
+            dateLocale="en-US"
+          />
+        </div>
+        <RecentPostsSection
+          client:load
+          recentPostsServiceConfig={recentPostsServiceConfig}
+          postPageBaseUrl="/"
+          categoryPageBaseUrl="/category/"
+          dateLocale="en-US"
+        />
+      </div>
+    </div>
+  </KitchensinkLayout>
 </BaseLayout>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { type LineItem } from '../services/common-types.js';
-import { renderAsChild } from '../utils/asChild.js';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { WixMediaImage } from '@wix/headless-media/react';
 import * as SelectedOption from './SelectedOption.js';
 import { Item as CoreItem } from './core/CurrentCart.js';
@@ -28,7 +28,7 @@ export interface LineItemRootProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children: React.ReactNode;
+  children: AsChildChildren<{ item: LineItem }>;
   /** The line item data */
   item: LineItem;
   /** CSS classes to apply to the default element */
@@ -57,27 +57,19 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
       lineItem: item,
     };
 
-    const content = (
-      <LineItemContext.Provider value={contextValue}>
-        {children}
-      </LineItemContext.Provider>
-    );
-
-    if (asChild) {
-      const rendered = renderAsChild({
-        children: children as any,
-        props: { item },
-        ref,
-        content,
-        attributes: { 'data-testid': TestIds.lineItemRoot, ...otherProps },
-      });
-      if (rendered) return rendered;
-    }
-
     return (
-      <div ref={ref as any} data-testid={TestIds.lineItemRoot} {...otherProps}>
-        {content}
-      </div>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        data-testid={TestIds.lineItemRoot}
+        customElement={children}
+        customElementProps={{ item }}
+        {...otherProps}
+      >
+        <LineItemContext.Provider value={contextValue}>
+          <div>{children}</div>
+        </LineItemContext.Provider>
+      </AsChildSlot>
     );
   },
 );
@@ -100,14 +92,7 @@ export interface TitleProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          title: string;
-        }
-      >;
+  children?: AsChildChildren<{ title: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -144,28 +129,19 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
 
   return (
     <CoreItem item={lineItem}>
-      {({ title }) => {
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { title },
-            ref,
-            content: title,
-            attributes: { 'data-testid': TestIds.lineItemTitle, ...otherProps },
-          });
-          if (rendered) return rendered;
-        }
-
-        return (
-          <span
-            ref={ref as any}
-            data-testid={TestIds.lineItemTitle}
-            {...otherProps}
-          >
-            {title}
-          </span>
-        );
-      }}
+      {({ title }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          data-testid={TestIds.lineItemTitle}
+          customElement={children}
+          customElementProps={{ title }}
+          content={title}
+          {...otherProps}
+        >
+          <span>{title}</span>
+        </AsChildSlot>
+      )}
     </CoreItem>
   );
 });
@@ -177,13 +153,7 @@ Title.displayName = 'LineItem.Title';
  */
 export interface ImageProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<
-    HTMLImageElement,
-    {
-      src: string;
-      alt: string;
-    }
-  >;
+  children?: AsChildChildren<{ src: string; alt: string }>;
   className?: string;
   [key: string]: any;
 }
@@ -251,7 +221,10 @@ export interface QuantityProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components for quantity controls */
-  children: React.ReactNode;
+  children: AsChildChildren<{
+    quantity: number;
+    updateQuantity: (quantity: number) => void;
+  }>;
   /** How much to increment/decrement (default: 1) */
   steps?: number;
   /** CSS classes to apply to the default element */
@@ -309,17 +282,12 @@ export interface SelectedOptionsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?:
-    | React.ReactNode
-    | React.ForwardRefRenderFunction<
-        HTMLElement,
-        {
-          selectedOptions: Array<{
-            name: string;
-            value: string | { color: string };
-          }>;
-        }
-      >;
+  children?: AsChildChildren<{
+    selectedOptions: Array<{
+      name: string;
+      value: string | { color: string };
+    }>;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -368,28 +336,17 @@ export const SelectedOptions = React.forwardRef<
           return null;
         }
 
-        if (asChild) {
-          const rendered = renderAsChild({
-            children,
-            props: { selectedOptions },
-            ref,
-            content: React.isValidElement(children) ? children : null,
-            attributes: {
-              'data-testid': TestIds.lineItemSelectedOptions,
-              ...otherProps,
-            },
-          });
-          if (rendered) return rendered;
-        }
-
         return (
-          <div
-            ref={ref as any}
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
             data-testid={TestIds.lineItemSelectedOptions}
+            customElement={children}
+            customElementProps={{ selectedOptions }}
             {...otherProps}
           >
-            {React.isValidElement(children) ? children : null}
-          </div>
+            <div>{children}</div>
+          </AsChildSlot>
         );
       }}
     </CoreItem>
