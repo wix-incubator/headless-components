@@ -1,6 +1,6 @@
 # Plan Paywall Interface
 
-Component that restricts access to its content until the user buys a plan.
+Component that restricts access to its content until if member does not have access to the required plans.
 
 ## Architecture
 
@@ -14,60 +14,74 @@ The root container that provides plan paywall context to all child components.
 
 **Props**
 ```tsx
-interface PlanPaywallServiceConfig {
-  requiredPlanIds: string[];
-}
+type PlanPaywallServiceConfig = { requiredPlanIds: string[] } | { memberOrders: orders.Order[] };
 
-interface PlanPaywallRootProps {
-  planPaywallServiceConfig: PlanPaywallServiceConfig;
+interface RootProps {
   children: React.ReactNode;
+  planPaywallServiceConfig: PlanPaywallServiceConfig;
 }
 ```
 
 **Example**
 ```tsx
-<PlanPaywall.Root planPaywallServiceConfig={planPaywallServiceConfig}>
+// Restrict by specific plan ids
+<PlanPaywall.Root planPaywallServiceConfig={{ requiredPlanIds: ['planId'] }}>
+  {/* All plan paywall components */}
+</PlanPaywall.Root>
+
+// Load member orders externally
+const { memberOrders } = await loadPlanPaywallServiceConfig(['planId']);
+
+<PlanPaywall.Root planPaywallServiceConfig={{ memberOrders: memberOrders }}>
   {/* All plan paywall components */}
 </PlanPaywall.Root>
 ```
 
-### PlanPaywall.RestrictedContent
+### PlanPaywall.Paywall
 
 Container for the paywalled content.
+If member has access to the required plans, the content (children) will be displayed. Otherwise, the fallback will be displayed.
 
 **Props**
 ```tsx
-interface PlanPaywallRestrictedContentProps {
-  children: React.ReactNode;
-  // TODO: Make this its own headless component PlanPaywall.Action.BuyPlan
-  // fallback?: React.ReactNode;
+interface PaywallProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanPaywallData> | React.ReactNode;
+  loadingState?: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 ```
 
 **Example**
 ```tsx
-// Fallback component will receive `plan` as a prop
-<PlanPaywall.RestrictedContent requiredPlanIds={['planId']} fallback={
-  <Plan.Root planId={planId}>
-    <Plan.Button label="Buy to unlock content" />
-  </Plan.Root>
-}>
+// Default usage
+<PlanPaywall.Paywall loadingState={<div>Loading...</div>} fallback={<div>You need to buy a plan to access this content</div>}>
+  <div>Paywalled content</div>
+</PlanPaywall.Paywall>
 
-  {/* Paywalled content */}
+// With asChild
+<PlanPaywall.Paywall asChild>
+  {React.forwardRef(({isLoading, error, hasAccess}, ref) => {
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
 
-</PlanPaywall.RestrictedContent>
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    }
 
+    if (hasAccess) {
+      return <div>Paywalled content</div>;
+    }
 
-<PlanPaywall.RestrictedContent requiredPlanIds={['planid1', 'planid2']} fallback={
-  // Somehow display the plans or redirect
-}>
-
-  {/* Paywalled content */}
-
-</PlanPaywall.RestrictedContent>
+    return <div>You need to buy a plan to access this content</div>;
+  })}
+</PlanPaywall.Paywall>
 ```
 
-<!-- TODO: Define data-attributes for states in all components -->
 **Data Attributes**
-- `data-testid="plan-paywall-restricted-content"` - Applied to content container
+- `data-testid="plan-paywall-paywall"` - Applied to paywall element
+- `data-is-loading="true|false"` - Indicates loading state
+- `data-has-error="true|false"` - Indicates error state
+- `data-has-access="true|false"` - Indicates if member has access to the required plans
 ---

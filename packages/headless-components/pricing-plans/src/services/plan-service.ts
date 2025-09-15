@@ -19,7 +19,12 @@ export interface PlanDuration {
 
 export interface PlanWithEnhancedData extends plansV3.Plan {
   enhancedData: {
-    price: { amount: number; currency: string; formattedPrice: string };
+    price: {
+      pricingVariantId: string;
+      amount: number;
+      currency: string;
+      formattedPrice: string;
+    };
     additionalFees: {
       name: string;
       amount: number;
@@ -94,8 +99,13 @@ export function enhancePlanData(plan: plansV3.Plan): PlanWithEnhancedData {
 function formatPlanPrice(
   plan: plansV3.Plan,
 ): PlanWithEnhancedData['enhancedData']['price'] {
+  const pricingVariant = plan.pricingVariants?.[0];
+  if (!pricingVariant) {
+    throw new Error('No pricing variant found');
+  }
+
   const priceAmount = Number(
-    plan.pricingVariants?.[0]?.pricingStrategies?.[0]?.flatRate?.amount,
+    pricingVariant?.pricingStrategies?.[0]?.flatRate?.amount,
   );
 
   if (Number.isNaN(priceAmount)) {
@@ -109,6 +119,7 @@ function formatPlanPrice(
   }).format(priceAmount);
 
   return {
+    pricingVariantId: pricingVariant._id!,
     amount: priceAmount,
     currency: plan.currency!,
     formattedPrice,

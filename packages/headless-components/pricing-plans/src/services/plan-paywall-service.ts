@@ -1,0 +1,102 @@
+import {
+  defineService,
+  implementService,
+  ServiceAPI,
+} from '@wix/services-definitions';
+import {
+  ReadOnlySignal,
+  SignalsServiceDefinition,
+} from '@wix/services-definitions/core-services/signals';
+import { orders } from '@wix/pricing-plans';
+import { members } from '@wix/members';
+
+export const PlanPaywallServiceDefinition = defineService<{
+  isLoadingSignal: ReadOnlySignal<boolean>;
+  errorSignal: ReadOnlySignal<Error | null>;
+  hasAccessSignal: ReadOnlySignal<boolean>;
+}>('planPaywallService');
+
+export type PlanPaywallServiceConfig =
+  | { requiredPlanIds: string[] }
+  | { memberOrders: orders.Order[] };
+
+export type PlanPaywallServiceAPI = ServiceAPI<
+  typeof PlanPaywallServiceDefinition
+>;
+
+export const PlanPaywallService =
+  implementService.withConfig<PlanPaywallServiceConfig>()(
+    PlanPaywallServiceDefinition,
+    ({ getService, config }) => {
+      const signalsService = getService(SignalsServiceDefinition);
+      const isLoadingSignal = signalsService.signal<boolean>(false);
+      const errorSignal = signalsService.signal<Error | null>(null);
+      const configHasMemberOrders = 'memberOrders' in config;
+      const memberOrdersSignal = signalsService.signal<orders.Order[] | null>(
+        configHasMemberOrders ? config.memberOrders : null,
+      );
+      const hasAccessSignal = signalsService.computed(
+        () => !!memberOrdersSignal.get()?.length,
+      );
+
+      if (!configHasMemberOrders) {
+        loadMemberOrders(config.requiredPlanIds);
+      }
+
+      async function loadMemberOrders(requiredPlanIds: string[]) {
+        try {
+          isLoadingSignal.set(true);
+          errorSignal.set(null);
+          const isLoggedIn = await isMemberLoggedIn();
+          if (!isLoggedIn) {
+            memberOrdersSignal.set(null);
+            return;
+          }
+
+          const memberOrders = await fetchMemberOrders(requiredPlanIds);
+          memberOrdersSignal.set(memberOrders);
+        } catch (error) {
+          errorSignal.set(
+            error instanceof Error ? error : new Error(error as any),
+          );
+        } finally {
+          isLoadingSignal.set(false);
+        }
+      }
+
+      return { isLoadingSignal, errorSignal, hasAccessSignal };
+    },
+  );
+
+async function fetchMemberOrders(
+  planIds: string[],
+): Promise<orders.Order[] | null> {
+  try {
+    const memberOrders = await orders.memberListOrders({
+      planIds,
+      orderStatuses: ['ACTIVE'],
+    });
+
+    return memberOrders?.orders ?? null;
+  } catch (error) {
+    console.error('Error fetching member orders:', error);
+    throw error;
+  }
+}
+
+async function isMemberLoggedIn(): Promise<boolean> {
+  try {
+    const { member } = await members.getCurrentMember();
+    return !!member;
+  } catch (error) {
+    console.error('Error checking if member is logged in:', error);
+    return false;
+  }
+}
+
+export async function loadPlanPaywallServiceConfig(
+  requiredPlanIds: string[],
+): Promise<PlanPaywallServiceConfig> {
+  const memberOrders = await fetchMemberOrders(requiredPlanIds);
+  return { memberOrders: memberOrders ?? [] };
+}

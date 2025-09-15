@@ -47,7 +47,7 @@
     "@wix/headless-ecom": "workspace:^",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
-    "@wix/members": "^1.0.322",
+    "@wix/members": "^1.0.327",
     "@wix/pricing-plans": "^1.0.221",
     "@wix/redirects": "^1.0.0",
     "@wix/sdk": "^1.15.27",

@@ -13,3 +13,9 @@ export {
   loadPlanListServiceConfig,
   PlanListServiceConfig,
 } from './plan-list-service.js';
+export {
+  PlanPaywallService,
+  PlanPaywallServiceDefinition,
+  loadPlanPaywallServiceConfig,
+  PlanPaywallServiceConfig,
+} from './plan-paywall-service.js';

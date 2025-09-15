@@ -787,7 +787,10 @@ const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowProps>(
               catalogItemId: planSignal.get()!._id!,
               options: {
                 type: 'PLAN',
-                // TODO: planOptions will be needed once start date or forms can be supported
+                planOptions: {
+                  pricingVariantId:
+                    planSignal.get()!.enhancedData.price.pricingVariantId,
+                },
               },
             },
           },
