@@ -20,20 +20,20 @@ import { Faq } from '@wix/faq/react';
 ### FAQ Categories List
 
 ```tsx
-import { FaqCategories, FaqCategory, Faq } from '@wix/faq/react';
+import { FaqCategories, FaqList, Faq } from '@wix/faq/react';
 
 <FaqCategories.Root faqCategoriesConfig={config}>
   <FaqCategories.Categories>
     <FaqCategories.CategoryRepeater>
-      <FaqCategory.Name />
-      <FaqCategory.Faqs>
-        <FaqCategory.FaqRepeater>
+      <FaqList.Name />
+      <FaqList.Items>
+        <FaqList.FaqRepeater>
           <Faq.Item>
             <Faq.Name />
             <Faq.Answer />
           </Faq.Item>
-        </FaqCategory.FaqRepeater>
-      </FaqCategory.Faqs>
+        </FaqList.FaqRepeater>
+      </FaqList.Items>
     </FaqCategories.CategoryRepeater>
   </FaqCategories.Categories>
 </FaqCategories.Root>
@@ -101,15 +101,15 @@ import { FaqCategories, FaqCategory, Faq } from '@wix/faq/react';
 <FaqCategories.Root faqCategoriesConfig={config}>
   <FaqCategories.Categories emptyState={<EmptyCategories />}>
     <FaqCategories.CategoryRepeater>
-      <FaqCategory.Name />
-      <FaqCategory.Faqs emptyState={<EmptyFaqs />}>
-        <FaqCategory.FaqRepeater>
+      <FaqList.Name />
+      <FaqList.Items emptyState={<EmptyFaqs />}>
+        <FaqList.FaqRepeater>
           <Faq.Item>
             <Faq.Name />
             <Faq.Answer />
           </Faq.Item>
-        </FaqCategory.FaqRepeater>
-      </FaqCategory.Faqs>
+        </FaqList.FaqRepeater>
+      </FaqList.Items>
     </FaqCategories.CategoryRepeater>
   </FaqCategories.Categories>
 </FaqCategories.Root>
@@ -173,9 +173,9 @@ interface FaqCategoriesRootProps {
 }
 ```
 
-### FaqCategory.Root
+### FaqList.Root
 ```tsx
-interface FaqCategoryRootProps {
+interface FaqListRootProps {
   category: FaqCategory;
   children: React.ReactNode;
   className?: string;
@@ -249,7 +249,7 @@ Components include these `data-testid` attributes:
 - `faq-category` - Single category
 - `faq-category-root` - Category container
 - `faq-category-name` - Category name
-- `faq-category-faqs` - Category's FAQs list
+- `faq-category-items` - Category's Items list
 - `faq-category-faq` - Single FAQ in category
 
 ## Architecture
@@ -258,10 +258,10 @@ Components include these `data-testid` attributes:
 FaqCategories.Root (Service Provider)
 ├── FaqCategories.Categories (List Container)
     └── FaqCategories.CategoryRepeater (Repeater)
-        └── FaqCategory.Root (Entity + Service Provider)
-            ├── FaqCategory.Name (Entity Display)
-            └── FaqCategory.Faqs (List Container)
-                └── FaqCategory.FaqRepeater (Repeater)
+        └── FaqList.Root (Entity + Service Provider)
+            ├── FaqList.Name (Entity Display)
+            └── FaqList.Items (List Container)
+                └── FaqList.FaqRepeater (Repeater)
                     └── Faq.Root (Entity + Service Provider)
                         └── Faq.Item (Item Wrapper)
                             ├── Faq.Name (Entity Display)

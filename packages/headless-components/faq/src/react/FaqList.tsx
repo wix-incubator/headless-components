@@ -41,12 +41,12 @@ export interface FaqListRootProps {
  * // Default usage
  * <FaqList.Root category={category}>
  *   <FaqList.Name />
- *   <FaqList.Faqs>
+ *   <FaqList.Items>
  *     <FaqList.FaqRepeater>
  *       <Faq.Name />
  *       <Faq.Answer />
  *     </FaqList.FaqRepeater>
- *   </FaqList.Faqs>
+ *   </FaqList.Items>
  * </FaqList.Root>
  * ```
  */
@@ -167,9 +167,9 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 });
 
 /**
- * Props for FaqList Faqs component
+ * Props for FaqList Items component
  */
-export interface FaqsProps {
+export interface ItemsProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
 }
@@ -182,31 +182,31 @@ export interface FaqsProps {
  * @example
  * ```tsx
  * // Default usage
- * <FaqList.Faqs emptyState={<div>No FAQs available</div>}>
+ * <FaqList.Items emptyState={<div>No FAQs available</div>}>
  *   <FaqList.FaqRepeater>
  *     <Faq.Name />
  *     <Faq.Answer />
  *   </FaqList.FaqRepeater>
- * </FaqList.Faqs>
+ * </FaqList.Items>
  *
  * // Simple container usage
- * <FaqList.Faqs emptyState={<div>No FAQs</div>}>
+ * <FaqList.Items emptyState={<div>No FAQs</div>}>
  *   <div className="faqs-container">
  *     <FaqList.FaqRepeater>
  *       <Faq.Name />
  *       <Faq.Answer />
  *     </FaqList.FaqRepeater>
  *   </div>
- * </FaqList.Faqs>
+ * </FaqList.Items>
  * ```
  */
-export const Faqs = React.forwardRef<HTMLDivElement, FaqsProps>(
+export const Items = React.forwardRef<HTMLDivElement, ItemsProps>(
   (props, ref) => {
     const { children, emptyState } = props;
 
     return (
       <CoreFaqList.Items>
-        {({ hasFaqs, faqs }) => {
+        {({ hasFaqs }) => {
           if (!hasFaqs) {
             return emptyState || null;
           }
