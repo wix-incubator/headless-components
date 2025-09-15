@@ -27,7 +27,7 @@ export function Root({ children, planPaywallServiceConfig }: RootProps) {
 
 export interface PaywallData {
   isLoading: boolean;
-  error: Error | null;
+  error: string | null;
   hasAccess: boolean;
 }
 

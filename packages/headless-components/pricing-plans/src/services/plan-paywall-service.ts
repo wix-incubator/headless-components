@@ -12,7 +12,7 @@ import { members } from '@wix/members';
 
 export const PlanPaywallServiceDefinition = defineService<{
   isLoadingSignal: ReadOnlySignal<boolean>;
-  errorSignal: ReadOnlySignal<Error | null>;
+  errorSignal: ReadOnlySignal<string | null>;
   hasAccessSignal: ReadOnlySignal<boolean>;
 }>('planPaywallService');
 
@@ -31,7 +31,7 @@ export const PlanPaywallService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
       const isLoadingSignal = signalsService.signal<boolean>(false);
-      const errorSignal = signalsService.signal<Error | null>(null);
+      const errorSignal = signalsService.signal<string | null>(null);
       const memberOrdersSignal = signalsService.signal<orders.Order[] | null>(
         config.memberOrders ?? null,
       );
@@ -67,14 +67,20 @@ export const PlanPaywallService =
           memberOrdersSignal.set(memberOrders);
         } catch (error) {
           errorSignal.set(
-            error instanceof Error ? error : new Error(error as any),
+            error instanceof Error
+              ? error.message
+              : 'Failed to check member access',
           );
         } finally {
           isLoadingSignal.set(false);
         }
       }
 
-      return { isLoadingSignal, errorSignal, hasAccessSignal };
+      return {
+        isLoadingSignal,
+        errorSignal,
+        hasAccessSignal,
+      };
     },
   );
 

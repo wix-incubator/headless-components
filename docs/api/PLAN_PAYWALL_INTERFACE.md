@@ -29,21 +29,30 @@ interface RootProps {
 ```tsx
 // Restrict by specific plan ids
 <PlanPaywall.Root planPaywallServiceConfig={{ requiredPlanIds: ['planId'] }}>
-  {/* All plan paywall components */}
+  <PlanPaywall.Paywall>
+    <PlanPaywall.RestrictedContent>
+      <div>Paywalled content</div>
+    </PlanPaywall.RestrictedContent>
+    <PlanPaywall.Fallback>
+      <div>You need to buy a plan to access this content</div>
+    </PlanPaywall.Fallback>
+    <PlanPaywall.ErrorComponent>
+      <div>There was an error checking member access</div>
+    </PlanPaywall.ErrorComponent>
+  </PlanPaywall.Paywall>
 </PlanPaywall.Root>
 
 // Load member orders externally
 const { memberOrders } = await loadPlanPaywallServiceConfig(['planId']);
 
 <PlanPaywall.Root planPaywallServiceConfig={{ memberOrders: memberOrders, requiredPlanIds: ['planId'] }}>
-  {/* All plan paywall components */}
+  {/* Plan paywall components */}
 </PlanPaywall.Root>
 ```
 
 ### PlanPaywall.Paywall
 
-Container for the paywalled content.
-If member has access to the required plans, the content (children) will be displayed. Otherwise, the fallback will be displayed.
+Container for controlling access to the paywalled content.
 
 **Props**
 ```tsx
@@ -51,15 +60,14 @@ interface PaywallProps {
   asChild?: boolean;
   children: AsChildChildren<PlanPaywallData> | React.ReactNode;
   loadingState?: React.ReactNode;
-  fallback?: React.ReactNode;
 }
 ```
 
 **Example**
 ```tsx
 // Default usage
-<PlanPaywall.Paywall loadingState={<div>Loading...</div>} fallback={<div>You need to buy a plan to access this content</div>}>
-  <div>Paywalled content</div>
+<PlanPaywall.Paywall loadingState={<div>Loading...</div>}>
+  {/* Plan paywall components */}
 </PlanPaywall.Paywall>
 
 // With asChild
@@ -84,7 +92,71 @@ interface PaywallProps {
 
 **Data Attributes**
 - `data-testid="plan-paywall-paywall"` - Applied to paywall element
-- `data-is-loading="true|false"` - Indicates loading state
-- `data-has-error="true|false"` - Indicates error state
-- `data-has-access="true|false"` - Indicates if member has access to the required plans
 ---
+
+### PlanPaywall.RestrictedContent
+
+Component that displays the restricted content if the member has access to the required plans.
+
+**Props**
+```tsx
+interface RestrictedContentProps {
+  children: React.ReactNode;
+}
+```
+
+**Example**
+```tsx
+<PlanPaywall.RestrictedContent>
+  <div>Paywalled content</div>
+</PlanPaywall.RestrictedContent>
+```
+---
+
+### PlanPaywall.Fallback
+
+Component that displays the fallback content if the member does not have access to the required plans.
+
+**Props**
+```tsx
+interface FallbackProps {
+  children: React.ReactNode;
+}
+```
+
+**Example**
+```tsx
+<PlanPaywall.Fallback>
+  <div>You need to buy a plan to access this content</div>
+</PlanPaywall.Fallback>
+```
+---
+
+### PlanPaywall.ErrorComponent
+
+Component that displays the error content if there is an error checking member access
+
+**Props**
+```tsx
+interface ErrorComponentProps {
+  asChild?: boolean;
+  children: AsChildChildren<{ error: string }> | React.ReactNode;
+}
+```
+
+**Example**
+```tsx
+// With asChild
+<PlanPaywall.ErrorComponent asChild>
+  <div>There was an error checking member access</div>
+</PlanPaywall.ErrorComponent>
+
+// With asChild with react component
+<PlanPaywall.ErrorComponent asChild>
+  {React.forwardRef(({error, ...props}, ref) => (
+    <div ref={ref} {...props} className="text-red-600">
+      Error: {error}
+    </div>
+  ))}
+</PlanPaywall.ErrorComponent>
+```
