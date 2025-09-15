@@ -3,13 +3,17 @@ import {
   Control as ControlPrimitive,
   Event as EventPrimitive,
 } from '@wix/headless-events/react';
-import { type EventServiceConfig } from '@wix/headless-events/services';
+import {
+  type EventServiceConfig,
+  type FormServiceConfig,
+} from '@wix/headless-events/services';
 
 interface FormProps {
   eventServiceConfig: EventServiceConfig;
+  formServiceConfig: FormServiceConfig;
 }
 
-export function Form({ eventServiceConfig }: FormProps) {
+export function Form({ eventServiceConfig, formServiceConfig }: FormProps) {
   return (
     <div className="min-h-screen bg-surface-primary">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 max-w-5xl mx-auto p-15">
@@ -17,7 +21,10 @@ export function Form({ eventServiceConfig }: FormProps) {
           <h1 className="text-3xl font-light text-content-primary mb-6">
             Add your details
           </h1>
-          <FormPrimitive.Root eventServiceConfig={eventServiceConfig}>
+          <FormPrimitive.Root
+            eventServiceConfig={eventServiceConfig}
+            formServiceConfig={formServiceConfig}
+          >
             <FormPrimitive.Controls className="grid grid-cols-2 gap-6">
               <FormPrimitive.ControlRepeater>
                 <div className="col-span-2 [&:nth-child(-n+2)]:col-span-1">

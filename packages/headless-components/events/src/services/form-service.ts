@@ -14,7 +14,9 @@ export interface FormServiceAPI {
   submit: (formData: FormData) => Promise<void>;
 }
 
-export interface FormServiceConfig {}
+export interface FormServiceConfig {
+  postFlowUrl: string;
+}
 
 export const FormServiceDefinition = defineService<
   FormServiceAPI,
@@ -23,7 +25,7 @@ export const FormServiceDefinition = defineService<
 
 export const FormService = implementService.withConfig<FormServiceConfig>()(
   FormServiceDefinition,
-  ({ getService }) => {
+  ({ getService, config }) => {
     const eventService = getService(EventServiceDefinition);
     const signalsService = getService(SignalsServiceDefinition);
 
@@ -43,7 +45,8 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
           form: getFormResponse(event, formData),
           ...getRequiredRsvpData(event, formData),
         });
-        window.location.href = `/events/${event.slug}/thank-you`;
+
+        window.location.href = config.postFlowUrl;
       } catch (err) {
         error.set(getErrorMessage(err));
       } finally {

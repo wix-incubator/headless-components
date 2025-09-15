@@ -21,5 +21,8 @@ if (eventServiceConfigResult.type === 'notFound') {
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}
+    formServiceConfig={{
+      postFlowUrl: Astro.url.pathname.replace('form', 'thank-you')
+    }}
   />
 </BaseLayout>

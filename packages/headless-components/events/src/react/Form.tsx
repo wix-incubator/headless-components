@@ -10,6 +10,7 @@ import {
 import {
   FormService,
   FormServiceDefinition,
+  type FormServiceConfig,
 } from '../services/form-service.js';
 import { flattenFormControls } from '../utils/form.js';
 import * as Control from './Control.js';
@@ -22,17 +23,18 @@ enum TestIds {
 
 export interface RootProps {
   eventServiceConfig: EventServiceConfig;
+  formServiceConfig: FormServiceConfig;
   children: React.ReactNode;
 }
 
 export const Root = (props: RootProps): React.ReactNode => {
-  const { eventServiceConfig, children } = props;
+  const { eventServiceConfig, formServiceConfig, children } = props;
 
   return (
     <WixServices
       servicesMap={createServicesMap()
         .addService(EventServiceDefinition, EventService, eventServiceConfig)
-        .addService(FormServiceDefinition, FormService, {})}
+        .addService(FormServiceDefinition, FormService, formServiceConfig)}
     >
       {children}
     </WixServices>
