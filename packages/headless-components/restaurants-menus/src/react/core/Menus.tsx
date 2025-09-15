@@ -1,16 +1,11 @@
 import React from 'react';
-import {
-  useService,
-  WixServices,
-} from '@wix/services-manager-react';
+import { useService, WixServices } from '@wix/services-manager-react';
 import {
   MenusService,
   MenusServiceConfig,
   MenusServiceDefinition,
 } from '../../services/index.js';
-import {
-  createServicesMap,
-} from '@wix/services-manager';
+import { createServicesMap } from '@wix/services-manager';
 
 export interface AppProps {
   children: React.ReactNode;
