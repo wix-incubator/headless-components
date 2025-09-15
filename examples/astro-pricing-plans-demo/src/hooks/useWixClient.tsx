@@ -1,41 +1,12 @@
-import { createClient, OAuthStrategy } from '@wix/sdk';
-import { orders } from '@wix/pricing-plans';
 import { members } from '@wix/members';
-import { useCallback, useState } from 'react';
-import { redirects } from '@wix/redirects';
+import { useCallback } from 'react';
 
 const MEMBER_STORAGE_KEY = 'member-store';
 
 export function useWixClient() {
-  const [client] = useState(() =>
-    createClient({
-      modules: {
-        membersApi: members,
-        ordersApi: orders,
-        redirectsApi: redirects,
-      },
-      auth: OAuthStrategy({
-        clientId: import.meta.env.PUBLIC_WIX_CLIENT_ID || 'your_client_id_here',
-      }),
-    }),
-  );
-
-  const getMemberHasPlansAccess = useCallback(async (planIds: string[]) => {
-    try {
-      const { orders } = await client.ordersApi.memberListOrders({
-        planIds,
-        orderStatuses: ['ACTIVE'],
-      });
-
-      return !!orders?.length;
-    } catch (error) {
-      return false;
-    }
-  }, []);
-
   const getIsLoggedIn = useCallback(async () => {
     try {
-      const member = await client.membersApi.getCurrentMember();
+      const member = await members.getCurrentMember();
 
       return !!member;
     } catch (error) {
@@ -116,7 +87,6 @@ export function useWixClient() {
   }, []);
 
   return {
-    getMemberHasPlansAccess,
     getIsLoggedIn,
     login,
     logout,
