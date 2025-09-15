@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { ServicesListServiceConfig } from '@wix/headless-services/services';
-import { ServiceList, Service } from '@wix/headless-services/react';
+import type { ServicesListServiceConfig } from '@wix/headless-bookings/services';
+import { ServiceList, Service } from '@wix/headless-bookings/react';
 import type { services } from '@wix/bookings';
 import { Sort } from '../../components/styled-components/Sort';
 

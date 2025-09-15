@@ -1,5 +1,5 @@
 {
-  "name": "@wix/astro-services-demo",
+  "name": "@wix/astro-bookings-example",
   "version": "0.0.1",
   "scripts": {
     "dev": "wix dev",
@@ -27,7 +27,7 @@
     "@wix/bookings": "^1.0.0",
     "@wix/dashboard": "^1.3.35",
     "@wix/essentials": "^0.1.23",
-    "@wix/headless-services": "workspace:*",
+    "@wix/headless-bookings": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/image": "^1.403.0",
     "@wix/sdk": "^1.15.24",
