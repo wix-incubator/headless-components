@@ -1,4 +1,5 @@
 export {
+  PRICING_PLANS_APP_ID,
   PlanService,
   PlanServiceDefinition,
   loadPlanServiceConfig,

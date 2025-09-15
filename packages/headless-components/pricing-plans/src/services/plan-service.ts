@@ -7,6 +7,8 @@ import { plansV3 } from '@wix/pricing-plans';
 
 type ValidPeriod = Exclude<plansV3.PeriodWithLiterals, 'UNKNOWN_PERIOD'>;
 
+export const PRICING_PLANS_APP_ID = '1522827f-c56c-a5c9-2ac9-00f9e6ae12d3';
+
 export interface PlanRecurrence {
   count: number;
   period: ValidPeriod;

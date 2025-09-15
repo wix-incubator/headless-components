@@ -1,7 +1,11 @@
 import React from 'react';
 export { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import { PlanServiceConfig, PlanServiceDefinition } from '../services/index.js';
+import {
+  PlanServiceConfig,
+  PlanServiceDefinition,
+  PRICING_PLANS_APP_ID,
+} from '../services/index.js';
 import {
   Root as CoreRoot,
   Plan as CorePlan,
@@ -549,7 +553,7 @@ export const AdditionalFeeAmount = React.forwardRef<
 export type PlanRecurrenceData = RecurrenceData;
 
 interface RecurrenceProps {
-  children: React.ForwardRefRenderFunction<HTMLElement, PlanRecurrenceData>;
+  children: React.ForwardRefExoticComponent<PlanRecurrenceData>;
 }
 
 /**
@@ -559,22 +563,27 @@ interface RecurrenceProps {
  * @example
  * ```tsx
  * <Plan.Recurrence>
- *   {({ recurrence }, ref) => {
+ *   {React.forwardRef(({ recurrence }, ref) => {
  *     if (!recurrence) return null;
  *
  *     return <span ref={ref} className="text-content-secondary" data-testid="plan-recurrence">
  *       Renews every {recurrence.count} {recurrence.period}(s)
  *     </span>
- *   }}
+ *   })}
  * </Plan.Recurrence>
  * ```
- * @todo: Decide if forwardRef is necessary here
- * @todo: Decide if there's a better way to design a component that will only work with a provided child component
  */
 export const Recurrence = React.forwardRef<HTMLElement, RecurrenceProps>(
   ({ children }, ref) => (
     <CoreRecurrence>
-      {({ recurrence }) => children({ recurrence }, ref)}
+      {({ recurrence }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild
+          customElement={children}
+          customElementProps={recurrence}
+        />
+      )}
     </CoreRecurrence>
   ),
 );
@@ -582,7 +591,7 @@ export const Recurrence = React.forwardRef<HTMLElement, RecurrenceProps>(
 export type PlanDurationData = DurationData;
 
 interface DurationProps {
-  children: React.ForwardRefRenderFunction<HTMLElement, PlanDurationData>;
+  children: React.ForwardRefExoticComponent<PlanDurationData>;
 }
 
 /**
@@ -592,19 +601,28 @@ interface DurationProps {
  * @example
  * ```tsx
  * <Plan.Duration>
- *   {({ duration }, ref) => {
+ *   {React.forwardRef(({ duration }, ref) => {
  *     if (!duration) return <span>Valid until canceled</span>;
  *
  *     return <span ref={ref} className="text-sm" data-testid="plan-duration">
  *       Valid for {duration.count} {duration.period}(s)
  *     </span>
- *   }}
+ *   })}
  * </Plan.Duration>
  * ```
  */
 export const Duration = React.forwardRef<HTMLElement, DurationProps>(
   ({ children }, ref) => (
-    <CoreDuration>{({ duration }) => children({ duration }, ref)}</CoreDuration>
+    <CoreDuration>
+      {({ duration }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild
+          customElement={children}
+          customElementProps={duration}
+        />
+      )}
+    </CoreDuration>
   ),
 );
 
@@ -745,9 +763,6 @@ export const PerkItem = React.forwardRef<HTMLElement, PerkItemProps>(
 type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
 
 /**
- * @todo: Check that examples work as expected
- * @todo: Perhaps implement with `asChild` for fine tuning for plan purchases?
- *
  * Initiates the plan purchase flow.
  *
  * @component
@@ -782,8 +797,7 @@ const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowProps>(
           {
             quantity: 1,
             catalogReference: {
-              // TODO: Move to a constant
-              appId: '1522827f-c56c-a5c9-2ac9-00f9e6ae12d3',
+              appId: PRICING_PLANS_APP_ID,
               catalogItemId: planSignal.get()!._id!,
               options: {
                 type: 'PLAN',
@@ -796,7 +810,6 @@ const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowProps>(
           },
         ]}
         ref={ref}
-        // TODO: Check that this is not overwritten
         data-testid={PlanTestId.ActionBuyNow}
       />
     );
