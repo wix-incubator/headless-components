@@ -210,8 +210,10 @@ export interface RsvpButtonProps {
 }
 
 export interface RsvpButtonRenderProps {
-  /** Event data for RSVP */
-  event: Event;
+  /** Event slug */
+  eventSlug: string;
+  /** Is event ticketed */
+  ticketed: boolean;
 }
 
 /**
@@ -222,8 +224,10 @@ export interface RsvpButtonRenderProps {
 export function RsvpButton(props: RsvpButtonProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
   const event = eventService.event.get();
+  const eventSlug = event.slug!;
+  const ticketed = event.registration?.type === 'TICKETING';
 
-  return props.children({ event });
+  return props.children({ eventSlug, ticketed });
 }
 
 export interface AddToGoogleCalendarProps {

@@ -11,12 +11,16 @@ interface EventDetailsPageProps {
   eventServiceConfig: EventServiceConfig;
   eventListServiceConfig: EventListServiceConfig;
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
+  eventsPagePath: string;
+  formPagePath: string;
 }
 
 export default function EventDetailsPage({
   eventServiceConfig,
   eventListServiceConfig,
   ticketDefinitionListServiceConfig,
+  eventsPagePath,
+  formPagePath,
 }: EventDetailsPageProps) {
   return (
     <KitchensinkLayout>
@@ -25,6 +29,8 @@ export default function EventDetailsPage({
           eventServiceConfig={eventServiceConfig}
           eventListServiceConfig={eventListServiceConfig}
           ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+          eventsPagePath={eventsPagePath}
+          formPagePath={formPagePath}
         />
       </div>
     </KitchensinkLayout>

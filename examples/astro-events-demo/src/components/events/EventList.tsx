@@ -6,9 +6,13 @@ import { type EventListServiceConfig } from '@wix/headless-events/services';
 
 interface EventListProps {
   eventListServiceConfig: EventListServiceConfig;
+  eventsPagePath: string;
 }
 
-export function EventList({ eventListServiceConfig }: EventListProps) {
+export function EventList({
+  eventListServiceConfig,
+  eventsPagePath,
+}: EventListProps) {
   return (
     <EventListPrimitive.Root eventListServiceConfig={eventListServiceConfig}>
       <EventListPrimitive.Events
@@ -41,14 +45,8 @@ export function EventList({ eventListServiceConfig }: EventListProps) {
               asChild
               className="btn-primary self-center font-light py-2 px-10 mt-auto"
             >
-              {({ event }) => (
-                <button
-                  onClick={() => {
-                    window.location.href = `/events/${event.slug}`;
-                  }}
-                >
-                  RSVP
-                </button>
+              {({ eventSlug }) => (
+                <a href={`${eventsPagePath}/${eventSlug}`}>RSVP</a>
               )}
             </EventPrimitive.RsvpButton>
           </div>

@@ -517,7 +517,7 @@ export interface RsvpButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ event: Event }>;
+  children?: AsChildChildren<{ eventSlug: string; ticketed: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
@@ -540,9 +540,9 @@ export interface RsvpButtonProps {
  *
  * // asChild with react component
  * <Event.RsvpButton asChild>
- *   {React.forwardRef(({ event, ...props }, ref) => (
+ *   {React.forwardRef(({ eventSlug, ticketed, ...props }, ref) => (
  *     <button ref={ref} {...props}>
- *       RSVP
+ *       {ticketed ? 'Buy Tickets' : 'RSVP'}
  *     </button>
  *   ))}
  * </Event.RsvpButton>
@@ -554,14 +554,15 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
 
     return (
       <CoreEvent.RsvpButton>
-        {({ event }) => (
+        {({ eventSlug, ticketed }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.eventRsvpButton}
+            data-ticketed={ticketed}
             customElement={children}
-            customElementProps={{ event }}
+            customElementProps={{ eventSlug, ticketed }}
             {...otherProps}
           >
             <button>{label}</button>

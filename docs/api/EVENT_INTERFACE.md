@@ -289,7 +289,7 @@ Displays the event RSVP button with customizable rendering.
 ```tsx
 interface RsvpButtonProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ event: Event }>;
+  children?: AsChildChildren<{ eventSlug: string; ticketed: boolean }>;
   className?: string;
   label?: string;
 }
@@ -308,9 +308,9 @@ interface RsvpButtonProps {
 
 // asChild with react component
 <Event.RsvpButton asChild>
-  {React.forwardRef(({ event, ...props }, ref) => (
+  {React.forwardRef(({ eventSlug, ticketed, ...props }, ref) => (
     <button ref={ref} {...props}>
-      {event.registration?.type === 'TICKETING' ? 'Buy Tickets' : 'RSVP'}
+      {ticketed ? 'Buy Tickets' : 'RSVP'}
     </button>
   ))}
 </Event.RsvpButton>
@@ -319,6 +319,7 @@ interface RsvpButtonProps {
 **Data Attributes**
 
 - `data-testid="event-rsvp-button"` - Applied to RSVP button element
+- `data-ticketed` - Is event ticketed
 
 ---
 
@@ -542,3 +543,4 @@ interface AddToIcsCalendarProps {
 | `data-ended`                                 | Event.Root                | Event status                         |
 | `data-sold-out`                              | Event.Root                | Event ticketing status               |
 | `data-registration-closed`                   | Event.Root                | Event registration status            |
+| `data-ticketed`                              | Event.RsvpButton          | Event type                           |

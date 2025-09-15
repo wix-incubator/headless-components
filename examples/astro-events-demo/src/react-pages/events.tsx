@@ -5,15 +5,20 @@ import { EventList } from '../components/events/EventList';
 
 interface EventsPageProps {
   eventListServiceConfig: EventListServiceConfig;
+  eventsPagePath: string;
 }
 
 export default function EventsPage({
   eventListServiceConfig,
+  eventsPagePath,
 }: EventsPageProps) {
   return (
     <KitchensinkLayout>
       <div className="max-w-7xl mx-auto p-10">
-        <EventList eventListServiceConfig={eventListServiceConfig} />
+        <EventList
+          eventListServiceConfig={eventListServiceConfig}
+          eventsPagePath={eventsPagePath}
+        />
       </div>
     </KitchensinkLayout>
   );

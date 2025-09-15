@@ -15,12 +15,16 @@ interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
   eventListServiceConfig: EventListServiceConfig;
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
+  eventsPagePath: string;
+  formPagePath: string;
 }
 
 export function EventDetails({
   eventServiceConfig,
   eventListServiceConfig,
   ticketDefinitionListServiceConfig,
+  eventsPagePath,
+  formPagePath,
 }: EventDetailsProps) {
   const currentEventId = eventServiceConfig.event._id;
   const otherUpcomingEvents = eventListServiceConfig.events
@@ -66,17 +70,9 @@ export function EventDetails({
             asChild
             className="inline-block btn-primary font-light py-3 px-8 mt-10"
           >
-            {({ event }) => (
-              <a
-                href={
-                  event.registration?.type === 'TICKETING'
-                    ? '#tickets'
-                    : `/events/${event.slug}/form`
-                }
-              >
-                {event.registration?.type === 'TICKETING'
-                  ? 'Buy Tickets'
-                  : 'RSVP'}
+            {({ ticketed }) => (
+              <a href={ticketed ? '#tickets' : formPagePath}>
+                {ticketed ? 'Buy Tickets' : 'RSVP'}
               </a>
             )}
           </EventPrimitive.RsvpButton>
@@ -212,6 +208,7 @@ export function EventDetails({
                 currentPage: 0,
                 totalPages: 1,
               }}
+              eventsPagePath={eventsPagePath}
             />
           </div>
         </div>
