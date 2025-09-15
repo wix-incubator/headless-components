@@ -212,27 +212,29 @@ export interface AnswerProps {
  * </Faq.Answer>
  * ```
  */
-export const Answer = React.forwardRef<HTMLElement, AnswerProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Answer = React.forwardRef<HTMLElement, AnswerProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreFaq.Answer>
-      {({ answer }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.faqAnswer}
-            customElement={children}
-            customElementProps={{ answer }}
-            content={answer}
-            {...otherProps}
-          >
-            <div>{answer}</div>
-          </AsChildSlot>
-        );
-      }}
-    </CoreFaq.Answer>
-  );
-});
+    return (
+      <CoreFaq.Answer>
+        {({ answer }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.faqAnswer}
+              customElement={children}
+              customElementProps={{ answer }}
+              content={answer}
+              {...otherProps}
+            >
+              <div>{answer}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreFaq.Answer>
+    );
+  },
+);

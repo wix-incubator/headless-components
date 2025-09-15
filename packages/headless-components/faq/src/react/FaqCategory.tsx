@@ -22,7 +22,6 @@ enum TestIds {
   faqCategoryFaq = 'faq-category-faq',
 }
 
-
 /**
  * Props for FaqCategory Root component
  */
@@ -75,9 +74,7 @@ export function Root(props: FaqCategoryRootProps): React.ReactNode {
         data-category-id={category._id}
         data-category-name={category.title}
       >
-        <CategoryContext category={category}>
-          {children}
-        </CategoryContext>
+        <CategoryContext category={category}>{children}</CategoryContext>
       </div>
     </CoreFaqCategory.Root>
   );
@@ -104,7 +101,9 @@ function CategoryContext({ category, children }: CategoryContextProps) {
 function useCategoryData(): FaqCategory {
   const category = React.useContext(CategoryDataContext);
   if (!category) {
-    throw new Error('useCategoryData must be used within a FaqCategory.Root component');
+    throw new Error(
+      'useCategoryData must be used within a FaqCategory.Root component',
+    );
   }
   return category;
 }
@@ -201,30 +200,31 @@ export interface FaqsProps {
  * </FaqCategory.Faqs>
  * ```
  */
-export const Faqs = React.forwardRef<HTMLDivElement, FaqsProps>((props, ref) => {
-  const { children, emptyState } = props;
+export const Faqs = React.forwardRef<HTMLDivElement, FaqsProps>(
+  (props, ref) => {
+    const { children, emptyState } = props;
 
-  return (
-    <CoreFaqCategory.Faqs>
-      {({ hasFaqs, faqs }) => {
-        if (!hasFaqs) {
-          return emptyState || null;
-        }
+    return (
+      <CoreFaqCategory.Faqs>
+        {({ hasFaqs, faqs }) => {
+          if (!hasFaqs) {
+            return emptyState || null;
+          }
 
-        const attributes = {
-          'data-testid': TestIds.faqCategoryFaqs,
-        };
+          const attributes = {
+            'data-testid': TestIds.faqCategoryFaqs,
+          };
 
-        return (
-          <div {...attributes} ref={ref}>
-            {children}
-          </div>
-        );
-      }}
-    </CoreFaqCategory.Faqs>
-  );
-});
-
+          return (
+            <div {...attributes} ref={ref}>
+              {children}
+            </div>
+          );
+        }}
+      </CoreFaqCategory.Faqs>
+    );
+  },
+);
 
 /**
  * Props for FaqCategory FaqRepeater component

@@ -21,7 +21,6 @@ enum TestIds {
   faqCategory = 'faq-category',
 }
 
-
 /**
  * Props for the FaqCategories root component
  */
@@ -178,31 +177,37 @@ export interface CategoryRepeaterProps {
  * </FaqCategories.CategoryRepeater>
  * ```
  */
-export const CategoryRepeater = React.forwardRef<HTMLElement, CategoryRepeaterProps>(
-  (props, _ref) => {
-    const { children, faqConfigsByCategory } = props;
+export const CategoryRepeater = React.forwardRef<
+  HTMLElement,
+  CategoryRepeaterProps
+>((props, _ref) => {
+  const { children, faqConfigsByCategory } = props;
 
-    return (
-      <CoreFaqCategories.Categories>
-        {({ hasCategories, categories }) => {
-          if (!hasCategories) return null;
+  return (
+    <CoreFaqCategories.Categories>
+      {({ hasCategories, categories }) => {
+        if (!hasCategories) return null;
 
-          return (
-            <>
-              {categories.map((category: FaqCategory) => (
-                <FaqCategoryComponents.Root
-                  key={category._id}
-                  category={category}
-                  faqConfig={faqConfigsByCategory?.[category._id || ''] || { faqs: [], categoryId: category._id }}
-                  data-testid={TestIds.faqCategory}
-                >
-                  {children}
-                </FaqCategoryComponents.Root>
-              ))}
-            </>
-          );
-        }}
-      </CoreFaqCategories.Categories>
-    );
-  },
-);
+        return (
+          <>
+            {categories.map((category: FaqCategory) => (
+              <FaqCategoryComponents.Root
+                key={category._id}
+                category={category}
+                faqConfig={
+                  faqConfigsByCategory?.[category._id || ''] || {
+                    faqs: [],
+                    categoryId: category._id,
+                  }
+                }
+                data-testid={TestIds.faqCategory}
+              >
+                {children}
+              </FaqCategoryComponents.Root>
+            ))}
+          </>
+        );
+      }}
+    </CoreFaqCategories.Categories>
+  );
+});

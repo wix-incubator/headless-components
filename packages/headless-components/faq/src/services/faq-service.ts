@@ -139,7 +139,10 @@ export async function loadFaqServiceConfig(
 ): Promise<FaqServiceConfig> {
   try {
     // Use query-based approach like the reference
-    let questionQuery = questionEntry.queryQuestionEntries({contentFormat: questionEntry.QueryQuestionEntriesRequestContentFormat.PLAIN_TEXT});
+    let questionQuery = questionEntry.queryQuestionEntries({
+      contentFormat:
+        questionEntry.QueryQuestionEntriesRequestContentFormat.PLAIN_TEXT,
+    });
 
     // Filter by category if specified
     if (categoryId) {
@@ -151,14 +154,16 @@ export async function loadFaqServiceConfig(
 
     // Transform and sort by sort order
     const transformedFaqs: FaqEntry[] = rawFaqs
-      .map(q => ({
+      .map((q) => ({
         _id: q._id,
         question: q.question,
         plainText: q.plainText,
         draftjs: q.draftjs,
         categoryId: q.categoryId,
         sortOrder: q.sortOrder,
-        labels: q.labels?.map((label: any) => label.title || '').filter(Boolean) || [],
+        labels:
+          q.labels?.map((label: any) => label.title || '').filter(Boolean) ||
+          [],
         visible: true, // Default to visible
       }))
       .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
@@ -168,7 +173,10 @@ export async function loadFaqServiceConfig(
       categoryId,
     };
   } catch (error) {
-    console.warn(`Failed to load FAQ entries for category ${categoryId}:`, error);
+    console.warn(
+      `Failed to load FAQ entries for category ${categoryId}:`,
+      error,
+    );
     // Return empty FAQs in case of error - graceful fallback
     return {
       faqs: [],
@@ -194,25 +202,29 @@ export async function loadAllFaqsByCategory(): Promise<
 > {
   try {
     // Use query-based approach
-    let questionQuery = questionEntry.queryQuestionEntries({contentFormat: questionEntry.QueryQuestionEntriesRequestContentFormat.PLAIN_TEXT});
+    let questionQuery = questionEntry.queryQuestionEntries({
+      contentFormat:
+        questionEntry.QueryQuestionEntriesRequestContentFormat.PLAIN_TEXT,
+    });
     const questionResult = await questionQuery.find();
     const rawFaqs = questionResult.items || [];
 
     // Transform questions
-    const allQuestions: FaqEntry[] = rawFaqs.map(q => ({
+    const allQuestions: FaqEntry[] = rawFaqs.map((q) => ({
       _id: q._id,
       question: q.question,
       plainText: q.plainText,
       draftjs: q.draftjs,
       categoryId: q.categoryId,
       sortOrder: q.sortOrder,
-      labels: q.labels?.map((label: any) => label.title || '').filter(Boolean) || [],
+      labels:
+        q.labels?.map((label: any) => label.title || '').filter(Boolean) || [],
       visible: true, // Default to visible
     }));
 
     // Group questions by category and sort within each category
     const faqsByCategory: Record<string, FaqEntry[]> = {};
-    allQuestions.forEach(faq => {
+    allQuestions.forEach((faq) => {
       const categoryId = faq.categoryId || 'uncategorized';
       if (!faqsByCategory[categoryId]) {
         faqsByCategory[categoryId] = [];
@@ -221,8 +233,10 @@ export async function loadAllFaqsByCategory(): Promise<
     });
 
     // Sort questions within each category
-    Object.keys(faqsByCategory).forEach(categoryId => {
-      faqsByCategory[categoryId].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+    Object.keys(faqsByCategory).forEach((categoryId) => {
+      faqsByCategory[categoryId].sort(
+        (a, b) => (a.sortOrder || 0) - (b.sortOrder || 0),
+      );
     });
 
     return faqsByCategory;
