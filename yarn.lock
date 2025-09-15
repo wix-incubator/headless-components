@@ -5456,6 +5456,8 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@wix/headless-components": "workspace:*"
   languageName: unknown
   linkType: soft
 
