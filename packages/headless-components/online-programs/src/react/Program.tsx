@@ -210,7 +210,7 @@ interface TitleProps {
  * ```
  */
 const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
-  const { asChild, className,children } = props;
+  const { asChild, className, children } = props;
 
   return (
     <CoreProgram.Title>
