@@ -114,11 +114,17 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 /**
  * Props for the Event Image component.
  */
-export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+export interface ImageProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Child components */
-  children?: React.ReactNode;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    src: string;
+    width?: number;
+    height?: number;
+    alt: string;
+  }>;
 }
 
 /**
