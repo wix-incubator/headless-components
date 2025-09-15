@@ -181,6 +181,8 @@ interface TitleProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{ title: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
@@ -208,7 +210,7 @@ interface TitleProps {
  * ```
  */
 const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
-  const { asChild, children } = props;
+  const { asChild, className,children } = props;
 
   return (
     <CoreProgram.Title>
@@ -217,6 +219,7 @@ const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
           <AsChildSlot
             ref={ref}
             asChild={asChild}
+            className={className}
             data-testid={TestIds.programTitle}
             customElement={children}
             customElementProps={{ title }}
