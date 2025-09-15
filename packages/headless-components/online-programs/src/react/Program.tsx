@@ -19,6 +19,7 @@ enum TestIds {
   programInstructors = 'program-instructors',
   programInstructorRepeater = 'program-instructor-repeater',
   programRaw = 'program-raw',
+  programId = 'program-id',
 }
 
 /**
@@ -116,6 +117,61 @@ const Raw = React.forwardRef<HTMLElement, RawProps>((props, ref) => {
 });
 
 Raw.displayName = 'Program.Raw';
+
+/**
+ * Props for Program.Id component
+ */
+interface IdProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ id: string }>;
+  className?: string;
+}
+
+/**
+ * Displays the program ID with customizable rendering following the documented API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Program.Id />
+ *
+ * // asChild with React component
+ * <Program.Id asChild>
+ *   {React.forwardRef(({ id }, ref) => (
+ *     <a ref={ref} href={`/program/${id}`}>
+ *       View Program
+ *     </a>
+ *   ))}
+ * </Program.Id>
+ * ```
+ */
+const Id = React.forwardRef<HTMLElement, IdProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreProgram.Id>
+      {({ id }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.programId}
+            customElement={children}
+            customElementProps={{ id }}
+            content={id}
+            {...otherProps}
+          >
+            <span>{id}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreProgram.Id>
+  );
+});
+
+Id.displayName = 'Program.Id';
 
 /**
  * Props for Program.Title component
@@ -723,6 +779,7 @@ InstructorRepeater.displayName = 'Program.InstructorRepeater';
 export const Program = {
   Root,
   Raw,
+  Id,
   Title,
   Image,
   DurationInDays,

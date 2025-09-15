@@ -409,6 +409,54 @@ export function SectionCount(props: ProgramSectionCountProps) {
 }
 
 /**
+ * Props for Program.Id headless component
+ */
+export interface ProgramIdProps {
+  /** Render prop function that receives program ID data */
+  children: (props: ProgramIdRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for Program.Id component
+ */
+export interface ProgramIdRenderProps {
+  /** Program ID */
+  id: string;
+}
+
+/**
+ * Headless component for program ID display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramIdDisplay() {
+ *   return (
+ *     <Program.Id>
+ *       {({ id }) => (
+ *         <a href={`/program/${id}`}>
+ *           View Program
+ *         </a>
+ *       )}
+ *     </Program.Id>
+ *   );
+ * }
+ * ```
+ */
+export function Id(props: ProgramIdProps) {
+  const service = useService(ProgramServiceDefinition);
+
+  const program = service.program.get();
+  const id = program._id!;
+
+  return props.children({
+    id,
+  });
+}
+
+/**
  * Props for ProgramInstructors headless component
  */
 export interface ProgramInstructorsProps {

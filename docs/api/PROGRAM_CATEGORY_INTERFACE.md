@@ -53,6 +53,7 @@ Displays the category ID with customizable rendering.
 interface CategoryIdProps {
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<HTMLElement, { id: string }>;
+  className?: string;
 }
 ```
 
@@ -83,6 +84,7 @@ interface ProgramCategoryLabelProps {
       label: string;
     }
   >;
+  className?: string;
 }
 ```
 

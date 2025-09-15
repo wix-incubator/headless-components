@@ -7,6 +7,7 @@ A comprehensive, composable, and headless API for rendering Online Program entit
 - [Components](#components)
   - [Program.Root](#programroot)
   - [Program.Raw](#programraw)
+  - [Program.Id](#programid)
   - [Program.Title](#programtitle)
   - [Program.Description](#programdescription)
   - [Program.Image](#programimage)
@@ -85,6 +86,47 @@ interface ProgramRawProps {
     ))}
   </Program.Raw>
 </Program.Root>
+```
+
+---
+
+### Program.Id
+
+Displays the program ID with customizable rendering following the documented API.
+
+**Props**
+
+```tsx
+interface ProgramIdProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      id: string;
+    }
+  >;
+  className?: string;
+}
+```
+
+**Data Attributes**
+
+- `data-testid="program-id"` - Applied to program ID element
+
+**Example**
+
+```tsx
+// Default usage
+<Program.Id />
+
+// asChild with React component
+<Program.Id asChild>
+  {React.forwardRef(({ id }, ref) => (
+    <a ref={ref} href={`/program/${id}`}>
+      View Program
+    </a>
+  ))}
+</Program.Id>
 ```
 
 ---
@@ -735,14 +777,45 @@ function DefaultProgramCard(props) {
 
 ```tsx
 function AdvancedProgramCard(props) {
-  const { category } = props;
+  const { program } = props;
 
   return (
     <Program.Root program={program}>
+      <Program.Id asChild>
+        {({ id }, ref) => (
+          <a ref={ref} href={`/program/${id}`} className="text-sm text-gray-500">
+            Program ID: {id}
+          </a>
+        )}
+      </Program.Id>
       <Program.Title asChild>{({ title }) => <h1>{title}</h1>}</Program.Title>
       <Program.Description asChild>
         {({ description }) => <p>{description}</p>}
       </Program.Description>
+    </Program.Root>
+  );
+}
+```
+
+### Program listing with links
+
+```tsx
+function ProgramListItem(props) {
+  const { program } = props;
+
+  return (
+    <Program.Root program={program}>
+      <div className="program-card">
+        <Program.Id asChild>
+          {({ id }, ref) => (
+            <a ref={ref} href={`/programs/${id}`} className="program-link">
+              <Program.Title />
+            </a>
+          )}
+        </Program.Id>
+        <Program.Description />
+        <Program.Price />
+      </div>
     </Program.Root>
   );
 }

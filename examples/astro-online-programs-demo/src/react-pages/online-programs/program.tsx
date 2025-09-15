@@ -72,6 +72,9 @@ export default function OnlineProgramPage({
       </Program.Price>
       <Program.Image />
 
+      <h2>Program ID</h2>
+      <Program.Id />
+
       <h2>Program Raw</h2>
       <Program.Raw asChild>
         {({ program, ...props }, ref) => (
