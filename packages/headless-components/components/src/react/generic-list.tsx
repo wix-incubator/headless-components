@@ -1,9 +1,6 @@
 import React from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 
-/** List display variants */
-export type ListVariant = 'list' | 'table' | 'grid';
-
 /** List item interface - generic item with id */
 export interface ListItem {
   id: string | number;
@@ -15,10 +12,6 @@ interface GenericListContextValue<T extends ListItem = ListItem> {
   hasMore: boolean;
   isLoading: boolean;
   onLoadMore?: () => void;
-  variant: ListVariant;
-  infinite: boolean;
-  onNextPage?: () => void;
-  onPreviousPage?: () => void;
 }
 
 const GenericListContext = React.createContext<GenericListContextValue | null>(
@@ -49,14 +42,6 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   hasMore?: boolean;
   /** Whether items are currently loading */
   isLoading?: boolean;
-  /** Display variant - affects layout structure (default: 'list') */
-  variant?: ListVariant;
-  /** Enable infinite scroll - automatically triggers onLoadMore when reaching the end (default: false) */
-  infinite?: boolean;
-  /** Function called to navigate to next page */
-  onNextPage?: () => void;
-  /** Function called to navigate to previous page */
-  onPreviousPage?: () => void;
   /** Children components - required */
   children: React.ReactNode;
   /** CSS classes */
@@ -121,10 +106,6 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       onLoadMore,
       hasMore = false,
       isLoading = false,
-      variant = 'list',
-      infinite = false,
-      onNextPage,
-      onPreviousPage,
       children,
       className,
       ...otherProps
@@ -140,21 +121,8 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
         hasMore,
         isLoading,
         onLoadMore,
-        variant,
-        infinite,
-        onNextPage,
-        onPreviousPage,
       }),
-      [
-        items,
-        hasMore,
-        isLoading,
-        onLoadMore,
-        variant,
-        infinite,
-        onNextPage,
-        onPreviousPage,
-      ],
+      [items, hasMore, isLoading, onLoadMore],
     );
 
     return (
@@ -162,11 +130,9 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
         <AsChildSlot
           ref={ref}
           className={className}
-          data-variant={variant}
           data-has-items={items.length > 0}
           data-is-loading={isLoading}
           data-has-more={hasMore}
-          data-infinite={infinite}
           customElement={children}
           {...otherProps}
         >
@@ -188,7 +154,7 @@ Root.displayName = 'GenericList.Root';
 export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
   (props, ref) => {
     const { emptyState, children, className, ...otherProps } = props;
-    const { items, variant } = useGenericListContext();
+    const { items } = useGenericListContext();
 
     if (!children) {
       throw new Error('GenericList.Items requires children');
@@ -205,7 +171,6 @@ export const Items = React.forwardRef<HTMLElement, GenericListItemsProps>(
       <AsChildSlot
         ref={ref}
         className={className}
-        data-variant={variant}
         data-empty={!hasItems}
         customElement={children}
         {...otherProps}

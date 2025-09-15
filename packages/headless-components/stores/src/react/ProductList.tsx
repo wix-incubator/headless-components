@@ -114,7 +114,6 @@ const RootContent = React.forwardRef<
       onLoadMore={() => productsListService.loadMore(10)}
       hasMore={productsListService.hasMoreProducts.get()}
       isLoading={productsListService.isLoading.get()}
-      variant="grid"
       className={className}
       ref={ref}
       data-testid={TestIds.productListRoot}

@@ -816,6 +816,14 @@ import { Filter } from '@wix/headless-components/react';
 
 ### GenericList.Root
 
+**TODO: the following features are missing:**
+
+- [ ] add `ListVariant` type definition and all variant-related functionality
+- [ ] add `variant` prop from GenericListRootProps interface
+- [ ] add `infinite` prop and infinite scroll functionality
+- [ ] add `onNextPage` and `onPreviousPage` pagination props
+- [ ] add `data-variant` and `data-infinite` data attributes
+
 Container for list components that renders items and supports multiple display variants, empty states, load more functionality, infinite scroll, pagination navigation, and totals display.
 
 **Type Definitions**
