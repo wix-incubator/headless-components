@@ -158,16 +158,14 @@ export const SectionsRepeater = React.forwardRef<
   const { sections } = useService(MenusServiceDefinition);
 
   const menuSections =
-    menu.sectionIds ??
-    []
+    (menu.sectionIds ?? [])
       .map((sectionId: string) =>
         sections.get().find((section) => section._id === sectionId),
       )
       .filter(
         (section: Section | undefined): section is Section =>
           section !== undefined,
-      ) ??
-    [];
+      ) ?? [];
 
   const hasSections = menuSections.length > 0;
 
