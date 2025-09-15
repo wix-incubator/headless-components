@@ -1,0 +1,45 @@
+---
+import {
+  loadEventServiceConfig,
+  loadEventListServiceConfig,
+  loadTicketDefinitionListServiceConfig,
+} from '@wix/headless-events/services';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import EventDetailsPage from '../../../react-pages/event-details';
+
+const { slug } = Astro.params;
+
+if (!slug || slug.includes('site-bi-navigation')) {
+  return Astro.redirect('/');
+}
+
+// Load initial data server-side
+const [eventServiceConfigResult, eventListServiceConfig] = await Promise.all([
+  loadEventServiceConfig(slug),
+  loadEventListServiceConfig(),
+]);
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+
+const ticketDefinitionListServiceConfig =
+  await loadTicketDefinitionListServiceConfig(
+    eventServiceConfigResult.config.event._id
+  );
+---
+
+<BaseLayout>
+  <title>Event Details</title>
+  <meta name="description" content="Event Details" />
+
+  <EventDetailsPage
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfigResult.config}
+    eventListServiceConfig={eventListServiceConfig}
+    ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+    eventsPagePath="/events"
+    formPagePath={`/events/${slug}/form`}
+  />
+</BaseLayout>

@@ -1,0 +1,171 @@
+import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import React from 'react';
+import {
+  PricingOptionService,
+  PricingOptionServiceDefinition,
+  type PricingOption,
+  type PricingOptionServiceConfig,
+} from '../../services/pricing-option-service.js';
+import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
+import { TicketDefinitionServiceDefinition } from '../../services/ticket-definition-service.js';
+
+export interface RootProps {
+  /** Child components that will have access to the pricing option service */
+  children: React.ReactNode;
+  /** Pricing option */
+  pricingOption: PricingOption;
+}
+
+/**
+ * PricingOption Root core component that provides pricing option service context.
+ *
+ * @component
+ */
+export function Root(props: RootProps): React.ReactNode {
+  const { pricingOption, children } = props;
+
+  const pricingOptionServiceConfig: PricingOptionServiceConfig = {
+    pricingOption,
+  };
+
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        PricingOptionServiceDefinition,
+        PricingOptionService,
+        pricingOptionServiceConfig,
+      )}
+    >
+      {children}
+    </WixServices>
+  );
+}
+
+export interface NameProps {
+  /** Render prop function */
+  children: (props: NameRenderProps) => React.ReactNode;
+}
+
+export interface NameRenderProps {
+  /** Pricing option name */
+  name: string;
+}
+
+/**
+ * PricingOption Name core component that provides pricing option name.
+ *
+ * @component
+ */
+export function Name(props: NameProps): React.ReactNode {
+  const pricingOptionService = useService(PricingOptionServiceDefinition);
+  const pricingOption = pricingOptionService.pricingOption.get();
+  const name = pricingOption.name!;
+
+  return props.children({ name });
+}
+
+export interface PricingProps {
+  /** Render prop function */
+  children: (props: PricingRenderProps) => React.ReactNode;
+}
+
+export interface PricingRenderProps {
+  /** Price */
+  price: number;
+  /** Price currency */
+  currency: string;
+}
+
+/**
+ * PricingOption Pricing core component that provides pricing data.
+ *
+ * @component
+ */
+export function Pricing(props: PricingProps): React.ReactNode {
+  const pricingOptionService = useService(PricingOptionServiceDefinition);
+  const pricingOption = pricingOptionService.pricingOption.get();
+
+  return props.children({
+    price: Number(pricingOption.price!.value),
+    currency: pricingOption.price!.currency!,
+  });
+}
+
+export interface QuantityProps {
+  /** Render prop function */
+  children: (props: QuantityRenderProps) => React.ReactNode;
+}
+
+export interface QuantityRenderProps {
+  /** Current quantity */
+  quantity: number;
+  /** Maximum quantity allowed */
+  maxQuantity: number;
+  /** Function to increment quantity */
+  increment: () => void;
+  /** Function to decrement quantity */
+  decrement: () => void;
+  /** Function to set specific quantity */
+  setQuantity: (quantity: number) => void;
+}
+
+/**
+ * PricingOption Quantity core component that provides quantity controls. Not rendered if sale hasn't started or if the ticket definition is sold out.
+ *
+ * @component
+ */
+export function Quantity(props: QuantityProps): React.ReactNode {
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+  const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+  const pricingOptionService = useService(PricingOptionServiceDefinition);
+  const pricingOption = pricingOptionService.pricingOption.get();
+  const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+  const pricingOptionId = pricingOption.optionId!;
+  const ticketDefinitionId = ticketDefinition._id!;
+
+  if (
+    ticketDefinition.saleStatus !== 'SALE_STARTED' ||
+    ticketDefinition.limitPerCheckout === 0
+  ) {
+    return null;
+  }
+
+  const quantity = ticketDefinitionListService.getCurrentSelectedQuantity(
+    ticketDefinitionId,
+    pricingOptionId,
+  );
+  const maxQuantity =
+    ticketDefinitionListService.getMaxQuantity(ticketDefinitionId);
+
+  const increment = () =>
+    ticketDefinitionListService.setQuantity({
+      ticketDefinitionId,
+      pricingOptionId,
+      quantity: quantity + 1,
+    });
+
+  const decrement = () =>
+    ticketDefinitionListService.setQuantity({
+      ticketDefinitionId,
+      pricingOptionId,
+      quantity: quantity - 1,
+    });
+
+  const setQuantity = (quantity: number) =>
+    ticketDefinitionListService.setQuantity({
+      ticketDefinitionId,
+      pricingOptionId,
+      quantity,
+    });
+
+  return props.children({
+    quantity,
+    maxQuantity,
+    increment,
+    decrement,
+    setQuantity,
+  });
+}
