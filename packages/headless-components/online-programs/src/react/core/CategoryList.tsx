@@ -15,7 +15,32 @@ export interface RootProps {
   categoryListConfig: CategoryListServiceConfig;
 }
 
-// TODO: Add example
+/**
+ * Root component that provides CategoryList service to its children.
+ * This component sets up the necessary service for managing category list.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { CategoryList } from '@wix/online-programs/components';
+ *
+ * function CategoryListPage(props) {
+ *  const { categories } = props;
+ *
+ *  return (
+ *    <CategoryList.Root categoryListConfig={{ categories }}>
+ *      <CategoryList.Categories>
+ *        <CategoryList.CategoryRepeater>
+ *          <Category.Label />
+ *          <Category.ID />
+ *        </CategoryList.CategoryRepeater>
+ *      </CategoryList.Categories>
+ *    </CategoryList.Root>
+ *  );
+ * }
+ * ```
+ */
 export function Root(props: RootProps): React.ReactNode {
   return (
     <WixServices

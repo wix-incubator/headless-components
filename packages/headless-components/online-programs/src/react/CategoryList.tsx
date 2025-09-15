@@ -22,7 +22,31 @@ interface CategoryListRootProps {
   categoryListConfig?: CategoryListServiceConfig;
 }
 
-// TODO: Add example
+/**
+ * Root component that provides the CategoryList service for rendering category lists.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { CategoryList } from '@wix/online-programs/components';
+ *
+ * function CategoryListPage(props) {
+ *  const { categories } = props;
+ *
+ *   return (
+ *     <CategoryList.Root categoryListConfig={{ categories }}>
+ *       <CategoryList.Categories>
+ *         <CategoryList.CategoryRepeater>
+ *           <Category.Label />
+ *           <Category.Id />
+ *         </CategoryList.CategoryRepeater>
+ *       </CategoryList.Categories>
+ *     </CategoryList.Root>
+ *   );
+ * }
+ * ```
+ */
 function Root(props: CategoryListRootProps) {
   const { children, categoryListConfig } = props;
 
@@ -36,6 +60,8 @@ function Root(props: CategoryListRootProps) {
     </CoreCategoryList.Root>
   );
 }
+
+Root.displayName = 'CategoryList.Root';
 
 /**
  * Props for CategoryList.Raw component
@@ -51,7 +77,26 @@ interface RawRenderProps {
   categories: categories.Category[];
 }
 
-// TODO: Add example
+/**
+ * Raw component that provides direct access to category list data.
+ * Should only be used when you need custom access to list data.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CategoryList.Root categoryListConfig={{ categories }}>
+ *  <CategoryList.Raw>
+ *    {({ categories }) => (
+ *      <div>
+ *        {categories.map((category) => (
+ *          <div key={category._id}>{category.label}</div>
+ *        ))}
+ *      </div>
+ *    )}
+ *  </CategoryList.Raw>
+ * </CategoryList.Root>
+ * ```
+ */
 const Raw = React.forwardRef<HTMLElement, RawProps>((props, _ref) => {
   const { children } = props;
 
@@ -62,13 +107,29 @@ const Raw = React.forwardRef<HTMLElement, RawProps>((props, _ref) => {
   return typeof children === 'function' ? children({ categories }) : children;
 });
 
+Raw.displayName = 'CategoryList.Raw';
+
 interface CategoriesProps {
   children: React.ReactNode;
   className?: string;
   emptyState?: React.ReactNode;
 }
 
-// TODO: Add example
+/**
+ * Container for the category list with empty state support.
+ * Follows List Container Level pattern.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CategoryList.Categories emptyState={<div>No categories found</div>}>
+ *   <CategoryList.CategoryRepeater>
+ *     <Category.Label />
+ *     <Category.Id />
+ *   </CategoryList.CategoryRepeater>
+ * </CategoryList.Categories>
+ * ```
+ */
 const Categories = React.forwardRef<HTMLElement, CategoriesProps>(
   (props, ref) => {
     const { children, className, emptyState } = props;
@@ -98,6 +159,8 @@ const Categories = React.forwardRef<HTMLElement, CategoriesProps>(
   },
 );
 
+Categories.displayName = 'CategoryList.Categories';
+
 /**
  * Props for CategoryList.CategoryRepeater component
  */
@@ -105,7 +168,20 @@ interface CategoryRepeaterProps {
   children: React.ReactNode;
 }
 
-// TODO: Add example
+/**
+ * Repeater component that renders Category.Root for each category.
+ * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CategoryList.CategoryRepeater>
+ *   <Category.Label />
+ *   <Category.Id />
+ * </CategoryList.CategoryRepeater>
+ * ```
+ */
 const CategoryRepeater = React.forwardRef<HTMLElement, CategoryRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
@@ -130,6 +206,8 @@ const CategoryRepeater = React.forwardRef<HTMLElement, CategoryRepeaterProps>(
     );
   },
 );
+
+CategoryRepeater.displayName = 'CategoryList.CategoryRepeater';
 
 /**
  * Compound component for CategoryList with all sub-components

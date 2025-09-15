@@ -10,7 +10,9 @@ A comprehensive program category list display component system built with compos
   - [CategoryList.Raw](#categorylistraw)
   - [CategoryList.Categories](#categorylistcategories)
   - [CategoryList.CategoryRepeater](#categorylistcategoryrepeater)
-- [Usage Examples](#usage-examples) _(soon...)_
+- [Usage Examples](#usage-examples)
+  - [Default usage](#default-usage)
+  - [Advanced usage](#advanced-usage)
 
 ## Architecture
 
@@ -119,4 +121,48 @@ interface CategoryListCategoryRepeaterProps {
 
 ## Usage Examples
 
-_(soon...)_
+### Default usage
+
+```tsx
+function DefaultCategoryCards(props) {
+  const { categories } = props;
+
+  return (
+    <CategoryList.Root categoryListConfig={{ categories }}>
+      <CategoryList.Categories>
+        <CategoryList.CategoryRepeater>
+          <Category.Id />
+          <Category.Label />
+        </CategoryList.CategoryRepeater>
+      </CategoryList.Categories>
+    </CategoryList.Root>
+  );
+}
+```
+
+### Advanced usage
+
+```tsx
+function AdvancedCategoryCards(props) {
+  const { categories } = props;
+
+  return (
+    <CategoryList.Root categoryListConfig={{ categories }}>
+      <CategoryList.Raw>
+        {({ categories }) => (
+          <div>
+            {categories.map((category) => (
+              <div key={category._id}>
+                <Category.Root category={category}>
+                  <Category.Id />
+                  <Category.Label />
+                </Category.Root>
+              </div>
+            ))}
+          </div>
+        )}
+      </CategoryList.Raw>
+    </CategoryList.Root>
+  );
+}
+```

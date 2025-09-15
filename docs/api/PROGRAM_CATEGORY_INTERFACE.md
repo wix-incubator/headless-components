@@ -9,7 +9,9 @@ A comprehensive program category display component system built with composable 
   - [Category.Root](#categoryroot)
   - [Category.Id](#categoryid)
   - [Category.Label](#categorylabel)
-- [Usage Examples](#usage-examples) _(soon...)_
+- [Usage Examples](#usage-examples)
+  - [Default usage](#default-usage)
+  - [Advanced usage](#advanced-usage)
 
 ## Architecture
 
@@ -111,4 +113,34 @@ interface ProgramCategoryLabelProps {
 
 ## Usage Examples
 
-_(soon...)_
+### Default usage
+
+```tsx
+function DefaultCategoryCard(props) {
+  const { category } = props;
+
+  return (
+    <Category.Root category={category}>
+      <Category.Id />
+      <Category.Label />
+    </Category.Root>
+  );
+}
+```
+
+### Advanced usage
+
+```tsx
+function AdvancedCategoryCard(props) {
+  const { category } = props;
+
+  return (
+    <Category.Root category={category}>
+      <Category.Id asChild>{({ id }) => <span>ID: {id}</span>}</Category.Id>
+      <Category.Label asChild>
+        {({ label }) => <span>Label: {label}</span>}
+      </Category.Label>
+    </Category.Root>
+  );
+}
+```

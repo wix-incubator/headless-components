@@ -10,7 +10,9 @@ A comprehensive program list display component system built with composable prim
   - [ProgramList.Raw](#programlistraw)
   - [ProgramList.Programs](#programlistprograms)
   - [ProgramList.ProgramRepeater](#programlistprogramrepeater)
-- [Usage Examples](#usage-examples) _(soon...)_
+- [Usage Examples](#usage-examples)
+  - [Default usage](#default-usage)
+  - [Advanced usage](#advanced-usage)
 
 ## Architecture
 
@@ -122,4 +124,48 @@ interface ProgramListProgramRepeaterProps {
 
 ## Usage Examples
 
-_(soon...)_
+### Default usage
+
+```tsx
+function DefaultProgramCards(props) {
+  const { programs } = props;
+
+  return (
+    <ProgramList.Root programListConfig={{ programs }}>
+      <ProgramList.Programs>
+        <ProgramList.ProgramRepeater>
+          <Program.Title />
+          <Program.Description />
+        </ProgramList.ProgramRepeater>
+      </ProgramList.Programs>
+    </ProgramList.Root>
+  );
+}
+```
+
+### Advanced usage
+
+```tsx
+function AdvancedProgramCards(props) {
+  const { programs } = props;
+
+  return (
+    <ProgramList.Root programListConfig={{ programs }}>
+      <ProgramList.Raw>
+        {({ programs }) => (
+          <div>
+            {programs.map((program) => (
+              <div key={program._id}>
+                <Program.Root program={program}>
+                  <Program.Title />
+                  <Program.Description />
+                </Program.Root>
+              </div>
+            ))}
+          </div>
+        )}
+      </ProgramList.Raw>
+    </ProgramList.Root>
+  );
+}
+```

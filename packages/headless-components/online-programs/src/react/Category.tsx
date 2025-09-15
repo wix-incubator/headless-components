@@ -33,6 +33,27 @@ interface CategoryRootProps {
   category: categories.Category;
 }
 
+/**
+ * Root component that provides the Category context to its children.
+ *
+ * @order 1
+ * @component
+ * @example
+ * ```tsx
+ * import { Category } from '@wix/online-programs/components';
+ *
+ * function CategoryCard(props) {
+ *  const { category } = props;
+ *
+ *   return (
+ *    <Category.Root category={category}>
+ *      <Category.Label />
+ *      <Category.Id />
+ *    </Category.Root>
+ *   );
+ * }
+ * ```
+ */
 function Root(props: CategoryRootProps): React.ReactNode {
   const { category, children } = props;
 
@@ -47,6 +68,9 @@ function Root(props: CategoryRootProps): React.ReactNode {
   );
 }
 
+/**
+ * Props for Category.Id component
+ */
 interface CategoryIdProps {
   asChild?: boolean;
   children?: AsChildChildren<{
@@ -55,6 +79,29 @@ interface CategoryIdProps {
   className?: string;
 }
 
+/**
+ * Headless component for category id display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Category } from '@wix/online-programs/components';
+ *
+ * function CategoryCard(props) {
+ *  const { category } = props;
+ *
+ *   return (
+ *    <Category.Root category={category}>
+ *      <Category.Id>
+ *        {({ id }) => (
+ *          <span>Category ID: {id}</span>
+ *        )}
+ *      </Category.Id>
+ *    </Category.Root>
+ *   );
+ * }
+ * ```
+ */
 const Id = React.forwardRef<HTMLElement, CategoryIdProps>((props, ref) => {
   const { asChild, children, className } = props;
 
@@ -92,6 +139,25 @@ interface CategoryLabelProps {
   className?: string;
 }
 
+/**
+ * Headless component for category id display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Category } from '@wix/online-programs/components';
+ *
+ * function CategoryCard(props) {
+ *  const { category } = props;
+ *
+ *   return (
+ *    <Category.Root category={category}>
+ *      <Category.Label />
+ *    </Category.Root>
+ *   );
+ * }
+ * ```
+ */
 const Label = React.forwardRef<HTMLElement, CategoryLabelProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
