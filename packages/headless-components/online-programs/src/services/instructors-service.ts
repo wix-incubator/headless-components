@@ -90,7 +90,7 @@ export const InstructorsService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const instructors: Signal<instructors.Instructor[]> = signalsService.signal(
-        config.instructors || [],
+        config.instructors!,
       );
       const isLoading: Signal<boolean> = signalsService.signal(
         !!config.programIds,
@@ -99,15 +99,14 @@ export const InstructorsService =
 
       const loadInstructorsByProgramIds = async (programIds: string[]) => {
         isLoading.set(true);
-        error.set(null);
+        const instructorsResponse = await listInstructorsByProgramIds(programIds);
 
-        try {
-          const instructorsResponse = await listInstructorsByProgramIds(programIds);
-          instructors.set(instructorsResponse);
-        } catch (err) {
-          const errorMessage = err instanceof Error ? err.message : 'Failed to load instructors';
-          error.set(errorMessage);
+        if (!instructorsResponse) {
           instructors.set([]);
+          error.set('Failed to load instructors');
+        } else {
+          instructors.set(instructorsResponse);
+          error.set(null);
         }
 
         isLoading.set(false);
@@ -159,12 +158,12 @@ export interface NotFoundInstructorsServiceConfigResult {
  * @param {string[]} programIds - The program IDs to load instructors for
  * @returns {Promise<Instructor[]>} Instructors response from the API
  */
-const listInstructorsByProgramIds = async (programIds: string[]): Promise<instructors.Instructor[]> => {
+const listInstructorsByProgramIds = async (programIds: string[]) => {
   const instructorsResponse = await instructors.listInstructors({
     programIdsFilter: programIds,
   });
 
-  return instructorsResponse.instructors || [];
+  return instructorsResponse.instructors;
 };
 
 /**

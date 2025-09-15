@@ -29,6 +29,6 @@ if (programServiceConfig.type === 'notFound') {
   <OnlineProgramPage
     client:load
     programServiceConfig={programServiceConfig.config}
-    instructorsServiceConfig={instructorsServiceConfig.type === 'success' ? instructorsServiceConfig.config : undefined}
+    instructorsServiceConfig={instructorsServiceConfig.type === 'success' ? instructorsServiceConfig.config : {instructors: []}}
   />
 </Layout>

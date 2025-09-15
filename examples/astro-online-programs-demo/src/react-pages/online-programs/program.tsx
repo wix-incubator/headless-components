@@ -22,6 +22,24 @@ export default function OnlineProgramPage({
         )}
       </Program.DurationInDays>
 
+      <h3>Steps</h3>
+      <Program.StepCount asChild>
+        {({ stepCount }: { stepCount: number }) => (
+          <div>{stepCount} Steps</div>
+        )}
+      </Program.StepCount>
+
+      <h3>Steps (Default)</h3>
+      <Program.StepCount />
+
+      <h3>Sections</h3>
+      <Program.SectionCount asChild>
+        {({ sectionCount }: { sectionCount: number }) => (
+          <div>{sectionCount} Sections</div>
+        )}
+      </Program.SectionCount>
+
+
       <h3>Instructors:</h3>
       <ul>
       <Program.Instructors instructors={instructorsServiceConfig?.instructors} emptyState={<li>No instructors</li>}>

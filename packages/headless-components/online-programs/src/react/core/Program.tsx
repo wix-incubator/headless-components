@@ -331,6 +331,102 @@ export function Description(props: ProgramDescriptionProps) {
 }
 
 /**
+ * Props for ProgramStepCount headless component
+ */
+export interface ProgramStepCountProps {
+  /** Render prop function that receives program steps count data */
+  children: (props: ProgramStepCountRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProgramStepCount component
+ */
+export interface ProgramStepCountRenderProps {
+  /** Number of steps in the program */
+  stepCount: number;
+}
+
+/**
+ * Headless component for program steps count display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramStepCount() {
+ *   return (
+ *     <Program.StepCount>
+ *       {({ stepCount }) => (
+ *         <p>{stepCount} Steps</p>
+ *       )}
+ *     </Program.StepCount>
+ *   );
+ * }
+ * ```
+ */
+export function StepCount(props: ProgramStepCountProps) {
+  const service = useService(ProgramServiceDefinition) as ServiceAPI<
+    typeof ProgramServiceDefinition
+  >;
+
+  const program = service.program.get();
+  const stepCount = program.contentSummary?.stepCount || 0;
+
+  return props.children({
+    stepCount,
+  });
+}
+
+/**
+ * Props for ProgramSectionCount headless component
+ */
+export interface ProgramSectionCountProps {
+  /** Render prop function that receives program section count data */
+  children: (props: ProgramSectionCountRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for ProgramSectionCount component
+ */
+export interface ProgramSectionCountRenderProps {
+  /** Number of sections in the program */
+  sectionCount: number;
+}
+
+/**
+ * Headless component for program section count display
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Program } from '@wix/online-programs/components';
+ *
+ * function ProgramSectionCount() {
+ *   return (
+ *     <Program.SectionCount>
+ *       {({ sectionCount }) => (
+ *         <p>{sectionCount} Sections</p>
+ *       )}
+ *     </Program.SectionCount>
+ *   );
+ * }
+ * ```
+ */
+export function SectionCount(props: ProgramSectionCountProps) {
+  const service = useService(ProgramServiceDefinition) as ServiceAPI<
+    typeof ProgramServiceDefinition
+  >;
+
+  const program = service.program.get();
+  const sectionCount = program.contentSummary?.sectionCount || 0;
+
+  return props.children({
+    sectionCount,
+  });
+}
+
+/**
  * Props for ProgramInstructors headless component
  */
 export interface ProgramInstructorsRootProps {
@@ -357,15 +453,15 @@ export interface ProgramInstructorsProps {
   /** Render prop function that receives instructors data */
   children: (props: ProgramInstructorsRenderProps) => React.ReactNode;
   /** Optional instructors data to use instead of fetching */
-  instructors?: instructors.Instructor[];
+  instructorsServiceConfig?: InstructorsServiceConfig;
 }
 export function Instructors(props: ProgramInstructorsProps) {
-  const instructors = props.instructors || [];
+  const instructors = props.instructorsServiceConfig?.instructors || [];
   return <WixServices
     servicesMap={createServicesMap().addService(
       InstructorsServiceDefinition,
       InstructorsService,
-      {instructors},
+      props.instructorsServiceConfig,
     )}
   >
     {props.children({

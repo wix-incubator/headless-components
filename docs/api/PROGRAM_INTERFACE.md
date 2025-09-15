@@ -2,10 +2,6 @@
 
 A comprehensive, composable, and headless API for rendering Online Program entities. This spec follows the established documentation style for headless components in this repository, inspired by Radix UI compound patterns and the conventions outlined in the API docs.
 
-## Open questions
-- public sdk doesn't support alt text for image
-- program instructor link to members area, how?
-
 ## Table of Contents
 
 - [Components](#components)
@@ -13,7 +9,8 @@ A comprehensive, composable, and headless API for rendering Online Program entit
   - [Program.Raw](#programraw)
   - [Program.Title](#programtitle)
   - [Program.Image](#programimage)
-  - [Program.StepsCount](#programstepscount)
+  - [Program.StepCount](#programstepcount)
+  - [Program.SectionCount](#programsectionscount)
   - [Program.Description](#programdescription)
   - [Program.DurationInDays](#programdurationindays)
   - [Program.Price](#programprice)
@@ -23,14 +20,7 @@ A comprehensive, composable, and headless API for rendering Online Program entit
     - [Instructor.Name](#instructorinstructorname)
     - [Instructor.Description](#instructordescription)
     - [Instructor.Image](#instructorimage)
-
-- [Drafts](#drafts)
-  - [Program.Participants.Stats.ParticipantsCount] ???
-  - [Program.Action.View]
-  - [Program.Action.Join]
-
-- [Usage Examples](#usage-examples) _(soon...)_
-
+  - [Program.Action.View] ??
 
 ## Components
 
@@ -44,7 +34,6 @@ The root container that provides program context to all child components.
 interface ProgramRootProps {
   program: Program;
   children: React.ReactNode;
-  [key: string]: any;
 }
 ```
 
@@ -55,20 +44,13 @@ interface ProgramRootProps {
 <Program.Root program={program}>
   <Program.Title />
   <Program.Description />
-</Program.Root>
-
-// With additional attributes
-<Program.Root program={program} className="program-container" data-testid="program-root">
-  <Program.Title />
-  <Program.Description />
+  {/* The rest program component */}
 </Program.Root>
 ```
 
 ---
 
 ### Program.Raw
-
-**Status: Not Implemented**
 
 Provides direct access to program context data. Should be used only in rare cases and never by Wix implementations.
 
@@ -117,7 +99,6 @@ interface ProgramTitleProps {
     }
   >;
   className?: string;
-  [key: string]: any;
 }
 ```
 
@@ -150,7 +131,8 @@ interface ProgramTitleProps {
 
 ### Program.Image
 
-Displays the program image using `WixMediaImage` component with customizable rendering. Data source: program.description.image
+Displays the program image using `WixMediaImage` component with customizable rendering.
+Data source: program.description.image
 
 **Props**
 
@@ -191,28 +173,25 @@ interface ProgramImageProps {
 </Program.Image>
 ```
 
-**Notes**
-- Uses `WixMediaImage` for optimized image rendering
-- Supports asChild pattern with `src` and `alt` props
-- Image source comes from `program.description.image`
-- Alt text defaults to program title
 ---
 
-### Program.StepsCount
+### Program.StepCount
 
-Displays the number of steps in the program. Data source: program.contentSummary.stepCount
+Displays the number of steps in the program.
+Data source: program.contentSummary.stepCount
 
 **Props**
 
 ```tsx
-interface ProgramStepsCountProps {
+interface ProgramStepCountProps {
   asChild?: boolean;
   children?: React.ForwardRefRenderFunction<
     HTMLElement,
     {
-      stepsCount: number;
+      stepCount: number;
     }
   >;
+  className?: string;
 }
 ```
 
@@ -224,28 +203,76 @@ interface ProgramStepsCountProps {
 
 ```tsx
 // Default usage
-<Program.StepsCount className="text-content-secondary" />
+<Program.StepCount className="text-content-secondary" />
 
 // asChild with primitive
-<Program.StepsCount asChild>
+<Program.StepCount asChild>
   <p className="text-content-secondary">
-</Program.StepsCount>
+</Program.StepCount>
 
 // Custom rendering
-<Program.StepsCount asChild>
-  {React.forwardRef(({ stepsCount, ...props }, ref) => (
+<Program.StepCount asChild>
+  {React.forwardRef(({ stepCount, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
-      {stepsCount} Steps
+      {stepCount} Steps
     </p>
   ))}
-</Program.StepsCount>
+</Program.StepCount>
+```
+
+---
+
+### Program.SectionCount
+
+Displays the number of sections in the program.
+Data source: program.contentSummary.sectionCount
+
+**Props**
+
+```tsx
+interface ProgramSectionCountProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    {
+      sectionCount: number;
+    }
+  >;
+  className?: string;
+}
+```
+
+**Data Attributes**
+
+- `data-testid="program-section-count"` - Applied to program section count element
+
+**Example**
+
+```tsx
+// Default usage
+<Program.SectionCount className="text-content-secondary" />
+
+// asChild with primitive
+<Program.SectionCount asChild>
+  <p className="text-content-secondary" />
+</Program.SectionCount>
+
+// Custom rendering
+<Program.SectionCount asChild>
+  {React.forwardRef(({ sectionCount, ...props }, ref) => (
+    <p ref={ref} {...props} className="text-content-secondary">
+      {sectionCount} Sections
+    </p>
+  ))}
+</Program.SectionCount>
 ```
 
 ---
 
 ### Program.Description
 
-Displays the program description text with customizable rendering. Data source: program.description.details
+Displays the program description text with customizable rendering.
+Data source: program.description.details
 
 **Props**
 
@@ -259,7 +286,6 @@ interface ProgramDescriptionProps {
     }
   >;
   className?: string;
-  [key: string]: any;
 }
 ```
 
@@ -344,7 +370,8 @@ interface ProgramDurationInDaysProps {
 
 ### Program.Price
 
-Displays the program price with customizable rendering. Data source: program.price with value and currency.
+Displays the program price with customizable rendering.
+Data source: program.price with value and currency.
 
 **Props**
 
@@ -401,7 +428,7 @@ interface ProgramPriceProps {
 
 ### Program.Instructors
 
-Container component for program instructors that provides context and conditional rendering. Does NOT render if there are no instructors (follows Container Level pattern).
+Container component for program instructors that provides context and conditional rendering. Renders `emptyState` when there are no instructors, otherwise renders the children.
 
 **Props**
 
@@ -413,6 +440,8 @@ interface ProgramInstructorsProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{ instructors: instructors.Instructor[]; hasInstructors: boolean }>;
+  /** Content to show when there are no instructors */
+  emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Additional HTML attributes */
@@ -428,6 +457,14 @@ interface ProgramInstructorsProps {
 ```tsx
 // Default usage
 <Program.Instructors instructors={instructors}>
+  <Program.InstructorRepeater>
+    <Instructor.Name />
+    <Instructor.Description />
+  </Program.InstructorRepeater>
+</Program.Instructors>
+
+// With empty state
+<Program.Instructors instructors={instructors} emptyState={<div>No instructors available</div>}>
   <Program.InstructorRepeater>
     <Instructor.Name />
     <Instructor.Description />
@@ -471,8 +508,6 @@ interface InstructorRepeaterProps {
   children?: AsChildChildren<{}>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
 }
 ```
 
@@ -544,7 +579,8 @@ interface InstructorProps {
 
 ### Instructor.Name
 
-Displays the instructor's name with customizable rendering. Data source: instructor.name.
+Displays the instructor's name with customizable rendering.
+Data source: instructor.name.
 
 **Props**
 
@@ -602,8 +638,6 @@ interface InstructorDescriptionProps {
   children?: AsChildChildren<{ description: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Additional HTML attributes */
-  [key: string]: any;
 }
 ```
 
@@ -622,7 +656,7 @@ interface InstructorDescriptionProps {
 </Instructor.Description>
 
 // asChild with react component
-<PInstructor.Description asChild>
+<Instructor.Description asChild>
   {React.forwardRef(({ description, ...props }, ref) => (
     <p ref={ref} {...props} className="text-content-secondary">
       {description}
@@ -644,7 +678,8 @@ interface InstructorDescriptionProps {
 
 ### Instructor.Image
 
-Displays the instructor's profile photo with customizable rendering. Data source: instructor.photo and instructor.photoAltText.
+Displays the instructor's profile photo with customizable rendering.
+Data source: instructor.photo and instructor.photoAltText.
 
 **Props**
 
@@ -700,8 +735,3 @@ interface InstructorImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageEle
   ))}
 </Instructor.Image>
 ```
-
-## Drafts
-
-### Program.ParticipantsCount
-No public API yet 😭

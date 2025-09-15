@@ -14,6 +14,8 @@ enum TestIds {
   programDuration = 'program-duration',
   programDescription = 'program-description',
   programPrice = 'program-price',
+  programStepCount = 'program-step-count',
+  programSectionCount = 'program-section-count',
   programInstructors = 'program-instructors',
   programInstructorRepeater = 'program-instructor-repeater',
 }
@@ -241,7 +243,7 @@ const DurationInDays = React.forwardRef<HTMLElement, DurationInDaysProps>(
               {...dataAttributes}
               {...otherProps}
             >
-              <p>{durationInDays}</p>
+              <div>{durationInDays}</div>
             </AsChildSlot>
           );
         }}
@@ -407,6 +409,148 @@ const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 Description.displayName = 'Program.Description';
 
 /**
+ * Props for Program StepCount component
+ */
+interface StepCountProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ stepCount: number }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+/**
+ * Displays the program steps count with customizable rendering.
+ * Data source: program.contentSummary.stepCount
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Program.StepCount className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Program.StepCount asChild>
+ *   <p className="text-content-secondary" />
+ * </Program.StepCount>
+ *
+ * // Custom rendering
+ * <Program.StepCount asChild>
+ *   {React.forwardRef(({ stepCount, ...props }, ref) => (
+ *     <p ref={ref} {...props} className="text-content-secondary">
+ *       {stepCount} Steps
+ *     </p>
+ *   ))}
+ * </Program.StepCount>
+ * ```
+ */
+const StepCount = React.forwardRef<HTMLElement, StepCountProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    return (
+      <CoreProgram.StepCount>
+        {({ stepCount }) => {
+          const dataAttributes = {
+            'data-testid': TestIds.programStepCount,
+          };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              customElement={children}
+              customElementProps={{ stepCount }}
+              content={stepCount}
+              {...dataAttributes}
+              {...otherProps}
+            >
+              <p>{stepCount}</p>
+            </AsChildSlot>
+          );
+        }}
+      </CoreProgram.StepCount>
+    );
+  },
+);
+
+StepCount.displayName = 'Program.StepCount';
+
+/**
+ * Props for Program SectionCount component
+ */
+interface SectionCountProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ sectionCount: number }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Additional HTML attributes */
+  [key: string]: any;
+}
+
+/**
+ * Displays the program section count with customizable rendering.
+ * Data source: program.contentSummary.sectionCount
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Program.SectionCount className="text-content-secondary" />
+ *
+ * // asChild with primitive
+ * <Program.SectionCount asChild>
+ *   <p className="text-content-secondary" />
+ * </Program.SectionCount>
+ *
+ * // Custom rendering
+ * <Program.SectionCount asChild>
+ *   {React.forwardRef(({ sectionCount, ...props }, ref) => (
+ *     <p ref={ref} {...props} className="text-content-secondary">
+ *       {sectionCount} Sections
+ *     </p>
+ *   ))}
+ * </Program.SectionCount>
+ * ```
+ */
+const SectionCount = React.forwardRef<HTMLElement, SectionCountProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    return (
+      <CoreProgram.SectionCount>
+        {({ sectionCount }) => {
+          const dataAttributes = {
+            'data-testid': TestIds.programSectionCount,
+          };
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              customElement={children}
+              customElementProps={{ sectionCount }}
+              content={sectionCount}
+              {...dataAttributes}
+              {...otherProps}
+            >
+              <div>{sectionCount}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreProgram.SectionCount>
+    );
+  },
+);
+
+SectionCount.displayName = 'Program.SectionCount';
+
+/**
  * Props for Program Instructors component (Container Level)
  */
 interface InstructorsProps {
@@ -466,7 +610,7 @@ const Instructors = React.forwardRef<
   const { asChild, children, instructors = [], emptyState, ...otherProps } = props;
 
   return (
-    <CoreProgram.Instructors instructors={instructors}>
+    <CoreProgram.Instructors instructorsServiceConfig={{ instructors }}>
       {({ instructors, hasInstructors }) => {
         if (!hasInstructors) {
           return emptyState;
@@ -574,6 +718,8 @@ export const Program = {
   DurationInDays,
   Price,
   Description,
+  StepCount,
+  SectionCount,
   Instructors,
   InstructorRepeater,
 } as const;
