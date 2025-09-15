@@ -87,6 +87,9 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   );
 });
 
+/**
+ * Props for the TicketDefinition Name component.
+ */
 export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -143,6 +146,9 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   );
 });
 
+/**
+ * Props for the TicketDefinition Description component.
+ */
 export interface DescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -201,6 +207,9 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   },
 );
 
+/**
+ * Props for the TicketDefinition FixedPricing component.
+ */
 export interface FixedPricingProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -274,6 +283,9 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
   },
 );
 
+/**
+ * Props for the TicketDefinition GuestPricing component.
+ */
 export interface GuestPricingProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -349,6 +361,9 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
   },
 );
 
+/**
+ * Props for the TicketDefinition Remaining component.
+ */
 export interface RemainingProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -409,6 +424,9 @@ export const Remaining = React.forwardRef<HTMLElement, RemainingProps>(
   },
 );
 
+/**
+ * Props for the TicketDefinition SaleStartDate component.
+ */
 export interface SaleStartDateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -472,6 +490,9 @@ export const SaleStartDate = React.forwardRef<HTMLElement, SaleStartDateProps>(
   },
 );
 
+/**
+ * Props for the TicketDefinition SaleEndDate component.
+ */
 export interface SaleEndDateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -538,6 +559,9 @@ export const SaleEndDate = React.forwardRef<HTMLElement, SaleEndDateProps>(
   },
 );
 
+/**
+ * Props for the TicketDefinition Quantity component.
+ */
 export interface QuantityProps {
   /** Whether to render as a child component */
   asChild?: boolean;
