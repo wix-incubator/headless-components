@@ -102,37 +102,22 @@ const RootContent = React.forwardRef<
 >((props, ref) => {
   const { children, className } = props;
   const productsListService = useService(ProductsListServiceDefinition);
-  const contextProducts = productsListService.products.get();
-  const pagingMetadata = productsListService.pagingMetadata.get();
 
-  const displayedProducts = contextProducts.length;
-  const totalProducts = pagingMetadata.count || contextProducts.length;
-  const isFiltered = false; // TODO: Implement filtering detection
-
-  // Map products to GenericList items (ensure id property)
-  const items = contextProducts.map((product) => ({
+  const items = productsListService.products.get().map((product) => ({
     ...product,
-    id: product._id || 'unknown', // Ensure id property for GenericList
+    id: product._id!,
   }));
-
-  // Wrapper for loadMore to match GenericList signature
-  const handleLoadMore = () => {
-    productsListService.loadMore(10); // Default page size
-  };
 
   return (
     <GenericList.Root
       items={items}
-      onLoadMore={handleLoadMore}
+      onLoadMore={() => productsListService.loadMore(10)}
       hasMore={productsListService.hasMoreProducts.get()}
       isLoading={productsListService.isLoading.get()}
       variant="grid"
       className={className}
       ref={ref}
       data-testid={TestIds.productListRoot}
-      data-total-products={totalProducts}
-      data-displayed-products={displayedProducts}
-      data-filtered={isFiltered}
     >
       {children}
     </GenericList.Root>
