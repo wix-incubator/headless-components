@@ -4678,6 +4678,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/auto_sdk_faq_category@npm:1.0.18":
+  version: 1.0.18
+  resolution: "@wix/auto_sdk_faq_category@npm:1.0.18"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/7938b431bda563f46c750b52bfeada0b707efc0167129967f4c3a2cc3710699540a4f9e2c9c3995f20b0f3c1af54d616ce491343fb01e3b230d64fb206a7aaec
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_faq_question-entry@npm:1.0.22":
+  version: 1.0.22
+  resolution: "@wix/auto_sdk_faq_question-entry@npm:1.0.22"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/ad500a4f69ec0ed67ecdbe85b2cefa8f413a24f99812f3fb382e5ad91470377efb86f5f00c8f105a664c6846b0ae1e12030c4c090883aae9c179c606fa0a7ac1
+  languageName: node
+  linkType: hard
+
 "@wix/auto_sdk_identity_authentication@npm:1.0.24":
   version: 1.0.24
   resolution: "@wix/auto_sdk_identity_authentication@npm:1.0.24"
@@ -5399,6 +5419,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/faq@npm:^1.0.0, @wix/faq@npm:^1.0.29":
+  version: 1.0.29
+  resolution: "@wix/faq@npm:1.0.29"
+  dependencies:
+    "@wix/auto_sdk_faq_category": "npm:1.0.18"
+    "@wix/auto_sdk_faq_question-entry": "npm:1.0.22"
+  checksum: 10c0/20ce9bf79e73fee5ea11ef65689df1705604327186346d186a0345c4c8722272eb167ceaa8cf284b6859f942db14f0f21dd4e2cd690fa91a900dbf09d3d2e66f
+  languageName: node
+  linkType: hard
+
 "@wix/feedback-loop-structure@npm:^1.32.0":
   version: 1.33.0
   resolution: "@wix/feedback-loop-structure@npm:1.33.0"
@@ -5545,10 +5575,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wix/headless-faq@workspace:packages/headless-components/faq":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-faq@workspace:packages/headless-components/faq"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.2.3"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/essentials": "npm:^0.1.24"
+    "@wix/faq": "npm:^1.0.0"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
+
 "@wix/headless-integrations@workspace:.":
   version: 0.0.0-use.local
   resolution: "@wix/headless-integrations@workspace:."
   dependencies:
+    "@wix/faq": "npm:^1.0.29"
     astro: "npm:^5.9.0"
     knip: "npm:^5.43.6"
     lefthook: "npm:^1.1.1"
