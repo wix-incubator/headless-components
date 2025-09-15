@@ -1,17 +1,19 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { TestIds } from './test-ids.js';
+import { ServiceList } from './index.js';
+import { Service } from './core/Service.js';
 import {
-  List,
-  Options,
-  ServiceRepeater,
-  Service,
-  Error,
-} from './ServiceList.tsx';
+  Root as CoreServiceListRoot,
+  Error as CoreServiceListError,
+  ItemContent as CoreServiceListItemContent,
+} from './core/ServiceList.js';
 import { services } from '@wix/bookings';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ServicesListServiceDefinition } from '../services/services-list-service.js';
+import { ServiceServiceDefinition } from '../services/service-service.js';
 
 // Mock modules
 vi.mock('@wix/services-manager-react', () => ({
@@ -104,7 +106,7 @@ const mockServiceListConfig = {
 };
 
 // Create a mock service value factory
-const createMockServiceValue = (overrides = {}) => ({
+const createMockServicesListServiceValue = (overrides = {}) => ({
   services: {
     get: () => mockServices,
     peek: () => mockServices,
@@ -144,6 +146,15 @@ const createMockServiceValue = (overrides = {}) => ({
   ...overrides,
 });
 
+const createMockServiceValue = (overrides = {}) => ({
+  service: {
+    get: () => mockServices[0],
+    peek: () => mockServices[0],
+    set: () => mockServices[0],
+  },
+  ...overrides,
+});
+
 describe('ServiceList Components', () => {
   beforeEach(() => {
     // Reset all mocks before each test
@@ -152,6 +163,9 @@ describe('ServiceList Components', () => {
     // Default mock implementation
     (useService as ReturnType<typeof vi.fn>).mockImplementation((service) => {
       if (service === ServicesListServiceDefinition) {
+        return createMockServicesListServiceValue();
+      }
+      if (service === ServiceServiceDefinition) {
         return createMockServiceValue();
       }
       return {};
@@ -161,9 +175,9 @@ describe('ServiceList Components', () => {
   describe('List Component', () => {
     it('should render list with correct data attributes', () => {
       render(
-        <List services={mockServices}>
+        <ServiceList.List services={mockServices}>
           <div>Content</div>
-        </List>,
+        </ServiceList.List>,
       );
 
       const list = screen.getByTestId(TestIds.servicesList);
@@ -176,11 +190,11 @@ describe('ServiceList Components', () => {
   describe('Options Component', () => {
     it('should render options with correct data attributes', () => {
       render(
-        <List services={mockServices}>
-          <Options>
+        <ServiceList.List services={mockServices}>
+          <ServiceList.Options>
             <div>Content</div>
-          </Options>
-        </List>,
+          </ServiceList.Options>
+        </ServiceList.List>,
       );
 
       const options = screen.getByTestId(TestIds.servicesOptions);
@@ -192,7 +206,7 @@ describe('ServiceList Components', () => {
     it('should render empty state when no services', () => {
       (useService as ReturnType<typeof vi.fn>).mockImplementation((service) => {
         if (service === ServicesListServiceDefinition) {
-          return createMockServiceValue({
+          return createMockServicesListServiceValue({
             services: {
               get: () => [],
               peek: () => [],
@@ -204,13 +218,13 @@ describe('ServiceList Components', () => {
       });
 
       render(
-        <List services={[]}>
-          <Options
+        <ServiceList.List services={[]}>
+          <ServiceList.Options
             emptyState={<div data-testid="empty-state">No services</div>}
           >
             <div>Content</div>
-          </Options>
-        </List>,
+          </ServiceList.Options>
+        </ServiceList.List>,
       );
 
       expect(screen.getByTestId('empty-state')).toBeInTheDocument();
@@ -220,34 +234,36 @@ describe('ServiceList Components', () => {
   describe('ServiceRepeater Component', () => {
     it('should render service repeater for each service', () => {
       render(
-        <List services={mockServices}>
-          <Options>
-            <ServiceRepeater>
-              <div>Service Content</div>
-            </ServiceRepeater>
-          </Options>
-        </List>,
+        <ServiceList.List services={mockServices}>
+          <ServiceList.Options>
+            <CoreServiceListItemContent>
+              {({ service }) => (
+                <Service.Root key={service._id} serviceConfig={{ service }}>
+                  <div>Service Content</div>
+                </Service.Root>
+              )}
+            </CoreServiceListItemContent>
+          </ServiceList.Options>
+        </ServiceList.List>,
       );
 
-      const repeaters = screen.getAllByTestId(TestIds.serviceRepeater);
-      expect(repeaters).toHaveLength(2);
-      expect(repeaters[0]).toHaveAttribute('data-service-id', 'service1');
-      expect(repeaters[1]).toHaveAttribute('data-service-id', 'service2');
+      const services = screen.getAllByText('Service Content');
+      expect(services).toHaveLength(2);
     });
 
     it('should render children as function with service data', () => {
       render(
-        <List services={mockServices}>
-          <Options>
-            <ServiceRepeater>
+        <ServiceList.List services={mockServices}>
+          <ServiceList.Options>
+            <CoreServiceListItemContent>
               {({ service }) => (
                 <div data-testid={`service-name-${service._id}`}>
                   {service.name}
                 </div>
               )}
-            </ServiceRepeater>
-          </Options>
-        </List>,
+            </CoreServiceListItemContent>
+          </ServiceList.Options>
+        </ServiceList.List>,
       );
 
       expect(screen.getByTestId('service-name-service1')).toHaveTextContent(
@@ -260,39 +276,48 @@ describe('ServiceList Components', () => {
   });
 
   describe('Service Components', () => {
-    const renderServiceComponent = (Component: React.ComponentType<any>) => {
+    it('should render Service.Name correctly', () => {
       render(
-        <Service.Root service={mockServices[0]}>
-          <Component />
+        <Service.Root serviceConfig={{ service: mockServices[0] }}>
+          <Service.Name>
+            {({ name }) => <div data-testid={TestIds.serviceName}>{name}</div>}
+          </Service.Name>
         </Service.Root>,
       );
-    };
-
-    it('should render Service.Name correctly', () => {
-      renderServiceComponent(Service.Name);
       expect(screen.getByTestId(TestIds.serviceName)).toHaveTextContent(
         'Test Service 1',
       );
     });
 
     it('should render Service.Description correctly', () => {
-      renderServiceComponent(Service.Description);
+      render(
+        <Service.Root serviceConfig={{ service: mockServices[0] }}>
+          <Service.Description>
+            {({ description }) => (
+              <div data-testid={TestIds.serviceDescription}>{description}</div>
+            )}
+          </Service.Description>
+        </Service.Root>,
+      );
       expect(screen.getByTestId(TestIds.serviceDescription)).toHaveTextContent(
         'Service 1 Description',
       );
     });
 
     it('should render Service.Price correctly', () => {
-      renderServiceComponent(Service.Price);
+      render(
+        <Service.Root serviceConfig={{ service: mockServices[0] }}>
+          <Service.Price>
+            {({ price }) => (
+              <div data-testid={TestIds.servicePrice}>
+                {price?.value} {price?.currency}
+              </div>
+            )}
+          </Service.Price>
+        </Service.Root>,
+      );
       expect(screen.getByTestId(TestIds.servicePrice)).toHaveTextContent(
         '100 USD',
-      );
-    });
-
-    it('should render Service.Duration correctly', () => {
-      renderServiceComponent(Service.Duration);
-      expect(screen.getByTestId(TestIds.serviceDuration)).toHaveTextContent(
-        '60 minutes',
       );
     });
   });
@@ -300,9 +325,9 @@ describe('ServiceList Components', () => {
   describe('Error Component', () => {
     it('should not render when there is no error', () => {
       render(
-        <List services={mockServices}>
-          <Error>Error occurred</Error>
-        </List>,
+        <ServiceList.List services={mockServices}>
+          <ServiceList.Error>Error occurred</ServiceList.Error>
+        </ServiceList.List>,
       );
 
       expect(
@@ -313,7 +338,7 @@ describe('ServiceList Components', () => {
     it('should render error message when there is an error', () => {
       (useService as ReturnType<typeof vi.fn>).mockImplementation((service) => {
         if (service === ServicesListServiceDefinition) {
-          return createMockServiceValue({
+          return createMockServicesListServiceValue({
             error: {
               get: () => 'Test error message',
               peek: () => 'Test error message',
@@ -324,11 +349,11 @@ describe('ServiceList Components', () => {
       });
 
       render(
-        <List services={mockServices}>
-          <Error>
+        <ServiceList.List services={mockServices}>
+          <ServiceList.Error>
             <div data-testid="custom-error">Test error message</div>
-          </Error>
-        </List>,
+          </ServiceList.Error>
+        </ServiceList.List>,
       );
 
       expect(screen.getByTestId(TestIds.serviceError)).toBeInTheDocument();

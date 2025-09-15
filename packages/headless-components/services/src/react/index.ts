@@ -1,23 +1,5 @@
-export {
-  List,
-  Options,
-  ServiceRepeater,
-  Raw,
-  Error,
-  Service,
-  ServiceRoot,
-  ServiceName,
-  ServiceDescription,
-  ServicePrice,
-  ServiceDuration,
-  ServiceImage,
-  ServiceCategory,
-  type ServiceListRootProps,
-  type ServiceOptionsProps,
-  type ServiceRepeaterProps,
-  type RawProps,
-  type ErrorProps,
-} from './ServiceList.js';
-export * from './context.js';
+// Components
+export * as ServiceList from './ServiceList.js';
+export * as Service from './core/Service.js';
+export * as ServicesSort from './ServiceListSort.js';
 export * from './test-ids.js';
-export * from './ServiceListSort.js';

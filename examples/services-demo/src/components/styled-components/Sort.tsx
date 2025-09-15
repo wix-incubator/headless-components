@@ -1,5 +1,5 @@
 import React from 'react';
-import { ServiceListSort } from '@wix/headless-services/react';
+import { ServicesSort } from '@wix/headless-services/react';
 
 interface SortProps {
   className?: string;
@@ -7,7 +7,7 @@ interface SortProps {
 
 export function Sort({ className }: SortProps) {
   return (
-    <ServiceListSort>
+    <ServicesSort.ServiceListSort>
       {({ currentSort, sortOptions, setSort }) => (
         <div className={className}>
           <select
@@ -33,6 +33,6 @@ export function Sort({ className }: SortProps) {
           </select>
         </div>
       )}
-    </ServiceListSort>
+    </ServicesSort.ServiceListSort>
   );
 }

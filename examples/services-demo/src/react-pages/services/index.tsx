@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { ServicesListServiceConfig } from '@wix/headless-services/services';
-import { List, Options, ServiceRepeater, Error as ServiceError, Service } from '@wix/headless-services/react';
+import { ServiceList, Service } from '@wix/headless-services/react';
 import type { services } from '@wix/bookings';
 import { Sort } from '../../components/styled-components/Sort';
 
@@ -9,42 +9,14 @@ interface ServicesPageProps {
 }
 
 export default function ServicesPage({ servicesConfig }: ServicesPageProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
   return (
-    <List servicesListConfig={servicesConfig}>
+    <ServiceList.List servicesListConfig={servicesConfig}>
       {({ services: servicesList }: { services: services.Service[] }) => (
         <div className="min-h-screen bg-surface-primary">
           {/* Header */}
           <div className="bg-surface-card shadow-sm border-surface-primary mb-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                {/* Categories */}
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => setSelectedCategory(null)}
-                    className={`px-4 py-2 text-sm rounded-full transition-all ${
-                      selectedCategory === null
-                        ? 'bg-surface-card text-content-primary'
-                        : 'bg-surface-primary text-content-secondary hover:bg-surface-secondary'
-                    }`}
-                  >
-                    All Services
-                  </button>
-                  {Array.from(new Set(servicesList.map(s => s.category?.name))).filter(Boolean).map((category) => (
-                    <button
-                      key={category as string}
-                      onClick={() => setSelectedCategory(category as string)}
-                      className={`px-4 py-2 text-sm rounded-full transition-all ${
-                        selectedCategory === category
-                          ? 'bg-surface-card text-content-primary'
-                          : 'bg-surface-primary text-content-secondary hover:bg-surface-secondary'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
 
                 {/* Sort */}
                 <Sort className="w-48" />
@@ -55,7 +27,7 @@ export default function ServicesPage({ servicesConfig }: ServicesPageProps) {
           {/* Main Content */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Error State */}
-            <ServiceError>
+            <ServiceList.Error>
               <div className="bg-status-danger-light border border-status-danger rounded-lg p-4 mb-6">
                 <div className="flex">
                   <svg className="h-5 w-5 text-status-danger" viewBox="0 0 20 20" fill="currentColor">
@@ -67,10 +39,10 @@ export default function ServicesPage({ servicesConfig }: ServicesPageProps) {
                   </div>
                 </div>
               </div>
-            </ServiceError>
+            </ServiceList.Error>
 
             {/* Services Grid */}
-            <Options emptyState={
+            <ServiceList.Options emptyState={
               <div className="text-center py-16">
                 <div className="mx-auto h-12 w-12 text-content-muted">
                   <svg className="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -82,26 +54,30 @@ export default function ServicesPage({ servicesConfig }: ServicesPageProps) {
               </div>
             }>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <ServiceRepeater>
-                  {({ service }: { service: services.Service }) => {
-                    if (!selectedCategory || service.category?.name === selectedCategory) {
-                      return (
-                        <Service.Root service={service}>
+                <ServiceList.ServiceRepeater>
                           <div className="bg-surface-card rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
                             {/* Service Image */}
                             <div className="aspect-w-16 aspect-h-9 relative">
-                              <Service.Image className="w-full h-full object-cover" />
-                              {service.category?.name && (
-                                <div className="absolute top-4 left-4">
-                                  <Service.Category className="bg-surface-card/90 backdrop-blur-sm text-xs text-content-secondary px-3 py-1 rounded-full font-medium" />
-                                </div>
-                              )}
-                            </div>
+                              <Service.Image />
+
+                           </div>
 
                             {/* Service Content */}
                             <div className="p-6">
-                              <Service.Name className="text-xl font-medium text-content-primary mb-2" />
-                              <Service.Description className="text-content-secondary text-sm mb-4 line-clamp-2" />
+                              <Service.Name>
+                                {({ name }) => (
+                                  <h3 className="text-xl font-medium text-content-primary mb-2">
+                                    {name}
+                                  </h3>
+                                )}
+                              </Service.Name>
+                              <Service.Description>
+                                {({ description }) => description && (
+                                  <p className="text-content-secondary text-sm mb-4 line-clamp-2">
+                                    {description}
+                                  </p>
+                                )}
+                              </Service.Description>
 
                               {/* Service Details */}
                               <div className="flex items-center justify-between text-sm border-t border-surface-primary pt-4">
@@ -109,9 +85,14 @@ export default function ServicesPage({ servicesConfig }: ServicesPageProps) {
                                   <svg className="w-5 h-5 text-content-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                   </svg>
-                                  <Service.Duration className="text-content-secondary" />
                                 </div>
-                                <Service.Price className="font-medium text-content-primary" />
+                                <Service.Price>
+                                  {({ price }) => price && (
+                                    <span className="font-medium text-content-primary">
+                                      {price.value} {price.currency}
+                                    </span>
+                                  )}
+                                </Service.Price>
                               </div>
 
                               {/* Learn More Link */}
@@ -122,17 +103,12 @@ export default function ServicesPage({ servicesConfig }: ServicesPageProps) {
                               </div>
                             </div>
                           </div>
-                        </Service.Root>
-                      );
-                    }
-                    return null;
-                  }}
-                </ServiceRepeater>
+                </ServiceList.ServiceRepeater>
               </div>
-            </Options>
+            </ServiceList.Options>
           </div>
         </div>
       )}
-    </List>
+    </ServiceList.List>
   );
 }

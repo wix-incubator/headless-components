@@ -26,11 +26,11 @@ export interface RootProps {
  * @component
  * @example
  * ```tsx
- * import { Services } from '@wix/services/components';
+ * import { ServiceList, Service } from '@wix/headless-services/react';
  *
  * function ServiceListPage() {
  *   return (
- *     <Services.Root
+ *     <ServiceList.Root
  *       servicesListConfig={{
  *         services: myServices,
  *         searchOptions: {
@@ -40,14 +40,17 @@ export interface RootProps {
  *         pagingMetadata: { count: 10, hasNext: true }
  *       }}
  *     >
- *       <Services.Options>
- *         <Services.ServiceRepeater>
- *           <Service.Name />
- *           <Service.Price />
- *           <Service.Duration />
- *         </Services.ServiceRepeater>
- *       </Services.Options>
- *     </Services.Root>
+ *       <ServiceList.Options>
+ *         <ServiceList.ServiceRepeater>
+ *           <Service.Name>
+ *             {({ name }) => <h3>{name}</h3>}
+ *           </Service.Name>
+ *           <Service.Price>
+ *             {({ price }) => price && <div>{price.value} {price.currency}</div>}
+ *           </Service.Price>
+ *         </ServiceList.ServiceRepeater>
+ *       </ServiceList.Options>
+ *     </ServiceList.Root>
  *   );
  * }
  * ```
@@ -88,11 +91,11 @@ export interface EmptyStateRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { Services } from '@wix/services/components';
+ * import { ServiceList } from '@wix/headless-services/react';
  *
  * function EmptyServicesMessage() {
  *   return (
- *     <Services.EmptyState>
+ *     <ServiceList.EmptyState>
  *       {() => (
  *         <div className="empty-state">
  *           <h3>No services found</h3>
@@ -100,7 +103,7 @@ export interface EmptyStateRenderProps {}
  *           <button>Clear Filters</button>
  *         </div>
  *       )}
- *     </Services.EmptyState>
+ *     </ServiceList.EmptyState>
  *   );
  * }
  * ```
@@ -144,18 +147,18 @@ export interface LoadingRenderProps {}
  * @component
  * @example
  * ```tsx
- * import { Services } from '@wix/services/components';
+ * import { ServiceList } from '@wix/headless-services/react';
  *
  * function ServicesLoading() {
  *   return (
- *     <Services.Loading>
+ *     <ServiceList.Loading>
  *       {() => (
  *         <div className="loading-spinner">
  *           <div>Loading services...</div>
  *           <div className="spinner"></div>
  *         </div>
  *       )}
- *     </Services.Loading>
+ *     </ServiceList.Loading>
  *   );
  * }
  * ```
@@ -196,11 +199,11 @@ export interface ErrorRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Services } from '@wix/services/components';
+ * import { ServiceList } from '@wix/headless-services/react';
  *
  * function ServicesError() {
  *   return (
- *     <Services.Error>
+ *     <ServiceList.Error>
  *       {({ error }) => (
  *         <div className="error-state">
  *           <h3>Error loading services</h3>
@@ -210,7 +213,7 @@ export interface ErrorRenderProps {
  *           </button>
  *         </div>
  *       )}
- *     </Services.Error>
+ *     </ServiceList.Error>
  *   );
  * }
  * ```
@@ -254,20 +257,26 @@ export interface ItemContentRenderProps {
  * @component
  * @example
  * ```tsx
- * import { Services } from '@wix/services/components';
+ * import { ServiceList, Service } from '@wix/headless-services/react';
  *
  * function ServicesGrid() {
  *   return (
- *     <Services.ItemContent>
+ *     <ServiceList.ItemContent>
  *       {({ service }) => (
  *         <div className="service-card">
- *           <img src={service.info.media?.mainMedia?.image?.url} alt={service.info.name} />
- *           <h3>{service.info.name}</h3>
- *           <p>{service.payment?.price} {service.payment?.currency}</p>
+ *           <Service.Image>
+ *             {({ image, alt }) => <img src={image} alt={alt} />}
+ *           </Service.Image>
+ *           <Service.Name>
+ *             {({ name }) => <h3>{name}</h3>}
+ *           </Service.Name>
+ *           <Service.Price>
+ *             {({ price }) => price && <p>{price.value} {price.currency}</p>}
+ *           </Service.Price>
  *           <button>Book Now</button>
  *         </div>
  *       )}
- *     </Services.ItemContent>
+ *     </ServiceList.ItemContent>
  *   );
  * }
  * ```

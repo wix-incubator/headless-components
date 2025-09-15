@@ -5,8 +5,7 @@
   "workspaces": [
     "packages/*",
     "packages/headless-components/*",
-    "examples/*",
-    "examples/services-demo/servicevibe"
+    "examples/*"
   ],
   "scripts": {
     "build:all": "turbo run build",

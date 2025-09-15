@@ -1,15 +1,12 @@
 import React from 'react';
 import { useService } from '@wix/services-manager-react';
 import { ServicesListServiceDefinition } from '../services/services-list-service.js';
+import { Sort as SortPrimitive } from '@wix/headless-components/react';
 
 export interface ServiceListSortProps {
   children: (props: {
     currentSort: { fieldName: string; order: 'ASC' | 'DESC' }[];
-    sortOptions: Array<{
-      fieldName: string;
-      order: 'ASC' | 'DESC';
-      label: string;
-    }>;
+    sortOptions: SortPrimitive.SortOption[];
     setSort: (sort: { fieldName: string; order: 'ASC' | 'DESC' }[]) => void;
   }) => React.ReactNode;
 }
