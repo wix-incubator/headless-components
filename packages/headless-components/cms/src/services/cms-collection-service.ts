@@ -8,6 +8,15 @@ import { items } from '@wix/data';
 export type WixDataItem = items.WixDataItem;
 
 /**
+ * Wix SDK sort array format for CMS collections
+ * Using the same format as the Sort primitive for compatibility
+ */
+export type SortValue = Array<{
+  fieldName?: string;
+  order?: string; // Wix SDK format (typically 'ASC'/'DESC')
+}>;
+
+/**
  * Service definition for the CMS Collection service.
  */
 export const CmsCollectionServiceDefinition = defineService<{
@@ -17,19 +26,39 @@ export const CmsCollectionServiceDefinition = defineService<{
   loadingSignal: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   errorSignal: Signal<string | null>;
+  /** Reactive signal containing the current sort configuration */
+  sortSignal: Signal<SortValue>;
+  /** Function to update the sort configuration */
+  setSort: (sort: SortValue) => void;
+  /** Function to reload items with current sort */
+  loadItems: () => Promise<void>;
 }>('cms-collection');
 
 /**
- * Shared function to load collection items from Wix Data
+ * Shared function to load collection items from Wix Data with sorting
  */
 const loadCollectionItems = async (
   collectionId: string,
+  sort?: SortValue,
 ): Promise<WixDataItem[]> => {
   if (!collectionId) {
     throw new Error('No collection ID provided');
   }
 
-  const result = await items.query(collectionId).find();
+  let query = items.query(collectionId);
+
+  // Apply sorting if provided
+  if (sort && sort.length > 0) {
+    sort.forEach(sortItem => {
+      if (sortItem.fieldName) {
+        query = sortItem.order === 'ASC'
+          ? query.ascending(sortItem.fieldName)
+          : query.descending(sortItem.fieldName);
+      }
+    });
+  }
+
+  const result = await query.find();
   return result.items;
 };
 
@@ -58,14 +87,17 @@ export const CmsCollectionServiceImplementation =
       );
       const loadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
+      const sortSignal = signalsService.signal<SortValue>([]); // initialize first sort? (title ascending or something)
 
       const loadItems = async () => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
         try {
+          const currentSort = sortSignal.get();
           const collectionItems = await loadCollectionItems(
             config.collectionId,
+            currentSort,
           );
           itemsSignal.set(collectionItems);
         } catch (err) {
@@ -83,6 +115,12 @@ export const CmsCollectionServiceImplementation =
         }
       };
 
+      const setSort = (sort: SortValue) => {
+        sortSignal.set(sort);
+        // Automatically reload items when sort changes
+        loadItems();
+      };
+
       // Auto-load items on service initialization only if not pre-loaded
       if (!config.collection) {
         loadItems();
@@ -93,6 +131,8 @@ export const CmsCollectionServiceImplementation =
         itemsSignal,
         loadingSignal,
         errorSignal,
+        sortSignal,
+        setSort,
       };
     },
   );
