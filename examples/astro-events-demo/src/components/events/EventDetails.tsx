@@ -121,52 +121,53 @@ export function EventDetails({
               >
                 Tickets
               </h2>
-              <TicketsPickerPrimitive.TicketDefinitionRepeater>
-                <div className="border border-gray-200 p-8">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="border-r border-gray-200">
-                      <div className="text-sm font-light text-content-primary">
-                        Ticket type
-                      </div>
-                      <TicketDefinitionPrimitive.Name className="font-light text-content-primary" />
-                      <TicketDefinitionPrimitive.SaleStartDate
-                        asChild
-                        className="block font-light text-content-primary"
-                      >
-                        {({ startDateFormatted }) => (
-                          <span>Sale starts on: {startDateFormatted}</span>
-                        )}
-                      </TicketDefinitionPrimitive.SaleStartDate>
-                      <TicketDefinitionPrimitive.SaleEndDate
-                        asChild
-                        className="block font-light text-content-primary"
-                      >
-                        {({ endDateFormatted, saleEnded }) => (
-                          <span>
-                            {saleEnded ? 'Sale ended on' : 'Sale ends on'}:{' '}
-                            {endDateFormatted}
-                          </span>
-                        )}
-                      </TicketDefinitionPrimitive.SaleEndDate>
+              <TicketsPickerPrimitive.TicketDefinitionRepeater className="group border border-gray-200 p-8">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="border-r border-gray-200">
+                    <div className="text-sm font-light text-content-primary">
+                      Ticket type
                     </div>
-                    <div className="flex items-center gap-2 mb-5 w-full justify-between">
-                      <div>
-                        <TicketDefinitionPrimitive.FixedPricing className="font-medium text-content-primary" />
-                        <TicketDefinitionPrimitive.GuestPricing className="border border-gray-200 font-medium text-content-primary py-2 px-2" />
-                      </div>
-                      <TicketDefinitionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
-                      <TicketDefinitionPrimitive.PricingOptions className="flex flex-col w-full">
-                        <TicketDefinitionPrimitive.PricingOptionRepeater>
-                          <div className="flex items-center gap-2 mb-5 w-full justify-between">
-                            <div>
-                              <PricingOptionPrimitive.Name className="text-content-primary" />{' '}
-                              <PricingOptionPrimitive.Pricing className="text-content-primary" />
-                            </div>
-                            <PricingOptionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
+                    <TicketDefinitionPrimitive.Name className="font-light text-content-primary" />
+                    <TicketDefinitionPrimitive.SaleStartDate
+                      asChild
+                      className="block font-light text-content-primary"
+                    >
+                      {({ startDateFormatted }) => (
+                        <span>Sale starts on: {startDateFormatted}</span>
+                      )}
+                    </TicketDefinitionPrimitive.SaleStartDate>
+                    <TicketDefinitionPrimitive.SaleEndDate
+                      asChild
+                      className="block font-light text-content-primary"
+                    >
+                      {({ endDateFormatted, saleEnded }) => (
+                        <span>
+                          {saleEnded ? 'Sale ended on' : 'Sale ends on'}:{' '}
+                          {endDateFormatted}
+                        </span>
+                      )}
+                    </TicketDefinitionPrimitive.SaleEndDate>
+                  </div>
+                  <div className="flex items-center gap-2 mb-5 w-full justify-between">
+                    <div>
+                      <TicketDefinitionPrimitive.FixedPricing className="font-medium text-content-primary" />
+                      <TicketDefinitionPrimitive.GuestPricing className="border border-gray-200 font-medium text-content-primary py-2 px-2" />
+                    </div>
+                    <TicketDefinitionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
+                    <div className="hidden group-data-[sold-out=true]:block text-sm text-status-danger">
+                      Sold Out
+                    </div>
+                    <TicketDefinitionPrimitive.PricingOptions className="flex flex-col w-full">
+                      <TicketDefinitionPrimitive.PricingOptionRepeater>
+                        <div className="flex items-center gap-2 mb-5 w-full justify-between">
+                          <div>
+                            <PricingOptionPrimitive.Name className="text-content-primary" />{' '}
+                            <PricingOptionPrimitive.Pricing className="text-content-primary" />
                           </div>
-                        </TicketDefinitionPrimitive.PricingOptionRepeater>
-                      </TicketDefinitionPrimitive.PricingOptions>
-                    </div>
+                          <PricingOptionPrimitive.Quantity className="block min-w-24 border border-gray-300 text-content-secondary p-2" />
+                        </div>
+                      </TicketDefinitionPrimitive.PricingOptionRepeater>
+                    </TicketDefinitionPrimitive.PricingOptions>
                   </div>
                 </div>
               </TicketsPickerPrimitive.TicketDefinitionRepeater>

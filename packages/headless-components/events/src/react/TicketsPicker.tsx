@@ -143,6 +143,8 @@ export const TicketDefinitions = React.forwardRef<
 export interface TicketDefinitionRepeaterProps {
   /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the ticket definition element */
+  className?: string;
 }
 
 /**
@@ -162,7 +164,7 @@ export interface TicketDefinitionRepeaterProps {
 export const TicketDefinitionRepeater = (
   props: TicketDefinitionRepeaterProps,
 ): React.ReactNode => {
-  const { children } = props;
+  const { children, className } = props;
 
   return (
     <CoreTicketsPicker.TicketDefinitionRepeater>
@@ -171,6 +173,7 @@ export const TicketDefinitionRepeater = (
           <TicketDefinition.Root
             key={ticketDefinition._id}
             ticketDefinition={ticketDefinition}
+            className={className}
           >
             {children}
           </TicketDefinition.Root>

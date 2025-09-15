@@ -287,7 +287,7 @@ export interface QuantityRenderProps {
 }
 
 /**
- * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options or if sale hasn't started.
+ * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options, or if sale hasn't started, or if the ticket definition is sold out.
  *
  * @component
  */
@@ -301,7 +301,8 @@ export function Quantity(props: QuantityProps): React.ReactNode {
 
   if (
     ticketDefinition.pricingMethod?.pricingOptions ||
-    ticketDefinition.saleStatus !== 'SALE_STARTED'
+    ticketDefinition.saleStatus !== 'SALE_STARTED' ||
+    ticketDefinition.limitPerCheckout === 0
   ) {
     return null;
   }

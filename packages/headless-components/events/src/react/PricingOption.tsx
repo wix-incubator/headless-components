@@ -216,7 +216,7 @@ export interface QuantityProps {
 }
 
 /**
- * Displays a quantity selector for the pricing option. Only renders when the sale has started.
+ * Displays a quantity selector for the pricing option. Only renders when the sale has started and the ticket definition is not sold out.
  *
  * @component
  * @example
