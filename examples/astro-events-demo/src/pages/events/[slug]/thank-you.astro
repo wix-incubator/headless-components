@@ -11,6 +11,8 @@ const eventServiceConfigResult = await loadEventServiceConfig(slug);
 if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
 }
+
+const eventPageUrl = Astro.url.href.replace(Astro.url.search, '').replace('/thank-you', '')
 ---
 
 <BaseLayout>
@@ -24,5 +26,6 @@ if (eventServiceConfigResult.type === 'notFound') {
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}
+    eventPageUrl={eventPageUrl}
   />
 </BaseLayout>

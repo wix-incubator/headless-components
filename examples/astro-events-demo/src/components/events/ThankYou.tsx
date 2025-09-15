@@ -3,9 +3,10 @@ import { type EventServiceConfig } from '@wix/headless-events/services';
 
 interface ThankYouProps {
   eventServiceConfig: EventServiceConfig;
+  eventPageUrl: string;
 }
 
-export function ThankYou({ eventServiceConfig }: ThankYouProps) {
+export function ThankYou({ eventServiceConfig, eventPageUrl }: ThankYouProps) {
   return (
     <div className="min-h-screen bg-surface-primary">
       <div className="max-w-5xl mx-auto p-15">
@@ -77,7 +78,10 @@ export function ThankYou({ eventServiceConfig }: ThankYouProps) {
               </div>
               <div className="flex items-center gap-3 font-light text-content-primary">
                 <span>Share on</span>
-                <EventPrimitive.FacebookShare asChild>
+                <EventPrimitive.FacebookShare
+                  asChild
+                  eventPageUrl={eventPageUrl}
+                >
                   <a>
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <path
@@ -87,7 +91,10 @@ export function ThankYou({ eventServiceConfig }: ThankYouProps) {
                     </svg>
                   </a>
                 </EventPrimitive.FacebookShare>
-                <EventPrimitive.LinkedInShare asChild>
+                <EventPrimitive.LinkedInShare
+                  asChild
+                  eventPageUrl={eventPageUrl}
+                >
                   <a>
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <path
@@ -97,7 +104,7 @@ export function ThankYou({ eventServiceConfig }: ThankYouProps) {
                     </svg>
                   </a>
                 </EventPrimitive.LinkedInShare>
-                <EventPrimitive.XShare asChild>
+                <EventPrimitive.XShare asChild eventPageUrl={eventPageUrl}>
                   <a>
                     <svg width="24" height="24" viewBox="0 0 24 24">
                       <path

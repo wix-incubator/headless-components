@@ -330,6 +330,7 @@ Displays the event Facebook share link with customizable rendering.
 
 ```tsx
 interface FacebookShareProps {
+  eventPageUrl: string;
   asChild?: boolean;
   children?: AsChildChildren<{ url: string }>;
   className?: string;
@@ -369,6 +370,7 @@ Displays the event LinkedIn share link with customizable rendering.
 
 ```tsx
 interface LinkedInShareProps {
+  eventPageUrl: string;
   asChild?: boolean;
   children?: AsChildChildren<{ url: string }>;
   className?: string;
@@ -408,6 +410,7 @@ Displays the event X share link with customizable rendering.
 
 ```tsx
 interface XShareProps {
+  eventPageUrl: string;
   asChild?: boolean;
   children?: AsChildChildren<{ url: string }>;
   className?: string;

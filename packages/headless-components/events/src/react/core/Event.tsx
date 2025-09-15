@@ -226,31 +226,6 @@ export function RsvpButton(props: RsvpButtonProps): React.ReactNode {
   return props.children({ event });
 }
 
-export interface ShareProps {
-  /** Render prop function */
-  children: (props: ShareRenderProps) => React.ReactNode;
-}
-
-export interface ShareRenderProps {
-  /** Event URL for sharing */
-  eventUrl: string;
-}
-
-/**
- * Event Share core component that provides event URL for sharing.
- *
- * @component
- */
-export function Share(props: ShareProps): React.ReactNode {
-  // TODO: fix this
-  const eventUrl =
-    typeof window !== 'undefined'
-      ? window.location.href
-      : 'https://www.wix.com';
-
-  return props.children({ eventUrl });
-}
-
 export interface AddToGoogleCalendarProps {
   /** Render prop function */
   children: (props: AddToGoogleCalendarRenderProps) => React.ReactNode;
