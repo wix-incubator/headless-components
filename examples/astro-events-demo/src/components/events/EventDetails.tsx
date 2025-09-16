@@ -3,11 +3,13 @@ import {
   TicketsPicker as TicketsPickerPrimitive,
   TicketDefinition as TicketDefinitionPrimitive,
   PricingOption as PricingOptionPrimitive,
+  ScheduleList as ScheduleListPrimitive,
 } from '@wix/headless-events/react';
 import {
   type EventServiceConfig,
   type EventListServiceConfig,
   type TicketDefinitionListServiceConfig,
+  type ScheduleListServiceConfig,
 } from '@wix/headless-events/services';
 import { EventList } from './EventList';
 
@@ -15,6 +17,7 @@ interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
   eventListServiceConfig: EventListServiceConfig;
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
+  scheduleListServiceConfig: ScheduleListServiceConfig;
   eventsPagePath: string;
   formPagePath: string;
 }
@@ -23,6 +26,7 @@ export function EventDetails({
   eventServiceConfig,
   eventListServiceConfig,
   ticketDefinitionListServiceConfig,
+  scheduleListServiceConfig,
   eventsPagePath,
   formPagePath,
 }: EventDetailsProps) {
@@ -107,6 +111,48 @@ export function EventDetails({
               }}
             />
           </div>
+
+          {scheduleListServiceConfig && (
+            <div className="mb-15">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-light text-content-primary">
+                  Schedule
+                </h2>
+                <button className="text-sm font-light text-content-primary hover:underline">
+                  See All
+                </button>
+              </div>
+
+              <ScheduleListPrimitive.Root
+                scheduleListServiceConfig={scheduleListServiceConfig}
+              >
+                <ScheduleListPrimitive.Items
+                  className="space-y-6"
+                  emptyState={
+                    <div className="text-center font-light py-8 text-content-secondary">
+                      <p>No schedule items available yet.</p>
+                    </div>
+                  }
+                >
+                  <ScheduleListPrimitive.ItemRepeater className="space-y-4">
+                    <div className="text-content-primary font-light">
+                      {/* Additional content can be added here if needed */}
+                    </div>
+                  </ScheduleListPrimitive.ItemRepeater>
+                </ScheduleListPrimitive.Items>
+
+                <ScheduleListPrimitive.Error asChild>
+                  {({ error }) => (
+                    <div className="mt-4 p-4 bg-status-danger-medium border border-status-danger rounded">
+                      <p className="text-status-error font-light">
+                        Failed to load schedule: {error}
+                      </p>
+                    </div>
+                  )}
+                </ScheduleListPrimitive.Error>
+              </ScheduleListPrimitive.Root>
+            </div>
+          )}
 
           <TicketsPickerPrimitive.Root
             ticketDefinitionListServiceConfig={

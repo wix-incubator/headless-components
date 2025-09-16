@@ -4,5 +4,6 @@ export * from './event-service.js';
 export * from './form-control-service.js';
 export * from './form-service.js';
 export * from './pricing-option-service.js';
+export * from './schedule-list-service.js';
 export * from './ticket-definition-list-service.js';
 export * from './ticket-definition-service.js';
