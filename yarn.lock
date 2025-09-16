@@ -5987,7 +5987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/essentials@npm:^0.1.23, @wix/essentials@npm:^0.1.24":
+"@wix/essentials@npm:^0.1.23, @wix/essentials@npm:^0.1.24, @wix/essentials@npm:^0.1.28":
   version: 0.1.28
   resolution: "@wix/essentials@npm:0.1.28"
   dependencies:
@@ -6235,10 +6235,10 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
+    "@wix/essentials": "npm:^0.1.28"
     "@wix/headless-ecom": "workspace:^"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
-    "@wix/members": "npm:^1.0.327"
     "@wix/pricing-plans": "npm:^1.0.221"
     "@wix/redirects": "npm:^1.0.0"
     "@wix/sdk": "npm:^1.15.27"
@@ -6451,7 +6451,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/members@npm:^1.0.137, @wix/members@npm:^1.0.322, @wix/members@npm:^1.0.324, @wix/members@npm:^1.0.327":
+"@wix/members@npm:^1.0.137, @wix/members@npm:^1.0.322, @wix/members@npm:^1.0.324":
   version: 1.0.327
   resolution: "@wix/members@npm:1.0.327"
   dependencies:

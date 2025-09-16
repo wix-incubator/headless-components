@@ -44,10 +44,10 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
+    "@wix/essentials": "^0.1.28",
     "@wix/headless-ecom": "workspace:^",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
-    "@wix/members": "^1.0.327",
     "@wix/pricing-plans": "^1.0.221",
     "@wix/redirects": "^1.0.0",
     "@wix/sdk": "^1.15.27",

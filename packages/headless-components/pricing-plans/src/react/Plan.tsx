@@ -389,12 +389,12 @@ export const AdditionalFees = React.forwardRef<
 >(({ children, asChild, className }, ref) => {
   return (
     <CoreAdditionalFees>
-      {(renderProps) => (
+      {(additionalFeesData) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           customElement={children}
-          customElementProps={renderProps}
+          customElementProps={additionalFeesData}
           className={className}
           data-testid={PlanTestId.AdditionalFees}
         >
@@ -576,12 +576,12 @@ interface RecurrenceProps {
 export const Recurrence = React.forwardRef<HTMLElement, RecurrenceProps>(
   ({ children }, ref) => (
     <CoreRecurrence>
-      {({ recurrence }) => (
+      {(recurrenceData) => (
         <AsChildSlot
           ref={ref}
           asChild
           customElement={children}
-          customElementProps={recurrence}
+          customElementProps={recurrenceData}
         />
       )}
     </CoreRecurrence>
@@ -614,12 +614,12 @@ interface DurationProps {
 export const Duration = React.forwardRef<HTMLElement, DurationProps>(
   ({ children }, ref) => (
     <CoreDuration>
-      {({ duration }) => (
+      {(durationData) => (
         <AsChildSlot
           ref={ref}
           asChild
           customElement={children}
-          customElementProps={duration}
+          customElementProps={durationData}
         />
       )}
     </CoreDuration>

@@ -8,7 +8,8 @@ import {
   SignalsServiceDefinition,
 } from '@wix/services-definitions/core-services/signals';
 import { orders } from '@wix/pricing-plans';
-import { members } from '@wix/members';
+import { type IOAuthStrategy } from '@wix/sdk';
+import { auth } from '@wix/essentials';
 
 export const PlanPaywallServiceDefinition = defineService<{
   isLoadingSignal: ReadOnlySignal<boolean>;
@@ -57,7 +58,7 @@ export const PlanPaywallService =
         try {
           isLoadingSignal.set(true);
           errorSignal.set(null);
-          const isLoggedIn = await isMemberLoggedIn();
+          const isLoggedIn = isMemberLoggedIn();
           if (!isLoggedIn) {
             memberOrdersSignal.set(null);
             return;
@@ -100,19 +101,17 @@ async function fetchMemberOrders(
   }
 }
 
-async function isMemberLoggedIn(): Promise<boolean> {
-  try {
-    const { member } = await members.getCurrentMember();
-    return !!member;
-  } catch (error) {
-    console.error('Error checking if member is logged in:', error);
-    return false;
-  }
+function isMemberLoggedIn(): boolean {
+  return auth.getContextualAuth<IOAuthStrategy>().loggedIn();
 }
 
 export async function loadPlanPaywallServiceConfig(
   requiredPlanIds: string[],
 ): Promise<PlanPaywallServiceConfig> {
+  if (!isMemberLoggedIn()) {
+    return { memberOrders: [], requiredPlanIds };
+  }
+
   const memberOrders = await fetchMemberOrders(requiredPlanIds);
   return { memberOrders: memberOrders ?? [], requiredPlanIds };
 }
