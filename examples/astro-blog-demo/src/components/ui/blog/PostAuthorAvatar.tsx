@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Blog } from '@wix/headless-blog/react';
+import { Blog } from '@wix/blog/components';
 import { cva, type VariantProps } from 'class-variance-authority';
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../avatar';

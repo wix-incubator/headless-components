@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Blog } from '@wix/headless-blog/react';
+import { Blog } from '@wix/blog/components';
 import {
   createCustomCategory,
   type BlogCategoriesServiceConfig,
-} from '@wix/headless-blog/services';
+} from '@wix/blog/services';
 import { useNavigation } from './NavigationContext';
 
 interface BlogCategoriesSectionProps {
@@ -15,7 +15,7 @@ interface BlogCategoriesSectionProps {
   categoryPageBaseUrl: string;
   /** Loaded result of `loadBlogCategoriesServiceConfig` */
   blogCategoriesServiceConfig: BlogCategoriesServiceConfig;
-  /** Custom categories to prepend to the real categories (e.g., "All posts"). Use `createCustomCategory` to create them from "@wix/headless-blog/services" */
+  /** Custom categories to prepend to the real categories (e.g., "All posts"). Use `createCustomCategory` to create them from "@wix/blog/services" */
   customCategoriesToPrepend?: ReturnType<typeof createCustomCategory>[];
 }
 

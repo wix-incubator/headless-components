@@ -10,7 +10,14 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      // TS: Mimick exported sdk from @wix/blog
+      "@wix/blog/components": [
+        "../../packages/headless-components/blog/react"
+      ],
+      "@wix/blog/services": [
+        "../../packages/headless-components/blog/services"
+      ],
     }
   }
 }

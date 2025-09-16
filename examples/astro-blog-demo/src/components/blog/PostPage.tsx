@@ -7,8 +7,8 @@ import { PostTitle } from '@/components/ui/blog/PostTitle';
 import { SeparatedItems } from '@/components/ui/blog/SeparatedItems';
 import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon } from '@radix-ui/react-icons';
-import { Blog } from '@wix/headless-blog/react';
-import { type BlogPostServiceConfig } from '@wix/headless-blog/services';
+import { Blog } from '@wix/blog/components';
+import { type BlogPostServiceConfig } from '@wix/blog/services';
 import { useNavigation } from './NavigationContext';
 import { SharePostActions } from './SharePostActions';
 

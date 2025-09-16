@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Blog } from '@wix/headless-blog/react';
+import { Blog } from '@wix/blog/components';
 import React from 'react';
 
 export const PostExcerpt = React.forwardRef<

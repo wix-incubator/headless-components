@@ -5,7 +5,7 @@ import { SeparatedItems } from '@/components/ui/blog/SeparatedItems';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ChevronRightIcon } from '@radix-ui/react-icons';
-import { Blog } from '@wix/headless-blog/react';
+import { Blog } from '@wix/blog/components';
 import { useNavigation } from './NavigationContext';
 
 interface BlogFeedCardProps {

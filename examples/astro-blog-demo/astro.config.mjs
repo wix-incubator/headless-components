@@ -27,5 +27,12 @@ export default defineConfig({
       host: true,
     },
     plugins: [tailwindcss()],
+    resolve: {
+      // Vite: Mimick exported sdk from @wix/blog
+      alias: {
+        '@wix/blog/components': '@wix/headless-blog/react',
+        '@wix/blog/services': '@wix/headless-blog/services',
+      },
+    },
   },
 });
