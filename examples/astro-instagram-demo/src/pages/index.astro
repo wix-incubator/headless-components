@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import IndexPage from "../react-pages/index";
+import { loadInstagramFeedServiceConfig } from "@wix/headless-instagram/services";
+
+// Load instagram feed config server-side; replace with your account id or username
+const accountId = 'nivinabbas';
+const result = await loadInstagramFeedServiceConfig(accountId, 9);
+
+if (result.type === 'notFound') {
+  return Astro.rewrite('/404');
+}
+
+const instagramConfig = result.config;
+---
+<BaseLayout>
+  <title>Instagram Demo</title>
+  <meta name="description" content="Instagram headless components demo" />
+
+  <IndexPage client:load instagramConfig={instagramConfig} slot="body" />
+</BaseLayout>

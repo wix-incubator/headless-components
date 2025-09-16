@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+Astro.response.status = 404;
+---
+<BaseLayout>
+  <title>Not Found</title>
+  <meta name="robots" content="noindex" />
+  <div slot="body" class="min-h-screen grid place-items-center p-8">
+    <div class="text-center">
+      <h1 class="text-3xl font-semibold mb-2">Hello World from nivin</h1>
+    </div>
+  </div>
+</BaseLayout>
