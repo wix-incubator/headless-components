@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useWixClient } from '../hooks/useWixClient';
 import { getLevelBadgeClass } from '../utils/course-utils';
-import { RestrictedContentComponent } from './RestrictedContentComponent';
 import { PlanCardContent } from './PlanCard';
 import type { Course } from '../utils/demo-courses';
 import { PricingPlans } from '@wix/headless-pricing-plans/react';
@@ -16,12 +15,20 @@ export const CoursePageComponent = (props: CoursePageComponentProps) => {
     props.course.accessedByPlanIds.length > 0
   ) {
     return (
-      <RestrictedContentComponent
-        planIds={props.course.accessedByPlanIds}
-        fallback={<RestrictedCourseFallback course={props.course} />}
+      <PricingPlans.PlanPaywall.Root
+        planPaywallServiceConfig={{
+          requiredPlanIds: props.course.accessedByPlanIds,
+        }}
       >
-        <CourseData {...props} />
-      </RestrictedContentComponent>
+        <PricingPlans.PlanPaywall.Paywall>
+          <PricingPlans.PlanPaywall.RestrictedContent>
+            <CourseData {...props} />
+          </PricingPlans.PlanPaywall.RestrictedContent>
+          <PricingPlans.PlanPaywall.Fallback>
+            <RestrictedCourseFallback course={props.course} />
+          </PricingPlans.PlanPaywall.Fallback>
+        </PricingPlans.PlanPaywall.Paywall>
+      </PricingPlans.PlanPaywall.Root>
     );
   }
 
@@ -32,13 +39,7 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
   course,
 }) => {
   const { getIsLoggedIn, login, logout } = useWixClient();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
-  useEffect(() => {
-    getIsLoggedIn().then((isLoggedIn) => {
-      setIsLoggedIn(isLoggedIn);
-    });
-  }, [getIsLoggedIn]);
+  const [isLoggedIn] = useState<boolean>(getIsLoggedIn());
 
   const authLinkText = isLoggedIn ? 'Logout' : 'Login';
 
@@ -219,13 +220,7 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
 
 const CourseData: React.FC<CoursePageComponentProps> = ({ course }) => {
   const { getIsLoggedIn, login, logout } = useWixClient();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
-  useEffect(() => {
-    getIsLoggedIn().then((isLoggedIn) => {
-      setIsLoggedIn(isLoggedIn);
-    });
-  }, [getIsLoggedIn]);
+  const [isLoggedIn] = useState<boolean>(getIsLoggedIn());
 
   const handleStartCourse = () => {
     if (

@@ -1,18 +1,14 @@
-import { members } from '@wix/members';
 import { useCallback } from 'react';
+import { auth } from '@wix/essentials';
+import { type IOAuthStrategy } from '@wix/sdk';
 
 const MEMBER_STORAGE_KEY = 'member-store';
 
 export function useWixClient() {
-  const getIsLoggedIn = useCallback(async () => {
-    try {
-      const member = await members.getCurrentMember();
-
-      return !!member;
-    } catch (error) {
-      return false;
-    }
-  }, []);
+  const getIsLoggedIn = useCallback(
+    () => auth.getContextualAuth<IOAuthStrategy>().loggedIn(),
+    [],
+  );
 
   const login = useCallback(async () => {
     const returnUrl = encodeURIComponent(window.location.pathname);

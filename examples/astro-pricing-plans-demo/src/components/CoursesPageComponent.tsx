@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getLevelBadgeClass } from '../utils/course-utils';
 import { useWixClient } from '../hooks/useWixClient';
-import { RestrictedContentComponent } from './RestrictedContentComponent';
 import { getAllCourses, type Course } from '../utils/demo-courses';
-import { PricingPlans } from '@wix/headless-pricing-plans/react';
+import {
+  PricingPlans,
+  type PlanRecurrenceData,
+} from '@wix/headless-pricing-plans/react';
 
 // Separate component for locked course card to properly manage state
 const LockedCourseCard: React.FC<{
@@ -112,7 +114,10 @@ const LockedCourseCard: React.FC<{
                               <PricingPlans.Plan.Name className="font-medium text-sm text-gray-900" />
                               <PricingPlans.Plan.Price className="text-sm font-semibold text-gray-900" />
                               <PricingPlans.Plan.Recurrence>
-                                {({ recurrence }, ref) => {
+                                {React.forwardRef<
+                                  HTMLSpanElement,
+                                  PlanRecurrenceData
+                                >(({ recurrence }, ref) => {
                                   if (!recurrence) return null;
 
                                   return (
@@ -123,7 +128,7 @@ const LockedCourseCard: React.FC<{
                                       /{recurrence.period.toLowerCase()}
                                     </span>
                                   );
-                                }}
+                                })}
                               </PricingPlans.Plan.Recurrence>
                             </div>
                             <PricingPlans.Plan.Action.BuyNow
@@ -147,31 +152,9 @@ const LockedCourseCard: React.FC<{
 
 const CoursesPageComponent: React.FC = () => {
   const { getIsLoggedIn, login, logout } = useWixClient();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [isLoggedIn] = useState(getIsLoggedIn());
 
   const courses = getAllCourses();
-
-  useEffect(() => {
-    initializeComponent();
-    // Initialize login state
-    getIsLoggedIn().then(setIsLoggedIn);
-  }, []);
-
-  const initializeComponent = async () => {
-    try {
-      // await loadCourses();
-
-      const isLoggedIn = await getIsLoggedIn();
-      setIsLoggedIn(isLoggedIn);
-      setLoading(false);
-    } catch (error) {
-      console.error('Failed to initialize courses page:', error);
-      setError(true);
-      setLoading(false);
-    }
-  };
 
   const handleCourseClick = (course: Course) => {
     // Navigate to individual course page
@@ -187,33 +170,6 @@ const CoursesPageComponent: React.FC = () => {
       login();
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-secondary-600">Loading courses...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="text-center py-20">
-            <p className="text-red-600">
-              Unable to load courses. Please try again later.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
@@ -364,18 +320,26 @@ const CoursesPageComponent: React.FC = () => {
                 <LockedCourseCard
                   course={course}
                   planIds={course.accessedByPlanIds}
-                  // onPlanCheckout={goToPlanCheckout}
                 />
               );
 
               return (
-                <RestrictedContentComponent
+                <PricingPlans.PlanPaywall.Root
                   key={course.id}
-                  planIds={course.accessedByPlanIds}
-                  fallback={fallback}
+                  planPaywallServiceConfig={{
+                    requiredPlanIds: course.accessedByPlanIds,
+                  }}
                 >
-                  {accessibleCourseCard}
-                </RestrictedContentComponent>
+                  <PricingPlans.PlanPaywall.Paywall>
+                    <PricingPlans.PlanPaywall.RestrictedContent>
+                      {accessibleCourseCard}
+                    </PricingPlans.PlanPaywall.RestrictedContent>
+
+                    <PricingPlans.PlanPaywall.Fallback>
+                      {fallback}
+                    </PricingPlans.PlanPaywall.Fallback>
+                  </PricingPlans.PlanPaywall.Paywall>
+                </PricingPlans.PlanPaywall.Root>
               );
             })}
           </div>

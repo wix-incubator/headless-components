@@ -1,5 +1,9 @@
 import React from 'react';
-import { PricingPlans } from '@wix/headless-pricing-plans/react';
+import {
+  PricingPlans,
+  type PlanDurationData,
+  type PlanRecurrenceData,
+} from '@wix/headless-pricing-plans/react';
 import type { PlanServiceConfig } from '@wix/headless-pricing-plans/services';
 
 interface PlanCardContentProps {
@@ -46,23 +50,40 @@ export const PlanCardContent: React.FC<PlanCardContentProps> = ({
           <div className="flex items-baseline justify-center gap-1">
             <Plan.Price className="text-2xl font-bold text-gray-900" />
             <Plan.Recurrence>
-              {({ recurrence }, ref) => {
-                if (!recurrence) return null;
+              {React.forwardRef<HTMLSpanElement, PlanRecurrenceData>(
+                ({ recurrence }, ref) => {
+                  if (!recurrence) return null;
 
-                const periodText = recurrence.period.toLowerCase();
-                const displayText =
-                  recurrence.count === 1
-                    ? ` / ${periodText}`
-                    : ` every ${recurrence.count} ${periodText}s`;
+                  const periodText = recurrence.period.toLowerCase();
+                  const displayText =
+                    recurrence.count === 1
+                      ? ` / ${periodText}`
+                      : ` every ${recurrence.count} ${periodText}s`;
+
+                  return (
+                    <span ref={ref} className="text-sm text-gray-500">
+                      {displayText}
+                    </span>
+                  );
+                },
+              )}
+            </Plan.Recurrence>
+          </div>
+          <Plan.Duration>
+            {React.forwardRef<HTMLSpanElement, PlanDurationData>(
+              ({ duration }, ref) => {
+                console.log('duration', duration);
+                if (!duration) return null;
 
                 return (
                   <span ref={ref} className="text-sm text-gray-500">
-                    {displayText}
+                    Valid for {duration.count} {duration.period.toLowerCase()}
+                    {duration.count === 1 ? '' : 's'}
                   </span>
                 );
-              }}
-            </Plan.Recurrence>
-          </div>
+              },
+            )}
+          </Plan.Duration>
         </div>
 
         <Plan.Perks className="space-y-2 py-2">
