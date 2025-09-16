@@ -1,27 +1,6 @@
 import { posts, tags } from '@wix/blog';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import type { members } from '@wix/members';
-import {
-  pluginAudioViewer,
-  pluginCodeBlockViewer,
-  pluginCollapsibleListViewer,
-  pluginDividerViewer,
-  pluginGalleryViewer,
-  pluginGiphyViewer,
-  pluginHtmlViewer,
-  pluginImageViewer,
-  pluginIndentViewer,
-  pluginLineSpacingViewer,
-  pluginLinkButtonViewer,
-  pluginLinkPreviewViewer,
-  pluginLinkViewer,
-  pluginTableViewer,
-  pluginTextColorViewer,
-  pluginTextHighlightViewer,
-  pluginVideoViewer,
-  RicosViewer,
-  type RicosCustomStyles,
-} from '@wix/ricos';
 import React from 'react';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import * as BlogCategories from './Categories.js';
@@ -88,16 +67,11 @@ export interface BlogPostRootProps {
  * Supports both service-driven and prop-driven post data.
  * Follows Container Level pattern from architecture rules.
  *
- * **Important:** This package requires manual CSS import for proper styling:
- * ```tsx
- * import '@wix/headless-blog/react/styles.css';
- * ```
- * The CSS is required for proper rendering of Blog.Post.Content and other styled components.
- *
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
+ * import { RicosViewer } from '@/components/ui/ricos-viewer';
  *
  * // Service-driven (gets post from BlogPostService)
  * function BlogPostPage() {
@@ -106,7 +80,9 @@ export interface BlogPostRootProps {
  *       <article>
  *         <Blog.Post.Title />
  *         <Blog.Post.PublishDate locale="en-US" />
- *         <Blog.Post.Content />
+ *         <Blog.Post.Content>
+ *           {RicosViewer}
+ *         </Blog.Post.Content>
  *         <Blog.Post.Tags>
  *           <Blog.Post.TagRepeater>
  *             <Blog.Post.Tag />
@@ -160,6 +136,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
         'data-testid': TestIds.blogPostRoot,
         'data-post-id': post._id,
         'data-post-slug': post.slug,
+        'data-post-pinned': post.pinned,
         'data-has-cover-image': !!contextValue.coverImageUrl,
       };
 
@@ -416,45 +393,34 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
 Title.displayName = 'Blog.Post.Title';
 
 export interface ContentProps {
-  asChild?: boolean;
   className?: string;
-  children?: AsChildChildren<{ ricosViewerContent: any }> | React.ReactNode;
-  customStyles?: RicosCustomStyles;
+  children:
+    | AsChildChildren<{ content: any }>
+    | React.ReactElement<{ content: any }>;
 }
 /**
- * Displays the blog post rich content using Wix Ricos viewer.
- *
- * **Note:** Requires CSS import for proper content styling:
- * ```tsx
- * import '@wix/headless-blog/react/styles.css';
- * ```
- * Without this import, the rich content may not render with proper typography and layout.
+ * Exposes blog post rich content
  *
  * @component
  * @example
  * ```tsx
+ * import { RicosViewer } from '@/components/ui/ricos-viewer';
+ *
  * // Default rendering with built-in Ricos viewer
- * <Blog.Post.Content />
+ * <Blog.Post.Content>
+ *   {RicosViewer}
+ * </Blog.Post.Content>
  *
  * // Custom styling
- * <Blog.Post.Content className="prose max-w-[60ch] mx-auto" />
- *
- * // Custom Ricos styles using CSS custom properties
- * <Blog.Post.Content
- *   customStyles={{
- *     p: {
- *       fontSize: 'var(--text-lg)',
- *       lineHeight: 'var(--leading-relaxed)',
- *       color: 'var(--color-content-primary)',
- *     },
- *   }}
- * />
+ * <Blog.Post.Content className="prose max-w-[60ch] mx-auto">
+ *   {RicosViewer}
+ * </Blog.Post.Content>
  *
  * // Custom rendering with asChild
  * <Blog.Post.Content asChild>
- *   {({ ricosViewerContent }) => (
+ *   {({ content }) => (
  *     <div className="custom-content-wrapper">
- *       <RicosViewer content={ricosViewerContent} plugins={customPlugins()} />
+ *       <RicosViewer content={content} />
  *     </div>
  *   )}
  * </Blog.Post.Content>
@@ -462,36 +428,17 @@ export interface ContentProps {
  */
 export const Content = React.forwardRef<HTMLElement, ContentProps>(
   (props, ref) => {
-    const { asChild, children, className, customStyles } = props;
+    const { children, className } = props;
+    const asChild = true;
 
     const attributes = {
       'data-testid': TestIds.blogPostContent,
     };
 
-    const ricosPluginsForBlog = [
-      pluginAudioViewer(),
-      pluginCodeBlockViewer(),
-      pluginCollapsibleListViewer(),
-      pluginDividerViewer(),
-      pluginGalleryViewer(),
-      pluginGiphyViewer(),
-      pluginHtmlViewer(),
-      pluginImageViewer(),
-      pluginIndentViewer(),
-      pluginLineSpacingViewer(),
-      pluginLinkViewer(),
-      pluginLinkButtonViewer(),
-      pluginLinkPreviewViewer(),
-      pluginTableViewer(),
-      pluginTextColorViewer(),
-      pluginTextHighlightViewer(),
-      pluginVideoViewer(),
-    ];
-
     return (
       <CoreBlogPost.RichContent>
-        {({ ricosViewerContent }) => {
-          if (!ricosViewerContent) return null;
+        {({ content }) => {
+          if (!content) return null;
 
           return (
             <AsChildSlot
@@ -500,16 +447,8 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
               className={className}
               {...attributes}
               customElement={children}
-              customElementProps={{ ricosViewerContent }}
-            >
-              <div>
-                <RicosViewer
-                  content={ricosViewerContent}
-                  plugins={ricosPluginsForBlog}
-                  theme={{ customStyles }}
-                />
-              </div>
-            </AsChildSlot>
+              customElementProps={{ content }}
+            ></AsChildSlot>
           );
         }}
       </CoreBlogPost.RichContent>

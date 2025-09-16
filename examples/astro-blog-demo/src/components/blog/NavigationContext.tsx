@@ -1,7 +1,7 @@
 // This file is copied from kitchensink repo src/components/NavigationContext.tsx
 //
 // TODO: Will need to remove this file and update usages once it's included in "picasso" repo under "integrations" folder
-import React, { createContext, useContext, type ReactNode } from 'react';
+import React, { createContext, useContext, type ReactNode } from "react";
 
 export interface NavigationProps {
   route: string;

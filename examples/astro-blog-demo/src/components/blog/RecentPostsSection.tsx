@@ -1,7 +1,7 @@
-import { Separator } from '@/components/ui/separator';
-import { Blog } from '@wix/headless-blog/react';
-import { type BlogFeedServiceConfig } from '@wix/headless-blog/services';
-import { BlogFeedCardEditorial } from './BlogFeedCard';
+import { Separator } from "@/components/ui/separator";
+import { Blog } from "@wix/blog/components";
+import { type BlogFeedServiceConfig } from "@wix/blog/services";
+import { BlogFeedCardEditorial } from "./BlogFeedCard";
 
 interface RecentPostsSectionProps {
   /** Loaded result of `loadBlogFeedServiceConfig`, to be used for the recent posts section */

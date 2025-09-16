@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
-import React from 'react';
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import React from "react";
 
 const SocialFacebookIcon = ({ className }: { className?: string }) => (
   <svg
@@ -89,7 +89,7 @@ const CopyToClipboard = (props: CopyToClipboardProps) => {
         setIsCopied(false);
       }, 2000) as unknown as number;
     } catch (error) {
-      console.error('Failed to copy URL to clipboard:', error);
+      console.error("Failed to copy URL to clipboard:", error);
     }
   }, [href]);
 
@@ -121,15 +121,15 @@ export const SharePostActions = React.forwardRef<
   if (!href) return null;
 
   const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
-    href,
+    href
   )}`;
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-    href,
+    href
   )}`;
   const xShareUrl = `https://x.com/share?url=${encodeURIComponent(href)}`;
 
   return (
-    <div className={cn('flex gap-2', className)} ref={ref}>
+    <div className={cn("flex gap-2", className)} ref={ref}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -194,7 +194,7 @@ export const SharePostActions = React.forwardRef<
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {isCopied ? 'Copied!' : 'Copy Link'}
+                  {isCopied ? "Copied!" : "Copy Link"}
                 </TooltipContent>
               </Tooltip>
             </>
@@ -205,4 +205,4 @@ export const SharePostActions = React.forwardRef<
   );
 });
 
-SharePostActions.displayName = 'SharePostActions';
+SharePostActions.displayName = "SharePostActions";
