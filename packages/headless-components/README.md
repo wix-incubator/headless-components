@@ -16,6 +16,7 @@ Headless components in our ecosystem follow a service + React component pattern:
 
 2. **React Component Layer**: Provides render props interface for consuming the service
 
+
 ## Service Structure Breakdown
 
 ### a. Service Definition (Interface)
