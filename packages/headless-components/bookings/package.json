@@ -32,7 +32,7 @@
     }
   },
   "dependencies": {
-    "@wix/bookings": "^1.0.122",
+    "@wix/auto_sdk_bookings_services": "^1.0.0",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/services-definitions": "^0.1.4",
