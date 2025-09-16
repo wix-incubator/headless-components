@@ -1,0 +1,34 @@
+---
+import {
+  loadProgramServiceConfig,
+  loadInstructorsServiceConfig
+} from '@wix/headless-online-programs/services';
+
+import OnlineProgramPage from '../react-pages/online-programs/program';
+import Layout from '../layouts/Layout.astro';
+
+const { programId } = Astro.params;
+export const prerender = false;
+
+if (!programId) {
+  return Astro.redirect('/');
+}
+
+const [programServiceConfig, instructorsServiceConfig] = await Promise.all([
+  loadProgramServiceConfig(programId),
+  loadInstructorsServiceConfig([programId]),
+]);
+
+if (programServiceConfig.type === 'notFound') {
+  return Astro.rewrite('/404');
+}
+
+---
+
+<Layout>
+  <OnlineProgramPage
+    client:load
+    programServiceConfig={programServiceConfig.config}
+    instructorsServiceConfig={instructorsServiceConfig.type === 'success' ? instructorsServiceConfig.config : {instructors: []}}
+  />
+</Layout>
