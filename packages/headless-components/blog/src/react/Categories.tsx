@@ -65,7 +65,7 @@ export interface BlogCategoriesRootProps {
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
  *
  * function CategoryNavigation() {
  *   return (

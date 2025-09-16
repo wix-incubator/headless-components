@@ -8,7 +8,7 @@ import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Blog } from '@wix/blog/components';
 import { useNavigation } from './NavigationContext';
 
-interface BlogFeedCardProps {
+interface BlogFeedCardProps extends React.HTMLAttributes<HTMLElement> {
   className?: string;
   postPageBaseUrl: string;
   /** Categories will link to category pages if provided, otherwise they will be displayed as labels. */
@@ -37,13 +37,15 @@ export function BlogFeedCardSideBySide({
   categoryPageBaseUrl,
   dateLocale,
   readMoreText,
+  ...attributes
 }: BlogFeedCardProps) {
   const Navigation = useNavigation();
 
   return (
     <article
+      {...attributes}
       className={cn(
-        'bg-surface-card grid auto-cols-fr grid-flow-col overflow-hidden rounded-xl',
+        'bg-surface-card group grid auto-cols-fr grid-flow-col overflow-hidden rounded-xl',
         className,
       )}
     >
@@ -63,6 +65,9 @@ export function BlogFeedCardSideBySide({
           )}
         </Blog.Post.Link>
 
+        {/* <div className="hidden group-data-[post-pinned=true]:block">
+          <PinIcon />
+        </div> */}
         <PostExcerpt className="mb-4" />
 
         <SeparatedItems className="text-content-secondary text-sm">
@@ -112,11 +117,12 @@ export function BlogFeedCardEditorial({
   categoryPageBaseUrl,
   dateLocale,
   readMoreText,
+  ...attributes
 }: BlogFeedCardProps) {
   const Navigation = useNavigation();
 
   return (
-    <article className={cn('flex flex-col', className)}>
+    <article className={cn('group flex flex-col', className)} {...attributes}>
       <Blog.Post.CoverImage className="mb-6 aspect-[250/200] w-full rounded-xl object-cover" />
       <PostCategories className="mb-4" baseUrl={categoryPageBaseUrl} />
 

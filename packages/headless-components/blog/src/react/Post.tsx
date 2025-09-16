@@ -67,16 +67,11 @@ export interface BlogPostRootProps {
  * Supports both service-driven and prop-driven post data.
  * Follows Container Level pattern from architecture rules.
  *
- * **Important:** This package requires manual CSS import for proper styling:
- * ```tsx
- * import '@wix/headless-blog/react/styles.css';
- * ```
- * The CSS is required for proper rendering of Blog.Post.Content and other styled components.
- *
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
+ * import { RicosViewer } from '@/components/ui/ricos-viewer';
  *
  * // Service-driven (gets post from BlogPostService)
  * function BlogPostPage() {
@@ -85,7 +80,9 @@ export interface BlogPostRootProps {
  *       <article>
  *         <Blog.Post.Title />
  *         <Blog.Post.PublishDate locale="en-US" />
- *         <Blog.Post.Content />
+ *         <Blog.Post.Content>
+ *           {RicosViewer}
+ *         </Blog.Post.Content>
  *         <Blog.Post.Tags>
  *           <Blog.Post.TagRepeater>
  *             <Blog.Post.Tag />
@@ -139,6 +136,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
         'data-testid': TestIds.blogPostRoot,
         'data-post-id': post._id,
         'data-post-slug': post.slug,
+        'data-post-pinned': post.pinned,
         'data-has-cover-image': !!contextValue.coverImageUrl,
       };
 

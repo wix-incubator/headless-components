@@ -7,11 +7,11 @@ import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
   loadBlogFeedServiceConfig,
-} from '@wix/headless-blog/services';
+} from '@wix/blog/services';
 
 import './theme.css';
-import { loadSEOTagsServiceConfig } from '@wix/headless-seo/services';
-import { SEO } from '@wix/headless-seo/react';
+import { loadSEOTagsServiceConfig } from '@wix/seo/services';
+import { SEO } from '@wix/seo/components';
 
 export const prerender = false;
 
@@ -22,6 +22,7 @@ const [
 ] = await Promise.all([
   loadBlogFeedServiceConfig({
     pageSize: 10,
+    showPinnedPostsFirst: true,
     sort: [
       {
         fieldName: 'firstPublishedDate',

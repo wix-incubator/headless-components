@@ -96,7 +96,7 @@ export interface BlogFeedRootProps {
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
  *
  * function BlogPage() {
  *   return (

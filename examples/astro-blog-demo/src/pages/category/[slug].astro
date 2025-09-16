@@ -6,12 +6,12 @@ import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
   loadBlogFeedServiceConfig,
-} from '@wix/headless-blog/services';
-import { SEO } from '@wix/headless-seo/react';
+} from '@wix/blog/services';
+import { SEO } from '@wix/seo/components';
 import {
   loadSEOTagsServiceConfig,
   type SEOTagsServiceConfig,
-} from '@wix/headless-seo/services';
+} from '@wix/seo/services';
 import BlogCategoriesSection from '@/components/blog/BlogCategoriesSection';
 
 import '../theme.css';
@@ -33,6 +33,7 @@ try {
     loadBlogFeedServiceConfig({
       categorySlug: slug,
       pageSize: 10,
+      showPinnedPostsFirst: true,
       sort: [
         {
           fieldName: 'firstPublishedDate',
