@@ -16,7 +16,7 @@ export function Sort({ className }: SortProps) {
             onChange={(e) => {
               const [fieldName, order] = e.target.value.split('-') as [
                 string,
-                'ASC' | 'DESC'
+                'ASC' | 'DESC',
               ];
               setSort([{ fieldName, order }]);
             }}

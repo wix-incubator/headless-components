@@ -1,5 +1,11 @@
 import React from 'react';
-import { List, Options, ServiceRepeater, Service, Error } from '@wix/headless-services/react';
+import {
+  List,
+  Options,
+  ServiceRepeater,
+  Service,
+  Error,
+} from '@wix/headless-services/react';
 import type { ServicesListServiceConfig } from '@wix/headless-services/services';
 import type { services } from '@wix/bookings';
 
@@ -12,7 +18,5 @@ export function ServicesListDemo({ initialServices }: ServicesListDemoProps) {
     return null;
   }
 
-  return (
-    < div />
-  );
+  return <div />;
 }
