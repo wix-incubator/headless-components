@@ -15,9 +15,7 @@
     "dist",
     "cjs",
     "react",
-    "services",
-    "server-actions",
-    "astro"
+    "services"
   ],
   "exports": {
     "./react": {
