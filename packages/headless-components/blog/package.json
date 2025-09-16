@@ -4,10 +4,9 @@
   "type": "module",
   "scripts": {
     "prebuild": "cd ../utils && yarn build && cd ../components && yarn build && cd ../media && yarn build",
-    "build": "npm run build:esm && npm run build:cjs && npm run copy-assets",
+    "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "copy-assets": "cp src/react/styles.css dist/react/styles.css",
     "test": "vitest",
     "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
     "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
@@ -46,12 +45,11 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
-    "@wix/blog": "^1.0.470",
+    "@wix/blog": "^1.0.477",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/members": "^1.0.322",
     "@wix/redirects": "^1.0.0",
-    "@wix/ricos": "^10.141.3",
     "@wix/sdk": "^1.15.27",
     "@wix/services-definitions": "^0.1.5",
     "@wix/services-manager-react": "^0.1.27"
