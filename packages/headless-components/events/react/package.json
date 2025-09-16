@@ -1,4 +1,4 @@
 {
-  "main": "../dist/react/index.js",
+  "main": "../cjs/dist/react/index.js",
   "types": "../dist/react/index.d.ts"
 }
