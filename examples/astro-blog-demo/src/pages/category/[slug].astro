@@ -1,26 +1,26 @@
 ---
-import FeedPage from '@/components/blog/FeedPage';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { KitchensinkLayout } from '@/layouts/KitchensinkLayout';
+import FeedPage from "@/components/blog/FeedPage";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { KitchensinkLayout } from "@/layouts/KitchensinkLayout";
 import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
   loadBlogFeedServiceConfig,
-} from '@wix/blog/services';
-import { SEO } from '@wix/seo/components';
+} from "@wix/blog/services";
+import { SEO } from "@wix/seo/components";
 import {
   loadSEOTagsServiceConfig,
   type SEOTagsServiceConfig,
-} from '@wix/seo/services';
-import BlogCategoriesSection from '@/components/blog/BlogCategoriesSection';
+} from "@wix/seo/services";
+import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
 
-import '../theme.css';
+import "../theme.css";
 
 const { slug } = Astro.params;
 export const prerender = false;
 
 if (!slug) {
-  return Astro.redirect('/');
+  return Astro.redirect("/");
 }
 
 let blogFeedServiceConfig;
@@ -36,8 +36,8 @@ try {
       showPinnedPostsFirst: true,
       sort: [
         {
-          fieldName: 'firstPublishedDate',
-          order: 'DESC',
+          fieldName: "firstPublishedDate",
+          order: "DESC",
         },
       ],
     }),
@@ -57,15 +57,15 @@ try {
   });
 } catch (error) {
   // If category not found, redirect to 404
-  return Astro.rewrite('/404');
+  return Astro.rewrite("/404");
 }
 
 const customCategoriesToPrepend = [
   createCustomCategory({
-    label: 'All posts',
-    slug: '/blog/',
+    label: "All posts",
+    slug: "/blog/",
     description:
-      'Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.',
+      "Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.",
   }),
 ];
 ---

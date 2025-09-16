@@ -1,17 +1,17 @@
 ---
-import BlogCategoriesSection from '@/components/blog/BlogCategoriesSection';
-import FeedPage from '@/components/blog/FeedPage';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { KitchensinkLayout } from '@/layouts/KitchensinkLayout';
+import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
+import FeedPage from "@/components/blog/FeedPage";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { KitchensinkLayout } from "@/layouts/KitchensinkLayout";
 import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
   loadBlogFeedServiceConfig,
-} from '@wix/blog/services';
+} from "@wix/blog/services";
 
-import './theme.css';
-import { loadSEOTagsServiceConfig } from '@wix/seo/services';
-import { SEO } from '@wix/seo/components';
+import "./theme.css";
+import { loadSEOTagsServiceConfig } from "@wix/seo/services";
+import { SEO } from "@wix/seo/components";
 
 export const prerender = false;
 
@@ -25,8 +25,8 @@ const [
     showPinnedPostsFirst: true,
     sort: [
       {
-        fieldName: 'firstPublishedDate',
-        order: 'DESC',
+        fieldName: "firstPublishedDate",
+        order: "DESC",
       },
     ],
   }),
@@ -34,15 +34,15 @@ const [
   loadSEOTagsServiceConfig({
     pageUrl: Astro.url.href,
     itemData: {
-      pageName: 'Blog',
+      pageName: "Blog",
       seoData: {
         tags: [
           {
-            type: 'meta',
+            type: "meta",
             props: {
-              name: 'description',
+              name: "description",
               content:
-                'Explore our blog featuring the latest insights on headless components, web development, and modern architecture.',
+                "Explore our blog featuring the latest insights on headless components, web development, and modern architecture.",
             },
           },
         ],
@@ -53,10 +53,10 @@ const [
 
 const customCategoriesToPrepend = [
   createCustomCategory({
-    label: 'All posts',
-    slug: '/blog/',
+    label: "All posts",
+    slug: "/blog/",
     description:
-      'Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.',
+      "Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.",
   }),
 ];
 ---

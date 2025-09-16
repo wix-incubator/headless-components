@@ -1,5 +1,5 @@
 // IMPLEMENTATION TAKEN FROM "picasso" repo: */ui/ricos-viewer.tsx
-import React from 'react';
+import React from "react";
 
 import {
   RicosViewer as CoreRicosViewer,
@@ -22,21 +22,21 @@ import {
   pluginVideoViewer,
   type RichContent,
   type RicosCustomStyles,
-} from '@wix/ricos';
+} from "@wix/ricos";
 
 /* Core Ricos Viewer CSS */
-import '@wix/ricos/css/ricos-viewer.global.css';
+import "@wix/ricos/css/ricos-viewer.global.css";
 
 /* Plugins supported by Wix Blog */
-import '@wix/ricos/css/plugin-audio-viewer.global.css';
-import '@wix/ricos/css/plugin-collapsible-list-viewer.global.css';
-import '@wix/ricos/css/plugin-divider-viewer.global.css';
-import '@wix/ricos/css/plugin-gallery-viewer.global.css';
-import '@wix/ricos/css/plugin-giphy-viewer.global.css';
-import '@wix/ricos/css/plugin-html-viewer.global.css';
-import '@wix/ricos/css/plugin-image-viewer.global.css';
-import '@wix/ricos/css/plugin-table-viewer.global.css';
-import '@wix/ricos/css/plugin-video-viewer.global.css';
+import "@wix/ricos/css/plugin-audio-viewer.global.css";
+import "@wix/ricos/css/plugin-collapsible-list-viewer.global.css";
+import "@wix/ricos/css/plugin-divider-viewer.global.css";
+import "@wix/ricos/css/plugin-gallery-viewer.global.css";
+import "@wix/ricos/css/plugin-giphy-viewer.global.css";
+import "@wix/ricos/css/plugin-html-viewer.global.css";
+import "@wix/ricos/css/plugin-image-viewer.global.css";
+import "@wix/ricos/css/plugin-table-viewer.global.css";
+import "@wix/ricos/css/plugin-video-viewer.global.css";
 
 export interface RicosViewerProps {
   content?: RichContent;
@@ -46,56 +46,56 @@ export interface RicosViewerProps {
 
 const defaultCustomStyles: RicosCustomStyles = {
   h1: {
-    color: 'var(--color-foreground)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontSize: 'var(--text-5xl)',
+    color: "var(--color-foreground)",
+    fontWeight: "var(--font-weight-bold)",
+    fontSize: "var(--text-5xl)",
   },
   h2: {
-    color: 'var(--color-foreground)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontSize: 'var(--text-4xl)',
+    color: "var(--color-foreground)",
+    fontWeight: "var(--font-weight-bold)",
+    fontSize: "var(--text-4xl)",
   },
   h3: {
-    color: 'var(--color-foreground)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontSize: 'var(--text-3xl)',
+    color: "var(--color-foreground)",
+    fontWeight: "var(--font-weight-bold)",
+    fontSize: "var(--text-3xl)",
   },
   h4: {
-    color: 'var(--color-foreground)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontSize: 'var(--text-2xl)',
+    color: "var(--color-foreground)",
+    fontWeight: "var(--font-weight-bold)",
+    fontSize: "var(--text-2xl)",
   },
   h5: {
-    color: 'var(--color-foreground)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontSize: 'var(--text-xl)',
+    color: "var(--color-foreground)",
+    fontWeight: "var(--font-weight-bold)",
+    fontSize: "var(--text-xl)",
   },
   h6: {
-    color: 'var(--color-foreground)',
-    fontWeight: 'var(--font-weight-bold)',
-    fontSize: 'var(--text-lg)',
+    color: "var(--color-foreground)",
+    fontWeight: "var(--font-weight-bold)",
+    fontSize: "var(--text-lg)",
   },
   p: {
-    color: 'var(--color-foreground)',
-    fontSize: 'var(--text-lg)',
+    color: "var(--color-foreground)",
+    fontSize: "var(--text-lg)",
   },
   quote: {
-    color: 'var(--color-foreground)',
+    color: "var(--color-foreground)",
   },
   codeBlock: {
-    color: 'var(--color-foreground)',
+    color: "var(--color-foreground)",
   },
   audio: {
-    titleColor: 'var(--color-foreground)',
-    subtitleColor: 'var(--color-foreground)',
-    backgroundColor: 'var(--color-background)',
-    borderColor: 'var(--color-border)',
-    actionColor: 'var(--color-foreground)',
-    actionTextColor: 'var(--color-background)',
+    titleColor: "var(--color-foreground)",
+    subtitleColor: "var(--color-foreground)",
+    backgroundColor: "var(--color-background)",
+    borderColor: "var(--color-border)",
+    actionColor: "var(--color-foreground)",
+    actionTextColor: "var(--color-background)",
   },
   table: {
-    borderColor: 'var(--color-border)',
-    backgroundColor: 'var(--color-background)',
+    borderColor: "var(--color-border)",
+    backgroundColor: "var(--color-background)",
   },
 };
 
@@ -104,7 +104,7 @@ export const RicosViewer = React.forwardRef<HTMLDivElement, RicosViewerProps>(
     const { className, customStyles = defaultCustomStyles, content } = props;
 
     const attributes = {
-      'data-testid': 'ricos-viewer',
+      "data-testid": "ricos-viewer",
     };
 
     const ricosPluginsForBlog = [
@@ -136,5 +136,5 @@ export const RicosViewer = React.forwardRef<HTMLDivElement, RicosViewerProps>(
         />
       </div>
     );
-  },
+  }
 );

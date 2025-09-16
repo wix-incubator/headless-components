@@ -1,9 +1,9 @@
-import { EmptyState } from '@/components/ui/blog/EmptyState';
-import { Button } from '@/components/ui/button';
-import { Blog } from '@wix/blog/components';
-import { type BlogFeedServiceConfig } from '@wix/blog/services';
-import { Loader2Icon } from 'lucide-react';
-import { BlogFeedCardEditorial, BlogFeedCardSideBySide } from './BlogFeedCard';
+import { EmptyState } from "@/components/ui/blog/EmptyState";
+import { Button } from "@/components/ui/button";
+import { Blog } from "@wix/blog/components";
+import { type BlogFeedServiceConfig } from "@wix/blog/services";
+import { Loader2Icon } from "lucide-react";
+import { BlogFeedCardEditorial, BlogFeedCardSideBySide } from "./BlogFeedCard";
 
 interface FeedPageProps {
   /** Loaded result of `loadBlogFeedServiceConfig` */

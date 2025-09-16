@@ -1,7 +1,15 @@
-import { cn } from '@/lib/utils';
-import { Blog } from '@wix/blog/components';
-import React from 'react';
+import { cn } from "@/lib/utils";
+import { Blog } from "@wix/blog/components";
+import React from "react";
 
+/**
+ * Displays the excerpt/summary of a blog post with line clamping.
+ *
+ * @example
+ * ```tsx
+ * <PostExcerpt className="text-muted" />
+ * ```
+ */
 export const PostExcerpt = React.forwardRef<
   HTMLElement,
   { className?: string }
@@ -9,9 +17,9 @@ export const PostExcerpt = React.forwardRef<
   return (
     <Blog.Post.Excerpt
       ref={ref}
-      className={cn('text-content-secondary line-clamp-3', className)}
+      className={cn("text-content-secondary line-clamp-3", className)}
     />
   );
 });
 
-PostExcerpt.displayName = 'PostExcerpt';
+PostExcerpt.displayName = "PostExcerpt";

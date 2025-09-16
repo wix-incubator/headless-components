@@ -1,12 +1,12 @@
-import { PostCategories } from '@/components/ui/blog/PostCategories';
-import { PostExcerpt } from '@/components/ui/blog/PostExcerpt';
-import { PostTitle } from '@/components/ui/blog/PostTitle';
-import { SeparatedItems } from '@/components/ui/blog/SeparatedItems';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
-import { Blog } from '@wix/blog/components';
-import { useNavigation } from './NavigationContext';
+import { PostCategories } from "@/components/ui/blog/PostCategories";
+import { PostExcerpt } from "@/components/ui/blog/PostExcerpt";
+import { PostTitle } from "@/components/ui/blog/PostTitle";
+import { SeparatedItems } from "@/components/ui/blog/SeparatedItems";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ChevronRightIcon } from "@radix-ui/react-icons";
+import { Blog } from "@wix/blog/components";
+import { useNavigation } from "./NavigationContext";
 
 interface BlogFeedCardProps extends React.HTMLAttributes<HTMLElement> {
   className?: string;
@@ -45,8 +45,8 @@ export function BlogFeedCardSideBySide({
     <article
       {...attributes}
       className={cn(
-        'bg-surface-card group grid auto-cols-fr grid-flow-col overflow-hidden rounded-xl',
-        className,
+        "bg-surface-card group grid auto-cols-fr grid-flow-col overflow-hidden rounded-xl",
+        className
       )}
     >
       <Blog.Post.CoverImage className="mb-6 aspect-video h-full w-full object-cover" />
@@ -65,9 +65,6 @@ export function BlogFeedCardSideBySide({
           )}
         </Blog.Post.Link>
 
-        {/* <div className="hidden group-data-[post-pinned=true]:block">
-          <PinIcon />
-        </div> */}
         <PostExcerpt className="mb-4" />
 
         <SeparatedItems className="text-content-secondary text-sm">
@@ -122,7 +119,7 @@ export function BlogFeedCardEditorial({
   const Navigation = useNavigation();
 
   return (
-    <article className={cn('group flex flex-col', className)} {...attributes}>
+    <article className={cn("group flex flex-col", className)} {...attributes}>
       <Blog.Post.CoverImage className="mb-6 aspect-[250/200] w-full rounded-xl object-cover" />
       <PostCategories className="mb-4" baseUrl={categoryPageBaseUrl} />
 

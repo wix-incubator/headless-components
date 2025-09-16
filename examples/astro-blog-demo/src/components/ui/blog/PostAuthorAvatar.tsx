@@ -1,31 +1,45 @@
-import { cn } from '@/lib/utils';
-import { Blog } from '@wix/blog/components';
-import { cva, type VariantProps } from 'class-variance-authority';
-import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '../avatar';
+import { cn } from "@/lib/utils";
+import { Blog } from "@wix/blog/components";
+import { cva, type VariantProps } from "class-variance-authority";
+import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 
-const avatarSizeVariants = cva('bg-foreground/10', {
+const avatarSizeVariants = cva("bg-foreground/10", {
   variants: {
     size: {
-      sm: 'h-6 w-6',
-      md: 'h-8 w-8',
-      lg: 'h-10 w-10',
+      sm: "h-6 w-6",
+      md: "h-8 w-8",
+      lg: "h-10 w-10",
     },
   },
   defaultVariants: {
-    size: 'sm',
+    size: "sm",
   },
 });
 
+/**
+ * Available avatar sizes for the PostAuthorAvatar component.
+ */
 export type AvatarSize = NonNullable<
-  VariantProps<typeof avatarSizeVariants>['size']
+  VariantProps<typeof avatarSizeVariants>["size"]
 >;
 
 interface PostAuthorAvatarProps {
+  /** Additional CSS classes to apply to the avatar */
   className?: string;
+  /** Size variant for the avatar. Defaults to 'sm' */
   avatarSize?: AvatarSize;
 }
 
+/**
+ * Displays the author's avatar for a blog post.
+ * Shows the author's profile image or initials as a fallback.
+ *
+ * @example
+ * ```tsx
+ * <PostAuthorAvatar avatarSize="md" />
+ * ```
+ */
 export const PostAuthorAvatar = React.forwardRef<
   HTMLElement,
   PostAuthorAvatarProps
@@ -48,4 +62,4 @@ export const PostAuthorAvatar = React.forwardRef<
   );
 });
 
-PostAuthorAvatar.displayName = 'PostAuthorAvatar';
+PostAuthorAvatar.displayName = "PostAuthorAvatar";

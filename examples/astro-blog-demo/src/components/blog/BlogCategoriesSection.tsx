@@ -1,11 +1,11 @@
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Blog } from '@wix/blog/components';
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Blog } from "@wix/blog/components";
 import {
   createCustomCategory,
   type BlogCategoriesServiceConfig,
-} from '@wix/blog/services';
-import { useNavigation } from './NavigationContext';
+} from "@wix/blog/services";
+import { useNavigation } from "./NavigationContext";
 
 interface BlogCategoriesSectionProps {
   className?: string;
@@ -44,7 +44,7 @@ export default function BlogCategoriesSection({
 
   return (
     <Blog.Categories.Root
-      className={cn('mb-8', className)}
+      className={cn("mb-8", className)}
       blogCategoriesServiceConfig={blogCategoriesServiceConfig}
       customCategoriesToPrepend={customCategoriesToPrepend}
     >
@@ -73,7 +73,7 @@ export default function BlogCategoriesSection({
                         <Button
                           asChild
                           aria-current={isActive}
-                          variant={isActive ? 'default' : 'outline'}
+                          variant={isActive ? "default" : "outline"}
                         >
                           <Navigation route={href}>
                             <Blog.Category.Label />
