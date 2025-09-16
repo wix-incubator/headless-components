@@ -29,16 +29,6 @@
       "types": "./dist/services/index.d.ts",
       "import": "./dist/services/index.js",
       "require": "./cjs/dist/services/index.js"
-    },
-    "./server-actions": {
-      "types": "./dist/server-actions/index.d.ts",
-      "import": "./dist/server-actions/index.js",
-      "require": "./cjs/dist/server-actions/index.js"
-    },
-    "./astro/actions": {
-      "types": "./dist/astro/actions/index.d.ts",
-      "import": "./dist/astro/actions/index.js",
-      "require": "./cjs/dist/astro/actions/index.js"
     }
   },
   "dependencies": {
