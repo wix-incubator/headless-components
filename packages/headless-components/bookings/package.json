@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-bookings",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "prebuild": "cd ../media && yarn build && cd ../ecom && yarn build",
