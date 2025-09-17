@@ -2,13 +2,19 @@ import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import * as CoreScheduleList from './core/ScheduleList.js';
-import { type ScheduleItem } from '../services/schedule-list-service.js';
+import {
+  type ScheduleItem,
+  type ScheduleItemGroup,
+} from '../services/schedule-list-service.js';
 import * as Schedule from './Schedule.js';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
   scheduleListError = 'schedule-list-error',
   scheduleListNavigationTrigger = 'schedule-list-navigation-trigger',
+  scheduleListGroups = 'schedule-list-groups',
+  scheduleListGroup = 'schedule-list-group',
+  scheduleListGroupTitle = 'schedule-list-group-title',
 }
 
 /**
@@ -223,3 +229,174 @@ export const NavigationTrigger = React.forwardRef<
     </CoreScheduleList.NavigationTrigger>
   );
 });
+
+/**
+ * Props for the ScheduleList Groups component.
+ */
+export interface GroupsProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        groups: ScheduleItemGroup[];
+        hasGroups: boolean;
+      }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Container for the grouped schedule items.
+ * Follows Container Level pattern - provides context and conditional rendering.
+ *
+ * @component
+ */
+export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreScheduleList.Groups>
+        {({ groups, hasGroups }) => {
+          if (!hasGroups) {
+            return null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.scheduleListGroups}
+              customElement={children}
+              customElementProps={{ groups, hasGroups }}
+              {...otherProps}
+            >
+              <div>{children as React.ReactNode}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreScheduleList.Groups>
+    );
+  },
+);
+
+/**
+ * Props for the ScheduleList GroupRepeater component.
+ */
+export interface GroupRepeaterProps {
+  /** Child components */
+  children: React.ReactNode;
+}
+
+/**
+ * Repeater component that renders Group components for each date group.
+ * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
+ *
+ * @component
+ */
+export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
+  const { children } = props;
+
+  return (
+    <CoreScheduleList.GroupRepeater>
+      {({ group, index }) => (
+        <CoreScheduleList.Group
+          key={group.dateLabel + '-' + index}
+          group={group}
+        >
+          {children}
+        </CoreScheduleList.Group>
+      )}
+    </CoreScheduleList.GroupRepeater>
+  );
+};
+
+/**
+ * Props for the ScheduleList Group component.
+ */
+export interface GroupProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        group: ScheduleItemGroup;
+      }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Container for an individual date group that provides group context.
+ * Must be used within GroupRepeater.
+ *
+ * @component
+ */
+export const Group = React.forwardRef<HTMLElement, GroupProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.scheduleListGroup}
+      customElement={children}
+      customElementProps={{}}
+      {...otherProps}
+    >
+      <div>{children as React.ReactNode}</div>
+    </AsChildSlot>
+  );
+});
+
+/**
+ * Props for the ScheduleList GroupTitle component.
+ */
+export interface GroupTitleProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    dateLabel: string;
+    date: Date;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the date label for a schedule group (e.g., "Mon, 07 Jul").
+ * Must be used within a Group component.
+ *
+ * @component
+ */
+export const GroupTitle = React.forwardRef<HTMLElement, GroupTitleProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreScheduleList.GroupTitle>
+        {({ dateLabel, date }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.scheduleListGroupTitle}
+            customElement={children}
+            customElementProps={{ dateLabel, date }}
+            content={dateLabel}
+            {...otherProps}
+          >
+            <h2>{dateLabel}</h2>
+          </AsChildSlot>
+        )}
+      </CoreScheduleList.GroupTitle>
+    );
+  },
+);

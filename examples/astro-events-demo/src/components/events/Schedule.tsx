@@ -40,35 +40,42 @@ export function Schedule({
         <ScheduleListPrimitive.Root
           scheduleListServiceConfig={scheduleListServiceConfig}
         >
-          <ScheduleListPrimitive.Items className="space-y-4 mb-6">
-            <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
-              <div className="flex gap-8">
-                <SchedulePrimitive.TimeSlot className="font-light text-content-primary min-w-[150px]">
-                  {({ timeRange, duration }) => (
-                    <>
-                      <span className="font-medium">{timeRange}</span>
-                      {duration && (
-                        <span className="text-content-secondary">
-                          {duration}
-                        </span>
-                      )}
-                    </>
-                  )}
-                </SchedulePrimitive.TimeSlot>
-                <div className="flex-1">
-                  <div className="flex flex-col">
-                    <SchedulePrimitive.Name className="font-light text-content-primary" />
-                    <SchedulePrimitive.Stage className="font-light text-content-primary text-sm flex items-center gap-1 mb-3" />
-                    <SchedulePrimitive.Tags className="flex gap-2 flex-wrap">
-                      <SchedulePrimitive.TagRepeater>
-                        <TagPrimitive.Text className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
-                      </SchedulePrimitive.TagRepeater>
-                    </SchedulePrimitive.Tags>
-                  </div>
-                </div>
-              </div>
-            </ScheduleListPrimitive.ItemRepeater>
-          </ScheduleListPrimitive.Items>
+          <ScheduleListPrimitive.Groups className="space-y-8 mb-6">
+            <ScheduleListPrimitive.GroupRepeater>
+              <ScheduleListPrimitive.Group className="space-y-4">
+                <ScheduleListPrimitive.GroupTitle className="text-2xl font-bold text-content-primary mb-4" />
+                <ScheduleListPrimitive.Items className="space-y-4">
+                  <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
+                    <div className="flex gap-8">
+                      <SchedulePrimitive.TimeSlot className="font-light text-content-primary min-w-[150px]">
+                        {({ timeRange, duration }) => (
+                          <>
+                            <span className="font-medium">{timeRange}</span>
+                            {duration && (
+                              <span className="text-content-secondary">
+                                {duration}
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </SchedulePrimitive.TimeSlot>
+                      <div className="flex-1">
+                        <div className="flex flex-col">
+                          <SchedulePrimitive.Name className="font-light text-content-primary" />
+                          <SchedulePrimitive.Stage className="font-light text-content-primary text-sm flex items-center gap-1 mb-3" />
+                          <SchedulePrimitive.Tags className="flex gap-2 flex-wrap">
+                            <SchedulePrimitive.TagRepeater>
+                              <TagPrimitive.Text className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
+                            </SchedulePrimitive.TagRepeater>
+                          </SchedulePrimitive.Tags>
+                        </div>
+                      </div>
+                    </div>
+                  </ScheduleListPrimitive.ItemRepeater>
+                </ScheduleListPrimitive.Items>
+              </ScheduleListPrimitive.Group>
+            </ScheduleListPrimitive.GroupRepeater>
+          </ScheduleListPrimitive.Groups>
         </ScheduleListPrimitive.Root>
       </div>
     </div>
