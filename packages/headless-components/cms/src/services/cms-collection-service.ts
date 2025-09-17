@@ -35,6 +35,8 @@ export const CmsCollectionServiceDefinition = defineService<{
   loadItems: (options?: CmsQueryOptions) => Promise<void>;
   /** Function to create a new item in the collection */
   createItem: (itemData: Partial<WixDataItem>) => Promise<void>;
+  /** The collection ID */
+  collectionId: string;
 }>('cms-collection');
 
 /**
@@ -241,6 +243,7 @@ export const CmsCollectionServiceImplementation =
         loadNextPage,
         loadPrevPage,
         createItem,
+        collectionId: config.collectionId,
       };
     },
   );

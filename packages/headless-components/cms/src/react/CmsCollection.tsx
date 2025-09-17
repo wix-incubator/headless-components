@@ -8,6 +8,8 @@ import {
 } from '../services/cms-collection-service.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import type { DisplayType } from './core/CmsCollection.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
+import * as CmsItem from './CmsItem.js';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -16,6 +18,8 @@ enum TestIds {
   cmsCollectionItemsTotals = 'cms-collection-items-totals',
   cmsCollectionItemsDisplayed = 'cms-collection-items-displayed',
   cmsCollectionCreateItem = 'cms-collection-create-item',
+  cmsCollectionItems = 'cms-collection-items',
+  cmsCollectionItem = 'cms-collection-item',
 }
 
 /**
@@ -84,54 +88,253 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   },
 );
 
+
 /**
- * Props for CmsCollection.Items headless component
+ * Props for CmsCollection.Items component
  */
 export interface ItemsProps {
-  /** Render prop function that receives collection items data */
-  children: (props: ItemsRenderProps) => React.ReactNode;
+  children: React.ReactNode;
+  emptyState?: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+  // TODO: add infiniteScroll and pageSize when we have pagination
 }
 
 /**
- * Render props for CmsCollection.Items component
+ * Main container for the collection items display with support for empty states.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage with empty state
+ * <CmsCollection.Items
+ *   emptyState={<div>No items found</div>}
+ *   className="space-y-4"
+ * >
+ *   <CmsCollection.ItemRepeater>
+ *     <CmsItem.Field fieldId="title" className="font-semibold mb-2" />
+ *     <CmsItem.Field fieldId="description" className="text-gray-600" />
+ *   </CmsCollection.ItemRepeater>
+ * </CmsCollection.Items>
+ *
+ * // Using asChild pattern
+ * <CmsCollection.Items asChild emptyState={<div>No data available</div>}>
+ *   <section className="grid grid-cols-3 gap-4">
+ *     <CmsCollection.ItemRepeater>
+ *       <CmsItem.Field fieldId="title" />
+ *       <CmsItem.Field fieldId="description" />
+ *     </CmsCollection.ItemRepeater>
+ *   </section>
+ * </CmsCollection.Items>
+ * ```
  */
-export interface ItemsRenderProps {
-  /** Array of collection items */
-  items: WixDataItem[];
-  /** Whether the collection is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
+export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
+  const { children, emptyState, asChild, className, ...otherProps } = props;
+
+  return (
+    <CoreCmsCollection.Items>
+      {({ items, isLoading, error }) => {
+        // Don't render anything during loading or error states
+        if (isLoading || error) {
+          return null;
+        }
+
+        // Show empty state when no items
+        if (items.length === 0) {
+          return emptyState || null;
+        }
+
+        const dataAttributes = {
+          'data-testid': TestIds.cmsCollectionItems,
+          'data-empty': items.length === 0,
+        };
+
+        if (asChild) {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              {...dataAttributes}
+              {...otherProps}
+            >
+              {children}
+            </AsChildSlot>
+          );
+        }
+
+        return (
+          <div
+            {...dataAttributes}
+            className={className}
+            ref={ref as React.LegacyRef<HTMLDivElement>}
+            {...otherProps}
+          >
+            {children}
+          </div>
+        );
+      }}
+    </CoreCmsCollection.Items>
+  );
+});
+
+/**
+ * Props for CmsCollection.ItemRepeater component
+ */
+export interface ItemRepeaterProps {
+  children: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
 }
 
 /**
- * Headless component for collection items display with loading and error states
+ * Repeats for each collection item in the list, providing individual item context.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <CmsCollection.ItemRepeater className="item-card">
+ *   <CmsItem.Field fieldId="title" />
+ *   <CmsItem.Field fieldId="image" />
+ *   <CmsItem.Field fieldId="description" />
+ * </CmsCollection.ItemRepeater>
+ * ```
+ */
+export function ItemRepeater(props: ItemRepeaterProps) {
+  const { children, asChild, className, ...otherProps } = props;
+
+  return (
+    <CoreCmsCollection.ItemRepeater>
+      {({ items, collectionId, isLoading, error }) => {
+        // Don't render during loading or error states
+        if (isLoading || error || items.length === 0) {
+          return null;
+        }
+
+        return (
+          <>
+            {items.map((item) => (
+              <CmsItem.Root
+                key={item._id}
+                item={{
+                  collectionId,
+                  id: item._id,
+                  item: item,
+                }}
+              >
+                {asChild ? (
+                  <AsChildSlot
+                    asChild={asChild}
+                    className={className}
+                    data-testid={TestIds.cmsCollectionItem}
+                    data-collection-item-id={item._id}
+                    {...otherProps}
+                  >
+                    {children}
+                  </AsChildSlot>
+                ) : (
+                  <div
+                    data-testid={TestIds.cmsCollectionItem}
+                    data-collection-item-id={item._id}
+                    className={className}
+                    {...otherProps}
+                  >
+                    {children}
+                  </div>
+                )}
+              </CmsItem.Root>
+            ))}
+          </>
+        );
+      }}
+    </CoreCmsCollection.ItemRepeater>
+  );
+}
+
+/**
+ * Props for CmsCollection.Loading component
+ */
+export interface LoadingProps {
+  /** Content to display during loading (can be a render function or ReactNode) */
+  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for Loading component
+ */
+export interface LoadingRenderProps {}
+
+/**
+ * Component that renders content during loading state.
+ * Only displays its children when the collection is currently loading.
  *
  * @component
  * @example
  * ```tsx
  * import { CmsCollection } from '@wix/cms/components';
  *
- * function CollectionItemsView() {
+ * function CollectionLoading() {
  *   return (
- *     <CmsCollection.Items>
- *       {({ items, isLoading, error }) => (
- *         <div>
- *           {error && <div>Error: {error}</div>}
- *           {isLoading && <div>Loading...</div>}
- *           {!isLoading && !error && items.length === 0 && <div>No items found</div>}
- *           {items.map(item => (
- *             <div key={item._id}>{item.title}</div>
- *           ))}
+ *     <CmsCollection.Loading>
+ *       {() => (
+ *         <div className="loading-spinner">
+ *           <div>Loading collection...</div>
+ *           <div className="spinner"></div>
  *         </div>
  *       )}
- *     </CmsCollection.Items>
+ *     </CmsCollection.Loading>
  *   );
  * }
  * ```
  */
-export function Items(props: ItemsProps) {
-  return <CoreCmsCollection.Items>{props.children}</CoreCmsCollection.Items>;
+export function Loading(props: LoadingProps): React.ReactNode {
+  return <CoreCmsCollection.Loading>{props.children}</CoreCmsCollection.Loading>;
+}
+
+/**
+ * Props for CmsCollection.Error component
+ */
+export interface ErrorProps {
+  /** Content to display during error state (can be a render function or ReactNode) */
+  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for Error component
+ */
+export interface ErrorRenderProps {
+  /** Error message */
+  error: string | null;
+}
+
+/**
+ * Component that renders content when there's an error loading collection.
+ * Only displays its children when an error has occurred.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * function CollectionError() {
+ *   return (
+ *     <CmsCollection.Error>
+ *       {({ error }) => (
+ *         <div className="error-state">
+ *           <h3>Error loading collection</h3>
+ *           <p>{error}</p>
+ *           <button onClick={() => window.location.reload()}>
+ *             Try Again
+ *           </button>
+ *         </div>
+ *       )}
+ *     </CmsCollection.Error>
+ *   );
+ * }
+ * ```
+ */
+export function Error(props: ErrorProps): React.ReactNode {
+  return <CoreCmsCollection.Error>{props.children}</CoreCmsCollection.Error>;
 }
 
 /**

@@ -267,7 +267,7 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
       displayed =
         pageSize > 0
           ? currentPage * pageSize + currentPageItems
-    : currentPageItems;
+        : currentPageItems;
       break;
   }
 
@@ -297,6 +297,28 @@ export interface CreateItemActionRenderProps {
 }
 
 /**
+ * Props for CmsCollection.ItemRepeater headless component
+ */
+export interface ItemRepeaterProps {
+  /** Render prop function that receives collection items data for repeating */
+  children: (props: ItemRepeaterRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for CmsCollection.ItemRepeater component
+ */
+export interface ItemRepeaterRenderProps {
+  /** Array of collection items */
+  items: WixDataItem[];
+  /** The collection ID */
+  collectionId: string;
+  /** Whether the collection is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
+}
+
+/**
  * Core headless component for creating new items in the collection
  */
 export function CreateItemAction(props: CreateItemActionProps) {
@@ -313,4 +335,92 @@ export function CreateItemAction(props: CreateItemActionProps) {
     isLoading,
     error,
   });
+}
+
+/**
+ * Core headless component for collection item repeating with data access
+ */
+export function ItemRepeater(props: ItemRepeaterProps) {
+  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
+    typeof CmsCollectionServiceDefinition
+  >;
+
+  const items = service.queryResultSignal.get()?.items || [];
+  const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
+  const collectionId = service.collectionId;
+
+  return props.children({
+    items,
+    collectionId,
+    isLoading,
+    error,
+  });
+}
+
+/**
+ * Props for Loading headless component
+ */
+export interface LoadingProps {
+  /** Content to display during loading (can be a render function or ReactNode) */
+  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for Loading component
+ */
+export interface LoadingRenderProps {}
+
+/**
+ * Component that renders content during loading state.
+ * Only displays its children when the collection is currently loading.
+ */
+export function Loading(props: LoadingProps): React.ReactNode {
+  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
+    typeof CmsCollectionServiceDefinition
+  >;
+  const isLoadingValue = service.loadingSignal.get();
+
+  if (isLoadingValue) {
+    return typeof props.children === 'function'
+      ? props.children({})
+      : props.children;
+  }
+
+  return null;
+}
+
+/**
+ * Props for Error headless component
+ */
+export interface ErrorProps {
+  /** Content to display during error state (can be a render function or ReactNode) */
+  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+/**
+ * Render props for Error component
+ */
+export interface ErrorRenderProps {
+  /** Error message */
+  error: string | null;
+}
+
+/**
+ * Component that renders content when there's an error loading collection.
+ * Only displays its children when an error has occurred.
+ */
+export function Error(props: ErrorProps): React.ReactNode {
+  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
+    typeof CmsCollectionServiceDefinition
+  >;
+  const errorValue = service.errorSignal.get();
+
+  if (errorValue) {
+    return typeof props.children === 'function'
+      ? props.children({ error: errorValue })
+      : props.children;
+  }
+
+  return null;
 }
