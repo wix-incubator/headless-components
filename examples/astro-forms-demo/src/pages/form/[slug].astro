@@ -12,7 +12,11 @@ if (typeof slug !== 'string' || !guidRegex.test(slug)) {
   return Astro.redirect('/404');
 }
 
-const formServiceConfig = await loadFormServiceConfig(slug);
+const result = await loadFormServiceConfig(slug);
+if (result.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+const formServiceConfig = result.config;
 ---
 
 <BaseLayout>
