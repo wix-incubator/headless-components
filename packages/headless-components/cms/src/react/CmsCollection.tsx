@@ -7,6 +7,7 @@ import {
   type CmsQueryOptions,
 } from '../services/cms-collection-service.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import type { DisplayType } from './core/CmsCollection.js';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -381,6 +382,8 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>(
  * Props for CmsCollection.Totals.Displayed component
  */
 export interface TotalsDisplayedProps {
+  /** Type of display count to show */
+  displayType?: DisplayType;
   children?: React.ForwardRefRenderFunction<HTMLElement, {
     displayed: number;
   }>;
@@ -389,7 +392,7 @@ export interface TotalsDisplayedProps {
 }
 
 /**
- * Displays the number of items currently displayed.
+ * Displays various count metrics based on the displayType prop.
  *
  * @component
  * @example
@@ -398,21 +401,27 @@ export interface TotalsDisplayedProps {
  *
  * function DisplayedCount() {
  *   return (
- *     <span>Showing: <CmsCollection.Totals.Displayed /></span>
+ *     <div>
+ *       <span>Displayed: <CmsCollection.Totals.Displayed displayType="displayed"/></span>
+ *       <span>Items on page: <CmsCollection.Totals.Displayed displayType="currentPageAmount"/></span>
+ *       <span>Current page: <CmsCollection.Totals.Displayed displayType="currentPageNum"/></span>
+ *       <span>Total pages: <CmsCollection.Totals.Displayed displayType="totalPages"/></span>
+ *     </div>
  *   );
  * }
  * ```
  */
 const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
   (props, ref) => {
-    const { children, asChild, className, ...otherProps } = props;
+    const { children, asChild, className, displayType, ...otherProps } = props;
 
     return (
-      <CoreCmsCollection.TotalsDisplayed>
+      <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
         {({ displayed }) => {
           const attributes = {
             'data-testid': TestIds.cmsCollectionItemsDisplayed,
             'data-displayed': displayed,
+            'data-display-type': displayType || 'displayed',
             className,
             ...otherProps,
           };

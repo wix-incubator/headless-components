@@ -205,9 +205,20 @@ export function TotalsCount(props: TotalsCountProps) {
 }
 
 /**
+ * Type of display count to show
+ */
+export type DisplayType =
+  | 'displayed' // Number of items displayed up to current page (default)
+  | 'currentPageAmount' // Number of items on current page only
+  | 'currentPageNum' // Current page number
+  | 'totalPages'; // Total number of pages
+
+/**
  * Props for CmsCollection.Totals.Displayed headless component
  */
 export interface TotalsDisplayedProps {
+  /** Type of display count to show */
+  displayType?: DisplayType;
   /** Render prop function that receives displayed count data */
   children: (props: TotalsDisplayedRenderProps) => React.ReactNode;
 }
@@ -216,31 +227,49 @@ export interface TotalsDisplayedProps {
  * Render props for CmsCollection.Totals.Displayed component
  */
 export interface TotalsDisplayedRenderProps {
-  /** Number of items currently displayed */
+  /** Number based on the specified displayType */
   displayed: number;
 }
 
 /**
- * Core headless component for displaying the number of items currently displayed
+ * Core headless component for displaying various count metrics
  */
 export function TotalsDisplayed(props: TotalsDisplayedProps) {
+  const { displayType = 'displayed' } = props;
   const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
     typeof CmsCollectionServiceDefinition
   >;
 
   const queryResult = service.queryResultSignal.get();
 
-  // Calculate displayed count based on pagination metadata
-  // displayed = (currentPage * pageSize) + items on current page
+  // Extract data from queryResult
   const currentPage = queryResult?.currentPage ?? 0; // 0-based index
   const pageSize = queryResult?.pageSize ?? 0;
   const currentPageItems = queryResult?.items.length ?? 0;
+  const totalPages = queryResult?.totalPages ?? 0;
 
-  // If we don't have pagination metadata, displayed = current items
-  // Otherwise: Total displayed = all items from previous pages + current page items
-  const displayed = pageSize > 0
-    ? (currentPage * pageSize) + currentPageItems
+  // Calculate the displayed value based on displayType
+  let displayed: number;
+
+  switch (displayType) {
+    case 'currentPageAmount':
+      displayed = currentPageItems;
+      break;
+    case 'currentPageNum':
+      displayed = currentPage + 1; // Convert from 0-based to 1-based for display
+      break;
+    case 'totalPages':
+      displayed = totalPages;
+      break;
+    case 'displayed':
+    default:
+      // Calculate total displayed count: all items from previous pages + current page items
+      displayed =
+        pageSize > 0
+          ? currentPage * pageSize + currentPageItems
     : currentPageItems;
+      break;
+  }
 
   return props.children({
     displayed,
