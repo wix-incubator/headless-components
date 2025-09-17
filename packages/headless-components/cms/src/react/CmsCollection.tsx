@@ -4,6 +4,7 @@ import {
   WixDataQueryResult,
   type CmsCollectionServiceConfig,
   type WixDataItem,
+  type CmsQueryOptions,
 } from '../services/cms-collection-service.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
@@ -11,6 +12,8 @@ enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
   cmsCollectionNext = 'cms-collection-next',
   cmsCollectionPrev = 'cms-collection-prev',
+  cmsCollectionItemsTotals = 'cms-collection-items-totals',
+  cmsCollectionItemsDisplayed = 'cms-collection-items-displayed',
 }
 
 /**
@@ -21,6 +24,7 @@ export interface RootProps {
   collection: {
     id: string;
     queryResult?: WixDataQueryResult;
+    queryOptions?: CmsQueryOptions;
   };
 }
 
@@ -60,6 +64,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const collectionServiceConfig: CmsCollectionServiceConfig = {
       collectionId: collection.id,
       queryResult: collection?.queryResult,
+      queryOptions: collection?.queryOptions,
     };
 
     const attributes = {
@@ -308,4 +313,138 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
     );
   },
 );
+
+/**
+ * Props for CmsCollection.Totals.Count component
+ */
+export interface TotalsCountProps {
+  children?: React.ForwardRefRenderFunction<HTMLElement, {
+    total: number;
+  }>;
+  asChild?: boolean;
+  className?: string;
+}
+
+/**
+ * Displays the total number of items in the collection.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * function TotalCount() {
+ *   return (
+ *     <span>Total: <CmsCollection.Totals.Count /></span>
+ *   );
+ * }
+ * ```
+ */
+const Count = React.forwardRef<HTMLElement, TotalsCountProps>(
+  (props, ref) => {
+    const { children, asChild, className, ...otherProps } = props;
+
+    return (
+      <CoreCmsCollection.TotalsCount>
+        {({ total }) => {
+          const attributes = {
+            'data-testid': TestIds.cmsCollectionItemsTotals,
+            'data-total': total,
+            className,
+            ...otherProps,
+          };
+
+          if (asChild && React.isValidElement(children)) {
+            return React.cloneElement(children as React.ReactElement, {
+              ...attributes,
+              ref,
+              children: total,
+            });
+          }
+
+          if (typeof children === 'function') {
+            return children({ total }, ref);
+          }
+
+          return (
+            <span {...attributes} ref={ref}>
+              {total}
+            </span>
+          );
+        }}
+      </CoreCmsCollection.TotalsCount>
+    );
+  },
+);
+
+/**
+ * Props for CmsCollection.Totals.Displayed component
+ */
+export interface TotalsDisplayedProps {
+  children?: React.ForwardRefRenderFunction<HTMLElement, {
+    displayed: number;
+  }>;
+  asChild?: boolean;
+  className?: string;
+}
+
+/**
+ * Displays the number of items currently displayed.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * function DisplayedCount() {
+ *   return (
+ *     <span>Showing: <CmsCollection.Totals.Displayed /></span>
+ *   );
+ * }
+ * ```
+ */
+const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
+  (props, ref) => {
+    const { children, asChild, className, ...otherProps } = props;
+
+    return (
+      <CoreCmsCollection.TotalsDisplayed>
+        {({ displayed }) => {
+          const attributes = {
+            'data-testid': TestIds.cmsCollectionItemsDisplayed,
+            'data-displayed': displayed,
+            className,
+            ...otherProps,
+          };
+
+          if (asChild && React.isValidElement(children)) {
+            return React.cloneElement(children as React.ReactElement, {
+              ...attributes,
+              ref,
+              children: displayed,
+            });
+          }
+
+          if (typeof children === 'function') {
+            return children({ displayed }, ref);
+          }
+
+          return (
+            <span {...attributes} ref={ref}>
+              {displayed}
+            </span>
+          );
+        }}
+      </CoreCmsCollection.TotalsDisplayed>
+    );
+  },
+);
+
+/**
+ * Container for totals-related components
+ */
+export const Totals = {
+  Count,
+  Displayed,
+};
 

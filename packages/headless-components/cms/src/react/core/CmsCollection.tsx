@@ -172,3 +172,77 @@ export function PrevAction(props: PrevActionProps) {
     totalPages: queryResult?.totalPages,
   });
 }
+
+/**
+ * Props for CmsCollection.Totals.Count headless component
+ */
+export interface TotalsCountProps {
+  /** Render prop function that receives total count data */
+  children: (props: TotalsCountRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for CmsCollection.Totals.Count component
+ */
+export interface TotalsCountRenderProps {
+  /** Total number of items in the collection */
+  total: number;
+}
+
+/**
+ * Core headless component for displaying the total number of items in the collection
+ */
+export function TotalsCount(props: TotalsCountProps) {
+  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
+    typeof CmsCollectionServiceDefinition
+  >;
+
+  const queryResult = service.queryResultSignal.get();
+
+  return props.children({
+    total: queryResult?.totalCount ?? 0,
+  });
+}
+
+/**
+ * Props for CmsCollection.Totals.Displayed headless component
+ */
+export interface TotalsDisplayedProps {
+  /** Render prop function that receives displayed count data */
+  children: (props: TotalsDisplayedRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for CmsCollection.Totals.Displayed component
+ */
+export interface TotalsDisplayedRenderProps {
+  /** Number of items currently displayed */
+  displayed: number;
+}
+
+/**
+ * Core headless component for displaying the number of items currently displayed
+ */
+export function TotalsDisplayed(props: TotalsDisplayedProps) {
+  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
+    typeof CmsCollectionServiceDefinition
+  >;
+
+  const queryResult = service.queryResultSignal.get();
+
+  // Calculate displayed count based on pagination metadata
+  // displayed = (currentPage * pageSize) + items on current page
+  const currentPage = queryResult?.currentPage ?? 0; // 0-based index
+  const pageSize = queryResult?.pageSize ?? 0;
+  const currentPageItems = queryResult?.items.length ?? 0;
+
+  // If we don't have pagination metadata, displayed = current items
+  // Otherwise: Total displayed = all items from previous pages + current page items
+  const displayed = pageSize > 0
+    ? (currentPage * pageSize) + currentPageItems
+    : currentPageItems;
+
+  return props.children({
+    displayed,
+  });
+}

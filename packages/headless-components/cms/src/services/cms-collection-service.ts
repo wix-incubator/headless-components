@@ -43,6 +43,8 @@ export interface CmsQueryOptions {
   limit?: number;
   /** Number of items to skip */
   skip?: number;
+  /** Whether to return the total count of items */
+  returnTotalCount?: boolean;
 }
 
 /**
@@ -57,17 +59,17 @@ const loadCollectionItems = async (
     throw new Error('No collection ID provided');
   }
 
-  const { limit, skip = 0 } = options;
+  const { limit, skip = 0 , returnTotalCount = false} = options;
 
   let query = items.query(collectionId);
 
   if (limit) {
-  query = query.limit(limit);
+    query = query.limit(limit);
   }
 
   query = query.skip(skip);
 
-  return await query.find();
+  return await query.find({ returnTotalCount });
 };
 
 /**
@@ -80,6 +82,7 @@ export interface CmsCollectionServiceConfig {
    * If provided, items and pagination info will be extracted from this result.
    * If not provided, service will load initial data automatically. */
   queryResult?: WixDataQueryResult;
+  queryOptions?: CmsQueryOptions;
 }
 
 /**
@@ -96,8 +99,8 @@ export const CmsCollectionServiceImplementation =
 
       // Initialize query result signal
       const queryResultSignal = signalsService.signal<WixDataQueryResult | null>(
-        config.queryResult || null,
-      );
+          config.queryResult || null,
+        );
 
       // Track current query result for cursor-based pagination
       let currentQueryResult: WixDataQueryResult | null = queryResultSignal.get();
@@ -109,7 +112,7 @@ export const CmsCollectionServiceImplementation =
         try {
           const result = await loadCollectionItems(
             config.collectionId,
-            options,
+            config.queryOptions,
           );
 
           currentQueryResult = result;
@@ -256,6 +259,7 @@ export const loadCmsCollectionServiceInitialData = async (
       [CmsCollectionServiceDefinition]: {
         collectionId,
         queryResult: result,
+        queryOptions: options,
       },
     };
   } catch (error) {
