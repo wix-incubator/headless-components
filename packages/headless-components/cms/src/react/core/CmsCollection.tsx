@@ -6,11 +6,17 @@ import {
   CmsCollectionServiceImplementation,
   type WixDataItem,
 } from '../../services/cms-collection-service.js';
+import {
+  CmsCollectionFiltersServiceDefinition,
+  CmsCollectionFiltersServiceImplementation,
+  type CmsCollectionFiltersServiceConfig,
+} from '../../services/cms-collection-filters-service.js';
 import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
   children: React.ReactNode;
   collectionServiceConfig: CmsCollectionServiceConfig;
+  filtersServiceConfig?: CmsCollectionFiltersServiceConfig;
 }
 
 /**
@@ -18,14 +24,23 @@ export interface RootProps {
  * This component sets up the necessary services for rendering and managing collection data.
  */
 export function Root(props: RootProps): React.ReactNode {
+  let servicesMap = createServicesMap().addService(
+    CmsCollectionServiceDefinition,
+    CmsCollectionServiceImplementation,
+    props.collectionServiceConfig,
+  );
+
+  // Conditionally add filters service if configuration is provided
+  if (props.filtersServiceConfig) {
+    servicesMap = servicesMap.addService(
+      CmsCollectionFiltersServiceDefinition,
+      CmsCollectionFiltersServiceImplementation,
+      props.filtersServiceConfig,
+    );
+  }
+
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        CmsCollectionServiceDefinition,
-        CmsCollectionServiceImplementation,
-        props.collectionServiceConfig,
-      )}
-    >
+    <WixServices servicesMap={servicesMap}>
       {props.children}
     </WixServices>
   );
@@ -55,13 +70,37 @@ export interface ItemsRenderProps {
  * Core headless component for collection items display with loading and error states
  */
 export function Items(props: ItemsProps) {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
+  const collectionService = useService(CmsCollectionServiceDefinition) as ServiceAPI<
     typeof CmsCollectionServiceDefinition
   >;
 
-  const items = service.itemsSignal.get();
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
+  // Try to get filters service if available
+  let filtersService: ServiceAPI<typeof CmsCollectionFiltersServiceDefinition> | null = null;
+    filtersService = useService(CmsCollectionFiltersServiceDefinition) as ServiceAPI<
+      typeof CmsCollectionFiltersServiceDefinition
+    >;
+
+  // Use filtered items if filters service is available, otherwise use collection items
+  const collectionItems = collectionService.itemsSignal.get();
+
+  let items = collectionItems;
+  if (filtersService) {
+    const filteredItems = filtersService.filteredItemsSignal.get();
+    const hasActiveFilters = filtersService.hasFiltersSignal.get();
+
+    // If no filters are active and filtered items is empty, sync with collection items
+    if (!hasActiveFilters && filteredItems.length === 0 && collectionItems.length > 0) {
+      filtersService.filteredItemsSignal.set(collectionItems);
+      items = collectionItems;
+    } else {
+      items = filteredItems;
+    }
+  }
+
+  const isLoading = collectionService.loadingSignal.get() ||
+    (filtersService ? filtersService.filteringSignal.get() : false);
+
+  const error = collectionService.errorSignal.get();
 
   return props.children({
     items,
