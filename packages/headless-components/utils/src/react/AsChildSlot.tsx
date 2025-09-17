@@ -66,9 +66,7 @@ function injectDataComponentTag(
           const existingTag = (firstChild.props as any)['data-component-tag'];
           const enhancedFirstChild = React.cloneElement(firstChild, {
             ...(firstChild.props as any),
-            ...(dataComponentTag && !existingTag
-              ? { 'data-component-tag': dataComponentTag }
-              : {}),
+            ...getConditionalDataComponentTagProps(dataComponentTag, existingTag),
           });
           return (
             <Slot {...restProps}>
@@ -88,15 +86,24 @@ function injectDataComponentTag(
     const existingTag = (renderedElement.props as any)['data-component-tag'];
     const enhancedElement = React.cloneElement(renderedElement, {
       ...(renderedElement.props as any), // Preserve existing props
-      ...(dataComponentTag && !existingTag
-        ? { 'data-component-tag': dataComponentTag }
-        : {}),
+      ...getConditionalDataComponentTagProps(dataComponentTag, existingTag),
     });
     return <Slot {...restProps}>{enhancedElement}</Slot>;
   }
 
   return <Slot {...restProps}>{renderedElement}</Slot>;
 }
+
+
+// Helper functions for data-component-tag prop merging
+function getDataComponentTagProps(dataComponentTag?: string) {
+  return dataComponentTag ? { 'data-component-tag': dataComponentTag } : {};
+}
+
+function getConditionalDataComponentTagProps(dataComponentTag?: string, existingTag?: string) {
+  return dataComponentTag && !existingTag ? { 'data-component-tag': dataComponentTag } : {};
+}
+
 
 export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
   (props, ref) => {
@@ -116,9 +123,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
         return (
           <Slot ref={ref} {...restProps}>
             <span
-              {...(dataComponentTag
-                ? { 'data-component-tag': dataComponentTag }
-                : {})}
+              {...getDataComponentTagProps(dataComponentTag)}
             >
               {customElement}
             </span>
@@ -133,9 +138,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
             {React.cloneElement(customElement as React.ReactElement, {
               ref,
               ...(content !== undefined ? { children: content } : {}),
-              ...(dataComponentTag
-                ? { 'data-component-tag': dataComponentTag }
-                : {}),
+              ...getDataComponentTagProps(dataComponentTag),
             })}
           </Slot>
         );
@@ -180,9 +183,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       return (
         <Slot ref={ref} {...restProps}>
           <div
-            {...(dataComponentTag
-              ? { 'data-component-tag': dataComponentTag }
-              : {})}
+            {...getDataComponentTagProps(dataComponentTag)}
           >
             {children}
           </div>
@@ -227,9 +228,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
         // Only inject data-component-tag if the child doesn't already have one
         const existingTag = (firstChild.props as any)['data-component-tag'];
         const enhancedFirstChild = React.cloneElement(firstChild, {
-          ...(dataComponentTag && !existingTag
-            ? { 'data-component-tag': dataComponentTag }
-            : {}),
+          ...getConditionalDataComponentTagProps(dataComponentTag, existingTag),
         });
 
         return (
@@ -253,9 +252,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       <Slot
         ref={ref}
         {...restProps}
-        {...(dataComponentTag
-          ? { 'data-component-tag': dataComponentTag }
-          : {})}
+        {...getDataComponentTagProps(dataComponentTag)}
       >
         {children}
       </Slot>
