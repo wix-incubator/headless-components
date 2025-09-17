@@ -160,7 +160,7 @@ const RootContent = React.forwardRef<HTMLDivElement, RootContentProps>(
         customElementProps={{}}
         {...otherProps}
       >
-        <div>{React.isValidElement(children) ? children : null}</div>
+        <div>{children}</div>
       </AsChildSlot>
     );
   },
@@ -796,7 +796,7 @@ export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
     const form = formService.form.get();
     const _form = {
       ...form,
-      id: form._id,
+      id: form?._id,
       // @ts-ignore
       fields: form.fields.map((field) => ({ ...field, id: field._id })),
     };
