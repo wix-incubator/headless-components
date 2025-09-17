@@ -9,6 +9,13 @@ export type WixDataItem = items.WixDataItem;
 export type WixDataQueryResult = items.WixDataResult;
 
 /**
+ * Utility function to extract error messages consistently
+ */
+function extractErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
+}
+
+/**
  * Service definition for the CMS Collection service.
  */
 export const CmsCollectionServiceDefinition = defineService<{
@@ -24,6 +31,10 @@ export const CmsCollectionServiceDefinition = defineService<{
   loadNextPage: () => Promise<void>;
   /** Function to load the previous page of items */
   loadPrevPage: () => Promise<void>;
+  /** Function to explicitly invalidate and reload items */
+  invalidate: () => Promise<void>;
+  /** Function to load items with optional query options */
+  loadItems: (options?: CmsQueryOptions) => Promise<void>;
 }>('cms-collection');
 
 /**
@@ -95,9 +106,9 @@ export const CmsCollectionServiceImplementation =
       );
 
       // Track current query result for cursor-based pagination
-      let currentQueryResult: WixDataQueryResult | null = config.queryResult || null;
+      let currentQueryResult: WixDataQueryResult | null = queryResultSignal.get();
 
-      const loadInitialItems = async (options: CmsQueryOptions = {}) => {
+      const loadItems = async (options: CmsQueryOptions = {}) => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
@@ -112,11 +123,7 @@ export const CmsCollectionServiceImplementation =
           itemsSignal.set(result.items);
 
         } catch (err) {
-          const errorMessage =
-            err instanceof Error
-              ? err.message
-              : 'Failed to load collection items';
-          errorSignal.set(errorMessage);
+          errorSignal.set(extractErrorMessage(err, 'Failed to load collection items'));
           console.error(
             `Failed to load items from collection "${config.collectionId}":`,
             err,
@@ -124,6 +131,18 @@ export const CmsCollectionServiceImplementation =
         } finally {
           loadingSignal.set(false);
         }
+      };
+
+      const invalidate = async () => {
+        // Preserve current pagination state when invalidating
+        const currentResult = queryResultSignal.get();
+        const currentSkip = (currentResult?.currentPage || 0) * (currentResult?.pageSize || 10);
+        const currentLimit = currentResult?.pageSize;
+
+        await loadItems({
+          skip: currentSkip,
+          limit: currentLimit
+        });
       };
 
       const loadNextPage = async () => {
@@ -148,11 +167,7 @@ export const CmsCollectionServiceImplementation =
           itemsSignal.set(nextResult.items);
 
         } catch (err) {
-          const errorMessage =
-            err instanceof Error
-              ? err.message
-              : 'Failed to load next page';
-          errorSignal.set(errorMessage);
+          errorSignal.set(extractErrorMessage(err, 'Failed to load next page'));
           console.error(
             `Failed to load next page from collection "${config.collectionId}":`,
             err,
@@ -184,11 +199,7 @@ export const CmsCollectionServiceImplementation =
           itemsSignal.set(prevResult.items);
 
         } catch (err) {
-          const errorMessage =
-            err instanceof Error
-              ? err.message
-              : 'Failed to load previous page';
-          errorSignal.set(errorMessage);
+          errorSignal.set(extractErrorMessage(err, 'Failed to load previous page'));
           console.error(
             `Failed to load previous page from collection "${config.collectionId}":`,
             err,
@@ -200,15 +211,16 @@ export const CmsCollectionServiceImplementation =
 
       // Auto-load items on service initialization only if not pre-loaded
       if (!config.queryResult) {
-        loadInitialItems();
+        loadItems();
       }
 
       return {
-        loadItems: loadInitialItems,
         itemsSignal,
         loadingSignal,
         errorSignal,
         queryResultSignal,
+        loadItems,
+        invalidate,
         loadNextPage,
         loadPrevPage,
       };
