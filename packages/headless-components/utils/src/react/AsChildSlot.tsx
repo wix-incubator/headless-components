@@ -66,7 +66,10 @@ function injectDataComponentTag(
           const existingTag = (firstChild.props as any)['data-component-tag'];
           const enhancedFirstChild = React.cloneElement(firstChild, {
             ...(firstChild.props as any),
-            ...getConditionalDataComponentTagProps(dataComponentTag, existingTag),
+            ...getConditionalDataComponentTagProps(
+              dataComponentTag,
+              existingTag,
+            ),
           });
           return (
             <Slot {...restProps}>
@@ -94,16 +97,19 @@ function injectDataComponentTag(
   return <Slot {...restProps}>{renderedElement}</Slot>;
 }
 
-
 // Helper functions for data-component-tag prop merging
 function getDataComponentTagProps(dataComponentTag?: string) {
   return dataComponentTag ? { 'data-component-tag': dataComponentTag } : {};
 }
 
-function getConditionalDataComponentTagProps(dataComponentTag?: string, existingTag?: string) {
-  return dataComponentTag && !existingTag ? { 'data-component-tag': dataComponentTag } : {};
+function getConditionalDataComponentTagProps(
+  dataComponentTag?: string,
+  existingTag?: string,
+) {
+  return dataComponentTag && !existingTag
+    ? { 'data-component-tag': dataComponentTag }
+    : {};
 }
-
 
 export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
   (props, ref) => {
@@ -122,9 +128,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       if (typeof customElement === 'string') {
         return (
           <Slot ref={ref} {...restProps}>
-            <span
-              {...getDataComponentTagProps(dataComponentTag)}
-            >
+            <span {...getDataComponentTagProps(dataComponentTag)}>
               {customElement}
             </span>
           </Slot>
@@ -182,11 +186,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
     if (typeof children === 'string') {
       return (
         <Slot ref={ref} {...restProps}>
-          <div
-            {...getDataComponentTagProps(dataComponentTag)}
-          >
-            {children}
-          </div>
+          <div {...getDataComponentTagProps(dataComponentTag)}>{children}</div>
         </Slot>
       );
     }
