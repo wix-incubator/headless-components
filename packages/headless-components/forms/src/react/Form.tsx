@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import { AsChildSlot } from '@wix/headless-utils/react';
 import { useService } from '@wix/services-manager-react';
 import {
   Form as FormViewer,
@@ -11,11 +11,6 @@ import {
   type FormServiceConfig,
 } from '../services/form-service';
 import * as CoreForm from './core/Form';
-import React from 'react';
-import { AsChildSlot } from '@wix/headless-utils/react';
-
-import { type FormServiceConfig } from '../services/form-service';
-import * as CoreForm from './core/Form.js';
 
 import {
   CheckboxGroupProps,
