@@ -52,7 +52,10 @@ const loadCollectionItems = async (
 
   let query = items.query(collectionId);
 
+  if (limit) {
   query = query.limit(limit);
+  }
+
   query = query.skip(skip);
 
   return await query.find();
