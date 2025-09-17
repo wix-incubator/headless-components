@@ -3,7 +3,6 @@
 
 // Export all components individually for direct access and namespace construction
 export { Root } from './InstagramFeedRoot.js';
-export { Header } from './Header.js';
 export { Title } from './Title.js';
 export { UserName } from './UserName.js';
 export { Hashtag } from './Hashtag.js';
@@ -33,7 +32,6 @@ export type {
 
 // Export component prop types
 export type { RootProps } from './InstagramFeedRoot.js';
-export type { HeaderProps } from './Header.js';
 export type { TitleProps } from './Title.js';
 export type { UserNameProps } from './UserName.js';
 export type { HashtagProps } from './Hashtag.js';

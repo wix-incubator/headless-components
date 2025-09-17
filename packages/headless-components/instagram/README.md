@@ -22,12 +22,11 @@ function InstagramWidget() {
       }}
       className="w-full max-w-4xl mx-auto"
     >
-      {/* Header Section */}
-      <InstagramFeed.Header className="mb-8 text-center">
+      <div>
         <InstagramFeed.Title className="text-3xl font-bold text-gray-900 mb-2" />
         <InstagramFeed.UserName className="text-xl text-gray-600 mb-1" />
         <InstagramFeed.Hashtag className="text-blue-600 font-medium" />
-      </InstagramFeed.Header>
+      </div>
 
       {/* Gallery Section - Following 3-Level Pattern */}
       <InstagramFeed.Gallery className="gallery-container">
@@ -60,7 +59,6 @@ The Instagram headless component follows the established 3-level architecture pa
 - `InstagramFeed.Root` - Main container with service configuration
 
 ### Header Components
-- `InstagramFeed.Header` - Header section wrapper
 - `InstagramFeed.Title` - Feed title display
 - `InstagramFeed.UserName` - Instagram username/display name
 - `InstagramFeed.Hashtag` - Associated hashtag
@@ -145,7 +143,6 @@ interface InstagramMediaItem {
 All components include proper `data-testid` attributes following the naming convention:
 
 - `data-testid="instagram-feed-root"`
-- `data-testid="instagram-feed-header"`
 - `data-testid="instagram-feed-title"`
 - `data-testid="instagram-feed-username"`
 - `data-testid="instagram-feed-hashtag"`

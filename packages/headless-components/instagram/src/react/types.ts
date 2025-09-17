@@ -85,7 +85,6 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlotProps>(
 export enum TestIds {
   // Container Level
   instagramFeedRoot = 'instagram-feed-root',
-  instagramFeedHeader = 'instagram-feed-header',
   instagramFeedTitle = 'instagram-feed-title',
   instagramFeedUsername = 'instagram-feed-username',
   instagramFeedHashtag = 'instagram-feed-hashtag',

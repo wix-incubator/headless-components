@@ -33,10 +33,10 @@ export interface RootProps {
  *         limit: 6
  *       }}
  *     >
- *       <InstagramFeed.Header>
+ *       <div>
  *         <InstagramFeed.Title />
  *         <InstagramFeed.UserName />
- *       </InstagramFeed.Header>
+ *       </div>
  *       <InstagramFeed.Gallery>
  *         <InstagramFeed.GalleryItems>
  *           <InstagramFeed.GalleryRepeater>

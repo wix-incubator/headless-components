@@ -68,10 +68,10 @@ import { InstagramFeed } from '@wix/headless-instagram/react';
 
 // Uses REAL Instagram data via SDK
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'real_connection_id' }}>
-  <InstagramFeed.Header>
+  <div>
     <InstagramFeed.UserName />  {/* Real Instagram username */}
     <InstagramFeed.Hashtag />   {/* Real Instagram hashtag */}
-  </InstagramFeed.Header>
+  </div>
 
   <InstagramFeed.Gallery>
     <InstagramFeed.GalleryItems>

@@ -11,7 +11,6 @@ src/react/
 ├── types.ts                    # Shared types and utilities
 ├── contexts.ts                 # All React contexts and hooks
 ├── InstagramFeedRoot.tsx       # Root component
-├── Header.tsx                  # Header container
 ├── Title.tsx                   # Title component
 ├── UserName.tsx               # UserName component
 ├── Hashtag.tsx                # Hashtag component
@@ -31,9 +30,6 @@ src/react/
 
 ### 2. **Main Components**
 - `InstagramFeedRoot.tsx` - Service provider and main container
-- `Header.tsx` - Header section wrapper
-
-### 3. **Header Components**
 - `Title.tsx` - Feed title display
 - `UserName.tsx` - Username/display name
 - `Hashtag.tsx` - Hashtag display
@@ -52,11 +48,11 @@ src/react/
 import { InstagramFeed } from '@wix/headless-instagram/react';
 
 <InstagramFeed.Root instagramFeedServiceConfig={{ username: 'myaccount' }}>
-  <InstagramFeed.Header>
+  <div>
     <InstagramFeed.Title />
     <InstagramFeed.UserName />
     <InstagramFeed.Hashtag />
-  </InstagramFeed.Header>
+  </div>
 
   <InstagramFeed.Gallery>
     <InstagramFeed.GalleryItems>
@@ -74,7 +70,6 @@ import { InstagramFeed } from '@wix/headless-instagram/react';
 ```tsx
 import {
   Root,
-  Header,
   Title,
   Gallery,
   GalleryItems,
