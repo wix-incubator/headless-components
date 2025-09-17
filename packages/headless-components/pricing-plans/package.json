@@ -1,0 +1,60 @@
+{
+  "name": "@wix/headless-pricing-plans",
+  "version": "0.0.8",
+  "type": "module",
+  "scripts": {
+    "prebuild": "cd ../utils && yarn build && cd ../components && yarn build && cd ../media && yarn build",
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "test": "vitest",
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "files": [
+    "dist",
+    "cjs",
+    "react",
+    "services",
+    "server-actions",
+    "astro"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./cjs/dist/react/index.js"
+    },
+    "./services": {
+      "types": "./dist/services/index.d.ts",
+      "import": "./dist/services/index.js",
+      "require": "./cjs/dist/services/index.js"
+    }
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^20.9.0",
+    "@vitest/ui": "^3.1.4",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "@wix/essentials": "^0.1.28",
+    "@wix/headless-ecom": "workspace:^",
+    "@wix/headless-media": "workspace:*",
+    "@wix/headless-utils": "workspace:*",
+    "@wix/pricing-plans": "^1.0.221",
+    "@wix/redirects": "^1.0.0",
+    "@wix/sdk": "^1.15.27",
+    "@wix/services-definitions": "^0.1.5",
+    "@wix/services-manager-react": "^0.1.27"
+  },
+  "peerDependencies": {
+    "@wix/headless-components": "workspace:*"
+  }
+}

@@ -7,6 +7,8 @@ import {
 } from '../../services/form-service.js';
 import { createServicesMap } from '@wix/services-manager';
 
+const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
+
 export interface RootProps {
   children: React.ReactNode;
   formServiceConfig: FormServiceConfig;
@@ -23,10 +25,27 @@ export interface RootProps {
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
+ * import { loadFormServiceConfig } from '@wix/headless-forms/services';
  *
- * function FormPage() {
+ * // Pattern 1: Pre-loaded form data (SSR/SSG)
+ * function FormPage({ formServiceConfig }) {
  *   return (
- *     <Form.Root formServiceConfig={{ form: myForm }}>
+ *     <Form.Root formServiceConfig={formServiceConfig}>
+ *       <Form.Loading>
+ *         {({ isLoading }) => isLoading ? <div>Loading form...</div> : null}
+ *       </Form.Loading>
+ *       <Form.LoadingError>
+ *         {({ error, hasError }) => hasError ? <div>{error}</div> : null}
+ *       </Form.LoadingError>
+ *       <Form.Fields fieldMap={FIELD_MAP} />
+ *     </Form.Root>
+ *   );
+ * }
+ *
+ * // Pattern 2: Lazy loading with formId (Client-side)
+ * function DynamicFormPage({ formId }) {
+ *   return (
+ *     <Form.Root formServiceConfig={{ formId }}>
  *       <Form.Loading>
  *         {({ isLoading }) => isLoading ? <div>Loading form...</div> : null}
  *       </Form.Loading>
@@ -209,8 +228,9 @@ export function Error(props: FormSubmitErrorProps) {
     typeof FormServiceDefinition
   >;
 
-  const error = service.submitError?.get() || null;
-  const hasError = !!error;
+  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
+  const error = submitResponse.type === 'error' ? submitResponse.message : null;
+  const hasError = submitResponse.type === 'error';
 
   return props.children({
     error,
@@ -232,6 +252,8 @@ export interface FormSubmittedProps {
 export interface FormSubmittedRenderProps {
   /** Whether the form has been submitted */
   isSubmitted: boolean;
+  /** Success message */
+  message: string;
 }
 
 /**
@@ -247,11 +269,11 @@ export interface FormSubmittedRenderProps {
  * function FormSubmittedDisplay() {
  *   return (
  *     <Form.Submitted>
- *       {({ isSubmitted }) => (
+ *       {({ isSubmitted, message }) => (
  *         isSubmitted ? (
  *           <div className="success-message">
  *             <h2>Thank You!</h2>
- *             <p>Your form has been submitted successfully.</p>
+ *             <p>{message}</p>
  *           </div>
  *         ) : null
  *       )}
@@ -261,9 +283,19 @@ export interface FormSubmittedRenderProps {
  * ```
  */
 export function Submitted(props: FormSubmittedProps) {
-  const isSubmitted = false; // TODO: Implement actual submission state tracking
+  const service = useService(FormServiceDefinition) as ServiceAPI<
+    typeof FormServiceDefinition
+  >;
+
+  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
+  const isSubmitted = submitResponse.type === 'success';
+  const message =
+    submitResponse.type === 'success'
+      ? submitResponse.message || DEFAULT_SUCCESS_MESSAGE
+      : DEFAULT_SUCCESS_MESSAGE;
 
   return props.children({
     isSubmitted,
+    message,
   });
 }

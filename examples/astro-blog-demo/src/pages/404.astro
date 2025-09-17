@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import NotFoundPage from '../react-pages/404';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import NotFoundPage from "../react-pages/404";
 
 // Ensure proper 404 HTTP status code
 Astro.response.status = 404;
@@ -9,10 +9,10 @@ export const prerender = false;
 
 <BaseLayout>
   <title>Page Not Found | Blog</title>
-  <meta name="description" content="The page you're looking for could not be found." />
-
-  <NotFoundPage
-    client:load
-    slot="body"
+  <meta
+    name="description"
+    content="The page you're looking for could not be found."
   />
+
+  <NotFoundPage client:load slot="body" />
 </BaseLayout>

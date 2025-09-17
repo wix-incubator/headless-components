@@ -1,39 +1,85 @@
 ---
-import { loadBlogCategoriesServiceConfig, loadBlogFeedServiceConfig } from '@wix/headless-blog/services';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import BlogFeedPage from '../react-pages/blog/feed-page';
+import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
+import FeedPage from "@/components/blog/FeedPage";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { KitchensinkLayout } from "@/layouts/KitchensinkLayout";
+import {
+  createCustomCategory,
+  loadBlogCategoriesServiceConfig,
+  loadBlogFeedServiceConfig,
+} from "@wix/blog/services";
 
+import "./theme.css";
+import { loadSEOTagsServiceConfig } from "@wix/seo/services";
+import { SEO } from "@wix/seo/components";
 
 export const prerender = false;
 
-const [blogFeedServiceConfig, blogCategoriesServiceConfig] = await Promise.all([
+const [
+  blogFeedServiceConfig,
+  blogCategoriesServiceConfig,
+  seoTagsServiceConfig,
+] = await Promise.all([
   loadBlogFeedServiceConfig({
     pageSize: 10,
+    showPinnedPostsFirst: true,
     sort: [
       {
-        fieldName: 'firstPublishedDate',
-        order: 'DESC'
+        fieldName: "firstPublishedDate",
+        order: "DESC",
       },
-    ]
+    ],
   }),
-  loadBlogCategoriesServiceConfig()
+  loadBlogCategoriesServiceConfig(),
+  loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      pageName: "Blog",
+      seoData: {
+        tags: [
+          {
+            type: "meta",
+            props: {
+              name: "description",
+              content:
+                "Explore our blog featuring the latest insights on headless components, web development, and modern architecture.",
+            },
+          },
+        ],
+      },
+    },
+  }),
 ]);
 
+const customCategoriesToPrepend = [
+  createCustomCategory({
+    label: "All posts",
+    slug: "/blog/",
+    description:
+      "Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.",
+  }),
+];
 ---
 
 <BaseLayout>
-  <title>Blog | Wix Headless Components</title>
-  <meta name="description" content="Explore our blog featuring the latest insights on headless components, web development, and modern architecture." />
+  <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />
 
-  <BlogFeedPage
-    client:load
-    pathname={Astro.url.pathname}
-    blogFeedServiceConfig={blogFeedServiceConfig}
-    blogCategoriesServiceConfig={blogCategoriesServiceConfig}
-    feedPageHref="/"
-    postPageBaseUrl="/"
-    categoryPageBaseUrl="/category/"
-    dateLocale="en-US"
-    slot="body"
-  />
+  <KitchensinkLayout>
+    <div class="bg-background min-h-screen">
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <BlogCategoriesSection
+          pathname={Astro.url.pathname}
+          categoryPageBaseUrl="/blog/category/"
+          blogCategoriesServiceConfig={blogCategoriesServiceConfig}
+          customCategoriesToPrepend={customCategoriesToPrepend}
+        />
+        <FeedPage
+          client:load
+          blogFeedServiceConfig={blogFeedServiceConfig}
+          postPageBaseUrl="/blog/post/"
+          dateLocale="en-US"
+        />
+      </div>
+    </div>
+  </KitchensinkLayout>
 </BaseLayout>

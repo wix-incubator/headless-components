@@ -55,6 +55,7 @@ export type BlogFeedServiceConfig = {
   pageSize: number;
   nextPageCursor?: string;
   sort: QueryPostsSort[];
+  showPinnedPostsFirst: boolean;
 };
 
 export const BlogFeedService =
@@ -102,6 +103,7 @@ export const BlogFeedService =
           const result = await fetchPosts({
             skipTo: loadMore ? nextPageCursor : undefined,
             sort: sortSignal.get(),
+            showPinnedPostsFirst: config.showPinnedPostsFirst,
             pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
             categoryId: config.initialCategory?._id,
             excludePostIds: config.excludePostIds || [],
@@ -152,6 +154,7 @@ export const BlogFeedService =
 export type BlogFeedServiceConfigParams = {
   categorySlug?: string;
   pageSize?: number;
+  showPinnedPostsFirst?: boolean;
   excludePostIds?: (string | undefined)[];
   postIds?: (string | undefined)[];
   sort?: QueryPostsSort[];
@@ -161,6 +164,7 @@ export async function loadBlogFeedServiceConfig(
   params: BlogFeedServiceConfigParams = {},
 ): Promise<BlogFeedServiceConfig> {
   const pageSize = params.pageSize || 10;
+  const showPinnedPostsFirst = params.showPinnedPostsFirst || false;
   const sort: BlogFeedServiceConfig['sort'] = params.sort || [
     {
       fieldName: 'firstPublishedDate',
@@ -190,6 +194,7 @@ export async function loadBlogFeedServiceConfig(
       categoryId: initialCategory?._id,
       excludePostIds,
       postIds,
+      showPinnedPostsFirst,
     });
 
     return {
@@ -200,6 +205,7 @@ export async function loadBlogFeedServiceConfig(
       excludePostIds,
       sort,
       nextPageCursor: result.cursors.next || undefined,
+      showPinnedPostsFirst,
     };
   } catch (error) {
     return {
@@ -210,6 +216,7 @@ export async function loadBlogFeedServiceConfig(
       pageSize,
       sort,
       nextPageCursor: undefined,
+      showPinnedPostsFirst,
     };
   }
 }
@@ -221,6 +228,7 @@ type FetchPostsParams = {
   categoryId?: string;
   excludePostIds: string[];
   postIds: string[];
+  showPinnedPostsFirst: boolean;
 };
 
 async function fetchPosts(
@@ -235,12 +243,16 @@ async function fetchPosts(
     pageSize = DEFAULT_PAGE_SIZE,
     excludePostIds,
     postIds,
+    showPinnedPostsFirst,
   } = params;
-
   let query = posts.queryPosts().limit(pageSize);
 
   if (skipTo) {
     query = query.skipTo(skipTo);
+  }
+
+  if (showPinnedPostsFirst) {
+    query = query.descending('pinned');
   }
 
   for (const sortOption of sort) {

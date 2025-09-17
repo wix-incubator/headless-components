@@ -1,0 +1,28 @@
+---
+import { getCourseById, getAllCourses } from '../../utils/demo-courses';
+import Layout from '../../layouts/Layout.astro';
+import { CoursePageComponent } from '../../components/CoursePageComponent';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const courses = getAllCourses();
+
+  return courses.map((course) => ({
+    params: { id: course.id },
+    props: { course },
+  }));
+}
+
+const { id } = Astro.params;
+const { course: propsCourse } = Astro.props;
+const course = propsCourse || getCourseById(id as string);
+
+if (!course) {
+  return Astro.redirect('/courses');
+}
+---
+
+<Layout title={`${course.title} | MasterCraft Carpentry Academy`}>
+  <CoursePageComponent course={course} client:load />
+</Layout>

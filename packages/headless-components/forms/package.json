@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-forms",
-  "version": "0.0.10",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -41,7 +41,6 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@wix/auto_sdk_forms_forms": "^1.0.46",
     "@wix/form-public": "https://npm.dev.wixpress.com/api/npm/npm-repos/@wix/form-public/-/@wix/form-public-0.5.0.tgz",
     "@wix/forms": "^1.0.292",
     "@wix/headless-utils": "workspace:*",
