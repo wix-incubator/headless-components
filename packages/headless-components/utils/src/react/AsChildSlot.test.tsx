@@ -663,7 +663,11 @@ describe('AsChildSlot', () => {
 
       it('should preserve existing data-component-tag in render function output', () => {
         const renderFunction = vi.fn((props, ref) => (
-          <div ref={ref} data-testid="function-with-existing" data-component-tag="existing-tag">
+          <div
+            ref={ref}
+            data-testid="function-with-existing"
+            data-component-tag="existing-tag"
+          >
             Function content with existing tag
           </div>
         ));
@@ -750,7 +754,11 @@ describe('AsChildSlot', () => {
       it('should preserve existing data-component-tag in render object output', () => {
         const renderObject = {
           render: vi.fn((props, ref) => (
-            <div ref={ref} data-testid="object-with-existing" data-component-tag="existing-object-tag">
+            <div
+              ref={ref}
+              data-testid="object-with-existing"
+              data-component-tag="existing-object-tag"
+            >
               Object content with existing tag
             </div>
           )),
@@ -766,8 +774,14 @@ describe('AsChildSlot', () => {
 
         // The existing data-component-tag should be preserved
         const element = screen.getByTestId('object-with-existing');
-        expect(element).toHaveAttribute('data-component-tag', 'existing-object-tag');
-        expect(element).not.toHaveAttribute('data-component-tag', 'outer-object-tag');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'existing-object-tag',
+        );
+        expect(element).not.toHaveAttribute(
+          'data-component-tag',
+          'outer-object-tag',
+        );
       });
     });
 
@@ -869,7 +883,11 @@ describe('AsChildSlot', () => {
 
       it('should preserve existing data-component-tag in function children output', () => {
         const childrenFunction = vi.fn((props, ref) => (
-          <div ref={ref} data-testid="function-children-existing" data-component-tag="existing-children-tag">
+          <div
+            ref={ref}
+            data-testid="function-children-existing"
+            data-component-tag="existing-children-tag"
+          >
             Function children with existing tag
           </div>
         ));
@@ -883,8 +901,14 @@ describe('AsChildSlot', () => {
 
         // The existing data-component-tag should be preserved
         const element = screen.getByTestId('function-children-existing');
-        expect(element).toHaveAttribute('data-component-tag', 'existing-children-tag');
-        expect(element).not.toHaveAttribute('data-component-tag', 'outer-children-tag');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'existing-children-tag',
+        );
+        expect(element).not.toHaveAttribute(
+          'data-component-tag',
+          'outer-children-tag',
+        );
       });
 
       it('should automatically inject data-component-tag into render object children output', () => {
@@ -920,7 +944,11 @@ describe('AsChildSlot', () => {
       it('should preserve existing data-component-tag in render object children output', () => {
         const childrenObject = {
           render: vi.fn((props, ref) => (
-            <div ref={ref} data-testid="object-children-existing" data-component-tag="existing-object-tag">
+            <div
+              ref={ref}
+              data-testid="object-children-existing"
+              data-component-tag="existing-object-tag"
+            >
               Object children with existing tag
             </div>
           )),
@@ -935,8 +963,14 @@ describe('AsChildSlot', () => {
 
         // The existing data-component-tag should be preserved
         const element = screen.getByTestId('object-children-existing');
-        expect(element).toHaveAttribute('data-component-tag', 'existing-object-tag');
-        expect(element).not.toHaveAttribute('data-component-tag', 'outer-object-tag');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'existing-object-tag',
+        );
+        expect(element).not.toHaveAttribute(
+          'data-component-tag',
+          'outer-object-tag',
+        );
       });
 
       it('should handle multiple elements and inject data-component-tag into first element', () => {
@@ -1075,7 +1109,7 @@ describe('AsChildSlot', () => {
             <TestComponent data-component-tag="inner">
               <div data-testid="nested-div">Nested content</div>
             </TestComponent>
-          </TestComponent>
+          </TestComponent>,
         );
 
         // The inner data-component-tag should take precedence
@@ -1092,7 +1126,7 @@ describe('AsChildSlot', () => {
             <div data-testid="existing-tag" data-component-tag="inner">
               Content with existing tag
             </div>
-          </TestComponent>
+          </TestComponent>,
         );
 
         // The existing data-component-tag should be preserved
@@ -1108,7 +1142,7 @@ describe('AsChildSlot', () => {
               First child with existing tag
             </div>
             <span data-testid="second-child">Second child</span>
-          </TestComponent>
+          </TestComponent>,
         );
 
         const firstElement = screen.getByTestId('first-with-tag');
@@ -1134,13 +1168,16 @@ describe('AsChildSlot', () => {
               customElement={innerRenderFunction}
               data-component-tag="inner-compose"
             />
-          </TestComponent>
+          </TestComponent>,
         );
 
         // Inner data-component-tag should take precedence
         const element = screen.getByTestId('composed-function');
         expect(element).toHaveAttribute('data-component-tag', 'inner-compose');
-        expect(element).not.toHaveAttribute('data-component-tag', 'outer-compose');
+        expect(element).not.toHaveAttribute(
+          'data-component-tag',
+          'outer-compose',
+        );
       });
 
       it('should handle AsChildSlot with render function returning another AsChildSlot', () => {
@@ -1160,12 +1197,15 @@ describe('AsChildSlot', () => {
             asChild
             customElement={outerRenderFunction}
             data-component-tag="outer-function"
-          />
+          />,
         );
 
         // The inner AsChildSlot's tag should be applied to the final element
         const element = screen.getByTestId('final-element');
-        expect(element).toHaveAttribute('data-component-tag', 'inner-from-function');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'inner-from-function',
+        );
       });
 
       it('should handle deep nested AsChildSlot composition with mixed patterns', () => {
@@ -1189,7 +1229,7 @@ describe('AsChildSlot', () => {
             asChild
             customElement={middleRenderFunction}
             data-component-tag="outer-layer"
-          />
+          />,
         );
 
         // The middle layer tag should be applied
@@ -1201,10 +1241,7 @@ describe('AsChildSlot', () => {
         // Inner render object that returns another AsChildSlot
         const innerRenderObject = {
           render: vi.fn((props, ref) => (
-            <TestComponent
-              ref={ref}
-              data-component-tag="object-inner"
-            >
+            <TestComponent ref={ref} data-component-tag="object-inner">
               <article data-testid="object-composed">
                 Object composition content
               </article>
@@ -1217,7 +1254,7 @@ describe('AsChildSlot', () => {
             asChild
             customElement={innerRenderObject}
             data-component-tag="object-outer"
-          />
+          />,
         );
 
         // Inner AsChildSlot should apply its tag
@@ -1228,7 +1265,9 @@ describe('AsChildSlot', () => {
       it('should handle render function returning React Fragment with data-component-tag injection', () => {
         const fragmentRenderFunction = vi.fn((props, ref) => (
           <React.Fragment>
-            <div ref={ref} data-testid="fragment-first">First in fragment</div>
+            <div ref={ref} data-testid="fragment-first">
+              First in fragment
+            </div>
             <span data-testid="fragment-second">Second in fragment</span>
             <p data-testid="fragment-third">Third in fragment</p>
           </React.Fragment>
@@ -1239,7 +1278,7 @@ describe('AsChildSlot', () => {
             asChild
             customElement={fragmentRenderFunction}
             data-component-tag="fragment-tag"
-          />
+          />,
         );
 
         // Only the first element should get the data-component-tag
@@ -1247,7 +1286,10 @@ describe('AsChildSlot', () => {
         const secondElement = screen.getByTestId('fragment-second');
         const thirdElement = screen.getByTestId('fragment-third');
 
-        expect(firstElement).toHaveAttribute('data-component-tag', 'fragment-tag');
+        expect(firstElement).toHaveAttribute(
+          'data-component-tag',
+          'fragment-tag',
+        );
         expect(secondElement).not.toHaveAttribute('data-component-tag');
         expect(thirdElement).not.toHaveAttribute('data-component-tag');
       });
@@ -1255,8 +1297,12 @@ describe('AsChildSlot', () => {
       it('should handle render function returning shorthand Fragment with data-component-tag injection', () => {
         const shortFragmentRenderFunction = vi.fn((props, ref) => (
           <>
-            <section ref={ref} data-testid="short-fragment-first">First in short fragment</section>
-            <article data-testid="short-fragment-second">Second in short fragment</article>
+            <section ref={ref} data-testid="short-fragment-first">
+              First in short fragment
+            </section>
+            <article data-testid="short-fragment-second">
+              Second in short fragment
+            </article>
           </>
         ));
 
@@ -1265,22 +1311,29 @@ describe('AsChildSlot', () => {
             asChild
             customElement={shortFragmentRenderFunction}
             data-component-tag="short-fragment-tag"
-          />
+          />,
         );
 
         // Only the first element should get the data-component-tag
         const firstElement = screen.getByTestId('short-fragment-first');
         const secondElement = screen.getByTestId('short-fragment-second');
 
-        expect(firstElement).toHaveAttribute('data-component-tag', 'short-fragment-tag');
+        expect(firstElement).toHaveAttribute(
+          'data-component-tag',
+          'short-fragment-tag',
+        );
         expect(secondElement).not.toHaveAttribute('data-component-tag');
       });
 
       it('should handle nested AsChildSlot composition with fragment children', () => {
         const fragmentChildrenFunction = vi.fn((props, ref) => (
           <>
-            <div ref={ref} data-testid="nested-fragment-first">Nested fragment first</div>
-            <span data-testid="nested-fragment-second">Nested fragment second</span>
+            <div ref={ref} data-testid="nested-fragment-first">
+              Nested fragment first
+            </div>
+            <span data-testid="nested-fragment-second">
+              Nested fragment second
+            </span>
           </>
         ));
 
@@ -1290,24 +1343,33 @@ describe('AsChildSlot', () => {
               children={fragmentChildrenFunction}
               data-component-tag="inner-fragment"
             />
-          </TestComponent>
+          </TestComponent>,
         );
 
         // Inner fragment tag should be applied to first element
         const firstElement = screen.getByTestId('nested-fragment-first');
         const secondElement = screen.getByTestId('nested-fragment-second');
 
-        expect(firstElement).toHaveAttribute('data-component-tag', 'inner-fragment');
+        expect(firstElement).toHaveAttribute(
+          'data-component-tag',
+          'inner-fragment',
+        );
         expect(secondElement).not.toHaveAttribute('data-component-tag');
       });
 
       it('should preserve existing data-component-tag in fragment scenarios', () => {
         const fragmentWithExistingTag = vi.fn((props, ref) => (
           <React.Fragment>
-            <div ref={ref} data-testid="fragment-existing" data-component-tag="existing-fragment-tag">
+            <div
+              ref={ref}
+              data-testid="fragment-existing"
+              data-component-tag="existing-fragment-tag"
+            >
               Fragment element with existing tag
             </div>
-            <span data-testid="fragment-no-tag">Fragment element without tag</span>
+            <span data-testid="fragment-no-tag">
+              Fragment element without tag
+            </span>
           </React.Fragment>
         ));
 
@@ -1316,14 +1378,17 @@ describe('AsChildSlot', () => {
             asChild
             customElement={fragmentWithExistingTag}
             data-component-tag="outer-fragment-tag"
-          />
+          />,
         );
 
         // Existing tag should be preserved
         const firstElement = screen.getByTestId('fragment-existing');
         const secondElement = screen.getByTestId('fragment-no-tag');
 
-        expect(firstElement).toHaveAttribute('data-component-tag', 'existing-fragment-tag');
+        expect(firstElement).toHaveAttribute(
+          'data-component-tag',
+          'existing-fragment-tag',
+        );
         expect(secondElement).not.toHaveAttribute('data-component-tag');
       });
     });
