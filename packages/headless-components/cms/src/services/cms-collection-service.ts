@@ -105,14 +105,15 @@ export const CmsCollectionServiceImplementation =
       // Track current query result for cursor-based pagination
       let currentQueryResult: WixDataQueryResult | null = queryResultSignal.get();
 
-      const loadItems = async () => {
+      const loadItems = async (options?: CmsQueryOptions) => {
         loadingSignal.set(true);
         errorSignal.set(null);
+        const mergedOptions = { ...config.queryOptions, ...options };
 
         try {
           const result = await loadCollectionItems(
             config.collectionId,
-            config.queryOptions,
+            mergedOptions,
           );
 
           currentQueryResult = result;
