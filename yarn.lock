@@ -7359,25 +7359,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@npm:0.0.13, @wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
+"@wix/headless-media@npm:0.0.13":
+  version: 0.0.13
+  resolution: "@wix/headless-media@npm:0.0.13"
   dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@types/node": "npm:^20.9.0"
-    "@vitest/ui": "npm:^3.1.4"
-    "@wix/headless-utils": "workspace:*"
     "@wix/sdk": "npm:^1.17.1"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
-    jsdom: "npm:^26.1.0"
-    prettier: "npm:^3.4.2"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/bc5455b5528b0f4dd672afeb65d5f32bd24f4f636f39a7866678e87570b8a9ff705065f4b05afff92db94e36ba49a1e9c9e67b11fa01d5f081f0d845458f5cfd
+  languageName: node
+  linkType: hard
 
 "@wix/headless-media@npm:0.0.5, @wix/headless-media@npm:^0.0.5":
   version: 0.0.5
@@ -7411,6 +7402,26 @@ __metadata:
   checksum: 10c0/e4c0b970d6ac84a1237dc624914679f53f0d375616893948c154e62652fa6f031c059afddcf4464a86a80473b6c3a8c920170e74a5b9a133e5320f55141ad5c6
   languageName: node
   linkType: hard
+
+"@wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
+  dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/sdk": "npm:^1.17.1"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
 
 "@wix/headless-online-programs@npm:0.0.1":
   version: 0.0.1
