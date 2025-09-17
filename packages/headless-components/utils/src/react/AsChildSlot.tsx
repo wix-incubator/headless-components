@@ -62,9 +62,13 @@ function injectDataComponentTag(
         const restChildren = children.slice(1);
 
         if (React.isValidElement(firstChild)) {
+          // Only inject data-component-tag if the child doesn't already have one
+          const existingTag = (firstChild.props as any)['data-component-tag'];
           const enhancedFirstChild = React.cloneElement(firstChild, {
-            'data-component-tag': dataComponentTag,
             ...(firstChild.props as any),
+            ...(dataComponentTag && !existingTag
+              ? { 'data-component-tag': dataComponentTag }
+              : {}),
           });
           return (
             <Slot {...restProps}>
@@ -80,9 +84,13 @@ function injectDataComponentTag(
     }
 
     // Handle single element
+    // Only inject data-component-tag if the element doesn't already have one
+    const existingTag = (renderedElement.props as any)['data-component-tag'];
     const enhancedElement = React.cloneElement(renderedElement, {
-      'data-component-tag': dataComponentTag,
       ...(renderedElement.props as any), // Preserve existing props
+      ...(dataComponentTag && !existingTag
+        ? { 'data-component-tag': dataComponentTag }
+        : {}),
     });
     return <Slot {...restProps}>{enhancedElement}</Slot>;
   }
@@ -216,8 +224,10 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       const restChildren = childrenArray.slice(1);
 
       if (React.isValidElement(firstChild)) {
+        // Only inject data-component-tag if the child doesn't already have one
+        const existingTag = (firstChild.props as any)['data-component-tag'];
         const enhancedFirstChild = React.cloneElement(firstChild, {
-          ...(dataComponentTag
+          ...(dataComponentTag && !existingTag
             ? { 'data-component-tag': dataComponentTag }
             : {}),
         });

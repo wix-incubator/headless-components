@@ -661,6 +661,27 @@ describe('AsChildSlot', () => {
         );
       });
 
+      it('should preserve existing data-component-tag in render function output', () => {
+        const renderFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="function-with-existing" data-component-tag="existing-tag">
+            Function content with existing tag
+          </div>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={renderFunction}
+            data-component-tag="outer-tag"
+          />,
+        );
+
+        // The existing data-component-tag should be preserved
+        const element = screen.getByTestId('function-with-existing');
+        expect(element).toHaveAttribute('data-component-tag', 'existing-tag');
+        expect(element).not.toHaveAttribute('data-component-tag', 'outer-tag');
+      });
+
       it('should preserve existing props when injecting data-component-tag', () => {
         const renderFunction = vi.fn((props, ref) => (
           <div
@@ -724,6 +745,29 @@ describe('AsChildSlot', () => {
           'data-component-tag',
           'object-component',
         );
+      });
+
+      it('should preserve existing data-component-tag in render object output', () => {
+        const renderObject = {
+          render: vi.fn((props, ref) => (
+            <div ref={ref} data-testid="object-with-existing" data-component-tag="existing-object-tag">
+              Object content with existing tag
+            </div>
+          )),
+        };
+
+        render(
+          <TestComponent
+            asChild
+            customElement={renderObject}
+            data-component-tag="outer-object-tag"
+          />,
+        );
+
+        // The existing data-component-tag should be preserved
+        const element = screen.getByTestId('object-with-existing');
+        expect(element).toHaveAttribute('data-component-tag', 'existing-object-tag');
+        expect(element).not.toHaveAttribute('data-component-tag', 'outer-object-tag');
       });
     });
 
@@ -823,6 +867,26 @@ describe('AsChildSlot', () => {
         );
       });
 
+      it('should preserve existing data-component-tag in function children output', () => {
+        const childrenFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="function-children-existing" data-component-tag="existing-children-tag">
+            Function children with existing tag
+          </div>
+        ));
+
+        render(
+          <TestComponent
+            children={childrenFunction}
+            data-component-tag="outer-children-tag"
+          />,
+        );
+
+        // The existing data-component-tag should be preserved
+        const element = screen.getByTestId('function-children-existing');
+        expect(element).toHaveAttribute('data-component-tag', 'existing-children-tag');
+        expect(element).not.toHaveAttribute('data-component-tag', 'outer-children-tag');
+      });
+
       it('should automatically inject data-component-tag into render object children output', () => {
         const childrenObject = {
           render: vi.fn((props, ref) => (
@@ -851,6 +915,28 @@ describe('AsChildSlot', () => {
           'data-component-tag',
           'object-children',
         );
+      });
+
+      it('should preserve existing data-component-tag in render object children output', () => {
+        const childrenObject = {
+          render: vi.fn((props, ref) => (
+            <div ref={ref} data-testid="object-children-existing" data-component-tag="existing-object-tag">
+              Object children with existing tag
+            </div>
+          )),
+        };
+
+        render(
+          <TestComponent
+            children={childrenObject}
+            data-component-tag="outer-object-tag"
+          />,
+        );
+
+        // The existing data-component-tag should be preserved
+        const element = screen.getByTestId('object-children-existing');
+        expect(element).toHaveAttribute('data-component-tag', 'existing-object-tag');
+        expect(element).not.toHaveAttribute('data-component-tag', 'outer-object-tag');
       });
 
       it('should handle multiple elements and inject data-component-tag into first element', () => {
@@ -996,6 +1082,147 @@ describe('AsChildSlot', () => {
         const element = screen.getByTestId('nested-div');
         expect(element).toHaveAttribute('data-component-tag', 'inner');
         expect(element).not.toHaveAttribute('data-component-tag', 'outer');
+      });
+
+      it('should handle nested AsChildSlot precedence with prop override scenario', () => {
+        // This tests if the child already has data-component-tag="inner"
+        // and outer tries to override it with data-component-tag="outer"
+        render(
+          <TestComponent data-component-tag="outer">
+            <div data-testid="existing-tag" data-component-tag="inner">
+              Content with existing tag
+            </div>
+          </TestComponent>
+        );
+
+        // The existing data-component-tag should be preserved
+        const element = screen.getByTestId('existing-tag');
+        expect(element).toHaveAttribute('data-component-tag', 'inner');
+      });
+
+      it('should detect override vulnerability in cloneElement multiple children case', () => {
+        // Test the multiple children path where cloneElement might override existing props
+        render(
+          <TestComponent data-component-tag="outer">
+            <div data-testid="first-with-tag" data-component-tag="existing">
+              First child with existing tag
+            </div>
+            <span data-testid="second-child">Second child</span>
+          </TestComponent>
+        );
+
+        const firstElement = screen.getByTestId('first-with-tag');
+        const secondElement = screen.getByTestId('second-child');
+
+        // This test verifies our implementation preserves existing data-component-tag
+        expect(firstElement).toHaveAttribute('data-component-tag', 'existing');
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should handle nested AsChildSlot composition with render functions', () => {
+        // Outer AsChildSlot wraps inner AsChildSlot that uses render function
+        const innerRenderFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="composed-function">
+            Inner render function content
+          </div>
+        ));
+
+        render(
+          <TestComponent data-component-tag="outer-compose">
+            <TestComponent
+              asChild
+              customElement={innerRenderFunction}
+              data-component-tag="inner-compose"
+            />
+          </TestComponent>
+        );
+
+        // Inner data-component-tag should take precedence
+        const element = screen.getByTestId('composed-function');
+        expect(element).toHaveAttribute('data-component-tag', 'inner-compose');
+        expect(element).not.toHaveAttribute('data-component-tag', 'outer-compose');
+      });
+
+      it('should handle AsChildSlot with render function returning another AsChildSlot', () => {
+        // Render function returns another AsChildSlot component
+        const outerRenderFunction = vi.fn((props, ref) => (
+          <TestComponent
+            ref={ref}
+            data-component-tag="inner-from-function"
+            data-testid="function-returned-slot"
+          >
+            <div data-testid="final-element">Final content</div>
+          </TestComponent>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={outerRenderFunction}
+            data-component-tag="outer-function"
+          />
+        );
+
+        // The inner AsChildSlot's tag should be applied to the final element
+        const element = screen.getByTestId('final-element');
+        expect(element).toHaveAttribute('data-component-tag', 'inner-from-function');
+      });
+
+      it('should handle deep nested AsChildSlot composition with mixed patterns', () => {
+        // Test: Outer AsChildSlot → Render Function → Inner AsChildSlot → Children Function
+        const childrenFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="deep-nested">
+            Deep nested content
+          </div>
+        ));
+
+        const middleRenderFunction = vi.fn((props, ref) => (
+          <TestComponent
+            ref={ref}
+            children={childrenFunction}
+            data-component-tag="middle-layer"
+          />
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={middleRenderFunction}
+            data-component-tag="outer-layer"
+          />
+        );
+
+        // The middle layer tag should be applied
+        const element = screen.getByTestId('deep-nested');
+        expect(element).toHaveAttribute('data-component-tag', 'middle-layer');
+      });
+
+      it('should handle AsChildSlot composition with render objects', () => {
+        // Inner render object that returns another AsChildSlot
+        const innerRenderObject = {
+          render: vi.fn((props, ref) => (
+            <TestComponent
+              ref={ref}
+              data-component-tag="object-inner"
+            >
+              <article data-testid="object-composed">
+                Object composition content
+              </article>
+            </TestComponent>
+          )),
+        };
+
+        render(
+          <TestComponent
+            asChild
+            customElement={innerRenderObject}
+            data-component-tag="object-outer"
+          />
+        );
+
+        // Inner AsChildSlot should apply its tag
+        const element = screen.getByTestId('object-composed');
+        expect(element).toHaveAttribute('data-component-tag', 'object-inner');
       });
     });
   });
