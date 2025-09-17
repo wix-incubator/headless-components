@@ -1224,6 +1224,108 @@ describe('AsChildSlot', () => {
         const element = screen.getByTestId('object-composed');
         expect(element).toHaveAttribute('data-component-tag', 'object-inner');
       });
+
+      it('should handle render function returning React Fragment with data-component-tag injection', () => {
+        const fragmentRenderFunction = vi.fn((props, ref) => (
+          <React.Fragment>
+            <div ref={ref} data-testid="fragment-first">First in fragment</div>
+            <span data-testid="fragment-second">Second in fragment</span>
+            <p data-testid="fragment-third">Third in fragment</p>
+          </React.Fragment>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={fragmentRenderFunction}
+            data-component-tag="fragment-tag"
+          />
+        );
+
+        // Only the first element should get the data-component-tag
+        const firstElement = screen.getByTestId('fragment-first');
+        const secondElement = screen.getByTestId('fragment-second');
+        const thirdElement = screen.getByTestId('fragment-third');
+
+        expect(firstElement).toHaveAttribute('data-component-tag', 'fragment-tag');
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
+        expect(thirdElement).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should handle render function returning shorthand Fragment with data-component-tag injection', () => {
+        const shortFragmentRenderFunction = vi.fn((props, ref) => (
+          <>
+            <section ref={ref} data-testid="short-fragment-first">First in short fragment</section>
+            <article data-testid="short-fragment-second">Second in short fragment</article>
+          </>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={shortFragmentRenderFunction}
+            data-component-tag="short-fragment-tag"
+          />
+        );
+
+        // Only the first element should get the data-component-tag
+        const firstElement = screen.getByTestId('short-fragment-first');
+        const secondElement = screen.getByTestId('short-fragment-second');
+
+        expect(firstElement).toHaveAttribute('data-component-tag', 'short-fragment-tag');
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should handle nested AsChildSlot composition with fragment children', () => {
+        const fragmentChildrenFunction = vi.fn((props, ref) => (
+          <>
+            <div ref={ref} data-testid="nested-fragment-first">Nested fragment first</div>
+            <span data-testid="nested-fragment-second">Nested fragment second</span>
+          </>
+        ));
+
+        render(
+          <TestComponent data-component-tag="outer-fragment">
+            <TestComponent
+              children={fragmentChildrenFunction}
+              data-component-tag="inner-fragment"
+            />
+          </TestComponent>
+        );
+
+        // Inner fragment tag should be applied to first element
+        const firstElement = screen.getByTestId('nested-fragment-first');
+        const secondElement = screen.getByTestId('nested-fragment-second');
+
+        expect(firstElement).toHaveAttribute('data-component-tag', 'inner-fragment');
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should preserve existing data-component-tag in fragment scenarios', () => {
+        const fragmentWithExistingTag = vi.fn((props, ref) => (
+          <React.Fragment>
+            <div ref={ref} data-testid="fragment-existing" data-component-tag="existing-fragment-tag">
+              Fragment element with existing tag
+            </div>
+            <span data-testid="fragment-no-tag">Fragment element without tag</span>
+          </React.Fragment>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={fragmentWithExistingTag}
+            data-component-tag="outer-fragment-tag"
+          />
+        );
+
+        // Existing tag should be preserved
+        const firstElement = screen.getByTestId('fragment-existing');
+        const secondElement = screen.getByTestId('fragment-no-tag');
+
+        expect(firstElement).toHaveAttribute('data-component-tag', 'existing-fragment-tag');
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
+      });
     });
   });
 });
