@@ -334,7 +334,7 @@ export interface TotalsDisplayedProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    displayedProducts: number;
+    displayedItems: number;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;

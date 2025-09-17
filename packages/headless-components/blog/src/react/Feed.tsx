@@ -14,6 +14,9 @@ import * as CoreFeed from './core/Feed.js';
 import { isValidChildren } from './helpers.js';
 import * as Post from './Post.js';
 
+/** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=83683a8a-9d7f-437a-9c15-d5cd083530da */
+const HTML_CODE_TAG = 'blog.feed';
+
 interface PostsContextValue {
   hasPosts: boolean;
   posts: PostWithResolvedFields[];
@@ -96,7 +99,7 @@ export interface BlogFeedRootProps {
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
  *
  * function BlogPage() {
  *   return (
@@ -141,6 +144,7 @@ export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>(
             };
 
             const attributes = {
+              'data-component-tag': HTML_CODE_TAG,
               'data-testid': TestIds.blogFeedRoot,
               'data-has-posts': hasPosts,
               'data-loading': isLoading,

@@ -1,16 +1,16 @@
-import { Chip } from '@/components/ui/blog/Chip';
-import { EmptyState } from '@/components/ui/blog/EmptyState';
-import { PostAuthorAvatar } from '@/components/ui/blog/PostAuthorAvatar';
-import { PostCategories } from '@/components/ui/blog/PostCategories';
-import { PostContent } from '@/components/ui/blog/PostContent';
-import { PostTitle } from '@/components/ui/blog/PostTitle';
-import { SeparatedItems } from '@/components/ui/blog/SeparatedItems';
-import { Button } from '@/components/ui/button';
-import { ChevronLeftIcon } from '@radix-ui/react-icons';
-import { Blog } from '@wix/headless-blog/react';
-import { type BlogPostServiceConfig } from '@wix/headless-blog/services';
-import { useNavigation } from './NavigationContext';
-import { SharePostActions } from './SharePostActions';
+import { Chip } from "@/components/ui/blog/Chip";
+import { EmptyState } from "@/components/ui/blog/EmptyState";
+import { PostAuthorAvatar } from "@/components/ui/blog/PostAuthorAvatar";
+import { PostCategories } from "@/components/ui/blog/PostCategories";
+import { PostContent } from "@/components/ui/blog/PostContent";
+import { PostTitle } from "@/components/ui/blog/PostTitle";
+import { SeparatedItems } from "@/components/ui/blog/SeparatedItems";
+import { Button } from "@/components/ui/button";
+import { ChevronLeftIcon } from "@radix-ui/react-icons";
+import { Blog } from "@wix/blog/components";
+import { type BlogPostServiceConfig } from "@wix/blog/services";
+import { useNavigation } from "./NavigationContext";
+import { SharePostActions } from "./SharePostActions";
 
 interface PostPageProps {
   /** Loaded result of `loadBlogPostServiceConfig` */
