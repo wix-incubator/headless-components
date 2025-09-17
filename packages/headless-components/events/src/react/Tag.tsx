@@ -18,7 +18,7 @@ function useTagContext(): Tag {
 
 enum TestIds {
   tagRoot = 'tag-root',
-  tagText = 'tag-text',
+  tagLabel = 'tag-label',
 }
 
 /**
@@ -48,7 +48,7 @@ export interface RootProps {
  * function TagComponent({ tag }) {
  *   return (
  *     <Tag.Root tag={tag}>
- *       <Tag.Text />
+ *       <Tag.Label />
  *     </Tag.Root>
  *   );
  * }
@@ -75,9 +75,9 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 });
 
 /**
- * Props for the Tag Text component.
+ * Props for the Tag Label component.
  */
-export interface TextProps {
+export interface LabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -87,30 +87,30 @@ export interface TextProps {
 }
 
 /**
- * Displays the tag text with customizable rendering.
+ * Displays the tag label with customizable rendering.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Tag.Text className="px-2 py-1 bg-gray-100 rounded" />
+ * <Tag.Label className="px-2 py-1 bg-gray-100 rounded" />
  *
  * // asChild with primitive
- * <Tag.Text asChild>
+ * <Tag.Label asChild>
  *   <span className="px-2 py-1 bg-gray-100 rounded" />
- * </Tag.Text>
+ * </Tag.Label>
  *
  * // asChild with react component
- * <Tag.Text asChild>
+ * <Tag.Label asChild>
  *   {React.forwardRef(({ text, index, ...props }, ref) => (
  *     <span ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded">
  *       {text}
  *     </span>
  *   ))}
- * </Tag.Text>
+ * </Tag.Label>
  * ```
  */
-export const Text = React.forwardRef<HTMLElement, TextProps>((props, ref) => {
+export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
   const { value, index } = useTagContext();
 
@@ -119,7 +119,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>((props, ref) => {
       ref={ref}
       asChild={asChild}
       className={className}
-      data-testid={TestIds.tagText}
+      data-testid={TestIds.tagLabel}
       customElement={children}
       customElementProps={{ text: value, index }}
       content={value}

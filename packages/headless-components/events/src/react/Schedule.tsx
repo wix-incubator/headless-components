@@ -354,7 +354,7 @@ export interface TagsProps {
  * ```tsx
  * <Schedule.Tags>
  *   <Schedule.TagRepeater>
- *     <Tag.Text />
+ *     <Tag.Label />
  *   </Schedule.TagRepeater>
  * </Schedule.Tags>
  * ```

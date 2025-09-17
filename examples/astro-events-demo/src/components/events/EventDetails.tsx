@@ -135,16 +135,14 @@ export function EventDetails({
                       </>
                     )}
                   </SchedulePrimitive.TimeSlot>
-                  <div className="flex-1">
-                    <div className="flex flex-col">
-                      <SchedulePrimitive.Name className="font-light text-content-primary" />
-                      <SchedulePrimitive.Stage className="font-light text-content-primary text-sm flex items-center gap-1 mb-3" />
-                      <SchedulePrimitive.Tags className="flex gap-2 flex-wrap">
-                        <SchedulePrimitive.TagRepeater>
-                          <TagPrimitive.Text className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
-                        </SchedulePrimitive.TagRepeater>
-                      </SchedulePrimitive.Tags>
-                    </div>
+                  <div className="flex flex-col">
+                    <SchedulePrimitive.Name className="font-light text-content-primary" />
+                    <SchedulePrimitive.Stage className="font-light text-content-primary text-sm flex items-center gap-1 mb-3" />
+                    <SchedulePrimitive.Tags className="flex gap-2 flex-wrap">
+                      <SchedulePrimitive.TagRepeater>
+                        <TagPrimitive.Label className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
+                      </SchedulePrimitive.TagRepeater>
+                    </SchedulePrimitive.Tags>
                   </div>
                 </div>
               </ScheduleListPrimitive.ItemRepeater>
