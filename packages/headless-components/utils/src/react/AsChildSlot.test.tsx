@@ -982,6 +982,21 @@ describe('AsChildSlot', () => {
         expect(element).toHaveAttribute('data-additional', 'additional-value');
         expect(element).toHaveClass('additional-class');
       });
+
+      it('should handle nested AsChildSlot with data-component-tag precedence', () => {
+        render(
+          <TestComponent data-component-tag="outer">
+            <TestComponent data-component-tag="inner">
+              <div data-testid="nested-div">Nested content</div>
+            </TestComponent>
+          </TestComponent>
+        );
+
+        // The inner data-component-tag should take precedence
+        const element = screen.getByTestId('nested-div');
+        expect(element).toHaveAttribute('data-component-tag', 'inner');
+        expect(element).not.toHaveAttribute('data-component-tag', 'outer');
+      });
     });
   });
 });
