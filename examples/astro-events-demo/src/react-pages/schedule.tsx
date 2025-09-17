@@ -4,6 +4,7 @@ import {
   type ScheduleListServiceConfig,
 } from '@wix/headless-events/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
+import { Schedule } from '../components/events/Schedule';
 
 interface SchedulePageProps {
   eventServiceConfig: EventServiceConfig;
@@ -14,13 +15,13 @@ export default function SchedulePage({
   eventServiceConfig,
   scheduleListServiceConfig,
 }: SchedulePageProps) {
-  console.log('eventServiceConfig', eventServiceConfig);
-  console.log('scheduleListServiceConfig', scheduleListServiceConfig);
-
   return (
     <KitchensinkLayout>
       <div className="max-w-7xl mx-auto">
-        <div>Schedule</div>
+        <Schedule
+          eventServiceConfig={eventServiceConfig}
+          scheduleListServiceConfig={scheduleListServiceConfig}
+        />
       </div>
     </KitchensinkLayout>
   );
