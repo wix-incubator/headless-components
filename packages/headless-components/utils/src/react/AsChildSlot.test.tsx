@@ -237,7 +237,10 @@ describe('AsChildSlot', () => {
     it('should work with render object even when asChild is true', () => {
       const renderObject = {
         render: (props: any, ref: React.Ref<HTMLElement>) => (
-          <div ref={ref as React.RefObject<HTMLDivElement>} data-testid="render-object-with-asChild">
+          <div
+            ref={ref as React.RefObject<HTMLDivElement>}
+            data-testid="render-object-with-asChild"
+          >
             Render object content
           </div>
         ),
@@ -509,7 +512,10 @@ describe('AsChildSlot', () => {
 
     it('should handle customElement as function without asChild', () => {
       const renderFunction = (props: any, ref: React.Ref<HTMLElement>) => (
-        <div ref={ref as React.RefObject<HTMLDivElement>} data-testid="function-without-asChild">
+        <div
+          ref={ref as React.RefObject<HTMLDivElement>}
+          data-testid="function-without-asChild"
+        >
           Function content
         </div>
       );
@@ -593,7 +599,9 @@ describe('AsChildSlot', () => {
   describe('data-component-tag prop', () => {
     describe('with customElement scenarios', () => {
       it('should pass data-component-tag to React element customElement', () => {
-        const customElement = <div data-testid="custom-element">Custom content</div>;
+        const customElement = (
+          <div data-testid="custom-element">Custom content</div>
+        );
 
         render(
           <TestComponent
@@ -601,7 +609,7 @@ describe('AsChildSlot', () => {
             customElement={customElement}
             data-component-tag="my-component"
             className="test-class"
-          />
+          />,
         );
 
         const element = screen.getByTestId('custom-element');
@@ -616,18 +624,21 @@ describe('AsChildSlot', () => {
             customElement="String content"
             data-component-tag="string-component"
             data-testid="string-wrapper"
-          />
+          />,
         );
 
         const spanElement = screen.getByText('String content');
-        expect(spanElement).toHaveAttribute('data-component-tag', 'string-component');
+        expect(spanElement).toHaveAttribute(
+          'data-component-tag',
+          'string-component',
+        );
         expect(spanElement.tagName).toBe('SPAN');
       });
 
-      it('should pass data-component-tag to render function customElement via props', () => {
+      it('should automatically inject data-component-tag into render function output', () => {
         const renderFunction = vi.fn((props, ref) => (
-          <div ref={ref} data-testid="function-element" {...props}>
-            Function content
+          <div ref={ref} data-testid="function-element">
+            Function content (tag automatically injected)
           </div>
         ));
 
@@ -636,23 +647,29 @@ describe('AsChildSlot', () => {
             asChild
             customElement={renderFunction}
             data-component-tag="function-component"
-          />
+          />,
         );
 
-        // The data-component-tag should be passed via props to render functions
-        expect(renderFunction).toHaveBeenCalledWith(
-          expect.objectContaining({ 'data-component-tag': 'function-component' }),
-          expect.any(Object)
-        );
+        // The function is called with original props (no data-component-tag passed)
+        expect(renderFunction).toHaveBeenCalledWith({}, expect.any(Object));
 
+        // But the data-component-tag is automatically injected into the output
         const element = screen.getByTestId('function-element');
-        expect(element).toHaveAttribute('data-component-tag', 'function-component');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'function-component',
+        );
       });
 
-      it('should allow render function to ignore data-component-tag', () => {
+      it('should preserve existing props when injecting data-component-tag', () => {
         const renderFunction = vi.fn((props, ref) => (
-          <div ref={ref} data-testid="function-element">
-            Function content (ignoring data-component-tag)
+          <div
+            ref={ref}
+            data-testid="function-element"
+            className="existing-class"
+            data-existing="existing-value"
+          >
+            Function content with existing props
           </div>
         ));
 
@@ -660,27 +677,31 @@ describe('AsChildSlot', () => {
           <TestComponent
             asChild
             customElement={renderFunction}
-            data-component-tag="ignored-component"
-          />
+            customElementProps={{ title: 'Test Title' }}
+            data-component-tag="preserve-props"
+          />,
         );
 
-        // The function receives the prop but doesn't have to use it
+        // The function is called with custom element props
         expect(renderFunction).toHaveBeenCalledWith(
-          expect.objectContaining({ 'data-component-tag': 'ignored-component' }),
-          expect.any(Object)
+          { title: 'Test Title' },
+          expect.any(Object),
         );
 
+        // The data-component-tag is injected while preserving existing props
         const element = screen.getByTestId('function-element');
-        expect(element).not.toHaveAttribute('data-component-tag');
+        expect(element).toHaveAttribute('data-component-tag', 'preserve-props');
+        expect(element).toHaveClass('existing-class');
+        expect(element).toHaveAttribute('data-existing', 'existing-value');
       });
 
-      it('should pass data-component-tag to render object customElement via props', () => {
+      it('should automatically inject data-component-tag into render object output', () => {
         const renderObject = {
           render: vi.fn((props, ref) => (
-            <div ref={ref} data-testid="object-element" {...props}>
-              Object content
+            <div ref={ref} data-testid="object-element">
+              Object content (tag automatically injected)
             </div>
-          ))
+          )),
         };
 
         render(
@@ -688,17 +709,21 @@ describe('AsChildSlot', () => {
             asChild
             customElement={renderObject}
             data-component-tag="object-component"
-          />
+          />,
         );
 
-        // The data-component-tag should be passed via props to render objects
+        // The render method is called with original props (no data-component-tag passed)
         expect(renderObject.render).toHaveBeenCalledWith(
-          expect.objectContaining({ 'data-component-tag': 'object-component' }),
-          expect.any(Object)
+          {},
+          expect.any(Object),
         );
 
+        // But the data-component-tag is automatically injected into the output
         const element = screen.getByTestId('object-element');
-        expect(element).toHaveAttribute('data-component-tag', 'object-component');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'object-component',
+        );
       });
     });
 
@@ -710,21 +735,22 @@ describe('AsChildSlot', () => {
             data-testid="string-children-wrapper"
           >
             String children content
-          </TestComponent>
+          </TestComponent>,
         );
 
         const divElement = screen.getByText('String children content');
-        expect(divElement).toHaveAttribute('data-component-tag', 'string-children');
+        expect(divElement).toHaveAttribute(
+          'data-component-tag',
+          'string-children',
+        );
         expect(divElement.tagName).toBe('DIV');
       });
 
       it('should pass data-component-tag to single React element child', () => {
         render(
-          <TestComponent
-            data-component-tag="single-child"
-          >
+          <TestComponent data-component-tag="single-child">
             <span data-testid="single-child">Single child</span>
-          </TestComponent>
+          </TestComponent>,
         );
 
         // For single child, the data-component-tag goes to the Slot, not the child
@@ -741,26 +767,27 @@ describe('AsChildSlot', () => {
             <div data-testid="first-child">First child</div>
             <span data-testid="second-child">Second child</span>
             <p data-testid="third-child">Third child</p>
-          </TestComponent>
+          </TestComponent>,
         );
 
         const firstChild = screen.getByTestId('first-child');
         const secondChild = screen.getByTestId('second-child');
         const thirdChild = screen.getByTestId('third-child');
 
-        expect(firstChild).toHaveAttribute('data-component-tag', 'multiple-children');
+        expect(firstChild).toHaveAttribute(
+          'data-component-tag',
+          'multiple-children',
+        );
         expect(secondChild).not.toHaveAttribute('data-component-tag');
         expect(thirdChild).not.toHaveAttribute('data-component-tag');
       });
 
       it('should handle multiple children where first child is not a React element', () => {
         const { container } = render(
-          <TestComponent
-            data-component-tag="mixed-children"
-          >
+          <TestComponent data-component-tag="mixed-children">
             Plain text
             <span data-testid="second-element">Second element</span>
-          </TestComponent>
+          </TestComponent>,
         );
 
         // When first child is not a React element, data-component-tag should not be applied
@@ -771,10 +798,10 @@ describe('AsChildSlot', () => {
         expect(container).toHaveTextContent('Plain text');
       });
 
-      it('should pass data-component-tag to function children via props', () => {
+      it('should automatically inject data-component-tag into function children output', () => {
         const childrenFunction = vi.fn((props, ref) => (
-          <div ref={ref} data-testid="function-children" {...props}>
-            Function children content
+          <div ref={ref} data-testid="function-children">
+            Function children content (tag automatically injected)
           </div>
         ));
 
@@ -782,78 +809,79 @@ describe('AsChildSlot', () => {
           <TestComponent
             children={childrenFunction}
             data-component-tag="function-children"
-          />
+          />,
         );
 
-        // The data-component-tag should be passed via props to function children
-        expect(childrenFunction).toHaveBeenCalledWith(
-          expect.objectContaining({ 'data-component-tag': 'function-children' }),
-          expect.any(Object)
-        );
+        // The function is called with original props (no data-component-tag passed)
+        expect(childrenFunction).toHaveBeenCalledWith({}, expect.any(Object));
 
+        // But the data-component-tag is automatically injected into the output
         const element = screen.getByTestId('function-children');
-        expect(element).toHaveAttribute('data-component-tag', 'function-children');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'function-children',
+        );
       });
 
-      it('should pass data-component-tag to render object children via props', () => {
+      it('should automatically inject data-component-tag into render object children output', () => {
         const childrenObject = {
           render: vi.fn((props, ref) => (
-            <div ref={ref} data-testid="object-children" {...props}>
-              Object children content
+            <div ref={ref} data-testid="object-children">
+              Object children content (tag automatically injected)
             </div>
-          ))
+          )),
         };
 
         render(
           <TestComponent
             children={childrenObject}
             data-component-tag="object-children"
-          />
+          />,
         );
 
-        // The data-component-tag should be passed via props to render object children
+        // The render method is called with original props (no data-component-tag passed)
         expect(childrenObject.render).toHaveBeenCalledWith(
-          expect.objectContaining({ 'data-component-tag': 'object-children' }),
-          expect.any(Object)
+          {},
+          expect.any(Object),
         );
 
+        // But the data-component-tag is automatically injected into the output
         const element = screen.getByTestId('object-children');
-        expect(element).toHaveAttribute('data-component-tag', 'object-children');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'object-children',
+        );
       });
 
-      it('should merge data-component-tag with existing customElementProps', () => {
+      it('should handle multiple elements and inject data-component-tag into first element', () => {
         const renderFunction = vi.fn((props, ref) => (
-          <div ref={ref} data-testid="merged-props" {...props}>
-            Custom and data-component-tag merged
-          </div>
+          <>
+            <div ref={ref} data-testid="first-element">
+              First element
+            </div>
+            <span data-testid="second-element">Second element</span>
+          </>
         ));
 
         render(
           <TestComponent
             asChild
             customElement={renderFunction}
-            customElementProps={{
-              'data-custom': 'custom-value',
-              className: 'custom-class'
-            }}
-            data-component-tag="merged-component"
-          />
+            data-component-tag="multi-element"
+          />,
         );
 
-        // Should receive both custom props and data-component-tag
-        expect(renderFunction).toHaveBeenCalledWith(
-          expect.objectContaining({
-            'data-custom': 'custom-value',
-            className: 'custom-class',
-            'data-component-tag': 'merged-component'
-          }),
-          expect.any(Object)
-        );
+        expect(renderFunction).toHaveBeenCalledWith({}, expect.any(Object));
 
-        const element = screen.getByTestId('merged-props');
-        expect(element).toHaveAttribute('data-component-tag', 'merged-component');
-        expect(element).toHaveAttribute('data-custom', 'custom-value');
-        expect(element).toHaveClass('custom-class');
+        // Only the first element should have the data-component-tag
+        const firstElement = screen.getByTestId('first-element');
+        const secondElement = screen.getByTestId('second-element');
+
+        expect(firstElement).toHaveAttribute(
+          'data-component-tag',
+          'multi-element',
+        );
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
       });
     });
 
@@ -862,7 +890,7 @@ describe('AsChildSlot', () => {
         render(
           <TestComponent data-testid="no-tag">
             <div data-testid="child">Child content</div>
-          </TestComponent>
+          </TestComponent>,
         );
 
         const child = screen.getByTestId('child');
@@ -871,12 +899,9 @@ describe('AsChildSlot', () => {
 
       it('should not pass data-component-tag when prop is empty string', () => {
         render(
-          <TestComponent
-            data-component-tag=""
-            data-testid="empty-tag"
-          >
+          <TestComponent data-component-tag="" data-testid="empty-tag">
             <div data-testid="child">Child content</div>
-          </TestComponent>
+          </TestComponent>,
         );
 
         const child = screen.getByTestId('child');
@@ -885,15 +910,16 @@ describe('AsChildSlot', () => {
 
       it('should handle data-component-tag with special characters', () => {
         render(
-          <TestComponent
-            data-component-tag="my-component_123-test.value"
-          >
+          <TestComponent data-component-tag="my-component_123-test.value">
             <div data-testid="child">Child content</div>
-          </TestComponent>
+          </TestComponent>,
         );
 
         const child = screen.getByTestId('child');
-        expect(child).toHaveAttribute('data-component-tag', 'my-component_123-test.value');
+        expect(child).toHaveAttribute(
+          'data-component-tag',
+          'my-component_123-test.value',
+        );
       });
 
       it('should return null when no children and no customElement', () => {
@@ -901,7 +927,7 @@ describe('AsChildSlot', () => {
           <TestComponent
             data-component-tag="no-content"
             data-testid="should-not-exist"
-          />
+          />,
         );
 
         expect(container.firstChild).toBeNull();
@@ -917,7 +943,7 @@ describe('AsChildSlot', () => {
             className="test-class"
           >
             <div data-testid="child">Child content</div>
-          </TestComponent>
+          </TestComponent>,
         );
 
         const child = screen.getByTestId('child');
@@ -944,11 +970,14 @@ describe('AsChildSlot', () => {
             data-component-tag="merged-component"
             className="additional-class"
             data-additional="additional-value"
-          />
+          />,
         );
 
         const element = screen.getByTestId('existing-props');
-        expect(element).toHaveAttribute('data-component-tag', 'merged-component');
+        expect(element).toHaveAttribute(
+          'data-component-tag',
+          'merged-component',
+        );
         expect(element).toHaveAttribute('data-existing', 'existing-value');
         expect(element).toHaveAttribute('data-additional', 'additional-value');
         expect(element).toHaveClass('additional-class');
