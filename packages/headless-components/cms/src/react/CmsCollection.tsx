@@ -1,9 +1,11 @@
 import React from 'react';
 import * as CoreCmsCollection from './core/CmsCollection.js';
+import * as CoreCmsCollectionFilters from './core/CmsCollectionFilters.js';
 import {
   type CmsCollectionServiceConfig,
   type WixDataItem,
 } from '../services/cms-collection-service.js';
+import type { FilterOption } from '@wix/headless-components/react';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -18,6 +20,8 @@ export interface RootProps {
     id: string;
     items?: WixDataItem[];
   };
+  /** Optional filter options configuration for enabling filtering */
+  filterOptions?: FilterOption[];
 }
 
 /**
@@ -48,20 +52,31 @@ export interface RootProps {
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   (props, ref) => {
-    const { children, collection } = props;
+    const { children, collection, filterOptions } = props;
 
     const collectionServiceConfig: CmsCollectionServiceConfig = {
       collectionId: collection.id,
       collection: collection.items,
     };
 
+    // Create filters service config if filter options are provided
+    const filtersServiceConfig = filterOptions ? {
+      collectionId: collection.id,
+      filterOptions,
+      initialItems: collection.items,
+    } : undefined;
+
     const attributes = {
       'data-testid': TestIds.cmsCollectionRoot,
       'data-collection-id': collection.id,
+      'data-has-filters': !!filterOptions,
     };
 
     return (
-      <CoreCmsCollection.Root collectionServiceConfig={collectionServiceConfig}>
+      <CoreCmsCollection.Root
+        collectionServiceConfig={collectionServiceConfig}
+        filtersServiceConfig={filtersServiceConfig}
+      >
         <div {...attributes} ref={ref}>
           {children}
         </div>
@@ -119,4 +134,74 @@ export interface ItemsRenderProps {
 export function Items(props: ItemsProps) {
   return <CoreCmsCollection.Items>{props.children}</CoreCmsCollection.Items>;
 }
+
+/**
+ * Props for CmsCollection.Filters component
+ */
+export interface FiltersProps extends CoreCmsCollectionFilters.FiltersProps {}
+
+/**
+ * Filter component that provides comprehensive filtering functionality for CMS collections.
+ *
+ * This component acts as a provider that integrates with the CmsCollectionFilters service to offer
+ * predefined filter options based on the collection's filterable fields configuration.
+ *
+ * The component automatically extracts available filter options from the service configuration
+ * and provides them to child Filter primitive components for rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ * import { Filter } from '@wix/headless-components/react';
+ *
+ * function CollectionWithFilters() {
+ *   const filterOptions = [
+ *     {
+ *       key: 'title',
+ *       label: 'Title',
+ *       type: 'single',
+ *       displayType: 'text',
+ *       fieldType: 'singular',
+ *     },
+ *     {
+ *       key: 'category',
+ *       label: 'Category',
+ *       type: 'multi',
+ *       displayType: 'text',
+ *       fieldType: 'singular',
+ *       validValues: ['news', 'blog', 'events'],
+ *     },
+ *   ];
+ *
+ *   return (
+ *     <CmsCollection.Root
+ *       collection={{ id: 'MyCollection' }}
+ *       filterOptions={filterOptions}
+ *     >
+ *       <CmsCollection.Filters>
+ *         <Filter.FilterOptions>
+ *           <Filter.FilterOptionRepeater>
+ *             <Filter.FilterOption.Label />
+ *             <Filter.FilterOption.MultiFilter />
+ *             <Filter.FilterOption.RangeFilter />
+ *           </Filter.FilterOptionRepeater>
+ *         </Filter.FilterOptions>
+ *       </CmsCollection.Filters>
+ *
+ *       <CmsCollection.Items>
+ *         {({ items, isLoading, error }) => (
+ *           <div>
+ *             {error && <div>Error: {error}</div>}
+ *             {isLoading && <div>Loading...</div>}
+ *             {items.map(item => <div key={item._id}>{item.title}</div>)}
+ *           </div>
+ *         )}
+ *       </CmsCollection.Items>
+ *     </CmsCollection.Root>
+ *   );
+ * }
+ * ```
+ */
+export const Filters = CoreCmsCollectionFilters.Filters;
 
