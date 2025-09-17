@@ -1,12 +1,15 @@
 import React from 'react';
 import * as CoreCmsCollection from './core/CmsCollection.js';
 import {
+  WixDataQueryResult,
   type CmsCollectionServiceConfig,
   type WixDataItem,
 } from '../services/cms-collection-service.js';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
+  cmsCollectionNext = 'cms-collection-next',
+  cmsCollectionPrev = 'cms-collection-prev',
 }
 
 /**
@@ -16,7 +19,7 @@ export interface RootProps {
   children: React.ReactNode;
   collection: {
     id: string;
-    items?: WixDataItem[];
+    queryResult: WixDataQueryResult;
   };
 }
 
@@ -41,6 +44,9 @@ export interface RootProps {
  *           </div>
  *         )}
  *       </CmsCollection.Items>
+ *
+ *       <CmsCollection.NextAction>Next Page</CmsCollection.NextAction>
+ *       <CmsCollection.PrevAction>Previous Page</CmsCollection.PrevAction>
  *     </CmsCollection.Root>
  *   );
  * }
@@ -52,7 +58,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     const collectionServiceConfig: CmsCollectionServiceConfig = {
       collectionId: collection.id,
-      collection: collection.items,
+      queryResult: collection.queryResult,
     };
 
     const attributes = {
@@ -119,4 +125,120 @@ export interface ItemsRenderProps {
 export function Items(props: ItemsProps) {
   return <CoreCmsCollection.Items>{props.children}</CoreCmsCollection.Items>;
 }
+
+/**
+ * Props for CmsCollection.NextAction component
+ */
+export interface NextActionProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * Displays a button to load the next page of items. Not rendered if no items are left to load.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * function NextButton() {
+ *   return (
+ *     <CmsCollection.NextAction className="btn-primary">
+ *       Next Page
+ *       <ChevronRight className="h-4 w-4" />
+ *     </CmsCollection.NextAction>
+ *   );
+ * }
+ * ```
+ */
+export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
+  (props, ref) => {
+    const { children, className, ...otherProps } = props;
+
+    return (
+      <CoreCmsCollection.NextAction>
+        {({ loadNext, hasNext, isLoading }) => {
+          // Don't render if no next page available
+          if (!hasNext) {
+            return null;
+          }
+
+          const attributes = {
+            'data-testid': TestIds.cmsCollectionNext,
+            'data-loading': isLoading,
+            onClick: () => loadNext(),
+            disabled: isLoading,
+            className,
+            ...otherProps,
+          };
+
+          return (
+            <button {...attributes} ref={ref}>
+              {children}
+            </button>
+          );
+        }}
+      </CoreCmsCollection.NextAction>
+    );
+  },
+);
+
+/**
+ * Props for CmsCollection.PrevAction component
+ */
+export interface PrevActionProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * Displays a button to load the previous page of items. Not rendered if no previous page is available.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * function PrevButton() {
+ *   return (
+ *     <CmsCollection.PrevAction className="btn-primary">
+ *       <ChevronLeft className="h-4 w-4" />
+ *       Previous Page
+ *     </CmsCollection.PrevAction>
+ *   );
+ * }
+ * ```
+ */
+export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
+  (props, ref) => {
+    const { children, className, ...otherProps } = props;
+
+    return (
+      <CoreCmsCollection.PrevAction>
+        {({ loadPrev, hasPrev, isLoading }) => {
+          // Don't render if no previous page available
+          if (!hasPrev) {
+            return null;
+          }
+
+          const attributes = {
+            'data-testid': TestIds.cmsCollectionPrev,
+            'data-loading': isLoading,
+            onClick: () => loadPrev(),
+            disabled: isLoading,
+            className,
+            ...otherProps,
+          };
+
+          return (
+            <button {...attributes} ref={ref}>
+              {children}
+            </button>
+          );
+        }}
+      </CoreCmsCollection.PrevAction>
+    );
+  },
+);
 
