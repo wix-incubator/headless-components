@@ -11,7 +11,8 @@ import type { EnhancedCategory } from './blog-categories-service.js';
  *
  * @example
  * ```tsx
- * import { Blog, createCustomCategory } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
+ * import { createCustomCategory } from '@wix/blog/services';
  *
  * const customCategories = [
  *   createCustomCategory('All Posts', '/', {

@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 /* This is the equivalent of tailwind.config.js */
 @theme {
   /* Map Tailwind variables to existing wix-theme variables */

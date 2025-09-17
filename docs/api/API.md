@@ -94,7 +94,7 @@ See the [Platform](./PLATFORM_INTERFACE.md) API
 
 ### Open issues:
 
-- Should The component also check if the entity is still loading, and if so, render a loading state (skeleton), by doing so, skeletons will be rendered natively by elements and would be pefectly aligned with the loaded state.
+- Should The component also check if the entity is still loading, and if so, render a loading state (skeleton), by doing so, skeletons will be rendered natively by elements and would be perfectly aligned with the loaded state.
 
   for example:
 

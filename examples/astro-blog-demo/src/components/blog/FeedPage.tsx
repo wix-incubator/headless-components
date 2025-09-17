@@ -1,9 +1,9 @@
-import { EmptyState } from '@/components/ui/blog/EmptyState';
-import { Button } from '@/components/ui/button';
-import { Blog } from '@wix/headless-blog/react';
-import { type BlogFeedServiceConfig } from '@wix/headless-blog/services';
-import { Loader2Icon } from 'lucide-react';
-import { BlogFeedCardEditorial, BlogFeedCardSideBySide } from './BlogFeedCard';
+import { EmptyState } from "@/components/ui/blog/EmptyState";
+import { Button } from "@/components/ui/button";
+import { Blog } from "@wix/blog/components";
+import { type BlogFeedServiceConfig } from "@wix/blog/services";
+import { Loader2Icon } from "lucide-react";
+import { BlogFeedCardEditorial, BlogFeedCardSideBySide } from "./BlogFeedCard";
 
 interface FeedPageProps {
   /** Loaded result of `loadBlogFeedServiceConfig` */
@@ -11,7 +11,7 @@ interface FeedPageProps {
   /** The base url of the post page, commonly end with trailing slash, e.g. "/post/" */
   postPageBaseUrl: string;
   /** The base url of the category page, commonly end with trailing slash, e.g. "/category/" */
-  categoryPageBaseUrl: string;
+  categoryPageBaseUrl?: string;
   /** The date locale to use for the dates */
   dateLocale: string;
 }

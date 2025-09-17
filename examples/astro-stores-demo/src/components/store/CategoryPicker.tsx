@@ -1,15 +1,15 @@
-import { CategoryList, Category, type Category as CategoryType } from '@wix/headless-stores/react';
-import type {
-  CategoriesListServiceConfig,
-} from '@wix/headless-stores/services';
+import {
+  CategoryList,
+  Category,
+  type Category as CategoryType,
+} from '@wix/headless-stores/react';
+import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 
 interface CategoryPickerProps {
   categoriesListConfig: CategoriesListServiceConfig;
 }
 
-export function CategoryPicker({
-  categoriesListConfig,
-}: CategoryPickerProps) {
+export function CategoryPicker({ categoriesListConfig }: CategoryPickerProps) {
   return (
     <CategoryList.Root categoriesListConfig={categoriesListConfig}>
       <div>
