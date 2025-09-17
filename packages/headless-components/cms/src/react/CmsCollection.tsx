@@ -319,10 +319,13 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
  * Props for CmsCollection.Totals.Count component
  */
 export interface TotalsCountProps {
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    total: number;
-  }>;
+  /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild or content when not */
+  children?: AsChildChildren<{
+    total: number;
+  }> | React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
@@ -334,9 +337,23 @@ export interface TotalsCountProps {
  * ```tsx
  * import { CmsCollection } from '@wix/cms/components';
  *
+ * // Default usage
  * function TotalCount() {
  *   return (
  *     <span>Total: <CmsCollection.Totals.Count /></span>
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomTotalCount() {
+ *   return (
+ *     <CmsCollection.Totals.Count asChild>
+ *       {({ total }) => (
+ *         <strong className="text-lg font-bold">
+ *           {total} items total
+ *         </strong>
+ *       )}
+ *     </CmsCollection.Totals.Count>
  *   );
  * }
  * ```
@@ -348,29 +365,22 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>(
     return (
       <CoreCmsCollection.TotalsCount>
         {({ total }) => {
-          const attributes = {
-            'data-testid': TestIds.cmsCollectionItemsTotals,
-            'data-total': total,
-            className,
-            ...otherProps,
-          };
-
-          if (asChild && React.isValidElement(children)) {
-            return React.cloneElement(children as React.ReactElement, {
-              ...attributes,
-              ref,
-              children: total,
-            });
-          }
-
-          if (typeof children === 'function') {
-            return children({ total }, ref);
-          }
-
           return (
-            <span {...attributes} ref={ref}>
-              {total}
-            </span>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.cmsCollectionItemsTotals}
+              data-total={total}
+              customElement={children}
+              customElementProps={{
+                total,
+              }}
+              content={total}
+              {...otherProps}
+            >
+              <span>{total}</span>
+            </AsChildSlot>
           );
         }}
       </CoreCmsCollection.TotalsCount>
@@ -384,10 +394,13 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>(
 export interface TotalsDisplayedProps {
   /** Type of display count to show */
   displayType?: DisplayType;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {
-    displayed: number;
-  }>;
+  /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild or content when not */
+  children?: AsChildChildren<{
+    displayed: number;
+  }> | React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
@@ -399,6 +412,7 @@ export interface TotalsDisplayedProps {
  * ```tsx
  * import { CmsCollection } from '@wix/cms/components';
  *
+ * // Default usage
  * function DisplayedCount() {
  *   return (
  *     <div>
@@ -407,6 +421,20 @@ export interface TotalsDisplayedProps {
  *       <span>Current page: <CmsCollection.Totals.Displayed displayType="currentPageNum"/></span>
  *       <span>Total pages: <CmsCollection.Totals.Displayed displayType="totalPages"/></span>
  *     </div>
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomDisplayedCount() {
+ *   return (
+ *     <CmsCollection.Totals.Displayed displayType="displayed" asChild>
+ *       {({ displayed }) => (
+ *         <div className="count-badge">
+ *           <span className="count-number">{displayed}</span>
+ *           <span className="count-label">items shown</span>
+ *         </div>
+ *       )}
+ *     </CmsCollection.Totals.Displayed>
  *   );
  * }
  * ```
@@ -418,30 +446,23 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
     return (
       <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
         {({ displayed }) => {
-          const attributes = {
-            'data-testid': TestIds.cmsCollectionItemsDisplayed,
-            'data-displayed': displayed,
-            'data-display-type': displayType || 'displayed',
-            className,
-            ...otherProps,
-          };
-
-          if (asChild && React.isValidElement(children)) {
-            return React.cloneElement(children as React.ReactElement, {
-              ...attributes,
-              ref,
-              children: displayed,
-            });
-          }
-
-          if (typeof children === 'function') {
-            return children({ displayed }, ref);
-          }
-
           return (
-            <span {...attributes} ref={ref}>
-              {displayed}
-            </span>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.cmsCollectionItemsDisplayed}
+              data-displayed={displayed}
+              data-display-type={displayType || 'displayed'}
+              customElement={children}
+              customElementProps={{
+                displayed,
+              }}
+              content={displayed}
+              {...otherProps}
+            >
+              <span>{displayed}</span>
+            </AsChildSlot>
           );
         }}
       </CoreCmsCollection.TotalsDisplayed>
