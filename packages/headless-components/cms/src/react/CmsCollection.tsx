@@ -15,6 +15,7 @@ enum TestIds {
   cmsCollectionPrev = 'cms-collection-prev',
   cmsCollectionItemsTotals = 'cms-collection-items-totals',
   cmsCollectionItemsDisplayed = 'cms-collection-items-displayed',
+  cmsCollectionCreateItem = 'cms-collection-create-item',
 }
 
 /**
@@ -478,3 +479,136 @@ export const Totals = {
   Displayed,
 };
 
+/**
+ * Props for CmsCollection.CreateItemAction component
+ */
+export interface CreateItemActionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Button label for default rendering */
+  label?: string;
+  /** Custom render function when using asChild or button content when not */
+  children?:
+    | AsChildChildren<{
+        disabled: boolean;
+        isLoading: boolean;
+        onClick: () => void;
+      }>
+    | React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Loading state text to display when creating item */
+  loadingState?: string | React.ReactNode;
+  /** Data to use when creating the item. If not provided, creates an empty item. */
+  itemData?: Partial<WixDataItem>;
+}
+
+/**
+ * Displays a button to create a new item in the collection. Integrates with the collection service to handle item creation with loading states.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * // Default usage
+ * function CreateButton() {
+ *   return (
+ *     <CmsCollection.CreateItemAction
+ *       label="Add Item"
+ *       className="btn-primary"
+ *       loadingState="Creating..."
+ *       itemData={{ title: "New Item", status: "draft" }}
+ *     />
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomCreateButton() {
+ *   return (
+ *     <CmsCollection.CreateItemAction
+ *       asChild
+ *       itemData={{ title: "New Article", status: "draft" }}
+ *     >
+ *       {({ disabled, isLoading, onClick }) => (
+ *         <button
+ *           disabled={disabled}
+ *           onClick={onClick}
+ *           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+ *         >
+ *           <PlusIcon className="w-4 h-4" />
+ *           {isLoading ? 'Creating...' : 'Add New Article'}
+ *         </button>
+ *       )}
+ *     </CmsCollection.CreateItemAction>
+ *   );
+ * }
+ *
+ * // Simple content override
+ * function SimpleCreateButton() {
+ *   return (
+ *     <CmsCollection.CreateItemAction
+ *       label="New Post"
+ *       loadingState="Publishing..."
+ *       itemData={{ category: "blog", status: "published" }}
+ *     >
+ *       📝 Create Post
+ *     </CmsCollection.CreateItemAction>
+ *   );
+ * }
+ * ```
+ */
+export const CreateItemAction = React.forwardRef<
+  HTMLButtonElement,
+  CreateItemActionProps
+>((props, ref) => {
+  const {
+    asChild,
+    children,
+    className,
+    label = 'Create Item',
+    loadingState = 'Creating...',
+    itemData = {},
+    ...otherProps
+  } = props;
+
+  return (
+    <CoreCmsCollection.CreateItemAction>
+      {({ createItem, isLoading }) => {
+        const disabled = isLoading;
+        // const onClick = async () => {
+        //   try {
+        //     await createItem(itemData);
+        //   } catch (error) {
+        //     // Error handling is managed by the service
+        //     console.error('Failed to create item:', error);
+        //   }
+        // };
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={() => createItem(itemData)}
+            disabled={disabled}
+            data-testid={TestIds.cmsCollectionCreateItem}
+            data-loading={isLoading}
+            customElement={children}
+            customElementProps={{
+              disabled,
+              isLoading,
+              onClick: () => createItem(itemData),
+            }}
+            content={isLoading ? loadingState : label}
+            {...otherProps}
+          >
+            <button disabled={disabled}>
+              {isLoading ? loadingState : label}
+            </button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreCmsCollection.CreateItemAction>
+  );
+});
