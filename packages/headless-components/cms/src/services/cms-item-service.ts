@@ -64,11 +64,11 @@ export const CmsItemServiceImplementation =
       const signalsService = getService(SignalsServiceDefinition);
 
       // Initialize with pre-loaded item if provided, otherwise with empty object
-      const itemSignal: Signal<WixDataItem> = signalsService.signal<WixDataItem>(
+      const itemSignal = signalsService.signal<WixDataItem>(
         config.item || ({ _id: '' } as WixDataItem),
       );
-      const loadingSignal: Signal<boolean> = signalsService.signal<boolean>(false);
-      const errorSignal: Signal<string | null> = signalsService.signal<string | null>(null);
+      const loadingSignal = signalsService.signal<boolean>(false);
+      const errorSignal = signalsService.signal<string | null>(null);
 
       const loadItemData = async () => {
         loadingSignal.set(true);
