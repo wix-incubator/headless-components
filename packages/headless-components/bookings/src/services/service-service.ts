@@ -3,7 +3,7 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { services } from '@wix/bookings';
+import * as services from '@wix/auto_sdk_bookings_services';
 
 /**
  * API interface for the Service service, providing reactive service data management.
