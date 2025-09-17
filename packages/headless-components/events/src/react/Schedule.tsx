@@ -63,7 +63,9 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
       data-testid={TestIds.scheduleRoot}
       {...otherProps}
     >
-      <CoreSchedule.Root item={item}>{children}</CoreSchedule.Root>
+      <div>
+        <CoreSchedule.Root item={item}>{children}</CoreSchedule.Root>
+      </div>
     </AsChildSlot>
   );
 });
@@ -339,8 +341,6 @@ export interface TagsProps {
   children:
     | React.ReactNode
     | AsChildChildren<{ tags: string[]; hasTags: boolean }>;
-  /** Empty state to display when no tags are available */
-  emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -352,7 +352,7 @@ export interface TagsProps {
  * @component
  * @example
  * ```tsx
- * <Schedule.Tags emptyState={<div>No tags</div>}>
+ * <Schedule.Tags>
  *   <Schedule.TagRepeater>
  *     <Tag.Text />
  *   </Schedule.TagRepeater>
@@ -360,13 +360,13 @@ export interface TagsProps {
  * ```
  */
 export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
-  const { asChild, children, emptyState, className, ...otherProps } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreSchedule.Tags>
       {({ tags, hasTags }) => {
         if (!hasTags) {
-          return emptyState || null;
+          return null;
         }
 
         return (
@@ -414,7 +414,9 @@ export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
   return (
     <CoreSchedule.Tags>
       {({ tags, hasTags }) => {
-        if (!hasTags) return null;
+        if (!hasTags) {
+          return null;
+        }
 
         return tags.map((tagValue, index) => (
           <Tag.Root key={index} tag={{ value: tagValue, index }}>

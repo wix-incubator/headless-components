@@ -8,6 +8,7 @@ import * as Schedule from './Schedule.js';
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
   scheduleListError = 'schedule-list-error',
+  scheduleListNavigationTrigger = 'schedule-list-navigation-trigger',
 }
 
 /**
@@ -150,65 +151,75 @@ export const ItemRepeater = (props: ItemRepeaterProps): React.ReactNode => {
   );
 };
 
-// LoadMoreTrigger removed - no pagination needed
-
 /**
- * Props for the ScheduleList Error component.
+ * Props for the ScheduleList NavigationTrigger component.
  */
-export interface ErrorProps {
+export interface NavigationTriggerProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ error: string }>;
+  children?: AsChildChildren<{
+    items: ScheduleItem[];
+    hasItems: boolean;
+    eventSlug: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** The label to display inside the element */
+  label?: string;
 }
 
 /**
- * Displays an error message when the schedule list fails to load.
+ * Displays a navigation element for schedule page functionality.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <ScheduleList.Error className="text-red-500" />
+ * <ScheduleList.NavigationTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="View Schedule" />
  *
  * // asChild with primitive
- * <ScheduleList.Error asChild className="text-red-500">
- *   <span />
- * </ScheduleList.Error>
+ * <ScheduleList.NavigationTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+ *   <a href="/schedule">View Schedule</a>
+ * </ScheduleList.NavigationTrigger>
  *
  * // asChild with react component
- * <ScheduleList.Error asChild className="text-red-500">
- *   {React.forwardRef(({ error, ...props }, ref) => (
- *     <span ref={ref} {...props}>
- *       {error}
- *     </span>
+ * <ScheduleList.NavigationTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+ *   {React.forwardRef(({ items, hasItems, eventSlug, ...props }, ref) => (
+ *     <a ref={ref} {...props} href={`/events/${eventSlug}/schedule`}>
+ *       View Schedule
+ *     </a>
  *   ))}
- * </ScheduleList.Error>
+ * </ScheduleList.NavigationTrigger>
  * ```
  */
-export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const NavigationTrigger = React.forwardRef<
+  HTMLElement,
+  NavigationTriggerProps
+>((props, ref) => {
+  const { asChild, children, className, label, ...otherProps } = props;
 
   return (
-    <CoreScheduleList.Error>
-      {({ error }) => {
+    <CoreScheduleList.NavigationTrigger>
+      {({ items, hasItems, eventSlug }) => {
         return (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
-            data-testid={TestIds.scheduleListError}
+            data-testid={TestIds.scheduleListNavigationTrigger}
             customElement={children}
-            customElementProps={{ error }}
-            content={error}
+            customElementProps={{
+              items,
+              hasItems,
+              eventSlug,
+            }}
             {...otherProps}
           >
-            <span>{error}</span>
+            <button>{label}</button>
           </AsChildSlot>
         );
       }}
-    </CoreScheduleList.Error>
+    </CoreScheduleList.NavigationTrigger>
   );
 });

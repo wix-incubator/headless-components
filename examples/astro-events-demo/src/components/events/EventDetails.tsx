@@ -118,39 +118,30 @@ export function EventDetails({
             scheduleListServiceConfig={scheduleListServiceConfig}
           >
             <ScheduleListPrimitive.Items className="space-y-4 mb-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-light text-content-primary">
-                  Schedule
-                </h2>
-                <button className="text-sm font-light text-content-primary hover:underline">
-                  See All
-                </button>
-              </div>
-
-              <ScheduleListPrimitive.ItemRepeater className="p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24">
-                    <SchedulePrimitive.TimeSlot className="font-light text-content-primary">
-                      {({ timeRange, duration }) => (
-                        <>
-                          <div className="font-medium">{timeRange}</div>
-                          {duration && (
-                            <div className="text-content-secondary">
-                              {duration}
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </SchedulePrimitive.TimeSlot>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="space-y-2">
+              <h2 className="text-3xl font-light text-content-primary">
+                Schedule
+              </h2>
+              <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
+                <div className="flex gap-8">
+                  <SchedulePrimitive.TimeSlot className="font-light text-content-primary min-w-[150px]">
+                    {({ timeRange, duration }) => (
+                      <>
+                        <span className="font-medium">{timeRange}</span>
+                        {duration && (
+                          <span className="text-content-secondary">
+                            {duration}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </SchedulePrimitive.TimeSlot>
+                  <div className="flex-1">
+                    <div className="flex flex-col">
                       <SchedulePrimitive.Name className="font-light text-content-primary" />
-                      <SchedulePrimitive.Stage className="font-light text-content-primary flex items-center gap-1 text-sm" />
-
+                      <SchedulePrimitive.Stage className="font-light text-content-primary text-sm flex items-center gap-1 mb-3" />
                       <SchedulePrimitive.Tags className="flex gap-2 flex-wrap">
                         <SchedulePrimitive.TagRepeater>
-                          <TagPrimitive.Text className="px-2 py-1 bg-gray-100 rounded-full text-xs text-content-secondary" />
+                          <TagPrimitive.Text className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
                         </SchedulePrimitive.TagRepeater>
                       </SchedulePrimitive.Tags>
                     </div>
@@ -158,16 +149,18 @@ export function EventDetails({
                 </div>
               </ScheduleListPrimitive.ItemRepeater>
             </ScheduleListPrimitive.Items>
-
-            <ScheduleListPrimitive.Error asChild>
-              {({ error }) => (
-                <div className="mt-4 p-4 bg-status-danger-medium border border-status-danger rounded">
-                  <p className="text-status-error font-light">
-                    Failed to load schedule: {error}
-                  </p>
-                </div>
-              )}
-            </ScheduleListPrimitive.Error>
+            <div className="flex justify-end">
+              <ScheduleListPrimitive.NavigationTrigger
+                asChild
+                className="border border-gray-300 font-light text-content-primary py-2 px-4 hover:underline"
+              >
+                {({ eventSlug }) => (
+                  <a href={`${eventsPagePath}/${eventSlug}/schedule`}>
+                    See All
+                  </a>
+                )}
+              </ScheduleListPrimitive.NavigationTrigger>
+            </div>
           </ScheduleListPrimitive.Root>
 
           <TicketsPickerPrimitive.Root

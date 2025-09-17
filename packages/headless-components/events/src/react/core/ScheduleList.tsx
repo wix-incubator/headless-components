@@ -6,6 +6,7 @@ import {
   ScheduleListServiceDefinition,
 } from '../../services/schedule-list-service.js';
 import { type ScheduleItem } from '../../services/schedule-list-service.js';
+import { EventServiceDefinition } from '../../services/event-service.js';
 
 export interface RootProps {
   /** Child components that will have access to the schedule list service */
@@ -85,30 +86,34 @@ export function ItemRepeater(props: ItemRepeaterProps): React.ReactNode {
   return props.children({ items });
 }
 
-// LoadMoreTrigger removed - no pagination needed
-
-export interface ErrorProps {
+export interface NavigationTriggerProps {
   /** Render prop function */
-  children: (props: ErrorRenderProps) => React.ReactNode;
+  children: (props: NavigationTriggerRenderProps) => React.ReactNode;
 }
 
-export interface ErrorRenderProps {
-  /** Schedule list error message */
-  error: string;
+export interface NavigationTriggerRenderProps {
+  /** List of schedule items */
+  items: ScheduleItem[];
+  /** Indicates whether there are any schedule items in the list */
+  hasItems: boolean;
+  /** Event slug for URL construction */
+  eventSlug: string;
 }
 
 /**
- * ScheduleList Error core component that provides schedule list error. Not rendered if there is no error.
+ * ScheduleList NavigationTrigger core component that provides navigation functionality.
  *
  * @component
  */
-export function Error(props: ErrorProps): React.ReactNode {
+export function NavigationTrigger(
+  props: NavigationTriggerProps,
+): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
-  const error = scheduleListService.error.get();
+  const eventService = useService(EventServiceDefinition);
+  const items = scheduleListService.items.get();
+  const event = eventService.event.get();
+  const hasItems = !!items.length;
+  const eventSlug = event.slug!;
 
-  if (!error) {
-    return null;
-  }
-
-  return props.children({ error });
+  return props.children({ items, hasItems, eventSlug });
 }
