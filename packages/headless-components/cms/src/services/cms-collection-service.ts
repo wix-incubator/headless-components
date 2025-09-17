@@ -19,8 +19,6 @@ function extractErrorMessage(err: unknown, fallback: string): string {
  * Service definition for the CMS Collection service.
  */
 export const CmsCollectionServiceDefinition = defineService<{
-  /** Reactive signal containing the collection items */
-  itemsSignal: Signal<WixDataItem[]>;
   /** Reactive signal indicating if items are currently being loaded */
   loadingSignal: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
@@ -93,10 +91,6 @@ export const CmsCollectionServiceImplementation =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      // Initialize with pre-loaded query result if provided
-      const itemsSignal = signalsService.signal<WixDataItem[]>(
-        config.queryResult?.items || [],
-      );
       const loadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
 
@@ -120,8 +114,6 @@ export const CmsCollectionServiceImplementation =
 
           currentQueryResult = result;
           queryResultSignal.set(result);
-          itemsSignal.set(result.items);
-
         } catch (err) {
           errorSignal.set(extractErrorMessage(err, 'Failed to load collection items'));
           console.error(
@@ -164,8 +156,6 @@ export const CmsCollectionServiceImplementation =
           const nextResult = await currentQueryResult.next();
           currentQueryResult = nextResult;
           queryResultSignal.set(nextResult);
-          itemsSignal.set(nextResult.items);
-
         } catch (err) {
           errorSignal.set(extractErrorMessage(err, 'Failed to load next page'));
           console.error(
@@ -196,8 +186,6 @@ export const CmsCollectionServiceImplementation =
           const prevResult = await currentQueryResult.prev();
           currentQueryResult = prevResult;
           queryResultSignal.set(prevResult);
-          itemsSignal.set(prevResult.items);
-
         } catch (err) {
           errorSignal.set(extractErrorMessage(err, 'Failed to load previous page'));
           console.error(
@@ -215,7 +203,6 @@ export const CmsCollectionServiceImplementation =
       }
 
       return {
-        itemsSignal,
         loadingSignal,
         errorSignal,
         queryResultSignal,

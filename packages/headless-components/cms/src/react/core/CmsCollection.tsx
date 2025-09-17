@@ -60,7 +60,7 @@ export function Items(props: ItemsProps) {
     typeof CmsCollectionServiceDefinition
   >;
 
-  const items = service.itemsSignal.get();
+  const items = service.queryResultSignal.get()?.items || [];
   const isLoading = service.loadingSignal.get();
   const error = service.errorSignal.get();
 
