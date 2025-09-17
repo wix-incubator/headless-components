@@ -48,7 +48,7 @@ const loadCollectionItems = async (
     throw new Error('No collection ID provided');
   }
 
-  const { limit = 2, skip = 0 } = options;
+  const { limit, skip = 0 } = options;
 
   let query = items.query(collectionId);
 
