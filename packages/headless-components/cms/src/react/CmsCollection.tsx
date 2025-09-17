@@ -5,6 +5,7 @@ import {
   type CmsCollectionServiceConfig,
   type WixDataItem,
 } from '../services/cms-collection-service.js';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -130,7 +131,15 @@ export function Items(props: ItemsProps) {
  * Props for CmsCollection.NextAction component
  */
 export interface NextActionProps {
-  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild or button content when not */
+  children?: AsChildChildren<{
+    loadNext: () => void;
+    hasNext: boolean;
+    isLoading: boolean;
+  }> | React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
@@ -142,11 +151,29 @@ export interface NextActionProps {
  * ```tsx
  * import { CmsCollection } from '@wix/cms/components';
  *
+ * // Default usage
  * function NextButton() {
  *   return (
  *     <CmsCollection.NextAction className="btn-primary">
  *       Next Page
- *       <ChevronRight className="h-4 w-4" />
+ *     </CmsCollection.NextAction>
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomNextButton() {
+ *   return (
+ *     <CmsCollection.NextAction asChild>
+ *       {({ loadNext, hasNext, isLoading }) => (
+ *         <button
+ *           onClick={loadNext}
+ *           disabled={isLoading || !hasNext}
+ *           className="custom-next-btn"
+ *         >
+ *           {isLoading ? 'Loading...' : 'Next Page'}
+ *           <ChevronRight className="h-4 w-4" />
+ *         </button>
+ *       )}
  *     </CmsCollection.NextAction>
  *   );
  * }
@@ -154,7 +181,7 @@ export interface NextActionProps {
  */
 export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
   (props, ref) => {
-    const { children, className, ...otherProps } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreCmsCollection.NextAction>
@@ -164,19 +191,26 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
             return null;
           }
 
-          const attributes = {
-            'data-testid': TestIds.cmsCollectionNext,
-            'data-loading': isLoading,
-            onClick: () => loadNext(),
-            disabled: isLoading,
-            className,
-            ...otherProps,
-          };
-
           return (
-            <button {...attributes} ref={ref}>
-              {children}
-            </button>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              onClick={() => loadNext()}
+              disabled={isLoading}
+              data-testid={TestIds.cmsCollectionNext}
+              data-loading={isLoading}
+              customElement={children}
+              customElementProps={{
+                loadNext,
+                hasNext,
+                isLoading,
+              }}
+              content="Next"
+              {...otherProps}
+            >
+              <button disabled={isLoading}>Next</button>
+            </AsChildSlot>
           );
         }}
       </CoreCmsCollection.NextAction>
@@ -188,7 +222,15 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
  * Props for CmsCollection.PrevAction component
  */
 export interface PrevActionProps {
-  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild or button content when not */
+  children?: AsChildChildren<{
+    loadPrev: () => void;
+    hasPrev: boolean;
+    isLoading: boolean;
+  }> | React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
@@ -200,11 +242,29 @@ export interface PrevActionProps {
  * ```tsx
  * import { CmsCollection } from '@wix/cms/components';
  *
+ * // Default usage
  * function PrevButton() {
  *   return (
  *     <CmsCollection.PrevAction className="btn-primary">
- *       <ChevronLeft className="h-4 w-4" />
  *       Previous Page
+ *     </CmsCollection.PrevAction>
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomPrevButton() {
+ *   return (
+ *     <CmsCollection.PrevAction asChild>
+ *       {({ loadPrev, hasPrev, isLoading }) => (
+ *         <button
+ *           onClick={loadPrev}
+ *           disabled={isLoading || !hasPrev}
+ *           className="custom-prev-btn"
+ *         >
+ *           <ChevronLeft className="h-4 w-4" />
+ *           {isLoading ? 'Loading...' : 'Previous Page'}
+ *         </button>
+ *       )}
  *     </CmsCollection.PrevAction>
  *   );
  * }
@@ -212,7 +272,7 @@ export interface PrevActionProps {
  */
 export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
   (props, ref) => {
-    const { children, className, ...otherProps } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreCmsCollection.PrevAction>
@@ -222,19 +282,26 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
             return null;
           }
 
-          const attributes = {
-            'data-testid': TestIds.cmsCollectionPrev,
-            'data-loading': isLoading,
-            onClick: () => loadPrev(),
-            disabled: isLoading,
-            className,
-            ...otherProps,
-          };
-
           return (
-            <button {...attributes} ref={ref}>
-              {children}
-            </button>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              onClick={() => loadPrev()}
+              disabled={isLoading}
+              data-testid={TestIds.cmsCollectionPrev}
+              data-loading={isLoading}
+              customElement={children}
+              customElementProps={{
+                loadPrev,
+                hasPrev,
+                isLoading,
+              }}
+              content="Previous"
+              {...otherProps}
+            >
+              <button disabled={isLoading}>Previous</button>
+            </AsChildSlot>
           );
         }}
       </CoreCmsCollection.PrevAction>
