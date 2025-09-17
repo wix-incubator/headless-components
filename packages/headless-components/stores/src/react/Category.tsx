@@ -175,7 +175,7 @@ export const Root = React.forwardRef<HTMLElement, CategoryRootProps>(
         }}
       </CoreProductListFilters.CategoryFilter>
     );
-  }
+  },
 );
 
 /**
