@@ -54,7 +54,7 @@ Individual time slot component for displaying and selecting a single time slot.
 ## Usage Example
 
 ```tsx
-import { RequestReservation, Location, PartySize, TimeSlot } from "./core";
+import { RequestReservation, Location, PartySize, TimeSlot } from './core';
 
 // Example usage in a React component
 function ReservationForm() {
@@ -78,7 +78,7 @@ function ReservationForm() {
                         {({ onClick, isSelected }) => (
                           <button
                             onClick={onClick}
-                            className={isSelected ? "selected" : ""}
+                            className={isSelected ? 'selected' : ''}
                           >
                             <Location.Name>
                               {({ name }) => <span>{name}</span>}
@@ -113,7 +113,7 @@ function ReservationForm() {
                         {({ onClick, isSelected }) => (
                           <button
                             onClick={onClick}
-                            className={isSelected ? "selected" : ""}
+                            className={isSelected ? 'selected' : ''}
                           >
                             <PartySize.Size>
                               {({ size }) => <span>{size} people</span>}
@@ -148,7 +148,7 @@ function ReservationForm() {
                         {({ onClick, isSelected }) => (
                           <button
                             onClick={onClick}
-                            className={isSelected ? "selected" : ""}
+                            className={isSelected ? 'selected' : ''}
                           >
                             <TimeSlot.Time>
                               {({ time }) => <span>{time}</span>}
@@ -170,7 +170,7 @@ function ReservationForm() {
           <div>
             {error && <div className="error">{error}</div>}
             <button onClick={onReserve} disabled={loading}>
-              {loading ? "Creating Reservation..." : "Reserve Table"}
+              {loading ? 'Creating Reservation...' : 'Reserve Table'}
             </button>
           </div>
         )}

@@ -65,17 +65,17 @@ import {
   ReservationService,
   ReservationServiceDefinition,
   loadLocationServiceConfig,
-} from "./services";
-import { useService } from "@wix/services-manager-react";
+} from './services';
+import { useService } from '@wix/services-manager-react';
 import {
   createServicesManager,
   createServicesMap,
-} from "@wix/services-manager";
+} from '@wix/services-manager';
 
 // Load location config on server (SSR)
 const locationResult = await loadLocationServiceConfig();
-if (locationResult.type === "notFound") {
-  return Astro.redirect("/404");
+if (locationResult.type === 'notFound') {
+  return Astro.redirect('/404');
 }
 
 // Create services manager
@@ -84,15 +84,15 @@ const servicesManager = createServicesManager(
     .addService(
       LocationServiceDefinition,
       LocationService,
-      locationResult.config
+      locationResult.config,
     )
     .addService(
       RequestReservationServiceDefinition,
       RequestReservationService,
-      {}
+      {},
     )
     .addService(TimeSlotServiceDefinition, TimeSlotService, {})
-    .addService(ReservationServiceDefinition, ReservationService, {})
+    .addService(ReservationServiceDefinition, ReservationService, {}),
 );
 
 // Use in React component
@@ -115,7 +115,7 @@ function LocationSelector() {
 
   return (
     <select
-      value={selectedLocation?._id || ""}
+      value={selectedLocation?._id || ''}
       onChange={(e) => {
         const location = locations.find((l) => l._id === e.target.value);
         locationService.selectedLocationSignal.set(location || null);
@@ -132,7 +132,7 @@ function LocationSelector() {
 
 function ReservationForm() {
   const requestReservationService = useService(
-    RequestReservationServiceDefinition
+    RequestReservationServiceDefinition,
   );
   const partySize = requestReservationService.partySizeSignal.get();
   const partySizeOptions =
@@ -156,7 +156,7 @@ function ReservationForm() {
 
       <input
         type="date"
-        value={date.toISOString().split("T")[0]}
+        value={date.toISOString().split('T')[0]}
         onChange={(e) => {
           const newDate = new Date(e.target.value);
           if (requestReservationService.isValidDate(newDate)) {
@@ -185,7 +185,7 @@ function TimeSlotSelector() {
         <button
           key={slot._id}
           onClick={() => timeSlotService.onTimeSlotClick(slot)}
-          className={selectedTimeSlot?._id === slot._id ? "selected" : ""}
+          className={selectedTimeSlot?._id === slot._id ? 'selected' : ''}
         >
           {new Date(slot.startDate).toLocaleTimeString()}
         </button>
@@ -201,7 +201,7 @@ function ReserveButton() {
 
   return (
     <button onClick={() => reservationService.onReserve()} disabled={isLoading}>
-      {isLoading ? "Creating Reservation..." : "Reserve"}
+      {isLoading ? 'Creating Reservation...' : 'Reserve'}
     </button>
   );
 }

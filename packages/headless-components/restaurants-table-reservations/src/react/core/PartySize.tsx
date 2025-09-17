@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext } from 'react';
 
 // Context for sharing data between PartySize components
 interface PartySizeContextValue {
@@ -13,7 +13,7 @@ const PartySizeContext = createContext<PartySizeContextValue | null>(null);
 const usePartySizeContext = () => {
   const context = useContext(PartySizeContext);
   if (!context) {
-    throw new Error("PartySize components must be used within PartySize.Root");
+    throw new Error('PartySize components must be used within PartySize.Root');
   }
   return context;
 };
