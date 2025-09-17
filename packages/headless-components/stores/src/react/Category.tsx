@@ -24,7 +24,12 @@ function useCategoryContext(): CategoryContextValue {
   return context;
 }
 
+enum DataComponentTags {
+  categoryRoot = 'stores.category-root',
+}
+
 enum TestIds {
+  categoryRoot = 'category-root',
   categoryItem = 'category-item',
   categoryTrigger = 'category-trigger',
   categoryLabel = 'category-label',
@@ -128,6 +133,7 @@ export interface CategoryFilterProps {
  * Root container for a single category item.
  * This component sets up the necessary services for managing category state
  * and provides category context to child components.
+ * Automatically injects data-component-tag into the first child DOM element.
  *
  * @order 1
  * @component
@@ -135,38 +141,46 @@ export interface CategoryFilterProps {
  * ```tsx
  * import { Category } from '@wix/headless-stores/react';
  *
- * <Category.Root categoryServiceConfig={{ category }}>
- *   <Category.Trigger />
- *   <Category.Label />
- *   <Category.ID />
+ * <Category.Root category={category}>
+ *     <Category.Trigger />
+ *     <Category.Label />
+ *     <Category.ID />
  * </Category.Root>
  * ```
  */
-export function Root(props: CategoryRootProps): React.ReactNode {
-  const { category, children } = props;
+export const Root = React.forwardRef<HTMLElement, CategoryRootProps>(
+  (props, ref) => {
+    const { category, children } = props;
 
-  return (
-    <CoreProductListFilters.CategoryFilter>
-      {({ selectedCategory, setSelectedCategory }) => {
-        // Determine if this category is selected by comparing with selectedCategory
-        const isSelected = selectedCategory?._id === category._id;
+    return (
+      <CoreProductListFilters.CategoryFilter>
+        {({ selectedCategory, setSelectedCategory }) => {
+          // Determine if this category is selected by comparing with selectedCategory
+          const isSelected = selectedCategory?._id === category._id;
 
-        const contextValue: CategoryContextValue = {
-          category,
-          isSelected,
-          selectedCategory,
-          setSelectedCategory,
-        };
+          const contextValue: CategoryContextValue = {
+            category,
+            isSelected,
+            selectedCategory,
+            setSelectedCategory,
+          };
 
-        return (
-          <CategoryContext.Provider value={contextValue}>
-            {children}
-          </CategoryContext.Provider>
-        );
-      }}
-    </CoreProductListFilters.CategoryFilter>
-  );
-}
+          return (
+            <CategoryContext.Provider value={contextValue}>
+              <AsChildSlot
+                ref={ref}
+                data-component-tag={DataComponentTags.categoryRoot}
+                data-testid={TestIds.categoryRoot}
+              >
+                {children}
+              </AsChildSlot>
+            </CategoryContext.Provider>
+          );
+        }}
+      </CoreProductListFilters.CategoryFilter>
+    );
+  }
+);
 
 /**
  * Interactive element for selecting or triggering category actions.

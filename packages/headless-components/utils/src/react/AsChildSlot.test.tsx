@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import '@testing-library/jest-dom';
 import {
   AsChildSlot,
   type AsChildSlot as AsChildSlotProps,
@@ -148,7 +149,7 @@ describe('AsChildSlot', () => {
         ref: React.Ref<HTMLElement>,
       ) => (
         <ul
-          ref={ref as React.Ref<HTMLUListElement>}
+          ref={ref as React.RefObject<HTMLUListElement>}
           data-testid="complex-function"
         >
           {props.items.map((item, index) => (
@@ -212,7 +213,7 @@ describe('AsChildSlot', () => {
           ref: React.Ref<HTMLElement>,
         ) => (
           <div
-            ref={ref as React.Ref<HTMLDivElement>}
+            ref={ref as React.RefObject<HTMLDivElement>}
             data-testid="complex-object"
           >
             <h2>{props.data.name}</h2>
@@ -236,7 +237,7 @@ describe('AsChildSlot', () => {
     it('should work with render object even when asChild is true', () => {
       const renderObject = {
         render: (props: any, ref: React.Ref<HTMLElement>) => (
-          <div ref={ref} data-testid="render-object-with-asChild">
+          <div ref={ref as React.RefObject<HTMLDivElement>} data-testid="render-object-with-asChild">
             Render object content
           </div>
         ),
@@ -406,7 +407,7 @@ describe('AsChildSlot', () => {
         receivedRef = refParam;
         return (
           <span
-            ref={refParam as React.Ref<HTMLSpanElement>}
+            ref={refParam as React.RefObject<HTMLSpanElement>}
             data-testid="ref-function"
           />
         );
@@ -429,7 +430,7 @@ describe('AsChildSlot', () => {
           receivedRef = refParam;
           return (
             <p
-              ref={refParam as React.Ref<HTMLParagraphElement>}
+              ref={refParam as React.RefObject<HTMLParagraphElement>}
               data-testid="ref-object"
             />
           );
@@ -508,7 +509,7 @@ describe('AsChildSlot', () => {
 
     it('should handle customElement as function without asChild', () => {
       const renderFunction = (props: any, ref: React.Ref<HTMLElement>) => (
-        <div ref={ref} data-testid="function-without-asChild">
+        <div ref={ref as React.RefObject<HTMLDivElement>} data-testid="function-without-asChild">
           Function content
         </div>
       );
@@ -586,6 +587,372 @@ describe('AsChildSlot', () => {
       expect(screen.getByTestId('forward-ref-test')).toHaveTextContent(
         'Forward ref test',
       );
+    });
+  });
+
+  describe('data-component-tag prop', () => {
+    describe('with customElement scenarios', () => {
+      it('should pass data-component-tag to React element customElement', () => {
+        const customElement = <div data-testid="custom-element">Custom content</div>;
+
+        render(
+          <TestComponent
+            asChild
+            customElement={customElement}
+            data-component-tag="my-component"
+            className="test-class"
+          />
+        );
+
+        const element = screen.getByTestId('custom-element');
+        expect(element).toHaveAttribute('data-component-tag', 'my-component');
+        expect(element).toHaveClass('test-class');
+      });
+
+      it('should pass data-component-tag to string customElement wrapper', () => {
+        render(
+          <TestComponent
+            asChild
+            customElement="String content"
+            data-component-tag="string-component"
+            data-testid="string-wrapper"
+          />
+        );
+
+        const spanElement = screen.getByText('String content');
+        expect(spanElement).toHaveAttribute('data-component-tag', 'string-component');
+        expect(spanElement.tagName).toBe('SPAN');
+      });
+
+      it('should pass data-component-tag to render function customElement via props', () => {
+        const renderFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="function-element" {...props}>
+            Function content
+          </div>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={renderFunction}
+            data-component-tag="function-component"
+          />
+        );
+
+        // The data-component-tag should be passed via props to render functions
+        expect(renderFunction).toHaveBeenCalledWith(
+          expect.objectContaining({ 'data-component-tag': 'function-component' }),
+          expect.any(Object)
+        );
+
+        const element = screen.getByTestId('function-element');
+        expect(element).toHaveAttribute('data-component-tag', 'function-component');
+      });
+
+      it('should allow render function to ignore data-component-tag', () => {
+        const renderFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="function-element">
+            Function content (ignoring data-component-tag)
+          </div>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={renderFunction}
+            data-component-tag="ignored-component"
+          />
+        );
+
+        // The function receives the prop but doesn't have to use it
+        expect(renderFunction).toHaveBeenCalledWith(
+          expect.objectContaining({ 'data-component-tag': 'ignored-component' }),
+          expect.any(Object)
+        );
+
+        const element = screen.getByTestId('function-element');
+        expect(element).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should pass data-component-tag to render object customElement via props', () => {
+        const renderObject = {
+          render: vi.fn((props, ref) => (
+            <div ref={ref} data-testid="object-element" {...props}>
+              Object content
+            </div>
+          ))
+        };
+
+        render(
+          <TestComponent
+            asChild
+            customElement={renderObject}
+            data-component-tag="object-component"
+          />
+        );
+
+        // The data-component-tag should be passed via props to render objects
+        expect(renderObject.render).toHaveBeenCalledWith(
+          expect.objectContaining({ 'data-component-tag': 'object-component' }),
+          expect.any(Object)
+        );
+
+        const element = screen.getByTestId('object-element');
+        expect(element).toHaveAttribute('data-component-tag', 'object-component');
+      });
+    });
+
+    describe('with children scenarios', () => {
+      it('should pass data-component-tag to string children wrapper', () => {
+        render(
+          <TestComponent
+            data-component-tag="string-children"
+            data-testid="string-children-wrapper"
+          >
+            String children content
+          </TestComponent>
+        );
+
+        const divElement = screen.getByText('String children content');
+        expect(divElement).toHaveAttribute('data-component-tag', 'string-children');
+        expect(divElement.tagName).toBe('DIV');
+      });
+
+      it('should pass data-component-tag to single React element child', () => {
+        render(
+          <TestComponent
+            data-component-tag="single-child"
+          >
+            <span data-testid="single-child">Single child</span>
+          </TestComponent>
+        );
+
+        // For single child, the data-component-tag goes to the Slot, not the child
+        const child = screen.getByTestId('single-child');
+        expect(child).toHaveAttribute('data-component-tag', 'single-child');
+      });
+
+      it('should pass data-component-tag only to first child when multiple children', () => {
+        render(
+          <TestComponent
+            data-component-tag="multiple-children"
+            data-testid="multiple-children-wrapper"
+          >
+            <div data-testid="first-child">First child</div>
+            <span data-testid="second-child">Second child</span>
+            <p data-testid="third-child">Third child</p>
+          </TestComponent>
+        );
+
+        const firstChild = screen.getByTestId('first-child');
+        const secondChild = screen.getByTestId('second-child');
+        const thirdChild = screen.getByTestId('third-child');
+
+        expect(firstChild).toHaveAttribute('data-component-tag', 'multiple-children');
+        expect(secondChild).not.toHaveAttribute('data-component-tag');
+        expect(thirdChild).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should handle multiple children where first child is not a React element', () => {
+        const { container } = render(
+          <TestComponent
+            data-component-tag="mixed-children"
+          >
+            Plain text
+            <span data-testid="second-element">Second element</span>
+          </TestComponent>
+        );
+
+        // When first child is not a React element, data-component-tag should not be applied
+        const secondElement = screen.getByTestId('second-element');
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
+
+        // Check that the content is rendered
+        expect(container).toHaveTextContent('Plain text');
+      });
+
+      it('should pass data-component-tag to function children via props', () => {
+        const childrenFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="function-children" {...props}>
+            Function children content
+          </div>
+        ));
+
+        render(
+          <TestComponent
+            children={childrenFunction}
+            data-component-tag="function-children"
+          />
+        );
+
+        // The data-component-tag should be passed via props to function children
+        expect(childrenFunction).toHaveBeenCalledWith(
+          expect.objectContaining({ 'data-component-tag': 'function-children' }),
+          expect.any(Object)
+        );
+
+        const element = screen.getByTestId('function-children');
+        expect(element).toHaveAttribute('data-component-tag', 'function-children');
+      });
+
+      it('should pass data-component-tag to render object children via props', () => {
+        const childrenObject = {
+          render: vi.fn((props, ref) => (
+            <div ref={ref} data-testid="object-children" {...props}>
+              Object children content
+            </div>
+          ))
+        };
+
+        render(
+          <TestComponent
+            children={childrenObject}
+            data-component-tag="object-children"
+          />
+        );
+
+        // The data-component-tag should be passed via props to render object children
+        expect(childrenObject.render).toHaveBeenCalledWith(
+          expect.objectContaining({ 'data-component-tag': 'object-children' }),
+          expect.any(Object)
+        );
+
+        const element = screen.getByTestId('object-children');
+        expect(element).toHaveAttribute('data-component-tag', 'object-children');
+      });
+
+      it('should merge data-component-tag with existing customElementProps', () => {
+        const renderFunction = vi.fn((props, ref) => (
+          <div ref={ref} data-testid="merged-props" {...props}>
+            Custom and data-component-tag merged
+          </div>
+        ));
+
+        render(
+          <TestComponent
+            asChild
+            customElement={renderFunction}
+            customElementProps={{
+              'data-custom': 'custom-value',
+              className: 'custom-class'
+            }}
+            data-component-tag="merged-component"
+          />
+        );
+
+        // Should receive both custom props and data-component-tag
+        expect(renderFunction).toHaveBeenCalledWith(
+          expect.objectContaining({
+            'data-custom': 'custom-value',
+            className: 'custom-class',
+            'data-component-tag': 'merged-component'
+          }),
+          expect.any(Object)
+        );
+
+        const element = screen.getByTestId('merged-props');
+        expect(element).toHaveAttribute('data-component-tag', 'merged-component');
+        expect(element).toHaveAttribute('data-custom', 'custom-value');
+        expect(element).toHaveClass('custom-class');
+      });
+    });
+
+    describe('edge cases', () => {
+      it('should not pass data-component-tag when prop is undefined', () => {
+        render(
+          <TestComponent data-testid="no-tag">
+            <div data-testid="child">Child content</div>
+          </TestComponent>
+        );
+
+        const child = screen.getByTestId('child');
+        expect(child).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should not pass data-component-tag when prop is empty string', () => {
+        render(
+          <TestComponent
+            data-component-tag=""
+            data-testid="empty-tag"
+          >
+            <div data-testid="child">Child content</div>
+          </TestComponent>
+        );
+
+        const child = screen.getByTestId('child');
+        expect(child).not.toHaveAttribute('data-component-tag');
+      });
+
+      it('should handle data-component-tag with special characters', () => {
+        render(
+          <TestComponent
+            data-component-tag="my-component_123-test.value"
+          >
+            <div data-testid="child">Child content</div>
+          </TestComponent>
+        );
+
+        const child = screen.getByTestId('child');
+        expect(child).toHaveAttribute('data-component-tag', 'my-component_123-test.value');
+      });
+
+      it('should return null when no children and no customElement', () => {
+        const { container } = render(
+          <TestComponent
+            data-component-tag="no-content"
+            data-testid="should-not-exist"
+          />
+        );
+
+        expect(container.firstChild).toBeNull();
+      });
+    });
+
+    describe('integration with existing props', () => {
+      it('should work alongside other data attributes', () => {
+        render(
+          <TestComponent
+            data-component-tag="integration-test"
+            data-custom="custom-value"
+            className="test-class"
+          >
+            <div data-testid="child">Child content</div>
+          </TestComponent>
+        );
+
+        const child = screen.getByTestId('child');
+        expect(child).toHaveAttribute('data-component-tag', 'integration-test');
+        expect(child).toHaveAttribute('data-custom', 'custom-value');
+        expect(child).toHaveClass('test-class');
+      });
+
+      it('should merge data-component-tag with existing props on cloned elements', () => {
+        const customElement = (
+          <div
+            data-testid="existing-props"
+            data-existing="existing-value"
+            className="existing-class"
+          >
+            Custom content
+          </div>
+        );
+
+        render(
+          <TestComponent
+            asChild
+            customElement={customElement}
+            data-component-tag="merged-component"
+            className="additional-class"
+            data-additional="additional-value"
+          />
+        );
+
+        const element = screen.getByTestId('existing-props');
+        expect(element).toHaveAttribute('data-component-tag', 'merged-component');
+        expect(element).toHaveAttribute('data-existing', 'existing-value');
+        expect(element).toHaveAttribute('data-additional', 'additional-value');
+        expect(element).toHaveClass('additional-class');
+      });
     });
   });
 });

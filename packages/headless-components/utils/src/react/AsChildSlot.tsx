@@ -38,6 +38,8 @@ export interface AsChildSlot {
   className?: string;
 
   content?: React.ReactNode | string;
+  /** Data component tag to pass to the first child */
+  'data-component-tag'?: string;
 
   [key: string]: any;
 }
@@ -50,6 +52,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       customElement,
       customElementProps = {},
       content,
+      'data-component-tag': dataComponentTag,
       ...restProps
     } = props;
 
@@ -58,7 +61,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       if (typeof customElement === 'string') {
         return (
           <Slot ref={ref} {...restProps}>
-            <span>{customElement}</span>
+            <span {...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {})}>{customElement}</span>
           </Slot>
         );
       }
@@ -70,6 +73,7 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
             {React.cloneElement(customElement as React.ReactElement, {
               ref,
               ...(content !== undefined ? { children: content } : {}),
+              ...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {}),
             })}
           </Slot>
         );
@@ -77,16 +81,24 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
 
       // Handle render function pattern
       if (typeof customElement === 'function') {
+        const enhancedProps = {
+          ...customElementProps,
+          ...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {}),
+        };
         return (
-          <Slot {...restProps}>{customElement(customElementProps, ref)}</Slot>
+          <Slot {...restProps}>{customElement(enhancedProps, ref)}</Slot>
         );
       }
 
       // Handle render object pattern
       if (typeof customElement === 'object' && 'render' in customElement) {
+        const enhancedProps = {
+          ...customElementProps,
+          ...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {}),
+        };
         return (
           <Slot {...restProps}>
-            {customElement.render(customElementProps, ref)}
+            {customElement.render(enhancedProps, ref)}
           </Slot>
         );
       }
@@ -99,24 +111,59 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
     if (typeof children === 'string') {
       return (
         <Slot ref={ref} {...restProps}>
-          <div>{children}</div>
+          <div {...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {})}>{children}</div>
         </Slot>
       );
     }
 
     if (typeof children === 'function') {
-      return <Slot {...restProps}>{children({}, ref)}</Slot>;
+      const enhancedProps = {
+        ...customElementProps,
+        ...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {}),
+      };
+      return <Slot {...restProps}>{children(enhancedProps, ref)}</Slot>;
     }
 
     if (typeof children === 'object' && 'render' in children) {
+      const enhancedProps = {
+        ...customElementProps,
+        ...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {}),
+      };
       return (
-        <Slot {...restProps}>{children.render(customElementProps, ref)}</Slot>
+        <Slot {...restProps}>{children.render(enhancedProps, ref)}</Slot>
+      );
+    }
+
+    if (React.Children.count(children) > 1) {
+      const childrenArray = React.Children.toArray(children);
+      const firstChild = childrenArray[0];
+      const restChildren = childrenArray.slice(1);
+
+      if (React.isValidElement(firstChild)) {
+        const enhancedFirstChild = React.cloneElement(firstChild, {
+          ...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {}),
+        });
+
+        return (
+          <Slot ref={ref} {...restProps}>
+            <>
+              {enhancedFirstChild}
+              {restChildren}
+            </>
+          </Slot>
+        );
+      }
+
+      return (
+        <Slot ref={ref} {...restProps}>
+          <>{children}</>
+        </Slot>
       );
     }
 
     return (
-      <Slot ref={ref} {...restProps}>
-        {React.Children.count(children) > 1 ? <>{children}</> : children}
+      <Slot ref={ref} {...restProps} {...(dataComponentTag ? { 'data-component-tag': dataComponentTag } : {})}>
+        {children}
       </Slot>
     );
   },
