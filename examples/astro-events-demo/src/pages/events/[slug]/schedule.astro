@@ -1,0 +1,34 @@
+---
+import {
+  loadEventServiceConfig,
+  loadScheduleListServiceConfig,
+} from '@wix/headless-events/services';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SchedulePage from '../../../react-pages/schedule';
+
+const { slug } = Astro.params;
+
+// Load initial data server-side
+const eventServiceConfigResult = await loadEventServiceConfig(slug);
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+
+const scheduleListServiceConfig = await loadScheduleListServiceConfig(
+  eventServiceConfigResult.config.event._id,
+  100
+);
+---
+
+<BaseLayout>
+  <title>Schedule</title>
+  <meta name="description" content="Schedule" />
+
+  <SchedulePage
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfigResult.config}
+    scheduleListServiceConfig={scheduleListServiceConfig}
+  />
+</BaseLayout>
