@@ -56,6 +56,7 @@ const queryScheduleItems = async (eventId: string) => {
   const queryScheduleResult = await schedule.listScheduleItems({
     eventId: [eventId],
     state: ['PUBLISHED', 'VISIBLE'],
+    limit: 2,
   });
 
   return queryScheduleResult;

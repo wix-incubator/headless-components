@@ -2,6 +2,7 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type ScheduleItem } from '../services/schedule-list-service.js';
 import * as CoreSchedule from './core/Schedule.js';
+import * as Tag from './Tag.js';
 
 enum TestIds {
   scheduleRoot = 'schedule-root',
@@ -334,47 +335,39 @@ export const Stage = React.forwardRef<HTMLElement, StageProps>((props, ref) => {
 export interface TagsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ tags: string[]; hasTags: boolean }>;
+  /** Child components or custom render function when using asChild */
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ tags: string[]; hasTags: boolean }>;
+  /** Empty state to display when no tags are available */
+  emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the schedule item tags.
+ * Container for the schedule item tags with empty state support.
+ * Follows List Container Level pattern.
  *
  * @component
  * @example
  * ```tsx
- * // Default usage
- * <Schedule.Tags className="flex gap-2 mt-2" />
- *
- * // asChild with primitive
- * <Schedule.Tags asChild className="flex gap-2 mt-2">
- *   <div />
- * </Schedule.Tags>
- *
- * // asChild with react component
- * <Schedule.Tags asChild className="flex gap-2 mt-2">
- *   {React.forwardRef(({ tags, hasTags, ...props }, ref) => (
- *     <div ref={ref} {...props}>
- *       {tags.map((tag, index) => (
- *         <span key={index} className="px-2 py-1 bg-gray-100 rounded text-xs">
- *           {tag}
- *         </span>
- *       ))}
- *     </div>
- *   ))}
+ * <Schedule.Tags emptyState={<div>No tags</div>}>
+ *   <Schedule.TagRepeater>
+ *     <Tag.Text />
+ *   </Schedule.TagRepeater>
  * </Schedule.Tags>
  * ```
  */
 export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, emptyState, className, ...otherProps } = props;
 
   return (
     <CoreSchedule.Tags>
       {({ tags, hasTags }) => {
-        if (!hasTags) return null;
+        if (!hasTags) {
+          return emptyState || null;
+        }
 
         return (
           <AsChildSlot
@@ -386,20 +379,49 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
             customElementProps={{ tags, hasTags }}
             {...otherProps}
           >
-            <div className={`flex gap-2 flex-wrap ${className}`}>
-              {tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-700"
-                  data-testid={TestIds.scheduleTag}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            <div>{children as React.ReactNode}</div>
           </AsChildSlot>
         );
       }}
     </CoreSchedule.Tags>
   );
 });
+
+/**
+ * Props for the Schedule TagRepeater component.
+ */
+export interface TagRepeaterProps {
+  /** Child components */
+  children: React.ReactNode;
+}
+
+/**
+ * Repeater component that renders Tag.Root for each tag.
+ * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Schedule.TagRepeater>
+ *   <Tag.Text />
+ * </Schedule.TagRepeater>
+ * ```
+ */
+export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
+  const { children } = props;
+
+  return (
+    <CoreSchedule.Tags>
+      {({ tags, hasTags }) => {
+        if (!hasTags) return null;
+
+        return tags.map((tagValue, index) => (
+          <Tag.Root key={index} tag={{ value: tagValue, index }}>
+            {children}
+          </Tag.Root>
+        ));
+      }}
+    </CoreSchedule.Tags>
+  );
+};

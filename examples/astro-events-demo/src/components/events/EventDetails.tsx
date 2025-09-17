@@ -4,6 +4,8 @@ import {
   TicketDefinition as TicketDefinitionPrimitive,
   PricingOption as PricingOptionPrimitive,
   ScheduleList as ScheduleListPrimitive,
+  Schedule as SchedulePrimitive,
+  Tag as TagPrimitive,
 } from '@wix/headless-events/react';
 import {
   type EventServiceConfig,
@@ -112,8 +114,10 @@ export function EventDetails({
             />
           </div>
 
-          {scheduleListServiceConfig && (
-            <div className="mb-15">
+          <ScheduleListPrimitive.Root
+            scheduleListServiceConfig={scheduleListServiceConfig}
+          >
+            <ScheduleListPrimitive.Items className="space-y-4 mb-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-3xl font-light text-content-primary">
                   Schedule
@@ -123,36 +127,48 @@ export function EventDetails({
                 </button>
               </div>
 
-              <ScheduleListPrimitive.Root
-                scheduleListServiceConfig={scheduleListServiceConfig}
-              >
-                <ScheduleListPrimitive.Items
-                  className="space-y-6"
-                  emptyState={
-                    <div className="text-center font-light py-8 text-content-secondary">
-                      <p>No schedule items available yet.</p>
-                    </div>
-                  }
-                >
-                  <ScheduleListPrimitive.ItemRepeater className="space-y-4">
-                    <div className="text-content-primary font-light">
-                      {/* Additional content can be added here if needed */}
-                    </div>
-                  </ScheduleListPrimitive.ItemRepeater>
-                </ScheduleListPrimitive.Items>
+              <ScheduleListPrimitive.ItemRepeater className="p-4 border border-gray-200 rounded-lg bg-white shadow-sm">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-24">
+                    <SchedulePrimitive.TimeSlot className="font-light text-content-primary">
+                      {({ timeRange, duration }) => (
+                        <>
+                          <div className="font-medium">{timeRange}</div>
+                          {duration && (
+                            <div className="text-content-secondary">
+                              {duration}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </SchedulePrimitive.TimeSlot>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="space-y-2">
+                      <SchedulePrimitive.Name className="font-light text-content-primary" />
+                      <SchedulePrimitive.Stage className="font-light text-content-primary flex items-center gap-1 text-sm" />
 
-                <ScheduleListPrimitive.Error asChild>
-                  {({ error }) => (
-                    <div className="mt-4 p-4 bg-status-danger-medium border border-status-danger rounded">
-                      <p className="text-status-error font-light">
-                        Failed to load schedule: {error}
-                      </p>
+                      <SchedulePrimitive.Tags className="flex gap-2 flex-wrap">
+                        <SchedulePrimitive.TagRepeater>
+                          <TagPrimitive.Text className="px-2 py-1 bg-gray-100 rounded-full text-xs text-content-secondary" />
+                        </SchedulePrimitive.TagRepeater>
+                      </SchedulePrimitive.Tags>
                     </div>
-                  )}
-                </ScheduleListPrimitive.Error>
-              </ScheduleListPrimitive.Root>
-            </div>
-          )}
+                  </div>
+                </div>
+              </ScheduleListPrimitive.ItemRepeater>
+            </ScheduleListPrimitive.Items>
+
+            <ScheduleListPrimitive.Error asChild>
+              {({ error }) => (
+                <div className="mt-4 p-4 bg-status-danger-medium border border-status-danger rounded">
+                  <p className="text-status-error font-light">
+                    Failed to load schedule: {error}
+                  </p>
+                </div>
+              )}
+            </ScheduleListPrimitive.Error>
+          </ScheduleListPrimitive.Root>
 
           <TicketsPickerPrimitive.Root
             ticketDefinitionListServiceConfig={
