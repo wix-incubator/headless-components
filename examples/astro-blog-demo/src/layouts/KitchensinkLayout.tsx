@@ -1,5 +1,5 @@
-import { NavigationProvider } from '@/components/NavigationContext';
-import React from 'react';
+import { NavigationProvider } from "@/components/NavigationContext";
+import React from "react";
 
 interface KitchensinkLayoutProps {
   children: React.ReactNode;

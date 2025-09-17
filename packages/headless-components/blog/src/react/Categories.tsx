@@ -14,6 +14,9 @@ import type { createCustomCategory } from '../services/helpers.js';
 import * as CoreCategories from './core/Categories.js';
 import { isValidChildren } from './helpers.js';
 
+/** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=833bf7b1-2ad5-45f7-b2ac-89c207bcdc42 */
+const HTML_CODE_TAG = 'blog.categories';
+
 interface CategoriesContextValue {
   categories: EnhancedCategory[];
   hasCategories: boolean;
@@ -65,7 +68,7 @@ export interface BlogCategoriesRootProps {
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
  *
  * function CategoryNavigation() {
  *   return (
@@ -105,6 +108,7 @@ export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>(
       };
 
       const attributes = {
+        'data-component-tag': HTML_CODE_TAG,
         'data-testid': TestIds.blogCategoriesRoot,
         'data-has-categories': hasCategories,
       };
