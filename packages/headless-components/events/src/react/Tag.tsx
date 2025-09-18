@@ -84,16 +84,28 @@ export interface LabelProps {
   children?: AsChildChildren<{ text: string; index: number }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Click handler for interactive tags (e.g., filters) */
+  onClick?: () => void;
+  /** Whether the tag is in an active/selected state */
+  active?: boolean;
 }
 
 /**
  * Displays the tag label with customizable rendering.
+ * Supports both display and interactive modes for filtering.
  *
  * @component
  * @example
  * ```tsx
- * // Default usage
+ * // Default usage (display mode)
  * <Tag.Label className="px-2 py-1 bg-gray-100 rounded" />
+ *
+ * // Interactive mode (for filtering)
+ * <Tag.Label
+ *   className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
+ *   onClick={handleClick}
+ *   active={isSelected}
+ * />
  *
  * // asChild with primitive
  * <Tag.Label asChild>
@@ -111,8 +123,12 @@ export interface LabelProps {
  * ```
  */
 export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, onClick, active, ...otherProps } =
+    props;
   const { value, index } = useTagContext();
+
+  const handleClick = onClick ? () => onClick() : undefined;
+  const isInteractive = !!onClick;
 
   return (
     <AsChildSlot
@@ -123,9 +139,18 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
       customElement={children}
       customElementProps={{ text: value, index }}
       content={value}
+      onClick={handleClick}
+      data-active={active}
+      data-interactive={isInteractive}
       {...otherProps}
     >
-      <span>{value}</span>
+      {isInteractive ? (
+        <button onClick={handleClick} data-active={active}>
+          {value}
+        </button>
+      ) : (
+        <span>{value}</span>
+      )}
     </AsChildSlot>
   );
 });
