@@ -8,7 +8,6 @@ import {
 } from '../services/cms-collection-service.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import type { DisplayType } from './core/CmsCollection.js';
-import { AsChildSlot } from '@wix/headless-utils/react';
 import * as CmsItem from './CmsItem.js';
 
 enum TestIds {
@@ -149,29 +148,17 @@ export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
           'data-empty': items.length === 0,
         };
 
-        if (asChild) {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              {...dataAttributes}
-              {...otherProps}
-            >
-              {children}
-            </AsChildSlot>
-          );
-        }
-
         return (
-          <div
-            {...dataAttributes}
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
             className={className}
-            ref={ref as React.LegacyRef<HTMLDivElement>}
+            {...dataAttributes}
+            customElement={children}
             {...otherProps}
           >
             {children}
-          </div>
+          </AsChildSlot>
         );
       }}
     </CoreCmsCollection.Items>
@@ -222,26 +209,16 @@ export function ItemRepeater(props: ItemRepeaterProps) {
                   item: item,
                 }}
               >
-                {asChild ? (
-                  <AsChildSlot
-                    asChild={asChild}
-                    className={className}
-                    data-testid={TestIds.cmsCollectionItem}
-                    data-collection-item-id={item._id}
-                    {...otherProps}
-                  >
-                    {children}
-                  </AsChildSlot>
-                ) : (
-                  <div
-                    data-testid={TestIds.cmsCollectionItem}
-                    data-collection-item-id={item._id}
-                    className={className}
-                    {...otherProps}
-                  >
-                    {children}
-                  </div>
-                )}
+                <AsChildSlot
+                  asChild={asChild}
+                  className={className}
+                  data-testid={TestIds.cmsCollectionItem}
+                  data-collection-item-id={item._id}
+                  customElement={children}
+                  {...otherProps}
+                >
+                  {children}
+                </AsChildSlot>
               </CmsItem.Root>
             ))}
           </>
