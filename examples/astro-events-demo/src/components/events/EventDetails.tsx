@@ -123,11 +123,17 @@ export function EventDetails({
               </h2>
               <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
                 <div className="flex gap-8">
-                  <ScheduleItemPrimitive.TimeSlot
-                    className="min-w-[150px]"
-                    timeRangeClassName="font-light text-content-primary"
-                    durationClassName="text-content-secondary text-sm"
-                  />
+                  <div className="min-w-[150px] flex flex-col">
+                    <ScheduleItemPrimitive.TimeSlot className="font-light text-content-primary" />
+                    <ScheduleItemPrimitive.Duration
+                      asChild
+                      className="text-content-secondary text-sm"
+                    >
+                      {({ durationMinutes }) => (
+                        <span>{`${durationMinutes} minutes`}</span>
+                      )}
+                    </ScheduleItemPrimitive.Duration>
+                  </div>
                   <div className="flex flex-col">
                     <ScheduleItemPrimitive.Name className="font-light text-content-primary" />
                     <div className="flex gap-1 font-light text-content-primary mb-3">

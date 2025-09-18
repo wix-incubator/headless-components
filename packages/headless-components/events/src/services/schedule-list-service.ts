@@ -33,7 +33,6 @@ export interface ScheduleListServiceAPI {
 }
 
 export interface ScheduleListServiceConfig {
-  eventId: string;
   limit: number;
   items: ScheduleItem[];
 }
@@ -115,7 +114,6 @@ export async function loadScheduleListServiceConfig(
   const listScheduleResult = await listScheduleItems(eventId, limit);
 
   return {
-    eventId,
     limit,
     items: listScheduleResult.items ?? [],
   };

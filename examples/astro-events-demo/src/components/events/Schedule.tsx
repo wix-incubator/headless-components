@@ -54,17 +54,23 @@ export function Schedule({
           </ScheduleListFiltersPrimitive.Filters>
           <ScheduleListPrimitive.Groups className="space-y-8 mb-6">
             <ScheduleListPrimitive.GroupRepeater>
-              <ScheduleListPrimitive.GroupDateLabel className="text-2xl font-bold text-content-primary mb-4">
+              <ScheduleListPrimitive.GroupDateLabel className="text-2xl font-bold text-content-primary">
                 <h2 />
               </ScheduleListPrimitive.GroupDateLabel>
-              <ScheduleListPrimitive.Items className="space-y-4">
+              <ScheduleListPrimitive.Items className="mt-4 space-y-4">
                 <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
                   <div className="flex gap-8">
-                    <ScheduleItemPrimitive.TimeSlot
-                      className="min-w-[150px]"
-                      timeRangeClassName="font-light text-content-primary"
-                      durationClassName="text-content-secondary text-sm"
-                    />
+                    <div className="min-w-[150px] flex flex-col">
+                      <ScheduleItemPrimitive.TimeSlot className="font-light text-content-primary" />
+                      <ScheduleItemPrimitive.Duration
+                        asChild
+                        className="text-content-secondary text-sm"
+                      >
+                        {({ durationMinutes }) => (
+                          <span>{`${durationMinutes} minutes`}</span>
+                        )}
+                      </ScheduleItemPrimitive.Duration>
+                    </div>
                     <div className="flex flex-col">
                       <ScheduleItemPrimitive.Name className="font-light text-content-primary" />
                       <div className="flex gap-1 font-light text-content-primary mb-3">

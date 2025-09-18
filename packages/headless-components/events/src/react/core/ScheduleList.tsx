@@ -65,6 +65,10 @@ export function Items(props: ItemsProps): React.ReactNode {
   const items = groupContext ? groupContext.items : allItems;
   const hasItems = !!items.length;
 
+  if (!hasItems) {
+    return null;
+  }
+
   return (
     <ItemsContext.Provider value={items}>
       {props.children({ items, hasItems })}

@@ -1,35 +1,42 @@
 import React from 'react';
-import { type ScheduleItem } from '../../services/schedule-list-service.js';
-
-const ScheduleContext = React.createContext<ScheduleItem | null>(null);
-
-function useScheduleContext(): ScheduleItem {
-  const context = React.useContext(ScheduleContext);
-  if (!context) {
-    throw new Error(
-      'useScheduleContext must be used within a Schedule.Root component',
-    );
-  }
-  return context;
-}
+import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import {
+  type ScheduleItem,
+  ScheduleItemServiceDefinition,
+  ScheduleItemService,
+  type ScheduleItemServiceConfig,
+} from '../../services/index.js';
 
 export interface RootProps {
-  /** Child components that will have access to the schedule item */
+  /** Child components that will have access to the schedule item service */
   children: React.ReactNode;
   /** Schedule item data */
   item: ScheduleItem;
 }
 
 /**
- * Schedule Root core component that provides schedule item context.
+ * Schedule Root core component that provides schedule item service context.
  *
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
+  const { item, children } = props;
+
+  const scheduleItemServiceConfig: ScheduleItemServiceConfig = {
+    item,
+  };
+
   return (
-    <ScheduleContext.Provider value={props.item}>
-      {props.children}
-    </ScheduleContext.Provider>
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        ScheduleItemServiceDefinition,
+        ScheduleItemService,
+        scheduleItemServiceConfig,
+      )}
+    >
+      {children}
+    </WixServices>
   );
 }
 
@@ -49,8 +56,8 @@ export interface NameRenderProps {
  * @component
  */
 export function Name(props: NameProps): React.ReactNode {
-  const item = useScheduleContext();
-  const name = item.name!;
+  const scheduleService = useService(ScheduleItemServiceDefinition);
+  const name = scheduleService.name.get();
 
   return props.children({ name });
 }
@@ -67,10 +74,6 @@ export interface TimeSlotRenderProps {
   endTime: Date | null;
   /** Formatted time range string (e.g., "18:30 - 19:00") */
   timeRange: string;
-  /** Duration in minutes */
-  durationMinutes: number;
-  /** Formatted duration string (e.g., "30 minutes") */
-  duration: string;
 }
 
 /**
@@ -79,38 +82,39 @@ export interface TimeSlotRenderProps {
  * @component
  */
 export function TimeSlot(props: TimeSlotProps): React.ReactNode {
-  const item = useScheduleContext();
-  const startTime = new Date(item.timeSlot!.start!);
-  const endTime = new Date(item.timeSlot!.end!);
-
-  const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
-  };
-
-  const timeRange =
-    startTime && endTime
-      ? `${formatTime(startTime)} - ${formatTime(endTime)}`
-      : startTime
-        ? formatTime(startTime)
-        : '';
-
-  const durationMinutes =
-    startTime && endTime
-      ? Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60))
-      : 0;
-
-  const duration = durationMinutes > 0 ? `${durationMinutes} minutes` : '';
+  const scheduleService = useService(ScheduleItemServiceDefinition);
+  const startTime = scheduleService.startTime.get();
+  const endTime = scheduleService.endTime.get();
+  const timeRange = scheduleService.timeRange.get();
 
   return props.children({
     startTime,
     endTime,
     timeRange,
+  });
+}
+
+export interface DurationProps {
+  /** Render prop function */
+  children: (props: DurationRenderProps) => React.ReactNode;
+}
+
+export interface DurationRenderProps {
+  /** Duration in minutes */
+  durationMinutes: number;
+}
+
+/**
+ * Schedule Duration core component that provides schedule item duration information.
+ *
+ * @component
+ */
+export function Duration(props: DurationProps): React.ReactNode {
+  const scheduleService = useService(ScheduleItemServiceDefinition);
+  const durationMinutes = scheduleService.durationMinutes.get();
+
+  return props.children({
     durationMinutes,
-    duration,
   });
 }
 
@@ -130,8 +134,12 @@ export interface DescriptionRenderProps {
  * @component
  */
 export function Description(props: DescriptionProps): React.ReactNode {
-  const item = useScheduleContext();
-  const description = item.description || '';
+  const scheduleService = useService(ScheduleItemServiceDefinition);
+  const description = scheduleService.description.get();
+
+  if (!description) {
+    return null;
+  }
 
   return props.children({ description });
 }
@@ -152,8 +160,8 @@ export interface StageRenderProps {
  * @component
  */
 export function Stage(props: StageProps): React.ReactNode {
-  const item = useScheduleContext();
-  const stageName = item.stageName || '';
+  const scheduleService = useService(ScheduleItemServiceDefinition);
+  const stageName = scheduleService.stageName.get();
 
   return props.children({ stageName });
 }
@@ -176,9 +184,9 @@ export interface TagsRenderProps {
  * @component
  */
 export function Tags(props: TagsProps): React.ReactNode {
-  const item = useScheduleContext();
-  const tags = item.tags || [];
-  const hasTags = tags.length > 0;
+  const scheduleService = useService(ScheduleItemServiceDefinition);
+  const tags = scheduleService.tags.get();
+  const hasTags = scheduleService.hasTags.get();
 
   return props.children({ tags, hasTags });
 }

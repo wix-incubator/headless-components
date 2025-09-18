@@ -1,13 +1,14 @@
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
-import { type ScheduleItem } from '../services/schedule-list-service.js';
-import * as CoreSchedule from './core/Schedule.js';
+import { type ScheduleItem } from '../services/index.js';
+import * as CoreScheduleItem from './core/ScheduleItem.js';
 import * as Tag from './Tag.js';
 
 enum TestIds {
   scheduleRoot = 'schedule-root',
   scheduleName = 'schedule-name',
   scheduleTimeSlot = 'schedule-time-slot',
+  scheduleDuration = 'schedule-duration',
   scheduleDescription = 'schedule-description',
   scheduleStage = 'schedule-stage',
   scheduleTags = 'schedule-tags',
@@ -46,6 +47,7 @@ export interface RootProps {
  *     <Schedule.Root item={item}>
  *       <Schedule.Name />
  *       <Schedule.TimeSlot />
+ *       <Schedule.Duration />
  *       <Schedule.Description />
  *       <Schedule.Stage />
  *     </Schedule.Root>
@@ -57,7 +59,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { asChild, children, item, className, ...otherProps } = props;
 
   return (
-    <CoreSchedule.Root item={item}>
+    <CoreScheduleItem.Root item={item}>
       <AsChildSlot
         ref={ref}
         asChild={asChild}
@@ -67,7 +69,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
       >
         {children}
       </AsChildSlot>
-    </CoreSchedule.Root>
+    </CoreScheduleItem.Root>
   );
 });
 
@@ -111,7 +113,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreSchedule.Name>
+    <CoreScheduleItem.Name>
       {({ name }) => (
         <AsChildSlot
           ref={ref}
@@ -126,7 +128,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
           <span>{name}</span>
         </AsChildSlot>
       )}
-    </CoreSchedule.Name>
+    </CoreScheduleItem.Name>
   );
 });
 
@@ -141,29 +143,19 @@ export interface TimeSlotProps {
     startTime: Date | null;
     endTime: Date | null;
     timeRange: string;
-    durationMinutes: number;
-    duration: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** CSS classes to apply to the time range element */
-  timeRangeClassName?: string;
-  /** CSS classes to apply to the duration element */
-  durationClassName?: string;
 }
 
 /**
- * Displays the schedule item time slot information with duration.
+ * Displays the schedule item time slot information.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Schedule.TimeSlot
- *   className="text-gray-600"
- *   timeRangeClassName="font-medium"
- *   durationClassName="text-sm text-gray-500"
- * />
+ * <Schedule.TimeSlot className="text-gray-600 font-medium" />
  *
  * // asChild with primitive
  * <Schedule.TimeSlot asChild className="text-gray-600">
@@ -172,29 +164,21 @@ export interface TimeSlotProps {
  *
  * // asChild with react component
  * <Schedule.TimeSlot asChild className="text-gray-600">
- *   {React.forwardRef(({ timeRange, duration, startTime, ...props }, ref) => (
- *     <div ref={ref} {...props}>
- *       <time dateTime={startTime?.toISOString()}>{timeRange}</time>
- *       <span className="text-sm text-gray-500">{duration}</span>
- *     </div>
+ *   {React.forwardRef(({ timeRange, startTime, ...props }, ref) => (
+ *     <time ref={ref} {...props} dateTime={startTime?.toISOString()}>
+ *       {timeRange}
+ *     </time>
  *   ))}
  * </Schedule.TimeSlot>
  * ```
  */
 export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
   (props, ref) => {
-    const {
-      asChild,
-      children,
-      className,
-      timeRangeClassName,
-      durationClassName,
-      ...otherProps
-    } = props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreSchedule.TimeSlot>
-        {({ startTime, endTime, timeRange, durationMinutes, duration }) => (
+      <CoreScheduleItem.TimeSlot>
+        {({ startTime, endTime, timeRange }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -205,18 +189,79 @@ export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
               startTime,
               endTime,
               timeRange,
-              durationMinutes,
-              duration,
             }}
+            content={timeRange}
             {...otherProps}
           >
-            <div className={className}>
-              <div className={timeRangeClassName}>{timeRange}</div>
-              {duration && <div className={durationClassName}>{duration}</div>}
-            </div>
+            <span>{timeRange}</span>
           </AsChildSlot>
         )}
-      </CoreSchedule.TimeSlot>
+      </CoreScheduleItem.TimeSlot>
+    );
+  },
+);
+
+/**
+ * Props for the Schedule Duration component.
+ */
+export interface DurationProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    durationMinutes: number;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the schedule item duration information.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Schedule.Duration className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <Schedule.Duration asChild className="text-sm text-gray-500">
+ *   <div />
+ * </Schedule.Duration>
+ *
+ * // asChild with react component
+ * <Schedule.Duration asChild className="text-sm text-gray-500">
+ *   {React.forwardRef(({ durationMinutes, ...props }, ref) => (
+ *     <span ref={ref} {...props} title={`${durationMinutes} minutes`}>
+ *       {durationMinutes > 0 ? `${durationMinutes} minutes` : ''}
+ *     </span>
+ *   ))}
+ * </Schedule.Duration>
+ * ```
+ */
+export const Duration = React.forwardRef<HTMLElement, DurationProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreScheduleItem.Duration>
+        {({ durationMinutes }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.scheduleDuration}
+            customElement={children}
+            customElementProps={{
+              durationMinutes,
+            }}
+            content={durationMinutes}
+            {...otherProps}
+          >
+            <span>{durationMinutes}</span>
+          </AsChildSlot>
+        )}
+      </CoreScheduleItem.Duration>
     );
   },
 );
@@ -262,7 +307,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreSchedule.Description>
+      <CoreScheduleItem.Description>
         {({ description }) => (
           <AsChildSlot
             ref={ref}
@@ -277,7 +322,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             <span>{description}</span>
           </AsChildSlot>
         )}
-      </CoreSchedule.Description>
+      </CoreScheduleItem.Description>
     );
   },
 );
@@ -322,7 +367,7 @@ export const Stage = React.forwardRef<HTMLElement, StageProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreSchedule.Stage>
+    <CoreScheduleItem.Stage>
       {({ stageName }) => {
         if (!stageName) return null;
 
@@ -341,7 +386,7 @@ export const Stage = React.forwardRef<HTMLElement, StageProps>((props, ref) => {
           </AsChildSlot>
         );
       }}
-    </CoreSchedule.Stage>
+    </CoreScheduleItem.Stage>
   );
 });
 
@@ -379,7 +424,7 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreSchedule.Tags>
+    <CoreScheduleItem.Tags>
       {({ tags, hasTags }) => {
         if (!hasTags) {
           return null;
@@ -399,7 +444,7 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
           </AsChildSlot>
         );
       }}
-    </CoreSchedule.Tags>
+    </CoreScheduleItem.Tags>
   );
 });
 
@@ -428,7 +473,7 @@ export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
   const { children } = props;
 
   return (
-    <CoreSchedule.Tags>
+    <CoreScheduleItem.Tags>
       {({ tags, hasTags }) => {
         if (!hasTags) {
           return null;
@@ -440,6 +485,6 @@ export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
           </Tag.Root>
         ));
       }}
-    </CoreSchedule.Tags>
+    </CoreScheduleItem.Tags>
   );
 };
