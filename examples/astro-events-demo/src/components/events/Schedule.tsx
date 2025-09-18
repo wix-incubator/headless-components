@@ -61,18 +61,11 @@ export function Schedule({
                 <ScheduleListPrimitive.Items className="space-y-4">
                   <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
                     <div className="flex gap-8">
-                      <SchedulePrimitive.TimeSlot className="font-light text-content-primary min-w-[150px]">
-                        {({ timeRange, duration }) => (
-                          <>
-                            <span className="font-medium">{timeRange}</span>
-                            {duration && (
-                              <span className="text-content-secondary">
-                                {duration}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </SchedulePrimitive.TimeSlot>
+                      <SchedulePrimitive.TimeSlot
+                        className="min-w-[150px]"
+                        timeRangeClassName="font-light text-content-primary"
+                        durationClassName="text-content-secondary text-sm"
+                      />
                       <div className="flex flex-col">
                         <SchedulePrimitive.Name className="font-light text-content-primary" />
                         <SchedulePrimitive.Stage className="font-light text-content-primary text-sm flex items-center gap-1 mb-3" />

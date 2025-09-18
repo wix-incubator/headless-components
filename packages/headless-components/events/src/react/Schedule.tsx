@@ -145,6 +145,10 @@ export interface TimeSlotProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** CSS classes to apply to the time range element */
+  timeRangeClassName?: string;
+  /** CSS classes to apply to the duration element */
+  durationClassName?: string;
 }
 
 /**
@@ -154,7 +158,11 @@ export interface TimeSlotProps {
  * @example
  * ```tsx
  * // Default usage
- * <Schedule.TimeSlot className="text-gray-600" />
+ * <Schedule.TimeSlot
+ *   className="text-gray-600"
+ *   timeRangeClassName="font-medium"
+ *   durationClassName="text-sm text-gray-500"
+ * />
  *
  * // asChild with primitive
  * <Schedule.TimeSlot asChild className="text-gray-600">
@@ -174,7 +182,14 @@ export interface TimeSlotProps {
  */
 export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const {
+      asChild,
+      children,
+      className,
+      timeRangeClassName,
+      durationClassName,
+      ...otherProps
+    } = props;
 
     return (
       <CoreSchedule.TimeSlot>
@@ -195,10 +210,8 @@ export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
             {...otherProps}
           >
             <div className={className}>
-              <div className="font-medium">{timeRange}</div>
-              {duration && (
-                <div className="text-sm text-gray-500">{duration}</div>
-              )}
+              <div className={timeRangeClassName}>{timeRange}</div>
+              {duration && <div className={durationClassName}>{duration}</div>}
             </div>
           </AsChildSlot>
         )}
