@@ -155,16 +155,12 @@ export function EventDetails({
               </ScheduleListPrimitive.ItemRepeater>
             </ScheduleListPrimitive.Items>
             <div className="flex justify-end">
-              <ScheduleListPrimitive.NavigationTrigger
-                asChild
+              <a
+                href={`${eventsPagePath}/${eventServiceConfig.event.slug}/schedule`}
                 className="border border-gray-300 font-light text-content-primary py-2 px-4 hover:underline"
               >
-                {({ eventSlug }) => (
-                  <a href={`${eventsPagePath}/${eventSlug}/schedule`}>
-                    See All
-                  </a>
-                )}
-              </ScheduleListPrimitive.NavigationTrigger>
+                See All
+              </a>
             </div>
           </ScheduleListPrimitive.Root>
 

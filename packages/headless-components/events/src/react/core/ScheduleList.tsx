@@ -9,7 +9,6 @@ import {
   type ScheduleItem,
   type ScheduleItemGroup,
 } from '../../services/schedule-list-service.js';
-import { EventServiceDefinition } from '../../services/event-service.js';
 import React from 'react';
 
 export interface RootProps {
@@ -103,38 +102,6 @@ export function ItemRepeater(props: ItemRepeaterProps): React.ReactNode {
   return props.children({ items });
 }
 
-export interface NavigationTriggerProps {
-  /** Render prop function */
-  children: (props: NavigationTriggerRenderProps) => React.ReactNode;
-}
-
-export interface NavigationTriggerRenderProps {
-  /** List of schedule items */
-  items: ScheduleItem[];
-  /** Indicates whether there are any schedule items in the list */
-  hasItems: boolean;
-  /** Event slug for URL construction */
-  eventSlug: string;
-}
-
-/**
- * ScheduleList NavigationTrigger core component that provides navigation functionality.
- *
- * @component
- */
-export function NavigationTrigger(
-  props: NavigationTriggerProps,
-): React.ReactNode {
-  const scheduleListService = useService(ScheduleListServiceDefinition);
-  const eventService = useService(EventServiceDefinition);
-  const items = scheduleListService.items.get();
-  const event = eventService.event.get();
-  const hasItems = !!items.length;
-  const eventSlug = event.slug!;
-
-  return props.children({ items, hasItems, eventSlug });
-}
-
 export interface GroupsProps {
   /** Render prop function */
   children: (props: GroupsRenderProps) => React.ReactNode;
@@ -169,14 +136,12 @@ export interface GroupRepeaterProps {
 }
 
 export interface GroupRepeaterRenderProps {
-  /** Current group */
-  group: ScheduleItemGroup;
-  /** Index of the current group */
-  index: number;
+  /** List of grouped schedule items */
+  groups: ScheduleItemGroup[];
 }
 
 /**
- * ScheduleList GroupRepeater core component that repeats over grouped schedule items.
+ * ScheduleList GroupRepeater core component that provides grouped schedule items data.
  * Repeater Level component following List, Options, and Repeater Pattern.
  * Not rendered if there are no groups.
  *
@@ -191,7 +156,7 @@ export function GroupRepeater(props: GroupRepeaterProps): React.ReactNode {
     return null;
   }
 
-  return <>{groups.map((group, index) => props.children({ group, index }))}</>;
+  return props.children({ groups });
 }
 
 // Context for individual group

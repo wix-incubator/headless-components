@@ -11,7 +11,6 @@ import * as Schedule from './ScheduleItem.js';
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
   scheduleListError = 'schedule-list-error',
-  scheduleListNavigationTrigger = 'schedule-list-navigation-trigger',
   scheduleListGroups = 'schedule-list-groups',
   scheduleListGroup = 'schedule-list-group',
   scheduleListGroupDateLabel = 'schedule-list-group-date-label',
@@ -135,6 +134,7 @@ export interface ItemRepeaterProps {
  * </ScheduleList.ItemRepeater>
  * ```
  */
+
 export const ItemRepeater = (props: ItemRepeaterProps): React.ReactNode => {
   const { children, className } = props;
 
@@ -152,76 +152,6 @@ export const ItemRepeater = (props: ItemRepeaterProps): React.ReactNode => {
 };
 
 /**
- * Props for the ScheduleList NavigationTrigger component.
- */
-export interface NavigationTriggerProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    items: ScheduleItem[];
-    hasItems: boolean;
-    eventSlug: string;
-  }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** The label to display inside the element */
-  label?: string;
-}
-
-/**
- * Displays a navigation element for schedule page functionality.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <ScheduleList.NavigationTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="View Schedule" />
- *
- * // asChild with primitive
- * <ScheduleList.NavigationTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
- *   <a href="/schedule">View Schedule</a>
- * </ScheduleList.NavigationTrigger>
- *
- * // asChild with react component
- * <ScheduleList.NavigationTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
- *   {React.forwardRef(({ items, hasItems, eventSlug, ...props }, ref) => (
- *     <a ref={ref} {...props} href={`/events/${eventSlug}/schedule`}>
- *       View Schedule
- *     </a>
- *   ))}
- * </ScheduleList.NavigationTrigger>
- * ```
- */
-export const NavigationTrigger = React.forwardRef<
-  HTMLElement,
-  NavigationTriggerProps
->((props, ref) => {
-  const { asChild, children, className, label, ...otherProps } = props;
-
-  return (
-    <CoreScheduleList.NavigationTrigger>
-      {({ items, hasItems, eventSlug }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.scheduleListNavigationTrigger}
-          customElement={children}
-          customElementProps={{
-            items,
-            hasItems,
-            eventSlug,
-          }}
-          {...otherProps}
-        >
-          <button>{label}</button>
-        </AsChildSlot>
-      )}
-    </CoreScheduleList.NavigationTrigger>
-  );
-});
-/**
  * Props for the ScheduleList Groups component.
  */
 export interface GroupsProps {
@@ -236,33 +166,49 @@ export interface GroupsProps {
       }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Content to render when there are no groups */
+  emptyState?: React.ReactNode;
 }
 
 /**
  * Container for the grouped schedule items.
- * Follows Container Level pattern - provides context and conditional rendering.
+ * Follows List Container Level pattern - supports empty state rendering.
  *
  * @component
+ * @example
+ * ```tsx
+ * <ScheduleList.Groups emptyState={<div>No schedule groups available</div>}>
+ *   <ScheduleList.GroupRepeater>
+ *     <ScheduleList.GroupDateLabel />
+ *   </ScheduleList.GroupRepeater>
+ * </ScheduleList.Groups>
+ * ```
  */
 export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, emptyState, ...otherProps } = props;
 
     return (
       <CoreScheduleList.Groups>
-        {({ groups }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListGroups}
-            customElement={children}
-            customElementProps={{ groups }}
-            {...otherProps}
-          >
-            <div>{children as React.ReactNode}</div>
-          </AsChildSlot>
-        )}
+        {({ groups }) => {
+          if (!groups.length) {
+            return emptyState || null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.scheduleListGroups}
+              customElement={children}
+              customElementProps={{ groups }}
+              {...otherProps}
+            >
+              <div>{children as React.ReactNode}</div>
+            </AsChildSlot>
+          );
+        }}
       </CoreScheduleList.Groups>
     );
   },
@@ -288,13 +234,17 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
 
   return (
     <CoreScheduleList.GroupRepeater>
-      {({ group, index }) => (
-        <CoreScheduleList.Group
-          key={group.dateLabel + '-' + index}
-          group={group}
-        >
-          {children}
-        </CoreScheduleList.Group>
+      {({ groups }) => (
+        <>
+          {groups.map((group, index) => (
+            <CoreScheduleList.Group
+              key={group.dateLabel + '-' + index}
+              group={group}
+            >
+              {children}
+            </CoreScheduleList.Group>
+          ))}
+        </>
       )}
     </CoreScheduleList.GroupRepeater>
   );
