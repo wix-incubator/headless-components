@@ -5,7 +5,6 @@ export * as Form from './Form.js';
 export * as PricingOption from './PricingOption.js';
 export * as ScheduleItem from './ScheduleItem.js';
 export * as ScheduleList from './ScheduleList.js';
-export * as ScheduleListFilters from './ScheduleListFilters.js';
 export * as Tag from './Tag.js';
 export * as TicketDefinition from './TicketDefinition.js';
 export * as TicketsPicker from './TicketsPicker.js';

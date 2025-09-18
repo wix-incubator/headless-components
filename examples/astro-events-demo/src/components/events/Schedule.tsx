@@ -1,6 +1,5 @@
 import {
   ScheduleList as ScheduleListPrimitive,
-  ScheduleListFilters as ScheduleListFiltersPrimitive,
   ScheduleItem as ScheduleItemPrimitive,
   Event as EventPrimitive,
   Tag as TagPrimitive,
@@ -41,17 +40,17 @@ export function Schedule({
         <ScheduleListPrimitive.Root
           scheduleListServiceConfig={scheduleListServiceConfig}
         >
-          <ScheduleListFiltersPrimitive.Filters className="flex mb-6 justify-between">
-            <ScheduleListFiltersPrimitive.StageFilter
+          <div className="flex mb-6 justify-between">
+            <ScheduleListPrimitive.StageFilter
               labelClassName="font-light text-content-primary"
               dropdownClassName="font-light text-content-primary"
             />
-            <ScheduleListFiltersPrimitive.TagFilters className="flex gap-2 flex-wrap">
-              <ScheduleListFiltersPrimitive.TagFilterRepeater>
+            <ScheduleListPrimitive.TagFilters className="flex gap-2 flex-wrap">
+              <ScheduleListPrimitive.TagFilterRepeater>
                 <TagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
-              </ScheduleListFiltersPrimitive.TagFilterRepeater>
-            </ScheduleListFiltersPrimitive.TagFilters>
-          </ScheduleListFiltersPrimitive.Filters>
+              </ScheduleListPrimitive.TagFilterRepeater>
+            </ScheduleListPrimitive.TagFilters>
+          </div>
           <ScheduleListPrimitive.Groups className="space-y-8 mb-6">
             <ScheduleListPrimitive.GroupRepeater>
               <ScheduleListPrimitive.GroupDateLabel className="text-2xl font-bold text-content-primary">

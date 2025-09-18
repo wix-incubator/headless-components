@@ -225,3 +225,145 @@ export function GroupDateLabel(props: GroupDateLabelProps): React.ReactNode {
     date: group.date,
   });
 }
+
+export interface StageFilterProps {
+  /** Render prop function */
+  children: (props: StageFilterRenderProps) => React.ReactNode;
+}
+
+export interface StageFilterRenderProps {
+  /** Available stage names */
+  stageNames: string[];
+  /** Current stage filter value */
+  currentStageFilter: string | null;
+  /** Whether there are available stages */
+  hasStages: boolean;
+  /** Function to set stage filter */
+  setStageFilter: (stageName: string | null) => void;
+  /** Function to clear stage filter */
+  clearStageFilter: () => void;
+}
+
+/**
+ * ScheduleList StageFilter core component that provides stage filtering functionality.
+ *
+ * @component
+ */
+export function StageFilter(props: StageFilterProps): React.ReactNode {
+  const scheduleListService = useService(ScheduleListServiceDefinition);
+  const stageNames = scheduleListService.stageNames.get();
+  const currentStageFilter = scheduleListService.stageFilter.get();
+
+  const hasStages = stageNames.length > 0;
+
+  const setStageFilter = (stageName: string | null) => {
+    scheduleListService.setStageFilter(stageName);
+  };
+
+  const clearStageFilter = () => {
+    scheduleListService.setStageFilter(null);
+  };
+
+  return props.children({
+    stageNames,
+    currentStageFilter,
+    hasStages,
+    setStageFilter,
+    clearStageFilter,
+  });
+}
+
+export interface TagFiltersProps {
+  /** Render prop function */
+  children: (props: TagFiltersRenderProps) => React.ReactNode;
+}
+
+export interface TagFiltersRenderProps {
+  /** Available tags */
+  tags: string[];
+  /** Current tag filters */
+  currentTagFilters: string[];
+  /** Whether there are available tags */
+  hasTags: boolean;
+  /** Whether any tag filters are active */
+  hasActiveTagFilters: boolean;
+}
+
+/**
+ * ScheduleList TagFilters core component that provides tag filtering context.
+ * Container Level component following List, Options, and Repeater Pattern.
+ *
+ * @component
+ */
+export function TagFilters(props: TagFiltersProps): React.ReactNode {
+  const scheduleListService = useService(ScheduleListServiceDefinition);
+  const tags = scheduleListService.tags.get();
+  const currentTagFilters = scheduleListService.tagFilters.get();
+
+  const hasTags = tags.length > 0;
+  const hasActiveTagFilters = currentTagFilters.length > 0;
+
+  if (!hasTags) {
+    return null;
+  }
+
+  return props.children({
+    tags,
+    currentTagFilters,
+    hasTags,
+    hasActiveTagFilters,
+  });
+}
+
+export interface TagFilterRepeaterProps {
+  /** Render prop function */
+  children: (props: TagFilterRepeaterRenderProps) => React.ReactNode;
+}
+
+export interface TagFilterRepeaterRenderProps {
+  /** Available tags */
+  tags: string[];
+  /** Current tag filters */
+  currentTagFilters: string[];
+  /** Whether there are available tags */
+  hasTags: boolean;
+  /** Function to toggle a tag filter */
+  toggleTagFilter: (tag: string) => void;
+}
+
+/**
+ * ScheduleList TagFilterRepeater core component that provides tag filtering data.
+ * Repeater Level component following List, Options, and Repeater Pattern.
+ * Not rendered if there are no tags.
+ *
+ * @component
+ */
+export function TagFilterRepeater(
+  props: TagFilterRepeaterProps,
+): React.ReactNode {
+  const scheduleListService = useService(ScheduleListServiceDefinition);
+  const tags = scheduleListService.tags.get();
+  const currentTagFilters = scheduleListService.tagFilters.get();
+
+  const hasTags = tags.length > 0;
+
+  if (!hasTags) {
+    return null;
+  }
+
+  const toggleTagFilter = (tag: string) => {
+    const active = currentTagFilters.includes(tag);
+    if (active) {
+      scheduleListService.removeTagFilter(tag);
+    } else {
+      scheduleListService.addTagFilter(tag);
+    }
+  };
+
+  return props.children({
+    tags,
+    currentTagFilters,
+    hasTags,
+    toggleTagFilter,
+  });
+}
