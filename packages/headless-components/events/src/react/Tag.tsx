@@ -128,7 +128,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   const { value, index } = useTagContext();
 
   const handleClick = onClick ? () => onClick() : undefined;
-  const isInteractive = !!onClick;
+  const interactive = !!onClick;
 
   return (
     <AsChildSlot
@@ -141,10 +141,10 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
       content={value}
       onClick={handleClick}
       data-active={active}
-      data-interactive={isInteractive}
+      data-interactive={interactive}
       {...otherProps}
     >
-      {isInteractive ? (
+      {interactive ? (
         <button onClick={handleClick} data-active={active}>
           {value}
         </button>

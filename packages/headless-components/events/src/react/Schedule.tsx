@@ -56,17 +56,17 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { asChild, children, item, className, ...otherProps } = props;
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.scheduleRoot}
-      {...otherProps}
-    >
-      <div>
-        <CoreSchedule.Root item={item}>{children}</CoreSchedule.Root>
-      </div>
-    </AsChildSlot>
+    <CoreSchedule.Root item={item}>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.scheduleRoot}
+        {...otherProps}
+      >
+        {children}
+      </AsChildSlot>
+    </CoreSchedule.Root>
   );
 });
 
