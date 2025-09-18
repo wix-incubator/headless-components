@@ -133,7 +133,7 @@ export function Quantity(props: QuantityProps): React.ReactNode {
     return null;
   }
 
-  const quantity = ticketDefinitionListService.getCurrentSelectedQuantity(
+  const quantity = ticketDefinitionListService.getCurrentQuantity(
     ticketDefinitionId,
     pricingOptionId,
   );
