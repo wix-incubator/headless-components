@@ -275,3 +275,42 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
     displayed,
   });
 }
+
+/**
+ * Props for CmsCollection.CreateItemAction headless component
+ */
+export interface CreateItemActionProps {
+  /** Render prop function that receives create item controls */
+  children: (props: CreateItemActionRenderProps) => React.ReactNode;
+}
+
+/**
+ * Render props for CmsCollection.CreateItemAction component
+ */
+export interface CreateItemActionRenderProps {
+  /** Function to create a new item */
+  createItem: (itemData: Partial<WixDataItem>) => Promise<void>;
+  /** Whether creation is currently in progress */
+  isLoading: boolean;
+  /** Error message if creation failed, null otherwise */
+  error: string | null;
+}
+
+/**
+ * Core headless component for creating new items in the collection
+ */
+export function CreateItemAction(props: CreateItemActionProps) {
+  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
+    typeof CmsCollectionServiceDefinition
+  >;
+
+  const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
+  const createItem = service.createItem;
+
+  return props.children({
+    createItem,
+    isLoading,
+    error,
+  });
+}
