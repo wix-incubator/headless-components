@@ -239,30 +239,24 @@ export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
 
     return (
       <CoreScheduleListFilters.TagFilters>
-        {({ tags, currentTagFilters, hasTags, hasActiveTagFilters }) => {
-          if (!hasTags) {
-            return null;
-          }
-
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.scheduleListTagFilters}
-              customElement={children}
-              customElementProps={{
-                tags,
-                currentTagFilters,
-                hasTags,
-                hasActiveTagFilters,
-              }}
-              {...otherProps}
-            >
-              <div>{children as React.ReactNode}</div>
-            </AsChildSlot>
-          );
-        }}
+        {({ tags, currentTagFilters, hasTags, hasActiveTagFilters }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.scheduleListTagFilters}
+            customElement={children}
+            customElementProps={{
+              tags,
+              currentTagFilters,
+              hasTags,
+              hasActiveTagFilters,
+            }}
+            {...otherProps}
+          >
+            <div>{children as React.ReactNode}</div>
+          </AsChildSlot>
+        )}
       </CoreScheduleListFilters.TagFilters>
     );
   },

@@ -368,24 +368,20 @@ export const Stage = React.forwardRef<HTMLElement, StageProps>((props, ref) => {
 
   return (
     <CoreScheduleItem.Stage>
-      {({ stageName }) => {
-        if (!stageName) return null;
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleStage}
-            customElement={children}
-            customElementProps={{ stageName }}
-            content={stageName}
-            {...otherProps}
-          >
-            <span>{stageName}</span>
-          </AsChildSlot>
-        );
-      }}
+      {({ stageName }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.scheduleStage}
+          customElement={children}
+          customElementProps={{ stageName }}
+          content={stageName}
+          {...otherProps}
+        >
+          <span>{stageName}</span>
+        </AsChildSlot>
+      )}
     </CoreScheduleItem.Stage>
   );
 });
@@ -425,25 +421,19 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
 
   return (
     <CoreScheduleItem.Tags>
-      {({ tags, hasTags }) => {
-        if (!hasTags) {
-          return null;
-        }
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleTags}
-            customElement={children}
-            customElementProps={{ tags, hasTags }}
-            {...otherProps}
-          >
-            <div>{children as React.ReactNode}</div>
-          </AsChildSlot>
-        );
-      }}
+      {({ tags, hasTags }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.scheduleTags}
+          customElement={children}
+          customElementProps={{ tags, hasTags }}
+          {...otherProps}
+        >
+          <div>{children as React.ReactNode}</div>
+        </AsChildSlot>
+      )}
     </CoreScheduleItem.Tags>
   );
 });
@@ -474,17 +464,13 @@ export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
 
   return (
     <CoreScheduleItem.Tags>
-      {({ tags, hasTags }) => {
-        if (!hasTags) {
-          return null;
-        }
-
-        return tags.map((tagValue, index) => (
+      {({ tags }) =>
+        tags.map((tagValue, index) => (
           <Tag.Root key={index} tag={{ value: tagValue, index }}>
             {children}
           </Tag.Root>
-        ));
-      }}
+        ))
+      }
     </CoreScheduleItem.Tags>
   );
 };

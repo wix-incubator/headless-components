@@ -94,25 +94,19 @@ export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
 
   return (
     <CoreScheduleList.Items>
-      {({ items, hasItems }) => {
-        if (!hasItems) {
-          return null;
-        }
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListItems}
-            customElement={children}
-            customElementProps={{ items }}
-            {...otherProps}
-          >
-            <div>{children as React.ReactNode}</div>
-          </AsChildSlot>
-        );
-      }}
+      {({ items }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.scheduleListItems}
+          customElement={children}
+          customElementProps={{ items }}
+          {...otherProps}
+        >
+          <div>{children as React.ReactNode}</div>
+        </AsChildSlot>
+      )}
     </CoreScheduleList.Items>
   );
 });
@@ -207,29 +201,26 @@ export const NavigationTrigger = React.forwardRef<
 
   return (
     <CoreScheduleList.NavigationTrigger>
-      {({ items, hasItems, eventSlug }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListNavigationTrigger}
-            customElement={children}
-            customElementProps={{
-              items,
-              hasItems,
-              eventSlug,
-            }}
-            {...otherProps}
-          >
-            <button>{label}</button>
-          </AsChildSlot>
-        );
-      }}
+      {({ items, hasItems, eventSlug }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.scheduleListNavigationTrigger}
+          customElement={children}
+          customElementProps={{
+            items,
+            hasItems,
+            eventSlug,
+          }}
+          {...otherProps}
+        >
+          <button>{label}</button>
+        </AsChildSlot>
+      )}
     </CoreScheduleList.NavigationTrigger>
   );
 });
-
 /**
  * Props for the ScheduleList Groups component.
  */
@@ -259,25 +250,19 @@ export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
 
     return (
       <CoreScheduleList.Groups>
-        {({ groups, hasGroups }) => {
-          if (!hasGroups) {
-            return null;
-          }
-
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.scheduleListGroups}
-              customElement={children}
-              customElementProps={{ groups, hasGroups }}
-              {...otherProps}
-            >
-              <div>{children as React.ReactNode}</div>
-            </AsChildSlot>
-          );
-        }}
+        {({ groups }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.scheduleListGroups}
+            customElement={children}
+            customElementProps={{ groups }}
+            {...otherProps}
+          >
+            <div>{children as React.ReactNode}</div>
+          </AsChildSlot>
+        )}
       </CoreScheduleList.Groups>
     );
   },

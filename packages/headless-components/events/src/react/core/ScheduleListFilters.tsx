@@ -137,6 +137,10 @@ export function TagFilters(props: TagFiltersProps): React.ReactNode {
   const filtersContext = useFiltersContext();
   const hasActiveTagFilters = filtersContext.currentTagFilters.length > 0;
 
+  if (!filtersContext.hasTags) {
+    return null;
+  }
+
   return (
     <TagFiltersContext.Provider
       value={{

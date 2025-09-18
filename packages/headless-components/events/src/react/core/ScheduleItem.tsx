@@ -163,6 +163,10 @@ export function Stage(props: StageProps): React.ReactNode {
   const scheduleService = useService(ScheduleItemServiceDefinition);
   const stageName = scheduleService.stageName.get();
 
+  if (!stageName) {
+    return null;
+  }
+
   return props.children({ stageName });
 }
 
@@ -188,5 +192,18 @@ export function Tags(props: TagsProps): React.ReactNode {
   const tags = scheduleService.tags.get();
   const hasTags = scheduleService.hasTags.get();
 
+  if (!hasTags) {
+    return null;
+  }
+
   return props.children({ tags, hasTags });
+}
+
+export interface TagLabelProps {
+  children: (props: TagLabelRenderProps) => React.ReactNode;
+}
+
+export interface TagLabelRenderProps {
+  /** Schedule item tag */
+  tag: string;
 }

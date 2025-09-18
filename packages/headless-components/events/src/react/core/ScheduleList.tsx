@@ -143,8 +143,6 @@ export interface GroupsProps {
 export interface GroupsRenderProps {
   /** List of grouped schedule items */
   groups: ScheduleItemGroup[];
-  /** Indicates whether there are any groups */
-  hasGroups: boolean;
 }
 
 /**
@@ -158,7 +156,11 @@ export function Groups(props: GroupsProps): React.ReactNode {
   const groups = scheduleListService.groupedItems.get();
   const hasGroups = !!groups.length;
 
-  return props.children({ groups, hasGroups });
+  if (!hasGroups) {
+    return null;
+  }
+
+  return props.children({ groups });
 }
 
 export interface GroupRepeaterProps {
@@ -213,7 +215,6 @@ function useItemsContext(): ScheduleItem[] {
   }
   return context;
 }
-
 export interface GroupProps {
   /** Group data */
   group: ScheduleItemGroup;
