@@ -50,7 +50,7 @@ export interface NameRenderProps {
  */
 export function Name(props: NameProps): React.ReactNode {
   const item = useScheduleContext();
-  const name = item.name || 'Schedule item';
+  const name = item.name!;
 
   return props.children({ name });
 }
@@ -80,8 +80,8 @@ export interface TimeSlotRenderProps {
  */
 export function TimeSlot(props: TimeSlotProps): React.ReactNode {
   const item = useScheduleContext();
-  const startTime = item.timeSlot?.start ? new Date(item.timeSlot.start) : null;
-  const endTime = item.timeSlot?.end ? new Date(item.timeSlot.end) : null;
+  const startTime = new Date(item.timeSlot!.start!);
+  const endTime = new Date(item.timeSlot!.end!);
 
   const formatTime = (date: Date): string => {
     return date.toLocaleTimeString('en-US', {

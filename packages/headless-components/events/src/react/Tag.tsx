@@ -1,20 +1,7 @@
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
-
-export interface Tag {
-  value: string;
-  index: number;
-}
-
-const TagContext = React.createContext<Tag | null>(null);
-
-function useTagContext(): Tag {
-  const context = React.useContext(TagContext);
-  if (!context) {
-    throw new Error('useTagContext must be used within a Tag.Root component');
-  }
-  return context;
-}
+import { type Tag } from '../services/tag-service.js';
+import * as CoreTag from './core/Tag.js';
 
 enum TestIds {
   tagRoot = 'tag-root',
@@ -58,7 +45,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { tag, asChild, children, className, ...otherProps } = props;
 
   return (
-    <TagContext.Provider value={tag}>
+    <CoreTag.Root tag={tag}>
       <AsChildSlot
         ref={ref}
         asChild={asChild}
@@ -70,7 +57,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
       >
         <div>{children}</div>
       </AsChildSlot>
-    </TagContext.Provider>
+    </CoreTag.Root>
   );
 });
 
@@ -125,32 +112,37 @@ export interface LabelProps {
 export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   const { asChild, children, className, onClick, active, ...otherProps } =
     props;
-  const { value, index } = useTagContext();
-
-  const handleClick = onClick ? () => onClick() : undefined;
-  const interactive = !!onClick;
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.tagLabel}
-      customElement={children}
-      customElementProps={{ text: value, index }}
-      content={value}
-      onClick={handleClick}
-      data-active={active}
-      data-interactive={interactive}
-      {...otherProps}
-    >
-      {interactive ? (
-        <button onClick={handleClick} data-active={active}>
-          {value}
-        </button>
-      ) : (
-        <span>{value}</span>
-      )}
-    </AsChildSlot>
+    <CoreTag.Label>
+      {({ text, index }) => {
+        const handleClick = onClick ? () => onClick() : undefined;
+        const interactive = !!onClick;
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.tagLabel}
+            customElement={children}
+            customElementProps={{ text, index }}
+            content={text}
+            onClick={handleClick}
+            data-active={active}
+            data-interactive={interactive}
+            {...otherProps}
+          >
+            {interactive ? (
+              <button onClick={handleClick} data-active={active}>
+                {text}
+              </button>
+            ) : (
+              <span>{text}</span>
+            )}
+          </AsChildSlot>
+        );
+      }}
+    </CoreTag.Label>
   );
 });

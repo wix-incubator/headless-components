@@ -69,7 +69,7 @@ export const ScheduleListService =
 
       const stageNames = signalsService.computed(() => {
         const currentItems = items.get();
-        return getAvailableStages(currentItems);
+        return getAvailableStageNames(currentItems);
       });
 
       const tags = signalsService.computed(() => {
@@ -112,23 +112,23 @@ export async function loadScheduleListServiceConfig(
   eventId: string,
   limit: number = 2,
 ): Promise<ScheduleListServiceConfig> {
-  const queryScheduleResult = await queryScheduleItems(eventId, limit);
+  const listScheduleResult = await listScheduleItems(eventId, limit);
 
   return {
     eventId,
     limit,
-    items: queryScheduleResult.items ?? [],
+    items: listScheduleResult.items ?? [],
   };
 }
 
-const queryScheduleItems = async (eventId: string, limit: number) => {
-  const queryScheduleResult = await schedule.listScheduleItems({
+const listScheduleItems = async (eventId: string, limit: number) => {
+  const listScheduleResult = await schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
     limit,
   });
 
-  return queryScheduleResult;
+  return listScheduleResult;
 };
 
 function filterScheduleItems(
@@ -162,11 +162,7 @@ export function groupScheduleItemsByDate(
   const grouped = new Map<string, ScheduleItemGroup>();
 
   items.forEach((item) => {
-    if (!item.timeSlot?.start) {
-      return;
-    }
-
-    const startDate = new Date(item.timeSlot.start);
+    const startDate = new Date(item.timeSlot!.start!);
     const dateKey = startDate.toDateString();
 
     const dateLabel = startDate.toLocaleDateString('en-US', {
@@ -191,19 +187,21 @@ export function groupScheduleItemsByDate(
   return groupsArray.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-export function getAvailableStages(items: ScheduleItem[]): string[] {
-  const stages = new Set<string>();
+export function getAvailableStageNames(items: ScheduleItem[]): string[] {
+  const stageNames = new Set<string>();
+
   items.forEach((item) => {
     if (item.stageName) {
-      stages.add(item.stageName);
+      stageNames.add(item.stageName);
     }
   });
 
-  return Array.from(stages).sort();
+  return Array.from(stageNames).sort();
 }
 
 export function getAvailableTags(items: ScheduleItem[]): string[] {
   const tags = new Set<string>();
+
   items.forEach((item) => {
     if (item.tags) {
       item.tags.forEach((tag) => tags.add(tag));

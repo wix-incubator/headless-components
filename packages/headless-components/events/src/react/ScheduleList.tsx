@@ -6,7 +6,7 @@ import {
   type ScheduleItem,
   type ScheduleItemGroup,
 } from '../services/schedule-list-service.js';
-import * as Schedule from './Schedule.js';
+import * as Schedule from './ScheduleItem.js';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
@@ -395,7 +395,7 @@ export const GroupDateLabel = React.forwardRef<
           content={dateLabel}
           {...otherProps}
         >
-          <h2>{dateLabel}</h2>
+          <span>{dateLabel}</span>
         </AsChildSlot>
       )}
     </CoreScheduleList.GroupDateLabel>

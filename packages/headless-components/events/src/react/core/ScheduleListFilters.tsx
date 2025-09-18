@@ -156,37 +156,6 @@ export function TagFilters(props: TagFiltersProps): React.ReactNode {
   );
 }
 
-export interface TagFilterItemsProps {
-  /** Render prop function */
-  children: (props: TagFilterItemsRenderProps) => React.ReactNode;
-}
-
-export interface TagFilterItemsRenderProps {
-  /** Available tags */
-  tags: string[];
-  /** Whether there are available tags */
-  hasTags: boolean;
-}
-
-/**
- * ScheduleListFilters TagFilterItems core component that provides tag filter items.
- * List Container Level component following List, Options, and Repeater Pattern.
- *
- * @component
- */
-export function TagFilterItems(props: TagFilterItemsProps): React.ReactNode {
-  const tagFiltersContext = useTagFiltersContext();
-
-  if (!tagFiltersContext.hasTags) {
-    return null;
-  }
-
-  return props.children({
-    tags: tagFiltersContext.tags,
-    hasTags: tagFiltersContext.hasTags,
-  });
-}
-
 export interface TagFilterRepeaterProps {
   /** Child components */
   children: React.ReactNode;
@@ -234,7 +203,6 @@ export function TagFilterRepeater(
     </>
   );
 }
-
 // Context for filters
 const FiltersContext = React.createContext<FiltersRenderProps | null>(null);
 

@@ -3,7 +3,7 @@ export * as Event from './Event.js';
 export * as EventList from './EventList.js';
 export * as Form from './Form.js';
 export * as PricingOption from './PricingOption.js';
-export * as Schedule from './Schedule.js';
+export * as ScheduleItem from './ScheduleItem.js';
 export * as ScheduleList from './ScheduleList.js';
 export * as ScheduleListFilters from './ScheduleListFilters.js';
 export * as Tag from './Tag.js';

@@ -6,7 +6,6 @@ enum TestIds {
   scheduleListFilters = 'schedule-list-filters',
   scheduleListStageFilter = 'schedule-list-stage-filter',
   scheduleListTagFilters = 'schedule-list-tag-filters',
-  scheduleListTagFilterItems = 'schedule-list-tag-filter-items',
 }
 
 /**
@@ -41,11 +40,9 @@ export interface FiltersProps {
  * <ScheduleListFilters.Filters>
  *   <ScheduleListFilters.StageFilter />
  *   <ScheduleListFilters.TagFilters>
- *     <ScheduleListFilters.TagFilterItems>
- *       <ScheduleListFilters.TagFilterRepeater>
- *         <ScheduleListFilters.TagFilterItem />
- *       </ScheduleListFilters.TagFilterRepeater>
- *     </ScheduleListFilters.TagFilterItems>
+ *     <ScheduleListFilters.TagFilterRepeater>
+ *       <ScheduleListFilters.TagFilterItem />
+ *     </ScheduleListFilters.TagFilterRepeater>
  *   </ScheduleListFilters.TagFilters>
  * </ScheduleListFilters.Filters>
  * ```
@@ -270,59 +267,6 @@ export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
     );
   },
 );
-
-/**
- * Props for the ScheduleListFilters TagFilterItems component.
- */
-export interface TagFilterItemsProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Child components or custom render function when using asChild */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{ tags: string[]; hasTags: boolean }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** Empty state component to show when no tags are available */
-  emptyState?: React.ReactNode;
-}
-
-/**
- * Container for tag filter items with empty state support.
- * Follows List Container Level pattern.
- *
- * @component
- */
-export const TagFilterItems = React.forwardRef<
-  HTMLElement,
-  TagFilterItemsProps
->((props, ref) => {
-  const { asChild, children, className, emptyState, ...otherProps } = props;
-
-  return (
-    <CoreScheduleListFilters.TagFilterItems>
-      {({ tags, hasTags }) => {
-        if (!hasTags) {
-          return emptyState || null;
-        }
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListTagFilterItems}
-            customElement={children}
-            customElementProps={{ tags, hasTags }}
-            {...otherProps}
-          >
-            <div>{children as React.ReactNode}</div>
-          </AsChildSlot>
-        );
-      }}
-    </CoreScheduleListFilters.TagFilterItems>
-  );
-});
 
 /**
  * Props for the ScheduleListFilters TagFilterRepeater component.
