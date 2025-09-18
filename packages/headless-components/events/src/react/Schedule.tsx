@@ -11,6 +11,7 @@ enum TestIds {
   scheduleDescription = 'schedule-description',
   scheduleStage = 'schedule-stage',
   scheduleTags = 'schedule-tags',
+  scheduleTagItems = 'schedule-tag-items',
   scheduleTag = 'schedule-tag',
 }
 
@@ -359,16 +360,18 @@ export interface TagsProps {
 }
 
 /**
- * Container for the schedule item tags with empty state support.
- * Follows List Container Level pattern.
+ * Container for the schedule item tags with conditional rendering.
+ * Follows Container Level pattern - provides context and conditional rendering.
  *
  * @component
  * @example
  * ```tsx
  * <Schedule.Tags>
- *   <Schedule.TagRepeater>
- *     <Tag.Label />
- *   </Schedule.TagRepeater>
+ *   <Schedule.TagItems>
+ *     <Schedule.TagRepeater>
+ *       <Tag.Label />
+ *     </Schedule.TagRepeater>
+ *   </Schedule.TagItems>
  * </Schedule.Tags>
  * ```
  */
@@ -399,6 +402,59 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
     </CoreSchedule.Tags>
   );
 });
+
+/**
+ * Props for the Schedule TagItems component.
+ */
+export interface TagItemsProps {
+  /** Child components */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Empty state component to show when no tags are available */
+  emptyState?: React.ReactNode;
+}
+
+/**
+ * Container for the tag items with empty state support.
+ * Follows List Container Level pattern.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Schedule.TagItems>
+ *   <Schedule.TagRepeater>
+ *     <Tag.Label />
+ *   </Schedule.TagRepeater>
+ * </Schedule.TagItems>
+ * ```
+ */
+export const TagItems = React.forwardRef<HTMLElement, TagItemsProps>(
+  (props, ref) => {
+    const { children, className, emptyState, ...otherProps } = props;
+
+    return (
+      <CoreSchedule.Tags>
+        {({ hasTags }) => {
+          if (!hasTags) {
+            return emptyState || null;
+          }
+
+          return (
+            <div
+              ref={ref as React.LegacyRef<HTMLDivElement>}
+              className={className}
+              data-testid={TestIds.scheduleTagItems}
+              {...otherProps}
+            >
+              {children}
+            </div>
+          );
+        }}
+      </CoreSchedule.Tags>
+    );
+  },
+);
 
 /**
  * Props for the Schedule TagRepeater component.

@@ -275,8 +275,12 @@ export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
  * Props for the ScheduleListFilters TagFilterItems component.
  */
 export interface TagFilterItemsProps {
-  /** Child components */
-  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ tags: string[]; hasTags: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Empty state component to show when no tags are available */
@@ -293,24 +297,27 @@ export const TagFilterItems = React.forwardRef<
   HTMLElement,
   TagFilterItemsProps
 >((props, ref) => {
-  const { children, className, emptyState, ...otherProps } = props;
+  const { asChild, children, className, emptyState, ...otherProps } = props;
 
   return (
     <CoreScheduleListFilters.TagFilterItems>
-      {({ hasTags }) => {
+      {({ tags, hasTags }) => {
         if (!hasTags) {
           return emptyState || null;
         }
 
         return (
-          <div
-            ref={ref as React.LegacyRef<HTMLDivElement>}
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
             className={className}
             data-testid={TestIds.scheduleListTagFilterItems}
+            customElement={children}
+            customElementProps={{ tags, hasTags }}
             {...otherProps}
           >
-            {children}
-          </div>
+            <div>{children as React.ReactNode}</div>
+          </AsChildSlot>
         );
       }}
     </CoreScheduleListFilters.TagFilterItems>
@@ -326,11 +333,17 @@ export interface TagFilterRepeaterProps {
 }
 
 /**
- * Repeater component that renders TagFilterItem for each available tag.
+ * Repeater component that renders Tag.Root for each available tag with filtering functionality.
  * Follows Repeater Level pattern.
  * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
+ * @example
+ * ```tsx
+ * <ScheduleListFilters.TagFilterRepeater>
+ *   <Tag.Label />
+ * </ScheduleListFilters.TagFilterRepeater>
+ * ```
  */
 export const TagFilterRepeater = (
   props: TagFilterRepeaterProps,
