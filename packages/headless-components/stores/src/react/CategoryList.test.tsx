@@ -46,7 +46,10 @@ describe('CategoryList', () => {
 
     it('renders data-component-tag attribute on first DOM element when empty state is shown', () => {
       const { container } = render(
-        <CategoryList.Root categories={[]} emptyState={<div>No categories available</div>}>
+        <CategoryList.Root
+          categories={[]}
+          emptyState={<div>No categories available</div>}
+        >
           <div>Content</div>
         </CategoryList.Root>,
       );

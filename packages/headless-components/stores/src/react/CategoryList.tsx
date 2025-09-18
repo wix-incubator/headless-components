@@ -82,9 +82,7 @@ export const Root = (props: CategoryListRootProps): React.ReactNode => {
     categoriesListConfig || (categories ? { categories } : { categories: [] });
 
   return (
-    <CoreCategoryList.Root
-      categoriesListConfig={serviceConfig}
-    >
+    <CoreCategoryList.Root categoriesListConfig={serviceConfig}>
       <AsChildSlot
         data-testid={TestIds.categoryListRoot}
         data-component-tag={DataComponentTags.categoryListRoot}

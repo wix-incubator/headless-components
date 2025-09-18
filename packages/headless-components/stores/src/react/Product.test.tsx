@@ -1374,7 +1374,9 @@ describe('Product Components', () => {
     render(
       <Product.Root product={mockProductWithoutModifiers}>
         <Product.Modifiers>
-          <Product.ModifierOptions emptyState={<div>No modifiers available</div>}>
+          <Product.ModifierOptions
+            emptyState={<div>No modifiers available</div>}
+          >
             <div>Content</div>
           </Product.ModifierOptions>
         </Product.Modifiers>
