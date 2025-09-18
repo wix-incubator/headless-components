@@ -183,6 +183,8 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   );
 });
 
+Root.displayName = 'Option.Root';
+
 // Create a context to pass option data down
 export const OptionContext = React.createContext<any>(null);
 

@@ -178,6 +178,8 @@ export const Root = React.forwardRef<HTMLElement, CategoryRootProps>(
   },
 );
 
+Root.displayName = 'Category.Root';
+
 /**
  * Interactive element for selecting or triggering category actions.
  * Provides category data and selection state to custom render functions.

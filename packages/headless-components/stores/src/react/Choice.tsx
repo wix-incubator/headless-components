@@ -113,6 +113,9 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     );
   },
 );
+
+Root.displayName = 'Choice.Root';
+
 /**
  * Props for Choice Text component
  */
