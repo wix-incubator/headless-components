@@ -1,18 +1,89 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import NotFoundPage from "../react-pages/404";
+import { ClientRouter } from "astro:transitions";
+import "@/styles/theme.css";
 
-// Ensure proper 404 HTTP status code
 Astro.response.status = 404;
 export const prerender = false;
 ---
 
-<BaseLayout>
-  <title>Page Not Found | Blog</title>
-  <meta
-    name="description"
-    content="The page you're looking for could not be found."
-  />
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <title>Page Not Found | Blog</title>
+    <meta
+      name="description"
+      content="The page you're looking for could not be found."
+    />
+    <ClientRouter />
+  </head>
+  <body>
+    <div
+      class="bg-surface-primary flex min-h-screen items-center justify-center"
+    >
+      <div class="mx-auto max-w-md px-6 text-center">
+        {/* 404 Icon */}
+        <div class="mb-8">
+          <div
+            class="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20"
+          >
+            <svg
+              class="text-content-muted h-12 w-12"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.455-5.12-3.5M15 13.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.455-5.12-3.5M12 3a9 9 0 11-9 9 9 9 0 019-9z"
+              ></path>
+            </svg>
+          </div>
+          <h1 class="text-content-primary mb-2 text-6xl font-bold">404</h1>
+          <h2 class="text-content-secondary mb-4 text-2xl font-semibold">
+            Page Not Found
+          </h2>
+        </div>
 
-  <NotFoundPage client:load slot="body" />
-</BaseLayout>
+        {/* Error Message */}
+        <div class="mb-8">
+          <p class="text-content-light mb-4">
+            Oops! The page you're looking for seems to have wandered off into
+            the digital void.
+          </p>
+          <p class="text-content-muted text-sm">
+            Don't worry, it happens to the best of us. Let's get you back on
+            track.
+          </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div class="flex flex-col justify-center gap-4 sm:flex-row">
+          <a
+            href="/blog"
+            class="btn-secondary rounded-lg px-6 py-3 font-medium transition-all hover:scale-105"
+          >
+            Browse Blog
+          </a>
+        </div>
+
+        {/* Search Suggestion */}
+        <div class="mt-8 text-center">
+          <p class="text-content-muted mb-2 text-sm">
+            Looking for something specific?
+          </p>
+          <button
+            onclick="window.history.back()"
+            class="text-brand-primary hover:text-brand-light text-sm transition-colors hover:underline"
+          >
+            ← Go back to previous page
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

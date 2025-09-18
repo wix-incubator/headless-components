@@ -4354,7 +4354,7 @@ __metadata:
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
     "@wix/astro": "npm:^1.0.30"
-    "@wix/cli": "npm:^1.1.114"
+    "@wix/cli": "npm:^1.1.119"
     "@wix/headless-blog": "workspace:*"
     "@wix/headless-components": "workspace:*"
     "@wix/headless-seo": "workspace:*"
@@ -6472,7 +6472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/cli@npm:^1.1.114, @wix/cli@npm:^1.1.92, @wix/cli@npm:^1.1.95":
+"@wix/cli@npm:^1.1.114, @wix/cli@npm:^1.1.119, @wix/cli@npm:^1.1.92, @wix/cli@npm:^1.1.95":
   version: 1.1.119
   resolution: "@wix/cli@npm:1.1.119"
   dependencies:

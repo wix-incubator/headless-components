@@ -91,7 +91,7 @@ export default function PostPage({
           </Blog.Post.TagItemRepeater>
         </Blog.Post.TagItems>
         <section>
-          <SharePostActions href={href} />
+          <SharePostActions />
         </section>
       </article>
     </Blog.Post.Root>
