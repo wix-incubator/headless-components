@@ -43,5 +43,21 @@ describe('CategoryList', () => {
         'stores.category-list-root',
       );
     });
+
+    it('renders data-component-tag attribute on first DOM element when empty state is shown', () => {
+      const { container } = render(
+        <CategoryList.Root categories={[]} emptyState={<div>No categories available</div>}>
+          <div>Content</div>
+        </CategoryList.Root>,
+      );
+
+      const rootElement = container.querySelector(
+        '[data-component-tag="stores.category-list-root"]',
+      )!;
+      expect(rootElement).toHaveAttribute(
+        'data-component-tag',
+        'stores.category-list-root',
+      );
+    });
   });
 });

@@ -84,7 +84,6 @@ export const Root = (props: CategoryListRootProps): React.ReactNode => {
   return (
     <CoreCategoryList.Root
       categoriesListConfig={serviceConfig}
-      data-testid={TestIds.categoryListRoot}
     >
       <AsChildSlot
         data-testid={TestIds.categoryListRoot}

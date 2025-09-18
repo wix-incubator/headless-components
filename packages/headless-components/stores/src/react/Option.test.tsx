@@ -145,6 +145,12 @@ const mockColorOption = {
   ],
 };
 
+const mockOptionWithoutChoices = {
+  name: 'Empty Option',
+  hasChoices: false,
+  choices: [],
+};
+
 const mockSizeOption = {
   name: 'Size',
   hasChoices: true,
@@ -1345,6 +1351,22 @@ describe('Option Components', () => {
     render(
       <Option.Root option={mockColorOption}>
         <div>Content</div>
+      </Option.Root>,
+    );
+
+    const rootElement = screen.getByTestId('option-root');
+    expect(rootElement).toHaveAttribute(
+      'data-component-tag',
+      'stores.option-root',
+    );
+  });
+
+  it('renders data-component-tag attribute when Choices shows empty state', () => {
+    render(
+      <Option.Root option={mockOptionWithoutChoices}>
+        <Option.Choices emptyState={<div>No choices available</div>}>
+          <div>Content</div>
+        </Option.Choices>
       </Option.Root>,
     );
 

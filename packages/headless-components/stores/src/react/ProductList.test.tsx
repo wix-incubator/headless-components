@@ -58,5 +58,19 @@ describe('ProductList', () => {
         'stores.product-list-root',
       );
     });
+
+    it('renders data-component-tag attribute on first DOM element when empty state is shown', () => {
+      render(
+        <ProductList.Root products={[]}>
+          <div>Content</div>
+        </ProductList.Root>,
+      );
+
+      const rootElement = screen.getByTestId('product-list-root');
+      expect(rootElement).toHaveAttribute(
+        'data-component-tag',
+        'stores.product-list-root',
+      );
+    });
   });
 });
