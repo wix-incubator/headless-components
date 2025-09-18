@@ -808,7 +808,7 @@ export interface DateInputProps extends BaseFieldProps {
   label: string;
   showLabel: boolean;
   showPlaceholder: boolean;
-  firstDayOfWeek: 'SUNDAY' | 'MONDAY';
+  showDateLabels: boolean;
   acceptedDates: 'all' | 'past' | 'future';
   description?: forms.RichContent;
 }
