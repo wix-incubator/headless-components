@@ -33,9 +33,23 @@ export interface RootProps {
  * function ItemPage() {
  *   return (
  *     <CmsItem.Root item={{ collectionId: 'MyCollection', id: 'item-123' }}>
- *       <CmsItem.Field fieldId="title" />
- *       <CmsItem.Field fieldId="image" />
- *       <CmsItem.Field fieldId="price" />
+ *       <CmsItem.Field fieldId="title" asChild>
+ *         {({ fieldValue, ...props }, ref) => (
+ *           <h1 ref={ref} {...props}>{fieldValue}</h1>
+ *         )}
+ *       </CmsItem.Field>
+ *
+ *       <CmsItem.Field fieldId="image" asChild>
+ *         {({ fieldValue, ...props }, ref) => (
+ *           <img ref={ref} {...props} src={fieldValue?.url} alt={fieldValue?.alt} />
+ *         )}
+ *       </CmsItem.Field>
+ *
+ *       <CmsItem.Field fieldId="price" asChild>
+ *         {({ fieldValue, ...props }, ref) => (
+ *           <span ref={ref} {...props}>{fieldValue}</span>
+ *         )}
+ *       </CmsItem.Field>
  *     </CmsItem.Root>
  *   );
  * }
