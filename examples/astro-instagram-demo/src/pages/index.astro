@@ -1,0 +1,174 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import IndexPage from "../react-pages/index";
+
+// Demo template generator (adapted from your provided code)
+// const MP_URL = 'https://wixmp-19e700b7666f74a00729a0dd.wixmp.com/';
+const IG_URL = 'https://instagram.com/';
+const PARASTORAGE_URL = 'https://static.parastorage.com/services/instagram-blocks-app/1.223.0/assets/templates/';
+
+const DEMO_MEDIA = {
+  classic: {
+    caption: 'instagram-blocks.widget.demo.classic.caption',
+    folderName: 'New-IG',
+    countMedias: 18,
+    userName: 'wix',
+    videos: [],
+  },
+  studio: {
+    caption: 'instagram-blocks.widget.demo.studio.caption',
+    countMedias: 12,
+    folderName: 'New-IG-Studio',
+    userName: 'wixstudio',
+    videos: [3, 8],
+  },
+};
+
+function setUserAndMedias(dataInfo: {
+  assetsUrl: string;
+  description: string;
+  folderName: string;
+  countMedias: number;
+  userName: string;
+  videos?: number[];
+}) {
+  const { assetsUrl, description, folderName, countMedias, userName, videos } = dataInfo;
+
+  const templateMedias = Array.from({ length: countMedias }, (_, index) => ({
+    src: `${assetsUrl}${folderName}/${String(index + 1).padStart(2, '0')}.jpg`,
+    type: 'image',
+    description,
+    alt: description,
+    link: IG_URL + userName,
+    timestamp: new Date(),
+  }));
+
+  if (videos?.length) {
+    videos.forEach((videoSlot, index) => {
+      const videoPg = {
+        type: 'video',
+        description,
+        alt: description,
+        src: `${assetsUrl}${folderName}/video_src${String(index + 1).padStart(2, '0')}.mp4`,
+        thumbnail: `${assetsUrl}${folderName}/video_thumb${String(index + 1).padStart(2, '0')}.jpg`,
+        link: IG_URL + userName,
+        timestamp: new Date(),
+      };
+      templateMedias.splice(videoSlot - 1, 0, videoPg);
+    });
+  }
+
+  const templateUser = {
+    instagramAccount: {
+      id: '',
+      revision: '1',
+      instagramInfo: {
+        instagramId: userName,
+        instagramUsername: userName,
+      },
+    },
+  };
+
+  return { templateMedias, templateUser };
+}
+
+function generateTemplate(props: { templatesData?: string; isClassic?: boolean }) {
+  const { templatesData, isClassic: isClsProps } = props || {};
+  let countMedias: number | undefined,
+    folderName: string | undefined,
+    description: string | undefined,
+    userName: string | undefined,
+    videos: number[] | undefined,
+    assetsUrl: string | undefined;
+
+  function setDataForDemo(isClsc: boolean) {
+    const editorType = isClsc ? DEMO_MEDIA.classic : DEMO_MEDIA.studio;
+    ({ folderName, userName, countMedias, videos } = editorType as any);
+    // Use picsum as a reliable public image source (seeded by folderName)
+    assetsUrl = PARASTORAGE_URL;
+    description = editorType.caption;
+  }
+
+  if (templatesData) {
+    try {
+      const parsedData = JSON.parse(templatesData);
+      const { countMedias: c, folderName: f, userName: u } = parsedData || {};
+      countMedias = c; folderName = f; userName = u;
+      videos = DEMO_MEDIA.studio.videos;
+      // When explicit data is passed, still use picsum as the asset base
+      assetsUrl = PARASTORAGE_URL;
+      description = 'instagram-blocks.widget.demo.templates.caption';
+    } catch (e) {
+      setDataForDemo(Boolean(isClsProps));
+    }
+  } else {
+    setDataForDemo(Boolean(isClsProps));
+  }
+
+  return setUserAndMedias({
+    assetsUrl: assetsUrl!,
+    description: description!,
+    folderName: folderName!,
+    countMedias: countMedias!,
+    userName: userName!,
+    videos,
+  });
+}
+
+function toInstagramConfig(templateMedias: any[], templateUser: any) {
+  const mediaItems = templateMedias.map((m, i) => ({
+    id: `tmpl-${i}`,
+    type: (m.type === 'video' ? 'video' : 'image'),
+    mediaUrl: m.src,
+    thumbnailUrl: m.thumbnail,
+    caption: m.description,
+    permalink: m.link,
+    timestamp: typeof m.timestamp === 'string' ? m.timestamp : new Date(m.timestamp).toISOString(),
+    altText: m.alt,
+  }));
+  return {
+    accountId: templateUser.instagramAccount.instagramInfo.instagramId,
+    limit: mediaItems.length,
+    feedData: {
+      account: {
+        _id: templateUser.instagramAccount.instagramInfo.instagramId,
+        instagramInfo: {
+          instagramId: templateUser.instagramAccount.instagramInfo.instagramId,
+          instagramUsername: templateUser.instagramAccount.instagramInfo.instagramUsername,
+        },
+      },
+      mediaItems,
+      hasMore: false,
+      nextCursor: undefined,
+    },
+  };
+}
+
+// Read query params
+const url = new URL(Astro.request.url);
+const providedAccountId = url.searchParams.get('accountId');
+const providedUsername = url.searchParams.get('username');
+const templatesData = url.searchParams.get('templatesData') || undefined;
+const isClassic = url.searchParams.get('mode') === 'classic';
+
+// Generate template-based config
+const { templateMedias, templateUser } = generateTemplate({ templatesData, isClassic });
+const demoConfig = toInstagramConfig(templateMedias, templateUser);
+
+// If username/accountId is provided, override user in demo config for display
+if (providedAccountId || providedUsername) {
+  const user = providedUsername || providedAccountId!;
+  demoConfig.accountId = user;
+  demoConfig.feedData.account._id = user;
+  demoConfig.feedData.account.instagramInfo.instagramId = user;
+  demoConfig.feedData.account.instagramInfo.instagramUsername = user;
+}
+
+const instagramConfig = demoConfig;
+---
+<BaseLayout>
+  <title>Instagram Demo</title>
+  <meta name="description" content="Instagram headless components demo" />
+
+  <IndexPage client:load instagramConfig={instagramConfig} slot="body" />
+</BaseLayout>
