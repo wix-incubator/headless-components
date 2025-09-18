@@ -1,10 +1,11 @@
 import React from 'react';
-import { type InstagramFeedServiceConfig } from '../services/index.js';
+import { WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
 import {
-  InstagramFeedContext,
-  type InstagramFeedContextValue,
-} from './contexts.js';
-import { TestIds } from './types.js';
+  InstagramFeedService,
+  InstagramFeedServiceDefinition,
+  type InstagramFeedServiceConfig
+} from '../services/index.js';
 
 /**
  * Props for InstagramFeed Root component
@@ -16,34 +17,34 @@ export interface RootProps {
 }
 
 /**
- * Root component that provides Instagram feed service context.
- * This is the main container that initializes the Instagram feed service.
+ * Root component that provides Instagram feed service context using WixServices.
+ * This follows the same service-based pattern as the stores package.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { InstagramFeed } from '@wix/instagram/components';
+ * import { InstagramFeed } from '@wix/headless-instagram/react';
+ * import { MediaGallery } from '@wix/headless-media/react';
  *
  * function InstagramWidget() {
  *   return (
  *     <InstagramFeed.Root
  *       instagramFeedServiceConfig={{
- *         username: 'myaccount',
+ *         accountId: 'instagram_account_123',
  *         limit: 6
  *       }}
  *     >
  *       <div>
  *         <InstagramFeed.Title />
  *         <InstagramFeed.UserName />
+ *         <InstagramFeed.Hashtag />
  *       </div>
  *       <InstagramFeed.Gallery>
  *         <InstagramFeed.GalleryItems>
- *           <InstagramFeed.GalleryRepeater>
- *             <InstagramFeed.GalleryItem>
- *               <InstagramFeed.Media />
- *             </InstagramFeed.GalleryItem>
- *           </InstagramFeed.GalleryRepeater>
+ *           <InstagramFeed.GalleryItemRepeater>
+ *             <MediaGallery.ThumbnailItem />
+ *           </InstagramFeed.GalleryItemRepeater>
  *         </InstagramFeed.GalleryItems>
  *       </InstagramFeed.Gallery>
  *     </InstagramFeed.Root>
@@ -54,39 +55,20 @@ export interface RootProps {
 export function Root(props: RootProps): React.ReactNode {
   const { children, instagramFeedServiceConfig, className, ...attrs } = props;
 
-  // TODO: Integrate with actual service when service manager is available
-  // For now, simulate the service state with mock data
-  const [serviceState] = React.useState({
-    feedData: instagramFeedServiceConfig.feedData || {
-      account: {
-        _id: instagramFeedServiceConfig.accountId || 'sample_account',
-        instagramInfo: {
-          instagramId: instagramFeedServiceConfig.accountId || 'sample_id',
-          instagramUsername:
-            instagramFeedServiceConfig.accountId?.replace('instagram_', '') ||
-            'sample_user',
-        },
-      },
-      mediaItems: [],
-      hasMore: false,
-    },
-    isLoading: false,
-    error: undefined,
-    loadMore: async () => {},
-    refresh: async () => {},
-  });
-
-  const contextValue: InstagramFeedContextValue = serviceState;
-
   const attributes = {
-    'data-testid': TestIds.instagramFeedRoot,
     className,
     ...attrs,
   };
 
   return (
-    <InstagramFeedContext.Provider value={contextValue}>
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        InstagramFeedServiceDefinition,
+        InstagramFeedService,
+        instagramFeedServiceConfig
+      )}
+    >
       <div {...attributes}>{children}</div>
-    </InstagramFeedContext.Provider>
+    </WixServices>
   );
 }

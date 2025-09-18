@@ -24,9 +24,8 @@ src/react/
 ## Component Organization
 
 ### 1. **Core Infrastructure**
-- `types.ts` - Shared TypeScript types, AsChild utilities, TestIds enum
+- `index.ts` - Main export point with InstagramFeed namespace
 - `contexts.ts` - All React contexts and their corresponding hooks
-- `index.ts` - Main export point following stores package pattern
 
 ### 2. **Main Components**
 - `InstagramFeedRoot.tsx` - Service provider and main container
@@ -112,7 +111,7 @@ This structure maintains full compliance with the established patterns:
 - ✅ **3-Level List Pattern**: Gallery → GalleryItems → GalleryRepeater
 - ✅ **Context Pattern**: Proper context organization in separate file
 - ✅ **AsChild Support**: Consistent across all applicable components
-- ✅ **TestIds Enum**: Centralized in types.ts
+- ✅ **Simplified Structure**: No test IDs needed
 - ✅ **TypeScript**: Full type safety maintained
 - ✅ **Stores Package Consistency**: Matches the established patterns
 

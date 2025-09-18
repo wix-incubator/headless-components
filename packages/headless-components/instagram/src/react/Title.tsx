@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsChildSlot, TestIds, type AsChildChildren } from './types.js';
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 
 /**
  * Props for InstagramFeed Title component
@@ -51,7 +51,6 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
       ref={ref}
       asChild={asChild}
       className={className}
-      data-testid={TestIds.instagramFeedTitle}
       customElement={children}
       customElementProps={{ title }}
       content={title}

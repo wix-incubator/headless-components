@@ -1,6 +1,7 @@
 import React from 'react';
-import { TestIds } from './types.js';
-import { useGalleryContext } from './contexts.js';
+import { MediaGallery } from '@wix/headless-media/react';
+import { useService } from '@wix/services-manager-react';
+import { InstagramFeedServiceDefinition } from '../services/index.js';
 
 /**
  * Props for InstagramFeed GalleryItems component (List Container Level)
@@ -18,30 +19,31 @@ export interface GalleryItemsProps {
  * @example
  * ```tsx
  * <InstagramFeed.GalleryItems emptyState={<div>No photos to display</div>}>
- *   <InstagramFeed.GalleryRepeater>
- *     <InstagramFeed.GalleryItem>
- *       <InstagramFeed.Media />
- *     </InstagramFeed.GalleryItem>
- *   </InstagramFeed.GalleryRepeater>
+ *   <div className="grid grid-cols-3 gap-4">
+ *     <InstagramFeed.GalleryItemRepeater>
+ *       <MediaGallery.ThumbnailItem />
+ *     </InstagramFeed.GalleryItemRepeater>
+ *   </div>
  * </InstagramFeed.GalleryItems>
  * ```
  */
 export const GalleryItems = React.forwardRef<HTMLDivElement, GalleryItemsProps>(
   (props, ref) => {
     const { children, emptyState } = props;
-    const { hasItems } = useGalleryContext();
+    const instagramFeedService = useService(InstagramFeedServiceDefinition);
+    const feedData = instagramFeedService.feedData.get();
+
+    const hasItems = feedData.mediaItems.length > 0;
 
     if (!hasItems) {
       return emptyState || null;
     }
 
-    const attributes = {
-      'data-testid': TestIds.instagramFeedGalleryItems,
-    };
-
     return (
-      <div {...attributes} ref={ref}>
-        {children}
+      <div ref={ref}>
+        <MediaGallery.Thumbnails>
+          {children}
+        </MediaGallery.Thumbnails>
       </div>
     );
   },

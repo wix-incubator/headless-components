@@ -12,6 +12,34 @@ npm install @wix/headless-instagram
 
 ```tsx
 import { InstagramFeed } from '@wix/headless-instagram/react';
+import { MediaGallery } from '@wix/headless-media/react';
+import { InstagramMediaItemServiceDefinition } from '@wix/headless-instagram/services';
+import { useService } from '@wix/services-manager-react';
+
+// Custom media card component using service-based architecture
+function MediaCard({ src, alt, index }) {
+  // Access Instagram media item data via service
+  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
+  const mediaItem = mediaItemService.mediaItem.get();
+  const isVideo = mediaItem.type === 'video';
+
+  return (
+    <div className="group relative overflow-hidden rounded-lg">
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-64 object-cover transition-transform group-hover:scale-105"
+      />
+      {isVideo && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="bg-black/50 rounded-full p-2">
+            ▶️
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function InstagramWidget() {
   return (
@@ -28,7 +56,7 @@ function InstagramWidget() {
         <InstagramFeed.Hashtag className="text-blue-600 font-medium" />
       </div>
 
-      {/* Gallery Section - Following 3-Level Pattern */}
+      {/* Gallery Section - Service-Based Architecture */}
       <InstagramFeed.Gallery className="gallery-container">
         <InstagramFeed.GalleryItems
           emptyState={
@@ -38,11 +66,11 @@ function InstagramWidget() {
           }
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <InstagramFeed.GalleryRepeater>
-              <InstagramFeed.GalleryItem className="group relative overflow-hidden rounded-lg">
-                <InstagramFeed.Media className="w-full h-64 object-cover transition-transform group-hover:scale-105" />
-              </InstagramFeed.GalleryItem>
-            </InstagramFeed.GalleryRepeater>
+            <InstagramFeed.GalleryItemRepeater>
+              <MediaGallery.ThumbnailItem asChild>
+                {({ src, alt, index }) => <MediaCard src={src} alt={alt} index={index} />}
+              </MediaGallery.ThumbnailItem>
+            </InstagramFeed.GalleryItemRepeater>
           </div>
         </InstagramFeed.GalleryItems>
       </InstagramFeed.Gallery>
@@ -138,18 +166,6 @@ interface InstagramMediaItem {
 }
 ```
 
-## Data Attributes
-
-All components include proper `data-testid` attributes following the naming convention:
-
-- `data-testid="instagram-feed-root"`
-- `data-testid="instagram-feed-title"`
-- `data-testid="instagram-feed-username"`
-- `data-testid="instagram-feed-hashtag"`
-- `data-testid="instagram-feed-gallery"`
-- `data-testid="instagram-feed-gallery-items"`
-- `data-testid="instagram-feed-gallery-item"`
-- `data-testid="instagram-feed-media"`
 
 ## Architecture Notes
 
@@ -158,7 +174,7 @@ This component follows the established headless components architecture:
 1. **3-Level List Pattern**: Gallery → GalleryItems → GalleryRepeater
 2. **Context Pattern**: Data flows through React contexts
 3. **AsChild Support**: Full customization capabilities
-4. **TestIds Enum**: Centralized test ID management
+4. **Simplified Structure**: No test IDs or centralized types file
 5. **TypeScript**: Full type safety throughout
 
 ## Service Architecture

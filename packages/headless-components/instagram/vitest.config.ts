@@ -1,13 +1,10 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./src/vitest.setup.ts'],
+    environment: "jsdom",
+    setupFiles: ["./src/vitest.setup.ts"], // Adjusted path to be relative to this config file
     passWithNoTests: true,
-  },
-  esbuild: {
-    target: 'node14',
   },
 });

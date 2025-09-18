@@ -1,5 +1,5 @@
 {
-  "name": "@wix/headless-instagram-react",
+  "name": "@wix/headless-instagram/react",
   "main": "../cjs/dist/react/index.js",
   "module": "../dist/react/index.js",
   "types": "../dist/react/index.d.ts"

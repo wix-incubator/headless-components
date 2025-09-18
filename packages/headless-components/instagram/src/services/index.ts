@@ -13,3 +13,10 @@ export {
   type InstagramAccount,
   type InstagramMedia,
 } from './instagram-feed-service.js';
+
+export {
+  InstagramMediaItemService,
+  InstagramMediaItemServiceDefinition,
+  type InstagramMediaItemServiceConfig,
+  type InstagramMediaItemServiceAPI,
+} from './instagram-media-item-service.js';

@@ -1,10 +1,8 @@
 import React from 'react';
-import { AsChildSlot, TestIds } from './types.js';
-import {
-  useInstagramFeedContext,
-  GalleryContext,
-  type GalleryContextValue,
-} from './contexts.js';
+import { MediaGallery } from '@wix/headless-media/react';
+import { AsChildSlot } from '@wix/headless-utils/react';
+import { useService } from '@wix/services-manager-react';
+import { InstagramFeedServiceDefinition } from '../services/index.js';
 
 /**
  * Props for InstagramFeed Gallery component (Container Level)
@@ -28,11 +26,9 @@ export interface GalleryProps {
  * ```tsx
  * <InstagramFeed.Gallery>
  *   <InstagramFeed.GalleryItems>
- *     <InstagramFeed.GalleryRepeater>
- *       <InstagramFeed.GalleryItem>
- *         <InstagramFeed.Media />
- *       </InstagramFeed.GalleryItem>
- *     </InstagramFeed.GalleryRepeater>
+ *     <InstagramFeed.GalleryItemRepeater>
+ *       <MediaGallery.ThumbnailItem />
+ *     </InstagramFeed.GalleryItemRepeater>
  *   </InstagramFeed.GalleryItems>
  * </InstagramFeed.Gallery>
  *
@@ -49,31 +45,39 @@ export interface GalleryProps {
 export const Gallery = React.forwardRef<HTMLElement, GalleryProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
-    const { feedData } = useInstagramFeedContext();
+    const instagramFeedService = useService(InstagramFeedServiceDefinition);
+    const feedData = instagramFeedService.feedData.get();
 
     const hasItems = feedData.mediaItems.length > 0;
 
     // Don't render if no items (following the Container Level pattern)
     if (!hasItems) return null;
 
-    const contextValue: GalleryContextValue = {
-      hasItems,
-      mediaItems: feedData.mediaItems,
-    };
+    // Convert Instagram media items to MediaGallery format
+    // Note: MediaGallery only supports images, so we use thumbnails for videos
+    const mediaGalleryItems = feedData.mediaItems.map((mediaItem) => ({
+      image: mediaItem.type === 'video'
+        ? mediaItem.thumbnailUrl || mediaItem.mediaUrl  // Use thumbnail for videos
+        : mediaItem.mediaUrl,
+      altText: mediaItem.altText || mediaItem.caption || `Instagram ${mediaItem.type}`,
+    }));
 
     return (
-      <GalleryContext.Provider value={contextValue}>
+      <MediaGallery.Root
+        mediaGalleryServiceConfig={{
+          media: mediaGalleryItems,
+        }}
+      >
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
-          data-testid={TestIds.instagramFeedGallery}
           customElement={children}
           {...otherProps}
         >
           <div>{React.isValidElement(children) ? children : null}</div>
         </AsChildSlot>
-      </GalleryContext.Provider>
+      </MediaGallery.Root>
     );
   },
 );

@@ -1,6 +1,7 @@
 import React from 'react';
-import { AsChildSlot, TestIds, type AsChildChildren } from './types.js';
-import { useInstagramFeedContext } from './contexts.js';
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
+import { useService } from '@wix/services-manager-react';
+import { InstagramFeedServiceDefinition } from '../services/index.js';
 
 /**
  * Props for InstagramFeed Hashtag component
@@ -36,7 +37,8 @@ export interface HashtagProps {
 export const Hashtag = React.forwardRef<HTMLElement, HashtagProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
-    const { feedData } = useInstagramFeedContext();
+    const instagramFeedService = useService(InstagramFeedServiceDefinition);
+    const feedData = instagramFeedService.feedData.get();
 
     const hashtag = feedData.account?.instagramInfo?.instagramUsername;
 
@@ -50,7 +52,6 @@ export const Hashtag = React.forwardRef<HTMLElement, HashtagProps>(
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.instagramFeedHashtag}
         customElement={children}
         customElementProps={{ hashtag }}
         content={`#${hashtag}`}
