@@ -432,8 +432,8 @@ export interface SaleStartDateProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    /** Sale start date in ISO string format */
-    startDate: string;
+    /** Sale start date */
+    startDate: Date;
     /** Formatted sale start date */
     startDateFormatted: string;
   }>;
@@ -498,8 +498,8 @@ export interface SaleEndDateProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    /** Sale end date in ISO string format */
-    endDate: string;
+    /** Sale end date */
+    endDate: Date;
     /** Formatted sale end date */
     endDateFormatted: string;
     /** Whether sale has ended */

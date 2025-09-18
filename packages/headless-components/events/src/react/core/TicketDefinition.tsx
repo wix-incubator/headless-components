@@ -152,6 +152,7 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
   );
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+  const ticketDefinitionId = ticketDefinition._id!;
   const guestPrice = ticketDefinition.pricingMethod?.guestPrice;
 
   if (!guestPrice) {
@@ -160,7 +161,7 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
 
   const setPrice = (price: string) => {
     ticketDefinitionListService.setQuantity({
-      ticketDefinitionId: ticketDefinition._id!,
+      ticketDefinitionId,
       priceOverride: price,
     });
   };
@@ -201,8 +202,8 @@ export interface SaleStartDateProps {
 }
 
 export interface SaleStartDateRenderProps {
-  /** Sale start date in ISO string format */
-  startDate: string;
+  /** Sale start date */
+  startDate: Date;
   /** Formatted sale start date */
   startDateFormatted: string;
 }
@@ -223,9 +224,8 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
     return null;
   }
 
-  const dateObj = new Date(ticketDefinition.salePeriod!.startDate!);
-  const startDate = dateObj.toISOString();
-  const startDateFormatted = new Intl.DateTimeFormat('en-US').format(dateObj);
+  const startDate = new Date(ticketDefinition.salePeriod!.startDate!);
+  const startDateFormatted = startDate.toLocaleString();
 
   return props.children({ startDate, startDateFormatted });
 }
@@ -236,8 +236,8 @@ export interface SaleEndDateProps {
 }
 
 export interface SaleEndDateRenderProps {
-  /** Sale end date in ISO string format */
-  endDate: string;
+  /** Sale end date */
+  endDate: Date;
   /** Formatted sale end date */
   endDateFormatted: string;
   /** Whether sale has ended */
@@ -245,7 +245,7 @@ export interface SaleEndDateRenderProps {
 }
 
 /**
- * TicketDefinition SaleEndDate core component that provides sale end date. Not rendered if sale is scheduled.
+ * TicketDefinition SaleEndDate core component that provides sale end date. Not rendered if sale is scheduled or there is no sale period.
  *
  * @component
  */
@@ -261,9 +261,8 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
     return null;
   }
 
-  const dateObj = new Date(ticketDefinition.salePeriod!.endDate!);
-  const endDate = dateObj.toISOString();
-  const endDateFormatted = new Intl.DateTimeFormat('en-US').format(dateObj);
+  const endDate = new Date(ticketDefinition.salePeriod!.endDate!);
+  const endDateFormatted = endDate.toLocaleString();
 
   return props.children({ endDate, endDateFormatted, saleEnded });
 }
@@ -308,7 +307,7 @@ export function Quantity(props: QuantityProps): React.ReactNode {
   }
 
   const quantity =
-    ticketDefinitionListService.getCurrentSelectedQuantity(ticketDefinitionId);
+    ticketDefinitionListService.getCurrentQuantity(ticketDefinitionId);
   const maxQuantity =
     ticketDefinitionListService.getMaxQuantity(ticketDefinitionId);
 

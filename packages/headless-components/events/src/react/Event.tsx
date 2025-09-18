@@ -25,6 +25,7 @@ import {
 } from '@wix/ricos';
 import React from 'react';
 import { type Event } from '../services/event-service.js';
+import { hasDescription } from '../utils/event.js';
 import * as CoreEvent from './core/Event.js';
 import '@wix/ricos/css/ricos-viewer.global.css';
 import '@wix/ricos/css/all-plugins-viewer.css';
@@ -101,6 +102,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
           event.registration?.status === 'CLOSED_MANUALLY' ||
           event.registration?.status === 'CLOSED_AUTOMATICALLY'
         }
+        data-has-description={hasDescription(event)}
         customElement={children}
         customElementProps={{}}
         {...otherProps}
