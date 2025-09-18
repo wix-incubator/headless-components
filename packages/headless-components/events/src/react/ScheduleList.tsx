@@ -14,7 +14,7 @@ enum TestIds {
   scheduleListNavigationTrigger = 'schedule-list-navigation-trigger',
   scheduleListGroups = 'schedule-list-groups',
   scheduleListGroup = 'schedule-list-group',
-  scheduleListGroupTitle = 'schedule-list-group-title',
+  scheduleListGroupDateLabel = 'schedule-list-group-date-label',
 }
 
 /**
@@ -356,9 +356,9 @@ export const Group = React.forwardRef<HTMLElement, GroupProps>((props, ref) => {
 });
 
 /**
- * Props for the ScheduleList GroupTitle component.
+ * Props for the ScheduleList GroupDateLabel component.
  */
-export interface GroupTitleProps {
+export interface GroupDateLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -376,27 +376,28 @@ export interface GroupTitleProps {
  *
  * @component
  */
-export const GroupTitle = React.forwardRef<HTMLElement, GroupTitleProps>(
-  (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+export const GroupDateLabel = React.forwardRef<
+  HTMLElement,
+  GroupDateLabelProps
+>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
 
-    return (
-      <CoreScheduleList.GroupTitle>
-        {({ dateLabel, date }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListGroupTitle}
-            customElement={children}
-            customElementProps={{ dateLabel, date }}
-            content={dateLabel}
-            {...otherProps}
-          >
-            <h2>{dateLabel}</h2>
-          </AsChildSlot>
-        )}
-      </CoreScheduleList.GroupTitle>
-    );
-  },
-);
+  return (
+    <CoreScheduleList.GroupDateLabel>
+      {({ dateLabel, date }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.scheduleListGroupDateLabel}
+          customElement={children}
+          customElementProps={{ dateLabel, date }}
+          content={dateLabel}
+          {...otherProps}
+        >
+          <h2>{dateLabel}</h2>
+        </AsChildSlot>
+      )}
+    </CoreScheduleList.GroupDateLabel>
+  );
+});

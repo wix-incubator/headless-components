@@ -230,12 +230,12 @@ export function Group(props: GroupProps): React.ReactNode {
   );
 }
 
-export interface GroupTitleProps {
+export interface GroupDateLabelProps {
   /** Render prop function */
-  children: (props: GroupTitleRenderProps) => React.ReactNode;
+  children: (props: GroupDateLabelRenderProps) => React.ReactNode;
 }
 
-export interface GroupTitleRenderProps {
+export interface GroupDateLabelRenderProps {
   /** Formatted date label (e.g., "Mon, 07 Jul") */
   dateLabel: string;
   /** Date object for the group */
@@ -243,11 +243,11 @@ export interface GroupTitleRenderProps {
 }
 
 /**
- * ScheduleList GroupTitle core component that provides group title information.
+ * ScheduleList GroupDateLabel core component that provides group date label information.
  *
  * @component
  */
-export function GroupTitle(props: GroupTitleProps): React.ReactNode {
+export function GroupDateLabel(props: GroupDateLabelProps): React.ReactNode {
   const group = useGroupContext();
 
   return props.children({

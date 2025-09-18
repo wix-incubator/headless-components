@@ -57,7 +57,7 @@ export function Schedule({
           <ScheduleListPrimitive.Groups className="space-y-8 mb-6">
             <ScheduleListPrimitive.GroupRepeater>
               <ScheduleListPrimitive.Group className="space-y-4">
-                <ScheduleListPrimitive.GroupTitle className="text-2xl font-bold text-content-primary mb-4" />
+                <ScheduleListPrimitive.GroupDateLabel className="text-2xl font-bold text-content-primary mb-4" />
                 <ScheduleListPrimitive.Items className="space-y-4">
                   <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
                     <div className="flex gap-8">
