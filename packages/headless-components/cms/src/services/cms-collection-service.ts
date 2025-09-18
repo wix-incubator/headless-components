@@ -33,6 +33,8 @@ export const CmsCollectionServiceDefinition = defineService<{
   invalidate: () => Promise<void>;
   /** Function to load items with optional query options */
   loadItems: (options?: CmsQueryOptions) => Promise<void>;
+  /** Function to create a new item in the collection */
+  createItem: (itemData: Partial<WixDataItem>) => Promise<void>;
 }>('cms-collection');
 
 /**
@@ -43,6 +45,8 @@ export interface CmsQueryOptions {
   limit?: number;
   /** Number of items to skip */
   skip?: number;
+  /** Whether to return the total count of items */
+  returnTotalCount?: boolean;
 }
 
 /**
@@ -57,17 +61,17 @@ const loadCollectionItems = async (
     throw new Error('No collection ID provided');
   }
 
-  const { limit, skip = 0 } = options;
+  const { limit, skip = 0 , returnTotalCount = false} = options;
 
   let query = items.query(collectionId);
 
   if (limit) {
-  query = query.limit(limit);
+    query = query.limit(limit);
   }
 
   query = query.skip(skip);
 
-  return await query.find();
+  return await query.find({ returnTotalCount });
 };
 
 /**
@@ -80,6 +84,7 @@ export interface CmsCollectionServiceConfig {
    * If provided, items and pagination info will be extracted from this result.
    * If not provided, service will load initial data automatically. */
   queryResult?: WixDataQueryResult;
+  queryOptions?: CmsQueryOptions;
 }
 
 /**
@@ -96,23 +101,29 @@ export const CmsCollectionServiceImplementation =
 
       // Initialize query result signal
       const queryResultSignal = signalsService.signal<WixDataQueryResult | null>(
-        config.queryResult || null,
-      );
+          config.queryResult || null,
+        );
 
       // Track current query result for cursor-based pagination
       let currentQueryResult: WixDataQueryResult | null = queryResultSignal.get();
+
+      // Use effect to maintain currentQueryResult consistency with queryResultSignal
+      signalsService.effect(() => {
+        currentQueryResult = queryResultSignal.get();
+      });
 
       const loadItems = async (options: CmsQueryOptions = {}) => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
         try {
+          // Merge passed options with config defaults
+          const mergedOptions = { ...config.queryOptions, ...options };
           const result = await loadCollectionItems(
             config.collectionId,
-            options,
+            mergedOptions,
           );
 
-          currentQueryResult = result;
           queryResultSignal.set(result);
         } catch (err) {
           errorSignal.set(extractErrorMessage(err, 'Failed to load collection items'));
@@ -154,7 +165,6 @@ export const CmsCollectionServiceImplementation =
         try {
           // Use the SDK's next() function
           const nextResult = await currentQueryResult.next();
-          currentQueryResult = nextResult;
           queryResultSignal.set(nextResult);
         } catch (err) {
           errorSignal.set(extractErrorMessage(err, 'Failed to load next page'));
@@ -184,7 +194,6 @@ export const CmsCollectionServiceImplementation =
         try {
           // Use the SDK's prev() function
           const prevResult = await currentQueryResult.prev();
-          currentQueryResult = prevResult;
           queryResultSignal.set(prevResult);
         } catch (err) {
           errorSignal.set(extractErrorMessage(err, 'Failed to load previous page'));
@@ -192,6 +201,27 @@ export const CmsCollectionServiceImplementation =
             `Failed to load previous page from collection "${config.collectionId}":`,
             err,
           );
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const createItem = async (itemData: Partial<WixDataItem>) => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          await items.insert(config.collectionId, itemData);
+
+          // Invalidate + refetch to maintain consistency with backend query logic
+          await invalidate();
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to create item'));
+          console.error(
+            `Failed to create item in collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
         } finally {
           loadingSignal.set(false);
         }
@@ -210,6 +240,7 @@ export const CmsCollectionServiceImplementation =
         invalidate,
         loadNextPage,
         loadPrevPage,
+        createItem,
       };
     },
   );
@@ -256,6 +287,7 @@ export const loadCmsCollectionServiceInitialData = async (
       [CmsCollectionServiceDefinition]: {
         collectionId,
         queryResult: result,
+        queryOptions: options,
       },
     };
   } catch (error) {

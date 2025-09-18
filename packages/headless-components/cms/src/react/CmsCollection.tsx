@@ -4,13 +4,18 @@ import {
   WixDataQueryResult,
   type CmsCollectionServiceConfig,
   type WixDataItem,
+  type CmsQueryOptions,
 } from '../services/cms-collection-service.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import type { DisplayType } from './core/CmsCollection.js';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
   cmsCollectionNext = 'cms-collection-next',
   cmsCollectionPrev = 'cms-collection-prev',
+  cmsCollectionItemsTotals = 'cms-collection-items-totals',
+  cmsCollectionItemsDisplayed = 'cms-collection-items-displayed',
+  cmsCollectionCreateItem = 'cms-collection-create-item',
 }
 
 /**
@@ -21,6 +26,7 @@ export interface RootProps {
   collection: {
     id: string;
     queryResult?: WixDataQueryResult;
+    queryOptions?: CmsQueryOptions;
   };
 }
 
@@ -60,6 +66,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const collectionServiceConfig: CmsCollectionServiceConfig = {
       collectionId: collection.id,
       queryResult: collection?.queryResult,
+      queryOptions: collection?.queryOptions,
     };
 
     const attributes = {
@@ -309,3 +316,299 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
   },
 );
 
+/**
+ * Props for CmsCollection.Totals.Count component
+ */
+export interface TotalsCountProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild or content when not */
+  children?: AsChildChildren<{
+    total: number;
+  }> | React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the total number of items in the collection.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * // Default usage
+ * function TotalCount() {
+ *   return (
+ *     <span>Total: <CmsCollection.Totals.Count /></span>
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomTotalCount() {
+ *   return (
+ *     <CmsCollection.Totals.Count asChild>
+ *       {({ total }) => (
+ *         <strong className="text-lg font-bold">
+ *           {total} items total
+ *         </strong>
+ *       )}
+ *     </CmsCollection.Totals.Count>
+ *   );
+ * }
+ * ```
+ */
+const Count = React.forwardRef<HTMLElement, TotalsCountProps>(
+  (props, ref) => {
+    const { children, asChild, className, ...otherProps } = props;
+
+    return (
+      <CoreCmsCollection.TotalsCount>
+        {({ total }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.cmsCollectionItemsTotals}
+              data-total={total}
+              customElement={children}
+              customElementProps={{
+                total,
+              }}
+              content={total}
+              {...otherProps}
+            >
+              <span>{total}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreCmsCollection.TotalsCount>
+    );
+  },
+);
+
+/**
+ * Props for CmsCollection.Totals.Displayed component
+ */
+export interface TotalsDisplayedProps {
+  /** Type of display count to show */
+  displayType?: DisplayType;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild or content when not */
+  children?: AsChildChildren<{
+    displayed: number;
+  }> | React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays various count metrics based on the displayType prop.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * // Default usage
+ * function DisplayedCount() {
+ *   return (
+ *     <div>
+ *       <span>Displayed: <CmsCollection.Totals.Displayed displayType="displayed"/></span>
+ *       <span>Items on page: <CmsCollection.Totals.Displayed displayType="currentPageAmount"/></span>
+ *       <span>Current page: <CmsCollection.Totals.Displayed displayType="currentPageNum"/></span>
+ *       <span>Total pages: <CmsCollection.Totals.Displayed displayType="totalPages"/></span>
+ *     </div>
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomDisplayedCount() {
+ *   return (
+ *     <CmsCollection.Totals.Displayed displayType="displayed" asChild>
+ *       {({ displayed }) => (
+ *         <div className="count-badge">
+ *           <span className="count-number">{displayed}</span>
+ *           <span className="count-label">items shown</span>
+ *         </div>
+ *       )}
+ *     </CmsCollection.Totals.Displayed>
+ *   );
+ * }
+ * ```
+ */
+const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
+  (props, ref) => {
+    const { children, asChild, className, displayType, ...otherProps } = props;
+
+    return (
+      <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
+        {({ displayed }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.cmsCollectionItemsDisplayed}
+              data-displayed={displayed}
+              data-display-type={displayType || 'displayed'}
+              customElement={children}
+              customElementProps={{
+                displayed,
+              }}
+              content={displayed}
+              {...otherProps}
+            >
+              <span>{displayed}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreCmsCollection.TotalsDisplayed>
+    );
+  },
+);
+
+/**
+ * Container for totals-related components
+ */
+export const Totals = {
+  Count,
+  Displayed,
+};
+
+/**
+ * Props for CmsCollection.CreateItemAction component
+ */
+export interface CreateItemActionProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Button label for default rendering */
+  label?: string;
+  /** Custom render function when using asChild or button content when not */
+  children?:
+    | AsChildChildren<{
+        disabled: boolean;
+        isLoading: boolean;
+        onClick: () => void;
+      }>
+    | React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Loading state text to display when creating item */
+  loadingState?: string | React.ReactNode;
+  /** Data to use when creating the item. If not provided, creates an empty item. */
+  itemData?: Partial<WixDataItem>;
+}
+
+/**
+ * Displays a button to create a new item in the collection. Integrates with the collection service to handle item creation with loading states.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { CmsCollection } from '@wix/cms/components';
+ *
+ * // Default usage
+ * function CreateButton() {
+ *   return (
+ *     <CmsCollection.CreateItemAction
+ *       label="Add Item"
+ *       className="btn-primary"
+ *       loadingState="Creating..."
+ *       itemData={{ title: "New Item", status: "draft" }}
+ *     />
+ *   );
+ * }
+ *
+ * // Custom implementation using asChild pattern
+ * function CustomCreateButton() {
+ *   return (
+ *     <CmsCollection.CreateItemAction
+ *       asChild
+ *       itemData={{ title: "New Article", status: "draft" }}
+ *     >
+ *       {({ disabled, isLoading, onClick }) => (
+ *         <button
+ *           disabled={disabled}
+ *           onClick={onClick}
+ *           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+ *         >
+ *           <PlusIcon className="w-4 h-4" />
+ *           {isLoading ? 'Creating...' : 'Add New Article'}
+ *         </button>
+ *       )}
+ *     </CmsCollection.CreateItemAction>
+ *   );
+ * }
+ *
+ * // Simple content override
+ * function SimpleCreateButton() {
+ *   return (
+ *     <CmsCollection.CreateItemAction
+ *       label="New Post"
+ *       loadingState="Publishing..."
+ *       itemData={{ category: "blog", status: "published" }}
+ *     >
+ *       📝 Create Post
+ *     </CmsCollection.CreateItemAction>
+ *   );
+ * }
+ * ```
+ */
+export const CreateItemAction = React.forwardRef<
+  HTMLButtonElement,
+  CreateItemActionProps
+>((props, ref) => {
+  const {
+    asChild,
+    children,
+    className,
+    label = 'Create Item',
+    loadingState = 'Creating...',
+    itemData = {},
+    ...otherProps
+  } = props;
+
+  return (
+    <CoreCmsCollection.CreateItemAction>
+      {({ createItem, isLoading }) => {
+        const disabled = isLoading;
+        // const onClick = async () => {
+        //   try {
+        //     await createItem(itemData);
+        //   } catch (error) {
+        //     // Error handling is managed by the service
+        //     console.error('Failed to create item:', error);
+        //   }
+        // };
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={() => createItem(itemData)}
+            disabled={disabled}
+            data-testid={TestIds.cmsCollectionCreateItem}
+            data-loading={isLoading}
+            customElement={children}
+            customElementProps={{
+              disabled,
+              isLoading,
+              onClick: () => createItem(itemData),
+            }}
+            content={isLoading ? loadingState : label}
+            {...otherProps}
+          >
+            <button disabled={disabled}>
+              {isLoading ? loadingState : label}
+            </button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreCmsCollection.CreateItemAction>
+  );
+});
