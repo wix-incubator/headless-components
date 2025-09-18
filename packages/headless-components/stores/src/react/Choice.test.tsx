@@ -995,4 +995,23 @@ describe('Choice Components', () => {
       expect(choice.addedPrice).toBe('$2.00');
     });
   });
+
+  it('renders data-component-tag attribute on first DOM element', () => {
+    const mockUseContext = vi.spyOn(React, 'useContext');
+    mockUseContext.mockReturnValue(mockTextChoiceContext);
+
+    render(
+      <Choice.Root>
+        <div>Content</div>
+      </Choice.Root>,
+    );
+
+    const rootElement = screen.getByTestId('choice-root');
+    expect(rootElement).toHaveAttribute(
+      'data-component-tag',
+      'stores.choice-root',
+    );
+
+    mockUseContext.mockRestore();
+  });
 });

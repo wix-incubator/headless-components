@@ -4,6 +4,7 @@ import * as Category from './Category.js';
 import { type Category as CategoryType } from './Category.js';
 import { type CategoriesListServiceConfig } from '../services/categories-list-service.js';
 import { AsChildSlot } from '@wix/headless-utils/react';
+import { DataComponentTags } from '../data-component-tags.js';
 
 enum TestIds {
   categoryListRoot = 'category-list',
@@ -73,7 +74,7 @@ export interface CategoryListCategoryRepeaterProps {
  * }
  * ```
  */
-export function Root(props: CategoryListRootProps): React.ReactNode {
+export const Root = (props: CategoryListRootProps): React.ReactNode => {
   const { categories, categoriesListConfig, children, emptyState } = props;
 
   // Create service config, prioritizing categoriesListConfig, then categories prop
@@ -85,13 +86,22 @@ export function Root(props: CategoryListRootProps): React.ReactNode {
       categoriesListConfig={serviceConfig}
       data-testid={TestIds.categoryListRoot}
     >
-      {children}
-      {emptyState && (
-        <CoreCategoryList.EmptyState>{emptyState}</CoreCategoryList.EmptyState>
-      )}
+      <AsChildSlot
+        data-testid={TestIds.categoryListRoot}
+        data-component-tag={DataComponentTags.categoryListRoot}
+      >
+        {children}
+        {emptyState && (
+          <CoreCategoryList.EmptyState>
+            {emptyState}
+          </CoreCategoryList.EmptyState>
+        )}
+      </AsChildSlot>
     </CoreCategoryList.Root>
   );
-}
+};
+
+Root.displayName = 'CategoryList.Root';
 
 /**
  * Displays loading state while category data is being fetched.

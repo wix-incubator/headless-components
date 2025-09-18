@@ -1340,4 +1340,18 @@ describe('Option Components', () => {
       expect(repeaterProps).toBeDefined();
     });
   });
+
+  it('renders data-component-tag attribute on first DOM element', () => {
+    render(
+      <Option.Root option={mockColorOption}>
+        <div>Content</div>
+      </Option.Root>,
+    );
+
+    const rootElement = screen.getByTestId('option-root');
+    expect(rootElement).toHaveAttribute(
+      'data-component-tag',
+      'stores.option-root',
+    );
+  });
 });

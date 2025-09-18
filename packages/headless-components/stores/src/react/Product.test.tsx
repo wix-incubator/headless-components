@@ -1325,4 +1325,18 @@ describe('Product Components', () => {
       expect(variantsProps).toBeDefined();
     });
   });
+
+  it('renders data-component-tag attribute on first DOM element', () => {
+    render(
+      <Product.Root product={mockProduct}>
+        <div>Content</div>
+      </Product.Root>,
+    );
+
+    const rootElement = screen.getByTestId('product-root');
+    expect(rootElement).toHaveAttribute(
+      'data-component-tag',
+      'stores.product-root',
+    );
+  });
 });
