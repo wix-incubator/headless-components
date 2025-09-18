@@ -94,16 +94,16 @@ export interface FieldRenderProps {
  * ```tsx
  * // Simple text field
  * <CmsItem.Field fieldId="title" asChild>
- *   {React.forwardRef(({ fieldValue, ...props }, ref) => (
+ *   {({ fieldValue, ...props }, ref) => (
  *     <h1 ref={ref} {...props} className="text-4xl font-bold">
  *       {fieldValue}
  *     </h1>
- *   ))}
+ *   )}
  * </CmsItem.Field>
  *
  * // Image field
  * <CmsItem.Field fieldId="heroImage" asChild>
- *   {React.forwardRef(({ fieldValue, ...props }, ref) => (
+ *   {({ fieldValue, ...props }, ref) => (
  *     <img
  *       ref={ref}
  *       {...props}
@@ -111,19 +111,19 @@ export interface FieldRenderProps {
  *       alt={fieldValue?.alt}
  *       className="w-full h-auto rounded-lg"
  *     />
- *   ))}
+ *   )}
  * </CmsItem.Field>
  *
  * // Complex field with custom logic
  * <CmsItem.Field fieldId="rating" asChild>
- *   {React.forwardRef(({ fieldValue, ...props }, ref) => (
+ *   {({ fieldValue, ...props }, ref) => (
  *     <div ref={ref} {...props} className="flex items-center gap-1">
  *       <StarRating value={fieldValue?.rating} />
  *       <span className="text-sm text-content-secondary">
  *         ({fieldValue?.rating}/5)
  *       </span>
  *     </div>
- *   ))}
+ *   )}
  * </CmsItem.Field>
  * ```
  */
