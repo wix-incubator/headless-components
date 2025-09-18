@@ -3,18 +3,12 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-
-export interface Tag {
-  value: string;
-  index: number;
-}
-
 export interface TagServiceAPI {
-  tag: Signal<Tag>;
+  tag: Signal<string>;
 }
 
 export interface TagServiceConfig {
-  tag: Tag;
+  tag: string;
 }
 
 export const TagServiceDefinition = defineService<
@@ -27,7 +21,7 @@ export const TagService = implementService.withConfig<TagServiceConfig>()(
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
-    const tag = signalsService.signal<Tag>(config.tag);
+    const tag = signalsService.signal<string>(config.tag);
 
     return {
       tag,

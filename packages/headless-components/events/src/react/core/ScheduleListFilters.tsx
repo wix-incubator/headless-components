@@ -184,11 +184,11 @@ export function TagFilterRepeater(
 
   return (
     <>
-      {tagFiltersContext.tags.map((tag, index) => {
-        const isActive = tagFiltersContext.currentTagFilters.includes(tag);
+      {tagFiltersContext.tags.map((tag) => {
+        const active = tagFiltersContext.currentTagFilters.includes(tag);
 
         const toggleTag = () => {
-          if (isActive) {
+          if (active) {
             scheduleListService.removeTagFilter(tag);
           } else {
             scheduleListService.addTagFilter(tag);
@@ -196,10 +196,10 @@ export function TagFilterRepeater(
         };
 
         return (
-          <Tag.Root key={tag} tag={{ value: tag, index }}>
+          <Tag.Root key={tag} tag={tag}>
             {React.cloneElement(props.children as React.ReactElement, {
               onClick: toggleTag,
-              active: isActive,
+              active,
             })}
           </Tag.Root>
         );

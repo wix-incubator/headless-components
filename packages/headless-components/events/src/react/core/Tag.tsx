@@ -4,7 +4,6 @@ import React from 'react';
 import {
   TagService,
   TagServiceDefinition,
-  type Tag,
   type TagServiceConfig,
 } from '../../services/tag-service.js';
 
@@ -12,7 +11,7 @@ export interface RootProps {
   /** Child components that will have access to the tag service */
   children: React.ReactNode;
   /** Tag data */
-  tag: Tag;
+  tag: string;
 }
 
 /**
@@ -40,29 +39,26 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
-export interface LabelProps {
+export interface TagProps {
   /** Render prop function */
-  children: (props: LabelRenderProps) => React.ReactNode;
+  children: (props: TagRenderProps) => React.ReactNode;
 }
 
-export interface LabelRenderProps {
+export interface TagRenderProps {
   /** Tag value/text */
   text: string;
-  /** Tag index */
-  index: number;
 }
 
 /**
- * Tag Label core component that provides tag label data.
+ * Tag core component that provides tag data.
  *
  * @component
  */
-export function Label(props: LabelProps): React.ReactNode {
+export function Tag(props: TagProps): React.ReactNode {
   const tagService = useService(TagServiceDefinition);
   const tag = tagService.tag.get();
 
   return props.children({
-    text: tag.value,
-    index: tag.index,
+    text: tag,
   });
 }

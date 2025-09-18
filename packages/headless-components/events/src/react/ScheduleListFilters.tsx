@@ -279,7 +279,7 @@ export interface TagFilterRepeaterProps {
  * @example
  * ```tsx
  * <ScheduleListFilters.TagFilterRepeater>
- *   <Tag.Label />
+ *   <Tag.Button />
  * </ScheduleListFilters.TagFilterRepeater>
  * ```
  */

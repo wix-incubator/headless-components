@@ -48,7 +48,7 @@ export function Schedule({
             />
             <ScheduleListFiltersPrimitive.TagFilters className="flex gap-2 flex-wrap">
               <ScheduleListFiltersPrimitive.TagFilterRepeater>
-                <TagPrimitive.Label className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
+                <TagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
               </ScheduleListFiltersPrimitive.TagFilterRepeater>
             </ScheduleListFiltersPrimitive.TagFilters>
           </ScheduleListFiltersPrimitive.Filters>

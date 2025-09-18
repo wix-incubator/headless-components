@@ -1,11 +1,11 @@
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
-import { type Tag } from '../services/tag-service.js';
 import * as CoreTag from './core/Tag.js';
 
 enum TestIds {
   tagRoot = 'tag-root',
   tagLabel = 'tag-label',
+  tagButton = 'tag-button',
 }
 
 /**
@@ -13,7 +13,7 @@ enum TestIds {
  */
 export interface RootProps {
   /** Tag data */
-  tag: Tag;
+  tag: string;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components that will have access to the tag */
@@ -36,6 +36,15 @@ export interface RootProps {
  *   return (
  *     <Tag.Root tag={tag}>
  *       <Tag.Label />
+ *     </Tag.Root>
+ *   );
+ * }
+ *
+ * // For interactive tags
+ * function InteractiveTagComponent({ tag, onClick, active }) {
+ *   return (
+ *     <Tag.Root tag={tag}>
+ *       <Tag.Button onClick={onClick} active={active} />
  *     </Tag.Root>
  *   );
  * }
@@ -68,31 +77,20 @@ export interface LabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ text: string; index: number }>;
+  children?: AsChildChildren<{ text: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Click handler for interactive tags (e.g., filters) */
-  onClick?: () => void;
-  /** Whether the tag is in an active/selected state */
-  active?: boolean;
 }
 
 /**
- * Displays the tag label with customizable rendering.
- * Supports both display and interactive modes for filtering.
+ * Displays the tag label as a simple span element.
+ * Use this for non-interactive tag display.
  *
  * @component
  * @example
  * ```tsx
- * // Default usage (display mode)
+ * // Default usage
  * <Tag.Label className="px-2 py-1 bg-gray-100 rounded" />
- *
- * // Interactive mode (for filtering)
- * <Tag.Label
- *   className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
- *   onClick={handleClick}
- *   active={isSelected}
- * />
  *
  * // asChild with primitive
  * <Tag.Label asChild>
@@ -101,7 +99,7 @@ export interface LabelProps {
  *
  * // asChild with react component
  * <Tag.Label asChild>
- *   {React.forwardRef(({ text, index, ...props }, ref) => (
+ *   {React.forwardRef(({ text, ...props }, ref) => (
  *     <span ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded">
  *       {text}
  *     </span>
@@ -110,15 +108,11 @@ export interface LabelProps {
  * ```
  */
 export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
-  const { asChild, children, className, onClick, active, ...otherProps } =
-    props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreTag.Label>
-      {({ text, index }) => {
-        const handleClick = onClick ? () => onClick() : undefined;
-        const interactive = !!onClick;
-
+    <CoreTag.Tag>
+      {({ text }) => {
         return (
           <AsChildSlot
             ref={ref}
@@ -126,23 +120,93 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
             className={className}
             data-testid={TestIds.tagLabel}
             customElement={children}
-            customElementProps={{ text, index }}
+            customElementProps={{ text }}
             content={text}
-            onClick={handleClick}
-            data-active={active}
-            data-interactive={interactive}
             {...otherProps}
           >
-            {interactive ? (
-              <button onClick={handleClick} data-active={active}>
-                {text}
-              </button>
-            ) : (
-              <span>{text}</span>
-            )}
+            <span>{text}</span>
           </AsChildSlot>
         );
       }}
-    </CoreTag.Label>
+    </CoreTag.Tag>
   );
 });
+
+/**
+ * Props for the Tag Button component.
+ */
+export interface ButtonProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ text: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Click handler for the button */
+  onClick?: () => void;
+  /** Whether the tag is in an active/selected state */
+  active?: boolean;
+}
+
+/**
+ * Displays the tag as an interactive button element.
+ * Use this for interactive tags like filters or selectable options.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Tag.Button
+ *   className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
+ *   onClick={handleClick}
+ *   active={isSelected}
+ * />
+ *
+ * // asChild with primitive
+ * <Tag.Button asChild onClick={handleClick} active={isSelected}>
+ *   <button className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200" />
+ * </Tag.Button>
+ *
+ * // asChild with react component
+ * <Tag.Button asChild onClick={handleClick} active={isSelected}>
+ *   {React.forwardRef(({ text, ...props }, ref) => (
+ *     <button ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+ *       {text}
+ *     </button>
+ *   ))}
+ * </Tag.Button>
+ * ```
+ */
+export const Button = React.forwardRef<HTMLElement, ButtonProps>(
+  (props, ref) => {
+    const { asChild, children, className, onClick, active, ...otherProps } =
+      props;
+
+    return (
+      <CoreTag.Tag>
+        {({ text }) => {
+          const handleClick = onClick ? () => onClick() : undefined;
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.tagButton}
+              customElement={children}
+              customElementProps={{ text }}
+              content={text}
+              onClick={handleClick}
+              data-active={active}
+              {...otherProps}
+            >
+              <button onClick={handleClick} data-active={active}>
+                {text}
+              </button>
+            </AsChildSlot>
+          );
+        }}
+      </CoreTag.Tag>
+    );
+  },
+);

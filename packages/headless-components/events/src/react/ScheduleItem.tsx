@@ -455,7 +455,7 @@ export interface TagRepeaterProps {
  * @example
  * ```tsx
  * <Schedule.TagRepeater>
- *   <Tag.Text />
+ *   <Tag.Label />
  * </Schedule.TagRepeater>
  * ```
  */
@@ -466,7 +466,7 @@ export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
     <CoreScheduleItem.Tags>
       {({ tags }) =>
         tags.map((tagValue, index) => (
-          <Tag.Root key={index} tag={{ value: tagValue, index }}>
+          <Tag.Root key={index} tag={tagValue}>
             {children}
           </Tag.Root>
         ))
