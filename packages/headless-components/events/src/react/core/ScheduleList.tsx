@@ -196,7 +196,6 @@ export interface TagFiltersRenderProps {
   tags: string[];
   /** Current tag filters */
   currentTagFilters: string[];
-
   /** Whether any tag filters are active */
   hasActiveTagFilters: boolean;
 }

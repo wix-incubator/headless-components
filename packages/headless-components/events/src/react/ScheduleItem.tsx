@@ -12,8 +12,6 @@ enum TestIds {
   scheduleDescription = 'schedule-description',
   scheduleStage = 'schedule-stage',
   scheduleTags = 'schedule-tags',
-  scheduleTagItems = 'schedule-tag-items',
-  scheduleTag = 'schedule-tag',
 }
 
 export { ScheduleItem };

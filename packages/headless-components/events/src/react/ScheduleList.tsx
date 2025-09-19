@@ -46,9 +46,9 @@ export interface RootProps {
  *           <ScheduleItem.Description />
  *           <ScheduleItem.Stage />
  *           <ScheduleItem.Tags>
- *             <ScheduleItemTag.Repeater>
+ *             <ScheduleItem.TagRepeater>
  *              <ScheduleItemTag.Label />
- *             </ScheduleItemTag.Repeater>
+ *             </ScheduleItem.TagRepeater>
  *           </ScheduleItem.Tags>
  *         </ScheduleList.ItemRepeater>
  *       </ScheduleList.Items>
@@ -99,9 +99,9 @@ export interface ItemsProps {
  *     <ScheduleItem.Description />
  *     <ScheduleItem.Stage />
  *     <ScheduleItem.Tags>
- *       <ScheduleItemTag.Repeater>
+ *       <ScheduleItem.TagRepeater>
  *         <ScheduleItemTag.Label />
- *       </ScheduleItemTag.Repeater>
+ *       </ScheduleItem.TagRepeater>
  *     </ScheduleItem.Tags>
  *   </ScheduleList.ItemRepeater>
  * </ScheduleList.Items>
@@ -152,14 +152,13 @@ export interface ItemRepeaterProps {
  *   <ScheduleItem.Description />
  *   <ScheduleItem.Stage />
  *   <ScheduleItem.Tags>
- *     <ScheduleItemTag.Repeater>
+ *     <ScheduleItem.TagRepeater>
  *       <ScheduleItemTag.Label />
- *     </ScheduleItemTag.Repeater>
+ *     </ScheduleItem.TagRepeater>
  *   </ScheduleItem.Tags>
  * </ScheduleList.ItemRepeater>
  * ```
  */
-
 export const ItemRepeater = (props: ItemRepeaterProps): React.ReactNode => {
   const { children, className } = props;
 
@@ -268,9 +267,9 @@ export interface GroupRepeaterProps {
  *       <ScheduleItem.Description />
  *       <ScheduleItem.Stage />
  *       <ScheduleItem.Tags>
- *         <ScheduleItemTag.Repeater>
+ *         <ScheduleItem.TagRepeater>
  *           <ScheduleItemTag.Label />
- *         </ScheduleItemTag.Repeater>
+ *         </ScheduleItem.TagRepeater>
  *       </ScheduleItem.Tags>
  *     </ScheduleItemsGroup.GroupItemRepeater>
  *   </ScheduleItemsGroup.GroupItems>
