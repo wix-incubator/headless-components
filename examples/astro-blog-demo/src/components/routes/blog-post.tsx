@@ -14,9 +14,9 @@ export function BlogPostRoute() {
 
   return (
     <React.Suspense fallback={<div>Loading blog post...</div>}>
-      <div className="bg-background min-h-screen">
-        <div className="space-y-14 px-6 py-12">
-          <div className="mx-auto max-w-3xl">
+      <div className="min-h-screen bg-background">
+        <div className="px-6 py-12">
+          <div className="mx-auto mb-14 max-w-3xl">
             <PostPage
               blogPostServiceConfig={blogPostServiceConfig}
               href={window.location.href}

@@ -1,6 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import "@/styles/theme.css";
+import "@/styles/global.css";
 
 Astro.response.status = 404;
 export const prerender = false;
@@ -27,7 +27,7 @@ export const prerender = false;
         {/* 404 Icon */}
         <div class="mb-8">
           <div
-            class="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20"
+            class="bg-gradient-primary mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full"
           >
             <svg
               class="text-content-muted h-12 w-12"
@@ -43,8 +43,8 @@ export const prerender = false;
               ></path>
             </svg>
           </div>
-          <h1 class="text-content-primary mb-2 text-6xl font-bold">404</h1>
-          <h2 class="text-content-secondary mb-4 text-2xl font-semibold">
+          <h1 class="text-content-primary mb-2 font-heading text-6xl">404</h1>
+          <h2 class="text-content-secondary mb-4 font-paragraph text-2xl">
             Page Not Found
           </h2>
         </div>

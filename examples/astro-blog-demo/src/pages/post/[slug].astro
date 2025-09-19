@@ -9,7 +9,7 @@ import { SEO } from "@wix/seo/components";
 import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { ClientRouter } from "astro:transitions";
 
-import "@/styles/theme.css";
+import "@/styles/global.css";
 
 const { slug } = Astro.params;
 export const prerender = false;
@@ -56,9 +56,9 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
     <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
   </head>
   <body>
-    <div class="bg-background min-h-screen">
-      <div class="space-y-14 px-6 py-12">
-        <div class="mx-auto max-w-3xl">
+    <div class="min-h-screen bg-background">
+      <div class="px-6 py-12">
+        <div class="mx-auto mb-14 max-w-3xl">
           <PostPage
             client:load
             blogPostServiceConfig={blogPostServiceConfig}

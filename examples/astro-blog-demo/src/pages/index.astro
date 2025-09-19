@@ -11,7 +11,7 @@ import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { SEO } from "@wix/seo/components";
 import { ClientRouter } from "astro:transitions";
 
-import "@/styles/theme.css";
+import "@/styles/global.css";
 
 export const prerender = false;
 
@@ -71,7 +71,7 @@ const customCategoriesToPrepend = [
     <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
   </head>
   <body>
-    <div class="bg-background min-h-screen">
+    <div class="min-h-screen bg-background">
       <div class="mx-auto max-w-6xl px-6 py-12">
         <BlogCategoriesSection
           pathname={Astro.url.pathname}
@@ -83,6 +83,7 @@ const customCategoriesToPrepend = [
           client:load
           blogFeedServiceConfig={blogFeedServiceConfig}
           postPageBaseUrl="/blog/post/"
+          categoryPageBaseUrl="/blog/category/"
           dateLocale="en-US"
         />
       </div>

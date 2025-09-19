@@ -75,7 +75,7 @@ export function BlogFeedCardSideBySide({
           </Blog.Post.ReadingTime>
         </SeparatedItems>
 
-        <div className="mt-auto mb-0"></div>
+        <div className="mb-0 mt-auto"></div>
 
         {readMoreText && (
           <Button className="mt-4 w-fit" asChild>
@@ -137,7 +137,7 @@ export function BlogFeedCardEditorial({
 
       <PostExcerpt className="mb-4" />
 
-      <div className="mt-auto mb-0"></div>
+      <div className="mb-0 mt-auto"></div>
 
       <SeparatedItems className="text-content-secondary text-sm">
         <Blog.Post.PublishDate locale={dateLocale} />
