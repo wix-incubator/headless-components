@@ -1,17 +1,17 @@
 ---
 import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
 import FeedPage from "@/components/blog/FeedPage";
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { KitchensinkLayout } from "@/layouts/KitchensinkLayout";
 import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
   loadBlogFeedServiceConfig,
 } from "@wix/blog/services";
 
-import "./theme.css";
 import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { SEO } from "@wix/seo/components";
+import { ClientRouter } from "astro:transitions";
+
+import "@/styles/theme.css";
 
 export const prerender = false;
 
@@ -61,10 +61,16 @@ const customCategoriesToPrepend = [
 ];
 ---
 
-<BaseLayout>
-  <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />
-
-  <KitchensinkLayout>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <ClientRouter />
+    <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
+  </head>
+  <body>
     <div class="bg-background min-h-screen">
       <div class="mx-auto max-w-6xl px-6 py-12">
         <BlogCategoriesSection
@@ -81,5 +87,5 @@ const customCategoriesToPrepend = [
         />
       </div>
     </div>
-  </KitchensinkLayout>
-</BaseLayout>
+  </body>
+</html>
