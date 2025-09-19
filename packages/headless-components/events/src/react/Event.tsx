@@ -737,7 +737,7 @@ export const XShare = React.forwardRef<HTMLElement, XShareProps>(
   (props, ref) => {
     const { eventPageUrl, asChild, children, className, ...otherProps } = props;
 
-    const href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(eventPageUrl)}`;
+    const href = `https://x.com/intent/post?url=${encodeURIComponent(eventPageUrl)}`;
 
     return (
       <AsChildSlot
