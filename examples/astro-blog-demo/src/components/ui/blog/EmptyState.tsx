@@ -75,11 +75,13 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
       >
         {showIcon && (icon || defaultIcon)}
 
-        <h3 className="text-content-primary mb-4 text-2xl font-semibold">
+        <h3 className="text-content-primary mb-4 font-heading text-2xl">
           {title}
         </h3>
 
-        {subtitle && <p className="text-content-muted">{subtitle}</p>}
+        {subtitle && (
+          <p className="text-content-muted font-paragraph">{subtitle}</p>
+        )}
       </div>
     );
   }

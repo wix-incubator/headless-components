@@ -54,13 +54,13 @@ export default function BlogCategoriesSection({
           asChild
           pathname={pathname}
         >
-          <section className="group bg-surface-card border-surface-primary relative grid min-h-[182px] place-items-center gap-6 overflow-hidden rounded-xl border p-9 text-center">
-            <figure className="group-data-[has-image=true]:after:bg-background/80 absolute inset-0 after:absolute after:inset-0 empty:hidden">
+          <section className="bg-surface-card border-surface-primary group relative grid min-h-[182px] place-items-center gap-6 overflow-hidden rounded-xl border p-9 text-center">
+            <figure className="absolute inset-0 after:absolute after:inset-0 empty:hidden group-data-[has-image=true]:after:bg-background/80">
               <Blog.Category.Image className="h-full w-full object-cover" />
             </figure>
             <div className="isolate mx-auto flex max-w-4xl flex-col justify-center gap-3">
-              <Blog.Category.Label className="text-foreground text-5xl tracking-tight" />
-              <Blog.Category.Description className="text-foreground text-lg text-balance" />
+              <Blog.Category.Label className="text-content-primary font-heading text-5xl" />
+              <Blog.Category.Description className="text-content-secondary text-balance font-paragraph text-lg" />
             </div>
             <div className="isolate">
               <div className="flex flex-wrap justify-center gap-3">

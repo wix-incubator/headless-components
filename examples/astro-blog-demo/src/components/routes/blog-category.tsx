@@ -15,7 +15,7 @@ export function BlogCategoryRoute() {
 
   return (
     <React.Suspense fallback={<div>Loading category...</div>}>
-      <div className="bg-background min-h-screen">
+      <div className="min-h-screen bg-background">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <BlogCategoriesSection
             pathname={location.pathname}

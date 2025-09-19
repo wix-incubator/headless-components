@@ -61,58 +61,77 @@ export const PostContent = React.forwardRef<HTMLDivElement, PostContentProps>(
 
 PostContent.displayName = "PostContent";
 
+const cssVars = {
+  foreground: "var(--wix-theme-foreground)",
+  background: "var(--wix-theme-background)",
+  headingFontFamily: "var(--theme-font-family-heading)",
+  headingFontWeight: "var(--theme-font-weight-bold)",
+  paragraphFontFamily: "var(--theme-font-family-paragraph)",
+  paragraphFontWeight: "var(--theme-font-weight-normal)",
+  border: "var(--theme-color-border-40)",
+};
+
 const customStylesForPostContent: RicosCustomStyles = {
   h1: {
-    color: "var(--color-foreground)",
-    fontWeight: "var(--font-weight-bold)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.headingFontFamily,
+    fontWeight: cssVars.headingFontWeight,
     fontSize: "var(--text-5xl)",
   },
   h2: {
-    color: "var(--color-foreground)",
-    fontWeight: "var(--font-weight-bold)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.headingFontFamily,
+    fontWeight: cssVars.headingFontWeight,
     fontSize: "var(--text-4xl)",
   },
   h3: {
-    color: "var(--color-foreground)",
-    fontWeight: "var(--font-weight-bold)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.headingFontFamily,
+    fontWeight: cssVars.headingFontWeight,
     fontSize: "var(--text-3xl)",
   },
   h4: {
-    color: "var(--color-foreground)",
-    fontWeight: "var(--font-weight-bold)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.headingFontFamily,
+    fontWeight: cssVars.headingFontWeight,
     fontSize: "var(--text-2xl)",
   },
   h5: {
-    color: "var(--color-foreground)",
-    fontWeight: "var(--font-weight-bold)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.headingFontFamily,
+    fontWeight: cssVars.headingFontWeight,
     fontSize: "var(--text-xl)",
   },
   h6: {
-    color: "var(--color-foreground)",
-    fontWeight: "var(--font-weight-bold)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.headingFontFamily,
+    fontWeight: cssVars.headingFontWeight,
     fontSize: "var(--text-lg)",
   },
   p: {
-    color: "var(--color-foreground)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.paragraphFontFamily,
+    fontWeight: cssVars.paragraphFontWeight,
     fontSize: "var(--text-lg)",
   },
   quote: {
-    color: "var(--color-foreground)",
+    color: cssVars.foreground,
+    fontFamily: cssVars.paragraphFontFamily,
   },
   codeBlock: {
-    color: "var(--color-foreground)",
+    color: cssVars.foreground,
   },
   audio: {
-    titleColor: "var(--color-foreground)",
-    subtitleColor: "var(--color-foreground)",
-    backgroundColor: "var(--color-background)",
-    borderColor: "var(--color-border)",
-    actionColor: "var(--color-foreground)",
-    actionTextColor: "var(--color-background)",
+    titleColor: cssVars.foreground,
+    subtitleColor: cssVars.foreground,
+    backgroundColor: cssVars.background,
+    borderColor: cssVars.border,
+    actionColor: cssVars.foreground,
+    actionTextColor: cssVars.background,
   },
   table: {
-    borderColor: "var(--color-border)",
-    backgroundColor: "var(--color-background)",
+    borderColor: cssVars.border,
+    backgroundColor: cssVars.background,
   },
 };
 
