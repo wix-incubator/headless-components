@@ -102,6 +102,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
           event.registration?.status === 'CLOSED_MANUALLY' ||
           event.registration?.status === 'CLOSED_AUTOMATICALLY'
         }
+        data-has-image={!!event.mainImage}
         data-has-description={hasDescription(event)}
         customElement={children}
         customElementProps={{}}

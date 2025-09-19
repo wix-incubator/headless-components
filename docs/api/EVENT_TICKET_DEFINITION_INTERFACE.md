@@ -32,11 +32,11 @@ interface RootProps {
 **Data Attributes**
 
 - `data-testid="ticket-definition-root"` - Applied to ticket definition element
-- `data-sold-out` - Is ticket definition sold out
-- `data-free` - Is ticket definition free
-- `data-fixed-pricing` - Has ticket definition fixed pricing method
-- `data-guest-pricing` - Has ticket definition guest pricing method
-- `data-pricing-options` - Has ticket definition pricing options
+- `data-sold-out` - Ticket definition is sold out
+- `data-free` - Ticket definition is free
+- `data-fixed-pricing` - Ticket definition has fixed pricing method
+- `data-guest-pricing` - Ticket definition has guest pricing method
+- `data-pricing-options` - Ticket definition has pricing options
 
 ---
 
@@ -450,13 +450,14 @@ interface PricingOptionRepeaterProps {
 | `data-testid="ticket-definition-description"`     | TicketDefinition.Description    | Ticket definition description element      |
 | `data-testid="ticket-definition-fixed-pricing"`   | TicketDefinition.FixedPricing   | Fixed pricing element                      |
 | `data-testid="ticket-definition-guest-pricing"`   | TicketDefinition.GuestPricing   | Guest pricing input element                |
+| `data-testid="ticket-definition-pricing-range"`   | TicketDefinition.PricingRange   | Pricing range element                      |
 | `data-testid="ticket-definition-remaining"`       | TicketDefinition.Remaining      | Remaining tickets element                  |
 | `data-testid="ticket-definition-sale-start-date"` | TicketDefinition.SaleStartDate  | Sale start date element                    |
 | `data-testid="ticket-definition-sale-end-date"`   | TicketDefinition.SaleEndDate    | Sale end date element                      |
 | `data-testid="ticket-definition-quantity"`        | TicketDefinition.Quantity       | Quantity element                           |
 | `data-testid="ticket-definition-pricing-options"` | TicketDefinition.PricingOptions | Pricing options container                  |
-| `data-sold-out`                                   | TicketDefinition.Root           | Is ticket definition sold out              |
-| `data-free`                                       | TicketDefinition.Root           | Is ticket definition free                  |
-| `data-fixed-pricing`                              | TicketDefinition.Root           | Has ticket definition fixed pricing method |
-| `data-guest-pricing`                              | TicketDefinition.Root           | Has ticket definition guest pricing method |
-| `data-pricing-options`                            | TicketDefinition.Root           | Has ticket definition pricing options      |
+| `data-sold-out`                                   | TicketDefinition.Root           | Ticket definition is sold out              |
+| `data-free`                                       | TicketDefinition.Root           | Ticket definition is free                  |
+| `data-fixed-pricing`                              | TicketDefinition.Root           | Ticket definition has fixed pricing method |
+| `data-guest-pricing`                              | TicketDefinition.Root           | Ticket definition has guest pricing method |
+| `data-pricing-options`                            | TicketDefinition.Root           | Ticket definition has pricing options      |
