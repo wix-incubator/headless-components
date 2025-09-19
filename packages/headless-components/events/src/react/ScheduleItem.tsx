@@ -1,7 +1,7 @@
 import React from 'react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreScheduleItem from './core/ScheduleItem.js';
-import * as Tag from './ScheduleItemTag.js';
+import * as ScheduleItemTag from './ScheduleItemTag.js';
 import { type ScheduleItem } from '../services/schedule-item-service.js';
 
 enum TestIds {
@@ -19,7 +19,7 @@ enum TestIds {
 export { ScheduleItem };
 
 /**
- * Props for the Schedule Root component.
+ * Props for the ScheduleItem Root component.
  */
 export interface RootProps {
   /** Schedule item data */
@@ -34,7 +34,7 @@ export interface RootProps {
 
 /**
  * Root container that provides schedule item service data to all child components.
- * Must be used as the top-level Schedule component.
+ * Must be used as the top-level ScheduleItem component.
  *
  * @order 1
  * @component
@@ -74,7 +74,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 });
 
 /**
- * Props for the Schedule Name component.
+ * Props for the ScheduleItem Name component.
  */
 export interface NameProps {
   /** Whether to render as a child component */
@@ -95,14 +95,14 @@ export interface NameProps {
  * <ScheduleItem.Name className="font-bold text-lg" />
  *
  * // asChild with primitive
- * <ScheduleItem.Name asChild className="font-bold text-lg">
- *   <h2 />
+ * <ScheduleItem.Name asChild>
+ *   <h2 className="font-bold text-lg"/>
  * </ScheduleItem.Name>
  *
  * // asChild with react component
- * <ScheduleItem.Name asChild className="font-bold text-lg">
+ * <ScheduleItem.Name asChild>
  *   {React.forwardRef(({ name, ...props }, ref) => (
- *     <h2 ref={ref} {...props}>
+ *     <h2 ref={ref} className="font-bold text-lg" {...props}>
  *       {name}
  *     </h2>
  *   ))}
@@ -133,7 +133,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 });
 
 /**
- * Props for the Schedule TimeSlot component.
+ * Props for the ScheduleItem TimeSlot component.
  */
 export interface TimeSlotProps {
   /** Whether to render as a child component */
@@ -158,14 +158,14 @@ export interface TimeSlotProps {
  * <ScheduleItem.TimeSlot className="text-gray-600 font-medium" />
  *
  * // asChild with primitive
- * <ScheduleItem.TimeSlot asChild className="text-gray-600">
- *   <div />
+ * <ScheduleItem.TimeSlot asChild>
+ *   <div className="text-gray-600"/>
  * </ScheduleItem.TimeSlot>
  *
  * // asChild with react component
- * <ScheduleItem.TimeSlot asChild className="text-gray-600">
+ * <ScheduleItem.TimeSlot asChild>
  *   {React.forwardRef(({ formattedTimeRange, startTime, ...props }, ref) => (
- *     <time ref={ref} {...props} dateTime={startTime?.toISOString()}>
+ *     <time ref={ref} className="text-gray-600" {...props} dateTime={startTime?.toISOString()}>
  *       {formattedTimeRange}
  *     </time>
  *   ))}
@@ -225,14 +225,14 @@ export interface DurationProps {
  * <ScheduleItem.Duration className="text-sm text-gray-500" />
  *
  * // asChild with primitive
- * <ScheduleItem.Duration asChild className="text-sm text-gray-500">
- *   <div />
+ * <ScheduleItem.Duration asChild>
+ *   <div className="text-sm text-gray-500"/>
  * </ScheduleItem.Duration>
  *
  * // asChild with react component
- * <ScheduleItem.Duration asChild className="text-sm text-gray-500">
+ * <ScheduleItem.Duration asChild>
  *   {React.forwardRef(({ durationMinutes, ...props }, ref) => (
- *     <span ref={ref} {...props} title={`${durationMinutes} minutes`}>
+ *     <span ref={ref} className="text-sm text-gray-500" {...props}>
  *       {durationMinutes > 0 ? `${durationMinutes} minutes` : ''}
  *     </span>
  *   ))}
@@ -267,7 +267,7 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
 );
 
 /**
- * Props for the Schedule Description component.
+ * Props for the ScheduleItem Description component.
  */
 export interface DescriptionProps {
   /** Whether to render as a child component */
@@ -288,14 +288,14 @@ export interface DescriptionProps {
  * <ScheduleItem.Description className="text-gray-800 mt-2" />
  *
  * // asChild with primitive
- * <ScheduleItem.Description asChild className="text-gray-800 mt-2">
- *   <p />
+ * <ScheduleItem.Description asChild>
+ *   <p className="text-gray-800 mt-2"/>
  * </ScheduleItem.Description>
  *
  * // asChild with react component
- * <ScheduleItem.Description asChild className="text-gray-800 mt-2">
+ * <ScheduleItem.Description asChild>
  *   {React.forwardRef(({ description, ...props }, ref) => (
- *     <p ref={ref} {...props}>
+ *     <p ref={ref} className="text-gray-800 mt-2" {...props}>
  *       {description}
  *     </p>
  *   ))}
@@ -328,7 +328,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 );
 
 /**
- * Props for the Schedule Stage component.
+ * Props for the ScheduleItem Stage component.
  */
 export interface StageProps {
   /** Whether to render as a child component */
@@ -349,14 +349,14 @@ export interface StageProps {
  * <ScheduleItem.Stage className="text-blue-600 font-medium" />
  *
  * // asChild with primitive
- * <ScheduleItem.Stage asChild className="text-blue-600 font-medium">
- *   <span />
+ * <ScheduleItem.Stage asChild>
+ *   <span className="text-blue-600 font-medium"/>
  * </ScheduleItem.Stage>
  *
  * // asChild with react component
- * <ScheduleItem.Stage asChild className="text-blue-600 font-medium">
+ * <ScheduleItem.Stage asChild>
  *   {React.forwardRef(({ stageName, ...props }, ref) => (
- *     <span ref={ref} {...props}>
+ *     <span ref={ref} className="text-blue-600 font-medium" {...props}>
  *       {stageName}
  *     </span>
  *   ))}
@@ -387,7 +387,7 @@ export const Stage = React.forwardRef<HTMLElement, StageProps>((props, ref) => {
 });
 
 /**
- * Props for the Schedule Tags component.
+ * Props for the ScheduleItem Tags component.
  */
 export interface TagsProps {
   /** Whether to render as a child component */
@@ -400,7 +400,6 @@ export interface TagsProps {
 
 /**
  * Container for the schedule item tags with conditional rendering.
- * Follows Container Level pattern - provides context and conditional rendering.
  *
  * @component
  * @example
@@ -435,7 +434,7 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
 });
 
 /**
- * Props for the Schedule TagRepeater component.
+ * Props for the ScheduleItem TagRepeater component.
  */
 export interface TagRepeaterProps {
   /** Child components */
@@ -443,9 +442,7 @@ export interface TagRepeaterProps {
 }
 
 /**
- * Repeater component that renders Tag.Root for each tag.
- * Follows Repeater Level pattern.
- * Note: Repeater components do NOT support asChild as per architecture rules.
+ * Repeater component that renders ScheduleItemTag.Root for each tag.
  *
  * @component
  * @example
@@ -462,9 +459,9 @@ export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
     <CoreScheduleItem.Tags>
       {({ tags }) =>
         tags.map((tagValue, index) => (
-          <Tag.Root key={index} tag={tagValue}>
+          <ScheduleItemTag.Root key={index} tag={tagValue}>
             {children}
-          </Tag.Root>
+          </ScheduleItemTag.Root>
         ))
       }
     </CoreScheduleItem.Tags>
