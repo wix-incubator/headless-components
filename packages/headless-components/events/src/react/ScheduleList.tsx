@@ -1,12 +1,12 @@
 import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import * as CoreScheduleList from './core/ScheduleList.js';
+import * as Tag from './ScheduleItemTag.js';
 import * as ScheduleItem from './ScheduleItem.js';
 import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
-import * as Tag from './ScheduleItemTag.js';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
-import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
+import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
@@ -279,54 +279,45 @@ export interface StageFilterProps {
     setStageFilter: (stageName: string | null) => void;
     clearStageFilter: () => void;
   }>;
-  /** CSS classes to apply to the default elemen  t */
-  className?: string;
-  /** CSS classes to apply to the filter label */
-  labelClassName?: string;
   /** CSS classes to apply to the dropdown */
-  dropdownClassName?: string;
+  className?: string;
+  /** Text for the default/all option */
+  defaultOption: string;
 }
 
 /**
  * Stage filter component that provides stage filtering functionality.
- * Displays "Filter by:" as text followed by a dropdown for places.
+ * Returns a dropdown select element for filtering by stage.
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <ScheduleList.StageFilter
- *   className="flex items-center gap-2"
- *   labelClassName="font-light text-content-primary"
- *   dropdownClassName="border border-gray-200 rounded-md px-3 py-2"
- * />
+ * <div className="flex items-center gap-2">
+ *   <span>Filter by:</span>
+ *   <ScheduleList.StageFilter
+ *     className="border border-gray-200 rounded-md px-3 py-2"
+ *     defaultOption="All places"
+ *   />
+ * </div>
  *
  * // asChild with custom implementation
  * <ScheduleList.StageFilter asChild>
  *   {React.forwardRef(({ stageNames, currentStageFilter, setStageFilter, ...props }, ref) => (
- *     <div ref={ref} {...props} className="flex items-center gap-2">
- *       <span>Filter by:</span>
- *       <select value={currentStageFilter || ''} onChange={(e) => setStageFilter(e.target.value || null)}>
- *         <option value="">All places</option>
- *         {stageNames.map(stage => (
- *           <option key={stage} value={stage}>{stage}</option>
- *         ))}
- *       </select>
- *     </div>
+ *     <select ref={ref} {...props} value={currentStageFilter || ''} onChange={(e) => setStageFilter(e.target.value || null)}>
+ *       <option value="">All places</option>
+ *       {stageNames.map(stage => (
+ *         <option key={stage} value={stage}>{stage}</option>
+ *       ))}
+ *     </select>
  *   ))}
  * </ScheduleList.StageFilter>
  * ```
  */
 export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
   (props, ref) => {
-    const {
-      asChild,
-      children,
-      className,
-      labelClassName,
-      dropdownClassName,
-      ...otherProps
-    } = props;
+    const { asChild, children, className, defaultOption, ...otherProps } =
+      props;
 
     return (
       <CoreScheduleList.StageFilter>
@@ -350,21 +341,17 @@ export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
             }}
             {...otherProps}
           >
-            <div className="flex items-center gap-2">
-              <span className={labelClassName}>Filter by:</span>
-              <select
-                className={dropdownClassName}
-                value={currentStageFilter!}
-                onChange={(e) => setStageFilter(e.target.value || null)}
-              >
-                <option value="">All places</option>
-                {stageNames.map((stage) => (
-                  <option key={stage} value={stage}>
-                    {stage}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={currentStageFilter || ''}
+              onChange={(e) => setStageFilter(e.target.value || null)}
+            >
+              <option value="">{defaultOption}</option>
+              {stageNames.map((stage) => (
+                <option key={stage} value={stage}>
+                  {stage}
+                </option>
+              ))}
+            </select>
           </AsChildSlot>
         )}
       </CoreScheduleList.StageFilter>

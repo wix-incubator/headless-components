@@ -1,6 +1,6 @@
+import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
-import React from 'react';
 import {
   ScheduleItemsGroupService,
   ScheduleItemsGroupServiceConfig,

@@ -1,8 +1,8 @@
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
-import { type ScheduleItem } from '../services/index.js';
+import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreScheduleItem from './core/ScheduleItem.js';
 import * as Tag from './ScheduleItemTag.js';
+import { type ScheduleItem } from '../services/schedule-item-service.js';
 
 enum TestIds {
   scheduleRoot = 'schedule-root',

@@ -1,5 +1,5 @@
-import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreTag from './core/ScheduleItemTag.js';
 
 enum TestIds {

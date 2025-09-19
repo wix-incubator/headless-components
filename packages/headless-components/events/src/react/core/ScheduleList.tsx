@@ -1,3 +1,4 @@
+import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
@@ -5,7 +6,6 @@ import {
   ScheduleListServiceConfig,
   ScheduleListServiceDefinition,
 } from '../../services/schedule-list-service.js';
-import React from 'react';
 import { type ScheduleItem } from '../../services/schedule-item-service.js';
 import { type ScheduleItemsGroup } from '../../services/schedule-items-group-service.js';
 

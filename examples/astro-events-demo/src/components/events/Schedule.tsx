@@ -42,10 +42,15 @@ export function Schedule({
           scheduleListServiceConfig={scheduleListServiceConfig}
         >
           <div className="flex mb-6 justify-between">
-            <ScheduleListPrimitive.StageFilter
-              labelClassName="font-light text-content-primary"
-              dropdownClassName="font-light text-content-primary"
-            />
+            <div className="flex items-center gap-2">
+              <span className="font-light text-content-primary">
+                Filter by:
+              </span>
+              <ScheduleListPrimitive.StageFilter
+                className="font-light text-content-primary"
+                defaultOption="All stages"
+              />
+            </div>
             <ScheduleListPrimitive.TagFilters className="flex gap-2 flex-wrap">
               <ScheduleListPrimitive.TagFilterRepeater>
                 <ScheduleItemTagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
