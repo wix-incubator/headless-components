@@ -2,10 +2,10 @@ import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
 import {
-  TagService,
-  TagServiceDefinition,
-  type TagServiceConfig,
-} from '../../services/tag-service.js';
+  ScheduleItemTagService,
+  ScheduleItemTagServiceDefinition,
+  type ScheduleItemTagServiceConfig,
+} from '../../services/schedule-item-tag-service.js';
 
 export interface RootProps {
   /** Child components that will have access to the tag service */
@@ -22,15 +22,13 @@ export interface RootProps {
 export function Root(props: RootProps): React.ReactNode {
   const { tag, children } = props;
 
-  const tagServiceConfig: TagServiceConfig = {
-    tag,
-  };
+  const tagServiceConfig: ScheduleItemTagServiceConfig = { tag };
 
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
-        TagServiceDefinition,
-        TagService,
+        ScheduleItemTagServiceDefinition,
+        ScheduleItemTagService,
         tagServiceConfig,
       )}
     >
@@ -45,8 +43,8 @@ export interface TagProps {
 }
 
 export interface TagRenderProps {
-  /** Tag value/text */
-  text: string;
+  /** Tag label value */
+  tag: string;
 }
 
 /**
@@ -55,10 +53,8 @@ export interface TagRenderProps {
  * @component
  */
 export function Tag(props: TagProps): React.ReactNode {
-  const tagService = useService(TagServiceDefinition);
+  const tagService = useService(ScheduleItemTagServiceDefinition);
   const tag = tagService.tag.get();
 
-  return props.children({
-    text: tag,
-  });
+  return props.children({ tag });
 }

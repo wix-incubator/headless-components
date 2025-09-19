@@ -5,11 +5,9 @@ import {
   ScheduleListServiceConfig,
   ScheduleListServiceDefinition,
 } from '../../services/schedule-list-service.js';
-import {
-  type ScheduleItem,
-  type ScheduleItemGroup,
-} from '../../services/schedule-list-service.js';
 import React from 'react';
+import { type ScheduleItem } from '../../services/schedule-item-service.js';
+import { type ScheduleItemsGroup } from '../../services/schedule-items-group-service.js';
 
 export interface RootProps {
   /** Child components that will have access to the schedule list service */
@@ -45,8 +43,6 @@ export interface ItemsProps {
 export interface ItemsRenderProps {
   /** List of schedule items */
   items: ScheduleItem[];
-  /** Indicates whether there are any schedule items in the list */
-  hasItems: boolean;
 }
 
 /**
@@ -58,13 +54,12 @@ export interface ItemsRenderProps {
 export function Items(props: ItemsProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const items = scheduleListService.items.get();
-  const hasItems = !!items.length;
 
-  if (!hasItems) {
+  if (!items.length) {
     return null;
   }
 
-  return props.children({ items, hasItems });
+  return props.children({ items });
 }
 
 export interface ItemRepeaterProps {
@@ -85,9 +80,8 @@ export interface ItemRepeaterRenderProps {
 export function ItemRepeater(props: ItemRepeaterProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const items = scheduleListService.items.get();
-  const hasItems = !!items.length;
 
-  if (!hasItems) {
+  if (!items.length) {
     return null;
   }
 
@@ -101,7 +95,7 @@ export interface GroupsProps {
 
 export interface GroupsRenderProps {
   /** List of grouped schedule items */
-  groups: ScheduleItemGroup[];
+  itemsGroups: ScheduleItemsGroup[];
 }
 
 /**
@@ -112,14 +106,13 @@ export interface GroupsRenderProps {
  */
 export function Groups(props: GroupsProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
-  const groups = scheduleListService.groupedItems.get();
-  const hasGroups = !!groups.length;
+  const itemsGroups = scheduleListService.itemsGroups.get();
 
-  if (!hasGroups) {
+  if (!itemsGroups.length) {
     return null;
   }
 
-  return props.children({ groups });
+  return props.children({ itemsGroups });
 }
 
 export interface GroupRepeaterProps {
@@ -129,7 +122,7 @@ export interface GroupRepeaterProps {
 
 export interface GroupRepeaterRenderProps {
   /** List of grouped schedule items */
-  groups: ScheduleItemGroup[];
+  itemsGroups: ScheduleItemsGroup[];
 }
 
 /**
@@ -141,14 +134,13 @@ export interface GroupRepeaterRenderProps {
  */
 export function GroupRepeater(props: GroupRepeaterProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
-  const groups = scheduleListService.groupedItems.get();
-  const hasGroups = !!groups.length;
+  const itemsGroups = scheduleListService.itemsGroups.get();
 
-  if (!hasGroups) {
+  if (!itemsGroups.length) {
     return null;
   }
 
-  return props.children({ groups });
+  return props.children({ itemsGroups });
 }
 
 export interface StageFilterProps {
@@ -161,8 +153,6 @@ export interface StageFilterRenderProps {
   stageNames: string[];
   /** Current stage filter value */
   currentStageFilter: string | null;
-  /** Whether there are available stages */
-  hasStages: boolean;
   /** Function to set stage filter */
   setStageFilter: (stageName: string | null) => void;
   /** Function to clear stage filter */
@@ -170,7 +160,7 @@ export interface StageFilterRenderProps {
 }
 
 /**
- * ScheduleList StageFilter core component that provides stage filtering functionality.
+ * ScheduleList StageFilter core component that provides stage filtering data.
  *
  * @component
  */
@@ -178,8 +168,6 @@ export function StageFilter(props: StageFilterProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const stageNames = scheduleListService.stageNames.get();
   const currentStageFilter = scheduleListService.stageFilter.get();
-
-  const hasStages = stageNames.length > 0;
 
   const setStageFilter = (stageName: string | null) => {
     scheduleListService.setStageFilter(stageName);
@@ -189,10 +177,13 @@ export function StageFilter(props: StageFilterProps): React.ReactNode {
     scheduleListService.setStageFilter(null);
   };
 
+  if (!stageNames.length) {
+    return null;
+  }
+
   return props.children({
     stageNames,
     currentStageFilter,
-    hasStages,
     setStageFilter,
     clearStageFilter,
   });
@@ -208,14 +199,13 @@ export interface TagFiltersRenderProps {
   tags: string[];
   /** Current tag filters */
   currentTagFilters: string[];
-  /** Whether there are available tags */
-  hasTags: boolean;
+
   /** Whether any tag filters are active */
   hasActiveTagFilters: boolean;
 }
 
 /**
- * ScheduleList TagFilters core component that provides tag filtering context.
+ * ScheduleList TagFilters core component that provides tag filtering data.
  * Container Level component following List, Options, and Repeater Pattern.
  *
  * @component
@@ -225,17 +215,15 @@ export function TagFilters(props: TagFiltersProps): React.ReactNode {
   const tags = scheduleListService.tags.get();
   const currentTagFilters = scheduleListService.tagFilters.get();
 
-  const hasTags = tags.length > 0;
   const hasActiveTagFilters = currentTagFilters.length > 0;
 
-  if (!hasTags) {
+  if (!tags.length) {
     return null;
   }
 
   return props.children({
     tags,
     currentTagFilters,
-    hasTags,
     hasActiveTagFilters,
   });
 }
@@ -250,8 +238,6 @@ export interface TagFilterRepeaterRenderProps {
   tags: string[];
   /** Current tag filters */
   currentTagFilters: string[];
-  /** Whether there are available tags */
-  hasTags: boolean;
   /** Function to toggle a tag filter */
   toggleTagFilter: (tag: string) => void;
 }
@@ -270,14 +256,13 @@ export function TagFilterRepeater(
   const tags = scheduleListService.tags.get();
   const currentTagFilters = scheduleListService.tagFilters.get();
 
-  const hasTags = tags.length > 0;
-
-  if (!hasTags) {
+  if (!tags.length) {
     return null;
   }
 
   const toggleTagFilter = (tag: string) => {
     const active = currentTagFilters.includes(tag);
+
     if (active) {
       scheduleListService.removeTagFilter(tag);
     } else {
@@ -288,7 +273,6 @@ export function TagFilterRepeater(
   return props.children({
     tags,
     currentTagFilters,
-    hasTags,
     toggleTagFilter,
   });
 }

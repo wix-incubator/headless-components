@@ -5,7 +5,7 @@ import {
   PricingOption as PricingOptionPrimitive,
   ScheduleList as ScheduleListPrimitive,
   ScheduleItem as ScheduleItemPrimitive,
-  Tag as TagPrimitive,
+  ScheduleItemTag as ScheduleItemTagPrimitive,
 } from '@wix/headless-events/react';
 import {
   type EventServiceConfig,
@@ -154,7 +154,7 @@ export function EventDetails({
                     </ScheduleItemPrimitive.Stage>
                     <ScheduleItemPrimitive.Tags className="flex gap-2 flex-wrap">
                       <ScheduleItemPrimitive.TagRepeater>
-                        <TagPrimitive.Label className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
+                        <ScheduleItemTagPrimitive.Label className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
                       </ScheduleItemPrimitive.TagRepeater>
                     </ScheduleItemPrimitive.Tags>
                   </div>

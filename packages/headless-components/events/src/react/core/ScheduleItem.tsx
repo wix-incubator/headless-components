@@ -6,7 +6,8 @@ import {
   ScheduleItemServiceDefinition,
   ScheduleItemService,
   type ScheduleItemServiceConfig,
-} from '../../services/index.js';
+} from '../../services/schedule-item-service.js';
+import { formatTimeRange, getDurationInMinutes } from '../../utils/moment.js';
 
 export interface RootProps {
   /** Child components that will have access to the schedule item service */
@@ -56,8 +57,9 @@ export interface NameRenderProps {
  * @component
  */
 export function Name(props: NameProps): React.ReactNode {
-  const scheduleService = useService(ScheduleItemServiceDefinition);
-  const name = scheduleService.name.get();
+  const scheduleItemService = useService(ScheduleItemServiceDefinition);
+  const scheduleItem = scheduleItemService.item.get();
+  const name = scheduleItem.name!;
 
   return props.children({ name });
 }
@@ -69,11 +71,11 @@ export interface TimeSlotProps {
 
 export interface TimeSlotRenderProps {
   /** Schedule item start time */
-  startTime: Date | null;
+  startTime: Date;
   /** Schedule item end time */
-  endTime: Date | null;
+  endTime: Date;
   /** Formatted time range string (e.g., "18:30 - 19:00") */
-  timeRange: string;
+  formattedTimeRange: string;
 }
 
 /**
@@ -82,16 +84,13 @@ export interface TimeSlotRenderProps {
  * @component
  */
 export function TimeSlot(props: TimeSlotProps): React.ReactNode {
-  const scheduleService = useService(ScheduleItemServiceDefinition);
-  const startTime = scheduleService.startTime.get();
-  const endTime = scheduleService.endTime.get();
-  const timeRange = scheduleService.timeRange.get();
+  const scheduleItemService = useService(ScheduleItemServiceDefinition);
+  const scheduleItem = scheduleItemService.item.get();
+  const startTime = new Date(scheduleItem.timeSlot!.start!);
+  const endTime = new Date(scheduleItem.timeSlot!.end!);
+  const formattedTimeRange = formatTimeRange(startTime, endTime);
 
-  return props.children({
-    startTime,
-    endTime,
-    timeRange,
-  });
+  return props.children({ startTime, endTime, formattedTimeRange });
 }
 
 export interface DurationProps {
@@ -110,12 +109,13 @@ export interface DurationRenderProps {
  * @component
  */
 export function Duration(props: DurationProps): React.ReactNode {
-  const scheduleService = useService(ScheduleItemServiceDefinition);
-  const durationMinutes = scheduleService.durationMinutes.get();
+  const scheduleItemService = useService(ScheduleItemServiceDefinition);
+  const scheduleItem = scheduleItemService.item.get();
+  const startTime = new Date(scheduleItem.timeSlot!.start!);
+  const endTime = new Date(scheduleItem.timeSlot!.end!);
+  const durationMinutes = getDurationInMinutes(startTime, endTime);
 
-  return props.children({
-    durationMinutes,
-  });
+  return props.children({ durationMinutes });
 }
 
 export interface DescriptionProps {
@@ -134,8 +134,9 @@ export interface DescriptionRenderProps {
  * @component
  */
 export function Description(props: DescriptionProps): React.ReactNode {
-  const scheduleService = useService(ScheduleItemServiceDefinition);
-  const description = scheduleService.description.get();
+  const scheduleItemService = useService(ScheduleItemServiceDefinition);
+  const scheduleItem = scheduleItemService.item.get();
+  const description = scheduleItem.description!;
 
   if (!description) {
     return null;
@@ -160,8 +161,9 @@ export interface StageRenderProps {
  * @component
  */
 export function Stage(props: StageProps): React.ReactNode {
-  const scheduleService = useService(ScheduleItemServiceDefinition);
-  const stageName = scheduleService.stageName.get();
+  const scheduleItemService = useService(ScheduleItemServiceDefinition);
+  const scheduleItem = scheduleItemService.item.get();
+  const stageName = scheduleItem.stageName!;
 
   if (!stageName) {
     return null;
@@ -178,8 +180,6 @@ export interface TagsProps {
 export interface TagsRenderProps {
   /** Schedule item tags */
   tags: string[];
-  /** Whether the item has tags */
-  hasTags: boolean;
 }
 
 /**
@@ -188,22 +188,13 @@ export interface TagsRenderProps {
  * @component
  */
 export function Tags(props: TagsProps): React.ReactNode {
-  const scheduleService = useService(ScheduleItemServiceDefinition);
-  const tags = scheduleService.tags.get();
-  const hasTags = scheduleService.hasTags.get();
+  const scheduleItemService = useService(ScheduleItemServiceDefinition);
+  const scheduleItem = scheduleItemService.item.get();
+  const tags = scheduleItem.tags!;
 
-  if (!hasTags) {
+  if (!tags.length) {
     return null;
   }
 
-  return props.children({ tags, hasTags });
-}
-
-export interface TagLabelProps {
-  children: (props: TagLabelRenderProps) => React.ReactNode;
-}
-
-export interface TagLabelRenderProps {
-  /** Schedule item tag */
-  tag: string;
+  return props.children({ tags });
 }

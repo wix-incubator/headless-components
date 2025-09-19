@@ -1,14 +1,12 @@
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
-import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import * as CoreScheduleList from './core/ScheduleList.js';
-import {
-  type ScheduleItem,
-  type ScheduleItemGroup,
-} from '../services/schedule-list-service.js';
-import * as Schedule from './ScheduleItem.js';
-import * as ScheduleListGroup from './ScheduleListGroup.js';
-import * as Tag from './Tag.js';
+import * as ScheduleItem from './ScheduleItem.js';
+import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
+import * as Tag from './ScheduleItemTag.js';
+import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
+import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
+import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
@@ -41,7 +39,7 @@ export interface RootProps {
  * function ScheduleListPage({ scheduleListServiceConfig }) {
  *   return (
  *     <ScheduleList.Root scheduleListServiceConfig={scheduleListServiceConfig}>
- *       <ScheduleList.Items emptyState={<div>No schedule items available</div>}>
+ *       <ScheduleList.Items>
  *         <ScheduleList.ItemRepeater />
  *       </ScheduleList.Items>
  *       <ScheduleList.Error />
@@ -72,7 +70,7 @@ export interface ItemsProps {
   children:
     | React.ReactNode
     | AsChildChildren<{
-        items: ScheduleItem[];
+        items: ScheduleItemType[];
       }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -123,7 +121,7 @@ export interface ItemRepeaterProps {
 }
 
 /**
- * Repeater component that renders Schedule.Root for each schedule item.
+ * Repeater component that renders ScheduleItem.Root for each schedule item.
  * Follows Repeater Level pattern.
  * Note: Repeater components do NOT support asChild as per architecture rules.
  *
@@ -131,8 +129,8 @@ export interface ItemRepeaterProps {
  * @example
  * ```tsx
  * <ScheduleList.ItemRepeater>
- *   <Schedule.Name />
- *   <Schedule.TimeSlot />
+ *   <ScheduleItem.Name />
+ *   <ScheduleItem.TimeSlot />
  * </ScheduleList.ItemRepeater>
  * ```
  */
@@ -142,13 +140,13 @@ export const ItemRepeater = (props: ItemRepeaterProps): React.ReactNode => {
 
   return (
     <CoreScheduleList.ItemRepeater>
-      {({ items }) => {
-        return items.map((item) => (
-          <Schedule.Root key={item._id} item={item} className={className}>
+      {({ items }) =>
+        items.map((item) => (
+          <ScheduleItem.Root key={item._id} item={item} className={className}>
             {children}
-          </Schedule.Root>
-        ));
-      }}
+          </ScheduleItem.Root>
+        ))
+      }
     </CoreScheduleList.ItemRepeater>
   );
 };
@@ -163,8 +161,7 @@ export interface GroupsProps {
   children:
     | React.ReactNode
     | AsChildChildren<{
-        groups: ScheduleItemGroup[];
-        hasGroups: boolean;
+        itemsGroups: ScheduleItemsGroupType[];
       }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -181,13 +178,13 @@ export interface GroupsProps {
  * ```tsx
  * <ScheduleList.Groups emptyState={<div>No schedule groups available</div>}>
  *   <ScheduleList.GroupRepeater>
- *     <ScheduleListGroup.GroupDateLabel />
- *     <ScheduleListGroup.GroupItems>
- *       <ScheduleListGroup.GroupItemRepeater>
- *         <Schedule.Name />
- *         <Schedule.TimeSlot />
- *       </ScheduleListGroup.GroupItemRepeater>
- *     </ScheduleListGroup.GroupItems>
+ *     <ScheduleItemsGroup.GroupDateLabel />
+ *     <ScheduleItemsGroup.GroupItems>
+ *       <ScheduleItemsGroup.GroupItemRepeater>
+ *         <ScheduleItem.Name />
+ *         <ScheduleItem.TimeSlot />
+ *       </ScheduleItemsGroup.GroupItemRepeater>
+ *     </ScheduleItemsGroup.GroupItems>
  *   </ScheduleList.GroupRepeater>
  * </ScheduleList.Groups>
  * ```
@@ -198,8 +195,8 @@ export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
 
     return (
       <CoreScheduleList.Groups>
-        {({ groups }) => {
-          if (!groups.length) {
+        {({ itemsGroups }) => {
+          if (!itemsGroups.length) {
             return emptyState || null;
           }
 
@@ -210,7 +207,7 @@ export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
               className={className}
               data-testid={TestIds.scheduleListGroups}
               customElement={children}
-              customElementProps={{ groups }}
+              customElementProps={{ itemsGroups }}
               {...otherProps}
             >
               <div>{children as React.ReactNode}</div>
@@ -231,8 +228,8 @@ export interface GroupRepeaterProps {
 }
 
 /**
- * Repeater component that renders ScheduleListGroup.Root for each date group.
- * Provides proper group service context for ScheduleListGroup components.
+ * Repeater component that renders ScheduleItemsGroup.Root for each date group.
+ * Provides proper group service context for ScheduleItemsGroup components.
  * Follows Repeater Level pattern.
  * Note: Repeater components do NOT support asChild as per architecture rules.
  *
@@ -240,13 +237,13 @@ export interface GroupRepeaterProps {
  * @example
  * ```tsx
  * <ScheduleList.GroupRepeater>
- *   <ScheduleListGroup.GroupDateLabel />
- *   <ScheduleListGroup.GroupItems>
- *     <ScheduleListGroup.GroupItemRepeater>
- *       <Schedule.Name />
- *       <Schedule.TimeSlot />
- *     </ScheduleListGroup.GroupItemRepeater>
- *   </ScheduleListGroup.GroupItems>
+ *   <ScheduleItemsGroup.GroupDateLabel />
+ *   <ScheduleItemsGroup.GroupItems>
+ *     <ScheduleItemsGroup.GroupItemRepeater>
+ *       <ScheduleItem.Name />
+ *       <ScheduleItem.TimeSlot />
+ *     </ScheduleItemsGroup.GroupItemRepeater>
+ *   </ScheduleItemsGroup.GroupItems>
  * </ScheduleList.GroupRepeater>
  * ```
  */
@@ -255,18 +252,16 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
 
   return (
     <CoreScheduleList.GroupRepeater>
-      {({ groups }) => (
-        <>
-          {groups.map((group, index) => (
-            <ScheduleListGroup.Root
-              key={group.dateLabel + '-' + index}
-              group={group}
-            >
-              {children}
-            </ScheduleListGroup.Root>
-          ))}
-        </>
-      )}
+      {({ itemsGroups }) =>
+        itemsGroups.map((itemsGroup) => (
+          <ScheduleItemsGroup.Root
+            key={itemsGroup.formattedDate}
+            itemsGroup={itemsGroup}
+          >
+            {children}
+          </ScheduleItemsGroup.Root>
+        ))
+      }
     </CoreScheduleList.GroupRepeater>
   );
 };
@@ -281,11 +276,10 @@ export interface StageFilterProps {
   children?: AsChildChildren<{
     stageNames: string[];
     currentStageFilter: string | null;
-    hasStages: boolean;
     setStageFilter: (stageName: string | null) => void;
     clearStageFilter: () => void;
   }>;
-  /** CSS classes to apply to the default element */
+  /** CSS classes to apply to the default elemen  t */
   className?: string;
   /** CSS classes to apply to the filter label */
   labelClassName?: string;
@@ -339,48 +333,40 @@ export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
         {({
           stageNames,
           currentStageFilter,
-          hasStages,
           setStageFilter,
           clearStageFilter,
-        }) => {
-          if (!hasStages) {
-            return null;
-          }
-
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.scheduleListStageFilter}
-              customElement={children}
-              customElementProps={{
-                stageNames,
-                currentStageFilter,
-                hasStages,
-                setStageFilter,
-                clearStageFilter,
-              }}
-              {...otherProps}
-            >
-              <div className="flex items-center gap-2">
-                <span className={labelClassName}>Filter by:</span>
-                <select
-                  className={dropdownClassName}
-                  value={currentStageFilter || ''}
-                  onChange={(e) => setStageFilter(e.target.value || null)}
-                >
-                  <option value="">All places</option>
-                  {stageNames.map((stage) => (
-                    <option key={stage} value={stage}>
-                      {stage}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </AsChildSlot>
-          );
-        }}
+        }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.scheduleListStageFilter}
+            customElement={children}
+            customElementProps={{
+              stageNames,
+              currentStageFilter,
+              setStageFilter,
+              clearStageFilter,
+            }}
+            {...otherProps}
+          >
+            <div className="flex items-center gap-2">
+              <span className={labelClassName}>Filter by:</span>
+              <select
+                className={dropdownClassName}
+                value={currentStageFilter!}
+                onChange={(e) => setStageFilter(e.target.value || null)}
+              >
+                <option value="">All places</option>
+                {stageNames.map((stage) => (
+                  <option key={stage} value={stage}>
+                    {stage}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </AsChildSlot>
+        )}
       </CoreScheduleList.StageFilter>
     );
   },
@@ -398,7 +384,6 @@ export interface TagFiltersProps {
     | AsChildChildren<{
         tags: string[];
         currentTagFilters: string[];
-        hasTags: boolean;
         hasActiveTagFilters: boolean;
       }>;
   /** CSS classes to apply to the default element */
@@ -417,7 +402,7 @@ export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
 
     return (
       <CoreScheduleList.TagFilters>
-        {({ tags, currentTagFilters, hasTags, hasActiveTagFilters }) => (
+        {({ tags, currentTagFilters, hasActiveTagFilters }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -427,7 +412,6 @@ export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
             customElementProps={{
               tags,
               currentTagFilters,
-              hasTags,
               hasActiveTagFilters,
             }}
             {...otherProps}

@@ -2,7 +2,7 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type ScheduleItem } from '../services/index.js';
 import * as CoreScheduleItem from './core/ScheduleItem.js';
-import * as Tag from './Tag.js';
+import * as Tag from './ScheduleItemTag.js';
 
 enum TestIds {
   scheduleRoot = 'schedule-root',
@@ -178,7 +178,7 @@ export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
 
     return (
       <CoreScheduleItem.TimeSlot>
-        {({ startTime, endTime, timeRange }) => (
+        {({ startTime, endTime, formattedTimeRange }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -188,12 +188,12 @@ export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
             customElementProps={{
               startTime,
               endTime,
-              timeRange,
+              formattedTimeRange,
             }}
-            content={timeRange}
+            content={formattedTimeRange}
             {...otherProps}
           >
-            <span>{timeRange}</span>
+            <span>{formattedTimeRange}</span>
           </AsChildSlot>
         )}
       </CoreScheduleItem.TimeSlot>
@@ -393,9 +393,7 @@ export interface TagsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{ tags: string[]; hasTags: boolean }>;
+  children: React.ReactNode | AsChildChildren<{ tags: string[] }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -421,14 +419,14 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
 
   return (
     <CoreScheduleItem.Tags>
-      {({ tags, hasTags }) => (
+      {({ tags }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.scheduleTags}
           customElement={children}
-          customElementProps={{ tags, hasTags }}
+          customElementProps={{ tags }}
           {...otherProps}
         >
           <div>{children as React.ReactNode}</div>

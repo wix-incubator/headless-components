@@ -1,9 +1,9 @@
 import {
   ScheduleList as ScheduleListPrimitive,
-  ScheduleListGroup as ScheduleListGroupPrimitive,
+  ScheduleItemsGroup as ScheduleItemsGroupPrimitive,
   ScheduleItem as ScheduleItemPrimitive,
   Event as EventPrimitive,
-  Tag as TagPrimitive,
+  ScheduleItemTag as ScheduleItemTagPrimitive,
 } from '@wix/headless-events/react';
 import {
   type EventServiceConfig,
@@ -48,23 +48,23 @@ export function Schedule({
             />
             <ScheduleListPrimitive.TagFilters className="flex gap-2 flex-wrap">
               <ScheduleListPrimitive.TagFilterRepeater>
-                <TagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
+                <ScheduleItemTagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
               </ScheduleListPrimitive.TagFilterRepeater>
             </ScheduleListPrimitive.TagFilters>
           </div>
           <ScheduleListPrimitive.Groups className="space-y-8 mb-6">
             <ScheduleListPrimitive.GroupRepeater>
-              <ScheduleListGroupPrimitive.GroupDateLabel
+              <ScheduleItemsGroupPrimitive.GroupDateLabel
                 className="text-2xl font-bold text-content-primary"
                 asChild
               >
                 <h2 />
-              </ScheduleListGroupPrimitive.GroupDateLabel>
-              <ScheduleListGroupPrimitive.GroupItems
+              </ScheduleItemsGroupPrimitive.GroupDateLabel>
+              <ScheduleItemsGroupPrimitive.GroupItems
                 className="mt-4 space-y-4"
                 emptyState={<div>No schedule items available</div>}
               >
-                <ScheduleListGroupPrimitive.GroupItemRepeater className="group border border-gray-200 p-8">
+                <ScheduleItemsGroupPrimitive.GroupItemRepeater className="group border border-gray-200 p-8">
                   <div className="flex gap-8">
                     <div className="min-w-[150px] flex flex-col">
                       <ScheduleItemPrimitive.TimeSlot className="font-light text-content-primary" />
@@ -97,13 +97,13 @@ export function Schedule({
                       </ScheduleItemPrimitive.Stage>
                       <ScheduleItemPrimitive.Tags className="flex gap-2 flex-wrap">
                         <ScheduleItemPrimitive.TagRepeater>
-                          <TagPrimitive.Label className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
+                          <ScheduleItemTagPrimitive.Label className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5" />
                         </ScheduleItemPrimitive.TagRepeater>
                       </ScheduleItemPrimitive.Tags>
                     </div>
                   </div>
-                </ScheduleListGroupPrimitive.GroupItemRepeater>
-              </ScheduleListGroupPrimitive.GroupItems>
+                </ScheduleItemsGroupPrimitive.GroupItemRepeater>
+              </ScheduleItemsGroupPrimitive.GroupItems>
             </ScheduleListPrimitive.GroupRepeater>
           </ScheduleListPrimitive.Groups>
         </ScheduleListPrimitive.Root>

@@ -1,6 +1,6 @@
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
-import * as CoreTag from './core/Tag.js';
+import * as CoreTag from './core/ScheduleItemTag.js';
 
 enum TestIds {
   tagRoot = 'tag-root',
@@ -112,22 +112,20 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
 
   return (
     <CoreTag.Tag>
-      {({ text }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.tagLabel}
-            customElement={children}
-            customElementProps={{ text }}
-            content={text}
-            {...otherProps}
-          >
-            <span>{text}</span>
-          </AsChildSlot>
-        );
-      }}
+      {({ tag }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.tagLabel}
+          customElement={children}
+          customElementProps={{ tag }}
+          content={tag}
+          {...otherProps}
+        >
+          <span>{tag}</span>
+        </AsChildSlot>
+      )}
     </CoreTag.Tag>
   );
 });
@@ -184,7 +182,7 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(
 
     return (
       <CoreTag.Tag>
-        {({ text }) => {
+        {({ tag }) => {
           const handleClick = onClick ? () => onClick() : undefined;
 
           return (
@@ -194,14 +192,14 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(
               className={className}
               data-testid={TestIds.tagButton}
               customElement={children}
-              customElementProps={{ text }}
-              content={text}
+              customElementProps={{ tag }}
+              content={tag}
               onClick={handleClick}
               data-active={active}
               {...otherProps}
             >
               <button onClick={handleClick} data-active={active}>
-                {text}
+                {tag}
               </button>
             </AsChildSlot>
           );

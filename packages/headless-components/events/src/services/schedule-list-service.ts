@@ -5,14 +5,9 @@ import {
   ReadOnlySignal,
   SignalsServiceDefinition,
 } from '@wix/services-definitions/core-services/signals';
-
-export type ScheduleItem = schedule.ScheduleItem;
-
-export interface ScheduleItemGroup {
-  dateLabel: string;
-  date: Date;
-  items: ScheduleItem[];
-}
+import { type ScheduleItem } from './schedule-item-service.js';
+import { type ScheduleItemsGroup } from './schedule-items-group-service.js';
+import { formatDate } from '../utils/moment.js';
 
 enum StateFilter {
   PUBLISHED = schedule.StateFilter.PUBLISHED,
@@ -21,7 +16,7 @@ enum StateFilter {
 
 export interface ScheduleListServiceAPI {
   items: ReadOnlySignal<ScheduleItem[]>;
-  groupedItems: ReadOnlySignal<ScheduleItemGroup[]>;
+  itemsGroups: ReadOnlySignal<ScheduleItemsGroup[]>;
   error: Signal<string | null>;
   stageFilter: Signal<string | null>;
   tagFilters: Signal<string[]>;
@@ -54,7 +49,7 @@ export const ScheduleListService =
       const stageFilter = signalsService.signal<string | null>(null);
       const tagFilters = signalsService.signal<string[]>([]);
 
-      const groupedItems = signalsService.computed(() => {
+      const itemsGroups = signalsService.computed(() => {
         const currentItems = items.get();
         const currentStageFilter = stageFilter.get();
         const currentTagFilters = tagFilters.get();
@@ -106,7 +101,7 @@ export const ScheduleListService =
 
       return {
         items,
-        groupedItems,
+        itemsGroups,
         error,
         stageFilter,
         tagFilters,
@@ -167,24 +162,17 @@ function filterScheduleItems(
   });
 }
 
-export function groupScheduleItemsByDate(
-  items: ScheduleItem[],
-): ScheduleItemGroup[] {
-  const grouped = new Map<string, ScheduleItemGroup>();
+function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
+  const grouped = new Map<string, ScheduleItemsGroup>();
 
   items.forEach((item) => {
     const startDate = new Date(item.timeSlot!.start!);
     const dateKey = startDate.toDateString();
-
-    const dateLabel = startDate.toLocaleDateString('en-US', {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
-    });
+    const formattedDate = formatDate(startDate);
 
     if (!grouped.has(dateKey)) {
       grouped.set(dateKey, {
-        dateLabel,
+        formattedDate,
         date: startDate,
         items: [],
       });
@@ -198,7 +186,7 @@ export function groupScheduleItemsByDate(
   return groupsArray.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-export function getAvailableStageNames(items: ScheduleItem[]): string[] {
+function getAvailableStageNames(items: ScheduleItem[]): string[] {
   const stageNames = new Set<string>();
 
   items.forEach((item) => {
@@ -210,7 +198,7 @@ export function getAvailableStageNames(items: ScheduleItem[]): string[] {
   return Array.from(stageNames).sort();
 }
 
-export function getAvailableTags(items: ScheduleItem[]): string[] {
+function getAvailableTags(items: ScheduleItem[]): string[] {
   const tags = new Set<string>();
 
   items.forEach((item) => {
