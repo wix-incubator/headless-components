@@ -1,0 +1,29 @@
+---
+import { loadEventServiceConfig } from '@wix/headless-events/services';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ThankYouPage from '../../../react-pages/thank-you';
+
+const { slug } = Astro.params;
+
+// Load initial data server-side
+const eventServiceConfigResult = await loadEventServiceConfig(slug);
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout>
+  <title>Thank You</title>
+  <meta
+    name="description"
+    content="Thank you for your RSVP! We have received your response for this event."
+  />
+
+  <ThankYouPage
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfigResult.config}
+    eventPageUrl={`${Astro.url.origin}/events/${slug}`}
+  />
+</BaseLayout>
