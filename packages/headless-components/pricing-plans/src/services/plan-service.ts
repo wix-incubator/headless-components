@@ -4,6 +4,11 @@ import {
   SignalsServiceDefinition,
 } from '@wix/services-definitions/core-services/signals';
 import { plansV3 } from '@wix/pricing-plans';
+import {
+  CheckoutServiceDefinition,
+  LineItem,
+} from '@wix/headless-ecom/services';
+import { httpClient } from '@wix/essentials';
 
 type ValidPeriod = Exclude<plansV3.PeriodWithLiterals, 'UNKNOWN_PERIOD'>;
 
@@ -42,6 +47,7 @@ export const PlanServiceDefinition = defineService<{
   planSignal: ReadOnlySignal<PlanWithEnhancedData | null>;
   isLoadingSignal: ReadOnlySignal<boolean>;
   errorSignal: ReadOnlySignal<Error | null>;
+  goToPlanCheckout: (plan: PlanWithEnhancedData) => Promise<void>;
 }>('planService');
 
 export type PlanServiceConfig =
@@ -52,6 +58,7 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
   PlanServiceDefinition,
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
+    const checkoutService = getService(CheckoutServiceDefinition);
     const isLoadingSignal = signalsService.signal<boolean>(false);
     const errorSignal = signalsService.signal<Error | null>(null);
     const configHasPlan = 'plan' in config;
@@ -78,10 +85,20 @@ export const PlanService = implementService.withConfig<PlanServiceConfig>()(
       }
     }
 
+    async function goToPlanCheckout(plan: PlanWithEnhancedData): Promise<void> {
+      const address = await fetchAddress().catch(() => null);
+      const lineItem = buildPlanLineItem(plan);
+      // TODO: Decide if we need `externalReference` here
+      return checkoutService.createCheckout([lineItem], {
+        billingInfo: address ? { address } : undefined,
+      });
+    }
+
     return {
-      planSignal: planSignal,
-      isLoadingSignal: isLoadingSignal,
-      errorSignal: errorSignal,
+      planSignal,
+      isLoadingSignal,
+      errorSignal,
+      goToPlanCheckout,
     };
   },
 );
@@ -244,4 +261,38 @@ export async function loadPlanServiceConfig(
 ): Promise<PlanServiceConfig> {
   const plan = await fetchAndEnhancePlan(planId);
   return { plan };
+}
+
+type AddressResponse = {
+  country?: string;
+  subdivision?: string;
+  city?: string;
+};
+
+async function fetchAddress(): Promise<AddressResponse> {
+  try {
+    const response = await httpClient.fetchWithAuth(
+      '/_api/pricing-plans-ecom/address',
+    );
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching address:', error);
+    throw error;
+  }
+}
+
+function buildPlanLineItem(plan: PlanWithEnhancedData): LineItem {
+  return {
+    quantity: 1,
+    catalogReference: {
+      appId: PRICING_PLANS_APP_ID,
+      catalogItemId: plan._id!,
+      options: {
+        type: 'PLAN',
+        planOptions: {
+          pricingVariantId: plan.enhancedData.price.pricingVariantId,
+        },
+      },
+    },
+  };
 }

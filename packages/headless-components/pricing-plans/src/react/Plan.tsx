@@ -1,11 +1,7 @@
 import React from 'react';
 export { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import {
-  PlanServiceConfig,
-  PlanServiceDefinition,
-  PRICING_PLANS_APP_ID,
-} from '../services/index.js';
+import { PlanServiceConfig } from '../services/index.js';
 import {
   Root as CoreRoot,
   Plan as CorePlan,
@@ -35,10 +31,10 @@ import {
   PerkItemContext,
   PerkItemData,
   PerkItem as CorePerkItem,
+  ActionBuyNow as CoreActionBuyNow,
+  ActionBuyNowRenderProps,
 } from './core/Plan.js';
 import { WixMediaImage } from '@wix/headless-media/react';
-import { Commerce } from '@wix/headless-ecom/react';
-import { useService } from '@wix/services-manager-react';
 
 enum PlanTestId {
   Plan = 'plan-plan',
@@ -760,7 +756,17 @@ export const PerkItem = React.forwardRef<HTMLElement, PerkItemProps>(
   ),
 );
 
-type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
+export type PlanActionBuyNowRenderProps = ActionBuyNowRenderProps;
+
+// TODO: Check if docs are still correct
+interface ActionBuyNowProps {
+  asChild?: boolean;
+  children?: AsChildChildren<ActionBuyNowRenderProps>;
+  className?: string;
+  label?: string;
+  disabled?: boolean;
+  loadingState?: React.ReactNode;
+}
 
 /**
  * Initiates the plan purchase flow.
@@ -787,31 +793,28 @@ type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
  * ```
  */
 const ActionBuyNow = React.forwardRef<HTMLButtonElement, ActionBuyNowProps>(
-  (props, ref) => {
-    const { planSignal } = useService(PlanServiceDefinition);
-
+  ({ asChild, children, className, label, disabled, loadingState }, ref) => {
     return (
-      <Commerce.Actions.BuyNow
-        {...props}
-        lineItems={[
-          {
-            quantity: 1,
-            catalogReference: {
-              appId: PRICING_PLANS_APP_ID,
-              catalogItemId: planSignal.get()!._id!,
-              options: {
-                type: 'PLAN',
-                planOptions: {
-                  pricingVariantId:
-                    planSignal.get()!.enhancedData.price.pricingVariantId,
-                },
-              },
-            },
-          },
-        ]}
-        ref={ref}
-        data-testid={PlanTestId.ActionBuyNow}
-      />
+      <CoreActionBuyNow>
+        {(actionBuyNowRenderProps) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            customElement={children}
+            customElementProps={actionBuyNowRenderProps}
+            className={className}
+            disabled={disabled || actionBuyNowRenderProps.isLoading}
+            data-testid={PlanTestId.ActionBuyNow}
+            data-is-loading={actionBuyNowRenderProps.isLoading}
+            data-is-disabled={disabled || actionBuyNowRenderProps.isLoading}
+            onClick={actionBuyNowRenderProps.goToPlanCheckout}
+          >
+            <button type="button">
+              {actionBuyNowRenderProps.isLoading ? loadingState : label}
+            </button>
+          </AsChildSlot>
+        )}
+      </CoreActionBuyNow>
     );
   },
 );

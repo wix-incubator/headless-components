@@ -9,6 +9,7 @@ import { redirects } from '@wix/redirects';
 export { ChannelType } from '@wix/auto_sdk_ecom_checkout';
 
 export type LineItem = checkout.LineItem;
+export type CheckoutInfo = checkout.Checkout;
 
 /**
  * API interface for the Checkout service
@@ -17,7 +18,10 @@ export interface CheckoutServiceAPI {
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
 
-  createCheckout: (lineItems: LineItem[]) => Promise<void>;
+  createCheckout: (
+    lineItems: LineItem[],
+    checkoutInfo?: CheckoutInfo,
+  ) => Promise<void>;
 }
 
 export const CheckoutServiceDefinition =
@@ -40,7 +44,10 @@ export const CheckoutService =
       const isLoading: Signal<boolean> = signalsService.signal(false);
       const error: Signal<string | null> = signalsService.signal(null as any);
 
-      const createCheckout = async (lineItems: LineItem[]) => {
+      const createCheckout = async (
+        lineItems: LineItem[],
+        checkoutInfo?: CheckoutInfo,
+      ) => {
         try {
           isLoading.set(true);
           error.set(null);
@@ -48,6 +55,7 @@ export const CheckoutService =
           const checkoutResult = await checkout.createCheckout({
             lineItems,
             channelType: config.channelType || checkout.ChannelType.WEB,
+            checkoutInfo,
           });
 
           if (!checkoutResult._id) {

@@ -7,6 +7,7 @@ export type {
   PlanDurationData,
   PlanPerksData,
   PlanPerkItemData,
+  PlanActionBuyNowRenderProps,
 } from './Plan.js';
 
 export const PricingPlans = {
