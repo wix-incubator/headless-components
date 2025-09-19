@@ -24,28 +24,28 @@ export interface RootProps {
 
 /**
  * Root container that provides tag context to all child components.
- * Must be used as the top-level Tag component.
+ * Must be used as the top-level ScheduleItemTag component.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * import { Tag } from '@wix/events/components';
+ * import { ScheduleItemTag } from '@wix/events/components';
  *
  * function TagComponent({ tag }) {
  *   return (
- *     <Tag.Root tag={tag}>
- *       <Tag.Label />
- *     </Tag.Root>
+ *     <ScheduleItemTag.Root tag={tag}>
+ *       <ScheduleItemTag.Label />
+ *     </ScheduleItemTag.Root>
  *   );
  * }
  *
  * // For interactive tags
  * function InteractiveTagComponent({ tag, onClick, active }) {
  *   return (
- *     <Tag.Root tag={tag}>
- *       <Tag.Button onClick={onClick} active={active} />
- *     </Tag.Root>
+ *     <ScheduleItemTag.Root tag={tag}>
+ *       <ScheduleItemTag.Button onClick={onClick} active={active} />
+ *     </ScheduleItemTag.Root>
  *   );
  * }
  * ```
@@ -90,21 +90,21 @@ export interface LabelProps {
  * @example
  * ```tsx
  * // Default usage
- * <Tag.Label className="px-2 py-1 bg-gray-100 rounded" />
+ * <ScheduleItemTag.Label className="px-2 py-1 bg-gray-100 rounded" />
  *
  * // asChild with primitive
- * <Tag.Label asChild>
+ * <ScheduleItemTag.Label asChild>
  *   <span className="px-2 py-1 bg-gray-100 rounded" />
- * </Tag.Label>
+ * </ScheduleItemTag.Label>
  *
  * // asChild with react component
- * <Tag.Label asChild>
+ * <ScheduleItemTag.Label asChild>
  *   {React.forwardRef(({ text, ...props }, ref) => (
  *     <span ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded">
  *       {text}
  *     </span>
  *   ))}
- * </Tag.Label>
+ * </ScheduleItemTag.Label>
  * ```
  */
 export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
@@ -154,25 +154,25 @@ export interface ButtonProps {
  * @example
  * ```tsx
  * // Default usage
- * <Tag.Button
+ * <ScheduleItemTag.Button
  *   className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
  *   onClick={handleClick}
  *   active={isSelected}
  * />
  *
  * // asChild with primitive
- * <Tag.Button asChild onClick={handleClick} active={isSelected}>
+ * <ScheduleItemTag.Button asChild onClick={handleClick} active={isSelected}>
  *   <button className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200" />
- * </Tag.Button>
+ * </ScheduleItemTag.Button>
  *
  * // asChild with react component
- * <Tag.Button asChild onClick={handleClick} active={isSelected}>
+ * <ScheduleItemTag.Button asChild onClick={handleClick} active={isSelected}>
  *   {React.forwardRef(({ text, ...props }, ref) => (
  *     <button ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
  *       {text}
  *     </button>
  *   ))}
- * </Tag.Button>
+ * </ScheduleItemTag.Button>
  * ```
  */
 export const Button = React.forwardRef<HTMLElement, ButtonProps>(

@@ -17,7 +17,7 @@ export interface RootProps {
 }
 
 /**
- * Schedule Root core component that provides schedule item service context.
+ * ScheduleItem Root core component that provides schedule item service context.
  *
  * @component
  */
@@ -52,7 +52,7 @@ export interface NameRenderProps {
 }
 
 /**
- * Schedule Name core component that provides schedule item name.
+ * ScheduleItem Name core component that provides schedule item name.
  *
  * @component
  */
@@ -79,7 +79,7 @@ export interface TimeSlotRenderProps {
 }
 
 /**
- * Schedule TimeSlot core component that provides schedule item time information.
+ * ScheduleItem TimeSlot core component that provides schedule item time information.
  *
  * @component
  */
@@ -104,7 +104,7 @@ export interface DurationRenderProps {
 }
 
 /**
- * Schedule Duration core component that provides schedule item duration information.
+ * ScheduleItem Duration core component that provides schedule item duration information.
  *
  * @component
  */
@@ -129,7 +129,7 @@ export interface DescriptionRenderProps {
 }
 
 /**
- * Schedule Description core component that provides schedule item description.
+ * ScheduleItem Description core component that provides schedule item description.
  *
  * @component
  */
@@ -156,7 +156,7 @@ export interface StageRenderProps {
 }
 
 /**
- * Schedule Stage core component that provides schedule item stage information.
+ * ScheduleItem Stage core component that provides schedule item stage information.
  *
  * @component
  */
@@ -183,7 +183,7 @@ export interface TagsRenderProps {
 }
 
 /**
- * Schedule Tags core component that provides schedule item tags.
+ * ScheduleItem Tags core component that provides schedule item tags.
  *
  * @component
  */

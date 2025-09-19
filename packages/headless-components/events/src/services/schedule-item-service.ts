@@ -31,5 +31,3 @@ export const ScheduleItemService =
       return { item };
     },
   );
-
-export type ScheduleItemServiceConfigResult = ScheduleItemServiceConfig;

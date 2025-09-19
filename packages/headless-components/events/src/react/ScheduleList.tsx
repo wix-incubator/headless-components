@@ -1,8 +1,8 @@
 import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import * as CoreScheduleList from './core/ScheduleList.js';
-import * as Tag from './ScheduleItemTag.js';
 import * as ScheduleItem from './ScheduleItem.js';
+import * as ScheduleItemTag from './ScheduleItemTag.js';
 import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
@@ -10,7 +10,6 @@ import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/s
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
-  scheduleListError = 'schedule-list-error',
   scheduleListGroups = 'schedule-list-groups',
   scheduleListStageFilter = 'schedule-list-stage-filter',
   scheduleListTagFilters = 'schedule-list-tag-filters',
@@ -40,9 +39,19 @@ export interface RootProps {
  *   return (
  *     <ScheduleList.Root scheduleListServiceConfig={scheduleListServiceConfig}>
  *       <ScheduleList.Items>
- *         <ScheduleList.ItemRepeater />
+ *         <ScheduleList.ItemRepeater>
+ *           <ScheduleItem.Name />
+ *           <ScheduleItem.TimeSlot />
+ *           <ScheduleItem.Duration />
+ *           <ScheduleItem.Description />
+ *           <ScheduleItem.Stage />
+ *           <ScheduleItem.Tags>
+ *             <ScheduleItemTag.Repeater>
+ *              <ScheduleItemTag.Label />
+ *             </ScheduleItemTag.Repeater>
+ *           </ScheduleItem.Tags>
+ *         </ScheduleList.ItemRepeater>
  *       </ScheduleList.Items>
- *       <ScheduleList.Error />
  *     </ScheduleList.Root>
  *   );
  * }
@@ -78,13 +87,23 @@ export interface ItemsProps {
 
 /**
  * Container for the schedule list with support for empty state.
- * Follows List Container Level pattern.
  *
  * @component
  * @example
  * ```tsx
  * <ScheduleList.Items>
- *   <ScheduleList.ItemRepeater />
+ *   <ScheduleList.ItemRepeater>
+ *     <ScheduleItem.Name />
+ *     <ScheduleItem.TimeSlot />
+ *     <ScheduleItem.Duration />
+ *     <ScheduleItem.Description />
+ *     <ScheduleItem.Stage />
+ *     <ScheduleItem.Tags>
+ *       <ScheduleItemTag.Repeater>
+ *         <ScheduleItemTag.Label />
+ *       </ScheduleItemTag.Repeater>
+ *     </ScheduleItem.Tags>
+ *   </ScheduleList.ItemRepeater>
  * </ScheduleList.Items>
  * ```
  */
@@ -122,8 +141,6 @@ export interface ItemRepeaterProps {
 
 /**
  * Repeater component that renders ScheduleItem.Root for each schedule item.
- * Follows Repeater Level pattern.
- * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
  * @example
@@ -131,6 +148,14 @@ export interface ItemRepeaterProps {
  * <ScheduleList.ItemRepeater>
  *   <ScheduleItem.Name />
  *   <ScheduleItem.TimeSlot />
+ *   <ScheduleItem.Duration />
+ *   <ScheduleItem.Description />
+ *   <ScheduleItem.Stage />
+ *   <ScheduleItem.Tags>
+ *     <ScheduleItemTag.Repeater>
+ *       <ScheduleItemTag.Label />
+ *     </ScheduleItemTag.Repeater>
+ *   </ScheduleItem.Tags>
  * </ScheduleList.ItemRepeater>
  * ```
  */
@@ -228,10 +253,7 @@ export interface GroupRepeaterProps {
 }
 
 /**
- * Repeater component that renders ScheduleItemsGroup.Root for each date group.
- * Provides proper group service context for ScheduleItemsGroup components.
- * Follows Repeater Level pattern.
- * Note: Repeater components do NOT support asChild as per architecture rules.
+ * Repeater component that renders ScheduleItemsGroup.Root for each schedule items group.
  *
  * @component
  * @example
@@ -242,6 +264,14 @@ export interface GroupRepeaterProps {
  *     <ScheduleItemsGroup.GroupItemRepeater>
  *       <ScheduleItem.Name />
  *       <ScheduleItem.TimeSlot />
+ *       <ScheduleItem.Duration />
+ *       <ScheduleItem.Description />
+ *       <ScheduleItem.Stage />
+ *       <ScheduleItem.Tags>
+ *         <ScheduleItemTag.Repeater>
+ *           <ScheduleItemTag.Label />
+ *         </ScheduleItemTag.Repeater>
+ *       </ScheduleItem.Tags>
  *     </ScheduleItemsGroup.GroupItemRepeater>
  *   </ScheduleItemsGroup.GroupItems>
  * </ScheduleList.GroupRepeater>
@@ -379,7 +409,6 @@ export interface TagFiltersProps {
 
 /**
  * Container for tag filters with conditional rendering.
- * Follows Container Level pattern - provides context and conditional rendering.
  *
  * @component
  */
@@ -420,15 +449,13 @@ export interface TagFilterRepeaterProps {
 }
 
 /**
- * Repeater component that renders Tag.Root for each available tag with filtering functionality.
- * Follows Repeater Level pattern.
- * Note: Repeater components do NOT support asChild as per architecture rules.
+ * Repeater component that renders ScheduleItemTag.Root for each available tag with filtering functionality.
  *
  * @component
  * @example
  * ```tsx
  * <ScheduleList.TagFilterRepeater>
- *   <Tag.Button />
+ *   <ScheduleItemTag.Button />
  * </ScheduleList.TagFilterRepeater>
  * ```
  */
@@ -449,12 +476,12 @@ export const TagFilterRepeater = (
             };
 
             return (
-              <Tag.Root key={tag} tag={tag}>
+              <ScheduleItemTag.Root key={tag} tag={tag}>
                 {React.cloneElement(children as React.ReactElement, {
                   onClick: handleToggle,
                   active,
                 })}
-              </Tag.Root>
+              </ScheduleItemTag.Root>
             );
           })}
         </>

@@ -59,16 +59,19 @@ export const ScheduleListService =
           currentStageFilter,
           currentTagFilters,
         );
+
         return groupScheduleItemsByDate(filteredItems);
       });
 
       const stageNames = signalsService.computed(() => {
         const currentItems = items.get();
+
         return getAvailableStageNames(currentItems);
       });
 
       const tags = signalsService.computed(() => {
         const currentItems = items.get();
+
         return getAvailableTags(currentItems);
       });
 

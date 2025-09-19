@@ -17,7 +17,7 @@ export interface RootProps {
 }
 
 /**
- * ScheduleList Root core component that provides schedule list service context.
+ * ScheduleList Root core component that provides schedule list service data.
  *
  * @component
  */
@@ -47,7 +47,6 @@ export interface ItemsRenderProps {
 
 /**
  * ScheduleList Items core component that provides schedule list data.
- * Context-aware: provides group items when inside a Group, otherwise provides all items.
  *
  * @component
  */
@@ -73,7 +72,7 @@ export interface ItemRepeaterRenderProps {
 }
 
 /**
- * ScheduleList ItemRepeater core component that provides schedule item list. Not rendered if there are no items.
+ * ScheduleList ItemRepeater core component that provides schedule item list data. Not rendered if there are no items.
  *
  * @component
  */
@@ -99,8 +98,7 @@ export interface GroupsRenderProps {
 }
 
 /**
- * ScheduleList Groups core component that provides grouped schedule items context.
- * Container Level component following List, Options, and Repeater Pattern.
+ * ScheduleList Groups core component that provides grouped schedule items data.
  *
  * @component
  */
@@ -127,7 +125,6 @@ export interface GroupRepeaterRenderProps {
 
 /**
  * ScheduleList GroupRepeater core component that provides grouped schedule items data.
- * Repeater Level component following List, Options, and Repeater Pattern.
  * Not rendered if there are no groups.
  *
  * @component
@@ -206,7 +203,6 @@ export interface TagFiltersRenderProps {
 
 /**
  * ScheduleList TagFilters core component that provides tag filtering data.
- * Container Level component following List, Options, and Repeater Pattern.
  *
  * @component
  */
@@ -244,7 +240,6 @@ export interface TagFilterRepeaterRenderProps {
 
 /**
  * ScheduleList TagFilterRepeater core component that provides tag filtering data.
- * Repeater Level component following List, Options, and Repeater Pattern.
  * Not rendered if there are no tags.
  *
  * @component

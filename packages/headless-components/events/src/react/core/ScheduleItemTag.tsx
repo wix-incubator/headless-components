@@ -15,7 +15,7 @@ export interface RootProps {
 }
 
 /**
- * Tag Root core component that provides tag service context.
+ * ScheduleItemTag Root core component that provides tag service data.
  *
  * @component
  */
@@ -48,7 +48,7 @@ export interface TagRenderProps {
 }
 
 /**
- * Tag core component that provides tag data.
+ * ScheduleItemTag Tag core component that provides tag data.
  *
  * @component
  */

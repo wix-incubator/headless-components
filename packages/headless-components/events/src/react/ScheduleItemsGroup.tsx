@@ -1,13 +1,12 @@
 import React from 'react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreScheduleItemsGroup from './core/ScheduleItemsGroup.js';
-import * as Schedule from './ScheduleItem.js';
-import { type ScheduleItem } from '../services/schedule-item-service.js';
+import * as ScheduleItem from './ScheduleItem.js';
+import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 import { type ScheduleItemsGroup } from '../services/schedule-items-group-service.js';
 
 enum TestIds {
   scheduleItemsGroupRoot = 'schedule-items-group-root',
-  scheduleItemsGroup = 'schedule-items-group',
   scheduleItemsGroupDateLabel = 'schedule-items-group-date-label',
   scheduleItemsGroupItems = 'schedule-items-group-items',
   scheduleItemsGroupItem = 'schedule-items-group-item',
@@ -43,8 +42,8 @@ export interface RootProps {
  *       <ScheduleItemsGroup.GroupDateLabel />
  *       <ScheduleItemsGroup.GroupItems emptyState={<div>No schedule items available</div>}>
  *         <ScheduleItemsGroup.GroupItemRepeater>
- *           <Schedule.Name />
- *           <Schedule.TimeSlot />
+ *           <ScheduleItem.Name />
+ *           <ScheduleItem.TimeSlot />
  *         </ScheduleItemsGroup.GroupItemRepeater>
  *       </ScheduleItemsGroup.GroupItems>
  *     </ScheduleItemsGroup.Root>
@@ -148,7 +147,7 @@ export interface GroupItemsProps {
   children:
     | React.ReactNode
     | AsChildChildren<{
-        items: ScheduleItem[];
+        items: ScheduleItemType[];
       }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -158,15 +157,14 @@ export interface GroupItemsProps {
 
 /**
  * Container for the schedule items in the group with support for empty state.
- * Follows List Container Level pattern.
  *
  * @component
  * @example
  * ```tsx
  * <ScheduleItemsGroup.GroupItems emptyState={<div>No schedule items available</div>}>
  *   <ScheduleItemsGroup.GroupItemRepeater>
- *     <Schedule.Name />
- *     <Schedule.TimeSlot />
+ *     <ScheduleItem.Name />
+ *     <ScheduleItem.TimeSlot />
  *   </ScheduleItemsGroup.GroupItemRepeater>
  * </ScheduleItemsGroup.GroupItems>
  * ```
@@ -213,16 +211,14 @@ export interface GroupItemRepeaterProps {
 
 /**
  * Repeater component that renders ScheduleItem.Root for each schedule item in the group.
- * Follows Repeater Level pattern.
- * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
  * @example
  * ```tsx
  * <ScheduleItemsGroup.GroupItemRepeater>
- *   <Schedule.Name />
- *   <Schedule.TimeSlot />
- *   <Schedule.Duration />
+ *   <ScheduleItem.Name />
+ *   <ScheduleItem.TimeSlot />
+ *   <ScheduleItem.Duration />
  * </ScheduleItemsGroup.GroupItemRepeater>
  * ```
  */
@@ -235,14 +231,14 @@ export const GroupItemRepeater = (
     <CoreScheduleItemsGroup.GroupItems>
       {({ items }) =>
         items.map((item) => (
-          <Schedule.Root
+          <ScheduleItem.Root
             key={item._id}
             item={item}
             className={className}
             data-testid={TestIds.scheduleItemsGroupItem}
           >
             {children}
-          </Schedule.Root>
+          </ScheduleItem.Root>
         ))
       }
     </CoreScheduleItemsGroup.GroupItems>

@@ -17,7 +17,7 @@ export interface RootProps {
 }
 
 /**
- * ScheduleItemsGroup Root core component that provides schedule items group service context.
+ * ScheduleItemsGroup Root core component that provides schedule items group service data.
  *
  * @component
  */
@@ -76,7 +76,7 @@ export interface GroupItemsRenderProps {
 }
 
 /**
- * ScheduleItemsGroup GroupItems core component that provides group items information.
+ * ScheduleItemsGroup GroupItems core component that provides group items data.
  * Returns filtered items based on current stage and tag filters.
  *
  * @component
