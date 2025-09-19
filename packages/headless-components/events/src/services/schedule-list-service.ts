@@ -30,6 +30,7 @@ export interface ScheduleListServiceAPI {
   setStageFilter: (stageName: string | null) => void;
   addTagFilter: (tagValue: string) => void;
   removeTagFilter: (tagValue: string) => void;
+  filterItems: (items: ScheduleItem[]) => ScheduleItem[];
 }
 
 export interface ScheduleListServiceConfig {
@@ -92,6 +93,17 @@ export const ScheduleListService =
         tagFilters.set(currentFilters.filter((tag) => tag !== tagValue));
       };
 
+      const filterItems = (items: ScheduleItem[]) => {
+        const currentStageFilter = stageFilter.get();
+        const currentTagFilters = tagFilters.get();
+
+        return filterScheduleItems(
+          items,
+          currentStageFilter,
+          currentTagFilters,
+        );
+      };
+
       return {
         items,
         groupedItems,
@@ -103,6 +115,7 @@ export const ScheduleListService =
         setStageFilter,
         addTagFilter,
         removeTagFilter,
+        filterItems,
       };
     },
   );

@@ -9,6 +9,7 @@ import {
 import {
   type ScheduleItem,
   type ScheduleItemGroup,
+  ScheduleListServiceDefinition,
 } from '../../services/schedule-list-service.js';
 
 export interface RootProps {
@@ -106,14 +107,18 @@ export interface GroupItemsRenderProps {
 
 /**
  * ScheduleList GroupItems core component that provides group items information.
+ * Applies current filters to the group items to ensure only matching items are displayed.
  *
  * @component
  */
 export function GroupItems(props: GroupItemsProps): React.ReactNode {
   const groupService = useService(ScheduleListGroupServiceDefinition);
+  const scheduleListService = useService(ScheduleListServiceDefinition);
   const group = groupService.group.get();
 
+  const filteredItems = scheduleListService.filterItems(group.items);
+
   return props.children({
-    items: group.items,
+    items: filteredItems,
   });
 }
