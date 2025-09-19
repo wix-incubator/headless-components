@@ -30,11 +30,13 @@ interface RootProps {
 **Data Attributes**
 
 - `data-testid="event-root"` - Applied to event root element
-- `data-upcoming` - Is event upcoming
-- `data-started` - Is event started
-- `data-ended` - Is event ended
-- `data-sold-out` - Is event sold out
-- `data-registration-closed` - Is registration closed
+- `data-upcoming` - Event is upcoming
+- `data-started` - Event has started
+- `data-ended` - Event has ended
+- `data-sold-out` - Event is sold out
+- `data-registration-closed` - Registration is closed
+- `data-has-image` - Event has image
+- `data-has-description` - Event has description
 
 ---
 
@@ -319,7 +321,7 @@ interface RsvpButtonProps {
 **Data Attributes**
 
 - `data-testid="event-rsvp-button"` - Applied to RSVP button element
-- `data-ticketed` - Is event ticketed
+- `data-ticketed` - Event is ticketed
 
 ---
 
@@ -538,9 +540,11 @@ interface AddToIcsCalendarProps {
 | `data-testid="event-x-share"`                | Event.XShare              | Event X share element                |
 | `data-testid="event-add-to-google-calendar"` | Event.AddToGoogleCalendar | Event add to Google calendar element |
 | `data-testid="event-add-to-ics-calendar"`    | Event.AddToIcsCalendar    | Event add to ICS calendar element    |
-| `data-upcoming`                              | Event.Root                | Event status                         |
-| `data-started`                               | Event.Root                | Event status                         |
-| `data-ended`                                 | Event.Root                | Event status                         |
-| `data-sold-out`                              | Event.Root                | Event ticketing status               |
-| `data-registration-closed`                   | Event.Root                | Event registration status            |
-| `data-ticketed`                              | Event.RsvpButton          | Event type                           |
+| `data-upcoming`                              | Event.Root                | Event is upcoming                    |
+| `data-started`                               | Event.Root                | Event has started                    |
+| `data-ended`                                 | Event.Root                | Event has ended                      |
+| `data-sold-out`                              | Event.Root                | Event is sold out                    |
+| `data-registration-closed`                   | Event.Root                | Registration is closed               |
+| `data-has-image`                             | Event.Root                | Event has image                      |
+| `data-has-description`                       | Event.Root                | Event has description                |
+| `data-ticketed`                              | Event.RsvpButton          | Event is ticketed                    |

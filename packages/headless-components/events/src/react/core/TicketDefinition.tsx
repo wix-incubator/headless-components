@@ -173,6 +173,48 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
   });
 }
 
+export interface PricingRangeProps {
+  /** Render prop function */
+  children: (props: PricingRangeRenderProps) => React.ReactNode;
+}
+
+export interface PricingRangeRenderProps {
+  /** Minimum price */
+  minPrice: number;
+  /** Maximum price */
+  maxPrice: number;
+  /** Price currency */
+  currency: string;
+}
+
+/**
+ * TicketDefinition PricingRange core component that provides pricing range data. Not rendered if ticket definition doesn't have pricing options.
+ *
+ * @component
+ */
+export function PricingRange(props: PricingRangeProps): React.ReactNode {
+  const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+  const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+  const pricingOptions =
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails || [];
+  const hasPricingOptions = !!pricingOptions.length;
+
+  if (!hasPricingOptions) {
+    return null;
+  }
+
+  const prices = pricingOptions.map((option) => Number(option.price!.value!));
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const currency = pricingOptions[0]!.price!.currency!;
+
+  return props.children({
+    minPrice,
+    maxPrice,
+    currency,
+  });
+}
+
 export interface RemainingProps {
   /** Render prop function */
   children: (props: RemainingRenderProps) => React.ReactNode;
