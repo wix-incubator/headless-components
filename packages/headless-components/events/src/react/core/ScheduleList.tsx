@@ -57,22 +57,14 @@ export interface ItemsRenderProps {
  */
 export function Items(props: ItemsProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
-  const allItems = scheduleListService.items.get();
-
-  // Check if we're inside a group context
-  const groupContext = React.useContext(GroupContext);
-  const items = groupContext ? groupContext.items : allItems;
+  const items = scheduleListService.items.get();
   const hasItems = !!items.length;
 
   if (!hasItems) {
     return null;
   }
 
-  return (
-    <ItemsContext.Provider value={items}>
-      {props.children({ items, hasItems })}
-    </ItemsContext.Provider>
-  );
+  return props.children({ items, hasItems });
 }
 
 export interface ItemRepeaterProps {
@@ -87,12 +79,12 @@ export interface ItemRepeaterRenderProps {
 
 /**
  * ScheduleList ItemRepeater core component that provides schedule item list. Not rendered if there are no items.
- * Uses items from Items context (which are context-aware).
  *
  * @component
  */
 export function ItemRepeater(props: ItemRepeaterProps): React.ReactNode {
-  const items = useItemsContext();
+  const scheduleListService = useService(ScheduleListServiceDefinition);
+  const items = scheduleListService.items.get();
   const hasItems = !!items.length;
 
   if (!hasItems) {
@@ -157,73 +149,6 @@ export function GroupRepeater(props: GroupRepeaterProps): React.ReactNode {
   }
 
   return props.children({ groups });
-}
-
-// Context for individual group
-const GroupContext = React.createContext<ScheduleItemGroup | null>(null);
-
-function useGroupContext(): ScheduleItemGroup {
-  const context = React.useContext(GroupContext);
-  if (!context) {
-    throw new Error('useGroupContext must be used within a Group component');
-  }
-  return context;
-}
-
-// Context for current items (either all items or group items)
-const ItemsContext = React.createContext<ScheduleItem[] | null>(null);
-
-function useItemsContext(): ScheduleItem[] {
-  const context = React.useContext(ItemsContext);
-  if (!context) {
-    throw new Error('useItemsContext must be used within an Items component');
-  }
-  return context;
-}
-export interface GroupProps {
-  /** Group data */
-  group: ScheduleItemGroup;
-  /** Child components that will have access to the group context */
-  children: React.ReactNode;
-}
-
-/**
- * ScheduleList Group core component that provides individual group context.
- *
- * @component
- */
-export function Group(props: GroupProps): React.ReactNode {
-  const { group, children } = props;
-
-  return (
-    <GroupContext.Provider value={group}>{children}</GroupContext.Provider>
-  );
-}
-
-export interface GroupDateLabelProps {
-  /** Render prop function */
-  children: (props: GroupDateLabelRenderProps) => React.ReactNode;
-}
-
-export interface GroupDateLabelRenderProps {
-  /** Formatted date label (e.g., "Mon, 07 Jul") */
-  dateLabel: string;
-  /** Date object for the group */
-  date: Date;
-}
-
-/**
- * ScheduleList GroupDateLabel core component that provides group date label information.
- *
- * @component
- */
-export function GroupDateLabel(props: GroupDateLabelProps): React.ReactNode {
-  const group = useGroupContext();
-
-  return props.children({
-    dateLabel: group.dateLabel,
-    date: group.date,
-  });
 }
 
 export interface StageFilterProps {

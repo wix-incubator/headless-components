@@ -7,14 +7,13 @@ import {
   type ScheduleItemGroup,
 } from '../services/schedule-list-service.js';
 import * as Schedule from './ScheduleItem.js';
+import * as ScheduleListGroup from './ScheduleListGroup.js';
 import * as Tag from './Tag.js';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
   scheduleListError = 'schedule-list-error',
   scheduleListGroups = 'schedule-list-groups',
-  scheduleListGroup = 'schedule-list-group',
-  scheduleListGroupDateLabel = 'schedule-list-group-date-label',
   scheduleListStageFilter = 'schedule-list-stage-filter',
   scheduleListTagFilters = 'schedule-list-tag-filters',
 }
@@ -182,7 +181,13 @@ export interface GroupsProps {
  * ```tsx
  * <ScheduleList.Groups emptyState={<div>No schedule groups available</div>}>
  *   <ScheduleList.GroupRepeater>
- *     <ScheduleList.GroupDateLabel />
+ *     <ScheduleListGroup.GroupDateLabel />
+ *     <ScheduleListGroup.GroupItems>
+ *       <ScheduleListGroup.GroupItemRepeater>
+ *         <Schedule.Name />
+ *         <Schedule.TimeSlot />
+ *       </ScheduleListGroup.GroupItemRepeater>
+ *     </ScheduleListGroup.GroupItems>
  *   </ScheduleList.GroupRepeater>
  * </ScheduleList.Groups>
  * ```
@@ -226,11 +231,24 @@ export interface GroupRepeaterProps {
 }
 
 /**
- * Repeater component that renders Group components for each date group.
+ * Repeater component that renders ScheduleListGroup.Root for each date group.
+ * Provides proper group service context for ScheduleListGroup components.
  * Follows Repeater Level pattern.
  * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
+ * @example
+ * ```tsx
+ * <ScheduleList.GroupRepeater>
+ *   <ScheduleListGroup.GroupDateLabel />
+ *   <ScheduleListGroup.GroupItems>
+ *     <ScheduleListGroup.GroupItemRepeater>
+ *       <Schedule.Name />
+ *       <Schedule.TimeSlot />
+ *     </ScheduleListGroup.GroupItemRepeater>
+ *   </ScheduleListGroup.GroupItems>
+ * </ScheduleList.GroupRepeater>
+ * ```
  */
 export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
   const { children } = props;
@@ -240,105 +258,18 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
       {({ groups }) => (
         <>
           {groups.map((group, index) => (
-            <CoreScheduleList.Group
+            <ScheduleListGroup.Root
               key={group.dateLabel + '-' + index}
               group={group}
             >
               {children}
-            </CoreScheduleList.Group>
+            </ScheduleListGroup.Root>
           ))}
         </>
       )}
     </CoreScheduleList.GroupRepeater>
   );
 };
-
-/**
- * Props for the ScheduleList Group component.
- */
-export interface GroupProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Child components or custom render function when using asChild */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{
-        group: ScheduleItemGroup;
-      }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-}
-
-/**
- * Container for an individual date group that provides group context.
- * Must be used within GroupRepeater.
- *
- * @component
- */
-export const Group = React.forwardRef<HTMLElement, GroupProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
-
-  return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.scheduleListGroup}
-      customElement={children}
-      customElementProps={{}}
-      {...otherProps}
-    >
-      <div>{children as React.ReactNode}</div>
-    </AsChildSlot>
-  );
-});
-
-/**
- * Props for the ScheduleList GroupDateLabel component.
- */
-export interface GroupDateLabelProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    dateLabel: string;
-    date: Date;
-  }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-}
-
-/**
- * Displays the date label for a schedule group (e.g., "Mon, 07 Jul").
- * Must be used within a Group component.
- *
- * @component
- */
-export const GroupDateLabel = React.forwardRef<
-  HTMLElement,
-  GroupDateLabelProps
->((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
-
-  return (
-    <CoreScheduleList.GroupDateLabel>
-      {({ dateLabel, date }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.scheduleListGroupDateLabel}
-          customElement={children}
-          customElementProps={{ dateLabel, date }}
-          content={dateLabel}
-          {...otherProps}
-        >
-          <span>{dateLabel}</span>
-        </AsChildSlot>
-      )}
-    </CoreScheduleList.GroupDateLabel>
-  );
-});
 
 /**
  * Props for the ScheduleList StageFilter component.

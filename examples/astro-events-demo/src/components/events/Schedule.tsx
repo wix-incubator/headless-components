@@ -1,5 +1,6 @@
 import {
   ScheduleList as ScheduleListPrimitive,
+  ScheduleListGroup as ScheduleListGroupPrimitive,
   ScheduleItem as ScheduleItemPrimitive,
   Event as EventPrimitive,
   Tag as TagPrimitive,
@@ -53,11 +54,17 @@ export function Schedule({
           </div>
           <ScheduleListPrimitive.Groups className="space-y-8 mb-6">
             <ScheduleListPrimitive.GroupRepeater>
-              <ScheduleListPrimitive.GroupDateLabel className="text-2xl font-bold text-content-primary">
+              <ScheduleListGroupPrimitive.GroupDateLabel
+                className="text-2xl font-bold text-content-primary"
+                asChild
+              >
                 <h2 />
-              </ScheduleListPrimitive.GroupDateLabel>
-              <ScheduleListPrimitive.Items className="mt-4 space-y-4">
-                <ScheduleListPrimitive.ItemRepeater className="group border border-gray-200 p-8">
+              </ScheduleListGroupPrimitive.GroupDateLabel>
+              <ScheduleListGroupPrimitive.GroupItems
+                className="mt-4 space-y-4"
+                emptyState={<div>No schedule items available</div>}
+              >
+                <ScheduleListGroupPrimitive.GroupItemRepeater className="group border border-gray-200 p-8">
                   <div className="flex gap-8">
                     <div className="min-w-[150px] flex flex-col">
                       <ScheduleItemPrimitive.TimeSlot className="font-light text-content-primary" />
@@ -88,8 +95,8 @@ export function Schedule({
                       </ScheduleItemPrimitive.Tags>
                     </div>
                   </div>
-                </ScheduleListPrimitive.ItemRepeater>
-              </ScheduleListPrimitive.Items>
+                </ScheduleListGroupPrimitive.GroupItemRepeater>
+              </ScheduleListGroupPrimitive.GroupItems>
             </ScheduleListPrimitive.GroupRepeater>
           </ScheduleListPrimitive.Groups>
         </ScheduleListPrimitive.Root>
