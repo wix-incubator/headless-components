@@ -89,7 +89,7 @@ export const Name = React.forwardRef<HTMLElement, ModifierNameProps>(
               content={name}
               {...otherProps}
             >
-              <div>{name}</div>
+              <p>{name}</p>
             </AsChildSlot>
           );
         }}
@@ -148,7 +148,7 @@ export const Price = React.forwardRef<HTMLElement, ModifierPriceProps>(
               content={formattedAdditionalCharge ?? additionalCharge}
               {...otherProps}
             >
-              <div>{formattedAdditionalCharge ?? additionalCharge}</div>
+              <p>{formattedAdditionalCharge ?? additionalCharge}</p>
             </AsChildSlot>
           );
         }}

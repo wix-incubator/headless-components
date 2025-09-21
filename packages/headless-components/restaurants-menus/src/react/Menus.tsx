@@ -122,7 +122,7 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
               content={loading ? 'Loading...' : null}
               {...otherProps}
             >
-              <div>{loading ? 'Loading...' : null}</div>
+              <p>{loading ? 'Loading...' : null}</p>
             </AsChildSlot>
           );
         }}
@@ -172,7 +172,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
             content={error ? `Error: ${error}` : null}
             {...otherProps}
           >
-            <div>{error ? `Error: ${error}` : null}</div>
+            <p>{error ? `Error: ${error}` : null}</p>
           </AsChildSlot>
         );
       }}

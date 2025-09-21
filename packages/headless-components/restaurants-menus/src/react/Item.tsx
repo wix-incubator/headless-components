@@ -140,7 +140,7 @@ export const Name = React.forwardRef<HTMLElement, ItemNameProps>(
               content={name}
               {...otherProps}
             >
-              <div>{name}</div>
+              <p>{name}</p>
             </AsChildSlot>
           );
         }}
@@ -191,7 +191,7 @@ export const Description = React.forwardRef<HTMLElement, ItemDescriptionProps>(
               content={description}
               {...otherProps}
             >
-              <div>{description}</div>
+              <p>{description}</p>
             </AsChildSlot>
           );
         }}
@@ -242,7 +242,7 @@ export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
               content={formattedPrice || price}
               {...otherProps}
             >
-              <div>{formattedPrice || price}</div>
+              <p>{formattedPrice || price}</p>
             </AsChildSlot>
           );
         }}

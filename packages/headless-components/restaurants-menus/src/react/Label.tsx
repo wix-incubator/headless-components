@@ -73,7 +73,7 @@ export const Name = React.forwardRef<HTMLElement, LabelNameProps>(
               content={name}
               {...otherProps}
             >
-              <div>{name}</div>
+              <p>{name}</p>
             </AsChildSlot>
           );
         }}
