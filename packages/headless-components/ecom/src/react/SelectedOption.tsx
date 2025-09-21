@@ -1,5 +1,6 @@
 import { WixServices, useService } from '@wix/services-manager-react';
 import React from 'react';
+import { DataComponentTags } from '../data-component-tags.js';
 import {
   SelectedOptionServiceDefinition,
   SelectedOptionService,
@@ -32,7 +33,7 @@ export interface SelectedOptionRootProps {
  * </SelectedOption.Root>
  * ```
  */
-export function Root(props: SelectedOptionRootProps): React.ReactNode {
+export const Root = (props: SelectedOptionRootProps): React.ReactNode => {
   const { children, option } = props;
 
   return (
@@ -45,7 +46,9 @@ export function Root(props: SelectedOptionRootProps): React.ReactNode {
         },
       )}
     >
-      {children}
+      <AsChildSlot data-component-tag={DataComponentTags.selectedOptionRoot}>
+        {children}
+      </AsChildSlot>
     </WixServices>
   );
 }
