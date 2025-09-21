@@ -18,6 +18,7 @@ export {
   Description as ItemDescription,
   Price,
   Image,
+  AdditionalImages,
 } from './Item.js';
 export {
   Label as CoreLabel,

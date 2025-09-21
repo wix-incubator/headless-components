@@ -3,6 +3,7 @@ export const TestIds = {
   itemDescription: 'item-description',
   itemPrice: 'item-price',
   itemImage: 'item-image',
+  itemAdditionalImages: 'item-additional-images',
   itemVariants: 'item-variants',
   itemPriceVariants: 'item-price-variants',
   itemModifierGroups: 'item-modifier-groups',

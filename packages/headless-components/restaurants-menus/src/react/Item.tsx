@@ -5,6 +5,7 @@ import {
   ItemDescription,
   Price as CorePrice,
   Image as CoreImage,
+  AdditionalImages as CoreAdditionalImages,
   useItemContext,
 } from './core/index.js';
 import type {
@@ -18,7 +19,7 @@ import type {
   AsChildRenderFunction,
 } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds.js';
-import { WixMediaImage } from '@wix/headless-media/react';
+import { WixMediaImage, MediaGallery } from '@wix/headless-media/react';
 import * as VariantComponent from './Variant.js';
 import * as LabelComponent from './Label.js';
 import * as ModifierGroupComponent from './ModifierGroup.js';
@@ -312,6 +313,108 @@ export const Image = React.forwardRef<HTMLImageElement, ItemImageProps>(
   },
 );
 
+export interface ItemAdditionalImagesProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildRenderFunction<{
+    hasImages: boolean;
+    images?: string[];
+    altText: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays additional images using MediaGallery component with customizable rendering.
+ * Provides the actual images when available.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Item.AdditionalImages className="w-full h-64" />
+ *
+ * // asChild with primitive
+ * <Item.AdditionalImages asChild>
+ *   <div className="w-full h-64" />
+ * </Item.AdditionalImages>
+ *
+ * // asChild with custom component
+ * <Item.AdditionalImages asChild>
+ *   {React.forwardRef(({hasImages, images, altText, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="w-full h-64">
+ *       {hasImages && (
+ *         <MediaGallery.Root mediaGalleryServiceConfig={{ media: images.map(img => ({ image: img })) }}>
+ *           <MediaGallery.Viewport />
+ *           <MediaGallery.Previous />
+ *           <MediaGallery.Next />
+ *         </MediaGallery.Root>
+ *       )}
+ *     </div>
+ *   ))}
+ * </Item.AdditionalImages>
+ *
+ * // Custom render function
+ * <Item.AdditionalImages>
+ *   {({ hasImages, images, altText }) => (
+ *     <div className="w-full h-64">
+ *       {hasImages && (
+ *         <MediaGallery.Root mediaGalleryServiceConfig={{ media: images.map(img => ({ image: img })) }}>
+ *           <MediaGallery.Viewport />
+ *           <MediaGallery.Thumbnails>
+ *             <MediaGallery.ThumbnailRepeater>
+ *               <MediaGallery.ThumbnailItem />
+ *             </MediaGallery.ThumbnailRepeater>
+ *           </MediaGallery.Thumbnails>
+ *         </MediaGallery.Root>
+ *       )}
+ *     </div>
+ *   )}
+ * </Item.AdditionalImages>
+ * ```
+ */
+export const AdditionalImages = React.forwardRef<HTMLElement, ItemAdditionalImagesProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    return (
+      <CoreAdditionalImages>
+        {({ hasImages, images, altText }: { hasImages: boolean; images?: string[]; altText: string }) => {
+          if (asChild && children) {
+            return children({ hasImages, images, altText }, ref);
+          }
+
+          if (!hasImages) {
+            return null;
+          }
+
+          const mediaItems = images?.map((image: string) => ({ image })) || [];
+
+          return (
+            <MediaGallery.Root mediaGalleryServiceConfig={{ media: mediaItems }}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                data-testid={TestIds.itemAdditionalImages}
+                {...otherProps}
+              >
+                <div>
+                  <MediaGallery.Viewport />
+                  <MediaGallery.Previous />
+                  <MediaGallery.Next />
+                  <MediaGallery.Indicator />
+                </div>
+              </AsChildSlot>
+            </MediaGallery.Root>
+          );
+        }}
+      </CoreAdditionalImages>
+    );
+  },
+);
+
 /**
  * Repeater component for rendering individual variants.
  *
@@ -363,6 +466,7 @@ Name.displayName = 'Item.Name';
 Description.displayName = 'Item.Description';
 Price.displayName = 'Item.Price';
 Image.displayName = 'Item.Image';
+AdditionalImages.displayName = 'Item.AdditionalImages';
 VariantsRepeater.displayName = 'Item.VariantsRepeater';
 
 export const LabelsRepeater = (props: ItemLabelsRepeaterProps) => {
@@ -430,6 +534,8 @@ export const Item = {
   Price,
   /** Item image component */
   Image,
+  /** Item additional images component */
+  AdditionalImages,
   /** Item variants repeater component */
   VariantsRepeater,
   /** Item labels repeater component */
