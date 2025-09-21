@@ -29,7 +29,11 @@ export interface MenusRepeaterProps {
 }
 
 export function Root(props: MenusRootProps) {
-  return <Menus config={props.config}>{props.children}</Menus>;
+  return (
+    <Menus config={props.config}>
+      <div data-component-tag="menus.root">{props.children}</div>
+    </Menus>
+  );
 }
 
 export const MenusRepeater = React.forwardRef<HTMLElement, MenusRepeaterProps>(
