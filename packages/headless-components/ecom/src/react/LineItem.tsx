@@ -69,7 +69,9 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
         {...otherProps}
       >
         <LineItemContext.Provider value={contextValue}>
-          <div data-component-tag={DataComponentTags.lineItemRoot}>{children}</div>
+          <div data-component-tag={DataComponentTags.lineItemRoot}>
+            {children}
+          </div>
         </LineItemContext.Provider>
       </AsChildSlot>
     );
