@@ -14,6 +14,7 @@ import { ProductListSort as ProductListSortPrimitive } from './core/ProductListS
 import * as CoreProductListFilters from './core/ProductListFilters.js';
 import * as Product from './Product.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { DataComponentTags } from '../data-component-tags.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -90,6 +91,8 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   },
 );
 
+Root.displayName = 'ProductList.Root';
+
 /**
  * Internal component to handle the Root content with service access
  */
@@ -116,6 +119,7 @@ const RootContent = React.forwardRef<
       isLoading={productsListService.isLoading.get()}
       className={className}
       ref={ref}
+      data-component-tag={DataComponentTags.productListRoot}
       data-testid={TestIds.productListRoot}
     >
       {children}

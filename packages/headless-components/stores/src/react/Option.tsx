@@ -7,6 +7,7 @@ import * as Choice from './Choice.js';
 import * as ProductModifiersPrimitive from './core/ProductModifiers.js';
 import * as ProductVariantSelectorPrimitive from './core/ProductVariantSelector.js';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import { DataComponentTags } from '../data-component-tags.js';
 
 enum TestIds {
   optionRoot = 'option-root',
@@ -169,6 +170,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         ref={ref}
         asChild={asChild}
         className={className}
+        data-component-tag={DataComponentTags.optionRoot}
         data-testid={TestIds.optionRoot}
         data-type={optionType}
         customElement={children}
@@ -180,6 +182,8 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
     </OptionContext.Provider>
   );
 });
+
+Root.displayName = 'Option.Root';
 
 // Create a context to pass option data down
 export const OptionContext = React.createContext<any>(null);

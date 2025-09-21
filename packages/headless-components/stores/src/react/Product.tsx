@@ -11,6 +11,7 @@ import * as ProductModifiers from './core/ProductModifiers.js';
 import * as SelectedVariant from './core/SelectedVariant.js';
 import * as Option from './Option.js';
 import { AsContent } from './types.js';
+import { DataComponentTags } from '../data-component-tags.js';
 
 /**
  * Context for sharing variant options state between components
@@ -132,27 +133,34 @@ export interface ProductRootProps {
  * }
  * ```
  */
-export function Root(props: ProductRootProps): React.ReactNode {
+export const Root = (props: ProductRootProps): React.ReactNode => {
   const { children, product, ...attrs } = props;
 
   return (
-    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
-      <MediaGallery.Root
-        mediaGalleryServiceConfig={{
-          media: props.product.media?.itemsInfo?.items ?? [],
-        }}
-      >
-        <ProductVariantSelector.Root>
-          <ProductModifiers.Root>
-            <SelectedVariant.Root>
-              <AsChildSlot {...attrs}>{children}</AsChildSlot>
-            </SelectedVariant.Root>
-          </ProductModifiers.Root>
-        </ProductVariantSelector.Root>
-      </MediaGallery.Root>
-    </CoreProduct.Root>
+    <AsChildSlot
+      data-testid={TestIds.productRoot}
+      data-component-tag={DataComponentTags.productRoot}
+    >
+      <CoreProduct.Root productServiceConfig={{ product: props.product }}>
+        <MediaGallery.Root
+          mediaGalleryServiceConfig={{
+            media: props.product.media?.itemsInfo?.items ?? [],
+          }}
+        >
+          <ProductVariantSelector.Root>
+            <ProductModifiers.Root>
+              <SelectedVariant.Root>
+                <AsChildSlot {...attrs}>{children}</AsChildSlot>
+              </SelectedVariant.Root>
+            </ProductModifiers.Root>
+          </ProductVariantSelector.Root>
+        </MediaGallery.Root>
+      </CoreProduct.Root>
+    </AsChildSlot>
   );
-}
+};
+
+Root.displayName = 'Product.Root';
 
 /**
  * Props for Product Name component

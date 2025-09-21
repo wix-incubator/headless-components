@@ -1,4 +1,4 @@
-import { type RichContent, isRichContentEmpty } from '@wix/ricos';
+import { type RichContent } from '@wix/ricos';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
@@ -7,6 +7,7 @@ import {
   type EventServiceConfig,
   type Event,
 } from '../../services/event-service.js';
+import { hasDescription } from '../../utils/event.js';
 
 export interface RootProps {
   /** Child components that will have access to the event service */
@@ -197,11 +198,11 @@ export function Description(props: DescriptionProps): React.ReactNode {
   const event = eventService.event.get();
   const description = event.description as RichContent | undefined;
 
-  if (!description || isRichContentEmpty(description)) {
+  if (!hasDescription(event)) {
     return null;
   }
 
-  return props.children({ description });
+  return props.children({ description: description! });
 }
 
 export interface RsvpButtonProps {

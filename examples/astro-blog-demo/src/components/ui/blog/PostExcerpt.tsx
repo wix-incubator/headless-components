@@ -4,11 +4,6 @@ import React from "react";
 
 /**
  * Displays the excerpt/summary of a blog post with line clamping.
- *
- * @example
- * ```tsx
- * <PostExcerpt className="text-muted" />
- * ```
  */
 export const PostExcerpt = React.forwardRef<
   HTMLElement,

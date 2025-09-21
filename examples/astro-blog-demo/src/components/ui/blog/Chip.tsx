@@ -4,14 +4,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import React from "react";
 
 const chipVariants = cva(
-  "focus-visible:ring-ring inline-flex items-center rounded-full border text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+  "text-content-primary inline-flex items-center rounded-full border text-sm font-medium transition-colors",
   {
     variants: {
       variant: {
-        default:
-          "border-surface-subtle text-foreground px-3 py-1 leading-relaxed",
-        secondary:
-          "border-surface-strong text-foreground px-3 py-1 leading-tight",
+        default: "border-surface-subtle px-3 py-1 leading-relaxed",
+        secondary: "border-surface-strong px-3 py-1 leading-tight",
       },
       size: {
         default: "text-sm",
