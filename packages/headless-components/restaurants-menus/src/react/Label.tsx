@@ -105,7 +105,7 @@ export interface LabelIconProps {
 
 /**
  * Displays the label icon with customizable rendering following the documented API.
- * Provides both the actual icon element and a fallback element for when no icon is available.
+ * Provides the actual icon element when available.
  *
  * @component
  * @example
@@ -122,7 +122,7 @@ export interface LabelIconProps {
  * <Label.Icon asChild>
  *   {React.forwardRef(({hasIcon, icon, altText, ...props}, ref) => (
  *     <div ref={ref} {...props} className="w-4 h-4">
- *       {hasIcon ? <img src={icon} alt={altText} /> : <span>No Icon</span>}
+ *       {hasIcon && <img src={icon} alt={altText} />}
  *     </div>
  *   ))}
  * </Label.Icon>
@@ -131,10 +131,8 @@ export interface LabelIconProps {
  * <Label.Icon>
  *   {({ hasIcon, icon, altText }) => (
  *     <div className="w-4 h-4 flex-shrink-0">
- *       {hasIcon ? (
+ *       {hasIcon && (
  *         <WixMediaImage media={{ image: icon }} alt={altText} width={16} height={16} />
- *       ) : (
- *         <div className="w-4 h-4 bg-secondary rounded" />
  *       )}
  *     </div>
  *   )}

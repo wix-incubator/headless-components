@@ -91,15 +91,15 @@ export interface ErrorProps {
  *
  * // asChild with primitive
  * <Menus.Loading asChild>
- *   <div className="text-center" />
+ *   <p className="text-center" />
  * </Menus.Loading>
  *
  * // asChild with react component
  * <Menus.Loading asChild>
  *   {React.forwardRef(({loading, ...props}, ref) => (
- *     <div ref={ref} {...props} className="text-center">
+ *     <p ref={ref} {...props} className="text-center">
  *       {loading ? "Loading..." : null}
- *     </div>
+ *     </p>
  *   ))}
  * </Menus.Loading>
  * ```
@@ -142,15 +142,15 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
  *
  * // asChild with primitive
  * <Menus.Error asChild>
- *   <div className="text-red-600" />
+ *   <p className="text-red-600" />
  * </Menus.Error>
  *
  * // asChild with react component
  * <Menus.Error asChild>
  *   {React.forwardRef(({error, ...props}, ref) => (
- *     <div ref={ref} {...props} className="text-red-600">
+ *     <p ref={ref} {...props} className="text-red-600">
  *       {error ? `Error: ${error}` : null}
- *     </div>
+ *     </p>
  *   ))}
  * </Menus.Error>
  * ```

@@ -253,7 +253,7 @@ export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
 
 /**
  * Displays the item image with customizable rendering following the documented API.
- * Provides both the actual image element and a fallback element for when no image is available.
+ * Provides the actual image element when available.
  *
  * @component
  * @example
@@ -268,18 +268,18 @@ export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
  *
  * // asChild with custom component
  * <Item.Image asChild>
- *   {React.forwardRef(({hasImage, imageElement, fallbackElement, ...props}, ref) => (
+ *   {React.forwardRef(({hasImage, imageElement, ...props}, ref) => (
  *     <div ref={ref} {...props} className="w-20 h-20">
- *       {hasImage ? imageElement : fallbackElement}
+ *       {hasImage ? imageElement : <div>No image</div>}
  *     </div>
  *   ))}
  * </Item.Image>
  *
  * // Custom render function
  * <Item.Image>
- *   {({ hasImage, imageElement, fallbackElement }) => (
+ *   {({ hasImage, imageElement }) => (
  *     <div className="w-20 h-20 flex-shrink-0">
- *       {hasImage ? imageElement : fallbackElement}
+ *       {hasImage ? imageElement : <div>No image</div>}
  *     </div>
  *   )}
  * </Item.Image>
@@ -321,10 +321,10 @@ export const Image = React.forwardRef<HTMLImageElement, ItemImageProps>(
  * <Item.VariantsRepeater>
  *   {({ variant, index }) => (
  *     <div key={variant._id} className="flex justify-between p-2 border rounded">
- *       <span className="font-medium">{variant.name}</span>
- *       <span className="text-primary">
+ *       <p className="font-medium">{variant.name}</p>
+ *       <p className="text-primary">
  *         {variant.priceInfo?.formattedPrice || 'No price'}
- *       </span>
+ *       </p>
  *     </div>
  *   )}
  * </Item.VariantsRepeater>
