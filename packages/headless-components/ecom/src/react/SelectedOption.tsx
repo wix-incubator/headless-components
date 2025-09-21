@@ -51,7 +51,7 @@ export const Root = (props: SelectedOptionRootProps): React.ReactNode => {
       </AsChildSlot>
     </WixServices>
   );
-}
+};
 
 Root.displayName = 'SelectedOption.Root';
 
