@@ -61,6 +61,8 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
+Root.displayName = 'CategoryList.Root';
+
 /**
  * Props for EmptyState headless component
  */

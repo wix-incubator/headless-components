@@ -3328,6 +3328,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/container-queries@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@tailwindcss/container-queries@npm:0.1.1"
+  peerDependencies:
+    tailwindcss: ">=3.2.0"
+  checksum: 10c0/336546ddcc60280723f2a92e311cac0acb8b05624c6519675d4b11ae13ed01dba5e622705a9be69cd66ca2c8019032551176546e6920d9634750165ac4c15d8e
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/forms@npm:^0.5.7":
   version: 0.5.10
   resolution: "@tailwindcss/forms@npm:0.5.10"
@@ -3501,7 +3510,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/typography@npm:^0.5.10":
+"@tailwindcss/typography@npm:^0.5.10, @tailwindcss/typography@npm:^0.5.15":
   version: 0.5.16
   resolution: "@tailwindcss/typography@npm:0.5.16"
   dependencies:
@@ -4350,11 +4359,13 @@ __metadata:
     "@radix-ui/react-icons": "npm:^1.3.2"
     "@radix-ui/react-separator": "npm:^1.1.7"
     "@radix-ui/react-tooltip": "npm:^1.2.8"
+    "@tailwindcss/container-queries": "npm:^0.1.1"
+    "@tailwindcss/typography": "npm:^0.5.15"
     "@tailwindcss/vite": "npm:^4.0.13"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
     "@wix/astro": "npm:^1.0.30"
-    "@wix/cli": "npm:^1.1.114"
+    "@wix/cli": "npm:^1.1.119"
     "@wix/headless-blog": "workspace:*"
     "@wix/headless-components": "workspace:*"
     "@wix/headless-seo": "workspace:*"
@@ -4376,7 +4387,7 @@ __metadata:
     react-router-dom: "npm:^7.6.3"
     sass-embedded: "npm:^1.89.0"
     tailwind-merge: "npm:^3.3.1"
-    tailwindcss: "npm:^4.1.7"
+    tailwindcss: "npm:^3.4.14"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
@@ -6530,7 +6541,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/cli@npm:^1.1.114, @wix/cli@npm:^1.1.92, @wix/cli@npm:^1.1.95":
+"@wix/cli@npm:^1.1.114, @wix/cli@npm:^1.1.119, @wix/cli@npm:^1.1.92, @wix/cli@npm:^1.1.95":
   version: 1.1.119
   resolution: "@wix/cli@npm:1.1.119"
   dependencies:
@@ -7081,7 +7092,6 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/events": "npm:^1.0.607"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/redirects": "npm:^1.0.83"
@@ -7092,6 +7102,8 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+  peerDependencies:
+    "@wix/headless-components": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -7189,25 +7201,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@npm:0.0.13, @wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
+"@wix/headless-media@npm:0.0.13":
+  version: 0.0.13
+  resolution: "@wix/headless-media@npm:0.0.13"
   dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@types/node": "npm:^20.9.0"
-    "@vitest/ui": "npm:^3.1.4"
-    "@wix/headless-utils": "workspace:*"
     "@wix/sdk": "npm:^1.17.1"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
-    jsdom: "npm:^26.1.0"
-    prettier: "npm:^3.4.2"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
-  languageName: unknown
-  linkType: soft
+  checksum: 10c0/bc5455b5528b0f4dd672afeb65d5f32bd24f4f636f39a7866678e87570b8a9ff705065f4b05afff92db94e36ba49a1e9c9e67b11fa01d5f081f0d845458f5cfd
+  languageName: node
+  linkType: hard
 
 "@wix/headless-media@npm:0.0.5, @wix/headless-media@npm:^0.0.5":
   version: 0.0.5
@@ -7241,6 +7244,26 @@ __metadata:
   checksum: 10c0/e4c0b970d6ac84a1237dc624914679f53f0d375616893948c154e62652fa6f031c059afddcf4464a86a80473b6c3a8c920170e74a5b9a133e5320f55141ad5c6
   languageName: node
   linkType: hard
+
+"@wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
+  dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/sdk": "npm:^1.17.1"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
 
 "@wix/headless-online-programs@npm:0.0.1":
   version: 0.0.1
@@ -7359,7 +7382,6 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/essentials": "npm:^0.1.24"
-    "@wix/headless-components": "workspace:*"
     "@wix/headless-utils": "workspace:^"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
@@ -17683,7 +17705,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^3.4.1, tailwindcss@npm:^3.4.17":
+"tailwindcss@npm:^3.4.1, tailwindcss@npm:^3.4.14, tailwindcss@npm:^3.4.17":
   version: 3.4.17
   resolution: "tailwindcss@npm:3.4.17"
   dependencies:

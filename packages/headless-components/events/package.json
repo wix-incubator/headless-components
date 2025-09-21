@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-events",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -43,12 +43,14 @@
   },
   "dependencies": {
     "@wix/events": "^1.0.607",
-    "@wix/headless-components": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/redirects": "^1.0.83",
     "@wix/ricos": "^10.141.3",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
+  },
+  "peerDependencies": {
+    "@wix/headless-components": "workspace:*"
   }
 }
