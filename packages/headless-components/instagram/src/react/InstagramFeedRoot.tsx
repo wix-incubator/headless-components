@@ -22,35 +22,6 @@ export interface RootProps {
  *
  * @order 1
  * @component
- * @example
- * ```tsx
- * import { InstagramFeed } from '@wix/headless-instagram/react';
- * import { MediaGallery } from '@wix/headless-media/react';
- *
- * function InstagramWidget() {
- *   return (
- *     <InstagramFeed.Root
- *       instagramFeedServiceConfig={{
- *         accountId: 'instagram_account_123',
- *         limit: 6
- *       }}
- *     >
- *       <div>
- *         <InstagramFeed.Title />
- *         <InstagramFeed.UserName />
- *         <InstagramFeed.Hashtag />
- *       </div>
- *       <InstagramFeed.Gallery>
- *         <InstagramFeed.GalleryItems>
- *           <InstagramFeed.GalleryItemRepeater>
- *             <MediaGallery.ThumbnailItem />
- *           </InstagramFeed.GalleryItemRepeater>
- *         </InstagramFeed.GalleryItems>
- *       </InstagramFeed.Gallery>
- *     </InstagramFeed.Root>
- *   );
- * }
- * ```
  */
 export function Root(props: RootProps): React.ReactNode {
   const { children, instagramFeedServiceConfig, className, ...attrs } = props;
@@ -58,7 +29,7 @@ export function Root(props: RootProps): React.ReactNode {
   const attributes = {
     className,
     ...attrs,
-  };
+  } as any;
 
   return (
     <WixServices
@@ -72,3 +43,5 @@ export function Root(props: RootProps): React.ReactNode {
     </WixServices>
   );
 }
+
+

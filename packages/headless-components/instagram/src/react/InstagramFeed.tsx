@@ -8,6 +8,9 @@ export { Hashtag } from './Hashtag.js';
 export { Gallery } from './Gallery.js';
 export { GalleryItems } from './GalleryItems.js';
 export { GalleryItemRepeater } from './GalleryItemRepeater.js';
+export { InstagramMedias } from './InstagramMedias.js';
+export { InstagramMediaRepeater } from './InstagramMediaRepeater.js';
+export { InstagramMedia } from './InstagramMedia.js';
 
 // Export component prop types
 export type { RootProps } from './InstagramFeedRoot.js';
@@ -17,3 +20,7 @@ export type { HashtagProps } from './Hashtag.js';
 export type { GalleryProps } from './Gallery.js';
 export type { GalleryItemsProps } from './GalleryItems.js';
 export type { GalleryItemRepeaterProps } from './GalleryItemRepeater.js';
+export type { InstagramMediasProps } from './InstagramMedias.js';
+export type { InstagramMediaRepeaterProps } from './InstagramMediaRepeater.js';
+
+
