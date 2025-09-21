@@ -59,19 +59,19 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
     };
 
     return (
-      <LineItemContext.Provider value={contextValue}>
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          data-testid={TestIds.lineItemRoot}
-          customElement={children}
-          customElementProps={{ item }}
-          data-component-tag={DataComponentTags.lineItemRoot}
-          {...otherProps}
-        >
-          <div>{children}</div>
-        </AsChildSlot>
-      </LineItemContext.Provider>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        data-testid={TestIds.lineItemRoot}
+        data-component-tag={DataComponentTags.lineItemRoot}
+        customElement={children}
+        customElementProps={{ item }}
+        {...otherProps}
+      >
+        <LineItemContext.Provider value={contextValue}>
+          <div data-component-tag={DataComponentTags.lineItemRoot}>{children}</div>
+        </LineItemContext.Provider>
+      </AsChildSlot>
     );
   },
 );
