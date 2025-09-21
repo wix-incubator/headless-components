@@ -2,6 +2,7 @@ import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import {
   Sort as SortPrimitive,
   GenericListTotalsRenderProps,
+  GenericListLoadMoreRenderProps,
   GenericList,
 } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
@@ -275,11 +276,7 @@ export interface LoadMoreTriggerProps {
     | React.ReactNode
     | React.ForwardRefRenderFunction<
         HTMLButtonElement,
-        {
-          isLoading: boolean;
-          hasMoreProducts: boolean;
-          loadMore: () => void;
-        }
+        GenericListLoadMoreRenderProps
       >;
   /**
    * Whether to render as a child component.
