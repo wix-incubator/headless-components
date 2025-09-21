@@ -17,13 +17,21 @@ import { MediaGallery } from '@wix/headless-media/react';
     <InstagramFeed.Hashtag />
   </div>
 
-  <InstagramFeed.Gallery>
-    <InstagramFeed.GalleryItems>
-      <InstagramFeed.GalleryItemRepeater>
-        <MediaGallery.ThumbnailItem />
-      </InstagramFeed.GalleryItemRepeater>
-    </InstagramFeed.GalleryItems>
-  </InstagramFeed.Gallery>
+    <InstagramFeed.InstagramMedias>
+      <InstagramFeed.InstagramMediaRepeater>
+        <InstagramMedia.caption></InstagramMedia.caption>
+        <InstagramMedia.mediaType></InstagramMedia.mediaType>
+        <InstagramMedia.userName></InstagramMedia.userName>
+        <InstagramMedia.timestamp></InstagramMedia.timestamp>
+        <InstagramMedia.MediaGalleries>
+          <InstagramMedia.MediaGalleryRepeater>
+              <MediaGallery.ThumbnailItem />
+          </InstagramMedia.MediaGalleryRepeater>
+        </InstagramMedia.MediaGalleries>
+      </InstagramFeed.InstagramMediaRepeater>
+    </InstagramFeed.InstagramMedias>
+
+
 </InstagramFeed.Root>
 ```
 
