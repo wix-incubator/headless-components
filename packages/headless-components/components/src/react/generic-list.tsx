@@ -74,6 +74,10 @@ export interface GenericListLoadMoreProps {
   className?: string;
 }
 
+export interface GenericListTotalsRenderProps {
+  displayedItems: number;
+}
+
 /**
  * Props for the GenericList Totals component
  */
@@ -82,7 +86,7 @@ export interface GenericListTotalsProps {
   children?:
     | React.ReactNode
     | ((
-        props: { totalItems: number; displayedItems: number },
+        props: GenericListTotalsRenderProps,
         ref: React.Ref<HTMLElement>,
       ) => React.ReactNode);
   /** CSS classes */
