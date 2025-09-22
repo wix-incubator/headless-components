@@ -4,13 +4,21 @@ import {
   type ReadOnlySignal,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import { wixEventsV2 } from '@wix/events';
+import { wixEventsV2, categories } from '@wix/events';
 import { getErrorMessage } from '../utils/errors.js';
 import { type Event } from './event-service.js';
 
+export type Category = categories.Category;
+
 export interface EventListServiceAPI {
   /** Reactive signal containing the list of events */
-  events: Signal<Event[]>;
+  events: ReadOnlySignal<Event[]>;
+  /** Reactive signal containing the list of categories */
+  categories: Signal<Category[]>;
+  /** Reactive signal containing the selected category */
+  selectedCategory: Signal<Category | null>;
+  /** Function to set the selected category */
+  setSelectedCategory: (category: Category | null) => void;
   /** Reactive signal indicating if more events are currently being loaded */
   isLoadingMore: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
@@ -29,6 +37,7 @@ export interface EventListServiceAPI {
 
 export interface EventListServiceConfig {
   events: Event[];
+  categories: Category[];
   pageSize: number;
   currentPage: number;
   totalPages: number;
@@ -46,6 +55,8 @@ export const EventListService =
       const signalsService = getService(SignalsServiceDefinition);
 
       const events = signalsService.signal<Event[]>(config.events);
+      const categories = signalsService.signal<Category[]>(config.categories);
+      const selectedCategory = signalsService.signal<Category | null>(null);
       const isLoadingMore = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
       const pageSize = signalsService.signal<number>(config.pageSize);
@@ -54,6 +65,9 @@ export const EventListService =
       const hasMoreEvents = signalsService.computed<boolean>(
         () => currentPage.get() + 1 < totalPages.get(),
       );
+      const setSelectedCategory = (category: Category | null) => {
+        selectedCategory.set(category);
+      };
 
       const loadMoreEvents = async () => {
         isLoadingMore.set(true);
@@ -74,8 +88,27 @@ export const EventListService =
         }
       };
 
+      console.log('events in service', events.get());
+
+      const filteredEvents = signalsService.computed<Event[]>(() => {
+        if (!selectedCategory.get()) {
+          return events.get();
+        }
+
+        return events.get().filter((event) => {
+          // @ts-ignore
+          return event.categories?.categories?.some(
+            // @ts-ignore
+            (category) => category._id === selectedCategory.get()?._id,
+          );
+        });
+      });
+
       return {
-        events,
+        events: filteredEvents,
+        categories,
+        selectedCategory,
+        setSelectedCategory,
         isLoadingMore,
         error,
         pageSize,
@@ -88,10 +121,14 @@ export const EventListService =
   );
 
 export async function loadEventListServiceConfig(): Promise<EventListServiceConfig> {
-  const queryEventsResult = await queryEvents();
+  const [queryEventsResult, queryCategoriesResult] = await Promise.all([
+    queryEvents(),
+    queryCategories(),
+  ]);
 
   return {
     events: queryEventsResult.items ?? [],
+    categories: queryCategoriesResult.items ?? [],
     pageSize: queryEventsResult.pageSize,
     currentPage: queryEventsResult.currentPage ?? 0,
     totalPages: queryEventsResult.totalPages ?? 0,
@@ -104,6 +141,7 @@ const queryEvents = async (offset = 0) => {
       fields: [
         wixEventsV2.RequestedFields.DETAILS,
         wixEventsV2.RequestedFields.REGISTRATION,
+        wixEventsV2.RequestedFields.CATEGORIES,
       ],
     })
     .ascending('dateAndTimeSettings.startDate')
@@ -114,4 +152,14 @@ const queryEvents = async (offset = 0) => {
     .find();
 
   return queryEventsResult;
+};
+
+const queryCategories = async () => {
+  const queryCategoriesResult = await categories
+    .queryCategories({ fieldset: [categories.CategoryFieldset.COUNTS] })
+    .hasSome('states', [categories.State.MANUAL])
+    .limit(100)
+    .find();
+
+  return queryCategoriesResult;
 };

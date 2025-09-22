@@ -205,6 +205,7 @@ export function EventDetails({
             <EventList
               eventListServiceConfig={{
                 events: otherUpcomingEvents,
+                categories: [],
                 pageSize: 3,
                 currentPage: 0,
                 totalPages: 1,

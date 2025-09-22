@@ -3,6 +3,9 @@ import React from 'react';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
 import * as CoreEventList from './core/EventList.js';
 import * as Event from './Event.js';
+import * as CoreEventListFilters from './core/EventListFilters.js';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
+import { Filter } from '../../../components/dist/react/filter.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
@@ -291,3 +294,60 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
     </CoreEventList.Error>
   );
 });
+
+/**
+ * Props for the EventList Filters component.
+ */
+export interface FiltersRootProps {
+  /** Child components */
+  children: React.ReactNode;
+}
+
+/**
+ * Container for the event list filters. Not rendered if there are no categories.
+ *
+ * @component
+ */
+export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
+  return (
+    <CoreEventListFilters.CategoriesFilterRoot>
+      {({
+        filterOptions,
+        categories,
+        selectedCategory,
+        setSelectedCategory,
+      }) => {
+        const onChange = (value: Filter) => {
+          const categoryId = value ? value['category.id'] : null;
+
+          // Find the full category object by ID
+          const category = categoryId
+            ? categories.find((cat) => cat._id === categoryId) || null
+            : null;
+
+          console.log('category', category);
+          setSelectedCategory(category);
+        };
+
+        // Convert selectedCategory to ID for the filter primitive
+        const selectedCategoryId = selectedCategory?._id || null;
+
+        return (
+          <FilterPrimitive.Root
+            value={{
+              key: selectedCategoryId,
+              label: selectedCategory?.name || '',
+              type: 'single' as const,
+              displayType: 'text' as const,
+              fieldName: 'category.id',
+            }}
+            onChange={onChange}
+            filterOptions={filterOptions}
+          >
+            {props.children}
+          </FilterPrimitive.Root>
+        );
+      }}
+    </CoreEventListFilters.CategoriesFilterRoot>
+  );
+};

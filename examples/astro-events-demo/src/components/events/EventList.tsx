@@ -3,6 +3,7 @@ import {
   Event as EventPrimitive,
 } from '@wix/headless-events/react';
 import { type EventListServiceConfig } from '@wix/headless-events/services';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 
 interface EventListProps {
   eventListServiceConfig: EventListServiceConfig;
@@ -15,6 +16,13 @@ export function EventList({
 }: EventListProps) {
   return (
     <EventListPrimitive.Root eventListServiceConfig={eventListServiceConfig}>
+      <EventListPrimitive.FiltersRoot>
+        <FilterPrimitive.FilterOptions>
+          <FilterPrimitive.FilterOptionRepeater>
+            <FilterPrimitive.FilterOption.SingleFilter className="flex gap-2" />
+          </FilterPrimitive.FilterOptionRepeater>
+        </FilterPrimitive.FilterOptions>
+      </EventListPrimitive.FiltersRoot>
       <EventListPrimitive.Events
         className="grid justify-center grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5"
         emptyState={
