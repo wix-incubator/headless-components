@@ -320,16 +320,13 @@ export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
         const onChange = (value: Filter) => {
           const categoryId = value ? value['category.id'] : null;
 
-          // Find the full category object by ID
           const category = categoryId
             ? categories.find((cat) => cat._id === categoryId) || null
             : null;
 
-          console.log('category', category);
           setSelectedCategory(category);
         };
 
-        // Convert selectedCategory to ID for the filter primitive
         const selectedCategoryId = selectedCategory?._id || null;
 
         return (

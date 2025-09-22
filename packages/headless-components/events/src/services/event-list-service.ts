@@ -88,20 +88,20 @@ export const EventListService =
         }
       };
 
-      console.log('events in service', events.get());
-
       const filteredEvents = signalsService.computed<Event[]>(() => {
+        const allEvents = events.get();
+
         if (!selectedCategory.get()) {
-          return events.get();
+          return allEvents;
         }
 
-        return events.get().filter((event) => {
+        return allEvents.filter((event) =>
           // @ts-ignore
-          return event.categories?.categories?.some(
+          event.categories.categories.some(
             // @ts-ignore
             (category) => category._id === selectedCategory.get()?._id,
-          );
-        });
+          ),
+        );
       });
 
       return {
