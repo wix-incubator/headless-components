@@ -69,13 +69,17 @@ interface PaywallProps {
  *
  * // With asChild
  * <PlanPaywall.Paywall asChild>
- *   {React.forwardRef(({isLoading, error, hasAccess}, ref) => {
+ *   {React.forwardRef(({isLoading, error, hasAccess, isLoggedIn}, ref) => {
  *     if (isLoading) {
  *       return loadingState;
  *     }
  *
  *     if (error) {
  *       return <div>Error!</div>;
+ *     }
+ *
+ *     if (!isLoggedIn) {
+ *       return <div>Please log in to access this content</div>;
  *     }
  *
  *     if (hasAccess) {
@@ -90,15 +94,16 @@ interface PaywallProps {
 export const Paywall = ({ asChild, children, loadingState }: PaywallProps) => (
   <CorePaywall>
     {(paywallData) => (
-      <AsChildSlot
-        asChild={asChild}
-        customElement={children}
-        customElementProps={paywallData}
-        data-testid={PlanPaywallTestId.Paywall}
-        data-is-loading={paywallData.isLoading}
-        data-has-error={paywallData.error !== null}
-        data-has-access={paywallData.hasAccess}
-      >
+        <AsChildSlot
+          asChild={asChild}
+          customElement={children}
+          customElementProps={paywallData}
+          data-testid={PlanPaywallTestId.Paywall}
+          data-is-loading={paywallData.isLoading}
+          data-has-error={paywallData.error !== null}
+          data-has-access={paywallData.hasAccess}
+          data-is-logged-in={paywallData.isLoggedIn}
+        >
         <div>
           {paywallData.isLoading ? loadingState : (children as React.ReactNode)}
         </div>

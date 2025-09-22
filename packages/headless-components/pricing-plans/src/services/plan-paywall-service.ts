@@ -15,6 +15,7 @@ export const PlanPaywallServiceDefinition = defineService<{
   isLoadingSignal: ReadOnlySignal<boolean>;
   errorSignal: ReadOnlySignal<string | null>;
   hasAccessSignal: ReadOnlySignal<boolean>;
+  isLoggedInSignal: ReadOnlySignal<boolean>;
 }>('planPaywallService');
 
 export interface PlanPaywallServiceConfig {
@@ -33,6 +34,8 @@ export const PlanPaywallService =
       const signalsService = getService(SignalsServiceDefinition);
       const isLoadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
+      const isLoggedInSignal =
+        signalsService.signal<boolean>(isMemberLoggedIn());
       const memberOrdersSignal = signalsService.signal<orders.Order[] | null>(
         config.memberOrders ?? null,
       );
@@ -59,6 +62,7 @@ export const PlanPaywallService =
           isLoadingSignal.set(true);
           errorSignal.set(null);
           const isLoggedIn = isMemberLoggedIn();
+          isLoggedInSignal.set(isLoggedIn);
           if (!isLoggedIn) {
             memberOrdersSignal.set(null);
             return;
@@ -81,6 +85,7 @@ export const PlanPaywallService =
         isLoadingSignal,
         errorSignal,
         hasAccessSignal,
+        isLoggedInSignal,
       };
     },
   );

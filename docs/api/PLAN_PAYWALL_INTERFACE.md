@@ -61,6 +61,13 @@ interface PaywallProps {
   children: AsChildChildren<PlanPaywallData> | React.ReactNode;
   loadingState?: React.ReactNode;
 }
+
+interface PlanPaywallData {
+  isLoading: boolean;
+  error: string | null;
+  hasAccess: boolean;
+  isLoggedIn: boolean;
+}
 ```
 
 **Example**
@@ -72,13 +79,17 @@ interface PaywallProps {
 
 // With asChild
 <PlanPaywall.Paywall asChild>
-  {React.forwardRef(({isLoading, error, hasAccess}, ref) => {
+  {React.forwardRef(({isLoading, error, hasAccess, isLoggedIn}, ref) => {
     if (isLoading) {
       return <div>Loading...</div>;
     }
 
     if (error) {
       return <div>Error: {error.message}</div>;
+    }
+
+    if (!isLoggedIn) {
+      return <div>Please log in to access this content</div>;
     }
 
     if (hasAccess) {
@@ -92,6 +103,10 @@ interface PaywallProps {
 
 **Data Attributes**
 - `data-testid="plan-paywall-paywall"` - Applied to paywall element
+- `data-is-loading` - Boolean indicating loading state
+- `data-has-error` - Boolean indicating error state
+- `data-has-access` - Boolean indicating if user has access
+- `data-is-logged-in` - Boolean indicating if user is logged in
 ---
 
 ### PlanPaywall.RestrictedContent
