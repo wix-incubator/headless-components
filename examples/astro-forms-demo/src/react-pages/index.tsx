@@ -1,5 +1,5 @@
 import { Form } from '@wix/headless-forms/react';
-import { type FormServiceConfig } from '@wix/headless-forms/services';
+import { type FormServiceConfigResult } from '@wix/headless-forms/services';
 
 import '../styles/theme-1.css';
 import TextInput from '../components/TextInput';
@@ -29,7 +29,7 @@ import Appointment from '../components/Appointment';
 import ImageChoice from '../components/ImageChoice';
 
 interface FormsPageProps {
-  formServiceConfig: FormServiceConfig;
+  formServiceConfig: FormServiceConfigResult;
 }
 
 const FIELD_MAP = {
@@ -61,13 +61,20 @@ const FIELD_MAP = {
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
+  if (formServiceConfig.type === 'notFound') {
+    return <div>Form not found</div>;
+  }
+
   return (
-    <Form.Root formServiceConfig={formServiceConfig}>
-      <Form.Loading className="flex justify-center p-4" />
-      <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
-      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
-      <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
-      <Form.Fields fieldMap={FIELD_MAP} />
-    </Form.Root>
+    <>
+      <h1>Form {formServiceConfig.config.form?._id}</h1>
+      <Form.Root formServiceConfig={formServiceConfig.config}>
+        <Form.Loading className="flex justify-center p-4" />
+        <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
+        <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+        <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
+        <Form.Fields fieldMap={FIELD_MAP} />
+      </Form.Root>
+    </>
   );
 }

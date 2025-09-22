@@ -246,6 +246,30 @@ export async function loadFormServiceConfig(
     };
   } catch (error) {
     console.error('Failed to load form:', error);
-    return { type: 'notFound' };
   }
+
+  return { type: 'notFound' };
+}
+
+/**
+ * Loads first available form.
+ * A temporary hack until we have a way to pass the generated form config.
+ */
+export async function loadFirstFormServiceConfig(): Promise<FormServiceConfigResult> {
+  try {
+    const result = await forms.listForms('wix.form_app.form');
+    const form = result?.forms?.[0];
+    if (!form) {
+      return { type: 'notFound' };
+    }
+
+    return {
+      type: 'success',
+      config: { form },
+    };
+  } catch (error) {
+    console.error('Failed to load form:', error);
+  }
+
+  return { type: 'notFound' };
 }
