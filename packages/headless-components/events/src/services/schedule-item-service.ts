@@ -18,7 +18,7 @@ export interface ScheduleItemServiceConfig {
 export const ScheduleItemServiceDefinition = defineService<
   ScheduleItemServiceAPI,
   ScheduleItemServiceConfig
->('schedule-item');
+>('scheduleItem');
 
 export const ScheduleItemService =
   implementService.withConfig<ScheduleItemServiceConfig>()(

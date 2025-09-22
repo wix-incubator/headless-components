@@ -4,9 +4,9 @@ import {
   type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
 import { type ScheduleItem } from './schedule-item-service.js';
-import { ScheduleListServiceDefinition } from './schedule-list-service.js';
 
 export interface ScheduleItemsGroup {
+  id: string;
   formattedDate: string;
   date: Date;
   items: ScheduleItem[];
@@ -30,19 +30,10 @@ export const ScheduleItemsGroupService =
     ScheduleItemsGroupServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
-      const scheduleListService = getService(ScheduleListServiceDefinition);
 
-      const itemsGroup = signalsService.computed<ScheduleItemsGroup>(() => {
-        const currentGroup = config.itemsGroup;
-        const filteredItems = scheduleListService.filterItems(
-          currentGroup.items,
-        );
-
-        return {
-          ...currentGroup,
-          items: filteredItems,
-        };
-      });
+      const itemsGroup = signalsService.signal<ScheduleItemsGroup>(
+        config.itemsGroup,
+      );
 
       return { itemsGroup };
     },

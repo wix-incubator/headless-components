@@ -86,7 +86,7 @@ export interface ItemsProps {
 }
 
 /**
- * Container for the schedule list with support for empty state.
+ * Container for the schedule list items.
  *
  * @component
  * @example
@@ -200,7 +200,7 @@ export interface GroupsProps {
  * @component
  * @example
  * ```tsx
- * <ScheduleList.Groups emptyState={<div>No schedule groups available</div>}>
+ * <ScheduleList.Groups emptyState={<div>No schedule items available</div>}>
  *   <ScheduleList.GroupRepeater>
  *     <ScheduleItemsGroup.GroupDateLabel />
  *     <ScheduleItemsGroup.GroupItems>
@@ -311,7 +311,7 @@ export interface StageFilterProps {
   /** CSS classes to apply to the dropdown */
   className?: string;
   /** Text for the default/all option */
-  defaultOption: string;
+  defaultOptionLabel: string;
 }
 
 /**
@@ -326,7 +326,7 @@ export interface StageFilterProps {
  *   <span>Filter by:</span>
  *   <ScheduleList.StageFilter
  *     className="border border-gray-200 rounded-md px-3 py-2"
- *     defaultOption="All places"
+ *     defaultOptionLabel="All places"
  *   />
  * </div>
  *
@@ -345,7 +345,7 @@ export interface StageFilterProps {
  */
 export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
   (props, ref) => {
-    const { asChild, children, className, defaultOption, ...otherProps } =
+    const { asChild, children, className, defaultOptionLabel, ...otherProps } =
       props;
 
     return (
@@ -361,6 +361,10 @@ export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
             asChild={asChild}
             className={className}
             data-testid={TestIds.scheduleListStageFilter}
+            value={currentStageFilter || ''}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setStageFilter(e.target.value || null)
+            }
             customElement={children}
             customElementProps={{
               stageNames,
@@ -370,11 +374,8 @@ export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
             }}
             {...otherProps}
           >
-            <select
-              value={currentStageFilter || ''}
-              onChange={(e) => setStageFilter(e.target.value || null)}
-            >
-              <option value="">{defaultOption}</option>
+            <select>
+              <option value="">{defaultOptionLabel}</option>
               {stageNames.map((stage) => (
                 <option key={stage} value={stage}>
                   {stage}
@@ -400,7 +401,6 @@ export interface TagFiltersProps {
     | AsChildChildren<{
         tags: string[];
         currentTagFilters: string[];
-        hasActiveTagFilters: boolean;
       }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -417,7 +417,7 @@ export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
 
     return (
       <CoreScheduleList.TagFilters>
-        {({ tags, currentTagFilters, hasActiveTagFilters }) => (
+        {({ tags, currentTagFilters }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -427,7 +427,6 @@ export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
             customElementProps={{
               tags,
               currentTagFilters,
-              hasActiveTagFilters,
             }}
             {...otherProps}
           >
@@ -465,26 +464,13 @@ export const TagFilterRepeater = (
 
   return (
     <CoreScheduleList.TagFilterRepeater>
-      {({ tags, currentTagFilters, toggleTagFilter }) => (
-        <>
-          {tags.map((tag) => {
-            const active = currentTagFilters.includes(tag);
-
-            const handleToggle = () => {
-              toggleTagFilter(tag);
-            };
-
-            return (
-              <ScheduleItemTag.Root key={tag} tag={tag}>
-                {React.cloneElement(children as React.ReactElement, {
-                  onClick: handleToggle,
-                  active,
-                })}
-              </ScheduleItemTag.Root>
-            );
-          })}
-        </>
-      )}
+      {({ tags }) =>
+        tags.map((tag) => (
+          <ScheduleItemTag.Root key={tag} tag={tag}>
+            {children}
+          </ScheduleItemTag.Root>
+        ))
+      }
     </CoreScheduleList.TagFilterRepeater>
   );
 };

@@ -7,7 +7,7 @@ import {
   ScheduleItemService,
   type ScheduleItemServiceConfig,
 } from '../../services/schedule-item-service.js';
-import { formatTimeRange, getDurationInMinutes } from '../../utils/moment.js';
+import { formatTimeRange, getDurationInMinutes } from '../../utils/date.js';
 
 export interface RootProps {
   /** Child components that will have access to the schedule item service */
@@ -136,7 +136,7 @@ export interface DescriptionRenderProps {
 export function Description(props: DescriptionProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
   const scheduleItem = scheduleItemService.item.get();
-  const description = scheduleItem.description!;
+  const description = scheduleItem.description;
 
   if (!description) {
     return null;
@@ -163,7 +163,7 @@ export interface StageRenderProps {
 export function Stage(props: StageProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
   const scheduleItem = scheduleItemService.item.get();
-  const stageName = scheduleItem.stageName!;
+  const stageName = scheduleItem.stageName;
 
   if (!stageName) {
     return null;

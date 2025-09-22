@@ -106,10 +106,6 @@ export function Groups(props: GroupsProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const itemsGroups = scheduleListService.itemsGroups.get();
 
-  if (!itemsGroups.length) {
-    return null;
-  }
-
   return props.children({ itemsGroups });
 }
 
@@ -132,10 +128,6 @@ export interface GroupRepeaterRenderProps {
 export function GroupRepeater(props: GroupRepeaterProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const itemsGroups = scheduleListService.itemsGroups.get();
-
-  if (!itemsGroups.length) {
-    return null;
-  }
 
   return props.children({ itemsGroups });
 }
@@ -196,8 +188,6 @@ export interface TagFiltersRenderProps {
   tags: string[];
   /** Current tag filters */
   currentTagFilters: string[];
-  /** Whether any tag filters are active */
-  hasActiveTagFilters: boolean;
 }
 
 /**
@@ -210,17 +200,11 @@ export function TagFilters(props: TagFiltersProps): React.ReactNode {
   const tags = scheduleListService.tags.get();
   const currentTagFilters = scheduleListService.tagFilters.get();
 
-  const hasActiveTagFilters = currentTagFilters.length > 0;
-
   if (!tags.length) {
     return null;
   }
 
-  return props.children({
-    tags,
-    currentTagFilters,
-    hasActiveTagFilters,
-  });
+  return props.children({ tags, currentTagFilters });
 }
 
 export interface TagFilterRepeaterProps {
@@ -233,8 +217,6 @@ export interface TagFilterRepeaterRenderProps {
   tags: string[];
   /** Current tag filters */
   currentTagFilters: string[];
-  /** Function to toggle a tag filter */
-  toggleTagFilter: (tag: string) => void;
 }
 
 /**
@@ -254,19 +236,5 @@ export function TagFilterRepeater(
     return null;
   }
 
-  const toggleTagFilter = (tag: string) => {
-    const active = currentTagFilters.includes(tag);
-
-    if (active) {
-      scheduleListService.removeTagFilter(tag);
-    } else {
-      scheduleListService.addTagFilter(tag);
-    }
-  };
-
-  return props.children({
-    tags,
-    currentTagFilters,
-    toggleTagFilter,
-  });
+  return props.children({ tags, currentTagFilters });
 }

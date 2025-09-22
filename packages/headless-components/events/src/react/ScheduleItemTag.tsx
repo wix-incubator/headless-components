@@ -3,9 +3,9 @@ import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreTag from './core/ScheduleItemTag.js';
 
 enum TestIds {
-  tagRoot = 'tag-root',
-  tagLabel = 'tag-label',
-  tagButton = 'tag-button',
+  scheduleItemTagRoot = 'schedule-item-tag-root',
+  scheduleItemTagLabel = 'schedule-item-tag-label',
+  scheduleItemTagButton = 'schedule-item-tag-button',
 }
 
 /**
@@ -59,7 +59,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.tagRoot}
+        data-testid={TestIds.scheduleItemTagRoot}
         customElement={children}
         customElementProps={{}}
         {...otherProps}
@@ -77,7 +77,7 @@ export interface LabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ text: string }>;
+  children?: AsChildChildren<{ tag: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -99,9 +99,9 @@ export interface LabelProps {
  *
  * // asChild with react component
  * <ScheduleItemTag.Label asChild>
- *   {React.forwardRef(({ text, ...props }, ref) => (
+ *   {React.forwardRef(({ tag, ...props }, ref) => (
  *     <span ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded">
- *       {text}
+ *       {tag}
  *     </span>
  *   ))}
  * </ScheduleItemTag.Label>
@@ -117,7 +117,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
-          data-testid={TestIds.tagLabel}
+          data-testid={TestIds.scheduleItemTagLabel}
           customElement={children}
           customElementProps={{ tag }}
           content={tag}
@@ -137,13 +137,9 @@ export interface ButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ text: string }>;
+  children?: AsChildChildren<{ tag: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Click handler for the button */
-  onClick?: () => void;
-  /** Whether the tag is in an active/selected state */
-  active?: boolean;
 }
 
 /**
@@ -156,20 +152,18 @@ export interface ButtonProps {
  * // Default usage
  * <ScheduleItemTag.Button
  *   className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
- *   onClick={handleClick}
- *   active={isSelected}
  * />
  *
  * // asChild with primitive
- * <ScheduleItemTag.Button asChild onClick={handleClick} active={isSelected}>
+ * <ScheduleItemTag.Button asChild>
  *   <button className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200" />
  * </ScheduleItemTag.Button>
  *
  * // asChild with react component
- * <ScheduleItemTag.Button asChild onClick={handleClick} active={isSelected}>
- *   {React.forwardRef(({ text, ...props }, ref) => (
- *     <button ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
- *       {text}
+ * <ScheduleItemTag.Button asChild>
+ *   {React.forwardRef(({ tag, toggleTagFilter, active, ...props }, ref) => (
+ *     <button ref={ref} onClick={toggleTagFilter} data-active={active} {...props} className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
+ *       {tag}
  *     </button>
  *   ))}
  * </ScheduleItemTag.Button>
@@ -177,33 +171,26 @@ export interface ButtonProps {
  */
 export const Button = React.forwardRef<HTMLElement, ButtonProps>(
   (props, ref) => {
-    const { asChild, children, className, onClick, active, ...otherProps } =
-      props;
+    const { asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreTag.Tag>
-        {({ tag }) => {
-          const handleClick = onClick ? () => onClick() : undefined;
-
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.tagButton}
-              customElement={children}
-              customElementProps={{ tag }}
-              content={tag}
-              onClick={handleClick}
-              data-active={active}
-              {...otherProps}
-            >
-              <button onClick={handleClick} data-active={active}>
-                {tag}
-              </button>
-            </AsChildSlot>
-          );
-        }}
+        {({ tag, toggleTagFilter, active }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.scheduleItemTagButton}
+            customElement={children}
+            customElementProps={{ tag, toggleTagFilter, active }}
+            content={tag}
+            onClick={toggleTagFilter}
+            data-active={active}
+            {...otherProps}
+          >
+            <button>{tag}</button>
+          </AsChildSlot>
+        )}
       </CoreTag.Tag>
     );
   },

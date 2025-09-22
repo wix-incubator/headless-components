@@ -5,16 +5,14 @@ import * as ScheduleItemTag from './ScheduleItemTag.js';
 import { type ScheduleItem } from '../services/schedule-item-service.js';
 
 enum TestIds {
-  scheduleRoot = 'schedule-root',
-  scheduleName = 'schedule-name',
-  scheduleTimeSlot = 'schedule-time-slot',
-  scheduleDuration = 'schedule-duration',
-  scheduleDescription = 'schedule-description',
-  scheduleStage = 'schedule-stage',
-  scheduleTags = 'schedule-tags',
+  scheduleItemRoot = 'schedule-item-root',
+  scheduleItemName = 'schedule-item-name',
+  scheduleItemTimeSlot = 'schedule-item-time-slot',
+  scheduleItemDuration = 'schedule-item-duration',
+  scheduleItemDescription = 'schedule-item-description',
+  scheduleItemStage = 'schedule-item-stage',
+  scheduleItemTags = 'schedule-item-tags',
 }
-
-export { ScheduleItem };
 
 /**
  * Props for the ScheduleItem Root component.
@@ -62,10 +60,10 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.scheduleRoot}
+        data-testid={TestIds.scheduleItemRoot}
         {...otherProps}
       >
-        {children}
+        <div>{children}</div>
       </AsChildSlot>
     </CoreScheduleItem.Root>
   );
@@ -117,7 +115,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
-          data-testid={TestIds.scheduleName}
+          data-testid={TestIds.scheduleItemName}
           customElement={children}
           customElementProps={{ name }}
           content={name}
@@ -138,8 +136,8 @@ export interface TimeSlotProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    startTime: Date | null;
-    endTime: Date | null;
+    startTime: Date;
+    endTime: Date;
     formattedTimeRange: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -163,7 +161,7 @@ export interface TimeSlotProps {
  * // asChild with react component
  * <ScheduleItem.TimeSlot asChild>
  *   {React.forwardRef(({ formattedTimeRange, startTime, ...props }, ref) => (
- *     <time ref={ref} className="text-gray-600" {...props} dateTime={startTime?.toISOString()}>
+ *     <time ref={ref} className="text-gray-600" {...props} dateTime={startTime.toISOString()}>
  *       {formattedTimeRange}
  *     </time>
  *   ))}
@@ -181,7 +179,7 @@ export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
             ref={ref}
             asChild={asChild}
             className={className}
-            data-testid={TestIds.scheduleTimeSlot}
+            data-testid={TestIds.scheduleItemTimeSlot}
             customElement={children}
             customElementProps={{
               startTime,
@@ -248,7 +246,7 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
             ref={ref}
             asChild={asChild}
             className={className}
-            data-testid={TestIds.scheduleDuration}
+            data-testid={TestIds.scheduleItemDuration}
             customElement={children}
             customElementProps={{
               durationMinutes,
@@ -311,7 +309,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             ref={ref}
             asChild={asChild}
             className={className}
-            data-testid={TestIds.scheduleDescription}
+            data-testid={TestIds.scheduleItemDescription}
             customElement={children}
             customElementProps={{ description }}
             content={description}
@@ -371,7 +369,7 @@ export const Stage = React.forwardRef<HTMLElement, StageProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
-          data-testid={TestIds.scheduleStage}
+          data-testid={TestIds.scheduleItemStage}
           customElement={children}
           customElementProps={{ stageName }}
           content={stageName}
@@ -419,7 +417,7 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
-          data-testid={TestIds.scheduleTags}
+          data-testid={TestIds.scheduleItemTags}
           customElement={children}
           customElementProps={{ tags }}
           {...otherProps}

@@ -9,7 +9,6 @@ enum TestIds {
   scheduleItemsGroupRoot = 'schedule-items-group-root',
   scheduleItemsGroupDateLabel = 'schedule-items-group-date-label',
   scheduleItemsGroupItems = 'schedule-items-group-items',
-  scheduleItemsGroupItem = 'schedule-items-group-item',
 }
 
 /**
@@ -39,13 +38,13 @@ export interface RootProps {
  * function ScheduleItemsGroupComponent({ itemsGroup }) {
  *   return (
  *     <ScheduleItemsGroup.Root itemsGroup={itemsGroup}>
- *       <ScheduleItemsGroup.GroupDateLabel />
- *       <ScheduleItemsGroup.GroupItems emptyState={<div>No schedule items available</div>}>
- *         <ScheduleItemsGroup.GroupItemRepeater>
+ *       <ScheduleItemsGroup.DateLabel />
+ *       <ScheduleItemsGroup.Items emptyState={<div>No schedule items available</div>}>
+ *         <ScheduleItemsGroup.ItemRepeater>
  *           <ScheduleItem.Name />
  *           <ScheduleItem.TimeSlot />
- *         </ScheduleItemsGroup.GroupItemRepeater>
- *       </ScheduleItemsGroup.GroupItems>
+ *         </ScheduleItemsGroup.ItemRepeater>
+ *       </ScheduleItemsGroup.Items>
  *     </ScheduleItemsGroup.Root>
  *   );
  * }
@@ -72,9 +71,9 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 });
 
 /**
- * Props for the ScheduleItemsGroup GroupDateLabel component.
+ * Props for the ScheduleItemsGroup DateLabel component.
  */
-export interface GroupDateLabelProps {
+export interface DateLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
@@ -94,53 +93,52 @@ export interface GroupDateLabelProps {
  * @example
  * ```tsx
  * // Default usage
- * <ScheduleItemsGroup.GroupDateLabel className="text-lg font-semibold" />
+ * <ScheduleItemsGroup.DateLabel className="text-lg font-semibold" />
  *
  * // asChild with primitive
- * <ScheduleItemsGroup.GroupDateLabel asChild>
+ * <ScheduleItemsGroup.DateLabel asChild>
  *   <h3 className="text-lg font-semibold" />
- * </ScheduleItemsGroup.GroupDateLabel>
+ * </ScheduleItemsGroup.DateLabel>
  *
  * // asChild with react component
- * <ScheduleItemsGroup.GroupDateLabel asChild>
+ * <ScheduleItemsGroup.DateLabel asChild>
  *   {React.forwardRef(({ formattedDate, date, ...props }, ref) => (
  *     <h3 ref={ref} {...props} className="text-lg font-semibold">
  *       {formattedDate}
  *     </h3>
  *   ))}
- * </ScheduleItemsGroup.GroupDateLabel>
+ * </ScheduleItemsGroup.DateLabel>
  * ```
  */
-export const GroupDateLabel = React.forwardRef<
-  HTMLElement,
-  GroupDateLabelProps
->((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const DateLabel = React.forwardRef<HTMLElement, DateLabelProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreScheduleItemsGroup.GroupDateLabel>
-      {({ formattedDate, date }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.scheduleItemsGroupDateLabel}
-          customElement={children}
-          customElementProps={{ formattedDate, date }}
-          content={formattedDate}
-          {...otherProps}
-        >
-          <span>{formattedDate}</span>
-        </AsChildSlot>
-      )}
-    </CoreScheduleItemsGroup.GroupDateLabel>
-  );
-});
+    return (
+      <CoreScheduleItemsGroup.DateLabel>
+        {({ formattedDate, date }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.scheduleItemsGroupDateLabel}
+            customElement={children}
+            customElementProps={{ formattedDate, date }}
+            content={formattedDate}
+            {...otherProps}
+          >
+            <span>{formattedDate}</span>
+          </AsChildSlot>
+        )}
+      </CoreScheduleItemsGroup.DateLabel>
+    );
+  },
+);
 
 /**
- * Props for the ScheduleItemsGroup GroupItems component.
+ * Props for the ScheduleItemsGroup Items component.
  */
-export interface GroupItemsProps {
+export interface ItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
@@ -151,8 +149,6 @@ export interface GroupItemsProps {
       }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Content to render when there are no items */
-  emptyState?: React.ReactNode;
 }
 
 /**
@@ -161,48 +157,40 @@ export interface GroupItemsProps {
  * @component
  * @example
  * ```tsx
- * <ScheduleItemsGroup.GroupItems emptyState={<div>No schedule items available</div>}>
- *   <ScheduleItemsGroup.GroupItemRepeater>
+ * <ScheduleItemsGroup.Items emptyState={<div>No schedule items available</div>}>
+ *   <ScheduleItemsGroup.ItemRepeater>
  *     <ScheduleItem.Name />
  *     <ScheduleItem.TimeSlot />
- *   </ScheduleItemsGroup.GroupItemRepeater>
- * </ScheduleItemsGroup.GroupItems>
+ *   </ScheduleItemsGroup.ItemRepeater>
+ * </ScheduleItemsGroup.Items>
  * ```
  */
-export const GroupItems = React.forwardRef<HTMLElement, GroupItemsProps>(
-  (props, ref) => {
-    const { asChild, children, className, emptyState, ...otherProps } = props;
+export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
 
-    return (
-      <CoreScheduleItemsGroup.GroupItems>
-        {({ items }) => {
-          if (!items.length) {
-            return emptyState || null;
-          }
-
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.scheduleItemsGroupItems}
-              customElement={children}
-              customElementProps={{ items }}
-              {...otherProps}
-            >
-              <div>{children as React.ReactNode}</div>
-            </AsChildSlot>
-          );
-        }}
-      </CoreScheduleItemsGroup.GroupItems>
-    );
-  },
-);
+  return (
+    <CoreScheduleItemsGroup.Items>
+      {({ items }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.scheduleItemsGroupItems}
+          customElement={children}
+          customElementProps={{ items }}
+          {...otherProps}
+        >
+          <div>{children as React.ReactNode}</div>
+        </AsChildSlot>
+      )}
+    </CoreScheduleItemsGroup.Items>
+  );
+});
 
 /**
- * Props for the ScheduleItemsGroup GroupItemRepeater component.
+ * Props for the ScheduleItemsGroup ItemRepeater component.
  */
-export interface GroupItemRepeaterProps {
+export interface ItemRepeaterProps {
   /** Child components */
   children: React.ReactNode;
   /** CSS classes to apply to the schedule item element */
@@ -215,32 +203,25 @@ export interface GroupItemRepeaterProps {
  * @component
  * @example
  * ```tsx
- * <ScheduleItemsGroup.GroupItemRepeater>
+ * <ScheduleItemsGroup.ItemRepeater>
  *   <ScheduleItem.Name />
  *   <ScheduleItem.TimeSlot />
  *   <ScheduleItem.Duration />
- * </ScheduleItemsGroup.GroupItemRepeater>
+ * </ScheduleItemsGroup.ItemRepeater>
  * ```
  */
-export const GroupItemRepeater = (
-  props: GroupItemRepeaterProps,
-): React.ReactNode => {
+export const ItemRepeater = (props: ItemRepeaterProps): React.ReactNode => {
   const { children, className } = props;
 
   return (
-    <CoreScheduleItemsGroup.GroupItems>
+    <CoreScheduleItemsGroup.Items>
       {({ items }) =>
         items.map((item) => (
-          <ScheduleItem.Root
-            key={item._id}
-            item={item}
-            className={className}
-            data-testid={TestIds.scheduleItemsGroupItem}
-          >
+          <ScheduleItem.Root key={item._id} item={item} className={className}>
             {children}
           </ScheduleItem.Root>
         ))
       }
-    </CoreScheduleItemsGroup.GroupItems>
+    </CoreScheduleItemsGroup.Items>
   );
 };

@@ -48,7 +48,7 @@ export function Schedule({
               </span>
               <ScheduleListPrimitive.StageFilter
                 className="font-light text-content-primary"
-                defaultOption="All stages"
+                defaultOptionLabel="All stages"
               />
             </div>
             <ScheduleListPrimitive.TagFilters className="flex gap-2 flex-wrap">
@@ -57,19 +57,19 @@ export function Schedule({
               </ScheduleListPrimitive.TagFilterRepeater>
             </ScheduleListPrimitive.TagFilters>
           </div>
-          <ScheduleListPrimitive.Groups className="space-y-8 mb-6">
+          <ScheduleListPrimitive.Groups
+            className="space-y-8 mb-6"
+            emptyState={<div>No schedule items available</div>}
+          >
             <ScheduleListPrimitive.GroupRepeater>
-              <ScheduleItemsGroupPrimitive.GroupDateLabel
+              <ScheduleItemsGroupPrimitive.DateLabel
                 className="text-2xl font-bold text-content-primary"
                 asChild
               >
                 <h2 />
-              </ScheduleItemsGroupPrimitive.GroupDateLabel>
-              <ScheduleItemsGroupPrimitive.GroupItems
-                className="mt-4 space-y-4"
-                emptyState={<div>No schedule items available</div>}
-              >
-                <ScheduleItemsGroupPrimitive.GroupItemRepeater className="group border border-gray-200 p-8">
+              </ScheduleItemsGroupPrimitive.DateLabel>
+              <ScheduleItemsGroupPrimitive.Items className="mt-4 space-y-4">
+                <ScheduleItemsGroupPrimitive.ItemRepeater className="group border border-gray-200 p-8">
                   <div className="flex gap-8">
                     <div className="min-w-[150px] flex flex-col">
                       <ScheduleItemPrimitive.TimeSlot className="font-light text-content-primary" />
@@ -107,8 +107,8 @@ export function Schedule({
                       </ScheduleItemPrimitive.Tags>
                     </div>
                   </div>
-                </ScheduleItemsGroupPrimitive.GroupItemRepeater>
-              </ScheduleItemsGroupPrimitive.GroupItems>
+                </ScheduleItemsGroupPrimitive.ItemRepeater>
+              </ScheduleItemsGroupPrimitive.Items>
             </ScheduleListPrimitive.GroupRepeater>
           </ScheduleListPrimitive.Groups>
         </ScheduleListPrimitive.Root>

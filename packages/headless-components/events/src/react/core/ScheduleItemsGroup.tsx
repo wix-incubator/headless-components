@@ -41,12 +41,12 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
-export interface GroupDateLabelProps {
+export interface DateLabelProps {
   /** Render prop function */
-  children: (props: GroupDateLabelRenderProps) => React.ReactNode;
+  children: (props: DateLabelRenderProps) => React.ReactNode;
 }
 
-export interface GroupDateLabelRenderProps {
+export interface DateLabelRenderProps {
   /** Formatted date label (e.g., "Mon, 07 Jul") */
   formattedDate: string;
   /** Date object for the group */
@@ -54,34 +54,34 @@ export interface GroupDateLabelRenderProps {
 }
 
 /**
- * ScheduleItemsGroup GroupDateLabel core component that provides group date label information.
+ * ScheduleItemsGroup DateLabel core component that provides group date label information.
  *
  * @component
  */
-export function GroupDateLabel(props: GroupDateLabelProps): React.ReactNode {
+export function DateLabel(props: DateLabelProps): React.ReactNode {
   const groupService = useService(ScheduleItemsGroupServiceDefinition);
   const { formattedDate, date } = groupService.itemsGroup.get();
 
   return props.children({ formattedDate, date });
 }
 
-export interface GroupItemsProps {
+export interface ItemsProps {
   /** Render prop function */
-  children: (props: GroupItemsRenderProps) => React.ReactNode;
+  children: (props: ItemsRenderProps) => React.ReactNode;
 }
 
-export interface GroupItemsRenderProps {
+export interface ItemsRenderProps {
   /** List of schedule items */
   items: ScheduleItem[];
 }
 
 /**
- * ScheduleItemsGroup GroupItems core component that provides group items data.
+ * ScheduleItemsGroup Items core component that provides group items data.
  * Returns filtered items based on current stage and tag filters.
  *
  * @component
  */
-export function GroupItems(props: GroupItemsProps): React.ReactNode {
+export function Items(props: ItemsProps): React.ReactNode {
   const groupService = useService(ScheduleItemsGroupServiceDefinition);
   const { items } = groupService.itemsGroup.get();
 
