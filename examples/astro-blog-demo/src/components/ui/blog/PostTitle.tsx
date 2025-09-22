@@ -3,12 +3,12 @@ import { Blog } from "@wix/blog/components";
 import { cva, type VariantProps } from "class-variance-authority";
 import React from "react";
 
-export const postTitleVariants = cva("text-content-primary", {
+export const postTitleVariants = cva("text-foreground", {
   variants: {
     variant: {
-      base: "font-heading text-xl leading-tight",
-      lg: "font-heading text-3xl leading-tight",
-      xl: "-mt-1 font-heading text-3xl leading-tight md:text-5xl",
+      base: "font-heading text-xl",
+      lg: "font-heading text-3xl",
+      xl: "-mt-1 font-heading text-3xl md:text-5xl",
     },
   },
   defaultVariants: {

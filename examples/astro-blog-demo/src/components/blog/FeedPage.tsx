@@ -39,7 +39,7 @@ export default function FeedPage({
 }: FeedPageProps) {
   return (
     <Blog.Feed.Root blogFeedServiceConfig={blogFeedServiceConfig}>
-      <Blog.Feed.Sort className="text-content-primary mb-4 bg-transparent" />
+      <Blog.Feed.Sort className="text-foreground mb-4 bg-transparent" />
       <Blog.Feed.PostItems
         className="grid gap-x-8 gap-y-12 lg:grid-cols-2 xl:grid-cols-3"
         emptyState={
