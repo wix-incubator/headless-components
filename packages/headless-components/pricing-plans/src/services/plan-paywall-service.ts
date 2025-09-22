@@ -18,7 +18,7 @@ export const PlanPaywallServiceDefinition = defineService<{
 }>('planPaywallService');
 
 export interface PlanPaywallServiceConfig {
-  requiredPlanIds: string[];
+  accessPlanIds: string[];
   memberOrders?: orders.Order[];
 }
 
@@ -43,7 +43,7 @@ export const PlanPaywallService =
           const activePlanOrders = memberOrders.filter(
             (order) =>
               order.status === 'ACTIVE' &&
-              config.requiredPlanIds.includes(order.planId!),
+              config.accessPlanIds.includes(order.planId!),
           );
           return activePlanOrders.length > 0;
         }
@@ -51,10 +51,10 @@ export const PlanPaywallService =
       });
 
       if (!config.memberOrders) {
-        loadMemberOrders(config.requiredPlanIds);
+        loadMemberOrders(config.accessPlanIds);
       }
 
-      async function loadMemberOrders(requiredPlanIds: string[]) {
+      async function loadMemberOrders(accessPlanIds: string[]) {
         try {
           isLoadingSignal.set(true);
           errorSignal.set(null);
@@ -64,7 +64,7 @@ export const PlanPaywallService =
             return;
           }
 
-          const memberOrders = await fetchMemberOrders(requiredPlanIds);
+          const memberOrders = await fetchMemberOrders(accessPlanIds);
           memberOrdersSignal.set(memberOrders);
         } catch (error) {
           errorSignal.set(
@@ -106,12 +106,12 @@ function isMemberLoggedIn(): boolean {
 }
 
 export async function loadPlanPaywallServiceConfig(
-  requiredPlanIds: string[],
+  accessPlanIds: string[],
 ): Promise<PlanPaywallServiceConfig> {
   if (!isMemberLoggedIn()) {
-    return { memberOrders: [], requiredPlanIds };
+    return { memberOrders: [], accessPlanIds };
   }
 
-  const memberOrders = await fetchMemberOrders(requiredPlanIds);
-  return { memberOrders: memberOrders ?? [], requiredPlanIds };
+  const memberOrders = await fetchMemberOrders(accessPlanIds);
+  return { memberOrders: memberOrders ?? [], accessPlanIds };
 }

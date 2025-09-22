@@ -1,6 +1,6 @@
 # Plan Paywall Interface
 
-Component that restricts access to its content until if member does not have access to the required plans.
+Component that restricts access to its content unless the member has one of the access plans.
 
 ## Architecture
 
@@ -15,7 +15,7 @@ The root container that provides plan paywall context to all child components.
 **Props**
 ```tsx
 interface PlanPaywallServiceConfig {
-  requiredPlanIds: string[];
+  accessPlanIds: string[];
   memberOrders?: orders.Order[];
 }
 
@@ -28,7 +28,7 @@ interface RootProps {
 **Example**
 ```tsx
 // Restrict by specific plan ids
-<PlanPaywall.Root planPaywallServiceConfig={{ requiredPlanIds: ['planId'] }}>
+<PlanPaywall.Root planPaywallServiceConfig={{ accessPlanIds: ['planId'] }}>
   <PlanPaywall.Paywall>
     <PlanPaywall.RestrictedContent>
       <div>Paywalled content</div>
@@ -45,7 +45,7 @@ interface RootProps {
 // Load member orders externally
 const { memberOrders } = await loadPlanPaywallServiceConfig(['planId']);
 
-<PlanPaywall.Root planPaywallServiceConfig={{ memberOrders: memberOrders, requiredPlanIds: ['planId'] }}>
+<PlanPaywall.Root planPaywallServiceConfig={{ memberOrders: memberOrders, accessPlanIds: ['planId'] }}>
   {/* Plan paywall components */}
 </PlanPaywall.Root>
 ```
@@ -96,7 +96,7 @@ interface PaywallProps {
 
 ### PlanPaywall.RestrictedContent
 
-Component that displays the restricted content if the member has access to the required plans.
+Component that displays the restricted content if the member has one of the access plans.
 
 **Props**
 ```tsx
@@ -115,7 +115,7 @@ interface RestrictedContentProps {
 
 ### PlanPaywall.Fallback
 
-Component that displays the fallback content if the member does not have access to the required plans.
+Component that displays the fallback content if the member does not have any of the access plans.
 
 **Props**
 ```tsx

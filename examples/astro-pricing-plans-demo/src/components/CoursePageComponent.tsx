@@ -17,7 +17,7 @@ export const CoursePageComponent = (props: CoursePageComponentProps) => {
     return (
       <PricingPlans.PlanPaywall.Root
         planPaywallServiceConfig={{
-          requiredPlanIds: props.course.accessedByPlanIds,
+          accessPlanIds: props.course.accessedByPlanIds,
         }}
       >
         <PricingPlans.PlanPaywall.Paywall>

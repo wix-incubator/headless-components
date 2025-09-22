@@ -22,7 +22,7 @@ interface RootProps {
  * @component
  * @example
  * ```tsx
- * <PlanPaywall.Root planPaywallServiceConfig={{ requiredPlanIds: ['planId'] }}>
+ * <PlanPaywall.Root planPaywallServiceConfig={{ accessPlanIds: ['planId'] }}>
  *   <PlanPaywall.Paywall>
  *     <PlanPaywall.RestrictedContent>
  *       <div>Paywalled content</div>
@@ -112,7 +112,7 @@ interface RestrictedContentProps {
 }
 
 /**
- * Component that displays the restricted content if the member has access to the required plans.
+ * Component that displays the restricted content if the member has one of the access plans.
  *
  * @component
  * @example
@@ -139,7 +139,7 @@ interface FallbackProps {
 }
 
 /**
- * Component that displays the fallback content if the member does not have access to the required plans.
+ * Component that displays the fallback content if the member does not have any of the access plans.
  *
  * @component
  * @example
