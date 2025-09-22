@@ -41,10 +41,10 @@ export interface RootProps {
  * }
  *
  * // For interactive tags
- * function InteractiveTagComponent({ tag, onClick, active }) {
+ * function InteractiveTagComponent({ tag }) {
  *   return (
  *     <ScheduleItemTag.Root tag={tag}>
- *       <ScheduleItemTag.Button onClick={onClick} active={active} />
+ *       <ScheduleItemTag.Button />
  *     </ScheduleItemTag.Root>
  *   );
  * }
