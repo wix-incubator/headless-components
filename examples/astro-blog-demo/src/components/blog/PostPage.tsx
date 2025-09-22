@@ -68,24 +68,37 @@ export default function PostPage({
 
           <PostTitle variant="xl" />
 
-          <SeparatedItems className="text-content-secondary text-sm">
-            <div className="flex items-center gap-2">
-              <PostAuthorAvatar avatarSize="md" />
+          <div className="text-foreground/80 text-sm">
+            <SeparatedItems className="hidden text-foreground/80 sm:flex">
+              <div className="flex items-center gap-x-2">
+                <PostAuthorAvatar avatarSize="md" />
+                <Blog.Post.AuthorName />
+              </div>
+
+              <Blog.Post.PublishDate locale={dateLocale} />
+
+              <Blog.Post.ReadingTime asChild>
+                {({ readingTime }) => <span>{readingTime} min read</span>}
+              </Blog.Post.ReadingTime>
+            </SeparatedItems>
+            <div className="grid grid-cols-[auto_1fr] grid-rows-2 items-center gap-x-2 sm:hidden">
+              <PostAuthorAvatar className="row-span-2" avatarSize="md" />
               <Blog.Post.AuthorName />
+              <SeparatedItems className="text-sm text-foreground/80">
+                <Blog.Post.PublishDate locale={dateLocale} />
+
+                <Blog.Post.ReadingTime asChild>
+                  {({ readingTime }) => <span>{readingTime} min read</span>}
+                </Blog.Post.ReadingTime>
+              </SeparatedItems>
             </div>
-
-            <Blog.Post.PublishDate locale={dateLocale} />
-
-            <Blog.Post.ReadingTime asChild>
-              {({ readingTime }) => <span>{readingTime} min read</span>}
-            </Blog.Post.ReadingTime>
-          </SeparatedItems>
+          </div>
         </header>
         <PostContent />
 
         <Blog.Post.TagItems className="flex flex-wrap gap-2">
           <Blog.Post.TagItemRepeater>
-            <Chip asChild>
+            <Chip size="sm"asChild>
               <Blog.Tag.Label />
             </Chip>
           </Blog.Post.TagItemRepeater>

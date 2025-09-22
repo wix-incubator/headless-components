@@ -74,6 +74,7 @@ import {
   Root as CoreCheckoutRoot,
 } from './core/Checkout.js';
 import React from 'react';
+import { DataComponentTags } from '../data-component-tags.js';
 import { type LineItem } from '../services/checkout-service.js';
 
 /**
@@ -119,10 +120,14 @@ export interface RootProps {
 export const Root = ({ checkoutServiceConfig, children }: RootProps) => {
   return (
     <CoreCheckoutRoot checkoutServiceConfig={checkoutServiceConfig}>
-      {children}
+      <AsChildSlot data-component-tag={DataComponentTags.commerceRoot}>
+        {children}
+      </AsChildSlot>
     </CoreCheckoutRoot>
   );
 };
+
+Root.displayName = 'Commerce.Root';
 
 /**
  * Props for the ActionCheckout component.

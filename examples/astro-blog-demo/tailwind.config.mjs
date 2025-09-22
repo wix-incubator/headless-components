@@ -18,6 +18,15 @@ const colorsDarkTheme = {
   foreground: "#f1f5f9",
 };
 
+const colorsVibeTheme = {
+  foreground: "#FFFFFF",
+  background: "#0A0A0A",
+  secondary: "#1A1A2E",
+  "secondary-foreground": "#FFFFFF",
+  "primary-foreground": "#000000",
+  primary: "#FF6B35",
+};
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -87,6 +96,7 @@ export default {
       colors: {
         // ...colorsLightTheme,
         ...colorsDarkTheme,
+        // ...colorsVibeTheme,
       },
     },
   },
