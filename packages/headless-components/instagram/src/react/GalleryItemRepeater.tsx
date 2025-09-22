@@ -42,7 +42,7 @@ const ItemWrapper: React.FC<{ children: React.ReactNode; mediaItems: any[] }> = 
                 servicesMap={createServicesMap().addService(
                   InstagramMediaItemServiceDefinition,
                   InstagramMediaItemService,
-                  { mediaItem, index }
+                  { mediaItem, index },
                 )}
               >
                 {typeof child.props.children === 'function'

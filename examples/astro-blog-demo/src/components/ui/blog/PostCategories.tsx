@@ -37,7 +37,7 @@ export const PostCategories = React.forwardRef<
       className={cn("flex flex-wrap gap-2", className)}
     >
       <Blog.Categories.CategoryItemRepeater>
-        <Chip variant="secondary" asChild>
+        <Chip asChild>
           <CategoryLinkOrLabel
             className="data-[href]:hover:bg-foreground/5"
             baseUrl={baseUrl}

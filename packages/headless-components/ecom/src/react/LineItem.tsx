@@ -1,6 +1,7 @@
 import React from 'react';
 import { type LineItem } from '../services/common-types.js';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import { DataComponentTags } from '../data-component-tags.js';
 import { WixMediaImage } from '@wix/headless-media/react';
 import * as SelectedOption from './SelectedOption.js';
 import { Item as CoreItem } from './core/CurrentCart.js';
@@ -62,12 +63,15 @@ export const Root = React.forwardRef<HTMLElement, LineItemRootProps>(
         ref={ref}
         asChild={asChild}
         data-testid={TestIds.lineItemRoot}
+        data-component-tag={DataComponentTags.lineItemRoot}
         customElement={children}
         customElementProps={{ item }}
         {...otherProps}
       >
         <LineItemContext.Provider value={contextValue}>
-          <div>{children}</div>
+          <div data-component-tag={DataComponentTags.lineItemRoot}>
+            {children}
+          </div>
         </LineItemContext.Provider>
       </AsChildSlot>
     );
