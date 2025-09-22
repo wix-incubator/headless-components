@@ -41,9 +41,7 @@ export const GalleryItems = React.forwardRef<HTMLDivElement, GalleryItemsProps>(
 
     return (
       <div ref={ref}>
-        <MediaGallery.Thumbnails>
-          {children}
-        </MediaGallery.Thumbnails>
+        <MediaGallery.Thumbnails>{children}</MediaGallery.Thumbnails>
       </div>
     );
   },

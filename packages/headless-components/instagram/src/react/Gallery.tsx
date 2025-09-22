@@ -56,10 +56,12 @@ export const Gallery = React.forwardRef<HTMLElement, GalleryProps>(
     // Convert Instagram media items to MediaGallery format
     // Note: MediaGallery only supports images, so we use thumbnails for videos
     const mediaGalleryItems = feedData.mediaItems.map((mediaItem) => ({
-      image: mediaItem.type === 'video'
-        ? mediaItem.thumbnailUrl || mediaItem.mediaUrl  // Use thumbnail for videos
-        : mediaItem.mediaUrl,
-      altText: mediaItem.altText || mediaItem.caption || `Instagram ${mediaItem.type}`,
+      image:
+        mediaItem.type === 'video'
+          ? mediaItem.thumbnailUrl || mediaItem.mediaUrl // Use thumbnail for videos
+          : mediaItem.mediaUrl,
+      altText:
+        mediaItem.altText || mediaItem.caption || `Instagram ${mediaItem.type}`,
     }));
 
     return (

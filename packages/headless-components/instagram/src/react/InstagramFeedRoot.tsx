@@ -4,7 +4,7 @@ import { createServicesMap } from '@wix/services-manager';
 import {
   InstagramFeedService,
   InstagramFeedServiceDefinition,
-  type InstagramFeedServiceConfig
+  type InstagramFeedServiceConfig,
 } from '../services/index.js';
 
 /**
@@ -65,7 +65,7 @@ export function Root(props: RootProps): React.ReactNode {
       servicesMap={createServicesMap().addService(
         InstagramFeedServiceDefinition,
         InstagramFeedService,
-        instagramFeedServiceConfig
+        instagramFeedServiceConfig,
       )}
     >
       <div {...attributes}>{children}</div>

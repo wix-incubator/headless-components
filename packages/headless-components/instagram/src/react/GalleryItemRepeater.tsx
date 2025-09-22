@@ -30,7 +30,9 @@ export interface GalleryItemRepeaterProps {
  * </InstagramFeed.GalleryItemRepeater>
  * ```
  */
-export const GalleryItemRepeater: React.FC<GalleryItemRepeaterProps> = ({ children }) => {
+export const GalleryItemRepeater: React.FC<GalleryItemRepeaterProps> = ({
+  children,
+}) => {
   const instagramFeedService = useService(InstagramFeedServiceDefinition);
   const feedData = instagramFeedService.feedData.get();
   const { mediaItems } = feedData;
@@ -40,9 +42,7 @@ export const GalleryItemRepeater: React.FC<GalleryItemRepeaterProps> = ({ childr
   // Use MediaGallery.ThumbnailRepeater for iteration, but wrap children with Instagram service context
   return (
     <MediaGallery.ThumbnailRepeater>
-      <ItemWrapper mediaItems={mediaItems}>
-        {children}
-      </ItemWrapper>
+      <ItemWrapper mediaItems={mediaItems}>{children}</ItemWrapper>
     </MediaGallery.ThumbnailRepeater>
   );
 };
@@ -72,7 +72,7 @@ const ItemWrapper: React.FC<{
                 servicesMap={createServicesMap().addService(
                   InstagramMediaItemServiceDefinition,
                   InstagramMediaItemService,
-                  { mediaItem, index }
+                  { mediaItem, index },
                 )}
               >
                 {typeof child.props.children === 'function'
