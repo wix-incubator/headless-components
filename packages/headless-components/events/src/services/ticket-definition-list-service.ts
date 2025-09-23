@@ -121,7 +121,8 @@ export const TicketDefinitionListService =
               selectedQuantity.ticketDefinitionId !== ticketDefinitionId ||
               selectedQuantity.pricingOptionId !== pricingOptionId,
           )
-          .concat(newSelectedQuantity);
+          .concat(newSelectedQuantity)
+          .filter((selectedQuantity) => !!selectedQuantity.quantity);
 
         selectedQuantities.set(newSelectedQuantities);
       };
