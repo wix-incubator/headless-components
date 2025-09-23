@@ -20,6 +20,7 @@ export interface TicketDefinitionListServiceAPI {
     ticketDefinitionId: string,
     pricingOptionId?: string,
   ) => number;
+  getCurrentPriceOverride: (ticketDefinitionId: string) => string | undefined;
   isSoldOut: (ticketDefinitionId: string) => boolean;
 }
 
@@ -133,6 +134,7 @@ export const TicketDefinitionListService =
         setQuantity,
         getMaxQuantity,
         getCurrentQuantity,
+        getCurrentPriceOverride,
         isSoldOut,
       };
     },
