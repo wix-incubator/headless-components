@@ -15,7 +15,7 @@ export interface EventListServiceAPI {
   events: Signal<Event[]>;
   /** Reactive signal containing the list of categories */
   categories: Signal<Category[]>;
-  /** Reactive signal containing the selected category */
+  /** Reactive signal containing the selected category id */
   selectedCategoryId: Signal<string | null>;
   /** Reactive signal indicating if more events are currently being loaded */
   isLoadingMore: Signal<boolean>;
