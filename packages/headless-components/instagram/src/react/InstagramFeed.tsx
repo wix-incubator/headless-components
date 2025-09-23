@@ -11,6 +11,7 @@ export { GalleryItemRepeater } from './GalleryItemRepeater.js';
 export { InstagramMedias } from './InstagramMedias.js';
 export { InstagramMediaRepeater } from './InstagramMediaRepeater.js';
 export { InstagramMedia } from './InstagramMedia.js';
+export { MediaGalleries as FeedMediaGalleries } from './FeedMediaGalleries.js';
 
 // Export component prop types
 export type { RootProps } from './InstagramFeedRoot.js';

@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import '../styles/global-loader.css';
 import '../styles/global.css';
 ---
@@ -11,7 +10,6 @@ import '../styles/global.css';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <slot name="seo-tags" />
-    <ClientRouter />
     <slot />
   </head>
   <body>

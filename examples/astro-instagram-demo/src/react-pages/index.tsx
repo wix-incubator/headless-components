@@ -2,11 +2,14 @@ import React from 'react';
 import InstagramLayout from '../layouts/InstagramLayout';
 import { InstagramFeed } from '@wix/headless-instagram/react';
 import { MediaGallery } from '@wix/headless-media/react';
+import { useService } from '@wix/services-manager-react';
+import { InstagramFeedServiceDefinition } from '@wix/headless-instagram/services';
+import { MediaGalleryServiceDefinition } from '@wix/headless-media/services';
 import {
   type InstagramFeedServiceConfig,
   InstagramMediaItemServiceDefinition,
 } from '@wix/headless-instagram/services';
-import { useService } from '@wix/services-manager-react';
+// useService already imported above
 
 function MediaCard({
   src,
@@ -84,21 +87,47 @@ export default function IndexPage(props: {
 
           <h2 className="text-xl font-semibold mb-3">Latest Posts</h2>
 
-          <InstagramFeed.Gallery>
-            <InstagramFeed.GalleryItems>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <InstagramFeed.GalleryItemRepeater>
-                  <MediaGallery.ThumbnailItem asChild>
-                    {({ src, alt, index }) => (
-                      <MediaCard src={src} alt={alt} index={index} />
-                    )}
-                  </MediaGallery.ThumbnailItem>
-                </InstagramFeed.GalleryItemRepeater>
-              </div>
-            </InstagramFeed.GalleryItems>
-          </InstagramFeed.Gallery>
+          {/* Feed-level gallery: Instagram urls are external, so render with asChild */}
+          <InstagramFeed.FeedMediaGalleries>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <MediaGallery.Viewport className="col-span-full rounded-lg mb-4" />
+
+              <FeedCaptionAndDate className="col-span-full -mt-2 mb-4 text-sm opacity-80" />
+              <MediaGallery.Thumbnails>
+                <MediaGallery.ThumbnailRepeater>
+                  <MediaGallery.ThumbnailItem className="aspect-square rounded-md" />
+                </MediaGallery.ThumbnailRepeater>
+              </MediaGallery.Thumbnails>
+            </div>
+          </InstagramFeed.FeedMediaGalleries>
         </InstagramFeed.Root>
       </div>
     </InstagramLayout>
+  );
+}
+
+function FeedCaptionAndDate(props: { className?: string }) {
+  const feed = useService(InstagramFeedServiceDefinition);
+  const gallery = useService(MediaGalleryServiceDefinition);
+
+  const items = feed.feedData.get().mediaItems;
+  const index = gallery.selectedMediaIndex.get();
+  const item = items[index];
+  if (!item) return null;
+
+  const date = new Date(item.timestamp);
+  const formatted = isNaN(date.getTime())
+    ? item.timestamp
+    : date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+
+  return (
+    <div className={props.className}>
+      <div className="font-medium">{item.caption || ''}</div>
+      <div className="opacity-70">{formatted}</div>
+    </div>
   );
 }

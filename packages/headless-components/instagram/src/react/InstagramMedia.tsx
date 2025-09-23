@@ -2,6 +2,8 @@ import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { useService } from '@wix/services-manager-react';
 import { InstagramMediaItemServiceDefinition } from '../services/index.js';
+import { MediaGallery } from '@wix/headless-media/react';
+import type { MediaItem } from '@wix/headless-media/services';
 
 export enum TestIds {
   instagramMediaCaption = 'instagram-media-caption',
@@ -119,19 +121,39 @@ export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>((props, r
   );
 });
 
-export interface MediaGalleriesProps {
+export interface MediaGalleriesProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactNode;
-  className?: string;
+  infinite?: boolean;
+  autoPlay?: { direction?: 'forward' | 'backward'; intervalMs?: number };
 }
 
-export const MediaGalleries = React.forwardRef<HTMLDivElement, MediaGalleriesProps>((props, ref) => {
-  const { children, className, ...otherProps } = props;
-  return (
-    <div ref={ref} className={className} data-testid={TestIds.instagramMediaGalleries} {...otherProps}>
-      {children}
-    </div>
-  );
-});
+export const MediaGalleries = React.forwardRef<HTMLDivElement, MediaGalleriesProps>(
+  (props, ref) => {
+    const { children, className, infinite, autoPlay, ...otherProps } = props;
+    const mediaItemService = useService(InstagramMediaItemServiceDefinition);
+    const mediaItem = mediaItemService.mediaItem.get();
+
+    const media: MediaItem[] = mediaItem?.mediaUrl
+      ? [{ image: mediaItem.mediaUrl, altText: mediaItem.altText }]
+      : [];
+
+    return (
+      <div
+        ref={ref}
+        className={className}
+        data-testid={TestIds.instagramMediaGalleries}
+        {...otherProps}
+      >
+        <MediaGallery.Root
+          mediaGalleryServiceConfig={{ media, infinite, autoPlay }}
+        >
+          {children}
+        </MediaGallery.Root>
+      </div>
+    );
+  },
+);
 
 export interface MediaGalleryRepeaterProps {
   children: React.ReactNode;

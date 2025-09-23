@@ -65,6 +65,7 @@ graph LR
 
 ```tsx
 import { InstagramFeed } from '@wix/headless-instagram/react';
+import { MediaGallery } from '@wix/headless-media/react';
 
 // Uses REAL Instagram data via SDK
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'real_connection_id' }}>
@@ -73,15 +74,15 @@ import { InstagramFeed } from '@wix/headless-instagram/react';
     <InstagramFeed.Hashtag />   {/* Real Instagram hashtag */}
   </div>
 
-  <InstagramFeed.Gallery>
-    <InstagramFeed.GalleryItems>
-      <InstagramFeed.GalleryRepeater>
-        <InstagramFeed.GalleryItem>
-          <InstagramFeed.Media />  {/* Real Instagram posts */}
-        </InstagramFeed.GalleryItem>
-      </InstagramFeed.GalleryRepeater>
-    </InstagramFeed.GalleryItems>
-  </InstagramFeed.Gallery>
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaRepeater>
+      <InstagramMedia.MediaGalleries>
+        <InstagramMedia.MediaGalleryRepeater>
+          <MediaGallery.Root />
+        </InstagramMedia.MediaGalleryRepeater>
+      </InstagramMedia.MediaGalleries>
+    </InstagramFeed.InstagramMediaRepeater>
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 

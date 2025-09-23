@@ -56,24 +56,24 @@ function InstagramWidget() {
         <InstagramFeed.Hashtag className="text-blue-600 font-medium" />
       </div>
 
-      {/* Gallery Section - Service-Based Architecture */}
-      <InstagramFeed.Gallery className="gallery-container">
-        <InstagramFeed.GalleryItems
-          emptyState={
-            <div className="text-center text-gray-500 py-8">
-              No Instagram posts to display
-            </div>
-          }
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <InstagramFeed.GalleryItemRepeater>
-              <MediaGallery.ThumbnailItem asChild>
-                {({ src, alt, index }) => <MediaCard src={src} alt={alt} index={index} />}
-              </MediaGallery.ThumbnailItem>
-            </InstagramFeed.GalleryItemRepeater>
+      {/* Medias Section - Service-Based Architecture */}
+      <InstagramFeed.InstagramMedias
+        emptyState={
+          <div className="text-center text-gray-500 py-8">
+            No Instagram posts to display
           </div>
-        </InstagramFeed.GalleryItems>
-      </InstagramFeed.Gallery>
+        }
+      >
+        <InstagramFeed.InstagramMediaRepeater>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <InstagramMedia.MediaGalleries>
+              <InstagramMedia.MediaGalleryRepeater>
+                <MediaGallery.Root />
+              </InstagramMedia.MediaGalleryRepeater>
+            </InstagramMedia.MediaGalleries>
+          </div>
+        </InstagramFeed.InstagramMediaRepeater>
+      </InstagramFeed.InstagramMedias>
     </InstagramFeed.Root>
   );
 }

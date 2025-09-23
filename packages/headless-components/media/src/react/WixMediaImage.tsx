@@ -44,13 +44,34 @@ export const WixMediaImage = React.forwardRef<
   ) => {
     if (!media?.image) return null;
 
-    const getUrl = isShape ? wixMedia.getShapeUrl : wixMedia.getImageUrl;
+    const isWixMedia =
+      typeof media.image === 'string' &&
+      (/^wix:(image|shape):\/\//.test(media.image) ||
+        /static\.wixstatic\.com\/media\//.test(media.image));
 
-    const parsed = getUrl(media.image);
-    const src = parsed.url;
-    const derivedWidth = width || parsed.width;
-    const derivedHeight = height || parsed.height;
-    const derivedAlt = parsed.altText ?? alt;
+    let src: string = '';
+    let derivedWidth: number | undefined =
+      typeof width === 'number' ? width : undefined;
+    let derivedHeight: number | undefined =
+      typeof height === 'number' ? height : undefined;
+    let derivedAlt: string = alt;
+
+    if (isWixMedia) {
+      const getUrl = isShape ? wixMedia.getShapeUrl : wixMedia.getImageUrl;
+      const parsed = getUrl(media.image as string);
+      src = parsed.url;
+      derivedWidth =
+        typeof width === 'number' ? width : (parsed.width as number | undefined);
+      derivedHeight =
+        typeof height === 'number'
+          ? height
+          : (parsed.height as number | undefined);
+      derivedAlt = parsed.altText ?? alt;
+    } else {
+      // External URL fallback (e.g., Instagram). Use raw URL with no derived dimensions
+      src = String(media.image);
+      derivedAlt = alt;
+    }
 
     const dimensions: { width?: string | number; height?: string | number } =
       {};

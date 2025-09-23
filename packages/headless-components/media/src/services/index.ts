@@ -1,6 +1,8 @@
 export {
   MediaGalleryService,
   MediaGalleryServiceDefinition,
+  type MediaGalleryServiceConfig,
+  type MediaItem,
 } from './media-gallery-service.js';
 
 export {
