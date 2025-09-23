@@ -1,11 +1,11 @@
 import React from 'react';
-import { WixServices } from '@wix/services-manager-react';
-import { createServicesMap } from '@wix/services-manager';
-import {
-  InstagramFeedService,
-  InstagramFeedServiceDefinition,
-  type InstagramFeedServiceConfig,
-} from '../services/index.js';
+import * as CoreInstagramFeed from './core/InstagramFeed.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
+import type { InstagramFeedServiceConfig } from '../services/index.js';
+
+enum TestIds {
+  instagramFeedRoot = 'instagram-feed-root',
+}
 
 /**
  * Props for InstagramFeed Root component
@@ -13,11 +13,14 @@ import {
 export interface RootProps {
   children: React.ReactNode;
   instagramFeedServiceConfig: InstagramFeedServiceConfig;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Root component that provides Instagram feed service context using WixServices.
+ * Root component that provides Instagram feed service context.
  * This follows the same service-based pattern as the stores package.
  *
  * @order 1
@@ -40,35 +43,36 @@ export interface RootProps {
  *         <InstagramFeed.UserName />
  *         <InstagramFeed.Hashtag />
  *       </div>
- *       <InstagramFeed.Gallery>
- *         <InstagramFeed.GalleryItems>
- *           <InstagramFeed.GalleryItemRepeater>
- *             <MediaGallery.ThumbnailItem />
- *           </InstagramFeed.GalleryItemRepeater>
- *         </InstagramFeed.GalleryItems>
- *       </InstagramFeed.Gallery>
+ *       <InstagramFeed.InstagramMedias>
+ *         <InstagramFeed.InstagramMediaItems>
+ *           <InstagramFeed.InstagramMediaRepeater>
+ *             <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }} />
+ *           </InstagramFeed.InstagramMediaRepeater>
+ *         </InstagramFeed.InstagramMediaItems>
+ *       </InstagramFeed.InstagramMedias>
  *     </InstagramFeed.Root>
  *   );
  * }
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
-  const { children, instagramFeedServiceConfig, className, ...attrs } = props;
+export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
+  const { children, instagramFeedServiceConfig, asChild, className, ...otherProps } = props;
 
   const attributes = {
     className,
-    ...attrs,
+    'data-testid': TestIds.instagramFeedRoot,
+    ...otherProps,
   };
 
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        InstagramFeedServiceDefinition,
-        InstagramFeedService,
-        instagramFeedServiceConfig,
-      )}
-    >
-      <div {...attributes}>{children}</div>
-    </WixServices>
+    <CoreInstagramFeed.Root instagramFeedServiceConfig={instagramFeedServiceConfig}>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        {...attributes}
+      >
+        <div>{children}</div>
+      </AsChildSlot>
+    </CoreInstagramFeed.Root>
   );
-}
+});

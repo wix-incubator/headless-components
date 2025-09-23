@@ -1,7 +1,10 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { useService } from '@wix/services-manager-react';
-import { InstagramFeedServiceDefinition } from '../services/index.js';
+import * as CoreInstagramFeed from './core/InstagramFeed.js';
+
+enum TestIds {
+  instagramFeedHashtag = 'instagram-feed-hashtag',
+}
 
 /**
  * Props for InstagramFeed Hashtag component
@@ -16,7 +19,7 @@ export interface HashtagProps {
 }
 
 /**
- * Displays the Instagram hashtag if available.
+ * Displays the Instagram hashtag.
  *
  * @component
  * @example
@@ -28,7 +31,7 @@ export interface HashtagProps {
  * <InstagramFeed.Hashtag asChild>
  *   {React.forwardRef(({ hashtag, ...props }, ref) => (
  *     <span ref={ref} {...props} className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
- *       #{hashtag}
+ *       {hashtag}
  *     </span>
  *   ))}
  * </InstagramFeed.Hashtag>
@@ -37,28 +40,24 @@ export interface HashtagProps {
 export const Hashtag = React.forwardRef<HTMLElement, HashtagProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
-    const instagramFeedService = useService(InstagramFeedServiceDefinition);
-    const feedData = instagramFeedService.feedData.get();
-
-    const hashtag = feedData.account?.instagramInfo?.instagramUsername;
-
-    // Don't render if no hashtag
-    if (!hashtag) {
-      return null;
-    }
 
     return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        customElement={children}
-        customElementProps={{ hashtag }}
-        content={`#${hashtag}`}
-        {...otherProps}
-      >
-        <span>#{hashtag}</span>
-      </AsChildSlot>
+      <CoreInstagramFeed.Hashtag>
+        {({ hashtag }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.instagramFeedHashtag}
+            customElement={children}
+            customElementProps={{ hashtag }}
+            content={hashtag}
+            {...otherProps}
+          >
+            <span>{hashtag}</span>
+          </AsChildSlot>
+        )}
+      </CoreInstagramFeed.Hashtag>
     );
   },
 );

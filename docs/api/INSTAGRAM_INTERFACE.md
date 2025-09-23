@@ -17,21 +17,25 @@ import { MediaGallery } from '@wix/headless-media/react';
     <InstagramFeed.Hashtag />
   </div>
 
-    <InstagramFeed.InstagramMedias>
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaItems emptyState={<div>No media available</div>}>
       <InstagramFeed.InstagramMediaRepeater>
-        <InstagramMedia.caption></InstagramMedia.caption>
-        <InstagramMedia.mediaType></InstagramMedia.mediaType>
-        <InstagramMedia.userName></InstagramMedia.userName>
-        <InstagramMedia.timestamp></InstagramMedia.timestamp>
-        <InstagramMedia.MediaGalleries>
-          <InstagramMedia.MediaGalleryRepeater>
-              <MediaGallery.ThumbnailItem />
-          </InstagramMedia.MediaGalleryRepeater>
-        </InstagramMedia.MediaGalleries>
+        <InstagramMedia.Root>
+          <InstagramMedia.Caption />
+          <InstagramMedia.MediaType />
+          <InstagramMedia.UserName />
+          <InstagramMedia.Timestamp />
+          <InstagramMedia.MediaGalleries>
+            <InstagramMedia.MediaGalleryItems>
+              <InstagramMedia.MediaGalleryRepeater>
+                <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }} />
+              </InstagramMedia.MediaGalleryRepeater>
+            </InstagramMedia.MediaGalleryItems>
+          </InstagramMedia.MediaGalleries>
+        </InstagramMedia.Root>
       </InstagramFeed.InstagramMediaRepeater>
-    </InstagramFeed.InstagramMedias>
-
-
+    </InstagramFeed.InstagramMediaItems>
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
@@ -48,17 +52,20 @@ import { MediaGallery } from '@wix/headless-media/react';
     </div>
   </header>
 
-  <InstagramFeed.Gallery>
-    <InstagramFeed.GalleryItems
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaItems
       emptyState={<div className="text-center py-8">No Instagram posts found</div>}
     >
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <InstagramFeed.GalleryItemRepeater>
-          <MediaGallery.ThumbnailItem className="aspect-square object-cover rounded-lg hover:opacity-80 transition-opacity" />
-        </InstagramFeed.GalleryItemRepeater>
+        <InstagramFeed.InstagramMediaRepeater>
+          <MediaGallery.Root
+            mediaGalleryServiceConfig={{ media: [] }}
+            className="aspect-square object-cover rounded-lg hover:opacity-80 transition-opacity"
+          />
+        </InstagramFeed.InstagramMediaRepeater>
       </div>
-    </InstagramFeed.GalleryItems>
-  </InstagramFeed.Gallery>
+    </InstagramFeed.InstagramMediaItems>
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
@@ -71,15 +78,18 @@ import { MediaGallery } from '@wix/headless-media/react';
   <InstagramFeed.Title className="text-4xl font-bold text-center mb-2" />
   <InstagramFeed.UserName className="text-xl text-gray-600 text-center mb-6" />
 
-  <InstagramFeed.Gallery>
-    <InstagramFeed.GalleryItems>
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaItems>
       <div className="grid grid-cols-3 gap-2">
-        <InstagramFeed.GalleryItemRepeater>
-          <MediaGallery.ThumbnailItem className="aspect-square rounded hover:scale-105 transition-transform" />
-        </InstagramFeed.GalleryItemRepeater>
+        <InstagramFeed.InstagramMediaRepeater>
+          <MediaGallery.Root
+            mediaGalleryServiceConfig={{ media: [] }}
+            className="aspect-square rounded hover:scale-105 transition-transform"
+          />
+        </InstagramFeed.InstagramMediaRepeater>
       </div>
-    </InstagramFeed.GalleryItems>
-  </InstagramFeed.Gallery>
+    </InstagramFeed.InstagramMediaItems>
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
@@ -95,9 +105,9 @@ import { MediaGallery } from '@wix/headless-media/react';
     <span className="username-display" />
   </InstagramFeed.UserName>
 
-  <InstagramFeed.Gallery asChild>
-    <section className="instagram-gallery" />
-  </InstagramFeed.Gallery>
+  <InstagramFeed.InstagramMedias asChild>
+    <section className="instagram-medias" />
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
@@ -128,24 +138,26 @@ import { MediaGallery } from '@wix/headless-media/react';
     ))}
   </InstagramFeed.UserName>
 
-  <InstagramFeed.Gallery>
-    <InstagramFeed.GalleryItems>
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaItems>
       <div className="masonry-layout">
-        <InstagramFeed.GalleryItemRepeater>
-          <MediaGallery.ThumbnailItem asChild>
-            {({ src, alt, index }) => (
+        <InstagramFeed.InstagramMediaRepeater>
+          <MediaGallery.Root
+            mediaGalleryServiceConfig={{ media: [] }}
+            asChild
+          >
+            {({ src, alt }) => (
               <CustomInstagramCard
                 src={src}
                 alt={alt}
-                index={index}
                 className="masonry-item"
               />
             )}
-          </MediaGallery.ThumbnailItem>
-        </InstagramFeed.GalleryItemRepeater>
+          </MediaGallery.Root>
+        </InstagramFeed.InstagramMediaRepeater>
       </div>
-    </InstagramFeed.GalleryItems>
-  </InstagramFeed.Gallery>
+    </InstagramFeed.InstagramMediaItems>
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
@@ -155,8 +167,8 @@ import { MediaGallery } from '@wix/headless-media/react';
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
   <InstagramFeed.Title />
 
-  <InstagramFeed.Gallery>
-    <InstagramFeed.GalleryItems
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaItems
       emptyState={
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📷</div>
@@ -165,11 +177,11 @@ import { MediaGallery } from '@wix/headless-media/react';
         </div>
       }
     >
-      <InstagramFeed.GalleryItemRepeater>
-        <MediaGallery.ThumbnailItem />
-      </InstagramFeed.GalleryItemRepeater>
-    </InstagramFeed.GalleryItems>
-  </InstagramFeed.Gallery>
+      <InstagramFeed.InstagramMediaRepeater>
+        <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }} />
+      </InstagramFeed.InstagramMediaRepeater>
+    </InstagramFeed.InstagramMediaItems>
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
@@ -245,26 +257,60 @@ interface HashtagProps {
 }
 ```
 
-### InstagramFeed.Gallery
+### InstagramFeed.InstagramMedias
 ```tsx
-interface GalleryProps {
+interface InstagramMediasProps {
   asChild?: boolean;
   children: React.ReactNode;
   className?: string;
 }
 ```
 
-### InstagramFeed.GalleryItems
+### InstagramFeed.InstagramMediaItems
 ```tsx
-interface GalleryItemsProps {
+interface InstagramMediaItemsProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
 }
 ```
 
-### InstagramFeed.GalleryItemRepeater
+### InstagramFeed.InstagramMediaRepeater
 ```tsx
-interface GalleryItemRepeaterProps {
+interface InstagramMediaRepeaterProps {
+  children: React.ReactNode;
+}
+```
+
+### InstagramMedia.Root
+```tsx
+interface InstagramMediaRootProps {
+  children: React.ReactNode;
+  media?: InstagramMediaItem;
+  asChild?: boolean;
+  className?: string;
+}
+```
+
+### InstagramMedia.MediaGalleries
+```tsx
+interface MediaGalleriesProps {
+  asChild?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}
+```
+
+### InstagramMedia.MediaGalleryItems
+```tsx
+interface MediaGalleryItemsProps {
+  children: React.ReactNode;
+  emptyState?: React.ReactNode;
+}
+```
+
+### InstagramMedia.MediaGalleryRepeater
+```tsx
+interface MediaGalleryRepeaterProps {
   children: React.ReactNode;
 }
 ```
@@ -421,19 +467,14 @@ Instagram components integrate seamlessly with Media Gallery components:
 
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
-  <InstagramFeed.Gallery>
-    <InstagramFeed.GalleryItems>
-      <InstagramFeed.GalleryItemRepeater>
-        {/* Use any Media Gallery component */}
-        <MediaGallery.ThumbnailItem />
-        <MediaGallery.Modal>
-          <MediaGallery.ModalImage />
-          <MediaGallery.ModalCaption />
-          <MediaGallery.ModalClose />
-        </MediaGallery.Modal>
-      </InstagramFeed.GalleryItemRepeater>
-    </InstagramFeed.GalleryItems>
-  </InstagramFeed.Gallery>
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaItems>
+      <InstagramFeed.InstagramMediaRepeater>
+        {/* Use MediaGallery following stores pattern */}
+        <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }} />
+      </InstagramFeed.InstagramMediaRepeater>
+    </InstagramFeed.InstagramMediaItems>
+  </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
@@ -444,15 +485,26 @@ InstagramFeed.Root (Service Provider)
 ├── InstagramFeed.Title (Entity Display)
 ├── InstagramFeed.UserName (Entity Display)
 ├── InstagramFeed.Hashtag (Entity Display)
-└── InstagramFeed.Gallery (List Container - 3-Level Pattern)
-    └── InstagramFeed.GalleryItems (List Container Level)
-        └── InstagramFeed.GalleryItemRepeater (Repeater Level)
-            └── MediaGallery.* (Media Components)
+└── InstagramFeed.InstagramMedias (List Container - 3-Level Pattern)
+    └── InstagramFeed.InstagramMediaItems (List Container Level with emptyState)
+        └── InstagramFeed.InstagramMediaRepeater (Repeater Level - renders InstagramMedia.Root)
+            └── InstagramMedia.Root (Entity Root)
+                ├── InstagramMedia.Caption (Entity Component)
+                ├── InstagramMedia.MediaType (Entity Component)
+                ├── InstagramMedia.UserName (Entity Component)
+                ├── InstagramMedia.Timestamp (Entity Component)
+                └── InstagramMedia.MediaGalleries (Nested List Container)
+                    └── InstagramMedia.MediaGalleryItems (Nested List Container Level)
+                        └── InstagramMedia.MediaGalleryRepeater (Nested Repeater - renders MediaGallery.Root)
+                            └── MediaGallery.Root (Media Component)
 ```
 
 **Key Principles:**
 - **Services Pattern**: WixServices manages reactive Instagram feed data
-- **3-Level List Pattern**: Gallery → GalleryItems → GalleryItemRepeater
+- **3-Level List Pattern**: InstagramMedias → InstagramMediaItems → InstagramMediaRepeater
+- **Entity Delegation**: Repeaters render entity Root components (InstagramMedia.Root, MediaGallery.Root)
+- **Empty State Support**: List container level supports emptyState prop
+- **Conditional Rendering**: Container level doesn't render if list is empty
 - **Media Gallery Integration**: Seamless integration with Media Gallery components
 - **No React Context**: Data flows through services, metadata through props
 - **AsChild Support**: Full customization with asChild pattern
@@ -473,7 +525,7 @@ Import only the components you need for optimal bundle size:
 
 ```tsx
 // Tree-shakable imports
-import { Root, Gallery, GalleryItems, GalleryItemRepeater } from '@wix/headless-instagram/react';
+import { Root, InstagramMedias, InstagramMediaItems, InstagramMediaRepeater } from '@wix/headless-instagram/react';
 
 // Or use namespace import (recommended)
 import { InstagramFeed } from '@wix/headless-instagram/react';
