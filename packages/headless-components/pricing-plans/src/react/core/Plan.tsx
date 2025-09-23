@@ -15,6 +15,10 @@ import {
   CheckoutService,
   CheckoutServiceDefinition,
 } from '@wix/headless-ecom/services';
+import {
+  PlanCheckoutService,
+  PlanCheckoutServiceDefinition,
+} from '../../services/plan-checkout-service.js';
 
 interface RootProps {
   planServiceConfig: PlanServiceConfig;
@@ -38,7 +42,8 @@ export function Root({ planServiceConfig, children }: RootProps) {
           channelType: ChannelType.WEB,
           // TODO: Perhaps we can add postFlowUrl?
           // postFlowUrl: ''
-        })}
+        })
+        .addService(PlanCheckoutServiceDefinition, PlanCheckoutService)}
     >
       {children}
     </WixServices>
@@ -339,4 +344,37 @@ export function PerkItem({ children }: PerkItemProps) {
   }
 
   return children({ perk: perkItem.perk });
+}
+
+export interface ActionBuyNowRenderProps {
+  isLoading: boolean;
+  error: string | null;
+  goToPlanCheckout: () => Promise<void>;
+}
+
+interface ActionBuyNowProps {
+  children: (props: ActionBuyNowRenderProps) => React.ReactNode;
+}
+
+export function ActionBuyNow({ children }: ActionBuyNowProps) {
+  const { planSignal } = useService(PlanServiceDefinition);
+  const {
+    isLoadingSignal,
+    errorSignal,
+    goToPlanCheckout: _goToPlanCheckout,
+  } = useService(PlanCheckoutServiceDefinition);
+  const plan = planSignal.get();
+
+  if (!plan) {
+    return null;
+  }
+
+  const isLoading = isLoadingSignal.get();
+  const error = errorSignal.get();
+
+  return children({
+    isLoading,
+    error,
+    goToPlanCheckout: () => _goToPlanCheckout(plan),
+  });
 }
