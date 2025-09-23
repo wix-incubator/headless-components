@@ -1,12 +1,12 @@
 import { useService } from '@wix/services-manager-react';
 import {
-  EventListServiceDefinition,
-  type Category,
-} from '../../services/event-list-service.js';
-import {
   type FilterOption,
   Filter as FilterPrimitive,
 } from '@wix/headless-components/react';
+import {
+  type Category,
+  EventListServiceDefinition,
+} from '../../services/event-list-service.js';
 import { ALL_CATEGORIES, CATEGORIES_FILTER_KEY } from '../../constants.js';
 
 export interface CategoriesFilterRootProps {

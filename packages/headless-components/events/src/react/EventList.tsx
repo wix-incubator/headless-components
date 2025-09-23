@@ -1,10 +1,10 @@
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import React from 'react';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
 import * as CoreEventList from './core/EventList.js';
-import * as Event from './Event.js';
 import * as CoreEventListFilters from './core/EventListFilters.js';
-import { Filter as FilterPrimitive } from '@wix/headless-components/react';
+import * as Event from './Event.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
