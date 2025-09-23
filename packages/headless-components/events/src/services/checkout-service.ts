@@ -26,7 +26,7 @@ export interface CheckoutServiceAPI {
  */
 export interface CheckoutServiceConfig {
   postFlowUrl?: string;
-  noTicketDefinitionsSelectedErrorMessage?: string;
+  noTicketDefinitionsSelectedError?: string;
 }
 
 export const CheckoutServiceDefinition = defineService<
@@ -50,7 +50,7 @@ export const CheckoutService =
       ) => {
         if (!ticketReservationQuantities.length) {
           error.set(
-            config.noTicketDefinitionsSelectedErrorMessage || 'Select a ticket',
+            config.noTicketDefinitionsSelectedError || 'Select a ticket',
           );
           return;
         }
