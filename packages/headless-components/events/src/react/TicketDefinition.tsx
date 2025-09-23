@@ -78,6 +78,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         className={className}
         data-testid={TestIds.ticketDefinitionRoot}
         data-sold-out={ticketDefinition.limitPerCheckout === 0}
+        data-sale-started={ticketDefinition.saleStatus === 'SALE_STARTED'}
         data-free={!!ticketDefinition.pricingMethod?.free}
         data-fixed-pricing={!!ticketDefinition.pricingMethod?.fixedPrice}
         data-guest-pricing={!!ticketDefinition.pricingMethod?.guestPrice}
