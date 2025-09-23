@@ -20,6 +20,7 @@ export interface TicketDefinitionListServiceAPI {
     ticketDefinitionId: string,
     pricingOptionId?: string,
   ) => number;
+  getCurrentPriceOverride: (ticketDefinitionId: string) => string | undefined;
   isSoldOut: (ticketDefinitionId: string) => boolean;
 }
 
@@ -121,7 +122,8 @@ export const TicketDefinitionListService =
               selectedQuantity.ticketDefinitionId !== ticketDefinitionId ||
               selectedQuantity.pricingOptionId !== pricingOptionId,
           )
-          .concat(newSelectedQuantity);
+          .concat(newSelectedQuantity)
+          .filter((selectedQuantity) => !!selectedQuantity.quantity);
 
         selectedQuantities.set(newSelectedQuantities);
       };
@@ -132,6 +134,7 @@ export const TicketDefinitionListService =
         setQuantity,
         getMaxQuantity,
         getCurrentQuantity,
+        getCurrentPriceOverride,
         isSoldOut,
       };
     },

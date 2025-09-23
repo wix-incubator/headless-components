@@ -33,6 +33,7 @@ interface RootProps {
 
 - `data-testid="ticket-definition-root"` - Applied to ticket definition element
 - `data-sold-out` - Ticket definition is sold out
+- `data-sale-started` - Sale has started
 - `data-free` - Ticket definition is free
 - `data-fixed-pricing` - Ticket definition has fixed pricing method
 - `data-guest-pricing` - Ticket definition has guest pricing method
@@ -457,6 +458,7 @@ interface PricingOptionRepeaterProps {
 | `data-testid="ticket-definition-quantity"`        | TicketDefinition.Quantity       | Quantity element                           |
 | `data-testid="ticket-definition-pricing-options"` | TicketDefinition.PricingOptions | Pricing options container                  |
 | `data-sold-out`                                   | TicketDefinition.Root           | Ticket definition is sold out              |
+| `data-sale-started`                               | TicketDefinition.Root           | Sale has started                           |
 | `data-free`                                       | TicketDefinition.Root           | Ticket definition is free                  |
 | `data-fixed-pricing`                              | TicketDefinition.Root           | Ticket definition has fixed pricing method |
 | `data-guest-pricing`                              | TicketDefinition.Root           | Ticket definition has guest pricing method |

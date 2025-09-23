@@ -43,6 +43,9 @@ const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
     eventServiceConfig={eventServiceConfigResult.config}
     eventListServiceConfig={eventListServiceConfig}
     ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+    checkoutServiceConfig={{
+      noTicketDefinitionsSelectedError: 'Select a ticket'
+    }}
     scheduleListServiceConfig={scheduleListServiceConfig}
     eventsPagePath="/events"
     formPagePath={`/events/${slug}/form`}
