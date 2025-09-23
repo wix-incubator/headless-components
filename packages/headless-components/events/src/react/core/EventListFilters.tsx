@@ -9,14 +9,14 @@ import {
 } from '../../services/event-list-service.js';
 import { ALL_CATEGORIES, CATEGORIES_FILTER_KEY } from '../../constants.js';
 
-export interface FiltersProps {
+export interface FiltersRootProps {
   /** Render prop function */
-  children: (props: FiltersRenderProps) => React.ReactNode;
+  children: (props: FiltersRootRenderProps) => React.ReactNode;
   /** All categories label*/
   allCategoriesLabel: string;
 }
 
-export interface FiltersRenderProps {
+export interface FiltersRootRenderProps {
   /** Filter options */
   filterOptions: FilterOption[];
   /** Filter value */
@@ -30,10 +30,11 @@ export interface FiltersRenderProps {
  *
  * @component
  */
-export function Filters(props: FiltersProps): React.ReactNode {
+export function FiltersRoot(props: FiltersRootProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
   const categories = eventListService.categories.get();
-  const selectedCategory = eventListService.selectedCategory.get();
+  const selectedCategoryId =
+    eventListService.selectedCategoryId.get() || ALL_CATEGORIES;
 
   if (!categories.length) {
     return null;
@@ -46,8 +47,6 @@ export function Filters(props: FiltersProps): React.ReactNode {
       categoryId === ALL_CATEGORIES ? null : categoryId,
     );
   };
-
-  const selectedCategoryId = selectedCategory?._id || ALL_CATEGORIES;
 
   const { filterOptions, value } = buildFilterProps(
     categories,

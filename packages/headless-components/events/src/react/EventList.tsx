@@ -330,7 +330,9 @@ export interface FiltersProps {
  */
 export const Filters = (props: FiltersProps): React.ReactNode => {
   return (
-    <CoreEventListFilters.Filters allCategoriesLabel={props.allCategoriesLabel}>
+    <CoreEventListFilters.FiltersRoot
+      allCategoriesLabel={props.allCategoriesLabel}
+    >
       {({ filterOptions, onChange, value }) => {
         return (
           <FilterPrimitive.Root
@@ -342,6 +344,6 @@ export const Filters = (props: FiltersProps): React.ReactNode => {
           </FilterPrimitive.Root>
         );
       }}
-    </CoreEventListFilters.Filters>
+    </CoreEventListFilters.FiltersRoot>
   );
 };

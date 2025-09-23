@@ -16,7 +16,7 @@ export interface EventListServiceAPI {
   /** Reactive signal containing the list of categories */
   categories: Signal<Category[]>;
   /** Reactive signal containing the selected category */
-  selectedCategory: Signal<Category | null>;
+  selectedCategoryId: Signal<string | null>;
   /** Reactive signal indicating if more events are currently being loaded */
   isLoadingMore: Signal<boolean>;
   /** Reactive signal indicating if events are currently being loaded */
@@ -58,7 +58,7 @@ export const EventListService =
 
       const events = signalsService.signal<Event[]>(config.events);
       const categories = signalsService.signal<Category[]>(config.categories);
-      const selectedCategory = signalsService.signal<Category | null>(null);
+      const selectedCategoryId = signalsService.signal<string | null>(null);
       const isLoadingMore = signalsService.signal<boolean>(false);
       const isLoading = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
@@ -77,7 +77,7 @@ export const EventListService =
           const offset = pageSize.get() * (currentPage.get() + 1);
           const queryEventsResult = await queryEvents(
             offset,
-            selectedCategory.get()?._id,
+            selectedCategoryId.get(),
           );
 
           events.set([...events.get(), ...queryEventsResult.items]);
@@ -92,8 +92,7 @@ export const EventListService =
       };
 
       const loadEventsByCategory = async (categoryId: string | null) => {
-        const category = categories.get().find((cat) => cat._id === categoryId);
-        selectedCategory.set(category ?? null);
+        selectedCategoryId.set(categoryId);
 
         isLoading.set(true);
         error.set(null);
@@ -115,7 +114,7 @@ export const EventListService =
       return {
         events,
         categories,
-        selectedCategory,
+        selectedCategoryId,
         isLoadingMore,
         isLoading,
         error,
