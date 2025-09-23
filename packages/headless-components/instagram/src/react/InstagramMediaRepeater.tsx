@@ -1,41 +1,42 @@
 import React from 'react';
-import { WixServices, useService } from '@wix/services-manager-react';
+import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
+  InstagramFeedServiceDefinition,
   InstagramMediaItemService,
   InstagramMediaItemServiceDefinition,
-  InstagramFeedServiceDefinition,
 } from '../services/index.js';
-
-enum TestIds {
-  instagramMediaRepeater = 'instagram-media-repeater',
-}
+import { Root as InstagramMediaRoot } from './InstagramMedia.js';
 
 /**
- * Props for InstagramFeed InstagramMediaRepeater component (Repeater Level)
+ * Props for InstagramFeed InstagramMediaRepeater component
  */
 export interface InstagramMediaRepeaterProps {
+  /** Template to repeat for each media item */
   children: React.ReactNode;
 }
 
 /**
- * Repeater component that creates individual service contexts for each Instagram media item.
- * This follows the Repeater Level pattern from the rules.
- * Maps over media items and renders children for each, providing InstagramMedia context.
+ * Repeater component for Instagram media items, implementing the Repeater Level
+ * of the 3-level pattern. Renders InstagramMedia.Root for each media item.
  *
  * @component
  * @example
  * ```tsx
+ * // Basic usage
  * <InstagramFeed.InstagramMediaRepeater>
  *   <InstagramMedia.Caption />
  *   <InstagramMedia.MediaType />
- *   <InstagramMedia.UserName />
- *   <InstagramMedia.Timestamp />
+ * </InstagramFeed.InstagramMediaRepeater>
+ *
+ * // With media gallery
+ * <InstagramFeed.InstagramMediaRepeater>
  *   <InstagramMedia.MediaGalleries>
  *     <InstagramMedia.MediaGalleryRepeater>
- *       <MediaGallery.Root />
+ *       <MediaGallery.Viewport />
  *     </InstagramMedia.MediaGalleryRepeater>
  *   </InstagramMedia.MediaGalleries>
+ *   <InstagramMedia.Caption />
  * </InstagramFeed.InstagramMediaRepeater>
  * ```
  */
@@ -44,11 +45,12 @@ export const InstagramMediaRepeater = React.forwardRef<
   InstagramMediaRepeaterProps
 >((props, _ref) => {
   const { children } = props;
-  const instagramFeedService = useService(InstagramFeedServiceDefinition);
-  const feedData = instagramFeedService.feedData.get();
-  const { mediaItems } = feedData;
+  const feedService = useService(InstagramFeedServiceDefinition);
+  const feedData = feedService.feedData.get();
 
-  if (!mediaItems.length) return null;
+  const mediaItems = feedData?.mediaItems || [];
+
+  if (mediaItems.length === 0) return null;
 
   return (
     <>
@@ -61,7 +63,9 @@ export const InstagramMediaRepeater = React.forwardRef<
             { mediaItem, index },
           )}
         >
-          <div data-testid={TestIds.instagramMediaRepeater}>{children}</div>
+          <InstagramMediaRoot data-testid="instagram-media-repeater">
+            {children}
+          </InstagramMediaRoot>
         </WixServices>
       ))}
     </>

@@ -1,36 +1,54 @@
 import React from 'react';
+import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { useService } from '@wix/services-manager-react';
 import { InstagramFeedServiceDefinition } from '../services/index.js';
-import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-
-enum TestIds {
-  instagramMedias = 'instagram-medias',
-}
 
 /**
- * Props for InstagramFeed InstagramMedias component (Container Level)
+ * Props for InstagramFeed InstagramMedias component
  */
 export interface InstagramMediasProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ hasMedias: boolean; mediaItems: any[] }>;
+  children?: AsChildChildren<{ hasMediaItems: boolean; mediaItems: any[] }>;
+  /** CSS classes to apply to the default element */
   className?: string;
+  /** Content to show when there are no media items */
+  emptyState?: React.ReactNode;
 }
 
 /**
- * Container component for Instagram media items.
- * Does not render when there are no media items.
- * This follows the Container Level pattern from the rules.
+ * Container for Instagram media list, implementing the Container Level
+ * of the 3-level pattern. Only renders if there are media items available.
  *
  * @component
  * @example
  * ```tsx
+ * // Basic usage
  * <InstagramFeed.InstagramMedias>
  *   <InstagramFeed.InstagramMediaRepeater>
  *     <InstagramMedia.Caption />
- *     <InstagramMedia.MediaType />
  *   </InstagramFeed.InstagramMediaRepeater>
+ * </InstagramFeed.InstagramMedias>
+ *
+ * // With empty state
+ * <InstagramFeed.InstagramMedias emptyState={<div>No posts found</div>}>
+ *   <InstagramFeed.InstagramMediaRepeater>
+ *     <InstagramMedia.Caption />
+ *   </InstagramFeed.InstagramMediaRepeater>
+ * </InstagramFeed.InstagramMedias>
+ *
+ * // Using AsChild pattern for custom container
+ * <InstagramFeed.InstagramMedias asChild>
+ *   {({ hasMediaItems, mediaItems }) => (
+ *     <div className="media-grid">
+ *       {hasMediaItems && (
+ *         <span className="media-count">
+ *           {mediaItems.length} posts
+ *         </span>
+ *       )}
+ *     </div>
+ *   )}
  * </InstagramFeed.InstagramMedias>
  * ```
  */
@@ -38,19 +56,19 @@ export const InstagramMedias = React.forwardRef<
   HTMLDivElement,
   InstagramMediasProps
 >((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
-  const instagramFeedService = useService(InstagramFeedServiceDefinition);
-  const feedData = instagramFeedService.feedData.get();
+  const { asChild, children, className, emptyState, ...otherProps } = props;
+  const feedService = useService(InstagramFeedServiceDefinition);
+  const feedData = feedService.feedData.get();
 
-  const hasMedias = feedData.mediaItems.length > 0;
+  const mediaItems = feedData?.mediaItems || [];
+  const hasMediaItems = mediaItems.length > 0;
 
-  // Don't render if no medias (following the Container Level pattern)
-  if (!hasMedias) return null;
+  // Don't render if no media items and using default rendering
+  if (!hasMediaItems && !asChild) {
+    return emptyState || null;
+  }
 
-  const contextValue = {
-    hasMedias,
-    mediaItems: feedData.mediaItems,
-  };
+  const data = { hasMediaItems, mediaItems };
 
   return (
     <AsChildSlot
@@ -58,11 +76,21 @@ export const InstagramMedias = React.forwardRef<
       asChild={asChild}
       className={className}
       customElement={children}
-      customElementProps={contextValue}
-      data-testid={TestIds.instagramMedias}
+      customElementProps={data}
+      content={null}
+      data-testid="instagram-medias"
       {...otherProps}
     >
-      <div>{React.isValidElement(children) ? children : null}</div>
+      <div>
+        {hasMediaItems
+          ? typeof children === 'function' ||
+            (typeof children === 'object' &&
+              children !== null &&
+              !React.isValidElement(children))
+            ? null
+            : children
+          : emptyState}
+      </div>
     </AsChildSlot>
   );
 });

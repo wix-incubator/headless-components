@@ -27,36 +27,39 @@ export interface TitleProps {
  * // Custom title
  * <InstagramFeed.Title title="Latest Posts" />
  *
- * // asChild with custom rendering
+ * // Using AsChild pattern for custom elements
  * <InstagramFeed.Title asChild>
- *   {React.forwardRef(({ title, ...props }, ref) => (
- *     <h2 ref={ref} {...props} className="text-2xl font-bold">
- *       📷 {title}
- *     </h2>
- *   ))}
+ *   {({ title }) => (
+ *     <h1 className="custom-title">{title}</h1>
+ *   )}
  * </InstagramFeed.Title>
  * ```
  */
-export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
-  const {
-    asChild,
-    children,
-    className,
-    title = 'Instagram Feed',
-    ...otherProps
-  } = props;
+export const Title = React.forwardRef<HTMLHeadingElement, TitleProps>(
+  (props, ref) => {
+    const {
+      asChild,
+      children,
+      className,
+      title = 'Instagram Feed',
+      ...otherProps
+    } = props;
 
-  return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      customElement={children}
-      customElementProps={{ title }}
-      content={title}
-      {...otherProps}
-    >
-      <h2>{title}</h2>
-    </AsChildSlot>
-  );
-});
+    const data = { title };
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        customElement={children}
+        customElementProps={data}
+        content={title}
+        data-testid="instagram-feed-title"
+        {...otherProps}
+      >
+        <h2>{title}</h2>
+      </AsChildSlot>
+    );
+  },
+);

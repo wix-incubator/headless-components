@@ -1,2 +1,7 @@
-export * as InstagramFeed from './InstagramFeed.js';
-export * as InstagramMedia from './InstagramMedia.js';
+// Instagram headless components following stores pattern
+// Each entity has its own namespace with all related components
+
+import * as InstagramFeed from './InstagramFeed.js';
+import * as InstagramMedia from './InstagramMedia.js';
+
+export { InstagramFeed, InstagramMedia };
