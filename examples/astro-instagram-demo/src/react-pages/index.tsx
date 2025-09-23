@@ -5,44 +5,10 @@ import { MediaGallery } from '@wix/headless-media/react';
 import { useService } from '@wix/services-manager-react';
 import { InstagramFeedServiceDefinition } from '@wix/headless-instagram/services';
 import { MediaGalleryServiceDefinition } from '@wix/headless-media/services';
-import {
-  type InstagramFeedServiceConfig,
-  InstagramMediaItemServiceDefinition,
-} from '@wix/headless-instagram/services';
+import { type InstagramFeedServiceConfig } from '@wix/headless-instagram/services';
 // useService already imported above
 
-function MediaCard({
-  src,
-  alt,
-  index,
-}: {
-  src: string;
-  alt: string;
-  index: number;
-}) {
-  // Access the original Instagram media item from service to check if it's a video
-  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-  const mediaItem = mediaItemService.mediaItem.get();
-  const isVideo = mediaItem.type === 'video';
-
-  return (
-    <div className="rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur">
-      <div className="aspect-square overflow-hidden relative">
-        <img src={src} alt={alt} className="w-full h-full object-cover" />
-        {isVideo && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-black/50 rounded-full p-2 backdrop-blur-sm">
-              <div className="w-0 h-0 border-l-[8px] border-l-white border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent ml-1"></div>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="flex items-center justify-between px-3 py-2 text-xs opacity-80">
-        <span>{isVideo ? '🎥' : '📷'}</span>
-      </div>
-    </div>
-  );
-}
+// No custom image rendering; gallery components handle images (like Stores)
 
 export default function IndexPage(props: {
   instagramConfig: InstagramFeedServiceConfig;
