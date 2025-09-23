@@ -2,6 +2,10 @@ import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
+  type FilterOption,
+  Filter as FilterPrimitive,
+} from '@wix/headless-components/react';
+import {
   ScheduleListService,
   ScheduleListServiceConfig,
   ScheduleListServiceDefinition,
@@ -182,63 +186,65 @@ export function StageFilter(props: StageFilterProps): React.ReactNode {
   });
 }
 
-export interface TagFiltersProps {
+export interface FiltersRootProps {
   /** Render prop function */
-  children: (props: TagFiltersRenderProps) => React.ReactNode;
+  children: (props: FiltersRootRenderProps) => React.ReactNode;
 }
 
-export interface TagFiltersRenderProps {
-  /** Available tags */
-  tags: string[];
-  /** Current tag filters */
-  currentTagFilters: string[];
+export interface FiltersRootRenderProps {
+  /** Filter options */
+  filterOptions: FilterOption[];
+  /** Filter value */
+  filterValue: FilterPrimitive.Filter;
+  /** Function to load events by stage */
+  onChange: (value: FilterPrimitive.Filter) => Promise<void>;
 }
 
-/**
- * ScheduleList TagFilters core component that provides tag filtering data.
- *
- * @component
- */
-export function TagFilters(props: TagFiltersProps): React.ReactNode {
+export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const tags = scheduleListService.tags.get();
   const currentTagFilters = scheduleListService.tagFilters.get();
+  const setTagFilters = scheduleListService.setTagFilters;
 
-  if (!tags.length) {
-    return null;
-  }
+  const onChange = async (value: FilterPrimitive.Filter) => {
+    setTagFilters(value?.['tag']?.$in || []);
+  };
 
-  return props.children({ tags, currentTagFilters });
-}
+  const { filterOptions, filterValue } = buildTagFilterProps(
+    tags,
+    currentTagFilters,
+  );
 
-export interface TagFilterRepeaterProps {
-  /** Render prop function */
-  children: (props: TagFilterRepeaterRenderProps) => React.ReactNode;
-}
+  return props.children({
+    filterOptions,
+    filterValue,
+    onChange,
+  });
+};
 
-export interface TagFilterRepeaterRenderProps {
-  /** Available tags */
-  tags: string[];
-  /** Current tag filters */
-  currentTagFilters: string[];
-}
+const buildTagFilterProps = (tags: string[], currentTagFilters: string[]) => {
+  const TAG_FILTER_BASE = {
+    key: 'tag',
+    label: '',
+    type: 'multi' as const,
+    displayType: 'text' as const,
+  };
 
-/**
- * ScheduleList TagFilterRepeater core component that provides tag filtering data.
- * Not rendered if there are no tags.
- *
- * @component
- */
-export function TagFilterRepeater(
-  props: TagFilterRepeaterProps,
-): React.ReactNode {
-  const scheduleListService = useService(ScheduleListServiceDefinition);
-  const tags = scheduleListService.tags.get();
-  const currentTagFilters = scheduleListService.tagFilters.get();
+  const filterOptions = [
+    {
+      ...TAG_FILTER_BASE,
+      fieldName: 'tag',
+      validValues: tags,
+    },
+  ];
 
-  if (!tags.length) {
-    return null;
-  }
+  const filterValue = {
+    ...TAG_FILTER_BASE,
+    tag: currentTagFilters,
+  };
 
-  return props.children({ tags, currentTagFilters });
-}
+  return {
+    filterOptions,
+    filterValue,
+  };
+};

@@ -2,11 +2,14 @@ import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import * as CoreScheduleList from './core/ScheduleList.js';
 import * as ScheduleItem from './ScheduleItem.js';
-import * as ScheduleItemTag from './ScheduleItemTag.js';
 import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
+import {
+  type FilterOption,
+  Filter as FilterPrimitive,
+} from '@wix/headless-components/react';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
@@ -283,10 +286,7 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
     <CoreScheduleList.GroupRepeater>
       {({ itemsGroups }) =>
         itemsGroups.map((itemsGroup) => (
-          <ScheduleItemsGroup.Root
-            key={itemsGroup.formattedDate}
-            itemsGroup={itemsGroup}
-          >
+          <ScheduleItemsGroup.Root key={itemsGroup.id} itemsGroup={itemsGroup}>
             {children}
           </ScheduleItemsGroup.Root>
         ))
@@ -389,88 +389,32 @@ export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
   },
 );
 
-/**
- * Props for the ScheduleList TagFilters component.
- */
-export interface TagFiltersProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Child components or custom render function when using asChild */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{
-        tags: string[];
-        currentTagFilters: string[];
-      }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-}
-
-/**
- * Container for tag filters with conditional rendering.
- *
- * @component
- */
-export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
-  (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
-
-    return (
-      <CoreScheduleList.TagFilters>
-        {({ tags, currentTagFilters }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListTagFilters}
-            customElement={children}
-            customElementProps={{
-              tags,
-              currentTagFilters,
-            }}
-            {...otherProps}
-          >
-            <div>{children as React.ReactNode}</div>
-          </AsChildSlot>
-        )}
-      </CoreScheduleList.TagFilters>
-    );
-  },
-);
-
-/**
- * Props for the ScheduleList TagFilterRepeater component.
- */
-export interface TagFilterRepeaterProps {
-  /** Child components */
+export interface FiltersRootProps {
+  /** Render prop function */
   children: React.ReactNode;
 }
 
-/**
- * Repeater component that renders ScheduleItemTag.Root for each available tag with filtering functionality.
- *
- * @component
- * @example
- * ```tsx
- * <ScheduleList.TagFilterRepeater>
- *   <ScheduleItemTag.Button />
- * </ScheduleList.TagFilterRepeater>
- * ```
- */
-export const TagFilterRepeater = (
-  props: TagFilterRepeaterProps,
-): React.ReactNode => {
-  const { children } = props;
+export interface FiltersRootRenderProps {
+  /** Filter options */
+  filterOptions: FilterOption[];
+  /** Filter value */
+  filterValue: FilterPrimitive.Filter;
+  /** Function to handle tag filter change */
+  onChange: (value: FilterPrimitive.Filter) => Promise<void>;
+}
 
+export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
   return (
-    <CoreScheduleList.TagFilterRepeater>
-      {({ tags }) =>
-        tags.map((tag) => (
-          <ScheduleItemTag.Root key={tag} tag={tag}>
-            {children}
-          </ScheduleItemTag.Root>
-        ))
-      }
-    </CoreScheduleList.TagFilterRepeater>
+    <CoreScheduleList.FiltersRoot>
+      {({ filterOptions, filterValue, onChange }) => (
+        <FilterPrimitive.Root
+          value={filterValue}
+          onChange={onChange}
+          filterOptions={filterOptions}
+        >
+          {props.children}
+        </FilterPrimitive.Root>
+      )}
+    </CoreScheduleList.FiltersRoot>
   );
 };

@@ -23,9 +23,7 @@ export interface ScheduleListServiceAPI {
   stageNames: ReadOnlySignal<string[]>;
   tags: ReadOnlySignal<string[]>;
   setStageFilter: (stageName: string | null) => void;
-  addTagFilter: (tagValue: string) => void;
-  removeTagFilter: (tagValue: string) => void;
-  filterItems: (items: ScheduleItem[]) => ScheduleItem[];
+  setTagFilters: (newTagFilters: string[]) => void;
 }
 
 export interface ScheduleListServiceConfig {
@@ -79,27 +77,8 @@ export const ScheduleListService =
         stageFilter.set(stageName);
       };
 
-      const addTagFilter = (tagValue: string) => {
-        const currentFilters = tagFilters.get();
-        if (!currentFilters.includes(tagValue)) {
-          tagFilters.set([...currentFilters, tagValue]);
-        }
-      };
-
-      const removeTagFilter = (tagValue: string) => {
-        const currentFilters = tagFilters.get();
-        tagFilters.set(currentFilters.filter((tag) => tag !== tagValue));
-      };
-
-      const filterItems = (items: ScheduleItem[]) => {
-        const currentStageFilter = stageFilter.get();
-        const currentTagFilters = tagFilters.get();
-
-        return filterScheduleItems(
-          items,
-          currentStageFilter,
-          currentTagFilters,
-        );
+      const setTagFilters = (newTagFilters: string[]) => {
+        tagFilters.set(newTagFilters);
       };
 
       return {
@@ -111,9 +90,7 @@ export const ScheduleListService =
         stageNames,
         tags,
         setStageFilter,
-        addTagFilter,
-        removeTagFilter,
-        filterItems,
+        setTagFilters,
       };
     },
   );

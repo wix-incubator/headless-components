@@ -9,6 +9,7 @@ import {
   type EventServiceConfig,
   type ScheduleListServiceConfig,
 } from '@wix/headless-events/services';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
@@ -51,11 +52,13 @@ export function Schedule({
                 defaultOptionLabel="All stages"
               />
             </div>
-            <ScheduleListPrimitive.TagFilters className="flex gap-2 flex-wrap">
-              <ScheduleListPrimitive.TagFilterRepeater>
-                <ScheduleItemTagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
-              </ScheduleListPrimitive.TagFilterRepeater>
-            </ScheduleListPrimitive.TagFilters>
+            <ScheduleListPrimitive.FiltersRoot>
+              <FilterPrimitive.FilterOptions>
+                <FilterPrimitive.FilterOptionRepeater>
+                  <FilterPrimitive.FilterOption.MultiFilter className="flex gap-2 text-sm font-light text-content-primary [&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-gray-200 [&_button]:rounded-full [&_button[data-state=on]]:bg-blue-500 [&_button[data-state=on]]:text-white [&_button[data-state=on]]:border-blue-500" />
+                </FilterPrimitive.FilterOptionRepeater>
+              </FilterPrimitive.FilterOptions>
+            </ScheduleListPrimitive.FiltersRoot>
           </div>
           <ScheduleListPrimitive.Groups
             className="space-y-8 mb-6"
