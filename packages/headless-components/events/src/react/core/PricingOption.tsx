@@ -10,7 +10,7 @@ import {
 import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
 import { TicketDefinitionServiceDefinition } from '../../services/ticket-definition-service.js';
 import { EventServiceDefinition } from '../../services/event-service.js';
-import { getTaxConfig } from '../../utils/tax.js';
+import { getTicketDefinitionTax } from '../../utils/ticket-definition.js';
 
 export interface RootProps {
   /** Child components that will have access to the pricing option service */
@@ -142,11 +142,8 @@ export function Tax(props: TaxProps): React.ReactNode {
   const price = Number(pricingOption.price!.value!);
   const currency = pricingOption.price!.currency!;
 
-  const { name, rate, included, amount, formattedAmount } = getTaxConfig(
-    taxSettings,
-    price,
-    currency,
-  );
+  const { name, rate, included, amount, formattedAmount } =
+    getTicketDefinitionTax(taxSettings, price, currency);
 
   return props.children({
     name,

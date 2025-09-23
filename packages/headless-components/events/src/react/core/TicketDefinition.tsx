@@ -331,7 +331,7 @@ export interface FeeRenderProps {
 }
 
 /**
- * TicketDefinition Fee core component that provides fee data. Not rendered when ticket definition has no fee enabled, or when ticket definition is free or has pricing options, or when fee is included in price.
+ * TicketDefinition Fee core component that provides fee data. Not rendered when ticket definition has no fee enabled, or when ticket definition is free or has pricing options, or when fee is included in the price.
  *
  * @component
  */
