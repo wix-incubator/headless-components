@@ -10,35 +10,37 @@ Headless Instagram components with render props following the stores pattern. Di
 import { InstagramFeed } from '@wix/headless-instagram/react';
 import { MediaGallery } from '@wix/headless-media/react';
 
-<InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'instagram_account_123', limit: 6 }}>
+<InstagramFeed.Root
+  instagramFeedServiceConfig={{ accountId: 'instagram_account_123', limit: 6 }}
+>
   <div>
     <InstagramFeed.Title />
     <InstagramFeed.UserName />
     <InstagramFeed.Hashtag />
   </div>
 
-    <InstagramFeed.InstagramMedias>
-      <InstagramFeed.InstagramMediaRepeater>
-        <InstagramMedia.caption></InstagramMedia.caption>
-        <InstagramMedia.mediaType></InstagramMedia.mediaType>
-        <InstagramMedia.userName></InstagramMedia.userName>
-        <InstagramMedia.timestamp></InstagramMedia.timestamp>
-        <InstagramMedia.MediaGalleries>
-          <InstagramMedia.MediaGalleryRepeater>
-              <MediaGallery.ThumbnailItem />
-          </InstagramMedia.MediaGalleryRepeater>
-        </InstagramMedia.MediaGalleries>
-      </InstagramFeed.InstagramMediaRepeater>
-    </InstagramFeed.InstagramMedias>
-
-
-</InstagramFeed.Root>
+  <InstagramFeed.InstagramMedias>
+    <InstagramFeed.InstagramMediaRepeater>
+      <InstagramMedia.Caption></InstagramMedia.Caption>
+      <InstagramMedia.MediaType></InstagramMedia.MediaType>
+      <InstagramMedia.UserName></InstagramMedia.UserName>
+      <InstagramMedia.Timestamp></InstagramMedia.Timestamp>
+      <InstagramMedia.MediaGalleries>
+        <InstagramMedia.MediaGalleryRepeater>
+          <MediaGallery.Root />
+        </InstagramMedia.MediaGalleryRepeater>
+      </InstagramMedia.MediaGalleries>
+    </InstagramFeed.InstagramMediaRepeater>
+  </InstagramFeed.InstagramMedias>
+</InstagramFeed.Root>;
 ```
 
 ### Complete Feed with Custom Layout
 
 ```tsx
-<InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'myaccount', limit: 12 }}>
+<InstagramFeed.Root
+  instagramFeedServiceConfig={{ accountId: 'myaccount', limit: 12 }}
+>
   <header className="mb-6">
     <InstagramFeed.Title className="text-3xl font-bold" />
     <div className="flex items-center gap-2 mt-2">
@@ -50,7 +52,9 @@ import { MediaGallery } from '@wix/headless-media/react';
 
   <InstagramFeed.Gallery>
     <InstagramFeed.GalleryItems
-      emptyState={<div className="text-center py-8">No Instagram posts found</div>}
+      emptyState={
+        <div className="text-center py-8">No Instagram posts found</div>
+      }
     >
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <InstagramFeed.GalleryItemRepeater>
@@ -193,22 +197,19 @@ import { InstagramFeed } from '@wix/headless-instagram/core';
 
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
   <InstagramFeed.Title>
-    {({ title }) => (
-      <h2 className="custom-title">{title}</h2>
-    )}
+    {({ title }) => <h2 className="custom-title">{title}</h2>}
   </InstagramFeed.Title>
 
   <InstagramFeed.UserName>
-    {({ username }) => (
-      <span className="custom-username">@{username}</span>
-    )}
+    {({ username }) => <span className="custom-username">@{username}</span>}
   </InstagramFeed.UserName>
-</InstagramFeed.Root>
+</InstagramFeed.Root>;
 ```
 
 ## Props Reference
 
 ### InstagramFeed.Root
+
 ```tsx
 interface RootProps {
   instagramFeedServiceConfig: InstagramFeedServiceConfig;
@@ -218,6 +219,7 @@ interface RootProps {
 ```
 
 ### InstagramFeed.Title
+
 ```tsx
 interface TitleProps {
   asChild?: boolean;
@@ -228,6 +230,7 @@ interface TitleProps {
 ```
 
 ### InstagramFeed.UserName
+
 ```tsx
 interface UserNameProps {
   asChild?: boolean;
@@ -237,6 +240,7 @@ interface UserNameProps {
 ```
 
 ### InstagramFeed.Hashtag
+
 ```tsx
 interface HashtagProps {
   asChild?: boolean;
@@ -246,6 +250,7 @@ interface HashtagProps {
 ```
 
 ### InstagramFeed.Gallery
+
 ```tsx
 interface GalleryProps {
   asChild?: boolean;
@@ -255,6 +260,7 @@ interface GalleryProps {
 ```
 
 ### InstagramFeed.GalleryItems
+
 ```tsx
 interface GalleryItemsProps {
   children: React.ReactNode;
@@ -263,6 +269,7 @@ interface GalleryItemsProps {
 ```
 
 ### InstagramFeed.GalleryItemRepeater
+
 ```tsx
 interface GalleryItemRepeaterProps {
   children: React.ReactNode;
@@ -272,6 +279,7 @@ interface GalleryItemRepeaterProps {
 ## Data Types
 
 ### InstagramFeedServiceConfig
+
 ```tsx
 interface InstagramFeedServiceConfig {
   /** Instagram account ID or username */
@@ -284,6 +292,7 @@ interface InstagramFeedServiceConfig {
 ```
 
 ### InstagramFeedData
+
 ```tsx
 interface InstagramFeedData {
   /** Instagram account information */
@@ -298,6 +307,7 @@ interface InstagramFeedData {
 ```
 
 ### InstagramMediaItem
+
 ```tsx
 interface InstagramMediaItem {
   /** Unique identifier for the media item */
@@ -320,6 +330,7 @@ interface InstagramMediaItem {
 ```
 
 ### InstagramAccount
+
 ```tsx
 interface InstagramAccount {
   /** Account ID */
@@ -355,15 +366,15 @@ export async function getServerSideProps() {
   if (configResult.type === 'success') {
     return {
       props: {
-        instagramConfig: configResult.config
-      }
+        instagramConfig: configResult.config,
+      },
     };
   }
 
   return {
     props: {
-      instagramConfig: { accountId: 'account123', limit: 12 }
-    }
+      instagramConfig: { accountId: 'account123', limit: 12 },
+    },
   };
 }
 
@@ -406,9 +417,7 @@ function CustomInstagramComponent() {
   return (
     <div>
       <p>{feedData.mediaItems.length} posts loaded</p>
-      {feedData.hasMore && (
-        <button onClick={handleLoadMore}>Load More</button>
-      )}
+      {feedData.hasMore && <button onClick={handleLoadMore}>Load More</button>}
       <button onClick={handleRefresh}>Refresh</button>
     </div>
   );
@@ -451,6 +460,7 @@ InstagramFeed.Root (Service Provider)
 ```
 
 **Key Principles:**
+
 - **Services Pattern**: WixServices manages reactive Instagram feed data
 - **3-Level List Pattern**: Gallery → GalleryItems → GalleryItemRepeater
 - **Media Gallery Integration**: Seamless integration with Media Gallery components
@@ -473,7 +483,12 @@ Import only the components you need for optimal bundle size:
 
 ```tsx
 // Tree-shakable imports
-import { Root, Gallery, GalleryItems, GalleryItemRepeater } from '@wix/headless-instagram/react';
+import {
+  Root,
+  Gallery,
+  GalleryItems,
+  GalleryItemRepeater,
+} from '@wix/headless-instagram/react';
 
 // Or use namespace import (recommended)
 import { InstagramFeed } from '@wix/headless-instagram/react';
