@@ -1,0 +1,14 @@
+---
+import { loadFirstFormServiceConfig } from '@wix/headless-forms/services';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormsPage from '../../react-pages/index';
+
+const formServiceConfig = await loadFirstFormServiceConfig();
+---
+
+<BaseLayout>
+  <title>Form</title>
+  <meta name="description" content="Form" />
+
+  <FormsPage formServiceConfig={formServiceConfig} />
+</BaseLayout>
