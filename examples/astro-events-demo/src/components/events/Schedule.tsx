@@ -42,16 +42,6 @@ export function Schedule({
         <ScheduleListPrimitive.Root
           scheduleListServiceConfig={scheduleListServiceConfig}
         >
-          {/* <div className="flex mb-6 justify-between">
-            <div className="flex items-center gap-2">
-              <span className="font-light text-content-primary">
-                Filter by:
-              </span>
-              <ScheduleListPrimitive.StageFilter
-                className="font-light text-content-primary"
-                defaultOptionLabel="All stages"
-              />
-            </div> */}
           <ScheduleListPrimitive.FiltersRoot defaultOptionLabel="All stages">
             <FilterPrimitive.FilterOptions>
               <FilterPrimitive.FilterOptionRepeater className="flex flex-row justify-between mb-6 items-center">
@@ -60,7 +50,6 @@ export function Schedule({
               </FilterPrimitive.FilterOptionRepeater>
             </FilterPrimitive.FilterOptions>
           </ScheduleListPrimitive.FiltersRoot>
-          {/* </div> */}
           <ScheduleListPrimitive.Groups
             className="space-y-8 mb-6"
             emptyState={<div>No schedule items available</div>}

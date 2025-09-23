@@ -156,7 +156,7 @@ export interface FiltersRootRenderProps {
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
 }
 
-export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
+export function FiltersRoot(props: FiltersRootProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const tags = scheduleListService.tags.get();
   const stageNames = scheduleListService.stageNames.get();
@@ -188,7 +188,7 @@ export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
     filterValue,
     onChange,
   });
-};
+}
 
 const buildTagFilterProps = (
   tags: string[],
