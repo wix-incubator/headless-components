@@ -35,13 +35,13 @@ export interface RootProps {
  * function EventListPage({ eventListServiceConfig }) {
  *   return (
  *     <EventList.Root eventListServiceConfig={eventListServiceConfig}>
- *       <EventList.FiltersRoot allCategoriesLabel="All">
+ *       <EventList.Filters allCategoriesLabel="All">
  *         <Filter.FilterOptions>
  *           <Filter.FilterOptionRepeater>
  *             <Filter.FilterOption.SingleFilter />
  *           </Filter.FilterOptionRepeater>
  *         </Filter.FilterOptions>
- *       </EventList.FiltersRoot>
+ *       </EventList.Filters>
  *       <EventList.Events>
  *         <EventList.EventRepeater>
  *           <Event.Image />
@@ -306,7 +306,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 /**
  * Props for the EventList Filters component.
  */
-export interface FiltersRootProps {
+export interface FiltersProps {
   /** Child components */
   children: React.ReactNode;
   /** All categories label*/
@@ -319,24 +319,22 @@ export interface FiltersRootProps {
  * @component
  * @example
  * ```tsx
- * <EventList.FiltersRoot allCategoriesLabel="All">
+ * <EventList.Filters allCategoriesLabel="All">
  *   <Filter.FilterOptions className="border-b border-gray-500 mb-6">
  *     <Filter.FilterOptionRepeater>
  *       <Filter.FilterOption.SingleFilter className="flex gap-2" />
  *     </Filter.FilterOptionRepeater>
  *   </Filter.FilterOptions>
- * </EventList.FiltersRoot>
+ * </EventList.Filters>
  * ```
  */
-export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
+export const Filters = (props: FiltersProps): React.ReactNode => {
   return (
-    <CoreEventListFilters.CategoriesFilterRoot
-      allCategoriesLabel={props.allCategoriesLabel}
-    >
-      {({ filterOptions, onChange, filterValue }) => {
+    <CoreEventListFilters.Filters allCategoriesLabel={props.allCategoriesLabel}>
+      {({ filterOptions, onChange, value }) => {
         return (
           <FilterPrimitive.Root
-            value={filterValue}
+            value={value}
             onChange={onChange}
             filterOptions={filterOptions}
           >
@@ -344,6 +342,6 @@ export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
           </FilterPrimitive.Root>
         );
       }}
-    </CoreEventListFilters.CategoriesFilterRoot>
+    </CoreEventListFilters.Filters>
   );
 };

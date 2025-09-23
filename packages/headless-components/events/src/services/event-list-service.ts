@@ -17,12 +17,10 @@ export interface EventListServiceAPI {
   categories: Signal<Category[]>;
   /** Reactive signal containing the selected category */
   selectedCategory: Signal<Category | null>;
-  /** Function to set the selected category */
-  setSelectedCategory: (category: Category | null) => void;
   /** Reactive signal indicating if more events are currently being loaded */
   isLoadingMore: Signal<boolean>;
   /** Reactive signal indicating if events are currently being loaded */
-  isLoadingEvents: Signal<boolean>;
+  isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
   /** Reactive signal containing the number of events per page */
@@ -62,7 +60,7 @@ export const EventListService =
       const categories = signalsService.signal<Category[]>(config.categories);
       const selectedCategory = signalsService.signal<Category | null>(null);
       const isLoadingMore = signalsService.signal<boolean>(false);
-      const isLoadingEvents = signalsService.signal<boolean>(false);
+      const isLoading = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
       const pageSize = signalsService.signal<number>(config.pageSize);
       const currentPage = signalsService.signal<number>(config.currentPage);
@@ -70,9 +68,6 @@ export const EventListService =
       const hasMoreEvents = signalsService.computed<boolean>(
         () => currentPage.get() + 1 < totalPages.get(),
       );
-      const setSelectedCategory = (category: Category | null) => {
-        selectedCategory.set(category);
-      };
 
       const loadMoreEvents = async () => {
         isLoadingMore.set(true);
@@ -97,7 +92,10 @@ export const EventListService =
       };
 
       const loadEventsByCategory = async (categoryId: string | null) => {
-        isLoadingEvents.set(true);
+        const category = categories.get().find((cat) => cat._id === categoryId);
+        selectedCategory.set(category ?? null);
+
+        isLoading.set(true);
         error.set(null);
 
         try {
@@ -110,7 +108,7 @@ export const EventListService =
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
-          isLoadingEvents.set(false);
+          isLoading.set(false);
         }
       };
 
@@ -118,9 +116,8 @@ export const EventListService =
         events,
         categories,
         selectedCategory,
-        setSelectedCategory,
         isLoadingMore,
-        isLoadingEvents,
+        isLoading,
         error,
         pageSize,
         currentPage,

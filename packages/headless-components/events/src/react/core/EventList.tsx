@@ -54,7 +54,7 @@ export interface EventsRenderProps {
  */
 export function Events(props: EventsProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
-  const isLoading = eventListService.isLoadingEvents.get();
+  const isLoading = eventListService.isLoading.get();
   const events = eventListService.events.get();
   const hasEvents = !!events.length;
 

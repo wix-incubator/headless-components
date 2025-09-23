@@ -9,18 +9,18 @@ import {
 } from '../../services/event-list-service.js';
 import { ALL_CATEGORIES, CATEGORIES_FILTER_KEY } from '../../constants.js';
 
-export interface CategoriesFilterRootProps {
+export interface FiltersProps {
   /** Render prop function */
-  children: (props: CategoriesFilterRootRenderProps) => React.ReactNode;
+  children: (props: FiltersRenderProps) => React.ReactNode;
   /** All categories label*/
   allCategoriesLabel: string;
 }
 
-export interface CategoriesFilterRootRenderProps {
+export interface FiltersRenderProps {
   /** Filter options */
   filterOptions: FilterOption[];
   /** Filter value */
-  filterValue: FilterPrimitive.Filter;
+  value: FilterPrimitive.Filter;
   /** Function to handle category change */
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
 }
@@ -30,14 +30,10 @@ export interface CategoriesFilterRootRenderProps {
  *
  * @component
  */
-export function CategoriesFilterRoot(
-  props: CategoriesFilterRootProps,
-): React.ReactNode {
+export function Filters(props: FiltersProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
   const categories = eventListService.categories.get();
   const selectedCategory = eventListService.selectedCategory.get();
-  const setSelectedCategory = eventListService.setSelectedCategory;
-  const loadEventsByCategory = eventListService.loadEventsByCategory;
 
   if (!categories.length) {
     return null;
@@ -45,20 +41,15 @@ export function CategoriesFilterRoot(
 
   const handleCategoryChange = async (value: FilterPrimitive.Filter) => {
     const categoryId = value?.['categoryId'];
-    if (!categoryId || categoryId === ALL_CATEGORIES) {
-      setSelectedCategory(null);
-      await loadEventsByCategory(null);
-      return;
-    }
 
-    const category = categories.find((cat) => cat._id === categoryId) ?? null;
-    setSelectedCategory(category);
-    await loadEventsByCategory(categoryId);
+    await eventListService.loadEventsByCategory(
+      categoryId === ALL_CATEGORIES ? null : categoryId,
+    );
   };
 
   const selectedCategoryId = selectedCategory?._id || ALL_CATEGORIES;
 
-  const { filterOptions, filterValue } = buildFilterProps(
+  const { filterOptions, value } = buildFilterProps(
     categories,
     props.allCategoriesLabel,
     selectedCategoryId,
@@ -66,7 +57,7 @@ export function CategoriesFilterRoot(
 
   return props.children({
     filterOptions,
-    filterValue,
+    value,
     onChange: handleCategoryChange,
   });
 }
@@ -92,15 +83,16 @@ const buildFilterProps = (
         ...categories.map((category) => category._id!),
       ],
       valueFormatter: (value: string | number) =>
-        categories.find((category) => category._id === value)?.name ||
-        allCategoriesLabel,
+        value === ALL_CATEGORIES
+          ? allCategoriesLabel
+          : categories.find((category) => category._id === value)!.name!,
     },
   ];
 
-  const filterValue = {
+  const value = {
     ...FILTER_BASE,
     categoryId: selectedCategoryId,
   };
 
-  return { filterOptions, filterValue };
+  return { filterOptions, value };
 };
