@@ -1,0 +1,100 @@
+---
+import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
+import FeedPage from "@/components/blog/FeedPage";
+import {
+  createCustomCategory,
+  loadBlogCategoriesServiceConfig,
+  loadBlogFeedServiceConfig,
+} from "@wix/blog/services";
+import { SEO } from "@wix/seo/components";
+import {
+  loadSEOTagsServiceConfig,
+  type SEOTagsServiceConfig,
+} from "@wix/seo/services";
+import { ClientRouter } from "astro:transitions";
+
+import "@/styles/global.css";
+
+const { slug } = Astro.params;
+export const prerender = false;
+
+if (!slug) {
+  return Astro.redirect("/");
+}
+
+let blogFeedServiceConfig;
+let blogCategoriesServiceConfig;
+let categoryName = slug;
+let seoTagsServiceConfig: SEOTagsServiceConfig;
+
+try {
+  [blogFeedServiceConfig, blogCategoriesServiceConfig] = await Promise.all([
+    loadBlogFeedServiceConfig({
+      categorySlug: slug,
+      pageSize: 10,
+      showPinnedPostsFirst: true,
+      sort: [
+        {
+          fieldName: "firstPublishedDate",
+          order: "DESC",
+        },
+      ],
+    }),
+    loadBlogCategoriesServiceConfig(),
+  ]);
+
+  // Get the category name for the page title
+  categoryName = blogFeedServiceConfig.initialCategory?.label || slug;
+
+  seoTagsServiceConfig = await loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      slug,
+      pageName: categoryName,
+      seoData: blogFeedServiceConfig.initialCategory?.seoData,
+    },
+  });
+} catch (error) {
+  // If category not found, redirect to 404
+  return Astro.rewrite("/404");
+}
+
+const customCategoriesToPrepend = [
+  createCustomCategory({
+    label: "All posts",
+    slug: "/astro-router/blog/",
+    description:
+      "Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.",
+  }),
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <ClientRouter />
+    <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
+  </head>
+  <body>
+    <div class="min-h-screen bg-background">
+      <div class="mx-auto max-w-6xl px-6 py-12">
+        <BlogCategoriesSection
+          pathname={Astro.url.pathname}
+          categoryPageBaseUrl="/astro-router/blog/category/"
+          blogCategoriesServiceConfig={blogCategoriesServiceConfig}
+          customCategoriesToPrepend={customCategoriesToPrepend}
+        />
+        <FeedPage
+          client:load
+          blogFeedServiceConfig={blogFeedServiceConfig}
+          postPageBaseUrl="/astro-router/blog/post/"
+          categoryPageBaseUrl="/astro-router/blog/category/"
+          dateLocale="en-US"
+        />
+      </div>
+    </div>
+  </body>
+</html>

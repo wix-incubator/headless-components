@@ -399,7 +399,7 @@ Title.displayName = 'Blog.Post.Title';
 export interface ContentProps {
   className?: string;
   children:
-    | AsChildChildren<{ content: any, pricingPlanIds: string[] }>
+    | AsChildChildren<{ content: any; pricingPlanIds: string[] }>
     | React.ReactElement<{ content: any }>;
 }
 /**

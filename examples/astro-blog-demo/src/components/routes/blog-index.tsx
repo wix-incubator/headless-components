@@ -19,12 +19,12 @@ export function BlogIndexRoute() {
         <div className="mx-auto max-w-6xl px-6 py-12">
           <BlogCategoriesSection
             pathname={location.pathname}
-            categoryPageBaseUrl="/blog/react-router/category/"
+            categoryPageBaseUrl="/react-router/blog/category/"
             blogCategoriesServiceConfig={blogCategoriesServiceConfig}
             customCategoriesToPrepend={[
               createCustomCategory({
                 label: "All posts",
-                slug: "/blog/react-router/",
+                slug: "/react-router/blog/",
                 description:
                   "Discover the latest insights, tutorials, and best practices for building modern web applications.",
               }),
@@ -32,8 +32,8 @@ export function BlogIndexRoute() {
           />
           <FeedPage
             blogFeedServiceConfig={blogFeedServiceConfig}
-            postPageBaseUrl="/blog/react-router/post/"
-            categoryPageBaseUrl="/blog/react-router/category/"
+            postPageBaseUrl="/react-router/blog/post/"
+            categoryPageBaseUrl="/react-router/blog/category/"
             dateLocale="en-US"
           />
         </div>
