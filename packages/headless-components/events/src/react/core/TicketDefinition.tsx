@@ -302,10 +302,10 @@ export function Tax(props: TaxProps): React.ReactNode {
   const price = guestPrice
     ? Number(priceOverride || '0')
     : Number(fixedPrice!.value);
+  const currency = guestPrice?.currency ?? fixedPrice!.currency!;
   const amount = included
     ? (price - (price * 100) / (100 + rateAmount)).toFixed(2)
     : ((price * rateAmount) / 100).toFixed(2);
-  const currency = fixedPrice?.currency || guestPrice?.currency!;
   const formattedAmount = `${amount} ${currency}`;
 
   return props.children({

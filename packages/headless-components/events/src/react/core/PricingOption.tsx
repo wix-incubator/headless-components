@@ -9,6 +9,7 @@ import {
 } from '../../services/pricing-option-service.js';
 import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
 import { TicketDefinitionServiceDefinition } from '../../services/ticket-definition-service.js';
+import { EventServiceDefinition } from '../../services/event-service.js';
 
 export interface RootProps {
   /** Child components that will have access to the pricing option service */
@@ -97,6 +98,66 @@ export function Pricing(props: PricingProps): React.ReactNode {
     price,
     currency,
     formattedPrice,
+  });
+}
+
+export interface TaxProps {
+  /** Render prop function */
+  children: (props: TaxRenderProps) => React.ReactNode;
+}
+
+export interface TaxRenderProps {
+  /** Tax name */
+  name: string;
+  /** Tax rate */
+  rate: string;
+  /** Whether tax is included in price */
+  included: boolean;
+  /** Tax amount */
+  amount: string;
+  /** Tax currency */
+  currency: string;
+  /** Formatted tax amount */
+  formattedAmount: string;
+}
+
+/**
+ * PricingOption Tax core component that provides tax data. Not rendered for events with no tax settings.
+ *
+ * @component
+ */
+export function Tax(props: TaxProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+  const pricingOptionService = useService(PricingOptionServiceDefinition);
+
+  const event = eventService.event.get();
+  const pricingOption = pricingOptionService.pricingOption.get();
+
+  const taxSettings = event.registration?.tickets?.taxSettings;
+
+  if (!taxSettings) {
+    return null;
+  }
+
+  const name = taxSettings.name!;
+  const rate = taxSettings.rate!;
+  const rateAmount = Number(rate);
+  const included = taxSettings.type === 'INCLUDED_IN_PRICE';
+
+  const price = Number(pricingOption.price!.value!);
+  const currency = pricingOption.price!.currency!;
+  const amount = included
+    ? (price - (price * 100) / (100 + rateAmount)).toFixed(2)
+    : ((price * rateAmount) / 100).toFixed(2);
+  const formattedAmount = `${amount} ${currency}`;
+
+  return props.children({
+    name,
+    rate,
+    included,
+    amount,
+    currency,
+    formattedAmount,
   });
 }
 

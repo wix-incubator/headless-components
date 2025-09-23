@@ -7,6 +7,7 @@ enum TestIds {
   pricingOptionRoot = 'pricing-option-root',
   pricingOptionName = 'pricing-option-name',
   pricingOptionPricing = 'pricing-option-pricing',
+  pricingOptionTax = 'pricing-option-tax',
   pricingOptionQuantity = 'pricing-option-quantity',
 }
 
@@ -194,6 +195,81 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
     );
   },
 );
+
+/**
+ * Props for the PricingOption Tax component.
+ */
+export interface TaxProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    name: string;
+    rate: string;
+    included: boolean;
+    amount: string;
+    currency: string;
+    formattedAmount: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the tax for the pricing option. Only renders when event has tax settings.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <PricingOption.Tax className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <PricingOption.Tax asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </PricingOption.Tax>
+ *
+ * // asChild with react component
+ * <PricingOption.Tax asChild>
+ *   {React.forwardRef(({ name, rate, included, amount, currency, formattedAmount, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       {included ? `${name} included` : `+${formattedAmount} ${name}`}
+ *     </span>
+ *   ))}
+ * </PricingOption.Tax>
+ * ```
+ */
+export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CorePricingOption.Tax>
+      {({ name, rate, included, amount, currency, formattedAmount }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.pricingOptionTax}
+            customElement={children}
+            customElementProps={{
+              name,
+              rate,
+              included,
+              amount,
+              currency,
+              formattedAmount,
+            }}
+            content={formattedAmount}
+            {...otherProps}
+          >
+            <span>{formattedAmount}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CorePricingOption.Tax>
+  );
+});
 
 /**
  * Props for the PricingOption Quantity component.
