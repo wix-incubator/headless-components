@@ -27,7 +27,7 @@ export interface CategoriesFilterRootRenderProps {
 }
 
 /**
- * EventList Events core component that provides event list data.
+ * EventList Filters core component that provides event list filters data.
  *
  * @component
  */

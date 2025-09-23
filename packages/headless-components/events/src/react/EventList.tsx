@@ -37,6 +37,13 @@ export interface RootProps {
  * function EventListPage({ eventListServiceConfig }) {
  *   return (
  *     <EventList.Root eventListServiceConfig={eventListServiceConfig}>
+ *       <EventList.FiltersRoot allCategoriesLabel="All">
+ *         <Filter.FilterOptions>
+ *           <Filter.FilterOptionRepeater>
+ *             <Filter.FilterOption.SingleFilter />
+ *           </Filter.FilterOptionRepeater>
+ *         </Filter.FilterOptions>
+ *       </EventList.FiltersRoot>
  *       <EventList.Events>
  *         <EventList.EventRepeater>
  *           <Event.Image />
@@ -312,6 +319,16 @@ export interface FiltersRootProps {
  * Container for the event list filters. Not rendered if there are no categories.
  *
  * @component
+ * @example
+ * ```tsx
+ * <EventList.FiltersRoot allCategoriesLabel="All">
+ *   <Filter.FilterOptions className="border-b border-gray-500 mb-6">
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.SingleFilter className="flex gap-2" />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </EventList.FiltersRoot>
+ * ```
  */
 export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
   return (
