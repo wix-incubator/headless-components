@@ -21,6 +21,8 @@ export interface EventListServiceAPI {
   setSelectedCategory: (category: Category | null) => void;
   /** Reactive signal indicating if more events are currently being loaded */
   isLoadingMore: Signal<boolean>;
+  /** Reactive signal indicating if events are currently being loaded */
+  isLoadingEvents: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
   /** Reactive signal containing the number of events per page */
@@ -60,6 +62,7 @@ export const EventListService =
       const categories = signalsService.signal<Category[]>(config.categories);
       const selectedCategory = signalsService.signal<Category | null>(null);
       const isLoadingMore = signalsService.signal<boolean>(false);
+      const isLoadingEvents = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
       const pageSize = signalsService.signal<number>(config.pageSize);
       const currentPage = signalsService.signal<number>(config.currentPage);
@@ -94,12 +97,21 @@ export const EventListService =
       };
 
       const loadEventsByCategory = async (categoryId?: string) => {
-        const queryEventsResult = await queryEvents(0, categoryId);
+        isLoadingEvents.set(true);
+        error.set(null);
 
-        events.set(queryEventsResult.items);
-        pageSize.set(queryEventsResult.pageSize);
-        currentPage.set(queryEventsResult.currentPage ?? 0);
-        totalPages.set(queryEventsResult.totalPages ?? 0);
+        try {
+          const queryEventsResult = await queryEvents(0, categoryId);
+
+          events.set(queryEventsResult.items);
+          pageSize.set(queryEventsResult.pageSize);
+          currentPage.set(queryEventsResult.currentPage ?? 0);
+          totalPages.set(queryEventsResult.totalPages ?? 0);
+        } catch (err) {
+          error.set(getErrorMessage(err));
+        } finally {
+          isLoadingEvents.set(false);
+        }
       };
 
       return {
@@ -108,6 +120,7 @@ export const EventListService =
         selectedCategory,
         setSelectedCategory,
         isLoadingMore,
+        isLoadingEvents,
         error,
         pageSize,
         currentPage,

@@ -69,7 +69,9 @@ export interface EventsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ events: Event[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ events: Event[]; isLoading: boolean }>;
   /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -97,7 +99,7 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
 
     return (
       <CoreEventList.Events>
-        {({ events, hasEvents }) => {
+        {({ events, hasEvents, isLoading }) => {
           if (!hasEvents) {
             return emptyState || null;
           }
@@ -109,7 +111,7 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
               className={className}
               data-testid={TestIds.eventListEvents}
               customElement={children}
-              customElementProps={{ events }}
+              customElementProps={{ events, isLoading }}
               {...otherProps}
             >
               <div>{children as React.ReactNode}</div>

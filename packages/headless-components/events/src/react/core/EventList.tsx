@@ -43,6 +43,8 @@ export interface EventsRenderProps {
   events: Event[];
   /** Indicates whether there are any events in the list */
   hasEvents: boolean;
+  /** Indicates whether events are currently being loaded */
+  isLoading: boolean;
 }
 
 /**
@@ -52,10 +54,11 @@ export interface EventsRenderProps {
  */
 export function Events(props: EventsProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+  const isLoading = eventListService.isLoadingEvents.get();
   const events = eventListService.events.get();
   const hasEvents = !!events.length;
 
-  return props.children({ events, hasEvents });
+  return props.children({ events, hasEvents, isLoading });
 }
 
 export interface EventRepeaterProps {
