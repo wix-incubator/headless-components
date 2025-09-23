@@ -36,7 +36,7 @@ export interface EventListServiceAPI {
   /** Function to load more events */
   loadMoreEvents: () => Promise<void>;
   /** Function to load events by category */
-  loadEventsByCategory: (categoryId?: string) => Promise<void>;
+  loadEventsByCategory: (categoryId: string | null) => Promise<void>;
 }
 
 export interface EventListServiceConfig {
@@ -96,7 +96,7 @@ export const EventListService =
         }
       };
 
-      const loadEventsByCategory = async (categoryId?: string) => {
+      const loadEventsByCategory = async (categoryId: string | null) => {
         isLoadingEvents.set(true);
         error.set(null);
 
@@ -147,7 +147,7 @@ export async function loadEventListServiceConfig(): Promise<EventListServiceConf
   };
 }
 
-const queryEvents = async (offset = 0, categoryId?: string) => {
+const queryEvents = async (offset = 0, categoryId?: string | null) => {
   let eventsQuery = wixEventsV2
     .queryEvents({
       fields: [

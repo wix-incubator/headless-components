@@ -5,8 +5,6 @@ import * as CoreEventList from './core/EventList.js';
 import * as Event from './Event.js';
 import * as CoreEventListFilters from './core/EventListFilters.js';
 import { Filter as FilterPrimitive } from '@wix/headless-components/react';
-import { Filter } from '../../../components/dist/react/filter.js';
-import { ALL_CATEGORIES, CATEGORIES_FILTER_KEY } from '../constants.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
@@ -335,39 +333,10 @@ export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
     <CoreEventListFilters.CategoriesFilterRoot
       allCategoriesLabel={props.allCategoriesLabel}
     >
-      {({
-        filterOptions,
-        categories,
-        selectedCategory,
-        setSelectedCategory,
-        loadEventsByCategory,
-      }) => {
-        const onChange = async (value: Filter) => {
-          const categoryId =
-            value && value['categoryId'] !== ALL_CATEGORIES
-              ? value['categoryId']
-              : null;
-
-          const category = categoryId
-            ? categories.find((cat) => cat._id === categoryId) || null
-            : null;
-
-          setSelectedCategory(category);
-          await loadEventsByCategory(categoryId);
-        };
-
-        const selectedCategoryId = selectedCategory?._id || ALL_CATEGORIES;
-
+      {({ filterOptions, onChange, filterValue }) => {
         return (
           <FilterPrimitive.Root
-            value={{
-              key: CATEGORIES_FILTER_KEY,
-              label: selectedCategory?.name || props.allCategoriesLabel,
-              type: 'single' as const,
-              displayType: 'text' as const,
-              fieldName: 'categoryId',
-              categoryId: selectedCategoryId,
-            }}
+            value={filterValue}
             onChange={onChange}
             filterOptions={filterOptions}
           >
