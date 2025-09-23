@@ -153,7 +153,6 @@ const queryEvents = async (offset = 0, categoryId?: string | null) => {
       fields: [
         wixEventsV2.RequestedFields.DETAILS,
         wixEventsV2.RequestedFields.REGISTRATION,
-        wixEventsV2.RequestedFields.CATEGORIES,
       ],
     })
     .ascending('dateAndTimeSettings.startDate')
@@ -172,7 +171,7 @@ const queryEvents = async (offset = 0, categoryId?: string | null) => {
 
 const queryCategories = async () => {
   const queryCategoriesResult = await categories
-    .queryCategories({ fieldset: [categories.CategoryFieldset.COUNTS] })
+    .queryCategories()
     .hasSome('states', [categories.State.MANUAL])
     .limit(100)
     .find();
