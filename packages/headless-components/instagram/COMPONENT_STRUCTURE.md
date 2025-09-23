@@ -7,7 +7,7 @@ This document outlines the refactored file structure of the Instagram headless c
 ```
 src/react/
 ├── index.ts                     # Main export file
-├── InstagramFeed.tsx           # Namespace exports (like stores package)
+├── InstagramFeed.tsx           # Namespace exports
 ├── types.ts                    # Shared types and utilities
 ├── contexts.ts                 # All React contexts and hooks
 ├── InstagramFeedRoot.tsx       # Root component
@@ -24,16 +24,19 @@ src/react/
 ## Component Organization
 
 ### 1. **Core Infrastructure**
+
 - `index.ts` - Main export point with InstagramFeed namespace
 - `contexts.ts` - All React contexts and their corresponding hooks
 
 ### 2. **Main Components**
+
 - `InstagramFeedRoot.tsx` - Service provider and main container
 - `Title.tsx` - Feed title display
 - `UserName.tsx` - Username/display name
 - `Hashtag.tsx` - Hashtag display
 
 ### 4. **Gallery Components (3-Level Pattern)**
+
 - `Gallery.tsx` - Container Level (conditional rendering, context provider)
 - `GalleryItems.tsx` - List Container Level (empty state support)
 - `GalleryRepeater.tsx` - Repeater Level (maps over items)
@@ -43,6 +46,7 @@ src/react/
 ## Usage Patterns
 
 ### Namespace Import (Recommended)
+
 ```tsx
 import { InstagramFeed } from '@wix/headless-instagram/react';
 
@@ -62,10 +66,11 @@ import { InstagramFeed } from '@wix/headless-instagram/react';
       </InstagramFeed.GalleryRepeater>
     </InstagramFeed.GalleryItems>
   </InstagramFeed.Gallery>
-</InstagramFeed.Root>
+</InstagramFeed.Root>;
 ```
 
 ### Individual Imports (For Tree Shaking)
+
 ```tsx
 import {
   Root,
@@ -74,32 +79,37 @@ import {
   GalleryItems,
   GalleryRepeater,
   GalleryItem,
-  Media
+  Media,
 } from '@wix/headless-instagram/react';
 ```
 
 ## Benefits of This Structure
 
 ### ✅ **Maintainability**
+
 - Each component is in its own file with focused responsibility
 - Easy to locate and modify specific components
 - Clear separation of concerns
 
 ### ✅ **Developer Experience**
+
 - Better IntelliSense and code navigation
 - Clearer import statements
 - Easier to understand component relationships
 
 ### ✅ **Performance**
+
 - Better tree shaking when importing individual components
 - Smaller bundle size for applications that don't use all features
 
 ### ✅ **Testing**
+
 - Each component can be unit tested independently
 - Mock dependencies more easily
 - Better test organization
 
 ### ✅ **Code Reuse**
+
 - Shared utilities (types.ts, contexts.ts) can be easily imported
 - Components can be composed differently if needed
 - Better modularity

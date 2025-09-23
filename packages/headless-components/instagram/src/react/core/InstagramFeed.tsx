@@ -15,7 +15,6 @@ export interface RootProps {
 
 /**
  * Root component that provides Instagram feed service context using WixServices.
- * This follows the same service-based pattern as the stores package.
  *
  * @order 1
  * @component

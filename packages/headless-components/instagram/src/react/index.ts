@@ -1,4 +1,3 @@
-// Instagram headless components following stores pattern
 // Each entity has its own namespace with all related components
 
 import * as InstagramFeed from './InstagramFeed.js';
