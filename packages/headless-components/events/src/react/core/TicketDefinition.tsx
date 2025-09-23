@@ -10,7 +10,10 @@ import {
 import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
 import { PricingOption } from '../../services/pricing-option-service.js';
 import { EventServiceDefinition } from '../../services/event-service.js';
-import { getTaxConfig } from '../../utils/tax.js';
+import {
+  getTicketDefinitionFee,
+  getTicketDefinitionTax,
+} from '../../utils/ticket-definition.js';
 
 export interface RootProps {
   /** Child components that will have access to the ticket definition service */
@@ -276,6 +279,7 @@ export function Tax(props: TaxProps): React.ReactNode {
 
   const event = eventService.event.get();
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+
   const taxSettings = event.registration?.tickets?.taxSettings;
   const fixedPrice = ticketDefinition.pricingMethod?.fixedPrice;
   const guestPrice = ticketDefinition.pricingMethod?.guestPrice;
@@ -297,11 +301,8 @@ export function Tax(props: TaxProps): React.ReactNode {
   const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
   const currency = guestPrice?.currency ?? fixedPrice!.currency!;
 
-  const { name, rate, included, amount, formattedAmount } = getTaxConfig(
-    taxSettings,
-    price,
-    currency,
-  );
+  const { name, rate, included, amount, formattedAmount } =
+    getTicketDefinitionTax(taxSettings, price, currency);
 
   return props.children({
     name,
@@ -361,21 +362,15 @@ export function Fee(props: FeeProps): React.ReactNode {
   const priceOverride = ticketDefinitionListService.getCurrentPriceOverride(
     ticketDefinition._id!,
   );
-
-  const rate = '2.5';
-  const rateAmount = Number(rate);
-
-  const price = guestPrice
-    ? Number(priceOverride || '0')
-    : Number(fixedPrice!.value);
-  const priceWithAddedTax =
-    taxSettings?.type === 'ADDED_AT_CHECKOUT' &&
-    (!guestPrice || taxSettings.appliedToDonations)
-      ? price * ((100 + Number(taxSettings.rate)) / 100)
-      : price;
+  const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
   const currency = guestPrice?.currency ?? fixedPrice!.currency!;
-  const amount = ((priceWithAddedTax * rateAmount) / 100).toFixed(2);
-  const formattedAmount = `${amount} ${currency}`;
+
+  const { rate, amount, formattedAmount } = getTicketDefinitionFee(
+    taxSettings,
+    price,
+    currency,
+    !!guestPrice,
+  );
 
   return props.children({
     rate,
