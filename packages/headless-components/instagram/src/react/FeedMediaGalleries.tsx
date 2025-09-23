@@ -22,7 +22,11 @@ export const MediaGalleries = React.forwardRef<HTMLDivElement, MediaGalleriesPro
 
     const media = (feed.mediaItems || [])
       .map((item) => {
-        const image = item.mediaUrl || item.thumbnailUrl || null;
+        // Mirror Stores: gallery renders images only. Use thumbnail for videos, full image for images.
+        const image =
+          item.type === 'video'
+            ? item.thumbnailUrl || null
+            : item.mediaUrl || item.thumbnailUrl || null;
         if (!image) return null;
         return {
           image,
