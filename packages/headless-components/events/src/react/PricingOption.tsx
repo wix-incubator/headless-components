@@ -307,7 +307,7 @@ export interface FeeProps {
  * <PricingOption.Fee asChild>
  *   {React.forwardRef(({ rate, amount, currency, formattedAmount, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm text-gray-500">
- *       +${formattedAmount} service fee
+ *       +{formattedAmount} service fee
  *     </span>
  *   ))}
  * </PricingOption.Fee>
