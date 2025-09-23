@@ -10,7 +10,10 @@ import {
 import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
 import { TicketDefinitionServiceDefinition } from '../../services/ticket-definition-service.js';
 import { EventServiceDefinition } from '../../services/event-service.js';
-import { getTicketDefinitionTax } from '../../utils/ticket-definition.js';
+import {
+  getTicketDefinitionFee,
+  getTicketDefinitionTax,
+} from '../../utils/ticket-definition.js';
 
 export interface RootProps {
   /** Child components that will have access to the pricing option service */
@@ -149,6 +152,59 @@ export function Tax(props: TaxProps): React.ReactNode {
     name,
     rate,
     included,
+    amount,
+    currency,
+    formattedAmount,
+  });
+}
+
+export interface FeeProps {
+  /** Render prop function */
+  children: (props: FeeRenderProps) => React.ReactNode;
+}
+
+export interface FeeRenderProps {
+  /** Fee rate */
+  rate: string;
+  /** Fee amount */
+  amount: string;
+  /** Fee currency */
+  currency: string;
+  /** Formatted fee amount */
+  formattedAmount: string;
+}
+
+/**
+ * PricingOption Fee core component that provides fee data. Not rendered when ticket definition has no fee enabled, or when fee is included in the price.
+ *
+ * @component
+ */
+export function Fee(props: FeeProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+  const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+  const pricingOptionService = useService(PricingOptionServiceDefinition);
+
+  const event = eventService.event.get();
+  const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+  const pricingOption = pricingOptionService.pricingOption.get();
+  const taxSettings = event.registration?.tickets?.taxSettings;
+
+  if (ticketDefinition.feeType !== 'FEE_ADDED_AT_CHECKOUT') {
+    return null;
+  }
+
+  const price = Number(pricingOption.price!.value!);
+  const currency = pricingOption.price!.currency!;
+
+  const { rate, amount, formattedAmount } = getTicketDefinitionFee(
+    taxSettings,
+    price,
+    currency,
+    false,
+  );
+
+  return props.children({
+    rate,
     amount,
     currency,
     formattedAmount,

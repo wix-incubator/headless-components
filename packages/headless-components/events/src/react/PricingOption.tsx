@@ -8,6 +8,7 @@ enum TestIds {
   pricingOptionName = 'pricing-option-name',
   pricingOptionPricing = 'pricing-option-pricing',
   pricingOptionTax = 'pricing-option-tax',
+  pricingOptionFee = 'pricing-option-fee',
   pricingOptionQuantity = 'pricing-option-quantity',
 }
 
@@ -268,6 +269,77 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
         );
       }}
     </CorePricingOption.Tax>
+  );
+});
+
+/**
+ * Props for the PricingOption Fee component.
+ */
+export interface FeeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    rate: string;
+    amount: string;
+    currency: string;
+    formattedAmount: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the fee for the pricing option. Only renders when ticket definition has fee enabled.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <PricingOption.Fee className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <PricingOption.Fee asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </PricingOption.Fee>
+ *
+ * // asChild with react component
+ * <PricingOption.Fee asChild>
+ *   {React.forwardRef(({ rate, amount, currency, formattedAmount, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       +${formattedAmount} service fee
+ *     </span>
+ *   ))}
+ * </PricingOption.Fee>
+ * ```
+ */
+export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CorePricingOption.Fee>
+      {({ rate, amount, currency, formattedAmount }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.pricingOptionFee}
+            customElement={children}
+            customElementProps={{
+              rate,
+              amount,
+              currency,
+              formattedAmount,
+            }}
+            content={formattedAmount}
+            {...otherProps}
+          >
+            <span>{formattedAmount}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CorePricingOption.Fee>
   );
 });
 
