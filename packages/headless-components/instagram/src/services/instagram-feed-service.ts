@@ -32,6 +32,8 @@ export interface InstagramMediaItem {
   timestamp: string;
   /** Alt text for accessibility */
   altText?: string;
+  /** Username of the Instagram account that posted this media */
+  userName?: string;
 }
 
 /**

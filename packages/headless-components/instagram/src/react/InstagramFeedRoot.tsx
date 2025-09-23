@@ -4,7 +4,7 @@ import { createServicesMap } from '@wix/services-manager';
 import {
   InstagramFeedService,
   InstagramFeedServiceDefinition,
-  type InstagramFeedServiceConfig
+  type InstagramFeedServiceConfig,
 } from '../services/index.js';
 
 /**
@@ -24,10 +24,11 @@ export interface RootProps {
  * @component
  * @example
  * ```tsx
- * import { InstagramFeed } from '@wix/headless-instagram/react';
+ * import { InstagramFeed, InstagramMedia } from '@wix/headless-instagram/react';
  * import { MediaGallery } from '@wix/headless-media/react';
  *
- * function InstagramWidget() {
+ * // New pattern with InstagramMedia components
+ * function InstagramWidgetWithMedia() {
  *   return (
  *     <InstagramFeed.Root
  *       instagramFeedServiceConfig={{
@@ -40,13 +41,19 @@ export interface RootProps {
  *         <InstagramFeed.UserName />
  *         <InstagramFeed.Hashtag />
  *       </div>
- *       <InstagramFeed.Gallery>
- *         <InstagramFeed.GalleryItems>
- *           <InstagramFeed.GalleryItemRepeater>
- *             <MediaGallery.ThumbnailItem />
- *           </InstagramFeed.GalleryItemRepeater>
- *         </InstagramFeed.GalleryItems>
- *       </InstagramFeed.Gallery>
+ *       <InstagramFeed.InstagramMedias>
+ *         <InstagramFeed.InstagramMediaRepeater>
+ *           <InstagramMedia.Caption />
+ *           <InstagramMedia.MediaType />
+ *           <InstagramMedia.UserName />
+ *           <InstagramMedia.Timestamp />
+ *           <InstagramMedia.MediaGalleries>
+ *             <InstagramMedia.MediaGalleryRepeater>
+ *               <MediaGallery.Root />
+ *             </InstagramMedia.MediaGalleryRepeater>
+ *           </InstagramMedia.MediaGalleries>
+ *         </InstagramFeed.InstagramMediaRepeater>
+ *       </InstagramFeed.InstagramMedias>
  *     </InstagramFeed.Root>
  *   );
  * }
@@ -65,7 +72,7 @@ export function Root(props: RootProps): React.ReactNode {
       servicesMap={createServicesMap().addService(
         InstagramFeedServiceDefinition,
         InstagramFeedService,
-        instagramFeedServiceConfig
+        instagramFeedServiceConfig,
       )}
     >
       <div {...attributes}>{children}</div>
