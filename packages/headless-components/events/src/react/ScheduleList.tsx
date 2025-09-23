@@ -283,10 +283,7 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
     <CoreScheduleList.GroupRepeater>
       {({ itemsGroups }) =>
         itemsGroups.map((itemsGroup) => (
-          <ScheduleItemsGroup.Root
-            key={itemsGroup.formattedDate}
-            itemsGroup={itemsGroup}
-          >
+          <ScheduleItemsGroup.Root key={itemsGroup.id} itemsGroup={itemsGroup}>
             {children}
           </ScheduleItemsGroup.Root>
         ))
