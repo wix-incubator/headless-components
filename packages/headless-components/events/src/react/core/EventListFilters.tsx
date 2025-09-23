@@ -76,7 +76,7 @@ const buildFilterProps = (
   allCategoriesLabel: string,
   selectedCategoryId: string,
 ) => {
-  const filterBase = {
+  const FILTER_BASE = {
     key: CATEGORIES_FILTER_KEY,
     label: '',
     type: 'single' as const,
@@ -86,7 +86,7 @@ const buildFilterProps = (
 
   const filterOptions = [
     {
-      ...filterBase,
+      ...FILTER_BASE,
       validValues: [
         ALL_CATEGORIES,
         ...categories.map((category) => category._id!),
@@ -98,7 +98,7 @@ const buildFilterProps = (
   ];
 
   const filterValue = {
-    ...filterBase,
+    ...FILTER_BASE,
     categoryId: selectedCategoryId,
   };
 
