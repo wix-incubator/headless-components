@@ -12,7 +12,7 @@ export type Category = categories.Category;
 
 export interface EventListServiceAPI {
   /** Reactive signal containing the list of events */
-  events: ReadOnlySignal<Event[]>;
+  events: Signal<Event[]>;
   /** Reactive signal containing the list of categories */
   categories: Signal<Category[]>;
   /** Reactive signal containing the selected category */
@@ -33,6 +33,8 @@ export interface EventListServiceAPI {
   hasMoreEvents: ReadOnlySignal<boolean>;
   /** Function to load more events */
   loadMoreEvents: () => Promise<void>;
+  /** Function to load events by category */
+  loadEventsByCategory: (categoryId?: string) => Promise<void>;
 }
 
 export interface EventListServiceConfig {
@@ -75,7 +77,10 @@ export const EventListService =
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
-          const queryEventsResult = await queryEvents(offset);
+          const queryEventsResult = await queryEvents(
+            offset,
+            selectedCategory.get()?._id,
+          );
 
           events.set([...events.get(), ...queryEventsResult.items]);
           pageSize.set(queryEventsResult.pageSize);
@@ -88,24 +93,17 @@ export const EventListService =
         }
       };
 
-      const filteredEvents = signalsService.computed<Event[]>(() => {
-        const allEvents = events.get();
+      const loadEventsByCategory = async (categoryId?: string) => {
+        const queryEventsResult = await queryEvents(0, categoryId);
 
-        if (!selectedCategory.get()) {
-          return allEvents;
-        }
-
-        return allEvents.filter((event) =>
-          // @ts-ignore
-          event.categories.categories.some(
-            // @ts-ignore
-            (category) => category._id === selectedCategory.get()?._id,
-          ),
-        );
-      });
+        events.set(queryEventsResult.items);
+        pageSize.set(queryEventsResult.pageSize);
+        currentPage.set(queryEventsResult.currentPage ?? 0);
+        totalPages.set(queryEventsResult.totalPages ?? 0);
+      };
 
       return {
-        events: filteredEvents,
+        events,
         categories,
         selectedCategory,
         setSelectedCategory,
@@ -116,6 +114,7 @@ export const EventListService =
         totalPages,
         hasMoreEvents,
         loadMoreEvents,
+        loadEventsByCategory,
       };
     },
   );
@@ -135,8 +134,8 @@ export async function loadEventListServiceConfig(): Promise<EventListServiceConf
   };
 }
 
-const queryEvents = async (offset = 0) => {
-  const queryEventsResult = await wixEventsV2
+const queryEvents = async (offset = 0, categoryId?: string) => {
+  let eventsQuery = wixEventsV2
     .queryEvents({
       fields: [
         wixEventsV2.RequestedFields.DETAILS,
@@ -148,10 +147,14 @@ const queryEvents = async (offset = 0) => {
     .descending('_createdDate')
     .eq('status', wixEventsV2.Status.UPCOMING)
     .limit(10)
-    .skip(offset)
-    .find();
+    .skip(offset);
 
-  return queryEventsResult;
+  if (categoryId) {
+    // @ts-ignore
+    eventsQuery = eventsQuery.in('categories._id', [categoryId]);
+  }
+
+  return eventsQuery.find();
 };
 
 const queryCategories = async () => {

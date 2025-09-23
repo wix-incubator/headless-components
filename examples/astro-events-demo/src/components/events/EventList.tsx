@@ -16,7 +16,7 @@ export function EventList({
 }: EventListProps) {
   return (
     <EventListPrimitive.Root eventListServiceConfig={eventListServiceConfig}>
-      <EventListPrimitive.FiltersRoot>
+      <EventListPrimitive.FiltersRoot allCategoriesLabel="All">
         <FilterPrimitive.FilterOptions>
           <FilterPrimitive.FilterOptionRepeater>
             <FilterPrimitive.FilterOption.SingleFilter className="flex gap-2" />

@@ -6,6 +6,7 @@ import * as Event from './Event.js';
 import * as CoreEventListFilters from './core/EventListFilters.js';
 import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import { Filter } from '../../../components/dist/react/filter.js';
+import { ALL_CATEGORIES } from '../constants.js';
 
 enum TestIds {
   eventListEvents = 'event-list-events',
@@ -301,6 +302,8 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 export interface FiltersRootProps {
   /** Child components */
   children: React.ReactNode;
+  /** All categories label*/
+  allCategoriesLabel: string;
 }
 
 /**
@@ -310,21 +313,28 @@ export interface FiltersRootProps {
  */
 export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
   return (
-    <CoreEventListFilters.CategoriesFilterRoot>
+    <CoreEventListFilters.CategoriesFilterRoot
+      allCategoriesLabel={props.allCategoriesLabel}
+    >
       {({
         filterOptions,
         categories,
         selectedCategory,
         setSelectedCategory,
+        loadEventsByCategory,
       }) => {
-        const onChange = (value: Filter) => {
-          const categoryId = value ? value['category.id'] : null;
+        const onChange = async (value: Filter) => {
+          const categoryId =
+            value && value['category.id'] !== ALL_CATEGORIES
+              ? value['category.id']
+              : null;
 
           const category = categoryId
             ? categories.find((cat) => cat._id === categoryId) || null
             : null;
 
           setSelectedCategory(category);
+          await loadEventsByCategory(categoryId);
         };
 
         const selectedCategoryId = selectedCategory?._id || null;
@@ -333,7 +343,7 @@ export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
           <FilterPrimitive.Root
             value={{
               key: selectedCategoryId,
-              label: selectedCategory?.name || '',
+              label: selectedCategory?.name || props.allCategoriesLabel,
               type: 'single' as const,
               displayType: 'text' as const,
               fieldName: 'category.id',
