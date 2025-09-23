@@ -37,6 +37,7 @@ interface RootProps {
     <Plan.AdditionalFees />
     <Plan.Recurrence />
     <Plan.Duration />
+    <Plan.FreeTrialDays />
     <Plan.Action.BuyNow label="Select Plan" />
   </Plan.Plan>
 </Plan.Root>
@@ -482,6 +483,50 @@ interface PlanDurationData {
   }}
 </Plan.Duration>
 ```
+---
+
+### Plan.FreeTrialDays
+
+Displays the free trial days.
+
+**Props**
+
+**Props**
+```tsx
+interface FreeTrialDaysProps {
+  asChild?: boolean;
+  children: AsChildChildren<PlanFreeTrialDaysData>;
+  className?: string;
+}
+
+interface PlanFreeTrialDaysData {
+  freeTrialDays: number;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<Plan.FreeTrialDays className="text-sm" />
+
+// asChild with primitive
+<Plan.FreeTrialDays asChild>
+  <span className="text-sm" />
+</Plan.FreeTrialDays>
+
+// asChild with react component
+<Plan.FreeTrialDays asChild>
+  {React.forwardRef(({freeTrialDays, ...props}, ref) => (
+    <span ref={ref} {...props} className="text-sm">
+      {freeTrialDays}
+    </span>
+  ))}
+</Plan.FreeTrialDays>
+```
+
+**Data Attributes**
+- `data-testid="plan-free-trial-days"` - Applied to free trial days element
 ---
 
 ### Plan.Perks
