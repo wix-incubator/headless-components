@@ -59,6 +59,7 @@ export interface NameRenderProps {
  */
 export function Name(props: NameProps): React.ReactNode {
   const pricingOptionService = useService(PricingOptionServiceDefinition);
+
   const pricingOption = pricingOptionService.pricingOption.get();
   const name = pricingOption.name!;
 
@@ -72,9 +73,11 @@ export interface PricingProps {
 
 export interface PricingRenderProps {
   /** Price */
-  price: number;
+  price: string;
   /** Price currency */
   currency: string;
+  /** Formatted price */
+  formattedPrice: string;
 }
 
 /**
@@ -84,11 +87,16 @@ export interface PricingRenderProps {
  */
 export function Pricing(props: PricingProps): React.ReactNode {
   const pricingOptionService = useService(PricingOptionServiceDefinition);
+
   const pricingOption = pricingOptionService.pricingOption.get();
+  const price = pricingOption.price!.value!;
+  const currency = pricingOption.price!.currency!;
+  const formattedPrice = `${price} ${currency}`;
 
   return props.children({
-    price: Number(pricingOption.price!.value),
-    currency: pricingOption.price!.currency!,
+    price,
+    currency,
+    formattedPrice,
   });
 }
 
@@ -121,6 +129,7 @@ export function Quantity(props: QuantityProps): React.ReactNode {
   );
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
   const pricingOptionService = useService(PricingOptionServiceDefinition);
+
   const pricingOption = pricingOptionService.pricingOption.get();
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const pricingOptionId = pricingOption.optionId!;

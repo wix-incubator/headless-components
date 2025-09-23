@@ -132,7 +132,7 @@ interface PricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: number;
+    price: string;
     currency: string;
     formattedPrice: string;
   }>;
@@ -170,9 +170,7 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
 
     return (
       <CorePricingOption.Pricing>
-        {({ price, currency }) => {
-          const formattedPrice = `${price} ${currency}`;
-
+        {({ price, currency, formattedPrice }) => {
           return (
             <AsChildSlot
               ref={ref}
