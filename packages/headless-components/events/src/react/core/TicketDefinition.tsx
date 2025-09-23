@@ -10,6 +10,7 @@ import {
 import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
 import { PricingOption } from '../../services/pricing-option-service.js';
 import { EventServiceDefinition } from '../../services/event-service.js';
+import { getTaxConfig } from '../../utils/tax.js';
 
 export interface RootProps {
   /** Child components that will have access to the ticket definition service */
@@ -275,7 +276,6 @@ export function Tax(props: TaxProps): React.ReactNode {
 
   const event = eventService.event.get();
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-
   const taxSettings = event.registration?.tickets?.taxSettings;
   const fixedPrice = ticketDefinition.pricingMethod?.fixedPrice;
   const guestPrice = ticketDefinition.pricingMethod?.guestPrice;
@@ -294,20 +294,14 @@ export function Tax(props: TaxProps): React.ReactNode {
   const priceOverride = ticketDefinitionListService.getCurrentPriceOverride(
     ticketDefinition._id!,
   );
-
-  const name = taxSettings.name!;
-  const rate = taxSettings.rate!;
-  const rateAmount = Number(rate);
-  const included = taxSettings.type === 'INCLUDED_IN_PRICE';
-
-  const price = guestPrice
-    ? Number(priceOverride || '0')
-    : Number(fixedPrice!.value);
+  const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
   const currency = guestPrice?.currency ?? fixedPrice!.currency!;
-  const amount = included
-    ? (price - (price * 100) / (100 + rateAmount)).toFixed(2)
-    : ((price * rateAmount) / 100).toFixed(2);
-  const formattedAmount = `${amount} ${currency}`;
+
+  const { name, rate, included, amount, formattedAmount } = getTaxConfig(
+    taxSettings,
+    price,
+    currency,
+  );
 
   return props.children({
     name,
