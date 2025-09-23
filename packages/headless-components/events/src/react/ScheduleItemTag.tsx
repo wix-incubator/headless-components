@@ -137,7 +137,11 @@ export interface ButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ tag: string }>;
+  children?: AsChildChildren<{
+    tag: string;
+    toggleTagFilter: () => void;
+    active: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

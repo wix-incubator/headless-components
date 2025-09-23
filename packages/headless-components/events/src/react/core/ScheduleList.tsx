@@ -129,6 +129,10 @@ export function GroupRepeater(props: GroupRepeaterProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const itemsGroups = scheduleListService.itemsGroups.get();
 
+  if (!itemsGroups.length) {
+    return null;
+  }
+
   return props.children({ itemsGroups });
 }
 
