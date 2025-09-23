@@ -13,6 +13,7 @@ enum TestIds {
   ticketDefinitionGuestPricing = 'ticket-definition-guest-pricing',
   ticketDefinitionPricingRange = 'ticket-definition-pricing-range',
   ticketDefinitionTax = 'ticket-definition-tax',
+  ticketDefinitionFee = 'ticket-definition-fee',
   ticketDefinitionRemaining = 'ticket-definition-remaining',
   ticketDefinitionSaleStartDate = 'ticket-definition-sale-start-date',
   ticketDefinitionSaleEndDate = 'ticket-definition-sale-end-date',
@@ -456,7 +457,7 @@ export interface TaxProps {
 }
 
 /**
- * Displays the tax for the ticket definition. Only renders when event has tax settings, ticket definition has no pricing options, or tax is applied to donations and ticket definition has guest pricing.
+ * Displays the tax for the ticket definition. Only renders when event has tax settings, ticket definition is not free and has no pricing options, or ticket definition has guest pricing and tax is applied to donations.
  *
  * @component
  * @example
@@ -508,6 +509,77 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
         );
       }}
     </CoreTicketDefinition.Tax>
+  );
+});
+
+/**
+ * Props for the TicketDefinition Fee component.
+ */
+export interface FeeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    rate: string;
+    amount: string;
+    currency: string;
+    formattedAmount: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the fee for the ticket definition. Only renders when ticket definition has fee enabled, is not free and has no pricing options.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketDefinition.Fee className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketDefinition.Fee asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </TicketDefinition.Fee>
+ *
+ * // asChild with react component
+ * <TicketDefinition.Fee asChild>
+ *   {React.forwardRef(({ rate, amount, currency, formattedAmount, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       +${formattedAmount} service fee
+ *     </span>
+ *   ))}
+ * </TicketDefinition.Fee>
+ * ```
+ */
+export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreTicketDefinition.Fee>
+      {({ rate, amount, currency, formattedAmount }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionFee}
+            customElement={children}
+            customElementProps={{
+              rate,
+              amount,
+              currency,
+              formattedAmount,
+            }}
+            content={formattedAmount}
+            {...otherProps}
+          >
+            <span>{formattedAmount}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreTicketDefinition.Fee>
   );
 });
 

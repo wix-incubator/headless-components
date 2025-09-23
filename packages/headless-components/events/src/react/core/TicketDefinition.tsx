@@ -262,7 +262,7 @@ export interface TaxRenderProps {
 }
 
 /**
- * TicketDefinition Tax core component that provides tax data. Not rendered for events with no tax settings, or for ticket definitions with pricing options, or if tax is not applied to donations and ticket definition has guest pricing.
+ * TicketDefinition Tax core component that provides tax data. Not rendered when event has no tax settings, or when ticket definition is free or has pricing options, or when ticket definition has guest pricing and tax is not applied to donations.
  *
  * @component
  */
@@ -284,6 +284,7 @@ export function Tax(props: TaxProps): React.ReactNode {
 
   if (
     !taxSettings ||
+    ticketDefinition.pricingMethod!.free ||
     pricingOptions.length ||
     (guestPrice && !taxSettings.appliedToDonations)
   ) {
@@ -312,6 +313,77 @@ export function Tax(props: TaxProps): React.ReactNode {
     name,
     rate,
     included,
+    amount,
+    currency,
+    formattedAmount,
+  });
+}
+
+export interface FeeProps {
+  /** Render prop function */
+  children: (props: FeeRenderProps) => React.ReactNode;
+}
+
+export interface FeeRenderProps {
+  /** Fee rate */
+  rate: string;
+  /** Fee amount */
+  amount: string;
+  /** Fee currency */
+  currency: string;
+  /** Formatted fee amount */
+  formattedAmount: string;
+}
+
+/**
+ * TicketDefinition Fee core component that provides fee data. Not rendered when ticket definition has no fee enabled, or when ticket definition is free or has pricing options, or when fee is included in price.
+ *
+ * @component
+ */
+export function Fee(props: FeeProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+  const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+
+  const event = eventService.event.get();
+  const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+
+  const taxSettings = event.registration?.tickets?.taxSettings;
+  const fixedPrice = ticketDefinition.pricingMethod?.fixedPrice;
+  const guestPrice = ticketDefinition.pricingMethod?.guestPrice;
+  const pricingOptions =
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
+
+  if (
+    ticketDefinition.feeType !== 'FEE_ADDED_AT_CHECKOUT' ||
+    ticketDefinition.pricingMethod!.free ||
+    pricingOptions.length
+  ) {
+    return null;
+  }
+
+  const priceOverride = ticketDefinitionListService.getCurrentPriceOverride(
+    ticketDefinition._id!,
+  );
+
+  const rate = '2.5';
+  const rateAmount = Number(rate);
+
+  const price = guestPrice
+    ? Number(priceOverride || '0')
+    : Number(fixedPrice!.value);
+  const priceWithAddedTax =
+    taxSettings?.type === 'ADDED_AT_CHECKOUT'
+      ? price * ((100 + Number(taxSettings.rate)) / 100)
+      : price;
+  const currency = guestPrice?.currency ?? fixedPrice!.currency!;
+  const amount = ((priceWithAddedTax * rateAmount) / 100).toFixed(2);
+  const formattedAmount = `${amount} ${currency}`;
+
+  return props.children({
+    rate,
     amount,
     currency,
     formattedAmount,

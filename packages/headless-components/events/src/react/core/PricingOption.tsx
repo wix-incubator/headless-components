@@ -122,7 +122,7 @@ export interface TaxRenderProps {
 }
 
 /**
- * PricingOption Tax core component that provides tax data. Not rendered for events with no tax settings.
+ * PricingOption Tax core component that provides tax data. Not rendered when event has no tax settings.
  *
  * @component
  */
