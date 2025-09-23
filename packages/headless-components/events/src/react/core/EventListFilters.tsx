@@ -37,6 +37,10 @@ export function CategoriesFilterRoot(
   const eventListService = useService(EventListServiceDefinition);
   const categories = eventListService.categories.get();
 
+  if (!categories.length) {
+    return null;
+  }
+
   return props.children({
     filterOptions: buildFilterOptions(categories, props.allCategoriesLabel),
     categories,
