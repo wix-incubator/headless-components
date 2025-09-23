@@ -490,13 +490,9 @@ interface PlanDurationData {
 Displays the free trial days.
 
 **Props**
-
-**Props**
 ```tsx
 interface FreeTrialDaysProps {
-  asChild?: boolean;
-  children: AsChildChildren<PlanFreeTrialDaysData>;
-  className?: string;
+  children: React.ForwardRefExoticComponent<PlanFreeTrialDaysData>;
 }
 
 interface PlanFreeTrialDaysData {
@@ -507,16 +503,7 @@ interface PlanFreeTrialDaysData {
 **Example**
 
 ```tsx
-// Default usage
-<Plan.FreeTrialDays className="text-sm" />
-
-// asChild with primitive
-<Plan.FreeTrialDays asChild>
-  <span className="text-sm" />
-</Plan.FreeTrialDays>
-
-// asChild with react component
-<Plan.FreeTrialDays asChild>
+<Plan.FreeTrialDays>
   {React.forwardRef(({freeTrialDays, ...props}, ref) => (
     <span ref={ref} {...props} className="text-sm">
       {freeTrialDays}
@@ -524,9 +511,6 @@ interface PlanFreeTrialDaysData {
   ))}
 </Plan.FreeTrialDays>
 ```
-
-**Data Attributes**
-- `data-testid="plan-free-trial-days"` - Applied to free trial days element
 ---
 
 ### Plan.Perks
@@ -650,11 +634,11 @@ type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
 
 // With custom button with forwardRef
 <Plan.Action.BuyNow className="btn-primary" label="Buy Now" loadingState="Processing..." asChild>
-  {React.forwardRef(({disabled, isLoading, onClick, ...props}, ref) => (
+  {({disabled, isLoading, onClick, ...props}, ref) => (
     <button ref={ref} {...props} disabled={disabled} onClick={onClick} className="btn-primary">
       {isLoading ? 'Processing...' : 'Buy Now'}
     </button>
-  ))}
+  )}
 </Plan.Action.BuyNow>
 ```
 

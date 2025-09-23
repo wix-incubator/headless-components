@@ -637,9 +637,7 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
 export type PlanFreeTrialDaysData = FreeTrialDaysData;
 
 interface FreeTrialDaysProps {
-  asChild?: boolean;
-  children: AsChildChildren<PlanFreeTrialDaysData>;
-  className?: string;
+  children: React.ForwardRefExoticComponent<PlanFreeTrialDaysData>;
 }
 
 /**
@@ -648,16 +646,7 @@ interface FreeTrialDaysProps {
  * @component
  * @example
  * ```tsx
- * // Default usage
- * <Plan.FreeTrialDays className="text-sm" />
- *
- * // asChild with primitive
- * <Plan.FreeTrialDays asChild>
- *   <span className="text-sm" />
- * </Plan.FreeTrialDays>
- *
- * // asChild with react component
- * <Plan.FreeTrialDays asChild>
+ * <Plan.FreeTrialDays>
  *   {React.forwardRef(({ freeTrialDays }, ref) => {
  *     return <span ref={ref} className="text-sm" data-testid="plan-free-trial-days">
  *       Free trial for {freeTrialDays} days
@@ -667,20 +656,16 @@ interface FreeTrialDaysProps {
  * ```
  */
 export const FreeTrialDays = React.forwardRef<HTMLElement, FreeTrialDaysProps>(
-  ({ children, asChild, className }, ref) => (
+  ({ children }, ref) => (
     <CoreFreeTrialDays>
       {(freeTrialDaysData) => (
         <AsChildSlot
           ref={ref}
-          asChild={asChild}
+          asChild
           customElement={children}
           customElementProps={freeTrialDaysData}
-          className={className}
           data-testid={PlanTestId.FreeTrialDays}
-          content={freeTrialDaysData.freeTrialDays}
-        >
-          <span>{freeTrialDaysData.freeTrialDays}</span>
-        </AsChildSlot>
+        />
       )}
     </CoreFreeTrialDays>
   ),
@@ -839,11 +824,11 @@ type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
  *
  * // With custom button with forwardRef
  * <Plan.Action.BuyNow className="btn-primary" label="Buy Now" loadingState="Processing..." asChild>
- *   {React.forwardRef(({disabled, isLoading, onClick, ...props}, ref) => (
+ *   {({disabled, isLoading, onClick, ...props}, ref) => (
  *     <button ref={ref} {...props} disabled={disabled} onClick={onClick} className="btn-primary">
  *       {isLoading ? 'Processing...' : 'Buy Now'}
  *     </button>
- *   ))}
+ *   )}
  * </Plan.Action.BuyNow>
  * ```
  */
