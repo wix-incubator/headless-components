@@ -206,7 +206,7 @@ const buildTagFilterProps = (
 
   const STAGE_FILTER_BASE = {
     key: 'stage',
-    label: '',
+    label: 'Filter by: ',
     type: 'single' as const,
     displayType: 'text' as const,
   };

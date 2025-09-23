@@ -700,6 +700,7 @@ export interface SingleFilterProps extends React.HTMLAttributes<HTMLElement> {
    * should be a single child element that will receive filter props.
    */
   children?: React.ReactNode;
+  renderAsDropdown?: boolean;
 }
 
 /**
@@ -736,7 +737,12 @@ export interface SingleFilterProps extends React.HTMLAttributes<HTMLElement> {
  */
 export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
   (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
+    const {
+      asChild,
+      children,
+      renderAsDropdown = false,
+      ...otherProps
+    } = props;
     const { option } = useFilterOptionContext();
     const { value: filterValue, onChange } = useFilterContext();
 
@@ -763,7 +769,7 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
     }
 
     // Default rendering - Radix ToggleGroup for better UX
-    if (!asChild && !children) {
+    if (!renderAsDropdown && !asChild && !children) {
       return (
         <ToggleGroup.Root
           type="single"
@@ -810,16 +816,11 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
         data-display-type={option.displayType}
         className={otherProps.className}
       >
-        {children || (
-          <>
-            <option value="">Select {option.label}</option>
-            {option.validValues?.map((value) => (
-              <option key={value} value={value}>
-                {option.valueFormatter ? option.valueFormatter(value) : value}
-              </option>
-            ))}
-          </>
-        )}
+        {option.validValues?.map((value) => (
+          <option key={value} value={value}>
+            {option.valueFormatter ? option.valueFormatter(value) : value}
+          </option>
+        ))}
       </select>
     );
   },
