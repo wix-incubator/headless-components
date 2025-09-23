@@ -4,7 +4,7 @@ import {
   type Category,
 } from '../../services/event-list-service.js';
 import { type FilterOption } from '@wix/headless-components/react';
-import { ALL_CATEGORIES } from '../../constants.js';
+import { ALL_CATEGORIES, CATEGORIES_FILTER_KEY } from '../../constants.js';
 
 export interface CategoriesFilterRootProps {
   /** Render prop function */
@@ -51,11 +51,11 @@ const buildFilterOptions = (
   allCategoriesLabel: string,
 ) => [
   {
-    key: 'categories',
+    key: CATEGORIES_FILTER_KEY,
     label: '',
     type: 'single' as const,
     displayType: 'text' as const,
-    fieldName: 'category.id',
+    fieldName: 'categoryId',
     validValues: [
       ALL_CATEGORIES,
       ...categories.map((category) => category._id!),
