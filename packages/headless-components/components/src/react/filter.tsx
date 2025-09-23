@@ -700,6 +700,11 @@ export interface SingleFilterProps extends React.HTMLAttributes<HTMLElement> {
    * should be a single child element that will receive filter props.
    */
   children?: React.ReactNode;
+  /**
+   * When true, renders the filter as a dropdown.
+   *
+   * @default false
+   */
   renderAsDropdown?: boolean;
 }
 
