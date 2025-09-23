@@ -375,7 +375,8 @@ export function Fee(props: FeeProps): React.ReactNode {
     ? Number(priceOverride || '0')
     : Number(fixedPrice!.value);
   const priceWithAddedTax =
-    taxSettings?.type === 'ADDED_AT_CHECKOUT'
+    taxSettings?.type === 'ADDED_AT_CHECKOUT' &&
+    (!guestPrice || taxSettings.appliedToDonations)
       ? price * ((100 + Number(taxSettings.rate)) / 100)
       : price;
   const currency = guestPrice?.currency ?? fixedPrice!.currency!;
