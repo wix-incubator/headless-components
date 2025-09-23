@@ -295,103 +295,11 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
   );
 };
 
-/**
- * Props for the ScheduleList StageFilter component.
- */
-export interface StageFilterProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    stageNames: string[];
-    currentStageFilter: string | null;
-    setStageFilter: (stageName: string | null) => void;
-    clearStageFilter: () => void;
-  }>;
-  /** CSS classes to apply to the dropdown */
-  className?: string;
-  /** Text for the default/all option */
-  defaultOptionLabel: string;
-}
-
-/**
- * Stage filter component that provides stage filtering functionality.
- * Returns a dropdown select element for filtering by stage.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <div className="flex items-center gap-2">
- *   <span>Filter by:</span>
- *   <ScheduleList.StageFilter
- *     className="border border-gray-200 rounded-md px-3 py-2"
- *     defaultOptionLabel="All places"
- *   />
- * </div>
- *
- * // asChild with custom implementation
- * <ScheduleList.StageFilter asChild>
- *   {React.forwardRef(({ stageNames, currentStageFilter, setStageFilter, ...props }, ref) => (
- *     <select ref={ref} {...props} value={currentStageFilter || ''} onChange={(e) => setStageFilter(e.target.value || null)}>
- *       <option value="">All places</option>
- *       {stageNames.map(stage => (
- *         <option key={stage} value={stage}>{stage}</option>
- *       ))}
- *     </select>
- *   ))}
- * </ScheduleList.StageFilter>
- * ```
- */
-export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
-  (props, ref) => {
-    const { asChild, children, className, defaultOptionLabel, ...otherProps } =
-      props;
-
-    return (
-      <CoreScheduleList.StageFilter>
-        {({
-          stageNames,
-          currentStageFilter,
-          setStageFilter,
-          clearStageFilter,
-        }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListStageFilter}
-            value={currentStageFilter || ''}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setStageFilter(e.target.value || null)
-            }
-            customElement={children}
-            customElementProps={{
-              stageNames,
-              currentStageFilter,
-              setStageFilter,
-              clearStageFilter,
-            }}
-            {...otherProps}
-          >
-            <select>
-              <option value="">{defaultOptionLabel}</option>
-              {stageNames.map((stage) => (
-                <option key={stage} value={stage}>
-                  {stage}
-                </option>
-              ))}
-            </select>
-          </AsChildSlot>
-        )}
-      </CoreScheduleList.StageFilter>
-    );
-  },
-);
-
 export interface FiltersRootProps {
   /** Render prop function */
   children: React.ReactNode;
+  /** Default option label */
+  defaultOptionLabel: string;
 }
 
 export interface FiltersRootRenderProps {
@@ -405,7 +313,7 @@ export interface FiltersRootRenderProps {
 
 export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
   return (
-    <CoreScheduleList.FiltersRoot>
+    <CoreScheduleList.FiltersRoot defaultOptionLabel={props.defaultOptionLabel}>
       {({ filterOptions, filterValue, onChange }) => (
         <FilterPrimitive.Root
           value={filterValue}

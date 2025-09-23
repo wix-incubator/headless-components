@@ -42,7 +42,7 @@ export function Schedule({
         <ScheduleListPrimitive.Root
           scheduleListServiceConfig={scheduleListServiceConfig}
         >
-          <div className="flex mb-6 justify-between">
+          {/* <div className="flex mb-6 justify-between">
             <div className="flex items-center gap-2">
               <span className="font-light text-content-primary">
                 Filter by:
@@ -51,15 +51,16 @@ export function Schedule({
                 className="font-light text-content-primary"
                 defaultOptionLabel="All stages"
               />
-            </div>
-            <ScheduleListPrimitive.FiltersRoot>
-              <FilterPrimitive.FilterOptions>
-                <FilterPrimitive.FilterOptionRepeater>
-                  <FilterPrimitive.FilterOption.MultiFilter className="flex gap-2 text-sm font-light text-content-primary [&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-gray-200 [&_button]:rounded-full [&_button[data-state=on]]:bg-blue-500 [&_button[data-state=on]]:text-white [&_button[data-state=on]]:border-blue-500" />
-                </FilterPrimitive.FilterOptionRepeater>
-              </FilterPrimitive.FilterOptions>
-            </ScheduleListPrimitive.FiltersRoot>
-          </div>
+            </div> */}
+          <ScheduleListPrimitive.FiltersRoot defaultOptionLabel="All stages">
+            <FilterPrimitive.FilterOptions>
+              <FilterPrimitive.FilterOptionRepeater className="flex flex-row justify-between mb-6 items-center">
+                <FilterPrimitive.FilterOption.SingleFilter className="flex gap-2 text-content-primary" />
+                <FilterPrimitive.FilterOption.MultiFilter className="flex gap-2 text-sm font-light text-content-primary [&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-gray-200 [&_button]:rounded-full [&_button[data-state=on]]:bg-blue-500 [&_button[data-state=on]]:text-white [&_button[data-state=on]]:border-blue-500" />
+              </FilterPrimitive.FilterOptionRepeater>
+            </FilterPrimitive.FilterOptions>
+          </ScheduleListPrimitive.FiltersRoot>
+          {/* </div> */}
           <ScheduleListPrimitive.Groups
             className="space-y-8 mb-6"
             emptyState={<div>No schedule items available</div>}

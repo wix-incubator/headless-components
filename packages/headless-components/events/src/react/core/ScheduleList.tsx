@@ -140,55 +140,11 @@ export function GroupRepeater(props: GroupRepeaterProps): React.ReactNode {
   return props.children({ itemsGroups });
 }
 
-export interface StageFilterProps {
-  /** Render prop function */
-  children: (props: StageFilterRenderProps) => React.ReactNode;
-}
-
-export interface StageFilterRenderProps {
-  /** Available stage names */
-  stageNames: string[];
-  /** Current stage filter value */
-  currentStageFilter: string | null;
-  /** Function to set stage filter */
-  setStageFilter: (stageName: string | null) => void;
-  /** Function to clear stage filter */
-  clearStageFilter: () => void;
-}
-
-/**
- * ScheduleList StageFilter core component that provides stage filtering data.
- *
- * @component
- */
-export function StageFilter(props: StageFilterProps): React.ReactNode {
-  const scheduleListService = useService(ScheduleListServiceDefinition);
-  const stageNames = scheduleListService.stageNames.get();
-  const currentStageFilter = scheduleListService.stageFilter.get();
-
-  const setStageFilter = (stageName: string | null) => {
-    scheduleListService.setStageFilter(stageName);
-  };
-
-  const clearStageFilter = () => {
-    scheduleListService.setStageFilter(null);
-  };
-
-  if (!stageNames.length) {
-    return null;
-  }
-
-  return props.children({
-    stageNames,
-    currentStageFilter,
-    setStageFilter,
-    clearStageFilter,
-  });
-}
-
 export interface FiltersRootProps {
   /** Render prop function */
   children: (props: FiltersRootRenderProps) => React.ReactNode;
+  /** Default option label */
+  defaultOptionLabel: string;
 }
 
 export interface FiltersRootRenderProps {
@@ -203,16 +159,28 @@ export interface FiltersRootRenderProps {
 export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const tags = scheduleListService.tags.get();
+  const stageNames = scheduleListService.stageNames.get();
   const currentTagFilters = scheduleListService.tagFilters.get();
+  const currentStageFilter = scheduleListService.stageFilter.get();
   const setTagFilters = scheduleListService.setTagFilters;
+  const setStageFilter = scheduleListService.setStageFilter;
 
   const onChange = async (value: FilterPrimitive.Filter) => {
+    const stageValue =
+      value?.['stage'] && value?.['stage'] !== props.defaultOptionLabel
+        ? value?.['stage']
+        : null;
+
+    setStageFilter(stageValue);
     setTagFilters(value?.['tag']?.$in || []);
   };
 
   const { filterOptions, filterValue } = buildTagFilterProps(
     tags,
     currentTagFilters,
+    currentStageFilter,
+    stageNames,
+    props.defaultOptionLabel,
   );
 
   return props.children({
@@ -222,7 +190,13 @@ export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
   });
 };
 
-const buildTagFilterProps = (tags: string[], currentTagFilters: string[]) => {
+const buildTagFilterProps = (
+  tags: string[],
+  currentTagFilters: string[],
+  currentStageFilter: string | null,
+  stageNames: string[],
+  defaultOptionLabel: string,
+) => {
   const TAG_FILTER_BASE = {
     key: 'tag',
     label: '',
@@ -230,7 +204,19 @@ const buildTagFilterProps = (tags: string[], currentTagFilters: string[]) => {
     displayType: 'text' as const,
   };
 
+  const STAGE_FILTER_BASE = {
+    key: 'stage',
+    label: '',
+    type: 'single' as const,
+    displayType: 'text' as const,
+  };
+
   const filterOptions = [
+    {
+      ...STAGE_FILTER_BASE,
+      fieldName: 'stage',
+      validValues: [defaultOptionLabel, ...stageNames],
+    },
     {
       ...TAG_FILTER_BASE,
       fieldName: 'tag',
@@ -239,8 +225,8 @@ const buildTagFilterProps = (tags: string[], currentTagFilters: string[]) => {
   ];
 
   const filterValue = {
-    ...TAG_FILTER_BASE,
     tag: currentTagFilters,
+    stage: currentStageFilter || defaultOptionLabel,
   };
 
   return {
