@@ -21,7 +21,7 @@ export interface CategoriesFilterRootRenderProps {
   filterOptions: FilterOption[];
   /** Filter value */
   filterValue: FilterPrimitive.Filter;
-  /** Function to load events by category */
+  /** Function to handle category change */
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
 }
 
