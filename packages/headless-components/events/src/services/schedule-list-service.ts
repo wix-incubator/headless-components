@@ -29,14 +29,12 @@ export interface ScheduleListServiceAPI {
   stageNames: ReadOnlySignal<string[]>;
   tags: ReadOnlySignal<string[]>;
   loadItems: (options: {
-    stageName: string | null;
+    stageName?: string | null;
     tags?: string[];
   }) => Promise<void>;
   loadMoreItems: () => Promise<void>;
   setStageFilter: (stageName: string | null) => void;
   setTagFilters: (tags: string[]) => void;
-  addTagFilter: (tagValue: string) => void;
-  removeTagFilter: (tagValue: string) => void;
 }
 
 export interface ScheduleListServiceConfig {
@@ -72,16 +70,8 @@ export const ScheduleListService =
 
       const itemsGroups = signalsService.computed(() => {
         const currentItems = items.get();
-        const currentStageFilter = stageFilter.get();
-        const currentTagFilters = tagFilters.get();
 
-        const filteredItems = filterScheduleItems(
-          currentItems,
-          currentStageFilter,
-          currentTagFilters,
-        );
-
-        return groupScheduleItemsByDate(filteredItems);
+        return groupScheduleItemsByDate(currentItems);
       });
 
       const stageNames = signalsService.computed(() => {
@@ -104,24 +94,9 @@ export const ScheduleListService =
         tagFilters.set(tags);
       };
 
-      const addTagFilter = (tagValue: string) => {
-        const currentFilters = tagFilters.get();
-        if (!currentFilters.includes(tagValue)) {
-          tagFilters.set([...currentFilters, tagValue]);
-        }
-      };
-
-      const removeTagFilter = (tagValue: string) => {
-        const currentFilters = tagFilters.get();
-        tagFilters.set(currentFilters.filter((tag) => tag !== tagValue));
-      };
-
       const loadMoreItems = async () => {
         isLoadingMore.set(true);
         error.set(null);
-
-        const stageName = stageFilter.get() ? [stageFilter.get()!] : undefined;
-        const tag = tagFilters.get().length > 0 ? tagFilters.get() : undefined;
 
         try {
           const offset =
@@ -131,8 +106,8 @@ export const ScheduleListService =
             eventId,
             limit: config.limit,
             offset,
-            stageName,
-            tag,
+            stageName: [stageFilter.get()!],
+            tag: tagFilters.get(),
           });
 
           items.set([...items.get(), ...(listScheduleResult.items ?? [])]);
@@ -148,21 +123,21 @@ export const ScheduleListService =
         stageName,
         tags,
       }: {
-        stageName: string | null;
+        stageName?: string | null;
         tags?: string[];
       }) => {
         isLoading.set(true);
         error.set(null);
 
-        stageFilter.set(stageName);
+        stageFilter.set(stageName || null);
         tagFilters.set(tags || []);
 
         try {
           const listScheduleResult = await listScheduleItems({
             eventId,
             limit: config.limit,
-            stageName: stageName ? [stageName!] : undefined,
-            tag: tags ? tags : undefined,
+            stageName: [stageName!],
+            tag: tags,
           });
 
           items.set(listScheduleResult.items ?? []);
@@ -188,8 +163,6 @@ export const ScheduleListService =
         tags,
         setStageFilter,
         setTagFilters,
-        addTagFilter,
-        removeTagFilter,
         loadItems,
         loadMoreItems,
       };
@@ -200,7 +173,7 @@ export async function loadScheduleListServiceConfig(
   eventId: string,
   limit: number = 2,
 ): Promise<ScheduleListServiceConfig> {
-  const listScheduleResult = await listScheduleItems({ eventId, limit });
+  const listScheduleResult = await listScheduleItems({ eventId, limit: 1 });
 
   return {
     limit,
@@ -209,19 +182,21 @@ export async function loadScheduleListServiceConfig(
   };
 }
 
-const listScheduleItems = async ({
-  eventId,
-  limit,
-  offset = 0,
-  stageName,
-  tag,
-}: {
+interface ListScheduleItemsOptions {
   eventId: string;
   limit: number;
   offset?: number;
   stageName?: string[];
   tag?: string[];
-}) => {
+}
+
+const listScheduleItems = async ({
+  eventId,
+  limit,
+  offset = 0,
+  stageName = [],
+  tag = [],
+}: ListScheduleItemsOptions) => {
   const listScheduleResult = await schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
@@ -235,31 +210,6 @@ const listScheduleItems = async ({
 
   return listScheduleResult;
 };
-
-function filterScheduleItems(
-  items: ScheduleItem[],
-  stageFilter: string | null,
-  tagFilters: string[],
-): ScheduleItem[] {
-  return items.filter((item) => {
-    if (stageFilter && item.stageName !== stageFilter) {
-      return false;
-    }
-
-    if (tagFilters.length > 0) {
-      const itemTags = item.tags || [];
-      const hasAllTags = tagFilters.every((filterTag) =>
-        itemTags.includes(filterTag),
-      );
-
-      if (!hasAllTags) {
-        return false;
-      }
-    }
-
-    return true;
-  });
-}
 
 function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
   const grouped = new Map<string, ScheduleItemsGroup>();
