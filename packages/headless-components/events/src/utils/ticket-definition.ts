@@ -1,5 +1,6 @@
 import { wixEventsV2 } from '@wix/events';
 import { type TicketDefinition } from '../services/ticket-definition-service.js';
+import { formatPrice } from './price.js';
 
 const FEE_RATE = '2.5';
 
@@ -15,7 +16,7 @@ export const getTicketDefinitionTax = (
   const amount = included
     ? (price - (price * 100) / (100 + rateAmount)).toFixed(2)
     : ((price * rateAmount) / 100).toFixed(2);
-  const formattedAmount = `${amount} ${currency}`;
+  const formattedAmount = formatPrice(amount, currency);
 
   return {
     name,
@@ -39,7 +40,7 @@ export const getTicketDefinitionFee = (
       ? price * ((100 + Number(taxSettings.rate)) / 100)
       : price;
   const amount = ((priceWithTax * rateAmount) / 100).toFixed(2);
-  const formattedAmount = `${amount} ${currency}`;
+  const formattedAmount = formatPrice(amount, currency);
 
   return {
     rate: FEE_RATE,

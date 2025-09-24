@@ -15,6 +15,7 @@ import {
   getTicketDefinitionTax,
   isTicketDefinitionAvailable,
 } from '../../utils/ticket-definition.js';
+import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components that will have access to the pricing option service */
@@ -97,7 +98,7 @@ export function Pricing(props: PricingProps): React.ReactNode {
   const pricingOption = pricingOptionService.pricingOption.get();
   const price = pricingOption.price!.value!;
   const currency = pricingOption.price!.currency!;
-  const formattedPrice = `${price} ${currency}`;
+  const formattedPrice = formatPrice(price, currency);
 
   return props.children({
     price,

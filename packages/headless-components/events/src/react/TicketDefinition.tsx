@@ -377,6 +377,8 @@ export interface PricingRangeProps {
     minPrice: string;
     maxPrice: string;
     currency: string;
+    formattedMinPrice: string;
+    formattedMaxPrice: string;
     formattedPriceRange: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -413,7 +415,14 @@ export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
 
     return (
       <CoreTicketDefinition.PricingRange>
-        {({ minPrice, maxPrice, currency, formattedPriceRange }) => {
+        {({
+          minPrice,
+          maxPrice,
+          currency,
+          formattedMinPrice,
+          formattedMaxPrice,
+          formattedPriceRange,
+        }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -425,6 +434,8 @@ export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
                 minPrice,
                 maxPrice,
                 currency,
+                formattedMinPrice,
+                formattedMaxPrice,
                 formattedPriceRange,
               }}
               content={formattedPriceRange}
