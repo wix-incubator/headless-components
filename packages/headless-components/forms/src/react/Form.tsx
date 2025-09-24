@@ -790,8 +790,8 @@ export interface FieldsProps {
  * };
  * ```
  */
-export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
-  ({ fieldMap }) => {
+export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
+  ({ fieldMap }, ref) => {
     const formService = useService(FormServiceDefinition);
     const form = formService.form.get();
     const _form = {
@@ -814,14 +814,16 @@ export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
     if (!form) return <div>Form not found, oops!</div>;
 
     return (
-      <FormViewer
-        form={_form}
-        values={formValues}
-        onChange={handleFormChange}
-        errors={formErrors}
-        onValidate={handleFormValidate}
-        fields={fieldMap}
-      />
+      <div ref={ref}>
+        <FormViewer
+          form={_form}
+          values={formValues}
+          onChange={handleFormChange}
+          errors={formErrors}
+          onValidate={handleFormValidate}
+          fields={fieldMap}
+        />
+      </div>
     );
   },
 );
