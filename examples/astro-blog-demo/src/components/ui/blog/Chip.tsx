@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import React from "react";
 
 const chipVariants = cva(
-  "inline-flex items-center rounded-full border border-foreground/20 px-3 py-1 text-sm font-medium text-foreground transition-colors",
+  "inline-flex items-center rounded-full border border-foreground/20 px-3 py-1 font-paragraph text-sm font-medium text-foreground transition-colors",
   {
     variants: {
       size: {

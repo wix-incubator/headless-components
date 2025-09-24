@@ -11,6 +11,7 @@ import {
   type EventServiceConfig,
   type EventListServiceConfig,
   type TicketDefinitionListServiceConfig,
+  type CheckoutServiceConfig,
   type ScheduleListServiceConfig,
 } from '@wix/headless-events/services';
 import { EventList } from './EventList';
@@ -19,6 +20,7 @@ interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
   eventListServiceConfig: EventListServiceConfig;
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
+  checkoutServiceConfig: CheckoutServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
   eventsPagePath: string;
   formPagePath: string;
@@ -28,6 +30,7 @@ export function EventDetails({
   eventServiceConfig,
   eventListServiceConfig,
   ticketDefinitionListServiceConfig,
+  checkoutServiceConfig,
   scheduleListServiceConfig,
   eventsPagePath,
   formPagePath,
@@ -172,10 +175,11 @@ export function EventDetails({
           </ScheduleListPrimitive.Root>
 
           <TicketsPickerPrimitive.Root
+            eventServiceConfig={eventServiceConfig}
             ticketDefinitionListServiceConfig={
               ticketDefinitionListServiceConfig
             }
-            eventServiceConfig={eventServiceConfig}
+            checkoutServiceConfig={checkoutServiceConfig}
           >
             <TicketsPickerPrimitive.TicketDefinitions className="space-y-6 mb-6">
               <h2
@@ -268,6 +272,7 @@ export function EventDetails({
             <EventList
               eventListServiceConfig={{
                 events: otherUpcomingEvents,
+                categories: [],
                 pageSize: 3,
                 currentPage: 0,
                 totalPages: 1,

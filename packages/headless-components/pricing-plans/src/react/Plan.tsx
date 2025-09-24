@@ -231,6 +231,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>(
             customElement={children}
             customElementProps={nameData}
             className={className}
+            content={nameData.name}
             data-testid={PlanTestId.Name}
           >
             <span>{nameData.name}</span>
@@ -284,6 +285,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             customElement={children}
             customElementProps={descriptionData}
             className={className}
+            content={descriptionData.description}
             data-testid={PlanTestId.Description}
           >
             <span>{descriptionData.description}</span>
