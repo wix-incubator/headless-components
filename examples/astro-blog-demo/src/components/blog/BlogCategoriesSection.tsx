@@ -52,27 +52,28 @@ export default function BlogCategoriesSection({
         <Blog.Categories.ActiveCategory
           baseUrl={categoryPageBaseUrl}
           asChild
-          currentPath={pathname}
+          pathname={pathname}
         >
-          <section className="bg-surface-card border-surface-primary data-[has-image=true]:[&>figure]:after:bg-background/70 relative grid min-h-[182px] place-items-center gap-6 overflow-hidden rounded-xl border p-9 text-center">
-            <figure className="absolute inset-0 after:absolute after:inset-0 empty:hidden">
+          <section className="bg-foreground/5 group relative grid min-h-[182px] place-items-center gap-6 overflow-hidden rounded-xl p-9 text-center">
+            <figure className="absolute inset-0 after:absolute after:inset-0 empty:hidden group-data-[has-image=true]:after:bg-background/80">
               <Blog.Category.Image className="h-full w-full object-cover" />
             </figure>
             <div className="isolate mx-auto flex max-w-4xl flex-col justify-center gap-3">
-              <Blog.Category.Label className="text-foreground text-5xl tracking-tight" />
-              <Blog.Category.Description className="text-foreground text-lg text-balance" />
+              <Blog.Category.Label className="text-foreground font-heading text-5xl" />
+              <Blog.Category.Description className="text-foreground/80 text-balance font-paragraph text-lg" />
             </div>
             <div className="isolate">
               <div className="flex flex-wrap justify-center gap-3">
                 <Blog.Categories.CategoryItemRepeater>
-                  <Blog.Category.Link baseUrl={categoryPageBaseUrl} asChild>
-                    {({ href }) => {
-                      const isActive = pathname === href;
-
+                  <Blog.Category.Link
+                    baseUrl={categoryPageBaseUrl}
+                    pathname={pathname}
+                    asChild
+                  >
+                    {({ href, isActive }) => {
                       return (
                         <Button
                           asChild
-                          aria-current={isActive}
                           variant={isActive ? "default" : "outline"}
                         >
                           <Navigation route={href}>

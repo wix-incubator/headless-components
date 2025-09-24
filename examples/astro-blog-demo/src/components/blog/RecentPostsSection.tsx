@@ -38,7 +38,7 @@ export default function RecentPostsSection({
     <Blog.Feed.Root blogFeedServiceConfig={recentPostsServiceConfig}>
       <Blog.Feed.PostItems>
         <section className="mx-auto max-w-4xl space-y-6">
-          <h2 className="text-foreground text-2xl leading-tight font-semibold">
+          <h2 className="text-foreground font-heading text-3xl">
             Recent posts
           </h2>
 

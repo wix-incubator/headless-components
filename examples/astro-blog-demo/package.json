@@ -48,10 +48,12 @@
   },
   "devDependencies": {
     "@astrojs/cloudflare": "^12.5.4",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/typography": "^0.5.18",
     "@tailwindcss/vite": "^4.0.13",
-    "@wix/cli": "^1.1.114",
+    "@wix/cli": "^1.1.119",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
-    "tailwindcss": "^4.1.7"
+    "tailwindcss": "^3.4.14"
   }
 }

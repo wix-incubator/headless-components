@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import React from "react";
 
 export const emptyStateVariants = cva(
-  "bg-surface-card border-surface-subtle rounded-xl border px-6 py-12 text-center shadow-sm",
+  "bg-foreground/5 text-foreground rounded-xl px-6 py-12 text-center shadow-sm",
   {
     variants: {
       size: {
@@ -50,7 +50,7 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
     ref
   ) => {
     const defaultIcon = (
-      <div className="text-content-muted mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full">
+      <div className="text-foreground/60 mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full">
         <svg
           className="h-12 w-12"
           fill="none"
@@ -75,11 +75,13 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
       >
         {showIcon && (icon || defaultIcon)}
 
-        <h3 className="text-content-primary mb-4 text-2xl font-semibold">
+        <h3 className="text-foreground mb-4 font-heading text-2xl">
           {title}
         </h3>
 
-        {subtitle && <p className="text-content-muted">{subtitle}</p>}
+        {subtitle && (
+          <p className="text-foreground/60 font-paragraph">{subtitle}</p>
+        )}
       </div>
     );
   }

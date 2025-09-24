@@ -11,6 +11,7 @@ enum TestIds {
   ticketDefinitionDescription = 'ticket-definition-description',
   ticketDefinitionFixedPricing = 'ticket-definition-fixed-pricing',
   ticketDefinitionGuestPricing = 'ticket-definition-guest-pricing',
+  ticketDefinitionPricingRange = 'ticket-definition-pricing-range',
   ticketDefinitionRemaining = 'ticket-definition-remaining',
   ticketDefinitionSaleStartDate = 'ticket-definition-sale-start-date',
   ticketDefinitionSaleEndDate = 'ticket-definition-sale-end-date',
@@ -77,6 +78,10 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         className={className}
         data-testid={TestIds.ticketDefinitionRoot}
         data-sold-out={ticketDefinition.limitPerCheckout === 0}
+        data-free={!!ticketDefinition.pricingMethod?.free}
+        data-fixed-pricing={!!ticketDefinition.pricingMethod?.fixedPrice}
+        data-guest-pricing={!!ticketDefinition.pricingMethod?.guestPrice}
+        data-pricing-options={!!ticketDefinition.pricingMethod?.pricingOptions}
         customElement={children}
         customElementProps={{}}
         {...otherProps}
@@ -263,7 +268,6 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
               asChild={asChild}
               className={className}
               data-testid={TestIds.ticketDefinitionFixedPricing}
-              data-free={free}
               customElement={children}
               customElementProps={{
                 free,
@@ -362,6 +366,81 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
 );
 
 /**
+ * Props for the TicketDefinition PricingRange component.
+ */
+export interface PricingRangeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    minPrice: number;
+    maxPrice: number;
+    currency: string;
+    formattedPriceRange: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the pricing range for the ticket definition. Only renders when ticket definition has pricing options.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketDefinition.PricingRange className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketDefinition.PricingRange asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </TicketDefinition.PricingRange>
+ *
+ * // asChild with react component
+ * <TicketDefinition.PricingRange asChild>
+ *   {React.forwardRef(({ minPrice, maxPrice, currency, formattedPriceRange, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       {formattedPriceRange}
+ *     </span>
+ *   ))}
+ * </TicketDefinition.PricingRange>
+ * ```
+ */
+export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreTicketDefinition.PricingRange>
+        {({ minPrice, maxPrice, currency }) => {
+          const formattedPriceRange = `${minPrice} - ${maxPrice} ${currency}`;
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.ticketDefinitionPricingRange}
+              customElement={children}
+              customElementProps={{
+                minPrice,
+                maxPrice,
+                currency,
+                formattedPriceRange,
+              }}
+              content={formattedPriceRange}
+              {...otherProps}
+            >
+              <span>{formattedPriceRange}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreTicketDefinition.PricingRange>
+    );
+  },
+);
+
+/**
  * Props for the TicketDefinition Remaining component.
  */
 export interface RemainingProps {
@@ -432,8 +511,8 @@ export interface SaleStartDateProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    /** Sale start date in ISO string format */
-    startDate: string;
+    /** Sale start date */
+    startDate: Date;
     /** Formatted sale start date */
     startDateFormatted: string;
   }>;
@@ -498,8 +577,8 @@ export interface SaleEndDateProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    /** Sale end date in ISO string format */
-    endDate: string;
+    /** Sale end date */
+    endDate: Date;
     /** Formatted sale end date */
     endDateFormatted: string;
     /** Whether sale has ended */
@@ -545,7 +624,6 @@ export const SaleEndDate = React.forwardRef<HTMLElement, SaleEndDateProps>(
             asChild={asChild}
             className={className}
             data-testid={TestIds.ticketDefinitionSaleEndDate}
-            data-sale-ended={saleEnded}
             customElement={children}
             customElementProps={{ endDate, endDateFormatted, saleEnded }}
             content={endDateFormatted}

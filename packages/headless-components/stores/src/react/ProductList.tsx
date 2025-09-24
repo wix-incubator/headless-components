@@ -91,6 +91,8 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   },
 );
 
+Root.displayName = 'ProductList.Root';
+
 /**
  * Internal component to handle the Root content with service access
  */
