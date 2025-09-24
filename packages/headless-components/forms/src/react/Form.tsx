@@ -797,8 +797,7 @@ export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
     const _form = {
       ...form,
       id: form?._id,
-      // @ts-ignore
-      fields: form.fields.map((field) => ({ ...field, id: field._id })),
+      fields: form?.formFields?.map((field) => ({ ...field, id: field._id })),
     };
 
     const [formValues, setFormValues] = useState<FormValues>({});
@@ -814,7 +813,6 @@ export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
 
     return (
       <FormViewer
-        // @ts-ignore
         form={_form}
         values={formValues}
         onChange={handleFormChange}
