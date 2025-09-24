@@ -504,11 +504,11 @@ interface PlanFreeTrialDaysData {
 
 ```tsx
 <Plan.FreeTrialDays>
-  {React.forwardRef(({freeTrialDays, ...props}, ref) => (
-    <span ref={ref} {...props} className="text-sm">
-      {freeTrialDays}
+  {React.forwardRef(({ freeTrialDays }, ref) => {
+    return <span ref={ref} className="text-sm" data-testid="plan-free-trial-days">
+      Free trial for {freeTrialDays} days
     </span>
-  ))}
+  })}
 </Plan.FreeTrialDays>
 ```
 ---
