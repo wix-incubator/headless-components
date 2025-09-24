@@ -17,7 +17,6 @@ enum StateFilter {
 export interface ScheduleListServiceAPI {
   items: ReadOnlySignal<ScheduleItem[]>;
   itemsGroups: ReadOnlySignal<ScheduleItemsGroup[]>;
-  totalItems: Signal<number>;
   error: Signal<string | null>;
   stageFilter: Signal<string | null>;
   tagFilters: Signal<string[]>;
@@ -28,9 +27,7 @@ export interface ScheduleListServiceAPI {
 }
 
 export interface ScheduleListServiceConfig {
-  limit: number;
   items: ScheduleItem[];
-  totalItems: number;
 }
 
 export const ScheduleListServiceDefinition = defineService<
@@ -48,7 +45,6 @@ export const ScheduleListService =
       const error = signalsService.signal<string | null>(null);
       const stageFilter = signalsService.signal<string | null>(null);
       const tagFilters = signalsService.signal<string[]>([]);
-      const totalItems = signalsService.signal<number>(config.totalItems);
 
       const itemsGroups = signalsService.computed(() => {
         const currentItems = items.get();
@@ -88,7 +84,6 @@ export const ScheduleListService =
         items,
         itemsGroups,
         error,
-        totalItems,
         stageFilter,
         tagFilters,
         stageNames,
@@ -101,15 +96,20 @@ export const ScheduleListService =
 
 export async function loadScheduleListServiceConfig(
   eventId: string,
-  limit: number = 2,
+  loadAll = false,
 ): Promise<ScheduleListServiceConfig> {
-  const listScheduleResult = await listScheduleItems(eventId, limit);
+  const limit = loadAll ? 100 : 2;
+  const schedule = await listScheduleItems(eventId, limit);
 
-  return {
-    limit,
-    items: listScheduleResult.items ?? [],
-    totalItems: listScheduleResult.pagingMetadata?.total || 0,
-  };
+  while (schedule.pagingMetadata!.total! > schedule.items!.length && loadAll) {
+    const restItems = (
+      await listScheduleItems(eventId, limit, schedule.items!.length)
+    ).items!;
+
+    schedule.items = schedule.items!.concat(restItems);
+  }
+
+  return { items: schedule.items! };
 }
 
 const listScheduleItems = async (
