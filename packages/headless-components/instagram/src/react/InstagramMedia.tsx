@@ -2,7 +2,6 @@ import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { useService } from '@wix/services-manager-react';
 import { InstagramMediaItemServiceDefinition } from '../services/index.js';
-import { MediaGallery } from '@wix/headless-media/react';
 import type { MediaItem } from '@wix/headless-media/services';
 
 export enum TestIds {
@@ -124,20 +123,11 @@ export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>((props, r
 export interface MediaGalleriesProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactNode;
-  infinite?: boolean;
-  autoPlay?: { direction?: 'forward' | 'backward'; intervalMs?: number };
 }
 
 export const MediaGalleries = React.forwardRef<HTMLDivElement, MediaGalleriesProps>(
   (props, ref) => {
-    const { children, className, infinite, autoPlay, ...otherProps } = props;
-    const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-    const mediaItem = mediaItemService.mediaItem.get();
-
-    const media: MediaItem[] = mediaItem?.mediaUrl
-      ? [{ image: mediaItem.mediaUrl, altText: mediaItem.altText }]
-      : [];
-
+    const { children, className, ...otherProps } = props;
     return (
       <div
         ref={ref}
@@ -145,11 +135,7 @@ export const MediaGalleries = React.forwardRef<HTMLDivElement, MediaGalleriesPro
         data-testid={TestIds.instagramMediaGalleries}
         {...otherProps}
       >
-        <MediaGallery.Root
-          mediaGalleryServiceConfig={{ media, infinite, autoPlay }}
-        >
-          {children}
-        </MediaGallery.Root>
+        {children}
       </div>
     );
   },
@@ -160,17 +146,55 @@ export interface MediaGalleryRepeaterProps {
 }
 
 export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({ children }) => {
-  // For compatibility with the docs interface, simply render children.
-  // In practice, the example uses <MediaGallery.Root /> inside.
-  return <>{children}</>;
+  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
+  const mediaItem = mediaItemService.mediaItem.get();
+
+  const media: MediaItem[] = (mediaItem?.type === 'video'
+    ? mediaItem.thumbnailUrl
+    : mediaItem?.mediaUrl) ? [
+      {
+        image: (mediaItem.type === 'video'
+          ? mediaItem.thumbnailUrl!
+          : mediaItem.mediaUrl) as string,
+        altText: mediaItem.altText,
+      },
+    ] : [];
+
+  const injectConfig = (child: React.ReactNode): React.ReactNode => {
+    if (!React.isValidElement(child)) return child;
+    // Inject mediaGalleryServiceConfig into MediaGallery.Root children
+    return React.cloneElement(child as any, {
+      ...(child as any).props,
+      mediaGalleryServiceConfig: { media },
+    });
+  };
+
+  return <>{React.Children.map(children, injectConfig)}</>;
 };
 
+export interface MediaGalleryItemsProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const MediaGalleryItems = React.forwardRef<HTMLDivElement, MediaGalleryItemsProps>(
+  ({ children, className, ...otherProps }, ref) => {
+    return (
+      <div ref={ref} className={className} {...otherProps}>
+        {children}
+      </div>
+    );
+  },
+);
+
 export const InstagramMedia = {
-  caption: Caption,
-  mediaType: MediaType,
-  userName: UserName,
-  timestamp: Timestamp,
+  Root: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Caption,
+  MediaType,
+  UserName,
+  Timestamp,
   MediaGalleries,
+  MediaGalleryItems,
   MediaGalleryRepeater,
 };
 
