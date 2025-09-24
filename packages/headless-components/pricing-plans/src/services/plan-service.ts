@@ -35,6 +35,7 @@ export interface PlanWithEnhancedData extends plansV3.Plan {
     }[];
     recurrence: PlanRecurrence | null;
     duration: PlanDuration | null;
+    freeTrialDays: number | null;
   };
 }
 
@@ -90,15 +91,16 @@ export function enhancePlanData(plan: plansV3.Plan): PlanWithEnhancedData {
   return {
     ...plan,
     enhancedData: {
-      price: formatPlanPrice(plan),
+      price: getPlanPriceData(plan),
       additionalFees: getFormattedAdditionalFeesData(plan),
       recurrence: getPlanRecurrence(plan),
       duration: getPlanDuration(plan),
+      freeTrialDays: getPlanFreeTrialDays(plan),
     },
   };
 }
 
-function formatPlanPrice(
+function getPlanPriceData(
   plan: plansV3.Plan,
 ): PlanWithEnhancedData['enhancedData']['price'] {
   const pricingVariant = plan.pricingVariants?.[0];
@@ -174,6 +176,17 @@ function getPlanRecurrence(
   const period = billingTerms.billingCycle?.period as ValidPeriod;
 
   return { count, period };
+}
+
+function getPlanFreeTrialDays(
+  plan: plansV3.Plan,
+): PlanWithEnhancedData['enhancedData']['freeTrialDays'] {
+  const pricingVariant = plan.pricingVariants?.[0];
+  if (!pricingVariant) {
+    throw new Error('No pricing variant found');
+  }
+
+  return pricingVariant.freeTrialDays ?? null;
 }
 
 function isPlanRecurring(plan: plansV3.Plan): boolean {
