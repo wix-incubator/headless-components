@@ -31,6 +31,8 @@ export default defineConfig({
       alias: {
         "@wix/blog/components": "@wix/headless-blog/react",
         "@wix/blog/services": "@wix/headless-blog/services",
+        "@wix/pricing-plans/components": "@wix/headless-pricing-plans/react",
+        "@wix/pricing-plans/services": "@wix/headless-pricing-plans/services",
       },
     },
   },

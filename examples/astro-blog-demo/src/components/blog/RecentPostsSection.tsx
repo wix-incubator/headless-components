@@ -11,7 +11,7 @@ interface RecentPostsSectionProps {
   /** The base url of the category page, commonly end with trailing slash, e.g. "/category/" */
   categoryPageBaseUrl: string;
   /** The date locale to use for the dates */
-  dateLocale: string;
+  uiLocale: string;
 }
 
 /**
@@ -24,7 +24,7 @@ interface RecentPostsSectionProps {
  *   recentPostsServiceConfig={recentPostsConfig}
  *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
- *   dateLocale="en-US"
+ *   uiLocale="en-US"
  * />
  * ```
  */
@@ -32,7 +32,7 @@ export default function RecentPostsSection({
   recentPostsServiceConfig,
   postPageBaseUrl,
   categoryPageBaseUrl,
-  dateLocale,
+  uiLocale,
 }: RecentPostsSectionProps) {
   return (
     <Blog.Feed.Root blogFeedServiceConfig={recentPostsServiceConfig}>
@@ -49,7 +49,7 @@ export default function RecentPostsSection({
               <BlogFeedCardEditorial
                 postPageBaseUrl={postPageBaseUrl}
                 categoryPageBaseUrl={categoryPageBaseUrl}
-                dateLocale={dateLocale}
+                uiLocale={uiLocale}
               />
             </Blog.Feed.PostItemRepeater>
           </div>
