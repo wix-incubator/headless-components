@@ -40,14 +40,12 @@ export function Schedule({
                 className="font-light text-content-primary"
               />
             </div>
-            <div>
-              <a
-                href={`${eventsPagePath}/${eventServiceConfig.event.slug}`}
-                className="border border-gray-300 font-light text-content-primary py-2 px-4 hover:underline"
-              >
-                Get tickets
-              </a>
-            </div>
+            <a
+              href={`${eventsPagePath}/${eventServiceConfig.event.slug}`}
+              className="border border-gray-300 font-light text-content-primary py-2 px-4 hover:underline h-fit"
+            >
+              Get tickets
+            </a>
           </div>
         </EventPrimitive.Root>
         <ScheduleListPrimitive.Root
