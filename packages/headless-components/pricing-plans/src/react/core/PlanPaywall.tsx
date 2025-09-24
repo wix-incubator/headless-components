@@ -30,6 +30,7 @@ export interface PaywallData {
   error: string | null;
   hasAccess: boolean;
   isLoggedIn: boolean;
+  accessPlanIds: string[];
 }
 
 interface PaywallProps {
@@ -37,12 +38,17 @@ interface PaywallProps {
 }
 
 export function Paywall({ children }: PaywallProps) {
-  const { isLoadingSignal, errorSignal, hasAccessSignal, isLoggedInSignal } =
-    useService(PlanPaywallServiceDefinition);
+  const {
+    isLoadingSignal,
+    errorSignal,
+    hasAccessSignal,
+    isLoggedInSignal,
+    accessPlanIds,
+  } = useService(PlanPaywallServiceDefinition);
   const isLoading = isLoadingSignal.get();
   const error = errorSignal.get();
   const hasAccess = hasAccessSignal.get();
   const isLoggedIn = isLoggedInSignal.get();
 
-  return children({ isLoading, error, hasAccess, isLoggedIn });
+  return children({ isLoading, error, hasAccess, isLoggedIn, accessPlanIds });
 }

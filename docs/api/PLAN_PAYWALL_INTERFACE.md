@@ -100,13 +100,6 @@ interface PlanPaywallData {
   })}
 </PlanPaywall.Paywall>
 ```
-
-**Data Attributes**
-- `data-testid="plan-paywall-paywall"` - Applied to paywall element
-- `data-is-loading` - Boolean indicating loading state
-- `data-has-error` - Boolean indicating error state
-- `data-has-access` - Boolean indicating if user has access
-- `data-is-logged-in` - Boolean indicating if user is logged in
 ---
 
 ### PlanPaywall.RestrictedContent
@@ -135,14 +128,29 @@ Component that displays the fallback content if the member does not have any of 
 **Props**
 ```tsx
 interface FallbackProps {
-  children: React.ReactNode;
+  asChild?: boolean;
+  children:
+    | AsChildChildren<{ accessPlanIds: string[]; isLoggedIn: boolean }>
+    | React.ReactNode;
 }
 ```
 
 **Example**
 ```tsx
+// Default usage
 <PlanPaywall.Fallback>
-  <div>You need to buy a plan to access this content</div>
+  <div>Fallback content</div>
+</PlanPaywall.Fallback>
+
+// With asChild with react component
+<PlanPaywall.Fallback asChild>
+  {React.forwardRef(({accessPlanIds, isLoggedIn}, ref) => {
+    if (!isLoggedIn) {
+      return <div ref={ref}>Please log in to access this content</div>;
+    }
+
+    return <div ref={ref}>You need to buy one of the following plans to access this content: {accessPlanIds.join(', ')}</div>;
+  })}
 </PlanPaywall.Fallback>
 ```
 ---
@@ -161,6 +169,9 @@ interface ErrorComponentProps {
 
 **Example**
 ```tsx
+// Default usage
+<PlanPaywall.ErrorComponent />
+
 // With asChild
 <PlanPaywall.ErrorComponent asChild>
   <div>There was an error checking member access</div>
@@ -175,3 +186,7 @@ interface ErrorComponentProps {
   ))}
 </PlanPaywall.ErrorComponent>
 ```
+
+**Data Attributes**
+- `data-testid="plan-paywall-error-component"` - Applied to error component
+---

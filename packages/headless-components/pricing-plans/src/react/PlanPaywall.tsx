@@ -1,3 +1,4 @@
+import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { PlanPaywallServiceConfig } from '../services/index.js';
 import {
@@ -7,7 +8,6 @@ import {
 } from './core/PlanPaywall.js';
 
 enum PlanPaywallTestId {
-  Paywall = 'plan-paywall-paywall',
   ErrorComponent = 'plan-paywall-error',
 }
 
@@ -94,19 +94,12 @@ interface PaywallProps {
 export const Paywall = ({ asChild, children, loadingState }: PaywallProps) => (
   <CorePaywall>
     {(paywallData) => (
-        <AsChildSlot
-          asChild={asChild}
-          customElement={children}
-          customElementProps={paywallData}
-          data-testid={PlanPaywallTestId.Paywall}
-          data-is-loading={paywallData.isLoading}
-          data-has-error={paywallData.error !== null}
-          data-has-access={paywallData.hasAccess}
-          data-is-logged-in={paywallData.isLoggedIn}
-        >
-        <div>
-          {paywallData.isLoading ? loadingState : (children as React.ReactNode)}
-        </div>
+      <AsChildSlot
+        asChild={asChild}
+        customElement={children}
+        customElementProps={paywallData}
+      >
+        {paywallData.isLoading ? loadingState : (children as React.ReactNode)}
       </AsChildSlot>
     )}
   </CorePaywall>
@@ -130,17 +123,23 @@ interface RestrictedContentProps {
 export const RestrictedContent = ({ children }: RestrictedContentProps) => (
   <CorePaywall>
     {({ hasAccess, isLoading, error }) => {
-      if (isLoading || !!error) {
+      if (isLoading || !!error || !hasAccess) {
         return null;
       }
 
-      return hasAccess ? children : null;
+      return children;
     }}
   </CorePaywall>
 );
 
+export type PlanPaywallFallbackData = Pick<
+  PlanPaywallData,
+  'accessPlanIds' | 'isLoggedIn'
+>;
+
 interface FallbackProps {
-  children: React.ReactNode;
+  asChild?: boolean;
+  children: AsChildChildren<PlanPaywallFallbackData> | React.ReactNode;
 }
 
 /**
@@ -152,23 +151,49 @@ interface FallbackProps {
  * <PlanPaywall.Fallback>
  *   <div>Fallback content</div>
  * </PlanPaywall.Fallback>
+ *
+ * // With asChild with react component
+ * <PlanPaywall.Fallback asChild>
+ *   {React.forwardRef(({accessPlanIds, isLoggedIn}, ref) => {
+ *     if (!isLoggedIn) {
+ *       return <div ref={ref}>Please log in to access this content</div>;
+ *     }
+ *
+ *     return <div ref={ref}>You need to buy one of the following plans to access this content: {accessPlanIds.join(', ')}</div>;
+ *   })}
+ * </PlanPaywall.Fallback>
  * ```
  */
-export const Fallback = ({ children }: FallbackProps) => (
-  <CorePaywall>
-    {({ hasAccess, error, isLoading }) => {
-      if (isLoading || !!error) {
-        return null;
-      }
+export const Fallback = React.forwardRef<HTMLElement, FallbackProps>(
+  ({ asChild, children }, ref) => (
+    <CorePaywall>
+      {({ hasAccess, error, isLoading, isLoggedIn, accessPlanIds }) => {
+        if (isLoading || !!error || hasAccess) {
+          return null;
+        }
 
-      return hasAccess ? null : children;
-    }}
-  </CorePaywall>
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            customElement={children}
+            customElementProps={
+              { accessPlanIds, isLoggedIn } satisfies PlanPaywallFallbackData
+            }
+          >
+            {children}
+          </AsChildSlot>
+        );
+      }}
+    </CorePaywall>
+  ),
 );
+
+export type PlanPaywallErrorData = Pick<PlanPaywallData, 'error'>;
 
 interface ErrorComponentProps {
   asChild?: boolean;
-  children: AsChildChildren<{ error: string }> | React.ReactNode;
+  children: AsChildChildren<PlanPaywallErrorData> | React.ReactNode;
   className?: string;
 }
 
@@ -196,11 +221,10 @@ interface ErrorComponentProps {
  * </PlanPaywall.ErrorComponent>
  * ```
  */
-export const ErrorComponent = ({
-  asChild,
-  children,
-  className,
-}: ErrorComponentProps) => (
+export const ErrorComponent = React.forwardRef<
+  HTMLElement,
+  ErrorComponentProps
+>(({ asChild, children, className }, ref) => (
   <CorePaywall>
     {({ error }) => {
       if (!error) {
@@ -209,9 +233,10 @@ export const ErrorComponent = ({
 
       return (
         <AsChildSlot
+          ref={ref}
           asChild={asChild}
           customElement={children}
-          customElementProps={{ error }}
+          customElementProps={{ error } satisfies PlanPaywallErrorData}
           data-testid={PlanPaywallTestId.ErrorComponent}
           className={className}
         >
@@ -220,4 +245,4 @@ export const ErrorComponent = ({
       );
     }}
   </CorePaywall>
-);
+));

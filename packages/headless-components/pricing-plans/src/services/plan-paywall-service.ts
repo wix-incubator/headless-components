@@ -16,6 +16,7 @@ export const PlanPaywallServiceDefinition = defineService<{
   errorSignal: ReadOnlySignal<string | null>;
   hasAccessSignal: ReadOnlySignal<boolean>;
   isLoggedInSignal: ReadOnlySignal<boolean>;
+  accessPlanIds: string[];
 }>('planPaywallService');
 
 export interface PlanPaywallServiceConfig {
@@ -86,6 +87,7 @@ export const PlanPaywallService =
         errorSignal,
         hasAccessSignal,
         isLoggedInSignal,
+        accessPlanIds: config.accessPlanIds,
       };
     },
   );
