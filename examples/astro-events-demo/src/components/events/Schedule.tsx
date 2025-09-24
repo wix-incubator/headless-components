@@ -42,9 +42,9 @@ export function Schedule({
             </div>
             <a
               href={`${eventsPagePath}/${eventServiceConfig.event.slug}`}
-              className="border border-gray-300 font-light text-content-primary py-2 px-4 hover:underline h-fit"
+              className="h-fit border border-gray-300 rounded-[5px] py-2 px-4 font-light text-content-primary hover:underline"
             >
-              Get tickets
+              Get Tickets
             </a>
           </div>
         </EventPrimitive.Root>
