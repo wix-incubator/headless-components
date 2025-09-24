@@ -2,11 +2,6 @@ import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
-  EventService,
-  type EventServiceConfig,
-  EventServiceDefinition,
-} from '../../services/event-service.js';
-import {
   ScheduleListService,
   type ScheduleListServiceConfig,
   ScheduleListServiceDefinition,
@@ -19,8 +14,6 @@ export interface RootProps {
   children: React.ReactNode;
   /** Configuration for the schedule list service */
   scheduleListServiceConfig: ScheduleListServiceConfig;
-  /** Configuration for the event service */
-  eventServiceConfig: EventServiceConfig;
 }
 
 /**
@@ -29,17 +22,15 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { children, scheduleListServiceConfig, eventServiceConfig } = props;
+  const { children, scheduleListServiceConfig } = props;
 
   return (
     <WixServices
-      servicesMap={createServicesMap()
-        .addService(
-          ScheduleListServiceDefinition,
-          ScheduleListService,
-          scheduleListServiceConfig,
-        )
-        .addService(EventServiceDefinition, EventService, eventServiceConfig)}
+      servicesMap={createServicesMap().addService(
+        ScheduleListServiceDefinition,
+        ScheduleListService,
+        scheduleListServiceConfig,
+      )}
     >
       {children}
     </WixServices>
@@ -106,8 +97,6 @@ export interface GroupsProps {
 export interface GroupsRenderProps {
   /** List of grouped schedule items */
   itemsGroups: ScheduleItemsGroup[];
-  /** Indicates whether schedule items are currently being loaded */
-  isLoading: boolean;
 }
 
 /**
@@ -118,9 +107,8 @@ export interface GroupsRenderProps {
 export function Groups(props: GroupsProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
   const itemsGroups = scheduleListService.itemsGroups.get();
-  const isLoading = scheduleListService.isLoading.get();
 
-  return props.children({ itemsGroups, isLoading });
+  return props.children({ itemsGroups });
 }
 
 export interface GroupRepeaterProps {
@@ -177,11 +165,11 @@ export function StageFilter(props: StageFilterProps): React.ReactNode {
   const currentStageFilter = scheduleListService.stageFilter.get();
 
   const setStageFilter = (stageName: string | null) => {
-    scheduleListService.loadItems({ stageName });
+    scheduleListService.setStageFilter(stageName);
   };
 
   const clearStageFilter = () => {
-    scheduleListService.loadItems({ stageName: null });
+    scheduleListService.setStageFilter(null);
   };
 
   if (!stageNames.length) {
@@ -255,35 +243,4 @@ export function TagFilterRepeater(
   }
 
   return props.children({ tags, currentTagFilters });
-}
-
-export interface LoadMoreTriggerProps {
-  /** Render prop function */
-  children: (props: LoadMoreTriggerRenderProps) => React.ReactNode;
-}
-
-export interface LoadMoreTriggerRenderProps {
-  /** Indicates whether more schedule items are being loaded */
-  isLoading: boolean;
-  /** Indicates whether there are more schedule items to load */
-  hasMoreItems: boolean;
-  /** Function to load more schedule items */
-  loadMoreItems: () => void;
-}
-
-/**
- * ScheduleList LoadMoreTrigger core component that provides load more trigger data.
- *
- * @component
- */
-export function LoadMoreTrigger(props: LoadMoreTriggerProps): React.ReactNode {
-  const scheduleListService = useService(ScheduleListServiceDefinition);
-  const isLoading = scheduleListService.isLoadingMore.get();
-  const hasMoreItems = scheduleListService.hasMoreItems.get();
-
-  return props.children({
-    isLoading,
-    hasMoreItems,
-    loadMoreItems: scheduleListService.loadMoreItems,
-  });
 }

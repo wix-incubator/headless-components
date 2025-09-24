@@ -67,13 +67,9 @@ export function Tag(props: TagProps): React.ReactNode {
 
   const toggleTagFilter = () => {
     if (active) {
-      scheduleListService.loadItems({
-        tags: tagFilters.filter((t) => t !== tag),
-      });
+      scheduleListService.setTagFilters(tagFilters.filter((t) => t !== tag));
     } else {
-      scheduleListService.loadItems({
-        tags: [...tagFilters, tag],
-      });
+      scheduleListService.setTagFilters([...tagFilters, tag]);
     }
   };
 

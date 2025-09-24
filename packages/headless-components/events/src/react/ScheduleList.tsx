@@ -4,7 +4,6 @@ import * as CoreScheduleList from './core/ScheduleList.js';
 import * as ScheduleItem from './ScheduleItem.js';
 import * as ScheduleItemTag from './ScheduleItemTag.js';
 import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
-import { type EventServiceConfig } from '../services/event-service.js';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
@@ -14,7 +13,6 @@ enum TestIds {
   scheduleListGroups = 'schedule-list-groups',
   scheduleListStageFilter = 'schedule-list-stage-filter',
   scheduleListTagFilters = 'schedule-list-tag-filters',
-  scheduleListLoadMore = 'schedule-list-load-more',
 }
 
 /**
@@ -25,8 +23,6 @@ export interface RootProps {
   children: React.ReactNode;
   /** Configuration for the schedule list service */
   scheduleListServiceConfig: ScheduleListServiceConfig;
-  /** Configuration for the event service */
-  eventServiceConfig: EventServiceConfig;
 }
 
 /**
@@ -62,12 +58,11 @@ export interface RootProps {
  * ```
  */
 export const Root = (props: RootProps): React.ReactNode => {
-  const { children, scheduleListServiceConfig, eventServiceConfig } = props;
+  const { children, scheduleListServiceConfig } = props;
 
   return (
     <CoreScheduleList.Root
       scheduleListServiceConfig={scheduleListServiceConfig}
-      eventServiceConfig={eventServiceConfig}
     >
       {children}
     </CoreScheduleList.Root>
@@ -191,7 +186,6 @@ export interface GroupsProps {
     | React.ReactNode
     | AsChildChildren<{
         itemsGroups: ScheduleItemsGroupType[];
-        isLoading: boolean;
       }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -225,7 +219,7 @@ export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
 
     return (
       <CoreScheduleList.Groups>
-        {({ itemsGroups, isLoading }) => {
+        {({ itemsGroups }) => {
           if (!itemsGroups.length) {
             return emptyState || null;
           }
@@ -237,7 +231,7 @@ export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
               className={className}
               data-testid={TestIds.scheduleListGroups}
               customElement={children}
-              customElementProps={{ itemsGroups, isLoading }}
+              customElementProps={{ itemsGroups }}
               {...otherProps}
             >
               <div>{children as React.ReactNode}</div>
@@ -477,77 +471,3 @@ export const TagFilterRepeater = (
     </CoreScheduleList.TagFilterRepeater>
   );
 };
-
-/**
- * Props for the ScheduleList LoadMoreTrigger component.
- */
-export interface LoadMoreTriggerProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    isLoading: boolean;
-    loadMoreItems: () => void;
-  }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-  /** The label to display inside the button */
-  label?: string;
-}
-
-/**
- * Displays a button to load more schedule items. Not rendered if no schedule items are left to load.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <ScheduleList.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Load More" />
- *
- * // asChild with primitive
- * <ScheduleList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
- *   <button>Load More</button>
- * </ScheduleList.LoadMoreTrigger>
- *
- * // asChild with react component
- * <ScheduleList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
- *   {React.forwardRef(({ isLoading, loadMoreItems, ...props }, ref) => (
- *     <button ref={ref} {...props}>
- *       {isLoading ? 'Loading...' : 'Load More'}
- *     </button>
- *   ))}
- * </ScheduleList.LoadMoreTrigger>
- * ```
- */
-export const LoadMoreTrigger = React.forwardRef<
-  HTMLElement,
-  LoadMoreTriggerProps
->((props, ref) => {
-  const { asChild, children, className, label, ...otherProps } = props;
-
-  return (
-    <CoreScheduleList.LoadMoreTrigger>
-      {({ isLoading, hasMoreItems, loadMoreItems }) => {
-        if (!hasMoreItems) {
-          return null;
-        }
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListLoadMore}
-            customElement={children}
-            customElementProps={{ isLoading, loadMoreItems }}
-            disabled={isLoading}
-            onClick={loadMoreItems}
-            {...otherProps}
-          >
-            <button>{label}</button>
-          </AsChildSlot>
-        );
-      }}
-    </CoreScheduleList.LoadMoreTrigger>
-  );
-});

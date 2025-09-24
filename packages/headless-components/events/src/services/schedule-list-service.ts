@@ -8,8 +8,6 @@ import {
 import { type ScheduleItem } from './schedule-item-service.js';
 import { type ScheduleItemsGroup } from './schedule-items-group-service.js';
 import { formatDate } from '../utils/date.js';
-import { EventServiceDefinition } from './event-service.js';
-import { getErrorMessage } from '../utils/errors.js';
 
 enum StateFilter {
   PUBLISHED = schedule.StateFilter.PUBLISHED,
@@ -20,19 +18,11 @@ export interface ScheduleListServiceAPI {
   items: ReadOnlySignal<ScheduleItem[]>;
   itemsGroups: ReadOnlySignal<ScheduleItemsGroup[]>;
   totalItems: Signal<number>;
-  hasMoreItems: ReadOnlySignal<boolean>;
-  isLoading: Signal<boolean>;
-  isLoadingMore: Signal<boolean>;
   error: Signal<string | null>;
   stageFilter: Signal<string | null>;
   tagFilters: Signal<string[]>;
   stageNames: ReadOnlySignal<string[]>;
   tags: ReadOnlySignal<string[]>;
-  loadItems: (options: {
-    stageName?: string | null;
-    tags?: string[];
-  }) => Promise<void>;
-  loadMoreItems: () => Promise<void>;
   setStageFilter: (stageName: string | null) => void;
   setTagFilters: (tags: string[]) => void;
 }
@@ -52,26 +42,26 @@ export const ScheduleListService =
   implementService.withConfig<ScheduleListServiceConfig>()(
     ScheduleListServiceDefinition,
     ({ getService, config }) => {
-      const eventService = getService(EventServiceDefinition);
       const signalsService = getService(SignalsServiceDefinition);
-
-      const eventId = eventService.event.get()._id!;
 
       const items = signalsService.signal<ScheduleItem[]>(config.items);
       const error = signalsService.signal<string | null>(null);
       const stageFilter = signalsService.signal<string | null>(null);
       const tagFilters = signalsService.signal<string[]>([]);
-      const isLoading = signalsService.signal<boolean>(false);
-      const isLoadingMore = signalsService.signal<boolean>(false);
       const totalItems = signalsService.signal<number>(config.totalItems);
-      const hasMoreItems = signalsService.computed<boolean>(
-        () => items.get().length < totalItems.get(),
-      );
 
       const itemsGroups = signalsService.computed(() => {
         const currentItems = items.get();
+        const currentStageFilter = stageFilter.get();
+        const currentTagFilters = tagFilters.get();
 
-        return groupScheduleItemsByDate(currentItems);
+        const filteredItems = filterScheduleItems(
+          currentItems,
+          currentStageFilter,
+          currentTagFilters,
+        );
+
+        return groupScheduleItemsByDate(filteredItems);
       });
 
       const stageNames = signalsService.computed(() => {
@@ -94,77 +84,17 @@ export const ScheduleListService =
         tagFilters.set(tags);
       };
 
-      const loadMoreItems = async () => {
-        isLoadingMore.set(true);
-        error.set(null);
-
-        try {
-          const offset =
-            items.get().length < totalItems.get() ? items.get().length : 0;
-
-          const listScheduleResult = await listScheduleItems({
-            eventId,
-            limit: config.limit,
-            offset,
-            stageName: [stageFilter.get()!],
-            tag: tagFilters.get(),
-          });
-
-          items.set([...items.get(), ...(listScheduleResult.items ?? [])]);
-          totalItems.set(listScheduleResult.pagingMetadata?.total ?? 0);
-        } catch (err) {
-          error.set(getErrorMessage(err));
-        } finally {
-          isLoadingMore.set(false);
-        }
-      };
-
-      const loadItems = async ({
-        stageName,
-        tags,
-      }: {
-        stageName?: string | null;
-        tags?: string[];
-      }) => {
-        isLoading.set(true);
-        error.set(null);
-
-        stageFilter.set(stageName || null);
-        tagFilters.set(tags || []);
-
-        try {
-          const listScheduleResult = await listScheduleItems({
-            eventId,
-            limit: config.limit,
-            stageName: [stageName!],
-            tag: tags,
-          });
-
-          items.set(listScheduleResult.items ?? []);
-          totalItems.set(listScheduleResult.pagingMetadata?.total ?? 0);
-        } catch (err) {
-          error.set(getErrorMessage(err));
-        } finally {
-          isLoading.set(false);
-        }
-      };
-
       return {
         items,
         itemsGroups,
         error,
         totalItems,
-        hasMoreItems,
-        isLoading,
-        isLoadingMore,
         stageFilter,
         tagFilters,
         stageNames,
         tags,
         setStageFilter,
         setTagFilters,
-        loadItems,
-        loadMoreItems,
       };
     },
   );
@@ -210,6 +140,31 @@ const listScheduleItems = async ({
 
   return listScheduleResult;
 };
+
+function filterScheduleItems(
+  items: ScheduleItem[],
+  stageFilter: string | null,
+  tagFilters: string[],
+): ScheduleItem[] {
+  return items.filter((item) => {
+    if (stageFilter && item.stageName !== stageFilter) {
+      return false;
+    }
+
+    if (tagFilters.length > 0) {
+      const itemTags = item.tags || [];
+      const hasAllTags = tagFilters.every((filterTag) =>
+        itemTags.includes(filterTag),
+      );
+
+      if (!hasAllTags) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+}
 
 function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
   const grouped = new Map<string, ScheduleItemsGroup>();
