@@ -3,6 +3,7 @@ import React from 'react';
 import { type EventServiceConfig } from '../services/event-service.js';
 import { type TicketDefinitionListServiceConfig } from '../services/ticket-definition-list-service.js';
 import { type TicketDefinition as TicketDefinitionType } from '../services/ticket-definition-service.js';
+import { type CheckoutServiceConfig } from '../services/checkout-service.js';
 import * as TicketDefinition from './TicketDefinition.js';
 import * as CoreTicketsPicker from './core/TicketsPicker.js';
 
@@ -22,6 +23,8 @@ export interface RootProps {
   eventServiceConfig: EventServiceConfig;
   /** Ticket definition list service configuration */
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
+  /** Checkout service configuration */
+  checkoutServiceConfig: CheckoutServiceConfig;
 }
 
 /**
@@ -34,9 +37,13 @@ export interface RootProps {
  * ```tsx
  * import { TicketsPicker } from '@wix/events/components';
  *
- * function TicketsPickerComponent({ eventServiceConfig, ticketDefinitionListServiceConfig }) {
+ * function TicketsPickerComponent({ eventServiceConfig, ticketDefinitionListServiceConfig, checkoutServiceConfig }) {
  *   return (
- *     <TicketsPicker.Root eventServiceConfig={eventServiceConfig} ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}>
+ *     <TicketsPicker.Root
+ *       eventServiceConfig={eventServiceConfig}
+ *       ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+ *       checkoutServiceConfig={checkoutServiceConfig}
+ *     >
  *       <TicketsPicker.TicketDefinitions>
  *         <TicketsPicker.TicketDefinitionRepeater>
  *           <TicketDefinition.Name />
@@ -62,13 +69,18 @@ export interface RootProps {
  * ```
  */
 export const Root = (props: RootProps) => {
-  const { children, eventServiceConfig, ticketDefinitionListServiceConfig } =
-    props;
+  const {
+    children,
+    eventServiceConfig,
+    ticketDefinitionListServiceConfig,
+    checkoutServiceConfig,
+  } = props;
 
   return (
     <CoreTicketsPicker.Root
       eventServiceConfig={eventServiceConfig}
       ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+      checkoutServiceConfig={checkoutServiceConfig}
     >
       {children}
     </CoreTicketsPicker.Root>

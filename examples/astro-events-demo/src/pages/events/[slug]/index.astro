@@ -3,6 +3,7 @@ import {
   loadEventServiceConfig,
   loadEventListServiceConfig,
   loadTicketDefinitionListServiceConfig,
+  loadScheduleListServiceConfig,
 } from '@wix/headless-events/services';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import EventDetailsPage from '../../../react-pages/event-details';
@@ -23,10 +24,13 @@ if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
 }
 
-const ticketDefinitionListServiceConfig =
-  await loadTicketDefinitionListServiceConfig(
-    eventServiceConfigResult.config.event._id
-  );
+const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
+  await Promise.all([
+    loadTicketDefinitionListServiceConfig(
+      eventServiceConfigResult.config.event._id
+    ),
+    loadScheduleListServiceConfig(eventServiceConfigResult.config.event._id),
+  ]);
 ---
 
 <BaseLayout>
@@ -39,6 +43,10 @@ const ticketDefinitionListServiceConfig =
     eventServiceConfig={eventServiceConfigResult.config}
     eventListServiceConfig={eventListServiceConfig}
     ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+    checkoutServiceConfig={{
+      noTicketDefinitionsSelectedError: 'Select a ticket'
+    }}
+    scheduleListServiceConfig={scheduleListServiceConfig}
     eventsPagePath="/events"
     formPagePath={`/events/${slug}/form`}
   />

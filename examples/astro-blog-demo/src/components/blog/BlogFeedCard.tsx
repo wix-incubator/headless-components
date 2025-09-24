@@ -45,12 +45,12 @@ export function BlogFeedCardSideBySide({
     <article
       {...attributes}
       className={cn(
-        " bg-foreground/5 group grid auto-cols-fr lg:grid-flow-col overflow-hidden rounded-xl",
+        "group grid auto-cols-fr overflow-hidden rounded-xl bg-foreground/5 lg:grid-flow-col",
         className
       )}
     >
       <Blog.Post.CoverImage className="mb-6 aspect-video h-full w-full object-cover" />
-      <div className="flex grow flex-col p-8 ">
+      <div className="flex grow flex-col p-8">
         <PostCategories className="mb-4" baseUrl={categoryPageBaseUrl} />
 
         <Blog.Post.Link
@@ -67,7 +67,7 @@ export function BlogFeedCardSideBySide({
 
         <PostExcerpt className="mb-4" />
 
-        <SeparatedItems className="text-foreground/80 text-sm">
+        <SeparatedItems className="font-paragraph text-sm text-foreground/80">
           <Blog.Post.PublishDate locale={dateLocale} />
 
           <Blog.Post.ReadingTime asChild>
@@ -139,7 +139,7 @@ export function BlogFeedCardEditorial({
 
       <div className="mb-0 mt-auto"></div>
 
-      <SeparatedItems className="text-foreground/80 text-sm">
+      <SeparatedItems className="font-paragraph text-sm text-foreground/80">
         <Blog.Post.PublishDate locale={dateLocale} />
 
         <Blog.Post.ReadingTime asChild>

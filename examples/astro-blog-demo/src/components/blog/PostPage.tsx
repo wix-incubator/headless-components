@@ -15,8 +15,6 @@ import { SharePostActions } from "./SharePostActions";
 interface PostPageProps {
   /** Loaded result of `loadBlogPostServiceConfig` */
   blogPostServiceConfig: BlogPostServiceConfig;
-  /** Full href of the post page, used for social sharing */
-  href: string;
   /** The href of the feed page, used for the "Back to Blog" link */
   feedPageHref: string;
   /** The base url of the category page, commonly end with trailing slash, e.g. "/category/" */
@@ -43,7 +41,6 @@ interface PostPageProps {
  */
 export default function PostPage({
   blogPostServiceConfig,
-  href,
   feedPageHref,
   categoryPageBaseUrl,
   dateLocale,
@@ -68,8 +65,8 @@ export default function PostPage({
 
           <PostTitle variant="xl" />
 
-          <div className="text-foreground/80 text-sm">
-            <SeparatedItems className="hidden text-foreground/80 sm:flex">
+          <div className="text-sm text-foreground/80">
+            <SeparatedItems className="hidden font-paragraph text-foreground/80 sm:flex">
               <div className="flex items-center gap-x-2">
                 <PostAuthorAvatar avatarSize="md" />
                 <Blog.Post.AuthorName />
@@ -98,7 +95,7 @@ export default function PostPage({
 
         <Blog.Post.TagItems className="flex flex-wrap gap-2">
           <Blog.Post.TagItemRepeater>
-            <Chip size="sm"asChild>
+            <Chip size="sm" asChild>
               <Blog.Tag.Label />
             </Chip>
           </Blog.Post.TagItemRepeater>

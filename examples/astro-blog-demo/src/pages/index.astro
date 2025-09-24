@@ -1,92 +1,26 @@
 ---
-import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
-import FeedPage from "@/components/blog/FeedPage";
-import {
-  createCustomCategory,
-  loadBlogCategoriesServiceConfig,
-  loadBlogFeedServiceConfig,
-} from "@wix/blog/services";
-
-import { loadSEOTagsServiceConfig } from "@wix/seo/services";
-import { SEO } from "@wix/seo/components";
 import { ClientRouter } from "astro:transitions";
-
 import "@/styles/global.css";
-
-export const prerender = false;
-
-const [
-  blogFeedServiceConfig,
-  blogCategoriesServiceConfig,
-  seoTagsServiceConfig,
-] = await Promise.all([
-  loadBlogFeedServiceConfig({
-    pageSize: 10,
-    showPinnedPostsFirst: true,
-    sort: [
-      {
-        fieldName: "firstPublishedDate",
-        order: "DESC",
-      },
-    ],
-  }),
-  loadBlogCategoriesServiceConfig(),
-  loadSEOTagsServiceConfig({
-    pageUrl: Astro.url.href,
-    itemData: {
-      pageName: "Blog",
-      seoData: {
-        tags: [
-          {
-            type: "meta",
-            props: {
-              name: "description",
-              content:
-                "Explore our blog featuring the latest insights on headless components, web development, and modern architecture.",
-            },
-          },
-        ],
-      },
-    },
-  }),
-]);
-
-const customCategoriesToPrepend = [
-  createCustomCategory({
-    label: "All posts",
-    slug: "/blog",
-    description:
-      "Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.",
-  }),
-];
 ---
 
-<html lang="en">
+<html lang="en" class="bg-background font-paragraph text-foreground">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <title>Page Not Found | Blog</title>
+    <meta
+      name="description"
+      content="The page you're looking for could not be found."
+    />
     <ClientRouter />
-    <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
   </head>
   <body>
-    <div class="min-h-screen bg-background">
-      <div class="mx-auto max-w-6xl px-6 py-12">
-        <BlogCategoriesSection
-          pathname={Astro.url.pathname}
-          categoryPageBaseUrl="/blog/category/"
-          blogCategoriesServiceConfig={blogCategoriesServiceConfig}
-          customCategoriesToPrepend={customCategoriesToPrepend}
-        />
-        <FeedPage
-          client:load
-          blogFeedServiceConfig={blogFeedServiceConfig}
-          postPageBaseUrl="/blog/post/"
-          categoryPageBaseUrl="/blog/category/"
-          dateLocale="en-US"
-        />
-      </div>
-    </div>
+    <nav class="grid h-screen w-screen place-content-center">
+      <h1 class="font-heading text-2xl">astro-blog-demo</h1>
+      <a class="text-primary" href="/astro-router/blog/">Astro Router</a>
+      <a class="text-primary" href="/react-router/blog/">React Router</a>
+    </nav>
   </body>
 </html>

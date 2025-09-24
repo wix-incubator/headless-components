@@ -19,16 +19,15 @@ export function BlogPostRoute() {
           <div className="mx-auto mb-14 max-w-3xl">
             <PostPage
               blogPostServiceConfig={blogPostServiceConfig}
-              href={window.location.href}
-              feedPageHref="/blog/react-router/"
-              categoryPageBaseUrl="/blog/react-router/category/"
+              feedPageHref="/react-router/blog/"
+              categoryPageBaseUrl="/react-router/blog/category/"
               dateLocale="en-US"
             />
           </div>
           <RecentPostsSection
             recentPostsServiceConfig={recentPostsServiceConfig}
-            postPageBaseUrl="/blog/react-router/post/"
-            categoryPageBaseUrl="/blog/react-router/category/"
+            postPageBaseUrl="/react-router/blog/post/"
+            categoryPageBaseUrl="/react-router/blog/category/"
             dateLocale="en-US"
           />
         </div>

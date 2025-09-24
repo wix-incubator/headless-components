@@ -33,6 +33,7 @@ export interface RichContentProps {
 
 export interface RichContentRenderProps {
   content: any;
+  pricingPlanIds: string[];
 }
 
 /**
@@ -45,12 +46,13 @@ export const RichContent = (props: RichContentProps) => {
 
   const post = service.post.get();
   const content = post?.richContent;
+  const pricingPlanIds = post?.pricingPlanIds ?? [];
 
   if (!content) {
     return null;
   }
 
-  return props.children({ content });
+  return props.children({ content, pricingPlanIds });
 };
 
 RichContent.displayName = 'Blog.Post.RichContent/Core';
