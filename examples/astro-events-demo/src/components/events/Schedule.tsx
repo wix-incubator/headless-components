@@ -13,11 +13,13 @@ import {
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
+  eventsPagePath: string;
 }
 
 export function Schedule({
   eventServiceConfig,
   scheduleListServiceConfig,
+  eventsPagePath,
 }: ScheduleProps) {
   return (
     <div className="min-h-screen bg-surface-primary">
@@ -26,16 +28,26 @@ export function Schedule({
           Schedule
         </h1>
         <EventPrimitive.Root event={eventServiceConfig.event}>
-          <div className="flex flex-col mb-10">
-            <EventPrimitive.Title className="font-light text-content-primary" />
-            <EventPrimitive.Date
-              format="full"
-              className="font-light text-content-primary"
-            />
-            <EventPrimitive.Location
-              format="full"
-              className="font-light text-content-primary"
-            />
+          <div className="flex justify-between">
+            <div className="flex flex-col mb-10">
+              <EventPrimitive.Title className="font-light text-content-primary" />
+              <EventPrimitive.Date
+                format="full"
+                className="font-light text-content-primary"
+              />
+              <EventPrimitive.Location
+                format="full"
+                className="font-light text-content-primary"
+              />
+            </div>
+            <div>
+              <a
+                href={`${eventsPagePath}/${eventServiceConfig.event.slug}`}
+                className="border border-gray-300 font-light text-content-primary py-2 px-4 hover:underline"
+              >
+                Get tickets
+              </a>
+            </div>
           </div>
         </EventPrimitive.Root>
         <ScheduleListPrimitive.Root
