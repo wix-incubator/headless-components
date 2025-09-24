@@ -4,6 +4,7 @@ import { type TicketDefinition } from '../services/ticket-definition-service.js'
 import { type PricingOption as PricingOptionType } from '../services/pricing-option-service.js';
 import * as PricingOption from './PricingOption.js';
 import * as CoreTicketDefinition from './core/TicketDefinition.js';
+import { isTicketDefinitionAvailable } from '../utils/ticket-definition.js';
 
 enum TestIds {
   ticketDefinitionRoot = 'ticket-definition-root',
@@ -85,6 +86,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         data-fixed-pricing={!!ticketDefinition.pricingMethod?.fixedPrice}
         data-guest-pricing={!!ticketDefinition.pricingMethod?.guestPrice}
         data-pricing-options={!!ticketDefinition.pricingMethod?.pricingOptions}
+        data-available={isTicketDefinitionAvailable(ticketDefinition)}
         customElement={children}
         customElementProps={{}}
         {...otherProps}
@@ -929,6 +931,8 @@ export const PricingOptions = React.forwardRef<
 export interface PricingOptionRepeaterProps {
   /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the pricing option element */
+  className?: string;
 }
 
 /**
@@ -949,7 +953,7 @@ export interface PricingOptionRepeaterProps {
 export const PricingOptionRepeater = (
   props: PricingOptionRepeaterProps,
 ): React.ReactNode => {
-  const { children } = props;
+  const { children, className } = props;
 
   return (
     <CoreTicketDefinition.PricingOptionRepeater>
@@ -958,6 +962,7 @@ export const PricingOptionRepeater = (
           <PricingOption.Root
             key={pricingOption.optionId}
             pricingOption={pricingOption}
+            className={className}
           >
             {children}
           </PricingOption.Root>

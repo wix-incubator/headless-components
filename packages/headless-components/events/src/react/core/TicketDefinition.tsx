@@ -13,6 +13,7 @@ import { EventServiceDefinition } from '../../services/event-service.js';
 import {
   getTicketDefinitionFee,
   getTicketDefinitionTax,
+  isTicketDefinitionAvailable,
 } from '../../utils/ticket-definition.js';
 
 export interface RootProps {
@@ -425,9 +426,7 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-  const saleScheduled =
-    ticketDefinition.saleStatus === 'SALE_SCHEDULED' &&
-    !!ticketDefinition.salePeriod?.startDate;
+  const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
 
   if (!saleScheduled) {
     return null;
@@ -462,9 +461,7 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-  const saleScheduled =
-    ticketDefinition.saleStatus === 'SALE_SCHEDULED' &&
-    !!ticketDefinition.salePeriod?.endDate;
+  const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
   const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
 
   if (saleScheduled || !ticketDefinition.salePeriod) {
@@ -496,7 +493,7 @@ export interface QuantityRenderProps {
 }
 
 /**
- * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options, or if sale hasn't started, or if the ticket definition is sold out.
+ * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options, or if ticket definition is not available (is sold out or sale hasn't started).
  *
  * @component
  */
@@ -508,12 +505,10 @@ export function Quantity(props: QuantityProps): React.ReactNode {
 
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const ticketDefinitionId = ticketDefinition._id!;
+  const pricingOptions =
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
 
-  if (
-    ticketDefinition.pricingMethod?.pricingOptions ||
-    ticketDefinition.saleStatus !== 'SALE_STARTED' ||
-    ticketDefinition.limitPerCheckout === 0
-  ) {
+  if (!isTicketDefinitionAvailable(ticketDefinition) || pricingOptions.length) {
     return null;
   }
 

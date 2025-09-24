@@ -1,4 +1,5 @@
 import { wixEventsV2 } from '@wix/events';
+import { type TicketDefinition } from '../services/ticket-definition-service.js';
 
 const FEE_RATE = '2.5';
 
@@ -45,4 +46,13 @@ export const getTicketDefinitionFee = (
     amount,
     formattedAmount,
   };
+};
+
+export const isTicketDefinitionAvailable = (
+  ticketDefinition: TicketDefinition,
+) => {
+  return (
+    !!ticketDefinition.limitPerCheckout &&
+    ticketDefinition.saleStatus === 'SALE_STARTED'
+  );
 };
