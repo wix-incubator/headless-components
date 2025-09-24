@@ -103,7 +103,7 @@ export async function loadScheduleListServiceConfig(
   eventId: string,
   limit: number = 2,
 ): Promise<ScheduleListServiceConfig> {
-  const listScheduleResult = await listScheduleItems({ eventId, limit });
+  const listScheduleResult = await listScheduleItems(eventId, limit);
 
   return {
     limit,
@@ -112,26 +112,14 @@ export async function loadScheduleListServiceConfig(
   };
 }
 
-interface ListScheduleItemsOptions {
-  eventId: string;
-  limit: number;
-  offset?: number;
-  stageName?: string[];
-  tag?: string[];
-}
-
-const listScheduleItems = async ({
-  eventId,
-  limit,
+const listScheduleItems = async (
+  eventId: string,
+  limit: number,
   offset = 0,
-  stageName = [],
-  tag = [],
-}: ListScheduleItemsOptions) => {
+) => {
   const listScheduleResult = await schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
-    stageName,
-    tag,
     paging: {
       limit,
       offset,
