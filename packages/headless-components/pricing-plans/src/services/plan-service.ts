@@ -91,7 +91,7 @@ export function enhancePlanData(plan: plansV3.Plan): PlanWithEnhancedData {
   return {
     ...plan,
     enhancedData: {
-      price: getPricingData(plan),
+      price: getPlanPriceData(plan),
       additionalFees: getFormattedAdditionalFeesData(plan),
       recurrence: getPlanRecurrence(plan),
       duration: getPlanDuration(plan),
@@ -100,7 +100,7 @@ export function enhancePlanData(plan: plansV3.Plan): PlanWithEnhancedData {
   };
 }
 
-function getPricingData(
+function getPlanPriceData(
   plan: plansV3.Plan,
 ): PlanWithEnhancedData['enhancedData']['price'] {
   const pricingVariant = plan.pricingVariants?.[0];
