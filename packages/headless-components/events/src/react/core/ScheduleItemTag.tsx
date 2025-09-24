@@ -62,13 +62,21 @@ export function Tag(props: TagProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
 
   const tag = tagService.tag.get();
-  const active = scheduleListService.tagFilters.get().includes(tag);
+  const stageName = scheduleListService.stageFilter.get();
+  const tagFilters = scheduleListService.tagFilters.get();
+  const active = tagFilters.includes(tag);
 
   const toggleTagFilter = () => {
     if (active) {
-      scheduleListService.removeTagFilter(tag);
+      scheduleListService.loadItems({
+        stageName,
+        tags: tagFilters.filter((t) => t !== tag),
+      });
     } else {
-      scheduleListService.addTagFilter(tag);
+      scheduleListService.loadItems({
+        stageName,
+        tags: [...tagFilters, tag],
+      });
     }
   };
 

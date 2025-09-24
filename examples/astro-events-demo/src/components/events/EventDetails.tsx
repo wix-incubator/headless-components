@@ -119,6 +119,7 @@ export function EventDetails({
 
           <ScheduleListPrimitive.Root
             scheduleListServiceConfig={scheduleListServiceConfig}
+            eventServiceConfig={eventServiceConfig}
           >
             <ScheduleListPrimitive.Items className="space-y-4 mb-6">
               <h2 className="text-3xl font-light text-content-primary">

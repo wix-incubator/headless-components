@@ -40,6 +40,7 @@ export function Schedule({
         </EventPrimitive.Root>
         <ScheduleListPrimitive.Root
           scheduleListServiceConfig={scheduleListServiceConfig}
+          eventServiceConfig={eventServiceConfig}
         >
           <div className="flex mb-6 justify-between">
             <div className="flex items-center gap-2">
@@ -111,6 +112,10 @@ export function Schedule({
               </ScheduleItemsGroupPrimitive.Items>
             </ScheduleListPrimitive.GroupRepeater>
           </ScheduleListPrimitive.Groups>
+          <ScheduleListPrimitive.LoadMoreTrigger
+            className="btn-primary block font-light py-2 px-4 mt-8 mx-auto"
+            label="Load More"
+          />
         </ScheduleListPrimitive.Root>
       </div>
     </div>
