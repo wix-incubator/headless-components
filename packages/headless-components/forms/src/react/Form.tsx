@@ -811,6 +811,8 @@ export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
       setFormErrors(errors);
     }, []);
 
+    if (!form) return <div>Form not found, oops!</div>;
+
     return (
       <FormViewer
         form={_form}

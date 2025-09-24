@@ -17,5 +17,5 @@ if (typeof slug !== 'string' || !guidRegex.test(slug)) {
   <title>Form</title>
   <meta name="description" content="Form" />
 
-  <FormsPage formServiceConfig={{formId: slug}} />
+  <FormsPage formServiceConfig={{formId: slug}} client:load />
 </BaseLayout>
