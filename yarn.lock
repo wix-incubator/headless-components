@@ -19534,6 +19534,7 @@ __metadata:
   dependencies:
     "@astrojs/cloudflare": "npm:^12.5.3"
     "@astrojs/react": "npm:^4.3.0"
+    "@tailwindcss/vite": "npm:^4.0.13"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
     "@wix/astro": "npm:^1.0.8"
@@ -19547,6 +19548,7 @@ __metadata:
     prettier-plugin-astro: "npm:^0.14.1"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
+    tailwindcss: "npm:^4.1.7"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
