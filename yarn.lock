@@ -6618,12 +6618,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/form-public@https://npm.dev.wixpress.com/api/npm/npm-repos/@wix/form-public/-/@wix/form-public-0.5.0.tgz":
-  version: 0.5.0
-  resolution: "@wix/form-public@https://npm.dev.wixpress.com/api/npm/npm-repos/@wix/form-public/-/@wix/form-public-0.5.0.tgz"
+"@wix/form-public@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@wix/form-public@npm:0.9.0"
   peerDependencies:
     react: ^18.3.1
-  checksum: 10c0/b608456edf756bcaf15c559489c6836e2f092d95c2c0f092dfb83ea012fc429f2e47dc2a60bf5ca5caba6aee4772621e8b4f2bd824bd975e35ece7dc9957bc33
+  checksum: 10c0/a60d32b5b6432ed0d1a5bc8faa798cf57928917d80dee475deb26a0b58dea9233b3cb4c67ce7e39dac8f342b4a56a313fea4f09b349b07754181f982ffa5c335
   languageName: node
   linkType: hard
 
@@ -6870,7 +6870,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/form-public": "https://npm.dev.wixpress.com/api/npm/npm-repos/@wix/form-public/-/@wix/form-public-0.5.0.tgz"
+    "@wix/form-public": "npm:^0.9.0"
     "@wix/forms": "npm:^1.0.292"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
