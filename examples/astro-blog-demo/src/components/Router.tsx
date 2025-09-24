@@ -1,3 +1,5 @@
+import { MemberProvider } from "@/integrations/members";
+import { MemberProviderDevTools } from "@/integrations/members/providers/MemberProviderDevTools";
 import {
   createBrowserRouter,
   Link,
@@ -57,7 +59,10 @@ const ReactRouterNavigationComponent: NavigationComponent = ({
 export default function AppRouter() {
   return (
     <NavigationProvider navigationComponent={ReactRouterNavigationComponent}>
-      <RouterProvider router={router} />
+      <MemberProvider>
+        <MemberProviderDevTools />
+        <RouterProvider router={router} />
+      </MemberProvider>
     </NavigationProvider>
   );
 }

@@ -21,14 +21,14 @@ export function BlogPostRoute() {
               blogPostServiceConfig={blogPostServiceConfig}
               feedPageHref="/react-router/blog/"
               categoryPageBaseUrl="/react-router/blog/category/"
-              dateLocale="en-US"
+              uiLocale="en-US"
             />
           </div>
           <RecentPostsSection
             recentPostsServiceConfig={recentPostsServiceConfig}
             postPageBaseUrl="/react-router/blog/post/"
             categoryPageBaseUrl="/react-router/blog/category/"
-            dateLocale="en-US"
+            uiLocale="en-US"
           />
         </div>
       </div>

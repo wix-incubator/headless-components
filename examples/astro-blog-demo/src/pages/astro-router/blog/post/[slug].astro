@@ -1,13 +1,13 @@
 ---
-import PostPage from "@/components/blog/PostPage";
 import RecentPostsSection from "@/components/blog/RecentPostsSection";
 import {
-loadBlogFeedServiceConfig,
-loadBlogPostServiceConfig,
+  loadBlogFeedServiceConfig,
+  loadBlogPostServiceConfig,
 } from "@wix/blog/services";
 import { SEO } from "@wix/seo/components";
 import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { ClientRouter } from "astro:transitions";
+import { PostPage } from "./PostPageWithProviders";
 
 import "@/styles/global.css";
 
@@ -64,7 +64,7 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
             blogPostServiceConfig={blogPostServiceConfig}
             feedPageHref="/astro-router/blog/"
             categoryPageBaseUrl="/astro-router/blog/category/"
-            dateLocale="en-US"
+            uiLocale="en-US"
           />
         </div>
         <RecentPostsSection
@@ -72,7 +72,7 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
           recentPostsServiceConfig={recentPostsServiceConfig}
           postPageBaseUrl="/astro-router/blog/post/"
           categoryPageBaseUrl="/astro-router/blog/category/"
-          dateLocale="en-US"
+          uiLocale="en-US"
         />
       </div>
     </div>
