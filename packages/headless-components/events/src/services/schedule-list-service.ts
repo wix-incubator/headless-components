@@ -173,7 +173,7 @@ export async function loadScheduleListServiceConfig(
   eventId: string,
   limit: number = 2,
 ): Promise<ScheduleListServiceConfig> {
-  const listScheduleResult = await listScheduleItems({ eventId, limit: 1 });
+  const listScheduleResult = await listScheduleItems({ eventId, limit });
 
   return {
     limit,
