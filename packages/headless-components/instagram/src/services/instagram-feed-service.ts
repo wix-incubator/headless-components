@@ -32,6 +32,24 @@ export interface InstagramMediaItem {
   timestamp: string;
   /** Alt text for accessibility */
   altText?: string;
+  /** Children media items for carousel posts */
+  children?: InstagramCarouselItem[];
+}
+
+/**
+ * Individual media item within a carousel post
+ */
+export interface InstagramCarouselItem {
+  /** Unique identifier for the carousel item */
+  id: string;
+  /** Type of the media */
+  type: 'image' | 'video';
+  /** URL to the media content */
+  mediaUrl: string;
+  /** Thumbnail URL for videos */
+  thumbnailUrl?: string;
+  /** Alt text for accessibility */
+  altText?: string;
 }
 
 /**

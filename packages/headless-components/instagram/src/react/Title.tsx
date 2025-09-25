@@ -1,5 +1,10 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
+import * as CoreInstagramFeed from './core/InstagramFeed.js';
+
+enum TestIds {
+  instagramFeedTitle = 'instagram-feed-title',
+}
 
 /**
  * Props for InstagramFeed Title component
@@ -11,8 +16,6 @@ export interface TitleProps {
   children?: AsChildChildren<{ title: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-  /** Custom title text (defaults to "Instagram Feed") */
-  title?: string;
 }
 
 /**
@@ -23,9 +26,6 @@ export interface TitleProps {
  * ```tsx
  * // Default usage
  * <InstagramFeed.Title className="text-2xl font-bold mb-4" />
- *
- * // Custom title
- * <InstagramFeed.Title title="Latest Posts" />
  *
  * // asChild with custom rendering
  * <InstagramFeed.Title asChild>
@@ -42,21 +42,25 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
     asChild,
     children,
     className,
-    title = 'Instagram Feed',
     ...otherProps
   } = props;
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      customElement={children}
-      customElementProps={{ title }}
-      content={title}
-      {...otherProps}
-    >
-      <h2>{title}</h2>
-    </AsChildSlot>
+    <CoreInstagramFeed.Title>
+      {({ title }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.instagramFeedTitle}
+          customElement={children}
+          customElementProps={{ title }}
+          content={title}
+          {...otherProps}
+        >
+          <h2>{title}</h2>
+        </AsChildSlot>
+      )}
+    </CoreInstagramFeed.Title>
   );
 });
