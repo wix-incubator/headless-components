@@ -1,9 +1,4 @@
 export { Root, type RootProps } from './Root.js';
-export {
-  MediaGalleries,
-  type MediaGalleriesProps,
-  type MediaGalleriesRenderProps,
-} from './FeedMediaGalleries.js';
 
 // New core components
 export {
