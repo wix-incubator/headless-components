@@ -1,5 +1,5 @@
 import { Form } from '@wix/headless-forms/react';
-import { type FormServiceConfigResult } from '@wix/headless-forms/services';
+import { type FormServiceConfig } from '@wix/headless-forms/services';
 
 import '../styles/theme-1.css';
 import TextInput from '../components/TextInput';
@@ -29,7 +29,7 @@ import Appointment from '../components/Appointment';
 import ImageChoice from '../components/ImageChoice';
 
 interface FormsPageProps {
-  formServiceConfig: FormServiceConfigResult;
+  formServiceConfig: FormServiceConfig;
 }
 
 const FIELD_MAP = {
@@ -61,14 +61,10 @@ const FIELD_MAP = {
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
-  if (formServiceConfig.type === 'notFound') {
-    return <div>Form not found</div>;
-  }
-
   return (
     <>
-      <h1>Form {formServiceConfig.config.form?._id}</h1>
-      <Form.Root formServiceConfig={formServiceConfig.config}>
+      <h1>Form {formServiceConfig.formId ?? formServiceConfig.form?._id}</h1>
+      <Form.Root formServiceConfig={formServiceConfig}>
         <Form.Loading className="flex justify-center p-4" />
         <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
         <Form.Error className="text-destructive p-4 rounded-lg mb-4" />

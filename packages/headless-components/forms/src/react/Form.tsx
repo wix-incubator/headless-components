@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
-
-import { type FormServiceConfig } from '../services/form-service';
-import * as CoreForm from './core/Form.js';
+import { useService } from '@wix/services-manager-react';
+import {
+  Form as FormViewer,
+  type FormValues,
+  type FormError,
+} from '@wix/form-public';
+import {
+  FormServiceDefinition,
+  type FormServiceConfig,
+} from '../services/form-service';
+import * as CoreForm from './core/Form';
 
 import {
   CheckboxGroupProps,
@@ -152,7 +160,7 @@ const RootContent = React.forwardRef<HTMLDivElement, RootContentProps>(
         customElementProps={{}}
         {...otherProps}
       >
-        <div>{React.isValidElement(children) ? children : null}</div>
+        <div>{children}</div>
       </AsChildSlot>
     );
   },
@@ -782,125 +790,43 @@ export interface FieldsProps {
  * };
  * ```
  */
-export const Fields = React.forwardRef<HTMLElement, FieldsProps>(
-  ({ fieldMap }) => {
-    // TODO: render real viewer
-    return <MockViewer fieldMap={fieldMap} />;
+export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
+  ({ fieldMap }, ref) => {
+    const formService = useService(FormServiceDefinition);
+    const form = formService.form.get();
+    const _form = {
+      ...form,
+      id: form?._id,
+      fields: form?.formFields?.map((field) => ({ ...field, id: field._id })),
+    };
+
+    const [formValues, setFormValues] = useState<FormValues>({});
+    const [formErrors, setFormErrors] = useState<FormError[]>([]);
+
+    const handleFormChange = useCallback((values: FormValues) => {
+      setFormValues(values);
+    }, []);
+
+    const handleFormValidate = useCallback((errors: FormError[]) => {
+      setFormErrors(errors);
+    }, []);
+
+    if (!form) return <div>Form not found, oops!</div>;
+
+    return (
+      <div ref={ref}>
+        <FormViewer
+          form={_form}
+          values={formValues}
+          onChange={handleFormChange}
+          errors={formErrors}
+          onValidate={handleFormValidate}
+          fields={fieldMap}
+        />
+      </div>
+    );
   },
 );
-
-const MockViewer = ({ fieldMap }: { fieldMap: FieldMap }) => {
-  // This is how fieldMap is expected to be used in the viewer
-  const schemaFields = {
-    // CONTACTS_FIELD_TYPES
-    CONTACTS_COMPANY: fieldMap.TEXT_INPUT,
-    CONTACTS_POSITION: fieldMap.TEXT_INPUT,
-    CONTACTS_TAX_ID: fieldMap.TEXT_INPUT,
-    CONTACTS_FIRST_NAME: fieldMap.TEXT_INPUT,
-    CONTACTS_LAST_NAME: fieldMap.TEXT_INPUT,
-    CONTACTS_EMAIL: fieldMap.TEXT_INPUT,
-    CONTACTS_BIRTHDATE: fieldMap.DATE_INPUT,
-    CONTACTS_PHONE: fieldMap.PHONE_INPUT,
-    CONTACTS_ADDRESS: fieldMap.TEXT_INPUT,
-    CONTACTS_SUBSCRIBE: fieldMap.CHECKBOX,
-
-    // QUIZ_FIELD_TYPES
-    QUIZ_MULTI_CHOICE: fieldMap.CHECKBOX_GROUP,
-    QUIZ_SINGLE_CHOICE: fieldMap.RADIO_GROUP,
-    QUIZ_SHORT_TEXT: fieldMap.TEXT_INPUT,
-    QUIZ_LONG_TEXT: fieldMap.TEXT_AREA,
-    QUIZ_NUMBER: fieldMap.NUMBER_INPUT,
-    QUIZ_FILE_UPLOAD: fieldMap.FILE_UPLOAD,
-    QUIZ_IMAGE_CHOICE: fieldMap.IMAGE_CHOICE, // TODO: add
-
-    // DEXT_FIELD_TYPES
-    DEXT_TEXT_INPUT: fieldMap.TEXT_INPUT,
-    DEXT_TEXT_AREA: fieldMap.TEXT_AREA,
-    DEXT_DROPDOWN: fieldMap.DROPDOWN,
-    DEXT_URL_INPUT: fieldMap.TEXT_INPUT,
-    DEXT_RADIO_GROUP: fieldMap.RADIO_GROUP,
-    DEXT_NUMBER_INPUT: fieldMap.NUMBER_INPUT,
-    DEXT_CHECKBOX: fieldMap.CHECKBOX,
-    DEXT_CHECKBOX_GROUP: fieldMap.CHECKBOX_GROUP,
-    DEXT_EMAIL: fieldMap.TEXT_INPUT,
-    DEXT_PHONE: fieldMap.PHONE_INPUT,
-    DEXT_RATING_INPUT: fieldMap.RATING_INPUT,
-    DEXT_DATE_PICKER: fieldMap.DATE_PICKER,
-    DEXT_TAGS: fieldMap.TAGS,
-
-    // SCHEDULING_FIELD_TYPES
-    APPOINTMENT: fieldMap.APPOINTMENT,
-    SERVICES_DROPDOWN: fieldMap.DROPDOWN,
-
-    // ECOM_FIELD_TYPES
-    ECOM_ADDITIONAL_INFO: fieldMap.TEXT_AREA,
-    ECOM_ADDRESS: fieldMap.TEXT_INPUT,
-    ECOM_FULL_NAME: fieldMap.TEXT_INPUT,
-    ECOM_PHONE: fieldMap.PHONE_INPUT,
-    ECOM_COMPANY_NAME: fieldMap.TEXT_INPUT,
-    ECOM_EMAIL: fieldMap.TEXT_INPUT,
-    ECOM_SUBSCRIPTION: fieldMap.CHECKBOX,
-
-    // BOOKINGS_FIELD_TYPES
-    BOOKINGS_FIRST_NAME: fieldMap.TEXT_INPUT,
-    BOOKINGS_LAST_NAME: fieldMap.TEXT_INPUT,
-    BOOKINGS_EMAIL: fieldMap.TEXT_INPUT,
-    BOOKINGS_PHONE: fieldMap.PHONE_INPUT,
-    BOOKINGS_ADDRESS: fieldMap.TEXT_INPUT,
-
-    // PAYMENTS_FIELD_TYPES
-    PRODUCT_LIST: fieldMap.PRODUCT_LIST,
-    DONATION: fieldMap.DONATION,
-    PAYMENT_INPUT: fieldMap.PAYMENT_INPUT, // could be TEXT_INPUT?
-    FIXED_PAYMENT: fieldMap.FIXED_PAYMENT, // could be TAGS?
-
-    // COMMON_FIELD_TYPES
-    TEXT_INPUT: fieldMap.TEXT_INPUT,
-    NUMBER_INPUT: fieldMap.NUMBER_INPUT,
-    URL_INPUT: fieldMap.TEXT_INPUT,
-    TEXT_AREA: fieldMap.TEXT_AREA,
-    DATE_INPUT: fieldMap.DATE_INPUT,
-    DATE_TIME_INPUT: fieldMap.DATE_TIME_INPUT,
-    TIME_INPUT: fieldMap.TIME_INPUT,
-    RADIO_GROUP: fieldMap.RADIO_GROUP,
-    CHECKBOX_GROUP: fieldMap.CHECKBOX_GROUP,
-    FILE_UPLOAD: fieldMap.FILE_UPLOAD,
-    CHECKBOX: fieldMap.CHECKBOX,
-    DROPDOWN: fieldMap.DROPDOWN,
-    // NESTED_FORM: 'NESTED_FORM',
-    MULTILINE_ADDRESS: fieldMap.MULTILINE_ADDRESS,
-    // are these relevant for headless?
-    MLA_COUNTRY: fieldMap.DROPDOWN,
-    MLA_CITY: fieldMap.TEXT_INPUT,
-    MLA_ADDRESS_LINE: fieldMap.TEXT_INPUT, // dropdown if autocomplete disabled?
-    MLA_ADDRESS_LINE_2: fieldMap.TEXT_INPUT,
-    MLA_POSTAL_CODE: fieldMap.TEXT_INPUT,
-    MLA_SUBDIVISION: fieldMap.DROPDOWN,
-    MLA_STREET_NAME: fieldMap.TEXT_INPUT,
-    MLA_STREET_NUMBER: fieldMap.TEXT_INPUT,
-    MLA_APARTMENT: fieldMap.TEXT_INPUT,
-    FULL_NAME_FIRST_NAME: fieldMap.TEXT_INPUT,
-    FULL_NAME_LAST_NAME: fieldMap.TEXT_INPUT,
-    FULL_NAME: fieldMap.TEXT_INPUT,
-    VAT_ID: fieldMap.TEXT_INPUT,
-    SIGNATURE: fieldMap.SIGNATURE,
-    RATING_INPUT: fieldMap.RATING_INPUT,
-    TAGS: fieldMap.TAGS,
-    DATE_PICKER: fieldMap.DATE_PICKER,
-
-    // READONLY_FIELD_TYPES
-    HEADER: fieldMap.TEXT,
-    RICH_TEXT: fieldMap.TEXT,
-    SUBMIT_BUTTON: fieldMap.SUBMIT_BUTTON,
-  };
-
-  return (
-    <>
-      <div>Form Fields</div>
-      <div>{JSON.stringify(schemaFields)}</div>
-    </>
-  );
-};
 
 /**
  * Main Form namespace containing all form components following the compound component pattern.
