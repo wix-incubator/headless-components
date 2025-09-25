@@ -35,9 +35,18 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({
                 )}
               >
                 <MediaGallery.Root
-                  mediaGalleryServiceConfig={{ media: mediaItem }}
+                  mediaGalleryServiceConfig={{
+                    media: [
+                      {
+                        image: (mediaItem.type === 'video'
+                          ? (mediaItem.thumbnailUrl || mediaItem.mediaUrl)
+                          : mediaItem.mediaUrl) || '',
+                        altText: mediaItem.altText || '',
+                      }
+                    ].filter(item => item.image) // Only include items with valid image URLs
+                  }}
                 >
-                  {children as React.ReactElement}
+                  {children}
                 </MediaGallery.Root>
               </WixServices>
             ))}

@@ -64,15 +64,21 @@ function InstagramWidget() {
           </div>
         }
       >
-        <InstagramFeed.InstagramMediaRepeater>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <InstagramMedia.MediaGalleries>
-              <InstagramMedia.MediaGalleryRepeater>
-                <MediaGallery.Root />
-              </InstagramMedia.MediaGalleryRepeater>
-            </InstagramMedia.MediaGalleries>
-          </div>
-        </InstagramFeed.InstagramMediaRepeater>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <InstagramFeed.InstagramMediaRepeater>
+            <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                <img
+                  src={src}
+                  alt={alt || ''}
+                  className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+            </MediaGallery.Viewport>
+            <MediaGallery.Previous />
+            <MediaGallery.Next />
+          </InstagramFeed.InstagramMediaRepeater>
+        </div>
       </InstagramFeed.InstagramMedias>
     </InstagramFeed.Root>
   );
@@ -102,9 +108,10 @@ The Instagram headless component follows the established 3-level architecture pa
    - Maps over media items and provides context for each item
 
 ### Individual Item Components
-- `InstagramMedia.*` - Components for accessing individual media item data
-- `InstagramMedia.MediaGalleries` - Container for media gallery functionality
-- `InstagramMedia.MediaGalleryRepeater` - Repeater for media gallery items
+- `InstagramMedia.*` - Components for accessing individual media item data (Caption, UserName, etc.)
+- Use `MediaGallery.*` components directly within `InstagramFeed.InstagramMediaRepeater`
+
+**Note:** Instagram requires `asChild` pattern for `MediaGallery.Viewport` because it uses external image URLs. Product components can use default pattern because they use Wix-managed media.
 
 ## Advanced Usage with AsChild Pattern
 
