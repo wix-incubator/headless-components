@@ -9,7 +9,7 @@ import {
 
 import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { SEO } from "@wix/seo/components";
-// Removed ClientRouter (astro:transitions)
+import { ClientRouter } from "astro:transitions";
 
 import "@/styles/global.css";
 
@@ -67,6 +67,7 @@ const customCategoriesToPrepend = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <ClientRouter />
     <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
   </head>
   <body>
