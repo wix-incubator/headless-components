@@ -201,3 +201,121 @@ export const TicketRepeater = React.forwardRef<
     </CoreOrder.TicketRepeater>
   );
 });
+
+export interface SubtotalProps {
+  /** Render prop function */
+  children: (props: SubtotalRenderProps) => React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export interface SubtotalRenderProps {
+  /** Subtotal */
+  value: string;
+  /** Currency */
+  currency: string;
+}
+
+export const Subtotal = React.forwardRef<HTMLElement, SubtotalProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreOrder.Subtotal>
+        {({ value, currency }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            customElement={children}
+            customElementProps={{ value, currency }}
+            content={value}
+            {...otherProps}
+          >
+            <span>{value}</span>
+          </AsChildSlot>
+        )}
+      </CoreOrder.Subtotal>
+    );
+  },
+);
+
+export interface TaxProps {
+  /** Render prop function */
+  children: (props: TaxRenderProps) => React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export interface TaxRenderProps {
+  /** Tax rate */
+  taxRate: string;
+  /** Tax value */
+  taxValue: string;
+  /** Currency */
+  currency: string;
+}
+
+export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreOrder.Tax>
+      {({ taxRate, taxValue, currency }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          customElement={children}
+          customElementProps={{ taxRate, taxValue, currency }}
+          content={taxValue}
+          {...otherProps}
+        >
+          <span>{taxValue}</span>
+        </AsChildSlot>
+      )}
+    </CoreOrder.Tax>
+  );
+});
+
+export interface TotalProps {
+  /** Render prop function */
+  children: (props: TotalRenderProps) => React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export interface TotalRenderProps {
+  /** Total value */
+  value: string;
+  /** Currency */
+  currency: string;
+}
+
+export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreOrder.Total>
+      {({ value, currency }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          customElement={children}
+          customElementProps={{ value, currency }}
+          content={value}
+          {...otherProps}
+        >
+          <span>{value}</span>
+        </AsChildSlot>
+      )}
+    </CoreOrder.Total>
+  );
+});

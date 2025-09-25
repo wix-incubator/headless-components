@@ -189,7 +189,43 @@ export function ThankYou({
                           </div>
                         </OrderPrimitive.TicketRepeater>
                         <div className="flex flex-row justify-end">
-                          <div className="w-[40%]">hello</div>
+                          <div className="w-[40%]">
+                            <div className="flex flex-col py-5 border-b border-gray-300">
+                              <OrderPrimitive.Subtotal
+                                asChild
+                                className="font-light text-content-primary justify-between flex"
+                              >
+                                {({ value, currency }) => (
+                                  <div>
+                                    <span>Subtotal:</span>
+                                    <span>{`${value} ${currency}`}</span>
+                                  </div>
+                                )}
+                              </OrderPrimitive.Subtotal>
+                              <OrderPrimitive.Tax
+                                asChild
+                                className="font-light text-content-primary justify-between flex"
+                              >
+                                {({ taxRate, taxValue, currency }) => (
+                                  <div>
+                                    <span>{`Tax (${taxRate}%)`}</span>
+                                    <span>{`${taxValue} ${currency}`}</span>
+                                  </div>
+                                )}
+                              </OrderPrimitive.Tax>
+                            </div>
+                            <OrderPrimitive.Total
+                              asChild
+                              className="font-light text-content-primary justify-between flex py-5"
+                            >
+                              {({ value, currency }) => (
+                                <div>
+                                  <span>Total:</span>
+                                  <span>{`${value} ${currency}`}</span>
+                                </div>
+                              )}
+                            </OrderPrimitive.Total>
+                          </div>
                         </div>
                       </OrderPrimitive.Tickets>
                       <div className="px-6 py-3 gap-1 flex flex-row items-center">

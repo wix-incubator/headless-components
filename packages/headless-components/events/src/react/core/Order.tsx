@@ -145,3 +145,73 @@ export function TicketRepeater(props: TicketRepeaterProps): React.ReactNode {
 
   return props.children({ tickets });
 }
+
+export interface SubtotalProps {
+  /** Render prop function */
+  children: (props: SubtotalRenderProps) => React.ReactNode;
+}
+
+export interface SubtotalRenderProps {
+  /** Subtotal value */
+  value: string;
+  /** Currency */
+  currency: string;
+}
+
+export function Subtotal(props: SubtotalProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const subtotal = orderService.order.get().invoice?.subTotal!;
+
+  return props.children({
+    value: subtotal.value!,
+    currency: subtotal.currency!,
+  });
+}
+
+export interface TaxProps {
+  /** Render prop function */
+  children: (props: TaxRenderProps) => React.ReactNode;
+}
+
+export interface TaxRenderProps {
+  /** Tax rate */
+  taxRate: string;
+  /** Tax value */
+  taxValue: string;
+  /** Currency */
+  currency: string;
+}
+
+export function Tax(props: TaxProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const tax = orderService.order.get().invoice?.tax;
+
+  if (!tax) {
+    return null;
+  }
+
+  return props.children({
+    taxRate: tax.rate!,
+    taxValue: tax.amount!.value!,
+    currency: tax.amount!.currency!,
+  });
+}
+
+export interface TotalProps {
+  /** Render prop function */
+  children: (props: TotalRenderProps) => React.ReactNode;
+}
+
+export interface TotalRenderProps {
+  /** Total value */
+  value: string;
+  /** Currency */
+  currency: string;
+}
+
+export function Total(props: TotalProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const total = orderService.order.get().invoice?.grandTotal!;
+
+  return props.children({ value: total.value!, currency: total.currency! });
+}
