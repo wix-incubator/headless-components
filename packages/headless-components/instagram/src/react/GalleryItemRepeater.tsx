@@ -12,7 +12,9 @@ export interface GalleryItemRepeaterProps {
   children: React.ReactNode;
 }
 
-export const GalleryItemRepeater: React.FC<GalleryItemRepeaterProps> = ({ children }) => {
+export const GalleryItemRepeater: React.FC<GalleryItemRepeaterProps> = ({
+  children,
+}) => {
   return (
     <CoreGalleryItems.GalleryItems>
       {({ hasItems, mediaItems }) => {
@@ -28,7 +30,10 @@ export const GalleryItemRepeater: React.FC<GalleryItemRepeaterProps> = ({ childr
   );
 };
 
-const ItemWrapper: React.FC<{ children: React.ReactNode; mediaItems: any[] }> = ({ children, mediaItems }) => {
+const ItemWrapper: React.FC<{
+  children: React.ReactNode;
+  mediaItems: any[];
+}> = ({ children, mediaItems }) => {
   return React.Children.map(children, (child) => {
     if (!React.isValidElement(child)) return child;
 
@@ -57,5 +62,3 @@ const ItemWrapper: React.FC<{ children: React.ReactNode; mediaItems: any[] }> = 
     });
   });
 };
-
-

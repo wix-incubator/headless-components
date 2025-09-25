@@ -25,7 +25,8 @@ export function UserName(props: UserNameProps) {
   const instagramFeedService = useService(InstagramFeedServiceDefinition);
   const feedData = instagramFeedService.feedData.get();
 
-  const displayName = feedData.account?.instagramInfo?.instagramUsername || 'unknown';
+  const displayName =
+    feedData.account?.instagramInfo?.instagramUsername || 'unknown';
   const displayValue = `@${displayName}`;
 
   return props.children({

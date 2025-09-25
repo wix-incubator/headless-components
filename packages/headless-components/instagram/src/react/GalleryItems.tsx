@@ -7,24 +7,22 @@ export interface GalleryItemsProps {
   emptyState?: React.ReactNode;
 }
 
-export const GalleryItems = React.forwardRef<HTMLDivElement, GalleryItemsProps>((props, ref) => {
-  const { children, emptyState } = props;
+export const GalleryItems = React.forwardRef<HTMLDivElement, GalleryItemsProps>(
+  (props, ref) => {
+    const { children, emptyState } = props;
 
-  return (
-    <CoreGalleryItems.GalleryItems>
-      {({ hasItems }) => {
-        if (!hasItems) return emptyState || null;
+    return (
+      <CoreGalleryItems.GalleryItems>
+        {({ hasItems }) => {
+          if (!hasItems) return emptyState || null;
 
-        return (
-          <div ref={ref}>
-            <MediaGallery.Thumbnails>
-              {children}
-            </MediaGallery.Thumbnails>
-          </div>
-        );
-      }}
-    </CoreGalleryItems.GalleryItems>
-  );
-});
-
-
+          return (
+            <div ref={ref}>
+              <MediaGallery.Thumbnails>{children}</MediaGallery.Thumbnails>
+            </div>
+          );
+        }}
+      </CoreGalleryItems.GalleryItems>
+    );
+  },
+);

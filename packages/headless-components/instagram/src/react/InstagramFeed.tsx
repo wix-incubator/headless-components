@@ -24,5 +24,3 @@ export type { GalleryItemRepeaterProps } from './GalleryItemRepeater.js';
 export type { InstagramMediasProps } from './InstagramMedias.js';
 export type { InstagramMediaItemsProps } from './InstagramMediaItems.js';
 export type { InstagramMediaRepeaterProps } from './InstagramMediaRepeater.js';
-
-

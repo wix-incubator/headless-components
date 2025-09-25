@@ -10,25 +10,21 @@ export interface InstagramMediasProps {
  * Container for Instagram media items list.
  * Renders nothing (or emptyState) when there are no media items.
  */
-export const InstagramMedias = React.forwardRef<HTMLDivElement, InstagramMediasProps>(
-  (props, ref) => {
-    const { children, emptyState } = props;
+export const InstagramMedias = React.forwardRef<
+  HTMLDivElement,
+  InstagramMediasProps
+>((props, ref) => {
+  const { children, emptyState } = props;
 
-    return (
-      <CoreGalleryItems.GalleryItems>
-        {({ hasItems }) => {
-          if (!hasItems) {
-            return emptyState || null;
-          }
+  return (
+    <CoreGalleryItems.GalleryItems>
+      {({ hasItems }) => {
+        if (!hasItems) {
+          return emptyState || null;
+        }
 
-          return (
-            <div ref={ref}>
-              {children}
-            </div>
-          );
-        }}
-      </CoreGalleryItems.GalleryItems>
-    );
-  },
-);
-
+        return <div ref={ref}>{children}</div>;
+      }}
+    </CoreGalleryItems.GalleryItems>
+  );
+});

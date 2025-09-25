@@ -16,28 +16,30 @@ export interface CaptionProps {
   className?: string;
 }
 
-export const Caption = React.forwardRef<HTMLElement, CaptionProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Caption = React.forwardRef<HTMLElement, CaptionProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreInstagramMedia.Caption>
-      {({ caption }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.instagramMediaCaption}
-          customElement={children}
-          customElementProps={{ caption }}
-          content={caption ?? ''}
-          {...otherProps}
-        >
-          <span>{caption}</span>
-        </AsChildSlot>
-      )}
-    </CoreInstagramMedia.Caption>
-  );
-});
+    return (
+      <CoreInstagramMedia.Caption>
+        {({ caption }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.instagramMediaCaption}
+            customElement={children}
+            customElementProps={{ caption }}
+            content={caption ?? ''}
+            {...otherProps}
+          >
+            <span>{caption}</span>
+          </AsChildSlot>
+        )}
+      </CoreInstagramMedia.Caption>
+    );
+  },
+);
 
 export interface MediaTypeProps {
   asChild?: boolean;
@@ -45,28 +47,30 @@ export interface MediaTypeProps {
   className?: string;
 }
 
-export const MediaType = React.forwardRef<HTMLElement, MediaTypeProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const MediaType = React.forwardRef<HTMLElement, MediaTypeProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreInstagramMedia.MediaType>
-      {({ mediaType, type }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.instagramMediaType}
-          customElement={children}
-          customElementProps={{ mediaType }}
-          content={type}
-          {...otherProps}
-        >
-          <span>{type}</span>
-        </AsChildSlot>
-      )}
-    </CoreInstagramMedia.MediaType>
-  );
-});
+    return (
+      <CoreInstagramMedia.MediaType>
+        {({ mediaType, type }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.instagramMediaType}
+            customElement={children}
+            customElementProps={{ mediaType }}
+            content={type}
+            {...otherProps}
+          >
+            <span>{type}</span>
+          </AsChildSlot>
+        )}
+      </CoreInstagramMedia.MediaType>
+    );
+  },
+);
 
 export interface UserNameProps {
   asChild?: boolean;
@@ -74,28 +78,30 @@ export interface UserNameProps {
   className?: string;
 }
 
-export const UserName = React.forwardRef<HTMLElement, UserNameProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const UserName = React.forwardRef<HTMLElement, UserNameProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreInstagramMedia.UserName>
-      {({ userName }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.instagramMediaUserName}
-          customElement={children}
-          customElementProps={{ userName }}
-          content={userName ?? ''}
-          {...otherProps}
-        >
-          <span>{userName}</span>
-        </AsChildSlot>
-      )}
-    </CoreInstagramMedia.UserName>
-  );
-});
+    return (
+      <CoreInstagramMedia.UserName>
+        {({ userName }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.instagramMediaUserName}
+            customElement={children}
+            customElementProps={{ userName }}
+            content={userName ?? ''}
+            {...otherProps}
+          >
+            <span>{userName}</span>
+          </AsChildSlot>
+        )}
+      </CoreInstagramMedia.UserName>
+    );
+  },
+);
 
 export interface TimestampProps {
   asChild?: boolean;
@@ -103,55 +109,60 @@ export interface TimestampProps {
   className?: string;
 }
 
-export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreInstagramMedia.Timestamp>
-      {({ timestamp }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          data-testid={TestIds.instagramMediaTimestamp}
-          customElement={children}
-          customElementProps={{ timestamp }}
-          content={timestamp}
-          {...otherProps}
-        >
-          <time dateTime={timestamp}>{timestamp}</time>
-        </AsChildSlot>
-      )}
-    </CoreInstagramMedia.Timestamp>
-  );
-});
+    return (
+      <CoreInstagramMedia.Timestamp>
+        {({ timestamp }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.instagramMediaTimestamp}
+            customElement={children}
+            customElementProps={{ timestamp }}
+            content={timestamp}
+            {...otherProps}
+          >
+            <time dateTime={timestamp}>{timestamp}</time>
+          </AsChildSlot>
+        )}
+      </CoreInstagramMedia.Timestamp>
+    );
+  },
+);
 
 export interface MediaGalleriesProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: React.ReactNode;
 }
 
-export const MediaGalleries = React.forwardRef<HTMLDivElement, MediaGalleriesProps>(
-  (props, ref) => {
-    const { children, className, ...otherProps } = props;
-    return (
-      <div
-        ref={ref}
-        className={className}
-        data-testid={TestIds.instagramMediaGalleries}
-        {...otherProps}
-      >
-        {children}
-      </div>
-    );
-  },
-);
+export const MediaGalleries = React.forwardRef<
+  HTMLDivElement,
+  MediaGalleriesProps
+>((props, ref) => {
+  const { children, className, ...otherProps } = props;
+  return (
+    <div
+      ref={ref}
+      className={className}
+      data-testid={TestIds.instagramMediaGalleries}
+      {...otherProps}
+    >
+      {children}
+    </div>
+  );
+});
 
 export interface MediaGalleryRepeaterProps {
   children: React.ReactNode;
 }
 
-export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({ children }) => {
+export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
+  children,
+}) => {
   return (
     <CoreInstagramMedia.MediaGalleryRepeater>
       {({ media }) => {
@@ -175,15 +186,16 @@ export interface MediaGalleryItemsProps {
   className?: string;
 }
 
-export const MediaGalleryItems = React.forwardRef<HTMLDivElement, MediaGalleryItemsProps>(
-  ({ children, className, ...otherProps }, ref) => {
-    return (
-      <div ref={ref} className={className} {...otherProps}>
-        {children}
-      </div>
-    );
-  },
-);
+export const MediaGalleryItems = React.forwardRef<
+  HTMLDivElement,
+  MediaGalleryItemsProps
+>(({ children, className, ...otherProps }, ref) => {
+  return (
+    <div ref={ref} className={className} {...otherProps}>
+      {children}
+    </div>
+  );
+});
 
 export const InstagramMedia = {
   Root: ({ children }: { children: React.ReactNode }) => <>{children}</>,

@@ -9,36 +9,44 @@ export interface GalleryProps {
   className?: string;
 }
 
-export const Gallery = React.forwardRef<HTMLElement, GalleryProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const Gallery = React.forwardRef<HTMLElement, GalleryProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreGalleryItems.GalleryItems>
-      {({ hasItems, mediaItems }) => {
-        if (!hasItems) return null;
+    return (
+      <CoreGalleryItems.GalleryItems>
+        {({ hasItems, mediaItems }) => {
+          if (!hasItems) return null;
 
-        // Transform mediaItems to mediaGalleryItems format
-        const mediaGalleryItems = mediaItems.map((mediaItem) => ({
-          image: mediaItem.type === 'video' ? (mediaItem.thumbnailUrl || mediaItem.mediaUrl) : mediaItem.mediaUrl,
-          altText: mediaItem.altText || mediaItem.caption || `Instagram ${mediaItem.type}`,
-        }));
+          // Transform mediaItems to mediaGalleryItems format
+          const mediaGalleryItems = mediaItems.map((mediaItem) => ({
+            image:
+              mediaItem.type === 'video'
+                ? mediaItem.thumbnailUrl || mediaItem.mediaUrl
+                : mediaItem.mediaUrl,
+            altText:
+              mediaItem.altText ||
+              mediaItem.caption ||
+              `Instagram ${mediaItem.type}`,
+          }));
 
-        return (
-          <MediaGallery.Root mediaGalleryServiceConfig={{ media: mediaGalleryItems }}>
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              customElement={children}
-              {...otherProps}
+          return (
+            <MediaGallery.Root
+              mediaGalleryServiceConfig={{ media: mediaGalleryItems }}
             >
-              <div>{React.isValidElement(children) ? children : null}</div>
-            </AsChildSlot>
-          </MediaGallery.Root>
-        );
-      }}
-    </CoreGalleryItems.GalleryItems>
-  );
-});
-
-
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                customElement={children}
+                {...otherProps}
+              >
+                <div>{React.isValidElement(children) ? children : null}</div>
+              </AsChildSlot>
+            </MediaGallery.Root>
+          );
+        }}
+      </CoreGalleryItems.GalleryItems>
+    );
+  },
+);

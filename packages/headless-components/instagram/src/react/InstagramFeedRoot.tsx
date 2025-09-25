@@ -43,5 +43,3 @@ export function Root(props: RootProps): React.ReactNode {
     </WixServices>
   );
 }
-
-

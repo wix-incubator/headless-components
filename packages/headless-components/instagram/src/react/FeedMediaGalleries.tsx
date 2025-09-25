@@ -17,36 +17,44 @@ export interface MediaGalleriesProps
  * Feed-level MediaGalleries wrapper that provides MediaGallery.Root
  * with the current feed media items, similar to the Stores pattern.
  */
-export const MediaGalleries = React.forwardRef<HTMLDivElement, MediaGalleriesProps>(
-  (props, ref) => {
-    const { children, className, infinite, autoPlay, renderDefault = true, ...otherProps } = props;
+export const MediaGalleries = React.forwardRef<
+  HTMLDivElement,
+  MediaGalleriesProps
+>((props, ref) => {
+  const {
+    children,
+    className,
+    infinite,
+    autoPlay,
+    renderDefault = true,
+    ...otherProps
+  } = props;
 
-    return (
-      <CoreFeedMediaGalleries.MediaGalleries>
-        {({ media }) => (
-          <div ref={ref} className={className} {...otherProps}>
-            <MediaGallery.Root mediaGalleryServiceConfig={{ media, infinite, autoPlay }}>
-              {renderDefault && (
-                <>
-                  <MediaGallery.Viewport />
-                  <div>
-                    <MediaGallery.Previous />
-                    <MediaGallery.Next />
-                  </div>
-                  <MediaGallery.Thumbnails>
-                    <MediaGallery.ThumbnailRepeater>
-                      <MediaGallery.ThumbnailItem />
-                    </MediaGallery.ThumbnailRepeater>
-                  </MediaGallery.Thumbnails>
-                </>
-              )}
-              {children}
-            </MediaGallery.Root>
-          </div>
-        )}
-      </CoreFeedMediaGalleries.MediaGalleries>
-    );
-  },
-);
-
-
+  return (
+    <CoreFeedMediaGalleries.MediaGalleries>
+      {({ media }) => (
+        <div ref={ref} className={className} {...otherProps}>
+          <MediaGallery.Root
+            mediaGalleryServiceConfig={{ media, infinite, autoPlay }}
+          >
+            {renderDefault && (
+              <>
+                <MediaGallery.Viewport />
+                <div>
+                  <MediaGallery.Previous />
+                  <MediaGallery.Next />
+                </div>
+                <MediaGallery.Thumbnails>
+                  <MediaGallery.ThumbnailRepeater>
+                    <MediaGallery.ThumbnailItem />
+                  </MediaGallery.ThumbnailRepeater>
+                </MediaGallery.Thumbnails>
+              </>
+            )}
+            {children}
+          </MediaGallery.Root>
+        </div>
+      )}
+    </CoreFeedMediaGalleries.MediaGalleries>
+  );
+});

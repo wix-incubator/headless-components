@@ -15,7 +15,9 @@ export interface InstagramMediaRepeaterProps {
 /**
  * Repeats children for each Instagram media item, providing a per-item service context.
  */
-export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({ children }) => {
+export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({
+  children,
+}) => {
   return (
     <CoreGalleryItems.GalleryItems>
       {({ hasItems, mediaItems }) => {
@@ -29,7 +31,7 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({ 
                 servicesMap={createServicesMap().addService(
                   InstagramMediaItemServiceDefinition,
                   InstagramMediaItemService,
-                  { mediaItem, index }
+                  { mediaItem, index },
                 )}
               >
                 <MediaGallery.Root
@@ -45,5 +47,3 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({ 
     </CoreGalleryItems.GalleryItems>
   );
 };
-
-
