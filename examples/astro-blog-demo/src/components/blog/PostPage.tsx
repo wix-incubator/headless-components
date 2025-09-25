@@ -6,6 +6,7 @@ import { PostContent } from "@/components/ui/blog/PostContent";
 import { PostTitle } from "@/components/ui/blog/PostTitle";
 import { SeparatedItems } from "@/components/ui/blog/SeparatedItems";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import { Blog } from "@wix/blog/components";
 import { type BlogPostServiceConfig } from "@wix/blog/services";
@@ -15,14 +16,12 @@ import { SharePostActions } from "./SharePostActions";
 interface PostPageProps {
   /** Loaded result of `loadBlogPostServiceConfig` */
   blogPostServiceConfig: BlogPostServiceConfig;
-  /** Full href of the post page, used for social sharing */
-  href: string;
   /** The href of the feed page, used for the "Back to Blog" link */
   feedPageHref: string;
   /** The base url of the category page, commonly end with trailing slash, e.g. "/category/" */
   categoryPageBaseUrl: string;
   /** The date locale to use for the dates */
-  dateLocale: string;
+  uiLocale: string;
 }
 
 /**
@@ -37,16 +36,15 @@ interface PostPageProps {
  *   href="https://example.com/post/my-post"
  *   feedPageHref="/blog"
  *   categoryPageBaseUrl="/category/"
- *   dateLocale="en-US"
+ *   uiLocale="en-US"
  * />
  * ```
  */
 export default function PostPage({
   blogPostServiceConfig,
-  href,
   feedPageHref,
   categoryPageBaseUrl,
-  dateLocale,
+  uiLocale,
 }: PostPageProps) {
   const Navigation = useNavigation();
 
@@ -56,41 +54,62 @@ export default function PostPage({
       emptyState={<EmptyState title="Post not found" />}
     >
       <article className="space-y-4">
-        <header className="mb-8 space-y-6">
-          <Button asChild variant="outline">
+        <header className="mb-8 space-y-3">
+          <Button asChild variant="link" className="p-0">
             <Navigation route={feedPageHref}>
               <ChevronLeftIcon strokeWidth={2} className="h-4 w-4" />
               Back to Blog
             </Navigation>
           </Button>
 
-          <PostCategories className="mb-4" baseUrl={categoryPageBaseUrl} />
+          <div className="grid gap-5">
+            <PostCategories className="mb-4" baseUrl={categoryPageBaseUrl} />
+            <PostTitle variant="xl" />
 
-          <PostTitle variant="xl" />
+            <div className="text-sm text-foreground/80">
+              <SeparatedItems className="hidden font-paragraph text-foreground/80 sm:flex">
+                <div className="flex items-center gap-x-2">
+                  <PostAuthorAvatar avatarSize="md" />
+                  <Blog.Post.AuthorName />
+                </div>
 
-          <SeparatedItems className="text-content-secondary text-sm">
-            <div className="flex items-center gap-2">
-              <PostAuthorAvatar avatarSize="md" />
-              <Blog.Post.AuthorName />
+                <Blog.Post.PublishDate locale={uiLocale} />
+
+                <Blog.Post.ReadingTime asChild>
+                  {({ readingTime }) => <span>{readingTime} min read</span>}
+                </Blog.Post.ReadingTime>
+              </SeparatedItems>
+              <div className="grid grid-cols-[auto_1fr] grid-rows-2 items-center gap-x-2 sm:hidden">
+                <PostAuthorAvatar className="row-span-2" avatarSize="md" />
+                <Blog.Post.AuthorName />
+                <SeparatedItems className="text-sm text-foreground/80">
+                  <Blog.Post.PublishDate locale={uiLocale} />
+
+                  <Blog.Post.ReadingTime asChild>
+                    {({ readingTime }) => <span>{readingTime} min read</span>}
+                  </Blog.Post.ReadingTime>
+                </SeparatedItems>
+              </div>
             </div>
 
-            <Blog.Post.PublishDate locale={dateLocale} />
-
-            <Blog.Post.ReadingTime asChild>
-              {({ readingTime }) => <span>{readingTime} min read</span>}
-            </Blog.Post.ReadingTime>
-          </SeparatedItems>
+            <section className="-ml-2 -mt-2">
+              <SharePostActions />
+            </section>
+          </div>
         </header>
-        <PostContent />
+        <PostContent uiLocale={uiLocale} />
 
         <Blog.Post.TagItems className="flex flex-wrap gap-2">
           <Blog.Post.TagItemRepeater>
-            <Chip asChild>
+            <Chip size="sm" asChild>
               <Blog.Tag.Label />
             </Chip>
           </Blog.Post.TagItemRepeater>
         </Blog.Post.TagItems>
-        <section>
+
+        <Separator />
+
+        <section className="-ml-2">
           <SharePostActions />
         </section>
       </article>

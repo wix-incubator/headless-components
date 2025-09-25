@@ -1,14 +1,18 @@
-import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import { forms } from '@wix/forms';
+
 import {
   FormServiceDefinition,
   FormServiceConfig,
   FormService,
 } from '../../services/form-service.js';
-import { createServicesMap } from '@wix/services-manager';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
+/**
+ * Props for Root headless component
+ */
 export interface RootProps {
   children: React.ReactNode;
   formServiceConfig: FormServiceConfig;
@@ -20,8 +24,9 @@ export interface RootProps {
  *
  * @order 1
  * @component
- * @param {React.ReactNode} children - Child components that will have access to form context
- * @param {FormServiceConfig} formServiceConfig - Configuration object containing form data
+ * @param {RootProps} props - Component props
+ * @param {React.ReactNode} props.children - Child components that will have access to form context
+ * @param {FormServiceConfig} props.formServiceConfig - Configuration object containing form data
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -58,16 +63,19 @@ export interface RootProps {
  * }
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
+export function Root({
+  formServiceConfig,
+  children,
+}: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         FormServiceDefinition,
         FormService,
-        props.formServiceConfig,
+        formServiceConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }
@@ -112,11 +120,9 @@ export interface FormLoadingRenderProps {
  * ```
  */
 export function Loading(props: FormLoadingProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
+  const { isLoadingSignal } = useService(FormServiceDefinition);
 
-  const isLoading = service.isLoading?.get() || false;
+  const isLoading = isLoadingSignal.get();
 
   return props.children({
     isLoading,
@@ -167,11 +173,9 @@ export interface FormErrorRenderProps {
  * ```
  */
 export function LoadingError(props: FormErrorProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
+  const { errorSignal } = useService(FormServiceDefinition);
 
-  const error = service.error?.get() || null;
+  const error = errorSignal.get();
   const hasError = !!error;
 
   return props.children({
@@ -224,13 +228,9 @@ export interface FormSubmitErrorRenderProps {
  * ```
  */
 export function Error(props: FormSubmitErrorProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
-
-  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
-  const error = submitResponse.type === 'error' ? submitResponse.message : null;
-  const hasError = submitResponse.type === 'error';
+  // TODO: Implement submit response handling when submitResponseSignal is added to service
+  const error = null;
+  const hasError = false;
 
   return props.children({
     error,
@@ -283,19 +283,62 @@ export interface FormSubmittedRenderProps {
  * ```
  */
 export function Submitted(props: FormSubmittedProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
-
-  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
-  const isSubmitted = submitResponse.type === 'success';
-  const message =
-    submitResponse.type === 'success'
-      ? submitResponse.message || DEFAULT_SUCCESS_MESSAGE
-      : DEFAULT_SUCCESS_MESSAGE;
+  // TODO: Implement submit response handling when submitResponseSignal is added to service
+  const isSubmitted = false;
+  const message = DEFAULT_SUCCESS_MESSAGE;
 
   return props.children({
     isSubmitted,
     message,
+  });
+}
+
+/**
+ * Render props for Fields component
+ */
+interface FieldsRenderProps {
+  form: forms.Form | null;
+}
+
+/**
+ * Props for Fields headless component
+ */
+interface FieldsProps {
+  children: (props: FieldsRenderProps) => React.ReactNode;
+}
+
+/**
+ * Fields component that provides form data to its children.
+ * This component accesses the form data from the service and passes it to children via render props.
+ *
+ * @component
+ * @param {FieldsProps} props - Component props
+ * @param {FieldsProps['children']} props.children - Render prop function that receives form data
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormFields() {
+ *   return (
+ *     <Form.Fields>
+ *       {({ form }) => (
+ *         form ? (
+ *           <div>
+ *             <h2>{form.name}</h2>
+ *             <p>{form.description}</p>
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Fields>
+ *   );
+ * }
+ * ```
+ */
+export function Fields(props: FieldsProps) {
+  const { formSignal } = useService(FormServiceDefinition);
+  const form = formSignal.get();
+
+  return props.children({
+    form,
   });
 }

@@ -62,6 +62,7 @@ import type { LineItem } from '../services/common-types.js';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as LineItemComponent from './LineItem.js';
 import * as CouponComponents from './CartCoupon.js';
+import { DataComponentTags } from '../data-component-tags.js';
 
 // Components that render actual DOM elements get test IDs on their rendered elements
 // Components that only provide context/logic don't introduce new DOM elements
@@ -115,8 +116,17 @@ export interface RootProps {
  * ```
  */
 export const Root = ({ children }: RootProps) => {
-  return <>{children}</>;
+  return (
+    <AsChildSlot
+      data-component-tag={DataComponentTags.cartRoot}
+      data-testid={TestIds.cartRoot}
+    >
+      {children}
+    </AsChildSlot>
+  );
 };
+
+Root.displayName = 'Cart.Root';
 
 /**
  * Props for EmptyState component with asChild support

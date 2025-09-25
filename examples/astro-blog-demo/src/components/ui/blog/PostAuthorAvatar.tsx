@@ -45,7 +45,7 @@ export const PostAuthorAvatar = React.forwardRef<
   PostAuthorAvatarProps
 >(({ avatarSize, className }, ref) => {
   return (
-    <Blog.Post.AuthorAvatar asChild>
+    <Blog.Post.AuthorAvatar ref={ref} asChild>
       {({ authorAvatarUrl, authorNameInitials }) => {
         return (
           <Avatar

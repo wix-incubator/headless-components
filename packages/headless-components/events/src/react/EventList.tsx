@@ -1,7 +1,9 @@
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import React from 'react';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
 import * as CoreEventList from './core/EventList.js';
+import * as CoreEventListFilters from './core/EventListFilters.js';
 import * as Event from './Event.js';
 
 enum TestIds {
@@ -33,6 +35,13 @@ export interface RootProps {
  * function EventListPage({ eventListServiceConfig }) {
  *   return (
  *     <EventList.Root eventListServiceConfig={eventListServiceConfig}>
+ *       <EventList.Filters allCategoriesLabel="All">
+ *         <Filter.FilterOptions>
+ *           <Filter.FilterOptionRepeater>
+ *             <Filter.FilterOption.SingleFilter />
+ *           </Filter.FilterOptionRepeater>
+ *         </Filter.FilterOptions>
+ *       </EventList.Filters>
  *       <EventList.Events>
  *         <EventList.EventRepeater>
  *           <Event.Image />
@@ -65,7 +74,9 @@ export interface EventsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ events: Event[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ events: Event[]; isLoading: boolean }>;
   /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -93,7 +104,7 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
 
     return (
       <CoreEventList.Events>
-        {({ events, hasEvents }) => {
+        {({ events, hasEvents, isLoading }) => {
           if (!hasEvents) {
             return emptyState || null;
           }
@@ -105,7 +116,7 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
               className={className}
               data-testid={TestIds.eventListEvents}
               customElement={children}
-              customElementProps={{ events }}
+              customElementProps={{ events, isLoading }}
               {...otherProps}
             >
               <div>{children as React.ReactNode}</div>
@@ -291,3 +302,46 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
     </CoreEventList.Error>
   );
 });
+
+/**
+ * Props for the EventList Filters component.
+ */
+export interface FiltersProps {
+  /** Child components */
+  children: React.ReactNode;
+  /** All categories label*/
+  allCategoriesLabel: string;
+}
+
+/**
+ * Container for the event list filters. Not rendered if there are no categories.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <EventList.Filters allCategoriesLabel="All">
+ *   <Filter.FilterOptions className="border-b border-gray-500 mb-6">
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.SingleFilter className="flex gap-2" />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </EventList.Filters>
+ * ```
+ */
+export const Filters = (props: FiltersProps): React.ReactNode => {
+  return (
+    <CoreEventListFilters.Root allCategoriesLabel={props.allCategoriesLabel}>
+      {({ filterOptions, onChange, value }) => {
+        return (
+          <FilterPrimitive.Root
+            value={value}
+            onChange={onChange}
+            filterOptions={filterOptions}
+          >
+            {props.children}
+          </FilterPrimitive.Root>
+        );
+      }}
+    </CoreEventListFilters.Root>
+  );
+};

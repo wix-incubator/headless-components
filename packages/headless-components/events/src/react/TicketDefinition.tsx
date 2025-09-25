@@ -2,6 +2,7 @@ import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type TicketDefinition } from '../services/ticket-definition-service.js';
 import { type PricingOption as PricingOptionType } from '../services/pricing-option-service.js';
+import { isTicketDefinitionAvailable } from '../utils/ticket-definition.js';
 import * as PricingOption from './PricingOption.js';
 import * as CoreTicketDefinition from './core/TicketDefinition.js';
 
@@ -12,6 +13,8 @@ enum TestIds {
   ticketDefinitionFixedPricing = 'ticket-definition-fixed-pricing',
   ticketDefinitionGuestPricing = 'ticket-definition-guest-pricing',
   ticketDefinitionPricingRange = 'ticket-definition-pricing-range',
+  ticketDefinitionTax = 'ticket-definition-tax',
+  ticketDefinitionFee = 'ticket-definition-fee',
   ticketDefinitionRemaining = 'ticket-definition-remaining',
   ticketDefinitionSaleStartDate = 'ticket-definition-sale-start-date',
   ticketDefinitionSaleEndDate = 'ticket-definition-sale-end-date',
@@ -78,10 +81,13 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         className={className}
         data-testid={TestIds.ticketDefinitionRoot}
         data-sold-out={ticketDefinition.limitPerCheckout === 0}
+        data-sale-started={ticketDefinition.saleStatus === 'SALE_STARTED'}
+        data-sale-ended={ticketDefinition.saleStatus === 'SALE_ENDED'}
         data-free={!!ticketDefinition.pricingMethod?.free}
         data-fixed-pricing={!!ticketDefinition.pricingMethod?.fixedPrice}
         data-guest-pricing={!!ticketDefinition.pricingMethod?.guestPrice}
         data-pricing-options={!!ticketDefinition.pricingMethod?.pricingOptions}
+        data-available={isTicketDefinitionAvailable(ticketDefinition)}
         customElement={children}
         customElementProps={{}}
         {...otherProps}
@@ -220,10 +226,10 @@ export interface FixedPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    free: boolean;
-    price: number;
+    price: string;
     currency: string;
     formattedPrice: string;
+    free: boolean;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -259,9 +265,7 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
 
     return (
       <CoreTicketDefinition.FixedPricing>
-        {({ free, price, currency }) => {
-          const formattedPrice = `${price} ${currency}`;
-
+        {({ price, currency, formattedPrice, free }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -270,10 +274,10 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
               data-testid={TestIds.ticketDefinitionFixedPricing}
               customElement={children}
               customElementProps={{
-                free,
                 price,
                 currency,
                 formattedPrice,
+                free,
               }}
               content={formattedPrice}
               {...otherProps}
@@ -295,7 +299,7 @@ export interface GuestPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    minPrice: number;
+    minPrice: string;
     currency: string;
     formattedMinPrice: string;
     setPrice: (price: string) => void;
@@ -332,9 +336,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
 
     return (
       <CoreTicketDefinition.GuestPricing>
-        {({ minPrice, currency, setPrice }) => {
-          const formattedMinPrice = `${minPrice} ${currency}`;
-
+        {({ minPrice, currency, formattedMinPrice, setPrice }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -373,9 +375,11 @@ export interface PricingRangeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    minPrice: number;
-    maxPrice: number;
+    minPrice: string;
+    maxPrice: string;
     currency: string;
+    formattedMinPrice: string;
+    formattedMaxPrice: string;
     formattedPriceRange: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -412,9 +416,14 @@ export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
 
     return (
       <CoreTicketDefinition.PricingRange>
-        {({ minPrice, maxPrice, currency }) => {
-          const formattedPriceRange = `${minPrice} - ${maxPrice} ${currency}`;
-
+        {({
+          minPrice,
+          maxPrice,
+          currency,
+          formattedMinPrice,
+          formattedMaxPrice,
+          formattedPriceRange,
+        }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -426,6 +435,8 @@ export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
                 minPrice,
                 maxPrice,
                 currency,
+                formattedMinPrice,
+                formattedMaxPrice,
                 formattedPriceRange,
               }}
               content={formattedPriceRange}
@@ -439,6 +450,152 @@ export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
     );
   },
 );
+
+/**
+ * Props for the TicketDefinition Tax component.
+ */
+export interface TaxProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    name: string;
+    rate: string;
+    included: boolean;
+    amount: string;
+    currency: string;
+    formattedAmount: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the tax for the ticket definition. Only renders when event has tax settings, ticket definition is not free and has no pricing options, or ticket definition has guest pricing and tax is applied to donations.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketDefinition.Tax className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketDefinition.Tax asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </TicketDefinition.Tax>
+ *
+ * // asChild with react component
+ * <TicketDefinition.Tax asChild>
+ *   {React.forwardRef(({ name, rate, included, amount, currency, formattedAmount, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       {included ? `${name} included` : `+${formattedAmount} ${name}`}
+ *     </span>
+ *   ))}
+ * </TicketDefinition.Tax>
+ * ```
+ */
+export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreTicketDefinition.Tax>
+      {({ name, rate, included, amount, currency, formattedAmount }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionTax}
+            customElement={children}
+            customElementProps={{
+              name,
+              rate,
+              included,
+              amount,
+              currency,
+              formattedAmount,
+            }}
+            content={formattedAmount}
+            {...otherProps}
+          >
+            <span>{formattedAmount}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreTicketDefinition.Tax>
+  );
+});
+
+/**
+ * Props for the TicketDefinition Fee component.
+ */
+export interface FeeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    rate: string;
+    amount: string;
+    currency: string;
+    formattedAmount: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the fee for the ticket definition. Only renders when ticket definition has fee enabled, is not free and has no pricing options.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketDefinition.Fee className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketDefinition.Fee asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </TicketDefinition.Fee>
+ *
+ * // asChild with react component
+ * <TicketDefinition.Fee asChild>
+ *   {React.forwardRef(({ rate, amount, currency, formattedAmount, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       +{formattedAmount} service fee
+ *     </span>
+ *   ))}
+ * </TicketDefinition.Fee>
+ * ```
+ */
+export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreTicketDefinition.Fee>
+      {({ rate, amount, currency, formattedAmount }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionFee}
+            customElement={children}
+            customElementProps={{
+              rate,
+              amount,
+              currency,
+              formattedAmount,
+            }}
+            content={formattedAmount}
+            {...otherProps}
+          >
+            <span>{formattedAmount}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreTicketDefinition.Fee>
+  );
+});
 
 /**
  * Props for the TicketDefinition Remaining component.
@@ -786,6 +943,8 @@ export const PricingOptions = React.forwardRef<
 export interface PricingOptionRepeaterProps {
   /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the pricing option element */
+  className?: string;
 }
 
 /**
@@ -806,7 +965,7 @@ export interface PricingOptionRepeaterProps {
 export const PricingOptionRepeater = (
   props: PricingOptionRepeaterProps,
 ): React.ReactNode => {
-  const { children } = props;
+  const { children, className } = props;
 
   return (
     <CoreTicketDefinition.PricingOptionRepeater>
@@ -815,6 +974,7 @@ export const PricingOptionRepeater = (
           <PricingOption.Root
             key={pricingOption.optionId}
             pricingOption={pricingOption}
+            className={className}
           >
             {children}
           </PricingOption.Root>

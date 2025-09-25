@@ -12,7 +12,10 @@ export const PostExcerpt = React.forwardRef<
   return (
     <Blog.Post.Excerpt
       ref={ref}
-      className={cn("text-content-secondary line-clamp-3", className)}
+      className={cn(
+        "line-clamp-3 font-paragraph text-foreground/80",
+        className
+      )}
     />
   );
 });

@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { Slot } from '@radix-ui/react-slot';
+import { DataComponentTags } from '../data-component-tags.js';
 
 import { Coupon as CoreCoupon } from './core/CurrentCart.js';
 
@@ -79,11 +80,15 @@ export const Root = React.forwardRef<HTMLDivElement, CouponRootProps>(
 
     return (
       <CouponContext.Provider value={contextValue}>
-        <div ref={ref}>{children}</div>
+        <div ref={ref} data-component-tag={DataComponentTags.cartCouponRoot}>
+          {children}
+        </div>
       </CouponContext.Provider>
     );
   },
 );
+
+Root.displayName = 'CartCoupon.Root';
 
 /**
  * Props for Coupon.Input component

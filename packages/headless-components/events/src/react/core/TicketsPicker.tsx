@@ -15,6 +15,7 @@ import {
 import {
   CheckoutServiceDefinition,
   CheckoutService,
+  type CheckoutServiceConfig,
 } from '../../services/checkout-service.js';
 
 export interface RootProps {
@@ -24,6 +25,8 @@ export interface RootProps {
   eventServiceConfig: EventServiceConfig;
   /** Ticket definition list service configuration */
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
+  /** Checkout service configuration */
+  checkoutServiceConfig: CheckoutServiceConfig;
 }
 
 /**
@@ -32,8 +35,12 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { eventServiceConfig, ticketDefinitionListServiceConfig, children } =
-    props;
+  const {
+    eventServiceConfig,
+    ticketDefinitionListServiceConfig,
+    checkoutServiceConfig,
+    children,
+  } = props;
 
   return (
     <WixServices
@@ -44,7 +51,11 @@ export function Root(props: RootProps): React.ReactNode {
           TicketDefinitionListService,
           ticketDefinitionListServiceConfig,
         )
-        .addService(CheckoutServiceDefinition, CheckoutService, {})}
+        .addService(
+          CheckoutServiceDefinition,
+          CheckoutService,
+          checkoutServiceConfig,
+        )}
     >
       {children}
     </WixServices>
