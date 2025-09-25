@@ -7,7 +7,16 @@ import {
 } from '@wix/form-public';
 
 import { type FormServiceConfig } from '../services/form-service';
-import * as CoreForm from './core/Form';
+import {
+  Root as CoreRoot,
+  Form as CoreForm,
+  Loading as CoreLoading,
+  LoadingError as CoreLoadingError,
+  Error as CoreError,
+  Submitted as CoreSubmitted,
+  Fields as CoreFields,
+  FormRenderProps,
+} from './core/Form';
 
 import {
   CheckboxGroupProps,
@@ -40,6 +49,7 @@ import {
 enum TestIds {
   formRoot = 'form-root',
   form = 'form',
+  formLoading = 'form-loading',
   formLoadingError = 'form-loading-error',
   formError = 'form-error',
   formSubmitted = 'form-submitted',
@@ -112,18 +122,18 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const { children, formServiceConfig, asChild, ...otherProps } = props;
 
     return (
-      <CoreForm.Root formServiceConfig={formServiceConfig}>
+      <CoreRoot formServiceConfig={formServiceConfig}>
         <RootContent asChild={asChild} ref={ref} {...otherProps}>
           {children}
         </RootContent>
-      </CoreForm.Root>
+      </CoreRoot>
     );
   },
 );
 
 interface FormProps {
   asChild?: boolean;
-  children: AsChildChildren<CoreForm.FormRenderProps> | React.ReactNode;
+  children: AsChildChildren<FormRenderProps> | React.ReactNode;
   className?: string;
   loadingState?: React.ReactNode;
 }
@@ -161,7 +171,7 @@ interface FormProps {
 export const Form = React.forwardRef<HTMLElement, FormProps>(
   ({ children, asChild, className, loadingState }, ref) => {
     return (
-      <CoreForm.Form>
+      <CoreForm>
         {(formRenderProps) => (
           <AsChildSlot
             ref={ref}
@@ -180,7 +190,7 @@ export const Form = React.forwardRef<HTMLElement, FormProps>(
             </div>
           </AsChildSlot>
         )}
-      </CoreForm.Form>
+      </CoreForm>
     );
   },
 );
@@ -290,16 +300,16 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreForm.Loading>
+      <CoreLoading>
         {({ isLoading }) => {
           if (!isLoading) return null;
 
           return (
             <AsChildSlot
+              data-testid={TestIds.formLoading}
               ref={ref}
               asChild={asChild}
               className={className}
-              data-testid="form-loading"
               customElement={children}
               content="Loading form..."
               {...otherProps}
@@ -308,7 +318,7 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
             </AsChildSlot>
           );
         }}
-      </CoreForm.Loading>
+      </CoreLoading>
     );
   },
 );
@@ -379,7 +389,7 @@ export const LoadingError = React.forwardRef<HTMLElement, LoadingErrorProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreForm.LoadingError>
+      <CoreLoadingError>
         {({ error, hasError }) => {
           if (!hasError) return null;
 
@@ -400,7 +410,7 @@ export const LoadingError = React.forwardRef<HTMLElement, LoadingErrorProps>(
             </AsChildSlot>
           );
         }}
-      </CoreForm.LoadingError>
+      </CoreLoadingError>
     );
   },
 );
@@ -468,7 +478,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreForm.Error>
+    <CoreError>
       {({ error, hasError }) => {
         if (!hasError) return null;
 
@@ -489,7 +499,7 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
           </AsChildSlot>
         );
       }}
-    </CoreForm.Error>
+    </CoreError>
   );
 });
 
@@ -557,7 +567,7 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreForm.Submitted>
+      <CoreSubmitted>
         {({ isSubmitted, message }) => {
           if (!isSubmitted) return null;
 
@@ -580,7 +590,7 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
             </AsChildSlot>
           );
         }}
-      </CoreForm.Submitted>
+      </CoreSubmitted>
     );
   },
 );
@@ -866,7 +876,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     }, []);
 
     return (
-      <CoreForm.Fields>
+      <CoreFields>
         {({ form }) => {
           console.log('Fields form', form);
           if (!form) return null;
@@ -891,7 +901,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
             </div>
           );
         }}
-      </CoreForm.Fields>
+      </CoreFields>
     );
   },
 );
