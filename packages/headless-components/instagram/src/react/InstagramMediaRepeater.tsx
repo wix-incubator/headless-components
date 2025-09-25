@@ -35,7 +35,7 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({
                 )}
               >
                 <MediaGallery.Root
-                  mediaGalleryServiceConfig={{ media: mediaItem }}
+                  mediaGalleryServiceConfig={{ media: mediaItem.mediaGalleryItems }}
                 >
                   {children as React.ReactElement}
                 </MediaGallery.Root>

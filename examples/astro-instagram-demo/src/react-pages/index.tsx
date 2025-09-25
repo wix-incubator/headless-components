@@ -43,7 +43,6 @@ export default function IndexPage(props: {
               <InstagramFeed.InstagramMediaRepeater>
                   <InstagramMedia.MediaGalleries>
                     <InstagramMedia.MediaGalleryRepeater>
-                      <MediaGallery.Root mediaGalleryServiceConfig={{ media: [], infinite: true }}>
                           <MediaGallery.Viewport asChild>
                             {({ src, alt }) => (
                               <img
@@ -53,7 +52,6 @@ export default function IndexPage(props: {
                               />
                             )}
                           </MediaGallery.Viewport>
-                      </MediaGallery.Root>
                     </InstagramMedia.MediaGalleryRepeater>
                   </InstagramMedia.MediaGalleries>
               </InstagramFeed.InstagramMediaRepeater>
@@ -74,7 +72,6 @@ export default function IndexPage(props: {
                   <div className="flex-1 bg-gray-900 flex items-center justify-center">
                     <InstagramMedia.MediaGalleries>
                       <InstagramMedia.MediaGalleryRepeater>
-                        <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }}>
                           <div className="relative w-full h-full flex items-center justify-center">
                             <MediaGallery.Viewport asChild>
                               {({ src, alt }) => (
@@ -86,7 +83,6 @@ export default function IndexPage(props: {
                               )}
                             </MediaGallery.Viewport>
                           </div>
-                        </MediaGallery.Root>
                       </InstagramMedia.MediaGalleryRepeater>
                     </InstagramMedia.MediaGalleries>
                   </div>
@@ -109,7 +105,6 @@ export default function IndexPage(props: {
                       <div className="flex items-center justify-between mb-6">
                         <InstagramMedia.MediaGalleries>
                           <InstagramMedia.MediaGalleryRepeater>
-                            <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }}>
                               <div className="flex items-center space-x-6">
                                 <MediaGallery.Previous className="text-gray-600 hover:text-gray-800 text-2xl cursor-pointer">
                                   ‹
@@ -118,7 +113,6 @@ export default function IndexPage(props: {
                                   ›
                                 </MediaGallery.Next>
                               </div>
-                            </MediaGallery.Root>
                           </InstagramMedia.MediaGalleryRepeater>
                         </InstagramMedia.MediaGalleries>
                       </div>

@@ -23,7 +23,6 @@ export {
   MediaType as InstagramMediaType,
   UserName as InstagramMediaUserName,
   Timestamp as InstagramMediaTimestamp,
-  MediaGalleryRepeater,
   type CaptionProps as InstagramMediaCaptionProps,
   type CaptionRenderProps,
   type MediaTypeProps as InstagramMediaTypeProps,

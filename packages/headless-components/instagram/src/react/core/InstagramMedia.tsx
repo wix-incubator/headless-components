@@ -132,30 +132,4 @@ export interface MediaGalleryRepeaterRenderProps {
   hasMedia: boolean;
 }
 
-/**
- * Headless component for Instagram media gallery repeater
- */
-export function MediaGalleryRepeater(props: MediaGalleryRepeaterProps) {
-  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-  const mediaItem = mediaItemService.mediaItem.get();
 
-  const media: MediaItem[] = (
-    mediaItem?.type === 'video' ? mediaItem.thumbnailUrl : mediaItem?.mediaUrl
-  )
-    ? [
-        {
-          image: (mediaItem.type === 'video'
-            ? mediaItem.thumbnailUrl!
-            : mediaItem.mediaUrl) as string,
-          altText: mediaItem.altText,
-        },
-      ]
-    : [];
-
-  const hasMedia = media.length > 0;
-
-  return props.children({
-    media,
-    hasMedia,
-  });
-}

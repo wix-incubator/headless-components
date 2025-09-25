@@ -160,26 +160,20 @@ export interface MediaGalleryRepeaterProps {
   children: React.ReactNode;
 }
 
-export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
-  children,
-}) => {
-  return (
-    <CoreInstagramMedia.MediaGalleryRepeater>
-      {({ media }) => {
-        const injectConfig = (child: React.ReactNode): React.ReactNode => {
-          if (!React.isValidElement(child)) return child;
-          // Inject mediaGalleryServiceConfig into MediaGallery.Root children
-          return React.cloneElement(child as any, {
-            ...(child as any).props,
-            mediaGalleryServiceConfig: { media },
-          });
-        };
-
-        return <>{React.Children.map(children, injectConfig)}</>;
-      }}
-    </CoreInstagramMedia.MediaGalleryRepeater>
-  );
-};
+/**
+ * Repeater component that renders children for each media gallery item.
+ * This follows the Repeater Level pattern and works within an existing MediaGallery.Root context.
+ * Just passes through children - does not create MediaGallery.Root components.
+ *
+ * @component
+ */
+export const MediaGalleryRepeater = React.forwardRef<HTMLElement, MediaGalleryRepeaterProps>(
+  (props, _ref) => {
+    const { children } = props;
+    // Simply pass through children - MediaGallery.Root is created at a higher level
+    return <>{children}</>;
+  },
+);
 
 export interface MediaGalleryItemsProps {
   children: React.ReactNode;
