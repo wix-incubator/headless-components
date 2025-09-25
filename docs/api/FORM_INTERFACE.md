@@ -26,6 +26,13 @@ interface RootProps {
 }
 ```
 
+**Props**
+
+- `children` - Child components that will have access to form context
+- `formServiceConfig` - Form service configuration object (see FormServiceConfig section)
+- `asChild` - Whether to render as a child component (optional)
+- `className` - CSS classes to apply to the root element (optional)
+
 **FormServiceConfig**
 
 The `FormServiceConfig` supports two distinct patterns for providing form data:
@@ -34,12 +41,13 @@ The `FormServiceConfig` supports two distinct patterns for providing form data:
 - **Lazy Loading with Form ID (Client-side)**: Use when you only have a form ID and need to load form data asynchronously
 
 ```tsx
-interface FormServiceConfig {
-  /** Pre-loaded form data. When provided, the service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios. */
-  form?: forms.Form;
-  /** Form ID for lazy loading. When provided (and no form data), the service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing. */
-  formId?: string;
-}
+type FormServiceConfig = { formId: string } | { form: forms.Form };
+```
+
+**Configuration Options:**
+
+- `{ form: forms.Form }` - Pre-loaded form data. The service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios.
+- `{ formId: string }` - Form ID for lazy loading. The service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing.
 ```
 
 **Examples**
@@ -575,18 +583,18 @@ function DynamicFormPage({ formId }) {
 }
 ```
 
-## FormServiceConfig Interface
+## FormServiceConfig Type
 
-The `FormServiceConfig` interface defines how form data is provided to the Form service. It supports two distinct patterns:
+The `FormServiceConfig` type defines how form data is provided to the Form service. It supports two distinct patterns:
 
 ```tsx
-interface FormServiceConfig {
-  /** Pre-loaded form data. When provided, the service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios. */
-  form?: forms.Form;
-  /** Form ID for lazy loading. When provided (and no form data), the service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing. */
-  formId?: string;
-}
+type FormServiceConfig = { formId: string } | { form: forms.Form };
 ```
+
+**Configuration Options:**
+
+- `{ form: forms.Form }` - Pre-loaded form data. The service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios.
+- `{ formId: string }` - Form ID for lazy loading. The service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing.
 
 ## Service Integration
 
@@ -595,8 +603,8 @@ The Form component integrates with Wix services through the `FormService` which 
 - **Form data management**: Access to form configuration and field definitions
 - **Dual loading patterns**: Support for both pre-loaded form data and lazy loading with form IDs
 - **Error handling**: Signal for form loading errors
-- **Submit response handling**: Signal for form submission responses (success/error)
-- **Submission state**: Signal for form submission status
 - **State management**: Reactive state updates using signals
 - **Loading states**: Built-in loading indicators for async form loading
+
+**Note**: Submit response handling and submission state management are planned features that will be added in future updates.
 

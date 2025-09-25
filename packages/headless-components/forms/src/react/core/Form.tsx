@@ -10,6 +10,9 @@ import {
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
+/**
+ * Props for Root headless component
+ */
 export interface RootProps {
   children: React.ReactNode;
   formServiceConfig: FormServiceConfig;
@@ -21,8 +24,9 @@ export interface RootProps {
  *
  * @order 1
  * @component
- * @param {React.ReactNode} children - Child components that will have access to form context
- * @param {FormServiceConfig} formServiceConfig - Configuration object containing form data
+ * @param {RootProps} props - Component props
+ * @param {React.ReactNode} props.children - Child components that will have access to form context
+ * @param {FormServiceConfig} props.formServiceConfig - Configuration object containing form data
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -289,14 +293,47 @@ export function Submitted(props: FormSubmittedProps) {
   });
 }
 
+/**
+ * Render props for Fields component
+ */
 interface FieldsRenderProps {
   form: forms.Form | null;
 }
 
+/**
+ * Props for Fields headless component
+ */
 interface FieldsProps {
   children: (props: FieldsRenderProps) => React.ReactNode;
 }
 
+/**
+ * Fields component that provides form data to its children.
+ * This component accesses the form data from the service and passes it to children via render props.
+ *
+ * @component
+ * @param {FieldsProps} props - Component props
+ * @param {FieldsProps['children']} props.children - Render prop function that receives form data
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormFields() {
+ *   return (
+ *     <Form.Fields>
+ *       {({ form }) => (
+ *         form ? (
+ *           <div>
+ *             <h2>{form.name}</h2>
+ *             <p>{form.description}</p>
+ *           </div>
+ *         ) : null
+ *       )}
+ *     </Form.Fields>
+ *   );
+ * }
+ * ```
+ */
 export function Fields(props: FieldsProps) {
   const { formSignal } = useService(FormServiceDefinition);
   const form = formSignal.get();

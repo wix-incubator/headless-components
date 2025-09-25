@@ -75,6 +75,7 @@ export interface RootProps {
  * @param {RootProps} props - The component props
  * @param {React.ReactNode} props.children - Child components that will have access to form context
  * @param {FormServiceConfig} props.formServiceConfig - Form service configuration object
+ * @param {boolean} [props.asChild] - Whether to render as a child component
  * @param {string} [props.className] - CSS classes to apply to the root element
  * @example
  * ```tsx
@@ -839,69 +840,3 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     );
   },
 );
-
-/**
- * Main Form namespace containing all form components following the compound component pattern.
- * Provides a headless, flexible way to render and manage forms with custom field components.
- *
- * @namespace Form
- * @property {typeof Root} Root - Form root component that provides service context to all child components
- * @property {typeof Loading} Loading - Form loading state component that displays content during form loading
- * @property {typeof LoadingError} LoadingError - Form loading error state component for handling form loading errors
- * @property {typeof Error} Error - Form submit error state component for handling form submission errors
- * @property {typeof Submitted} Submitted - Form submitted state component for displaying success messages
- * @property {typeof Fields} Fields - Form fields component for rendering form fields with custom field renderers
- * @example
- * ```tsx
- * import { Form } from '@wix/headless-forms/react';
- * import { loadFormServiceConfig } from '@wix/headless-forms/services';
- * import { TextInput, TextArea, Checkbox } from './field-components';
- *
- * const FIELD_MAP = {
- *   TEXT_INPUT: TextInput,
- *   TEXT_AREA: TextArea,
- *   CHECKBOX: Checkbox,
- *   // ... other field components
- * };
- *
- * // Pattern 1: Pre-loaded form data (SSR/SSG)
- * function MyForm({ formServiceConfig }) {
- *   return (
- *     <Form.Root formServiceConfig={formServiceConfig}>
- *       <Form.Loading className="flex justify-center p-4" />
- *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
- *       <Form.Fields fieldMap={FIELD_MAP} />
- *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
- *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
- *     </Form.Root>
- *   );
- * }
- *
- * // Pattern 2: Lazy loading with formId (Client-side)
- * function DynamicForm({ formId }) {
- *   return (
- *     <Form.Root formServiceConfig={{ formId }}>
- *       <Form.Loading className="flex justify-center p-4" />
- *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
- *       <Form.Fields fieldMap={FIELD_MAP} />
- *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
- *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
- *     </Form.Root>
- *   );
- * }
- * ```
- */
-// export const Form = {
-//   /** Form root component that provides service context */
-//   Root,
-//   /** Form loading state component */
-//   Loading,
-//   /** Form loading error state component */
-//   LoadingError,
-//   /** Form error state component */
-//   Error,
-//   /** Form submitted state component */
-//   Submitted,
-//   /** Form fields component for rendering form fields */
-//   Fields,
-// } as const;
