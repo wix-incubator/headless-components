@@ -64,12 +64,12 @@ export interface MenuSelectorProps {
 /**
  * Menu selector component that provides menu selection functionality using tabs.
  * Uses the core MenuSelector component and wraps it with AsChildSlot for flexible rendering.
- * Only renders when there are more than 2 menus available.
+ * Only renders when there are more than 1 real menu available (excluding "All" option).
  *
  * @component
  * @example
  * ```tsx
- * // Default usage with custom styling (only shows if more than 2 menus)
+ * // Default usage with custom styling (only shows if more than 1 real menu)
  * <Menus.MenuSelector
  *   className="w-full"
  *   listClassName="flex space-x-1"
@@ -77,7 +77,7 @@ export interface MenuSelectorProps {
  * />
  *
  * // Conditional rendering based on menu count
- * {menus.length > 2 && (
+ * {menus.filter(menu => menu._id !== 'all').length > 1 && (
  *   <Menus.MenuSelector className="mb-4" />
  * )}
  *
@@ -142,8 +142,9 @@ export const MenuSelector = React.forwardRef<HTMLElement, MenuSelectorProps>(
           selectedMenu: Menu | null;
           onMenuSelect: (menu: Menu) => void;
         }) => {
-          // Only show selector if there are more than 2 menus
-          if (menus.length <= 2) {
+          // Only show selector if there are more than 1 real menu (excluding "All" option)
+          const realMenus = menus.filter(menu => menu._id !== 'all');
+          if (realMenus.length <= 1) {
             return null;
           }
 
@@ -194,13 +195,13 @@ export const MenusRepeater = React.forwardRef<HTMLElement, MenusRepeaterProps>(
     const menusService = useService(MenusServiceDefinition) as ServiceAPI<
       typeof MenusServiceDefinition
     >;
-    const menus = menusService.menus.get();
+    const filteredMenus = menusService.filteredMenus.get();
     const selectedMenu = menusService.selectedMenu.get();
-    const hasMenus = menus.length > 0;
+    const hasMenus = filteredMenus.length > 0;
 
     if (!hasMenus) return null;
 
-    const menusToRender = selectedMenu ? [selectedMenu] : menus;
+    const menusToRender = selectedMenu ? [selectedMenu] : filteredMenus;
 
     return (
       <>
@@ -351,10 +352,20 @@ export interface LocationSelectorProps {
     selectedLocation: string | null;
     onLocationSelect: (location: string) => void;
   }>;
-  /** CSS classes to apply to the select element */
+  /** CSS classes to apply to the root container element */
   className?: string;
+  /** CSS classes to apply to the select trigger element */
+  triggerClassName?: string;
+  /** CSS classes to apply to the select content element */
+  contentClassName?: string;
+  /** CSS classes to apply to the select viewport element */
+  viewportClassName?: string;
   /** CSS classes to apply to the option elements */
   optionClassName?: string;
+  /** CSS classes to apply to the scroll up button */
+  scrollUpButtonClassName?: string;
+  /** CSS classes to apply to the scroll down button */
+  scrollDownButtonClassName?: string;
   /** Placeholder text for the select */
   placeholder?: string;
   /** Text for the "all" option */
@@ -366,21 +377,31 @@ export interface LocationSelectorProps {
 /**
  * Location selector component that provides location selection functionality using a dropdown.
  * Uses the core LocationSelector component and wraps it with AsChildSlot for flexible rendering.
- * Only renders when there are 2 or more locations available.
+ * Only renders when there are more than 1 real location available (excluding "All" option).
  *
  * @component
  * @example
  * ```tsx
- * // Default usage with custom styling (only shows if 2+ locations)
+ * // Default usage with custom styling (only shows if more than 1 real location)
  * <Menus.LocationSelector
- *   className="w-full p-2 border rounded-md"
- *   optionClassName="p-2"
+ *   className="w-full"
+ *   triggerClassName="w-full p-2 border rounded-md bg-white"
+ *   contentClassName="bg-white border rounded-md shadow-lg"
+ *   viewportClassName="p-1"
+ *   optionClassName="p-2 hover:bg-gray-100 cursor-pointer"
+ *   scrollUpButtonClassName="p-2 text-gray-500"
+ *   scrollDownButtonClassName="p-2 text-gray-500"
  *   placeholder="Choose your location"
  * />
  *
  * // Conditional rendering based on location count
- * {locations.length >= 2 && (
- *   <Menus.LocationSelector className="mb-4" placeholder="Pick a location" />
+ * {locations.filter(location => location.id !== 'all').length > 1 && (
+ *   <Menus.LocationSelector
+ *     className="mb-4"
+ *     triggerClassName="w-full p-3 border-2 border-blue-500 rounded-lg"
+ *     contentClassName="bg-blue-50 border-2 border-blue-500 rounded-lg"
+ *     placeholder="Pick a location"
+ *   />
  * )}
  *
  * // asChild with custom Radix Select implementation
@@ -446,7 +467,12 @@ export const LocationSelector = React.forwardRef<
     asChild,
     children,
     className,
+    triggerClassName,
+    contentClassName,
+    viewportClassName,
     optionClassName,
+    scrollUpButtonClassName,
+    scrollDownButtonClassName,
     placeholder = 'Select a location',
     allText = 'All',
     showAll = true,
@@ -464,8 +490,9 @@ export const LocationSelector = React.forwardRef<
         selectedLocation: string | null;
         onLocationSelect: (location: string) => void;
       }) => {
-        // Only show selector if there are 2 or more locations
-        if (locations.length < 2) {
+        // Only show selector if there are more than 1 real location (excluding "All" option)
+        const realLocations = locations.filter(location => location.id !== 'all');
+        if (realLocations.length <= 1) {
           return null;
         }
 
@@ -480,6 +507,7 @@ export const LocationSelector = React.forwardRef<
           <AsChildSlot
             ref={ref}
             asChild={asChild}
+            className={className}
             data-testid={TestIds.locationSelector}
             {...otherProps}
           >
@@ -487,14 +515,14 @@ export const LocationSelector = React.forwardRef<
               value={selectedLocation || 'all'}
               onValueChange={onLocationSelect}
             >
-              <Select.Trigger className={className}>
+              <Select.Trigger className={triggerClassName}>
                 <Select.Value placeholder={placeholder} />
                 <Select.Icon />
               </Select.Trigger>
               <Select.Portal>
-                <Select.Content>
-                  <Select.ScrollUpButton />
-                  <Select.Viewport>
+                <Select.Content className={contentClassName}>
+                  <Select.ScrollUpButton className={scrollUpButtonClassName} />
+                  <Select.Viewport className={viewportClassName}>
                     {locations.map((location: Location) => (
                       <Select.Item
                         key={location.id}
@@ -505,7 +533,7 @@ export const LocationSelector = React.forwardRef<
                       </Select.Item>
                     ))}
                   </Select.Viewport>
-                  <Select.ScrollDownButton />
+                  <Select.ScrollDownButton className={scrollDownButtonClassName} />
                 </Select.Content>
               </Select.Portal>
             </Select.Root>
