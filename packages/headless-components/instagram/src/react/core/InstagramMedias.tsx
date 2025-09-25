@@ -2,15 +2,15 @@ import React from 'react';
 import { useService } from '@wix/services-manager-react';
 import { InstagramFeedServiceDefinition } from '../../services/index.js';
 
-export interface GalleryItemsProps {
-  /** Render prop function that receives gallery items data */
-  children: (props: GalleryItemsRenderProps) => React.ReactNode;
+export interface InstagramMediasProps {
+  /** Render prop function that receives Instagram medias data */
+  children: (props: InstagramMediasRenderProps) => React.ReactNode;
 }
 
 /**
- * Render props for GalleryItems component
+ * Render props for InstagramMedias component
  */
-export interface GalleryItemsRenderProps {
+export interface InstagramMediasRenderProps {
   /** Whether there are media items to display */
   hasItems: boolean;
   /** Array of media items */
@@ -18,10 +18,10 @@ export interface GalleryItemsRenderProps {
 }
 
 /**
- * Headless component for Instagram gallery items
- * Handles service logic and provides render props with gallery items data
+ * Headless component for Instagram medias
+ * Handles service logic and provides render props with media items data
  */
-export function GalleryItems(props: GalleryItemsProps) {
+export function InstagramMedias(props: InstagramMediasProps) {
   const instagramFeedService = useService(InstagramFeedServiceDefinition);
   const feedData = instagramFeedService.feedData.get();
 

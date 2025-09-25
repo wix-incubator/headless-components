@@ -1,5 +1,5 @@
 import React from 'react';
-import * as CoreGalleryItems from './core/GalleryItems.js';
+import * as CoreInstagramMedias from './core/InstagramMedias.js';
 
 /**
  * @deprecated Use `InstagramFeed.InstagramMedias` with `InstagramFeed.InstagramMediaRepeater` directly.
@@ -21,12 +21,12 @@ export const InstagramMediaItems = React.forwardRef<
   const { children, emptyState } = props;
 
   return (
-    <CoreGalleryItems.GalleryItems>
+    <CoreInstagramMedias.InstagramMedias>
       {({ hasItems }) => {
         if (!hasItems) return emptyState ?? null;
 
         return <div ref={ref}>{children}</div>;
       }}
-    </CoreGalleryItems.GalleryItems>
+    </CoreInstagramMedias.InstagramMedias>
   );
 });

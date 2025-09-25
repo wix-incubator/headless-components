@@ -8,10 +8,10 @@ export {
 } from './UserName.js';
 
 export {
-  GalleryItems,
-  type GalleryItemsProps,
-  type GalleryItemsRenderProps,
-} from './GalleryItems.js';
+  InstagramMedias,
+  type InstagramMediasProps,
+  type InstagramMediasRenderProps,
+} from './InstagramMedias.js';
 
 export {
   Caption as InstagramMediaCaption,

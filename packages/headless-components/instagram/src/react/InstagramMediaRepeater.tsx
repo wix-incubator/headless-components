@@ -5,7 +5,7 @@ import {
   InstagramMediaItemServiceDefinition,
   InstagramMediaItemService,
 } from '../services/index.js';
-import * as CoreGalleryItems from './core/GalleryItems.js';
+import * as CoreInstagramMedias from './core/InstagramMedias.js';
 import { MediaGallery } from '@wix/headless-media/react';
 
 export interface InstagramMediaRepeaterProps {
@@ -19,7 +19,7 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({
   children,
 }) => {
   return (
-    <CoreGalleryItems.GalleryItems>
+    <CoreInstagramMedias.InstagramMedias>
       {({ hasItems, mediaItems }) => {
         if (!hasItems) return null;
 
@@ -44,6 +44,6 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({
           </>
         );
       }}
-    </CoreGalleryItems.GalleryItems>
+    </CoreInstagramMedias.InstagramMedias>
   );
 };

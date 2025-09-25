@@ -1,5 +1,5 @@
 import React from 'react';
-import * as CoreGalleryItems from './core/GalleryItems.js';
+import * as CoreInstagramMedias from './core/InstagramMedias.js';
 
 export interface InstagramMediasProps {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ export const InstagramMedias = React.forwardRef<
   const { children, emptyState } = props;
 
   return (
-    <CoreGalleryItems.GalleryItems>
+    <CoreInstagramMedias.InstagramMedias>
       {({ hasItems }) => {
         if (!hasItems) {
           return emptyState || null;
@@ -25,6 +25,6 @@ export const InstagramMedias = React.forwardRef<
 
         return <div ref={ref}>{children}</div>;
       }}
-    </CoreGalleryItems.GalleryItems>
+    </CoreInstagramMedias.InstagramMedias>
   );
 });
