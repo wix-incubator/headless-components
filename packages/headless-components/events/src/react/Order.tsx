@@ -1,7 +1,9 @@
 import * as CoreOrder from './core/Order.js';
 import { type OrderServiceConfig } from '../services/order-service.js';
 import React from 'react';
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { Ticket as TicketType } from '../services/ticket-service.js';
+import * as Ticket from './Ticket.js';
 
 export interface RootProps {
   /** Child components */
@@ -134,5 +136,68 @@ export const DownloadTicketsButton = React.forwardRef<
         </AsChildSlot>
       )}
     </CoreOrder.DownloadTicketsButton>
+  );
+});
+
+export interface TicketsProps {
+  /** Render prop function */
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        tickets: TicketType[];
+      }>;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export const Tickets = React.forwardRef<HTMLElement, TicketsProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreOrder.Tickets>
+        {({ tickets }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            customElement={children}
+            customElementProps={{ tickets }}
+            content={tickets}
+            {...otherProps}
+          >
+            <div>{children as React.ReactNode}</div>
+          </AsChildSlot>
+        )}
+      </CoreOrder.Tickets>
+    );
+  },
+);
+
+export interface TicketRepeaterProps {
+  /** Child components */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export const TicketRepeater = React.forwardRef<
+  HTMLElement,
+  TicketRepeaterProps
+>((props) => {
+  const { children, className } = props;
+
+  return (
+    <CoreOrder.TicketRepeater>
+      {({ tickets }) =>
+        tickets.map((ticket) => (
+          <Ticket.Root key={ticket._id} ticket={ticket} className={className}>
+            {children}
+          </Ticket.Root>
+        ))
+      }
+    </CoreOrder.TicketRepeater>
   );
 });

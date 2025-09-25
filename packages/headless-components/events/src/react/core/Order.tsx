@@ -6,6 +6,7 @@ import {
   OrderServiceDefinition,
 } from '../../services/order-service.js';
 import { formatLongDate } from '../../utils/date.js';
+import { Ticket } from '../../services/ticket-service.js';
 
 export interface RootProps {
   /** Child components that will have access to the order service */
@@ -99,4 +100,48 @@ export function DownloadTicketsButton(
   const ticketsPdfUrl = orderService.order.get().ticketsPdf!;
 
   return props.children({ ticketsPdfUrl });
+}
+
+export interface TicketsProps {
+  /** Render prop function */
+  children: (props: TicketsRenderProps) => React.ReactNode;
+}
+
+export interface TicketsRenderProps {
+  /** Tickets */
+  tickets: Ticket[];
+}
+
+/**
+ * Order Tickets core component that provides tickets.
+ *
+ * @component
+ */
+export function Tickets(props: TicketsProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const tickets = orderService.order.get().invoice?.items!;
+
+  return props.children({ tickets });
+}
+
+export interface TicketRepeaterProps {
+  /** Render prop function */
+  children: (props: TicketRepeaterRenderProps) => React.ReactNode;
+}
+
+export interface TicketRepeaterRenderProps {
+  /** Tickets */
+  tickets: Ticket[];
+}
+
+/**
+ * Order TicketRepeater core component that provides tickets repeater.
+ *
+ * @component
+ */
+export function TicketRepeater(props: TicketRepeaterProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const tickets = orderService.order.get().invoice?.items!;
+
+  return props.children({ tickets });
 }

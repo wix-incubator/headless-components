@@ -1,6 +1,7 @@
 import {
   Event as EventPrimitive,
   Order as OrderPrimitive,
+  Ticket as TicketPrimitive,
 } from '@wix/headless-events/react';
 import {
   type EventServiceConfig,
@@ -164,15 +165,33 @@ export function ThankYou({
                           )}
                         </OrderPrimitive.DownloadTicketsButton>
                       </div>
-                      <div className="p-6 font-light text-content-primary border-b border-gray-300">
-                        <div className="flex border-b border-gray-200 py-3">
+                      <OrderPrimitive.Tickets className="px-6 border-b border-gray-300">
+                        <div className="flex border-b border-gray-200 py-4 font-light text-content-primary">
                           <div className="w-[35%]">Ticket type</div>
                           <div className="w-[25%]">Price</div>
                           <div className="w-[15%]">Quantity</div>
                           <div className="w-[25%] text-right">Total</div>
                         </div>
-                        {/* Ticket rows will be populated here */}
-                      </div>
+                        <OrderPrimitive.TicketRepeater>
+                          <div className="flex border-b border-gray-200 py-4 font-light text-content-primary">
+                            <div className="w-[35%]">
+                              <TicketPrimitive.Name />
+                            </div>
+                            <div className="w-[25%]">
+                              <TicketPrimitive.Price />
+                            </div>
+                            <div className="w-[15%]">
+                              <TicketPrimitive.Quantity />
+                            </div>
+                            <div className="w-[25%] text-right">
+                              <TicketPrimitive.Total />
+                            </div>
+                          </div>
+                        </OrderPrimitive.TicketRepeater>
+                        <div className="flex flex-row justify-end">
+                          <div className="w-[40%]">hello</div>
+                        </div>
+                      </OrderPrimitive.Tickets>
                       <div className="px-6 py-3 gap-1 flex flex-row items-center">
                         <OrderPrimitive.OrderNumber
                           asChild

@@ -48,7 +48,5 @@ export async function loadOrderServiceConfig(
     },
   );
 
-  console.log('order', order);
-
   return { order };
 }
