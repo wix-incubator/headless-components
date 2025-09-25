@@ -181,6 +181,21 @@ export default function IndexPage(props: {
                       <InstagramMedia.MediaGalleryRepeater>
                         <MediaGallery.Root mediaGalleryServiceConfig={{ media: [], infinite: true }}>
                           <ItemLightbox />
+                          <MediaGallery.Thumbnails>
+                            <MediaGallery.ThumbnailRepeater>
+                              <MediaGallery.ThumbnailItem asChild>
+                                {({ src, alt, isActive, select }) => (
+                                  <button
+                                    onClick={select}
+                                    data-active={isActive}
+                                    className="aspect-square rounded-md overflow-hidden"
+                                  >
+                                    <img src={src} alt={alt || ''} className="w-full h-full object-cover" />
+                                  </button>
+                                )}
+                              </MediaGallery.ThumbnailItem>
+                            </MediaGallery.ThumbnailRepeater>
+                          </MediaGallery.Thumbnails>
                         </MediaGallery.Root>
                       </InstagramMedia.MediaGalleryRepeater>
                     </InstagramMedia.MediaGalleryItems>

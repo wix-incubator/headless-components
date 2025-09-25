@@ -26,7 +26,18 @@ import { MediaGallery } from '@wix/headless-media/react';
           <InstagramMedia.MediaGalleries>
             <InstagramMedia.MediaGalleryItems>
               <InstagramMedia.MediaGalleryRepeater>
-                <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }} />
+                <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }}>
+                  <MediaGallery.Viewport />
+                  <div>
+                    <MediaGallery.Previous />
+                    <MediaGallery.Next />
+                  </div>
+                  <MediaGallery.Thumbnails>
+                    <MediaGallery.ThumbnailRepeater>
+                      <MediaGallery.ThumbnailItem />
+                    </MediaGallery.ThumbnailRepeater>
+                  </MediaGallery.Thumbnails>
+                </MediaGallery.Root>
               </InstagramMedia.MediaGalleryRepeater>
             </InstagramMedia.MediaGalleryItems>
           </InstagramMedia.MediaGalleries>
