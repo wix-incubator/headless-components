@@ -1,4 +1,3 @@
-import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import { forms } from '@wix/forms';
@@ -93,7 +92,7 @@ export function Form({ children }: FormProps) {
 
   const isLoading = isLoadingSignal.get();
   const error = errorSignal.get();
-
+  console.log('Form core:', isLoading, error, formSignal.get());
   if (isLoading) {
     return children({ isLoading: true, error: null, form: null });
   } else if (error) {
@@ -144,11 +143,9 @@ export interface FormLoadingRenderProps {
  * ```
  */
 export function Loading(props: FormLoadingProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
+  const { isLoadingSignal } = useService(FormServiceDefinition);
 
-  const isLoading = service.isLoadingSignal?.get() || false;
+  const isLoading = isLoadingSignal.get();
 
   return props.children({
     isLoading,
@@ -199,11 +196,9 @@ export interface FormErrorRenderProps {
  * ```
  */
 export function LoadingError(props: FormErrorProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
+  const { errorSignal } = useService(FormServiceDefinition);
 
-  const error = service.errorSignal?.get() || null;
+  const error = errorSignal.get();
   const hasError = !!error;
 
   return props.children({
@@ -330,8 +325,8 @@ interface FieldsProps {
 }
 
 export function Fields(props: FieldsProps) {
-  const formService = useService(FormServiceDefinition);
-  const form = formService.formSignal.get();
+  const { formSignal } = useService(FormServiceDefinition);
+  const form = formSignal.get();
 
   return props.children({
     form,

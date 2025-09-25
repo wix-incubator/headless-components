@@ -63,7 +63,7 @@ const FIELD_MAP = {
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
   return (
     <>
-      <h1>Form {formServiceConfig.formId ?? formServiceConfig.form?._id}</h1>
+      <h1>Form {'formId' in formServiceConfig ? formServiceConfig.formId : formServiceConfig?.form?._id}</h1>
       <Form.Root formServiceConfig={formServiceConfig}>
         <Form.Loading className="flex justify-center p-4" />
         <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
