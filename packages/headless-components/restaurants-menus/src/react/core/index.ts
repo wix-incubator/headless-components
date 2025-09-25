@@ -1,4 +1,10 @@
-export { Menus, Loading, ErrorState } from './Menus.js';
+export {
+  Menus,
+  Loading,
+  ErrorState,
+  MenuSelector,
+  LocationSelector,
+} from './Menus.js';
 export {
   Menu,
   useMenuContext,

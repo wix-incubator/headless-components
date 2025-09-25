@@ -8,7 +8,22 @@ import {
   itemModifiers,
 } from '@wix/restaurants';
 
-export type Menu = menus.Menu;
+export interface Location {
+  id: string;
+  name: string;
+}
+
+export interface BusinessLocationDetails {
+  name?: string;
+  archived?: boolean;
+  default?: boolean;
+}
+
+export interface EnhancedMenu extends Omit<menus.Menu, 'businessLocationDetails'> {
+  businessLocationDetails?: BusinessLocationDetails;
+}
+
+export type Menu = EnhancedMenu;
 export type Section = sections.Section;
 export type Item = items.Item;
 export type Variant = itemVariants.Variant;

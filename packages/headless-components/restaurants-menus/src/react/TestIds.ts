@@ -13,6 +13,8 @@ export const TestIds = {
   menuDescription: 'menu-description',
   menusLoading: 'menus-loading',
   menusError: 'menus-error',
+  menuSelector: 'menu-selector',
+  locationSelector: 'location-selector',
   labelName: 'label-name',
   labelIcon: 'label-icon',
   modifierGroupName: 'modifier-group-name',
