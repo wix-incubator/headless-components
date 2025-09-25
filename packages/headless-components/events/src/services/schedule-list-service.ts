@@ -100,14 +100,13 @@ export async function loadScheduleListServiceConfig(
 ): Promise<ScheduleListServiceConfig> {
   const loadAll = !limit;
   const pageSize = limit ?? 100;
-  let responses: schedule.ListScheduleItemsResponse[] = [];
 
-  const schedule = await listScheduleItems(eventId, pageSize);
-  const totalItems = schedule.pagingMetadata!.total!;
-  const initialOffset = schedule.items!.length;
-  responses.push(schedule);
+  const response = await listScheduleItems(eventId, pageSize);
+  const totalItems = response.pagingMetadata!.total!;
+  const itemsCount = response.items!.length;
+  const responses = [response];
 
-  if (pageSize < totalItems - initialOffset && loadAll) {
+  if (itemsCount < totalItems && loadAll) {
     const requestCount = Math.ceil(totalItems / pageSize) - 1;
     const moreResponses = await Promise.all(
       new Array(requestCount)
@@ -117,7 +116,7 @@ export async function loadScheduleListServiceConfig(
         ),
     );
 
-    responses = [...responses, ...moreResponses];
+    responses.push(...moreResponses);
   }
 
   const allItems = responses.flatMap((response) => response.items || []);
@@ -130,7 +129,7 @@ const listScheduleItems = async (
   limit: number,
   offset = 0,
 ) => {
-  const listScheduleResult = await schedule.listScheduleItems({
+  return schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
     paging: {
@@ -138,8 +137,6 @@ const listScheduleItems = async (
       offset,
     },
   });
-
-  return listScheduleResult;
 };
 
 function filterScheduleItems(
