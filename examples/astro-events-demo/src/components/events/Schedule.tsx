@@ -40,12 +40,16 @@ export function Schedule({
                 className="font-light text-content-primary"
               />
             </div>
-            <a
-              href={`${eventsPagePath}/${eventServiceConfig.event.slug}`}
+            <EventPrimitive.RsvpButton
+              asChild
               className="h-fit border border-gray-300 rounded-[5px] py-2 px-4 font-light text-content-primary hover:underline"
             >
-              Get Tickets
-            </a>
+              {({ eventSlug, ticketed }) => (
+                <a href={`${eventsPagePath}/${eventSlug}`}>
+                  {ticketed ? 'Get Tickets' : 'RSVP'}
+                </a>
+              )}
+            </EventPrimitive.RsvpButton>
           </div>
         </EventPrimitive.Root>
         <ScheduleListPrimitive.Root
