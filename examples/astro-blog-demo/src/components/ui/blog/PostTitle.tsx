@@ -6,9 +6,9 @@ import React from "react";
 export const postTitleVariants = cva("text-foreground", {
   variants: {
     variant: {
-      base: "text-xl leading-tight font-medium",
-      lg: "text-3xl leading-tight font-semibold",
-      xl: "-mt-1 text-3xl leading-tight font-bold tracking-tight md:text-5xl",
+      base: "font-heading text-xl",
+      lg: "font-heading text-3xl",
+      xl: "-mt-1 font-heading text-3xl md:text-5xl",
     },
   },
   defaultVariants: {

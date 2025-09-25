@@ -1,6 +1,7 @@
 import React from 'react';
 import { FreeText as FreeTextPrimitive } from './core/ProductModifiers.js';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import { DataComponentTags } from '../data-component-tags.js';
 
 enum TestIds {
   choiceRoot = 'choice-root',
@@ -100,6 +101,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const { choice } = choiceContext;
 
     const attributes = {
+      'data-component-tag': DataComponentTags.choiceRoot,
       'data-testid': TestIds.choiceRoot,
       'data-type': choice?.type,
     };
@@ -111,6 +113,9 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     );
   },
 );
+
+Root.displayName = 'Choice.Root';
+
 /**
  * Props for Choice Text component
  */

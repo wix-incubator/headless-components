@@ -62,12 +62,15 @@ const FIELD_MAP = {
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
   return (
-    <Form.Root formServiceConfig={formServiceConfig}>
-      <Form.Loading className="flex justify-center p-4" />
-      <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
-      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
-      <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
-      <Form.Fields fieldMap={FIELD_MAP} />
-    </Form.Root>
+    <>
+      <h1>Form {'formId' in formServiceConfig ? formServiceConfig.formId : formServiceConfig?.form?._id}</h1>
+      <Form.Root formServiceConfig={formServiceConfig}>
+        <Form.Loading className="flex justify-center p-4" />
+        <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
+        <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+        <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
+        <Form.Fields fieldMap={FIELD_MAP} />
+      </Form.Root>
+    </>
   );
 }

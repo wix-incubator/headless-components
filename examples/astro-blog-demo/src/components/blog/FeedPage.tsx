@@ -13,7 +13,7 @@ interface FeedPageProps {
   /** The base url of the category page, commonly end with trailing slash, e.g. "/category/" */
   categoryPageBaseUrl?: string;
   /** The date locale to use for the dates */
-  dateLocale: string;
+  uiLocale: string;
 }
 
 /**
@@ -27,7 +27,7 @@ interface FeedPageProps {
  *   blogFeedServiceConfig={feedConfig}
  *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
- *   dateLocale="en-US"
+ *   uiLocale="en-US"
  * />
  * ```
  */
@@ -35,11 +35,11 @@ export default function FeedPage({
   blogFeedServiceConfig,
   postPageBaseUrl,
   categoryPageBaseUrl,
-  dateLocale,
+  uiLocale,
 }: FeedPageProps) {
   return (
     <Blog.Feed.Root blogFeedServiceConfig={blogFeedServiceConfig}>
-      <Blog.Feed.Sort className="text-foreground mb-4" />
+      <Blog.Feed.Sort className="mb-4 bg-transparent text-foreground" />
       <Blog.Feed.PostItems
         className="grid gap-x-8 gap-y-12 lg:grid-cols-2 xl:grid-cols-3"
         emptyState={
@@ -52,7 +52,7 @@ export default function FeedPage({
         <Blog.Feed.PostItemRepeater offset={0} limit={1}>
           <BlogFeedCardSideBySide
             className="col-span-full"
-            dateLocale={dateLocale}
+            uiLocale={uiLocale}
             postPageBaseUrl={postPageBaseUrl}
             categoryPageBaseUrl={categoryPageBaseUrl}
             readMoreText="Read more"
@@ -60,7 +60,7 @@ export default function FeedPage({
         </Blog.Feed.PostItemRepeater>
         <Blog.Feed.PostItemRepeater offset={1}>
           <BlogFeedCardEditorial
-            dateLocale={dateLocale}
+            uiLocale={uiLocale}
             postPageBaseUrl={postPageBaseUrl}
             categoryPageBaseUrl={categoryPageBaseUrl}
             readMoreText="Read more"

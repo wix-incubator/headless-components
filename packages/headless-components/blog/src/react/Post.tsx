@@ -15,6 +15,9 @@ import {
 } from '../services/blog-post-service.js';
 import { isValidChildren } from './helpers.js';
 
+/** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=cb293890-7b26-4bcf-8c87-64f624c59158 */
+const HTML_CODE_TAG = 'blog.post';
+
 interface PostContextValue {
   post: PostWithResolvedFields | null;
   coverImageUrl?: string;
@@ -133,6 +136,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
         coverImageUrl: post?.resolvedFields?.coverImageUrl || fallbackImageUrl,
       };
       const attributes = {
+        'data-component-tag': HTML_CODE_TAG,
         'data-testid': TestIds.blogPostRoot,
         'data-post-id': post._id,
         'data-post-slug': post.slug,
@@ -395,7 +399,7 @@ Title.displayName = 'Blog.Post.Title';
 export interface ContentProps {
   className?: string;
   children:
-    | AsChildChildren<{ content: any }>
+    | AsChildChildren<{ content: any; pricingPlanIds: string[] }>
     | React.ReactElement<{ content: any }>;
 }
 /**
@@ -437,7 +441,7 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
 
     return (
       <CoreBlogPost.RichContent>
-        {({ content }) => {
+        {({ content, pricingPlanIds }) => {
           if (!content) return null;
 
           return (
@@ -447,7 +451,7 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
               className={className}
               {...attributes}
               customElement={children}
-              customElementProps={{ content }}
+              customElementProps={{ content, pricingPlanIds }}
             ></AsChildSlot>
           );
         }}

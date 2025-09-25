@@ -5,6 +5,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { ticketDefinitionsV2 } from '@wix/events';
 import { type TicketDefinition } from './ticket-definition-service.js';
+import { CheckoutServiceDefinition } from './checkout-service.js';
 
 export interface TicketDefinitionListServiceAPI {
   ticketDefinitions: Signal<TicketDefinition[]>;
@@ -16,10 +17,11 @@ export interface TicketDefinitionListServiceAPI {
     pricingOptionId?: string;
   }) => void;
   getMaxQuantity: (ticketDefinitionId: string) => number;
-  getCurrentSelectedQuantity: (
+  getCurrentQuantity: (
     ticketDefinitionId: string,
     pricingOptionId?: string,
   ) => number;
+  getCurrentPriceOverride: (ticketDefinitionId: string) => string | undefined;
   isSoldOut: (ticketDefinitionId: string) => boolean;
 }
 
@@ -44,6 +46,7 @@ export const TicketDefinitionListService =
     TicketDefinitionListServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
+      const checkoutService = getService(CheckoutServiceDefinition);
 
       const ticketDefinitions = signalsService.signal<TicketDefinition[]>(
         config.ticketDefinitions,
@@ -62,27 +65,15 @@ export const TicketDefinitionListService =
       const findTicketReservation = (
         ticketDefinitionId: string,
         pricingOptionId?: string,
-      ) => {
-        if (pricingOptionId) {
-          return selectedQuantities
-            .get()
-            .filter(
-              (selectedQuantity) =>
-                selectedQuantity.ticketDefinitionId === ticketDefinitionId,
-            )
-            .find(
-              (selectedQuantity) =>
-                selectedQuantity.pricingOptionId === pricingOptionId,
-            );
-        }
-
-        return selectedQuantities
+      ) =>
+        selectedQuantities
           .get()
           .find(
             (selectedQuantity) =>
-              selectedQuantity.ticketDefinitionId === ticketDefinitionId,
+              selectedQuantity.ticketDefinitionId === ticketDefinitionId &&
+              (!pricingOptionId ||
+                selectedQuantity.pricingOptionId === pricingOptionId),
           );
-      };
 
       const getMaxQuantity = (ticketDefinitionId: string) => {
         const ticketDefinition = findTicketDefinition(ticketDefinitionId);
@@ -90,7 +81,7 @@ export const TicketDefinitionListService =
         return ticketDefinition?.limitPerCheckout || 0;
       };
 
-      const getCurrentSelectedQuantity = (
+      const getCurrentQuantity = (
         ticketDefinitionId: string,
         pricingOptionId?: string,
       ) => {
@@ -99,7 +90,7 @@ export const TicketDefinitionListService =
           pricingOptionId,
         );
 
-        return selectedQuantity?.quantity ?? 0;
+        return selectedQuantity?.quantity || 0;
       };
 
       const getCurrentPriceOverride = (ticketDefinitionId: string) => {
@@ -115,34 +106,28 @@ export const TicketDefinitionListService =
         ticketDefinitionId,
         pricingOptionId,
         priceOverride = getCurrentPriceOverride(ticketDefinitionId),
-        quantity = getCurrentSelectedQuantity(
-          ticketDefinitionId,
-          pricingOptionId,
-        ),
+        quantity = getCurrentQuantity(ticketDefinitionId, pricingOptionId),
       }: TicketReservationQuantity) => {
-        const max = getMaxQuantity(ticketDefinitionId);
-        const newQuantity = Math.max(0, Math.min(quantity, max));
+        const maxQuantity = getMaxQuantity(ticketDefinitionId);
+        const newQuantity = Math.max(0, Math.min(quantity, maxQuantity));
         const newSelectedQuantity: TicketReservationQuantity = {
           ticketDefinitionId,
+          pricingOptionId,
           quantity: newQuantity,
           priceOverride: priceOverride ? priceOverride : undefined,
-          pricingOptionId,
         };
 
-        const newSelectedQuantities = [
-          ...selectedQuantities.get().filter((selectedQuantity) => {
-            if (pricingOptionId) {
-              return !(
-                selectedQuantity.ticketDefinitionId === ticketDefinitionId &&
-                selectedQuantity.pricingOptionId === pricingOptionId
-              );
-            }
+        const newSelectedQuantities = selectedQuantities
+          .get()
+          .filter(
+            (selectedQuantity) =>
+              selectedQuantity.ticketDefinitionId !== ticketDefinitionId ||
+              selectedQuantity.pricingOptionId !== pricingOptionId,
+          )
+          .concat(newSelectedQuantity)
+          .filter((selectedQuantity) => !!selectedQuantity.quantity);
 
-            return selectedQuantity.ticketDefinitionId !== ticketDefinitionId;
-          }),
-          newSelectedQuantity,
-        ];
-
+        checkoutService.error.set(null);
         selectedQuantities.set(newSelectedQuantities);
       };
 
@@ -151,8 +136,9 @@ export const TicketDefinitionListService =
         selectedQuantities,
         setQuantity,
         getMaxQuantity,
+        getCurrentQuantity,
+        getCurrentPriceOverride,
         isSoldOut,
-        getCurrentSelectedQuantity,
       };
     },
   );

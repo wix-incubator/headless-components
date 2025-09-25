@@ -48,5 +48,7 @@ export type {
   GenericListRootProps,
   GenericListItemsProps,
   GenericListLoadMoreProps,
+  GenericListLoadMoreRenderProps,
   GenericListTotalsProps,
+  GenericListTotalsRenderProps,
 } from './generic-list.js';

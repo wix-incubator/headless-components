@@ -13,7 +13,7 @@ interface BlogFeedCardProps extends React.HTMLAttributes<HTMLElement> {
   postPageBaseUrl: string;
   /** Categories will link to category pages if provided, otherwise they will be displayed as labels. */
   categoryPageBaseUrl?: string;
-  dateLocale: string;
+  uiLocale: string;
   readMoreText?: string;
 }
 
@@ -26,7 +26,7 @@ interface BlogFeedCardProps extends React.HTMLAttributes<HTMLElement> {
  * <BlogFeedCardSideBySide
  *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
- *   dateLocale="en-US"
+ *   uiLocale="en-US"
  *   readMoreText="Read more"
  * />
  * ```
@@ -35,7 +35,7 @@ export function BlogFeedCardSideBySide({
   className,
   postPageBaseUrl,
   categoryPageBaseUrl,
-  dateLocale,
+  uiLocale,
   readMoreText,
   ...attributes
 }: BlogFeedCardProps) {
@@ -45,7 +45,7 @@ export function BlogFeedCardSideBySide({
     <article
       {...attributes}
       className={cn(
-        "bg-surface-card group grid auto-cols-fr grid-flow-col overflow-hidden rounded-xl",
+        "group grid auto-cols-fr overflow-hidden rounded-xl bg-foreground/5 lg:grid-flow-col",
         className
       )}
     >
@@ -67,15 +67,15 @@ export function BlogFeedCardSideBySide({
 
         <PostExcerpt className="mb-4" />
 
-        <SeparatedItems className="text-content-secondary text-sm">
-          <Blog.Post.PublishDate locale={dateLocale} />
+        <SeparatedItems className="font-paragraph text-sm text-foreground/80">
+          <Blog.Post.PublishDate locale={uiLocale} />
 
           <Blog.Post.ReadingTime asChild>
             {({ readingTime }) => <span>{readingTime} min read</span>}
           </Blog.Post.ReadingTime>
         </SeparatedItems>
 
-        <div className="mt-auto mb-0"></div>
+        <div className="mb-0 mt-auto"></div>
 
         {readMoreText && (
           <Button className="mt-4 w-fit" asChild>
@@ -103,7 +103,7 @@ export function BlogFeedCardSideBySide({
  * <BlogFeedCardEditorial
  *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
- *   dateLocale="en-US"
+ *   uiLocale="en-US"
  *   readMoreText="Read more"
  * />
  * ```
@@ -112,7 +112,7 @@ export function BlogFeedCardEditorial({
   className,
   postPageBaseUrl,
   categoryPageBaseUrl,
-  dateLocale,
+  uiLocale,
   readMoreText,
   ...attributes
 }: BlogFeedCardProps) {
@@ -137,10 +137,10 @@ export function BlogFeedCardEditorial({
 
       <PostExcerpt className="mb-4" />
 
-      <div className="mt-auto mb-0"></div>
+      <div className="mb-0 mt-auto"></div>
 
-      <SeparatedItems className="text-content-secondary text-sm">
-        <Blog.Post.PublishDate locale={dateLocale} />
+      <SeparatedItems className="font-paragraph text-sm text-foreground/80">
+        <Blog.Post.PublishDate locale={uiLocale} />
 
         <Blog.Post.ReadingTime asChild>
           {({ readingTime }) => <span>{readingTime} min read</span>}

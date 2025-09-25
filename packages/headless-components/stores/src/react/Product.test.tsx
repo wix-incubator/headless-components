@@ -127,6 +127,18 @@ const mockProduct = {
   description: 'Test product description',
 } as any;
 
+const mockProductWithoutVariants = {
+  id: 'test-product-no-variants',
+  name: 'Product Without Variants',
+  description: 'Product with no variant options',
+} as any;
+
+const mockProductWithoutModifiers = {
+  id: 'test-product-no-modifiers',
+  name: 'Product Without Modifiers',
+  description: 'Product with no modifier options',
+} as any;
+
 describe('Product Components', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -1324,5 +1336,57 @@ describe('Product Components', () => {
       expect(priceProps).toBeDefined();
       expect(variantsProps).toBeDefined();
     });
+  });
+
+  it('renders data-component-tag attribute on first DOM element', () => {
+    render(
+      <Product.Root product={mockProduct}>
+        <div>Content</div>
+      </Product.Root>,
+    );
+
+    const rootElement = screen.getByTestId('product-root');
+    expect(rootElement).toHaveAttribute(
+      'data-component-tag',
+      'stores.product-root',
+    );
+  });
+
+  it('renders data-component-tag attribute when VariantOptions shows empty state', () => {
+    render(
+      <Product.Root product={mockProductWithoutVariants}>
+        <Product.Variants>
+          <Product.VariantOptions emptyState={<div>No variants available</div>}>
+            <div>Content</div>
+          </Product.VariantOptions>
+        </Product.Variants>
+      </Product.Root>,
+    );
+
+    const rootElement = screen.getByTestId('product-root');
+    expect(rootElement).toHaveAttribute(
+      'data-component-tag',
+      'stores.product-root',
+    );
+  });
+
+  it('renders data-component-tag attribute when ModifierOptions shows empty state', () => {
+    render(
+      <Product.Root product={mockProductWithoutModifiers}>
+        <Product.Modifiers>
+          <Product.ModifierOptions
+            emptyState={<div>No modifiers available</div>}
+          >
+            <div>Content</div>
+          </Product.ModifierOptions>
+        </Product.Modifiers>
+      </Product.Root>,
+    );
+
+    const rootElement = screen.getByTestId('product-root');
+    expect(rootElement).toHaveAttribute(
+      'data-component-tag',
+      'stores.product-root',
+    );
   });
 });

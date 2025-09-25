@@ -4,11 +4,6 @@ import React from "react";
 
 /**
  * Displays the excerpt/summary of a blog post with line clamping.
- *
- * @example
- * ```tsx
- * <PostExcerpt className="text-muted" />
- * ```
  */
 export const PostExcerpt = React.forwardRef<
   HTMLElement,
@@ -17,7 +12,10 @@ export const PostExcerpt = React.forwardRef<
   return (
     <Blog.Post.Excerpt
       ref={ref}
-      className={cn("text-content-secondary line-clamp-3", className)}
+      className={cn(
+        "line-clamp-3 font-paragraph text-foreground/80",
+        className
+      )}
     />
   );
 });
