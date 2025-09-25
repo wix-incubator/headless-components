@@ -37,7 +37,7 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   /** Array of items to display */
   items: T[];
   /** Function called to load more items (infinite scroll/load more pattern) */
-  onLoadMore?: () => void;
+  loadMore?: () => void;
   /** Whether more items can be loaded */
   hasMore?: boolean;
   /** Whether items are currently loading */
@@ -118,7 +118,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
   ) => {
     const {
       items,
-      onLoadMore,
+      loadMore,
       hasMore = false,
       isLoading = false,
       children,
@@ -135,9 +135,9 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
         items,
         hasMore,
         isLoading,
-        onLoadMore,
+        loadMore,
       }),
-      [items, hasMore, isLoading, onLoadMore],
+      [items, hasMore, isLoading, loadMore],
     );
 
     return (

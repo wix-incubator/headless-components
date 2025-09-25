@@ -116,7 +116,7 @@ const RootContent = React.forwardRef<
   return (
     <GenericList.Root
       items={items}
-      onLoadMore={() => productsListService.loadMore(10)}
+      loadMore={() => productsListService.loadMore(10)}
       hasMore={productsListService.hasMoreProducts.get()}
       isLoading={productsListService.isLoading.get()}
       className={className}
