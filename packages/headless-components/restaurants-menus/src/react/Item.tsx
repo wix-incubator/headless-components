@@ -375,45 +375,54 @@ export interface ItemAdditionalImagesProps {
  * </Item.AdditionalImages>
  * ```
  */
-export const AdditionalImages = React.forwardRef<HTMLElement, ItemAdditionalImagesProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
+export const AdditionalImages = React.forwardRef<
+  HTMLElement,
+  ItemAdditionalImagesProps
+>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
 
-    return (
-      <CoreAdditionalImages>
-        {({ hasImages, images, altText }: { hasImages: boolean; images?: string[]; altText: string }) => {
-          if (asChild && children) {
-            return children({ hasImages, images, altText }, ref);
-          }
+  return (
+    <CoreAdditionalImages>
+      {({
+        hasImages,
+        images,
+        altText,
+      }: {
+        hasImages: boolean;
+        images?: string[];
+        altText: string;
+      }) => {
+        if (asChild && children) {
+          return children({ hasImages, images, altText }, ref);
+        }
 
-          if (!hasImages) {
-            return null;
-          }
+        if (!hasImages) {
+          return null;
+        }
 
-          const mediaItems = images?.map((image: string) => ({ image })) || [];
+        const mediaItems = images?.map((image: string) => ({ image })) || [];
 
-          return (
-            <MediaGallery.Root mediaGalleryServiceConfig={{ media: mediaItems }}>
-              <AsChildSlot
-                ref={ref}
-                asChild={asChild}
-                data-testid={TestIds.itemAdditionalImages}
-                {...otherProps}
-              >
-                <div>
-                  <MediaGallery.Viewport />
-                  <MediaGallery.Previous />
-                  <MediaGallery.Next />
-                  <MediaGallery.Indicator />
-                </div>
-              </AsChildSlot>
-            </MediaGallery.Root>
-          );
-        }}
-      </CoreAdditionalImages>
-    );
-  },
-);
+        return (
+          <MediaGallery.Root mediaGalleryServiceConfig={{ media: mediaItems }}>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              data-testid={TestIds.itemAdditionalImages}
+              {...otherProps}
+            >
+              <div>
+                <MediaGallery.Viewport />
+                <MediaGallery.Previous />
+                <MediaGallery.Next />
+                <MediaGallery.Indicator />
+              </div>
+            </AsChildSlot>
+          </MediaGallery.Root>
+        );
+      }}
+    </CoreAdditionalImages>
+  );
+});
 
 /**
  * Repeater component for rendering individual variants.

@@ -180,7 +180,7 @@ export const getLocations = (menus: Menu[]) => {
     const archived = menu.businessLocationDetails?.archived;
 
     if (locationId && !archived) {
-      const existingLocation = acc.find(loc => loc.id === locationId);
+      const existingLocation = acc.find((loc) => loc.id === locationId);
       if (!existingLocation) {
         acc.push({
           id: locationId,

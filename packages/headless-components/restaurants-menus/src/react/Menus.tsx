@@ -55,6 +55,10 @@ export interface MenuSelectorProps {
   listClassName?: string;
   /** CSS classes to apply to each tab trigger element */
   triggerClassName?: string;
+  /** Text for the "all" option */
+  allText?: string;
+  /** Whether to show the "all" option */
+  showAll?: boolean;
 }
 
 /**
@@ -116,11 +120,28 @@ export interface MenuSelectorProps {
  */
 export const MenuSelector = React.forwardRef<HTMLElement, MenuSelectorProps>(
   (props, ref) => {
-    const { asChild, children, className, listClassName, triggerClassName, ...otherProps } = props;
+    const {
+      asChild,
+      children,
+      className,
+      listClassName,
+      triggerClassName,
+      allText = 'All',
+      showAll = true,
+      ...otherProps
+    } = props;
 
     return (
-      <CoreMenuSelector>
-        {({ menus, selectedMenu, onMenuSelect }: { menus: Menu[]; selectedMenu: Menu | null; onMenuSelect: (menu: Menu) => void }) => {
+      <CoreMenuSelector allText={allText} showAll={showAll}>
+        {({
+          menus,
+          selectedMenu,
+          onMenuSelect,
+        }: {
+          menus: Menu[];
+          selectedMenu: Menu | null;
+          onMenuSelect: (menu: Menu) => void;
+        }) => {
           // Only show selector if there are more than 2 menus
           if (menus.length <= 2) {
             return null;
@@ -139,7 +160,7 @@ export const MenuSelector = React.forwardRef<HTMLElement, MenuSelectorProps>(
             >
               <Tabs.Root
                 className={className}
-                value={selectedMenu?._id || ''}
+                value={selectedMenu?._id || 'all'}
                 onValueChange={(value) => {
                   const menu = menus.find((m: Menu) => m._id === value);
                   if (menu) onMenuSelect(menu);
@@ -336,6 +357,10 @@ export interface LocationSelectorProps {
   optionClassName?: string;
   /** Placeholder text for the select */
   placeholder?: string;
+  /** Text for the "all" option */
+  allText?: string;
+  /** Whether to show the "all" option */
+  showAll?: boolean;
 }
 
 /**
@@ -413,66 +438,83 @@ export interface LocationSelectorProps {
  * </Menus.LocationSelector>
  * ```
  */
-export const LocationSelector = React.forwardRef<HTMLElement, LocationSelectorProps>(
-  (props, ref) => {
-    const { asChild, children, className, optionClassName, placeholder = "Select a location", ...otherProps } = props;
+export const LocationSelector = React.forwardRef<
+  HTMLElement,
+  LocationSelectorProps
+>((props, ref) => {
+  const {
+    asChild,
+    children,
+    className,
+    optionClassName,
+    placeholder = 'Select a location',
+    allText = 'All',
+    showAll = true,
+    ...otherProps
+  } = props;
 
-    return (
-      <CoreLocationSelector>
-        {({ locations, selectedLocation, onLocationSelect }: {
-          locations: Location[];
-          selectedLocation: string | null;
-          onLocationSelect: (location: string) => void
-        }) => {
-          // Only show selector if there are 2 or more locations
-          if (locations.length < 2) {
-            return null;
-          }
+  return (
+    <CoreLocationSelector allText={allText} showAll={showAll}>
+      {({
+        locations,
+        selectedLocation,
+        onLocationSelect,
+      }: {
+        locations: Location[];
+        selectedLocation: string | null;
+        onLocationSelect: (location: string) => void;
+      }) => {
+        // Only show selector if there are 2 or more locations
+        if (locations.length < 2) {
+          return null;
+        }
 
-          if (asChild && children && typeof children === 'function') {
-            return children({ locations, selectedLocation, onLocationSelect }, ref);
-          }
-
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              data-testid={TestIds.locationSelector}
-              {...otherProps}
-            >
-              <Select.Root
-                value={selectedLocation || ''}
-                onValueChange={onLocationSelect}
-              >
-                <Select.Trigger className={className}>
-                  <Select.Value placeholder={placeholder} />
-                  <Select.Icon />
-                </Select.Trigger>
-                <Select.Portal>
-                  <Select.Content>
-                    <Select.ScrollUpButton />
-                    <Select.Viewport>
-                      {locations.map((location: Location) => (
-                        <Select.Item
-                          key={location.id}
-                          value={location.id}
-                          className={optionClassName}
-                        >
-                          <Select.ItemText>{location.name}</Select.ItemText>
-                        </Select.Item>
-                      ))}
-                    </Select.Viewport>
-                    <Select.ScrollDownButton />
-                  </Select.Content>
-                </Select.Portal>
-              </Select.Root>
-            </AsChildSlot>
+        if (asChild && children && typeof children === 'function') {
+          return children(
+            { locations, selectedLocation, onLocationSelect },
+            ref,
           );
-        }}
-      </CoreLocationSelector>
-    );
-  },
-);
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            data-testid={TestIds.locationSelector}
+            {...otherProps}
+          >
+            <Select.Root
+              value={selectedLocation || 'all'}
+              onValueChange={onLocationSelect}
+            >
+              <Select.Trigger className={className}>
+                <Select.Value placeholder={placeholder} />
+                <Select.Icon />
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content>
+                  <Select.ScrollUpButton />
+                  <Select.Viewport>
+                    {locations.map((location: Location) => (
+                      <Select.Item
+                        key={location.id}
+                        value={location.id}
+                        className={optionClassName}
+                      >
+                        <Select.ItemText>{location.name}</Select.ItemText>
+                      </Select.Item>
+                    ))}
+                  </Select.Viewport>
+                  <Select.ScrollDownButton />
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
+          </AsChildSlot>
+        );
+      }}
+    </CoreLocationSelector>
+  );
+});
 
 LocationSelector.displayName = 'Menus.LocationSelector';
 

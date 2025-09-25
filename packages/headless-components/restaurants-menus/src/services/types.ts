@@ -19,7 +19,8 @@ export interface BusinessLocationDetails {
   default?: boolean;
 }
 
-export interface EnhancedMenu extends Omit<menus.Menu, 'businessLocationDetails'> {
+export interface EnhancedMenu
+  extends Omit<menus.Menu, 'businessLocationDetails'> {
   businessLocationDetails?: BusinessLocationDetails;
 }
 
