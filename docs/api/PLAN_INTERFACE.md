@@ -37,6 +37,7 @@ interface RootProps {
     <Plan.AdditionalFees />
     <Plan.Recurrence />
     <Plan.Duration />
+    <Plan.FreeTrialDays />
     <Plan.Action.BuyNow label="Select Plan" />
   </Plan.Plan>
 </Plan.Root>
@@ -484,6 +485,34 @@ interface PlanDurationData {
 ```
 ---
 
+### Plan.FreeTrialDays
+
+Displays the free trial days.
+
+**Props**
+```tsx
+interface FreeTrialDaysProps {
+  children: React.ForwardRefExoticComponent<PlanFreeTrialDaysData>;
+}
+
+interface PlanFreeTrialDaysData {
+  freeTrialDays: number;
+}
+```
+
+**Example**
+
+```tsx
+<Plan.FreeTrialDays>
+  {React.forwardRef(({ freeTrialDays }, ref) => {
+    return <span ref={ref} className="text-sm" data-testid="plan-free-trial-days">
+      Free trial for {freeTrialDays} days
+    </span>
+  })}
+</Plan.FreeTrialDays>
+```
+---
+
 ### Plan.Perks
 
 Container for plan perks.
@@ -605,11 +634,11 @@ type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
 
 // With custom button with forwardRef
 <Plan.Action.BuyNow className="btn-primary" label="Buy Now" loadingState="Processing..." asChild>
-  {React.forwardRef(({disabled, isLoading, onClick, ...props}, ref) => (
+  {({disabled, isLoading, onClick, ...props}, ref) => (
     <button ref={ref} {...props} disabled={disabled} onClick={onClick} className="btn-primary">
       {isLoading ? 'Processing...' : 'Buy Now'}
     </button>
-  ))}
+  )}
 </Plan.Action.BuyNow>
 ```
 
