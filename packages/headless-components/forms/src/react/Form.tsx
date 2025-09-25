@@ -1,15 +1,12 @@
-import React, { useCallback, useState } from 'react';
-import { AsChildSlot } from '@wix/headless-utils/react';
-import { useService } from '@wix/services-manager-react';
+import React, { useState, useCallback } from 'react';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import {
   Form as FormViewer,
   type FormValues,
   type FormError,
 } from '@wix/form-public';
-import {
-  FormServiceDefinition,
-  type FormServiceConfig,
-} from '../services/form-service';
+
+import { type FormServiceConfig } from '../services/form-service';
 import * as CoreForm from './core/Form';
 
 import {
@@ -42,6 +39,7 @@ import {
 
 enum TestIds {
   formRoot = 'form-root',
+  form = 'form',
   formLoadingError = 'form-loading-error',
   formError = 'form-error',
   formSubmitted = 'form-submitted',
@@ -119,6 +117,70 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
           {children}
         </RootContent>
       </CoreForm.Root>
+    );
+  },
+);
+
+interface FormProps {
+  asChild?: boolean;
+  children: AsChildChildren<CoreForm.FormRenderProps> | React.ReactNode;
+  className?: string;
+  loadingState?: React.ReactNode;
+}
+
+/**
+ * Displays the plan data with support for loading state
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Plan.Plan className="flex flex-col gap-4" loadingState={<div>Loading...</div>}>
+ *   <Plan.Image />
+ *   <Plan.Name />
+ * </Plan.Plan>
+ *
+ * // With asChild
+ * <Plan.Plan asChild>
+ *   {React.forwardRef(({isLoading, error, plan}, ref) => {
+ *     if (isLoading) {
+ *       return <div>Loading...</div>;
+ *     }
+ *     if (error) {
+ *       return <div>Error!</div>;
+ *     }
+ *     return (
+ *       <div ref={ref} className="flex flex-col gap-4">
+ *         Plan {plan.name}
+ *       </div>
+ *     );
+ *   })}
+ * </Plan.Plan>
+ *
+ */
+export const Form = React.forwardRef<HTMLElement, FormProps>(
+  ({ children, asChild, className, loadingState }, ref) => {
+    return (
+      <CoreForm.Form>
+        {(formRenderProps) => (
+          <AsChildSlot
+            ref={ref}
+            data-testid={TestIds.form}
+            data-is-loading={formRenderProps.isLoading}
+            data-has-error={formRenderProps.error !== null}
+            className={className}
+            asChild={asChild}
+            customElement={children}
+            customElementProps={formRenderProps}
+          >
+            <div>
+              {formRenderProps.isLoading
+                ? loadingState
+                : (children as React.ReactNode)}
+            </div>
+          </AsChildSlot>
+        )}
+      </CoreForm.Form>
     );
   },
 );
@@ -592,7 +654,7 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
  * };
  * ```
  */
-interface FieldMap {
+export interface FieldMap {
   TEXT_INPUT: React.ComponentType<TextInputProps>;
   TEXT_AREA: React.ComponentType<TextAreaProps>;
   PHONE_INPUT: React.ComponentType<PhoneInputProps>;
@@ -641,7 +703,7 @@ interface FieldMap {
  * <Form.Fields fieldMap={FIELD_MAP} />
  * ```
  */
-export interface FieldsProps {
+interface FieldsProps {
   fieldMap: FieldMap;
 }
 
@@ -791,15 +853,7 @@ export interface FieldsProps {
  * ```
  */
 export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
-  ({ fieldMap }, ref) => {
-    const formService = useService(FormServiceDefinition);
-    const form = formService.formSignal.get();
-    const _form = {
-      ...form,
-      id: form?._id,
-      fields: form?.formFields?.map((field) => ({ ...field, id: field._id })),
-    };
-
+  (props, ref) => {
     const [formValues, setFormValues] = useState<FormValues>({});
     const [formErrors, setFormErrors] = useState<FormError[]>([]);
 
@@ -812,16 +866,32 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     }, []);
 
     return (
-      <div ref={ref}>
-        <FormViewer
-          form={_form}
-          values={formValues}
-          onChange={handleFormChange}
-          errors={formErrors}
-          onValidate={handleFormValidate}
-          fields={fieldMap}
-        />
-      </div>
+      <CoreForm.Fields>
+        {({ form }) => {
+          console.log('Fields form', form);
+          if (!form) return null;
+
+          return (
+            <div ref={ref}>
+              <FormViewer
+                form={{
+                  ...form,
+                  id: form?._id,
+                  fields: form?.formFields?.map((field) => ({
+                    ...field,
+                    id: field._id,
+                  })),
+                }}
+                values={formValues}
+                onChange={handleFormChange}
+                errors={formErrors}
+                onValidate={handleFormValidate}
+                fields={props.fieldMap}
+              />
+            </div>
+          );
+        }}
+      </CoreForm.Fields>
     );
   },
 );
@@ -877,17 +947,17 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
  * }
  * ```
  */
-export const Form = {
-  /** Form root component that provides service context */
-  Root,
-  /** Form loading state component */
-  Loading,
-  /** Form loading error state component */
-  LoadingError,
-  /** Form error state component */
-  Error,
-  /** Form submitted state component */
-  Submitted,
-  /** Form fields component for rendering form fields */
-  Fields,
-} as const;
+// export const Form = {
+//   /** Form root component that provides service context */
+//   Root,
+//   /** Form loading state component */
+//   Loading,
+//   /** Form loading error state component */
+//   LoadingError,
+//   /** Form error state component */
+//   Error,
+//   /** Form submitted state component */
+//   Submitted,
+//   /** Form fields component for rendering form fields */
+//   Fields,
+// } as const;

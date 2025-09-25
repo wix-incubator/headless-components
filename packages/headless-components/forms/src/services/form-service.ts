@@ -35,6 +35,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     );
 
     if (!hasSchema) {
+      isLoadingSignal.set(true);
       loadForm(config.formId);
     }
 
@@ -44,6 +45,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
 
         if (result) {
           formSignal.set(result);
+          console.log('result', !!result);
         } else {
           errorSignal.set('Form not found');
         }

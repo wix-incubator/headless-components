@@ -1,11 +1,13 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import { forms } from '@wix/forms';
+
 import {
   FormServiceDefinition,
   FormServiceConfig,
   FormService,
 } from '../../services/form-service.js';
-import { createServicesMap } from '@wix/services-manager';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -58,18 +60,48 @@ export interface RootProps {
  * }
  * ```
  */
-export function Root(props: RootProps): React.ReactNode {
+export function Root({
+  formServiceConfig,
+  children,
+}: RootProps): React.ReactNode {
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         FormServiceDefinition,
         FormService,
-        props.formServiceConfig,
+        formServiceConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
+}
+
+export type FormRenderProps =
+  | { isLoading: true; error: null; form: null }
+  | { isLoading: false; error: null; form: forms.Form }
+  | { isLoading: false; error: string; form: null };
+
+interface FormProps {
+  children: (props: FormRenderProps) => React.ReactNode;
+}
+
+export function Form({ children }: FormProps) {
+  const { formSignal, isLoadingSignal, errorSignal } = useService(
+    FormServiceDefinition,
+  );
+
+  const isLoading = isLoadingSignal.get();
+  const error = errorSignal.get();
+
+  if (isLoading) {
+    return children({ isLoading: true, error: null, form: null });
+  } else if (error) {
+    return children({ isLoading: false, error, form: null });
+  } else {
+    const form = formSignal.get()!;
+    return children({ isLoading: false, error: null, form });
+  }
 }
 
 /**
@@ -286,5 +318,22 @@ export function Submitted(props: FormSubmittedProps) {
   return props.children({
     isSubmitted,
     message,
+  });
+}
+
+interface FieldsRenderProps {
+  form: forms.Form | null;
+}
+
+interface FieldsProps {
+  children: (props: FieldsRenderProps) => React.ReactNode;
+}
+
+export function Fields(props: FieldsProps) {
+  const formService = useService(FormServiceDefinition);
+  const form = formService.formSignal.get();
+
+  return props.children({
+    form,
   });
 }
