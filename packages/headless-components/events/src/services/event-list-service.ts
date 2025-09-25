@@ -129,17 +129,17 @@ export const EventListService =
   );
 
 export async function loadEventListServiceConfig(): Promise<EventListServiceConfig> {
-  const [queryEventsResult, queryCategoriesResult] = await Promise.all([
+  const [queryEventsResponse, queryCategoriesResponse] = await Promise.all([
     queryEvents(),
     queryCategories(),
   ]);
 
   return {
-    events: queryEventsResult.items ?? [],
-    categories: queryCategoriesResult.items ?? [],
-    pageSize: queryEventsResult.pageSize,
-    currentPage: queryEventsResult.currentPage ?? 0,
-    totalPages: queryEventsResult.totalPages ?? 0,
+    events: queryEventsResponse.items ?? [],
+    categories: queryCategoriesResponse.items ?? [],
+    pageSize: queryEventsResponse.pageSize,
+    currentPage: queryEventsResponse.currentPage ?? 0,
+    totalPages: queryEventsResponse.totalPages ?? 0,
   };
 }
 
@@ -158,7 +158,7 @@ const queryEvents = async (offset = 0, categoryId?: string | null) => {
     .skip(offset);
 
   if (categoryId) {
-    // @ts-ignore
+    // @ts-expect-error
     eventsQuery = eventsQuery.in('categories._id', [categoryId]);
   }
 
@@ -166,11 +166,9 @@ const queryEvents = async (offset = 0, categoryId?: string | null) => {
 };
 
 const queryCategories = async () => {
-  const queryCategoriesResult = await categories
+  return categories
     .queryCategories()
     .hasSome('states', [categories.State.MANUAL])
     .limit(100)
     .find();
-
-  return queryCategoriesResult;
 };

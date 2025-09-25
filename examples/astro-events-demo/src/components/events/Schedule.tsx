@@ -13,11 +13,13 @@ import {
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
+  eventsPagePath: string;
 }
 
 export function Schedule({
   eventServiceConfig,
   scheduleListServiceConfig,
+  eventsPagePath,
 }: ScheduleProps) {
   return (
     <div className="min-h-screen bg-surface-primary">
@@ -26,16 +28,28 @@ export function Schedule({
           Schedule
         </h1>
         <EventPrimitive.Root event={eventServiceConfig.event}>
-          <div className="flex flex-col mb-10">
-            <EventPrimitive.Title className="font-light text-content-primary" />
-            <EventPrimitive.Date
-              format="full"
-              className="font-light text-content-primary"
-            />
-            <EventPrimitive.Location
-              format="full"
-              className="font-light text-content-primary"
-            />
+          <div className="flex justify-between">
+            <div className="flex flex-col mb-10">
+              <EventPrimitive.Title className="font-light text-content-primary" />
+              <EventPrimitive.Date
+                format="full"
+                className="font-light text-content-primary"
+              />
+              <EventPrimitive.Location
+                format="full"
+                className="font-light text-content-primary"
+              />
+            </div>
+            <EventPrimitive.RsvpButton
+              asChild
+              className="h-fit border border-gray-300 rounded-[5px] py-2 px-4 font-light text-content-primary hover:underline"
+            >
+              {({ eventSlug, ticketed }) => (
+                <a href={`${eventsPagePath}/${eventSlug}`}>
+                  {ticketed ? 'Get Tickets' : 'RSVP'}
+                </a>
+              )}
+            </EventPrimitive.RsvpButton>
           </div>
         </EventPrimitive.Root>
         <ScheduleListPrimitive.Root
@@ -53,7 +67,7 @@ export function Schedule({
             </div>
             <ScheduleListPrimitive.TagFilters className="flex gap-2 flex-wrap">
               <ScheduleListPrimitive.TagFilterRepeater>
-                <ScheduleItemTagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:bg-gray-50 data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
+                <ScheduleItemTagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:underline data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
               </ScheduleListPrimitive.TagFilterRepeater>
             </ScheduleListPrimitive.TagFilters>
           </div>
