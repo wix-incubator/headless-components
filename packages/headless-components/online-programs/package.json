@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-online-programs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -46,7 +46,7 @@
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/members": "^1.0.322",
-    "@wix/online-programs": "^1.0.43",
+    "@wix/online-programs": "^1.0.47",
     "@wix/redirects": "^1.0.0",
     "@wix/sdk": "^1.15.27",
     "@wix/services-definitions": "^0.1.5",

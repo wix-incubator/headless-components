@@ -5820,13 +5820,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_online-programs_categories@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@wix/auto_sdk_online-programs_categories@npm:1.0.2"
+"@wix/auto_sdk_online-programs_categories@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@wix/auto_sdk_online-programs_categories@npm:1.0.3"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.5.0"
     "@wix/sdk-types": "npm:^1.13.35"
-  checksum: 10c0/372151ad9cc540975b8460f89cb73a79f0c04b022a50b9ba5c813f83ebb04940af3c65aca52b88dcd42fc35917c3feb144d556a8852f79259a1ff46f48b0453a
+  checksum: 10c0/7249345df1bf1e4ce9368b7945eaa988f571e9f45194f5475ae46f35c8d9b25d29d278f3683a2fddbac5361858eb69e1c20d58868eb3077c42e88a12bd0703b6
   languageName: node
   linkType: hard
 
@@ -5840,13 +5840,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_online-programs_online-program-participants@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@wix/auto_sdk_online-programs_online-program-participants@npm:1.0.2"
+"@wix/auto_sdk_online-programs_online-program-participants@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@wix/auto_sdk_online-programs_online-program-participants@npm:1.0.3"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.5.0"
     "@wix/sdk-types": "npm:^1.13.35"
-  checksum: 10c0/13a5359a07bb9837bc96e495d7fb81e4b262ff4670c327bc70f58ee396ee5e39430fb0f642acea1daf7a24a8bdb42a5e887a738732a7e1df3f7b77d8215be263
+  checksum: 10c0/e989866b8b2cb49f1fbcba56b2c34f8de3eff3d89f1fefd482241713f45b6fc239d21da01a21e8e3d248201290cbeacd40ee9da457bd5fab2185bb7318fecbb9
   languageName: node
   linkType: hard
 
@@ -5860,23 +5860,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_online-programs_programs@npm:1.0.3":
-  version: 1.0.3
-  resolution: "@wix/auto_sdk_online-programs_programs@npm:1.0.3"
+"@wix/auto_sdk_online-programs_programs@npm:1.0.4":
+  version: 1.0.4
+  resolution: "@wix/auto_sdk_online-programs_programs@npm:1.0.4"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.5.0"
     "@wix/sdk-types": "npm:^1.13.35"
-  checksum: 10c0/be4ce238c75654c23bfaa59a74bc81dde502f69d9972fed54986146e0747ed62edd2275eee4ded5dbf7719dcf00e203ed9c4718ab57e05509b471336235096a7
+  checksum: 10c0/9a707956ce6f243af0cd347692f5e3dfc4fd2a9ec4b7ebdc0d6396faa78aaa77fb1a7002b6ca1590861ea08889c6af4ec9748bad9c6804d33aa072f9233568c5
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_online-programs_quizzes@npm:1.0.2":
-  version: 1.0.2
-  resolution: "@wix/auto_sdk_online-programs_quizzes@npm:1.0.2"
+"@wix/auto_sdk_online-programs_quizzes@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@wix/auto_sdk_online-programs_quizzes@npm:1.0.3"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.5.0"
     "@wix/sdk-types": "npm:^1.13.35"
-  checksum: 10c0/5f94f24058c60939aae9cd9d212f1b8e1664c0efe2ad805563fd58e9cd69e40ed1c21bf3f77cc02193a92c3f5b03c8a22bf7875c088c1a6b859e93075d2d766f
+  checksum: 10c0/233810065f7f8886e2e89e61145d8b47bec0d8bd73d0458190eca1fb8abb6d5217767162123bd50e565378b0f8c4e8c97fe37a65c762bf16ff9411ec912f4752
   languageName: node
   linkType: hard
 
@@ -7075,26 +7075,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-media@npm:0.0.13, @wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
-  dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@types/node": "npm:^20.9.0"
-    "@vitest/ui": "npm:^3.1.4"
-    "@wix/headless-utils": "workspace:*"
-    "@wix/sdk": "npm:^1.17.1"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-    jsdom: "npm:^26.1.0"
-    prettier: "npm:^3.4.2"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
-  languageName: unknown
-  linkType: soft
-
 "@wix/headless-media@npm:0.0.5, @wix/headless-media@npm:^0.0.5":
   version: 0.0.5
   resolution: "@wix/headless-media@npm:0.0.5"
@@ -7128,26 +7108,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-online-programs@npm:0.0.1":
-  version: 0.0.1
-  resolution: "@wix/headless-online-programs@npm:0.0.1"
+"@wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
   dependencies:
-    "@radix-ui/react-slot": "npm:^1.1.0"
-    "@wix/headless-media": "npm:0.0.13"
-    "@wix/headless-utils": "npm:0.0.3"
-    "@wix/members": "npm:^1.0.322"
-    "@wix/online-programs": "npm:^1.0.39"
-    "@wix/redirects": "npm:^1.0.0"
-    "@wix/sdk": "npm:^1.15.27"
-    "@wix/services-definitions": "npm:^0.1.5"
-    "@wix/services-manager-react": "npm:^0.1.27"
-  peerDependencies:
-    "@wix/headless-components": 0.0.13
-  checksum: 10c0/f7a0dad1cf3b1655f6abeed820f012a83125fb74484bc439f37e11247804343e7c528d09b778c14cb49f3df650a5ddf0b7d06c9dc4d7ce143786541acf8a54f4
-  languageName: node
-  linkType: hard
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/sdk": "npm:^1.17.1"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
 
-"@wix/headless-online-programs@workspace:packages/headless-components/online-programs":
+"@wix/headless-online-programs@npm:0.0.2, @wix/headless-online-programs@workspace:packages/headless-components/online-programs":
   version: 0.0.0-use.local
   resolution: "@wix/headless-online-programs@workspace:packages/headless-components/online-programs"
   dependencies:
@@ -7160,7 +7141,7 @@ __metadata:
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/members": "npm:^1.0.322"
-    "@wix/online-programs": "npm:^1.0.43"
+    "@wix/online-programs": "npm:^1.0.47"
     "@wix/redirects": "npm:^1.0.0"
     "@wix/sdk": "npm:^1.15.27"
     "@wix/services-definitions": "npm:^0.1.5"
@@ -7500,20 +7481,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/online-programs@npm:^1.0.39, @wix/online-programs@npm:^1.0.43":
-  version: 1.0.43
-  resolution: "@wix/online-programs@npm:1.0.43"
+"@wix/online-programs@npm:^1.0.47":
+  version: 1.0.47
+  resolution: "@wix/online-programs@npm:1.0.47"
   dependencies:
-    "@wix/auto_sdk_online-programs_categories": "npm:1.0.2"
+    "@wix/auto_sdk_online-programs_categories": "npm:1.0.3"
     "@wix/auto_sdk_online-programs_instructors": "npm:1.0.2"
-    "@wix/auto_sdk_online-programs_online-program-participants": "npm:1.0.2"
+    "@wix/auto_sdk_online-programs_online-program-participants": "npm:1.0.3"
     "@wix/auto_sdk_online-programs_participants": "npm:1.0.2"
-    "@wix/auto_sdk_online-programs_programs": "npm:1.0.3"
-    "@wix/auto_sdk_online-programs_quizzes": "npm:1.0.2"
+    "@wix/auto_sdk_online-programs_programs": "npm:1.0.4"
+    "@wix/auto_sdk_online-programs_quizzes": "npm:1.0.3"
     "@wix/auto_sdk_online-programs_sections": "npm:1.0.2"
     "@wix/auto_sdk_online-programs_steps": "npm:1.0.2"
-    "@wix/headless-online-programs": "npm:0.0.1"
-  checksum: 10c0/02205614128c80ccfb421b4054ecaac9d4b5f6dd06ea8eae29df099f796fe9b30cc9f27c5a9c1c6e671658189fde86cc611bcd5274cf8f227e5cff1de081dca5
+    "@wix/headless-online-programs": "npm:0.0.2"
+  checksum: 10c0/776e78404d0f7e2414587607d5ab09d9e57dfe9c35a48912f1dce2eb9450f11eff4118d1eb3cc9cb4ef358e6f249b1fe75df7ca7a71615ac27c2144f1dc5f706
   languageName: node
   linkType: hard
 
