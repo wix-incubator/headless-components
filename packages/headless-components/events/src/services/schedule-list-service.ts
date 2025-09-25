@@ -96,20 +96,33 @@ export const ScheduleListService =
 
 export async function loadScheduleListServiceConfig(
   eventId: string,
-  loadAll = false,
+  limit?: number,
 ): Promise<ScheduleListServiceConfig> {
-  const limit = loadAll ? 100 : 2;
-  const schedule = await listScheduleItems(eventId, limit);
+  const loadAll = !limit;
+  const pageSize = limit ?? 100;
+  let responses: schedule.ListScheduleItemsResponse[] = [];
 
-  while (schedule.pagingMetadata!.total! > schedule.items!.length && loadAll) {
-    const restItems = (
-      await listScheduleItems(eventId, limit, schedule.items!.length)
-    ).items!;
+  const schedule = await listScheduleItems(eventId, pageSize);
+  const totalItems = schedule.pagingMetadata!.total!;
+  const initialOffset = schedule.items!.length;
+  responses.push(schedule);
 
-    schedule.items = schedule.items!.concat(restItems);
+  if (pageSize < totalItems - initialOffset && loadAll) {
+    const requestCount = Math.ceil(totalItems / pageSize) - 1;
+    const moreResponses = await Promise.all(
+      new Array(requestCount)
+        .fill(null)
+        .map((_, index) =>
+          listScheduleItems(eventId, pageSize, (index + 1) * pageSize),
+        ),
+    );
+
+    responses = [...responses, ...moreResponses];
   }
 
-  return { items: schedule.items! };
+  const allItems = responses.flatMap((response) => response.items || []);
+
+  return { items: allItems };
 }
 
 const listScheduleItems = async (

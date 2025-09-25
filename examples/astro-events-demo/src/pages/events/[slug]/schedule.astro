@@ -16,8 +16,7 @@ if (eventServiceConfigResult.type === 'notFound') {
 }
 
 const scheduleListServiceConfig = await loadScheduleListServiceConfig(
-  eventServiceConfigResult.config.event._id,
-  true
+  eventServiceConfigResult.config.event._id
 );
 ---
 
