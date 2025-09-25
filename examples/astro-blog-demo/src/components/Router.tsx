@@ -1,4 +1,4 @@
-import { MemberProvider } from "@/integrations/members";
+import { MemberProvider } from "@/integrations";
 import { MemberProviderDevTools } from "@/integrations/members/providers/MemberProviderDevTools";
 import {
   createBrowserRouter,
