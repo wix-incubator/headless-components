@@ -44,7 +44,8 @@ const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
     eventListServiceConfig={eventListServiceConfig}
     ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
     checkoutServiceConfig={{
-      noTicketDefinitionsSelectedError: 'Select a ticket'
+      noTicketDefinitionsSelectedError: 'Select a ticket',
+      thankYouPageUrl: `${Astro.url.origin}/events/${slug}/thank-you`,
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
     eventsPagePath="/events"
