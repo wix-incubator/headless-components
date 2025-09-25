@@ -125,11 +125,11 @@ export function Description({ children }: DescriptionProps) {
   const { planSignal } = useService(PlanServiceDefinition);
   const plan = planSignal.get();
 
-  if (!plan) {
+  if (!plan || !plan.description) {
     return null;
   }
 
-  return children({ description: plan.description ?? '' });
+  return children({ description: plan.description });
 }
 
 export interface PriceData {
@@ -282,6 +282,25 @@ export function Duration({ children }: DurationProps) {
   }
 
   return children({ duration: plan.enhancedData.duration });
+}
+
+export interface FreeTrialDaysData {
+  freeTrialDays: number;
+}
+
+interface FreeTrialDaysProps {
+  children: (renderProps: FreeTrialDaysData) => React.ReactNode;
+}
+
+export function FreeTrialDays({ children }: FreeTrialDaysProps) {
+  const { planSignal } = useService(PlanServiceDefinition);
+
+  const plan = planSignal.get();
+  if (!plan || !plan.enhancedData.freeTrialDays) {
+    return null;
+  }
+
+  return children({ freeTrialDays: plan.enhancedData.freeTrialDays });
 }
 
 export interface PerksData {

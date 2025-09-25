@@ -9,7 +9,13 @@ export interface TitleProps {
 }
 
 export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
-  const { asChild, children, className, title = 'Instagram Feed', ...otherProps } = props;
+  const {
+    asChild,
+    children,
+    className,
+    title = 'Instagram Feed',
+    ...otherProps
+  } = props;
 
   return (
     <AsChildSlot
@@ -25,5 +31,3 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
     </AsChildSlot>
   );
 });
-
-

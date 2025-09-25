@@ -7,6 +7,8 @@ enum TestIds {
   pricingOptionRoot = 'pricing-option-root',
   pricingOptionName = 'pricing-option-name',
   pricingOptionPricing = 'pricing-option-pricing',
+  pricingOptionTax = 'pricing-option-tax',
+  pricingOptionFee = 'pricing-option-fee',
   pricingOptionQuantity = 'pricing-option-quantity',
 }
 
@@ -132,7 +134,7 @@ interface PricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: number;
+    price: string;
     currency: string;
     formattedPrice: string;
   }>;
@@ -170,9 +172,7 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
 
     return (
       <CorePricingOption.Pricing>
-        {({ price, currency }) => {
-          const formattedPrice = `${price} ${currency}`;
-
+        {({ price, currency, formattedPrice }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -196,6 +196,152 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
     );
   },
 );
+
+/**
+ * Props for the PricingOption Tax component.
+ */
+export interface TaxProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    name: string;
+    rate: string;
+    included: boolean;
+    amount: string;
+    currency: string;
+    formattedAmount: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the tax for the pricing option. Only renders when event has tax settings.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <PricingOption.Tax className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <PricingOption.Tax asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </PricingOption.Tax>
+ *
+ * // asChild with react component
+ * <PricingOption.Tax asChild>
+ *   {React.forwardRef(({ name, rate, included, amount, currency, formattedAmount, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       {included ? `${name} included` : `+${formattedAmount} ${name}`}
+ *     </span>
+ *   ))}
+ * </PricingOption.Tax>
+ * ```
+ */
+export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CorePricingOption.Tax>
+      {({ name, rate, included, amount, currency, formattedAmount }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.pricingOptionTax}
+            customElement={children}
+            customElementProps={{
+              name,
+              rate,
+              included,
+              amount,
+              currency,
+              formattedAmount,
+            }}
+            content={formattedAmount}
+            {...otherProps}
+          >
+            <span>{formattedAmount}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CorePricingOption.Tax>
+  );
+});
+
+/**
+ * Props for the PricingOption Fee component.
+ */
+export interface FeeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    rate: string;
+    amount: string;
+    currency: string;
+    formattedAmount: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the fee for the pricing option. Only renders when ticket definition has fee enabled.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <PricingOption.Fee className="text-sm text-gray-500" />
+ *
+ * // asChild with primitive
+ * <PricingOption.Fee asChild>
+ *   <span className="text-sm text-gray-500" />
+ * </PricingOption.Fee>
+ *
+ * // asChild with react component
+ * <PricingOption.Fee asChild>
+ *   {React.forwardRef(({ rate, amount, currency, formattedAmount, ...props }, ref) => (
+ *     <span ref={ref} {...props} className="text-sm text-gray-500">
+ *       +{formattedAmount} service fee
+ *     </span>
+ *   ))}
+ * </PricingOption.Fee>
+ * ```
+ */
+export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CorePricingOption.Fee>
+      {({ rate, amount, currency, formattedAmount }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.pricingOptionFee}
+            customElement={children}
+            customElementProps={{
+              rate,
+              amount,
+              currency,
+              formattedAmount,
+            }}
+            content={formattedAmount}
+            {...otherProps}
+          >
+            <span>{formattedAmount}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CorePricingOption.Fee>
+  );
+});
 
 /**
  * Props for the PricingOption Quantity component.

@@ -8,26 +8,26 @@ export interface UserNameProps {
   className?: string;
 }
 
-export const UserName = React.forwardRef<HTMLElement, UserNameProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+export const UserName = React.forwardRef<HTMLElement, UserNameProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
 
-  return (
-    <CoreUserName.UserName>
-      {({ displayName, displayValue }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          customElement={children}
-          customElementProps={{ displayName }}
-          content={displayValue}
-          {...otherProps}
-        >
-          <span>{displayValue}</span>
-        </AsChildSlot>
-      )}
-    </CoreUserName.UserName>
-  );
-});
-
-
+    return (
+      <CoreUserName.UserName>
+        {({ displayName, displayValue }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            customElement={children}
+            customElementProps={{ displayName }}
+            content={displayValue}
+            {...otherProps}
+          >
+            <span>{displayValue}</span>
+          </AsChildSlot>
+        )}
+      </CoreUserName.UserName>
+    );
+  },
+);

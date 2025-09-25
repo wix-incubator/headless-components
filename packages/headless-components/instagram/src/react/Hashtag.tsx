@@ -8,26 +8,26 @@ export interface HashtagProps {
   hashtag?: string;
 }
 
-export const Hashtag = React.forwardRef<HTMLElement, HashtagProps>((props, ref) => {
-  const { asChild, children, className, hashtag, ...otherProps } = props;
+export const Hashtag = React.forwardRef<HTMLElement, HashtagProps>(
+  (props, ref) => {
+    const { asChild, children, className, hashtag, ...otherProps } = props;
 
-  if (!hashtag) return null;
+    if (!hashtag) return null;
 
-  const formattedHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
+    const formattedHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
 
-  return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      customElement={children}
-      customElementProps={{ hashtag }}
-      content={formattedHashtag}
-      {...otherProps}
-    >
-      <span>{formattedHashtag}</span>
-    </AsChildSlot>
-  );
-});
-
-
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        customElement={children}
+        customElementProps={{ hashtag }}
+        content={formattedHashtag}
+        {...otherProps}
+      >
+        <span>{formattedHashtag}</span>
+      </AsChildSlot>
+    );
+  },
+);

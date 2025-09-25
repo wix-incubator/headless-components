@@ -1,7 +1,15 @@
 import React from 'react';
 import { useService } from '@wix/services-manager-react';
-import { InstagramMediaItemServiceDefinition, InstagramFeedServiceDefinition } from '../../services/index.js';
-import type { MediaItem } from '@wix/headless-media/services';
+import {
+  InstagramMediaItemServiceDefinition,
+  InstagramFeedServiceDefinition,
+} from '../../services/index.js';
+
+// Local minimal media item type to avoid dependency on headless-media
+export interface MediaItem {
+  image: string;
+  altText?: string;
+}
 
 export interface CaptionProps {
   /** Render prop function that receives caption data */
@@ -75,7 +83,9 @@ export interface UserNameRenderProps {
 export function UserName(props: UserNameProps) {
   const feedService = useService(InstagramFeedServiceDefinition);
   const account = feedService.feedData.get().account as any;
-  const userName = account?.instagramInfo?.instagramUsername as string | undefined;
+  const userName = account?.instagramInfo?.instagramUsername as
+    | string
+    | undefined;
 
   return props.children({
     userName,
@@ -129,16 +139,18 @@ export function MediaGalleryRepeater(props: MediaGalleryRepeaterProps) {
   const mediaItemService = useService(InstagramMediaItemServiceDefinition);
   const mediaItem = mediaItemService.mediaItem.get();
 
-  const media: MediaItem[] = (mediaItem?.type === 'video'
-    ? mediaItem.thumbnailUrl
-    : mediaItem?.mediaUrl) ? [
-      {
-        image: (mediaItem.type === 'video'
-          ? mediaItem.thumbnailUrl!
-          : mediaItem.mediaUrl) as string,
-        altText: mediaItem.altText,
-      },
-    ] : [];
+  const media: MediaItem[] = (
+    mediaItem?.type === 'video' ? mediaItem.thumbnailUrl : mediaItem?.mediaUrl
+  )
+    ? [
+        {
+          image: (mediaItem.type === 'video'
+            ? mediaItem.thumbnailUrl!
+            : mediaItem.mediaUrl) as string,
+          altText: mediaItem.altText,
+        },
+      ]
+    : [];
 
   const hasMedia = media.length > 0;
 

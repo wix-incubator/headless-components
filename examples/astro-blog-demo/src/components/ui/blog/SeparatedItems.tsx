@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 
-
 export interface SeparatedItemsProps
   extends React.HTMLAttributes<HTMLDivElement> {
   /** The child elements to be displayed with separators */
@@ -26,7 +25,10 @@ export const SeparatedItems = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   return (
     <div
-      className={cn('flex items-center gap-x-1 sm:gap-x-2 [&>*:not(:first-child)]:before:mr-1 sm:[&>*:not(:first-child)]:before:mr-2 [&>*:not(:first-child)]:before:content-["•"]', className)}
+      className={cn(
+        'flex items-center gap-x-1 sm:gap-x-2 [&>*:not(:first-child)]:before:mr-1 [&>*:not(:first-child)]:before:content-["•"] sm:[&>*:not(:first-child)]:before:mr-2',
+        className
+      )}
       ref={ref}
       {...props}
     >

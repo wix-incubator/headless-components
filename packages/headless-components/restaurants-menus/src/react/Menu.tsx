@@ -86,7 +86,7 @@ export const Name = React.forwardRef<HTMLElement, MenuNameProps>(
               content={name}
               {...otherProps}
             >
-              <div>{name}</div>
+              <h1>{name}</h1>
             </AsChildSlot>
           );
         }}
@@ -137,7 +137,7 @@ export const Description = React.forwardRef<HTMLElement, MenuDescriptionProps>(
               content={description}
               {...otherProps}
             >
-              <div>{description}</div>
+              <p>{description}</p>
             </AsChildSlot>
           );
         }}

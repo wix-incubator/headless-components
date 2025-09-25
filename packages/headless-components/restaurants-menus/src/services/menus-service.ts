@@ -20,6 +20,7 @@ import type {
   EnhancedModifierGroup,
   CursorPagingMetadata,
   EnhancedModifier,
+  Location,
 } from './types.js';
 import {
   SignalsServiceDefinition,
@@ -44,8 +45,11 @@ export interface MenusServiceAPI {
   labels: Signal<Label[]>;
   modifierGroups: Signal<EnhancedModifierGroup[]>;
   modifiers: Signal<Modifier[]>;
+  locations: Signal<Location[]>;
   loading: Signal<boolean>;
   error: Signal<string | null>;
+  selectedMenu: Signal<Menu | null>;
+  selectedLocation: Signal<string | null>;
 }
 
 export const MenusServiceDefinition = defineService<
@@ -169,6 +173,25 @@ function createEnhancedEntities(
   };
 }
 
+export const getLocations = (menus: Menu[]) => {
+  return menus.reduce<Location[]>((acc, menu) => {
+    const locationId = menu.businessLocationId;
+    const locationName = menu.businessLocationDetails?.name;
+    const archived = menu.businessLocationDetails?.archived;
+
+    if (locationId && !archived) {
+      const existingLocation = acc.find((loc) => loc.id === locationId);
+      if (!existingLocation) {
+        acc.push({
+          id: locationId,
+          name: locationName || `Location ${locationId}`,
+        });
+      }
+    }
+    return acc;
+  }, []);
+};
+
 export const MenusService = implementService.withConfig<MenusServiceConfig>()(
   MenusServiceDefinition,
   ({ getService, config }) => {
@@ -191,8 +214,21 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
     const modifiersSignal = signalsService.signal<Modifier[]>(
       config.modifiers || [],
     );
+    const locationsSignal = signalsService.signal<Location[]>([]);
     const loadingSignal = signalsService.signal<boolean>(false);
     const errorSignal = signalsService.signal<string | null>(null);
+    const selectedMenuSignal = signalsService.signal<Menu | null>(null);
+    const selectedLocationSignal = signalsService.signal<string | null>(null);
+
+    const updateLocations = () => {
+      const currentMenus = menusSignal.get();
+      const locations = getLocations(currentMenus);
+      locationsSignal.set(locations);
+    };
+
+    signalsService.effect(() => {
+      updateLocations();
+    });
 
     return {
       menus: menusSignal,
@@ -202,8 +238,11 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
       labels: labelsSignal,
       modifierGroups: modifierGroupsSignal,
       modifiers: modifiersSignal,
+      locations: locationsSignal,
       loading: loadingSignal,
       error: errorSignal,
+      selectedMenu: selectedMenuSignal,
+      selectedLocation: selectedLocationSignal,
     };
   },
 );

@@ -9,6 +9,13 @@ import {
 } from '../../services/ticket-definition-service.js';
 import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
 import { PricingOption } from '../../services/pricing-option-service.js';
+import { EventServiceDefinition } from '../../services/event-service.js';
+import {
+  getTicketDefinitionFee,
+  getTicketDefinitionTax,
+  isTicketDefinitionAvailable,
+} from '../../utils/ticket-definition.js';
+import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components that will have access to the ticket definition service */
@@ -59,6 +66,7 @@ export interface NameRenderProps {
  */
 export function Name(props: NameProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const name = ticketDefinition.name!;
 
@@ -82,6 +90,7 @@ export interface DescriptionRenderProps {
  */
 export function Description(props: DescriptionProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const description = ticketDefinition.description;
 
@@ -98,12 +107,14 @@ export interface FixedPricingProps {
 }
 
 export interface FixedPricingRenderProps {
-  /** Whether ticket definition is free */
-  free: boolean;
   /** Fixed price */
-  price: number;
+  price: string;
   /** Price currency */
   currency: string;
+  /** Formatted price */
+  formattedPrice: string;
+  /** Whether ticket definition is free */
+  free: boolean;
 }
 
 /**
@@ -113,6 +124,7 @@ export interface FixedPricingRenderProps {
  */
 export function FixedPricing(props: FixedPricingProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const fixedPrice = ticketDefinition.pricingMethod?.fixedPrice;
 
@@ -120,10 +132,15 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
     return null;
   }
 
+  const price = fixedPrice.value!;
+  const currency = fixedPrice.currency!;
+  const formattedPrice = formatPrice(price, currency);
+
   return props.children({
+    price,
+    currency,
+    formattedPrice,
     free: ticketDefinition.pricingMethod!.free!,
-    price: Number(fixedPrice.value!),
-    currency: fixedPrice.currency!,
   });
 }
 
@@ -134,9 +151,11 @@ export interface GuestPricingProps {
 
 export interface GuestPricingRenderProps {
   /** Minimum price */
-  minPrice: number;
+  minPrice: string;
   /** Price currency */
   currency: string;
+  /** Formatted minimum price */
+  formattedMinPrice: string;
   /** Function to set price */
   setPrice: (price: string) => void;
 }
@@ -151,6 +170,7 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
     TicketDefinitionListServiceDefinition,
   );
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const ticketDefinitionId = ticketDefinition._id!;
   const guestPrice = ticketDefinition.pricingMethod?.guestPrice;
@@ -166,9 +186,14 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
     });
   };
 
+  const minPrice = guestPrice.value!;
+  const currency = guestPrice.currency!;
+  const formattedMinPrice = formatPrice(minPrice, currency);
+
   return props.children({
-    minPrice: Number(guestPrice.value!),
-    currency: guestPrice.currency!,
+    minPrice,
+    currency,
+    formattedMinPrice,
     setPrice,
   });
 }
@@ -180,11 +205,17 @@ export interface PricingRangeProps {
 
 export interface PricingRangeRenderProps {
   /** Minimum price */
-  minPrice: number;
+  minPrice: string;
   /** Maximum price */
-  maxPrice: number;
+  maxPrice: string;
   /** Price currency */
   currency: string;
+  /** Formatted minimum price */
+  formattedMinPrice: string;
+  /** Formatted maximum price */
+  formattedMaxPrice: string;
+  /** Formatted price range */
+  formattedPriceRange: string;
 }
 
 /**
@@ -194,24 +225,168 @@ export interface PricingRangeRenderProps {
  */
 export function PricingRange(props: PricingRangeProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const pricingOptions =
-    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails || [];
-  const hasPricingOptions = !!pricingOptions.length;
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
 
-  if (!hasPricingOptions) {
+  if (!pricingOptions.length) {
     return null;
   }
 
   const prices = pricingOptions.map((option) => Number(option.price!.value!));
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
+  const minPrice = Math.min(...prices).toFixed(2);
+  const maxPrice = Math.max(...prices).toFixed(2);
   const currency = pricingOptions[0]!.price!.currency!;
+  const formattedMinPrice = formatPrice(minPrice, currency);
+  const formattedMaxPrice = formatPrice(maxPrice, currency);
+  const formattedPriceRange =
+    minPrice === maxPrice
+      ? formattedMinPrice
+      : `${formattedMinPrice} - ${formattedMaxPrice}`;
 
   return props.children({
     minPrice,
     maxPrice,
     currency,
+    formattedMinPrice,
+    formattedMaxPrice,
+    formattedPriceRange,
+  });
+}
+
+export interface TaxProps {
+  /** Render prop function */
+  children: (props: TaxRenderProps) => React.ReactNode;
+}
+
+export interface TaxRenderProps {
+  /** Tax name */
+  name: string;
+  /** Tax rate */
+  rate: string;
+  /** Whether tax is included in price */
+  included: boolean;
+  /** Tax amount */
+  amount: string;
+  /** Tax currency */
+  currency: string;
+  /** Formatted tax amount */
+  formattedAmount: string;
+}
+
+/**
+ * TicketDefinition Tax core component that provides tax data. Not rendered when event has no tax settings, or when ticket definition is free or has pricing options, or when ticket definition has guest pricing and tax is not applied to donations.
+ *
+ * @component
+ */
+export function Tax(props: TaxProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+  const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+
+  const event = eventService.event.get();
+  const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+
+  const taxSettings = event.registration?.tickets?.taxSettings;
+  const fixedPrice = ticketDefinition.pricingMethod?.fixedPrice;
+  const guestPrice = ticketDefinition.pricingMethod?.guestPrice;
+  const pricingOptions =
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
+
+  if (
+    !taxSettings ||
+    ticketDefinition.pricingMethod!.free ||
+    pricingOptions.length ||
+    (guestPrice && !taxSettings.appliedToDonations)
+  ) {
+    return null;
+  }
+
+  const priceOverride = ticketDefinitionListService.getCurrentPriceOverride(
+    ticketDefinition._id!,
+  );
+  const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
+  const currency = guestPrice?.currency ?? fixedPrice!.currency!;
+
+  const { name, rate, included, amount, formattedAmount } =
+    getTicketDefinitionTax(taxSettings, price, currency);
+
+  return props.children({
+    name,
+    rate,
+    included,
+    amount,
+    currency,
+    formattedAmount,
+  });
+}
+
+export interface FeeProps {
+  /** Render prop function */
+  children: (props: FeeRenderProps) => React.ReactNode;
+}
+
+export interface FeeRenderProps {
+  /** Fee rate */
+  rate: string;
+  /** Fee amount */
+  amount: string;
+  /** Fee currency */
+  currency: string;
+  /** Formatted fee amount */
+  formattedAmount: string;
+}
+
+/**
+ * TicketDefinition Fee core component that provides fee data. Not rendered when ticket definition has no fee enabled, or when ticket definition is free or has pricing options, or when fee is included in the price.
+ *
+ * @component
+ */
+export function Fee(props: FeeProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+  const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+
+  const event = eventService.event.get();
+  const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
+
+  const taxSettings = event.registration?.tickets?.taxSettings;
+  const fixedPrice = ticketDefinition.pricingMethod?.fixedPrice;
+  const guestPrice = ticketDefinition.pricingMethod?.guestPrice;
+  const pricingOptions =
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
+
+  if (
+    ticketDefinition.feeType !== 'FEE_ADDED_AT_CHECKOUT' ||
+    ticketDefinition.pricingMethod!.free ||
+    pricingOptions.length
+  ) {
+    return null;
+  }
+
+  const priceOverride = ticketDefinitionListService.getCurrentPriceOverride(
+    ticketDefinition._id!,
+  );
+  const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
+  const currency = guestPrice?.currency ?? fixedPrice!.currency!;
+
+  const { rate, amount, formattedAmount } = getTicketDefinitionFee(
+    taxSettings,
+    price,
+    currency,
+    !!guestPrice,
+  );
+
+  return props.children({
+    rate,
+    amount,
+    currency,
+    formattedAmount,
   });
 }
 
@@ -232,6 +407,7 @@ export interface RemainingRenderProps {
  */
 export function Remaining(props: RemainingProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const remaining = ticketDefinition.limitPerCheckout || 0;
 
@@ -257,10 +433,9 @@ export interface SaleStartDateRenderProps {
  */
 export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-  const saleScheduled =
-    ticketDefinition.saleStatus === 'SALE_SCHEDULED' &&
-    !!ticketDefinition.salePeriod?.startDate;
+  const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
 
   if (!saleScheduled) {
     return null;
@@ -293,10 +468,9 @@ export interface SaleEndDateRenderProps {
  */
 export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-  const saleScheduled =
-    ticketDefinition.saleStatus === 'SALE_SCHEDULED' &&
-    !!ticketDefinition.salePeriod?.endDate;
+  const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
   const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
 
   if (saleScheduled || !ticketDefinition.salePeriod) {
@@ -328,7 +502,7 @@ export interface QuantityRenderProps {
 }
 
 /**
- * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options, or if sale hasn't started, or if the ticket definition is sold out.
+ * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options, or if ticket definition is not available (is sold out or sale hasn't started).
  *
  * @component
  */
@@ -337,14 +511,13 @@ export function Quantity(props: QuantityProps): React.ReactNode {
     TicketDefinitionListServiceDefinition,
   );
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const ticketDefinitionId = ticketDefinition._id!;
+  const pricingOptions =
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
 
-  if (
-    ticketDefinition.pricingMethod?.pricingOptions ||
-    ticketDefinition.saleStatus !== 'SALE_STARTED' ||
-    ticketDefinition.limitPerCheckout === 0
-  ) {
+  if (!isTicketDefinitionAvailable(ticketDefinition) || pricingOptions.length) {
     return null;
   }
 
@@ -397,12 +570,12 @@ export interface PricingOptionsRenderProps {
  */
 export function PricingOptions(props: PricingOptionsProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const pricingOptions =
-    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails || [];
-  const hasPricingOptions = !!pricingOptions.length;
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
 
-  if (!hasPricingOptions) {
+  if (!pricingOptions.length) {
     return null;
   }
 
@@ -428,12 +601,12 @@ export function PricingOptionRepeater(
   props: PricingOptionRepeaterProps,
 ): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
+
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const pricingOptions =
-    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails || [];
-  const hasPricingOptions = !!pricingOptions.length;
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
 
-  if (!hasPricingOptions) {
+  if (!pricingOptions.length) {
     return null;
   }
 

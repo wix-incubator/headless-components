@@ -14,24 +14,19 @@ export interface InstagramMediaItemsProps {
  * @deprecated Use `InstagramFeed.InstagramMedias` with `InstagramFeed.InstagramMediaRepeater` directly.
  * List container previously used to gate empty state. Prefer handling empty state on InstagramMedias.
  */
-export const InstagramMediaItems = React.forwardRef<HTMLDivElement, InstagramMediaItemsProps>(
-  (props, ref) => {
-    const { children, emptyState } = props;
+export const InstagramMediaItems = React.forwardRef<
+  HTMLDivElement,
+  InstagramMediaItemsProps
+>((props, ref) => {
+  const { children, emptyState } = props;
 
-    return (
-      <CoreGalleryItems.GalleryItems>
-        {({ hasItems }) => {
-          if (!hasItems) return (emptyState ?? null);
+  return (
+    <CoreGalleryItems.GalleryItems>
+      {({ hasItems }) => {
+        if (!hasItems) return emptyState ?? null;
 
-          return (
-            <div ref={ref}>
-              {children}
-            </div>
-          );
-        }}
-      </CoreGalleryItems.GalleryItems>
-    );
-  },
-);
-
-
+        return <div ref={ref}>{children}</div>;
+      }}
+    </CoreGalleryItems.GalleryItems>
+  );
+});

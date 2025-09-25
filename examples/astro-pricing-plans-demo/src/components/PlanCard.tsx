@@ -2,6 +2,7 @@ import React from 'react';
 import {
   PricingPlans,
   type PlanDurationData,
+  type PlanFreeTrialDaysData,
   type PlanRecurrenceData,
 } from '@wix/headless-pricing-plans/react';
 import type { PlanServiceConfig } from '@wix/headless-pricing-plans/services';
@@ -85,6 +86,17 @@ export const PlanCardContent: React.FC<PlanCardContentProps> = ({
             )}
           </Plan.Duration>
         </div>
+        <Plan.FreeTrialDays>
+          {React.forwardRef<HTMLSpanElement, PlanFreeTrialDaysData>(
+            ({ freeTrialDays }, ref) => {
+              return (
+                <span ref={ref} className="text-sm text-gray-500">
+                  Free trial for {freeTrialDays} days
+                </span>
+              );
+            },
+          )}
+        </Plan.FreeTrialDays>
 
         <Plan.Perks className="space-y-2 py-2">
           <Plan.PerksRepeater>

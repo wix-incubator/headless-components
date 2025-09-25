@@ -89,7 +89,7 @@ export const Name = React.forwardRef<HTMLElement, SectionNameProps>(
               content={name}
               {...otherProps}
             >
-              <div>{name}</div>
+              <h2>{name}</h2>
             </AsChildSlot>
           );
         }}
@@ -142,7 +142,7 @@ export const Description = React.forwardRef<
             content={description}
             {...otherProps}
           >
-            <div>{description}</div>
+            <p>{description}</p>
           </AsChildSlot>
         );
       }}

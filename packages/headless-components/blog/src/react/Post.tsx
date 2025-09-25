@@ -399,7 +399,7 @@ Title.displayName = 'Blog.Post.Title';
 export interface ContentProps {
   className?: string;
   children:
-    | AsChildChildren<{ content: any }>
+    | AsChildChildren<{ content: any; pricingPlanIds: string[] }>
     | React.ReactElement<{ content: any }>;
 }
 /**
@@ -441,7 +441,7 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
 
     return (
       <CoreBlogPost.RichContent>
-        {({ content }) => {
+        {({ content, pricingPlanIds }) => {
           if (!content) return null;
 
           return (
@@ -451,7 +451,7 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>(
               className={className}
               {...attributes}
               customElement={children}
-              customElementProps={{ content }}
+              customElementProps={{ content, pricingPlanIds }}
             ></AsChildSlot>
           );
         }}

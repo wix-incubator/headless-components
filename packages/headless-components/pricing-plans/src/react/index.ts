@@ -7,6 +7,13 @@ export type {
   PlanDurationData,
   PlanPerksData,
   PlanPerkItemData,
+  PlanFreeTrialDaysData,
+  PlanAdditionalFeesData,
+  PlanAdditionalFeeNameData,
+  PlanAdditionalFeeAmountData,
+  PlanPriceData,
+  PlanNameData,
+  PlanDescriptionData,
 } from './Plan.js';
 
 export const PricingPlans = {

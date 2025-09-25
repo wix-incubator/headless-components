@@ -1,17 +1,21 @@
 export { Root, type RootProps } from './Root.js';
-export { MediaGalleries, type MediaGalleriesProps, type MediaGalleriesRenderProps } from './FeedMediaGalleries.js';
+export {
+  MediaGalleries,
+  type MediaGalleriesProps,
+  type MediaGalleriesRenderProps,
+} from './FeedMediaGalleries.js';
 
 // New core components
 export {
   UserName as CoreUserName,
   type UserNameProps as CoreUserNameProps,
-  type UserNameRenderProps
+  type UserNameRenderProps,
 } from './UserName.js';
 
 export {
   GalleryItems,
   type GalleryItemsProps,
-  type GalleryItemsRenderProps
+  type GalleryItemsRenderProps,
 } from './GalleryItems.js';
 
 export {
@@ -31,5 +35,3 @@ export {
   type MediaGalleryRepeaterProps,
   type MediaGalleryRepeaterRenderProps,
 } from './InstagramMedia.js';
-
-

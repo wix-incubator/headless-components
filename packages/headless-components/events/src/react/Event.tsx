@@ -363,6 +363,50 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
 );
 
 /**
+ * Props for the Event Coordinates component.
+ */
+export interface CoordinatesProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ latitude: number; longitude: number }>;
+}
+
+/**
+ * Provides the event location coordinates. Only rendered if the event has coordinates.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // asChild with react component
+ * <Event.Coordinates asChild>
+ *   {React.forwardRef(({ latitude, longitude, ...props }, ref) => (
+ *     <MapComponent ref={ref} {...props} latitude={latitude} longitude={longitude} />
+ *   ))}
+ * </Event.Coordinates>
+ * ```
+ */
+export const Coordinates = React.forwardRef<HTMLElement, CoordinatesProps>(
+  (props, ref) => {
+    const { asChild, children, ...otherProps } = props;
+
+    return (
+      <CoreEvent.Coordinates>
+        {({ latitude, longitude }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            customElement={children}
+            customElementProps={{ latitude, longitude }}
+            {...otherProps}
+          />
+        )}
+      </CoreEvent.Coordinates>
+    );
+  },
+);
+
+/**
  * Props for the Event ShortDescription component.
  */
 export interface ShortDescriptionProps {

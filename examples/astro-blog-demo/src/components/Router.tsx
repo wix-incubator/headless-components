@@ -1,3 +1,5 @@
+import { MemberProvider } from "@/integrations";
+import { MemberProviderDevTools } from "@/integrations/members/providers/MemberProviderDevTools";
 import {
   createBrowserRouter,
   Link,
@@ -21,18 +23,18 @@ const router = createBrowserRouter(
       element: <Outlet />,
       children: [
         {
-          path: "/blog/react-router/",
+          path: "/react-router/blog/",
           element: <BlogIndexRoute />,
           loader: blogIndexRouteLoader,
           index: true,
         },
         {
-          path: "/blog/react-router/post/:slug",
+          path: "/react-router/blog/post/:slug",
           element: <BlogPostRoute />,
           loader: blogPostRouteLoader,
         },
         {
-          path: "/blog/react-router/category/:slug",
+          path: "/react-router/blog/category/:slug",
           element: <BlogCategoryRoute />,
           loader: blogCategoryRouteLoader,
         },
@@ -57,7 +59,10 @@ const ReactRouterNavigationComponent: NavigationComponent = ({
 export default function AppRouter() {
   return (
     <NavigationProvider navigationComponent={ReactRouterNavigationComponent}>
-      <RouterProvider router={router} />
+      <MemberProvider>
+        <MemberProviderDevTools />
+        <RouterProvider router={router} />
+      </MemberProvider>
     </NavigationProvider>
   );
 }
