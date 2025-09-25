@@ -3,6 +3,7 @@ import {
   Event as EventPrimitive,
 } from '@wix/headless-events/react';
 import { type EventListServiceConfig } from '@wix/headless-events/services';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 
 interface EventListProps {
   eventListServiceConfig: EventListServiceConfig;
@@ -15,6 +16,13 @@ export function EventList({
 }: EventListProps) {
   return (
     <EventListPrimitive.Root eventListServiceConfig={eventListServiceConfig}>
+      <EventListPrimitive.Filters allCategoriesLabel="All">
+        <FilterPrimitive.FilterOptions className="border-b border-gray-500 mb-6">
+          <FilterPrimitive.FilterOptionRepeater>
+            <FilterPrimitive.FilterOption.SingleFilter className="flex font-light text-content-primary [&_button]:px-2 [&_button]:border-b-4 [&_button]:border-transparent [&_button[data-state=on]]:border-black [&_button]:-mb-px [&_button[data-state=on]]:relative" />
+          </FilterPrimitive.FilterOptionRepeater>
+        </FilterPrimitive.FilterOptions>
+      </EventListPrimitive.Filters>
       <EventListPrimitive.Events
         className="grid justify-center grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5"
         emptyState={

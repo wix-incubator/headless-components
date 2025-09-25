@@ -91,11 +91,11 @@ export default {
       },
       fontFamily: {
         heading: ["'Epunda Slab'", "sans-serif"],
-        paragraph: ["Rubik", "serif"],
+        paragraph: ["'Crimson Text'", "serif"],
       },
       colors: {
-        // ...colorsLightTheme,
-        ...colorsDarkTheme,
+        ...colorsLightTheme,
+        // ...colorsDarkTheme,
         // ...colorsVibeTheme,
       },
     },

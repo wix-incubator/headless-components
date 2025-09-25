@@ -246,6 +246,7 @@ export async function loadFormServiceConfig(
     };
   } catch (error) {
     console.error('Failed to load form:', error);
-    return { type: 'notFound' };
   }
+
+  return { type: 'notFound' };
 }
