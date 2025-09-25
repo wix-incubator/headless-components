@@ -15,41 +15,37 @@ import { MediaGallery } from '@wix/headless-media/react';
     <InstagramFeed.Hashtag />
   </div>
 
+  {/* expand mode */}
   <InstagramFeed.InstagramMedias>
-    <InstagramFeed.InstagramMediaItems emptyState={<div>No media available</div>}>
-      <InstagramFeed.InstagramMediaRepeater>
-        <InstagramMedia.Root>
-          <InstagramMedia.Caption />
-          <InstagramMedia.MediaType />
-          <InstagramMedia.UserName />
-          <InstagramMedia.Timestamp />
-          <InstagramMedia.MediaGalleries>
-            <InstagramMedia.MediaGalleryItems>
-              <InstagramMedia.MediaGalleryRepeater>
-                <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }}>
-                  <MediaGallery.Viewport />
-                  <div>
-                    <MediaGallery.Previous />
-                    <MediaGallery.Next />
-                  </div>
-                  <MediaGallery.Thumbnails>
-                    <MediaGallery.ThumbnailRepeater>
-                      <MediaGallery.ThumbnailItem />
-                    </MediaGallery.ThumbnailRepeater>
-                  </MediaGallery.Thumbnails>
-                </MediaGallery.Root>
-              </InstagramMedia.MediaGalleryRepeater>
-            </InstagramMedia.MediaGalleryItems>
-          </InstagramMedia.MediaGalleries>
-        </InstagramMedia.Root>
-      </InstagramFeed.InstagramMediaRepeater>
-    </InstagramFeed.InstagramMediaItems>
+    <InstagramFeed.InstagramMediaRepeater>
+      <MediaGallery.Root>
+        {/* <MediaGallery.Viewport>
+             <MediaGallery.Previous/> */}
+        <InstagramMedia.caption />
+        <InstagramMedia.mediaType />
+        <InstagramMedia.userName />
+        <InstagramMedia.timestamp />
+        <InstagramMedia.MediaGalleries>
+          <InstagramMedia.MediaGalleryRepeater>
+            <MediaGallery.Root>
+              {/* <MediaGallery.Viewport>
+                   <MediaGallery.Previous/>
+                     <MediaGallery.ThumbnailItem>
+                   <MediaGallery.Next/>
+                 </MediaGallery.Viewport> */}
+            </MediaGallery.Root>
+          </InstagramMedia.MediaGalleryRepeater>
+        </InstagramMedia.MediaGalleries>
+        {/*   <MediaGallery.Next/>
+            </MediaGallery.Viewport> */}
+      </MediaGallery.Root>
+    </InstagramFeed.InstagramMediaRepeater>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
 
 ## Notes
 
-- Use `InstagramFeed.InstagramMedias` as the list container with empty state support.
+- Use `InstagramFeed.InstagramMedias` as the list container.
 - Use `InstagramFeed.InstagramMediaRepeater` to iterate media items and provide per-item context.
-- Use the `InstagramMedia.*` namespace for item-level subcomponents such as `caption`, `mediaType`, `userName`, `timestamp`, and nested `MediaGalleries`/`MediaGalleryRepeater`.
+- Use the `InstagramMedia.*` namespace (now with lowercase aliases: `caption`, `mediaType`, `userName`, `timestamp`) for item-level components and nested `MediaGalleries`/`MediaGalleryRepeater`.
