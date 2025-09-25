@@ -4,7 +4,12 @@ import {
   InstagramMediaItemServiceDefinition,
   InstagramFeedServiceDefinition,
 } from '../../services/index.js';
-import type { MediaItem } from '@wix/headless-media/services';
+
+// Local minimal media item type to avoid dependency on headless-media
+export interface MediaItem {
+  image: string;
+  altText?: string;
+}
 
 export interface CaptionProps {
   /** Render prop function that receives caption data */
