@@ -14,7 +14,7 @@ import { MediaGallery } from '@wix/headless-media/react';
   <div>
     <InstagramFeed.Title />
     <InstagramFeed.UserName />
-    <InstagramFeed.Hashtag />
+    <InstagramFeed.Hashtag hashtag="myhashtag" />
   </div>
 
   <InstagramFeed.InstagramMedias>
@@ -44,7 +44,7 @@ import { MediaGallery } from '@wix/headless-media/react';
     <div className="flex items-center gap-2 mt-2">
       <span className="text-gray-600">@</span>
       <InstagramFeed.UserName className="font-medium" />
-      <InstagramFeed.Hashtag className="text-blue-500" />
+      <InstagramFeed.Hashtag hashtag="myaccount" className="text-blue-500" />
     </div>
   </header>
 
@@ -97,6 +97,10 @@ import { MediaGallery } from '@wix/headless-media/react';
     <span className="username-display" />
   </InstagramFeed.UserName>
 
+  <InstagramFeed.Hashtag hashtag="myhashtag" asChild>
+    <span className="hashtag-display" />
+  </InstagramFeed.Hashtag>
+
   {/* List container does not support asChild */}
   <InstagramFeed.InstagramMedias>
     <InstagramFeed.InstagramMediaRepeater>
@@ -123,19 +127,34 @@ import { MediaGallery } from '@wix/headless-media/react';
   </InstagramFeed.Title>
 
   <InstagramFeed.UserName asChild>
-    {React.forwardRef(({ username, ...props }, ref) => (
+    {React.forwardRef(({ displayName, ...props }, ref) => (
       <a
         ref={ref}
         {...props}
-        href={`https://instagram.com/${username}`}
+        href={`https://instagram.com/${displayName}`}
         className="username-link"
         target="_blank"
         rel="noopener noreferrer"
       >
-        @{username}
+        @{displayName}
       </a>
     ))}
   </InstagramFeed.UserName>
+
+  <InstagramFeed.Hashtag hashtag="myhashtag" asChild>
+    {React.forwardRef(({ hashtag, ...props }, ref) => (
+      <a
+        ref={ref}
+        {...props}
+        href={`https://instagram.com/explore/tags/${hashtag.replace('#', '')}`}
+        className="hashtag-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {hashtag}
+      </a>
+    ))}
+  </InstagramFeed.Hashtag>
 
   <InstagramFeed.InstagramMedias>
     <InstagramFeed.InstagramMediaRepeater>
@@ -177,12 +196,16 @@ import { MediaGallery } from '@wix/headless-media/react';
 </InstagramFeed.Root>
 ```
 
-### With Custom Title
+### With Custom Title and Hashtag
 
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
   <InstagramFeed.Title title="Latest Posts" className="text-3xl font-bold" />
   <InstagramFeed.UserName />
+
+  {/* Hashtag automatically adds # prefix if not present */}
+  <InstagramFeed.Hashtag hashtag="latestposts" /> {/* Renders: #latestposts */}
+  <InstagramFeed.Hashtag hashtag="#alreadyformatted" /> {/* Renders: #alreadyformatted */}
 
   {/* Rest of the component */}
 </InstagramFeed.Root>
@@ -203,8 +226,8 @@ import { InstagramFeed } from '@wix/headless-instagram/core';
   </InstagramFeed.Title>
 
   <InstagramFeed.UserName>
-    {({ username }) => (
-      <span className="custom-username">@{username}</span>
+    {({ displayName }) => (
+      <span className="custom-username">@{displayName}</span>
     )}
   </InstagramFeed.UserName>
 </InstagramFeed.Root>
@@ -235,7 +258,7 @@ interface TitleProps {
 ```tsx
 interface UserNameProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ username: string }>;
+  children?: AsChildChildren<{ displayName: string }>;
   className?: string;
 }
 ```
@@ -246,6 +269,7 @@ interface HashtagProps {
   asChild?: boolean;
   children?: AsChildChildren<{ hashtag: string }>;
   className?: string;
+  hashtag?: string; // Hashtag to display (adds # prefix if not present)
 }
 ```
 
@@ -444,10 +468,11 @@ InstagramFeed.Root (Service Provider)
 
 **Key Principles:**
 - **Services Pattern**: WixServices manages reactive Instagram feed data
-- **3-Level List Pattern**: Gallery → GalleryItems → GalleryItemRepeater
+- **3-Level List Pattern**: Container → List → Repeater with consolidated core logic
 - **Media Gallery Integration**: Seamless integration with Media Gallery components
 - **No React Context**: Data flows through services, metadata through props
 - **AsChild Support**: Full customization with asChild pattern
+- **Prop-Based Components**: Simple components like Title and Hashtag use props instead of services
 - **Composable**: Mix and match components as needed
 
 ## Performance
