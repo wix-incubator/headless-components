@@ -2,9 +2,9 @@ import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type TicketDefinition } from '../services/ticket-definition-service.js';
 import { type PricingOption as PricingOptionType } from '../services/pricing-option-service.js';
+import { isTicketDefinitionAvailable } from '../utils/ticket-definition.js';
 import * as PricingOption from './PricingOption.js';
 import * as CoreTicketDefinition from './core/TicketDefinition.js';
-import { isTicketDefinitionAvailable } from '../utils/ticket-definition.js';
 
 enum TestIds {
   ticketDefinitionRoot = 'ticket-definition-root',
