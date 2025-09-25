@@ -238,7 +238,9 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
       }
 
       // Filter menus by selected location
-      return allMenus.filter(menu => menu.businessLocationId === selectedLocationId);
+      return allMenus.filter(
+        (menu) => menu.businessLocationId === selectedLocationId,
+      );
     };
 
     signalsService.effect(() => {
@@ -252,7 +254,9 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
       // If there's a selected menu, check if it's still valid for the current location
       if (selectedMenu) {
         const filteredMenus = filterMenusByLocation();
-        const isMenuStillValid = filteredMenus.some(menu => menu._id === selectedMenu._id);
+        const isMenuStillValid = filteredMenus.some(
+          (menu) => menu._id === selectedMenu._id,
+        );
 
         // If the selected menu is not available in the filtered menus, reset selection
         if (!isMenuStillValid) {

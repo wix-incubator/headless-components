@@ -143,7 +143,7 @@ export const MenuSelector = React.forwardRef<HTMLElement, MenuSelectorProps>(
           onMenuSelect: (menu: Menu) => void;
         }) => {
           // Only show selector if there are more than 1 real menu (excluding "All" option)
-          const realMenus = menus.filter(menu => menu._id !== 'all');
+          const realMenus = menus.filter((menu) => menu._id !== 'all');
           if (realMenus.length <= 1) {
             return null;
           }
@@ -491,7 +491,9 @@ export const LocationSelector = React.forwardRef<
         onLocationSelect: (location: string) => void;
       }) => {
         // Only show selector if there are more than 1 real location (excluding "All" option)
-        const realLocations = locations.filter(location => location.id !== 'all');
+        const realLocations = locations.filter(
+          (location) => location.id !== 'all',
+        );
         if (realLocations.length <= 1) {
           return null;
         }
@@ -533,7 +535,9 @@ export const LocationSelector = React.forwardRef<
                       </Select.Item>
                     ))}
                   </Select.Viewport>
-                  <Select.ScrollDownButton className={scrollDownButtonClassName} />
+                  <Select.ScrollDownButton
+                    className={scrollDownButtonClassName}
+                  />
                 </Select.Content>
               </Select.Portal>
             </Select.Root>
