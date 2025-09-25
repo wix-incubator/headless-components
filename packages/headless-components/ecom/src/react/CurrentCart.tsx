@@ -18,6 +18,7 @@ export interface RootProps {
 
 export const Root = ({ children, currentCartServiceConfig }: RootProps) => {
   return (
+    // we don't supply data-component-tag here because it's already provided by the CartRoot component
     <CoreRoot
       currentCartServiceConfig={currentCartServiceConfig}
       data-testid={TestIds.currentCartRoot}
@@ -26,3 +27,5 @@ export const Root = ({ children, currentCartServiceConfig }: RootProps) => {
     </CoreRoot>
   );
 };
+
+Root.displayName = 'CurrentCart.Root';

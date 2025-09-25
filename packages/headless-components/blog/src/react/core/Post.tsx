@@ -32,7 +32,8 @@ export interface RichContentProps {
 }
 
 export interface RichContentRenderProps {
-  ricosViewerContent: any;
+  content: any;
+  pricingPlanIds: string[];
 }
 
 /**
@@ -44,16 +45,14 @@ export const RichContent = (props: RichContentProps) => {
   >;
 
   const post = service.post.get();
+  const content = post?.richContent;
+  const pricingPlanIds = post?.pricingPlanIds ?? [];
 
-  if (!post?.richContent) {
+  if (!content) {
     return null;
   }
 
-  const richContent = post.richContent;
-
-  return props.children({
-    ricosViewerContent: richContent,
-  });
+  return props.children({ content, pricingPlanIds });
 };
 
 RichContent.displayName = 'Blog.Post.RichContent/Core';

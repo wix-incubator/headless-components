@@ -52,6 +52,15 @@ export const WixMediaImage = React.forwardRef<
     const derivedHeight = height || parsed.height;
     const derivedAlt = parsed.altText ?? alt;
 
+    const dimensions: { width?: string | number; height?: string | number } =
+      {};
+    if (derivedWidth) {
+      dimensions.width = derivedWidth;
+    }
+    if (derivedHeight) {
+      dimensions.height = derivedHeight;
+    }
+
     return (
       <AsChildSlot
         ref={ref}
@@ -60,18 +69,12 @@ export const WixMediaImage = React.forwardRef<
         customElement={children}
         customElementProps={{
           src,
-          width: derivedWidth,
-          height: derivedHeight,
+          ...dimensions,
           alt: derivedAlt,
         }}
         {...otherProps}
       >
-        <img
-          src={src}
-          width={derivedWidth}
-          height={derivedHeight}
-          alt={derivedAlt}
-        />
+        <img src={src} {...dimensions} alt={derivedAlt} />
       </AsChildSlot>
     );
   },

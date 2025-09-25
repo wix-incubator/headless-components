@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
-import React from 'react';
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
 
 const SocialFacebookIcon = ({ className }: { className?: string }) => (
   <svg
@@ -89,7 +89,7 @@ const CopyToClipboard = (props: CopyToClipboardProps) => {
         setIsCopied(false);
       }, 2000) as unknown as number;
     } catch (error) {
-      console.error('Failed to copy URL to clipboard:', error);
+      console.error("Failed to copy URL to clipboard:", error);
     }
   }, [href]);
 
@@ -100,7 +100,7 @@ const CopyToClipboard = (props: CopyToClipboardProps) => {
 };
 
 type SharePostActionsProps = {
-  href: string;
+  shareUrl?: string;
   className?: string;
 };
 
@@ -108,28 +108,28 @@ type SharePostActionsProps = {
  * A social sharing component that provides buttons to share a blog post on various platforms.
  * Includes share buttons for X (Twitter), Facebook, LinkedIn, and a copy-to-clipboard link.
  * Each button shows a tooltip on hover with platform-specific messaging.
- *
- * @example
- * ```tsx
- * <SharePostActions href="https://example.com/post/my-post" />
- * ```
  */
 export const SharePostActions = React.forwardRef<
   HTMLDivElement,
   SharePostActionsProps
->(({ href, className }: SharePostActionsProps, ref) => {
-  if (!href) return null;
+>(({ className, shareUrl: shareUrlProp }: SharePostActionsProps, ref) => {
+  const [shareUrl, setShareUrl] = useState(shareUrlProp ?? "");
+
+  useEffect(() => {
+    if (shareUrl) return;
+    setShareUrl(window.location.href);
+  }, [shareUrl]);
 
   const linkedInShareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
-    href,
+    shareUrl
   )}`;
   const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-    href,
+    shareUrl
   )}`;
-  const xShareUrl = `https://x.com/share?url=${encodeURIComponent(href)}`;
+  const xShareUrl = `https://x.com/share?url=${encodeURIComponent(shareUrl)}`;
 
   return (
-    <div className={cn('flex gap-2', className)} ref={ref}>
+    <div className={cn("flex gap-2", className)} ref={ref}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -179,7 +179,7 @@ export const SharePostActions = React.forwardRef<
           <TooltipContent>Share on LinkedIn</TooltipContent>
         </Tooltip>
 
-        <CopyToClipboard href={href}>
+        <CopyToClipboard href={shareUrl}>
           {({ copyToClipboard, isCopied }) => (
             <>
               <Tooltip open={isCopied || undefined}>
@@ -194,7 +194,7 @@ export const SharePostActions = React.forwardRef<
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {isCopied ? 'Copied!' : 'Copy Link'}
+                  {isCopied ? "Copied!" : "Copy Link"}
                 </TooltipContent>
               </Tooltip>
             </>
@@ -205,4 +205,4 @@ export const SharePostActions = React.forwardRef<
   );
 });
 
-SharePostActions.displayName = 'SharePostActions';
+SharePostActions.displayName = "SharePostActions";

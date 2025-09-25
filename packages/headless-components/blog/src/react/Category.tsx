@@ -1,6 +1,7 @@
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { useCategoryItemRepeaterContext } from './Categories.js';
+import { isActiveCategory } from './helpers.js';
 
 const enum TestIds {
   blogCategoryLabel = 'blog-category-label',
@@ -121,7 +122,15 @@ export interface LinkProps {
   asChild?: boolean;
   className?: string;
   baseUrl?: string;
-  children?: AsChildChildren<{ href: string }> | React.ReactNode;
+  /** The pathname of the current page */
+  pathname?: string;
+  children?:
+    | AsChildChildren<{
+        href: string;
+        /** Only available if pathname is provided */
+        isActive: boolean;
+      }>
+    | React.ReactNode;
 }
 
 /**
@@ -150,13 +159,16 @@ export interface LinkProps {
  * ```
  */
 export const Link = React.forwardRef<HTMLElement, LinkProps>((props, ref) => {
-  const { asChild, children, className, baseUrl = '' } = props;
+  const { asChild, children, className, pathname, baseUrl = '' } = props;
   const { category, imageUrl } = useCategoryItemRepeaterContext();
 
   const href = category.isCustom ? category.slug : `${baseUrl}${category.slug}`;
+  const isActive = isActiveCategory(pathname, baseUrl, category);
   const attributes = {
     'data-testid': TestIds.blogCategoryLink,
     'data-href': href,
+    'data-active': isActive,
+    'aria-current': isActive ? 'page' : undefined,
     'data-has-image': !!imageUrl,
   };
 
@@ -167,7 +179,7 @@ export const Link = React.forwardRef<HTMLElement, LinkProps>((props, ref) => {
       className={className}
       {...attributes}
       customElement={children}
-      customElementProps={{ href }}
+      customElementProps={{ href, isActive }}
       content={href}
     >
       <a href={href}>{category.label}</a>

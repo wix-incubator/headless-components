@@ -1,39 +1,56 @@
-import { cn } from '@/lib/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
-import React from 'react';
+import { cn } from "@/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
+import React from "react";
 
 export const emptyStateVariants = cva(
-  'bg-surface-card border-surface-subtle rounded-xl border px-6 py-12 text-center shadow-sm',
+  "rounded-xl bg-foreground/5 px-6 py-12 text-center text-foreground shadow-sm",
   {
     variants: {
       size: {
-        sm: 'py-8',
-        md: 'py-12',
-        lg: 'py-16',
+        sm: "py-8",
+        md: "py-12",
+        lg: "py-16",
       },
     },
     defaultVariants: {
-      size: 'md',
+      size: "md",
     },
-  },
+  }
 );
 
 export interface EmptyStateProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof emptyStateVariants> {
+  /** The main title displayed in the empty state */
   title: string;
+  /** Optional subtitle text displayed below the title */
   subtitle?: string;
+  /** Custom icon to display. If not provided, a default document icon is shown */
   icon?: React.ReactNode;
+  /** Whether to show the icon. Defaults to true */
   showIcon?: boolean;
 }
 
+/**
+ * A component for displaying empty states with optional title, subtitle, and icon.
+ * Useful for when there's no content to display, such as empty lists or search results.
+ *
+ * @example
+ * ```tsx
+ * <EmptyState
+ *   title="No posts found"
+ *   subtitle="Try adjusting your search criteria"
+ *   size="lg"
+ * />
+ * ```
+ */
 export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
   (
     { className, size, title, subtitle, icon, showIcon = true, ...props },
-    ref,
+    ref
   ) => {
     const defaultIcon = (
-      <div className="text-content-muted mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full">
+      <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full text-foreground/60">
         <svg
           className="h-12 w-12"
           fill="none"
@@ -58,14 +75,14 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
       >
         {showIcon && (icon || defaultIcon)}
 
-        <h3 className="text-content-primary mb-4 text-2xl font-semibold">
-          {title}
-        </h3>
+        <h3 className="mb-4 font-heading text-2xl text-foreground">{title}</h3>
 
-        {subtitle && <p className="text-content-muted">{subtitle}</p>}
+        {subtitle && (
+          <p className="font-paragraph text-foreground/60">{subtitle}</p>
+        )}
       </div>
     );
-  },
+  }
 );
 
-EmptyState.displayName = 'EmptyState';
+EmptyState.displayName = "EmptyState";

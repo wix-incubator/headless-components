@@ -1,5 +1,10 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
-import { Sort as SortPrimitive } from '@wix/headless-components/react';
+import {
+  Sort as SortPrimitive,
+  GenericListTotalsRenderProps,
+  GenericListLoadMoreRenderProps,
+  GenericList,
+} from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import type { ProductsListServiceConfig } from '../services/products-list-service.js';
@@ -7,11 +12,11 @@ import { ProductsListServiceDefinition } from '../services/products-list-service
 import { productsV3 } from '@wix/stores';
 
 import * as CoreProductList from './core/ProductList.js';
-import * as CoreProductListPagination from './core/ProductListPagination.js';
 import { ProductListSort as ProductListSortPrimitive } from './core/ProductListSort.js';
 import * as CoreProductListFilters from './core/ProductListFilters.js';
 import * as Product from './Product.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { DataComponentTags } from '../data-component-tags.js';
 
 enum TestIds {
   productListRoot = 'product-list-root',
@@ -88,6 +93,8 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   },
 );
 
+Root.displayName = 'ProductList.Root';
+
 /**
  * Internal component to handle the Root content with service access
  */
@@ -100,25 +107,25 @@ const RootContent = React.forwardRef<
 >((props, ref) => {
   const { children, className } = props;
   const productsListService = useService(ProductsListServiceDefinition);
-  const contextProducts = productsListService.products.get();
-  const pagingMetadata = productsListService.pagingMetadata.get();
 
-  const displayedProducts = contextProducts.length;
-  const totalProducts = pagingMetadata.count || contextProducts.length;
-  const isFiltered = false; // TODO: Implement filtering detection
-
-  const attributes = {
-    'data-testid': TestIds.productListRoot,
-    'data-total-products': totalProducts,
-    'data-displayed-products': displayedProducts,
-    'data-filtered': isFiltered,
-    className,
-  };
+  const items = productsListService.products.get().map((product) => ({
+    ...product,
+    id: product._id!,
+  }));
 
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+    <GenericList.Root
+      items={items}
+      loadMore={() => productsListService.loadMore(10)}
+      hasMore={productsListService.hasMoreProducts.get()}
+      isLoading={productsListService.isLoading.get()}
+      className={className}
+      ref={ref}
+      data-component-tag={DataComponentTags.productListRoot}
+      data-testid={TestIds.productListRoot}
+    >
       {children}
-    </div>
+    </GenericList.Root>
   );
 });
 
@@ -194,33 +201,16 @@ export interface ProductsProps {
  */
 export const Products = React.forwardRef<HTMLElement, ProductsProps>(
   (props, ref) => {
-    const {
-      children,
-      emptyState,
-      infiniteScroll = true,
-      pageSize = 0,
-      className,
-    } = props;
-    const productsListService = useService(ProductsListServiceDefinition);
-    const products = productsListService.products.get();
-    const hasProducts = products.length > 0;
-
-    if (!hasProducts) {
-      return emptyState || null;
-    }
-
-    const attributes = {
-      'data-testid': TestIds.productListProducts,
-      'data-empty': !hasProducts,
-      'data-infinite-scroll': infiniteScroll,
-      'data-page-size': pageSize,
-      className,
-    };
+    const { children, ...otherProps } = props;
 
     return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      <GenericList.Items
+        ref={ref}
+        data-testid={TestIds.productListProducts}
+        {...otherProps}
+      >
         {children as React.ReactNode}
-      </div>
+      </GenericList.Items>
     );
   },
 );
@@ -286,11 +276,7 @@ export interface LoadMoreTriggerProps {
     | React.ReactNode
     | React.ForwardRefRenderFunction<
         HTMLButtonElement,
-        {
-          isLoading: boolean;
-          hasMoreProducts: boolean;
-          loadMore: () => void;
-        }
+        GenericListLoadMoreRenderProps
       >;
   /**
    * Whether to render as a child component.
@@ -329,42 +315,16 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLButtonElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const {
-    asChild,
-    children,
-    className,
-    label = 'Load More',
-    loadingState = 'Loading...',
-  } = props;
+  const { children = <button />, ...otherProps } = props;
 
   return (
-    <CoreProductListPagination.LoadMoreTrigger>
-      {({ loadMore, hasMoreProducts, isLoading }) => {
-        // Don't render if no more products to load
-        if (!hasMoreProducts) return null;
-
-        const handleClick = () => loadMore(10);
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            onClick={handleClick}
-            disabled={isLoading}
-            data-testid={TestIds.productListLoadMore}
-            customElement={children}
-            customElementProps={{
-              loadMore,
-              hasMoreProducts,
-              isLoading,
-            }}
-          >
-            <button>{isLoading ? loadingState : label}</button>
-          </AsChildSlot>
-        );
-      }}
-    </CoreProductListPagination.LoadMoreTrigger>
+    <GenericList.Actions.LoadMore
+      ref={ref}
+      data-testid={TestIds.productListLoadMore}
+      {...otherProps}
+    >
+      {children as React.ReactNode}
+    </GenericList.Actions.LoadMore>
   );
 });
 
@@ -375,9 +335,7 @@ export interface TotalsDisplayedProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    displayedProducts: number;
-  }>;
+  children?: AsChildChildren<GenericListTotalsRenderProps>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -395,7 +353,7 @@ export interface TotalsDisplayedProps {
  * </ProductList.TotalsDisplayed>
  * // or with render function
  * <ProductList.TotalsDisplayed asChild>
- *   {({ displayedProducts }, ref) => <strong ref={ref}>{displayedProducts}</strong>}
+ *   {({ displayedItems }, ref) => <strong ref={ref}>{displayedItems}</strong>}
  * </ProductList.TotalsDisplayed>
  * ```
  */
@@ -403,25 +361,16 @@ export const TotalsDisplayed = React.forwardRef<
   HTMLElement,
   TotalsDisplayedProps
 >((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
-  const productsListService = useService(ProductsListServiceDefinition);
-  const products = productsListService.products.get();
-  const displayedProducts = products.length;
+  const { children = <span />, ...otherProps } = props;
 
   return (
-    <AsChildSlot
+    <GenericList.Totals
       ref={ref}
-      asChild={asChild}
-      className={className}
       data-testid={TestIds.productListTotalsDisplayed}
-      data-displayed={displayedProducts}
-      customElement={children}
-      customElementProps={{ displayedProducts }}
-      content={displayedProducts}
       {...otherProps}
     >
-      <span>{displayedProducts}</span>
-    </AsChildSlot>
+      {children as React.ReactNode}
+    </GenericList.Totals>
   );
 });
 

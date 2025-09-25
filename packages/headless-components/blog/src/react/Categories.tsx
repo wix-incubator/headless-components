@@ -12,7 +12,10 @@ import {
 } from '../services/blog-categories-service.js';
 import type { createCustomCategory } from '../services/helpers.js';
 import * as CoreCategories from './core/Categories.js';
-import { isValidChildren } from './helpers.js';
+import { isActiveCategory, isValidChildren } from './helpers.js';
+
+/** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=833bf7b1-2ad5-45f7-b2ac-89c207bcdc42 */
+const HTML_CODE_TAG = 'blog.categories';
 
 interface CategoriesContextValue {
   categories: EnhancedCategory[];
@@ -65,7 +68,7 @@ export interface BlogCategoriesRootProps {
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/headless-blog/react';
+ * import { Blog } from '@wix/blog/components';
  *
  * function CategoryNavigation() {
  *   return (
@@ -105,6 +108,7 @@ export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>(
       };
 
       const attributes = {
+        'data-component-tag': asChild ? undefined : HTML_CODE_TAG,
         'data-testid': TestIds.blogCategoriesRoot,
         'data-has-categories': hasCategories,
       };
@@ -283,7 +287,8 @@ export function useCategoryItemRepeaterContext(): CategoryItemRepeaterContextVal
 export interface ActiveCategoryProps {
   asChild?: boolean;
   className?: string;
-  currentPath: string;
+  /** The pathname of the current page */
+  pathname: string;
   baseUrl?: string;
   children: AsChildChildren<{ category: EnhancedCategory }> | React.ReactNode;
 }
@@ -295,7 +300,7 @@ export interface ActiveCategoryProps {
  * @component
  * @example
  * ```tsx
- * <Blog.Categories.ActiveCategory currentPath={location.pathname} baseUrl="/category/">
+ * <Blog.Categories.ActiveCategory pathname={location.pathname} baseUrl="/category/">
  *   {({ category }) => (
  *     <div className="hero-section">
  *       <Blog.Categories.Image />
@@ -312,13 +317,11 @@ export const ActiveCategory = React.forwardRef<
   HTMLElement,
   ActiveCategoryProps
 >((props, ref) => {
-  const { asChild, className, currentPath, baseUrl = '', children } = props;
+  const { asChild, className, pathname, baseUrl = '', children } = props;
   const { categories, fallbackImageUrl } = useCategoriesContext();
 
-  const activeCategory = categories.find(
-    (category) =>
-      currentPath ===
-      (category.isCustom ? category.slug : `${baseUrl}${category.slug}`),
+  const activeCategory = categories.find((category) =>
+    isActiveCategory(pathname, baseUrl, category),
   );
 
   if (!activeCategory) return null;

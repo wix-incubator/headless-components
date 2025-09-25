@@ -3,6 +3,7 @@ description:
 globs: packages/headless-components/cms/**/*
 alwaysApply: false
 ---
+
 ## Headless Component Compositions Structure
 
 - **Short, Descriptive Exports:**
@@ -12,11 +13,13 @@ alwaysApply: false
 
 - **Barrel File Pattern:**
   The barrel file (`index.tsx`) for each group must re-export all components using the ES module namespace pattern:
+
   ```ts
-  export * as Category from "./Category";
-  export * as Product from "./Product";
+  export * as Category from './Category';
+  export * as Product from './Product';
   // etc.
   ```
+
   **Do not use aliasing in the barrel file.**
   If a component needs a shorter name, rename it in its source file.
 
@@ -30,8 +33,9 @@ alwaysApply: false
 - **Import Consistency:**
   Never import individual components directly from submodules.
   **Always import the namespace from the barrel file:**
+
   ```ts
-  import { Category, Product } from "@wix/stores/components";
+  import { Category, Product } from '@wix/stores/components';
   ```
 
 - **No Aliasing:**
@@ -45,5 +49,3 @@ alwaysApply: false
 
 **Summary:**
 _Export all headless components with short names, use the namespace pattern in the barrel file, and always consume as `Namespace.Component`. Never alias or import directly from submodules._
-
-

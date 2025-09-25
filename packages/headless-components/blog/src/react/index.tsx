@@ -11,6 +11,3 @@ export const Blog = {
   Post,
   Tag,
 };
-
-// CSS exports - consumers must import this alongside components
-// import '@wix/headless-blog/react/styles.css';

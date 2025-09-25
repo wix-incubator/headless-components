@@ -3,9 +3,11 @@ description:
 globs: packages/headless-components/cms/**/*
 alwaysApply: false
 ---
+
 # Checklist for Authoring Client-Side Services & Headless Components
 
 ## Client-Side Services Checklist
+
 - [ ] Service logic and state are encapsulated in the service (no UI code)
 - [ ] Service does **not** return UI messages or strings (no English/UI text)
 - [ ] All outputs are structured data: enums, statuses, error codes, etc.
@@ -14,6 +16,7 @@ alwaysApply: false
 - [ ] Service exposes only what is needed for headless components/UI
 
 ## Headless Components Checklist
+
 - [ ] Component receives data from client-side service via hooks (e.g., `useService`)
 - [ ] Component exposes data and actions via render props (children function)
 - [ ] Component does **not** render UI directly, only calls the children render prop
@@ -23,6 +26,7 @@ alwaysApply: false
 # Checklist for Authoring Client-Side Services & Headless Components
 
 ## Client-Side Services Checklist
+
 - [ ] Service logic and state are encapsulated in the service (no UI code)
 - [ ] Service does **not** return UI messages or strings (no English/UI text)
 - [ ] All outputs are structured data: enums, statuses, error codes, etc.
@@ -31,6 +35,7 @@ alwaysApply: false
 - [ ] Service exposes only what is needed for headless components/UI
 
 ## Headless Components Checklist
+
 - [ ] Component receives data from client-side service via hooks (e.g., `useService`)
 - [ ] Component exposes data and actions via render props (children function)
 - [ ] Component does **not** render UI directly, only calls the children render prop
@@ -46,7 +51,7 @@ domain folder with a `<service-name>-service.ts`. you can see an example service
 and they expose an api that then allows mustating the state or exposed computed values,
 getters or any other logic, even if it doesn't affect state, but has logic closely related
 to the service. it's important to node that client side services do not include actual UI and specficailly, should not return UI messages or strings, as this should be all handled by the user of the service outside of this layer, so when authoring client side services, we need to ensure we expose structured data that isn't tied to a specific UI / language etc.
- The services are client side services, meaning they are run on the client
+The services are client side services, meaning they are run on the client
 and don't have server-only logic in them (they may run in SSR, so they need to be
 isomorphoic anyway). but service factories acceot a config object. that config object is
 kind of the intial strate of the service. With each service implementation comes a function
@@ -62,23 +67,24 @@ headless components are kind of the logical building blocks of common use cases 
 product page, a member profile page etc. When we have a product page for exmaple, it consists
 of a product gallery that shows the product media items, a variant selector which shows the
 different options of the product and allowing choosing them (size, color etc) and there is an
- add to cart button. All of these are affected by the currenltlky selected variant, even the price,
- the add to cart button is disabled if there is no stock, etc. To compose a product page of
- Headless compoennts, we then basically have headless components for ProductGallery,
- VariantSelector, CurrentCart which in turn have ProductGallery.SelectedImage,
- ProductGallery.NextImageTrigger, ProductGalleryPreviousImageTrigger,
- VariantSelecter.AddToCartTrigger, VariantSelector.ProductOptions etc.
- These all allow to easily compose a product page out of services and all that
-  is left to connect the logic to the DOM and styles (whatever is returned by teh
-  children render props).
+add to cart button. All of these are affected by the currenltlky selected variant, even the price,
+the add to cart button is disabled if there is no stock, etc. To compose a product page of
+Headless compoennts, we then basically have headless components for ProductGallery,
+VariantSelector, CurrentCart which in turn have ProductGallery.SelectedImage,
+ProductGallery.NextImageTrigger, ProductGalleryPreviousImageTrigger,
+VariantSelecter.AddToCartTrigger, VariantSelector.ProductOptions etc.
+These all allow to easily compose a product page out of services and all that
+is left to connect the logic to the DOM and styles (whatever is returned by teh
+children render props).
 
 How does it work?
 In order to use services we need to render a `ServicesManagerProvider` somewhere in
- out react tree, under which part we want to start using the headless components,
- that would be related to the state managed by that specific ServicesManager.
- We can have multiple `ServicesManagerProvider`s in the same page, they can be
- nested and repeated, and all headless components would be tied to the services
- manager by their location in the react tree (it uses react context).
+out react tree, under which part we want to start using the headless components,
+that would be related to the state managed by that specific ServicesManager.
+We can have multiple `ServicesManagerProvider`s in the same page, they can be
+nested and repeated, and all headless components would be tied to the services
+manager by their location in the react tree (it uses react context).
+
 ```tsx
 import { ServicesManagerProvider } from "@wix/services-manager-react";
 import { CurrentMemberServiceDefinition, CurrentMemberService } from "/path/to/headless/members/current-member-service.ts";
@@ -92,24 +98,26 @@ import { CurrentMemberServiceDefinition, CurrentMemberService } from "/path/to/h
   ))[0]}
 >
     </>
-</ServiesManagerProvider>
+</ServicesManagerProvider>
 ```
+
 The `currentMemberServiceConfig` is the result of calling `loadCurrentMemberServiceConfig`
- on the server and passing the result into the react pages and up to the
-  `ServicesManagerProvider`. There might be some cases where the config isn't loaded
-  on the server, that's ok too.
+on the server and passing the result into the react pages and up to the
+`ServicesManagerProvider`. There might be some cases where the config isn't loaded
+on the server, that's ok too.
 writing a Headless component is simple, we place a file for the component in the
- headless domain folder, and we export headless components like;
+headless domain folder, and we export headless components like;
+
 ```tsx
-import type { ServiceAPI } from "@wix/services-definitions";
-import { useService } from "@wix/services-manager-react";
-import { CurrentMemberServiceDefinition } from "./current-member-service";
+import type { ServiceAPI } from '@wix/services-definitions';
+import { useService } from '@wix/services-manager-react';
+import { CurrentMemberServiceDefinition } from './current-member-service';
 
 export const FullName = (props: {
   children: (props: { fullName: string }) => React.ReactNode;
 }) => {
   const { currentMember } = useService(
-    CurrentMemberServiceDefinition
+    CurrentMemberServiceDefinition,
   ) as ServiceAPI<typeof CurrentMemberServiceDefinition>;
 
   const member = currentMember.get();
@@ -118,34 +126,29 @@ export const FullName = (props: {
   return props.children({ fullName });
 };
 ```
+
 The headless components use the `useService` hook to get the active service,
 and then they get what they want to expose from the service, and pass it as props to the children render prop.
 
-
 Then, in our pages and components in the project, we can start using the headless components like
+
 ```tsx
 <BuyNow>
-    {({
-        isLoading,
-        redirectToCheckout,
-        productName,
-        price,
-        currency,
-        error,
-    }) => (
-        <button
-        onClick={() => redirectToCheckout()}
-        disabled={isLoading || Boolean(error)}
-        >
-        {error
-            ? error
-            : isLoading
-            ? "Loading..."
-            : `Buy Now ${productName} ${price} ${currency}`}
-        </button>
-    )}
+  {({ isLoading, redirectToCheckout, productName, price, currency, error }) => (
+    <button
+      onClick={() => redirectToCheckout()}
+      disabled={isLoading || Boolean(error)}
+    >
+      {error
+        ? error
+        : isLoading
+          ? 'Loading...'
+          : `Buy Now ${productName} ${price} ${currency}`}
+    </button>
+  )}
 </BuyNow>
 ```
+
 We have full control of the DOM and how the actions and data from the service are getting bound to user interaction and interface.
 
 <note>
@@ -212,8 +215,8 @@ const updateProfile = async () => {
     },
     profile: {
       nickname: formData.nickname,
-      title: formData.profileTitle
-    }
+      title: formData.profileTitle,
+    },
   };
 
   // Use the currentMemberService to update, which will:
@@ -224,6 +227,7 @@ const updateProfile = async () => {
 ```
 
 This pattern shows how dependent services can:
+
 1. **Share data**: ProfileUpdate gets its initial form data from CurrentMember's state
 2. **Share operations**: ProfileUpdate uses CurrentMember's updateMember method
 3. **Maintain consistency**: Updates through one service immediately reflect in the other
@@ -243,26 +247,26 @@ For services that load entities that may not exist (e.g., products by slug, serv
 ```typescript
 // Define the result type as a discriminated union
 export type EntityServiceConfigResult =
-  | { type: "success"; config: ServiceFactoryConfig<typeof EntityService> }
-  | { type: "notFound" };
+  | { type: 'success'; config: ServiceFactoryConfig<typeof EntityService> }
+  | { type: 'notFound' };
 
 export async function loadEntityServiceConfig(
-  entityId: string
+  entityId: string,
 ): Promise<EntityServiceConfigResult> {
   try {
     const entity = await fetchEntity(entityId);
 
     if (!entity) {
-      return { type: "notFound" };
+      return { type: 'notFound' };
     }
 
     return {
-      type: "success",
+      type: 'success',
       config: { entity },
     };
   } catch (error) {
-    console.error("Failed to load entity:", error);
-    return { type: "notFound" };
+    console.error('Failed to load entity:', error);
+    return { type: 'notFound' };
   }
 }
 ```
@@ -303,16 +307,26 @@ If you have a service that depends on another service (using `getService`), both
 
 ```tsx
 // ✅ CORRECT: Both services in the same ServicesManager
-const [servicesManager] = useState(() => createServicesManager(
-  createServicesMap()
-    .addService(CurrentMemberServiceDefinition, CurrentMemberService, currentMemberConfig)
-    .addService(ProfileUpdateServiceDefinition, ProfileUpdateService, profileUpdateConfig)
-));
+const [servicesManager] = useState(() =>
+  createServicesManager(
+    createServicesMap()
+      .addService(
+        CurrentMemberServiceDefinition,
+        CurrentMemberService,
+        currentMemberConfig,
+      )
+      .addService(
+        ProfileUpdateServiceDefinition,
+        ProfileUpdateService,
+        profileUpdateConfig,
+      ),
+  ),
+);
 
 <ServicesManagerProvider servicesManager={servicesManager}>
   {/* Both CurrentMember and ProfileUpdate headless components work here */}
   <UpdateProfileDialog />
-</ServicesManagerProvider>
+</ServicesManagerProvider>;
 ```
 
 ```tsx
@@ -328,6 +342,7 @@ const [servicesManager] = useState(() => createServicesManager(
 ```
 
 **Why this matters:**
+
 - Each `ServicesManager` creates its own isolated service container
 - Services can only access other services within the same container via `getService`
 - State is not shared between different `ServicesManager` instances
@@ -350,13 +365,13 @@ When client-side services need to perform server-only operations (like using `au
 
 ```typescript
 // src/headless/members/actions.ts
-import { defineAction } from "astro:actions";
-import { z } from "astro:schema";
-import { auth } from "@wix/essentials";
+import { defineAction } from 'astro:actions';
+import { z } from 'astro:schema';
+import { auth } from '@wix/essentials';
 
 export const photoUploadAstroActions = {
   uploadPhoto: defineAction({
-    accept: "form",
+    accept: 'form',
     input: z.object({
       photo: z.instanceof(File),
     }),
@@ -364,17 +379,17 @@ export const photoUploadAstroActions = {
       // Server-only logic using auth.elevate
       const { uploadUrl } = await auth.elevate(files.generateFileUploadUrl)(
         photo.type,
-        { fileName: photo.name, parentFolderId: "visitor-uploads" }
+        { fileName: photo.name, parentFolderId: 'visitor-uploads' },
       );
 
       // Additional server-side processing...
-      return { success: true, fileId, message: "Photo updated successfully" };
+      return { success: true, fileId, message: 'Photo updated successfully' };
     },
   }),
 };
 
 // src/actions/index.ts
-import { photoUploadAstroActions } from "../headless/members/actions";
+import { photoUploadAstroActions } from '../headless/members/actions';
 
 export const server = {
   photoUploadAstroActions,
@@ -389,7 +404,7 @@ export const PhotoUploadService = implementService.withConfig<{
   // Service uses injected action instead of direct fetch
   const uploadPhoto = async (): Promise<void> => {
     const formData = new FormData();
-    formData.append("photo", file);
+    formData.append('photo', file);
 
     const result = await config.uploadAction(formData);
 
@@ -405,11 +420,11 @@ export const PhotoUploadService = implementService.withConfig<{
 
 // Config loader accepts and passes through the action
 export async function loadPhotoUploadServiceConfig(
-  uploadAction: (formData: FormData) => Promise<{ data?: any; error?: any }>
+  uploadAction: (formData: FormData) => Promise<{ data?: any; error?: any }>,
 ): Promise<ServiceFactoryConfig<typeof PhotoUploadService>> {
   return {
     maxFileSize: 10 * 1024 * 1024,
-    allowedTypes: ["image/jpeg", "image/png", "image/gif"],
+    allowedTypes: ['image/jpeg', 'image/png', 'image/gif'],
     uploadAction,
   };
 }
@@ -454,13 +469,13 @@ const photoUploadConfig = await loadPhotoUploadServiceConfig(uploadAction);
 
 ```typescript
 // src/headless/members/photo-upload-service-actions.ts
-import { defineAction } from "astro:actions";
-import { z } from "astro:schema";
-import { auth } from "@wix/essentials";
+import { defineAction } from 'astro:actions';
+import { z } from 'astro:schema';
+import { auth } from '@wix/essentials';
 
 export const photoUploadAstroActions = {
   uploadPhoto: defineAction({
-    accept: "form",
+    accept: 'form',
     input: z.object({
       photo: z.instanceof(File),
     }),
@@ -468,17 +483,17 @@ export const photoUploadAstroActions = {
       // Server-only logic using auth.elevate
       const { uploadUrl } = await auth.elevate(files.generateFileUploadUrl)(
         photo.type,
-        { fileName: photo.name, parentFolderId: "visitor-uploads" }
+        { fileName: photo.name, parentFolderId: 'visitor-uploads' },
       );
 
       // Additional server-side processing...
-      return { success: true, fileId, message: "Photo updated successfully" };
+      return { success: true, fileId, message: 'Photo updated successfully' };
     },
   }),
 };
 
 // src/actions/index.ts
-import { photoUploadAstroActions } from "../headless/members/photo-upload-service-actions";
+import { photoUploadAstroActions } from '../headless/members/photo-upload-service-actions';
 
 export const server = {
   photoUploadAstroActions,
@@ -494,7 +509,7 @@ export const PhotoUploadService = implementService.withConfig<{
 }>()(PhotoUploadServiceDefinition, ({ getService, config }) => {
   const uploadPhoto = async (): Promise<void> => {
     const formData = new FormData();
-    formData.append("photo", file);
+    formData.append('photo', file);
 
     try {
       const result = await config.photoUploadAstroActions.uploadPhoto(formData);
@@ -509,11 +524,14 @@ export const PhotoUploadService = implementService.withConfig<{
 
 // Config loader returns only serializable data
 export async function loadPhotoUploadServiceConfig(): Promise<
-  Omit<ServiceFactoryConfig<typeof PhotoUploadService>, 'photoUploadAstroActions'>
+  Omit<
+    ServiceFactoryConfig<typeof PhotoUploadService>,
+    'photoUploadAstroActions'
+  >
 > {
   return {
     maxFileSize: 10 * 1024 * 1024,
-    allowedTypes: ["image/jpeg", "image/png", "image/gif"],
+    allowedTypes: ['image/jpeg', 'image/png', 'image/gif'],
   };
 }
 ```

@@ -1,19 +1,19 @@
-import { PostCategories } from '@/components/ui/blog/PostCategories';
-import { PostExcerpt } from '@/components/ui/blog/PostExcerpt';
-import { PostTitle } from '@/components/ui/blog/PostTitle';
-import { SeparatedItems } from '@/components/ui/blog/SeparatedItems';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
-import { Blog } from '@wix/headless-blog/react';
-import { useNavigation } from './NavigationContext';
+import { PostCategories } from "@/components/ui/blog/PostCategories";
+import { PostExcerpt } from "@/components/ui/blog/PostExcerpt";
+import { PostTitle } from "@/components/ui/blog/PostTitle";
+import { SeparatedItems } from "@/components/ui/blog/SeparatedItems";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ChevronRightIcon } from "@radix-ui/react-icons";
+import { Blog } from "@wix/blog/components";
+import { useNavigation } from "./NavigationContext";
 
-interface BlogFeedCardProps {
+interface BlogFeedCardProps extends React.HTMLAttributes<HTMLElement> {
   className?: string;
   postPageBaseUrl: string;
   /** Categories will link to category pages if provided, otherwise they will be displayed as labels. */
   categoryPageBaseUrl?: string;
-  dateLocale: string;
+  uiLocale: string;
   readMoreText?: string;
 }
 
@@ -26,7 +26,7 @@ interface BlogFeedCardProps {
  * <BlogFeedCardSideBySide
  *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
- *   dateLocale="en-US"
+ *   uiLocale="en-US"
  *   readMoreText="Read more"
  * />
  * ```
@@ -35,16 +35,18 @@ export function BlogFeedCardSideBySide({
   className,
   postPageBaseUrl,
   categoryPageBaseUrl,
-  dateLocale,
+  uiLocale,
   readMoreText,
+  ...attributes
 }: BlogFeedCardProps) {
   const Navigation = useNavigation();
 
   return (
     <article
+      {...attributes}
       className={cn(
-        'bg-surface-card grid auto-cols-fr grid-flow-col overflow-hidden rounded-xl',
-        className,
+        "group grid auto-cols-fr overflow-hidden rounded-xl bg-foreground/5 lg:grid-flow-col",
+        className
       )}
     >
       <Blog.Post.CoverImage className="mb-6 aspect-video h-full w-full object-cover" />
@@ -65,15 +67,15 @@ export function BlogFeedCardSideBySide({
 
         <PostExcerpt className="mb-4" />
 
-        <SeparatedItems className="text-content-secondary text-sm">
-          <Blog.Post.PublishDate locale={dateLocale} />
+        <SeparatedItems className="font-paragraph text-sm text-foreground/80">
+          <Blog.Post.PublishDate locale={uiLocale} />
 
           <Blog.Post.ReadingTime asChild>
             {({ readingTime }) => <span>{readingTime} min read</span>}
           </Blog.Post.ReadingTime>
         </SeparatedItems>
 
-        <div className="mt-auto mb-0"></div>
+        <div className="mb-0 mt-auto"></div>
 
         {readMoreText && (
           <Button className="mt-4 w-fit" asChild>
@@ -101,7 +103,7 @@ export function BlogFeedCardSideBySide({
  * <BlogFeedCardEditorial
  *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
- *   dateLocale="en-US"
+ *   uiLocale="en-US"
  *   readMoreText="Read more"
  * />
  * ```
@@ -110,13 +112,14 @@ export function BlogFeedCardEditorial({
   className,
   postPageBaseUrl,
   categoryPageBaseUrl,
-  dateLocale,
+  uiLocale,
   readMoreText,
+  ...attributes
 }: BlogFeedCardProps) {
   const Navigation = useNavigation();
 
   return (
-    <article className={cn('flex flex-col', className)}>
+    <article className={cn("group flex flex-col", className)} {...attributes}>
       <Blog.Post.CoverImage className="mb-6 aspect-[250/200] w-full rounded-xl object-cover" />
       <PostCategories className="mb-4" baseUrl={categoryPageBaseUrl} />
 
@@ -134,10 +137,10 @@ export function BlogFeedCardEditorial({
 
       <PostExcerpt className="mb-4" />
 
-      <div className="mt-auto mb-0"></div>
+      <div className="mb-0 mt-auto"></div>
 
-      <SeparatedItems className="text-content-secondary text-sm">
-        <Blog.Post.PublishDate locale={dateLocale} />
+      <SeparatedItems className="font-paragraph text-sm text-foreground/80">
+        <Blog.Post.PublishDate locale={uiLocale} />
 
         <Blog.Post.ReadingTime asChild>
           {({ readingTime }) => <span>{readingTime} min read</span>}
