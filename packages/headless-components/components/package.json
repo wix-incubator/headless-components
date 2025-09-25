@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-components",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",

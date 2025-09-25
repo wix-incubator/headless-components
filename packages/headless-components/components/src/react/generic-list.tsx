@@ -60,6 +60,12 @@ export interface GenericListItemsProps {
   className?: string;
 }
 
+export interface GenericListLoadMoreRenderProps {
+  isLoading: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
+}
+
 /**
  * Props for the GenericList LoadMore component
  */
@@ -69,9 +75,18 @@ export interface GenericListLoadMoreProps {
   /** Loading state content */
   loadingState?: React.ReactNode;
   /** Children for custom rendering - optional but either children or label must be provided */
-  children?: React.ReactNode;
+  children?:
+    | React.ReactNode
+    | ((
+        props: GenericListLoadMoreRenderProps,
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
   /** CSS classes */
   className?: string;
+}
+
+export interface GenericListTotalsRenderProps {
+  displayedItems: number;
 }
 
 /**
@@ -82,7 +97,7 @@ export interface GenericListTotalsProps {
   children?:
     | React.ReactNode
     | ((
-        props: { totalItems: number; displayedItems: number },
+        props: GenericListTotalsRenderProps,
         ref: React.Ref<HTMLElement>,
       ) => React.ReactNode);
   /** CSS classes */
