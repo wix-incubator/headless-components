@@ -173,36 +173,32 @@ export default function IndexPage(props: {
           <h2 className="text-xl font-semibold mb-3">Latest Posts</h2>
 
           <InstagramFeed.InstagramMedias>
-            <InstagramFeed.InstagramMediaItems>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <InstagramFeed.InstagramMediaRepeater>
-                  <InstagramMedia.MediaGalleries>
-                    <InstagramMedia.MediaGalleryItems>
-                      <InstagramMedia.MediaGalleryRepeater>
-                        <MediaGallery.Root mediaGalleryServiceConfig={{ media: [], infinite: true }}>
-                          <ItemLightbox />
-                          <MediaGallery.Thumbnails>
-                            <MediaGallery.ThumbnailRepeater>
-                              <MediaGallery.ThumbnailItem asChild>
-                                {({ src, alt, isActive, select }) => (
-                                  <button
-                                    onClick={select}
-                                    data-active={isActive}
-                                    className="aspect-square rounded-md overflow-hidden"
-                                  >
-                                    <img src={src} alt={alt || ''} className="w-full h-full object-cover" />
-                                  </button>
-                                )}
-                              </MediaGallery.ThumbnailItem>
-                            </MediaGallery.ThumbnailRepeater>
-                          </MediaGallery.Thumbnails>
-                        </MediaGallery.Root>
-                      </InstagramMedia.MediaGalleryRepeater>
-                    </InstagramMedia.MediaGalleryItems>
-                  </InstagramMedia.MediaGalleries>
-                </InstagramFeed.InstagramMediaRepeater>
-              </div>
-            </InstagramFeed.InstagramMediaItems>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <InstagramFeed.InstagramMediaRepeater>
+                <InstagramMedia.MediaGalleries>
+                  <InstagramMedia.MediaGalleryRepeater>
+                    <MediaGallery.Root mediaGalleryServiceConfig={{ media: [], infinite: true }}>
+                      <ItemLightbox />
+                      <MediaGallery.Thumbnails>
+                        <MediaGallery.ThumbnailRepeater>
+                          <MediaGallery.ThumbnailItem asChild>
+                            {({ src, alt, isActive, select }) => (
+                              <button
+                                onClick={select}
+                                data-active={isActive}
+                                className="aspect-square rounded-md overflow-hidden"
+                              >
+                                <img src={src} alt={alt || ''} className="w-full h-full object-cover" />
+                              </button>
+                            )}
+                          </MediaGallery.ThumbnailItem>
+                        </MediaGallery.ThumbnailRepeater>
+                      </MediaGallery.Thumbnails>
+                    </MediaGallery.Root>
+                  </InstagramMedia.MediaGalleryRepeater>
+                </InstagramMedia.MediaGalleries>
+              </InstagramFeed.InstagramMediaRepeater>
+            </div>
           </InstagramFeed.InstagramMedias>
         </InstagramFeed.Root>
       </div>

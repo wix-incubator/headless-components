@@ -2,14 +2,18 @@ import React from 'react';
 import { useService } from '@wix/services-manager-react';
 import { InstagramFeedServiceDefinition } from '../services/index.js';
 
+/**
+ * @deprecated Use `InstagramFeed.InstagramMedias` with `InstagramFeed.InstagramMediaRepeater` directly.
+ * This component will be removed in a future release.
+ */
 export interface InstagramMediaItemsProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
 }
 
 /**
- * List container for media items within InstagramMedias.
- * Renders emptyState when there are no items.
+ * @deprecated Use `InstagramFeed.InstagramMedias` with `InstagramFeed.InstagramMediaRepeater` directly.
+ * List container previously used to gate empty state. Prefer handling empty state on InstagramMedias.
  */
 export const InstagramMediaItems = React.forwardRef<HTMLDivElement, InstagramMediaItemsProps>(
   (props, ref) => {

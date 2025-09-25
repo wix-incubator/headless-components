@@ -1,7 +1,7 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { useService } from '@wix/services-manager-react';
-import { InstagramMediaItemServiceDefinition } from '../services/index.js';
+import { InstagramMediaItemServiceDefinition, InstagramFeedServiceDefinition } from '../services/index.js';
 import type { MediaItem } from '@wix/headless-media/services';
 
 export enum TestIds {
@@ -74,8 +74,10 @@ export interface UserNameProps {
 
 export const UserName = React.forwardRef<HTMLElement, UserNameProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
-  // Username is part of account, not media item; keep for interface compatibility
-  const userName = undefined as unknown as string | undefined;
+  // Username is part of the feed account; read from feed service
+  const feedService = useService(InstagramFeedServiceDefinition);
+  const account = feedService.feedData.get().account as any;
+  const userName = account?.instagramInfo?.instagramUsername as string | undefined;
 
   return (
     <AsChildSlot
@@ -196,6 +198,11 @@ export const InstagramMedia = {
   MediaGalleries,
   MediaGalleryItems,
   MediaGalleryRepeater,
+  // lowercase aliases (new interface)
+  caption: Caption,
+  mediaType: MediaType,
+  userName: UserName,
+  timestamp: Timestamp,
 };
 
 // End of InstagramMedia namespace
