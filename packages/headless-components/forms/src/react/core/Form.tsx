@@ -116,7 +116,7 @@ export function Loading(props: FormLoadingProps) {
     typeof FormServiceDefinition
   >;
 
-  const isLoading = service.isLoading?.get() || false;
+  const isLoading = service.isLoadingSignal?.get() || false;
 
   return props.children({
     isLoading,
@@ -171,7 +171,7 @@ export function LoadingError(props: FormErrorProps) {
     typeof FormServiceDefinition
   >;
 
-  const error = service.error?.get() || null;
+  const error = service.errorSignal?.get() || null;
   const hasError = !!error;
 
   return props.children({
@@ -224,13 +224,9 @@ export interface FormSubmitErrorRenderProps {
  * ```
  */
 export function Error(props: FormSubmitErrorProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
-
-  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
-  const error = submitResponse.type === 'error' ? submitResponse.message : null;
-  const hasError = submitResponse.type === 'error';
+  // TODO: Implement submit response handling when submitResponseSignal is added to service
+  const error = null;
+  const hasError = false;
 
   return props.children({
     error,
@@ -283,16 +279,9 @@ export interface FormSubmittedRenderProps {
  * ```
  */
 export function Submitted(props: FormSubmittedProps) {
-  const service = useService(FormServiceDefinition) as ServiceAPI<
-    typeof FormServiceDefinition
-  >;
-
-  const submitResponse = service.submitResponse?.get() || { type: 'idle' };
-  const isSubmitted = submitResponse.type === 'success';
-  const message =
-    submitResponse.type === 'success'
-      ? submitResponse.message || DEFAULT_SUCCESS_MESSAGE
-      : DEFAULT_SUCCESS_MESSAGE;
+  // TODO: Implement submit response handling when submitResponseSignal is added to service
+  const isSubmitted = false;
+  const message = DEFAULT_SUCCESS_MESSAGE;
 
   return props.children({
     isSubmitted,

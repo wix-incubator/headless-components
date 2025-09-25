@@ -793,7 +793,7 @@ export interface FieldsProps {
 export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
   ({ fieldMap }, ref) => {
     const formService = useService(FormServiceDefinition);
-    const form = formService.form.get();
+    const form = formService.formSignal.get();
     const _form = {
       ...form,
       id: form?._id,
@@ -810,8 +810,6 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     const handleFormValidate = useCallback((errors: FormError[]) => {
       setFormErrors(errors);
     }, []);
-
-    if (!form) return <div>Form not found, oops!</div>;
 
     return (
       <div ref={ref}>
