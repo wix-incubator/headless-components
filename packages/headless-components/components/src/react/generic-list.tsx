@@ -11,7 +11,7 @@ interface GenericListContextValue<T extends ListItem = ListItem> {
   items: T[];
   hasMore: boolean;
   isLoading: boolean;
-  onLoadMore?: () => void;
+  loadMore?: () => void;
 }
 
 const GenericListContext = React.createContext<GenericListContextValue | null>(
@@ -37,7 +37,7 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   /** Array of items to display */
   items: T[];
   /** Function called to load more items (infinite scroll/load more pattern) */
-  onLoadMore?: () => void;
+  loadMore?: () => void;
   /** Whether more items can be loaded */
   hasMore?: boolean;
   /** Whether items are currently loading */
@@ -63,7 +63,7 @@ export interface GenericListItemsProps {
 export interface GenericListLoadMoreRenderProps {
   isLoading: boolean;
   hasMore: boolean;
-  onLoadMore: () => void;
+  loadMore: () => void;
 }
 
 /**
@@ -118,7 +118,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
   ) => {
     const {
       items,
-      onLoadMore,
+      loadMore,
       hasMore = false,
       isLoading = false,
       children,
@@ -135,9 +135,9 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
         items,
         hasMore,
         isLoading,
-        onLoadMore,
+        loadMore,
       }),
-      [items, hasMore, isLoading, onLoadMore],
+      [items, hasMore, isLoading, loadMore],
     );
 
     return (
@@ -210,7 +210,7 @@ export const LoadMore = React.forwardRef<
 >((props, ref) => {
   const { label, loadingState, children, className, ...otherProps } = props;
 
-  const { hasMore, isLoading, onLoadMore } = useGenericListContext();
+  const { hasMore, isLoading, loadMore } = useGenericListContext();
 
   // Either children or label must be provided
   if (!children && !label) {
@@ -223,8 +223,8 @@ export const LoadMore = React.forwardRef<
   }
 
   const handleClick = () => {
-    if (onLoadMore && !isLoading) {
-      onLoadMore();
+    if (loadMore && !isLoading) {
+      loadMore();
     }
   };
 
@@ -247,7 +247,7 @@ export const LoadMore = React.forwardRef<
         loadingState,
         isLoading,
         hasMore,
-        onLoadMore,
+        loadMore,
       }}
       content={content}
       {...otherProps}
