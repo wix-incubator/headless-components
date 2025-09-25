@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { useMember } from "@/integrations/members";
 import {
   PricingPlans,
@@ -161,7 +162,9 @@ export default function PostPaywall({
                     </PricingPlans.Plan.Action.BuyNow>
                   </section>
 
-                  <section className="flex flex-col gap-4 border-t border-t-foreground/15 px-6 py-6 empty:hidden">
+                  <Separator className="mx-6 w-auto" />
+
+                  <section className="flex flex-col gap-4 px-6 py-6 empty:hidden">
                     <PricingPlans.Plan.Perks className="mx-auto max-w-fit space-y-2">
                       <PricingPlans.Plan.PerksRepeater>
                         <div className="flex items-center font-paragraph text-sm text-foreground/80">
