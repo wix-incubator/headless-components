@@ -1,5 +1,4 @@
 ---
-import { loadFormServiceConfig } from '@wix/headless-forms/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormsPage from '../../react-pages/index';
 
@@ -12,12 +11,11 @@ if (typeof slug !== 'string' || !guidRegex.test(slug)) {
   return Astro.redirect('/404');
 }
 
-const formServiceConfig = await loadFormServiceConfig(slug);
 ---
 
 <BaseLayout>
   <title>Form</title>
   <meta name="description" content="Form" />
 
-  <FormsPage formServiceConfig={formServiceConfig} />
+  <FormsPage formServiceConfig={{formId: slug}} client:load />
 </BaseLayout>

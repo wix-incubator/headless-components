@@ -5,6 +5,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { ticketDefinitionsV2 } from '@wix/events';
 import { type TicketDefinition } from './ticket-definition-service.js';
+import { CheckoutServiceDefinition } from './checkout-service.js';
 
 export interface TicketDefinitionListServiceAPI {
   ticketDefinitions: Signal<TicketDefinition[]>;
@@ -45,6 +46,7 @@ export const TicketDefinitionListService =
     TicketDefinitionListServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
+      const checkoutService = getService(CheckoutServiceDefinition);
 
       const ticketDefinitions = signalsService.signal<TicketDefinition[]>(
         config.ticketDefinitions,
@@ -125,6 +127,7 @@ export const TicketDefinitionListService =
           .concat(newSelectedQuantity)
           .filter((selectedQuantity) => !!selectedQuantity.quantity);
 
+        checkoutService.error.set(null);
         selectedQuantities.set(newSelectedQuantities);
       };
 

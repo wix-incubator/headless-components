@@ -55,6 +55,14 @@ export interface ItemImageProps {
   }) => React.ReactNode;
 }
 
+export interface ItemAdditionalImagesProps {
+  children: (props: {
+    hasImages: boolean;
+    altText: string;
+    images?: string[];
+  }) => React.ReactNode;
+}
+
 export function Name(props: ItemNameProps) {
   const { item } = useItemContext();
 
@@ -86,6 +94,19 @@ export function Image(props: ItemImageProps) {
   return props.children({
     hasImage,
     image: item.image,
+    altText,
+  });
+}
+
+export function AdditionalImages(props: ItemAdditionalImagesProps) {
+  const { item } = useItemContext();
+
+  const hasImages = !!item.additionalImages;
+  const altText = item.name ?? '';
+
+  return props.children({
+    hasImages: hasImages,
+    images: item.additionalImages,
     altText,
   });
 }

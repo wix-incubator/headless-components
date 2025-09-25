@@ -16,8 +16,7 @@ if (eventServiceConfigResult.type === 'notFound') {
 }
 
 const scheduleListServiceConfig = await loadScheduleListServiceConfig(
-  eventServiceConfigResult.config.event._id,
-  100
+  eventServiceConfigResult.config.event._id
 );
 ---
 
@@ -30,5 +29,6 @@ const scheduleListServiceConfig = await loadScheduleListServiceConfig(
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}
     scheduleListServiceConfig={scheduleListServiceConfig}
+    eventsPagePath="/events"
   />
 </BaseLayout>

@@ -27,12 +27,14 @@
   "devDependencies": {
     "@astrojs/cloudflare": "^12.5.3",
     "@astrojs/react": "^4.3.0",
+    "@tailwindcss/vite": "^4.0.13",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@wix/cli": "^1.1.92",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "tailwindcss": "^4.1.7"
   }
 }

@@ -81,7 +81,7 @@ export const Name = React.forwardRef<HTMLElement, ModifierGroupNameProps>(
               content={name}
               {...otherProps}
             >
-              <div>{name}</div>
+              <p>{name}</p>
             </AsChildSlot>
           );
         }}

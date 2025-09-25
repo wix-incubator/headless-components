@@ -35,6 +35,8 @@ import {
   PerkItemContext,
   PerkItemData,
   PerkItem as CorePerkItem,
+  FreeTrialDays as CoreFreeTrialDays,
+  FreeTrialDaysData,
 } from './core/Plan.js';
 import { WixMediaImage } from '@wix/headless-media/react';
 import { Commerce } from '@wix/headless-ecom/react';
@@ -52,6 +54,7 @@ enum PlanTestId {
   Perks = 'plan-perks',
   PerkItem = 'plan-perk-item',
   ActionBuyNow = 'plan-action-buy-now',
+  FreeTrialDays = 'plan-free-trial-days',
 }
 
 interface RootProps {
@@ -343,6 +346,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>(
             customElementProps={priceData}
             className={className}
             data-testid={PlanTestId.Price}
+            content={priceData.price.formattedPrice}
           >
             {/* TODO: Use a generic price formatting component when available */}
             <span>{priceData.price.formattedPrice}</span>
@@ -487,6 +491,7 @@ export const AdditionalFeeName = React.forwardRef<
           customElementProps={additionalFeeNameData}
           className={className}
           data-testid={PlanTestId.AdditionalFeeName}
+          content={additionalFeeNameData.name}
         >
           <span>{additionalFeeNameData.name}</span>
         </AsChildSlot>
@@ -544,6 +549,7 @@ export const AdditionalFeeAmount = React.forwardRef<
           customElementProps={additionalFeeAmountData}
           className={className}
           data-testid={PlanTestId.AdditionalFeeAmount}
+          content={additionalFeeAmountData.formattedFee}
         >
           <span>{additionalFeeAmountData.formattedFee}</span>
         </AsChildSlot>
@@ -625,6 +631,43 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
         />
       )}
     </CoreDuration>
+  ),
+);
+
+export type PlanFreeTrialDaysData = FreeTrialDaysData;
+
+interface FreeTrialDaysProps {
+  children: React.ForwardRefExoticComponent<PlanFreeTrialDaysData>;
+}
+
+/**
+ * Displays the free trial days.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Plan.FreeTrialDays>
+ *   {React.forwardRef(({ freeTrialDays }, ref) => {
+ *     return <span ref={ref} className="text-sm" data-testid="plan-free-trial-days">
+ *       Free trial for {freeTrialDays} days
+ *     </span>
+ *   })}
+ * </Plan.FreeTrialDays>
+ * ```
+ */
+export const FreeTrialDays = React.forwardRef<HTMLElement, FreeTrialDaysProps>(
+  ({ children }, ref) => (
+    <CoreFreeTrialDays>
+      {(freeTrialDaysData) => (
+        <AsChildSlot
+          ref={ref}
+          asChild
+          customElement={children}
+          customElementProps={freeTrialDaysData}
+          data-testid={PlanTestId.FreeTrialDays}
+        />
+      )}
+    </CoreFreeTrialDays>
   ),
 );
 
@@ -754,6 +797,7 @@ export const PerkItem = React.forwardRef<HTMLElement, PerkItemProps>(
           customElementProps={perkItemData}
           className={className}
           data-testid={PlanTestId.PerkItem}
+          content={perkItemData.perk}
         >
           <span>{perkItemData.perk}</span>
         </AsChildSlot>
@@ -780,11 +824,11 @@ type ActionBuyNowProps = Omit<Commerce.ActionAddToCartProps, 'lineItems'>;
  *
  * // With custom button with forwardRef
  * <Plan.Action.BuyNow className="btn-primary" label="Buy Now" loadingState="Processing..." asChild>
- *   {React.forwardRef(({disabled, isLoading, onClick, ...props}, ref) => (
+ *   {({disabled, isLoading, onClick, ...props}, ref) => (
  *     <button ref={ref} {...props} disabled={disabled} onClick={onClick} className="btn-primary">
  *       {isLoading ? 'Processing...' : 'Buy Now'}
  *     </button>
- *   ))}
+ *   )}
  * </Plan.Action.BuyNow>
  * ```
  */

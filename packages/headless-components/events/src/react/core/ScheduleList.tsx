@@ -3,7 +3,7 @@ import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
   ScheduleListService,
-  ScheduleListServiceConfig,
+  type ScheduleListServiceConfig,
   ScheduleListServiceDefinition,
 } from '../../services/schedule-list-service.js';
 import { type ScheduleItem } from '../../services/schedule-item-service.js';
@@ -22,15 +22,17 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
+  const { children, scheduleListServiceConfig } = props;
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         ScheduleListServiceDefinition,
         ScheduleListService,
-        props.scheduleListServiceConfig,
+        scheduleListServiceConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }
