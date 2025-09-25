@@ -1,0 +1,118 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Color/Font System Rules - STRICTLY ENFORCED
+
+## 🚫 ABSOLUTE PROHIBITIONS
+
+### NEVER use hardcoded colors or fonts in components:
+```tsx
+// ❌ FORBIDDEN - Hardcoded colors or fonts
+className="bg-red-500 text-white border-gray-300"
+className="bg-orange-600 hover:bg-orange-700"
+style={{ color: '#ff0000', backgroundColor: '#ffffff' }}
+style={{ fontFamily: 'Arial' }}
+
+// ❌ FORBIDDEN - Direct CSS variable usage in className
+className="text-[var(--theme-text-primary)]"
+className="bg-[var(--theme-background-card)]"
+className="font-[var(--theme-font-primary)]"
+```
+
+```tsx
+// ❌ FORBIDDEN - Custom Class Names
+className="text-my-custom-color"
+className="bg-my-custom-color"
+className="font-my-custom-font"
+```
+
+### NEVER use hardcoded hex/rgb colors:
+```tsx
+// ❌ FORBIDDEN
+style={{ color: '#000000' }}
+style={{ backgroundColor: '#ff6b35' }}
+style={{ borderColor: 'rgb(255, 107, 53)' }}
+const color = "#ff0000";
+```
+
+```tsx
+// ❌ Font CSS prop
+style={{ font: 'Arial 16px bold' }}
+
+```
+
+## ✅ MANDATORY APPROACH FOR COLORS
+
+### 1. There is a defined pallette of colors that can be used in the project, You should use these colors, You should not create new colors.
+- Background – Page or section background color, for example bg-background tailwind class
+- Foreground – Text color, for example text-foreground class
+- Primary – Highlights, such as a main button or a featured section background. For example bg-primary
+- Primary Foreground - the text color for main CTAs for example, will have good contrast to primary.
+- Secondary – Supporting highlights or less prominent elements. For example bg-background
+- Secondary Foreground - the text color for main secondary buttons for example, will have good contrast to secondary color.
+-Destructive – Errors, alerts, or destructive actions, for example - text-destructive
+The only exception is green color for success so you can use for example bg-green-500, but only for success messages and their backgrounds.
+
+### 2. Use ONLY these colors in your code.
+```tsx
+// ✅ REQUIRED - Use semantic class names
+function ProductCard() {
+  return (
+    <div className="bg-background border-foreground text-foreground">
+      <h3 className="text-foreground">Product Name</h3>
+      <p className="text-secondary-foreground">Description</p>
+      <button className="bg-primary text-primary-foreground">Add to Cart</button>
+      <span className="text-green-500">In Stock</span>
+    </div>
+  );
+}
+```
+
+## ✅ MANDATORY APPROACH FOR FONTS
+
+### 1. There is a defined pallette of fonts that can be used in the project, You should use these fonts, You should not create new fonts.
+- Heading - The font that is used for headings, for example font-heading
+- Paragraph - The font that is used any other text that is not a heading, for example font-paragraph
+
+## 🔧 IMPLEMENTATION WORKFLOW
+
+### Do not add new fonts. use only the fonts defined in the font system.
+
+1. **First**: Choose the best font from the font system.
+
+2. **Second**: Use class in component
+```tsx
+<h2 className="font-heading">Heading</h2>
+<p className="font-paragraph">Paragraph</p>
+```
+
+## 🚨 VIOLATION DETECTION
+
+### Code Review Checklist:
+- [ ] No hardcoded colors (hex, rgb, hsl, named colors)
+- [ ] No direct CSS variable usage in className
+- [ ] No inline styles with color properties
+- [ ] All colors use class names from the color system
+- [ ] Only green color for success messages and their backgrounds can be used directly, all other colors should be used from the color system.
+- [ ] No hardcoded fonts
+- [ ] No inline styles with font properties
+- [ ] All fonts use class names from the font system
+
+### Automated Checks (Recommended):
+```bash
+# Search for violations
+grep -r "className.*#[0-9a-fA-F]" src/
+grep -r "style.*color.*:" src/
+grep -r "className.*var(--" src/
+grep -r "bg-red-\|bg-blue-\|bg-green-\|bg-yellow-\|bg-orange-" src/
+grep -r "font-.*:" src/ | grep -v "font-heading" | grep -v "font-paragraph"
+```
+
+## 🎯 ENFORCEMENT
+
+**This rule is NON-NEGOTIABLE.** All color-related code must follow this system:
+Zero tolerance for hardcoded colors or direct CSS variable usage
+
+**Rationale**: This system ensures maintainable theming, consistent design, better performance, and easier debugging across the entire application.

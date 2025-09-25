@@ -7337,7 +7337,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-forms@npm:0.0.1, @wix/headless-forms@workspace:packages/headless-components/forms":
+"@wix/headless-forms@npm:0.0.1":
+  version: 0.0.1
+  resolution: "@wix/headless-forms@npm:0.0.1"
+  dependencies:
+    "@wix/forms": "npm:^1.0.292"
+    "@wix/headless-utils": "npm:0.0.3"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/e40b7641cf38b1902c1f7962535803d2f3f9c4309113b96012b75aaae345f49db0b6c7c5fcc13d3074af63cef3152d10301cfe5dba79aa592168dd880552c5bf
+  languageName: node
+  linkType: hard
+
+"@wix/headless-forms@workspace:packages/headless-components/forms":
   version: 0.0.0-use.local
   resolution: "@wix/headless-forms@workspace:packages/headless-components/forms"
   dependencies:
