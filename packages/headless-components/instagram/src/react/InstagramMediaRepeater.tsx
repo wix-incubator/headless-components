@@ -6,6 +6,7 @@ import {
   InstagramMediaItemService,
 } from '../services/index.js';
 import * as CoreGalleryItems from './core/GalleryItems.js';
+import { MediaGallery } from '@wix/headless-media/react';
 
 export interface InstagramMediaRepeaterProps {
   children: React.ReactNode;
@@ -31,7 +32,11 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({ 
                   { mediaItem, index }
                 )}
               >
-                {children}
+                <MediaGallery.Root
+                  mediaGalleryServiceConfig={{ media: mediaItem }}
+                >
+                  {children as React.ReactElement}
+                </MediaGallery.Root>
               </WixServices>
             ))}
           </>
