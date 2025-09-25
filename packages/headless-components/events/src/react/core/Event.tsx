@@ -288,3 +288,33 @@ export function AddToIcsCalendar(
 
   return props.children({ url });
 }
+
+export interface TypeProps {
+  /** Render prop function */
+  children: (props: TypeRenderProps) => React.ReactNode;
+}
+
+export interface TypeRenderProps {
+  /** Is event ticketed */
+  ticketed: boolean;
+  /** Is event RSVP */
+  rsvp: boolean;
+  /** Is event external */
+  external: boolean;
+}
+
+/**
+ * Event Type core component that provides event type.
+ *
+ * @component
+ */
+export function Type(props: TypeProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+  const event = eventService.event.get();
+
+  const ticketed = event.registration?.type === 'TICKETING';
+  const rsvp = event.registration?.type === 'RSVP';
+  const external = event.registration?.type === 'EXTERNAL';
+
+  return props.children({ ticketed, rsvp, external });
+}

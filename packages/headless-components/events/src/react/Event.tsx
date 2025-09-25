@@ -886,3 +886,51 @@ export const AddToIcsCalendar = React.forwardRef<
     </CoreEvent.AddToIcsCalendar>
   );
 });
+
+/**
+ * Props for the Event Type component.
+ */
+export interface TypeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    ticketed: boolean;
+    rsvp: boolean;
+    external: boolean;
+  }>;
+}
+
+/**
+ * Provides event type information.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // asChild with react component
+ * <Event.Type asChild>
+ *   {React.forwardRef(({ ticketed, rsvp, external, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {ticketed ? 'Ticketed' : rsvp ? 'RSVP' : external ? 'External' : ''}
+ *     </span>
+ *   ))}
+ * </Event.Type>
+ * ```
+ */
+export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+
+  return (
+    <CoreEvent.Type>
+      {({ ticketed, rsvp, external }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          customElement={children}
+          customElementProps={{ ticketed, rsvp, external }}
+          {...otherProps}
+        />
+      )}
+    </CoreEvent.Type>
+  );
+});

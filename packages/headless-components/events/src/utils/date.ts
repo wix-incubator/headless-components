@@ -1,8 +1,15 @@
-export const formatDate = (date: Date) =>
+export const formatCompactDate = (date: Date) =>
   date.toLocaleDateString('en-US', {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
+  });
+
+export const formatLongDate = (date: Date) =>
+  date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    day: 'numeric',
+    month: 'long',
   });
 
 export const formatTime = (date: Date) =>
