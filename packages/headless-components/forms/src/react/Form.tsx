@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildSlot } from '@wix/headless-utils/react';
 import {
   Form as FormViewer,
   type FormValues,
@@ -9,13 +9,11 @@ import {
 import { type FormServiceConfig } from '../services/form-service';
 import {
   Root as CoreRoot,
-  Form as CoreForm,
   Loading as CoreLoading,
   LoadingError as CoreLoadingError,
   Error as CoreError,
   Submitted as CoreSubmitted,
   Fields as CoreFields,
-  FormRenderProps,
 } from './core/Form';
 
 import {
@@ -127,70 +125,6 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
           {children}
         </RootContent>
       </CoreRoot>
-    );
-  },
-);
-
-interface FormProps {
-  asChild?: boolean;
-  children: AsChildChildren<FormRenderProps> | React.ReactNode;
-  className?: string;
-  loadingState?: React.ReactNode;
-}
-
-/**
- * Displays the plan data with support for loading state
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Plan.Plan className="flex flex-col gap-4" loadingState={<div>Loading...</div>}>
- *   <Plan.Image />
- *   <Plan.Name />
- * </Plan.Plan>
- *
- * // With asChild
- * <Plan.Plan asChild>
- *   {React.forwardRef(({isLoading, error, plan}, ref) => {
- *     if (isLoading) {
- *       return <div>Loading...</div>;
- *     }
- *     if (error) {
- *       return <div>Error!</div>;
- *     }
- *     return (
- *       <div ref={ref} className="flex flex-col gap-4">
- *         Plan {plan.name}
- *       </div>
- *     );
- *   })}
- * </Plan.Plan>
- *
- */
-export const Form = React.forwardRef<HTMLElement, FormProps>(
-  ({ children, asChild, className, loadingState }, ref) => {
-    return (
-      <CoreForm>
-        {(formRenderProps) => (
-          <AsChildSlot
-            ref={ref}
-            data-testid={TestIds.form}
-            data-is-loading={formRenderProps.isLoading}
-            data-has-error={formRenderProps.error !== null}
-            className={className}
-            asChild={asChild}
-            customElement={children}
-            customElementProps={formRenderProps}
-          >
-            <div>
-              {formRenderProps.isLoading
-                ? loadingState
-                : (children as React.ReactNode)}
-            </div>
-          </AsChildSlot>
-        )}
-      </CoreForm>
     );
   },
 );

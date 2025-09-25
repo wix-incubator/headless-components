@@ -76,33 +76,6 @@ export function Root({
   );
 }
 
-export type FormRenderProps =
-  | { isLoading: true; error: null; form: null }
-  | { isLoading: false; error: null; form: forms.Form }
-  | { isLoading: false; error: string; form: null };
-
-interface FormProps {
-  children: (props: FormRenderProps) => React.ReactNode;
-}
-
-export function Form({ children }: FormProps) {
-  const { formSignal, isLoadingSignal, errorSignal } = useService(
-    FormServiceDefinition,
-  );
-
-  const isLoading = isLoadingSignal.get();
-  const error = errorSignal.get();
-  console.log('Form core:', isLoading, error, formSignal.get());
-  if (isLoading) {
-    return children({ isLoading: true, error: null, form: null });
-  } else if (error) {
-    return children({ isLoading: false, error, form: null });
-  } else {
-    const form = formSignal.get()!;
-    return children({ isLoading: false, error: null, form });
-  }
-}
-
 /**
  * Props for FormLoading headless component
  */
