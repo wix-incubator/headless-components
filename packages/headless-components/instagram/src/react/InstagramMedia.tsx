@@ -1,8 +1,6 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { useService } from '@wix/services-manager-react';
-import { InstagramMediaItemServiceDefinition, InstagramFeedServiceDefinition } from '../services/index.js';
-import type { MediaItem } from '@wix/headless-media/services';
+import * as CoreInstagramMedia from './core/InstagramMedia.js';
 
 export enum TestIds {
   instagramMediaCaption = 'instagram-media-caption',
@@ -20,22 +18,24 @@ export interface CaptionProps {
 
 export const Caption = React.forwardRef<HTMLElement, CaptionProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
-  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-  const { caption } = mediaItemService.mediaItem.get();
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.instagramMediaCaption}
-      customElement={children}
-      customElementProps={{ caption }}
-      content={caption ?? ''}
-      {...otherProps}
-    >
-      <span>{caption}</span>
-    </AsChildSlot>
+    <CoreInstagramMedia.Caption>
+      {({ caption }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.instagramMediaCaption}
+          customElement={children}
+          customElementProps={{ caption }}
+          content={caption ?? ''}
+          {...otherProps}
+        >
+          <span>{caption}</span>
+        </AsChildSlot>
+      )}
+    </CoreInstagramMedia.Caption>
   );
 });
 
@@ -47,22 +47,24 @@ export interface MediaTypeProps {
 
 export const MediaType = React.forwardRef<HTMLElement, MediaTypeProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
-  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-  const { type } = mediaItemService.mediaItem.get();
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.instagramMediaType}
-      customElement={children}
-      customElementProps={{ mediaType: type }}
-      content={type}
-      {...otherProps}
-    >
-      <span>{type}</span>
-    </AsChildSlot>
+    <CoreInstagramMedia.MediaType>
+      {({ mediaType, type }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.instagramMediaType}
+          customElement={children}
+          customElementProps={{ mediaType }}
+          content={type}
+          {...otherProps}
+        >
+          <span>{type}</span>
+        </AsChildSlot>
+      )}
+    </CoreInstagramMedia.MediaType>
   );
 });
 
@@ -74,24 +76,24 @@ export interface UserNameProps {
 
 export const UserName = React.forwardRef<HTMLElement, UserNameProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
-  // Username is part of the feed account; read from feed service
-  const feedService = useService(InstagramFeedServiceDefinition);
-  const account = feedService.feedData.get().account as any;
-  const userName = account?.instagramInfo?.instagramUsername as string | undefined;
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.instagramMediaUserName}
-      customElement={children}
-      customElementProps={{ userName }}
-      content={userName ?? ''}
-      {...otherProps}
-    >
-      <span>{userName}</span>
-    </AsChildSlot>
+    <CoreInstagramMedia.UserName>
+      {({ userName }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.instagramMediaUserName}
+          customElement={children}
+          customElementProps={{ userName }}
+          content={userName ?? ''}
+          {...otherProps}
+        >
+          <span>{userName}</span>
+        </AsChildSlot>
+      )}
+    </CoreInstagramMedia.UserName>
   );
 });
 
@@ -103,22 +105,24 @@ export interface TimestampProps {
 
 export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
-  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-  const { timestamp } = mediaItemService.mediaItem.get();
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      data-testid={TestIds.instagramMediaTimestamp}
-      customElement={children}
-      customElementProps={{ timestamp }}
-      content={timestamp}
-      {...otherProps}
-    >
-      <time dateTime={timestamp}>{timestamp}</time>
-    </AsChildSlot>
+    <CoreInstagramMedia.Timestamp>
+      {({ timestamp }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.instagramMediaTimestamp}
+          customElement={children}
+          customElementProps={{ timestamp }}
+          content={timestamp}
+          {...otherProps}
+        >
+          <time dateTime={timestamp}>{timestamp}</time>
+        </AsChildSlot>
+      )}
+    </CoreInstagramMedia.Timestamp>
   );
 });
 
@@ -148,30 +152,22 @@ export interface MediaGalleryRepeaterProps {
 }
 
 export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({ children }) => {
-  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-  const mediaItem = mediaItemService.mediaItem.get();
+  return (
+    <CoreInstagramMedia.MediaGalleryRepeater>
+      {({ media }) => {
+        const injectConfig = (child: React.ReactNode): React.ReactNode => {
+          if (!React.isValidElement(child)) return child;
+          // Inject mediaGalleryServiceConfig into MediaGallery.Root children
+          return React.cloneElement(child as any, {
+            ...(child as any).props,
+            mediaGalleryServiceConfig: { media },
+          });
+        };
 
-  const media: MediaItem[] = (mediaItem?.type === 'video'
-    ? mediaItem.thumbnailUrl
-    : mediaItem?.mediaUrl) ? [
-      {
-        image: (mediaItem.type === 'video'
-          ? mediaItem.thumbnailUrl!
-          : mediaItem.mediaUrl) as string,
-        altText: mediaItem.altText,
-      },
-    ] : [];
-
-  const injectConfig = (child: React.ReactNode): React.ReactNode => {
-    if (!React.isValidElement(child)) return child;
-    // Inject mediaGalleryServiceConfig into MediaGallery.Root children
-    return React.cloneElement(child as any, {
-      ...(child as any).props,
-      mediaGalleryServiceConfig: { media },
-    });
-  };
-
-  return <>{React.Children.map(children, injectConfig)}</>;
+        return <>{React.Children.map(children, injectConfig)}</>;
+      }}
+    </CoreInstagramMedia.MediaGalleryRepeater>
+  );
 };
 
 export interface MediaGalleryItemsProps {

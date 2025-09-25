@@ -4,6 +4,8 @@
     "module": "Node16",
     "moduleResolution": "node16",
     "outDir": "./cjs/dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "noEmit": false,
+    "allowImportingTsExtensions": false
   }
 }

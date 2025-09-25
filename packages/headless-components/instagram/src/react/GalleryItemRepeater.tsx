@@ -1,28 +1,30 @@
 import React from 'react';
 import { MediaGallery } from '@wix/headless-media/react';
-import { WixServices, useService } from '@wix/services-manager-react';
+import { WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
   InstagramMediaItemService,
   InstagramMediaItemServiceDefinition,
-  InstagramFeedServiceDefinition,
 } from '../services/index.js';
+import * as CoreGalleryItems from './core/GalleryItems.js';
 
 export interface GalleryItemRepeaterProps {
   children: React.ReactNode;
 }
 
 export const GalleryItemRepeater: React.FC<GalleryItemRepeaterProps> = ({ children }) => {
-  const instagramFeedService = useService(InstagramFeedServiceDefinition);
-  const feedData = instagramFeedService.feedData.get();
-  const { mediaItems } = feedData;
-
-  if (!mediaItems.length) return null;
-
   return (
-    <MediaGallery.ThumbnailRepeater>
-      <ItemWrapper mediaItems={mediaItems}>{children}</ItemWrapper>
-    </MediaGallery.ThumbnailRepeater>
+    <CoreGalleryItems.GalleryItems>
+      {({ hasItems, mediaItems }) => {
+        if (!hasItems) return null;
+
+        return (
+          <MediaGallery.ThumbnailRepeater>
+            <ItemWrapper mediaItems={mediaItems}>{children}</ItemWrapper>
+          </MediaGallery.ThumbnailRepeater>
+        );
+      }}
+    </CoreGalleryItems.GalleryItems>
   );
 };
 
