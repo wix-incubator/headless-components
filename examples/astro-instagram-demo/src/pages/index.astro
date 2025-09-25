@@ -126,9 +126,44 @@ function toInstagramConfig(templateMedias: any[], templateUser: any) {
     timestamp: typeof m.timestamp === 'string' ? m.timestamp : new Date(m.timestamp).toISOString(),
     altText: m.alt,
   }));
+
+  // Add a carousel post with 3 images as the first item
+  const carouselPost = {
+    id: 'carousel-demo',
+    type: 'carousel',
+    mediaUrl: templateMedias[0]?.src || 'https://static.parastorage.com/services/instagram-blocks-app/1.223.0/assets/templates/New-IG-Studio/01.jpg',
+    caption: 'Carousel post with multiple images - swipe to see more!',
+    permalink: 'https://instagram.com/p/carousel-demo',
+    timestamp: new Date().toISOString(),
+    altText: 'Instagram carousel post',
+    children: [
+      {
+        id: 'carousel-item-1',
+        type: 'image',
+        mediaUrl: 'https://static.parastorage.com/services/instagram-blocks-app/1.223.0/assets/templates/New-IG-Studio/01.jpg',
+        altText: 'First image in carousel',
+      },
+      {
+        id: 'carousel-item-2',
+        type: 'image',
+        mediaUrl: 'https://static.parastorage.com/services/instagram-blocks-app/1.223.0/assets/templates/New-IG-Studio/02.jpg',
+        altText: 'Second image in carousel',
+      },
+      {
+        id: 'carousel-item-3',
+        type: 'image',
+        mediaUrl: 'https://static.parastorage.com/services/instagram-blocks-app/1.223.0/assets/templates/New-IG-Studio/03.jpg',
+        altText: 'Third image in carousel',
+      },
+    ],
+  };
+
+  // Insert carousel post as the first item
+  const allMediaItems = [carouselPost, ...mediaItems];
+
   return {
     accountId: templateUser.instagramAccount.instagramInfo.instagramId,
-    limit: mediaItems.length,
+    limit: allMediaItems.length,
     feedData: {
       account: {
         _id: templateUser.instagramAccount.instagramInfo.instagramId,
@@ -137,7 +172,7 @@ function toInstagramConfig(templateMedias: any[], templateUser: any) {
           instagramUsername: templateUser.instagramAccount.instagramInfo.instagramUsername,
         },
       },
-      mediaItems,
+      mediaItems: allMediaItems,
       hasMore: false,
       nextCursor: undefined,
     },

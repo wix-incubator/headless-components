@@ -20,7 +20,7 @@ import { MediaGallery } from '@wix/headless-media/react';
   <InstagramFeed.InstagramMedias>
     <InstagramFeed.InstagramMediaItems emptyState={<div>No media available</div>}>
       <InstagramFeed.InstagramMediaRepeater>
-        <InstagramMedia.Root>
+        <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }}>
           <InstagramMedia.Caption />
           <InstagramMedia.MediaType />
           <InstagramMedia.UserName />
@@ -28,11 +28,15 @@ import { MediaGallery } from '@wix/headless-media/react';
           <InstagramMedia.MediaGalleries>
             <InstagramMedia.MediaGalleryItems>
               <InstagramMedia.MediaGalleryRepeater>
-                <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }} />
+                <MediaGallery.Thumbnails>
+                  <MediaGallery.ThumbnailRepeater>
+                    <MediaGallery.ThumbnailItem />
+                  </MediaGallery.ThumbnailRepeater>
+                </MediaGallery.Thumbnails>
               </InstagramMedia.MediaGalleryRepeater>
             </InstagramMedia.MediaGalleryItems>
           </InstagramMedia.MediaGalleries>
-        </InstagramMedia.Root>
+        </MediaGallery.Root>
       </InstagramFeed.InstagramMediaRepeater>
     </InstagramFeed.InstagramMediaItems>
   </InstagramFeed.InstagramMedias>

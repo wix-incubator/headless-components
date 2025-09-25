@@ -1,7 +1,6 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { useService } from '@wix/services-manager-react';
-import { MediaGallery } from '@wix/headless-media/react';
 import * as CoreInstagramMedia from './core/InstagramMedia.js';
 import { InstagramMediaItemServiceDefinition } from '../services/index.js';
 
@@ -337,42 +336,19 @@ export interface MediaGalleryRepeaterProps {
 
 /**
  * Repeater component that renders children for each media gallery item.
- * This follows the Repeater Level pattern and renders MediaGallery.Root for each item.
+ * This follows the Repeater Level pattern and works within an existing MediaGallery.Root context.
+ * Just passes through children - does not create MediaGallery.Root components.
  *
  * @component
  */
 export const MediaGalleryRepeater = React.forwardRef<HTMLElement, MediaGalleryRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
-    const { hasItems, mediaItems } = useMediaGalleriesContext();
+    const { hasItems } = useMediaGalleriesContext();
 
     if (!hasItems) return null;
 
-    return (
-      <>
-        {mediaItems.map((mediaItem: any, index: number) => {
-          // Convert Instagram media item to MediaGallery format
-          const imageUrl = mediaItem.type === 'video'
-            ? mediaItem.thumbnailUrl || mediaItem.mediaUrl
-            : mediaItem.mediaUrl;
-
-          const mediaGalleryItems = [{
-            image: imageUrl,
-            altText: mediaItem.altText || mediaItem.caption || `Instagram ${mediaItem.type}`,
-          }];
-
-
-        return (
-          <MediaGallery.Root
-            key={mediaItem.id || index}
-            mediaGalleryServiceConfig={{ media: mediaGalleryItems }}
-            data-testid={TestIds.instagramMediaGalleryItem}
-          >
-            {children}
-          </MediaGallery.Root>
-        );
-        })}
-      </>
-    );
+    // Simply pass through children - MediaGallery.Root is created at a higher level
+    return <>{children}</>;
   },
 );
