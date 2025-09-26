@@ -112,7 +112,7 @@ export function DownloadTicketsButton(
   const isPolling = orderService.isPolling.get();
   const isReady = isOrderReady(orderService.order.get());
 
-  const isVisible = !isReady || isPolling;
+  const isVisible = isReady && !isPolling;
 
   if (!isVisible) {
     return null;
