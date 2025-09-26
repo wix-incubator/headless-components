@@ -56,7 +56,7 @@ export function Schedule({
         <ScheduleListPrimitive.Root
           scheduleListServiceConfig={scheduleListServiceConfig}
         >
-          <ScheduleListPrimitive.FiltersRoot defaultOptionLabel="All stages">
+          <ScheduleListPrimitive.Filters allStagesLabel="All stages">
             <FilterPrimitive.FilterOptions>
               <FilterPrimitive.FilterOptionRepeater className="flex flex-row justify-between mb-6 items-center">
                 <FilterPrimitive.FilterOption.SingleFilter
@@ -85,7 +85,7 @@ export function Schedule({
                 <FilterPrimitive.FilterOption.MultiFilter className="flex gap-2 text-sm font-light text-content-primary [&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-gray-200 [&_button]:rounded-full [&_button[data-state=on]]:bg-blue-500 [&_button[data-state=on]]:text-white [&_button[data-state=on]]:border-blue-500" />
               </FilterPrimitive.FilterOptionRepeater>
             </FilterPrimitive.FilterOptions>
-          </ScheduleListPrimitive.FiltersRoot>
+          </ScheduleListPrimitive.Filters>
           <ScheduleListPrimitive.Groups
             className="space-y-8 mb-6"
             emptyState={<div>No schedule items available</div>}

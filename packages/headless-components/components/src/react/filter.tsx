@@ -787,11 +787,6 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
             valueFormatter: option.valueFormatter,
             onChange: updateFilter,
           }}
-          content={
-            option.valueFormatter
-              ? option.valueFormatter(currentValue)
-              : currentValue
-          }
           {...otherProps}
         >
           {children}

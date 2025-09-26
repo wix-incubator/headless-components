@@ -295,34 +295,34 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
   );
 };
 
-export interface FiltersRootProps {
+export interface FiltersProps {
   /** Render prop function */
   children: React.ReactNode;
-  /** Default option label */
-  defaultOptionLabel: string;
+  /** All stages label */
+  allStagesLabel: string;
 }
 
-export interface FiltersRootRenderProps {
+export interface FiltersRenderProps {
   /** Filter options */
   filterOptions: FilterOption[];
   /** Filter value */
-  filterValue: FilterPrimitive.Filter;
+  value: FilterPrimitive.Filter;
   /** Function to handle tag filter change */
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
 }
 
-export const FiltersRoot = (props: FiltersRootProps): React.ReactNode => {
+export const Filters = (props: FiltersProps): React.ReactNode => {
   return (
-    <CoreScheduleList.FiltersRoot defaultOptionLabel={props.defaultOptionLabel}>
-      {({ filterOptions, filterValue, onChange }) => (
+    <CoreScheduleList.Filters allStagesLabel={props.allStagesLabel}>
+      {({ filterOptions, value, onChange }) => (
         <FilterPrimitive.Root
-          value={filterValue}
+          value={value}
           onChange={onChange}
           filterOptions={filterOptions}
         >
           {props.children}
         </FilterPrimitive.Root>
       )}
-    </CoreScheduleList.FiltersRoot>
+    </CoreScheduleList.Filters>
   );
 };
