@@ -92,8 +92,6 @@ export async function loadOrderServiceConfig(
     },
   );
 
-  console.log('invoice', order.invoice?.fees);
-
   return { order, eventId, orderNumber };
 }
 
