@@ -12,6 +12,28 @@ export interface RootProps {
   orderServiceConfig: OrderServiceConfig;
 }
 
+/**
+ * Order Root component that provides order service context to child components.
+ * This is the top-level component that must wrap all other Order components.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage from ThankYou page - ticketed event
+ * <Order.Root orderServiceConfig={orderServiceConfig}>
+ *   <Order.InvoiceItems className="px-6 border-b border-gray-300">
+ *     <Order.InvoiceItemRepeater>
+ *       <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
+ *         <div className="w-[35%]"><InvoiceItem.Name /></div>
+ *         <div className="w-[25%]"><InvoiceItem.Price /></div>
+ *         <div className="w-[15%]"><InvoiceItem.Quantity /></div>
+ *         <div className="w-[25%] text-right"><InvoiceItem.Total /></div>
+ *       </div>
+ *     </Order.InvoiceItemRepeater>
+ *   </Order.InvoiceItems>
+ * </Order.Root>
+ * ```
+ */
 export const Root = (props: RootProps): React.ReactNode => {
   const { children, orderServiceConfig } = props;
 
@@ -36,6 +58,31 @@ export interface OrderNumberRenderProps {
   orderNumber: string;
 }
 
+/**
+ * Displays the order number with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.OrderNumber className="font-light text-lg text-gray-700" />
+ *
+ * // asChild with primitive
+ * <Order.OrderNumber asChild>
+ *   <h2 className="text-xl font-bold text-gray-900" />
+ * </Order.OrderNumber>
+ *
+ * // Real usage from ThankYou page
+ * <Order.OrderNumber
+ *   asChild
+ *   className="font-light text-sm text-gray-700"
+ * >
+ *   {({ orderNumber }) => (
+ *     <span>{`Order No. #${orderNumber}`}</span>
+ *   )}
+ * </Order.OrderNumber>
+ * ```
+ */
 export const OrderNumber = React.forwardRef<HTMLElement, OrderNumberProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
@@ -76,6 +123,31 @@ export interface CreatedDateRenderProps {
   isReady: boolean;
 }
 
+/**
+ * Displays the order creation date with readiness status and customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.CreatedDate className="text-gray-600 font-light" />
+ *
+ * // asChild with primitive
+ * <Order.CreatedDate asChild>
+ *   <time className="text-sm text-gray-500 font-light" />
+ * </Order.CreatedDate>
+ *
+ * // Real usage from ThankYou page
+ * <Order.CreatedDate
+ *   asChild
+ *   className="font-light text-sm text-gray-700"
+ * >
+ *   {({ createdDate }) => (
+ *     <span>{`Placed on: ${createdDate}`}</span>
+ *   )}
+ * </Order.CreatedDate>
+ * ```
+ */
 export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
@@ -118,6 +190,39 @@ export interface DownloadTicketsButtonRenderProps {
   isVisible: boolean;
 }
 
+/**
+ * Download tickets button that provides access to event tickets PDF with visibility control.
+ * Only shows when tickets are available for download.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage with custom label
+ * <Order.DownloadTicketsButton
+ *   label="Download My Tickets"
+ *   className="bg-blue-500 text-white px-4 py-2 rounded"
+ * />
+ *
+ * // asChild with primitive
+ * <Order.DownloadTicketsButton asChild>
+ *   <a className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" />
+ * </Order.DownloadTicketsButton>
+ *
+ * // Real usage from ThankYou page
+ * <Order.DownloadTicketsButton asChild>
+ *   {({ ticketsPdfUrl, isVisible }) =>
+ *     isVisible && (
+ *       <button
+ *         className="block font-light py-3 px-20 ml-auto bg-blue-500 text-white rounded"
+ *         onClick={() => window.open(ticketsPdfUrl, '_blank')}
+ *       >
+ *         Download Tickets
+ *       </button>
+ *     )
+ *   }
+ * </Order.DownloadTicketsButton>
+ * ```
+ */
 export const DownloadTicketsButton = React.forwardRef<
   HTMLElement,
   DownloadTicketsButtonProps
@@ -156,6 +261,52 @@ export interface InvoiceItemsProps {
   className?: string;
 }
 
+/**
+ * Container for order invoice items with customizable rendering.
+ * Provides access to the list of invoice items for further processing.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Real usage from ThankYou page
+ * <Order.InvoiceItems className="px-6 border-b border-gray-300">
+ *   <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
+ *     <div className="w-[35%]">Ticket type</div>
+ *     <div className="w-[25%]">Price</div>
+ *     <div className="w-[15%]">Quantity</div>
+ *     <div className="w-[25%] text-right">Total</div>
+ *   </div>
+ *   <Order.InvoiceItemRepeater>
+ *     <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
+ *       <div className="w-[35%]"><InvoiceItem.Name /></div>
+ *       <div className="w-[25%]"><InvoiceItem.Price /></div>
+ *       <div className="w-[15%]"><InvoiceItem.Quantity /></div>
+ *       <div className="w-[25%] text-right"><InvoiceItem.Total /></div>
+ *     </div>
+ *   </Order.InvoiceItemRepeater>
+ * </Order.InvoiceItems>
+ *
+ * // asChild with primitive
+ * <Order.InvoiceItems asChild>
+ *   <div className="bg-white rounded-lg shadow p-4" />
+ * </Order.InvoiceItems>
+ *
+ * // Custom render function with item count
+ * <Order.InvoiceItems>
+ *   {({ invoiceItems }) => (
+ *     <div className="p-4">
+ *       <h3 className="text-lg font-semibold mb-4">Items ({invoiceItems.length})</h3>
+ *       <Order.InvoiceItemRepeater>
+ *         <div className="flex justify-between py-2">
+ *           <InvoiceItem.Name />
+ *           <InvoiceItem.Total />
+ *         </div>
+ *       </Order.InvoiceItemRepeater>
+ *     </div>
+ *   )}
+ * </Order.InvoiceItems>
+ * ```
+ */
 export const InvoiceItems = React.forwardRef<HTMLElement, InvoiceItemsProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
@@ -187,6 +338,52 @@ export interface InvoiceItemRepeaterProps {
   className?: string;
 }
 
+/**
+ * Repeater component that renders InvoiceItem.Root for each invoice item in the order.
+ * Must be used within Order.InvoiceItems component.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Real usage from ThankYou page - table-like layout
+ * <Order.InvoiceItems>
+ *   <Order.InvoiceItemRepeater>
+ *     <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
+ *       <div className="w-[35%]">
+ *         <InvoiceItem.Name />
+ *       </div>
+ *       <div className="w-[25%]">
+ *         <InvoiceItem.Price />
+ *       </div>
+ *       <div className="w-[15%]">
+ *         <InvoiceItem.Quantity />
+ *       </div>
+ *       <div className="w-[25%] text-right">
+ *         <InvoiceItem.Total />
+ *       </div>
+ *     </div>
+ *   </Order.InvoiceItemRepeater>
+ * </Order.InvoiceItems>
+ *
+ * // Simple card layout
+ * <Order.InvoiceItems>
+ *   <Order.InvoiceItemRepeater className="border-b border-gray-200 last:border-b-0">
+ *     <div className="flex justify-between items-center p-4">
+ *       <div>
+ *         <InvoiceItem.Name className="font-medium text-gray-900" />
+ *         <div className="text-sm text-gray-500">
+ *           Qty: <InvoiceItem.Quantity />
+ *         </div>
+ *       </div>
+ *       <div className="text-right">
+ *         <InvoiceItem.Price className="text-sm text-gray-600" />
+ *         <InvoiceItem.Total className="font-semibold text-gray-900" />
+ *       </div>
+ *     </div>
+ *   </Order.InvoiceItemRepeater>
+ * </Order.InvoiceItems>
+ * ```
+ */
 export const InvoiceItemRepeater = (props: InvoiceItemRepeaterProps) => {
   const { children, className } = props;
 
@@ -223,6 +420,34 @@ export interface SubtotalRenderProps {
   currency: string;
 }
 
+/**
+ * Displays the order subtotal amount with currency and customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.Subtotal className="text-lg font-light text-gray-700" />
+ *
+ * // asChild with primitive
+ * <Order.Subtotal asChild>
+ *   <p className="text-lg font-light text-gray-700" />
+ * </Order.Subtotal>
+ *
+ * // Real usage from ThankYou page
+ * <Order.Subtotal
+ *   asChild
+ *   className="font-light text-gray-700 justify-between flex"
+ * >
+ *   {({ value, currency }) => (
+ *     <div>
+ *       <span>Subtotal:</span>
+ *       <span>{`${value} ${currency}`}</span>
+ *     </div>
+ *   )}
+ * </Order.Subtotal>
+ * ```
+ */
 export const Subtotal = React.forwardRef<HTMLElement, SubtotalProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
@@ -265,6 +490,34 @@ export interface TaxRenderProps {
   currency: string;
 }
 
+/**
+ * Displays the order tax information with rate, value, and currency with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.Tax className="text-gray-600 font-light" />
+ *
+ * // asChild with primitive
+ * <Order.Tax asChild>
+ *   <p className="text-sm text-gray-600 font-light" />
+ * </Order.Tax>
+ *
+ * // Real usage from ThankYou page
+ * <Order.Tax
+ *   asChild
+ *   className="font-light text-gray-700 justify-between flex"
+ * >
+ *   {({ taxRate, taxValue, currency }) => (
+ *     <div>
+ *       <span>{`Tax (${taxRate}%)`}</span>
+ *       <span>{`${taxValue} ${currency}`}</span>
+ *     </div>
+ *   )}
+ * </Order.Tax>
+ * ```
+ */
 export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
@@ -305,6 +558,34 @@ export interface ServiceFeeRenderProps {
   rate: string;
 }
 
+/**
+ * Displays the order service fee information with rate, value, and currency with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.ServiceFee className="text-gray-600 font-light" />
+ *
+ * // asChild with primitive
+ * <Order.ServiceFee asChild>
+ *   <p className="text-sm text-gray-600 font-light" />
+ * </Order.ServiceFee>
+ *
+ * // Real usage from ThankYou page
+ * <Order.ServiceFee
+ *   asChild
+ *   className="font-light text-gray-700 justify-between flex"
+ * >
+ *   {({ value, currency, rate }) => (
+ *     <div>
+ *       <span>{`Service Fee (${rate}%)`}</span>
+ *       <span>{`${value} ${currency}`}</span>
+ *     </div>
+ *   )}
+ * </Order.ServiceFee>
+ * ```
+ */
 export const ServiceFee = React.forwardRef<HTMLElement, ServiceFeeProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
@@ -345,6 +626,35 @@ export interface TotalRenderProps {
   currency: string;
 }
 
+/**
+ * Displays the order total amount with currency and customizable rendering.
+ * This represents the final amount to be paid including all fees and taxes.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.Total className="text-xl font-light text-gray-700" />
+ *
+ * // asChild with primitive
+ * <Order.Total asChild>
+ *   <p className="text-2xl font-bold text-gray-900" />
+ * </Order.Total>
+ *
+ * // Real usage from ThankYou page
+ * <Order.Total
+ *   asChild
+ *   className="font-light text-gray-700 justify-between flex py-5"
+ * >
+ *   {({ value, currency }) => (
+ *     <div>
+ *       <span>Total:</span>
+ *       <span>{`${value} ${currency}`}</span>
+ *     </div>
+ *   )}
+ * </Order.Total>
+ * ```
+ */
 export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
