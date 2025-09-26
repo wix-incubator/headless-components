@@ -2,7 +2,7 @@
   "semi": true,
   "trailingComma": "all",
   "singleQuote": true,
-  "printWidth": 80,
+  "printWidth": 100,
   "tabWidth": 2,
   "useTabs": false,
   "bracketSpacing": true,
@@ -10,13 +10,5 @@
   "endOfLine": "lf",
   "plugins": [
     "prettier-plugin-organize-imports"
-  ],
-  "overrides": [
-    {
-      "files": "*.astro",
-      "options": {
-        "parser": "astro"
-      }
-    }
   ]
 }
