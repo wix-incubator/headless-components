@@ -2,8 +2,8 @@ import * as CoreOrder from './core/Order.js';
 import { type OrderServiceConfig } from '../services/order-service.js';
 import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import { Ticket as TicketType } from '../services/ticket-service.js';
-import * as Ticket from './Ticket.js';
+import { InvoiceItem as InvoiceItemType } from '../services/invoice-item-service.js';
+import * as InvoiceItem from './InvoiceItem.js';
 
 export interface RootProps {
   /** Child components */
@@ -144,7 +144,7 @@ export interface TicketsProps {
   children:
     | React.ReactNode
     | AsChildChildren<{
-        tickets: TicketType[];
+        invoiceItems: InvoiceItemType[];
       }>;
   /** Whether to render as a child component */
   asChild?: boolean;
@@ -157,21 +157,21 @@ export const Tickets = React.forwardRef<HTMLElement, TicketsProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreOrder.Tickets>
-        {({ tickets }) => (
+      <CoreOrder.InvoiceItems>
+        {({ invoiceItems }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             customElement={children}
-            customElementProps={{ tickets }}
-            content={tickets}
+            customElementProps={{ invoiceItems }}
+            content={invoiceItems}
             {...otherProps}
           >
             <div>{children as React.ReactNode}</div>
           </AsChildSlot>
         )}
-      </CoreOrder.Tickets>
+      </CoreOrder.InvoiceItems>
     );
   },
 );
@@ -190,15 +190,19 @@ export const TicketRepeater = React.forwardRef<
   const { children, className } = props;
 
   return (
-    <CoreOrder.TicketRepeater>
-      {({ tickets }) =>
-        tickets.map((ticket) => (
-          <Ticket.Root key={ticket._id} ticket={ticket} className={className}>
+    <CoreOrder.InvoiceItemRepeater>
+      {({ invoiceItems }) =>
+        invoiceItems.map((invoiceItem) => (
+          <InvoiceItem.Root
+            key={invoiceItem._id}
+            invoiceItem={invoiceItem}
+            className={className}
+          >
             {children}
-          </Ticket.Root>
+          </InvoiceItem.Root>
         ))
       }
-    </CoreOrder.TicketRepeater>
+    </CoreOrder.InvoiceItemRepeater>
   );
 });
 

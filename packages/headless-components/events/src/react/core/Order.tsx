@@ -6,7 +6,7 @@ import {
   OrderServiceDefinition,
 } from '../../services/order-service.js';
 import { formatLongDate } from '../../utils/date.js';
-import { Ticket } from '../../services/ticket-service.js';
+import { InvoiceItem } from '../../services/invoice-item-service.js';
 
 export interface RootProps {
   /** Child components that will have access to the order service */
@@ -102,48 +102,50 @@ export function DownloadTicketsButton(
   return props.children({ ticketsPdfUrl });
 }
 
-export interface TicketsProps {
+export interface InvoiceItemsProps {
   /** Render prop function */
-  children: (props: TicketsRenderProps) => React.ReactNode;
+  children: (props: InvoiceItemsRenderProps) => React.ReactNode;
 }
 
-export interface TicketsRenderProps {
-  /** Tickets */
-  tickets: Ticket[];
+export interface InvoiceItemsRenderProps {
+  /** Invoice items */
+  invoiceItems: InvoiceItem[];
 }
 
 /**
- * Order Tickets core component that provides tickets.
+ * Order InvoiceItems core component that provides invoice items.
  *
  * @component
  */
-export function Tickets(props: TicketsProps): React.ReactNode {
+export function InvoiceItems(props: InvoiceItemsProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const tickets = orderService.order.get().invoice?.items!;
+  const invoiceItems = orderService.order.get().invoice?.items!;
 
-  return props.children({ tickets });
+  return props.children({ invoiceItems });
 }
 
-export interface TicketRepeaterProps {
+export interface InvoiceItemRepeaterProps {
   /** Render prop function */
-  children: (props: TicketRepeaterRenderProps) => React.ReactNode;
+  children: (props: InvoiceItemRepeaterRenderProps) => React.ReactNode;
 }
 
-export interface TicketRepeaterRenderProps {
-  /** Tickets */
-  tickets: Ticket[];
+export interface InvoiceItemRepeaterRenderProps {
+  /** Invoice items */
+  invoiceItems: InvoiceItem[];
 }
 
 /**
- * Order TicketRepeater core component that provides tickets repeater.
+ * Order InvoiceItemRepeater core component that provides invoice items repeater.
  *
  * @component
  */
-export function TicketRepeater(props: TicketRepeaterProps): React.ReactNode {
+export function InvoiceItemRepeater(
+  props: InvoiceItemRepeaterProps,
+): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const tickets = orderService.order.get().invoice?.items!;
+  const invoiceItems = orderService.order.get().invoice?.items!;
 
-  return props.children({ tickets });
+  return props.children({ invoiceItems });
 }
 
 export interface SubtotalProps {
@@ -158,6 +160,11 @@ export interface SubtotalRenderProps {
   currency: string;
 }
 
+/**
+ * Order Subtotal core component that provides order subtotal.
+ *
+ * @component
+ */
 export function Subtotal(props: SubtotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const subtotal = orderService.order.get().invoice?.subTotal!;
@@ -182,6 +189,11 @@ export interface TaxRenderProps {
   currency: string;
 }
 
+/**
+ * Order Tax core component that provides order tax.
+ *
+ * @component
+ */
 export function Tax(props: TaxProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const tax = orderService.order.get().invoice?.tax;
@@ -209,6 +221,11 @@ export interface TotalRenderProps {
   currency: string;
 }
 
+/**
+ * Order Total core component that provides order total.
+ *
+ * @component
+ */
 export function Total(props: TotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const total = orderService.order.get().invoice?.grandTotal!;

@@ -1,13 +1,13 @@
 import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import { Ticket } from '../services/ticket-service.js';
-import * as CoreTicket from './core/Ticket.js';
+import { type InvoiceItem } from '../services/invoice-item-service.js';
+import * as CoreInvoiceItem from './core/InvoiceItem.js';
 
 export interface RootProps {
   /** Child components */
   children: React.ReactNode;
-  /** Ticket */
-  ticket: Ticket;
+  /** Invoice item */
+  invoiceItem: InvoiceItem;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** CSS classes to apply to the default element */
@@ -15,15 +15,15 @@ export interface RootProps {
 }
 
 /**
- * Ticket Root core component that provides ticket service context.
+ * InvoiceItem Root core component that provides invoice item service context.
  *
  * @component
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { ticket, asChild, children, className, ...otherProps } = props;
+  const { invoiceItem, asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreTicket.Root ticket={ticket}>
+    <CoreInvoiceItem.Root invoiceItem={invoiceItem}>
       <AsChildSlot
         ref={ref}
         asChild={asChild}
@@ -34,7 +34,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
       >
         <div>{children}</div>
       </AsChildSlot>
-    </CoreTicket.Root>
+    </CoreInvoiceItem.Root>
   );
 });
 
@@ -51,7 +51,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreTicket.Name>
+    <CoreInvoiceItem.Name>
       {({ name }) => (
         <AsChildSlot
           ref={ref}
@@ -65,7 +65,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
           <span>{name}</span>
         </AsChildSlot>
       )}
-    </CoreTicket.Name>
+    </CoreInvoiceItem.Name>
   );
 });
 
@@ -82,7 +82,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreTicket.Price>
+    <CoreInvoiceItem.Price>
       {({ value, currency }) => (
         <AsChildSlot
           ref={ref}
@@ -98,7 +98,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
           </span>
         </AsChildSlot>
       )}
-    </CoreTicket.Price>
+    </CoreInvoiceItem.Price>
   );
 });
 
@@ -116,7 +116,7 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreTicket.Quantity>
+      <CoreInvoiceItem.Quantity>
         {({ quantity }) => (
           <AsChildSlot
             ref={ref}
@@ -130,7 +130,7 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
             <span>{quantity}</span>
           </AsChildSlot>
         )}
-      </CoreTicket.Quantity>
+      </CoreInvoiceItem.Quantity>
     );
   },
 );
@@ -148,7 +148,7 @@ export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <CoreTicket.Total>
+    <CoreInvoiceItem.Total>
       {({ value, currency }) => (
         <AsChildSlot
           ref={ref}
@@ -164,6 +164,6 @@ export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
           </span>
         </AsChildSlot>
       )}
-    </CoreTicket.Total>
+    </CoreInvoiceItem.Total>
   );
 });

@@ -1,7 +1,7 @@
 import {
   Event as EventPrimitive,
   Order as OrderPrimitive,
-  Ticket as TicketPrimitive,
+  InvoiceItem as InvoiceItemPrimitive,
 } from '@wix/headless-events/react';
 import {
   type EventServiceConfig,
@@ -175,16 +175,16 @@ export function ThankYou({
                         <OrderPrimitive.TicketRepeater>
                           <div className="flex border-b border-gray-200 py-4 font-light text-content-primary">
                             <div className="w-[35%]">
-                              <TicketPrimitive.Name />
+                              <InvoiceItemPrimitive.Name />
                             </div>
                             <div className="w-[25%]">
-                              <TicketPrimitive.Price />
+                              <InvoiceItemPrimitive.Price />
                             </div>
                             <div className="w-[15%]">
-                              <TicketPrimitive.Quantity />
+                              <InvoiceItemPrimitive.Quantity />
                             </div>
                             <div className="w-[25%] text-right">
-                              <TicketPrimitive.Total />
+                              <InvoiceItemPrimitive.Total />
                             </div>
                           </div>
                         </OrderPrimitive.TicketRepeater>
