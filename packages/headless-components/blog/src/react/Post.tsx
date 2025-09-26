@@ -21,6 +21,8 @@ const HTML_CODE_TAG = 'blog.post';
 interface PostContextValue {
   post: PostWithResolvedFields | null;
   coverImageUrl?: string;
+  olderPost?: PostWithResolvedFields;
+  newerPost?: PostWithResolvedFields;
 }
 
 const PostContext = React.createContext<PostContextValue | null>(null);
@@ -51,6 +53,9 @@ const enum TestIds {
   blogPostReadingTime = 'blog-post-reading-time',
   blogPostCategories = 'blog-post-categories',
   blogPostTags = 'blog-post-tags',
+  blogPostSiblingPosts = 'blog-post-sibling-posts',
+  blogPostSiblingNewerPost = 'blog-post-sibling-newer-post',
+  blogPostSiblingOlderPost = 'blog-post-sibling-older-post',
 }
 
 export interface BlogPostRootProps {
@@ -130,10 +135,16 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
       blogPostServiceConfig,
     } = props;
 
-    const renderRoot = (post: PostWithResolvedFields) => {
+    const renderRoot = (
+      post: PostWithResolvedFields,
+      olderPost?: PostWithResolvedFields,
+      newerPost?: PostWithResolvedFields,
+    ) => {
       const contextValue: PostContextValue = {
         post,
         coverImageUrl: post?.resolvedFields?.coverImageUrl || fallbackImageUrl,
+        olderPost,
+        newerPost,
       };
       const attributes = {
         'data-component-tag': HTML_CODE_TAG,
@@ -168,6 +179,8 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
     // Otherwise, use service to get post data
     return (
       <WixServices
+        // key: Ensure we re-render the component when the post changes
+        key={blogPostServiceConfig?.post._id}
         servicesMap={createServicesMap().addService(
           BlogPostServiceDefinition,
           BlogPostService,
@@ -175,12 +188,12 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
         )}
       >
         <CoreBlogPost.Root>
-          {({ post }) => {
+          {({ post, olderPost, newerPost }) => {
             if (!post) {
               return emptyState || null;
             }
 
-            return renderRoot(post);
+            return renderRoot(post, olderPost, newerPost);
           }}
         </CoreBlogPost.Root>
       </WixServices>
@@ -909,6 +922,139 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
 );
 
 AuthorAvatar.displayName = 'Blog.Post.AuthorAvatar';
+
+export interface SiblingPostsRootProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+/**
+ * Renders only if there is an older or newer post
+ * @example
+ * ```tsx
+ * <Blog.Post.SiblingPosts.Root>
+ *   <h2>Continue reading</h2>
+ *   <Blog.Post.SiblingPosts.Newer>
+ *     <Blog.Post.Title />
+ *   </Blog.Post.SiblingPosts.Newer>
+ *   <Blog.Post.SiblingPosts.Older>
+ *     <Blog.Post.Title />
+ *   </Blog.Post.SiblingPosts.Older>
+ * </Blog.Post.SiblingPosts.Root>
+ * ```
+ */
+const SiblingPostsRoot = React.forwardRef<HTMLElement, SiblingPostsRootProps>(
+  (props, ref) => {
+    const { children, className } = props;
+    const { olderPost, newerPost } = usePostContext();
+
+    if (!olderPost && !newerPost) return null;
+
+    const attributes = {
+      'data-testid': TestIds.blogPostSiblingPosts,
+    };
+
+    return (
+      <div
+        {...attributes}
+        ref={ref as React.Ref<HTMLDivElement>}
+        className={className}
+      >
+        {children}
+      </div>
+    );
+  },
+);
+
+SiblingPostsRoot.displayName = 'Blog.Post.SiblingPosts.Root';
+
+export interface SiblingPostNextProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+/**
+ * Creates a Post context for a newer post
+ * @example
+ * ```tsx
+ * <Blog.Post.SiblingPosts.Newer>
+ *   <Blog.Post.Title />
+ * </Blog.Post.SiblingPosts.Newer>
+ * ```
+ */
+const SiblingPostNewer = React.forwardRef<HTMLElement, SiblingPostNextProps>(
+  (props, ref) => {
+    const { children, className } = props;
+    const { newerPost, coverImageUrl } = usePostContext();
+
+    if (!newerPost) return null;
+
+    const attributes = {
+      'data-testid': TestIds.blogPostSiblingNewerPost,
+    };
+
+    return (
+      <Root
+        post={newerPost}
+        ref={ref}
+        fallbackImageUrl={coverImageUrl}
+        className={className}
+        {...attributes}
+      >
+        {children}
+      </Root>
+    );
+  },
+);
+
+SiblingPostNewer.displayName = 'Blog.Post.SiblingPosts.Newer';
+
+export interface SiblingPostOlderProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+/**
+ * Creates a Post context for an older post
+ * @example
+ * ```tsx
+ * <Blog.Post.SiblingPosts.Older>
+ *   <Blog.Post.Title />
+ * </Blog.Post.SiblingPosts.Older>
+ * ```
+ */
+const SiblingPostOlder = React.forwardRef<HTMLElement, SiblingPostOlderProps>(
+  (props, ref) => {
+    const { children, className } = props;
+    const { olderPost, coverImageUrl } = usePostContext();
+
+    if (!olderPost) return null;
+
+    const attributes = {
+      'data-testid': TestIds.blogPostSiblingOlderPost,
+    };
+
+    return (
+      <Root
+        post={olderPost}
+        ref={ref}
+        fallbackImageUrl={coverImageUrl}
+        className={className}
+        {...attributes}
+      >
+        {children}
+      </Root>
+    );
+  },
+);
+
+SiblingPostOlder.displayName = 'Blog.Post.SiblingPosts.Older';
+
+export const SiblingPosts = {
+  Root: SiblingPostsRoot,
+  Newer: SiblingPostNewer,
+  Older: SiblingPostOlder,
+};
 
 /**
  * Helper function to create author name from member data

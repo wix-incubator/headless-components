@@ -21,6 +21,7 @@ export function BlogPostRoute() {
               blogPostServiceConfig={blogPostServiceConfig}
               feedPageHref="/react-router/blog/"
               categoryPageBaseUrl="/react-router/blog/category/"
+              postPageBaseUrl="/react-router/blog/post/"
               uiLocale="en-US"
             />
           </div>
