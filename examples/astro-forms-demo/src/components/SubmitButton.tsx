@@ -1,5 +1,4 @@
-import React from 'react';
-import { SubmitButtonProps } from '@wix/headless-forms/react';
+import { type SubmitButtonProps } from '@wix/headless-forms/react';
 
 export default function SubmitButton({ id, text }: SubmitButtonProps) {
   return (
