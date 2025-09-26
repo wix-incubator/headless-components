@@ -176,18 +176,10 @@ export function ThankYou({
                         </div>
                         <OrderPrimitive.InvoiceItemRepeater>
                           <div className="flex border-b border-gray-200 py-4 font-light text-content-primary">
-                            <div className="w-[35%]">
-                              <InvoiceItemPrimitive.Name />
-                            </div>
-                            <div className="w-[25%]">
-                              <InvoiceItemPrimitive.Price />
-                            </div>
-                            <div className="w-[15%]">
-                              <InvoiceItemPrimitive.Quantity />
-                            </div>
-                            <div className="w-[25%] text-right">
-                              <InvoiceItemPrimitive.Total />
-                            </div>
+                            <InvoiceItemPrimitive.Name className="w-[35%]" />
+                            <InvoiceItemPrimitive.Price className="w-[25%]" />
+                            <InvoiceItemPrimitive.Quantity className="w-[15%]" />
+                            <InvoiceItemPrimitive.Total className="w-[25%] text-right" />
                           </div>
                         </OrderPrimitive.InvoiceItemRepeater>
                         <div className="flex flex-row justify-end">

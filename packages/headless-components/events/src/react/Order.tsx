@@ -24,10 +24,10 @@ export interface RootProps {
  *   <Order.InvoiceItems className="px-6 border-b border-gray-300">
  *     <Order.InvoiceItemRepeater>
  *       <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
- *         <div className="w-[35%]"><InvoiceItem.Name /></div>
- *         <div className="w-[25%]"><InvoiceItem.Price /></div>
- *         <div className="w-[15%]"><InvoiceItem.Quantity /></div>
- *         <div className="w-[25%] text-right"><InvoiceItem.Total /></div>
+ *         <InvoiceItem.Name className="w-[35%]" />
+ *         <InvoiceItem.Price className="w-[25%]" />
+ *         <InvoiceItem.Quantity className="w-[15%]" />
+ *         <InvoiceItem.Total className="w-[25%] text-right" />
  *       </div>
  *     </Order.InvoiceItemRepeater>
  *   </Order.InvoiceItems>
