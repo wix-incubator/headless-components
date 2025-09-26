@@ -38,6 +38,7 @@ interface PostPageProps {
  *   blogPostServiceConfig={postConfig}
  *   href="https://example.com/post/my-post"
  *   feedPageHref="/blog"
+ *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
  *   uiLocale="en-US"
  * />
