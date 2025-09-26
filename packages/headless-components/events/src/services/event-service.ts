@@ -6,6 +6,7 @@ import {
 import { wixEventsV2 } from '@wix/events';
 
 export type Event = wixEventsV2.Event;
+export type RichContent = wixEventsV2.RichContent;
 
 export interface EventServiceAPI {
   event: Signal<Event>;

@@ -7179,7 +7179,6 @@ __metadata:
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/redirects": "npm:^1.0.83"
-    "@wix/ricos": "npm:^10.141.3"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
@@ -7789,7 +7788,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/ricos@npm:^10.141.3, @wix/ricos@npm:^10.141.4":
+"@wix/ricos@npm:^10.141.4":
   version: 10.142.0
   resolution: "@wix/ricos@npm:10.142.0"
   dependencies:
