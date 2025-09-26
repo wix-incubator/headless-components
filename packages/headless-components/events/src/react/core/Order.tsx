@@ -6,7 +6,7 @@ import {
   OrderServiceConfig,
   OrderServiceDefinition,
 } from '../../services/order-service.js';
-import { formatLongDate } from '../../utils/date.js';
+import { formatFullDate } from '../../utils/date.js';
 import { InvoiceItem } from '../../services/invoice-item-service.js';
 import { useEffect } from 'react';
 
@@ -77,7 +77,7 @@ export interface CreatedDateRenderProps {
  */
 export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const createdDate = formatLongDate(orderService.order.get().created!);
+  const createdDate = formatFullDate(orderService.order.get().created!);
   const isReady = isOrderReady(orderService.order.get());
 
   useEffect(() => {

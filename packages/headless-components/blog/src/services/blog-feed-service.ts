@@ -241,7 +241,7 @@ async function fetchPosts(
     sort,
     categoryId,
     pageSize = DEFAULT_PAGE_SIZE,
-    excludePostIds,
+    excludePostIds = [],
     postIds,
     showPinnedPostsFirst,
   } = params;
@@ -273,7 +273,7 @@ async function fetchPosts(
     query = query.in('_id', postIds);
   }
 
-  for (const excludePostId of excludePostIds || []) {
+  for (const excludePostId of excludePostIds) {
     query = query.ne('_id', excludePostId);
   }
 

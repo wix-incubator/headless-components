@@ -25,6 +25,7 @@ import type {
 import {
   SignalsServiceDefinition,
   type Signal,
+  type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
 
 export interface MenusServiceConfig {
@@ -39,6 +40,7 @@ export interface MenusServiceConfig {
 }
 export interface MenusServiceAPI {
   menus: Signal<Menu[]>;
+  filteredMenus: ReadOnlySignal<Menu[]>;
   sections: Signal<Section[]>;
   items: Signal<EnhancedItem[]>;
   variants: Signal<Variant[]>;
@@ -226,12 +228,51 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
       locationsSignal.set(locations);
     };
 
+    const filterMenusByLocation = () => {
+      const allMenus = menusSignal.get();
+      const selectedLocationId = selectedLocationSignal.get();
+
+      if (!selectedLocationId || selectedLocationId === 'all') {
+        // If no location selected or "all" selected, show all menus
+        return allMenus;
+      }
+
+      // Filter menus by selected location
+      return allMenus.filter(
+        (menu) => menu.businessLocationId === selectedLocationId,
+      );
+    };
+
     signalsService.effect(() => {
       updateLocations();
     });
 
+    // Reset selected menu when location changes
+    signalsService.effect(() => {
+      const selectedMenu = selectedMenuSignal.get();
+
+      // If there's a selected menu, check if it's still valid for the current location
+      if (selectedMenu) {
+        const filteredMenus = filterMenusByLocation();
+        const isMenuStillValid = filteredMenus.some(
+          (menu) => menu._id === selectedMenu._id,
+        );
+
+        // If the selected menu is not available in the filtered menus, reset selection
+        if (!isMenuStillValid) {
+          selectedMenuSignal.set(null);
+        }
+      }
+    });
+
+    // Create a computed signal for filtered menus
+    const filteredMenusSignal = signalsService.computed(() => {
+      return filterMenusByLocation();
+    });
+
     return {
       menus: menusSignal,
+      filteredMenus: filteredMenusSignal,
       sections: sectionsSignal,
       items: itemsSignal,
       variants: variantsSignal,

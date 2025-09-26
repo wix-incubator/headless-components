@@ -39,27 +39,6 @@ export function usePostsContext(): PostsContextValue {
   return context;
 }
 
-export interface FeedPostRepeaterContextValue {
-  post: PostWithResolvedFields;
-  index: number;
-  amount: number;
-}
-
-export const FeedPostRepeaterContext =
-  React.createContext<FeedPostRepeaterContextValue | null>(null);
-
-FeedPostRepeaterContext.displayName = 'Blog.Feed.FeedPostRepeaterContext';
-
-export function useFeedPostRepeaterContext(): FeedPostRepeaterContextValue {
-  const context = React.useContext(FeedPostRepeaterContext);
-  if (!context) {
-    throw new Error(
-      'useFeedPostRepeaterContext must be used within a BlogFeed.PostRepeater component',
-    );
-  }
-  return context;
-}
-
 const enum TestIds {
   blogFeedRoot = 'blog-feed-root',
   blogFeedPosts = 'blog-feed-posts',
@@ -375,19 +354,16 @@ export const PostItemRepeater = React.forwardRef<
 
   return (
     <>
-      {postsSlice.map((post, index) => {
-        const contextValue: FeedPostRepeaterContextValue = {
-          post,
-          index,
-          amount: posts.length,
-        };
-
+      {postsSlice.map((post) => {
         return (
-          <FeedPostRepeaterContext.Provider key={post._id} value={contextValue}>
-            <Post.Root post={post} asChild fallbackImageUrl={fallbackImageUrl}>
-              {children}
-            </Post.Root>
-          </FeedPostRepeaterContext.Provider>
+          <Post.Root
+            key={post._id}
+            post={post}
+            asChild
+            fallbackImageUrl={fallbackImageUrl}
+          >
+            {children}
+          </Post.Root>
         );
       })}
     </>

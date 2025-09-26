@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-events",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -46,7 +46,6 @@
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/redirects": "^1.0.83",
-    "@wix/ricos": "^10.141.3",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
   },

@@ -67,11 +67,11 @@ export function MenuSelector(props: MenuSelectorProps) {
   const { allText, showAll = true } = props;
   const menusService = useService(MenusServiceDefinition);
 
-  const allMenus = menusService.menus.get();
+  const filteredMenus = menusService.filteredMenus.get();
   // Add "All" option at the beginning if showAll is true
   const menus = showAll
-    ? [{ _id: 'all', name: allText || 'All' } as Menu, ...allMenus]
-    : allMenus;
+    ? [{ _id: 'all', name: allText || 'All' } as Menu, ...filteredMenus]
+    : filteredMenus;
   const selectedMenu = menusService.selectedMenu.get();
 
   const onMenuSelect = (menu: Menu) => {

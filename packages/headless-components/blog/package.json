@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-blog",
-  "version": "0.0.12",
+  "version": "0.0.14",
   "type": "module",
   "scripts": {
     "prebuild": "cd ../utils && yarn build && cd ../components && yarn build && cd ../media && yarn build",
