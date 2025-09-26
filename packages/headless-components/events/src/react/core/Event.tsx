@@ -8,6 +8,7 @@ import {
   type RichContent,
 } from '../../services/event-service.js';
 import { hasDescription } from '../../utils/event.js';
+import { formatFullDate, formatShortDate } from '../../utils/date.js';
 
 export interface RootProps {
   /** Child components that will have access to the event service */
@@ -115,8 +116,8 @@ export function Date(props: DateProps): React.ReactNode {
   const date = event.dateAndTimeSettings!.dateAndTimeTbd
     ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
     : format === 'short'
-      ? event.dateAndTimeSettings!.formatted!.startDate!
-      : event.dateAndTimeSettings!.formatted!.dateAndTime!;
+      ? formatShortDate(event.dateAndTimeSettings!.startDate!)
+      : formatFullDate(event.dateAndTimeSettings!.startDate!);
 
   return props.children({ date });
 }
