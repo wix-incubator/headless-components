@@ -1,6 +1,8 @@
 import type { V3Product } from '@wix/auto_sdk_stores_products-v-3';
 import {
   Sort as SortPrimitive,
+  GenericListTotalsRenderProps,
+  GenericListLoadMoreRenderProps,
   GenericList,
 } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
@@ -114,7 +116,7 @@ const RootContent = React.forwardRef<
   return (
     <GenericList.Root
       items={items}
-      onLoadMore={() => productsListService.loadMore(10)}
+      loadMore={() => productsListService.loadMore(10)}
       hasMore={productsListService.hasMoreProducts.get()}
       isLoading={productsListService.isLoading.get()}
       className={className}
@@ -274,11 +276,7 @@ export interface LoadMoreTriggerProps {
     | React.ReactNode
     | React.ForwardRefRenderFunction<
         HTMLButtonElement,
-        {
-          isLoading: boolean;
-          hasMoreProducts: boolean;
-          loadMore: () => void;
-        }
+        GenericListLoadMoreRenderProps
       >;
   /**
    * Whether to render as a child component.
@@ -337,9 +335,7 @@ export interface TotalsDisplayedProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    displayedItems: number;
-  }>;
+  children?: AsChildChildren<GenericListTotalsRenderProps>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -357,7 +353,7 @@ export interface TotalsDisplayedProps {
  * </ProductList.TotalsDisplayed>
  * // or with render function
  * <ProductList.TotalsDisplayed asChild>
- *   {({ displayedProducts }, ref) => <strong ref={ref}>{displayedProducts}</strong>}
+ *   {({ displayedItems }, ref) => <strong ref={ref}>{displayedItems}</strong>}
  * </ProductList.TotalsDisplayed>
  * ```
  */

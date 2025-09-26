@@ -1,9 +1,8 @@
+import PostPaywall from "@/components/blog/PostPaywall";
 import { cn } from "@/lib/utils";
 import { Blog } from "@wix/blog/components";
 import {
   RicosViewer as CoreRicosViewer,
-  type RichContent,
-  type RicosCustomStyles,
   pluginAudioViewer,
   pluginCodeBlockViewer,
   pluginCollapsibleListViewer,
@@ -21,6 +20,8 @@ import {
   pluginTextColorViewer,
   pluginTextHighlightViewer,
   pluginVideoViewer,
+  type RichContent,
+  type RicosCustomStyles,
 } from "@wix/ricos";
 import React from "react";
 
@@ -38,8 +39,9 @@ import "@wix/ricos/css/plugin-image-viewer.global.css";
 import "@wix/ricos/css/plugin-table-viewer.global.css";
 import "@wix/ricos/css/plugin-video-viewer.global.css";
 
-export interface PostContentProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+export interface PostContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  uiLocale: string;
+}
 
 /**
  * Renders the rich content of a blog post.
@@ -50,10 +52,24 @@ export interface PostContentProps
  * ```
  */
 export const PostContent = React.forwardRef<HTMLDivElement, PostContentProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, uiLocale, ...props }, ref) => {
     return (
       <Blog.Post.Content className={cn(className)} ref={ref} {...props}>
-        {RicosViewer}
+        {({ content, pricingPlanIds }) => {
+          return (
+            <>
+              <div className="min-h-32">
+                <RicosViewer content={content} />
+              </div>
+              {pricingPlanIds.length > 0 ? (
+                <PostPaywall
+                  pricingPlanIds={pricingPlanIds}
+                  uiLocale={uiLocale}
+                />
+              ) : null}
+            </>
+          );
+        }}
       </Blog.Post.Content>
     );
   }

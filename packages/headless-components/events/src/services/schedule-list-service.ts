@@ -23,11 +23,10 @@ export interface ScheduleListServiceAPI {
   stageNames: ReadOnlySignal<string[]>;
   tags: ReadOnlySignal<string[]>;
   setStageFilter: (stageName: string | null) => void;
-  setTagFilters: (newTagFilters: string[]) => void;
+  setTagFilters: (tags: string[]) => void;
 }
 
 export interface ScheduleListServiceConfig {
-  limit: number;
   items: ScheduleItem[];
 }
 
@@ -77,8 +76,8 @@ export const ScheduleListService =
         stageFilter.set(stageName);
       };
 
-      const setTagFilters = (newTagFilters: string[]) => {
-        tagFilters.set(newTagFilters);
+      const setTagFilters = (tags: string[]) => {
+        tagFilters.set(tags);
       };
 
       return {
@@ -97,24 +96,47 @@ export const ScheduleListService =
 
 export async function loadScheduleListServiceConfig(
   eventId: string,
-  limit: number = 2,
+  limit?: number,
 ): Promise<ScheduleListServiceConfig> {
-  const listScheduleResult = await listScheduleItems(eventId, limit);
+  const loadAll = !limit;
+  const pageSize = limit ?? 100;
 
-  return {
-    limit,
-    items: listScheduleResult.items ?? [],
-  };
+  const response = await listScheduleItems(eventId, pageSize);
+  const totalItems = response.pagingMetadata!.total!;
+  const itemsCount = response.items!.length;
+  const responses = [response];
+
+  if (itemsCount < totalItems && loadAll) {
+    const requestCount = Math.ceil(totalItems / pageSize) - 1;
+    const moreResponses = await Promise.all(
+      new Array(requestCount)
+        .fill(null)
+        .map((_, index) =>
+          listScheduleItems(eventId, pageSize, (index + 1) * pageSize),
+        ),
+    );
+
+    responses.push(...moreResponses);
+  }
+
+  const allItems = responses.flatMap((response) => response.items || []);
+
+  return { items: allItems };
 }
 
-const listScheduleItems = async (eventId: string, limit: number) => {
-  const listScheduleResult = await schedule.listScheduleItems({
+const listScheduleItems = async (
+  eventId: string,
+  limit: number,
+  offset = 0,
+) => {
+  return schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
-    limit,
+    paging: {
+      limit,
+      offset,
+    },
   });
-
-  return listScheduleResult;
 };
 
 function filterScheduleItems(

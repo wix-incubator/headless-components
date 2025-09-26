@@ -13,7 +13,9 @@ import { EventServiceDefinition } from '../../services/event-service.js';
 import {
   getTicketDefinitionFee,
   getTicketDefinitionTax,
+  isTicketDefinitionAvailable,
 } from '../../utils/ticket-definition.js';
+import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components that will have access to the ticket definition service */
@@ -132,7 +134,7 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
 
   const price = fixedPrice.value!;
   const currency = fixedPrice.currency!;
-  const formattedPrice = `${price} ${currency}`;
+  const formattedPrice = formatPrice(price, currency);
 
   return props.children({
     price,
@@ -186,7 +188,7 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
 
   const minPrice = guestPrice.value!;
   const currency = guestPrice.currency!;
-  const formattedMinPrice = `${minPrice} ${currency}`;
+  const formattedMinPrice = formatPrice(minPrice, currency);
 
   return props.children({
     minPrice,
@@ -208,6 +210,10 @@ export interface PricingRangeRenderProps {
   maxPrice: string;
   /** Price currency */
   currency: string;
+  /** Formatted minimum price */
+  formattedMinPrice: string;
+  /** Formatted maximum price */
+  formattedMaxPrice: string;
   /** Formatted price range */
   formattedPriceRange: string;
 }
@@ -232,15 +238,19 @@ export function PricingRange(props: PricingRangeProps): React.ReactNode {
   const minPrice = Math.min(...prices).toFixed(2);
   const maxPrice = Math.max(...prices).toFixed(2);
   const currency = pricingOptions[0]!.price!.currency!;
+  const formattedMinPrice = formatPrice(minPrice, currency);
+  const formattedMaxPrice = formatPrice(maxPrice, currency);
   const formattedPriceRange =
     minPrice === maxPrice
-      ? `${minPrice} ${currency}`
-      : `${minPrice} - ${maxPrice} ${currency}`;
+      ? formattedMinPrice
+      : `${formattedMinPrice} - ${formattedMaxPrice}`;
 
   return props.children({
     minPrice,
     maxPrice,
     currency,
+    formattedMinPrice,
+    formattedMaxPrice,
     formattedPriceRange,
   });
 }
@@ -425,9 +435,7 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-  const saleScheduled =
-    ticketDefinition.saleStatus === 'SALE_SCHEDULED' &&
-    !!ticketDefinition.salePeriod?.startDate;
+  const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
 
   if (!saleScheduled) {
     return null;
@@ -462,9 +470,7 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
-  const saleScheduled =
-    ticketDefinition.saleStatus === 'SALE_SCHEDULED' &&
-    !!ticketDefinition.salePeriod?.endDate;
+  const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
   const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
 
   if (saleScheduled || !ticketDefinition.salePeriod) {
@@ -496,7 +502,7 @@ export interface QuantityRenderProps {
 }
 
 /**
- * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options, or if sale hasn't started, or if the ticket definition is sold out.
+ * TicketDefinition Quantity core component that provides quantity controls. Not rendered for ticket definitions with pricing options, or if ticket definition is not available (is sold out or sale hasn't started).
  *
  * @component
  */
@@ -508,12 +514,10 @@ export function Quantity(props: QuantityProps): React.ReactNode {
 
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const ticketDefinitionId = ticketDefinition._id!;
+  const pricingOptions =
+    ticketDefinition.pricingMethod?.pricingOptions?.optionDetails ?? [];
 
-  if (
-    ticketDefinition.pricingMethod?.pricingOptions ||
-    ticketDefinition.saleStatus !== 'SALE_STARTED' ||
-    ticketDefinition.limitPerCheckout === 0
-  ) {
+  if (!isTicketDefinitionAvailable(ticketDefinition) || pricingOptions.length) {
     return null;
   }
 

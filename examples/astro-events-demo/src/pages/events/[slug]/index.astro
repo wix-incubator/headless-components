@@ -29,7 +29,7 @@ const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
     loadTicketDefinitionListServiceConfig(
       eventServiceConfigResult.config.event._id
     ),
-    loadScheduleListServiceConfig(eventServiceConfigResult.config.event._id),
+    loadScheduleListServiceConfig(eventServiceConfigResult.config.event._id, 2),
   ]);
 ---
 
@@ -44,7 +44,7 @@ const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
     eventListServiceConfig={eventListServiceConfig}
     ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
     checkoutServiceConfig={{
-      noTicketDefinitionsSelectedError: 'Select a ticket'
+      noTicketDefinitionsSelectedError: 'Select a ticket',
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
     eventsPagePath="/events"

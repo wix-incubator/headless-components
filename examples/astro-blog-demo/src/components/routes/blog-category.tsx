@@ -34,7 +34,7 @@ export function BlogCategoryRoute() {
             blogFeedServiceConfig={blogFeedServiceConfig}
             postPageBaseUrl="/react-router/blog/post/"
             categoryPageBaseUrl="/react-router/blog/category/"
-            dateLocale="en-US"
+            uiLocale="en-US"
           />
         </div>
       </div>

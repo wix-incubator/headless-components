@@ -13,7 +13,9 @@ import { EventServiceDefinition } from '../../services/event-service.js';
 import {
   getTicketDefinitionFee,
   getTicketDefinitionTax,
+  isTicketDefinitionAvailable,
 } from '../../utils/ticket-definition.js';
+import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components that will have access to the pricing option service */
@@ -96,7 +98,7 @@ export function Pricing(props: PricingProps): React.ReactNode {
   const pricingOption = pricingOptionService.pricingOption.get();
   const price = pricingOption.price!.value!;
   const currency = pricingOption.price!.currency!;
-  const formattedPrice = `${price} ${currency}`;
+  const formattedPrice = formatPrice(price, currency);
 
   return props.children({
     price,
@@ -230,7 +232,7 @@ export interface QuantityRenderProps {
 }
 
 /**
- * PricingOption Quantity core component that provides quantity controls. Not rendered if sale hasn't started or if the ticket definition is sold out.
+ * PricingOption Quantity core component that provides quantity controls. Not rendered if ticket definition is not available (is sold out or sale hasn't started).
  *
  * @component
  */
@@ -246,10 +248,7 @@ export function Quantity(props: QuantityProps): React.ReactNode {
   const pricingOptionId = pricingOption.optionId!;
   const ticketDefinitionId = ticketDefinition._id!;
 
-  if (
-    ticketDefinition.saleStatus !== 'SALE_STARTED' ||
-    ticketDefinition.limitPerCheckout === 0
-  ) {
+  if (!isTicketDefinitionAvailable(ticketDefinition)) {
     return null;
   }
 

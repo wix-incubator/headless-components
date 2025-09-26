@@ -14,11 +14,13 @@ import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
+  eventsPagePath: string;
 }
 
 export function Schedule({
   eventServiceConfig,
   scheduleListServiceConfig,
+  eventsPagePath,
 }: ScheduleProps) {
   return (
     <div className="min-h-screen bg-surface-primary">
@@ -27,16 +29,28 @@ export function Schedule({
           Schedule
         </h1>
         <EventPrimitive.Root event={eventServiceConfig.event}>
-          <div className="flex flex-col mb-10">
-            <EventPrimitive.Title className="font-light text-content-primary" />
-            <EventPrimitive.Date
-              format="full"
-              className="font-light text-content-primary"
-            />
-            <EventPrimitive.Location
-              format="full"
-              className="font-light text-content-primary"
-            />
+          <div className="flex justify-between">
+            <div className="flex flex-col mb-10">
+              <EventPrimitive.Title className="font-light text-content-primary" />
+              <EventPrimitive.Date
+                format="full"
+                className="font-light text-content-primary"
+              />
+              <EventPrimitive.Location
+                format="full"
+                className="font-light text-content-primary"
+              />
+            </div>
+            <EventPrimitive.RsvpButton
+              asChild
+              className="h-fit border border-gray-300 rounded-[5px] py-2 px-4 font-light text-content-primary hover:underline"
+            >
+              {({ eventSlug, ticketed }) => (
+                <a href={`${eventsPagePath}/${eventSlug}`}>
+                  {ticketed ? 'Get Tickets' : 'RSVP'}
+                </a>
+              )}
+            </EventPrimitive.RsvpButton>
           </div>
         </EventPrimitive.Root>
         <ScheduleListPrimitive.Root
