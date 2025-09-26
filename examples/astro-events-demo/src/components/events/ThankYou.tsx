@@ -213,6 +213,17 @@ export function ThankYou({
                                   </div>
                                 )}
                               </OrderPrimitive.Tax>
+                              <OrderPrimitive.ServiceFee
+                                asChild
+                                className="font-light text-content-primary justify-between flex"
+                              >
+                                {({ value, currency, rate }) => (
+                                  <div>
+                                    <span>{`Service Fee (${rate}%)`}</span>
+                                    <span>{`${value} ${currency}`}</span>
+                                  </div>
+                                )}
+                              </OrderPrimitive.ServiceFee>
                             </div>
                             <OrderPrimitive.Total
                               asChild

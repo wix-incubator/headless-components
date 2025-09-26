@@ -218,6 +218,36 @@ export function Tax(props: TaxProps): React.ReactNode {
   });
 }
 
+export interface ServiceFeeProps {
+  /** Render prop function */
+  children: (props: ServiceFeeRenderProps) => React.ReactNode;
+}
+
+export interface ServiceFeeRenderProps {
+  /** Service fee value */
+  value: string;
+  /** Currency */
+  currency: string;
+  /** Service fee rate */
+  rate: string;
+}
+
+/**
+ * Order ServiceFee core component that provides order service fee.
+ *
+ * @component
+ */
+export function ServiceFee(props: ServiceFeeProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const serviceFee = orderService.order.get().invoice?.fees?.[0];
+
+  return props.children({
+    value: serviceFee!.amount!.value!,
+    currency: serviceFee!.amount!.currency!,
+    rate: serviceFee!.rate!,
+  });
+}
+
 export interface TotalProps {
   /** Render prop function */
   children: (props: TotalRenderProps) => React.ReactNode;

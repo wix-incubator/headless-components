@@ -285,6 +285,48 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
   );
 });
 
+export interface ServiceFeeProps {
+  /** Render prop function */
+  children: (props: ServiceFeeRenderProps) => React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export interface ServiceFeeRenderProps {
+  /** Service fee value */
+  value: string;
+  /** Currency */
+  currency: string;
+  /** Service fee rate */
+  rate: string;
+}
+
+export const ServiceFee = React.forwardRef<HTMLElement, ServiceFeeProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreOrder.ServiceFee>
+        {({ value, currency, rate }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            customElement={children}
+            customElementProps={{ value, currency, rate }}
+            content={value}
+            {...otherProps}
+          >
+            <span>{value}</span>
+          </AsChildSlot>
+        )}
+      </CoreOrder.ServiceFee>
+    );
+  },
+);
+
 export interface TotalProps {
   /** Render prop function */
   children: (props: TotalRenderProps) => React.ReactNode;
