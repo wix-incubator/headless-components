@@ -6990,12 +6990,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/form-public@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@wix/form-public@npm:0.9.0"
+"@wix/form-public@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "@wix/form-public@npm:0.15.0"
+  dependencies:
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.mapkeys: "npm:^4.6.0"
   peerDependencies:
     react: ^18.3.1
-  checksum: 10c0/a60d32b5b6432ed0d1a5bc8faa798cf57928917d80dee475deb26a0b58dea9233b3cb4c67ce7e39dac8f342b4a56a313fea4f09b349b07754181f982ffa5c335
+  checksum: 10c0/9526f5c3d0e32bc9d79bec12767e750b7514320f5fd768b6981b8cdd23dc0086cb256a951aa1113f6dd448d3adabeb764e198a135be03fd56339990c486134b4
   languageName: node
   linkType: hard
 
@@ -7240,7 +7243,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/form-public": "npm:^0.9.0"
+    "@wix/form-public": "npm:^0.15.0"
     "@wix/forms": "npm:^1.0.292"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
@@ -12903,6 +12906,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.camelcase@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "lodash.camelcase@npm:4.3.0"
+  checksum: 10c0/fcba15d21a458076dd309fce6b1b4bf611d84a0ec252cb92447c948c533ac250b95d2e00955801ebc367e5af5ed288b996d75d37d2035260a937008e14eaf432
+  languageName: node
+  linkType: hard
+
 "lodash.curry@npm:^4.1.1":
   version: 4.1.1
   resolution: "lodash.curry@npm:4.1.1"
@@ -12921,6 +12931,13 @@ __metadata:
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: 10c0/48f40d471a1654397ed41685495acb31498d5ed696185ac8973daef424a749ca0c7871bf7b665d5c14f5cc479394479e0307e781f61d5573831769593411be6e
+  languageName: node
+  linkType: hard
+
+"lodash.mapkeys@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.mapkeys@npm:4.6.0"
+  checksum: 10c0/5e7028eb5400a34007932cf224b2de1b1e8030e6ce79fe2d43b1e4a7362315270c914d741b13d81eef51529fcb02b6c51bb39fa6fe78a659e138e54e16252883
   languageName: node
   linkType: hard
 
