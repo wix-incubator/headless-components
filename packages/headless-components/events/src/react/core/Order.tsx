@@ -95,10 +95,8 @@ export interface DownloadTicketsButtonProps {
 export interface DownloadTicketsButtonRenderProps {
   /** Tickets PDF URL */
   ticketsPdfUrl: string;
-  /** Whether the order is polling */
-  isPolling: boolean;
-  /** Whether the order is ready */
-  isReady: boolean;
+  /** Whether the button is visible */
+  isVisible: boolean;
 }
 
 /**
@@ -114,7 +112,13 @@ export function DownloadTicketsButton(
   const isPolling = orderService.isPolling.get();
   const isReady = isOrderReady(orderService.order.get());
 
-  return props.children({ ticketsPdfUrl, isPolling, isReady });
+  const isVisible = !isReady || isPolling;
+
+  if (!isVisible) {
+    return null;
+  }
+
+  return props.children({ ticketsPdfUrl, isVisible });
 }
 
 export interface InvoiceItemsProps {

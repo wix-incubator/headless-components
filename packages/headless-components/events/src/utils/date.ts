@@ -16,7 +16,7 @@ export const formatFullDate = (date: string | Date) =>
 
 export const formatDateMonthDayYear = (date: string | Date) =>
   new Date(date).toLocaleDateString('en-US', {
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     year: 'numeric',
   });

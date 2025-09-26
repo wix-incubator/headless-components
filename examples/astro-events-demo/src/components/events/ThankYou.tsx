@@ -155,21 +155,18 @@ export function ThankYou({
                           <a>Add to Calendar</a>
                         </EventPrimitive.AddToGoogleCalendar>
                         <OrderPrimitive.DownloadTicketsButton asChild>
-                          {({ ticketsPdfUrl, isPolling, isReady }) => (
-                            <button
-                              className={`block font-light py-3 px-20 ml-auto ${
-                                !isReady
-                                  ? 'bg-gray-300 text-content-faded'
-                                  : 'btn-primary'
-                              }`}
-                              disabled={!isReady}
-                              onClick={() =>
-                                window.open(ticketsPdfUrl, '_blank')
-                              }
-                            >
-                              {isPolling ? 'Loading...' : 'Download Tickets'}
-                            </button>
-                          )}
+                          {({ ticketsPdfUrl, isVisible }) =>
+                            isVisible && (
+                              <button
+                                className="block font-light py-3 px-20 ml-auto btn-primary"
+                                onClick={() =>
+                                  window.open(ticketsPdfUrl, '_blank')
+                                }
+                              >
+                                Download Tickets
+                              </button>
+                            )
+                          }
                         </OrderPrimitive.DownloadTicketsButton>
                       </div>
                       <OrderPrimitive.InvoiceItems className="px-6 border-b border-gray-300">
