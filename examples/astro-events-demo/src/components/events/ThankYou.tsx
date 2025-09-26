@@ -154,14 +154,21 @@ export function ThankYou({
                         >
                           <a>Add to Calendar</a>
                         </EventPrimitive.AddToGoogleCalendar>
-                        <OrderPrimitive.DownloadTicketsButton
-                          asChild
-                          className="btn-primary self-center font-light py-2 px-10 mt-auto"
-                        >
-                          {({ ticketsPdfUrl }) => (
-                            <a href={ticketsPdfUrl} target="_blank">
-                              Download Tickets
-                            </a>
+                        <OrderPrimitive.DownloadTicketsButton asChild>
+                          {({ ticketsPdfUrl, isPolling, isReady }) => (
+                            <button
+                              className={`block font-light py-3 px-20 ml-auto ${
+                                !isReady
+                                  ? 'bg-gray-300 text-content-faded'
+                                  : 'btn-primary'
+                              }`}
+                              disabled={!isReady}
+                              onClick={() =>
+                                window.open(ticketsPdfUrl, '_blank')
+                              }
+                            >
+                              {isPolling ? 'Loading...' : 'Download Tickets'}
+                            </button>
                           )}
                         </OrderPrimitive.DownloadTicketsButton>
                       </div>

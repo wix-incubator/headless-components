@@ -114,6 +114,10 @@ export interface DownloadTicketsButtonProps {
 export interface DownloadTicketsButtonRenderProps {
   /** Tickets PDF URL */
   ticketsPdfUrl: string;
+  /** Whether the order is polling */
+  isPolling: boolean;
+  /** Whether the order is ready */
+  isReady: boolean;
 }
 
 export const DownloadTicketsButton = React.forwardRef<
@@ -124,13 +128,13 @@ export const DownloadTicketsButton = React.forwardRef<
 
   return (
     <CoreOrder.DownloadTicketsButton>
-      {({ ticketsPdfUrl }) => (
+      {({ ticketsPdfUrl, isPolling, isReady }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           customElement={children}
-          customElementProps={{ ticketsPdfUrl }}
+          customElementProps={{ ticketsPdfUrl, isPolling, isReady }}
           content={ticketsPdfUrl}
           {...otherProps}
         >

@@ -10,6 +10,7 @@ export type Order = orders.Order;
 
 export interface OrderServiceAPI {
   order: Signal<Order>;
+  isPolling: Signal<boolean>;
   pollOrder: () => Promise<void>;
 }
 
@@ -30,40 +31,47 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
     const signalsService = getService(SignalsServiceDefinition);
 
     const order = signalsService.signal<Order>(config.order);
+    const isPolling = signalsService.signal<boolean>(false);
     const { eventId, orderNumber } = config;
 
     const pollOrder = async () => {
-      console.log('polling order');
       if (isOrderReady(order.get())) {
-        console.log('order is ready');
         return;
       }
 
-      await poll({
-        callback: async () => {
-          const response = await orders.getOrder(
-            { eventId, orderNumber },
-            {
-              fieldset: [
-                orders.OrderFieldset.TICKETS,
-                orders.OrderFieldset.DETAILS,
-                orders.OrderFieldset.INVOICE,
-              ],
-            },
-          );
+      isPolling.set(true);
 
-          order.set(response);
-          console.log('order polled');
+      try {
+        await poll({
+          callback: async () => {
+            const response = await orders.getOrder(
+              { eventId, orderNumber },
+              {
+                fieldset: [
+                  orders.OrderFieldset.TICKETS,
+                  orders.OrderFieldset.DETAILS,
+                  orders.OrderFieldset.INVOICE,
+                ],
+              },
+            );
 
-          return isOrderReady(response);
-        },
-        intervalMs: 2000,
-        totalMs: 15000,
-      });
+            order.set(response);
+
+            return isOrderReady(response);
+          },
+          intervalMs: 2000,
+          totalMs: 15000,
+        });
+      } catch (error) {
+        console.log(`Error polling order: ${error}`);
+      } finally {
+        isPolling.set(false);
+      }
     };
 
     return {
       order,
+      isPolling,
       pollOrder,
     };
   },

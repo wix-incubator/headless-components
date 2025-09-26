@@ -95,6 +95,10 @@ export interface DownloadTicketsButtonProps {
 export interface DownloadTicketsButtonRenderProps {
   /** Tickets PDF URL */
   ticketsPdfUrl: string;
+  /** Whether the order is polling */
+  isPolling: boolean;
+  /** Whether the order is ready */
+  isReady: boolean;
 }
 
 /**
@@ -107,8 +111,10 @@ export function DownloadTicketsButton(
 ): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const ticketsPdfUrl = orderService.order.get().ticketsPdf!;
+  const isPolling = orderService.isPolling.get();
+  const isReady = isOrderReady(orderService.order.get());
 
-  return props.children({ ticketsPdfUrl });
+  return props.children({ ticketsPdfUrl, isPolling, isReady });
 }
 
 export interface InvoiceItemsProps {
