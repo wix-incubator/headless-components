@@ -7,10 +7,7 @@ import {
 } from '@wix/services-definitions';
 import type { Signal } from '@wix/services-definitions/core-services/signals';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
-import {
-  enhancePosts,
-  type PostWithResolvedFields,
-} from './blog-feed-service.js';
+import { enhancePosts, type PostWithResolvedFields } from './blog-feed-service.js';
 
 type QueryPostsBuilder = ReturnType<ReturnType<typeof posts.queryPosts>>;
 
@@ -30,12 +27,12 @@ export const BlogPostService = implementService.withConfig<{
   const signalsService = getService(SignalsServiceDefinition);
 
   const postSignal = signalsService.signal<PostWithResolvedFields>(config.post);
-  const olderPostSignal = signalsService.signal<
-    PostWithResolvedFields | undefined
-  >(config.olderPost);
-  const newerPostSignal = signalsService.signal<
-    PostWithResolvedFields | undefined
-  >(config.newerPost);
+  const olderPostSignal = signalsService.signal<PostWithResolvedFields | undefined>(
+    config.olderPost,
+  );
+  const newerPostSignal = signalsService.signal<PostWithResolvedFields | undefined>(
+    config.newerPost,
+  );
 
   return {
     post: postSignal,
@@ -44,9 +41,7 @@ export const BlogPostService = implementService.withConfig<{
   };
 });
 
-export type BlogPostServiceConfig = ServiceFactoryConfig<
-  typeof BlogPostService
->;
+export type BlogPostServiceConfig = ServiceFactoryConfig<typeof BlogPostService>;
 
 export type BlogPostServiceConfigResult =
   | {
@@ -85,8 +80,8 @@ export async function loadBlogPostServiceConfig(
 
     const [enhancedPost, olderPost, newerPost] = await enhancePosts([
       post,
-      ...(siblingPosts.olderPost ? [siblingPosts.olderPost] : []),
-      ...(siblingPosts.newerPost ? [siblingPosts.newerPost] : []),
+      siblingPosts.olderPost,
+      siblingPosts.newerPost,
     ]);
 
     if (!enhancedPost) {
@@ -111,10 +106,7 @@ async function fetchSiblingPosts(post: posts.Post): Promise<{
   olderPost: posts.Post | undefined;
   newerPost: posts.Post | undefined;
 }> {
-  const [olderPost, newerPost] = await Promise.all([
-    fetchOlderPost(post),
-    fetchNewerPost(post),
-  ]);
+  const [olderPost, newerPost] = await Promise.all([fetchOlderPost(post), fetchNewerPost(post)]);
 
   return { olderPost, newerPost };
 }

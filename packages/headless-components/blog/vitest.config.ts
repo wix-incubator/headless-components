@@ -4,7 +4,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: ["./src/vitest.setup.ts"], // Adjusted path to be relative to this config file
+    setupFiles: ["./src/vitest.setup.ts"],
     passWithNoTests: true,
+    silent: 'passed-only',
   },
 });
