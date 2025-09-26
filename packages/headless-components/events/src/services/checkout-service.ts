@@ -25,7 +25,7 @@ export interface CheckoutServiceAPI {
  * Configuration options for the Checkout service
  */
 export interface CheckoutServiceConfig {
-  postFlowUrl?: string;
+  thankYouPageUrl?: string;
   noTicketDefinitionsSelectedError?: string;
 }
 
@@ -100,8 +100,8 @@ export const CheckoutService =
               eventSlug,
             },
             callbacks: {
-              postFlowUrl:
-                config.postFlowUrl ||
+              thankYouPageUrl:
+                config.thankYouPageUrl ||
                 (typeof window !== 'undefined' ? window.location.href : ''),
             },
           });

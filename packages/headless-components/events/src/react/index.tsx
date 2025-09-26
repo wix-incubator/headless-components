@@ -2,6 +2,8 @@ export * as Control from './Control.js';
 export * as Event from './Event.js';
 export * as EventList from './EventList.js';
 export * as Form from './Form.js';
+export * as InvoiceItem from './InvoiceItem.js';
+export * as Order from './Order.js';
 export * as PricingOption from './PricingOption.js';
 export * as ScheduleItem from './ScheduleItem.js';
 export * as ScheduleList from './ScheduleList.js';
