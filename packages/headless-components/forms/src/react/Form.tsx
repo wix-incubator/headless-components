@@ -43,6 +43,7 @@ import {
   AppointmentProps,
   ImageChoiceProps,
 } from './types.js';
+import { convertKeysToCamelCase } from '../utils/convertKeysToCamelCase';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -798,7 +799,7 @@ interface FieldsProps {
  * ```
  */
 export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
-  (props, ref) => {
+  ({ fieldMap }, ref) => {
     const [formValues, setFormValues] = useState<FormValues>({});
     const [formErrors, setFormErrors] = useState<FormError[]>([]);
 
@@ -813,25 +814,17 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     return (
       <CoreFields>
         {({ form }) => {
-          console.log('Fields form', form);
           if (!form) return null;
 
           return (
             <div ref={ref}>
               <FormViewer
-                form={{
-                  ...form,
-                  id: form?._id,
-                  fields: form?.formFields?.map((field) => ({
-                    ...field,
-                    id: field._id,
-                  })),
-                }}
+                form={convertKeysToCamelCase(form)}
                 values={formValues}
                 onChange={handleFormChange}
                 errors={formErrors}
                 onValidate={handleFormValidate}
-                fields={props.fieldMap}
+                fields={fieldMap}
               />
             </div>
           );
