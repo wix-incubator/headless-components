@@ -57,12 +57,14 @@ export type BlogPostServiceConfigResult =
 
 type BlogPostServiceConfigParams = {
   postSlug: string;
+  /** Fetches sibling posts (next/previous), defaults to true */
+  includeSiblingPosts?: boolean;
 };
 
 export async function loadBlogPostServiceConfig(
   params: BlogPostServiceConfigParams,
 ): Promise<BlogPostServiceConfigResult> {
-  const { postSlug } = params;
+  const { postSlug, includeSiblingPosts = true } = params;
 
   if (!postSlug) {
     return { type: 'notFound' };
@@ -77,7 +79,9 @@ export async function loadBlogPostServiceConfig(
       return { type: 'notFound' };
     }
 
-    const siblingPosts = await fetchSiblingPosts(post);
+    const siblingPosts = includeSiblingPosts
+      ? await fetchSiblingPosts(post)
+      : { olderPost: undefined, newerPost: undefined };
 
     const [enhancedPost, olderPost, newerPost] = await enhancePosts([
       post,
