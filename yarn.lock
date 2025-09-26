@@ -4048,25 +4048,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.camelcase@npm:^4.3.7":
-  version: 4.3.9
-  resolution: "@types/lodash.camelcase@npm:4.3.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10c0/d6c42c800624b75b079ff7862d258d7c8236837f8485a4fe9f92e5e7d3e9ccaef2eb202e24e8f04d209ad5573c85edc7871d0cecc831454a501d594b11f1311b
-  languageName: node
-  linkType: hard
-
-"@types/lodash.mapkeys@npm:^4.6.7":
-  version: 4.6.9
-  resolution: "@types/lodash.mapkeys@npm:4.6.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10c0/ddf92f4826bf5918d8da8b9b2ebef3ff69e5b2611b3c62225d960d6b553f45ada32aef4efd36d3658458c3e5f9ad10a1df721a27fbbaba80302a6b3363aa424a
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.178, @types/lodash@npm:^4.14.182":
+"@types/lodash@npm:^4.14.178, @types/lodash@npm:^4.14.182":
   version: 4.17.20
   resolution: "@types/lodash@npm:4.17.20"
   checksum: 10c0/98cdd0faae22cbb8079a01a3bb65aa8f8c41143367486c1cbf5adc83f16c9272a2a5d2c1f541f61d0d73da543c16ee1d21cf2ef86cb93cd0cc0ac3bced6dd88f
@@ -7374,8 +7356,6 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
-    "@types/lodash.camelcase": "npm:^4.3.7"
-    "@types/lodash.mapkeys": "npm:^4.6.7"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/form-public": "npm:^0.9.0"
@@ -7384,8 +7364,6 @@ __metadata:
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
-    lodash.camelcase: "npm:^4.3.0"
-    lodash.mapkeys: "npm:^4.6.0"
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
@@ -13059,13 +13037,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.camelcase@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "lodash.camelcase@npm:4.3.0"
-  checksum: 10c0/fcba15d21a458076dd309fce6b1b4bf611d84a0ec252cb92447c948c533ac250b95d2e00955801ebc367e5af5ed288b996d75d37d2035260a937008e14eaf432
-  languageName: node
-  linkType: hard
-
 "lodash.curry@npm:^4.1.1":
   version: 4.1.1
   resolution: "lodash.curry@npm:4.1.1"
@@ -13084,13 +13055,6 @@ __metadata:
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: 10c0/48f40d471a1654397ed41685495acb31498d5ed696185ac8973daef424a749ca0c7871bf7b665d5c14f5cc479394479e0307e781f61d5573831769593411be6e
-  languageName: node
-  linkType: hard
-
-"lodash.mapkeys@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "lodash.mapkeys@npm:4.6.0"
-  checksum: 10c0/5e7028eb5400a34007932cf224b2de1b1e8030e6ce79fe2d43b1e4a7362315270c914d741b13d81eef51529fcb02b6c51bb39fa6fe78a659e138e54e16252883
   languageName: node
   linkType: hard
 
