@@ -12,6 +12,7 @@ import {
 } from '../../services/schedule-list-service.js';
 import { type ScheduleItem } from '../../services/schedule-item-service.js';
 import { type ScheduleItemsGroup } from '../../services/schedule-items-group-service.js';
+import { STAGES_FILTER_KEY, TAGS_FILTER_KEY } from '../../constants.js';
 
 export interface RootProps {
   /** Child components that will have access to the schedule list service */
@@ -200,15 +201,15 @@ const buildTagFilterProps = (
   defaultOptionLabel: string,
 ) => {
   const TAG_FILTER_BASE = {
-    key: 'tag',
+    key: TAGS_FILTER_KEY,
     label: '',
     type: 'multi' as const,
     displayType: 'text' as const,
   };
 
   const STAGE_FILTER_BASE = {
-    key: 'stage',
-    label: 'Filter by: ',
+    key: STAGES_FILTER_KEY,
+    label: '',
     type: 'single' as const,
     displayType: 'text' as const,
   };

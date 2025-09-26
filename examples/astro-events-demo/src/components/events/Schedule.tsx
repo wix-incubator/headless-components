@@ -59,13 +59,29 @@ export function Schedule({
           <ScheduleListPrimitive.FiltersRoot defaultOptionLabel="All stages">
             <FilterPrimitive.FilterOptions>
               <FilterPrimitive.FilterOptionRepeater className="flex flex-row justify-between mb-6 items-center">
-                <div className="flex flex-row gap-2">
-                  <FilterPrimitive.FilterOption.Label className="font-light text-content-primary" />
-                  <FilterPrimitive.FilterOption.SingleFilter
-                    renderAsDropdown
-                    className="flex gap-2 text-content-primary"
-                  />
-                </div>
+                <FilterPrimitive.FilterOption.SingleFilter
+                  asChild
+                  className="flex gap-2 text-content-primary"
+                >
+                  {({ value, onChange, validValues, valueFormatter }) => (
+                    <div>
+                      <span>Filter by:</span>
+                      <select
+                        value={value}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                          onChange(e.target.value)
+                        }
+                        data-filter-type="single"
+                      >
+                        {validValues?.map(value => (
+                          <option key={value} value={value}>
+                            {valueFormatter ? valueFormatter(value) : value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </FilterPrimitive.FilterOption.SingleFilter>
                 <FilterPrimitive.FilterOption.MultiFilter className="flex gap-2 text-sm font-light text-content-primary [&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-gray-200 [&_button]:rounded-full [&_button[data-state=on]]:bg-blue-500 [&_button[data-state=on]]:text-white [&_button[data-state=on]]:border-blue-500" />
               </FilterPrimitive.FilterOptionRepeater>
             </FilterPrimitive.FilterOptions>
