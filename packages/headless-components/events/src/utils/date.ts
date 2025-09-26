@@ -14,6 +14,13 @@ export const formatFullDate = (date: string | Date) =>
     minute: '2-digit',
   });
 
+export const formatDateMonthDayYear = (date: string | Date) =>
+  new Date(date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
 export const formatTime = (date: string | Date) =>
   new Date(date).toLocaleTimeString('en-US', {
     hour: '2-digit',
