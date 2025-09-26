@@ -72,6 +72,8 @@ export interface CreatedDateProps {
 export interface CreatedDateRenderProps {
   /** Created date */
   createdDate: string;
+  /** Whether the order is ready */
+  isReady: boolean;
 }
 
 export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
@@ -80,13 +82,13 @@ export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
 
     return (
       <CoreOrder.CreatedDate>
-        {({ createdDate }) => (
+        {({ createdDate, isReady }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             customElement={children}
-            customElementProps={{ createdDate }}
+            customElementProps={{ createdDate, isReady }}
             content={createdDate}
             {...otherProps}
           >
@@ -139,7 +141,7 @@ export const DownloadTicketsButton = React.forwardRef<
   );
 });
 
-export interface TicketsProps {
+export interface InvoiceItemsProps {
   /** Render prop function */
   children:
     | React.ReactNode
@@ -152,7 +154,7 @@ export interface TicketsProps {
   className?: string;
 }
 
-export const Tickets = React.forwardRef<HTMLElement, TicketsProps>(
+export const InvoiceItems = React.forwardRef<HTMLElement, InvoiceItemsProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
 
@@ -176,17 +178,14 @@ export const Tickets = React.forwardRef<HTMLElement, TicketsProps>(
   },
 );
 
-export interface TicketRepeaterProps {
+export interface InvoiceItemRepeaterProps {
   /** Child components */
   children: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
-export const TicketRepeater = React.forwardRef<
-  HTMLElement,
-  TicketRepeaterProps
->((props) => {
+export const InvoiceItemRepeater = (props: InvoiceItemRepeaterProps) => {
   const { children, className } = props;
 
   return (
@@ -204,7 +203,7 @@ export const TicketRepeater = React.forwardRef<
       }
     </CoreOrder.InvoiceItemRepeater>
   );
-});
+};
 
 export interface SubtotalProps {
   /** Render prop function */

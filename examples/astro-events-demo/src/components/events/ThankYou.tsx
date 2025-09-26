@@ -165,14 +165,14 @@ export function ThankYou({
                           )}
                         </OrderPrimitive.DownloadTicketsButton>
                       </div>
-                      <OrderPrimitive.Tickets className="px-6 border-b border-gray-300">
+                      <OrderPrimitive.InvoiceItems className="px-6 border-b border-gray-300">
                         <div className="flex border-b border-gray-200 py-4 font-light text-content-primary">
                           <div className="w-[35%]">Ticket type</div>
                           <div className="w-[25%]">Price</div>
                           <div className="w-[15%]">Quantity</div>
                           <div className="w-[25%] text-right">Total</div>
                         </div>
-                        <OrderPrimitive.TicketRepeater>
+                        <OrderPrimitive.InvoiceItemRepeater>
                           <div className="flex border-b border-gray-200 py-4 font-light text-content-primary">
                             <div className="w-[35%]">
                               <InvoiceItemPrimitive.Name />
@@ -187,7 +187,7 @@ export function ThankYou({
                               <InvoiceItemPrimitive.Total />
                             </div>
                           </div>
-                        </OrderPrimitive.TicketRepeater>
+                        </OrderPrimitive.InvoiceItemRepeater>
                         <div className="flex flex-row justify-end">
                           <div className="w-[40%]">
                             <div className="flex flex-col py-5 border-b border-gray-300">
@@ -227,7 +227,7 @@ export function ThankYou({
                             </OrderPrimitive.Total>
                           </div>
                         </div>
-                      </OrderPrimitive.Tickets>
+                      </OrderPrimitive.InvoiceItems>
                       <div className="px-6 py-3 gap-1 flex flex-row items-center">
                         <OrderPrimitive.OrderNumber
                           asChild

@@ -1,12 +1,14 @@
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
+  isOrderReady,
   OrderService,
   OrderServiceConfig,
   OrderServiceDefinition,
 } from '../../services/order-service.js';
 import { formatLongDate } from '../../utils/date.js';
 import { InvoiceItem } from '../../services/invoice-item-service.js';
+import { useEffect } from 'react';
 
 export interface RootProps {
   /** Child components that will have access to the order service */
@@ -64,6 +66,8 @@ export interface CreatedDateProps {
 export interface CreatedDateRenderProps {
   /** Created date */
   createdDate: string;
+  /** Whether the order is ready */
+  isReady: boolean;
 }
 
 /**
@@ -74,8 +78,13 @@ export interface CreatedDateRenderProps {
 export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const createdDate = formatLongDate(orderService.order.get().created!);
+  const isReady = isOrderReady(orderService.order.get());
 
-  return props.children({ createdDate });
+  useEffect(() => {
+    orderService.pollOrder();
+  }, []);
+
+  return props.children({ createdDate, isReady });
 }
 
 export interface DownloadTicketsButtonProps {
