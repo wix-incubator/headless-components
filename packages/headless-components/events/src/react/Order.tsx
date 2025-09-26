@@ -72,7 +72,7 @@ export interface OrderNumberRenderProps {
  *   <h2 className="text-xl font-bold text-gray-900" />
  * </Order.OrderNumber>
  *
- * // Real usage from ThankYou page
+ * // asChild with react component
  * <Order.OrderNumber
  *   asChild
  *   className="font-light text-sm text-gray-700"
@@ -134,10 +134,10 @@ export interface CreatedDateRenderProps {
  *
  * // asChild with primitive
  * <Order.CreatedDate asChild>
- *   <time className="text-sm text-gray-500 font-light" />
+ *   <p className="text-sm text-gray-500 font-light" />
  * </Order.CreatedDate>
  *
- * // Real usage from ThankYou page
+ * // asChild with react component
  * <Order.CreatedDate
  *   asChild
  *   className="font-light text-sm text-gray-700"
@@ -208,7 +208,7 @@ export interface DownloadTicketsButtonRenderProps {
  *   <a className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" />
  * </Order.DownloadTicketsButton>
  *
- * // Real usage from ThankYou page
+ * // asChild with react component
  * <Order.DownloadTicketsButton asChild>
  *   {({ ticketsPdfUrl, isVisible }) =>
  *     isVisible && (
@@ -268,7 +268,6 @@ export interface InvoiceItemsProps {
  * @component
  * @example
  * ```tsx
- * // Real usage from ThankYou page
  * <Order.InvoiceItems className="px-6 border-b border-gray-300">
  *   <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
  *     <div className="w-[35%]">Ticket type</div>
@@ -284,26 +283,6 @@ export interface InvoiceItemsProps {
  *       <div className="w-[25%] text-right"><InvoiceItem.Total /></div>
  *     </div>
  *   </Order.InvoiceItemRepeater>
- * </Order.InvoiceItems>
- *
- * // asChild with primitive
- * <Order.InvoiceItems asChild>
- *   <div className="bg-white rounded-lg shadow p-4" />
- * </Order.InvoiceItems>
- *
- * // Custom render function with item count
- * <Order.InvoiceItems>
- *   {({ invoiceItems }) => (
- *     <div className="p-4">
- *       <h3 className="text-lg font-semibold mb-4">Items ({invoiceItems.length})</h3>
- *       <Order.InvoiceItemRepeater>
- *         <div className="flex justify-between py-2">
- *           <InvoiceItem.Name />
- *           <InvoiceItem.Total />
- *         </div>
- *       </Order.InvoiceItemRepeater>
- *     </div>
- *   )}
  * </Order.InvoiceItems>
  * ```
  */
@@ -434,7 +413,7 @@ export interface SubtotalRenderProps {
  *   <p className="text-lg font-light text-gray-700" />
  * </Order.Subtotal>
  *
- * // Real usage from ThankYou page
+ * // asChild with react component
  * <Order.Subtotal
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
@@ -504,7 +483,7 @@ export interface TaxRenderProps {
  *   <p className="text-sm text-gray-600 font-light" />
  * </Order.Tax>
  *
- * // Real usage from ThankYou page
+ * // asChild with react component
  * <Order.Tax
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
@@ -572,7 +551,7 @@ export interface ServiceFeeRenderProps {
  *   <p className="text-sm text-gray-600 font-light" />
  * </Order.ServiceFee>
  *
- * // Real usage from ThankYou page
+ * // asChild with react component
  * <Order.ServiceFee
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
@@ -641,7 +620,7 @@ export interface TotalRenderProps {
  *   <p className="text-2xl font-bold text-gray-900" />
  * </Order.Total>
  *
- * // Real usage from ThankYou page
+ * // asChild with react component
  * <Order.Total
  *   asChild
  *   className="font-light text-gray-700 justify-between flex py-5"
