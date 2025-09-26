@@ -1,0 +1,17 @@
+---
+import { loadCategoryListServiceConfig, loadProgramListServiceConfig } from '@wix/headless-online-programs/services';
+
+import ProgramsPage from '../react-pages/online-programs/programs';
+
+const [programListServiceConfig, categoryListServiceConfig] = await Promise.all([
+  loadProgramListServiceConfig(),
+  loadCategoryListServiceConfig(),
+]);
+
+---
+
+<ProgramsPage
+  client:load
+  programListServiceConfig={programListServiceConfig}
+  categoryListServiceConfig={categoryListServiceConfig}
+/>
