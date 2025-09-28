@@ -1364,7 +1364,9 @@ describe('Product Components', () => {
       </Product.Root>,
     );
 
-    const rootElement = container.querySelector('[data-component-tag="stores.product-root"]');
+    const rootElement = container.querySelector(
+      '[data-component-tag="stores.product-root"]',
+    );
     expect(rootElement).toBeDefined();
   });
 
@@ -1381,7 +1383,9 @@ describe('Product Components', () => {
       </Product.Root>,
     );
 
-    const rootElement = container.querySelector('[data-component-tag="stores.product-root"]');
+    const rootElement = container.querySelector(
+      '[data-component-tag="stores.product-root"]',
+    );
     expect(rootElement).toBeDefined();
   });
 });
