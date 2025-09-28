@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { useMember } from "@/integrations/members";
+import { useMember } from "@/integrations";
 import {
   PricingPlans,
   type PlanDurationData,

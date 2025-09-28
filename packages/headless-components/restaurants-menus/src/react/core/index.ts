@@ -1,4 +1,10 @@
-export { Menus, Loading, ErrorState } from './Menus.js';
+export {
+  Menus,
+  Loading,
+  ErrorState,
+  MenuSelector,
+  LocationSelector,
+} from './Menus.js';
 export {
   Menu,
   useMenuContext,
@@ -18,6 +24,7 @@ export {
   Description as ItemDescription,
   Price,
   Image,
+  AdditionalImages,
 } from './Item.js';
 export {
   Label as CoreLabel,

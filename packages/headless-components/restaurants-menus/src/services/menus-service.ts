@@ -20,10 +20,12 @@ import type {
   EnhancedModifierGroup,
   CursorPagingMetadata,
   EnhancedModifier,
+  Location,
 } from './types.js';
 import {
   SignalsServiceDefinition,
   type Signal,
+  type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
 
 export interface MenusServiceConfig {
@@ -38,14 +40,18 @@ export interface MenusServiceConfig {
 }
 export interface MenusServiceAPI {
   menus: Signal<Menu[]>;
+  filteredMenus: ReadOnlySignal<Menu[]>;
   sections: Signal<Section[]>;
   items: Signal<EnhancedItem[]>;
   variants: Signal<Variant[]>;
   labels: Signal<Label[]>;
   modifierGroups: Signal<EnhancedModifierGroup[]>;
   modifiers: Signal<Modifier[]>;
+  locations: Signal<Location[]>;
   loading: Signal<boolean>;
   error: Signal<string | null>;
+  selectedMenu: Signal<Menu | null>;
+  selectedLocation: Signal<string | null>;
 }
 
 export const MenusServiceDefinition = defineService<
@@ -169,6 +175,25 @@ function createEnhancedEntities(
   };
 }
 
+export const getLocations = (menus: Menu[]) => {
+  return menus.reduce<Location[]>((acc, menu) => {
+    const locationId = menu.businessLocationId;
+    const locationName = menu.businessLocationDetails?.name;
+    const archived = menu.businessLocationDetails?.archived;
+
+    if (locationId && !archived) {
+      const existingLocation = acc.find((loc) => loc.id === locationId);
+      if (!existingLocation) {
+        acc.push({
+          id: locationId,
+          name: locationName || `Location ${locationId}`,
+        });
+      }
+    }
+    return acc;
+  }, []);
+};
+
 export const MenusService = implementService.withConfig<MenusServiceConfig>()(
   MenusServiceDefinition,
   ({ getService, config }) => {
@@ -191,19 +216,74 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
     const modifiersSignal = signalsService.signal<Modifier[]>(
       config.modifiers || [],
     );
+    const locationsSignal = signalsService.signal<Location[]>([]);
     const loadingSignal = signalsService.signal<boolean>(false);
     const errorSignal = signalsService.signal<string | null>(null);
+    const selectedMenuSignal = signalsService.signal<Menu | null>(null);
+    const selectedLocationSignal = signalsService.signal<string | null>(null);
+
+    const updateLocations = () => {
+      const currentMenus = menusSignal.get();
+      const locations = getLocations(currentMenus);
+      locationsSignal.set(locations);
+    };
+
+    const filterMenusByLocation = () => {
+      const allMenus = menusSignal.get();
+      const selectedLocationId = selectedLocationSignal.get();
+
+      if (!selectedLocationId || selectedLocationId === 'all') {
+        // If no location selected or "all" selected, show all menus
+        return allMenus;
+      }
+
+      // Filter menus by selected location
+      return allMenus.filter(
+        (menu) => menu.businessLocationId === selectedLocationId,
+      );
+    };
+
+    signalsService.effect(() => {
+      updateLocations();
+    });
+
+    // Reset selected menu when location changes
+    signalsService.effect(() => {
+      const selectedMenu = selectedMenuSignal.get();
+
+      // If there's a selected menu, check if it's still valid for the current location
+      if (selectedMenu) {
+        const filteredMenus = filterMenusByLocation();
+        const isMenuStillValid = filteredMenus.some(
+          (menu) => menu._id === selectedMenu._id,
+        );
+
+        // If the selected menu is not available in the filtered menus, reset selection
+        if (!isMenuStillValid) {
+          selectedMenuSignal.set(null);
+        }
+      }
+    });
+
+    // Create a computed signal for filtered menus
+    const filteredMenusSignal = signalsService.computed(() => {
+      return filterMenusByLocation();
+    });
 
     return {
       menus: menusSignal,
+      filteredMenus: filteredMenusSignal,
       sections: sectionsSignal,
       items: itemsSignal,
       variants: variantsSignal,
       labels: labelsSignal,
       modifierGroups: modifierGroupsSignal,
       modifiers: modifiersSignal,
+      locations: locationsSignal,
       loading: loadingSignal,
       error: errorSignal,
+      selectedMenu: selectedMenuSignal,
+      selectedLocation: selectedLocationSignal,
     };
   },
 );

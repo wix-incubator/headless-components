@@ -21,6 +21,8 @@ const HTML_CODE_TAG = 'blog.post';
 interface PostContextValue {
   post: PostWithResolvedFields | null;
   coverImageUrl?: string;
+  olderPost?: PostWithResolvedFields;
+  newerPost?: PostWithResolvedFields;
 }
 
 const PostContext = React.createContext<PostContextValue | null>(null);
@@ -30,9 +32,7 @@ PostContext.displayName = 'Blog.Post.PostContext';
 export function usePostContext(): PostContextValue {
   const context = React.useContext(PostContext);
   if (!context) {
-    throw new Error(
-      'usePostContext must be used within a BlogPost.Root component',
-    );
+    throw new Error('usePostContext must be used within a BlogPost.Root component');
   }
   return context;
 }
@@ -51,6 +51,9 @@ const enum TestIds {
   blogPostReadingTime = 'blog-post-reading-time',
   blogPostCategories = 'blog-post-categories',
   blogPostTags = 'blog-post-tags',
+  blogPostSiblingPosts = 'blog-post-sibling-posts',
+  blogPostSiblingNewerPost = 'blog-post-sibling-newer-post',
+  blogPostSiblingOlderPost = 'blog-post-sibling-older-post',
 }
 
 export interface BlogPostRootProps {
@@ -118,113 +121,115 @@ export interface BlogPostRootProps {
  * }
  * ```
  */
-export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>(
-  (props, ref) => {
-    const {
-      asChild,
-      children,
-      className,
-      post: providedPost,
-      emptyState,
-      fallbackImageUrl,
-      blogPostServiceConfig,
-    } = props;
+export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>((props, ref) => {
+  const {
+    asChild,
+    children,
+    className,
+    post: providedPost,
+    emptyState,
+    fallbackImageUrl,
+    blogPostServiceConfig,
+  } = props;
 
-    const renderRoot = (post: PostWithResolvedFields) => {
-      const contextValue: PostContextValue = {
-        post,
-        coverImageUrl: post?.resolvedFields?.coverImageUrl || fallbackImageUrl,
-      };
-      const attributes = {
-        'data-component-tag': HTML_CODE_TAG,
-        'data-testid': TestIds.blogPostRoot,
-        'data-post-id': post._id,
-        'data-post-slug': post.slug,
-        'data-post-pinned': post.pinned,
-        'data-has-cover-image': !!contextValue.coverImageUrl,
-      };
-
-      return (
-        <PostContext.Provider value={contextValue}>
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            customElement={children}
-            customElementProps={{ post }}
-            {...attributes}
-          >
-            {children}
-          </AsChildSlot>
-        </PostContext.Provider>
-      );
+  const renderRoot = (
+    post: PostWithResolvedFields,
+    olderPost?: PostWithResolvedFields,
+    newerPost?: PostWithResolvedFields,
+  ) => {
+    const contextValue: PostContextValue = {
+      post,
+      coverImageUrl: post?.resolvedFields?.coverImageUrl || fallbackImageUrl,
+      olderPost,
+      newerPost,
+    };
+    const attributes = {
+      'data-component-tag': HTML_CODE_TAG,
+      'data-testid': TestIds.blogPostRoot,
+      'data-post-id': post._id,
+      'data-post-slug': post.slug,
+      'data-post-pinned': post.pinned,
+      'data-has-cover-image': !!contextValue.coverImageUrl,
     };
 
-    // If post is provided via props, use it directly
-    if (providedPost) {
-      return renderRoot(providedPost);
-    }
-
-    // Otherwise, use service to get post data
     return (
-      <WixServices
-        servicesMap={createServicesMap().addService(
-          BlogPostServiceDefinition,
-          BlogPostService,
-          blogPostServiceConfig,
-        )}
-      >
-        <CoreBlogPost.Root>
-          {({ post }) => {
-            if (!post) {
-              return emptyState || null;
-            }
-
-            return renderRoot(post);
-          }}
-        </CoreBlogPost.Root>
-      </WixServices>
+      <PostContext.Provider value={contextValue}>
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          customElement={children}
+          customElementProps={{ post }}
+          {...attributes}
+        >
+          {children}
+        </AsChildSlot>
+      </PostContext.Provider>
     );
-  },
-);
+  };
+
+  // If post is provided via props, use it directly
+  if (providedPost) {
+    return renderRoot(providedPost);
+  }
+
+  // Otherwise, use service to get post data
+  return (
+    <WixServices
+      // key: Ensure we re-render the component when the post changes
+      key={blogPostServiceConfig?.post._id}
+      servicesMap={createServicesMap().addService(
+        BlogPostServiceDefinition,
+        BlogPostService,
+        blogPostServiceConfig,
+      )}
+    >
+      <CoreBlogPost.Root>
+        {({ post, olderPost, newerPost }) => {
+          if (!post) {
+            return emptyState || null;
+          }
+
+          return renderRoot(post, olderPost, newerPost);
+        }}
+      </CoreBlogPost.Root>
+    </WixServices>
+  );
+});
 
 Root.displayName = 'Blog.Post.Root';
 
 export interface CoverImageProps {
   asChild?: boolean;
   className?: string;
-  children?:
-    | AsChildChildren<{ imageUrl: string; alt: string }>
-    | React.ReactNode;
+  children?: AsChildChildren<{ imageUrl: string; alt: string }> | React.ReactNode;
 }
 
-export const CoverImage = React.forwardRef<HTMLElement, CoverImageProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-    const { post, coverImageUrl } = usePostContext();
+export const CoverImage = React.forwardRef<HTMLElement, CoverImageProps>((props, ref) => {
+  const { asChild, children, className } = props;
+  const { post, coverImageUrl } = usePostContext();
 
-    const alt = post?.resolvedFields?.coverImageAlt || post?.title || '';
+  const alt = post?.resolvedFields?.coverImageAlt || post?.title || '';
 
-    if (!coverImageUrl) return null;
+  if (!coverImageUrl) return null;
 
-    const attributes = {
-      'data-testid': TestIds.blogPostCoverImage,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostCoverImage,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ imageUrl: coverImageUrl, alt }}
-      >
-        <img src={coverImageUrl} alt={alt} />
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{ imageUrl: coverImageUrl, alt }}
+    >
+      <img src={coverImageUrl} alt={alt} />
+    </AsChildSlot>
+  );
+});
 
 CoverImage.displayName = 'Blog.Post.CoverImage';
 
@@ -256,35 +261,33 @@ export interface LinkProps {
  * </Blog.Post.Link>
  * ```
  */
-export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
-  (props, ref) => {
-    const { asChild, children, className, baseUrl = '' } = props;
-    const { post } = usePostContext();
+export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
+  const { asChild, children, className, baseUrl = '' } = props;
+  const { post } = usePostContext();
 
-    const slug = post?.slug;
-    if (!slug) return null;
+  const slug = post?.slug;
+  if (!slug) return null;
 
-    const href = `${baseUrl}${slug}`;
+  const href = `${baseUrl}${slug}`;
 
-    const attributes = {
-      'data-testid': TestIds.blogPostLink,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostLink,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ href, slug }}
-        content={children}
-      >
-        <a href={href}>{isValidChildren(children) ? children : slug}</a>
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{ href, slug }}
+      content={children}
+    >
+      <a href={href}>{isValidChildren(children) ? children : slug}</a>
+    </AsChildSlot>
+  );
+});
 
 Link.displayName = 'Blog.Post.Link';
 
@@ -314,33 +317,31 @@ export interface ExcerptProps {
  * </Blog.Post.Excerpt>
  * ```
  */
-export const Excerpt = React.forwardRef<HTMLElement, ExcerptProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-    const { post } = usePostContext();
+export const Excerpt = React.forwardRef<HTMLElement, ExcerptProps>((props, ref) => {
+  const { asChild, children, className } = props;
+  const { post } = usePostContext();
 
-    if (!post?.excerpt) return null;
+  if (!post?.excerpt) return null;
 
-    const excerpt = post.excerpt;
-    const attributes = {
-      'data-testid': TestIds.blogPostExcerpt,
-    };
+  const excerpt = post.excerpt;
+  const attributes = {
+    'data-testid': TestIds.blogPostExcerpt,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ excerpt }}
-        content={excerpt}
-      >
-        <p>{excerpt}</p>
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{ excerpt }}
+      content={excerpt}
+    >
+      <p>{excerpt}</p>
+    </AsChildSlot>
+  );
+});
 
 Excerpt.displayName = 'Blog.Post.Excerpt';
 
@@ -430,35 +431,33 @@ export interface ContentProps {
  * </Blog.Post.Content>
  * ```
  */
-export const Content = React.forwardRef<HTMLElement, ContentProps>(
-  (props, ref) => {
-    const { children, className } = props;
-    const asChild = true;
+export const Content = React.forwardRef<HTMLElement, ContentProps>((props, ref) => {
+  const { children, className } = props;
+  const asChild = true;
 
-    const attributes = {
-      'data-testid': TestIds.blogPostContent,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostContent,
+  };
 
-    return (
-      <CoreBlogPost.RichContent>
-        {({ content, pricingPlanIds }) => {
-          if (!content) return null;
+  return (
+    <CoreBlogPost.RichContent>
+      {({ content, pricingPlanIds }) => {
+        if (!content) return null;
 
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              {...attributes}
-              customElement={children}
-              customElementProps={{ content, pricingPlanIds }}
-            ></AsChildSlot>
-          );
-        }}
-      </CoreBlogPost.RichContent>
-    );
-  },
-);
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            {...attributes}
+            customElement={children}
+            customElementProps={{ content, pricingPlanIds }}
+          ></AsChildSlot>
+        );
+      }}
+    </CoreBlogPost.RichContent>
+  );
+});
 
 Content.displayName = 'Blog.Post.Content';
 
@@ -466,9 +465,7 @@ export interface PublishDateProps {
   asChild?: boolean;
   className?: string;
   locale: Intl.LocalesArgument;
-  children?:
-    | AsChildChildren<{ publishDate: string; formattedDate: string }>
-    | React.ReactNode;
+  children?: AsChildChildren<{ publishDate: string; formattedDate: string }> | React.ReactNode;
 }
 
 /**
@@ -496,43 +493,40 @@ export interface PublishDateProps {
  * </Blog.Post.PublishDate>
  * ```
  */
-export const PublishDate = React.forwardRef<HTMLElement, PublishDateProps>(
-  (props, ref) => {
-    const { asChild, children, className, locale } = props;
-    const { post } = usePostContext();
+export const PublishDate = React.forwardRef<HTMLElement, PublishDateProps>((props, ref) => {
+  const { asChild, children, className, locale } = props;
+  const { post } = usePostContext();
 
-    const publishDate = post?.firstPublishedDate;
-    if (!publishDate) return null;
+  const publishDate = post?.firstPublishedDate;
+  if (!publishDate) return null;
 
-    const formattedDate = new Date(publishDate).toLocaleDateString(locale, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+  const formattedDate = new Date(publishDate).toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 
-    // Ensure publishDate is a string for dateTime attribute
-    const dateTimeString =
-      typeof publishDate === 'string' ? publishDate : publishDate.toISOString();
+  // Ensure publishDate is a string for dateTime attribute
+  const dateTimeString = typeof publishDate === 'string' ? publishDate : publishDate.toISOString();
 
-    const attributes = {
-      'data-testid': TestIds.blogPostPublishDate,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostPublishDate,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ publishDate: dateTimeString, formattedDate }}
-        content={formattedDate}
-      >
-        <time dateTime={dateTimeString}>{formattedDate}</time>
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{ publishDate: dateTimeString, formattedDate }}
+      content={formattedDate}
+    >
+      <time dateTime={dateTimeString}>{formattedDate}</time>
+    </AsChildSlot>
+  );
+});
 
 PublishDate.displayName = 'Blog.Post.PublishDate';
 
@@ -542,33 +536,31 @@ export interface ReadingTimeProps {
   children?: AsChildChildren<{ readingTime: number }> | React.ReactNode;
 }
 
-export const ReadingTime = React.forwardRef<HTMLElement, ReadingTimeProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-    const { post } = usePostContext();
+export const ReadingTime = React.forwardRef<HTMLElement, ReadingTimeProps>((props, ref) => {
+  const { asChild, children, className } = props;
+  const { post } = usePostContext();
 
-    const readingTime = post?.minutesToRead ?? 0;
-    if (readingTime <= 0) return null;
+  const readingTime = post?.minutesToRead ?? 0;
+  if (readingTime <= 0) return null;
 
-    const attributes = {
-      'data-testid': TestIds.blogPostReadingTime,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostReadingTime,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ readingTime }}
-        content={readingTime}
-      >
-        <span>{readingTime}</span>
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{ readingTime }}
+      content={readingTime}
+    >
+      <span>{readingTime}</span>
+    </AsChildSlot>
+  );
+});
 
 ReadingTime.displayName = 'Blog.Post.ReadingTime';
 
@@ -576,17 +568,14 @@ interface PostCategoriesContextValue {
   categories: posts.Category[];
 }
 
-const PostCategoriesContext =
-  React.createContext<PostCategoriesContextValue | null>(null);
+const PostCategoriesContext = React.createContext<PostCategoriesContextValue | null>(null);
 
 PostCategoriesContext.displayName = 'Blog.Post.PostCategoriesContext';
 
 export function usePostCategoriesContext(): PostCategoriesContextValue {
   const context = React.useContext(PostCategoriesContext);
   if (!context) {
-    throw new Error(
-      'usePostCategoriesContext must be used within a BlogPost.Categories component',
-    );
+    throw new Error('usePostCategoriesContext must be used within a BlogPost.Categories component');
   }
   return context;
 }
@@ -597,17 +586,14 @@ interface CategoryRepeaterContextValue {
   amount: number;
 }
 
-const CategoryRepeaterContext =
-  React.createContext<CategoryRepeaterContextValue | null>(null);
+const CategoryRepeaterContext = React.createContext<CategoryRepeaterContextValue | null>(null);
 
 CategoryRepeaterContext.displayName = 'Blog.Post.CategoryRepeaterContext';
 
 export function useCategoryRepeaterContext(): CategoryRepeaterContextValue {
   const context = React.useContext(CategoryRepeaterContext);
   if (!context) {
-    throw new Error(
-      'useCategoryContext must be used within a BlogPost.CategoryRepeater component',
-    );
+    throw new Error('useCategoryContext must be used within a BlogPost.CategoryRepeater component');
   }
   return context;
 }
@@ -623,9 +609,7 @@ PostTagsContext.displayName = 'Blog.Post.PostTagsContext';
 export function usePostTagsContext(): PostTagsContextValue {
   const context = React.useContext(PostTagsContext);
   if (!context) {
-    throw new Error(
-      'usePostTagsContext must be used within a BlogPost.Tags component',
-    );
+    throw new Error('usePostTagsContext must be used within a BlogPost.Tags component');
   }
   return context;
 }
@@ -636,18 +620,14 @@ interface TagRepeaterContextValue {
   amount: number;
 }
 
-const TagRepeaterContext = React.createContext<TagRepeaterContextValue | null>(
-  null,
-);
+const TagRepeaterContext = React.createContext<TagRepeaterContextValue | null>(null);
 
 TagRepeaterContext.displayName = 'Blog.Post.TagRepeaterContext';
 
 export function useTagRepeaterContext(): TagRepeaterContextValue {
   const context = React.useContext(TagRepeaterContext);
   if (!context) {
-    throw new Error(
-      'useTagContext must be used within a BlogPost.TagRepeater component',
-    );
+    throw new Error('useTagContext must be used within a BlogPost.TagRepeater component');
   }
   return context;
 }
@@ -672,39 +652,33 @@ export interface CategoryItemsProps {
  * </Blog.Post.CategoryItems>
  * ```
  */
-export const CategoryItems = React.forwardRef<HTMLElement, CategoryItemsProps>(
-  (props, ref) => {
-    const { children, className } = props;
-    const { post } = usePostContext();
+export const CategoryItems = React.forwardRef<HTMLElement, CategoryItemsProps>((props, ref) => {
+  const { children, className } = props;
+  const { post } = usePostContext();
 
-    const categories = post?.resolvedFields?.categories || [];
-    const hasCategories = categories.length > 0;
+  const categories = post?.resolvedFields?.categories || [];
+  const hasCategories = categories.length > 0;
 
-    if (!hasCategories) return null;
+  if (!hasCategories) return null;
 
-    const contextValue: PostCategoriesContextValue = {
-      categories,
-    };
+  const contextValue: PostCategoriesContextValue = {
+    categories,
+  };
 
-    const attributes = {
-      'data-testid': TestIds.blogPostCategories,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostCategories,
+  };
 
-    return (
-      <PostCategoriesContext.Provider value={contextValue}>
-        <BlogCategories.Root categories={categories} asChild>
-          <div
-            {...attributes}
-            ref={ref as React.Ref<HTMLDivElement>}
-            className={className}
-          >
-            {children}
-          </div>
-        </BlogCategories.Root>
-      </PostCategoriesContext.Provider>
-    );
-  },
-);
+  return (
+    <PostCategoriesContext.Provider value={contextValue}>
+      <BlogCategories.Root categories={categories} asChild>
+        <div {...attributes} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+          {children}
+        </div>
+      </BlogCategories.Root>
+    </PostCategoriesContext.Provider>
+  );
+});
 
 CategoryItems.displayName = 'Blog.Post.Categories';
 
@@ -728,37 +702,31 @@ export interface TagItemsProps {
  * </Blog.Post.TagItems>
  * ```
  */
-export const TagItems = React.forwardRef<HTMLElement, TagItemsProps>(
-  (props, ref) => {
-    const { children, className } = props;
-    const { post } = usePostContext();
+export const TagItems = React.forwardRef<HTMLElement, TagItemsProps>((props, ref) => {
+  const { children, className } = props;
+  const { post } = usePostContext();
 
-    const postTags = post?.resolvedFields?.tags || [];
-    const hasTags = postTags.length > 0;
+  const postTags = post?.resolvedFields?.tags || [];
+  const hasTags = postTags.length > 0;
 
-    if (!hasTags) return null;
+  if (!hasTags) return null;
 
-    const contextValue: PostTagsContextValue = {
-      tags: postTags,
-    };
+  const contextValue: PostTagsContextValue = {
+    tags: postTags,
+  };
 
-    const attributes = {
-      'data-testid': TestIds.blogPostTags,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostTags,
+  };
 
-    return (
-      <PostTagsContext.Provider value={contextValue}>
-        <div
-          {...attributes}
-          ref={ref as React.Ref<HTMLDivElement>}
-          className={className}
-        >
-          {children}
-        </div>
-      </PostTagsContext.Provider>
-    );
-  },
-);
+  return (
+    <PostTagsContext.Provider value={contextValue}>
+      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+        {children}
+      </div>
+    </PostTagsContext.Provider>
+  );
+});
 
 TagItems.displayName = 'Blog.Post.Tags';
 
@@ -781,33 +749,32 @@ export interface TagItemRepeaterProps {
  * </Blog.Post.TagItems>
  * ```
  */
-export const TagItemRepeater = React.forwardRef<
-  HTMLElement,
-  TagItemRepeaterProps
->((props, _ref) => {
-  const { children } = props;
-  const { tags } = usePostTagsContext();
+export const TagItemRepeater = React.forwardRef<HTMLElement, TagItemRepeaterProps>(
+  (props, _ref) => {
+    const { children } = props;
+    const { tags } = usePostTagsContext();
 
-  if (tags.length === 0) return null;
+    if (tags.length === 0) return null;
 
-  return (
-    <>
-      {tags.map((tag, index) => {
-        const contextValue: TagRepeaterContextValue = {
-          tag,
-          index,
-          amount: tags.length,
-        };
+    return (
+      <>
+        {tags.map((tag, index) => {
+          const contextValue: TagRepeaterContextValue = {
+            tag,
+            index,
+            amount: tags.length,
+          };
 
-        return (
-          <TagRepeaterContext.Provider key={tag._id} value={contextValue}>
-            {children}
-          </TagRepeaterContext.Provider>
-        );
-      })}
-    </>
-  );
-});
+          return (
+            <TagRepeaterContext.Provider key={tag._id} value={contextValue}>
+              {children}
+            </TagRepeaterContext.Provider>
+          );
+        })}
+      </>
+    );
+  },
+);
 
 TagItemRepeater.displayName = 'Blog.Post.TagRepeater';
 
@@ -817,38 +784,36 @@ export interface AuthorNameProps {
   children?: AsChildChildren<{ authorName: string }> | React.ReactNode;
 }
 
-export const AuthorName = React.forwardRef<HTMLElement, AuthorNameProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-    const { post } = usePostContext();
+export const AuthorName = React.forwardRef<HTMLElement, AuthorNameProps>((props, ref) => {
+  const { asChild, children, className } = props;
+  const { post } = usePostContext();
 
-    const owner = post?.resolvedFields?.owner;
-    if (!owner) return null;
+  const owner = post?.resolvedFields?.owner;
+  if (!owner) return null;
 
-    const { authorName } = createAuthorName(owner);
-    if (!authorName) return null;
+  const { authorName } = createAuthorName(owner);
+  if (!authorName) return null;
 
-    const attributes = {
-      'data-testid': TestIds.blogPostAuthorName,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostAuthorName,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{
-          authorName,
-        }}
-        content={authorName}
-      >
-        <span>{authorName}</span>
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{
+        authorName,
+      }}
+      content={authorName}
+    >
+      <span>{authorName}</span>
+    </AsChildSlot>
+  );
+});
 
 AuthorName.displayName = 'Blog.Post.AuthorName';
 
@@ -863,52 +828,169 @@ export interface AuthorAvatarProps {
     | React.ReactNode;
 }
 
-export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-    const { post } = usePostContext();
-    const [error, setError] = React.useState(false);
-    const onError = React.useCallback(() => setError(true), []);
+export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>((props, ref) => {
+  const { asChild, children, className } = props;
+  const { post } = usePostContext();
+  const [error, setError] = React.useState(false);
+  const onError = React.useCallback(() => setError(true), []);
 
-    const owner = post?.resolvedFields?.owner;
-    if (!owner) return null;
+  const owner = post?.resolvedFields?.owner;
+  if (!owner) return null;
 
-    const { authorAvatarInitials } = createAuthorName(owner);
-    const authorAvatarUrl = owner.profile?.photo?.url;
+  const { authorAvatarInitials } = createAuthorName(owner);
+  const authorAvatarUrl = owner.profile?.photo?.url;
 
-    if (!authorAvatarInitials && !authorAvatarUrl) return null;
+  if (!authorAvatarInitials && !authorAvatarUrl) return null;
 
-    const attributes = {
-      'data-testid': TestIds.blogPostAuthorAvatar,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogPostAuthorAvatar,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{
-          authorAvatarUrl,
-          authorAvatarInitials,
-        }}
-      >
-        {authorAvatarUrl && !error ? (
-          <img
-            src={authorAvatarUrl}
-            alt={authorAvatarInitials}
-            onError={onError}
-          />
-        ) : (
-          <span>{authorAvatarInitials}</span>
-        )}
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{
+        authorAvatarUrl,
+        authorAvatarInitials,
+      }}
+    >
+      {authorAvatarUrl && !error ? (
+        <img src={authorAvatarUrl} alt={authorAvatarInitials} onError={onError} />
+      ) : (
+        <span>{authorAvatarInitials}</span>
+      )}
+    </AsChildSlot>
+  );
+});
 
 AuthorAvatar.displayName = 'Blog.Post.AuthorAvatar';
+
+export interface SiblingPostsRootProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+/**
+ * Renders only if there is an older or newer post
+ * @example
+ * ```tsx
+ * <Blog.Post.SiblingPosts.Root>
+ *   <h2>Continue reading</h2>
+ *   <Blog.Post.SiblingPosts.Newer>
+ *     <Blog.Post.Title />
+ *   </Blog.Post.SiblingPosts.Newer>
+ *   <Blog.Post.SiblingPosts.Older>
+ *     <Blog.Post.Title />
+ *   </Blog.Post.SiblingPosts.Older>
+ * </Blog.Post.SiblingPosts.Root>
+ * ```
+ */
+const SiblingPostsRoot = React.forwardRef<HTMLElement, SiblingPostsRootProps>((props, ref) => {
+  const { children, className } = props;
+  const { olderPost, newerPost } = usePostContext();
+
+  if (!olderPost && !newerPost) return null;
+
+  const attributes = {
+    'data-testid': TestIds.blogPostSiblingPosts,
+  };
+
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+      {children}
+    </div>
+  );
+});
+
+SiblingPostsRoot.displayName = 'Blog.Post.SiblingPosts.Root';
+
+export interface SiblingPostNextProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+/**
+ * Creates a Post context for a newer post
+ * @example
+ * ```tsx
+ * <Blog.Post.SiblingPosts.Newer>
+ *   <Blog.Post.Title />
+ * </Blog.Post.SiblingPosts.Newer>
+ * ```
+ */
+const SiblingPostNewer = React.forwardRef<HTMLElement, SiblingPostNextProps>((props, ref) => {
+  const { children, className } = props;
+  const { newerPost, coverImageUrl } = usePostContext();
+
+  if (!newerPost) return null;
+
+  const attributes = {
+    'data-testid': TestIds.blogPostSiblingNewerPost,
+  };
+
+  return (
+    <Root
+      post={newerPost}
+      ref={ref}
+      fallbackImageUrl={coverImageUrl}
+      className={className}
+      {...attributes}
+    >
+      {children}
+    </Root>
+  );
+});
+
+SiblingPostNewer.displayName = 'Blog.Post.SiblingPosts.Newer';
+
+export interface SiblingPostOlderProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+/**
+ * Creates a Post context for an older post
+ * @example
+ * ```tsx
+ * <Blog.Post.SiblingPosts.Older>
+ *   <Blog.Post.Title />
+ * </Blog.Post.SiblingPosts.Older>
+ * ```
+ */
+const SiblingPostOlder = React.forwardRef<HTMLElement, SiblingPostOlderProps>((props, ref) => {
+  const { children, className } = props;
+  const { olderPost, coverImageUrl } = usePostContext();
+
+  if (!olderPost) return null;
+
+  const attributes = {
+    'data-testid': TestIds.blogPostSiblingOlderPost,
+  };
+
+  return (
+    <Root
+      post={olderPost}
+      ref={ref}
+      fallbackImageUrl={coverImageUrl}
+      className={className}
+      {...attributes}
+    >
+      {children}
+    </Root>
+  );
+});
+
+SiblingPostOlder.displayName = 'Blog.Post.SiblingPosts.Older';
+
+export const SiblingPosts = {
+  Root: SiblingPostsRoot,
+  Newer: SiblingPostNewer,
+  Older: SiblingPostOlder,
+};
 
 /**
  * Helper function to create author name from member data
@@ -922,9 +1004,7 @@ function createAuthorName(owner: members.Member | null | undefined): {
   const nickname = owner?.profile?.nickname?.trim();
 
   const authorName =
-    nickname ||
-    `${formattedFirstName || ''} ${formattedLastName || ''}`.trim() ||
-    '';
+    nickname || `${formattedFirstName || ''} ${formattedLastName || ''}`.trim() || '';
 
   const authorAvatarInitials = authorName
     ?.split(' ')

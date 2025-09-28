@@ -7,7 +7,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { type ScheduleItem } from './schedule-item-service.js';
 import { type ScheduleItemsGroup } from './schedule-items-group-service.js';
-import { formatDate } from '../utils/date.js';
+import { formatShortDate } from '../utils/date.js';
 
 enum StateFilter {
   PUBLISHED = schedule.StateFilter.PUBLISHED,
@@ -23,13 +23,10 @@ export interface ScheduleListServiceAPI {
   stageNames: ReadOnlySignal<string[]>;
   tags: ReadOnlySignal<string[]>;
   setStageFilter: (stageName: string | null) => void;
-  addTagFilter: (tagValue: string) => void;
-  removeTagFilter: (tagValue: string) => void;
-  filterItems: (items: ScheduleItem[]) => ScheduleItem[];
+  setTagFilters: (tags: string[]) => void;
 }
 
 export interface ScheduleListServiceConfig {
-  limit: number;
   items: ScheduleItem[];
 }
 
@@ -79,27 +76,8 @@ export const ScheduleListService =
         stageFilter.set(stageName);
       };
 
-      const addTagFilter = (tagValue: string) => {
-        const currentFilters = tagFilters.get();
-        if (!currentFilters.includes(tagValue)) {
-          tagFilters.set([...currentFilters, tagValue]);
-        }
-      };
-
-      const removeTagFilter = (tagValue: string) => {
-        const currentFilters = tagFilters.get();
-        tagFilters.set(currentFilters.filter((tag) => tag !== tagValue));
-      };
-
-      const filterItems = (items: ScheduleItem[]) => {
-        const currentStageFilter = stageFilter.get();
-        const currentTagFilters = tagFilters.get();
-
-        return filterScheduleItems(
-          items,
-          currentStageFilter,
-          currentTagFilters,
-        );
+      const setTagFilters = (tags: string[]) => {
+        tagFilters.set(tags);
       };
 
       return {
@@ -111,33 +89,54 @@ export const ScheduleListService =
         stageNames,
         tags,
         setStageFilter,
-        addTagFilter,
-        removeTagFilter,
-        filterItems,
+        setTagFilters,
       };
     },
   );
 
 export async function loadScheduleListServiceConfig(
   eventId: string,
-  limit: number = 2,
+  limit?: number,
 ): Promise<ScheduleListServiceConfig> {
-  const listScheduleResult = await listScheduleItems(eventId, limit);
+  const loadAll = !limit;
+  const pageSize = limit ?? 100;
 
-  return {
-    limit,
-    items: listScheduleResult.items ?? [],
-  };
+  const response = await listScheduleItems(eventId, pageSize);
+  const totalItems = response.pagingMetadata!.total!;
+  const itemsCount = response.items!.length;
+  const responses = [response];
+
+  if (itemsCount < totalItems && loadAll) {
+    const requestCount = Math.ceil(totalItems / pageSize) - 1;
+    const moreResponses = await Promise.all(
+      new Array(requestCount)
+        .fill(null)
+        .map((_, index) =>
+          listScheduleItems(eventId, pageSize, (index + 1) * pageSize),
+        ),
+    );
+
+    responses.push(...moreResponses);
+  }
+
+  const allItems = responses.flatMap((response) => response.items || []);
+
+  return { items: allItems };
 }
 
-const listScheduleItems = async (eventId: string, limit: number) => {
-  const listScheduleResult = await schedule.listScheduleItems({
+const listScheduleItems = async (
+  eventId: string,
+  limit: number,
+  offset = 0,
+) => {
+  return schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
-    limit,
+    paging: {
+      limit,
+      offset,
+    },
   });
-
-  return listScheduleResult;
 };
 
 function filterScheduleItems(
@@ -171,7 +170,7 @@ function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
   items.forEach((item) => {
     const startDate = new Date(item.timeSlot!.start!);
     const dateKey = startDate.toDateString();
-    const formattedDate = formatDate(startDate);
+    const formattedDate = formatShortDate(startDate);
 
     if (!grouped.has(dateKey)) {
       grouped.set(dateKey, {

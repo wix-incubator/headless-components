@@ -14,6 +14,9 @@
       "@/integrations/*": [
         "./integrations/*"
       ],
+      "@/integrations": [
+        "./integrations"
+      ],
       // TS: Mimick exported sdk from Wix TPAs
       "@wix/blog/components": [
         "../../packages/headless-components/blog/react"
