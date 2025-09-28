@@ -41,7 +41,6 @@ export default function IndexPage(props: {
                     <MediaGallery.Viewport asChild>
                       {({ src, alt }) =>
                      {
-                      console.log('src', src);
                       return   <img
                           src={src}
                           alt={alt || ''}
