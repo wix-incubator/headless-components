@@ -7447,7 +7447,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-bookings@npm:0.0.2, @wix/headless-bookings@workspace:*, @wix/headless-bookings@workspace:packages/headless-components/bookings":
+"@wix/headless-bookings@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@wix/headless-bookings@npm:0.0.2"
+  dependencies:
+    "@wix/bookings": "npm:^1.0.122"
+    "@wix/headless-media": "npm:0.0.13"
+    "@wix/headless-utils": "npm:0.0.3"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    react: "npm:^18.2.0"
+  peerDependencies:
+    "@wix/headless-components": 0.0.13
+    react: ^18.2.0
+  checksum: 10c0/f06c0c19ccd91fe158519e19bd3200a7fa268910c3e58cba68b9b7cdf917fa45c56113719151872d556187109028073c7722a08cb454f454de3be415448200a8
+  languageName: node
+  linkType: hard
+
+"@wix/headless-bookings@workspace:*, @wix/headless-bookings@workspace:packages/headless-components/bookings":
   version: 0.0.0-use.local
   resolution: "@wix/headless-bookings@workspace:packages/headless-components/bookings"
   dependencies:
@@ -7465,12 +7482,11 @@ __metadata:
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
     prettier: "npm:^3.4.2"
-    react: "npm:^18.2.0"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
   peerDependencies:
     "@wix/headless-components": "workspace:*"
-    react: ^18.2.0
+    react: ">=16.3.0"
   languageName: unknown
   linkType: soft
 
@@ -7650,7 +7666,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-faq@npm:0.0.2, @wix/headless-faq@workspace:packages/headless-components/faq":
+"@wix/headless-faq@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@wix/headless-faq@npm:0.0.2"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.2.3"
+    "@wix/essentials": "npm:^0.1.24"
+    "@wix/faq": "npm:^1.0.0"
+    "@wix/headless-utils": "npm:0.0.3"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/38a1fb6b657b715ea5efab228a7f94ddd998a155dda730dc0f1968a5582e5f4bfd023fd3198d94166041e049691f200599cca4a1ef39d08e6c84067362555acd
+  languageName: node
+  linkType: hard
+
+"@wix/headless-faq@workspace:packages/headless-components/faq":
   version: 0.0.0-use.local
   resolution: "@wix/headless-faq@workspace:packages/headless-components/faq"
   dependencies:
@@ -7795,7 +7825,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-online-programs@npm:0.0.3, @wix/headless-online-programs@workspace:packages/headless-components/online-programs":
+"@wix/headless-online-programs@npm:0.0.3":
+  version: 0.0.3
+  resolution: "@wix/headless-online-programs@npm:0.0.3"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.1.0"
+    "@wix/headless-media": "npm:0.0.14"
+    "@wix/headless-utils": "npm:0.0.3"
+    "@wix/members": "npm:^1.0.322"
+    "@wix/online-programs": "npm:^1.0.47"
+    "@wix/redirects": "npm:^1.0.0"
+    "@wix/sdk": "npm:^1.15.27"
+    "@wix/services-definitions": "npm:^0.1.5"
+    "@wix/services-manager-react": "npm:^0.1.27"
+  peerDependencies:
+    "@wix/headless-components": 0.0.15
+  checksum: 10c0/9de75e71830cd3dc0a3e8343d2e0766f9043ecddc1cfe477422b676f51f46d130e5834dbb11baac010f05983efffe5657c00d0ddf50892aa274cb38cc693f7b6
+  languageName: node
+  linkType: hard
+
+"@wix/headless-online-programs@workspace:packages/headless-components/online-programs":
   version: 0.0.0-use.local
   resolution: "@wix/headless-online-programs@workspace:packages/headless-components/online-programs"
   dependencies:
@@ -7920,7 +7969,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-restaurants-table-reservations@npm:0.0.2, @wix/headless-restaurants-table-reservations@workspace:packages/headless-components/restaurants-table-reservations":
+"@wix/headless-restaurants-table-reservations@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@wix/headless-restaurants-table-reservations@npm:0.0.2"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.2.3"
+    "@wix/essentials": "npm:^0.1.24"
+    "@wix/headless-utils": "npm:^0.0.3"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    "@wix/table-reservations": "npm:^1.0.281"
+  peerDependencies:
+    "@wix/headless-components": 0.0.13
+  checksum: 10c0/368d61c71ae5a068777a133754f5d5aaeae9ca3264220261edb2bffa194ef198bddbbacfe5f624e767288a47ad603172bec9b81ae28af10bbc2c0cd4b3d8eeea
+  languageName: node
+  linkType: hard
+
+"@wix/headless-restaurants-table-reservations@workspace:packages/headless-components/restaurants-table-reservations":
   version: 0.0.0-use.local
   resolution: "@wix/headless-restaurants-table-reservations@workspace:packages/headless-components/restaurants-table-reservations"
   dependencies:
@@ -8053,7 +8118,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-utils@npm:0.0.3, @wix/headless-utils@workspace:*, @wix/headless-utils@workspace:^, @wix/headless-utils@workspace:packages/headless-components/utils":
+"@wix/headless-utils@npm:0.0.3, @wix/headless-utils@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@wix/headless-utils@npm:0.0.3"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.2.3"
+    react: "npm:^18.0.0"
+  peerDependencies:
+    react: ">=18.0.0"
+  checksum: 10c0/6bed01bf29d4b313b7ba0d4480aad56118342453e990af4231fcb56b2a78e3d537894b896f611af806612642694e2d65db82794701f88e7f93d1e88b693b0ef9
+  languageName: node
+  linkType: hard
+
+"@wix/headless-utils@workspace:*, @wix/headless-utils@workspace:^, @wix/headless-utils@workspace:packages/headless-components/utils":
   version: 0.0.0-use.local
   resolution: "@wix/headless-utils@workspace:packages/headless-components/utils"
   dependencies:
@@ -8063,7 +8140,7 @@ __metadata:
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
   peerDependencies:
-    react: ">=18.0.0"
+    react: ">=16.3.0"
   languageName: unknown
   linkType: soft
 
@@ -16787,7 +16864,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18.2.0, react@npm:^18.3.1":
+"react@npm:18.3.1, react@npm:^18.0.0, react@npm:^18.2.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
