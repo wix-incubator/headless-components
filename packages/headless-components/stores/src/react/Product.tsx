@@ -6,9 +6,9 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import { MediaGallery } from '@wix/headless-media/react';
 import { Quantity as QuantityComponent } from '@wix/headless-components/react';
 import * as CoreProduct from './core/Product.js';
-import * as ProductVariantSelector from './core/ProductVariantSelector.js';
-import * as ProductModifiers from './core/ProductModifiers.js';
-import * as SelectedVariant from './core/SelectedVariant.js';
+import * as CoreProductVariantSelector from './core/ProductVariantSelector.js';
+import * as CoreProductModifiers from './core/ProductModifiers.js';
+import * as CoreSelectedVariant from './core/SelectedVariant.js';
 import * as Option from './Option.js';
 import { AsContent } from './types.js';
 import { DataComponentTags } from '../data-component-tags.js';
@@ -137,26 +137,27 @@ export const Root = (props: ProductRootProps): React.ReactNode => {
   const { children, product, ...attrs } = props;
 
   return (
-    <AsChildSlot
-      data-testid={TestIds.productRoot}
-      data-component-tag={DataComponentTags.productRoot}
-    >
-      <CoreProduct.Root productServiceConfig={{ product: props.product }}>
-        <MediaGallery.Root
-          mediaGalleryServiceConfig={{
-            media: props.product.media?.itemsInfo?.items ?? [],
-          }}
-        >
-          <ProductVariantSelector.Root>
-            <ProductModifiers.Root>
-              <SelectedVariant.Root>
-                <AsChildSlot {...attrs}>{children}</AsChildSlot>
-              </SelectedVariant.Root>
-            </ProductModifiers.Root>
-          </ProductVariantSelector.Root>
-        </MediaGallery.Root>
-      </CoreProduct.Root>
-    </AsChildSlot>
+    <CoreProduct.Root productServiceConfig={{ product: props.product }}>
+      <MediaGallery.Root
+        mediaGalleryServiceConfig={{
+          media: props.product.media?.itemsInfo?.items ?? [],
+        }}
+      >
+        <CoreProductVariantSelector.Root>
+          <CoreProductModifiers.Root>
+            <CoreSelectedVariant.Root>
+              <AsChildSlot
+                data-testid={TestIds.productRoot}
+                data-component-tag={DataComponentTags.productRoot}
+                {...attrs}
+              >
+                {children}
+              </AsChildSlot>
+            </CoreSelectedVariant.Root>
+          </CoreProductModifiers.Root>
+        </CoreProductVariantSelector.Root>
+      </MediaGallery.Root>
+    </CoreProduct.Root>
   );
 };
 
@@ -371,7 +372,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
   const { asChild, children, className, ...otherProps } = props;
 
   return (
-    <SelectedVariant.Price>
+    <CoreSelectedVariant.Price>
       {({ price, compareAtPrice }) => {
         return (
           <AsChildSlot
@@ -392,7 +393,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
           </AsChildSlot>
         );
       }}
-    </SelectedVariant.Price>
+    </CoreSelectedVariant.Price>
   );
 });
 
@@ -447,7 +448,7 @@ export const CompareAtPrice = React.forwardRef<
   const testId = TestIds.productCompareAtPrice;
 
   return (
-    <SelectedVariant.Price>
+    <CoreSelectedVariant.Price>
       {({ compareAtPrice }) => {
         // Don't render anything if there's no compare-at price
         if (!compareAtPrice) {
@@ -473,7 +474,7 @@ export const CompareAtPrice = React.forwardRef<
           </AsChildSlot>
         );
       }}
-    </SelectedVariant.Price>
+    </CoreSelectedVariant.Price>
   );
 });
 
@@ -853,10 +854,10 @@ export interface VariantsProps {
  */
 export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...attributes } = props;
 
     return (
-      <ProductVariantSelector.Options>
+      <CoreProductVariantSelector.Options>
         {({ hasOptions, options }) => {
           if (!hasOptions) return null;
 
@@ -873,13 +874,14 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
                 className={className}
                 data-testid={TestIds.productVariants}
                 customElement={children}
+                {...attributes}
               >
                 <div>{React.isValidElement(children) ? children : null}</div>
               </AsChildSlot>
             </VariantsContext.Provider>
           );
         }}
-      </ProductVariantSelector.Options>
+      </CoreProductVariantSelector.Options>
     );
   },
 );
@@ -967,7 +969,7 @@ export const VariantOptionRepeater = React.forwardRef<
     <>
       {options.map((option: any) => {
         return (
-          <ProductVariantSelector.Option key={option._id} option={option}>
+          <CoreProductVariantSelector.Option key={option._id} option={option}>
             {(optionData) => (
               <Option.Root
                 option={{
@@ -978,7 +980,7 @@ export const VariantOptionRepeater = React.forwardRef<
                 {children as React.ReactElement}
               </Option.Root>
             )}
-          </ProductVariantSelector.Option>
+          </CoreProductVariantSelector.Option>
         );
       })}
     </>
@@ -1042,10 +1044,10 @@ export interface ModifiersProps {
  */
 export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
   (props, ref) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, ...attributes } = props;
 
     return (
-      <ProductModifiers.Modifiers>
+      <CoreProductModifiers.Modifiers>
         {({ hasModifiers, modifiers }) => {
           if (!hasModifiers) return null;
 
@@ -1062,13 +1064,14 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
                 className={className}
                 data-testid={TestIds.productModifiers}
                 customElement={children}
+                {...attributes}
               >
                 <div>{React.isValidElement(children) ? children : null}</div>
               </AsChildSlot>
             </ModifiersContext.Provider>
           );
         }}
-      </ProductModifiers.Modifiers>
+      </CoreProductModifiers.Modifiers>
     );
   },
 );
@@ -1159,7 +1162,7 @@ export const ModifierOptionRepeater = React.forwardRef<
     <>
       {modifiers.map((modifier: any) => {
         return (
-          <ProductModifiers.Modifier key={modifier._id} modifier={modifier}>
+          <CoreProductModifiers.Modifier key={modifier._id} modifier={modifier}>
             {(modifierData) => (
               <Option.Root
                 option={{
@@ -1170,7 +1173,7 @@ export const ModifierOptionRepeater = React.forwardRef<
                 {children as React.ReactElement}
               </Option.Root>
             )}
-          </ProductModifiers.Modifier>
+          </CoreProductModifiers.Modifier>
         );
       })}
     </>
@@ -1360,7 +1363,7 @@ export const ProductQuantity = React.forwardRef<
   const { asChild, children, className } = props;
 
   return (
-    <ProductVariantSelector.Stock>
+    <CoreProductVariantSelector.Stock>
       {({
         inStock,
         isPreOrderEnabled,
@@ -1401,7 +1404,7 @@ export const ProductQuantity = React.forwardRef<
           </QuantityComponent.Root>
         );
       }}
-    </ProductVariantSelector.Stock>
+    </CoreProductVariantSelector.Stock>
   );
 });
 
@@ -1423,7 +1426,7 @@ export const ProductQuantityDecrement = React.forwardRef<
   const { asChild, children, className } = props;
 
   return (
-    <ProductVariantSelector.Stock>
+    <CoreProductVariantSelector.Stock>
       {({ selectedQuantity, inStock, isPreOrderEnabled }) => {
         const disabled =
           selectedQuantity <= 1 || (!inStock && !isPreOrderEnabled);
@@ -1450,7 +1453,7 @@ export const ProductQuantityDecrement = React.forwardRef<
           />
         );
       }}
-    </ProductVariantSelector.Stock>
+    </CoreProductVariantSelector.Stock>
   );
 });
 
@@ -1471,7 +1474,7 @@ export const ProductQuantityInput = React.forwardRef<
   const { asChild, children, className, disabled = true } = props;
 
   return (
-    <ProductVariantSelector.Stock>
+    <CoreProductVariantSelector.Stock>
       {() => {
         if (asChild && children) {
           return (
@@ -1496,7 +1499,7 @@ export const ProductQuantityInput = React.forwardRef<
           />
         );
       }}
-    </ProductVariantSelector.Stock>
+    </CoreProductVariantSelector.Stock>
   );
 });
 
@@ -1518,7 +1521,7 @@ export const ProductQuantityIncrement = React.forwardRef<
   const { asChild, children, className } = props;
 
   return (
-    <ProductVariantSelector.Stock>
+    <CoreProductVariantSelector.Stock>
       {({
         selectedQuantity,
         availableQuantity,
@@ -1551,7 +1554,7 @@ export const ProductQuantityIncrement = React.forwardRef<
           />
         );
       }}
-    </ProductVariantSelector.Stock>
+    </CoreProductVariantSelector.Stock>
   );
 });
 
@@ -1626,7 +1629,7 @@ export const ProductQuantityRaw = React.forwardRef<
   const { asChild, children, className } = props;
 
   return (
-    <ProductVariantSelector.Stock>
+    <CoreProductVariantSelector.Stock>
       {(renderProps) => {
         return (
           <AsChildSlot
@@ -1639,7 +1642,7 @@ export const ProductQuantityRaw = React.forwardRef<
           />
         );
       }}
-    </ProductVariantSelector.Stock>
+    </CoreProductVariantSelector.Stock>
   );
 });
 
@@ -1664,7 +1667,7 @@ export const ProductVariantSelectorReset = React.forwardRef<
   const { asChild, children, className } = props;
 
   return (
-    <ProductVariantSelector.Reset>
+    <CoreProductVariantSelector.Reset>
       {(renderProps) => {
         if (!renderProps.hasSelections) {
           return null;
@@ -1685,7 +1688,7 @@ export const ProductVariantSelectorReset = React.forwardRef<
           </AsChildSlot>
         );
       }}
-    </ProductVariantSelector.Reset>
+    </CoreProductVariantSelector.Reset>
   );
 });
 
@@ -1700,7 +1703,7 @@ export const ProductActionAddToCart = React.forwardRef<
   const { asChild, children, className, label, loadingState } = props;
 
   return (
-    <SelectedVariant.Actions>
+    <CoreSelectedVariant.Actions>
       {({
         lineItems,
         canAddToCart,
@@ -1748,7 +1751,7 @@ export const ProductActionAddToCart = React.forwardRef<
           />
         );
       }}
-    </SelectedVariant.Actions>
+    </CoreSelectedVariant.Actions>
   );
 });
 
@@ -1763,7 +1766,7 @@ export const ProductActionBuyNow = React.forwardRef<
   const { asChild, children, className, label, loadingState } = props;
 
   return (
-    <SelectedVariant.Actions>
+    <CoreSelectedVariant.Actions>
       {({
         lineItems,
         canAddToCart,
@@ -1812,7 +1815,7 @@ export const ProductActionBuyNow = React.forwardRef<
           />
         );
       }}
-    </SelectedVariant.Actions>
+    </CoreSelectedVariant.Actions>
   );
 });
 
@@ -1827,7 +1830,7 @@ export const ProductActionPreOrder = React.forwardRef<
   const { asChild, children, className, label, loadingState } = props;
 
   return (
-    <SelectedVariant.Actions>
+    <CoreSelectedVariant.Actions>
       {({ lineItems, isLoading, addToCart, isPreOrderEnabled }) => {
         if (!isPreOrderEnabled) {
           return null;
@@ -1870,7 +1873,7 @@ export const ProductActionPreOrder = React.forwardRef<
           />
         );
       }}
-    </SelectedVariant.Actions>
+    </CoreSelectedVariant.Actions>
   );
 });
 
@@ -2020,7 +2023,7 @@ export const ProductVariantStock = React.forwardRef<
   const { asChild, children, className, labels } = props;
 
   return (
-    <ProductVariantSelector.Stock>
+    <CoreProductVariantSelector.Stock>
       {({
         inStock,
         isPreOrderEnabled,
@@ -2068,7 +2071,7 @@ export const ProductVariantStock = React.forwardRef<
           </AsChildSlot>
         );
       }}
-    </ProductVariantSelector.Stock>
+    </CoreProductVariantSelector.Stock>
   );
 });
 
@@ -2117,7 +2120,7 @@ export const ProductVariantSKU = React.forwardRef<
   const { asChild, children, className } = props;
 
   return (
-    <SelectedVariant.Details>
+    <CoreSelectedVariant.Details>
       {({ sku }) => {
         // Don't render anything if there's no SKU
         if (!sku) {
@@ -2138,7 +2141,7 @@ export const ProductVariantSKU = React.forwardRef<
           </AsChildSlot>
         );
       }}
-    </SelectedVariant.Details>
+    </CoreSelectedVariant.Details>
   );
 });
 
@@ -2187,7 +2190,7 @@ export const ProductVariantWeight = React.forwardRef<
   const { asChild, children, className } = props;
 
   return (
-    <SelectedVariant.Details>
+    <CoreSelectedVariant.Details>
       {({ weight }) => {
         // Don't render anything if there's no weight
         if (!weight) {
@@ -2208,7 +2211,7 @@ export const ProductVariantWeight = React.forwardRef<
           </AsChildSlot>
         );
       }}
-    </SelectedVariant.Details>
+    </CoreSelectedVariant.Details>
   );
 });
 
