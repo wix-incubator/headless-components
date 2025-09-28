@@ -3,32 +3,13 @@ globs: packages/headless-components/cms/**/*
 alwaysApply: false
 ---
 
-# CMS Package Migration Rules
+# CMS Package Implementation Rules
 
-## 🚫 Legacy Folder Restrictions
+## ✅ Implementation Standards
 
-### Absolute Prohibitions:
-- **NEVER import from `./legacy/` directory**
-- **NEVER reference legacy components directly**
-- **NEVER copy-paste legacy code without refactoring**
+### **Follow CMS Interface Design**
 
-```tsx
-// ❌ FORBIDDEN - Importing from legacy
-import { CMSCrud } from './legacy/react/CMSCrud';
-import { CmsCrudPagination } from '../legacy/react/CmsCrudPagination';
+- Follow the design described in the following 2 markdown files: `docs/api/CMS_COLLECTION_INTERFACE.md`
+  and `docs/api/CMS_COLLECTION_ITEM_INTERFACE.md`
 
-// ❌ FORBIDDEN - Relative paths to legacy
-import { CMSFilter } from './legacy/react/CMSFilter';
-```
-
-## ✅ Migration Guidelines
-
-### 1. **Use Legacy as Reference Only**
-- Study legacy implementations for business logic understanding
-- Understand the API contracts and expected behaviors
-
-### 2. **New Implementation Standards**
-- follow the design described in the following 2 markdown files: `docs/api/CMS_COLLECTION_INTERFACE.md`
-and `docs/api/CMS_COLLECTION_ITEM_INTERFACE.md`
-
-**Remember**: Legacy code is for understanding requirements only. All new implementations must follow modern headless component patterns.
+**Remember**: All implementations must follow modern headless component patterns.

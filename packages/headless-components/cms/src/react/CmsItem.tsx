@@ -1,8 +1,6 @@
 import React from 'react';
 import * as CoreCmsItem from './core/CmsItem.js';
-import {
-  type CmsItemServiceConfig,
-} from '../services/cms-item-service.js';
+import { type CmsItemServiceConfig } from '../services/cms-item-service.js';
 import { AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {

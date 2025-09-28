@@ -63,7 +63,7 @@ const loadCollectionItems = async (
     throw new Error('No collection ID provided');
   }
 
-  const { limit, skip = 0 , returnTotalCount = false} = options;
+  const { limit, skip = 0, returnTotalCount = false } = options;
 
   let query = items.query(collectionId);
 
@@ -102,12 +102,14 @@ export const CmsCollectionServiceImplementation =
       const errorSignal = signalsService.signal<string | null>(null);
 
       // Initialize query result signal
-      const queryResultSignal = signalsService.signal<WixDataQueryResult | null>(
+      const queryResultSignal =
+        signalsService.signal<WixDataQueryResult | null>(
           config.queryResult || null,
         );
 
       // Track current query result for cursor-based pagination
-      let currentQueryResult: WixDataQueryResult | null = queryResultSignal.get();
+      let currentQueryResult: WixDataQueryResult | null =
+        queryResultSignal.get();
 
       // Use effect to maintain currentQueryResult consistency with queryResultSignal
       signalsService.effect(() => {
@@ -128,7 +130,9 @@ export const CmsCollectionServiceImplementation =
 
           queryResultSignal.set(result);
         } catch (err) {
-          errorSignal.set(extractErrorMessage(err, 'Failed to load collection items'));
+          errorSignal.set(
+            extractErrorMessage(err, 'Failed to load collection items'),
+          );
           console.error(
             `Failed to load items from collection "${config.collectionId}":`,
             err,
@@ -141,12 +145,13 @@ export const CmsCollectionServiceImplementation =
       const invalidate = async () => {
         // Preserve current pagination state when invalidating
         const currentResult = queryResultSignal.get();
-        const currentSkip = (currentResult?.currentPage || 0) * (currentResult?.pageSize || 10);
+        const currentSkip =
+          (currentResult?.currentPage || 0) * (currentResult?.pageSize || 10);
         const currentLimit = currentResult?.pageSize;
 
         await loadItems({
           skip: currentSkip,
-          limit: currentLimit
+          limit: currentLimit,
         });
       };
 
@@ -198,7 +203,9 @@ export const CmsCollectionServiceImplementation =
           const prevResult = await currentQueryResult.prev();
           queryResultSignal.set(prevResult);
         } catch (err) {
-          errorSignal.set(extractErrorMessage(err, 'Failed to load previous page'));
+          errorSignal.set(
+            extractErrorMessage(err, 'Failed to load previous page'),
+          );
           console.error(
             `Failed to load previous page from collection "${config.collectionId}":`,
             err,

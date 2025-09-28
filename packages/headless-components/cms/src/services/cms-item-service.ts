@@ -75,16 +75,11 @@ export const CmsItemServiceImplementation =
         errorSignal.set(null);
 
         try {
-          const item = await loadItem(
-            config.collectionId,
-            config.itemId,
-          );
+          const item = await loadItem(config.collectionId, config.itemId);
           itemSignal.set(item);
         } catch (err) {
           const errorMessage =
-            err instanceof Error
-              ? err.message
-              : 'Failed to load item';
+            err instanceof Error ? err.message : 'Failed to load item';
           errorSignal.set(errorMessage);
           console.error(
             `Failed to load item "${config.itemId}" from collection "${config.collectionId}":`,

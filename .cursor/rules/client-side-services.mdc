@@ -1,6 +1,6 @@
 ---
 description:
-globs: packages/headless-components/cms/**/*
+globs:
 alwaysApply: false
 ---
 

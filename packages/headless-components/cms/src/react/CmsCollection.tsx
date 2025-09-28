@@ -87,7 +87,6 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   },
 );
 
-
 /**
  * Props for CmsCollection.Items component
  */
@@ -265,7 +264,9 @@ export interface LoadingRenderProps {}
  * ```
  */
 export function Loading(props: LoadingProps): React.ReactNode {
-  return <CoreCmsCollection.Loading>{props.children}</CoreCmsCollection.Loading>;
+  return (
+    <CoreCmsCollection.Loading>{props.children}</CoreCmsCollection.Loading>
+  );
 }
 
 /**
@@ -321,11 +322,13 @@ export interface NextActionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or button content when not */
-  children?: AsChildChildren<{
-    loadNext: () => void;
-    hasNext: boolean;
-    isLoading: boolean;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        loadNext: () => void;
+        hasNext: boolean;
+        isLoading: boolean;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -412,11 +415,13 @@ export interface PrevActionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or button content when not */
-  children?: AsChildChildren<{
-    loadPrev: () => void;
-    hasPrev: boolean;
-    isLoading: boolean;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        loadPrev: () => void;
+        hasPrev: boolean;
+        isLoading: boolean;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -503,9 +508,11 @@ export interface TotalsCountProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or content when not */
-  children?: AsChildChildren<{
-    total: number;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        total: number;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -539,35 +546,33 @@ export interface TotalsCountProps {
  * }
  * ```
  */
-const Count = React.forwardRef<HTMLElement, TotalsCountProps>(
-  (props, ref) => {
-    const { children, asChild, className, ...otherProps } = props;
+const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
+  const { children, asChild, className, ...otherProps } = props;
 
-    return (
-      <CoreCmsCollection.TotalsCount>
-        {({ total }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.cmsCollectionItemsTotals}
-              data-total={total}
-              customElement={children}
-              customElementProps={{
-                total,
-              }}
-              content={total}
-              {...otherProps}
-            >
-              <span>{total}</span>
-            </AsChildSlot>
-          );
-        }}
-      </CoreCmsCollection.TotalsCount>
-    );
-  },
-);
+  return (
+    <CoreCmsCollection.TotalsCount>
+      {({ total }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.cmsCollectionItemsTotals}
+            data-total={total}
+            customElement={children}
+            customElementProps={{
+              total,
+            }}
+            content={total}
+            {...otherProps}
+          >
+            <span>{total}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreCmsCollection.TotalsCount>
+  );
+});
 
 /**
  * Props for CmsCollection.Totals.Displayed component
@@ -578,9 +583,11 @@ export interface TotalsDisplayedProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or content when not */
-  children?: AsChildChildren<{
-    displayed: number;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        displayed: number;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
