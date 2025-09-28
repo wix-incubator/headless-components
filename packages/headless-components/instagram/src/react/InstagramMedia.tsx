@@ -133,8 +133,6 @@ export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>(
   },
 );
 
-
-
 export const InstagramMedia = {
   Root: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   Caption,

@@ -38,12 +38,13 @@ export const InstagramMediaRepeater: React.FC<InstagramMediaRepeaterProps> = ({
                   mediaGalleryServiceConfig={{
                     media: [
                       {
-                        image: (mediaItem.type === 'video'
-                          ? (mediaItem.thumbnailUrl || mediaItem.mediaUrl)
-                          : mediaItem.mediaUrl) || '',
+                        image:
+                          (mediaItem.type === 'video'
+                            ? mediaItem.thumbnailUrl || mediaItem.mediaUrl
+                            : mediaItem.mediaUrl) || '',
                         altText: mediaItem.altText || '',
-                      }
-                    ].filter(item => item.image) // Only include items with valid image URLs
+                      },
+                    ].filter((item) => item.image), // Only include items with valid image URLs
                   }}
                 >
                   {children}
