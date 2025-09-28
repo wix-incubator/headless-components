@@ -36,8 +36,7 @@
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/services-definitions": "^0.1.4",
-    "@wix/services-manager-react": "^0.1.26",
-    "react": "^18.2.0"
+    "@wix/services-manager-react": "^0.1.26"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -54,6 +53,6 @@
   },
   "peerDependencies": {
     "@wix/headless-components": "workspace:*",
-    "react": "^18.2.0"
+    "react": ">=16.3.0"
   }
 }

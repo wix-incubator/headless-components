@@ -7079,12 +7079,11 @@ __metadata:
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
     prettier: "npm:^3.4.2"
-    react: "npm:^18.2.0"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
   peerDependencies:
     "@wix/headless-components": "workspace:*"
-    react: ^18.2.0
+    react: ">=16.3.0"
   languageName: unknown
   linkType: soft
 
@@ -7579,7 +7578,7 @@ __metadata:
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
   peerDependencies:
-    react: ">=18.0.0"
+    react: ">=16.3.0"
   languageName: unknown
   linkType: soft
 

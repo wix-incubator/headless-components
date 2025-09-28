@@ -32,6 +32,6 @@
     "@radix-ui/react-slot": "^1.2.3"
   },
   "peerDependencies": {
-    "react": ">=18.0.0"
+    "react": ">=16.3.0"
   }
 }
