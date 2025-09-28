@@ -12,41 +12,34 @@ import {
  */
 export interface RootProps {
   children: React.ReactNode;
+  /** Configuration for the Instagram feed service */
   instagramFeedServiceConfig: InstagramFeedServiceConfig;
   className?: string;
 }
 
 /**
- * Root component that provides Instagram feed service context using WixServices.
- * This follows the same service-based pattern as the stores package.
+ * Root component that provides the Instagram feed service context to its children.
+ * This component provides the foundation for all Instagram feed functionality
+ * and must wrap all other Instagram feed components.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
  * import { InstagramFeed } from '@wix/headless-instagram/react';
- * import { MediaGallery } from '@wix/headless-media/react';
  *
- * function InstagramWidget() {
+ * function MyInstagramFeed() {
  *   return (
  *     <InstagramFeed.Root
- *       instagramFeedServiceConfig={{
- *         accountId: 'instagram_account_123',
- *         limit: 6
- *       }}
+ *       instagramFeedServiceConfig={{ accountId: 'my_account', limit: 6 }}
  *     >
- *       <div>
- *         <InstagramFeed.Title />
- *         <InstagramFeed.UserName />
- *         <InstagramFeed.Hashtag />
- *       </div>
- *       <InstagramFeed.Gallery>
- *         <InstagramFeed.GalleryItems>
- *           <InstagramFeed.GalleryItemRepeater>
- *             <MediaGallery.ThumbnailItem />
- *           </InstagramFeed.GalleryItemRepeater>
- *         </InstagramFeed.GalleryItems>
- *       </InstagramFeed.Gallery>
+ *       <InstagramFeed.Title />
+ *       <InstagramFeed.UserName />
+ *       <InstagramFeed.InstagramMedias>
+ *         <InstagramFeed.InstagramMediaRepeater>
+ *           <InstagramMedia.Caption />
+ *         </InstagramFeed.InstagramMediaRepeater>
+ *       </InstagramFeed.InstagramMedias>
  *     </InstagramFeed.Root>
  *   );
  * }

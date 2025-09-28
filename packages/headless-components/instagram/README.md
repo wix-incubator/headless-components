@@ -11,42 +11,15 @@ npm install @wix/headless-instagram
 ## Basic Usage
 
 ```tsx
-import { InstagramFeed } from '@wix/headless-instagram/react';
+import { InstagramFeed, InstagramMedia } from '@wix/headless-instagram/react';
 import { MediaGallery } from '@wix/headless-media/react';
-import { InstagramMediaItemServiceDefinition } from '@wix/headless-instagram/services';
-import { useService } from '@wix/services-manager-react';
-
-// Custom media card component using service-based architecture
-function MediaCard({ src, alt, index }) {
-  // Access Instagram media item data via service
-  const mediaItemService = useService(InstagramMediaItemServiceDefinition);
-  const mediaItem = mediaItemService.mediaItem.get();
-  const isVideo = mediaItem.type === 'video';
-
-  return (
-    <div className="group relative overflow-hidden rounded-lg">
-      <img
-        src={src}
-        alt={alt}
-        className="w-full h-64 object-cover transition-transform group-hover:scale-105"
-      />
-      {isVideo && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-black/50 rounded-full p-2">
-            ▶️
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
 function InstagramWidget() {
   return (
     <InstagramFeed.Root
       instagramFeedServiceConfig={{
         accountId: 'instagram_account_123',
-        limit: 6
+        limit: 6,
       }}
       className="w-full max-w-4xl mx-auto"
     >
@@ -56,24 +29,19 @@ function InstagramWidget() {
         <InstagramFeed.Hashtag className="text-blue-600 font-medium" />
       </div>
 
-      {/* Gallery Section - Service-Based Architecture */}
-      <InstagramFeed.Gallery className="gallery-container">
-        <InstagramFeed.GalleryItems
-          emptyState={
-            <div className="text-center text-gray-500 py-8">
-              No Instagram posts to display
-            </div>
-          }
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <InstagramFeed.GalleryItemRepeater>
-              <MediaGallery.ThumbnailItem asChild>
-                {({ src, alt, index }) => <MediaCard src={src} alt={alt} index={index} />}
-              </MediaGallery.ThumbnailItem>
-            </InstagramFeed.GalleryItemRepeater>
-          </div>
-        </InstagramFeed.GalleryItems>
-      </InstagramFeed.Gallery>
+      <InstagramFeed.InstagramMedias>
+        <InstagramFeed.InstagramMediaRepeater>
+          <InstagramMedia.Caption />
+          <InstagramMedia.MediaType />
+          <InstagramMedia.UserName />
+          <InstagramMedia.Timestamp />
+          <InstagramMedia.MediaGalleries>
+            <InstagramMedia.MediaGalleryRepeater>
+              <MediaGallery.Root />
+            </InstagramMedia.MediaGalleryRepeater>
+          </InstagramMedia.MediaGalleries>
+        </InstagramFeed.InstagramMediaRepeater>
+      </InstagramFeed.InstagramMedias>
     </InstagramFeed.Root>
   );
 }
@@ -84,29 +52,32 @@ function InstagramWidget() {
 The Instagram headless component follows the established 3-level architecture pattern:
 
 ### Root Container
+
 - `InstagramFeed.Root` - Main container with service configuration
 
 ### Header Components
+
 - `InstagramFeed.Title` - Feed title display
 - `InstagramFeed.UserName` - Instagram username/display name
 - `InstagramFeed.Hashtag` - Associated hashtag
 
-### Gallery Components (3-Level Pattern)
+### Media Components (3-Level Pattern)
 
-1. **Container Level**: `InstagramFeed.Gallery`
+1. **Container Level**: `InstagramFeed.InstagramMedias`
    - Main container that provides context and conditional rendering
    - Does NOT render if the list is empty
 
-2. **List Container Level**: `InstagramFeed.GalleryItems`
-   - Container for the gallery items with empty state support
-   - Supports `emptyState` prop for when no media items exist
-
-3. **Repeater Level**: `InstagramFeed.GalleryRepeater`
+2. **Repeater Level**: `InstagramFeed.InstagramMediaRepeater`
    - Maps over media items and provides context for each item
 
-### Individual Item Components
-- `InstagramFeed.GalleryItem` - Wrapper for each media item
-- `InstagramFeed.Media` - Displays the actual Instagram media (image/video)
+### Individual InstagramMedia Components
+
+- `InstagramMedia.Caption` - Displays the Instagram media caption
+- `InstagramMedia.MediaType` - Shows the media type (image/video/carousel)
+- `InstagramMedia.UserName` - Instagram username
+- `InstagramMedia.Timestamp` - Media timestamp with formatting
+- `InstagramMedia.MediaGalleries` - Container for media gallery
+- `InstagramMedia.MediaGalleryRepeater` - Renders MediaGallery.Root for each item
 
 ## Advanced Usage with AsChild Pattern
 
@@ -120,23 +91,23 @@ The Instagram headless component follows the established 3-level architecture pa
   ))}
 </InstagramFeed.Title>
 
-// Custom Media with Overlay
-<InstagramFeed.Media asChild>
-  {React.forwardRef(({ mediaItem, index, ...props }, ref) => (
-    <div ref={ref} {...props} className="relative group">
-      <img
-        src={mediaItem.mediaUrl}
-        alt={mediaItem.altText || `Instagram post ${index + 1}`}
-        className="w-full h-64 object-cover"
-      />
-      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200">
-        <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-          <p className="text-sm font-medium">{mediaItem.caption}</p>
-        </div>
-      </div>
-    </div>
+// Custom Caption with styling
+<InstagramMedia.Caption asChild>
+  {React.forwardRef(({ caption, ...props }, ref) => (
+    <p ref={ref} {...props} className="text-sm text-gray-600 line-clamp-2">
+      {caption}
+    </p>
   ))}
-</InstagramFeed.Media>
+</InstagramMedia.Caption>
+
+// Custom MediaType with badge
+<InstagramMedia.MediaType asChild>
+  {React.forwardRef(({ mediaType, ...props }, ref) => (
+    <span ref={ref} {...props} className={`badge ${mediaType === 'video' ? 'badge-video' : 'badge-image'}`}>
+      {mediaType === 'video' ? '📹' : '📷'} {mediaType}
+    </span>
+  ))}
+</InstagramMedia.MediaType>
 ```
 
 ## Configuration
@@ -145,8 +116,8 @@ The Instagram headless component follows the established 3-level architecture pa
 
 ```tsx
 interface InstagramFeedServiceConfig {
-  accountId?: string;          // Instagram account ID
-  limit?: number;              // Number of items to fetch
+  accountId?: string; // Instagram account ID
+  limit?: number; // Number of items to fetch
   feedData?: InstagramFeedData; // Initial feed data (for SSR)
 }
 ```
@@ -155,26 +126,25 @@ interface InstagramFeedServiceConfig {
 
 ```tsx
 interface InstagramMediaItem {
-  id: string;             // Unique identifier
+  id: string; // Unique identifier
   type: 'image' | 'video' | 'carousel'; // Media type
-  mediaUrl: string;       // URL to media content
-  thumbnailUrl?: string;  // Thumbnail for videos
-  caption?: string;       // Post caption
-  permalink: string;      // Link to Instagram post
-  timestamp: string;      // ISO timestamp
-  altText?: string;       // Accessibility text
+  mediaUrl: string; // URL to media content
+  thumbnailUrl?: string; // Thumbnail for videos
+  caption?: string; // Post caption
+  permalink: string; // Link to Instagram post
+  timestamp: string; // ISO timestamp
+  altText?: string; // Accessibility text
 }
 ```
-
 
 ## Architecture Notes
 
 This component follows the established headless components architecture:
 
-1. **3-Level List Pattern**: Gallery → GalleryItems → GalleryRepeater
-2. **Context Pattern**: Data flows through React contexts
+1. **3-Level List Pattern**: InstagramMedias → InstagramMediaRepeater → Individual Components
+2. **Service-Based Architecture**: Data flows through service manager
 3. **AsChild Support**: Full customization capabilities
-4. **Simplified Structure**: No test IDs or centralized types file
+4. **Individual Media Gallery**: Each media item can have its own MediaGallery via MediaGalleries/MediaGalleryRepeater
 5. **TypeScript**: Full type safety throughout
 
 ## Service Architecture
@@ -187,19 +157,30 @@ This component follows the Wix headless service architecture pattern:
 import {
   InstagramFeedService,
   InstagramFeedServiceDefinition,
-  loadInstagramFeedServiceConfig
+  loadInstagramFeedServiceConfig,
 } from '@wix/instagram/services';
-import { ServiceProvider, createServicesMap } from '@wix/services-manager-react';
+import {
+  ServiceProvider,
+  createServicesMap,
+} from '@wix/services-manager-react';
 
 // SSR: Load configuration
-const feedConfig = await loadInstagramFeedServiceConfig('instagram_account_123', 12);
+const feedConfig = await loadInstagramFeedServiceConfig(
+  'instagram_account_123',
+  12,
+);
 
 // Client: Set up service provider
 function App() {
   return (
-    <ServiceProvider services={createServicesMap([
-      [InstagramFeedServiceDefinition, InstagramFeedService.withConfig(feedConfig.config)]
-    ])}>
+    <ServiceProvider
+      services={createServicesMap([
+        [
+          InstagramFeedServiceDefinition,
+          InstagramFeedService.withConfig(feedConfig.config),
+        ],
+      ])}
+    >
       <InstagramWidget />
     </ServiceProvider>
   );
@@ -222,6 +203,7 @@ function InstagramWidget() {
 ### Current Implementation ✅ PRODUCTION READY
 
 The service is **actively using real Instagram SDKs**:
+
 - **✅ LIVE**: `@wix/instagram-account` SDK integration
 - **✅ LIVE**: `@wix/instagram-media` SDK integration
 - **✅ ACTIVE**: Real-time Instagram account and media data
