@@ -14,8 +14,7 @@ export const UserName = React.forwardRef<HTMLElement, UserNameProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreUserName.UserName unknownLabel={props.unknownLabel}
-      >
+      <CoreUserName.UserName unknownLabel={props.unknownLabel}>
         {({ displayName, displayValue }) => (
           <AsChildSlot
             ref={ref}

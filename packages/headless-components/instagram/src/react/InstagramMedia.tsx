@@ -30,21 +30,25 @@ export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
           <>
             {mediaItems.map((mediaItem, index) => {
               console.log('mediaItem', mediaItem.mediaGalleryItems);
-              return <WixServices
-                key={mediaItem.id || index}
-                servicesMap={createServicesMap().addService(
-                  InstagramMediaItemServiceDefinition,
-                  InstagramMediaItemService,
-                  { mediaItem, index },
-                )}
-              >
-                <MediaGallery.Root
-                  mediaGalleryServiceConfig={{ media:  mediaItem.mediaGalleryItems }}
+              return (
+                <WixServices
+                  key={mediaItem.id || index}
+                  servicesMap={createServicesMap().addService(
+                    InstagramMediaItemServiceDefinition,
+                    InstagramMediaItemService,
+                    { mediaItem, index },
+                  )}
                 >
-                  {children as React.ReactElement}
-                </MediaGallery.Root>
-              </WixServices>
-      })}
+                  <MediaGallery.Root
+                    mediaGalleryServiceConfig={{
+                      media: mediaItem.mediaGalleryItems,
+                    }}
+                  >
+                    {children as React.ReactElement}
+                  </MediaGallery.Root>
+                </WixServices>
+              );
+            })}
           </>
         );
       }}
@@ -204,7 +208,6 @@ export const MediaGalleries = React.forwardRef<
     </div>
   );
 });
-
 
 export interface MediaGalleryItemsProps {
   children: React.ReactNode;

@@ -27,39 +27,56 @@ export function InstagramMedias(props: InstagramMediasProps) {
 
   const hasItems = feedData.mediaItems.length > 0;
 
-    // Convert Instagram media items to MediaGallery format
-    const convertedMediaItems = feedData.mediaItems.map((mediaItem: any) => {
-      let mediaGalleryItems: any[] = [];
+  // Convert Instagram media items to MediaGallery format
+  const convertedMediaItems = feedData.mediaItems.map((mediaItem: any) => {
+    let mediaGalleryItems: any[] = [];
 
-      if (mediaItem.type === 'carousel' && mediaItem.children && mediaItem.children.length > 0) {
-        // Convert all carousel children to MediaGallery format
-        mediaGalleryItems = mediaItem.children.map((carouselItem: any, carouselIndex: number) => {
-          const imageUrl = carouselItem.type === 'video'
-            ? carouselItem.thumbnailUrl || carouselItem.mediaUrl
-            : carouselItem.mediaUrl;
+    if (
+      mediaItem.type === 'carousel' &&
+      mediaItem.children &&
+      mediaItem.children.length > 0
+    ) {
+      // Convert all carousel children to MediaGallery format
+      mediaGalleryItems = mediaItem.children.map(
+        (carouselItem: any, carouselIndex: number) => {
+          const imageUrl =
+            carouselItem.type === 'video'
+              ? carouselItem.thumbnailUrl || carouselItem.mediaUrl
+              : carouselItem.mediaUrl;
 
           return {
             image: imageUrl,
-            altText: carouselItem.altText || mediaItem.caption || `Instagram carousel item ${carouselIndex + 1}`,
+            altText:
+              carouselItem.altText ||
+              mediaItem.caption ||
+              `Instagram carousel item ${carouselIndex + 1}`,
           };
-        });
-      } else {
-        // Convert single Instagram media item to MediaGallery format
-        const imageUrl = mediaItem.type === 'video'
+        },
+      );
+    } else {
+      // Convert single Instagram media item to MediaGallery format
+      const imageUrl =
+        mediaItem.type === 'video'
           ? mediaItem.thumbnailUrl || mediaItem.mediaUrl
           : mediaItem.mediaUrl;
 
-        mediaGalleryItems = [{
+      mediaGalleryItems = [
+        {
           image: imageUrl,
-          altText: mediaItem.altText || mediaItem.caption || `Instagram ${mediaItem.type}`,
-        }];
-      }
+          altText:
+            mediaItem.altText ||
+            mediaItem.caption ||
+            `Instagram ${mediaItem.type}`,
+        },
+      ];
+    }
 
-      return {// Keep original Instagram data
-        ...mediaItem,
-        mediaGalleryItems, // Add converted MediaGallery data
-      };
-    });
+    return {
+      // Keep original Instagram data
+      ...mediaItem,
+      mediaGalleryItems, // Add converted MediaGallery data
+    };
+  });
   return props.children({
     hasItems,
     mediaItems: convertedMediaItems,
