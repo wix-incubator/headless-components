@@ -50,6 +50,10 @@ export interface ItemsRenderProps {
   isLoading: boolean;
   /** Error message if loading failed, null otherwise */
   error: string | null;
+  /** Function to load the next page */
+  loadNext: () => Promise<void>;
+  /** Whether there is a next page available */
+  hasNext: boolean;
 }
 
 /**
@@ -63,11 +67,15 @@ export function Items(props: ItemsProps) {
   const items = service.queryResultSignal.get()?.items || [];
   const isLoading = service.loadingSignal.get();
   const error = service.errorSignal.get();
+  const queryResult = service.queryResultSignal.get();
+  const loadNext = service.loadNextPage;
 
   return props.children({
     items,
     isLoading,
     error,
+    loadNext,
+    hasNext: queryResult?.hasNext() ?? false,
   });
 }
 
