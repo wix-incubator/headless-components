@@ -2,7 +2,7 @@ import {
   type Signal,
   type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
-import { services } from '@wix/bookings';
+import * as services from '@wix/auto_sdk_bookings_services';
 export declare const DEFAULT_QUERY_LIMIT = 100;
 /**
  * Configuration interface for the Services List service.
