@@ -869,12 +869,12 @@ export const Variants = React.forwardRef<HTMLElement, VariantsProps>(
           return (
             <VariantsContext.Provider value={contextValue}>
               <AsChildSlot
+                {...attributes}
                 ref={ref}
                 asChild={asChild}
                 className={className}
                 data-testid={TestIds.productVariants}
                 customElement={children}
-                {...attributes}
               >
                 <div>{React.isValidElement(children) ? children : null}</div>
               </AsChildSlot>
@@ -1059,12 +1059,12 @@ export const Modifiers = React.forwardRef<HTMLElement, ModifiersProps>(
           return (
             <ModifiersContext.Provider value={contextValue}>
               <AsChildSlot
+                {...attributes}
                 ref={ref}
                 asChild={asChild}
                 className={className}
                 data-testid={TestIds.productModifiers}
                 customElement={children}
-                {...attributes}
               >
                 <div>{React.isValidElement(children) ? children : null}</div>
               </AsChildSlot>
