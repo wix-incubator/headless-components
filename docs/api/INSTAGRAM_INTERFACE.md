@@ -16,19 +16,26 @@ import { MediaGallery } from '@wix/headless-media/react';
     <InstagramFeed.UserName />
     <InstagramFeed.Hashtag hashtag="myhashtag" />
   </div>
-
   <InstagramFeed.InstagramMedias>
-    <InstagramFeed.InstagramMediaRepeater>
-      <InstagramMedia.Caption />
-      <InstagramMedia.MediaType />
-      <InstagramMedia.UserName />
-      <InstagramMedia.Timestamp />
-      <InstagramMedia.MediaGalleries>
-        <InstagramMedia.MediaGalleryRepeater>
-          <MediaGallery.Viewport />
-        </InstagramMedia.MediaGalleryRepeater>
-      </InstagramMedia.MediaGalleries>
-    </InstagramFeed.InstagramMediaRepeater>
+    <InstagramMedia.MediaGalleries>
+      <InstagramMedia.MediaGalleryRepeater>
+        <MediaGallery.Previous/>
+        <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                 <img
+                src={src}
+                alt={alt || ''}
+                className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+        </MediaGallery.Viewport>
+        <MediaGallery.Next/>
+        <InstagramMedia.Caption />
+        <InstagramMedia.MediaType />
+        <InstagramMedia.UserName />
+        <InstagramMedia.Timestamp />
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
@@ -49,15 +56,21 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
   </header>
 
   <InstagramFeed.InstagramMedias>
-    <InstagramFeed.InstagramMediaRepeater>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <InstagramMedia.MediaGalleries>
-          <InstagramMedia.MediaGalleryRepeater>
-            <MediaGallery.Viewport />
-          </InstagramMedia.MediaGalleryRepeater>
-        </InstagramMedia.MediaGalleries>
-      </div>
-    </InstagramFeed.InstagramMediaRepeater>
+    <InstagramMedia.MediaGalleries>
+      <InstagramMedia.MediaGalleryRepeater>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                 <img
+                src={src}
+                alt={alt || ''}
+                className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+        </MediaGallery.Viewport>
+        </div>
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
@@ -72,14 +85,21 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
   <InstagramFeed.UserName className="text-xl text-gray-600 text-center mb-6" />
 
   <InstagramFeed.InstagramMedias>
-    <InstagramFeed.InstagramMediaRepeater>
-      <div className="grid grid-cols-3 gap-2">
-        <InstagramMedia.MediaGalleries>
-          <InstagramMedia.MediaGalleryRepeater>
-          </InstagramMedia.MediaGalleryRepeater>
-        </InstagramMedia.MediaGalleries>
-      </div>
-    </InstagramFeed.InstagramMediaRepeater>
+    <InstagramMedia.MediaGalleries>
+      <InstagramMedia.MediaGalleryRepeater>
+        <div className="grid grid-cols-3 gap-2">
+          <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                 <img
+                src={src}
+                alt={alt || ''}
+                className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+        </MediaGallery.Viewport>
+        </div>
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
@@ -102,13 +122,19 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
 
   {/* List container does not support asChild */}
   <InstagramFeed.InstagramMedias>
-    <InstagramFeed.InstagramMediaRepeater>
-      <InstagramMedia.MediaGalleries>
-        <InstagramMedia.MediaGalleryRepeater>
-          <MediaGallery.Viewport />
-        </InstagramMedia.MediaGalleryRepeater>
-      </InstagramMedia.MediaGalleries>
-    </InstagramFeed.InstagramMediaRepeater>
+    <InstagramMedia.MediaGalleries>
+      <InstagramMedia.MediaGalleryRepeater>
+        <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                 <img
+                src={src}
+                alt={alt || ''}
+                className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+        </MediaGallery.Viewport>
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
@@ -156,15 +182,21 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
   </InstagramFeed.Hashtag>
 
   <InstagramFeed.InstagramMedias>
-    <InstagramFeed.InstagramMediaRepeater>
-      <div className="masonry-layout">
-        <InstagramMedia.MediaGalleries>
-          <InstagramMedia.MediaGalleryRepeater>
-            <MediaGallery.Viewport />
-          </InstagramMedia.MediaGalleryRepeater>
-        </InstagramMedia.MediaGalleries>
-      </div>
-    </InstagramFeed.InstagramMediaRepeater>
+    <InstagramMedia.MediaGalleries>
+      <InstagramMedia.MediaGalleryRepeater>
+        <div className="masonry-layout">
+          <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                 <img
+                src={src}
+                alt={alt || ''}
+                className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+        </MediaGallery.Viewport>
+        </div>
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
@@ -175,22 +207,28 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
   <InstagramFeed.Title />
 
-  <InstagramFeed.InstagramMedias
-    emptyState={
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">📷</div>
-        <h3 className="text-xl font-semibold mb-2">No posts yet</h3>
-        <p className="text-gray-600">Check back later for new content!</p>
-      </div>
-    }
-  >
-    <InstagramFeed.InstagramMediaRepeater>
-      <InstagramMedia.MediaGalleries>
-        <InstagramMedia.MediaGalleryRepeater>
-          <MediaGallery.Viewport />
-        </InstagramMedia.MediaGalleryRepeater>
-      </InstagramMedia.MediaGalleries>
-    </InstagramFeed.InstagramMediaRepeater>
+  <InstagramFeed.InstagramMedias>
+    <InstagramMedia.MediaGalleries
+      emptyState={
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">📷</div>
+          <h3 className="text-xl font-semibold mb-2">No posts yet</h3>
+          <p className="text-gray-600">Check back later for new content!</p>
+        </div>
+      }
+    >
+      <InstagramMedia.MediaGalleryRepeater>
+        <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                 <img
+                src={src}
+                alt={alt || ''}
+                className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+        </MediaGallery.Viewport>
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
@@ -281,10 +319,54 @@ interface InstagramMediasProps {
 }
 ```
 
-### InstagramFeed.InstagramMediaRepeater
+### InstagramMedia.MediaGalleries
 ```tsx
-interface InstagramMediaRepeaterProps {
+interface MediaGalleriesProps {
   children: React.ReactNode;
+  emptyState?: React.ReactNode;
+}
+```
+
+### InstagramMedia.MediaGalleryRepeater
+```tsx
+interface MediaGalleryRepeaterProps {
+  children: React.ReactNode;
+}
+```
+
+### InstagramMedia.Caption
+```tsx
+interface CaptionProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ caption: string }>;
+  className?: string;
+}
+```
+
+### InstagramMedia.MediaType
+```tsx
+interface MediaTypeProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ mediaType: 'image' | 'video' | 'carousel' }>;
+  className?: string;
+}
+```
+
+### InstagramMedia.UserName
+```tsx
+interface UserNameProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ userName: string }>;
+  className?: string;
+}
+```
+
+### InstagramMedia.Timestamp
+```tsx
+interface TimestampProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ timestamp: string }>;
+  className?: string;
 }
 ```
 
@@ -441,14 +523,24 @@ Instagram components integrate seamlessly with Media Gallery components:
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
   <InstagramFeed.InstagramMedias>
-    <InstagramFeed.InstagramMediaRepeater>
-      <InstagramMedia.MediaGalleries>
-        <InstagramMedia.MediaGalleryRepeater>
-          {/* Use Media Gallery primitives like Viewport within the repeater */}
-          <MediaGallery.Viewport />
-        </InstagramMedia.MediaGalleryRepeater>
-      </InstagramMedia.MediaGalleries>
-    </InstagramFeed.InstagramMediaRepeater>
+    <InstagramMedia.MediaGalleries>
+      <InstagramMedia.MediaGalleryRepeater>
+        {/* Use Media Gallery primitives like Viewport within the repeater */}
+        <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                 <img
+                src={src}
+                alt={alt || ''}
+                className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+        </MediaGallery.Viewport>
+        <InstagramMedia.Caption />
+        <InstagramMedia.MediaType />
+        <InstagramMedia.UserName />
+        <InstagramMedia.Timestamp />
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
@@ -460,10 +552,16 @@ InstagramFeed.Root (Service Provider)
 ├── InstagramFeed.Title (Entity Display)
 ├── InstagramFeed.UserName (Entity Display)
 ├── InstagramFeed.Hashtag (Entity Display)
-└── InstagramFeed.InstagramMedias (List Container)
-    └── InstagramFeed.InstagramMediaRepeater (Repeater Level)
-        └── InstagramMedia.* (Item Components)
-            └── MediaGallery.* (Media Components)
+└── InstagramFeed.InstagramMedias (Container Level)
+    └── InstagramMedia.MediaGalleries (List Container Level)
+        └── InstagramMedia.MediaGalleryRepeater (Repeater Level)
+            ├── MediaGallery.Previous (Media Component)
+            ├── MediaGallery.Viewport (Media Component)
+            ├── MediaGallery.Next (Media Component)
+            ├── InstagramMedia.Caption (Item Component)
+            ├── InstagramMedia.MediaType (Item Component)
+            ├── InstagramMedia.UserName (Item Component)
+            └── InstagramMedia.Timestamp (Item Component)
 ```
 
 **Key Principles:**
@@ -490,8 +588,10 @@ Import only the components you need for optimal bundle size:
 
 ```tsx
 // Tree-shakable imports
-import { Root, InstagramMedias, InstagramMediaRepeater } from '@wix/headless-instagram/react';
+import { Root, InstagramMedias } from '@wix/headless-instagram/react';
+import { MediaGalleries, MediaGalleryRepeater } from '@wix/headless-media/react';
 
 // Or use namespace import (recommended)
 import { InstagramFeed } from '@wix/headless-instagram/react';
+import { InstagramMedia } from '@wix/headless-media/react';
 ```
