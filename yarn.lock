@@ -48,7 +48,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/cloudflare@npm:^12.5.3":
+"@astrojs/cloudflare@npm:^12.5.3, @astrojs/cloudflare@npm:^12.5.4":
   version: 12.6.9
   resolution: "@astrojs/cloudflare@npm:12.6.9"
   dependencies:
@@ -64,33 +64,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@astrojs/cloudflare@npm:^12.5.4":
-  version: 12.6.8
-  resolution: "@astrojs/cloudflare@npm:12.6.8"
-  dependencies:
-    "@astrojs/internal-helpers": "npm:0.7.2"
-    "@astrojs/underscore-redirects": "npm:1.0.0"
-    "@cloudflare/workers-types": "npm:^4.20250903.0"
-    tinyglobby: "npm:^0.2.14"
-    vite: "npm:^6.3.6"
-    wrangler: "npm:4.33.2"
-  peerDependencies:
-    astro: ^5.7.0
-  checksum: 10c0/04f08d8ed415ef2a36b450b6167787f5892db49fb7ef1f50bbb87b4991ef39c880b6bd5e4466d1189fc3b26bbe3aa9cad3fc48538ae8593933164681abe5da30
-  languageName: node
-  linkType: hard
-
 "@astrojs/compiler@npm:^2.10.3, @astrojs/compiler@npm:^2.12.2, @astrojs/compiler@npm:^2.9.1":
   version: 2.13.0
   resolution: "@astrojs/compiler@npm:2.13.0"
   checksum: 10c0/d8f4ee217468acc03beeb1f632cad8811622f7fef9075133cb5c327ec7ce290bc04e55e74740011800618d9a06be5cc3c2a93fd574c8c3421bad00ad133625c3
-  languageName: node
-  linkType: hard
-
-"@astrojs/internal-helpers@npm:0.7.2":
-  version: 0.7.2
-  resolution: "@astrojs/internal-helpers@npm:0.7.2"
-  checksum: 10c0/c80f7d28f7b241b64f6542df68767b62e33d5637c4b23e8b7edcc9c6e3d5d3169b572e7da4d8eb5536939c34f8be0225923c8be6c52290551d74ca7c1dcbc4cc
   languageName: node
   linkType: hard
 
@@ -134,35 +111,6 @@ __metadata:
   bin:
     astro-ls: bin/nodeServer.js
   checksum: 10c0/e25d9c7811406f5cb230379fac233c0769ca7015642b3200b7f5a278c68877b73db816d06a89a016666f12c3d2dd8abebbaf97613fca7495aae60a388c954472
-  languageName: node
-  linkType: hard
-
-"@astrojs/markdown-remark@npm:6.3.6":
-  version: 6.3.6
-  resolution: "@astrojs/markdown-remark@npm:6.3.6"
-  dependencies:
-    "@astrojs/internal-helpers": "npm:0.7.2"
-    "@astrojs/prism": "npm:3.3.0"
-    github-slugger: "npm:^2.0.0"
-    hast-util-from-html: "npm:^2.0.3"
-    hast-util-to-text: "npm:^4.0.2"
-    import-meta-resolve: "npm:^4.1.0"
-    js-yaml: "npm:^4.1.0"
-    mdast-util-definitions: "npm:^6.0.0"
-    rehype-raw: "npm:^7.0.0"
-    rehype-stringify: "npm:^10.0.1"
-    remark-gfm: "npm:^4.0.1"
-    remark-parse: "npm:^11.0.0"
-    remark-rehype: "npm:^11.1.2"
-    remark-smartypants: "npm:^3.0.2"
-    shiki: "npm:^3.2.1"
-    smol-toml: "npm:^1.3.4"
-    unified: "npm:^11.0.5"
-    unist-util-remove-position: "npm:^5.0.0"
-    unist-util-visit: "npm:^5.0.0"
-    unist-util-visit-parents: "npm:^6.0.1"
-    vfile: "npm:^6.0.3"
-  checksum: 10c0/9a55458aa15f778e1522abd574b048b084652269963d47e9ace8fa2e1b63d026efc1468d48f2936dae3cee387b56be3eba3abf388f162adb9e9b08ce1d9b1ddd
   languageName: node
   linkType: hard
 
@@ -514,19 +462,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/unenv-preset@npm:2.7.1":
-  version: 2.7.1
-  resolution: "@cloudflare/unenv-preset@npm:2.7.1"
-  peerDependencies:
-    unenv: 2.0.0-rc.19
-    workerd: ^1.20250828.1
-  peerDependenciesMeta:
-    workerd:
-      optional: true
-  checksum: 10c0/43f73b35528a70ddcda397db5ec75c5bf5e6f05c3c4c825e3dc5b33857ca2a484912d8f19f6f925e20d2dea34d04321605704f1385e886eefd02193a284222b2
-  languageName: node
-  linkType: hard
-
 "@cloudflare/unenv-preset@npm:2.7.3":
   version: 2.7.3
   resolution: "@cloudflare/unenv-preset@npm:2.7.3"
@@ -540,24 +475,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-darwin-64@npm:1.20250829.0":
-  version: 1.20250829.0
-  resolution: "@cloudflare/workerd-darwin-64@npm:1.20250829.0"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@cloudflare/workerd-darwin-64@npm:1.20250906.0":
   version: 1.20250906.0
   resolution: "@cloudflare/workerd-darwin-64@npm:1.20250906.0"
   conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@cloudflare/workerd-darwin-arm64@npm:1.20250829.0":
-  version: 1.20250829.0
-  resolution: "@cloudflare/workerd-darwin-arm64@npm:1.20250829.0"
-  conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
@@ -568,24 +489,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-linux-64@npm:1.20250829.0":
-  version: 1.20250829.0
-  resolution: "@cloudflare/workerd-linux-64@npm:1.20250829.0"
-  conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@cloudflare/workerd-linux-64@npm:1.20250906.0":
   version: 1.20250906.0
   resolution: "@cloudflare/workerd-linux-64@npm:1.20250906.0"
   conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@cloudflare/workerd-linux-arm64@npm:1.20250829.0":
-  version: 1.20250829.0
-  resolution: "@cloudflare/workerd-linux-arm64@npm:1.20250829.0"
-  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
@@ -596,24 +503,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cloudflare/workerd-windows-64@npm:1.20250829.0":
-  version: 1.20250829.0
-  resolution: "@cloudflare/workerd-windows-64@npm:1.20250829.0"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@cloudflare/workerd-windows-64@npm:1.20250906.0":
   version: 1.20250906.0
   resolution: "@cloudflare/workerd-windows-64@npm:1.20250906.0"
   conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@cloudflare/workers-types@npm:^4.20250903.0":
-  version: 4.20250918.0
-  resolution: "@cloudflare/workers-types@npm:4.20250918.0"
-  checksum: 10c0/34fbf20cd5739300081e38d5730b981f7db412075bb839aad1160f5bea3101ad60f0eaa9ef1b61e5f5054ab29f5c3b3f51c1ae6a641add11029af5568ffe6339
   languageName: node
   linkType: hard
 
@@ -3451,18 +3344,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/core@npm:3.12.2":
-  version: 3.12.2
-  resolution: "@shikijs/core@npm:3.12.2"
-  dependencies:
-    "@shikijs/types": "npm:3.12.2"
-    "@shikijs/vscode-textmate": "npm:^10.0.2"
-    "@types/hast": "npm:^3.0.4"
-    hast-util-to-html: "npm:^9.0.5"
-  checksum: 10c0/3a05bc0a316a8a0170996ffe5dfc76021d20a459ed2c1aa5e659468a1a65af1cf0f69415535ecbd54387f4c61caf5d4b4e88b8fde21caf6af649d4178da52092
-  languageName: node
-  linkType: hard
-
 "@shikijs/core@npm:3.13.0":
   version: 3.13.0
   resolution: "@shikijs/core@npm:3.13.0"
@@ -3472,17 +3353,6 @@ __metadata:
     "@types/hast": "npm:^3.0.4"
     hast-util-to-html: "npm:^9.0.5"
   checksum: 10c0/eed294190fce38393a2a20d89d3a73f2cc7542fd0bbbb96c68b37dbe5054dc269d81d3224e02adab896de5df4b97d240ac814aecb934ae75f036bd7d3391b1b8
-  languageName: node
-  linkType: hard
-
-"@shikijs/engine-javascript@npm:3.12.2":
-  version: 3.12.2
-  resolution: "@shikijs/engine-javascript@npm:3.12.2"
-  dependencies:
-    "@shikijs/types": "npm:3.12.2"
-    "@shikijs/vscode-textmate": "npm:^10.0.2"
-    oniguruma-to-es: "npm:^4.3.3"
-  checksum: 10c0/421a3c20ab9841ffcefd776ac8c4ad7394458fa7919113b4ee5a0d97c2093dcc2299c886ea37216356972108024b5ac6b787dae26c25b42c54ae358f9feec3f0
   languageName: node
   linkType: hard
 
@@ -3497,16 +3367,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/engine-oniguruma@npm:3.12.2":
-  version: 3.12.2
-  resolution: "@shikijs/engine-oniguruma@npm:3.12.2"
-  dependencies:
-    "@shikijs/types": "npm:3.12.2"
-    "@shikijs/vscode-textmate": "npm:^10.0.2"
-  checksum: 10c0/89887dda52949f82537388000b13f9060ae1fcdd87f4b305282b97bdbb1afde0bc4abb8f4f046896164fd8b9c251923f2a4d780fac933fa214ba90fb957a9873
-  languageName: node
-  linkType: hard
-
 "@shikijs/engine-oniguruma@npm:3.13.0":
   version: 3.13.0
   resolution: "@shikijs/engine-oniguruma@npm:3.13.0"
@@ -3514,15 +3374,6 @@ __metadata:
     "@shikijs/types": "npm:3.13.0"
     "@shikijs/vscode-textmate": "npm:^10.0.2"
   checksum: 10c0/0cd0307028acf0a30fff7de642b84d4600aa33086f88952f1313f9ef56b604e067ebeb2e64f4e9025c06c68dfd6434c2c5da83d385af4792b622e6ad07f7613f
-  languageName: node
-  linkType: hard
-
-"@shikijs/langs@npm:3.12.2":
-  version: 3.12.2
-  resolution: "@shikijs/langs@npm:3.12.2"
-  dependencies:
-    "@shikijs/types": "npm:3.12.2"
-  checksum: 10c0/1e72b8efedb5d3959ac4d4fea5a2d5eb7855eea5cddc35e21b5090bf903d40c058214be8c1d63355ad2cffc022be8ec0297bdc6695eddc91c02324dcc417814d
   languageName: node
   linkType: hard
 
@@ -3535,31 +3386,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/themes@npm:3.12.2":
-  version: 3.12.2
-  resolution: "@shikijs/themes@npm:3.12.2"
-  dependencies:
-    "@shikijs/types": "npm:3.12.2"
-  checksum: 10c0/728b89554a166dca87aa3a4b53d0aa2c0b2c560252036275b3e8d3b4c790cf8fc980b5e06574e4fbad223627149eff150af12db5acd599fffd71e6ff6391af18
-  languageName: node
-  linkType: hard
-
 "@shikijs/themes@npm:3.13.0":
   version: 3.13.0
   resolution: "@shikijs/themes@npm:3.13.0"
   dependencies:
     "@shikijs/types": "npm:3.13.0"
   checksum: 10c0/b00052267de6f8acf09d01994823234ef4f75285d4c6587f039f5081490462a50ef73defb916add45fec1f469cf0c15ed53e5ada8ca9a48ebc7a243e4a76bbc6
-  languageName: node
-  linkType: hard
-
-"@shikijs/types@npm:3.12.2":
-  version: 3.12.2
-  resolution: "@shikijs/types@npm:3.12.2"
-  dependencies:
-    "@shikijs/vscode-textmate": "npm:^10.0.2"
-    "@types/hast": "npm:^3.0.4"
-  checksum: 10c0/74622ac69a84f0d7b66f6f9253bdaa0fee69b7bc97d5f85e12b2a70a9d77d2b04fdbccf65fcd9460449340a214594cb945fee8b3d2c091175e58e8cdf2cb2920
   languageName: node
   linkType: hard
 
@@ -6184,16 +6016,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_members_badges@npm:1.0.25":
-  version: 1.0.25
-  resolution: "@wix/auto_sdk_members_badges@npm:1.0.25"
-  dependencies:
-    "@wix/sdk-runtime": "npm:^0.5.0"
-    "@wix/sdk-types": "npm:^1.13.35"
-  checksum: 10c0/60dbd47cdd1bef823ecb06bd8e9335df40eebe9d89dc8a6da41143811f3b15def7cac29ae04a8c6dfeede0426286b7e3338a09eb33769a2b2f11512ec37a6c94
-  languageName: node
-  linkType: hard
-
 "@wix/auto_sdk_members_badges@npm:1.0.26":
   version: 1.0.26
   resolution: "@wix/auto_sdk_members_badges@npm:1.0.26"
@@ -7494,9 +7316,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-cms@workspace:packages/headless-components/cms"
   dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/data": "npm:^1.0.0"
@@ -7504,8 +7324,11 @@ __metadata:
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
     jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+  peerDependencies:
+    "@wix/headless-components": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -8191,30 +8014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/members@npm:^1.0.137, @wix/members@npm:^1.0.322":
-  version: 1.0.328
-  resolution: "@wix/members@npm:1.0.328"
-  dependencies:
-    "@wix/auto_sdk_members_authentication": "npm:1.0.25"
-    "@wix/auto_sdk_members_authorization": "npm:1.0.19"
-    "@wix/auto_sdk_members_badges": "npm:1.0.25"
-    "@wix/auto_sdk_members_custom-field-applications": "npm:1.0.21"
-    "@wix/auto_sdk_members_custom-field-suggestions": "npm:1.0.18"
-    "@wix/auto_sdk_members_custom-fields": "npm:1.0.29"
-    "@wix/auto_sdk_members_default-privacy": "npm:1.0.20"
-    "@wix/auto_sdk_members_member-followers": "npm:1.0.22"
-    "@wix/auto_sdk_members_member-privacy-settings": "npm:1.0.31"
-    "@wix/auto_sdk_members_member-report": "npm:1.0.23"
-    "@wix/auto_sdk_members_member-role-definition": "npm:1.0.25"
-    "@wix/auto_sdk_members_member-to-member-block": "npm:1.0.19"
-    "@wix/auto_sdk_members_members": "npm:1.0.73"
-    "@wix/auto_sdk_members_members-about": "npm:1.0.32"
-    "@wix/auto_sdk_members_user-member": "npm:1.0.28"
-  checksum: 10c0/7c4e203dec12abced6e9a414c9d740d4efda6b5e3147ae9ee5a6936f53b7831b165e2fa35c4ffa991471d1fed3f8d910997da497790035fccd1deddfce45e3d7
-  languageName: node
-  linkType: hard
-
-"@wix/members@npm:^1.0.324":
+"@wix/members@npm:^1.0.137, @wix/members@npm:^1.0.322, @wix/members@npm:^1.0.324":
   version: 1.0.329
   resolution: "@wix/members@npm:1.0.329"
   dependencies:
@@ -8392,100 +8192,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/ricos@npm:^10.141.3":
-  version: 10.142.0
-  resolution: "@wix/ricos@npm:10.142.0"
-  dependencies:
-    "@codemirror/lang-json": "npm:^6.0.0"
-    "@codemirror/lint": "npm:^6.0.0"
-    "@dnd-kit/core": "npm:^6.3.1"
-    "@dnd-kit/sortable": "npm:^10.0.0"
-    "@dnd-kit/utilities": "npm:^3.2.2"
-    "@emoji-mart/data": "npm:^1.2.1"
-    "@emoji-mart/react": "npm:^1.1.1"
-    "@floating-ui/react-dom": "npm:^2.0.0"
-    "@lezer/highlight": "npm:^1.2.0"
-    "@loadable/component": "npm:^5.14.1"
-    "@popperjs/core": "npm:2.11.2"
-    "@tiptap/core": "npm:2.8.0"
-    "@tiptap/pm": "npm:2.8.0"
-    "@tiptap/react": "npm:2.8.0"
-    "@tiptap/suggestion": "npm:2.8.0"
-    "@uiw/codemirror-themes": "npm:^4.21.25"
-    "@uiw/react-codemirror": "npm:^4.19.7"
-    "@wix/design-system": "npm:^1.211.0"
-    "@wix/image-kit": "npm:^1.93.0"
-    "@wix/members": "npm:^1.0.137"
-    "@wix/sdk": "npm:^1.14.3"
-    "@wix/unidriver-core": "npm:^1.3.6"
-    "@wix/unidriver-jsdom-react": "npm:^1.3.6"
-    "@wix/unidriver-playwright": "npm:^1.3.9"
-    "@wix/unidriver-puppeteer": "npm:^1.3.6"
-    "@wix/wix-ui-icons-common": "npm:^3.89.0"
-    chokidar: "npm:^4.0.1"
-    classnames: "npm:^2.5.1"
-    dataloader: "npm:^2.2.2"
-    deep-freeze: "npm:^0.0.1"
-    downshift: "npm:3.2.12"
-    effect: "npm:^3.12.9"
-    emoji-mart: "npm:^5.6.0"
-    emulate-tab: "npm:^1.2.1"
-    fastdom: "npm:^1.0.12"
-    focus-trap: "npm:^7.6.2"
-    fp-ts-esm: "npm:^2.16.10"
-    fuse.js: "npm:^7.0.0"
-    html-entities: "npm:^2.3.6"
-    i18next: "npm:^19.0.0"
-    id3js: "npm:2.1.1"
-    idb: "npm:^7.0.0"
-    image-client-api: "npm:1.2218.0"
-    immutable: "npm:^4.0.0"
-    js-video-url-parser: "npm:~0.5.1"
-    json-to-ast: "npm:^2.1.0"
-    jsonschema: "npm:~1.2.4"
-    linkify-it: "npm:^5.0.0"
-    linkifyjs: "npm:3.0.4"
-    load-script: "npm:^2.0.0"
-    monocle-ts-esm: "npm:^2.3.13"
-    omit-deep: "npm:0.3.0"
-    parse5: "npm:^6.0.0"
-    prismjs: "npm:~1.16.0"
-    pro-gallery: "npm:^5.0.138"
-    pro-gallery-lib: "npm:^5.0.137"
-    prop-types: "npm:^15.0.0"
-    prosemirror-dev-tools: "npm:4.1.0"
-    prosemirror-state: "npm:^1.0.0"
-    prosemirror-transform: "npm:^1.0.0"
-    prosemirror-utils: "npm:0.9.6"
-    re-resizable: "npm:^6.9.9"
-    react-click-outsider: "npm:1.1.1"
-    react-colorful: "npm:^5.6.1"
-    react-dock: "npm:^0.6.0"
-    react-flip-move: "npm:^3.0.4"
-    react-i18next: "npm:^11.18.6"
-    react-infinite-scroller: "npm:^1.2.4"
-    react-json-tree: "npm:^0.17.0"
-    react-measure: "npm:~2.3.0"
-    react-modal: "npm:~3.4.1"
-    react-player: "npm:~1.15.0"
-    react-portal-tooltip: "npm:^2.4.7"
-    react-sizeme: "npm:^3.0.2"
-    react-window: "npm:~1.5.0"
-    rope-sequence: "npm:^1.3.0"
-    ts-is-present: "npm:^1.1.1"
-    type-fest: "npm:^2.12.2"
-    utility-types: "npm:^3.10.0"
-    uuid: "npm:^3.4.0"
-  peerDependencies:
-    "@babel/runtime": ^7.17.2
-    lodash: ^4.17.15
-    react: ^16.14.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/1a78b389423feb6a5c8852082f214e0424f2cebcf10bbd0ca1b1b6008ad74b21aad6500c9203f4b6aaaf7790a5864a29b4a9c1a53ff760da31c1c521be4f1ccb
-  languageName: node
-  linkType: hard
-
-"@wix/ricos@npm:^10.141.4":
+"@wix/ricos@npm:^10.141.3, @wix/ricos@npm:^10.141.4":
   version: 10.143.0
   resolution: "@wix/ricos@npm:10.143.0"
   dependencies:
@@ -9201,83 +8908,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"astro@npm:^5.13.4, astro@npm:^5.9.0":
-  version: 5.13.8
-  resolution: "astro@npm:5.13.8"
-  dependencies:
-    "@astrojs/compiler": "npm:^2.12.2"
-    "@astrojs/internal-helpers": "npm:0.7.2"
-    "@astrojs/markdown-remark": "npm:6.3.6"
-    "@astrojs/telemetry": "npm:3.3.0"
-    "@capsizecss/unpack": "npm:^2.4.0"
-    "@oslojs/encoding": "npm:^1.1.0"
-    "@rollup/pluginutils": "npm:^5.2.0"
-    acorn: "npm:^8.15.0"
-    aria-query: "npm:^5.3.2"
-    axobject-query: "npm:^4.1.0"
-    boxen: "npm:8.0.1"
-    ci-info: "npm:^4.3.0"
-    clsx: "npm:^2.1.1"
-    common-ancestor-path: "npm:^1.0.1"
-    cookie: "npm:^1.0.2"
-    cssesc: "npm:^3.0.0"
-    debug: "npm:^4.4.1"
-    deterministic-object-hash: "npm:^2.0.2"
-    devalue: "npm:^5.3.2"
-    diff: "npm:^5.2.0"
-    dlv: "npm:^1.1.3"
-    dset: "npm:^3.1.4"
-    es-module-lexer: "npm:^1.7.0"
-    esbuild: "npm:^0.25.0"
-    estree-walker: "npm:^3.0.3"
-    flattie: "npm:^1.1.1"
-    fontace: "npm:~0.3.0"
-    github-slugger: "npm:^2.0.0"
-    html-escaper: "npm:3.0.3"
-    http-cache-semantics: "npm:^4.2.0"
-    import-meta-resolve: "npm:^4.2.0"
-    js-yaml: "npm:^4.1.0"
-    kleur: "npm:^4.1.5"
-    magic-string: "npm:^0.30.18"
-    magicast: "npm:^0.3.5"
-    mrmime: "npm:^2.0.1"
-    neotraverse: "npm:^0.6.18"
-    p-limit: "npm:^6.2.0"
-    p-queue: "npm:^8.1.0"
-    package-manager-detector: "npm:^1.3.0"
-    picomatch: "npm:^4.0.3"
-    prompts: "npm:^2.4.2"
-    rehype: "npm:^13.0.2"
-    semver: "npm:^7.7.2"
-    sharp: "npm:^0.34.0"
-    shiki: "npm:^3.12.0"
-    smol-toml: "npm:^1.4.2"
-    tinyexec: "npm:^0.3.2"
-    tinyglobby: "npm:^0.2.14"
-    tsconfck: "npm:^3.1.6"
-    ultrahtml: "npm:^1.6.0"
-    unifont: "npm:~0.5.2"
-    unist-util-visit: "npm:^5.0.0"
-    unstorage: "npm:^1.17.0"
-    vfile: "npm:^6.0.3"
-    vite: "npm:^6.3.6"
-    vitefu: "npm:^1.1.1"
-    xxhash-wasm: "npm:^1.1.0"
-    yargs-parser: "npm:^21.1.1"
-    yocto-spinner: "npm:^0.2.3"
-    zod: "npm:^3.25.76"
-    zod-to-json-schema: "npm:^3.24.6"
-    zod-to-ts: "npm:^1.2.0"
-  dependenciesMeta:
-    sharp:
-      optional: true
-  bin:
-    astro: astro.js
-  checksum: 10c0/ebc1406b8a77ae296a53053f3cb04e56dd28bef7ddfd6409bc1ce4c3cd73a13f4b489c8e830a000baa62cd6a892806b30a9ba8724cfc0d6ee878d040b2e3355a
-  languageName: node
-  linkType: hard
-
-"astro@npm:^5.13.6, astro@npm:^5.8.0":
+"astro@npm:^5.13.4, astro@npm:^5.13.6, astro@npm:^5.8.0, astro@npm:^5.9.0":
   version: 5.13.11
   resolution: "astro@npm:5.13.11"
   dependencies:
@@ -9670,17 +9301,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001702":
+"caniuse-lite@npm:^1.0.30001702, caniuse-lite@npm:^1.0.30001741":
   version: 1.0.30001745
   resolution: "caniuse-lite@npm:1.0.30001745"
   checksum: 10c0/646ca4b57baaa7a835cf7204c8a257490ee8e36364c04638212e3750c5e8ef45c39f352307e6205114487bcc179d42f5216f6dac146641b16a60b20b29d6f2a6
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001741":
-  version: 1.0.30001743
-  resolution: "caniuse-lite@npm:1.0.30001743"
-  checksum: 10c0/1bd730ca10d881a1ca9f55ce864d34c3b18501718c03976e0d3419f4694b715159e13fdef6d58ad47b6d2445d315940f3a01266658876828c820a3331aac021d
   languageName: node
   linkType: hard
 
@@ -12458,7 +12082,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-meta-resolve@npm:^4.1.0, import-meta-resolve@npm:^4.2.0":
+"import-meta-resolve@npm:^4.2.0":
   version: 4.2.0
   resolution: "import-meta-resolve@npm:4.2.0"
   checksum: 10c0/3ee8aeecb61d19b49d2703987f977e9d1c7d4ba47db615a570eaa02fe414f40dfa63f7b953e842cbe8470d26df6371332bfcf21b2fd92b0112f9fea80dde2c4c
@@ -14540,28 +14164,6 @@ __metadata:
   bin:
     mini-svg-data-uri: cli.js
   checksum: 10c0/24545fa30b5a45449241bf19c25b8bc37594b63ec06401b3d563bd1c2e8a6abb7c18741f8b354e0064baa63c291be214154bf3a66f201ae71dfab3cc1a5e3191
-  languageName: node
-  linkType: hard
-
-"miniflare@npm:4.20250829.0":
-  version: 4.20250829.0
-  resolution: "miniflare@npm:4.20250829.0"
-  dependencies:
-    "@cspotcode/source-map-support": "npm:0.8.1"
-    acorn: "npm:8.14.0"
-    acorn-walk: "npm:8.3.2"
-    exit-hook: "npm:2.2.1"
-    glob-to-regexp: "npm:0.4.1"
-    sharp: "npm:^0.33.5"
-    stoppable: "npm:1.1.0"
-    undici: "npm:^7.10.0"
-    workerd: "npm:1.20250829.0"
-    ws: "npm:8.18.0"
-    youch: "npm:4.1.0-beta.10"
-    zod: "npm:3.22.3"
-  bin:
-    miniflare: bootstrap.js
-  checksum: 10c0/df1da7807e5161053b2d217dcf9addad2e0d6f6d5ccd6ce48417812dd593ff46c1fcec1b3f67a11cd15562e6ac1f48a5280a646cdf1ca7027ae19b4e41e5ae8f
   languageName: node
   linkType: hard
 
@@ -17977,23 +17579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:^3.12.0, shiki@npm:^3.2.1":
-  version: 3.12.2
-  resolution: "shiki@npm:3.12.2"
-  dependencies:
-    "@shikijs/core": "npm:3.12.2"
-    "@shikijs/engine-javascript": "npm:3.12.2"
-    "@shikijs/engine-oniguruma": "npm:3.12.2"
-    "@shikijs/langs": "npm:3.12.2"
-    "@shikijs/themes": "npm:3.12.2"
-    "@shikijs/types": "npm:3.12.2"
-    "@shikijs/vscode-textmate": "npm:^10.0.2"
-    "@types/hast": "npm:^3.0.4"
-  checksum: 10c0/86e6c6a83807069f8e6e0d5e69a301fc74fff6abd92d490a9dc59066aac2e7a8582bf0742f118ab89f4ec88965a6e8946c5deb594e4ecb8edf07d95071967ace
-  languageName: node
-  linkType: hard
-
-"shiki@npm:^3.12.2":
+"shiki@npm:^3.12.0, shiki@npm:^3.12.2":
   version: 3.13.0
   resolution: "shiki@npm:3.13.0"
   dependencies:
@@ -18175,7 +17761,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"smol-toml@npm:^1.3.4, smol-toml@npm:^1.4.1, smol-toml@npm:^1.4.2":
+"smol-toml@npm:^1.4.1, smol-toml@npm:^1.4.2":
   version: 1.4.2
   resolution: "smol-toml@npm:1.4.2"
   checksum: 10c0/e01e5f249b1ad852d09aa22f338a6cb3896ac35c92bf0d35744ce1b1e2f4b67901d4a0e886027617a2a8aa9f1a6c67c919c41b544c4aec137b6ebe042ca10d36
@@ -19215,26 +18801,6 @@ __metadata:
   version: 7.14.0
   resolution: "undici@npm:7.14.0"
   checksum: 10c0/4beab6a5bfb89add9e90195aee6bc993708afbabad33bff7da791b5334a6e26a591c29938822d2fb8f69ae0ad8d580d64e03247b11157af9f820d5bd9f8f16e7
-  languageName: node
-  linkType: hard
-
-"undici@npm:^7.10.0":
-  version: 7.16.0
-  resolution: "undici@npm:7.16.0"
-  checksum: 10c0/efd867792e9f233facf9efa0a087e2d9c3e4415c0b234061b9b40307ca4fa01d945fee4d43c7b564e1b80e0d519bcc682f9f6e0de13c717146c00a80e2f1fb0f
-  languageName: node
-  linkType: hard
-
-"unenv@npm:2.0.0-rc.19":
-  version: 2.0.0-rc.19
-  resolution: "unenv@npm:2.0.0-rc.19"
-  dependencies:
-    defu: "npm:^6.1.4"
-    exsolve: "npm:^1.0.7"
-    ohash: "npm:^2.0.11"
-    pathe: "npm:^2.0.3"
-    ufo: "npm:^1.6.1"
-  checksum: 10c0/6c104af99097704e3d65562e2ec3ed876a1846df0b61b4e0714e99128d6dd6103d7022d6425bb0bfc9f6f453c52d09d152ff31f83ec118188503a9e33677bc3c
   languageName: node
   linkType: hard
 
@@ -20359,32 +19925,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"workerd@npm:1.20250829.0":
-  version: 1.20250829.0
-  resolution: "workerd@npm:1.20250829.0"
-  dependencies:
-    "@cloudflare/workerd-darwin-64": "npm:1.20250829.0"
-    "@cloudflare/workerd-darwin-arm64": "npm:1.20250829.0"
-    "@cloudflare/workerd-linux-64": "npm:1.20250829.0"
-    "@cloudflare/workerd-linux-arm64": "npm:1.20250829.0"
-    "@cloudflare/workerd-windows-64": "npm:1.20250829.0"
-  dependenciesMeta:
-    "@cloudflare/workerd-darwin-64":
-      optional: true
-    "@cloudflare/workerd-darwin-arm64":
-      optional: true
-    "@cloudflare/workerd-linux-64":
-      optional: true
-    "@cloudflare/workerd-linux-arm64":
-      optional: true
-    "@cloudflare/workerd-windows-64":
-      optional: true
-  bin:
-    workerd: bin/workerd
-  checksum: 10c0/3064d0f9e83d42b3031aa910677d9f0f4d7ac37c54334cedbdb647cdee6e07fd8b78cb0bd64b86385234531b24954e8f105bfc296934f7257118997f69389c36
-  languageName: node
-  linkType: hard
-
 "workerd@npm:1.20250906.0":
   version: 1.20250906.0
   resolution: "workerd@npm:1.20250906.0"
@@ -20408,34 +19948,6 @@ __metadata:
   bin:
     workerd: bin/workerd
   checksum: 10c0/14b9a5cd0e6abee0a0823e08ff6cc74f961b5ce7a0b2492f0ef4f9aaa81f0c35aac36b587c7d7e5780cd0002f8a853d4cd370154cacae298f4c671e1a842b0a3
-  languageName: node
-  linkType: hard
-
-"wrangler@npm:4.33.2":
-  version: 4.33.2
-  resolution: "wrangler@npm:4.33.2"
-  dependencies:
-    "@cloudflare/kv-asset-handler": "npm:0.4.0"
-    "@cloudflare/unenv-preset": "npm:2.7.1"
-    blake3-wasm: "npm:2.1.5"
-    esbuild: "npm:0.25.4"
-    fsevents: "npm:~2.3.2"
-    miniflare: "npm:4.20250829.0"
-    path-to-regexp: "npm:6.3.0"
-    unenv: "npm:2.0.0-rc.19"
-    workerd: "npm:1.20250829.0"
-  peerDependencies:
-    "@cloudflare/workers-types": ^4.20250829.0
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  peerDependenciesMeta:
-    "@cloudflare/workers-types":
-      optional: true
-  bin:
-    wrangler: bin/wrangler.js
-    wrangler2: bin/wrangler.js
-  checksum: 10c0/e580f12acb9f9b443d925106015ccfdcd584b878ab1cc330521f32fbeac07be81e01d34bb0a25200ef28f8a626a02dc858f429f42e9334fbc7a0eecf9d92929a
   languageName: node
   linkType: hard
 
