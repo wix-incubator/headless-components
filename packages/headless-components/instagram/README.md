@@ -64,15 +64,21 @@ function InstagramWidget() {
           </div>
         }
       >
-        <InstagramFeed.InstagramMediaRepeater>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <InstagramMedia.MediaGalleries>
-              <InstagramMedia.MediaGalleryRepeater>
-                <MediaGallery.Root />
-              </InstagramMedia.MediaGalleryRepeater>
-            </InstagramMedia.MediaGalleries>
-          </div>
-        </InstagramFeed.InstagramMediaRepeater>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <InstagramFeed.InstagramMediaRepeater>
+            <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                <img
+                  src={src}
+                  alt={alt || ''}
+                  className="w-full h-full object-cover cursor-pointer"
+                />
+              )}
+            </MediaGallery.Viewport>
+            <MediaGallery.Previous />
+            <MediaGallery.Next />
+          </InstagramFeed.InstagramMediaRepeater>
+        </div>
       </InstagramFeed.InstagramMedias>
     </InstagramFeed.Root>
   );
@@ -91,22 +97,21 @@ The Instagram headless component follows the established 3-level architecture pa
 - `InstagramFeed.UserName` - Instagram username/display name
 - `InstagramFeed.Hashtag` - Associated hashtag
 
-### Gallery Components (3-Level Pattern)
+### Instagram Media Components (3-Level Pattern)
 
-1. **Container Level**: `InstagramFeed.Gallery`
+1. **Container Level**: `InstagramFeed.InstagramMedias`
    - Main container that provides context and conditional rendering
    - Does NOT render if the list is empty
-
-2. **List Container Level**: `InstagramFeed.GalleryItems`
-   - Container for the gallery items with empty state support
    - Supports `emptyState` prop for when no media items exist
 
-3. **Repeater Level**: `InstagramFeed.GalleryRepeater`
+2. **Repeater Level**: `InstagramFeed.InstagramMediaRepeater`
    - Maps over media items and provides context for each item
 
 ### Individual Item Components
-- `InstagramFeed.GalleryItem` - Wrapper for each media item
-- `InstagramFeed.Media` - Displays the actual Instagram media (image/video)
+- `InstagramMedia.*` - Components for accessing individual media item data (Caption, UserName, etc.)
+- Use `MediaGallery.*` components directly within `InstagramFeed.InstagramMediaRepeater`
+
+**Note:** Instagram requires `asChild` pattern for `MediaGallery.Viewport` because it uses external image URLs. Product components can use default pattern because they use Wix-managed media.
 
 ## Advanced Usage with AsChild Pattern
 
@@ -171,7 +176,7 @@ interface InstagramMediaItem {
 
 This component follows the established headless components architecture:
 
-1. **3-Level List Pattern**: Gallery → GalleryItems → GalleryRepeater
+1. **3-Level List Pattern**: InstagramMedias → InstagramMediaRepeater
 2. **Context Pattern**: Data flows through React contexts
 3. **AsChild Support**: Full customization capabilities
 4. **Simplified Structure**: No test IDs or centralized types file

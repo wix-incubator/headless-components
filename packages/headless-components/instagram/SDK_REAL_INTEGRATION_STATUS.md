@@ -76,11 +76,13 @@ import { MediaGallery } from '@wix/headless-media/react';
 
   <InstagramFeed.InstagramMedias>
     <InstagramFeed.InstagramMediaRepeater>
-      <InstagramMedia.MediaGalleries>
-        <InstagramMedia.MediaGalleryRepeater>
-          <MediaGallery.Root />
-        </InstagramMedia.MediaGalleryRepeater>
-      </InstagramMedia.MediaGalleries>
+      <MediaGallery.Viewport asChild>
+        {({ src, alt }) => (
+          <img src={src} alt={alt || ''} className="w-full h-full object-cover" />
+        )}
+      </MediaGallery.Viewport>
+      <MediaGallery.Previous />
+      <MediaGallery.Next />
     </InstagramFeed.InstagramMediaRepeater>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>

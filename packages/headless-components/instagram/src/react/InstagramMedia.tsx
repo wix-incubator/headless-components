@@ -7,7 +7,6 @@ export enum TestIds {
   instagramMediaType = 'instagram-media-type',
   instagramMediaUserName = 'instagram-media-username',
   instagramMediaTimestamp = 'instagram-media-timestamp',
-  instagramMediaGalleries = 'instagram-media-galleries',
 }
 
 export interface CaptionProps {
@@ -134,27 +133,6 @@ export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>(
   },
 );
 
-export interface MediaGalleriesProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
-  children: React.ReactNode;
-}
-
-export const MediaGalleries = React.forwardRef<
-  HTMLDivElement,
-  MediaGalleriesProps
->((props, ref) => {
-  const { children, className, ...otherProps } = props;
-  return (
-    <div
-      ref={ref}
-      className={className}
-      data-testid={TestIds.instagramMediaGalleries}
-      {...otherProps}
-    >
-      {children}
-    </div>
-  );
-});
 
 export interface MediaGalleryRepeaterProps {
   children: React.ReactNode;
@@ -197,9 +175,6 @@ export const InstagramMedia = {
   MediaType,
   UserName,
   Timestamp,
-  MediaGalleries,
-  MediaGalleryItems,
-  MediaGalleryRepeater,
   // lowercase aliases (new interface)
   caption: Caption,
   mediaType: MediaType,

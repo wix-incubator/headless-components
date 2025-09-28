@@ -1,13 +1,8 @@
 import React from 'react';
 import InstagramLayout from '../layouts/InstagramLayout';
 import { InstagramFeed, InstagramMedia } from '@wix/headless-instagram/react';
-import { InstagramMediaItemServiceDefinition } from '@wix/headless-instagram/services';
 import { MediaGallery } from '@wix/headless-media/react';
-import { useService } from '@wix/services-manager-react';
-import { InstagramFeedServiceDefinition } from '@wix/headless-instagram/services';
-import { MediaGalleryServiceDefinition } from '@wix/headless-media/services';
 import { type InstagramFeedServiceConfig } from '@wix/headless-instagram/services';
-// useService already imported above
 
 // No custom image rendering; gallery components handle images (like Stores)
 
