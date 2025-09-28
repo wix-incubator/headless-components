@@ -1,6 +1,56 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreInstagramMedia from './core/InstagramMedia.js';
+import { WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import {
+  InstagramMediaItemServiceDefinition,
+  InstagramMediaItemService,
+} from '../services/index.js';
+import * as CoreInstagramMedias from './core/InstagramMedias.js';
+import { MediaGallery } from '@wix/headless-media/react';
+
+export interface MediaGalleryRepeaterProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Repeats children for each Instagram media item, providing a per-item service context.
+ */
+export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
+  children,
+}) => {
+  return (
+    <CoreInstagramMedias.InstagramMedias>
+      {({ hasItems, mediaItems }) => {
+        console.log('mediaItems', mediaItems);
+        if (!hasItems) return null;
+
+        return (
+          <>
+            {mediaItems.map((mediaItem, index) => {
+              console.log('mediaItem', mediaItem.mediaGalleryItems);
+              return <WixServices
+                key={mediaItem.id || index}
+                servicesMap={createServicesMap().addService(
+                  InstagramMediaItemServiceDefinition,
+                  InstagramMediaItemService,
+                  { mediaItem, index },
+                )}
+              >
+                <MediaGallery.Root
+                  mediaGalleryServiceConfig={{ media:  mediaItem.mediaGalleryItems }}
+                >
+                  {children as React.ReactElement}
+                </MediaGallery.Root>
+              </WixServices>
+      })}
+          </>
+        );
+      }}
+    </CoreInstagramMedias.InstagramMedias>
+  );
+};
 
 export enum TestIds {
   instagramMediaCaption = 'instagram-media-caption',
@@ -53,7 +103,7 @@ export const MediaType = React.forwardRef<HTMLElement, MediaTypeProps>(
 
     return (
       <CoreInstagramMedia.MediaType>
-        {({ mediaType, type }) => (
+        {({ mediaType }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -61,10 +111,10 @@ export const MediaType = React.forwardRef<HTMLElement, MediaTypeProps>(
             data-testid={TestIds.instagramMediaType}
             customElement={children}
             customElementProps={{ mediaType }}
-            content={type}
+            content={mediaType}
             {...otherProps}
           >
-            <span>{type}</span>
+            <span>{mediaType}</span>
           </AsChildSlot>
         )}
       </CoreInstagramMedia.MediaType>
@@ -156,30 +206,6 @@ export const MediaGalleries = React.forwardRef<
   );
 });
 
-export interface MediaGalleryRepeaterProps {
-  children: React.ReactNode;
-}
-
-export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
-  children,
-}) => {
-  return (
-    <CoreInstagramMedia.MediaGalleryRepeater>
-      {({ media }) => {
-        const injectConfig = (child: React.ReactNode): React.ReactNode => {
-          if (!React.isValidElement(child)) return child;
-          // Inject mediaGalleryServiceConfig into MediaGallery.Root children
-          return React.cloneElement(child as any, {
-            ...(child as any).props,
-            mediaGalleryServiceConfig: { media },
-          });
-        };
-
-        return <>{React.Children.map(children, injectConfig)}</>;
-      }}
-    </CoreInstagramMedia.MediaGalleryRepeater>
-  );
-};
 
 export interface MediaGalleryItemsProps {
   children: React.ReactNode;

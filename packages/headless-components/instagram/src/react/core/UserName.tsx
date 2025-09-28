@@ -5,6 +5,8 @@ import { InstagramFeedServiceDefinition } from '../../services/index.js';
 export interface UserNameProps {
   /** Render prop function that receives username data */
   children: (props: UserNameRenderProps) => React.ReactNode;
+  /** Fallback label when username is unavailable */
+  unknownLabel?: string;
 }
 
 /**
@@ -22,11 +24,12 @@ export interface UserNameRenderProps {
  * Handles service logic and provides render props with username data
  */
 export function UserName(props: UserNameProps) {
+  const { unknownLabel = 'unknown' } = props;
   const instagramFeedService = useService(InstagramFeedServiceDefinition);
   const feedData = instagramFeedService.feedData.get();
 
   const displayName =
-    feedData.account?.instagramInfo?.instagramUsername || 'unknown';
+    feedData.account?.instagramInfo?.instagramUsername || unknownLabel;
   const displayValue = `@${displayName}`;
 
   return props.children({

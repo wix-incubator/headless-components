@@ -18,27 +18,29 @@ import { MediaGallery } from '@wix/headless-media/react';
   {/* expand mode */}
   <InstagramFeed.InstagramMedias>
     <InstagramFeed.InstagramMediaRepeater>
-      <MediaGallery.Root>
+
         {/* <MediaGallery.Viewport>
              <MediaGallery.Previous/> */}
-        <InstagramMedia.caption />
-        <InstagramMedia.mediaType />
-        <InstagramMedia.userName />
-        <InstagramMedia.timestamp />
+        <InstagramMedia.Caption />
+        <InstagramMedia.MediaType />
+        <InstagramMedia.UserName />
+        <InstagramMedia.Timestamp />
         <InstagramMedia.MediaGalleries>
           <InstagramMedia.MediaGalleryRepeater>
-            <MediaGallery.Root>
-              {/* <MediaGallery.Viewport>
-                   <MediaGallery.Previous/>
-                     <MediaGallery.ThumbnailItem>
-                   <MediaGallery.Next/>
-                 </MediaGallery.Viewport> */}
-            </MediaGallery.Root>
+               <MediaGallery.Viewport asChild>
+                      {({ src, alt }) => (
+                        <img
+                          src={src}
+                          alt={alt || ''}
+                          className="w-full h-full object-cover cursor-pointer"
+                        />
+                      )}
+                    </MediaGallery.Viewport>
+
           </InstagramMedia.MediaGalleryRepeater>
         </InstagramMedia.MediaGalleries>
         {/*   <MediaGallery.Next/>
             </MediaGallery.Viewport> */}
-      </MediaGallery.Root>
     </InstagramFeed.InstagramMediaRepeater>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>

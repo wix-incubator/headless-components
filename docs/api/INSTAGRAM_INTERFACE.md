@@ -19,21 +19,21 @@ import { MediaGallery } from '@wix/headless-media/react';
 
   <InstagramFeed.InstagramMedias>
     <InstagramFeed.InstagramMediaRepeater>
-      <MediaGallery.Root>
-        <InstagramMedia.caption />
-        <InstagramMedia.mediaType />
-        <InstagramMedia.userName />
-        <InstagramMedia.timestamp />
-        <InstagramMedia.MediaGalleries>
-          <InstagramMedia.MediaGalleryRepeater>
-            <MediaGallery.Root />
-          </InstagramMedia.MediaGalleryRepeater>
-        </InstagramMedia.MediaGalleries>
-      </MediaGallery.Root>
+      <InstagramMedia.Caption />
+      <InstagramMedia.MediaType />
+      <InstagramMedia.UserName />
+      <InstagramMedia.Timestamp />
+      <InstagramMedia.MediaGalleries>
+        <InstagramMedia.MediaGalleryRepeater>
+          <MediaGallery.Viewport />
+        </InstagramMedia.MediaGalleryRepeater>
+      </InstagramMedia.MediaGalleries>
     </InstagramFeed.InstagramMediaRepeater>
   </InstagramFeed.InstagramMedias>
 </InstagramFeed.Root>
 ```
+
+Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the provided `hashtag` prop (adding a leading `#` if missing). It does not read hashtags from the feed or fetch anything.
 
 ### Complete Feed with Custom Layout
 
@@ -53,7 +53,7 @@ import { MediaGallery } from '@wix/headless-media/react';
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <InstagramMedia.MediaGalleries>
           <InstagramMedia.MediaGalleryRepeater>
-            <MediaGallery.Root />
+            <MediaGallery.Viewport />
           </InstagramMedia.MediaGalleryRepeater>
         </InstagramMedia.MediaGalleries>
       </div>
@@ -76,7 +76,6 @@ import { MediaGallery } from '@wix/headless-media/react';
       <div className="grid grid-cols-3 gap-2">
         <InstagramMedia.MediaGalleries>
           <InstagramMedia.MediaGalleryRepeater>
-            <MediaGallery.Root />
           </InstagramMedia.MediaGalleryRepeater>
         </InstagramMedia.MediaGalleries>
       </div>
@@ -106,7 +105,7 @@ import { MediaGallery } from '@wix/headless-media/react';
     <InstagramFeed.InstagramMediaRepeater>
       <InstagramMedia.MediaGalleries>
         <InstagramMedia.MediaGalleryRepeater>
-          <MediaGallery.Root />
+          <MediaGallery.Viewport />
         </InstagramMedia.MediaGalleryRepeater>
       </InstagramMedia.MediaGalleries>
     </InstagramFeed.InstagramMediaRepeater>
@@ -161,7 +160,7 @@ import { MediaGallery } from '@wix/headless-media/react';
       <div className="masonry-layout">
         <InstagramMedia.MediaGalleries>
           <InstagramMedia.MediaGalleryRepeater>
-            <MediaGallery.Root />
+            <MediaGallery.Viewport />
           </InstagramMedia.MediaGalleryRepeater>
         </InstagramMedia.MediaGalleries>
       </div>
@@ -188,7 +187,7 @@ import { MediaGallery } from '@wix/headless-media/react';
     <InstagramFeed.InstagramMediaRepeater>
       <InstagramMedia.MediaGalleries>
         <InstagramMedia.MediaGalleryRepeater>
-          <MediaGallery.Root />
+          <MediaGallery.Viewport />
         </InstagramMedia.MediaGalleryRepeater>
       </InstagramMedia.MediaGalleries>
     </InstagramFeed.InstagramMediaRepeater>
@@ -264,12 +263,13 @@ interface UserNameProps {
 ```
 
 ### InstagramFeed.Hashtag
+Pure UI component. Renders the provided hashtag string and does not read from services or infer hashtags from the feed. If `hashtag` is not provided, it renders nothing. A leading `#` is added automatically if missing.
 ```tsx
 interface HashtagProps {
   asChild?: boolean;
   children?: AsChildChildren<{ hashtag: string }>;
   className?: string;
-  hashtag?: string; // Hashtag to display (adds # prefix if not present)
+  hashtag?: string; // Hashtag to display; renders nothing if omitted; adds # if missing
 }
 ```
 
@@ -444,8 +444,8 @@ Instagram components integrate seamlessly with Media Gallery components:
     <InstagramFeed.InstagramMediaRepeater>
       <InstagramMedia.MediaGalleries>
         <InstagramMedia.MediaGalleryRepeater>
-          {/* Use any Media Gallery components within a MediaGallery.Root */}
-          <MediaGallery.Root />
+          {/* Use Media Gallery primitives like Viewport within the repeater */}
+          <MediaGallery.Viewport />
         </InstagramMedia.MediaGalleryRepeater>
       </InstagramMedia.MediaGalleries>
     </InstagramFeed.InstagramMediaRepeater>

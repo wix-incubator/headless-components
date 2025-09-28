@@ -68,7 +68,15 @@ function InstagramWidget() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <InstagramMedia.MediaGalleries>
               <InstagramMedia.MediaGalleryRepeater>
-                <MediaGallery.Root />
+               <MediaGallery.Viewport asChild>
+                      {({ src, alt }) => (
+                        <img
+                          src={src}
+                          alt={alt || ''}
+                          className="w-full h-full object-cover cursor-pointer"
+                        />
+                      )}
+                    </MediaGallery.Viewport>
               </InstagramMedia.MediaGalleryRepeater>
             </InstagramMedia.MediaGalleries>
           </div>
