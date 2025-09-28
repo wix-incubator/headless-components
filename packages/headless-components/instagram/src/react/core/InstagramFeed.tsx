@@ -38,17 +38,25 @@ export interface RootProps {
  *         <InstagramFeed.Hashtag />
  *       </div>
  *       <InstagramFeed.InstagramMedias>
- *         <InstagramFeed.InstagramMediaRepeater>
- *           <InstagramMedia.Caption />
- *           <InstagramMedia.MediaType />
- *           <InstagramMedia.UserName />
- *           <InstagramMedia.Timestamp />
- *           <InstagramMedia.MediaGalleries>
- *             <InstagramMedia.MediaGalleryRepeater>
- *               <MediaGallery.Root />
- *             </InstagramMedia.MediaGalleryRepeater>
- *           </InstagramMedia.MediaGalleries>
- *         </InstagramFeed.InstagramMediaRepeater>
+ *         <InstagramFeed.InstagramMediaItems emptyState={<div>No posts</div>}>
+ *           <InstagramFeed.InstagramMediaRepeater>
+ *             <InstagramMedia.Root>
+ *               <InstagramMedia.Caption />
+ *               <InstagramMedia.MediaType />
+ *               <InstagramMedia.UserName />
+ *               <InstagramMedia.Timestamp />
+ *               <InstagramMedia.MediaGalleries>
+ *                 <InstagramMedia.MediaGalleryItems>
+ *                   <InstagramMedia.MediaGalleryRepeater>
+ *                     <MediaGallery.Root>
+ *                       <MediaGallery.Viewport />
+ *                     </MediaGallery.Root>
+ *                   </InstagramMedia.MediaGalleryRepeater>
+ *                 </InstagramMedia.MediaGalleryItems>
+ *               </InstagramMedia.MediaGalleries>
+ *             </InstagramMedia.Root>
+ *           </InstagramFeed.InstagramMediaRepeater>
+ *         </InstagramFeed.InstagramMediaItems>
  *       </InstagramFeed.InstagramMedias>
  *     </InstagramFeed.Root>
  *   );

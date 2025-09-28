@@ -1,7 +1,72 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
-import { MediaGallery } from '@wix/headless-media/react';
+import { useService } from '@wix/services-manager-react';
+import { MediaGallery as MediaGalleryComponent } from '@wix/headless-media/react';
 import * as CoreInstagramMedia from './core/InstagramMedia.js';
+import { InstagramMediaItemServiceDefinition } from '../services/index.js';
+
+// Import MediaGallery wrapper components
+export {
+  MediaGalleries,
+  type MediaGalleriesProps,
+} from './InstagramMediaMediaGalleries.js';
+export {
+  MediaGalleryRepeater,
+  type MediaGalleryRepeaterProps,
+} from './InstagramMediaMediaGalleryRepeater.js';
+
+/**
+ * Props for InstagramMedia MediaGallery wrapper component
+ */
+export interface MediaGalleryProps {
+  children: React.ReactNode;
+}
+
+/**
+ * MediaGallery wrapper for Instagram media carousel navigation.
+ * Handles MediaGallery.Root internally, consumer only provides MediaGallery UI components.
+ * Follows the same pattern as Product.MediaGallery in stores headless.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <InstagramMedia.MediaGallery>
+ *   <MediaGallery.Viewport />
+ *   <MediaGallery.Previous />
+ *   <MediaGallery.Next />
+ *   <MediaGallery.Thumbnails>
+ *     <MediaGallery.ThumbnailRepeater>
+ *       <MediaGallery.ThumbnailItem />
+ *     </MediaGallery.ThumbnailRepeater>
+ *   </MediaGallery.Thumbnails>
+ * </InstagramMedia.MediaGallery>
+ * ```
+ */
+export const MediaGallery = React.forwardRef<HTMLDivElement, MediaGalleryProps>(
+  (props, ref) => {
+    const { children, ...otherProps } = props;
+    const mediaItemService = useService(InstagramMediaItemServiceDefinition);
+    const mediaItem = mediaItemService.mediaItem.get();
+
+    if (!mediaItem) return null;
+
+    // Transform Instagram data to MediaGallery format automatically
+    const mediaGalleryConfig =
+      CoreInstagramMedia.transformToMediaGalleryFormat(mediaItem);
+
+    return (
+      <div {...otherProps} ref={ref} data-testid="instagram-media-gallery">
+        <MediaGalleryComponent.Root
+          mediaGalleryServiceConfig={mediaGalleryConfig}
+        >
+          {children}
+        </MediaGalleryComponent.Root>
+      </div>
+    );
+  },
+);
+
+MediaGallery.displayName = 'InstagramMedia.MediaGallery';
 
 /**
  * Props for InstagramMedia Root component
@@ -18,19 +83,6 @@ export interface RootProps {
  *
  * @order 1
  * @component
- * @example
- * ```tsx
- * // Used internally by InstagramMediaRepeater
- * <InstagramMedia.Root>
- *   <InstagramMedia.Caption />
- *   <InstagramMedia.MediaType />
- *   <InstagramMedia.MediaGalleries>
- *     <InstagramMedia.MediaGalleryRepeater>
- *       <MediaGallery.Viewport />
- *     </InstagramMedia.MediaGalleryRepeater>
- *   </InstagramMedia.MediaGalleries>
- * </InstagramMedia.Root>
- * ```
  */
 export function Root(props: RootProps): React.ReactNode {
   const { children, className, ...attrs } = props;
@@ -49,8 +101,6 @@ enum TestIds {
   instagramMediaType = 'instagram-media-type',
   instagramMediaUserName = 'instagram-media-username',
   instagramMediaTimestamp = 'instagram-media-timestamp',
-  instagramMediaGalleries = 'instagram-media-galleries',
-  instagramMediaGalleryRepeater = 'instagram-media-gallery-repeater',
 }
 
 /**
@@ -60,7 +110,7 @@ export interface CaptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ caption: string | null }>;
+  children?: AsChildChildren<{ caption?: string }>;
   className?: string;
 }
 
@@ -68,39 +118,31 @@ export interface CaptionProps {
  * Displays the Instagram media caption
  *
  * @component
- * @example
- * ```tsx
- * // Basic usage
- * <InstagramMedia.Caption />
- *
- * // AsChild pattern for custom element
- * <InstagramMedia.Caption asChild>
- *   {({ caption }) => (
- *     <p className="media-caption">{caption || 'No caption'}</p>
- *   )}
- * </InstagramMedia.Caption>
- * ```
  */
 export const Caption = React.forwardRef<HTMLDivElement, CaptionProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
     const mediaItem = CoreInstagramMedia.useInstagramMediaItem();
 
-    const caption = mediaItem.caption || null;
+    const caption = mediaItem?.caption || '';
     const data = { caption };
+
+    const attributes = {
+      'data-testid': TestIds.instagramMediaCaption,
+      className,
+      ...otherProps,
+    };
 
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
-        className={className}
         customElement={children}
         customElementProps={data}
-        content={caption || ''}
-        data-testid={TestIds.instagramMediaCaption}
-        {...otherProps}
+        content={caption}
+        {...attributes}
       >
-        <div>{caption || ''}</div>
+        <div>{caption}</div>
       </AsChildSlot>
     );
   },
@@ -113,48 +155,37 @@ export interface MediaTypeProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ mediaType: string }>;
+  children?: AsChildChildren<{ mediaType?: string }>;
   className?: string;
 }
 
 /**
- * Displays the Instagram media type (image or video)
+ * Displays the Instagram media type
  *
  * @component
- * @example
- * ```tsx
- * // Basic usage
- * <InstagramMedia.MediaType />
- *
- * // AsChild pattern for custom element
- * <InstagramMedia.MediaType asChild>
- *   {({ mediaType }) => (
- *     <span className={`media-type ${mediaType}`}>
- *       {mediaType.toUpperCase()}
- *     </span>
- *   )}
- * </InstagramMedia.MediaType>
- * ```
  */
 export const MediaType = React.forwardRef<HTMLSpanElement, MediaTypeProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
     const mediaItem = CoreInstagramMedia.useInstagramMediaItem();
 
-    const mediaType = mediaItem.type || 'image';
+    const mediaType = mediaItem?.type || 'image';
     const data = { mediaType };
+
+    const attributes = {
+      'data-testid': TestIds.instagramMediaType,
+      className,
+      ...otherProps,
+    };
 
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
-        className={className}
         customElement={children}
         customElementProps={data}
         content={mediaType}
-        data-testid={TestIds.instagramMediaType}
-        data-type={mediaType}
-        {...otherProps}
+        {...attributes}
       >
         <span>{mediaType}</span>
       </AsChildSlot>
@@ -177,41 +208,31 @@ export interface UserNameProps {
  * Displays the Instagram media user name
  *
  * @component
- * @example
- * ```tsx
- * // Basic usage
- * <InstagramMedia.UserName />
- *
- * // AsChild pattern for custom element
- * <InstagramMedia.UserName asChild>
- *   {({ userName }) => (
- *     <a href={`https://instagram.com/${userName}`} className="username-link">
- *       @{userName}
- *     </a>
- *   )}
- * </InstagramMedia.UserName>
- * ```
  */
 export const UserName = React.forwardRef<HTMLSpanElement, UserNameProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
     const mediaItem = CoreInstagramMedia.useInstagramMediaItem();
 
-    const userName = mediaItem.userName || null;
+    const userName = mediaItem?.userName || '';
     const data = { userName };
+
+    const attributes = {
+      'data-testid': TestIds.instagramMediaUserName,
+      className,
+      ...otherProps,
+    };
 
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
-        className={className}
         customElement={children}
         customElementProps={data}
-        content={userName || ''}
-        data-testid={TestIds.instagramMediaUserName}
-        {...otherProps}
+        content={userName}
+        {...attributes}
       >
-        <span>{userName || ''}</span>
+        <span>{userName}</span>
       </AsChildSlot>
     );
   },
@@ -224,7 +245,7 @@ export interface TimestampProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ timestamp: string; formattedDate: string }>;
+  children?: AsChildChildren<{ timestamp?: string; formattedDate?: string }>;
   className?: string;
 }
 
@@ -232,40 +253,32 @@ export interface TimestampProps {
  * Displays the Instagram media timestamp
  *
  * @component
- * @example
- * ```tsx
- * // Basic usage
- * <InstagramMedia.Timestamp />
- *
- * // AsChild pattern for custom element
- * <InstagramMedia.Timestamp asChild>
- *   {({ timestamp, formattedDate }) => (
- *     <time dateTime={timestamp} className="timestamp">
- *       {formattedDate}
- *     </time>
- *   )}
- * </InstagramMedia.Timestamp>
- * ```
  */
 export const Timestamp = React.forwardRef<HTMLTimeElement, TimestampProps>(
   (props, ref) => {
     const { asChild, children, className, ...otherProps } = props;
     const mediaItem = CoreInstagramMedia.useInstagramMediaItem();
 
-    const timestamp = mediaItem.timestamp || new Date().toISOString();
-    const formattedDate = new Date(timestamp).toLocaleDateString();
+    const timestamp = mediaItem?.timestamp || '';
+    const formattedDate = timestamp
+      ? new Date(timestamp).toLocaleDateString()
+      : '';
     const data = { timestamp, formattedDate };
+
+    const attributes = {
+      'data-testid': TestIds.instagramMediaTimestamp,
+      className,
+      ...otherProps,
+    };
 
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
-        className={className}
         customElement={children}
         customElementProps={data}
         content={formattedDate}
-        data-testid={TestIds.instagramMediaTimestamp}
-        {...otherProps}
+        {...attributes}
       >
         <time dateTime={timestamp}>{formattedDate}</time>
       </AsChildSlot>
@@ -273,152 +286,6 @@ export const Timestamp = React.forwardRef<HTMLTimeElement, TimestampProps>(
   },
 );
 
-/**
- * Props for InstagramMedia MediaGalleries component
- */
-export interface MediaGalleriesProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    hasGalleryItems: boolean;
-    galleryItems: Array<{ image: string; altText: string }>;
-  }>;
-  className?: string;
-  /** Content to show when there are no gallery items */
-  emptyState?: React.ReactNode;
-}
-
-/**
- * Container for Instagram media galleries, implementing the Container Level
- * of the 3-level pattern. Only renders if there are valid gallery items.
- *
- * @component
- * @example
- * ```tsx
- * // Basic usage
- * <InstagramMedia.MediaGalleries>
- *   <InstagramMedia.MediaGalleryRepeater>
- *     <MediaGallery.Viewport />
- *   </InstagramMedia.MediaGalleryRepeater>
- * </InstagramMedia.MediaGalleries>
- *
- * // With empty state
- * <InstagramMedia.MediaGalleries emptyState={<div>No media</div>}>
- *   <InstagramMedia.MediaGalleryRepeater>
- *     <MediaGallery.Viewport />
- *   </InstagramMedia.MediaGalleryRepeater>
- * </InstagramMedia.MediaGalleries>
- *
- * // AsChild pattern for custom container
- * <InstagramMedia.MediaGalleries asChild>
- *   {({ hasGalleryItems, galleryItems, ...props }) => (
- *     <div {...props} className="media-gallery-container">
- *       {hasGalleryItems && (
- *         <span className="gallery-count">
- *           {galleryItems.length} items
- *         </span>
- *       )}
- *     </div>
- *   )}
- * </InstagramMedia.MediaGalleries>
- * ```
- */
-export const MediaGalleries = React.forwardRef<
-  HTMLDivElement,
-  MediaGalleriesProps
->((props, ref) => {
-  const { asChild, children, className, emptyState, ...otherProps } = props;
-  const mediaItem = CoreInstagramMedia.useInstagramMediaItem();
-
-  // Convert Instagram media item to MediaGallery format using core logic
-  const galleryItems =
-    CoreInstagramMedia.transformToMediaGalleryFormat(mediaItem);
-  const hasGalleryItems = CoreInstagramMedia.hasValidGalleryItems(galleryItems);
-
-  // Don't render if no gallery items and using default rendering
-  if (!hasGalleryItems && !asChild) {
-    return emptyState || null;
-  }
-
-  const data = { hasGalleryItems, galleryItems };
-
-  return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      customElement={children}
-      customElementProps={data}
-      content={null}
-      data-testid={TestIds.instagramMediaGalleries}
-      {...otherProps}
-    >
-      <div>
-        {hasGalleryItems
-          ? typeof children === 'function' ||
-            (typeof children === 'object' &&
-              children !== null &&
-              !React.isValidElement(children))
-            ? null
-            : children
-          : emptyState}
-      </div>
-    </AsChildSlot>
-  );
-});
-
-/**
- * Props for InstagramMedia MediaGalleryRepeater component
- */
-export interface MediaGalleryRepeaterProps {
-  children: React.ReactNode;
-}
-
-/**
- * Repeater component for Instagram media galleries, implementing the Repeater Level
- * of the 3-level pattern. Uses MediaGallery.Root from @wix/headless-media/react.
- *
- * @component
- * @example
- * ```tsx
- * // Basic usage
- * <InstagramMedia.MediaGalleryRepeater>
- *   <MediaGallery.Viewport />
- * </InstagramMedia.MediaGalleryRepeater>
- *
- * // With custom MediaGallery components
- * <InstagramMedia.MediaGalleryRepeater>
- *   <MediaGallery.Viewport />
- *   <MediaGallery.Thumbnails>
- *     <MediaGallery.ThumbnailRepeater>
- *       <MediaGallery.ThumbnailItem />
- *     </MediaGallery.ThumbnailRepeater>
- *   </MediaGallery.Thumbnails>
- * </InstagramMedia.MediaGalleryRepeater>
- * ```
- */
-export const MediaGalleryRepeater = React.forwardRef<
-  HTMLElement,
-  MediaGalleryRepeaterProps
->((props, _ref) => {
-  const { children } = props;
-  const mediaItem = CoreInstagramMedia.useInstagramMediaItem();
-
-  // Convert Instagram media item to MediaGallery format using core logic
-  const galleryItems =
-    CoreInstagramMedia.transformToMediaGalleryFormat(mediaItem);
-  const hasGalleryItems = CoreInstagramMedia.hasValidGalleryItems(galleryItems);
-
-  if (!hasGalleryItems) return null;
-
-  return (
-    <MediaGallery.Root
-      mediaGalleryServiceConfig={{
-        media: galleryItems,
-      }}
-    >
-      <div data-testid={TestIds.instagramMediaGalleryRepeater}>{children}</div>
-    </MediaGallery.Root>
-  );
-});
+// Note: No useMediaGalleryConfig hook needed
+// Consumer handles integration with MediaGallery or any other components
+// Instagram components only provide Instagram data

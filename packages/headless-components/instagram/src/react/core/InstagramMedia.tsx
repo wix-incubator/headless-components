@@ -24,9 +24,13 @@ export interface RootProps {
  *   <InstagramMedia.Caption />
  *   <InstagramMedia.MediaType />
  *   <InstagramMedia.MediaGalleries>
- *     <InstagramMedia.MediaGalleryRepeater>
- *       <MediaGallery.Root />
- *     </InstagramMedia.MediaGalleryRepeater>
+ *     <InstagramMedia.MediaGalleryItems>
+ *       <InstagramMedia.MediaGalleryRepeater>
+ *         <MediaGallery.Root>
+ *           <MediaGallery.Viewport />
+ *         </MediaGallery.Root>
+ *       </InstagramMedia.MediaGalleryRepeater>
+ *     </InstagramMedia.MediaGalleryItems>
  *   </InstagramMedia.MediaGalleries>
  * </InstagramMedia.Root>
  * ```
@@ -53,29 +57,30 @@ export function useInstagramMediaItem() {
 /**
  * Transform Instagram media item to MediaGallery format
  * This is the core transformation logic used by MediaGallery components
+ * Now properly handles carousel children
  */
 export function transformToMediaGalleryFormat(mediaItem: any) {
-  // For external URLs (like demo data), we need to wrap them in a media object format
-  // that MediaGallery can understand
+  // Handle carousel albums with children
+  if (mediaItem.children && mediaItem.children.length > 0) {
+    return mediaItem.children.map((child: any, index: number) => ({
+      image: child.mediaUrl || child.mediaUrl,
+      altText: child.caption || `Instagram media ${index + 1}`,
+    }));
+  }
+
+  // Handle single media items
   const imageUrl =
     mediaItem.type === 'video'
       ? mediaItem.thumbnailUrl || mediaItem.mediaUrl
       : mediaItem.mediaUrl;
 
-  const transformedData = [
+  return [
     {
-      // MediaGallery expects either a Wix media object or a URL
-      // For external URLs, we pass them directly as the image property
       image: imageUrl,
       altText:
         mediaItem.altText || mediaItem.caption || `Instagram ${mediaItem.type}`,
-      // Add additional metadata that MediaGallery might need
-      url: imageUrl,
-      type: mediaItem.type === 'video' ? 'video' : 'image',
     },
   ];
-
-  return transformedData;
 }
 
 /**

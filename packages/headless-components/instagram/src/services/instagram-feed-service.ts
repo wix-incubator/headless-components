@@ -34,6 +34,13 @@ export interface InstagramMediaItem {
   altText?: string;
   /** Username of the Instagram account that posted this media */
   userName?: string;
+  /** Children for carousel albums - matches SDK Media.children */
+  children?: Array<{
+    mediaId?: string;
+    mediaType?: string;
+    mediaUrl?: string | null;
+    id?: string;
+  }>;
 }
 
 /**
@@ -150,7 +157,8 @@ export const InstagramFeedService =
         config.feedData || defaultInstagramFeedData,
       );
       const isLoading: Signal<boolean> = signalsService.signal(
-        !!config.accountId as any,
+        // Only loading if we have accountId but no feedData (need to fetch)
+        !!(config.accountId && !config.feedData) as any,
       );
       const error: Signal<string | null> = signalsService.signal(null as any);
 
@@ -182,6 +190,13 @@ export const InstagramFeedService =
               altText:
                 mediaItem.caption ||
                 `Instagram post ${mediaItem._id || mediaItem.mediaId}`,
+              children:
+                mediaItem.children?.map((child) => ({
+                  mediaId: child.mediaId,
+                  mediaType: child.mediaType,
+                  mediaUrl: child.mediaUrl,
+                  id: child.mediaId || '',
+                })) || [],
             })) || [];
 
           const newFeedData: InstagramFeedData = {

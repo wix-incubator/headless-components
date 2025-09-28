@@ -17,26 +17,24 @@ export interface InstagramMediaRepeaterProps {
 }
 
 /**
- * Repeater component for Instagram media items, implementing the Repeater Level
- * of the 3-level pattern. Renders InstagramMedia.Root for each media item.
+ * Simple repeater component for Instagram media items.
+ * MediaGallery integration handled by InstagramFeed.MediaGallery and InstagramMedia.MediaGallery wrappers.
  *
  * @component
  * @example
  * ```tsx
- * // Basic usage
  * <InstagramFeed.InstagramMediaRepeater>
+ *   <InstagramFeed.MediaGallery>
+ *     <MediaGallery.Previous />
+ *     <MediaGallery.Next />
+ *   </InstagramFeed.MediaGallery>
+ *
  *   <InstagramMedia.Caption />
  *   <InstagramMedia.MediaType />
- * </InstagramFeed.InstagramMediaRepeater>
  *
- * // With media gallery
- * <InstagramFeed.InstagramMediaRepeater>
- *   <InstagramMedia.MediaGalleries>
- *     <InstagramMedia.MediaGalleryRepeater>
- *       <MediaGallery.Viewport />
- *     </InstagramMedia.MediaGalleryRepeater>
- *   </InstagramMedia.MediaGalleries>
- *   <InstagramMedia.Caption />
+ *   <InstagramMedia.MediaGallery>
+ *     <MediaGallery.Viewport />
+ *   </InstagramMedia.MediaGallery>
  * </InstagramFeed.InstagramMediaRepeater>
  * ```
  */
