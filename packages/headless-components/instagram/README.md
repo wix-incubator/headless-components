@@ -110,9 +110,10 @@ The Instagram headless component follows the established 3-level architecture pa
    - Maps over media items and provides context for each item
 
 ### Individual Item Components
-- `InstagramMedia.*` - Components for accessing individual media item data
-- `InstagramMedia.MediaGalleries` - Container for media gallery functionality
-- `InstagramMedia.MediaGalleryRepeater` - Repeater for media gallery items
+- `InstagramMedia.*` - Components for accessing individual media item data (Caption, UserName, etc.)
+- Use `MediaGallery.*` components directly within `InstagramFeed.InstagramMediaRepeater`
+
+**Note:** Instagram requires `asChild` pattern for `MediaGallery.Viewport` because it uses external image URLs. Product components can use default pattern because they use Wix-managed media.
 
 ## Advanced Usage with AsChild Pattern
 

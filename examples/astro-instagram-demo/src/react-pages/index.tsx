@@ -1,13 +1,8 @@
 import React from 'react';
 import InstagramLayout from '../layouts/InstagramLayout';
 import { InstagramFeed, InstagramMedia } from '@wix/headless-instagram/react';
-import { InstagramMediaItemServiceDefinition } from '@wix/headless-instagram/services';
 import { MediaGallery } from '@wix/headless-media/react';
-import { useService } from '@wix/services-manager-react';
-import { InstagramFeedServiceDefinition } from '@wix/headless-instagram/services';
-import { MediaGalleryServiceDefinition } from '@wix/headless-media/services';
 import { type InstagramFeedServiceConfig } from '@wix/headless-instagram/services';
-// useService already imported above
 
 // No custom image rendering; gallery components handle images (like Stores)
 
@@ -41,21 +36,15 @@ export default function IndexPage(props: {
           <InstagramFeed.InstagramMedias>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               <InstagramFeed.InstagramMediaRepeater>
-                  <InstagramMedia.MediaGalleries>
-                    <InstagramMedia.MediaGalleryRepeater>
-                      <MediaGallery.Root mediaGalleryServiceConfig={{ media: [], infinite: true }}>
-                          <MediaGallery.Viewport asChild>
-                            {({ src, alt }) => (
-                              <img
-                                src={src}
-                                alt={alt || ''}
-                                className="w-full h-full object-cover cursor-pointer"
-                              />
-                            )}
-                          </MediaGallery.Viewport>
-                      </MediaGallery.Root>
-                    </InstagramMedia.MediaGalleryRepeater>
-                  </InstagramMedia.MediaGalleries>
+                <MediaGallery.Viewport asChild>
+                  {({ src, alt }) => (
+                    <img
+                      src={src}
+                      alt={alt || ''}
+                      className="w-full h-full object-cover cursor-pointer"
+                    />
+                  )}
+                </MediaGallery.Viewport>
               </InstagramFeed.InstagramMediaRepeater>
             </div>
           </InstagramFeed.InstagramMedias>
@@ -72,23 +61,17 @@ export default function IndexPage(props: {
                 <div className="flex min-h-[500px]">
                   {/* Left Side - Image */}
                   <div className="flex-1 bg-gray-900 flex items-center justify-center">
-                    <InstagramMedia.MediaGalleries>
-                      <InstagramMedia.MediaGalleryRepeater>
-                        <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }}>
-                          <div className="relative w-full h-full flex items-center justify-center">
-                            <MediaGallery.Viewport asChild>
-                              {({ src, alt }) => (
-                                <img
-                                  src={src}
-                                  alt={alt || ''}
-                                  className="max-w-full max-h-full object-contain"
-                                />
-                              )}
-                            </MediaGallery.Viewport>
-                          </div>
-                        </MediaGallery.Root>
-                      </InstagramMedia.MediaGalleryRepeater>
-                    </InstagramMedia.MediaGalleries>
+                    <div className="relative w-full h-full flex items-center justify-center">
+                      <MediaGallery.Viewport asChild>
+                        {({ src, alt }) => (
+                          <img
+                            src={src}
+                            alt={alt || ''}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        )}
+                      </MediaGallery.Viewport>
+                    </div>
                   </div>
 
                   {/* Right Side - Content */}
@@ -107,20 +90,14 @@ export default function IndexPage(props: {
                     </div>
                     <div className="p-6 border-b border-gray-200 flex-1">
                       <div className="flex items-center justify-between mb-6">
-                        <InstagramMedia.MediaGalleries>
-                          <InstagramMedia.MediaGalleryRepeater>
-                            <MediaGallery.Root mediaGalleryServiceConfig={{ media: [] }}>
-                              <div className="flex items-center space-x-6">
-                                <MediaGallery.Previous className="text-gray-600 hover:text-gray-800 text-2xl cursor-pointer">
-                                  ‹
-                                </MediaGallery.Previous>
-                                <MediaGallery.Next className="text-gray-600 hover:text-gray-800 text-2xl cursor-pointer">
-                                  ›
-                                </MediaGallery.Next>
-                              </div>
-                            </MediaGallery.Root>
-                          </InstagramMedia.MediaGalleryRepeater>
-                        </InstagramMedia.MediaGalleries>
+                        <div className="flex items-center space-x-6">
+                          <MediaGallery.Previous className="text-gray-600 hover:text-gray-800 text-2xl cursor-pointer">
+                            ‹
+                          </MediaGallery.Previous>
+                          <MediaGallery.Next className="text-gray-600 hover:text-gray-800 text-2xl cursor-pointer">
+                            ›
+                          </MediaGallery.Next>
+                        </div>
                       </div>
 
                       <div className="text-xl font-medium text-gray-900 mb-8">

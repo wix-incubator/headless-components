@@ -15,7 +15,7 @@ import { MediaGallery } from '@wix/headless-media/react';
     <InstagramFeed.Hashtag />
   </div>
 
-  {/* expand mode */}
+  {/* Media Section */}
   <InstagramFeed.InstagramMedias>
     <InstagramFeed.InstagramMediaRepeater>
 
@@ -50,4 +50,6 @@ import { MediaGallery } from '@wix/headless-media/react';
 
 - Use `InstagramFeed.InstagramMedias` as the list container.
 - Use `InstagramFeed.InstagramMediaRepeater` to iterate media items and provide per-item context.
-- Use the `InstagramMedia.*` namespace (now with lowercase aliases: `caption`, `mediaType`, `userName`, `timestamp`) for item-level components and nested `MediaGalleries`/`MediaGalleryRepeater`.
+- `InstagramMediaRepeater` automatically sets up `MediaGallery.Root` with proper media data.
+- Use `InstagramMedia.*` namespace for item-level data (caption, mediaType, userName, timestamp).
+- Use plain `MediaGallery.*` components directly within the repeater - no custom wrappers needed.
