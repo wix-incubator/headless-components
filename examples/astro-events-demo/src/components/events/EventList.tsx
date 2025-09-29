@@ -1,4 +1,4 @@
-import { type EventListServiceConfig } from '@wix/headless-events/services';
+import { type EventListServiceConfig } from '@wix/events/services';
 import {
   EventList as EventListPrimitive,
   Events,

@@ -1,4 +1,4 @@
-import { TicketDefinition as TicketDefinitionPrimitive } from '@wix/headless-events/react';
+import { TicketDefinition as TicketDefinitionPrimitive } from '@wix/events/components';
 import React from 'react';
 import { cn } from '@/lib/utils';
 

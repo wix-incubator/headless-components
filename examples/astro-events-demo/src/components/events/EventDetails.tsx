@@ -3,7 +3,7 @@ import {
   type EventListServiceConfig,
   type TicketDefinitionListServiceConfig,
   type CheckoutServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 import {
   Event,
   EventDate,

@@ -1,4 +1,4 @@
-import { EventList as EventListPrimitive } from '@wix/headless-events/react';
+import { EventList as EventListPrimitive } from '@wix/events/components';
 import React from 'react';
 import { cn } from '@/lib/utils';
 

@@ -8,7 +8,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@/components/*": ["src/components/*"]
+      "@/components/*": ["src/components/*"],
+      "@wix/events/components": [
+        "../../packages/headless-components/events/react"
+      ],
+      "@wix/events/services": [
+        "../../packages/headless-components/events/services"
+      ]
     }
   }
 }

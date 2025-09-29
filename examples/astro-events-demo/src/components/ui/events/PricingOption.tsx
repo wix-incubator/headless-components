@@ -1,4 +1,4 @@
-import { PricingOption as PricingOptionPrimitive } from '@wix/headless-events/react';
+import { PricingOption as PricingOptionPrimitive } from '@wix/events/components';
 import React from 'react';
 import { cn } from '@/lib/utils';
 

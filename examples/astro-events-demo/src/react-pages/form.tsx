@@ -1,7 +1,7 @@
 import {
   type EventServiceConfig,
   type FormServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { Form } from '../components/events/Form';
 

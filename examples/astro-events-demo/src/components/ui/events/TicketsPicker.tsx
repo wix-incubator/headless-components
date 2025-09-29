@@ -1,4 +1,4 @@
-import { TicketsPicker as TicketsPickerPrimitive } from '@wix/headless-events/react';
+import { TicketsPicker as TicketsPickerPrimitive } from '@wix/events/components';
 import React from 'react';
 import { cn } from '@/lib/utils';
 

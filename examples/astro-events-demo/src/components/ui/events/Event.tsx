@@ -1,4 +1,4 @@
-import { Event as EventPrimitive } from '@wix/headless-events/react';
+import { Event as EventPrimitive } from '@wix/events/components';
 import {
   LinkPreviewProviders,
   RicosViewer,

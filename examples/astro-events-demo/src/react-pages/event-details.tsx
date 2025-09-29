@@ -4,7 +4,7 @@ import {
   type TicketDefinitionListServiceConfig,
   type CheckoutServiceConfig,
   type ScheduleListServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 import { EventDetails } from '../components/events/EventDetails';
 
 interface EventDetailsPageProps {
