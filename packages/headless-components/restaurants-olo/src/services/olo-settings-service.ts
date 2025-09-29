@@ -20,29 +20,33 @@ export interface OLOSettingsServiceConfig {
   operation?: operationsApi.Operation;
 }
 
-export const OLOSettingsServiceDefinition = defineService<OLOSettingsServiceAPI>('oloSettings');
+export const OLOSettingsServiceDefinition =
+  defineService<OLOSettingsServiceAPI>('oloSettings');
 
-export const OLOSettingsService = implementService.withConfig<OLOSettingsServiceConfig>()(
-  OLOSettingsServiceDefinition,
-  ({ getService, config }) => {
-    const signalsService = getService(SignalsServiceDefinition);
-    const operationGroup = signalsService.signal<operationGroupsApi.OperationGroup | undefined>(
-      config.operationGroup
-    );
-    const operation = signalsService.signal<operationsApi.Operation | undefined>(config.operation);
-    const selectedItem = signalsService.signal<unknown>(null);
-    const isLoading = signalsService.signal<boolean>(false);
-    const error = signalsService.signal<string | null>(null);
+export const OLOSettingsService =
+  implementService.withConfig<OLOSettingsServiceConfig>()(
+    OLOSettingsServiceDefinition,
+    ({ getService, config }) => {
+      const signalsService = getService(SignalsServiceDefinition);
+      const operationGroup = signalsService.signal<
+        operationGroupsApi.OperationGroup | undefined
+      >(config.operationGroup);
+      const operation = signalsService.signal<
+        operationsApi.Operation | undefined
+      >(config.operation);
+      const selectedItem = signalsService.signal<unknown>(null);
+      const isLoading = signalsService.signal<boolean>(false);
+      const error = signalsService.signal<string | null>(null);
 
-    return {
-      operationGroup,
-      operation,
-      isLoading,
-      error,
-      selectedItem,
-    };
-  }
-);
+      return {
+        operationGroup,
+        operation,
+        isLoading,
+        error,
+        selectedItem,
+      };
+    },
+  );
 
 export async function loadOLOSettingsServiceConfig() {
   try {
@@ -62,7 +66,9 @@ export async function loadOLOSettingsServiceConfig() {
       operationGroup: undefined,
       operation: undefined,
       isLoading: false,
-      error: (error as Error)?.message || 'Failed to load OLO settings service config',
+      error:
+        (error as Error)?.message ||
+        'Failed to load OLO settings service config',
     };
   }
 }
