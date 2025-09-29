@@ -1,3 +1,5 @@
+@import '@wix/wix-vibe-plugins/plugins-theme.css';
+@import '@wix/wix-vibe-plugins/plugins-vars.css';
 @import './fonts.css';
 
 @tailwind base;

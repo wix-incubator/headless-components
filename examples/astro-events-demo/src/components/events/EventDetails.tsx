@@ -336,7 +336,7 @@ export const EventDetails = ({
                 currentPage: 0,
                 totalPages: 1,
               }}
-              eventsPagePath={eventDetailsPagePath}
+              eventDetailsPagePath={eventDetailsPagePath}
             />
           </div>
         </div>
