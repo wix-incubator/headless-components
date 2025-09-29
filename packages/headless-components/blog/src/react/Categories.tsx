@@ -114,6 +114,7 @@ export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>((prop
           {...attributes}
           customElement={children}
           customElementProps={{ hasCategories }}
+          data-component-tag={"wow"}
         >
           <div>{isValidChildren(children) ? children : null}</div>
         </AsChildSlot>
