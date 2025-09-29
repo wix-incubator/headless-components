@@ -7,7 +7,7 @@ enum TestIds {
   cmsItemRoot = 'collection-item',
 }
 
-const DataComponentTag = "cms.item-root";
+const DataComponentTag = 'cms.item-root';
 
 /**
  * Props for CmsItem.Root component
