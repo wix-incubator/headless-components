@@ -340,7 +340,7 @@ export function Actions(props: ActionsProps) {
   }
 
   const inStock = variantService.isInStock.get();
-  const isPreOrderEnabled = variantService.isPreOrderEnabled.get();
+  const isPreOrderEnabled = variantService.isPreOrderEnabled.get() && !inStock;
   const preOrderMessage = variantService.preOrderMessage.get();
   const isLoading =
     variantService.isLoading.get() ||

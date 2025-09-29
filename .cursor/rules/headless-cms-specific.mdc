@@ -1,0 +1,15 @@
+---
+globs: packages/headless-components/cms/**/*
+alwaysApply: false
+---
+
+# CMS Package Implementation Rules
+
+## ✅ Implementation Standards
+
+### **Follow CMS Interface Design**
+
+- Follow the design described in the following 2 markdown files: `docs/api/CMS_COLLECTION_INTERFACE.md`
+  and `docs/api/CMS_COLLECTION_ITEM_INTERFACE.md`
+
+**Remember**: All implementations must follow modern headless component patterns.

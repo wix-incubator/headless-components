@@ -28,7 +28,7 @@ export default function PostSiblingsNav({
               className="text-start"
             />
           </Blog.Post.SiblingPosts.Older>
-          <Separator className="my-2 md:hidden" />
+          <Separator className="my-2 md:hidden first:hidden last:hidden" />
           <Blog.Post.SiblingPosts.Newer>
             <SiblingPostLink
               label="Next"
