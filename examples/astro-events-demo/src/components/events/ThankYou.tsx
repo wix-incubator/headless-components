@@ -204,10 +204,10 @@ export function ThankYou({
                                   asChild
                                   className="justify-between flex"
                                 >
-                                  {({ value, currency }) => (
+                                  {({ formattedAmount }) => (
                                     <div>
                                       <span>Subtotal:</span>
-                                      <span>{`${value} ${currency}`}</span>
+                                      <span>{formattedAmount}</span>
                                     </div>
                                   )}
                                 </OrderPrimitive.Subtotal>
@@ -215,10 +215,10 @@ export function ThankYou({
                                   asChild
                                   className="justify-between flex"
                                 >
-                                  {({ value, currency, rate }) => (
+                                  {({ formattedAmount, rate }) => (
                                     <div>
                                       <span>{`Paid Plan Discount (${rate}%)`}</span>
-                                      <span>{`${value} ${currency}`}</span>
+                                      <span>{formattedAmount}</span>
                                     </div>
                                   )}
                                 </OrderPrimitive.PaidPlanDiscount>
@@ -226,9 +226,9 @@ export function ThankYou({
                                   asChild
                                   className="justify-between flex"
                                 >
-                                  {({ value, currency }) => (
+                                  {({ formattedAmount }) => (
                                     <div>
-                                      <span>{`Coupon Discount (${value} ${currency})`}</span>
+                                      <span>{`Coupon Discount (${formattedAmount})`}</span>
                                     </div>
                                   )}
                                 </OrderPrimitive.CouponDiscount>
@@ -236,10 +236,10 @@ export function ThankYou({
                                   asChild
                                   className="justify-between flex"
                                 >
-                                  {({ rate, value, currency, name }) => (
+                                  {({ rate, formattedAmount, name }) => (
                                     <div>
                                       <span>{`${name} (${rate}%)`}</span>
-                                      <span>{`${value} ${currency}`}</span>
+                                      <span>{formattedAmount}</span>
                                     </div>
                                   )}
                                 </OrderPrimitive.Tax>
@@ -247,10 +247,10 @@ export function ThankYou({
                                   asChild
                                   className="justify-between flex"
                                 >
-                                  {({ value, currency, rate }) => (
+                                  {({ formattedAmount, rate }) => (
                                     <div>
                                       <span>{`Service Fee (${rate}%)`}</span>
-                                      <span>{`${value} ${currency}`}</span>
+                                      <span>{formattedAmount}</span>
                                     </div>
                                   )}
                                 </OrderPrimitive.ServiceFee>
@@ -259,10 +259,10 @@ export function ThankYou({
                                 asChild
                                 className="font-light text-content-primary justify-between flex py-5"
                               >
-                                {({ value, currency }) => (
+                                {({ formattedAmount }) => (
                                   <div>
                                     <span>Total:</span>
-                                    <span>{`${value} ${currency}`}</span>
+                                    <span>{formattedAmount}</span>
                                   </div>
                                 )}
                               </OrderPrimitive.Total>

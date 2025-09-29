@@ -1,4 +1,4 @@
-export const waitALittle = (ms = 1000) =>
+const waitALittle = (ms = 1000) =>
   new Promise<undefined>((resolve) => setTimeout(resolve, ms));
 
 export const poll = async ({

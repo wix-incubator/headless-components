@@ -6,6 +6,7 @@ import {
   InvoiceItemServiceConfig,
   InvoiceItemServiceDefinition,
 } from '../../services/invoice-item-service.js';
+import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components */
@@ -69,10 +70,8 @@ export interface PriceProps {
 }
 
 export interface PriceRenderProps {
-  /** Invoice item price value */
-  value: string;
-  /** Invoice item price currency */
-  currency: string;
+  /** Formatted invoice item price amount */
+  formattedAmount: string;
 }
 
 /**
@@ -86,7 +85,9 @@ export function Price(props: PriceProps): React.ReactNode {
   const invoiceItem = invoiceItemService.invoiceItem.get();
   const price = invoiceItem.price!;
 
-  return props.children({ value: price.value!, currency: price.currency! });
+  return props.children({
+    formattedAmount: formatPrice(price.value!, price.currency!),
+  });
 }
 
 export interface QuantityProps {
@@ -119,10 +120,8 @@ export interface TotalProps {
 }
 
 export interface TotalRenderProps {
-  /** Invoice item total value */
-  value: string;
-  /** Invoice item total currency */
-  currency: string;
+  /** Formatted invoice item total amount */
+  formattedAmount: string;
 }
 
 /**
@@ -136,5 +135,7 @@ export function Total(props: TotalProps): React.ReactNode {
   const invoiceItem = invoiceItemService.invoiceItem.get();
   const total = invoiceItem.total!;
 
-  return props.children({ value: total.value!, currency: total.currency! });
+  return props.children({
+    formattedAmount: formatPrice(total.value!, total.currency!),
+  });
 }

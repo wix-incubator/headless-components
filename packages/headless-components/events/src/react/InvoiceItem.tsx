@@ -127,7 +127,7 @@ export interface PriceProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ value: string; currency: string }>;
+  children?: AsChildChildren<{ formattedAmount: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -148,9 +148,9 @@ export interface PriceProps {
  *
  * // asChild with React component
  * <InvoiceItem.Price asChild>
- *   {React.forwardRef(({ value, currency, ...props }, ref) => (
+ *   {React.forwardRef(({ formattedAmount, ...props }, ref) => (
  *     <p ref={ref} {...props} className="text-lg text-green-600">
- *       {`${value} ${currency}`}
+ *       {`Price: ${formattedAmount}`}
  *     </p>
  *   ))}
  * </InvoiceItem.Price>
@@ -161,18 +161,18 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
 
   return (
     <CoreInvoiceItem.Price>
-      {({ value, currency }) => (
+      {({ formattedAmount }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.invoiceItemPrice}
           customElement={children}
-          customElementProps={{ value, currency }}
-          content={value}
+          customElementProps={{ formattedAmount }}
+          content={formattedAmount}
           {...otherProps}
         >
-          <span>{value}</span>
+          <span>{formattedAmount}</span>
         </AsChildSlot>
       )}
     </CoreInvoiceItem.Price>
@@ -247,7 +247,7 @@ export interface TotalProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ value: string; currency: string }>;
+  children?: AsChildChildren<{ formattedAmount: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -268,9 +268,9 @@ export interface TotalProps {
  *
  * // asChild with React component
  * <InvoiceItem.Total asChild>
- *   {React.forwardRef(({ value, currency, ...props }, ref) => (
+ *   {React.forwardRef(({ formattedAmount, ...props }, ref) => (
  *     <p ref={ref} {...props} className="font-bold text-xl text-green-600">
- *       {`Total: ${value} ${currency}`}
+ *       {`Total: ${formattedAmount}`}
  *     </p>
  *   ))}
  * </InvoiceItem.Total>
@@ -281,18 +281,18 @@ export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
 
   return (
     <CoreInvoiceItem.Total>
-      {({ value, currency }) => (
+      {({ formattedAmount }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.invoiceItemTotal}
           customElement={children}
-          customElementProps={{ value, currency }}
-          content={value}
+          customElementProps={{ formattedAmount }}
+          content={formattedAmount}
           {...otherProps}
         >
-          <span>{value}</span>
+          <span>{formattedAmount}</span>
         </AsChildSlot>
       )}
     </CoreInvoiceItem.Total>

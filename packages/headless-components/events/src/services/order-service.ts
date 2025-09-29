@@ -32,7 +32,8 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
 
     const order = signalsService.signal<Order>(config.order);
     const isPolling = signalsService.signal<boolean>(false);
-    const { eventId, orderNumber } = config;
+    const eventId = signalsService.signal<string>(config.eventId);
+    const orderNumber = signalsService.signal<string>(config.orderNumber);
 
     const pollOrder = async () => {
       if (isOrderReady(order.get())) {
@@ -45,7 +46,7 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
         await poll({
           callback: async () => {
             const response = await orders.getOrder(
-              { eventId, orderNumber },
+              { eventId: eventId.get(), orderNumber: orderNumber.get() },
               {
                 fieldset: [
                   orders.OrderFieldset.TICKETS,
