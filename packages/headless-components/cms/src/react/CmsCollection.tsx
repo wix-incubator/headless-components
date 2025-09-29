@@ -21,6 +21,8 @@ enum TestIds {
   cmsCollectionItem = 'cms-collection-item',
 }
 
+const DataComponentTag = "cms.collection-root";
+
 /**
  * Props for CmsCollection.Root component
  */
@@ -75,6 +77,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     const attributes = {
       'data-testid': TestIds.cmsCollectionRoot,
       'data-collection-id': collection.id,
+      'data-component-tag': DataComponentTag,
     };
 
     return (
