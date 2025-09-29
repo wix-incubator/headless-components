@@ -1,11 +1,7 @@
 import { categories, posts, tags } from '@wix/blog';
 import { members } from '@wix/members';
 import { media } from '@wix/sdk';
-import {
-  defineService,
-  implementService,
-  type ServiceAPI,
-} from '@wix/services-definitions';
+import { defineService, implementService, type ServiceAPI } from '@wix/services-definitions';
 import type { Signal } from '@wix/services-definitions/core-services/signals';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
 
@@ -58,98 +54,91 @@ export type BlogFeedServiceConfig = {
   showPinnedPostsFirst: boolean;
 };
 
-export const BlogFeedService =
-  implementService.withConfig<BlogFeedServiceConfig>()(
-    BlogFeedServiceDefinition,
-    ({ getService, config }) => {
-      const signalsService = getService(SignalsServiceDefinition);
+export const BlogFeedService = implementService.withConfig<BlogFeedServiceConfig>()(
+  BlogFeedServiceDefinition,
+  ({ getService, config }) => {
+    const signalsService = getService(SignalsServiceDefinition);
 
-      const postsSignal = signalsService.signal<PostWithResolvedFields[]>(
-        config.initialPosts,
-      );
-      const categorySignal = signalsService.signal<categories.Category | null>(
-        config.initialCategory || null,
-      );
-      const sortSignal = signalsService.signal<QueryPostsSort[]>(config.sort);
-      const isLoadingSignal = signalsService.signal<boolean>(false);
-      const errorSignal = signalsService.signal<string | null>(null);
+    const postsSignal = signalsService.signal<PostWithResolvedFields[]>(config.initialPosts);
+    const categorySignal = signalsService.signal<categories.Category | null>(
+      config.initialCategory || null,
+    );
+    const sortSignal = signalsService.signal<QueryPostsSort[]>(config.sort);
+    const isLoadingSignal = signalsService.signal<boolean>(false);
+    const errorSignal = signalsService.signal<string | null>(null);
 
-      let nextPageCursor: string | undefined = config.nextPageCursor;
+    let nextPageCursor: string | undefined = config.nextPageCursor;
 
-      const totalPostsSignal = signalsService.signal<number>(
-        config.totalPostCount || 0,
-      );
+    const totalPostsSignal = signalsService.signal<number>(config.totalPostCount || 0);
 
-      const isEmpty = (): boolean => {
-        return !isLoadingSignal.get() && totalPostsSignal.get() === 0;
-      };
+    const isEmpty = (): boolean => {
+      return !isLoadingSignal.get() && totalPostsSignal.get() === 0;
+    };
 
-      const hasNextPage = (): boolean => {
-        return !!nextPageCursor;
-      };
+    const hasNextPage = (): boolean => {
+      return !!nextPageCursor;
+    };
 
-      // Actions
-      const load = async (
-        loadMore: boolean,
-      ): Promise<posts.PostsQueryResult | undefined> => {
-        try {
-          if (loadMore && !nextPageCursor) {
-            return;
-          }
-
-          isLoadingSignal.set(true);
-          errorSignal.set(null);
-
-          const result = await fetchPosts({
-            skipTo: loadMore ? nextPageCursor : undefined,
-            sort: sortSignal.get(),
-            showPinnedPostsFirst: config.showPinnedPostsFirst,
-            pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
-            categoryId: config.initialCategory?._id,
-            excludePostIds: config.excludePostIds || [],
-            postIds: [],
-          });
-
-          if (loadMore) {
-            postsSignal.set([...postsSignal.get(), ...result.items]);
-          } else {
-            postsSignal.set(result.items);
-          }
-
-          nextPageCursor = result?.cursors.next || undefined;
-
-          return result;
-        } catch (err) {
-          console.error('Failed to load posts:', err);
-          errorSignal.set('Failed to load posts');
-        } finally {
-          isLoadingSignal.set(false);
+    // Actions
+    const load = async (loadMore: boolean): Promise<posts.PostsQueryResult | undefined> => {
+      try {
+        if (loadMore && !nextPageCursor) {
+          return;
         }
-      };
 
-      const loadNextPage = async (): Promise<void> => {
-        await load(true);
-      };
+        isLoadingSignal.set(true);
+        errorSignal.set(null);
 
-      const setSort = async (sort: QueryPostsSort[]): Promise<void> => {
-        sortSignal.set(sort);
-        await load(false);
-      };
+        const result = await fetchPosts({
+          skipTo: loadMore ? nextPageCursor : undefined,
+          sort: sortSignal.get(),
+          showPinnedPostsFirst: config.showPinnedPostsFirst,
+          pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
+          categoryId: config.initialCategory?._id,
+          excludePostIds: config.excludePostIds || [],
+          postIds: [],
+        });
 
-      return {
-        posts: postsSignal,
-        category: categorySignal,
-        isLoading: isLoadingSignal,
-        error: errorSignal,
-        totalPosts: totalPostsSignal,
-        isEmpty,
-        hasNextPage,
-        loadNextPage: loadNextPage,
-        sort: sortSignal,
-        setSort,
-      };
-    },
-  );
+        if (loadMore) {
+          postsSignal.set([...postsSignal.get(), ...result.items]);
+        } else {
+          postsSignal.set(result.items);
+        }
+
+        nextPageCursor = result?.cursors.next || undefined;
+
+        return result;
+      } catch (err) {
+        console.error('Failed to load posts:', err);
+        errorSignal.set('Failed to load posts');
+      } finally {
+        isLoadingSignal.set(false);
+      }
+    };
+
+    const loadNextPage = async (): Promise<void> => {
+      await load(true);
+    };
+
+    const setSort = async (sort: QueryPostsSort[]): Promise<void> => {
+      sortSignal.set(sort);
+      await load(false);
+    };
+
+    return {
+      posts: postsSignal,
+      category: categorySignal,
+      isLoading: isLoadingSignal,
+      error: errorSignal,
+      totalPosts: totalPostsSignal,
+      isEmpty,
+      hasNextPage,
+      loadNextPage: loadNextPage,
+      sort: sortSignal,
+      setSort,
+    };
+  },
+);
 
 export type BlogFeedServiceConfigParams = {
   categorySlug?: string;
@@ -233,9 +222,7 @@ type FetchPostsParams = {
 
 async function fetchPosts(
   params: FetchPostsParams,
-): Promise<
-  Omit<posts.PostsQueryResult, 'items'> & { items: PostWithResolvedFields[] }
-> {
+): Promise<Omit<posts.PostsQueryResult, 'items'> & { items: PostWithResolvedFields[] }> {
   const {
     skipTo,
     sort,
@@ -287,23 +274,31 @@ async function fetchPosts(
   };
 }
 
+export async function enhancePosts(rawPosts: posts.Post[]): Promise<PostWithResolvedFields[]>;
 export async function enhancePosts(
-  rawPosts: posts.Post[],
-): Promise<PostWithResolvedFields[]> {
-  const { members, categories, tags } = await fetchPostEntities(rawPosts);
+  rawPosts: (posts.Post | undefined)[],
+): Promise<(PostWithResolvedFields | undefined)[]>;
+export async function enhancePosts(
+  rawPosts: (posts.Post | undefined)[],
+): Promise<(PostWithResolvedFields | undefined)[]> {
+  const filteredPosts = rawPosts.filter(nonNullable);
+  const { members, categories, tags } = await fetchPostEntities(filteredPosts);
 
-  return rawPosts.map<PostWithResolvedFields>((post) => {
+  // Ensure same amount of posts are returned as rawPosts
+  return rawPosts.map<PostWithResolvedFields | undefined>((post) => {
+    if (!post) {
+      return undefined;
+    }
+
     const coverImage = getCoverImage(post);
+
     return {
       ...post,
       resolvedFields: {
         owner: post.memberId ? members[post.memberId] : undefined,
         categories:
-          post.categoryIds
-            ?.map((categoryId) => categories[categoryId])
-            .filter(nonNullable) ?? [],
-        tags:
-          post.tagIds?.map((tagId) => tags[tagId]).filter(nonNullable) ?? [],
+          post.categoryIds?.map((categoryId) => categories[categoryId]).filter(nonNullable) ?? [],
+        tags: post.tagIds?.map((tagId) => tags[tagId]).filter(nonNullable) ?? [],
         coverImageUrl: coverImage.url,
         coverImageAlt: coverImage.alt,
       },
@@ -350,13 +345,11 @@ async function fetchPostEntities(posts: posts.Post[]): Promise<{
       }),
   );
 
-  const [resolvedMembers, resolvedCategories, resolvedTags] = await Promise.all(
-    [
-      Promise.all(memberPromises),
-      Promise.all(categoryPromises),
-      Promise.all(tagPromises),
-    ],
-  );
+  const [resolvedMembers, resolvedCategories, resolvedTags] = await Promise.all([
+    Promise.all(memberPromises),
+    Promise.all(categoryPromises),
+    Promise.all(tagPromises),
+  ]);
 
   return {
     members: Object.fromEntries(resolvedMembers),

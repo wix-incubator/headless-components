@@ -1,15 +1,10 @@
 import { categories } from '@wix/blog';
 import { media } from '@wix/sdk';
-import {
-  defineService,
-  implementService,
-  type ServiceAPI,
-} from '@wix/services-definitions';
+import { defineService, implementService, type ServiceAPI } from '@wix/services-definitions';
 import type { ReadOnlySignal } from '@wix/services-definitions/core-services/signals';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
 
-export interface EnhancedCategory
-  extends Omit<categories.Category, 'coverImage'> {
+export interface EnhancedCategory extends Omit<categories.Category, 'coverImage'> {
   imageUrl: string | null;
   isCustom: boolean;
 }
@@ -18,29 +13,26 @@ export const BlogCategoriesServiceDefinition = defineService<{
   categories: ReadOnlySignal<EnhancedCategory[]>;
 }>('blogCategoriesService');
 
-export type BlogCategoriesServiceAPI = ServiceAPI<
-  typeof BlogCategoriesServiceDefinition
->;
+export type BlogCategoriesServiceAPI = ServiceAPI<typeof BlogCategoriesServiceDefinition>;
 
 export type BlogCategoriesServiceConfig = {
   initialCategories?: EnhancedCategory[];
 };
 
-export const BlogCategoriesService =
-  implementService.withConfig<BlogCategoriesServiceConfig>()(
-    BlogCategoriesServiceDefinition,
-    ({ getService, config }) => {
-      const signalsService = getService(SignalsServiceDefinition);
+export const BlogCategoriesService = implementService.withConfig<BlogCategoriesServiceConfig>()(
+  BlogCategoriesServiceDefinition,
+  ({ getService, config }) => {
+    const signalsService = getService(SignalsServiceDefinition);
 
-      const categoriesSignal = signalsService.signal<EnhancedCategory[]>(
-        config.initialCategories || [],
-      );
+    const categoriesSignal = signalsService.signal<EnhancedCategory[]>(
+      config.initialCategories || [],
+    );
 
-      return {
-        categories: categoriesSignal,
-      };
-    },
-  );
+    return {
+      categories: categoriesSignal,
+    };
+  },
+);
 
 export async function loadBlogCategoriesServiceConfig(): Promise<BlogCategoriesServiceConfig> {
   try {
@@ -62,13 +54,9 @@ export async function loadBlogCategoriesServiceConfig(): Promise<BlogCategoriesS
   }
 }
 
-export function enhanceCategories(
-  categories: categories.Category[],
-): EnhancedCategory[] {
+export function enhanceCategories(categories: categories.Category[]): EnhancedCategory[] {
   return categories.map((category) => {
-    const imageUrl = category.coverImage
-      ? media.getImageUrl(category.coverImage).url
-      : null;
+    const imageUrl = category.coverImage ? media.getImageUrl(category.coverImage).url : null;
 
     return {
       ...category,

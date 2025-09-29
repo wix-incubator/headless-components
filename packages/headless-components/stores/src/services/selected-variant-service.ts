@@ -303,7 +303,7 @@ export const SelectedVariantService =
             options.set(optionsMap);
           }
 
-          if (currentProduct.variantSummary!.variantCount! > 1) {
+          if (currentProduct.variantSummary!.variantCount! > 0) {
             variants.set(currentProduct.variantsInfo?.variants || []);
 
             if (currentProduct.variantsInfo?.variants?.length) {

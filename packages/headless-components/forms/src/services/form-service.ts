@@ -77,17 +77,18 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     );
 
     if (!hasSchema) {
-      isLoadingSignal.set(true);
       loadForm(config.formId);
     }
 
     async function loadForm(id: string): Promise<void> {
+      isLoadingSignal.set(true);
+      errorSignal.set(null);
+
       try {
         const result = await fetchForm(id);
 
         if (result) {
           formSignal.set(result);
-          console.log('result', !!result);
         } else {
           errorSignal.set('Form not found');
         }

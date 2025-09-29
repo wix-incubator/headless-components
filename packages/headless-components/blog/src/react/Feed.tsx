@@ -32,9 +32,7 @@ PostsContext.displayName = 'Blog.Feed.PostsContext';
 export function usePostsContext(): PostsContextValue {
   const context = React.useContext(PostsContext);
   if (!context) {
-    throw new Error(
-      'usePostsContext must be used within a BlogFeed.Root component',
-    );
+    throw new Error('usePostsContext must be used within a BlogFeed.Root component');
   }
   return context;
 }
@@ -94,61 +92,53 @@ export interface BlogFeedRootProps {
  * }
  * ```
  */
-export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>(
-  (props, ref) => {
-    const {
-      asChild,
-      children,
-      className,
-      blogFeedServiceConfig,
-      fallbackImageUrl,
-    } = props;
+export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>((props, ref) => {
+  const { asChild, children, className, blogFeedServiceConfig, fallbackImageUrl } = props;
 
-    return (
-      <WixServices
-        servicesMap={createServicesMap().addService(
-          BlogFeedServiceDefinition,
-          BlogFeedService,
-          blogFeedServiceConfig,
-        )}
-      >
-        <CoreFeed.Posts>
-          {({ posts, hasPosts, totalPosts, isLoading }) => {
-            const contextValue: PostsContextValue = {
-              hasPosts,
-              posts,
-              totalPosts,
-              isLoading,
-              fallbackImageUrl,
-            };
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        BlogFeedServiceDefinition,
+        BlogFeedService,
+        blogFeedServiceConfig,
+      )}
+    >
+      <CoreFeed.Posts>
+        {({ posts, hasPosts, totalPosts, isLoading }) => {
+          const contextValue: PostsContextValue = {
+            hasPosts,
+            posts,
+            totalPosts,
+            isLoading,
+            fallbackImageUrl,
+          };
 
-            const attributes = {
-              'data-component-tag': HTML_CODE_TAG,
-              'data-testid': TestIds.blogFeedRoot,
-              'data-has-posts': hasPosts,
-              'data-loading': isLoading,
-            };
+          const attributes = {
+            'data-component-tag': HTML_CODE_TAG,
+            'data-testid': TestIds.blogFeedRoot,
+            'data-has-posts': hasPosts,
+            'data-loading': isLoading,
+          };
 
-            return (
-              <PostsContext.Provider value={contextValue}>
-                <AsChildSlot
-                  ref={ref}
-                  asChild={asChild}
-                  className={className}
-                  {...attributes}
-                  customElement={children}
-                  customElementProps={{ hasPosts }}
-                >
-                  <div>{isValidChildren(children) ? children : null}</div>
-                </AsChildSlot>
-              </PostsContext.Provider>
-            );
-          }}
-        </CoreFeed.Posts>
-      </WixServices>
-    );
-  },
-);
+          return (
+            <PostsContext.Provider value={contextValue}>
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                {...attributes}
+                customElement={children}
+                customElementProps={{ hasPosts }}
+              >
+                <div>{isValidChildren(children) ? children : null}</div>
+              </AsChildSlot>
+            </PostsContext.Provider>
+          );
+        }}
+      </CoreFeed.Posts>
+    </WixServices>
+  );
+});
 
 Root.displayName = 'Blog.Feed.Root';
 
@@ -173,31 +163,25 @@ export interface PostItemsProps {
  * </Blog.Feed.PostItems>
  * ```
  */
-export const PostItems = React.forwardRef<HTMLElement, PostItemsProps>(
-  (props, ref) => {
-    const { children, emptyState, className } = props;
-    const { hasPosts, isLoading } = usePostsContext();
+export const PostItems = React.forwardRef<HTMLElement, PostItemsProps>((props, ref) => {
+  const { children, emptyState, className } = props;
+  const { hasPosts, isLoading } = usePostsContext();
 
-    if (!hasPosts) {
-      return emptyState || null;
-    }
+  if (!hasPosts) {
+    return emptyState || null;
+  }
 
-    const attributes = {
-      'data-testid': TestIds.blogFeedPosts,
-      'data-loading': isLoading,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogFeedPosts,
+    'data-loading': isLoading,
+  };
 
-    return (
-      <div
-        {...attributes}
-        ref={ref as React.Ref<HTMLDivElement>}
-        className={className}
-      >
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+      {children}
+    </div>
+  );
+});
 
 PostItems.displayName = 'Blog.Feed.PostItems';
 
@@ -341,34 +325,28 @@ export interface PostItemRepeaterProps {
  * </Blog.Feed.PostItemRepeater>
  * ```
  */
-export const PostItemRepeater = React.forwardRef<
-  HTMLElement,
-  PostItemRepeaterProps
->((props, _ref) => {
-  const { children, offset = 0, limit = Infinity } = props;
-  const { hasPosts, posts, fallbackImageUrl } = usePostsContext();
+export const PostItemRepeater = React.forwardRef<HTMLElement, PostItemRepeaterProps>(
+  (props, _ref) => {
+    const { children, offset = 0, limit = Infinity } = props;
+    const { hasPosts, posts, fallbackImageUrl } = usePostsContext();
 
-  if (!hasPosts) return null;
+    if (!hasPosts) return null;
 
-  const postsSlice = posts.slice(offset, offset + limit);
+    const postsSlice = posts.slice(offset, offset + limit);
 
-  return (
-    <>
-      {postsSlice.map((post) => {
-        return (
-          <Post.Root
-            key={post._id}
-            post={post}
-            asChild
-            fallbackImageUrl={fallbackImageUrl}
-          >
-            {children}
-          </Post.Root>
-        );
-      })}
-    </>
-  );
-});
+    return (
+      <>
+        {postsSlice.map((post) => {
+          return (
+            <Post.Root key={post._id} post={post} asChild fallbackImageUrl={fallbackImageUrl}>
+              {children}
+            </Post.Root>
+          );
+        })}
+      </>
+    );
+  },
+);
 
 PostItemRepeater.displayName = 'Blog.Feed.PostItemRepeater';
 
@@ -402,46 +380,44 @@ export interface LoadMoreProps {
  * </Blog.Feed.LoadMore>
  * ```
  */
-export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>(
-  (props, ref) => {
-    const { asChild, children, className, loadingState } = props;
+export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>((props, ref) => {
+  const { asChild, children, className, loadingState } = props;
 
-    return (
-      <CoreFeed.LoadMore>
-        {({ hasNextPage, isLoading, loadNextPage }) => {
-          if (!hasNextPage) return null;
+  return (
+    <CoreFeed.LoadMore>
+      {({ hasNextPage, isLoading, loadNextPage }) => {
+        if (!hasNextPage) return null;
 
-          const attributes: React.ButtonHTMLAttributes<HTMLButtonElement> & {
-            'data-testid'?: string;
-            'data-loading'?: boolean;
-            'data-has-next-page'?: boolean;
-          } = {
-            'data-testid': TestIds.blogFeedLoadMore,
-            'data-loading': isLoading,
-            'data-has-next-page': hasNextPage,
-            onClick: loadNextPage,
-          };
+        const attributes: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+          'data-testid'?: string;
+          'data-loading'?: boolean;
+          'data-has-next-page'?: boolean;
+        } = {
+          'data-testid': TestIds.blogFeedLoadMore,
+          'data-loading': isLoading,
+          'data-has-next-page': hasNextPage,
+          onClick: loadNextPage,
+        };
 
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              {...attributes}
-              customElement={children}
-              content={isLoading && loadingState ? loadingState : undefined}
-              customElementProps={{
-                isLoading,
-                loadNextPage,
-              }}
-            >
-              <button>{isValidChildren(children) ? children : null}</button>
-            </AsChildSlot>
-          );
-        }}
-      </CoreFeed.LoadMore>
-    );
-  },
-);
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            {...attributes}
+            customElement={children}
+            content={isLoading && loadingState ? loadingState : undefined}
+            customElementProps={{
+              isLoading,
+              loadNextPage,
+            }}
+          >
+            <button>{isValidChildren(children) ? children : null}</button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreFeed.LoadMore>
+  );
+});
 
 LoadMore.displayName = 'Blog.Feed.LoadMore';

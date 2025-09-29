@@ -87,34 +87,32 @@ export interface DescriptionProps {
  * </Blog.Category.Description>
  * ```
  */
-export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
-  (props, ref) => {
-    const { asChild, children, className } = props;
-    const { category, imageUrl } = useCategoryItemRepeaterContext();
+export const Description = React.forwardRef<HTMLElement, DescriptionProps>((props, ref) => {
+  const { asChild, children, className } = props;
+  const { category, imageUrl } = useCategoryItemRepeaterContext();
 
-    if (!category?.description) return null;
+  if (!category?.description) return null;
 
-    const description = category.description;
-    const attributes = {
-      'data-testid': TestIds.blogCategoryDescription,
-      'data-has-image': !!imageUrl,
-    };
+  const description = category.description;
+  const attributes = {
+    'data-testid': TestIds.blogCategoryDescription,
+    'data-has-image': !!imageUrl,
+  };
 
-    return (
-      <AsChildSlot
-        ref={ref}
-        asChild={asChild}
-        className={className}
-        {...attributes}
-        customElement={children}
-        customElementProps={{ description }}
-        content={description}
-      >
-        <p>{description}</p>
-      </AsChildSlot>
-    );
-  },
-);
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{ description }}
+      content={description}
+    >
+      <p>{description}</p>
+    </AsChildSlot>
+  );
+});
 
 Description.displayName = 'Blog.Category.Description';
 
