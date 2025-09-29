@@ -201,7 +201,13 @@ export const Quantity: React.FC<ItemDetailsQuantityProps> = (
 ) => {
   return (
     <CoreItemDetails.QuantityComponent>
-      {({ quantity, onValueChange }: { quantity: number; onValueChange: (value: number) => void }) => (
+      {({
+        quantity,
+        onValueChange,
+      }: {
+        quantity: number;
+        onValueChange: (value: number) => void;
+      }) => (
         <QuantityComponent.Root
           ref={ref}
           onValueChange={onValueChange}
@@ -236,7 +242,13 @@ export const SpecialRequest = React.forwardRef<
   ) => {
     return (
       <CoreItemDetails.SpecialRequest>
-        {({ value, onChange }: { value: string; onChange: (value: string) => void }) => (
+        {({
+          value,
+          onChange,
+        }: {
+          value: string;
+          onChange: (value: string) => void;
+        }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
