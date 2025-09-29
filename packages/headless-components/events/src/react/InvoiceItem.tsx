@@ -133,7 +133,7 @@ export interface PriceProps {
 }
 
 /**
- * Displays the invoice item price with currency and customizable rendering.
+ * Displays the invoice item formatted price with customizable rendering.
  *
  * @component
  * @example
@@ -253,7 +253,7 @@ export interface TotalProps {
 }
 
 /**
- * Displays the invoice item total amount with currency and customizable rendering.
+ * Displays the invoice item formatted total amount with customizable rendering.
  *
  * @component
  * @example

@@ -444,7 +444,7 @@ export interface SubtotalProps {
 }
 
 /**
- * Displays the order subtotal amount with currency and customizable rendering.
+ * Displays the order formatted subtotal amount with customizable rendering.
  *
  * @component
  * @example
@@ -509,7 +509,7 @@ export interface PaidPlanDiscountProps {
 }
 
 /**
- * Displays the order paid plan discount information with rate, value, and currency with customizable rendering.
+ * Displays the order paid plan discount information with rate and formatted amount with customizable rendering.
  *
  * @component
  * @example
@@ -572,7 +572,7 @@ export interface CouponDiscountProps {
 }
 
 /**
- * Displays the order coupon discount information with value and currency with customizable rendering.
+ * Displays the order coupon discount information with formatted amount with customizable rendering.
  *
  * @component
  * @example
@@ -638,7 +638,7 @@ export interface TaxProps {
 }
 
 /**
- * Displays the order tax information with rate, value, and currency with customizable rendering.
+ * Displays the order tax information with rate, formatted amount and name with customizable rendering.
  *
  * @component
  * @example
@@ -704,7 +704,7 @@ export interface ServiceFeeProps {
 }
 
 /**
- * Displays the order service fee information with rate, value, and currency with customizable rendering.
+ * Displays the order service fee information with rate and formatted amount with customizable rendering.
  *
  * @component
  * @example
@@ -769,7 +769,7 @@ export interface TotalProps {
 }
 
 /**
- * Displays the order total amount with currency and customizable rendering.
+ * Displays the order formatted total amount with customizable rendering.
  * This represents the final amount to be paid including all fees and taxes.
  *
  * @component
