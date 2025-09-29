@@ -6,7 +6,7 @@ import {
   InvoiceItemServiceConfig,
   InvoiceItemServiceDefinition,
 } from '../../services/invoice-item-service.js';
-import { formatPrice } from '../../utils/price.js';
+import { formatPrice, roundPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components */
@@ -84,9 +84,11 @@ export function Price(props: PriceProps): React.ReactNode {
 
   const invoiceItem = invoiceItemService.invoiceItem.get();
   const price = invoiceItem.price!;
+  const currency = price.currency!;
+  const amount = roundPrice(Number(price.value!), currency);
 
   return props.children({
-    formattedAmount: formatPrice(price.value!, price.currency!),
+    formattedAmount: formatPrice(amount, currency),
   });
 }
 
@@ -134,8 +136,10 @@ export function Total(props: TotalProps): React.ReactNode {
 
   const invoiceItem = invoiceItemService.invoiceItem.get();
   const total = invoiceItem.total!;
+  const currency = total.currency!;
+  const amount = roundPrice(Number(total.value!), currency);
 
   return props.children({
-    formattedAmount: formatPrice(total.value!, total.currency!),
+    formattedAmount: formatPrice(amount, currency),
   });
 }

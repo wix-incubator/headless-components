@@ -4,7 +4,7 @@ import {
   loadEventListServiceConfig,
   loadTicketDefinitionListServiceConfig,
   loadScheduleListServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import EventDetailsPage from '../../../react-pages/event-details';
 
@@ -48,7 +48,7 @@ const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
       thankYouPageUrl: `${Astro.url.origin}/events/${slug}/thank-you`,
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
-    eventsPagePath="/events"
-    formPagePath={`/events/${slug}/form`}
+    eventDetailsPagePath="/events/:slug"
+    formPagePath="/events/:slug/form"
   />
 </BaseLayout>

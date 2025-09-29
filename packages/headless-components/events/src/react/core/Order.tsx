@@ -9,7 +9,7 @@ import {
 import { formatDateMonthDayYear } from '../../utils/date.js';
 import { InvoiceItem } from '../../services/invoice-item-service.js';
 import { useEffect } from 'react';
-import { formatPrice } from '../../utils/price.js';
+import { formatPrice, roundPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components that will have access to the order service */
@@ -209,8 +209,11 @@ export function Subtotal(props: SubtotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const subtotal = orderService.order.get().invoice!.subTotal!;
 
+  const currency = subtotal.currency!;
+  const amount = roundPrice(Number(subtotal.value!), currency);
+
   return props.children({
-    formattedAmount: formatPrice(subtotal.value!, subtotal.currency!),
+    formattedAmount: formatPrice(amount, currency),
   });
 }
 
@@ -242,11 +245,14 @@ export function PaidPlanDiscount(
     return null;
   }
 
+  const currency = paidPlanDiscount.amount?.currency!;
+  const amount = roundPrice(
+    Number(`-${paidPlanDiscount.amount?.value!}`),
+    currency,
+  );
+
   return props.children({
-    formattedAmount: formatPrice(
-      `-${paidPlanDiscount.amount?.value!}`,
-      paidPlanDiscount.amount?.currency!,
-    ),
+    formattedAmount: formatPrice(amount, currency),
     rate: paidPlanDiscount.paidPlan?.percentDiscount?.rate!,
   });
 }
@@ -275,11 +281,14 @@ export function CouponDiscount(props: CouponDiscountProps): React.ReactNode {
     return null;
   }
 
+  const currency = couponDiscount.amount?.currency!;
+  const amount = roundPrice(
+    Number(`-${couponDiscount.amount?.value!}`),
+    currency,
+  );
+
   return props.children({
-    formattedAmount: formatPrice(
-      `-${couponDiscount.amount?.value!}`,
-      couponDiscount.amount?.currency!,
-    ),
+    formattedAmount: formatPrice(amount, currency),
   });
 }
 
@@ -310,9 +319,12 @@ export function Tax(props: TaxProps): React.ReactNode {
     return null;
   }
 
+  const currency = tax.amount?.currency!;
+  const amount = roundPrice(Number(tax.amount?.value!), currency);
+
   return props.children({
     rate: tax.rate!,
-    formattedAmount: formatPrice(tax.amount!.value!, tax.amount!.currency!),
+    formattedAmount: formatPrice(amount, currency),
     name: tax.name!,
   });
 }
@@ -345,11 +357,11 @@ export function ServiceFee(props: ServiceFeeProps): React.ReactNode {
     return null;
   }
 
+  const currency = addedFee.amount?.currency!;
+  const amount = roundPrice(Number(addedFee.amount?.value!), currency);
+
   return props.children({
-    formattedAmount: formatPrice(
-      addedFee!.amount!.value!,
-      addedFee!.amount!.currency!,
-    ),
+    formattedAmount: formatPrice(amount, currency),
     rate: addedFee!.rate!,
   });
 }
@@ -373,7 +385,10 @@ export function Total(props: TotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const total = orderService.order.get().invoice!.grandTotal!;
 
+  const currency = total.currency!;
+  const amount = roundPrice(Number(total.value!), currency);
+
   return props.children({
-    formattedAmount: formatPrice(total.value!, total.currency!),
+    formattedAmount: formatPrice(amount, currency),
   });
 }

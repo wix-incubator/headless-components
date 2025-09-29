@@ -80,7 +80,7 @@ export interface PricingProps {
 
 export interface PricingRenderProps {
   /** Price */
-  price: string;
+  price: number;
   /** Price currency */
   currency: string;
   /** Formatted price */
@@ -96,7 +96,7 @@ export function Pricing(props: PricingProps): React.ReactNode {
   const pricingOptionService = useService(PricingOptionServiceDefinition);
 
   const pricingOption = pricingOptionService.pricingOption.get();
-  const price = pricingOption.price!.value!;
+  const price = Number(pricingOption.price!.value!);
   const currency = pricingOption.price!.currency!;
   const formattedPrice = formatPrice(price, currency);
 
@@ -116,15 +116,17 @@ export interface TaxRenderProps {
   /** Tax name */
   name: string;
   /** Tax rate */
-  rate: string;
+  rate: number;
   /** Whether tax is included in price */
   included: boolean;
+  /** Taxable amount */
+  taxableAmount: number;
   /** Tax amount */
-  amount: string;
+  taxAmount: number;
   /** Tax currency */
   currency: string;
   /** Formatted tax amount */
-  formattedAmount: string;
+  formattedTaxAmount: string;
 }
 
 /**
@@ -147,16 +149,17 @@ export function Tax(props: TaxProps): React.ReactNode {
   const price = Number(pricingOption.price!.value!);
   const currency = pricingOption.price!.currency!;
 
-  const { name, rate, included, amount, formattedAmount } =
+  const { name, rate, included, taxableAmount, taxAmount, formattedTaxAmount } =
     getTicketDefinitionTax(taxSettings, price, currency);
 
   return props.children({
     name,
     rate,
     included,
-    amount,
+    taxableAmount,
+    taxAmount,
     currency,
-    formattedAmount,
+    formattedTaxAmount,
   });
 }
 
@@ -167,9 +170,9 @@ export interface FeeProps {
 
 export interface FeeRenderProps {
   /** Fee rate */
-  rate: string;
+  rate: number;
   /** Fee amount */
-  amount: string;
+  amount: number;
   /** Fee currency */
   currency: string;
   /** Formatted fee amount */

@@ -2,11 +2,11 @@ import {
   Form as FormPrimitive,
   Control as ControlPrimitive,
   Event as EventPrimitive,
-} from '@wix/headless-events/react';
+} from '@wix/events/components';
 import {
   type EventServiceConfig,
   type FormServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 
 interface FormProps {
   eventServiceConfig: EventServiceConfig;

@@ -2,7 +2,7 @@ import '../styles/theme-1.css';
 import {
   type EventServiceConfig,
   type OrderServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { ThankYou } from '../components/events/ThankYou';
 

@@ -4,11 +4,11 @@ import {
   ScheduleItem as ScheduleItemPrimitive,
   Event as EventPrimitive,
   ScheduleItemTag as ScheduleItemTagPrimitive,
-} from '@wix/headless-events/react';
+} from '@wix/events/components';
 import {
   type EventServiceConfig,
   type ScheduleListServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
