@@ -5,11 +5,26 @@ import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { InvoiceItem as InvoiceItemType } from '../services/invoice-item-service.js';
 import * as InvoiceItem from './InvoiceItem.js';
 
+enum TestIds {
+  orderRoot = 'order-root',
+  orderNumber = 'order-number',
+  orderCreatedDate = 'order-created-date',
+  orderDownloadTicketsButton = 'order-download-tickets-button',
+  orderInvoiceItems = 'order-invoice-items',
+  orderSubtotal = 'order-subtotal',
+  orderTax = 'order-tax',
+  orderServiceFee = 'order-service-fee',
+  orderTotal = 'order-total',
+}
+
+/**
+ * Props for the Order Root component.
+ */
 export interface RootProps {
-  /** Child components */
-  children: React.ReactNode;
   /** Configuration for the order service */
   orderServiceConfig: OrderServiceConfig;
+  /** Child components */
+  children: React.ReactNode;
 }
 
 /**
@@ -44,18 +59,16 @@ export const Root = (props: RootProps): React.ReactNode => {
   );
 };
 
+/**
+ * Props for the Order OrderNumber component.
+ */
 export interface OrderNumberProps {
-  /** Render prop function */
-  children: (props: OrderNumberRenderProps) => React.ReactNode;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ orderNumber: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-export interface OrderNumberRenderProps {
-  /** Order number */
-  orderNumber: string;
 }
 
 /**
@@ -94,6 +107,7 @@ export const OrderNumber = React.forwardRef<HTMLElement, OrderNumberProps>(
             ref={ref}
             asChild={asChild}
             className={className}
+            data-testid={TestIds.orderNumber}
             customElement={children}
             customElementProps={{ orderNumber }}
             content={orderNumber}
@@ -107,20 +121,16 @@ export const OrderNumber = React.forwardRef<HTMLElement, OrderNumberProps>(
   },
 );
 
+/**
+ * Props for the Order CreatedDate component.
+ */
 export interface CreatedDateProps {
-  /** Render prop function */
-  children: (props: CreatedDateRenderProps) => React.ReactNode;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ createdDate: string; isReady: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-export interface CreatedDateRenderProps {
-  /** Created date */
-  createdDate: string;
-  /** Whether the order is ready */
-  isReady: boolean;
 }
 
 /**
@@ -159,6 +169,7 @@ export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
             ref={ref}
             asChild={asChild}
             className={className}
+            data-testid={TestIds.orderCreatedDate}
             customElement={children}
             customElementProps={{ createdDate, isReady }}
             content={createdDate}
@@ -172,22 +183,18 @@ export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
   },
 );
 
+/**
+ * Props for the Order DownloadTicketsButton component.
+ */
 export interface DownloadTicketsButtonProps {
-  /** Render prop function */
-  children: (props: DownloadTicketsButtonRenderProps) => React.ReactNode;
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** CSS classes to apply to the default element */
-  className?: string;
   /** The label to display inside the button */
   label?: string;
-}
-
-export interface DownloadTicketsButtonRenderProps {
-  /** Tickets PDF URL */
-  ticketsPdfUrl: string;
-  /** Whether the button is visible */
-  isVisible: boolean;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ ticketsPdfUrl: string; isVisible: boolean }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
@@ -236,6 +243,7 @@ export const DownloadTicketsButton = React.forwardRef<
           ref={ref}
           asChild={asChild}
           className={className}
+          data-testid={TestIds.orderDownloadTicketsButton}
           customElement={children}
           customElementProps={{ ticketsPdfUrl, isVisible }}
           content={ticketsPdfUrl}
@@ -248,15 +256,18 @@ export const DownloadTicketsButton = React.forwardRef<
   );
 });
 
+/**
+ * Props for the Order InvoiceItems component.
+ */
 export interface InvoiceItemsProps {
-  /** Render prop function */
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
     | AsChildChildren<{
         invoiceItems: InvoiceItemType[];
       }>;
-  /** Whether to render as a child component */
-  asChild?: boolean;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -297,6 +308,7 @@ export const InvoiceItems = React.forwardRef<HTMLElement, InvoiceItemsProps>(
             ref={ref}
             asChild={asChild}
             className={className}
+            data-testid={TestIds.orderInvoiceItems}
             customElement={children}
             customElementProps={{ invoiceItems }}
             content={invoiceItems}
@@ -310,6 +322,9 @@ export const InvoiceItems = React.forwardRef<HTMLElement, InvoiceItemsProps>(
   },
 );
 
+/**
+ * Props for the Order InvoiceItemRepeater component.
+ */
 export interface InvoiceItemRepeaterProps {
   /** Child components */
   children: React.ReactNode;
@@ -383,20 +398,16 @@ export const InvoiceItemRepeater = (props: InvoiceItemRepeaterProps) => {
   );
 };
 
+/**
+ * Props for the Order Subtotal component.
+ */
 export interface SubtotalProps {
-  /** Render prop function */
-  children: (props: SubtotalRenderProps) => React.ReactNode;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ value: string; currency: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-export interface SubtotalRenderProps {
-  /** Subtotal */
-  value: string;
-  /** Currency */
-  currency: string;
 }
 
 /**
@@ -438,6 +449,7 @@ export const Subtotal = React.forwardRef<HTMLElement, SubtotalProps>(
             ref={ref}
             asChild={asChild}
             className={className}
+            data-testid={TestIds.orderSubtotal}
             customElement={children}
             customElementProps={{ value, currency }}
             content={value}
@@ -451,22 +463,20 @@ export const Subtotal = React.forwardRef<HTMLElement, SubtotalProps>(
   },
 );
 
+/**
+ * Props for the Order Tax component.
+ */
 export interface TaxProps {
-  /** Render prop function */
-  children: (props: TaxRenderProps) => React.ReactNode;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    taxRate: string;
+    taxValue: string;
+    currency: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-export interface TaxRenderProps {
-  /** Tax rate */
-  taxRate: string;
-  /** Tax value */
-  taxValue: string;
-  /** Currency */
-  currency: string;
 }
 
 /**
@@ -507,6 +517,7 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
+          data-testid={TestIds.orderTax}
           customElement={children}
           customElementProps={{ taxRate, taxValue, currency }}
           content={taxValue}
@@ -519,22 +530,20 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
   );
 });
 
+/**
+ * Props for the Order ServiceFee component.
+ */
 export interface ServiceFeeProps {
-  /** Render prop function */
-  children: (props: ServiceFeeRenderProps) => React.ReactNode;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    value: string;
+    currency: string;
+    rate: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-export interface ServiceFeeRenderProps {
-  /** Service fee value */
-  value: string;
-  /** Currency */
-  currency: string;
-  /** Service fee rate */
-  rate: string;
 }
 
 /**
@@ -576,6 +585,7 @@ export const ServiceFee = React.forwardRef<HTMLElement, ServiceFeeProps>(
             ref={ref}
             asChild={asChild}
             className={className}
+            data-testid={TestIds.orderServiceFee}
             customElement={children}
             customElementProps={{ value, currency, rate }}
             content={value}
@@ -589,20 +599,16 @@ export const ServiceFee = React.forwardRef<HTMLElement, ServiceFeeProps>(
   },
 );
 
+/**
+ * Props for the Order Total component.
+ */
 export interface TotalProps {
-  /** Render prop function */
-  children: (props: TotalRenderProps) => React.ReactNode;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ value: string; currency: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
-}
-
-export interface TotalRenderProps {
-  /** Total value */
-  value: string;
-  /** Currency */
-  currency: string;
 }
 
 /**
@@ -644,6 +650,7 @@ export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
+          data-testid={TestIds.orderTotal}
           customElement={children}
           customElementProps={{ value, currency }}
           content={value}

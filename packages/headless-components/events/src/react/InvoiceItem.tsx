@@ -3,13 +3,24 @@ import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { type InvoiceItem } from '../services/invoice-item-service.js';
 import * as CoreInvoiceItem from './core/InvoiceItem.js';
 
+enum TestIds {
+  invoiceItemRoot = 'invoice-item-root',
+  invoiceItemName = 'invoice-item-name',
+  invoiceItemPrice = 'invoice-item-price',
+  invoiceItemQuantity = 'invoice-item-quantity',
+  invoiceItemTotal = 'invoice-item-total',
+}
+
+/**
+ * Props for the InvoiceItem Root component.
+ */
 export interface RootProps {
-  /** Child components */
-  children: React.ReactNode;
   /** Invoice item */
   invoiceItem: InvoiceItem;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Child components */
+  children: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -28,6 +39,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         ref={ref}
         asChild={asChild}
         className={className}
+        data-testid={TestIds.invoiceItemRoot}
         customElement={children}
         customElementProps={{}}
         {...otherProps}
@@ -38,11 +50,14 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   );
 });
 
+/**
+ * Props for the InvoiceItem Name component.
+ */
 export interface NameProps {
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ name: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -81,6 +96,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
+          data-testid={TestIds.invoiceItemName}
           customElement={children}
           customElementProps={{ name }}
           content={name}
@@ -93,11 +109,14 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
   );
 });
 
+/**
+ * Props for the InvoiceItem Price component.
+ */
 export interface PriceProps {
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ value: string; currency: string }>;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ value: string; currency: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -136,6 +155,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
+          data-testid={TestIds.invoiceItemPrice}
           customElement={children}
           customElementProps={{ value, currency }}
           content={value}
@@ -150,11 +170,14 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
   );
 });
 
+/**
+ * Props for the InvoiceItem Quantity component.
+ */
 export interface QuantityProps {
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ quantity: number }>;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ quantity: number }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -194,6 +217,7 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
             ref={ref}
             asChild={asChild}
             className={className}
+            data-testid={TestIds.invoiceItemQuantity}
             customElement={children}
             customElementProps={{ quantity }}
             content={quantity}
@@ -207,11 +231,14 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
   },
 );
 
+/**
+ * Props for the InvoiceItem Total component.
+ */
 export interface TotalProps {
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ value: string; currency: string }>;
   /** Whether to render as a child component */
   asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ value: string; currency: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -250,6 +277,7 @@ export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
           ref={ref}
           asChild={asChild}
           className={className}
+          data-testid={TestIds.invoiceItemTotal}
           customElement={children}
           customElementProps={{ value, currency }}
           content={value}
