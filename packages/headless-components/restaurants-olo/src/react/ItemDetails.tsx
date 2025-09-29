@@ -85,21 +85,22 @@ export interface AddToCartActionProps {
  * </ItemDetails>
  * ```
  */
-export const AddToCart = React.forwardRef<HTMLButtonElement, AddToCartActionProps>(
-  ({ lineItems, className, label, ...props }, ref) => {
-    return (
-      <Commerce.Actions.AddToCart
-        ref={ref}
-        asChild={false}
-        label={label}
-        className={className}
-        lineItems={lineItems}
-      >
-        {props.children}
-      </Commerce.Actions.AddToCart>
-    );
-  },
-);
+export const AddToCart = React.forwardRef<
+  HTMLButtonElement,
+  AddToCartActionProps
+>(({ lineItems, className, label, ...props }, ref) => {
+  return (
+    <Commerce.Actions.AddToCart
+      ref={ref}
+      asChild={false}
+      label={label}
+      className={className}
+      lineItems={lineItems}
+    >
+      {props.children}
+    </Commerce.Actions.AddToCart>
+  );
+});
 
 AddToCart.displayName = 'AddToCart';
 
@@ -145,7 +146,10 @@ export interface SpecialRequestProps {
  * <ItemDetails.AddToCartButton>Add to cart</ItemDetails.AddToCartButton>
  */
 export interface AddToCartButtonProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof Commerce.Actions.AddToCart>, 'lineItems'> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Commerce.Actions.AddToCart>,
+    'lineItems'
+  > {
   asChild?: boolean;
   children?: React.ReactNode;
   className?: string;
@@ -191,11 +195,18 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   );
 };
 
-export const Quantity: React.FC<ItemDetailsQuantityProps> = ({ children }, ref) => {
+export const Quantity: React.FC<ItemDetailsQuantityProps> = (
+  { children },
+  ref,
+) => {
   return (
     <CoreItemDetails.QuantityComponent>
       {({ quantity, onValueChange }) => (
-        <QuantityComponent.Root ref={ref} onValueChange={onValueChange} initialValue={quantity}>
+        <QuantityComponent.Root
+          ref={ref}
+          onValueChange={onValueChange}
+          initialValue={quantity}
+        >
           {children}
         </QuantityComponent.Root>
       )}

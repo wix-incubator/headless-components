@@ -56,8 +56,12 @@ interface ItemDetailsModifiersRepeaterProps {
   }) => React.ReactNode;
 }
 
-export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({ children }) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<typeof ItemServiceDefinition>;
+export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
+  children,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
   const item = service.item.get();
 
   // TODO: Check if modifiers exist on item type - might be in a different property
@@ -78,8 +82,12 @@ interface ItemDetailsVariantsRepeaterProps {
   }) => React.ReactNode;
 }
 
-export const VariantsRepeater: React.FC<ItemDetailsVariantsRepeaterProps> = ({ children }) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<typeof ItemServiceDefinition>;
+export const VariantsRepeater: React.FC<ItemDetailsVariantsRepeaterProps> = ({
+  children,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
   const item = service.item.get();
 
   // TODO: Check if variants exist on item type - might be in a different property
@@ -102,9 +110,13 @@ interface ItemDetailsSpecialRequestProps {
   }) => React.ReactNode;
 }
 
-export const SpecialRequest: React.FC<ItemDetailsSpecialRequestProps> = ({ children }) => {
+export const SpecialRequest: React.FC<ItemDetailsSpecialRequestProps> = ({
+  children,
+}) => {
   const [value, setValue] = useState('');
-  const service = useService(ItemServiceDefinition) as ServiceAPI<typeof ItemServiceDefinition>;
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
 
   const onChange = (newValue: string) => {
     setValue(newValue);
@@ -123,8 +135,12 @@ interface ItemDetailsLineItemProps {
   children: (props: { lineItem: LineItem }) => React.ReactNode;
 }
 
-export const LineItemComponent: React.FC<ItemDetailsLineItemProps> = ({ children }) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<typeof ItemServiceDefinition>;
+export const LineItemComponent: React.FC<ItemDetailsLineItemProps> = ({
+  children,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
   const lineItem = service.lineItem?.get?.() ?? {};
   return children({ lineItem });
 };
@@ -141,8 +157,12 @@ interface ItemDetailsQuantityProps {
   }) => React.ReactNode;
 }
 
-export const QuantityComponent: React.FC<ItemDetailsQuantityProps> = ({ children }) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<typeof ItemServiceDefinition>;
+export const QuantityComponent: React.FC<ItemDetailsQuantityProps> = ({
+  children,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
   const quantity = service.quantity?.get?.() ?? 1;
   const increment = () => service.quantity?.set?.(quantity + 1);
   const decrement = () => service.quantity?.set?.(quantity - 1);
