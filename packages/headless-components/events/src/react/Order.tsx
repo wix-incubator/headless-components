@@ -8,6 +8,7 @@ import * as InvoiceItem from './InvoiceItem.js';
 enum TestIds {
   orderRoot = 'order-root',
   orderNumber = 'order-number',
+  orderGuestEmail = 'order-guest-email',
   orderCreatedDate = 'order-created-date',
   orderDownloadTicketsButton = 'order-download-tickets-button',
   orderInvoiceItems = 'order-invoice-items',
@@ -15,6 +16,8 @@ enum TestIds {
   orderTax = 'order-tax',
   orderServiceFee = 'order-service-fee',
   orderTotal = 'order-total',
+  orderPaidPlanDiscount = 'order-paid-plan-discount',
+  orderCouponDiscount = 'order-coupon-discount',
 }
 
 /**
@@ -22,7 +25,7 @@ enum TestIds {
  */
 export interface RootProps {
   /** Configuration for the order service */
-  orderServiceConfig: OrderServiceConfig;
+  orderServiceConfig?: OrderServiceConfig;
   /** Child components */
   children: React.ReactNode;
 }
@@ -117,6 +120,65 @@ export const OrderNumber = React.forwardRef<HTMLElement, OrderNumberProps>(
           </AsChildSlot>
         )}
       </CoreOrder.OrderNumber>
+    );
+  },
+);
+
+/**
+ * Props for the Order GuestEmail component.
+ */
+export interface GuestEmailProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ guestEmail: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the guest email with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.GuestEmail className="text-gray-600 font-light" />
+ *
+ * // asChild with primitive
+ * <Order.GuestEmail asChild>
+ *   <p className="text-sm text-gray-500 font-light" />
+ * </Order.GuestEmail>
+ *
+ * // asChild with react component
+ * <Order.GuestEmail asChild>
+ *   {({ guestEmail }) => (
+ *     <span>{`Email: ${guestEmail}`}</span>
+ *   )}
+ * </Order.GuestEmail>
+ * ```
+ */
+export const GuestEmail = React.forwardRef<HTMLElement, GuestEmailProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreOrder.GuestEmail>
+        {({ guestEmail }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.orderGuestEmail}
+            customElement={children}
+            customElementProps={{ guestEmail }}
+            content={guestEmail}
+            {...otherProps}
+          >
+            <span>{guestEmail}</span>
+          </AsChildSlot>
+        )}
+      </CoreOrder.GuestEmail>
     );
   },
 );
@@ -433,6 +495,131 @@ export const Subtotal = React.forwardRef<HTMLElement, SubtotalProps>(
     );
   },
 );
+
+/**
+ * Props for the Order PaidPlanDiscount component.
+ */
+export interface PaidPlanDiscountProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ value: string; currency: string; rate: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the order paid plan discount information with rate, value, and currency with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.PaidPlanDiscount className="text-gray-600 font-light" />
+ *
+ * // asChild with primitive
+ * <Order.PaidPlanDiscount asChild>
+ *   <p className="text-sm text-gray-600 font-light" />
+ * </Order.PaidPlanDiscount>
+ *
+ * // asChild with react component
+ * <Order.PaidPlanDiscount asChild>
+ *   {({ value, currency, rate }) => (
+ *     <div>
+ *       <span>{`Paid Plan Discount (${rate}%)`}</span>
+ *       <span>{`${value} ${currency}`}</span>
+ *     </div>
+ *   )}
+ * </Order.PaidPlanDiscount>
+ * ```
+ */
+export const PaidPlanDiscount = React.forwardRef<
+  HTMLElement,
+  PaidPlanDiscountProps
+>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreOrder.PaidPlanDiscount>
+      {({ value, currency, rate }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.orderPaidPlanDiscount}
+          customElement={children}
+          customElementProps={{ value, currency, rate }}
+          content={value}
+          {...otherProps}
+        >
+          <span>{value}</span>
+        </AsChildSlot>
+      )}
+    </CoreOrder.PaidPlanDiscount>
+  );
+});
+
+/**
+ * Props for the Order CouponDiscount component.
+ */
+export interface CouponDiscountProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ value: string; currency: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the order coupon discount information with value and currency with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Order.CouponDiscount className="text-gray-600 font-light" />
+ *
+ * // asChild with primitive
+ * <Order.CouponDiscount asChild>
+ *   <p className="text-sm text-gray-600 font-light" />
+ * </Order.CouponDiscount>
+ *
+ * // asChild with react component
+ * <Order.CouponDiscount asChild>
+ *   {({ value, currency }) => (
+ *     <div>
+ *       <span>{`Coupon Discount (${value} ${currency})`}</span>
+ *     </div>
+ *   )}
+ * </Order.CouponDiscount>
+ * ```
+ */
+export const CouponDiscount = React.forwardRef<
+  HTMLElement,
+  CouponDiscountProps
+>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreOrder.CouponDiscount>
+      {({ value, currency }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.orderCouponDiscount}
+          customElement={children}
+          customElementProps={{ value, currency }}
+          content={value}
+          {...otherProps}
+        >
+          <span>{value}</span>
+        </AsChildSlot>
+      )}
+    </CoreOrder.CouponDiscount>
+  );
+});
 
 /**
  * Props for the Order Tax component.

@@ -14,7 +14,7 @@ export interface RootProps {
   /** Child components that will have access to the order service */
   children: React.ReactNode;
   /** Configuration for the order service */
-  orderServiceConfig: OrderServiceConfig;
+  orderServiceConfig?: OrderServiceConfig;
 }
 
 /**
@@ -24,6 +24,10 @@ export interface RootProps {
  */
 export function Root(props: RootProps): React.ReactNode {
   const { children, orderServiceConfig } = props;
+
+  if (!orderServiceConfig) {
+    return children;
+  }
 
   return (
     <WixServices
@@ -58,6 +62,27 @@ export function OrderNumber(props: OrderNumberProps): React.ReactNode {
   const orderNumber = orderService.order.get().orderNumber!;
 
   return props.children({ orderNumber });
+}
+
+export interface GuestEmailProps {
+  /** Render prop function */
+  children: (props: GuestEmailRenderProps) => React.ReactNode;
+}
+export interface GuestEmailRenderProps {
+  /** Guest email */
+  guestEmail: string;
+}
+
+/**
+ * Order GuestEmail core component that provides guest email.
+ *
+ * @component
+ */
+export function GuestEmail(props: GuestEmailProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const guestEmail = orderService.order.get().email!;
+
+  return props.children({ guestEmail });
 }
 
 export interface CreatedDateProps {
@@ -191,6 +216,75 @@ export function Subtotal(props: SubtotalProps): React.ReactNode {
   });
 }
 
+export interface PaidPlanDiscountProps {
+  /** Render prop function */
+  children: (props: PaidPlanDiscountRenderProps) => React.ReactNode;
+}
+
+export interface PaidPlanDiscountRenderProps {
+  /** Paid plan discount value */
+  value: string;
+  /** Currency */
+  currency: string;
+  /** Paid plan discount rate */
+  rate: string;
+}
+
+/**
+ * Order PaidPlanDiscount core component that provides paid plan discount.
+ *
+ * @component
+ */
+export function PaidPlanDiscount(
+  props: PaidPlanDiscountProps,
+): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const discounts = orderService.order.get().invoice!.discount?.discounts;
+  const paidPlanDiscount = discounts?.find((item) => item.paidPlan);
+
+  if (!paidPlanDiscount) {
+    return null;
+  }
+
+  return props.children({
+    value: `-${paidPlanDiscount.amount?.value!}`,
+    currency: paidPlanDiscount.amount?.currency!,
+    rate: paidPlanDiscount.paidPlan?.percentDiscount?.rate!,
+  });
+}
+
+export interface CouponDiscountProps {
+  /** Render prop function */
+  children: (props: CouponDiscountRenderProps) => React.ReactNode;
+}
+
+export interface CouponDiscountRenderProps {
+  /** Coupon discount value */
+  value: string;
+  /** Currency */
+  currency: string;
+}
+
+/**
+ * Order CouponDiscount core component that provides coupon discount.
+ *
+ * @component
+ */
+export function CouponDiscount(props: CouponDiscountProps): React.ReactNode {
+  const orderService = useService(OrderServiceDefinition);
+  const discounts = orderService.order.get().invoice!.discount?.discounts;
+  const couponDiscount = discounts?.find((item) => item.coupon);
+
+  if (!couponDiscount) {
+    return null;
+  }
+
+  return props.children({
+    value: `-${couponDiscount.amount?.value!}`,
+    currency: couponDiscount.amount?.currency!,
+  });
+}
+
 export interface TaxProps {
   /** Render prop function */
   children: (props: TaxRenderProps) => React.ReactNode;
@@ -214,7 +308,7 @@ export function Tax(props: TaxProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const tax = orderService.order.get().invoice!.tax;
 
-  if (!tax) {
+  if (!tax?.amount?.value) {
     return null;
   }
 
@@ -246,12 +340,19 @@ export interface ServiceFeeRenderProps {
  */
 export function ServiceFee(props: ServiceFeeProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const serviceFee = orderService.order.get().invoice!.fees![0];
+  const fees = orderService.order.get().invoice!.fees!;
+  const addedFee = fees.find(
+    ({ type }) => type === 'FEE_ADDED' || type === 'FEE_ADDED_AT_CHECKOUT',
+  );
+
+  if (!addedFee) {
+    return null;
+  }
 
   return props.children({
-    value: serviceFee!.amount!.value!,
-    currency: serviceFee!.amount!.currency!,
-    rate: serviceFee!.rate!,
+    value: addedFee!.amount!.value!,
+    currency: addedFee!.amount!.currency!,
+    rate: addedFee!.rate!,
   });
 }
 
