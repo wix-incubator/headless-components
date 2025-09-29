@@ -11,6 +11,7 @@ import { ChevronLeftIcon } from "@radix-ui/react-icons";
 import { Blog } from "@wix/blog/components";
 import { type BlogPostServiceConfig } from "@wix/blog/services";
 import { useNavigation } from "./NavigationContext";
+import PostSiblingsNav from "./PostSiblingsNav";
 import { SharePostActions } from "./SharePostActions";
 
 interface PostPageProps {
@@ -20,6 +21,8 @@ interface PostPageProps {
   feedPageHref: string;
   /** The base url of the category page, commonly end with trailing slash, e.g. "/category/" */
   categoryPageBaseUrl: string;
+  /** The base url of the post page, commonly end with trailing slash, e.g. "/post/" */
+  postPageBaseUrl: string;
   /** The date locale to use for the dates */
   uiLocale: string;
 }
@@ -35,6 +38,7 @@ interface PostPageProps {
  *   blogPostServiceConfig={postConfig}
  *   href="https://example.com/post/my-post"
  *   feedPageHref="/blog"
+ *   postPageBaseUrl="/post/"
  *   categoryPageBaseUrl="/category/"
  *   uiLocale="en-US"
  * />
@@ -44,6 +48,7 @@ export default function PostPage({
   blogPostServiceConfig,
   feedPageHref,
   categoryPageBaseUrl,
+  postPageBaseUrl,
   uiLocale,
 }: PostPageProps) {
   const Navigation = useNavigation();
@@ -112,6 +117,8 @@ export default function PostPage({
         <section className="-ml-2">
           <SharePostActions />
         </section>
+
+        <PostSiblingsNav postPageBaseUrl={postPageBaseUrl} />
       </article>
     </Blog.Post.Root>
   );

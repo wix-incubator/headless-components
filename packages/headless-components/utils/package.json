@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-utils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -32,6 +32,6 @@
     "@radix-ui/react-slot": "^1.2.3"
   },
   "peerDependencies": {
-    "react": ">=18.0.0"
+    "react": ">=16.3.0"
   }
 }

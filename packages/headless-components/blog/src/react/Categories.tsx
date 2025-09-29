@@ -23,18 +23,14 @@ interface CategoriesContextValue {
   fallbackImageUrl?: string;
 }
 
-const CategoriesContext = React.createContext<CategoriesContextValue | null>(
-  null,
-);
+const CategoriesContext = React.createContext<CategoriesContextValue | null>(null);
 
 CategoriesContext.displayName = 'Blog.Categories.Context';
 
 function useCategoriesContext(): CategoriesContextValue {
   const context = React.useContext(CategoriesContext);
   if (!context) {
-    throw new Error(
-      'useCategoriesContext must be used within a BlogCategories.Root component',
-    );
+    throw new Error('useCategoriesContext must be used within a BlogCategories.Root component');
   }
   return context;
 }
@@ -85,84 +81,73 @@ export interface BlogCategoriesRootProps {
  * }
  * ```
  */
-export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>(
-  (props, ref) => {
-    const {
-      asChild,
-      children,
-      className,
-      categories: categoriesProp,
-      customCategoriesToPrepend = [],
-      blogCategoriesServiceConfig,
+export const Root = React.forwardRef<HTMLElement, BlogCategoriesRootProps>((props, ref) => {
+  const {
+    asChild,
+    children,
+    className,
+    categories: categoriesProp,
+    customCategoriesToPrepend = [],
+    blogCategoriesServiceConfig,
+    fallbackImageUrl,
+  } = props;
+
+  const renderRoot = (categories: EnhancedCategory[], hasCategories: boolean) => {
+    const contextValue: CategoriesContextValue = {
+      categories,
       fallbackImageUrl,
-    } = props;
-
-    const renderRoot = (
-      categories: EnhancedCategory[],
-      hasCategories: boolean,
-    ) => {
-      const contextValue: CategoriesContextValue = {
-        categories,
-        fallbackImageUrl,
-        hasCategories,
-      };
-
-      const attributes = {
-        'data-component-tag': asChild ? undefined : HTML_CODE_TAG,
-        'data-testid': TestIds.blogCategoriesRoot,
-        'data-has-categories': hasCategories,
-      };
-
-      return (
-        <CategoriesContext.Provider value={contextValue}>
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            {...attributes}
-            customElement={children}
-            customElementProps={{ hasCategories }}
-          >
-            <div>{isValidChildren(children) ? children : null}</div>
-          </AsChildSlot>
-        </CategoriesContext.Provider>
-      );
+      hasCategories,
     };
 
-    if (categoriesProp) {
-      return renderRoot(
-        enhanceCategories(categoriesProp),
-        categoriesProp.length > 0,
-      );
-    }
+    const attributes = {
+      'data-component-tag': asChild ? undefined : HTML_CODE_TAG,
+      'data-testid': TestIds.blogCategoriesRoot,
+      'data-has-categories': hasCategories,
+    };
 
     return (
-      <WixServices
-        servicesMap={createServicesMap().addService(
-          BlogCategoriesServiceDefinition,
-          BlogCategoriesService,
-          blogCategoriesServiceConfig,
-        )}
-      >
-        <CoreCategories.Categories>
-          {({
-            categories: realCategories,
-            hasCategories: hasRealCategories,
-          }) => {
-            const allCategories: EnhancedCategory[] = [
-              ...customCategoriesToPrepend,
-              ...realCategories,
-            ];
-
-            const hasCategories = hasRealCategories;
-
-            return renderRoot(allCategories, hasCategories);
-          }}
-        </CoreCategories.Categories>
-      </WixServices>
+      <CategoriesContext.Provider value={contextValue}>
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          {...attributes}
+          customElement={children}
+          customElementProps={{ hasCategories }}
+        >
+          <div>{isValidChildren(children) ? children : null}</div>
+        </AsChildSlot>
+      </CategoriesContext.Provider>
     );
-  },
-);
+  };
+
+  if (categoriesProp) {
+    return renderRoot(enhanceCategories(categoriesProp), categoriesProp.length > 0);
+  }
+
+  return (
+    <WixServices
+      servicesMap={createServicesMap().addService(
+        BlogCategoriesServiceDefinition,
+        BlogCategoriesService,
+        blogCategoriesServiceConfig,
+      )}
+    >
+      <CoreCategories.Categories>
+        {({ categories: realCategories, hasCategories: hasRealCategories }) => {
+          const allCategories: EnhancedCategory[] = [
+            ...customCategoriesToPrepend,
+            ...realCategories,
+          ];
+
+          const hasCategories = hasRealCategories;
+
+          return renderRoot(allCategories, hasCategories);
+        }}
+      </CoreCategories.Categories>
+    </WixServices>
+  );
+});
 
 Root.displayName = 'Blog.Categories.Root';
 
@@ -185,26 +170,24 @@ export interface CategoryItemsProps {
  * </Blog.Categories.CategoryItems>
  * ```
  */
-export const CategoryItems = React.forwardRef<HTMLElement, CategoryItemsProps>(
-  (props, ref) => {
-    const { children, emptyState } = props;
-    const { hasCategories } = useCategoriesContext();
+export const CategoryItems = React.forwardRef<HTMLElement, CategoryItemsProps>((props, ref) => {
+  const { children, emptyState } = props;
+  const { hasCategories } = useCategoriesContext();
 
-    if (!hasCategories) {
-      return emptyState || null;
-    }
+  if (!hasCategories) {
+    return emptyState || null;
+  }
 
-    const attributes = {
-      'data-testid': TestIds.blogCategories,
-    };
+  const attributes = {
+    'data-testid': TestIds.blogCategories,
+  };
 
-    return (
-      <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
-        {children}
-      </div>
-    );
-  },
-);
+  return (
+    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>}>
+      {children}
+    </div>
+  );
+});
 
 CategoryItems.displayName = 'Blog.Categories.CategoryItems';
 
@@ -231,36 +214,32 @@ export interface CategoryItemRepeaterProps {
  * </Blog.Categories.CategoryItems>
  * ```
  */
-export const CategoryItemRepeater = React.forwardRef<
-  HTMLElement,
-  CategoryItemRepeaterProps
->((props, _ref) => {
-  const { children, offset = 0, limit = Infinity } = props;
-  const { categories, fallbackImageUrl } = useCategoriesContext();
+export const CategoryItemRepeater = React.forwardRef<HTMLElement, CategoryItemRepeaterProps>(
+  (props, _ref) => {
+    const { children, offset = 0, limit = Infinity } = props;
+    const { categories, fallbackImageUrl } = useCategoriesContext();
 
-  const categoriesSlice = categories.slice(offset, offset + limit);
+    const categoriesSlice = categories.slice(offset, offset + limit);
 
-  return (
-    <>
-      {categoriesSlice.map((category) => {
-        const imageUrl = category.imageUrl || fallbackImageUrl;
-        const contextValue: CategoryItemRepeaterContextValue = {
-          category,
-          imageUrl,
-        };
+    return (
+      <>
+        {categoriesSlice.map((category) => {
+          const imageUrl = category.imageUrl || fallbackImageUrl;
+          const contextValue: CategoryItemRepeaterContextValue = {
+            category,
+            imageUrl,
+          };
 
-        return (
-          <CategoryItemRepeaterContext.Provider
-            key={category._id}
-            value={contextValue}
-          >
-            {children}
-          </CategoryItemRepeaterContext.Provider>
-        );
-      })}
-    </>
-  );
-});
+          return (
+            <CategoryItemRepeaterContext.Provider key={category._id} value={contextValue}>
+              {children}
+            </CategoryItemRepeaterContext.Provider>
+          );
+        })}
+      </>
+    );
+  },
+);
 
 CategoryItemRepeater.displayName = 'Blog.Categories.CategoryItemRepeater';
 
@@ -269,17 +248,16 @@ interface CategoryItemRepeaterContextValue {
   imageUrl?: string;
 }
 
-const CategoryItemRepeaterContext =
-  React.createContext<CategoryItemRepeaterContextValue | null>(null);
+const CategoryItemRepeaterContext = React.createContext<CategoryItemRepeaterContextValue | null>(
+  null,
+);
 
 CategoryItemRepeaterContext.displayName = 'Blog.Categories.CategoryContext';
 
 export function useCategoryItemRepeaterContext(): CategoryItemRepeaterContextValue {
   const context = React.useContext(CategoryItemRepeaterContext);
   if (!context) {
-    throw new Error(
-      'useCategoryContext must be used within a Category.Root component',
-    );
+    throw new Error('useCategoryContext must be used within a Category.Root component');
   }
   return context;
 }
@@ -313,10 +291,7 @@ export interface ActiveCategoryProps {
  * </Blog.Categories.ActiveCategory>
  * ```
  */
-export const ActiveCategory = React.forwardRef<
-  HTMLElement,
-  ActiveCategoryProps
->((props, ref) => {
+export const ActiveCategory = React.forwardRef<HTMLElement, ActiveCategoryProps>((props, ref) => {
   const { asChild, className, pathname, baseUrl = '', children } = props;
   const { categories, fallbackImageUrl } = useCategoriesContext();
 

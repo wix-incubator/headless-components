@@ -1,34 +1,9 @@
 import { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import {
-  LinkPreviewProviders,
-  RichContent,
-  RicosViewer,
-  pluginAudioViewer,
-  pluginCodeBlockViewer,
-  pluginCollapsibleListViewer,
-  pluginDividerViewer,
-  pluginEmojiViewer,
-  pluginFileUploadViewer,
-  pluginGalleryViewer,
-  pluginGiphyViewer,
-  pluginHashtagViewer,
-  pluginHtmlViewer,
-  pluginImageViewer,
-  pluginIndentViewer,
-  pluginLineSpacingViewer,
-  pluginLinkViewer,
-  pluginLinkPreviewViewer,
-  pluginSpoilerViewer,
-  pluginVideoViewer,
-  type RicosCustomStyles,
-} from '@wix/ricos';
 import React from 'react';
-import { type Event } from '../services/event-service.js';
+import { type Event, type RichContent } from '../services/event-service.js';
 import { hasDescription } from '../utils/event.js';
 import * as CoreEvent from './core/Event.js';
-import '@wix/ricos/css/ricos-viewer.global.css';
-import '@wix/ricos/css/all-plugins-viewer.css';
 
 enum TestIds {
   eventRoot = 'event-root',
@@ -474,82 +449,40 @@ export const ShortDescription = React.forwardRef<
  * Props for the Event Description component.
  */
 export interface DescriptionProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ description: RichContent }>;
-  /** CSS classes to apply to the container element */
-  className?: string;
-  /** Ricos viewer custom styles */
-  customStyles?: RicosCustomStyles;
+  /** Custom render function */
+  children: AsChildChildren<{ description: RichContent }>;
 }
 
 /**
- * Displays the event description using RicosViewer component.
+ * Provides the event description.
  *
  * @component
  * @example
  * ```tsx
- * // Default usage
- * <Event.Description />
- *
- * // asChild with react component
+ * // Usage with react component
  * <Event.Description asChild>
  *   {React.forwardRef(({ description, ...props }, ref) => (
- *     <RicosViewer ref={ref} content={description} plugins={plugins} />
+ *     <RicosViewer ref={ref} content={description} />
  *   ))}
  * </Event.Description>
  * ```
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className, customStyles, ...otherProps } = props;
+    const { children, ...otherProps } = props;
 
     return (
       <CoreEvent.Description>
         {({ description }) => {
           return (
             <AsChildSlot
+              asChild
               ref={ref}
-              asChild={asChild}
-              className={className}
               data-testid={TestIds.eventDescription}
               customElement={children}
               customElementProps={{ description }}
               {...otherProps}
-            >
-              <div>
-                <RicosViewer
-                  content={description}
-                  theme={{ customStyles }}
-                  plugins={[
-                    pluginAudioViewer(),
-                    pluginCodeBlockViewer(),
-                    pluginCollapsibleListViewer(),
-                    pluginDividerViewer(),
-                    pluginEmojiViewer(),
-                    pluginFileUploadViewer(),
-                    pluginGalleryViewer(),
-                    pluginGiphyViewer(),
-                    pluginHashtagViewer(),
-                    pluginHtmlViewer(),
-                    pluginImageViewer(),
-                    pluginIndentViewer(),
-                    pluginLineSpacingViewer(),
-                    pluginLinkViewer(),
-                    pluginLinkPreviewViewer({
-                      exposeEmbedButtons: [
-                        LinkPreviewProviders.Instagram,
-                        LinkPreviewProviders.Twitter,
-                        LinkPreviewProviders.TikTok,
-                      ],
-                    }),
-                    pluginSpoilerViewer(),
-                    pluginVideoViewer(),
-                  ]}
-                />
-              </div>
-            </AsChildSlot>
+            />
           );
         }}
       </CoreEvent.Description>

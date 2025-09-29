@@ -1,4 +1,3 @@
-import { type RichContent } from '@wix/ricos';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
@@ -6,8 +5,10 @@ import {
   EventServiceDefinition,
   type EventServiceConfig,
   type Event,
+  type RichContent,
 } from '../../services/event-service.js';
 import { hasDescription } from '../../utils/event.js';
+import { formatFullDate, formatShortDate } from '../../utils/date.js';
 
 export interface RootProps {
   /** Child components that will have access to the event service */
@@ -115,8 +116,8 @@ export function Date(props: DateProps): React.ReactNode {
   const date = event.dateAndTimeSettings!.dateAndTimeTbd
     ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
     : format === 'short'
-      ? event.dateAndTimeSettings!.formatted!.startDate!
-      : event.dateAndTimeSettings!.formatted!.dateAndTime!;
+      ? formatShortDate(event.dateAndTimeSettings!.startDate!)
+      : formatFullDate(event.dateAndTimeSettings!.startDate!);
 
   return props.children({ date });
 }
@@ -235,7 +236,7 @@ export function Description(props: DescriptionProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const description = event.description as RichContent | undefined;
+  const description = event.description;
 
   if (!hasDescription(event)) {
     return null;

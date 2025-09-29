@@ -12,6 +12,8 @@ export interface RootProps {
 
 export interface RootRenderProps {
   post: ReturnType<BlogPostServiceAPI['post']['get']>;
+  olderPost: ReturnType<BlogPostServiceAPI['olderPost']['get']>;
+  newerPost: ReturnType<BlogPostServiceAPI['newerPost']['get']>;
 }
 
 /**
@@ -22,6 +24,8 @@ export const Root = (props: RootProps) => {
 
   return props.children({
     post: service.post.get(),
+    olderPost: service.olderPost.get(),
+    newerPost: service.newerPost.get(),
   });
 };
 

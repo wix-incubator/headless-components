@@ -22,13 +22,11 @@ export interface RootProps {
  *
  * @component
  */
-export const Root = React.forwardRef<HTMLDivElement, RootProps>(
-  (props, ref) => {
-    const { children } = props;
+export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => {
+  const { children } = props;
 
-    return <div ref={ref}>{children}</div>;
-  },
-);
+  return <div ref={ref}>{children}</div>;
+});
 
 Root.displayName = 'Blog.Feed.Root (core)';
 

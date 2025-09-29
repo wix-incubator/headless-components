@@ -7,7 +7,7 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { type ScheduleItem } from './schedule-item-service.js';
 import { type ScheduleItemsGroup } from './schedule-items-group-service.js';
-import { formatDate } from '../utils/date.js';
+import { formatShortDate } from '../utils/date.js';
 
 enum StateFilter {
   PUBLISHED = schedule.StateFilter.PUBLISHED,
@@ -170,7 +170,7 @@ function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
   items.forEach((item) => {
     const startDate = new Date(item.timeSlot!.start!);
     const dateKey = startDate.toDateString();
-    const formattedDate = formatDate(startDate);
+    const formattedDate = formatShortDate(startDate);
 
     if (!grouped.has(dateKey)) {
       grouped.set(dateKey, {
