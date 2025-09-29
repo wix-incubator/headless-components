@@ -18,10 +18,10 @@ interface EventListProps {
   eventDetailsPagePath: string;
 }
 
-export const EventList = ({
+export function EventList({
   eventListServiceConfig,
   eventDetailsPagePath,
-}: EventListProps) => {
+}: EventListProps) {
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
       <Events className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
@@ -53,4 +53,4 @@ export const EventList = ({
       <EventListError className="mt-4" />
     </EventListPrimitive>
   );
-};
+}

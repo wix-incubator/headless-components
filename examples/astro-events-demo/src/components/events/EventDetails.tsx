@@ -3,6 +3,7 @@ import {
   type EventListServiceConfig,
   type TicketDefinitionListServiceConfig,
   type CheckoutServiceConfig,
+  type ScheduleListServiceConfig,
 } from '@wix/events/services';
 import {
   Event,
@@ -46,18 +47,20 @@ interface EventDetailsProps {
   eventListServiceConfig: EventListServiceConfig;
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   checkoutServiceConfig: CheckoutServiceConfig;
+  scheduleListServiceConfig: ScheduleListServiceConfig;
   eventDetailsPagePath: string;
   formPagePath: string;
 }
 
-export const EventDetails = ({
+export function EventDetails({
   eventServiceConfig,
   eventListServiceConfig,
   ticketDefinitionListServiceConfig,
   checkoutServiceConfig,
+  // scheduleListServiceConfig,
   eventDetailsPagePath,
   formPagePath,
-}: EventDetailsProps) => {
+}: EventDetailsProps) {
   const currentEventId = eventServiceConfig.event._id;
   const otherUpcomingEvents = eventListServiceConfig.events
     .filter(
@@ -220,7 +223,7 @@ export const EventDetails = ({
                       <TicketDefinitionFee asChild>
                         {({ amount, formattedAmount }) => (
                           <span>
-                            {Number(amount) === 0
+                            {amount === 0
                               ? `+Ticket service fee`
                               : `+${formattedAmount} ticket service fee`}
                           </span>
@@ -343,4 +346,4 @@ export const EventDetails = ({
       ) : null}
     </Event>
   );
-};
+}

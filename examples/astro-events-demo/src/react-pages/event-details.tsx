@@ -22,7 +22,7 @@ export default function EventDetailsPage({
   eventListServiceConfig,
   ticketDefinitionListServiceConfig,
   checkoutServiceConfig,
-  // scheduleListServiceConfig,
+  scheduleListServiceConfig,
   eventDetailsPagePath,
   formPagePath,
 }: EventDetailsPageProps) {
@@ -33,7 +33,7 @@ export default function EventDetailsPage({
         eventListServiceConfig={eventListServiceConfig}
         ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
         checkoutServiceConfig={checkoutServiceConfig}
-        // scheduleListServiceConfig={scheduleListServiceConfig}
+        scheduleListServiceConfig={scheduleListServiceConfig}
         eventDetailsPagePath={eventDetailsPagePath}
         formPagePath={formPagePath}
       />

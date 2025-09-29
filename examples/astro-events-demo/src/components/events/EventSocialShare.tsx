@@ -8,9 +8,9 @@ interface EventSocialShareProps {
   eventPageUrl?: string;
 }
 
-export const EventSocialShare = ({
+export function EventSocialShare({
   eventPageUrl = typeof window !== 'undefined' ? window.location.href : '',
-}: EventSocialShareProps) => {
+}: EventSocialShareProps) {
   return (
     <div className="flex gap-3">
       <EventFacebookShare asChild eventPageUrl={eventPageUrl}>
@@ -45,4 +45,4 @@ export const EventSocialShare = ({
       </EventLinkedInShare>
     </div>
   );
-};
+}

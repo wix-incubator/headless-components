@@ -124,7 +124,7 @@ export async function loadScheduleListServiceConfig(
   return { items: allItems };
 }
 
-async function listScheduleItems(eventId: string, limit: number, offset = 0) {
+function listScheduleItems(eventId: string, limit: number, offset = 0) {
   return schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
