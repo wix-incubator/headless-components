@@ -27,7 +27,7 @@ export const OLOSettingsService = implementService.withConfig<OLOSettingsService
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
     const operationGroup = signalsService.signal<operationGroupsApi.OperationGroup | undefined>(
-      config.operationGroup,
+      config.operationGroup
     );
     const operation = signalsService.signal<operationsApi.Operation | undefined>(config.operation);
     const selectedItem = signalsService.signal<unknown>(null);
@@ -41,7 +41,7 @@ export const OLOSettingsService = implementService.withConfig<OLOSettingsService
       error,
       selectedItem,
     };
-  },
+  }
 );
 
 export async function loadOLOSettingsServiceConfig() {
