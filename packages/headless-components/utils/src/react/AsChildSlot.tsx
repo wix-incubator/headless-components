@@ -219,6 +219,41 @@ export const AsChildSlot = React.forwardRef<HTMLElement, AsChildSlot>(
       return <Slot {...restProps}>{renderedElement}</Slot>;
     }
 
+    // Handle React Fragment children specifically
+    if (React.isValidElement(children) && children.type === React.Fragment) {
+      const fragmentChildren = React.Children.toArray(
+        (children.props as any).children,
+      );
+
+      if (fragmentChildren.length > 0) {
+        const firstChild = fragmentChildren[0];
+        const restChildren = fragmentChildren.slice(1);
+
+        if (React.isValidElement(firstChild)) {
+          // Only inject data-component-tag if the child doesn't already have one
+          const existingTag = (firstChild.props as any)['data-component-tag'];
+          const enhancedFirstChild = React.cloneElement(firstChild, {
+            ...getConditionalDataComponentTagProps(dataComponentTag, existingTag),
+          });
+
+          return (
+            <Slot ref={ref} {...restProps}>
+              <>
+                {enhancedFirstChild}
+                {restChildren}
+              </>
+            </Slot>
+          );
+        }
+      }
+
+      return (
+        <Slot ref={ref} {...restProps}>
+          {children}
+        </Slot>
+      );
+    }
+
     if (React.Children.count(children) > 1) {
       const childrenArray = React.Children.toArray(children);
       const firstChild = childrenArray[0];
