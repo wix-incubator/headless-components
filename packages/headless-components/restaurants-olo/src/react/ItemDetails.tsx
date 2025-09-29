@@ -97,7 +97,7 @@ export const AddToCart = React.forwardRef<HTMLButtonElement, AddToCartActionProp
         {props.children}
       </Commerce.Actions.AddToCart>
     );
-  }
+  },
 );
 
 AddToCart.displayName = 'AddToCart';
@@ -190,10 +190,7 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   );
 };
 
-export const Quantity: React.FC<ItemDetailsQuantityProps> = (
-  { children },
-  ref,
-) => {
+export const Quantity: React.FC<ItemDetailsQuantityProps> = ({ children }, ref) => {
   return (
     <CoreItemDetails.QuantityComponent>
       {({ quantity, onValueChange }) => (

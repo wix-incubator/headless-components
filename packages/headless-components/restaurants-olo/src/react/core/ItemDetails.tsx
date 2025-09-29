@@ -6,7 +6,7 @@ import {
   ItemServiceConfig,
   ItemServiceDefinition,
   loadItemServiceConfig,
-  OLOSettingsServiceDefinition
+  OLOSettingsServiceDefinition,
 } from '../../services';
 import { type LineItem } from '@wix/ecom/services';
 import { createServicesMap } from '@wix/services-manager';

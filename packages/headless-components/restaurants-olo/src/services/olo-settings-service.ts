@@ -11,8 +11,8 @@ export interface OLOSettingsServiceAPI {
   selectedItem?: Signal<any>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
-//   fetchOperationGroups: () => Promise<void>;
-//   fetchOperations: () => Promise<void>;
+  //   fetchOperationGroups: () => Promise<void>;
+  //   fetchOperations: () => Promise<void>;
 }
 
 export interface OLOSettingsServiceConfig {
@@ -22,22 +22,27 @@ export interface OLOSettingsServiceConfig {
 
 export const OLOSettingsServiceDefinition = defineService<OLOSettingsServiceAPI>('oloSettings');
 
-export const OLOSettingsService = implementService.withConfig<OLOSettingsServiceConfig>()(OLOSettingsServiceDefinition, ({ getService, config }) => {
-  const signalsService = getService(SignalsServiceDefinition);
-  const operationGroup = signalsService.signal<operationGroupsApi.OperationGroup | undefined>(config.operationGroup);
-  const operation = signalsService.signal<operationsApi.Operation | undefined>(config.operation);
-  const selectedItem = signalsService.signal<any>(null);
-  const isLoading = signalsService.signal<boolean>(false);
-  const error = signalsService.signal<string | null>(null);
+export const OLOSettingsService = implementService.withConfig<OLOSettingsServiceConfig>()(
+  OLOSettingsServiceDefinition,
+  ({ getService, config }) => {
+    const signalsService = getService(SignalsServiceDefinition);
+    const operationGroup = signalsService.signal<operationGroupsApi.OperationGroup | undefined>(
+      config.operationGroup,
+    );
+    const operation = signalsService.signal<operationsApi.Operation | undefined>(config.operation);
+    const selectedItem = signalsService.signal<any>(null);
+    const isLoading = signalsService.signal<boolean>(false);
+    const error = signalsService.signal<string | null>(null);
 
-  return {
-    operationGroup,
-    operation,
-    isLoading,
-    error,
-    selectedItem,
-  };
-});
+    return {
+      operationGroup,
+      operation,
+      isLoading,
+      error,
+      selectedItem,
+    };
+  },
+);
 
 export async function loadOLOSettingsServiceConfig() {
   try {

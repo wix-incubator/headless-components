@@ -34,8 +34,7 @@ export interface ItemServiceAPI {
  *
  * @constant
  */
-export const ItemServiceDefinition =
-  defineService<ItemServiceAPI>('item');
+export const ItemServiceDefinition = defineService<ItemServiceAPI>('item');
 
 /**
  * Configuration interface required to initialize the ItemService.
@@ -87,78 +86,75 @@ export interface ItemServiceConfig {
  */
 const APP_ID = '9a5d83fd-8570-482e-81ab-cfa88942ee60';
 
-export const ItemService =
-  implementService.withConfig<ItemServiceConfig>()(
-    ItemServiceDefinition,
-    ({ getService, config }) => {
-      const signalsService = getService(SignalsServiceDefinition);
+export const ItemService = implementService.withConfig<ItemServiceConfig>()(
+  ItemServiceDefinition,
+  ({ getService, config }) => {
+    const signalsService = getService(SignalsServiceDefinition);
 
-      const item: Signal<items.Item> = signalsService.signal(
-        config.item,
-      );
-      const isLoading: Signal<boolean> = signalsService.signal(
-        !!config.item,
-      );
-      const error: Signal<string | null> = signalsService.signal(config.item ? null : 'Item not found');
-      const quantity: Signal<number> = signalsService.signal(1);
-      const specialRequest: Signal<string> = signalsService.signal('');
-      const lineItem: Signal<LineItem> = signalsService.signal({});
+    const item: Signal<items.Item> = signalsService.signal(config.item);
+    const isLoading: Signal<boolean> = signalsService.signal(!!config.item);
+    const error: Signal<string | null> = signalsService.signal(
+      config.item ? null : 'Item not found',
+    );
+    const quantity: Signal<number> = signalsService.signal(1);
+    const specialRequest: Signal<string> = signalsService.signal('');
+    const lineItem: Signal<LineItem> = signalsService.signal({});
 
-      if (config.item) {
-        console.log('config.item', config.item);
-        lineItem.set({
-          quantity: quantity.get(),
-          catalogReference: {
+    if (config.item) {
+      console.log('config.item', config.item);
+      lineItem.set({
+        quantity: quantity.get(),
+        catalogReference: {
+          // @ts-expect-error - item is not typed
+          catalogItemId: config.item._id,
+          appId: APP_ID,
+          options: {
+            operationId: config.operationId,
             // @ts-expect-error - item is not typed
-            catalogItemId: config.item._id,
-            appId: APP_ID,
-            options: {
-              operationId: config.operationId,
-              // @ts-expect-error - item is not typed
-              menuId: config.item.menuId,
-              // @ts-expect-error - item is not typed
-              sectionId: config.item.sectionId,
-            }
-          }
-        });
-      }
+            menuId: config.item.menuId,
+            // @ts-expect-error - item is not typed
+            sectionId: config.item.sectionId,
+          },
+        },
+      });
+    }
 
-      const updateQuantity = (_quantity: number) => {
-        quantity.set(_quantity);
-        const _lineItem = lineItem.get();
-        lineItem.set({
-          ..._lineItem,
-          quantity: _quantity,
-        });
-      }
+    const updateQuantity = (_quantity: number) => {
+      quantity.set(_quantity);
+      const _lineItem = lineItem.get();
+      lineItem.set({
+        ..._lineItem,
+        quantity: _quantity,
+      });
+    };
 
-      const updateSpecialRequest = (_specialRequest: string) => {
-        specialRequest.set(_specialRequest);
-        const _lineItem = lineItem.get();
-        lineItem.set({
-          ..._lineItem,
-          catalogReference: {
-            ..._lineItem.catalogReference,
-            options: {
-              ..._lineItem.catalogReference?.options,
-              specialRequest: _specialRequest
-            }
-          }
-        });
-      }
+    const updateSpecialRequest = (_specialRequest: string) => {
+      specialRequest.set(_specialRequest);
+      const _lineItem = lineItem.get();
+      lineItem.set({
+        ..._lineItem,
+        catalogReference: {
+          ..._lineItem.catalogReference,
+          options: {
+            ..._lineItem.catalogReference?.options,
+            specialRequest: _specialRequest,
+          },
+        },
+      });
+    };
 
-      return {
-        item,
-        quantity,
-        updateQuantity,
-        updateSpecialRequest,
-        isLoading,
-        error,
-        specialRequest,
-        lineItem,
-      };
-    },
-  );
+    return {
+      item,
+      quantity,
+      updateQuantity,
+      updateSpecialRequest,
+      isLoading,
+      error,
+      specialRequest,
+      lineItem,
+    };
+  },
+);
 
 /**
  * Success result interface for item service configuration loading.
@@ -264,8 +260,8 @@ export function loadItemServiceConfig({
   item,
   operationId,
 }: {
-    item: any,
-    operationId: string,
+  item: any;
+  operationId: string;
 }): ItemServiceConfig {
   return { item, operationId };
 }
