@@ -1,31 +1,23 @@
 // @ts-check
-import { defineConfig } from "astro/config";
-import wix from "@wix/astro";
-import cloudflare from "@astrojs/cloudflare";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@astrojs/react";
-
-import sitemap from "@astrojs/sitemap";
+import cloudflare from '@astrojs/cloudflare';
+import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
+import tailwind from '@astrojs/tailwind';
+import wix from '@wix/astro';
+import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://kitchensink-netanelg4.wix-host.com",
-
-  output: "server",
-
+  site: 'https://kitchensink-netanelg4.wix-host.com',
+  output: 'server',
   adapter: cloudflare(),
-
+  integrations: [react(), wix(), sitemap(), tailwind()],
   vite: {
-    plugins: [tailwindcss()],
-    // Bundle @wix/image for SSR compatibility to fix module loading issues
-    ssr: {
-      noExternal: ["@wix/image"],
+    resolve: {
+      alias: {
+        '@wix/events/components': '@wix/headless-events/react',
+        '@wix/events/services': '@wix/headless-events/services',
+      },
     },
   },
-
-  integrations: [
-    react(),
-    wix(),
-    sitemap(),
-  ],
 });

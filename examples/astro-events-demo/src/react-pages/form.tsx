@@ -1,4 +1,3 @@
-import '../styles/theme-1.css';
 import {
   type EventServiceConfig,
   type FormServiceConfig,

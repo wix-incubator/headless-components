@@ -47,7 +47,7 @@ const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
       noTicketDefinitionsSelectedError: 'Select a ticket',
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
-    eventsPagePath="/events"
-    formPagePath={`/events/${slug}/form`}
+    eventDetailsPagePath="/events/:slug"
+    formPagePath="/events/:slug/form"
   />
 </BaseLayout>

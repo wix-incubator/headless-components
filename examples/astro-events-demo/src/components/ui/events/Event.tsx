@@ -23,7 +23,7 @@ import {
 } from '@wix/ricos';
 import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../../../lib/utils';
+import { cn } from '@/lib/utils';
 
 import '@wix/ricos/css/ricos-viewer.global.css';
 import '@wix/ricos/css/plugin-audio-viewer.global.css';

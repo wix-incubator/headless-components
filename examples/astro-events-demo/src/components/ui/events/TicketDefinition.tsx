@@ -1,6 +1,6 @@
 import { TicketDefinition as TicketDefinitionPrimitive } from '@wix/headless-events/react';
 import React from 'react';
-import { cn } from '../../../lib/utils';
+import { cn } from '@/lib/utils';
 
 /**
  * Root component for ticket definition display.
