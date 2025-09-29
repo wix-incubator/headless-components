@@ -3,3 +3,5 @@ export const TAGS_FILTER_KEY = 'tags';
 export const STAGES_FILTER_KEY = 'stages';
 
 export const ALL_CATEGORIES = 'allCategories';
+
+export const WIX_FEE_RATE = 2.5;

@@ -17,6 +17,7 @@ import {
   CheckoutService,
   type CheckoutServiceConfig,
 } from '../../services/checkout-service.js';
+import { WIX_FEE_RATE } from '../../constants.js';
 
 export interface RootProps {
   /** Child components that will have access to necessary services */
@@ -85,6 +86,7 @@ export function TicketDefinitions(
   const ticketDefinitionListService = useService(
     TicketDefinitionListServiceDefinition,
   );
+
   const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const hasTicketDefinitions = !!ticketDefinitions.length;
 
@@ -112,6 +114,7 @@ export function TicketDefinitionRepeater(
   const ticketDefinitionListService = useService(
     TicketDefinitionListServiceDefinition,
   );
+
   const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const hasTicketDefinitions = !!ticketDefinitions.length;
 
@@ -120,6 +123,162 @@ export function TicketDefinitionRepeater(
   }
 
   return props.children({ ticketDefinitions });
+}
+
+export interface TotalProps {
+  /** Render prop function */
+  children: (props: TotalRenderProps) => React.ReactNode;
+}
+
+export interface TotalRenderProps {
+  /** Total amount */
+  total: number;
+  /** Currency */
+  currency: string;
+  /** Formatted total */
+  formattedTotal: string;
+}
+
+/**
+ * TicketsPicker Total core component that provides total data.
+ *
+ * @component
+ */
+export function Total(props: TotalProps): React.ReactNode {
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+
+  const { total, currency, formattedTotal } =
+    ticketDefinitionListService.totals.get();
+
+  return props.children({
+    total,
+    currency,
+    formattedTotal,
+  });
+}
+
+export interface SubtotalProps {
+  /** Render prop function */
+  children: (props: SubtotalRenderProps) => React.ReactNode;
+}
+
+export interface SubtotalRenderProps {
+  /** Subtotal amount */
+  subtotal: number;
+  /** Currency */
+  currency: string;
+  /** Formatted subtotal */
+  formattedSubtotal: string;
+}
+
+/**
+ * TicketsPicker Subtotal core component that provides subtotal data.
+ *
+ * @component
+ */
+export function Subtotal(props: SubtotalProps): React.ReactNode {
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+
+  const { subtotal, currency, formattedSubtotal } =
+    ticketDefinitionListService.totals.get();
+
+  return props.children({
+    subtotal,
+    currency,
+    formattedSubtotal,
+  });
+}
+
+export interface TaxProps {
+  /** Render prop function */
+  children: (props: TaxRenderProps) => React.ReactNode;
+}
+
+export interface TaxRenderProps {
+  /** Tax name */
+  name: string;
+  /** Tax rate */
+  rate: number;
+  /** Whether tax is included in price */
+  included: boolean;
+  /** Tax amount */
+  tax: number;
+  /** Currency */
+  currency: string;
+  /** Formatted tax */
+  formattedTax: string;
+}
+
+/**
+ * TicketsPicker Tax core component that provides tax data.
+ *
+ * @component
+ */
+export function Tax(props: TaxProps): React.ReactNode {
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+  const taxSettings = event.registration?.tickets?.taxSettings;
+
+  if (!taxSettings) {
+    return null;
+  }
+
+  const { tax, currency, formattedTax } =
+    ticketDefinitionListService.totals.get();
+
+  return props.children({
+    name: taxSettings.name!,
+    rate: Number(taxSettings.rate!),
+    included: taxSettings.type === 'INCLUDED_IN_PRICE',
+    tax,
+    currency,
+    formattedTax,
+  });
+}
+
+export interface FeeProps {
+  /** Render prop function */
+  children: (props: FeeRenderProps) => React.ReactNode;
+}
+
+export interface FeeRenderProps {
+  /** Fee rate */
+  rate: number;
+  /** Fee amount */
+  fee: number;
+  /** Currency */
+  currency: string;
+  /** Formatted fee */
+  formattedFee: string;
+}
+
+/**
+ * TicketsPicker Fee core component that provides fee data.
+ *
+ * @component
+ */
+export function Fee(props: FeeProps): React.ReactNode {
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+
+  const { fee, currency, formattedFee } =
+    ticketDefinitionListService.totals.get();
+
+  return props.children({
+    rate: WIX_FEE_RATE,
+    fee,
+    currency,
+    formattedFee,
+  });
 }
 
 export interface CheckoutErrorProps {

@@ -1,8 +1,7 @@
 import { wixEventsV2 } from '@wix/events';
+import { WIX_FEE_RATE } from '../constants.js';
 import { type TicketDefinition } from '../services/ticket-definition-service.js';
 import { formatPrice, roundPrice } from './price.js';
-
-const FEE_RATE = 2.5;
 
 export const getTicketDefinitionCurrency = (
   ticketDefinition: TicketDefinition,
@@ -58,11 +57,11 @@ export const getTicketDefinitionFee = (
       ? getTicketDefinitionTax(taxSettings, price, currency)
       : undefined;
   const priceWithAddedTax = addedTax ? price + addedTax.taxAmount : price;
-  const amount = roundPrice(priceWithAddedTax * FEE_RATE, currency);
+  const amount = roundPrice(priceWithAddedTax * WIX_FEE_RATE, currency);
   const formattedAmount = formatPrice(amount, currency);
 
   return {
-    rate: FEE_RATE,
+    rate: WIX_FEE_RATE,
     amount,
     formattedAmount,
   };

@@ -9,6 +9,10 @@ import * as CoreTicketsPicker from './core/TicketsPicker.js';
 
 enum TestIds {
   ticketsPickerTicketDefinitions = 'tickets-picker-ticket-definitions',
+  ticketsPickerTotal = 'tickets-picker-total',
+  ticketsPickerSubtotal = 'tickets-picker-subtotal',
+  ticketsPickerTax = 'tickets-picker-tax',
+  ticketsPickerFee = 'tickets-picker-fee',
   ticketsPickerCheckoutError = 'tickets-picker-checkout-error',
   ticketsPickerCheckoutTrigger = 'tickets-picker-checkout-trigger',
 }
@@ -194,6 +198,279 @@ export const TicketDefinitionRepeater = (
     </CoreTicketsPicker.TicketDefinitionRepeater>
   );
 };
+
+/**
+ * Props for the TicketsPicker Total component.
+ */
+export interface TotalProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    total: number;
+    currency: string;
+    formattedTotal: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the total amount.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketsPicker.Total className="text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketsPicker.Total asChild className="text-gray-500">
+ *   <span />
+ * </TicketsPicker.Total>
+ *
+ * // asChild with react component
+ * <TicketsPicker.Total asChild className="text-gray-500">
+ *   {React.forwardRef(({ total, currency, formattedTotal, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {formattedTotal}
+ *     </span>
+ *   ))}
+ * </TicketsPicker.Total>
+ * ```
+ */
+export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreTicketsPicker.Total>
+      {({ total, currency, formattedTotal }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketsPickerTotal}
+            customElement={children}
+            customElementProps={{ total, currency, formattedTotal }}
+            content={formattedTotal}
+            {...otherProps}
+          >
+            <span>{formattedTotal}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreTicketsPicker.Total>
+  );
+});
+
+/**
+ * Props for the TicketsPicker Subtotal component.
+ */
+export interface SubtotalProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    subtotal: number;
+    currency: string;
+    formattedSubtotal: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the subtotal amount.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketsPicker.Subtotal className="text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketsPicker.Subtotal asChild className="text-gray-500">
+ *   <span />
+ * </TicketsPicker.Subtotal>
+ *
+ * // asChild with react component
+ * <TicketsPicker.Subtotal asChild className="text-gray-500">
+ *   {React.forwardRef(({ subtotal, currency, formattedSubtotal, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {formattedSubtotal}
+ *     </span>
+ *   ))}
+ * </TicketsPicker.Subtotal>
+ * ```
+ */
+export const Subtotal = React.forwardRef<HTMLElement, SubtotalProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreTicketsPicker.Subtotal>
+        {({ subtotal, currency, formattedSubtotal }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.ticketsPickerSubtotal}
+              customElement={children}
+              customElementProps={{ subtotal, currency, formattedSubtotal }}
+              content={formattedSubtotal}
+              {...otherProps}
+            >
+              <span>{formattedSubtotal}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreTicketsPicker.Subtotal>
+    );
+  },
+);
+
+/**
+ * Props for the TicketsPicker Tax component.
+ */
+export interface TaxProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    name: string;
+    rate: number;
+    included: boolean;
+    tax: number;
+    currency: string;
+    formattedTax: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the tax amount.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketsPicker.Tax className="text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketsPicker.Tax asChild className="text-gray-500">
+ *   <span />
+ * </TicketsPicker.Tax>
+ *
+ * // asChild with react component
+ * <TicketsPicker.Tax asChild className="text-gray-500">
+ *   {React.forwardRef(({ name, rate, included, tax, currency, formattedTax, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {formattedTax}
+ *     </span>
+ *   ))}
+ * </TicketsPicker.Tax>
+ * ```
+ */
+export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreTicketsPicker.Tax>
+      {({ name, rate, included, tax, currency, formattedTax }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketsPickerTax}
+            customElement={children}
+            customElementProps={{
+              name,
+              rate,
+              included,
+              tax,
+              currency,
+              formattedTax,
+            }}
+            content={formattedTax}
+            {...otherProps}
+          >
+            <span>{formattedTax}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreTicketsPicker.Tax>
+  );
+});
+
+/**
+ * Props for the TicketsPicker Fee component.
+ */
+export interface FeeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    rate: number;
+    fee: number;
+    currency: string;
+    formattedFee: string;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the fee amount.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketsPicker.Fee className="text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketsPicker.Fee asChild className="text-gray-500">
+ *   <span />
+ * </TicketsPicker.Fee>
+ *
+ * // asChild with react component
+ * <TicketsPicker.Fee asChild className="text-gray-500">
+ *   {React.forwardRef(({ rate, fee, currency, formattedFee, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {formattedFee}
+ *     </span>
+ *   ))}
+ * </TicketsPicker.Fee>
+ * ```
+ */
+export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
+
+  return (
+    <CoreTicketsPicker.Fee>
+      {({ rate, fee, currency, formattedFee }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketsPickerFee}
+            customElement={children}
+            customElementProps={{ rate, fee, currency, formattedFee }}
+            content={formattedFee}
+            {...otherProps}
+          >
+            <span>{formattedFee}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreTicketsPicker.Fee>
+  );
+});
 
 /**
  * Props for the TicketsPicker CheckoutError component.
