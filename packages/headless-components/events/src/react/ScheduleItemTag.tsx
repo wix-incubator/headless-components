@@ -39,15 +39,6 @@ export interface RootProps {
  *     </ScheduleItemTag.Root>
  *   );
  * }
- *
- * // For interactive tags
- * function InteractiveTagComponent({ tag }) {
- *   return (
- *     <ScheduleItemTag.Root tag={tag}>
- *       <ScheduleItemTag.Button />
- *     </ScheduleItemTag.Root>
- *   );
- * }
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
@@ -129,73 +120,3 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
     </CoreTag.Tag>
   );
 });
-
-/**
- * Props for the Tag Button component.
- */
-export interface ButtonProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    tag: string;
-    toggleTagFilter: () => void;
-    active: boolean;
-  }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-}
-
-/**
- * Displays the tag as an interactive button element.
- * Use this for interactive tags like filters or selectable options.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <ScheduleItemTag.Button
- *   className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
- * />
- *
- * // asChild with primitive
- * <ScheduleItemTag.Button asChild>
- *   <button className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200" />
- * </ScheduleItemTag.Button>
- *
- * // asChild with react component
- * <ScheduleItemTag.Button asChild>
- *   {React.forwardRef(({ tag, toggleTagFilter, active, ...props }, ref) => (
- *     <button ref={ref} onClick={toggleTagFilter} data-active={active} {...props} className="px-2 py-1 bg-gray-100 rounded cursor-pointer hover:bg-gray-200">
- *       {tag}
- *     </button>
- *   ))}
- * </ScheduleItemTag.Button>
- * ```
- */
-export const Button = React.forwardRef<HTMLElement, ButtonProps>(
-  (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
-
-    return (
-      <CoreTag.Tag>
-        {({ tag, toggleTagFilter, active }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleItemTagButton}
-            customElement={children}
-            customElementProps={{ tag, toggleTagFilter, active }}
-            content={tag}
-            onClick={toggleTagFilter}
-            data-active={active}
-            {...otherProps}
-          >
-            <button>{tag}</button>
-          </AsChildSlot>
-        )}
-      </CoreTag.Tag>
-    );
-  },
-);

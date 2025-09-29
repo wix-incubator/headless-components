@@ -45,6 +45,7 @@ import React, { createContext, useContext } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import * as Slider from '@radix-ui/react-slider';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 /**
  * Props for button-like components that support the asChild pattern
  */
@@ -684,7 +685,8 @@ export const FilterOptionLabel = React.forwardRef<
 /**
  * Props for single filter components
  */
-export interface SingleFilterProps extends React.HTMLAttributes<HTMLElement> {
+export interface SingleFilterProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'children'> {
   /**
    * When true, enables the asChild pattern where the component delegates
    * rendering to its child using the Slot pattern. Useful for custom styling
@@ -696,10 +698,17 @@ export interface SingleFilterProps extends React.HTMLAttributes<HTMLElement> {
 
   /**
    * Custom content for the filter component. When provided with asChild=false,
-   * replaces the default select dropdown. When used with asChild=true,
+   * replaces the default group of buttons. When used with asChild=true,
    * should be a single child element that will receive filter props.
    */
-  children?: React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        value: string;
+        onChange: (value: string) => void;
+        validValues: FilterOption['validValues'];
+        valueFormatter: FilterOption['valueFormatter'];
+      }>
+    | React.ReactNode;
 }
 
 /**
@@ -762,65 +771,45 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
       currentValue = singleFilterGetUIValue(filterValue, option);
     }
 
-    // Default rendering - Radix ToggleGroup for better UX
-    if (!asChild && !children) {
-      return (
-        <ToggleGroup.Root
-          type="single"
-          value={currentValue}
-          onValueChange={(value) => updateFilter(value || '')}
-          data-testid={TestIds.filterOptionSingle}
-          data-filter-type="single"
-          data-display-type={option.displayType}
-          className={otherProps.className}
-        >
-          {option.validValues?.map((value) => (
-            <ToggleGroup.Item key={value} value={String(value)}>
-              {option.valueFormatter ? option.valueFormatter(value) : value}
-            </ToggleGroup.Item>
-          ))}
-        </ToggleGroup.Root>
-      );
-    }
-
-    // Custom rendering with asChild/children - fallback to select
+    // Custom rendering with asChild/children
     if (asChild) {
       return (
-        <Slot
+        <AsChildSlot
           ref={ref}
+          asChild={asChild}
           data-testid={TestIds.filterOptionSingle}
           data-filter-type="single"
           data-display-type={option.displayType}
+          customElement={children}
+          customElementProps={{
+            value: currentValue,
+            validValues: option.validValues,
+            valueFormatter: option.valueFormatter,
+            onChange: updateFilter,
+          }}
           {...otherProps}
         >
           {children}
-        </Slot>
+        </AsChildSlot>
       );
     }
 
     return (
-      <select
-        ref={ref as React.Ref<HTMLSelectElement>}
+      <ToggleGroup.Root
+        type="single"
         value={currentValue}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-          updateFilter(e.target.value)
-        }
+        onValueChange={(value) => updateFilter(value || '')}
         data-testid={TestIds.filterOptionSingle}
         data-filter-type="single"
         data-display-type={option.displayType}
         className={otherProps.className}
       >
-        {children || (
-          <>
-            <option value="">Select {option.label}</option>
-            {option.validValues?.map((value) => (
-              <option key={value} value={value}>
-                {option.valueFormatter ? option.valueFormatter(value) : value}
-              </option>
-            ))}
-          </>
-        )}
-      </select>
+        {option.validValues?.map((value) => (
+          <ToggleGroup.Item key={value} value={String(value)}>
+            {option.valueFormatter ? option.valueFormatter(value) : value}
+          </ToggleGroup.Item>
+        ))}
+      </ToggleGroup.Root>
     );
   },
 );
