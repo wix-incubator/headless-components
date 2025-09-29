@@ -4549,12 +4549,14 @@ __metadata:
     "@wix/cli": "npm:^1.1.95"
     "@wix/events": "npm:^1.0.597"
     "@wix/headless-events": "workspace:*"
+    "@wix/ricos": "npm:^10.143.0"
     "@wix/sdk": "npm:^1.15.24"
     "@wix/services-definitions": "npm:^0.1.5"
     "@wix/services-manager": "npm:^0.2.21"
     "@wix/services-manager-react": "npm:^0.1.27"
     "@wix/wix-vibe-plugins": "npm:^0.0.1"
     astro: "npm:^5.9.0"
+    class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
     prettier: "npm:^3.6.2"
     prettier-plugin-astro: "npm:^0.14.1"
@@ -4562,6 +4564,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^7.6.3"
     sass-embedded: "npm:^1.89.0"
+    tailwind-merge: "npm:^3.3.1"
     tailwindcss: "npm:^4.1.7"
     typescript: "npm:^5.8.3"
   languageName: unknown
@@ -7807,9 +7810,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/ricos@npm:^10.141.4":
-  version: 10.142.0
-  resolution: "@wix/ricos@npm:10.142.0"
+"@wix/ricos@npm:^10.141.4, @wix/ricos@npm:^10.143.0":
+  version: 10.143.0
+  resolution: "@wix/ricos@npm:10.143.0"
   dependencies:
     "@codemirror/lang-json": "npm:^6.0.0"
     "@codemirror/lint": "npm:^6.0.0"
@@ -7896,7 +7899,7 @@ __metadata:
     lodash: ^4.17.15
     react: ^16.14.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/1a78b389423feb6a5c8852082f214e0424f2cebcf10bbd0ca1b1b6008ad74b21aad6500c9203f4b6aaaf7790a5864a29b4a9c1a53ff760da31c1c521be4f1ccb
+  checksum: 10c0/19242755933036bc40e515689605c048ed51003f977dbed796e351289545df3c3b7a843cd9defbef2dbf7725766022f7cae13cfdbde24a257edaca250b8a0fa9
   languageName: node
   linkType: hard
 
