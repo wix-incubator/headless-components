@@ -6,10 +6,7 @@ import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
-import {
-  type FilterOption,
-  Filter as FilterPrimitive,
-} from '@wix/headless-components/react';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
@@ -295,22 +292,31 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
   );
 };
 
+/**
+ * Props for the ScheduleList Filters component.
+ */
 export interface FiltersProps {
-  /** Render prop function */
+  /** Child components or custom render function when using asChild */
   children: React.ReactNode;
   /** All stages label */
   allStagesLabel: string;
 }
 
-export interface FiltersRenderProps {
-  /** Filter options */
-  filterOptions: FilterOption[];
-  /** Filter value */
-  value: FilterPrimitive.Filter;
-  /** Function to handle tag filter change */
-  onChange: (value: FilterPrimitive.Filter) => Promise<void>;
-}
-
+/**
+ * Container for the schedule list filters.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ScheduleList.Filters allStagesLabel="All">
+ *   <Filter.FilterOptions className="border-b border-gray-500 mb-6">
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.SingleFilter className="flex gap-2" />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </ScheduleList.Filters>
+ * ```
+ */
 export const Filters = (props: FiltersProps): React.ReactNode => {
   return (
     <CoreScheduleList.Filters allStagesLabel={props.allStagesLabel}>

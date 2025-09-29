@@ -173,9 +173,7 @@ export function Filters(props: FiltersProps): React.ReactNode {
 
   const onChange = async (value: FilterPrimitive.Filter) => {
     const stageValue =
-      value?.['stage'] && value?.['stage'] !== props.allStagesLabel
-        ? value?.['stage']
-        : null;
+      value?.['stage'] !== props.allStagesLabel ? value?.['stage'] : null;
 
     scheduleListService.setStageFilter(stageValue);
     scheduleListService.setTagFilters(value?.['tag']?.$in || []);
@@ -203,28 +201,23 @@ const buildFilterProps = (
   stageNames: string[],
   allStagesLabel: string,
 ) => {
-  const TAG_FILTER_BASE = {
-    key: TAGS_FILTER_KEY,
+  const FILTER_BASE = {
     label: '',
-    type: 'multi' as const,
-    displayType: 'text' as const,
-  };
-
-  const STAGE_FILTER_BASE = {
-    key: STAGES_FILTER_KEY,
-    label: '',
-    type: 'single' as const,
     displayType: 'text' as const,
   };
 
   const filterOptions = [
     {
-      ...STAGE_FILTER_BASE,
+      ...FILTER_BASE,
+      key: STAGES_FILTER_KEY,
+      type: 'single' as const,
       fieldName: 'stage',
       validValues: [allStagesLabel, ...stageNames],
     },
     {
-      ...TAG_FILTER_BASE,
+      ...FILTER_BASE,
+      key: TAGS_FILTER_KEY,
+      type: 'multi' as const,
       fieldName: 'tag',
       validValues: tags,
     },
