@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { ServiceAPI } from '@wix/services-manager/types';
+import { createServicesMap } from '@wix/services-manager';
 import {
   ItemService,
   ItemServiceConfig,
   ItemServiceDefinition,
   loadItemServiceConfig,
-  OLOSettingsServiceDefinition,
-} from '../../services';
+} from '../../services/item-details-service';
 import { type LineItem } from '@wix/ecom/services';
-import { createServicesMap } from '@wix/services-manager';
+import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================

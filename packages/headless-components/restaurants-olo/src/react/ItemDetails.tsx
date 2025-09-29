@@ -2,10 +2,10 @@ import React from 'react';
 import { Commerce } from '@wix/ecom/components';
 import { type LineItem } from '@wix/ecom/services';
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import { CoreItemDetails } from './core';
 import { Quantity as QuantityComponent } from '@wix/headless-components/react';
-import { ItemServiceConfig } from '../services';
 import { Item } from '@wix/restaurants/components';
+import * as CoreItemDetails from './core/ItemDetails';
+import { ItemServiceConfig } from '../services/item-details-service';
 
 enum TestIds {
   itemName = 'item-name',
@@ -171,7 +171,7 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
 }) => {
   return (
     <CoreItemDetails.LineItemComponent>
-      {({ lineItem }) => (
+      {({ lineItem }: { lineItem: LineItem }) => (
         <AsChildSlot
           asChild={asChild}
           className={className}
@@ -201,7 +201,7 @@ export const Quantity: React.FC<ItemDetailsQuantityProps> = (
 ) => {
   return (
     <CoreItemDetails.QuantityComponent>
-      {({ quantity, onValueChange }) => (
+      {({ quantity, onValueChange }: { quantity: number; onValueChange: (value: number) => void }) => (
         <QuantityComponent.Root
           ref={ref}
           onValueChange={onValueChange}
@@ -236,7 +236,7 @@ export const SpecialRequest = React.forwardRef<
   ) => {
     return (
       <CoreItemDetails.SpecialRequest>
-        {({ value, onChange }) => (
+        {({ value, onChange }: { value: string; onChange: (value: string) => void }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
