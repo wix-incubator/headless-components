@@ -66,8 +66,6 @@ export interface CreatedDateProps {
 export interface CreatedDateRenderProps {
   /** Created date */
   createdDate: string;
-  /** Whether the order is ready */
-  isReady: boolean;
 }
 
 /**
@@ -78,13 +76,8 @@ export interface CreatedDateRenderProps {
 export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
   const createdDate = formatDateMonthDayYear(orderService.order.get().created!);
-  const isReady = isOrderReady(orderService.order.get());
 
-  useEffect(() => {
-    orderService.pollOrder();
-  }, []);
-
-  return props.children({ createdDate, isReady });
+  return props.children({ createdDate });
 }
 
 export interface DownloadTicketsButtonProps {
@@ -95,8 +88,6 @@ export interface DownloadTicketsButtonProps {
 export interface DownloadTicketsButtonRenderProps {
   /** Tickets PDF URL */
   ticketsPdfUrl: string;
-  /** Whether the button is visible */
-  isVisible: boolean;
 }
 
 /**
@@ -112,13 +103,17 @@ export function DownloadTicketsButton(
   const isPolling = orderService.isPolling.get();
   const isReady = isOrderReady(orderService.order.get());
 
-  const isVisible = isReady && !isPolling;
+  const isUrlReady = isReady && !isPolling;
 
-  if (!isVisible) {
+  useEffect(() => {
+    orderService.pollOrder();
+  }, []);
+
+  if (!isUrlReady) {
     return null;
   }
 
-  return props.children({ ticketsPdfUrl, isVisible });
+  return props.children({ ticketsPdfUrl });
 }
 
 export interface InvoiceItemsProps {

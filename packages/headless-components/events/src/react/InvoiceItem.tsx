@@ -28,7 +28,17 @@ export interface RootProps {
 /**
  * InvoiceItem Root core component that provides invoice item service context.
  *
+ * @order 1
  * @component
+ * @example
+ * ```tsx
+ * <InvoiceItem.Root invoiceItem={invoiceItem}>
+ *   <InvoiceItem.Name />
+ *   <InvoiceItem.Price />
+ *   <InvoiceItem.Quantity />
+ *   <InvoiceItem.Total />
+ * </InvoiceItem.Root>
+ * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { invoiceItem, asChild, children, className, ...otherProps } = props;

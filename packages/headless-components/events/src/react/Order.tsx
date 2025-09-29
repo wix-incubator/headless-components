@@ -31,10 +31,10 @@ export interface RootProps {
  * Order Root component that provides order service context to child components.
  * This is the top-level component that must wrap all other Order components.
  *
+ * @order 1
  * @component
  * @example
  * ```tsx
- * // Basic usage from ThankYou page - ticketed event
  * <Order.Root orderServiceConfig={orderServiceConfig}>
  *   <Order.InvoiceItems className="px-6 border-b border-gray-300">
  *     <Order.InvoiceItemRepeater>
@@ -128,7 +128,7 @@ export interface CreatedDateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ createdDate: string; isReady: boolean }>;
+  children?: AsChildChildren<{ createdDate: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -164,14 +164,14 @@ export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
 
     return (
       <CoreOrder.CreatedDate>
-        {({ createdDate, isReady }) => (
+        {({ createdDate }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.orderCreatedDate}
             customElement={children}
-            customElementProps={{ createdDate, isReady }}
+            customElementProps={{ createdDate }}
             content={createdDate}
             {...otherProps}
           >
@@ -192,13 +192,13 @@ export interface DownloadTicketsButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ ticketsPdfUrl: string; isVisible: boolean }>;
+  children?: AsChildChildren<{ ticketsPdfUrl: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Download tickets button that provides access to event tickets PDF with visibility control.
+ * Download tickets button that provides access to event tickets PDF.
  * Only shows when tickets are available for download.
  *
  * @component
@@ -217,15 +217,13 @@ export interface DownloadTicketsButtonProps {
  *
  * // asChild with react component
  * <Order.DownloadTicketsButton asChild>
- *   {({ ticketsPdfUrl, isVisible }) =>
- *     isVisible && (
+ *   {({ ticketsPdfUrl }) =>
  *       <button
  *         className="block font-light py-3 px-20 ml-auto bg-blue-500 text-white rounded"
  *         onClick={() => window.open(ticketsPdfUrl, '_blank')}
  *       >
  *         Download Tickets
  *       </button>
- *     )
  *   }
  * </Order.DownloadTicketsButton>
  * ```
@@ -238,14 +236,14 @@ export const DownloadTicketsButton = React.forwardRef<
 
   return (
     <CoreOrder.DownloadTicketsButton>
-      {({ ticketsPdfUrl, isVisible }) => (
+      {({ ticketsPdfUrl }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.orderDownloadTicketsButton}
           customElement={children}
-          customElementProps={{ ticketsPdfUrl, isVisible }}
+          customElementProps={{ ticketsPdfUrl }}
           content={ticketsPdfUrl}
           {...otherProps}
         >
@@ -339,22 +337,14 @@ export interface InvoiceItemRepeaterProps {
  * @component
  * @example
  * ```tsx
- * // Real usage from ThankYou page - table-like layout
+ * // Table-like layout
  * <Order.InvoiceItems>
  *   <Order.InvoiceItemRepeater>
  *     <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
- *       <div className="w-[35%]">
- *         <InvoiceItem.Name />
- *       </div>
- *       <div className="w-[25%]">
- *         <InvoiceItem.Price />
- *       </div>
- *       <div className="w-[15%]">
- *         <InvoiceItem.Quantity />
- *       </div>
- *       <div className="w-[25%] text-right">
- *         <InvoiceItem.Total />
- *       </div>
+ *       <InvoiceItem.Name className="w-[35%]" />
+ *       <InvoiceItem.Price className="w-[25%]" />
+ *       <InvoiceItem.Quantity className="w-[15%]" />
+ *       <InvoiceItem.Total className="w-[25%] text-right" />
  *     </div>
  *   </Order.InvoiceItemRepeater>
  * </Order.InvoiceItems>
@@ -365,9 +355,7 @@ export interface InvoiceItemRepeaterProps {
  *     <div className="flex justify-between items-center p-4">
  *       <div>
  *         <InvoiceItem.Name className="font-medium text-gray-900" />
- *         <div className="text-sm text-gray-500">
- *           Qty: <InvoiceItem.Quantity />
- *         </div>
+ *         <InvoiceItem.Quantity className="text-sm text-gray-500" />
  *       </div>
  *       <div className="text-right">
  *         <InvoiceItem.Price className="text-sm text-gray-600" />

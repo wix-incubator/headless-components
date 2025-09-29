@@ -10,7 +10,7 @@ import {
 
 interface ThankYouProps {
   eventServiceConfig: EventServiceConfig;
-  orderServiceConfig: OrderServiceConfig;
+  orderServiceConfig?: OrderServiceConfig;
   eventPageUrl: string;
 }
 
@@ -142,7 +142,7 @@ export function ThankYou({
                       </div>
                     </div>
                   );
-                } else if (ticketed) {
+                } else if (ticketed && orderServiceConfig) {
                   return (
                     <OrderPrimitive.Root
                       orderServiceConfig={orderServiceConfig}

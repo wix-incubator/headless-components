@@ -8,7 +8,7 @@ import { ThankYou } from '../components/events/ThankYou';
 
 interface ThankYouPageProps {
   eventServiceConfig: EventServiceConfig;
-  orderServiceConfig: OrderServiceConfig;
+  orderServiceConfig?: OrderServiceConfig;
   eventPageUrl: string;
 }
 

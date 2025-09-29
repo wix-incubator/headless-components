@@ -15,10 +15,13 @@ if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
 }
 
-const eventId = Astro.url.searchParams.get('eventId');
+const eventId = eventServiceConfigResult.config.event._id;
 const orderNumber = Astro.url.searchParams.get('orderNumber');
 
-const orderServiceConfig = await loadOrderServiceConfig(eventId, orderNumber);
+let orderServiceConfig;
+if (orderNumber) {
+  orderServiceConfig = await loadOrderServiceConfig(eventId, orderNumber);
+}
 ---
 
 <BaseLayout>
