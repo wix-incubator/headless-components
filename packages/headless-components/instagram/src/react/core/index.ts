@@ -18,6 +18,7 @@ export {
   MediaType as InstagramMediaType,
   UserName as InstagramMediaUserName,
   Timestamp as InstagramMediaTimestamp,
+  MediaGalleryRepeater,
   type CaptionProps as InstagramMediaCaptionProps,
   type CaptionRenderProps,
   type MediaTypeProps as InstagramMediaTypeProps,
@@ -26,4 +27,6 @@ export {
   type UserNameRenderProps as InstagramMediaUserNameRenderProps,
   type TimestampProps as InstagramMediaTimestampProps,
   type TimestampRenderProps,
+  type MediaGalleryRepeaterProps,
+  type MediaGalleryRepeaterRenderProps,
 } from './InstagramMedia.js';

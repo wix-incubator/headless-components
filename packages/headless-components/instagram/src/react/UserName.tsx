@@ -6,6 +6,7 @@ export interface UserNameProps {
   asChild?: boolean;
   children?: AsChildChildren<{ displayName: string }>;
   className?: string;
+  unknownLabel?: string;
 }
 
 export const UserName = React.forwardRef<HTMLElement, UserNameProps>(
@@ -13,7 +14,7 @@ export const UserName = React.forwardRef<HTMLElement, UserNameProps>(
     const { asChild, children, className, ...otherProps } = props;
 
     return (
-      <CoreUserName.UserName>
+      <CoreUserName.UserName unknownLabel={props.unknownLabel}>
         {({ displayName, displayValue }) => (
           <AsChildSlot
             ref={ref}

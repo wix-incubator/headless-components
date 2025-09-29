@@ -1,12 +1,67 @@
 import React from 'react';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreInstagramMedia from './core/InstagramMedia.js';
+import { WixServices } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import {
+  InstagramMediaItemServiceDefinition,
+  InstagramMediaItemService,
+} from '../services/index.js';
+import * as CoreInstagramMedias from './core/InstagramMedias.js';
+import { MediaGallery } from '@wix/headless-media/react';
+
+export interface MediaGalleryRepeaterProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Repeats children for each Instagram media item, providing a per-item service context.
+ */
+export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
+  children,
+}) => {
+  return (
+    <CoreInstagramMedias.InstagramMedias>
+      {({ hasItems, mediaItems }) => {
+        console.log('mediaItems', mediaItems);
+        if (!hasItems) return null;
+
+        return (
+          <>
+            {mediaItems.map((mediaItem, index) => {
+              console.log('mediaItem', mediaItem.mediaGalleryItems);
+              return (
+                <WixServices
+                  key={mediaItem.id || index}
+                  servicesMap={createServicesMap().addService(
+                    InstagramMediaItemServiceDefinition,
+                    InstagramMediaItemService,
+                    { mediaItem, index },
+                  )}
+                >
+                  <MediaGallery.Root
+                    mediaGalleryServiceConfig={{
+                      media: mediaItem.mediaGalleryItems,
+                    }}
+                  >
+                    {children as React.ReactElement}
+                  </MediaGallery.Root>
+                </WixServices>
+              );
+            })}
+          </>
+        );
+      }}
+    </CoreInstagramMedias.InstagramMedias>
+  );
+};
 
 export enum TestIds {
   instagramMediaCaption = 'instagram-media-caption',
   instagramMediaType = 'instagram-media-type',
   instagramMediaUserName = 'instagram-media-username',
   instagramMediaTimestamp = 'instagram-media-timestamp',
+  instagramMediaGalleries = 'instagram-media-galleries',
 }
 
 export interface CaptionProps {
@@ -52,7 +107,7 @@ export const MediaType = React.forwardRef<HTMLElement, MediaTypeProps>(
 
     return (
       <CoreInstagramMedia.MediaType>
-        {({ mediaType, type }) => (
+        {({ mediaType }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -60,10 +115,10 @@ export const MediaType = React.forwardRef<HTMLElement, MediaTypeProps>(
             data-testid={TestIds.instagramMediaType}
             customElement={children}
             customElementProps={{ mediaType }}
-            content={type}
+            content={mediaType}
             {...otherProps}
           >
-            <span>{type}</span>
+            <span>{mediaType}</span>
           </AsChildSlot>
         )}
       </CoreInstagramMedia.MediaType>
@@ -132,6 +187,43 @@ export const Timestamp = React.forwardRef<HTMLElement, TimestampProps>(
     );
   },
 );
+export interface MediaGalleriesProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  children: React.ReactNode;
+}
+
+export const MediaGalleries = React.forwardRef<
+  HTMLDivElement,
+  MediaGalleriesProps
+>((props, ref) => {
+  const { children, className, ...otherProps } = props;
+  return (
+    <div
+      ref={ref}
+      className={className}
+      data-testid={TestIds.instagramMediaGalleries}
+      {...otherProps}
+    >
+      {children}
+    </div>
+  );
+});
+
+export interface MediaGalleryItemsProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const MediaGalleryItems = React.forwardRef<
+  HTMLDivElement,
+  MediaGalleryItemsProps
+>(({ children, className, ...otherProps }, ref) => {
+  return (
+    <div ref={ref} className={className} {...otherProps}>
+      {children}
+    </div>
+  );
+});
 
 export const InstagramMedia = {
   Root: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -139,6 +231,9 @@ export const InstagramMedia = {
   MediaType,
   UserName,
   Timestamp,
+  MediaGalleries,
+  MediaGalleryItems,
+  MediaGalleryRepeater,
   // lowercase aliases (new interface)
   caption: Caption,
   mediaType: MediaType,

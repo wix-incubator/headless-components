@@ -47,8 +47,6 @@ export interface MediaTypeProps {
 export interface MediaTypeRenderProps {
   /** Type of media */
   mediaType: 'image' | 'video' | 'carousel';
-  /** Raw type value */
-  type: 'image' | 'video' | 'carousel';
 }
 
 /**
@@ -60,7 +58,6 @@ export function MediaType(props: MediaTypeProps) {
 
   return props.children({
     mediaType: type,
-    type,
   });
 }
 
