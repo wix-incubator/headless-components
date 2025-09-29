@@ -143,7 +143,7 @@ export async function loadEventListServiceConfig(): Promise<EventListServiceConf
   };
 }
 
-const queryEvents = async (offset = 0, categoryId?: string | null) => {
+function queryEvents(offset = 0, categoryId?: string | null) {
   let eventsQuery = wixEventsV2
     .queryEvents({
       fields: [
@@ -163,12 +163,12 @@ const queryEvents = async (offset = 0, categoryId?: string | null) => {
   }
 
   return eventsQuery.find();
-};
+}
 
-const queryCategories = async () => {
+function queryCategories() {
   return categories
     .queryCategories()
     .hasSome('states', [categories.State.MANUAL])
     .limit(100)
     .find();
-};
+}

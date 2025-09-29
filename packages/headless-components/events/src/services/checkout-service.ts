@@ -6,7 +6,7 @@ import {
 import { ticketReservations } from '@wix/events';
 import { redirects } from '@wix/redirects';
 import { getErrorMessage } from '../utils/errors.js';
-import { TicketReservationQuantity } from './ticket-definition-list-service.js';
+import { type TicketReservationQuantity } from './ticket-definition-list-service.js';
 
 /**
  * API interface for the Checkout service

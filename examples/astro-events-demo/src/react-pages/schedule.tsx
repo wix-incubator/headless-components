@@ -1,8 +1,7 @@
-import '../styles/theme-1.css';
 import {
   type EventServiceConfig,
   type ScheduleListServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { Schedule } from '../components/events/Schedule';
 
