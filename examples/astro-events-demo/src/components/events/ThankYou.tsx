@@ -200,10 +200,10 @@ export function ThankYou({
                                 asChild
                                 className="font-light text-content-primary justify-between flex"
                               >
-                                {({ taxRate, taxValue, currency }) => (
+                                {({ rate, value, currency }) => (
                                   <div>
-                                    <span>{`Tax (${taxRate}%)`}</span>
-                                    <span>{`${taxValue} ${currency}`}</span>
+                                    <span>{`Tax (${rate}%)`}</span>
+                                    <span>{`${value} ${currency}`}</span>
                                   </div>
                                 )}
                               </OrderPrimitive.Tax>
