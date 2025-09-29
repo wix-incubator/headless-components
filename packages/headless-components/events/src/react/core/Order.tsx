@@ -297,6 +297,8 @@ export interface TaxRenderProps {
   value: string;
   /** Currency */
   currency: string;
+  /** Tax name */
+  name: string;
 }
 
 /**
@@ -316,6 +318,7 @@ export function Tax(props: TaxProps): React.ReactNode {
     rate: tax.rate!,
     value: tax.amount!.value!,
     currency: tax.amount!.currency!,
+    name: tax.name!,
   });
 }
 

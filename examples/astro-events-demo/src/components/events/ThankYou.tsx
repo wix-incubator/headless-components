@@ -236,9 +236,9 @@ export function ThankYou({
                                   asChild
                                   className="justify-between flex"
                                 >
-                                  {({ rate, value, currency }) => (
+                                  {({ rate, value, currency, name }) => (
                                     <div>
-                                      <span>{`Tax (${rate}%)`}</span>
+                                      <span>{`${name} (${rate}%)`}</span>
                                       <span>{`${value} ${currency}`}</span>
                                     </div>
                                   )}

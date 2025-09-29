@@ -632,6 +632,7 @@ export interface TaxProps {
     rate: string;
     value: string;
     currency: string;
+    name: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -656,9 +657,9 @@ export interface TaxProps {
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
  * >
- *   {({ rate, value, currency }) => (
+ *   {({ rate, value, currency, name }) => (
  *     <div>
- *       <span>{`Tax (${rate}%)`}</span>
+ *       <span>{`${name} (${rate}%)`}</span>
  *       <span>{`${value} ${currency}`}</span>
  *     </div>
  *   )}
@@ -670,14 +671,14 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
 
   return (
     <CoreOrder.Tax>
-      {({ rate, value, currency }) => (
+      {({ rate, value, currency, name }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.orderTax}
           customElement={children}
-          customElementProps={{ rate, value, currency }}
+          customElementProps={{ rate, value, currency, name }}
           content={value}
           {...otherProps}
         >
