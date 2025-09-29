@@ -819,14 +819,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
           return (
             <div ref={ref}>
               <FormViewer
-                form={{
-                  ...form,
-                  id: form?._id,
-                  fields: form?.formFields?.map((field) => ({
-                    ...field,
-                    id: field._id,
-                  })),
-                }}
+                form={form}
                 values={formValues}
                 onChange={handleFormChange}
                 errors={formErrors}
