@@ -155,7 +155,7 @@ export interface FiltersRenderProps {
   filterOptions: FilterOption[];
   /** Filter value */
   value: FilterPrimitive.Filter;
-  /** Function to load events by stage */
+  /** Function to handle filter change */
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
 }
 
@@ -172,11 +172,12 @@ export function Filters(props: FiltersProps): React.ReactNode {
   const currentStageFilter = scheduleListService.stageFilter.get();
 
   const onChange = async (value: FilterPrimitive.Filter) => {
-    const stageValue =
+    const stageFilter =
       value?.['stage'] !== props.allStagesLabel ? value?.['stage'] : null;
+    const tagFilters = value?.['tag']?.$in || [];
 
-    scheduleListService.setStageFilter(stageValue);
-    scheduleListService.setTagFilters(value?.['tag']?.$in || []);
+    scheduleListService.setStageFilter(stageFilter);
+    scheduleListService.setTagFilters(tagFilters);
   };
 
   const { filterOptions, value } = buildFilterProps(
@@ -186,6 +187,10 @@ export function Filters(props: FiltersProps): React.ReactNode {
     stageNames,
     props.allStagesLabel,
   );
+
+  if (!stageNames.length && !tags.length) {
+    return null;
+  }
 
   return props.children({
     filterOptions,
