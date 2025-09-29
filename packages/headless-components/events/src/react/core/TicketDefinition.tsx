@@ -11,6 +11,7 @@ import { TicketDefinitionListServiceDefinition } from '../../services/ticket-def
 import { PricingOption } from '../../services/pricing-option-service.js';
 import { EventServiceDefinition } from '../../services/event-service.js';
 import {
+  getTicketDefinitionCurrency,
   getTicketDefinitionFee,
   getTicketDefinitionTax,
   isTicketDefinitionAvailable,
@@ -108,7 +109,7 @@ export interface FixedPricingProps {
 
 export interface FixedPricingRenderProps {
   /** Fixed price */
-  price: string;
+  price: number;
   /** Price currency */
   currency: string;
   /** Formatted price */
@@ -132,8 +133,8 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
     return null;
   }
 
-  const price = fixedPrice.value!;
-  const currency = fixedPrice.currency!;
+  const price = Number(fixedPrice.value!);
+  const currency = getTicketDefinitionCurrency(ticketDefinition);
   const formattedPrice = formatPrice(price, currency);
 
   return props.children({
@@ -151,7 +152,7 @@ export interface GuestPricingProps {
 
 export interface GuestPricingRenderProps {
   /** Minimum price */
-  minPrice: string;
+  minPrice: number;
   /** Price currency */
   currency: string;
   /** Formatted minimum price */
@@ -186,8 +187,8 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
     });
   };
 
-  const minPrice = guestPrice.value!;
-  const currency = guestPrice.currency!;
+  const minPrice = Number(guestPrice.value!);
+  const currency = getTicketDefinitionCurrency(ticketDefinition);
   const formattedMinPrice = formatPrice(minPrice, currency);
 
   return props.children({
@@ -205,9 +206,9 @@ export interface PricingRangeProps {
 
 export interface PricingRangeRenderProps {
   /** Minimum price */
-  minPrice: string;
+  minPrice: number;
   /** Maximum price */
-  maxPrice: string;
+  maxPrice: number;
   /** Price currency */
   currency: string;
   /** Formatted minimum price */
@@ -235,9 +236,9 @@ export function PricingRange(props: PricingRangeProps): React.ReactNode {
   }
 
   const prices = pricingOptions.map((option) => Number(option.price!.value!));
-  const minPrice = Math.min(...prices).toFixed(2);
-  const maxPrice = Math.max(...prices).toFixed(2);
-  const currency = pricingOptions[0]!.price!.currency!;
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const currency = getTicketDefinitionCurrency(ticketDefinition);
   const formattedMinPrice = formatPrice(minPrice, currency);
   const formattedMaxPrice = formatPrice(maxPrice, currency);
   const formattedPriceRange =
@@ -264,15 +265,17 @@ export interface TaxRenderProps {
   /** Tax name */
   name: string;
   /** Tax rate */
-  rate: string;
+  rate: number;
   /** Whether tax is included in price */
   included: boolean;
+  /** Taxable amount */
+  taxableAmount: number;
   /** Tax amount */
-  amount: string;
+  taxAmount: number;
   /** Tax currency */
   currency: string;
   /** Formatted tax amount */
-  formattedAmount: string;
+  formattedTaxAmount: string;
 }
 
 /**
@@ -309,18 +312,19 @@ export function Tax(props: TaxProps): React.ReactNode {
     ticketDefinition._id!,
   );
   const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
-  const currency = guestPrice?.currency ?? fixedPrice!.currency!;
+  const currency = getTicketDefinitionCurrency(ticketDefinition);
 
-  const { name, rate, included, amount, formattedAmount } =
+  const { name, rate, included, taxableAmount, taxAmount, formattedTaxAmount } =
     getTicketDefinitionTax(taxSettings, price, currency);
 
   return props.children({
     name,
     rate,
     included,
-    amount,
+    taxableAmount,
+    taxAmount,
     currency,
-    formattedAmount,
+    formattedTaxAmount,
   });
 }
 
@@ -331,9 +335,9 @@ export interface FeeProps {
 
 export interface FeeRenderProps {
   /** Fee rate */
-  rate: string;
+  rate: number;
   /** Fee amount */
-  amount: string;
+  amount: number;
   /** Fee currency */
   currency: string;
   /** Formatted fee amount */
@@ -373,7 +377,7 @@ export function Fee(props: FeeProps): React.ReactNode {
     ticketDefinition._id!,
   );
   const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
-  const currency = guestPrice?.currency ?? fixedPrice!.currency!;
+  const currency = getTicketDefinitionCurrency(ticketDefinition);
 
   const { rate, amount, formattedAmount } = getTicketDefinitionFee(
     taxSettings,

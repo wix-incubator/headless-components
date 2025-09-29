@@ -124,11 +124,7 @@ export async function loadScheduleListServiceConfig(
   return { items: allItems };
 }
 
-const listScheduleItems = async (
-  eventId: string,
-  limit: number,
-  offset = 0,
-) => {
+async function listScheduleItems(eventId: string, limit: number, offset = 0) {
   return schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
@@ -137,7 +133,7 @@ const listScheduleItems = async (
       offset,
     },
   });
-};
+}
 
 function filterScheduleItems(
   items: ScheduleItem[],
