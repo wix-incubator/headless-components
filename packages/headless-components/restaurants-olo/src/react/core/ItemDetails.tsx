@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { ServiceAPI } from '@wix/services-manager/types';
 import { createServicesMap } from '@wix/services-manager';
+import { type LineItem } from '@wix/ecom/services';
 import {
   ItemService,
   ItemServiceConfig,
   ItemServiceDefinition,
   loadItemServiceConfig,
-} from '../../services/item-details-service';
-import { type LineItem } from '@wix/ecom/services';
-import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service';
+} from '../../services/item-details-service.js';
+import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service.js';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================

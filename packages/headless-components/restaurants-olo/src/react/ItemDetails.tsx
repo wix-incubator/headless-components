@@ -4,8 +4,8 @@ import { type LineItem } from '@wix/ecom/services';
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { Quantity as QuantityComponent } from '@wix/headless-components/react';
 import { Item } from '@wix/restaurants/components';
-import * as CoreItemDetails from './core/ItemDetails';
-import { ItemServiceConfig } from '../services/item-details-service';
+import * as CoreItemDetails from './core/ItemDetails.js';
+import { ItemServiceConfig } from '../services/item-details-service.js';
 
 enum TestIds {
   itemName = 'item-name',

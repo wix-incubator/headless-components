@@ -1,1 +1,1 @@
-export * as CoreItemDetails from './ItemDetails';
+export * as CoreItemDetails from './ItemDetails.js';
