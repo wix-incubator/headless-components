@@ -23,15 +23,17 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
+  const { children, orderServiceConfig } = props;
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         OrderServiceDefinition,
         OrderService,
-        props.orderServiceConfig,
+        orderServiceConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }
@@ -133,7 +135,7 @@ export interface InvoiceItemsRenderProps {
  */
 export function InvoiceItems(props: InvoiceItemsProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const invoiceItems = orderService.order.get().invoice?.items!;
+  const invoiceItems = orderService.order.get().invoice!.items!;
 
   return props.children({ invoiceItems });
 }
@@ -157,7 +159,7 @@ export function InvoiceItemRepeater(
   props: InvoiceItemRepeaterProps,
 ): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const invoiceItems = orderService.order.get().invoice?.items!;
+  const invoiceItems = orderService.order.get().invoice!.items!;
 
   return props.children({ invoiceItems });
 }
@@ -181,7 +183,7 @@ export interface SubtotalRenderProps {
  */
 export function Subtotal(props: SubtotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const subtotal = orderService.order.get().invoice?.subTotal!;
+  const subtotal = orderService.order.get().invoice!.subTotal!;
 
   return props.children({
     value: subtotal.value!,
@@ -196,9 +198,9 @@ export interface TaxProps {
 
 export interface TaxRenderProps {
   /** Tax rate */
-  taxRate: string;
+  rate: string;
   /** Tax value */
-  taxValue: string;
+  value: string;
   /** Currency */
   currency: string;
 }
@@ -210,15 +212,15 @@ export interface TaxRenderProps {
  */
 export function Tax(props: TaxProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const tax = orderService.order.get().invoice?.tax;
+  const tax = orderService.order.get().invoice!.tax;
 
   if (!tax) {
     return null;
   }
 
   return props.children({
-    taxRate: tax.rate!,
-    taxValue: tax.amount!.value!,
+    rate: tax.rate!,
+    value: tax.amount!.value!,
     currency: tax.amount!.currency!,
   });
 }
@@ -229,12 +231,12 @@ export interface ServiceFeeProps {
 }
 
 export interface ServiceFeeRenderProps {
+  /** Service fee rate */
+  rate: string;
   /** Service fee value */
   value: string;
   /** Currency */
   currency: string;
-  /** Service fee rate */
-  rate: string;
 }
 
 /**
@@ -244,7 +246,7 @@ export interface ServiceFeeRenderProps {
  */
 export function ServiceFee(props: ServiceFeeProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const serviceFee = orderService.order.get().invoice?.fees?.[0];
+  const serviceFee = orderService.order.get().invoice!.fees![0];
 
   return props.children({
     value: serviceFee!.amount!.value!,
@@ -272,7 +274,7 @@ export interface TotalRenderProps {
  */
 export function Total(props: TotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const total = orderService.order.get().invoice?.grandTotal!;
+  const total = orderService.order.get().invoice!.grandTotal!;
 
   return props.children({ value: total.value!, currency: total.currency! });
 }

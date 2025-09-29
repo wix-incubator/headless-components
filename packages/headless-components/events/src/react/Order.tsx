@@ -29,7 +29,7 @@ export interface RootProps {
 
 /**
  * Order Root component that provides order service context to child components.
- * This is the top-level component that must wrap all other Order components.
+ * Must be used as the top-level component for order functionality.
  *
  * @order 1
  * @component
@@ -134,7 +134,7 @@ export interface CreatedDateProps {
 }
 
 /**
- * Displays the order creation date with readiness status and customizable rendering.
+ * Displays the order creation date with customizable rendering.
  *
  * @component
  * @example
@@ -286,10 +286,10 @@ export interface InvoiceItemsProps {
  *   </div>
  *   <Order.InvoiceItemRepeater>
  *     <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
- *       <div className="w-[35%]"><InvoiceItem.Name /></div>
- *       <div className="w-[25%]"><InvoiceItem.Price /></div>
- *       <div className="w-[15%]"><InvoiceItem.Quantity /></div>
- *       <div className="w-[25%] text-right"><InvoiceItem.Total /></div>
+ *       <InvoiceItem.Name className="w-[35%]" />
+ *       <InvoiceItem.Price className="w-[25%]" />
+ *       <InvoiceItem.Quantity className="w-[15%]" />
+ *       <InvoiceItem.Total className="w-[25%] text-right" />
  *     </div>
  *   </Order.InvoiceItemRepeater>
  * </Order.InvoiceItems>
@@ -337,7 +337,6 @@ export interface InvoiceItemRepeaterProps {
  * @component
  * @example
  * ```tsx
- * // Table-like layout
  * <Order.InvoiceItems>
  *   <Order.InvoiceItemRepeater>
  *     <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
@@ -345,22 +344,6 @@ export interface InvoiceItemRepeaterProps {
  *       <InvoiceItem.Price className="w-[25%]" />
  *       <InvoiceItem.Quantity className="w-[15%]" />
  *       <InvoiceItem.Total className="w-[25%] text-right" />
- *     </div>
- *   </Order.InvoiceItemRepeater>
- * </Order.InvoiceItems>
- *
- * // Simple card layout
- * <Order.InvoiceItems>
- *   <Order.InvoiceItemRepeater className="border-b border-gray-200 last:border-b-0">
- *     <div className="flex justify-between items-center p-4">
- *       <div>
- *         <InvoiceItem.Name className="font-medium text-gray-900" />
- *         <InvoiceItem.Quantity className="text-sm text-gray-500" />
- *       </div>
- *       <div className="text-right">
- *         <InvoiceItem.Price className="text-sm text-gray-600" />
- *         <InvoiceItem.Total className="font-semibold text-gray-900" />
- *       </div>
  *     </div>
  *   </Order.InvoiceItemRepeater>
  * </Order.InvoiceItems>
@@ -459,8 +442,8 @@ export interface TaxProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    taxRate: string;
-    taxValue: string;
+    rate: string;
+    value: string;
     currency: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -486,10 +469,10 @@ export interface TaxProps {
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
  * >
- *   {({ taxRate, taxValue, currency }) => (
+ *   {({ rate, value, currency }) => (
  *     <div>
- *       <span>{`Tax (${taxRate}%)`}</span>
- *       <span>{`${taxValue} ${currency}`}</span>
+ *       <span>{`Tax (${rate}%)`}</span>
+ *       <span>{`${value} ${currency}`}</span>
  *     </div>
  *   )}
  * </Order.Tax>
@@ -500,18 +483,18 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
 
   return (
     <CoreOrder.Tax>
-      {({ taxRate, taxValue, currency }) => (
+      {({ rate, value, currency }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.orderTax}
           customElement={children}
-          customElementProps={{ taxRate, taxValue, currency }}
-          content={taxValue}
+          customElementProps={{ rate, value, currency }}
+          content={value}
           {...otherProps}
         >
-          <span>{taxValue}</span>
+          <span>{value}</span>
         </AsChildSlot>
       )}
     </CoreOrder.Tax>

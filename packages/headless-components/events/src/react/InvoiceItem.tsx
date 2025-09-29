@@ -27,6 +27,7 @@ export interface RootProps {
 
 /**
  * InvoiceItem Root core component that provides invoice item service context.
+ * Must be used as the top-level component for invoice item functionality.
  *
  * @order 1
  * @component
@@ -149,7 +150,7 @@ export interface PriceProps {
  * <InvoiceItem.Price asChild>
  *   {React.forwardRef(({ value, currency, ...props }, ref) => (
  *     <p ref={ref} {...props} className="text-lg text-green-600">
- *       {value} {currency}
+ *       {`${value} ${currency}`}
  *     </p>
  *   ))}
  * </InvoiceItem.Price>
@@ -171,9 +172,7 @@ export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
           content={value}
           {...otherProps}
         >
-          <span>
-            {value} {currency}
-          </span>
+          <span>{value}</span>
         </AsChildSlot>
       )}
     </CoreInvoiceItem.Price>
@@ -210,7 +209,7 @@ export interface QuantityProps {
  * <InvoiceItem.Quantity asChild>
  *   {React.forwardRef(({ quantity, ...props }, ref) => (
  *     <span ref={ref} {...props} className="badge">
- *       Qty: {quantity}
+ *       {`Qty: ${quantity}`}
  *     </span>
  *   ))}
  * </InvoiceItem.Quantity>
@@ -271,7 +270,7 @@ export interface TotalProps {
  * <InvoiceItem.Total asChild>
  *   {React.forwardRef(({ value, currency, ...props }, ref) => (
  *     <p ref={ref} {...props} className="font-bold text-xl text-green-600">
- *       Total: {value} {currency}
+ *       {`Total: ${value} ${currency}`}
  *     </p>
  *   ))}
  * </InvoiceItem.Total>
@@ -293,9 +292,7 @@ export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
           content={value}
           {...otherProps}
         >
-          <span>
-            {value} {currency}
-          </span>
+          <span>{value}</span>
         </AsChildSlot>
       )}
     </CoreInvoiceItem.Total>
