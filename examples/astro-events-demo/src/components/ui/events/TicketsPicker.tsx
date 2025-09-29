@@ -55,6 +55,95 @@ export const TicketDefinitionRepeater =
   TicketsPickerPrimitive.TicketDefinitionRepeater;
 
 /**
+ * Displays the total amount.
+ *
+ * @component
+ */
+export const TicketsPickerTotal = React.forwardRef<
+  React.ElementRef<typeof TicketsPickerPrimitive.Total>,
+  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Total>
+>(({ className, ...props }, ref) => {
+  return (
+    <TicketsPickerPrimitive.Total
+      {...props}
+      ref={ref}
+      className={cn('block font-paragraph text-foreground text-xl', className)}
+    />
+  );
+});
+
+TicketsPickerTotal.displayName = 'TicketsPickerTotal';
+
+/**
+ * Displays the subtotal amount.
+ *
+ * @component
+ */
+export const TicketsPickerSubtotal = React.forwardRef<
+  React.ElementRef<typeof TicketsPickerPrimitive.Subtotal>,
+  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Subtotal>
+>(({ className, ...props }, ref) => {
+  return (
+    <TicketsPickerPrimitive.Subtotal
+      {...props}
+      ref={ref}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
+    />
+  );
+});
+
+TicketsPickerSubtotal.displayName = 'TicketsPickerSubtotal';
+
+/**
+ * Displays the tax amount.
+ *
+ * @component
+ */
+export const TicketsPickerTax = React.forwardRef<
+  React.ElementRef<typeof TicketsPickerPrimitive.Tax>,
+  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Tax>
+>(({ className, ...props }, ref) => {
+  return (
+    <TicketsPickerPrimitive.Tax
+      {...props}
+      ref={ref}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
+    />
+  );
+});
+
+TicketsPickerTax.displayName = 'TicketsPickerTax';
+
+/**
+ * Displays the fee amount.
+ *
+ * @component
+ */
+export const TicketsPickerFee = React.forwardRef<
+  React.ElementRef<typeof TicketsPickerPrimitive.Fee>,
+  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Fee>
+>(({ className, ...props }, ref) => {
+  return (
+    <TicketsPickerPrimitive.Fee
+      {...props}
+      ref={ref}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
+    />
+  );
+});
+
+TicketsPickerFee.displayName = 'TicketsPickerFee';
+
+/**
  * Error component for displaying checkout error.
  * Shows error message when checkout fails.
  *
@@ -68,7 +157,10 @@ export const CheckoutError = React.forwardRef<
     <TicketsPickerPrimitive.CheckoutError
       {...props}
       ref={ref}
-      className={cn('block font-paragraph text-status-danger', className)}
+      className={cn(
+        'block font-paragraph text-status-danger text-base',
+        className
+      )}
     />
   );
 });
@@ -89,7 +181,7 @@ export const CheckoutTrigger = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block bg-primary text-primary-foreground font-paragraph text-base py-2 sm:py-3 px-20 hover:bg-primary/80 w-full sm:w-auto',
+        'block bg-primary text-primary-foreground font-paragraph text-base py-2 sm:py-3 px-20 hover:bg-primary/80 w-full',
         className
       )}
     />

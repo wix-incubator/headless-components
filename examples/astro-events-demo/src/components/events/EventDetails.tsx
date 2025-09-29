@@ -16,6 +16,10 @@ import {
   EventTitle,
   EventCoordinates,
   TicketsPicker,
+  TicketsPickerTotal,
+  TicketsPickerSubtotal,
+  TicketsPickerTax,
+  TicketsPickerFee,
   TicketDefinitions,
   TicketDefinitionRepeater,
   TicketDefinitionName,
@@ -157,7 +161,7 @@ export function EventDetails({
               >
                 Tickets
               </h2>
-              <TicketDefinitionRepeater className="group/ticket-definition border border-foreground/10 p-5 sm:p-8 mb-5 sm:mb-6">
+              <TicketDefinitionRepeater className="group/ticket-definition border border-foreground/10 p-5 sm:p-8 mt-5 sm:mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                   <div className="md:border-r border-foreground/10">
                     <div className="text-sm font-paragraph text-foreground">
@@ -283,18 +287,60 @@ export function EventDetails({
             </TicketDefinitions>
             <CheckoutError asChild>
               {({ error }) => (
-                <div className="bg-status-danger-medium border border-status-danger text-center mb-5 sm:mb-6 p-2 sm:p-4">
+                <div className="bg-status-danger-medium border border-status-danger text-center mt-5 sm:mt-6 p-2 sm:p-4">
                   {error}
                 </div>
               )}
             </CheckoutError>
-            <CheckoutTrigger asChild className="ml-auto">
-              {({ isLoading, checkout }) => (
-                <button onClick={checkout}>
-                  {isLoading ? 'Processing...' : 'Checkout'}
-                </button>
-              )}
-            </CheckoutTrigger>
+            <div className="w-full sm:w-2/5 ml-auto mt-3">
+              <TicketsPickerSubtotal asChild>
+                {({ subtotal, formattedSubtotal }) =>
+                  subtotal === 0 ? null : (
+                    <div className="flex justify-between">
+                      <span>Subtotal</span>
+                      <span>{formattedSubtotal}</span>
+                    </div>
+                  )
+                }
+              </TicketsPickerSubtotal>
+              <TicketsPickerTax asChild>
+                {({ name, rate, tax, formattedTax }) =>
+                  tax === 0 ? null : (
+                    <div className="flex justify-between">
+                      <span>
+                        {name} ({rate}%)
+                      </span>
+                      <span>{formattedTax}</span>
+                    </div>
+                  )
+                }
+              </TicketsPickerTax>
+              <TicketsPickerFee asChild>
+                {({ fee, formattedFee }) =>
+                  fee === 0 ? null : (
+                    <div className="flex justify-between">
+                      <span>Ticket service fee</span>
+                      <span>{formattedFee}</span>
+                    </div>
+                  )
+                }
+              </TicketsPickerFee>
+              <TicketsPickerTotal asChild className="mt-1">
+                {({ formattedTotal }) => (
+                  <div className="flex justify-between">
+                    <span>Total</span>
+                    <span>{formattedTotal}</span>
+                  </div>
+                )}
+              </TicketsPickerTotal>
+              <CheckoutTrigger asChild className="mt-3">
+                {({ isLoading, checkout }) => (
+                  <button onClick={checkout}>
+                    {isLoading ? 'Processing...' : 'Checkout'}
+                  </button>
+                )}
+              </CheckoutTrigger>
+            </div>
           </TicketsPicker>
         </div>
 

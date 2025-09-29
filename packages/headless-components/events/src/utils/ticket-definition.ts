@@ -57,7 +57,7 @@ export const getTicketDefinitionFee = (
       ? getTicketDefinitionTax(taxSettings, price, currency)
       : undefined;
   const priceWithAddedTax = addedTax ? price + addedTax.taxAmount : price;
-  const amount = roundPrice(priceWithAddedTax * WIX_FEE_RATE, currency);
+  const amount = roundPrice(priceWithAddedTax * (WIX_FEE_RATE / 100), currency);
   const formattedAmount = formatPrice(amount, currency);
 
   return {
