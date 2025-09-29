@@ -50,6 +50,10 @@ export interface ItemsRenderProps {
   isLoading: boolean;
   /** Error message if loading failed, null otherwise */
   error: string | null;
+  /** Function to load the next page */
+  loadNext: () => Promise<void>;
+  /** Whether there is a next page available */
+  hasNext: boolean;
 }
 
 /**
@@ -63,11 +67,15 @@ export function Items(props: ItemsProps) {
   const items = service.queryResultSignal.get()?.items || [];
   const isLoading = service.loadingSignal.get();
   const error = service.errorSignal.get();
+  const queryResult = service.queryResultSignal.get();
+  const loadNext = service.loadNextPage;
 
   return props.children({
     items,
     isLoading,
     error,
+    loadNext,
+    hasNext: queryResult?.hasNext() ?? false,
   });
 }
 
@@ -90,13 +98,13 @@ export interface NextActionRenderProps {
   /** Whether a page is currently loading */
   isLoading: boolean;
   /** Current page number */
-  currentPage: WixDataQueryResult['currentPage'];
+  currentPage: WixDataQueryResult["currentPage"];
   /** Total number of items */
-  totalCount: WixDataQueryResult['totalCount'];
+  totalCount: WixDataQueryResult["totalCount"];
   /** Page size */
-  pageSize: WixDataQueryResult['pageSize'];
+  pageSize: WixDataQueryResult["pageSize"];
   /** Total number of pages */
-  totalPages: WixDataQueryResult['totalPages'];
+  totalPages: WixDataQueryResult["totalPages"];
 }
 
 /**
@@ -141,13 +149,13 @@ export interface PrevActionRenderProps {
   /** Whether a page is currently loading */
   isLoading: boolean;
   /** Current page number */
-  currentPage: WixDataQueryResult['currentPage'];
+  currentPage: WixDataQueryResult["currentPage"];
   /** Total number of items */
-  totalCount: WixDataQueryResult['totalCount'];
+  totalCount: WixDataQueryResult["totalCount"];
   /** Page size */
-  pageSize: WixDataQueryResult['pageSize'];
+  pageSize: WixDataQueryResult["pageSize"];
   /** Total number of pages */
-  totalPages: WixDataQueryResult['totalPages'];
+  totalPages: WixDataQueryResult["totalPages"];
 }
 
 /**
@@ -267,7 +275,7 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
       displayed =
         pageSize > 0
           ? currentPage * pageSize + currentPageItems
-          : currentPageItems;
+        : currentPageItems;
       break;
   }
 
