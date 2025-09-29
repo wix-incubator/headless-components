@@ -1,5 +1,4 @@
-import '../styles/theme-1.css';
-import { type EventServiceConfig } from '@wix/headless-events/services';
+import { type EventServiceConfig } from '@wix/events/services';
 import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { ThankYou } from '../components/events/ThankYou';
 

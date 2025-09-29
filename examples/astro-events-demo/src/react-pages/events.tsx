@@ -1,25 +1,21 @@
-import '../styles/theme-1.css';
-import { type EventListServiceConfig } from '@wix/headless-events/services';
-import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
+import { type EventListServiceConfig } from '@wix/events/services';
 import { EventList } from '../components/events/EventList';
 
 interface EventsPageProps {
   eventListServiceConfig: EventListServiceConfig;
-  eventsPagePath: string;
+  eventDetailsPagePath: string;
 }
 
 export default function EventsPage({
   eventListServiceConfig,
-  eventsPagePath,
+  eventDetailsPagePath,
 }: EventsPageProps) {
   return (
-    <KitchensinkLayout>
-      <div className="max-w-7xl mx-auto p-10">
-        <EventList
-          eventListServiceConfig={eventListServiceConfig}
-          eventsPagePath={eventsPagePath}
-        />
-      </div>
-    </KitchensinkLayout>
+    <div className="bg-background">
+      <EventList
+        eventListServiceConfig={eventListServiceConfig}
+        eventDetailsPagePath={eventDetailsPagePath}
+      />
+    </div>
   );
 }

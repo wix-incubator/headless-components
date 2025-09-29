@@ -1,0 +1,59 @@
+/* This file is generated and will include all the font faces of the font families from tailwind.config */
+/* heading - barlow-medium */
+@font-face {
+  font-family: 'barlow-medium';
+  font-style: normal;
+  font-weight: 400;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/ZqlneECqpsd9SXlmAsD2E1tXRa8TVwTICgirnJhmVJw.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'barlow-medium';
+  font-style: italic;
+  font-weight: 700;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/hw7DQwyFvE7wFOFzpow4xqg5eI2G47JWe0-AuFtD150.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'barlow-medium';
+  font-style: normal;
+  font-weight: 700;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/yS165lxqGuDghyUMXeu6xVtXRa8TVwTICgirnJhmVJw.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'barlow-medium';
+  font-style: italic;
+  font-weight: 400;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/xJLokI-F3wr7NRWXgS0pZ6g5eI2G47JWe0-AuFtD150.woff2')
+    format('woff2');
+}
+/* paragraph - barlow-extralight */
+@font-face {
+  font-family: 'barlow-extralight';
+  font-style: normal;
+  font-weight: 400;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/51v0xj5VPw1cLYHNhfd8NFtXRa8TVwTICgirnJhmVJw.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'barlow-extralight';
+  font-style: normal;
+  font-weight: 700;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/2woyxyDnPU0v4IiqYU9D1g.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'barlow-extralight';
+  font-style: italic;
+  font-weight: 700;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/cdbGxfKO8gdkBd5U5TuXqPesZW2xOQ-xsNqO47m55DA.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'barlow-extralight';
+  font-style: italic;
+  font-weight: 400;
+  src: url('//static.parastorage.com/tag-bundler/api/v1/fonts-cache/googlefont/woff2/s/barlow/v1/14AxwKgJhKIO-YYUP_KtZag5eI2G47JWe0-AuFtD150.woff2')
+    format('woff2');
+}

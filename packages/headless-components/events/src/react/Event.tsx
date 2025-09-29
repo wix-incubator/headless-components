@@ -450,7 +450,7 @@ export const ShortDescription = React.forwardRef<
  */
 export interface DescriptionProps {
   /** Custom render function */
-  children: AsChildChildren<{ description: RichContent }>;
+  children?: AsChildChildren<{ description: RichContent }>;
 }
 
 /**

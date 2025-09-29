@@ -226,7 +226,7 @@ export interface FixedPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: string;
+    price: number;
     currency: string;
     formattedPrice: string;
     free: boolean;
@@ -299,7 +299,7 @@ export interface GuestPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    minPrice: string;
+    minPrice: number;
     currency: string;
     formattedMinPrice: string;
     setPrice: (price: string) => void;
@@ -375,8 +375,8 @@ export interface PricingRangeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    minPrice: string;
-    maxPrice: string;
+    minPrice: number;
+    maxPrice: number;
     currency: string;
     formattedMinPrice: string;
     formattedMaxPrice: string;
@@ -460,11 +460,12 @@ export interface TaxProps {
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
     name: string;
-    rate: string;
+    rate: number;
     included: boolean;
-    amount: string;
+    taxableAmount: number;
+    taxAmount: number;
     currency: string;
-    formattedAmount: string;
+    formattedTaxAmount: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -486,9 +487,9 @@ export interface TaxProps {
  *
  * // asChild with react component
  * <TicketDefinition.Tax asChild>
- *   {React.forwardRef(({ name, rate, included, amount, currency, formattedAmount, ...props }, ref) => (
+ *   {React.forwardRef(({ name, rate, included, taxableAmount, taxAmount, currency, formattedTaxAmount, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm text-gray-500">
- *       {included ? `${name} included` : `+${formattedAmount} ${name}`}
+ *       {included ? `${name} included` : `+${formattedTaxAmount} ${name}`}
  *     </span>
  *   ))}
  * </TicketDefinition.Tax>
@@ -499,7 +500,15 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
 
   return (
     <CoreTicketDefinition.Tax>
-      {({ name, rate, included, amount, currency, formattedAmount }) => {
+      {({
+        name,
+        rate,
+        included,
+        taxableAmount,
+        taxAmount,
+        currency,
+        formattedTaxAmount,
+      }) => {
         return (
           <AsChildSlot
             ref={ref}
@@ -511,14 +520,15 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
               name,
               rate,
               included,
-              amount,
+              taxableAmount,
+              taxAmount,
               currency,
-              formattedAmount,
+              formattedTaxAmount,
             }}
-            content={formattedAmount}
+            content={formattedTaxAmount}
             {...otherProps}
           >
-            <span>{formattedAmount}</span>
+            <span>{formattedTaxAmount}</span>
           </AsChildSlot>
         );
       }}
@@ -534,8 +544,8 @@ export interface FeeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    rate: string;
-    amount: string;
+    rate: number;
+    amount: number;
     currency: string;
     formattedAmount: string;
   }>;
