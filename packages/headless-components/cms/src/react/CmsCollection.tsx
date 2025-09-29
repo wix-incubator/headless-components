@@ -87,7 +87,6 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   },
 );
 
-
 /**
  * Props for CmsCollection.Items component
  */
@@ -140,7 +139,14 @@ export interface ItemsProps {
  * ```
  */
 export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
-  const { children, emptyState, asChild, className, infiniteScroll, ...otherProps } = props;
+  const {
+    children,
+    emptyState,
+    asChild,
+    className,
+    infiniteScroll,
+    ...otherProps
+  } = props;
   const sentinelRef = React.useRef<HTMLDivElement>(null);
 
   return (
@@ -148,7 +154,12 @@ export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
       {({ items, isLoading, error, loadNext, hasNext }) => {
         // Set up infinite scroll when enabled
         React.useEffect(() => {
-          if (!infiniteScroll || !sentinelRef.current || !hasNext || isLoading) {
+          if (
+            !infiniteScroll ||
+            !sentinelRef.current ||
+            !hasNext ||
+            isLoading
+          ) {
             return;
           }
 
@@ -165,7 +176,7 @@ export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
               // Trigger when the sentinel is 100px away from entering the viewport
               rootMargin: '100px',
               threshold: 0,
-            }
+            },
           );
 
           observer.observe(sentinel);
@@ -216,7 +227,7 @@ export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
                   height: '1px',
                   width: '100%',
                   opacity: 0,
-                  pointerEvents: 'none'
+                  pointerEvents: 'none',
                 }}
                 aria-hidden="true"
               />
@@ -328,7 +339,9 @@ export interface LoadingRenderProps {}
  * ```
  */
 export function Loading(props: LoadingProps): React.ReactNode {
-  return <CoreCmsCollection.Loading>{props.children}</CoreCmsCollection.Loading>;
+  return (
+    <CoreCmsCollection.Loading>{props.children}</CoreCmsCollection.Loading>
+  );
 }
 
 /**
@@ -384,11 +397,13 @@ export interface NextActionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or button content when not */
-  children?: AsChildChildren<{
-    loadNext: () => void;
-    hasNext: boolean;
-    isLoading: boolean;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        loadNext: () => void;
+        hasNext: boolean;
+        isLoading: boolean;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -475,11 +490,13 @@ export interface PrevActionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or button content when not */
-  children?: AsChildChildren<{
-    loadPrev: () => void;
-    hasPrev: boolean;
-    isLoading: boolean;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        loadPrev: () => void;
+        hasPrev: boolean;
+        isLoading: boolean;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -566,9 +583,11 @@ export interface TotalsCountProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or content when not */
-  children?: AsChildChildren<{
-    total: number;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        total: number;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -602,35 +621,33 @@ export interface TotalsCountProps {
  * }
  * ```
  */
-const Count = React.forwardRef<HTMLElement, TotalsCountProps>(
-  (props, ref) => {
-    const { children, asChild, className, ...otherProps } = props;
+const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
+  const { children, asChild, className, ...otherProps } = props;
 
-    return (
-      <CoreCmsCollection.TotalsCount>
-        {({ total }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.cmsCollectionItemsTotals}
-              data-total={total}
-              customElement={children}
-              customElementProps={{
-                total,
-              }}
-              content={total}
-              {...otherProps}
-            >
-              <span>{total}</span>
-            </AsChildSlot>
-          );
-        }}
-      </CoreCmsCollection.TotalsCount>
-    );
-  },
-);
+  return (
+    <CoreCmsCollection.TotalsCount>
+      {({ total }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.cmsCollectionItemsTotals}
+            data-total={total}
+            customElement={children}
+            customElementProps={{
+              total,
+            }}
+            content={total}
+            {...otherProps}
+          >
+            <span>{total}</span>
+          </AsChildSlot>
+        );
+      }}
+    </CoreCmsCollection.TotalsCount>
+  );
+});
 
 /**
  * Props for CmsCollection.Totals.Displayed component
@@ -641,9 +658,11 @@ export interface TotalsDisplayedProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild or content when not */
-  children?: AsChildChildren<{
-    displayed: number;
-  }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        displayed: number;
+      }>
+    | React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
 }

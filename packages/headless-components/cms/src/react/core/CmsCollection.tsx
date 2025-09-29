@@ -98,13 +98,13 @@ export interface NextActionRenderProps {
   /** Whether a page is currently loading */
   isLoading: boolean;
   /** Current page number */
-  currentPage: WixDataQueryResult["currentPage"];
+  currentPage: WixDataQueryResult['currentPage'];
   /** Total number of items */
-  totalCount: WixDataQueryResult["totalCount"];
+  totalCount: WixDataQueryResult['totalCount'];
   /** Page size */
-  pageSize: WixDataQueryResult["pageSize"];
+  pageSize: WixDataQueryResult['pageSize'];
   /** Total number of pages */
-  totalPages: WixDataQueryResult["totalPages"];
+  totalPages: WixDataQueryResult['totalPages'];
 }
 
 /**
@@ -149,13 +149,13 @@ export interface PrevActionRenderProps {
   /** Whether a page is currently loading */
   isLoading: boolean;
   /** Current page number */
-  currentPage: WixDataQueryResult["currentPage"];
+  currentPage: WixDataQueryResult['currentPage'];
   /** Total number of items */
-  totalCount: WixDataQueryResult["totalCount"];
+  totalCount: WixDataQueryResult['totalCount'];
   /** Page size */
-  pageSize: WixDataQueryResult["pageSize"];
+  pageSize: WixDataQueryResult['pageSize'];
   /** Total number of pages */
-  totalPages: WixDataQueryResult["totalPages"];
+  totalPages: WixDataQueryResult['totalPages'];
 }
 
 /**
@@ -275,7 +275,7 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
       displayed =
         pageSize > 0
           ? currentPage * pageSize + currentPageItems
-        : currentPageItems;
+          : currentPageItems;
       break;
   }
 
