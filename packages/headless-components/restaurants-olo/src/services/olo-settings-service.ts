@@ -8,7 +8,7 @@ import {
 export interface OLOSettingsServiceAPI {
   operationGroup: Signal<operationGroupsApi.OperationGroup | undefined>;
   operation: Signal<operationsApi.Operation | undefined>;
-  selectedItem?: Signal<any>;
+  selectedItem?: Signal<unknown>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
   //   fetchOperationGroups: () => Promise<void>;
@@ -30,7 +30,7 @@ export const OLOSettingsService = implementService.withConfig<OLOSettingsService
       config.operationGroup,
     );
     const operation = signalsService.signal<operationsApi.Operation | undefined>(config.operation);
-    const selectedItem = signalsService.signal<any>(null);
+    const selectedItem = signalsService.signal<unknown>(null);
     const isLoading = signalsService.signal<boolean>(false);
     const error = signalsService.signal<string | null>(null);
 

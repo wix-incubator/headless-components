@@ -21,7 +21,7 @@ import { createServicesMap } from '@wix/services-manager';
 // ========================================
 
 interface ItemDetailsRootProps {
-  children: (props: { item: any }) => React.ReactNode;
+  children: (props: { item: unknown }) => React.ReactNode;
   itemDetailsServiceConfig: ItemServiceConfig;
 }
 
@@ -51,7 +51,7 @@ export const Root: React.FC<ItemDetailsRootProps> = ({ children }) => {
 
 interface ItemDetailsModifiersRepeaterProps {
   children: (props: {
-    modifiers: any[]; // TODO: Use proper Modifier type
+    modifiers: []; // TODO: Use proper Modifier type
     hasModifiers: boolean;
   }) => React.ReactNode;
 }
@@ -61,7 +61,7 @@ export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
   const item = service.item.get();
 
   // TODO: Check if modifiers exist on item type - might be in a different property
-  const modifiers = (item as any)?.modifiers || [];
+  const modifiers = (item as unknown as { modifiers: [] })?.modifiers || [];
   const hasModifiers = modifiers.length > 0;
 
   return children({ modifiers, hasModifiers });
@@ -73,7 +73,7 @@ export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
 
 interface ItemDetailsVariantsRepeaterProps {
   children: (props: {
-    variants: any[]; // TODO: Use proper Variant type
+    variants: []; // TODO: Use proper Variant type
     hasVariants: boolean;
   }) => React.ReactNode;
 }
@@ -83,7 +83,7 @@ export const VariantsRepeater: React.FC<ItemDetailsVariantsRepeaterProps> = ({ c
   const item = service.item.get();
 
   // TODO: Check if variants exist on item type - might be in a different property
-  const variants = (item as any)?.variants || [];
+  const variants = (item as unknown as { variants: [] })?.variants || [];
   const hasVariants = variants.length > 0;
 
   return children({ variants, hasVariants });

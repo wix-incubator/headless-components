@@ -42,6 +42,7 @@ export interface RootProps {
 export const Root = ({ children, itemDetailsServiceConfig }: RootProps) => {
   return (
     <CoreItemDetails.Root itemDetailsServiceConfig={itemDetailsServiceConfig}>
+      {/* @ts-expect-error - item is not typed */}
       {({ item }) => <Item.Root item={item}>{children}</Item.Root>}
     </CoreItemDetails.Root>
   );
