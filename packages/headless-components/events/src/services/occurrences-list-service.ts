@@ -28,11 +28,11 @@ export interface OccurrencesListServiceAPI {
 }
 
 export interface OccurrencesListServiceConfig {
-  categoryId: string;
-  occurrences: Event[];
-  pageSize: number;
-  currentPage: number;
-  totalPages: number;
+  categoryId?: string;
+  occurrences?: Event[];
+  pageSize?: number;
+  currentPage?: number;
+  totalPages?: number;
 }
 
 export const OccurrencesListServiceDefinition = defineService<
@@ -46,12 +46,16 @@ export const OccurrencesListService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const occurrences = signalsService.signal<Event[]>(config.occurrences);
+      const occurrences = signalsService.signal<Event[]>(
+        config.occurrences ?? [],
+      );
       const isLoadingMore = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
-      const pageSize = signalsService.signal<number>(config.pageSize);
-      const currentPage = signalsService.signal<number>(config.currentPage);
-      const totalPages = signalsService.signal<number>(config.totalPages);
+      const pageSize = signalsService.signal<number>(config.pageSize ?? 0);
+      const currentPage = signalsService.signal<number>(
+        config.currentPage ?? 0,
+      );
+      const totalPages = signalsService.signal<number>(config.totalPages ?? 0);
       const hasMoreOccurrences = signalsService.computed<boolean>(
         () => currentPage.get() + 1 < totalPages.get(),
       );

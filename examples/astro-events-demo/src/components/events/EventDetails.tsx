@@ -4,6 +4,7 @@ import {
   type TicketDefinitionListServiceConfig,
   type CheckoutServiceConfig,
   type ScheduleListServiceConfig,
+  type OccurrencesListServiceConfig,
 } from '@wix/events/services';
 import {
   Event,
@@ -49,6 +50,7 @@ interface EventDetailsProps {
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   checkoutServiceConfig: CheckoutServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
+  occurrencesListServiceConfig?: OccurrencesListServiceConfig;
   eventDetailsPagePath: string;
   formPagePath: string;
 }
@@ -59,6 +61,7 @@ export function EventDetails({
   ticketDefinitionListServiceConfig,
   checkoutServiceConfig,
   // scheduleListServiceConfig,
+  occurrencesListServiceConfig,
   eventDetailsPagePath,
   formPagePath,
 }: EventDetailsProps) {
@@ -70,7 +73,11 @@ export function EventDetails({
     .slice(0, 3);
 
   return (
-    <Event event={eventServiceConfig.event} className="group/event">
+    <Event
+      event={eventServiceConfig.event}
+      occurrencesListServiceConfig={occurrencesListServiceConfig}
+      className="group/event"
+    >
       {/* Mobile Image Section */}
       <div className="relative w-full pt-[56.25%] group-data-[has-image=false]/event:hidden block sm:hidden">
         <EventImage className="absolute top-0 w-full h-full" />

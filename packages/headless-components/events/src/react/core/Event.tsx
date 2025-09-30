@@ -36,21 +36,19 @@ export function Root(props: RootProps): React.ReactNode {
     event,
   };
 
-  const servicesMap = createServicesMap().addService(
-    EventServiceDefinition,
-    EventService,
-    eventServiceConfig,
+  return (
+    <WixServices
+      servicesMap={createServicesMap()
+        .addService(EventServiceDefinition, EventService, eventServiceConfig)
+        .addService(
+          OccurrencesListServiceDefinition,
+          OccurrencesListService,
+          occurrencesListServiceConfig,
+        )}
+    >
+      {children}
+    </WixServices>
   );
-
-  if (occurrencesListServiceConfig) {
-    servicesMap.addService(
-      OccurrencesListServiceDefinition,
-      OccurrencesListService,
-      occurrencesListServiceConfig,
-    );
-  }
-
-  return <WixServices servicesMap={servicesMap}>{children}</WixServices>;
 }
 
 export interface ImageProps {

@@ -4,6 +4,7 @@ import {
   loadEventListServiceConfig,
   loadTicketDefinitionListServiceConfig,
   loadScheduleListServiceConfig,
+  loadOccurrencesListServiceConfig,
 } from '@wix/events/services';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import EventDetailsPage from '../../../react-pages/event-details';
@@ -24,13 +25,23 @@ if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
 }
 
-const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
-  await Promise.all([
-    loadTicketDefinitionListServiceConfig(
-      eventServiceConfigResult.config.event._id
-    ),
-    loadScheduleListServiceConfig(eventServiceConfigResult.config.event._id, 2),
-  ]);
+const recurringCategoryId =
+  eventServiceConfigResult.config.event.dateAndTimeSettings?.recurringEvents
+    ?.categoryId;
+
+const [
+  ticketDefinitionListServiceConfig,
+  scheduleListServiceConfig,
+  occurrencesListServiceConfig,
+] = await Promise.all([
+  loadTicketDefinitionListServiceConfig(
+    eventServiceConfigResult.config.event._id
+  ),
+  loadScheduleListServiceConfig(eventServiceConfigResult.config.event._id, 2),
+  recurringCategoryId
+    ? loadOccurrencesListServiceConfig(recurringCategoryId)
+    : undefined,
+]);
 ---
 
 <BaseLayout>
@@ -48,6 +59,7 @@ const [ticketDefinitionListServiceConfig, scheduleListServiceConfig] =
       thankYouPageUrl: `${Astro.url.origin}/events/${slug}/thank-you`,
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
+    occurrencesListServiceConfig={occurrencesListServiceConfig}
     eventDetailsPagePath="/events/:slug"
     formPagePath="/events/:slug/form"
   />
