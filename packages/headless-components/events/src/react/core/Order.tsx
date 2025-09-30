@@ -378,7 +378,7 @@ export interface FeeRenderProps {
   amount: number;
   /** Fee currency */
   currency: string;
-  /** Formatted Fee amount */
+  /** Formatted fee amount */
   formattedAmount: string;
 }
 
