@@ -3,7 +3,13 @@ import { Commerce } from '@wix/ecom/components';
 import { type LineItem } from '@wix/ecom/services';
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { Quantity as QuantityComponent } from '@wix/headless-components/react';
-import { Item } from '@wix/restaurants/components';
+import {
+  Item,
+  Label,
+  Modifier,
+  ModifierGroup,
+  Variant,
+} from '@wix/restaurants/components';
 import * as CoreItemDetails from './core/ItemDetails.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
 
@@ -14,6 +20,9 @@ enum TestIds {
   itemImage = 'item-image',
   itemAddToCart = 'item-add-to-cart',
   itemSpecialRequest = 'item-special-request',
+  itemLabels = 'item-labels',
+  itemModifierGroups = 'item-modifier-groups',
+  itemVariants = 'item-variants',
 }
 
 /**
@@ -55,6 +64,272 @@ export interface ItemDetailsNameProps {
   /** CSS classes to apply to the default element */
   className?: string;
 }
+
+export const Name = React.forwardRef<HTMLElement, ItemDetailsNameProps>(
+  ({ asChild, children, className, ...rest }, ref) => {
+    return (
+      <Item.Name
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.itemName}
+        {...rest}
+      >
+        {children}
+      </Item.Name>
+    );
+  },
+);
+Name.displayName = 'ItemDetails.Name';
+
+/**
+ * Displays the item image with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ItemDetails.Image />
+ * <ItemDetails.Image asChild>
+ *   <img className="rounded" />
+ * </ItemDetails.Image>
+ * ```
+ */
+export interface ItemDetailsImageProps {
+  asChild?: boolean;
+  /**
+   * Custom render function when using asChild.
+   * Receives an object with:
+   * - hasImage: boolean - whether the item has an image
+   * - image: string - the actual image element (WixMediaImage)
+   * - altText: string - the alt text for the image
+   */
+  children?: (props: {
+    hasImage: boolean;
+    image?: string;
+    altText: string;
+  }) => React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export const Image = React.forwardRef<HTMLElement, ItemDetailsImageProps>(
+  ({ asChild, children, className, ...rest }) => {
+    return (
+      <Item.Image
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.itemImage}
+        {...rest}
+      >
+        {children}
+      </Item.Image>
+    );
+  },
+);
+Image.displayName = 'ItemDetails.Image';
+
+/**
+ * Displays the item price with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ItemDetails.Price />
+ * <ItemDetails.Price asChild>
+ *   <span className="font-semibold text-lg" />
+ * </ItemDetails.Price>
+ * ```
+ */
+export interface ItemDetailsPriceProps {
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export const Price = React.forwardRef<HTMLElement, ItemDetailsPriceProps>(
+  ({ asChild, className, ...rest }, ref) => {
+    return (
+      <Item.Price
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.itemPrice}
+        {...rest}
+      />
+    );
+  },
+);
+Price.displayName = 'ItemDetails.Price';
+
+/**
+ * Displays the item description with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ItemDetails.Description />
+ * <ItemDetails.Description asChild>
+ *   <p className="text-sm" />
+ * </ItemDetails.Description>
+ * ```
+ */
+export interface ItemDetailsDescriptionProps {
+  asChild?: boolean;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export const Description = React.forwardRef<
+  HTMLElement,
+  ItemDetailsDescriptionProps
+>(({ asChild, className, ...rest }, ref) => {
+  return (
+    <Item.Description
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      data-testid={TestIds.itemDescription}
+      {...rest}
+    />
+  );
+});
+Description.displayName = 'ItemDetails.Description';
+
+/**
+ * Wrapper component for Item.LabelsRepeater.
+ * Renders the labels for the item using the headless component.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ItemDetails.Labels>
+ *   {(label) => <span>{label.name}</span>}
+ * </ItemDetails.Labels>
+ * ```
+ */
+export interface ItemDetailsLabelsProps {
+  children?: AsChildChildren<{ label: string }>;
+  className?: string;
+  asChild?: boolean;
+  iconClassName?: string;
+  nameClassName?: string;
+}
+
+export const Labels = React.forwardRef<HTMLElement, ItemDetailsLabelsProps>(
+  ({ children, className, asChild, iconClassName, nameClassName, ...rest }) => {
+    return (
+      <Item.LabelsRepeater {...rest}>
+        <AsChildSlot
+          asChild={asChild}
+          testId={TestIds.itemLabels}
+          className={className}
+          customElement={children}
+        >
+          <Label.Icon className={iconClassName} />
+          <Label.Name className={nameClassName} />
+        </AsChildSlot>
+      </Item.LabelsRepeater>
+    );
+  },
+);
+Labels.displayName = 'ItemDetails.Labels';
+
+/**
+ * Wrapper component for Item.ModifierGroupsRepeater.
+ * Renders the modifier groups for the item using the headless component.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ItemDetails.ModifierGroups>
+ *   {(modifierGroup) => <span>{modifierGroup.name}</span>}
+ * </ItemDetails.ModifierGroups>
+ * ```
+ */
+export interface ItemDetailsModifierGroupsProps {
+  children?: AsChildChildren<{ modifierGroup: any }>;
+  className?: string;
+  asChild?: boolean;
+  modifierNameClassName?: string;
+  modifierPriceClassName?: string;
+}
+
+export const ModifierGroups = React.forwardRef<
+  HTMLElement,
+  ItemDetailsModifierGroupsProps
+>(
+  ({
+    children,
+    className,
+    asChild,
+    modifierNameClassName,
+    modifierPriceClassName,
+    ...rest
+  }) => {
+    return (
+      <Item.ModifierGroupsRepeater {...rest}>
+        <AsChildSlot
+          asChild={asChild}
+          testId={TestIds.itemModifierGroups}
+          className={className}
+          customElement={children}
+        >
+          <ModifierGroup.ModifiersRepeater>
+            <Modifier.Name className={modifierNameClassName} />
+            <Modifier.Price className={modifierPriceClassName} />
+          </ModifierGroup.ModifiersRepeater>
+        </AsChildSlot>
+      </Item.ModifierGroupsRepeater>
+    );
+  },
+);
+/**
+ * Wrapper component for Item.VariantsRepeater.
+ * Renders the variants for the item using the headless component.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ItemDetails.Variants>
+ *   {(variant) => <span>{variant.name}</span>}
+ * </ItemDetails.Variants>
+ * ```
+ */
+export interface ItemDetailsVariantsProps {
+  children?: AsChildChildren<{ variant: any }>;
+  className?: string;
+  asChild?: boolean;
+  variantNameClassName?: string;
+  variantPriceClassName?: string;
+}
+
+export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
+  ({
+    children,
+    className,
+    asChild,
+    variantNameClassName,
+    variantPriceClassName,
+    ...rest
+  }) => {
+    return (
+      <Item.VariantsRepeater {...rest}>
+        <AsChildSlot
+          asChild={asChild}
+          testId={TestIds.itemVariants}
+          className={className}
+          customElement={children}
+        >
+          <Variant.Name className={variantNameClassName} />
+          <Variant.Price className={variantPriceClassName} />
+        </AsChildSlot>
+      </Item.VariantsRepeater>
+    );
+  },
+);
+Variants.displayName = 'ItemDetails.Variants';
+
+ModifierGroups.displayName = 'ItemDetails.ModifierGroups';
 
 export interface AddToCartActionProps {
   /** Whether to render as a child component */
@@ -195,10 +470,7 @@ export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
   );
 };
 
-export const Quantity: React.FC<ItemDetailsQuantityProps> = (
-  { children },
-  ref,
-) => {
+export const Quantity: React.FC<ItemDetailsQuantityProps> = ({ children }) => {
   return (
     <CoreItemDetails.QuantityComponent>
       {({
@@ -209,7 +481,6 @@ export const Quantity: React.FC<ItemDetailsQuantityProps> = (
         onValueChange: (value: number) => void;
       }) => (
         <QuantityComponent.Root
-          ref={ref}
           onValueChange={onValueChange}
           initialValue={quantity}
         >
