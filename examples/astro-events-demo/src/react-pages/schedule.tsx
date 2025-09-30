@@ -2,7 +2,6 @@ import {
   type EventServiceConfig,
   type ScheduleListServiceConfig,
 } from '@wix/events/services';
-import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { Schedule } from '../components/events/Schedule';
 
 interface SchedulePageProps {
@@ -17,14 +16,12 @@ export default function SchedulePage({
   eventsPagePath,
 }: SchedulePageProps) {
   return (
-    <KitchensinkLayout>
-      <div className="max-w-7xl mx-auto">
-        <Schedule
-          eventServiceConfig={eventServiceConfig}
-          scheduleListServiceConfig={scheduleListServiceConfig}
-          eventsPagePath={eventsPagePath}
-        />
-      </div>
-    </KitchensinkLayout>
+    <div className="bg-background">
+      <Schedule
+        eventServiceConfig={eventServiceConfig}
+        scheduleListServiceConfig={scheduleListServiceConfig}
+        eventsPagePath={eventsPagePath}
+      />
+    </div>
   );
 }

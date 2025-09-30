@@ -156,13 +156,13 @@ export function EventDetails({
 
           {/* Schedule Section */}
           <ScheduleList scheduleListServiceConfig={scheduleListServiceConfig}>
-            <ScheduleListItems className="space-y-4 mb-6 mt-6 sm:mt-16">
-              <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-3 sm:mb-4">
+            <ScheduleListItems className="mb-6 mt-6 sm:mt-16">
+              <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-4">
                 Schedule
               </h2>
-              <ScheduleListItemRepeater className="group border border-foreground/10 p-5 sm:p-8 mb-5 sm:mb-6">
-                <div className="flex gap-6">
-                  <div className="min-w-[150px] flex flex-col">
+              <ScheduleListItemRepeater className="border-b sm:border border-foreground/10 pb-4 sm:py-8 sm:px-6 mb-4">
+                <div className="flex gap-2 sm:gap-6 flex-col sm:flex-row">
+                  <div className="min-w-[150px]">
                     <ScheduleItemTimeSlot />
                     <ScheduleItemDuration asChild>
                       {({ durationMinutes }) => (
@@ -170,11 +170,11 @@ export function EventDetails({
                       )}
                     </ScheduleItemDuration>
                   </div>
-                  <div className="flex flex-col">
+                  <div>
                     <ScheduleItemName />
                     <ScheduleItemStage
                       asChild
-                      className="flex gap-1 items-center mb-3"
+                      className="flex gap-1 items-center"
                     >
                       {({ stageName }) => (
                         <div>
@@ -189,7 +189,7 @@ export function EventDetails({
                         </div>
                       )}
                     </ScheduleItemStage>
-                    <ScheduleItemTags className="flex gap-2 flex-wrap">
+                    <ScheduleItemTags className="flex gap-2 flex-wrap mt-3">
                       <ScheduleItemTagRepeater>
                         <ScheduleItemTagLabel />
                       </ScheduleItemTagRepeater>
@@ -197,10 +197,10 @@ export function EventDetails({
                   </div>
                 </div>
               </ScheduleListItemRepeater>
-              <div className="flex justify-end">
+              <div className="flex sm:justify-end">
                 <a
                   href={`${schedulePagePath.replace(':slug', eventServiceConfig.event.slug!)}`}
-                  className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline"
+                  className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline w-full sm:w-auto text-center"
                 >
                   See All
                 </a>
