@@ -4,6 +4,7 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 import { items } from '@wix/data';
+import type { SortValue } from '@wix/headless-components/react';
 
 export type WixDataItem = items.WixDataItem;
 export type WixDataQueryResult = items.WixDataResult;
@@ -25,6 +26,8 @@ export const CmsCollectionServiceDefinition = defineService<{
   errorSignal: Signal<string | null>;
   /** Reactive signal containing the current query result with pagination data */
   queryResultSignal: Signal<WixDataQueryResult | null>;
+  /** Reactive signal containing the current sort value */
+  sortSignal: Signal<SortValue>;
   /** Function to load the next page of items */
   loadNextPage: () => Promise<void>;
   /** Function to load the previous page of items */
@@ -35,6 +38,8 @@ export const CmsCollectionServiceDefinition = defineService<{
   loadItems: (options?: CmsQueryOptions) => Promise<void>;
   /** Function to create a new item in the collection */
   createItem: (itemData: Partial<WixDataItem>) => Promise<void>;
+  /** Function to update the sort value */
+  setSort: (sort: SortValue) => void;
   /** The collection ID */
   collectionId: string;
 }>('cms-collection');
@@ -58,6 +63,7 @@ export interface CmsQueryOptions {
 const loadCollectionItems = async (
   collectionId: string,
   options: CmsQueryOptions = {},
+  sort?: SortValue,
 ) => {
   if (!collectionId) {
     throw new Error('No collection ID provided');
@@ -66,6 +72,18 @@ const loadCollectionItems = async (
   const { limit, skip = 0, returnTotalCount = false } = options;
 
   let query = items.query(collectionId);
+
+  if (sort && sort.length > 0 && sort[0]) {
+    const { fieldName, order } = sort[0];
+    if (fieldName) {
+      if (order === 'DESC') {
+        query = query.descending(fieldName);
+      } else {
+        // Default to ascending if order not specified or is 'ASC'
+        query = query.ascending(fieldName);
+      }
+    }
+  }
 
   if (limit) {
     query = query.limit(limit);
@@ -87,6 +105,8 @@ export interface CmsCollectionServiceConfig {
    * If not provided, service will load initial data automatically. */
   queryResult?: WixDataQueryResult;
   queryOptions?: CmsQueryOptions;
+  /** Optional initial sort value */
+  initialSort?: SortValue;
 }
 
 /**
@@ -107,6 +127,11 @@ export const CmsCollectionServiceImplementation =
           config.queryResult || null,
         );
 
+      // Initialize sort signal
+      const sortSignal = signalsService.signal<SortValue>(
+        config.initialSort || [],
+      );
+
       // Track current query result for cursor-based pagination
       let currentQueryResult: WixDataQueryResult | null =
         queryResultSignal.get();
@@ -126,6 +151,7 @@ export const CmsCollectionServiceImplementation =
           const result = await loadCollectionItems(
             config.collectionId,
             mergedOptions,
+            sortSignal.get(),
           );
 
           queryResultSignal.set(result);
@@ -236,6 +262,12 @@ export const CmsCollectionServiceImplementation =
         }
       };
 
+      const setSort = (sort: SortValue) => {
+        sortSignal.set(sort);
+        // Reload items with new sort, preserving pagination
+        loadItems();
+      };
+
       // Auto-load items on service initialization only if not pre-loaded
       if (!config.queryResult) {
         loadItems();
@@ -245,11 +277,13 @@ export const CmsCollectionServiceImplementation =
         loadingSignal,
         errorSignal,
         queryResultSignal,
+        sortSignal,
         loadItems,
         invalidate,
         loadNextPage,
         loadPrevPage,
         createItem,
+        setSort,
         collectionId: config.collectionId,
       };
     },
@@ -284,6 +318,7 @@ export type CmsCollectionServiceConfigResult = {
 export const loadCmsCollectionServiceInitialData = async (
   collectionId: string,
   options: CmsQueryOptions = {},
+  sort?: SortValue,
 ): Promise<CmsCollectionServiceConfigResult> => {
   try {
     if (!collectionId) {
@@ -291,13 +326,14 @@ export const loadCmsCollectionServiceInitialData = async (
     }
 
     // Load collection items on the server using shared function
-    const result = await loadCollectionItems(collectionId, options);
+    const result = await loadCollectionItems(collectionId, options, sort);
 
     return {
       [CmsCollectionServiceDefinition]: {
         collectionId,
         queryResult: result,
         queryOptions: options,
+        initialSort: sort,
       },
     };
   } catch (error) {
