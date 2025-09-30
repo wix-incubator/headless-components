@@ -110,7 +110,7 @@ export function Schedule({
                     <ScheduleItemTimeSlot />
                     <ScheduleItemDuration asChild>
                       {({ durationMinutes }) => (
-                        <span>{`${durationMinutes} minutes`}</span>
+                        <span>{durationMinutes} minutes</span>
                       )}
                     </ScheduleItemDuration>
                   </div>

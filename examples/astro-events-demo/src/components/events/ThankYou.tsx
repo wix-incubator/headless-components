@@ -201,8 +201,8 @@ export function ThankYou({
                               >
                                 {({ formattedAmount, rate }) => (
                                   <div>
-                                    <span>{`Paid Plan Discount (${rate}%)`}</span>
-                                    <span>{`-${formattedAmount}`}</span>
+                                    <span>Paid Plan Discount ({rate}%)</span>
+                                    <span>-{formattedAmount}</span>
                                   </div>
                                 )}
                               </OrderPaidPlanDiscount>
@@ -213,7 +213,7 @@ export function ThankYou({
                                 {({ formattedAmount }) => (
                                   <div>
                                     <span>Coupon Discount</span>
-                                    <span>{`-${formattedAmount}`}</span>
+                                    <span>-{formattedAmount}</span>
                                   </div>
                                 )}
                               </OrderCouponDiscount>
@@ -223,7 +223,9 @@ export function ThankYou({
                               >
                                 {({ rate, formattedAmount, name }) => (
                                   <div>
-                                    <span>{`${name} (${rate}%)`}</span>
+                                    <span>
+                                      {name} ({rate}%)
+                                    </span>
                                     <span>{formattedAmount}</span>
                                   </div>
                                 )}
@@ -234,7 +236,7 @@ export function ThankYou({
                               >
                                 {({ formattedAmount, rate }) => (
                                   <div>
-                                    <span>{`Ticket Service Fee (${rate}%)`}</span>
+                                    <span>Ticket Service Fee ({rate}%)</span>
                                     <span>{formattedAmount}</span>
                                   </div>
                                 )}
@@ -257,12 +259,12 @@ export function ThankYou({
                       <div className="flex flex-row items-center px-6 py-3 gap-1">
                         <OrderNumber asChild>
                           {({ orderNumber }) => (
-                            <span>{`Order No. #${orderNumber}`}</span>
+                            <span>Order No. #{orderNumber}</span>
                           )}
                         </OrderNumber>
                         <OrderCreatedDate asChild>
                           {({ formattedDate }) => (
-                            <span>{`Placed on: ${formattedDate}`}</span>
+                            <span>Placed on: {formattedDate}</span>
                           )}
                         </OrderCreatedDate>
                       </div>

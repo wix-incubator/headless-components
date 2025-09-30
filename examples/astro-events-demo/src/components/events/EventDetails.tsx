@@ -167,7 +167,7 @@ export function EventDetails({
                     <ScheduleItemTimeSlot />
                     <ScheduleItemDuration asChild>
                       {({ durationMinutes }) => (
-                        <span>{`${durationMinutes} minutes`}</span>
+                        <span>{durationMinutes} minutes</span>
                       )}
                     </ScheduleItemDuration>
                   </div>
@@ -200,7 +200,10 @@ export function EventDetails({
               </ScheduleListItemRepeater>
               <div className="flex sm:justify-end">
                 <a
-                  href={`${schedulePagePath.replace(':slug', eventServiceConfig.event.slug!)}`}
+                  href={schedulePagePath.replace(
+                    ':slug',
+                    eventServiceConfig.event.slug!
+                  )}
                   className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline w-full sm:w-auto text-center"
                 >
                   See All
