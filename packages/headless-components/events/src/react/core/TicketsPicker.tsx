@@ -261,11 +261,18 @@ export function CheckoutTrigger(props: CheckoutTriggerProps): React.ReactNode {
     ticketDefinitionListService.selectedQuantities.get();
   const isLoading = checkoutService.isLoading.get();
   const error = checkoutService.error.get();
+  const filteredSelectedQuantities = selectedQuantities.filter(
+    (selectedQuantity) => !!selectedQuantity.quantity,
+  );
   const hasTicketDefinitions = !!ticketDefinitions.length;
-  const hasSelectedTicketDefinitions = !!selectedQuantities.length;
+  const hasSelectedTicketDefinitions = !!filteredSelectedQuantities.length;
 
   const checkout = () =>
-    checkoutService.checkout(event._id!, event.slug!, selectedQuantities);
+    checkoutService.checkout(
+      event._id!,
+      event.slug!,
+      filteredSelectedQuantities,
+    );
 
   if (!hasTicketDefinitions) {
     return null;

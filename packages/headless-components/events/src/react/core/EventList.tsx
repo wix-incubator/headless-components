@@ -96,8 +96,6 @@ export interface LoadMoreTriggerProps {
 export interface LoadMoreTriggerRenderProps {
   /** Indicates whether more events are being loaded */
   isLoading: boolean;
-  /** Indicates whether there are more events to load */
-  hasMoreEvents: boolean;
   /** Function to load more events */
   loadMoreEvents: () => void;
 }
@@ -112,9 +110,12 @@ export function LoadMoreTrigger(props: LoadMoreTriggerProps): React.ReactNode {
   const isLoading = eventListService.isLoadingMore.get();
   const hasMoreEvents = eventListService.hasMoreEvents.get();
 
+  if (!hasMoreEvents) {
+    return null;
+  }
+
   return props.children({
     isLoading,
-    hasMoreEvents,
     loadMoreEvents: eventListService.loadMoreEvents,
   });
 }
