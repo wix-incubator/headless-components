@@ -45,7 +45,7 @@ enum TestIds {
 export interface RootProps {
   asChild?: boolean;
   children: React.ReactNode;
-  itemDetailsServiceConfig: ItemServiceConfig;
+  itemDetailsServiceConfig?: ItemServiceConfig;
 }
 
 export const Root = ({ children, itemDetailsServiceConfig }: RootProps) => {
