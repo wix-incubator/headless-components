@@ -181,8 +181,13 @@ export function Totals(props: TotalsProps): React.ReactNode {
     formattedTax,
     formattedFee,
   } = ticketDefinitionListService.totals.get();
+  const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const event = eventService.event.get();
   const taxSettings = event.registration?.tickets?.taxSettings;
+
+  if (!ticketDefinitions.length) {
+    return null;
+  }
 
   return props.children({
     total,

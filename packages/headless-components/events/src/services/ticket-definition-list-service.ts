@@ -176,9 +176,18 @@ export const TicketDefinitionListService =
 export async function loadTicketDefinitionListServiceConfig(
   eventId: string,
 ): Promise<TicketDefinitionListServiceConfig> {
-  const query = { filter: { eventId } };
-  const response =
-    await ticketDefinitionsV2.queryAvailableTicketDefinitions(query);
+  // @ts-expect-error
+  const response = await ticketDefinitionsV2.queryAvailableTicketDefinitions({
+    filter: {
+      eventId,
+    },
+    sort: [
+      {
+        fieldName: 'sortIndex',
+        direction: 'ASC',
+      },
+    ],
+  });
   const ticketDefinitions = response.ticketDefinitions ?? [];
 
   return { ticketDefinitions };
