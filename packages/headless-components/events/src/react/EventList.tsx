@@ -217,11 +217,7 @@ export const LoadMoreTrigger = React.forwardRef<
 
   return (
     <CoreEventList.LoadMoreTrigger>
-      {({ isLoading, hasMoreEvents, loadMoreEvents }) => {
-        if (!hasMoreEvents) {
-          return null;
-        }
-
+      {({ isLoading, loadMoreEvents }) => {
         return (
           <AsChildSlot
             ref={ref}

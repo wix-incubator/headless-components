@@ -17,10 +17,10 @@ export interface EventListServiceAPI {
   categories: Signal<Category[]>;
   /** Reactive signal containing the selected category id */
   selectedCategoryId: Signal<string | null>;
-  /** Reactive signal indicating if more events are currently being loaded */
-  isLoadingMore: Signal<boolean>;
   /** Reactive signal indicating if events are currently being loaded */
   isLoading: Signal<boolean>;
+  /** Reactive signal indicating if more events are currently being loaded */
+  isLoadingMore: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   error: Signal<string | null>;
   /** Reactive signal containing the number of events per page */
@@ -31,10 +31,10 @@ export interface EventListServiceAPI {
   totalPages: Signal<number>;
   /** Reactive signal indicating if there are more events to load */
   hasMoreEvents: ReadOnlySignal<boolean>;
+  /** Function to load events */
+  loadEvents: (categoryId?: string) => Promise<void>;
   /** Function to load more events */
   loadMoreEvents: () => Promise<void>;
-  /** Function to load events by category */
-  loadEventsByCategory: (categoryId: string | null) => Promise<void>;
 }
 
 export interface EventListServiceConfig {
@@ -69,41 +69,18 @@ export const EventListService =
         () => currentPage.get() + 1 < totalPages.get(),
       );
 
-      const loadMoreEvents = async () => {
-        isLoadingMore.set(true);
-        error.set(null);
-
-        try {
-          const offset = pageSize.get() * (currentPage.get() + 1);
-          const queryEventsResult = await queryEvents(
-            offset,
-            selectedCategoryId.get(),
-          );
-
-          events.set([...events.get(), ...queryEventsResult.items]);
-          pageSize.set(queryEventsResult.pageSize);
-          currentPage.set(queryEventsResult.currentPage ?? 0);
-          totalPages.set(queryEventsResult.totalPages ?? 0);
-        } catch (err) {
-          error.set(getErrorMessage(err));
-        } finally {
-          isLoadingMore.set(false);
-        }
-      };
-
-      const loadEventsByCategory = async (categoryId: string | null) => {
-        selectedCategoryId.set(categoryId);
-
+      const loadEvents = async (categoryId?: string) => {
+        selectedCategoryId.set(categoryId ?? null);
         isLoading.set(true);
         error.set(null);
 
         try {
-          const queryEventsResult = await queryEvents(0, categoryId);
+          const queryEventsResponse = await queryEvents(0, categoryId);
 
-          events.set(queryEventsResult.items);
-          pageSize.set(queryEventsResult.pageSize);
-          currentPage.set(queryEventsResult.currentPage ?? 0);
-          totalPages.set(queryEventsResult.totalPages ?? 0);
+          events.set(queryEventsResponse.items);
+          pageSize.set(queryEventsResponse.pageSize);
+          currentPage.set(queryEventsResponse.currentPage ?? 0);
+          totalPages.set(queryEventsResponse.totalPages ?? 0);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
@@ -111,19 +88,41 @@ export const EventListService =
         }
       };
 
+      const loadMoreEvents = async () => {
+        isLoadingMore.set(true);
+        error.set(null);
+
+        try {
+          const offset = pageSize.get() * (currentPage.get() + 1);
+          const queryEventsResponse = await queryEvents(
+            offset,
+            selectedCategoryId.get(),
+          );
+
+          events.set([...events.get(), ...queryEventsResponse.items]);
+          pageSize.set(queryEventsResponse.pageSize);
+          currentPage.set(queryEventsResponse.currentPage ?? 0);
+          totalPages.set(queryEventsResponse.totalPages ?? 0);
+        } catch (err) {
+          error.set(getErrorMessage(err));
+        } finally {
+          isLoadingMore.set(false);
+        }
+      };
+
       return {
         events,
         categories,
         selectedCategoryId,
-        isLoadingMore,
         isLoading,
+        isLoadingMore,
         error,
         pageSize,
         currentPage,
         totalPages,
         hasMoreEvents,
+        loadEvents,
         loadMoreEvents,
-        loadEventsByCategory,
       };
     },
   );

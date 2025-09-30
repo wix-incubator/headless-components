@@ -56,7 +56,7 @@ export const EventRepeater = EventListPrimitive.EventRepeater;
 export const EventListLoadMoreTrigger = React.forwardRef<
   React.ElementRef<typeof EventListPrimitive.LoadMoreTrigger>,
   React.ComponentPropsWithoutRef<typeof EventListPrimitive.LoadMoreTrigger>
->(({ className, label = 'Load More', ...props }, ref) => {
+>(({ className, ...props }, ref) => {
   return (
     <EventListPrimitive.LoadMoreTrigger
       {...props}
@@ -65,7 +65,6 @@ export const EventListLoadMoreTrigger = React.forwardRef<
         'block bg-primary text-primary-foreground font-paragraph py-2 px-4 hover:bg-primary/80',
         className
       )}
-      label={label}
     />
   );
 });
@@ -87,7 +86,7 @@ export const EventListError = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-destructive text-center',
+        'block font-paragraph text-status-danger text-center',
         className
       )}
     />

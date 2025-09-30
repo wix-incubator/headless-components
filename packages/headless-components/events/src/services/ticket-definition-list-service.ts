@@ -154,8 +154,7 @@ export const TicketDefinitionListService =
               selectedQuantity.ticketDefinitionId !== ticketDefinitionId ||
               selectedQuantity.pricingOptionId !== pricingOptionId,
           )
-          .concat(newSelectedQuantity)
-          .filter((selectedQuantity) => !!selectedQuantity.quantity);
+          .concat(newSelectedQuantity);
 
         checkoutService.error.set(null);
         selectedQuantities.set(newSelectedQuantities);
@@ -177,9 +176,18 @@ export const TicketDefinitionListService =
 export async function loadTicketDefinitionListServiceConfig(
   eventId: string,
 ): Promise<TicketDefinitionListServiceConfig> {
-  const query = { filter: { eventId } };
-  const response =
-    await ticketDefinitionsV2.queryAvailableTicketDefinitions(query);
+  // @ts-expect-error
+  const response = await ticketDefinitionsV2.queryAvailableTicketDefinitions({
+    filter: {
+      eventId,
+    },
+    sort: [
+      {
+        fieldName: 'sortIndex',
+        direction: 'ASC',
+      },
+    ],
+  });
   const ticketDefinitions = response.ticketDefinitions ?? [];
 
   return { ticketDefinitions };
@@ -216,6 +224,10 @@ function getTicketReservationTotals(
 
   selectedQuantities.forEach(
     ({ ticketDefinitionId, quantity, priceOverride, pricingOptionId }) => {
+      if (!quantity) {
+        return;
+      }
+
       const ticketDefinition = ticketDefinitions.find(
         (ticketDefinition) => ticketDefinition._id === ticketDefinitionId,
       )!;

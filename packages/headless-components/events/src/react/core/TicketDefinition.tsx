@@ -16,6 +16,7 @@ import {
   getTicketDefinitionTax,
   isTicketDefinitionAvailable,
 } from '../../utils/ticket-definition.js';
+import { formatFullDate } from '../../utils/date.js';
 import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
@@ -446,7 +447,7 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
   }
 
   const startDate = new Date(ticketDefinition.salePeriod!.startDate!);
-  const startDateFormatted = startDate.toLocaleString();
+  const startDateFormatted = formatFullDate(startDate);
 
   return props.children({ startDate, startDateFormatted });
 }
@@ -482,7 +483,7 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
   }
 
   const endDate = new Date(ticketDefinition.salePeriod!.endDate!);
-  const endDateFormatted = endDate.toLocaleString();
+  const endDateFormatted = formatFullDate(endDate);
 
   return props.children({ endDate, endDateFormatted, saleEnded });
 }

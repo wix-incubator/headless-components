@@ -43,7 +43,7 @@ export function Root(props: RootProps): React.ReactNode {
   const handleCategoryChange = async (value: FilterPrimitive.Filter) => {
     const categoryId = value?.['categoryId'];
 
-    await eventListService.loadEventsByCategory(
+    await eventListService.loadEvents(
       categoryId === ALL_CATEGORIES ? null : categoryId,
     );
   };
