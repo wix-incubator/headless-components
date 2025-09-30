@@ -25,6 +25,7 @@ if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
 }
 
+const eventId = eventServiceConfigResult.config.event._id;
 const recurringCategoryId =
   eventServiceConfigResult.config.event.dateAndTimeSettings?.recurringEvents
     ?.categoryId;
@@ -34,13 +35,9 @@ const [
   scheduleListServiceConfig,
   occurrencesListServiceConfig,
 ] = await Promise.all([
-  loadTicketDefinitionListServiceConfig(
-    eventServiceConfigResult.config.event._id
-  ),
-  loadScheduleListServiceConfig(eventServiceConfigResult.config.event._id, 2),
-  recurringCategoryId
-    ? loadOccurrencesListServiceConfig(recurringCategoryId)
-    : undefined,
+  loadTicketDefinitionListServiceConfig(eventId),
+  loadScheduleListServiceConfig(eventId, 2),
+  loadOccurrencesListServiceConfig(recurringCategoryId),
 ]);
 ---
 

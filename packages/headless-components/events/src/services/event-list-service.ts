@@ -75,12 +75,12 @@ export const EventListService =
         error.set(null);
 
         try {
-          const queryEventsResponse = await queryEvents({ categoryId });
+          const response = await queryEvents({ categoryId });
 
-          events.set(queryEventsResponse.items);
-          pageSize.set(queryEventsResponse.pageSize);
-          currentPage.set(queryEventsResponse.currentPage);
-          totalPages.set(queryEventsResponse.totalPages);
+          events.set(response.items);
+          pageSize.set(response.pageSize);
+          currentPage.set(response.currentPage);
+          totalPages.set(response.totalPages);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
@@ -94,15 +94,15 @@ export const EventListService =
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
-          const queryEventsResponse = await queryEvents({
+          const response = await queryEvents({
             offset,
             categoryId: selectedCategoryId.get(),
           });
 
-          events.set([...events.get(), ...queryEventsResponse.items]);
-          pageSize.set(queryEventsResponse.pageSize);
-          currentPage.set(queryEventsResponse.currentPage);
-          totalPages.set(queryEventsResponse.totalPages);
+          events.set([...events.get(), ...response.items]);
+          pageSize.set(response.pageSize);
+          currentPage.set(response.currentPage);
+          totalPages.set(response.totalPages);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {

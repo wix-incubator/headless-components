@@ -4,6 +4,7 @@ import {
   type ReadOnlySignal,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
+import { wixEventsV2 } from '@wix/events';
 import { getErrorMessage } from '../utils/errors.js';
 import { type Event } from './event-service.js';
 import { queryEvents } from './event-list-service.js';
@@ -61,20 +62,21 @@ export const OccurrencesListService =
       );
 
       const loadMoreOccurrences = async () => {
+        if (!config.categoryId) {
+          return;
+        }
+
         isLoadingMore.set(true);
         error.set(null);
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
-          const queryEventsResponse = await queryEvents({
-            offset,
-            categoryId: config.categoryId,
-          });
+          const response = await queryOccurrences(config.categoryId, offset);
 
-          occurrences.set([...occurrences.get(), ...queryEventsResponse.items]);
-          pageSize.set(queryEventsResponse.pageSize);
-          currentPage.set(queryEventsResponse.currentPage);
-          totalPages.set(queryEventsResponse.totalPages);
+          occurrences.set([...occurrences.get(), ...response.items]);
+          pageSize.set(response.pageSize);
+          currentPage.set(response.currentPage);
+          totalPages.set(response.totalPages);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
@@ -96,15 +98,27 @@ export const OccurrencesListService =
   );
 
 export async function loadOccurrencesListServiceConfig(
-  categoryId: string,
+  recurringCategoryId: string,
 ): Promise<OccurrencesListServiceConfig> {
-  const queryEventsResponse = await queryEvents({ categoryId });
+  if (recurringCategoryId) {
+    const response = await queryOccurrences(recurringCategoryId);
 
-  return {
+    return {
+      categoryId: recurringCategoryId,
+      occurrences: response.items,
+      pageSize: response.pageSize,
+      currentPage: response.currentPage,
+      totalPages: response.totalPages,
+    };
+  }
+
+  return {};
+}
+
+async function queryOccurrences(categoryId: string, offset = 0) {
+  return queryEvents({
+    offset,
     categoryId,
-    occurrences: queryEventsResponse.items,
-    pageSize: queryEventsResponse.pageSize,
-    currentPage: queryEventsResponse.currentPage,
-    totalPages: queryEventsResponse.totalPages,
-  };
+    status: [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED],
+  });
 }
