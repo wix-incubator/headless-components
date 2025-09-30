@@ -1,6 +1,7 @@
 import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
 
 /**
  * Root component for filter display and interaction.
@@ -49,22 +50,42 @@ FilterOptions.displayName = 'FilterOptions';
  */
 export const FilterOptionRepeater = FilterPrimitive.FilterOptionRepeater;
 
+const filterOptionSingleVariants = cva('font-paragraph text-foreground', {
+  variants: {
+    variant: {
+      tabs: 'flex [&_button]:px-2 [&_button]:border-b-4 [&_button]:border-transparent [&_button[data-state=on]]:border-primary [&_button]:-mb-px [&_button[data-state=on]]:relative [&_button]:font-light [&_button]:bg-transparent hover:[&_button]:text-primary/80',
+    },
+  },
+});
+
+export interface FilterOptionSingleProps
+  extends React.ComponentPropsWithoutRef<
+      typeof FilterPrimitive.FilterOption.SingleFilter
+    >,
+    VariantProps<typeof filterOptionSingleVariants> {}
+
 /**
- * Single selection filter component.
+ * Single selection filter component with style variants.
  *
  * @component
+ * @example
+ * ```tsx
+ * // Default styling (inherits base styles)
+ * <FilterOptionSingle />
+ *
+ * // Tab-like styling with border indicators
+ * <FilterOptionSingle variant="tabs" />
+ * ```
  */
 export const FilterOptionSingle = React.forwardRef<
   React.ElementRef<typeof FilterPrimitive.FilterOption.SingleFilter>,
-  React.ComponentPropsWithoutRef<
-    typeof FilterPrimitive.FilterOption.SingleFilter
-  >
->(({ className, ...props }, ref) => {
+  FilterOptionSingleProps
+>(({ className, variant, ...props }, ref) => {
   return (
     <FilterPrimitive.FilterOption.SingleFilter
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(filterOptionSingleVariants({ variant }), className)}
     />
   );
 });

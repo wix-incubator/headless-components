@@ -10,6 +10,10 @@ import {
   EventLocation,
   EventDate,
   EventRsvpButton,
+  EventListFilters,
+  FilterOptions,
+  FilterOptionRepeater,
+  FilterOptionSingle,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
 
@@ -24,6 +28,13 @@ export function EventList({
 }: EventListProps) {
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
+      <EventListFilters allCategoriesLabel="All">
+        <FilterOptions className="border-b border-foreground/20 mb-6">
+          <FilterOptionRepeater>
+            <FilterOptionSingle variant="tabs" />
+          </FilterOptionRepeater>
+        </FilterOptions>
+      </EventListFilters>
       <Events className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
         <EventRepeater className="flex flex-col bg-background border border-foreground/10">
           <div className="relative w-full pt-[100%] bg-primary/80">
