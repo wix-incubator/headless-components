@@ -30,7 +30,7 @@ export const ScheduleItemTagLabel = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'inline-flex items-center px-3 py-1.5 bg-secondary text-secondary-foreground rounded-full border border-secondary text-sm font-paragraph leading-5',
+        'inline-flex text-sm font-paragraph text-foreground px-3 py-1.5 border border-secondary rounded-full bg-background',
         className
       )}
     />

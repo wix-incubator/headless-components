@@ -39,7 +39,7 @@ export const ScheduleItemName = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-foreground font-medium text-lg',
+        'block font-paragraph text-foreground text-base font-medium',
         className
       )}
     />
@@ -127,10 +127,7 @@ export const ScheduleItemStage = React.forwardRef<
     <ScheduleItemPrimitive.Stage
       {...props}
       ref={ref}
-      className={cn(
-        'block font-paragraph text-foreground text-sm font-medium',
-        className
-      )}
+      className={cn('block font-paragraph text-foreground text-sm', className)}
     />
   );
 });

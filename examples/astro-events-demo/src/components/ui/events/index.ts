@@ -1,5 +1,6 @@
 export * from './Event';
 export * from './EventList';
+export * from './Filter';
 export * from './PricingOption';
 export * from './ScheduleItem';
 export * from './ScheduleItemsGroup';
