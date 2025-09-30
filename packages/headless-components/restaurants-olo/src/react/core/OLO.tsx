@@ -6,7 +6,9 @@ import {
   OLOSettingsService,
   OLOSettingsServiceDefinition,
 } from '@wix/headless-restaurants-olo/services';
-import { ItemServiceConfig, OLOSettingsServiceConfig } from '../../services';
+import { OLOSettingsServiceConfig } from '../../services/olo-settings-service.js';
+import { ItemServiceConfig } from '../../services/item-details-service.js';
+
 // import { OLOSettingsService, OLOSettingsServiceDefinition } from '../../services/OLOSettingsService';
 
 // ========================================
