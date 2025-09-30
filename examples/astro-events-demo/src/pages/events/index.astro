@@ -1,5 +1,5 @@
 ---
-import { loadEventListServiceConfig } from '@wix/headless-events/services';
+import { loadEventListServiceConfig } from '@wix/events/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import EventsPage from '../../react-pages/events';
 
@@ -15,6 +15,6 @@ const eventListServiceConfig = await loadEventListServiceConfig();
     client:load
     slot="body"
     eventListServiceConfig={eventListServiceConfig}
-    eventsPagePath="/events"
+    eventDetailsPagePath="/events/:slug"
   />
 </BaseLayout>

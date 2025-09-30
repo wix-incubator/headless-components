@@ -1,12 +1,10 @@
-import '../styles/theme-1.css';
 import {
   type EventServiceConfig,
   type EventListServiceConfig,
   type TicketDefinitionListServiceConfig,
   type CheckoutServiceConfig,
   type ScheduleListServiceConfig,
-} from '@wix/headless-events/services';
-import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
+} from '@wix/events/services';
 import { EventDetails } from '../components/events/EventDetails';
 
 interface EventDetailsPageProps {
@@ -15,7 +13,7 @@ interface EventDetailsPageProps {
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   checkoutServiceConfig: CheckoutServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
-  eventsPagePath: string;
+  eventDetailsPagePath: string;
   formPagePath: string;
 }
 
@@ -25,22 +23,20 @@ export default function EventDetailsPage({
   ticketDefinitionListServiceConfig,
   checkoutServiceConfig,
   scheduleListServiceConfig,
-  eventsPagePath,
+  eventDetailsPagePath,
   formPagePath,
 }: EventDetailsPageProps) {
   return (
-    <KitchensinkLayout>
-      <div className="max-w-7xl mx-auto">
-        <EventDetails
-          eventServiceConfig={eventServiceConfig}
-          eventListServiceConfig={eventListServiceConfig}
-          ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
-          checkoutServiceConfig={checkoutServiceConfig}
-          scheduleListServiceConfig={scheduleListServiceConfig}
-          eventsPagePath={eventsPagePath}
-          formPagePath={formPagePath}
-        />
-      </div>
-    </KitchensinkLayout>
+    <div className="bg-background">
+      <EventDetails
+        eventServiceConfig={eventServiceConfig}
+        eventListServiceConfig={eventListServiceConfig}
+        ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+        checkoutServiceConfig={checkoutServiceConfig}
+        scheduleListServiceConfig={scheduleListServiceConfig}
+        eventDetailsPagePath={eventDetailsPagePath}
+        formPagePath={formPagePath}
+      />
+    </div>
   );
 }

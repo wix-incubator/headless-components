@@ -4,11 +4,12 @@ import {
   ScheduleItem as ScheduleItemPrimitive,
   Event as EventPrimitive,
   ScheduleItemTag as ScheduleItemTagPrimitive,
-} from '@wix/headless-events/react';
+} from '@wix/events/components';
 import {
   type EventServiceConfig,
   type ScheduleListServiceConfig,
-} from '@wix/headless-events/services';
+} from '@wix/events/services';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
@@ -55,22 +56,36 @@ export function Schedule({
         <ScheduleListPrimitive.Root
           scheduleListServiceConfig={scheduleListServiceConfig}
         >
-          <div className="flex mb-6 justify-between">
-            <div className="flex items-center gap-2">
-              <span className="font-light text-content-primary">
-                Filter by:
-              </span>
-              <ScheduleListPrimitive.StageFilter
-                className="font-light text-content-primary"
-                defaultOptionLabel="All stages"
-              />
-            </div>
-            <ScheduleListPrimitive.TagFilters className="flex gap-2 flex-wrap">
-              <ScheduleListPrimitive.TagFilterRepeater>
-                <ScheduleItemTagPrimitive.Button className="inline-flex items-center px-3 py-1.5 border border-gray-200 rounded-full text-sm font-light text-content-primary leading-5 cursor-pointer transition-colors hover:underline data-[active=true]:bg-blue-500 data-[active=true]:text-white data-[active=true]:border-blue-500" />
-              </ScheduleListPrimitive.TagFilterRepeater>
-            </ScheduleListPrimitive.TagFilters>
-          </div>
+          <ScheduleListPrimitive.Filters allStagesLabel="All stages">
+            <FilterPrimitive.FilterOptions>
+              <FilterPrimitive.FilterOptionRepeater className="flex flex-row justify-between mb-6 items-center">
+                <FilterPrimitive.FilterOption.SingleFilter
+                  asChild
+                  className="flex gap-2 text-content-primary"
+                >
+                  {({ value, onChange, validValues, valueFormatter }) => (
+                    <div>
+                      <span>Filter by:</span>
+                      <select
+                        value={value}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                          onChange(e.target.value)
+                        }
+                        data-filter-type="single"
+                      >
+                        {validValues?.map(value => (
+                          <option key={value} value={value}>
+                            {valueFormatter ? valueFormatter(value) : value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </FilterPrimitive.FilterOption.SingleFilter>
+                <FilterPrimitive.FilterOption.MultiFilter className="flex gap-2 text-sm font-light text-content-primary [&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-gray-200 [&_button]:rounded-full [&_button[data-state=on]]:bg-blue-500 [&_button[data-state=on]]:text-white [&_button[data-state=on]]:border-blue-500" />
+              </FilterPrimitive.FilterOptionRepeater>
+            </FilterPrimitive.FilterOptions>
+          </ScheduleListPrimitive.Filters>
           <ScheduleListPrimitive.Groups
             className="space-y-8 mb-6"
             emptyState={<div>No schedule items available</div>}

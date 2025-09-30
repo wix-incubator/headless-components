@@ -1,10 +1,13 @@
-export const formatPrice = (amount: string, currency: string) => {
+export const roundPrice = (amount: number, _currency: string) =>
+  Number(amount.toFixed(2));
+
+export const formatPrice = (amount: number, currency: string) => {
   try {
     return new Intl.NumberFormat('en-US', {
       currency,
       style: 'currency',
-    }).format(Number(amount));
+    }).format(amount);
   } catch (error) {
-    return `${amount} ${currency}`;
+    return `${amount.toFixed(2)} ${currency}`;
   }
 };

@@ -1,5 +1,5 @@
-import { Event as EventPrimitive } from '@wix/headless-events/react';
-import { type EventServiceConfig } from '@wix/headless-events/services';
+import { Event as EventPrimitive } from '@wix/events/components';
+import { type EventServiceConfig } from '@wix/events/services';
 
 interface ThankYouProps {
   eventServiceConfig: EventServiceConfig;

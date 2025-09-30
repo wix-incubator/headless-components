@@ -2,11 +2,11 @@ import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import * as CoreScheduleList from './core/ScheduleList.js';
 import * as ScheduleItem from './ScheduleItem.js';
-import * as ScheduleItemTag from './ScheduleItemTag.js';
 import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
@@ -293,181 +293,42 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
 };
 
 /**
- * Props for the ScheduleList StageFilter component.
+ * Props for the ScheduleList Filters component.
  */
-export interface StageFilterProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    stageNames: string[];
-    currentStageFilter: string | null;
-    setStageFilter: (stageName: string | null) => void;
-    clearStageFilter: () => void;
-  }>;
-  /** CSS classes to apply to the dropdown */
-  className?: string;
-  /** Text for the default/all option */
-  defaultOptionLabel: string;
-}
-
-/**
- * Stage filter component that provides stage filtering functionality.
- * Returns a dropdown select element for filtering by stage.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <div className="flex items-center gap-2">
- *   <span>Filter by:</span>
- *   <ScheduleList.StageFilter
- *     className="border border-gray-200 rounded-md px-3 py-2"
- *     defaultOptionLabel="All places"
- *   />
- * </div>
- *
- * // asChild with custom implementation
- * <ScheduleList.StageFilter asChild>
- *   {React.forwardRef(({ stageNames, currentStageFilter, setStageFilter, ...props }, ref) => (
- *     <select ref={ref} {...props} value={currentStageFilter || ''} onChange={(e) => setStageFilter(e.target.value || null)}>
- *       <option value="">All places</option>
- *       {stageNames.map(stage => (
- *         <option key={stage} value={stage}>{stage}</option>
- *       ))}
- *     </select>
- *   ))}
- * </ScheduleList.StageFilter>
- * ```
- */
-export const StageFilter = React.forwardRef<HTMLElement, StageFilterProps>(
-  (props, ref) => {
-    const { asChild, children, className, defaultOptionLabel, ...otherProps } =
-      props;
-
-    return (
-      <CoreScheduleList.StageFilter>
-        {({
-          stageNames,
-          currentStageFilter,
-          setStageFilter,
-          clearStageFilter,
-        }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListStageFilter}
-            value={currentStageFilter || ''}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setStageFilter(e.target.value || null)
-            }
-            customElement={children}
-            customElementProps={{
-              stageNames,
-              currentStageFilter,
-              setStageFilter,
-              clearStageFilter,
-            }}
-            {...otherProps}
-          >
-            <select>
-              <option value="">{defaultOptionLabel}</option>
-              {stageNames.map((stage) => (
-                <option key={stage} value={stage}>
-                  {stage}
-                </option>
-              ))}
-            </select>
-          </AsChildSlot>
-        )}
-      </CoreScheduleList.StageFilter>
-    );
-  },
-);
-
-/**
- * Props for the ScheduleList TagFilters component.
- */
-export interface TagFiltersProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
+export interface FiltersProps {
   /** Child components or custom render function when using asChild */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{
-        tags: string[];
-        currentTagFilters: string[];
-      }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-}
-
-/**
- * Container for tag filters with conditional rendering.
- *
- * @component
- */
-export const TagFilters = React.forwardRef<HTMLElement, TagFiltersProps>(
-  (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
-
-    return (
-      <CoreScheduleList.TagFilters>
-        {({ tags, currentTagFilters }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.scheduleListTagFilters}
-            customElement={children}
-            customElementProps={{
-              tags,
-              currentTagFilters,
-            }}
-            {...otherProps}
-          >
-            <div>{children as React.ReactNode}</div>
-          </AsChildSlot>
-        )}
-      </CoreScheduleList.TagFilters>
-    );
-  },
-);
-
-/**
- * Props for the ScheduleList TagFilterRepeater component.
- */
-export interface TagFilterRepeaterProps {
-  /** Child components */
   children: React.ReactNode;
+  /** All stages label */
+  allStagesLabel: string;
 }
 
 /**
- * Repeater component that renders ScheduleItemTag.Root for each available tag with filtering functionality.
+ * Container for the schedule list filters.
  *
  * @component
  * @example
  * ```tsx
- * <ScheduleList.TagFilterRepeater>
- *   <ScheduleItemTag.Button />
- * </ScheduleList.TagFilterRepeater>
+ * <ScheduleList.Filters allStagesLabel="All">
+ *   <Filter.FilterOptions className="border-b border-gray-500 mb-6">
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.SingleFilter className="flex gap-2" />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </ScheduleList.Filters>
  * ```
  */
-export const TagFilterRepeater = (
-  props: TagFilterRepeaterProps,
-): React.ReactNode => {
-  const { children } = props;
-
+export const Filters = (props: FiltersProps): React.ReactNode => {
   return (
-    <CoreScheduleList.TagFilterRepeater>
-      {({ tags }) =>
-        tags.map((tag) => (
-          <ScheduleItemTag.Root key={tag} tag={tag}>
-            {children}
-          </ScheduleItemTag.Root>
-        ))
-      }
-    </CoreScheduleList.TagFilterRepeater>
+    <CoreScheduleList.Filters allStagesLabel={props.allStagesLabel}>
+      {({ filterOptions, value, onChange }) => (
+        <FilterPrimitive.Root
+          value={value}
+          onChange={onChange}
+          filterOptions={filterOptions}
+        >
+          {props.children}
+        </FilterPrimitive.Root>
+      )}
+    </CoreScheduleList.Filters>
   );
 };

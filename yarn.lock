@@ -3767,7 +3767,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/typography@npm:^0.5.10, @tailwindcss/typography@npm:^0.5.18":
+"@tailwindcss/typography@npm:^0.5.10, @tailwindcss/typography@npm:^0.5.15, @tailwindcss/typography@npm:^0.5.18":
   version: 0.5.19
   resolution: "@tailwindcss/typography@npm:0.5.19"
   dependencies:
@@ -4867,20 +4867,25 @@ __metadata:
     "@astrojs/cloudflare": "npm:^12.5.4"
     "@astrojs/react": "npm:^4.3.0"
     "@astrojs/sitemap": "npm:^3.4.1"
+    "@astrojs/tailwind": "npm:^6.0.2"
+    "@radix-ui/react-separator": "npm:^1.1.7"
+    "@tailwindcss/container-queries": "npm:^0.1.1"
+    "@tailwindcss/typography": "npm:^0.5.15"
     "@tailwindcss/vite": "npm:^4.0.13"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
     "@types/react-router-dom": "npm:^5.3.3"
     "@wix/astro": "npm:^1.0.22"
-    "@wix/cli": "npm:^1.1.95"
-    "@wix/events": "npm:^1.0.597"
+    "@wix/cli": "npm:^1.1.119"
     "@wix/headless-events": "workspace:*"
+    "@wix/ricos": "npm:^10.143.0"
     "@wix/sdk": "npm:^1.15.24"
     "@wix/services-definitions": "npm:^0.1.5"
     "@wix/services-manager": "npm:^0.2.21"
     "@wix/services-manager-react": "npm:^0.1.27"
     "@wix/wix-vibe-plugins": "npm:^0.0.1"
     astro: "npm:^5.9.0"
+    class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
     prettier: "npm:^3.6.2"
     prettier-plugin-astro: "npm:^0.14.1"
@@ -4888,7 +4893,8 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^7.6.3"
     sass-embedded: "npm:^1.89.0"
-    tailwindcss: "npm:^4.1.7"
+    tailwind-merge: "npm:^3.3.1"
+    tailwindcss: "npm:^3.4.14"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
@@ -7333,7 +7339,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/events@npm:^1.0.597, @wix/events@npm:^1.0.607":
+"@wix/events@npm:^1.0.607":
   version: 1.0.620
   resolution: "@wix/events@npm:1.0.620"
   dependencies:
@@ -7400,15 +7406,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/form-public@npm:^0.15.0":
-  version: 0.15.0
-  resolution: "@wix/form-public@npm:0.15.0"
+"@wix/form-public@npm:^0.17.0":
+  version: 0.17.0
+  resolution: "@wix/form-public@npm:0.17.0"
   dependencies:
     lodash.camelcase: "npm:^4.3.0"
     lodash.mapkeys: "npm:^4.6.0"
   peerDependencies:
     react: ^18.3.1
-  checksum: 10c0/9526f5c3d0e32bc9d79bec12767e750b7514320f5fd768b6981b8cdd23dc0086cb256a951aa1113f6dd448d3adabeb764e198a135be03fd56339990c486134b4
+  checksum: 10c0/423ab95c3f4089c4cdb1c5e48861f01d5794f9f7fd80178612b62cb0dfffc528490f5c128f4dbf47c04dd145d4feff6321827c84af05350dbe0fa7dc9b398efb
   languageName: node
   linkType: hard
 
@@ -7750,7 +7756,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/form-public": "npm:^0.15.0"
+    "@wix/form-public": "npm:^0.17.0"
     "@wix/forms": "npm:^1.0.292"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
@@ -8429,7 +8435,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/ricos@npm:^10.141.3, @wix/ricos@npm:^10.141.4":
+"@wix/ricos@npm:^10.141.3, @wix/ricos@npm:^10.141.4, @wix/ricos@npm:^10.143.0":
   version: 10.143.0
   resolution: "@wix/ricos@npm:10.143.0"
   dependencies:

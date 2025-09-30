@@ -95,11 +95,11 @@ export interface ItemsProps {
   emptyState?: React.ReactNode;
   asChild?: boolean;
   className?: string;
-  // TODO: add infiniteScroll and pageSize when we have pagination
+  infiniteScroll?: boolean;
 }
 
 /**
- * Main container for the collection items display with support for empty states.
+ * Main container for the collection items display with support for empty states and infinite scroll.
  *
  * @component
  * @example
@@ -115,6 +115,18 @@ export interface ItemsProps {
  *   </CmsCollection.ItemRepeater>
  * </CmsCollection.Items>
  *
+ * // With infinite scroll enabled
+ * <CmsCollection.Items
+ *   infiniteScroll
+ *   emptyState={<div>No data available</div>}
+ *   className="space-y-4"
+ * >
+ *   <CmsCollection.ItemRepeater>
+ *     <CmsItem.Field fieldId="title" />
+ *     <CmsItem.Field fieldId="description" />
+ *   </CmsCollection.ItemRepeater>
+ * </CmsCollection.Items>
+ *
  * // Using asChild pattern
  * <CmsCollection.Items asChild emptyState={<div>No data available</div>}>
  *   <section className="grid grid-cols-3 gap-4">
@@ -127,37 +139,100 @@ export interface ItemsProps {
  * ```
  */
 export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
-  const { children, emptyState, asChild, className, ...otherProps } = props;
+  const {
+    children,
+    emptyState,
+    asChild,
+    className,
+    infiniteScroll,
+    ...otherProps
+  } = props;
+  const sentinelRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <CoreCmsCollection.Items>
-      {({ items, isLoading, error }) => {
+      {({ items, isLoading, error, loadNext, hasNext }) => {
+        // Set up infinite scroll when enabled
+        React.useEffect(() => {
+          if (
+            !infiniteScroll ||
+            !sentinelRef.current ||
+            !hasNext ||
+            isLoading
+          ) {
+            return;
+          }
+
+          const sentinel = sentinelRef.current;
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              const entry = entries[0];
+              if (entry && entry.isIntersecting && hasNext && !isLoading) {
+                loadNext();
+              }
+            },
+            {
+              // Trigger when the sentinel is 100px away from entering the viewport
+              rootMargin: '100px',
+              threshold: 0,
+            },
+          );
+
+          observer.observe(sentinel);
+
+          return () => {
+            observer.disconnect();
+          };
+        }, [infiniteScroll, hasNext, isLoading, loadNext]);
+
         // Don't render anything during loading or error states
-        if (isLoading || error) {
+        if (isLoading && items.length === 0) {
+          return null;
+        }
+
+        if (error && items.length === 0) {
           return null;
         }
 
         // Show empty state when no items
-        if (items.length === 0) {
+        if (items.length === 0 && !isLoading) {
           return emptyState || null;
         }
 
         const dataAttributes = {
           'data-testid': TestIds.cmsCollectionItems,
           'data-empty': items.length === 0,
+          'data-infinite-scroll': infiniteScroll,
         };
 
         return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            {...dataAttributes}
-            customElement={children}
-            {...otherProps}
-          >
-            {children}
-          </AsChildSlot>
+          <>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              {...dataAttributes}
+              customElement={children}
+              {...otherProps}
+            >
+              {children}
+            </AsChildSlot>
+
+            {/* Infinite scroll sentinel - only render when infinite scroll is enabled and there are more items */}
+            {infiniteScroll && hasNext && (
+              <div
+                ref={sentinelRef}
+                style={{
+                  height: '1px',
+                  width: '100%',
+                  opacity: 0,
+                  pointerEvents: 'none',
+                }}
+                aria-hidden="true"
+              />
+            )}
+          </>
         );
       }}
     </CoreCmsCollection.Items>

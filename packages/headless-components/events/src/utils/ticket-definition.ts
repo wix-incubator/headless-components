@@ -1,8 +1,18 @@
 import { wixEventsV2 } from '@wix/events';
+import { WIX_FEE_RATE } from '../constants.js';
 import { type TicketDefinition } from '../services/ticket-definition-service.js';
-import { formatPrice } from './price.js';
+import { formatPrice, roundPrice } from './price.js';
 
-const FEE_RATE = '2.5';
+export const getTicketDefinitionCurrency = (
+  ticketDefinition: TicketDefinition,
+) => {
+  const { fixedPrice, guestPrice, pricingOptions } =
+    ticketDefinition.pricingMethod!;
+
+  return (fixedPrice?.currency ??
+    guestPrice?.currency ??
+    pricingOptions?.optionDetails?.[0]?.price?.currency)!;
+};
 
 export const getTicketDefinitionTax = (
   taxSettings: wixEventsV2.TaxSettings,
@@ -10,21 +20,29 @@ export const getTicketDefinitionTax = (
   currency: string,
 ) => {
   const name = taxSettings.name!;
-  const rate = taxSettings.rate!;
-  const rateAmount = Number(rate);
+  const rate = Number(taxSettings.rate!);
   const included = taxSettings.type === 'INCLUDED_IN_PRICE';
-  const amount = included
-    ? (price - (price * 100) / (100 + rateAmount)).toFixed(2)
-    : ((price * rateAmount) / 100).toFixed(2);
-  const formattedAmount = formatPrice(amount, currency);
 
-  return {
+  const tax = {
     name,
     rate,
     included,
-    amount,
-    formattedAmount,
+    taxableAmount: 0,
+    taxAmount: 0,
+    formattedTaxAmount: '',
   };
+
+  if (included) {
+    tax.taxableAmount = roundPrice((price * 100) / (100 + rate), currency);
+    tax.taxAmount = roundPrice(price - tax.taxableAmount, currency);
+    tax.formattedTaxAmount = formatPrice(tax.taxAmount, currency);
+  } else {
+    tax.taxableAmount = price;
+    tax.taxAmount = roundPrice(price * (rate / 100), currency);
+    tax.formattedTaxAmount = formatPrice(tax.taxAmount, currency);
+  }
+
+  return tax;
 };
 
 export const getTicketDefinitionFee = (
@@ -33,17 +51,17 @@ export const getTicketDefinitionFee = (
   currency: string,
   guestPricing: boolean,
 ) => {
-  const rateAmount = Number(FEE_RATE);
-  const priceWithTax =
+  const addedTax =
     taxSettings?.type === 'ADDED_AT_CHECKOUT' &&
     (!guestPricing || taxSettings.appliedToDonations)
-      ? price * ((100 + Number(taxSettings.rate)) / 100)
-      : price;
-  const amount = ((priceWithTax * rateAmount) / 100).toFixed(2);
+      ? getTicketDefinitionTax(taxSettings, price, currency)
+      : undefined;
+  const priceWithAddedTax = addedTax ? price + addedTax.taxAmount : price;
+  const amount = roundPrice(priceWithAddedTax * (WIX_FEE_RATE / 100), currency);
   const formattedAmount = formatPrice(amount, currency);
 
   return {
-    rate: FEE_RATE,
+    rate: WIX_FEE_RATE,
     amount,
     formattedAmount,
   };

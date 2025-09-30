@@ -57,6 +57,35 @@ export const Root = ({ children, itemDetailsServiceConfig }: RootProps) => {
   );
 };
 
+/**
+ * Displays the item name with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ItemDetails.Name />
+ * <ItemDetails.Name asChild>
+ *   <h2 className="font-heading text-lg" />
+ * </ItemDetails.Name>
+ * ```
+ */
+export const Name = React.forwardRef<HTMLElement, ItemDetailsNameProps>(
+  ({ asChild, children, className, ...rest }, ref) => {
+    return (
+      <Item.Name
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.itemName}
+        {...rest}
+      >
+        {children}
+      </Item.Name>
+    );
+  },
+);
+Name.displayName = 'ItemDetails.Name';
+
 export interface ItemDetailsNameProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
