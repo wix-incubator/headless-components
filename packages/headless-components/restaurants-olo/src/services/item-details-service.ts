@@ -14,7 +14,7 @@ import { type LineItem } from '@wix/ecom/services';
  */
 export interface ItemServiceAPI {
   /** Reactive signal containing the current item data */
-  item: Signal<items.Item>;
+  item?: Signal<items.Item | undefined>;
   quantity: Signal<number>;
   specialRequest: Signal<string>;
   lineItem: Signal<LineItem>;
@@ -44,7 +44,7 @@ export const ItemServiceDefinition = defineService<ItemServiceAPI>('item');
  */
 export interface ItemServiceConfig {
   /** The initial item data to configure the service with */
-  item: items.Item;
+  item?: items.Item;
 
   itemId?: string;
 
@@ -91,7 +91,9 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
-    const item: Signal<items.Item> = signalsService.signal(config.item);
+    const item: Signal<items.Item | undefined> = signalsService.signal(
+      config.item,
+    );
     const isLoading: Signal<boolean> = signalsService.signal(!!config.item);
     const error: Signal<string | null> = signalsService.signal(
       config.item ? null : 'Item not found',

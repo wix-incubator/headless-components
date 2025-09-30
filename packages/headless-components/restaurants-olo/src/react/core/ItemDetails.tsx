@@ -62,7 +62,7 @@ export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
   const service = useService(ItemServiceDefinition) as ServiceAPI<
     typeof ItemServiceDefinition
   >;
-  const item = service.item.get();
+  const item = service.item?.get();
 
   // TODO: Check if modifiers exist on item type - might be in a different property
   const modifiers = (item as unknown as { modifiers: [] })?.modifiers || [];
@@ -88,7 +88,7 @@ export const VariantsRepeater: React.FC<ItemDetailsVariantsRepeaterProps> = ({
   const service = useService(ItemServiceDefinition) as ServiceAPI<
     typeof ItemServiceDefinition
   >;
-  const item = service.item.get();
+  const item = service.item?.get();
 
   // TODO: Check if variants exist on item type - might be in a different property
   const variants = (item as unknown as { variants: [] })?.variants || [];
