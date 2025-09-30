@@ -29,7 +29,7 @@ export interface OccurrencesListServiceAPI {
 }
 
 export interface OccurrencesListServiceConfig {
-  categoryId?: string;
+  recurringCategoryId?: string;
   occurrences?: Event[];
   pageSize?: number;
   currentPage?: number;
@@ -62,7 +62,7 @@ export const OccurrencesListService =
       );
 
       const loadMoreOccurrences = async () => {
-        if (!config.categoryId) {
+        if (!config.recurringCategoryId) {
           return;
         }
 
@@ -71,7 +71,10 @@ export const OccurrencesListService =
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
-          const response = await queryOccurrences(config.categoryId, offset);
+          const response = await queryOccurrences(
+            config.recurringCategoryId,
+            offset,
+          );
 
           occurrences.set([...occurrences.get(), ...response.items]);
           pageSize.set(response.pageSize);
@@ -104,7 +107,7 @@ export async function loadOccurrencesListServiceConfig(
     const response = await queryOccurrences(recurringCategoryId);
 
     return {
-      categoryId: recurringCategoryId,
+      recurringCategoryId,
       occurrences: response.items,
       pageSize: response.pageSize,
       currentPage: response.currentPage,
@@ -115,10 +118,10 @@ export async function loadOccurrencesListServiceConfig(
   return {};
 }
 
-async function queryOccurrences(categoryId: string, offset = 0) {
+async function queryOccurrences(recurringCategoryId: string, offset = 0) {
   return queryEvents({
     offset,
-    categoryId,
+    categoryId: recurringCategoryId,
     status: [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED],
   });
 }
