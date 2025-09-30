@@ -32,7 +32,10 @@ export const InvoiceItemName = React.forwardRef<
     <InvoiceItemPrimitive.Name
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -52,7 +55,10 @@ export const InvoiceItemPrice = React.forwardRef<
     <InvoiceItemPrimitive.Price
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -72,7 +78,10 @@ export const InvoiceItemQuantity = React.forwardRef<
     <InvoiceItemPrimitive.Quantity
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -92,7 +101,10 @@ export const InvoiceItemTotal = React.forwardRef<
     <InvoiceItemPrimitive.Total
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });

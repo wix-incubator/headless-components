@@ -37,7 +37,10 @@ export const OrderNumber = React.forwardRef<
     <OrderPrimitive.OrderNumber
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground text-base', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -57,7 +60,10 @@ export const OrderGuestEmail = React.forwardRef<
     <OrderPrimitive.GuestEmail
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground text-base', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -77,7 +83,10 @@ export const OrderCreatedDate = React.forwardRef<
     <OrderPrimitive.CreatedDate
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground text-base', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -149,7 +158,10 @@ export const OrderSubtotal = React.forwardRef<
     <OrderPrimitive.Subtotal
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -169,7 +181,10 @@ export const OrderTax = React.forwardRef<
     <OrderPrimitive.Tax
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -189,7 +204,10 @@ export const OrderServiceFee = React.forwardRef<
     <OrderPrimitive.ServiceFee
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -209,7 +227,10 @@ export const OrderPaidPlanDiscount = React.forwardRef<
     <OrderPrimitive.PaidPlanDiscount
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -229,7 +250,10 @@ export const OrderCouponDiscount = React.forwardRef<
     <OrderPrimitive.CouponDiscount
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });
@@ -249,7 +273,10 @@ export const OrderTotal = React.forwardRef<
     <OrderPrimitive.Total
       {...props}
       ref={ref}
-      className={cn('font-paragraph text-foreground', className)}
+      className={cn(
+        'block font-paragraph text-foreground text-base',
+        className
+      )}
     />
   );
 });

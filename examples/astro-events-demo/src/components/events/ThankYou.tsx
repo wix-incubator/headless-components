@@ -93,7 +93,7 @@ export function ThankYou({
                 <div className="flex flex-row justify-between w-full">
                   <div>
                     <EventTitle variant="lg" className="mb-3" />
-                    <div className="flex gap-1 items-center font-paragraph text-sm text-foreground mb-1">
+                    <div className="flex gap-1 items-center mb-1">
                       <svg width="20" height="20" viewBox="0 0 20 20">
                         <path
                           className="text-foreground"
@@ -103,7 +103,7 @@ export function ThankYou({
                       </svg>
                       <EventDate format="short" />
                     </div>
-                    <div className="flex gap-1 items-center font-paragraph text-sm text-foreground">
+                    <div className="flex gap-1 items-center">
                       <svg width="20" height="20" viewBox="0 0 20 20">
                         <path
                           className="text-foreground"
@@ -157,8 +157,10 @@ export function ThankYou({
                     <a>Outlook</a>
                   </EventAddToIcsCalendar>
                 </div>
-                <div className="flex items-center gap-3 font-paragraph text-foreground">
-                  <span>Share on</span>
+                <div className="flex items-center gap-3">
+                  <span className="font-paragraph text-foreground">
+                    Share on
+                  </span>
                   <EventSocialShare eventPageUrl={eventPageUrl} />
                 </div>
               </div>
@@ -187,7 +189,7 @@ export function ThankYou({
                               <div className="flex flex-col py-5 border-b border-foreground/10">
                                 <OrderSubtotal
                                   asChild
-                                  className="justify-between flex"
+                                  className="flex justify-between"
                                 >
                                   {({ formattedAmount }) => (
                                     <div>
@@ -198,7 +200,7 @@ export function ThankYou({
                                 </OrderSubtotal>
                                 <OrderPaidPlanDiscount
                                   asChild
-                                  className="justify-between flex"
+                                  className="flex justify-between"
                                 >
                                   {({ formattedAmount, rate }) => (
                                     <div>
@@ -209,7 +211,7 @@ export function ThankYou({
                                 </OrderPaidPlanDiscount>
                                 <OrderCouponDiscount
                                   asChild
-                                  className="justify-between flex"
+                                  className="flex justify-between"
                                 >
                                   {({ formattedAmount }) => (
                                     <div>
@@ -219,7 +221,7 @@ export function ThankYou({
                                 </OrderCouponDiscount>
                                 <OrderTax
                                   asChild
-                                  className="justify-between flex"
+                                  className="flex justify-between"
                                 >
                                   {({ rate, formattedAmount, name }) => (
                                     <div>
@@ -230,7 +232,7 @@ export function ThankYou({
                                 </OrderTax>
                                 <OrderServiceFee
                                   asChild
-                                  className="justify-between flex"
+                                  className="flex justify-between"
                                 >
                                   {({ formattedAmount, rate }) => (
                                     <div>
@@ -242,7 +244,7 @@ export function ThankYou({
                               </div>
                               <OrderTotal
                                 asChild
-                                className="justify-between flex py-5"
+                                className="flex justify-between py-5"
                               >
                                 {({ formattedAmount }) => (
                                   <div>
@@ -254,7 +256,7 @@ export function ThankYou({
                             </div>
                           </div>
                         </OrderInvoiceItems>
-                        <div className="px-6 py-3 gap-1 flex flex-row items-center">
+                        <div className="flex flex-row items-center px-6 py-3 gap-1">
                           <OrderNumber asChild>
                             {({ orderNumber }) => (
                               <span>{`Order No. #${orderNumber}`}</span>
