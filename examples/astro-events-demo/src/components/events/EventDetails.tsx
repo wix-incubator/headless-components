@@ -60,6 +60,7 @@ interface EventDetailsProps {
   scheduleListServiceConfig: ScheduleListServiceConfig;
   eventDetailsPagePath: string;
   formPagePath: string;
+  schedulePagePath: string;
 }
 
 export function EventDetails({
@@ -70,6 +71,7 @@ export function EventDetails({
   scheduleListServiceConfig,
   eventDetailsPagePath,
   formPagePath,
+  schedulePagePath,
 }: EventDetailsProps) {
   const currentEventId = eventServiceConfig.event._id;
   const otherUpcomingEvents = eventListServiceConfig.events
@@ -197,7 +199,7 @@ export function EventDetails({
               </ScheduleListItemRepeater>
               <div className="flex justify-end">
                 <a
-                  href={`${eventDetailsPagePath.replace(':slug', eventServiceConfig.event.slug!)}/schedule`}
+                  href={`${schedulePagePath.replace(':slug', eventServiceConfig.event.slug!)}`}
                   className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline"
                 >
                   See All

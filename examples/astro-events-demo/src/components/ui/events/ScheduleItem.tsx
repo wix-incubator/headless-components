@@ -39,7 +39,7 @@ export const ScheduleItemName = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-foreground text-base font-medium',
+        'block font-paragraph text-foreground text-base',
         className
       )}
     />
@@ -62,7 +62,7 @@ export const ScheduleItemTimeSlot = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-foreground text-base font-medium',
+        'block font-paragraph text-foreground text-base',
         className
       )}
     />
