@@ -185,11 +185,11 @@ export async function loadTicketDefinitionListServiceConfig(
   return { ticketDefinitions };
 }
 
-const getTicketReservationTotals = (
+function getTicketReservationTotals(
   event: Event,
   ticketDefinitions: TicketDefinition[],
   selectedQuantities: TicketReservationQuantity[],
-): TicketReservationTotals => {
+): TicketReservationTotals {
   const taxSettings = event.registration?.tickets?.taxSettings;
   const currency = ticketDefinitions[0]
     ? getTicketDefinitionCurrency(ticketDefinitions[0])
@@ -282,4 +282,4 @@ const getTicketReservationTotals = (
     formattedFee: formatPrice(fee, currency),
     formattedTotal: formatPrice(total, currency),
   };
-};
+}
