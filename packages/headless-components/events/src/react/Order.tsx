@@ -6,7 +6,6 @@ import { InvoiceItem as InvoiceItemType } from '../services/invoice-item-service
 import * as InvoiceItem from './InvoiceItem.js';
 
 enum TestIds {
-  orderRoot = 'order-root',
   orderNumber = 'order-number',
   orderGuestEmail = 'order-guest-email',
   orderCreatedDate = 'order-created-date',
@@ -14,7 +13,7 @@ enum TestIds {
   orderInvoiceItems = 'order-invoice-items',
   orderSubtotal = 'order-subtotal',
   orderTax = 'order-tax',
-  orderServiceFee = 'order-service-fee',
+  orderFee = 'order-fee',
   orderTotal = 'order-total',
   orderPaidPlanDiscount = 'order-paid-plan-discount',
   orderCouponDiscount = 'order-coupon-discount',
@@ -190,7 +189,10 @@ export interface CreatedDateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ createdDate: string }>;
+  children?: AsChildChildren<{
+    createdDate: string;
+    formattedDate: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -214,8 +216,8 @@ export interface CreatedDateProps {
  *   asChild
  *   className="font-light text-sm text-gray-700"
  * >
- *   {({ createdDate }) => (
- *     <span>{`Placed on: ${createdDate}`}</span>
+ *   {({ createdDate, formattedDate }) => (
+ *     <span>{`Placed on: ${formattedDate}`}</span>
  *   )}
  * </Order.CreatedDate>
  * ```
@@ -226,18 +228,18 @@ export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
 
     return (
       <CoreOrder.CreatedDate>
-        {({ createdDate }) => (
+        {({ createdDate, formattedDate }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.orderCreatedDate}
             customElement={children}
-            customElementProps={{ createdDate }}
+            customElementProps={{ createdDate, formattedDate }}
             content={createdDate}
             {...otherProps}
           >
-            <span>{createdDate}</span>
+            <span>{formattedDate}</span>
           </AsChildSlot>
         )}
       </CoreOrder.CreatedDate>
@@ -306,7 +308,6 @@ export const DownloadTicketsButton = React.forwardRef<
           data-testid={TestIds.orderDownloadTicketsButton}
           customElement={children}
           customElementProps={{ ticketsPdfUrl }}
-          content={ticketsPdfUrl}
           {...otherProps}
         >
           <button>{label}</button>
@@ -371,7 +372,6 @@ export const InvoiceItems = React.forwardRef<HTMLElement, InvoiceItemsProps>(
             data-testid={TestIds.orderInvoiceItems}
             customElement={children}
             customElementProps={{ invoiceItems }}
-            content={invoiceItems}
             {...otherProps}
           >
             <div>{children as React.ReactNode}</div>
@@ -438,7 +438,11 @@ export interface SubtotalProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedAmount: string }>;
+  children?: AsChildChildren<{
+    formattedAmount: string;
+    amount: number;
+    currency: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -462,7 +466,7 @@ export interface SubtotalProps {
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
  * >
- *   {({ formattedAmount }) => (
+ *   {({ formattedAmount, amount, currency }) => (
  *     <div>
  *       <span>Subtotal:</span>
  *       <span>{formattedAmount}</span>
@@ -477,14 +481,14 @@ export const Subtotal = React.forwardRef<HTMLElement, SubtotalProps>(
 
     return (
       <CoreOrder.Subtotal>
-        {({ formattedAmount }) => (
+        {({ formattedAmount, amount, currency }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.orderSubtotal}
             customElement={children}
-            customElementProps={{ formattedAmount }}
+            customElementProps={{ formattedAmount, amount, currency }}
             content={formattedAmount}
             {...otherProps}
           >
@@ -503,7 +507,12 @@ export interface PaidPlanDiscountProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedAmount: string; rate: string }>;
+  children?: AsChildChildren<{
+    formattedAmount: string;
+    rate: number;
+    amount: number;
+    currency: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -524,7 +533,7 @@ export interface PaidPlanDiscountProps {
  *
  * // asChild with react component
  * <Order.PaidPlanDiscount asChild>
- *   {({ formattedAmount, rate }) => (
+ *   {({ formattedAmount, rate, amount, currency }) => (
  *     <div>
  *       <span>{`Paid Plan Discount (${rate}%)`}</span>
  *       <span>{formattedAmount}</span>
@@ -541,14 +550,14 @@ export const PaidPlanDiscount = React.forwardRef<
 
   return (
     <CoreOrder.PaidPlanDiscount>
-      {({ formattedAmount, rate }) => (
+      {({ formattedAmount, rate, amount, currency }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.orderPaidPlanDiscount}
           customElement={children}
-          customElementProps={{ formattedAmount, rate }}
+          customElementProps={{ formattedAmount, rate, amount, currency }}
           content={formattedAmount}
           {...otherProps}
         >
@@ -566,7 +575,11 @@ export interface CouponDiscountProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedAmount: string }>;
+  children?: AsChildChildren<{
+    formattedAmount: string;
+    amount: number;
+    currency: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -587,7 +600,7 @@ export interface CouponDiscountProps {
  *
  * // asChild with react component
  * <Order.CouponDiscount asChild>
- *   {({ formattedAmount }) => (
+ *   {({ formattedAmount, amount, currency }) => (
  *     <div>
  *       <span>{`Coupon Discount (${formattedAmount})`}</span>
  *     </div>
@@ -603,14 +616,14 @@ export const CouponDiscount = React.forwardRef<
 
   return (
     <CoreOrder.CouponDiscount>
-      {({ formattedAmount }) => (
+      {({ formattedAmount, amount, currency }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.orderCouponDiscount}
           customElement={children}
-          customElementProps={{ formattedAmount }}
+          customElementProps={{ formattedAmount, amount, currency }}
           content={formattedAmount}
           {...otherProps}
         >
@@ -629,7 +642,9 @@ export interface TaxProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    rate: string;
+    rate: number;
+    amount: number;
+    currency: string;
     formattedAmount: string;
     name: string;
   }>;
@@ -656,7 +671,7 @@ export interface TaxProps {
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
  * >
- *   {({ rate, formattedAmount, name }) => (
+ *   {({ rate, amount, currency, formattedAmount, name }) => (
  *     <div>
  *       <span>{`${name} (${rate}%)`}</span>
  *       <span>{formattedAmount}</span>
@@ -670,14 +685,14 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
 
   return (
     <CoreOrder.Tax>
-      {({ rate, formattedAmount, name }) => (
+      {({ rate, amount, currency, formattedAmount, name }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.orderTax}
           customElement={children}
-          customElementProps={{ rate, formattedAmount, name }}
+          customElementProps={{ rate, amount, currency, formattedAmount, name }}
           content={formattedAmount}
           {...otherProps}
         >
@@ -689,15 +704,17 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
 });
 
 /**
- * Props for the Order ServiceFee component.
+ * Props for the Order Fee component.
  */
-export interface ServiceFeeProps {
+export interface FeeProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
     formattedAmount: string;
-    rate: string;
+    rate: number;
+    amount: number;
+    currency: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -710,51 +727,49 @@ export interface ServiceFeeProps {
  * @example
  * ```tsx
  * // Default usage
- * <Order.ServiceFee className="text-gray-600 font-light" />
+ * <Order.Fee className="text-gray-600 font-light" />
  *
  * // asChild with primitive
- * <Order.ServiceFee asChild>
+ * <Order.Fee asChild>
  *   <p className="text-sm text-gray-600 font-light" />
- * </Order.ServiceFee>
+ * </Order.Fee>
  *
  * // asChild with react component
- * <Order.ServiceFee
+ * <Order.Fee
  *   asChild
  *   className="font-light text-gray-700 justify-between flex"
  * >
- *   {({ formattedAmount, rate }) => (
+ *   {({ formattedAmount, rate, amount, currency }) => (
  *     <div>
  *       <span>{`Service Fee (${rate}%)`}</span>
  *       <span>{formattedAmount}</span>
  *     </div>
  *   )}
- * </Order.ServiceFee>
+ * </Order.Fee>
  * ```
  */
-export const ServiceFee = React.forwardRef<HTMLElement, ServiceFeeProps>(
-  (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
+  const { asChild, children, className, ...otherProps } = props;
 
-    return (
-      <CoreOrder.ServiceFee>
-        {({ formattedAmount, rate }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.orderServiceFee}
-            customElement={children}
-            customElementProps={{ formattedAmount, rate }}
-            content={formattedAmount}
-            {...otherProps}
-          >
-            <span>{formattedAmount}</span>
-          </AsChildSlot>
-        )}
-      </CoreOrder.ServiceFee>
-    );
-  },
-);
+  return (
+    <CoreOrder.Fee>
+      {({ formattedAmount, rate, amount, currency }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.orderFee}
+          customElement={children}
+          customElementProps={{ formattedAmount, rate, amount, currency }}
+          content={formattedAmount}
+          {...otherProps}
+        >
+          <span>{formattedAmount}</span>
+        </AsChildSlot>
+      )}
+    </CoreOrder.Fee>
+  );
+});
 
 /**
  * Props for the Order Total component.
@@ -763,7 +778,11 @@ export interface TotalProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedAmount: string }>;
+  children?: AsChildChildren<{
+    formattedAmount: string;
+    amount: number;
+    currency: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -788,7 +807,7 @@ export interface TotalProps {
  *   asChild
  *   className="font-light text-gray-700 justify-between flex py-5"
  * >
- *   {({ formattedAmount }) => (
+ *   {({ formattedAmount, amount, currency }) => (
  *     <div>
  *       <span>Total:</span>
  *       <span>{formattedAmount}</span>
@@ -802,14 +821,14 @@ export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
 
   return (
     <CoreOrder.Total>
-      {({ formattedAmount }) => (
+      {({ formattedAmount, amount, currency }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.orderTotal}
           customElement={children}
-          customElementProps={{ formattedAmount }}
+          customElementProps={{ formattedAmount, amount, currency }}
           content={formattedAmount}
           {...otherProps}
         >

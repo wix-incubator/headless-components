@@ -18,7 +18,7 @@ import {
   OrderPaidPlanDiscount,
   OrderCouponDiscount,
   OrderTax,
-  OrderServiceFee,
+  OrderFee,
   OrderTotal,
   InvoiceItemName,
   InvoiceItemPrice,
@@ -193,7 +193,7 @@ export function ThankYou({
                                 >
                                   {({ formattedAmount }) => (
                                     <div>
-                                      <span>Subtotal:</span>
+                                      <span>Subtotal</span>
                                       <span>{formattedAmount}</span>
                                     </div>
                                   )}
@@ -205,7 +205,7 @@ export function ThankYou({
                                   {({ formattedAmount, rate }) => (
                                     <div>
                                       <span>{`Paid Plan Discount (${rate}%)`}</span>
-                                      <span>{formattedAmount}</span>
+                                      <span>{`-${formattedAmount}`}</span>
                                     </div>
                                   )}
                                 </OrderPaidPlanDiscount>
@@ -215,7 +215,8 @@ export function ThankYou({
                                 >
                                   {({ formattedAmount }) => (
                                     <div>
-                                      <span>{`Coupon Discount (${formattedAmount})`}</span>
+                                      <span>Coupon Discount</span>
+                                      <span>{`-${formattedAmount}`}</span>
                                     </div>
                                   )}
                                 </OrderCouponDiscount>
@@ -230,17 +231,17 @@ export function ThankYou({
                                     </div>
                                   )}
                                 </OrderTax>
-                                <OrderServiceFee
+                                <OrderFee
                                   asChild
                                   className="flex justify-between"
                                 >
                                   {({ formattedAmount, rate }) => (
                                     <div>
-                                      <span>{`Service Fee (${rate}%)`}</span>
+                                      <span>{`Ticket Service Fee (${rate}%)`}</span>
                                       <span>{formattedAmount}</span>
                                     </div>
                                   )}
-                                </OrderServiceFee>
+                                </OrderFee>
                               </div>
                               <OrderTotal
                                 asChild
@@ -248,7 +249,7 @@ export function ThankYou({
                               >
                                 {({ formattedAmount }) => (
                                   <div>
-                                    <span>Total:</span>
+                                    <span>Total</span>
                                     <span>{formattedAmount}</span>
                                   </div>
                                 )}
@@ -263,8 +264,8 @@ export function ThankYou({
                             )}
                           </OrderNumber>
                           <OrderCreatedDate asChild>
-                            {({ createdDate }) => (
-                              <span>{`Placed on: ${createdDate}`}</span>
+                            {({ formattedDate }) => (
+                              <span>{`Placed on: ${formattedDate}`}</span>
                             )}
                           </OrderCreatedDate>
                         </div>

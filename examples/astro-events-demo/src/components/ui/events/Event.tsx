@@ -364,14 +364,7 @@ EventXShare.displayName = 'EventXShare';
  *
  * @component
  */
-export const EventType = React.forwardRef<
-  React.ElementRef<typeof EventPrimitive.Type>,
-  React.ComponentPropsWithoutRef<typeof EventPrimitive.Type>
->(({ ...props }, ref) => {
-  return <EventPrimitive.Type {...props} ref={ref} />;
-});
-
-EventType.displayName = 'EventType';
+export const EventType = EventPrimitive.Type;
 
 /**
  * Displays Google Calendar add button for the event.

@@ -1,4 +1,4 @@
-const waitALittle = (ms = 1000) =>
+const wait = (ms = 1000) =>
   new Promise<undefined>((resolve) => setTimeout(resolve, ms));
 
 export const poll = async ({
@@ -20,7 +20,7 @@ export const poll = async ({
     }
 
     if (!result) {
-      await waitALittle(intervalMs);
+      await wait(intervalMs);
       await poll({ callback, intervalMs, totalMs: totalMs - intervalMs });
     }
 

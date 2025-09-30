@@ -192,16 +192,16 @@ export const OrderTax = React.forwardRef<
 OrderTax.displayName = 'OrderTax';
 
 /**
- * Displays the order service fee.
+ * Displays the order fee.
  *
  * @component
  */
-export const OrderServiceFee = React.forwardRef<
-  React.ElementRef<typeof OrderPrimitive.ServiceFee>,
-  React.ComponentPropsWithoutRef<typeof OrderPrimitive.ServiceFee>
+export const OrderFee = React.forwardRef<
+  React.ElementRef<typeof OrderPrimitive.Fee>,
+  React.ComponentPropsWithoutRef<typeof OrderPrimitive.Fee>
 >(({ className, ...props }, ref) => {
   return (
-    <OrderPrimitive.ServiceFee
+    <OrderPrimitive.Fee
       {...props}
       ref={ref}
       className={cn(
@@ -212,7 +212,7 @@ export const OrderServiceFee = React.forwardRef<
   );
 });
 
-OrderServiceFee.displayName = 'OrderServiceFee';
+OrderFee.displayName = 'OrderFee';
 
 /**
  * Displays the order paid plan discount.

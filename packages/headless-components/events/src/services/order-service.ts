@@ -11,7 +11,6 @@ export type Order = orders.Order;
 export interface OrderServiceAPI {
   order: Signal<Order>;
   isPolling: Signal<boolean>;
-  pollOrder: () => Promise<void>;
 }
 
 export interface OrderServiceConfig {
@@ -32,8 +31,7 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
 
     const order = signalsService.signal<Order>(config.order);
     const isPolling = signalsService.signal<boolean>(false);
-    const eventId = signalsService.signal<string>(config.eventId);
-    const orderNumber = signalsService.signal<string>(config.orderNumber);
+    const { eventId, orderNumber } = config;
 
     const pollOrder = async () => {
       if (isOrderReady(order.get())) {
@@ -45,16 +43,7 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
       try {
         await poll({
           callback: async () => {
-            const response = await orders.getOrder(
-              { eventId: eventId.get(), orderNumber: orderNumber.get() },
-              {
-                fieldset: [
-                  orders.OrderFieldset.TICKETS,
-                  orders.OrderFieldset.DETAILS,
-                  orders.OrderFieldset.INVOICE,
-                ],
-              },
-            );
+            const response = await loadOrder(eventId, orderNumber);
 
             order.set(response);
 
@@ -70,10 +59,11 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
       }
     };
 
+    pollOrder();
+
     return {
       order,
       isPolling,
-      pollOrder,
     };
   },
 );
@@ -82,7 +72,16 @@ export async function loadOrderServiceConfig(
   eventId: string,
   orderNumber: string,
 ): Promise<OrderServiceConfig> {
-  const order = await orders.getOrder(
+  const order = await loadOrder(eventId, orderNumber);
+
+  return { order, eventId, orderNumber };
+}
+
+export const isOrderReady = (order: Order) =>
+  order.ticketsQuantity === order.tickets?.length;
+
+const loadOrder = async (eventId: string, orderNumber: string) => {
+  return orders.getOrder(
     { eventId, orderNumber },
     {
       fieldset: [
@@ -92,9 +91,4 @@ export async function loadOrderServiceConfig(
       ],
     },
   );
-
-  return { order, eventId, orderNumber };
-}
-
-export const isOrderReady = (order: Order) =>
-  order.ticketsQuantity === order.tickets?.length;
+};

@@ -8,8 +8,7 @@ import {
 } from '../../services/order-service.js';
 import { formatDateMonthDayYear } from '../../utils/date.js';
 import { InvoiceItem } from '../../services/invoice-item-service.js';
-import { useEffect } from 'react';
-import { formatPrice, roundPrice } from '../../utils/price.js';
+import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
   /** Child components that will have access to the order service */
@@ -60,7 +59,9 @@ export interface OrderNumberRenderProps {
  */
 export function OrderNumber(props: OrderNumberProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const orderNumber = orderService.order.get().orderNumber!;
+
+  const order = orderService.order.get();
+  const orderNumber = order.orderNumber!;
 
   return props.children({ orderNumber });
 }
@@ -69,6 +70,7 @@ export interface GuestEmailProps {
   /** Render prop function */
   children: (props: GuestEmailRenderProps) => React.ReactNode;
 }
+
 export interface GuestEmailRenderProps {
   /** Guest email */
   guestEmail: string;
@@ -81,7 +83,9 @@ export interface GuestEmailRenderProps {
  */
 export function GuestEmail(props: GuestEmailProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const guestEmail = orderService.order.get().email!;
+
+  const order = orderService.order.get();
+  const guestEmail = order.email!;
 
   return props.children({ guestEmail });
 }
@@ -94,6 +98,8 @@ export interface CreatedDateProps {
 export interface CreatedDateRenderProps {
   /** Created date */
   createdDate: string;
+  /** Formatted date */
+  formattedDate: string;
 }
 
 /**
@@ -103,9 +109,12 @@ export interface CreatedDateRenderProps {
  */
 export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const createdDate = formatDateMonthDayYear(orderService.order.get().created!);
 
-  return props.children({ createdDate });
+  const order = orderService.order.get();
+  const createdDate = order.created!.toString();
+  const formattedDate = formatDateMonthDayYear(createdDate);
+
+  return props.children({ createdDate, formattedDate });
 }
 
 export interface DownloadTicketsButtonProps {
@@ -127,15 +136,13 @@ export function DownloadTicketsButton(
   props: DownloadTicketsButtonProps,
 ): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const ticketsPdfUrl = orderService.order.get().ticketsPdf!;
+
+  const order = orderService.order.get();
+  const ticketsPdfUrl = order.ticketsPdf!;
   const isPolling = orderService.isPolling.get();
-  const isReady = isOrderReady(orderService.order.get());
+  const isReady = isOrderReady(order);
 
   const isUrlReady = isReady && !isPolling;
-
-  useEffect(() => {
-    orderService.pollOrder();
-  }, []);
 
   if (!isUrlReady) {
     return null;
@@ -161,7 +168,9 @@ export interface InvoiceItemsRenderProps {
  */
 export function InvoiceItems(props: InvoiceItemsProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const invoiceItems = orderService.order.get().invoice!.items!;
+
+  const order = orderService.order.get();
+  const invoiceItems = order.invoice!.items!;
 
   return props.children({ invoiceItems });
 }
@@ -177,7 +186,7 @@ export interface InvoiceItemRepeaterRenderProps {
 }
 
 /**
- * Order InvoiceItemRepeater core component that provides invoice items repeater.
+ * Order InvoiceItemRepeater core component that provides invoice items.
  *
  * @component
  */
@@ -185,7 +194,9 @@ export function InvoiceItemRepeater(
   props: InvoiceItemRepeaterProps,
 ): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const invoiceItems = orderService.order.get().invoice!.items!;
+
+  const order = orderService.order.get();
+  const invoiceItems = order.invoice!.items!;
 
   return props.children({ invoiceItems });
 }
@@ -198,6 +209,10 @@ export interface SubtotalProps {
 export interface SubtotalRenderProps {
   /** Formatted subtotal amount */
   formattedAmount: string;
+  /** Subtotal amount */
+  amount: number;
+  /** Subtotal currency */
+  currency: string;
 }
 
 /**
@@ -207,13 +222,17 @@ export interface SubtotalRenderProps {
  */
 export function Subtotal(props: SubtotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const subtotal = orderService.order.get().invoice!.subTotal!;
+
+  const order = orderService.order.get();
+  const subtotal = order.invoice!.subTotal!;
 
   const currency = subtotal.currency!;
-  const amount = roundPrice(Number(subtotal.value!), currency);
+  const amount = Number(subtotal.value!);
 
   return props.children({
     formattedAmount: formatPrice(amount, currency),
+    amount,
+    currency,
   });
 }
 
@@ -226,7 +245,11 @@ export interface PaidPlanDiscountRenderProps {
   /** Formatted paid plan discount amount */
   formattedAmount: string;
   /** Paid plan discount rate */
-  rate: string;
+  rate: number;
+  /** Paid plan discount amount */
+  amount: number;
+  /** Paid plan discount currency */
+  currency: string;
 }
 
 /**
@@ -238,22 +261,23 @@ export function PaidPlanDiscount(
   props: PaidPlanDiscountProps,
 ): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const discounts = orderService.order.get().invoice!.discount?.discounts;
+
+  const order = orderService.order.get();
+  const discounts = order.invoice!.discount?.discounts;
   const paidPlanDiscount = discounts?.find((item) => item.paidPlan);
 
   if (!paidPlanDiscount) {
     return null;
   }
 
-  const currency = paidPlanDiscount.amount?.currency!;
-  const amount = roundPrice(
-    Number(`-${paidPlanDiscount.amount?.value!}`),
-    currency,
-  );
+  const currency = paidPlanDiscount.amount!.currency!;
+  const amount = Number(paidPlanDiscount.amount!.value!);
 
   return props.children({
     formattedAmount: formatPrice(amount, currency),
-    rate: paidPlanDiscount.paidPlan?.percentDiscount?.rate!,
+    rate: Number(paidPlanDiscount.paidPlan!.percentDiscount!.rate!),
+    amount,
+    currency,
   });
 }
 
@@ -265,6 +289,10 @@ export interface CouponDiscountProps {
 export interface CouponDiscountRenderProps {
   /** Formatted coupon discount amount */
   formattedAmount: string;
+  /** Coupon discount amount */
+  amount: number;
+  /** Coupon discount currency */
+  currency: string;
 }
 
 /**
@@ -274,21 +302,22 @@ export interface CouponDiscountRenderProps {
  */
 export function CouponDiscount(props: CouponDiscountProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const discounts = orderService.order.get().invoice!.discount?.discounts;
+
+  const order = orderService.order.get();
+  const discounts = order.invoice!.discount?.discounts;
   const couponDiscount = discounts?.find((item) => item.coupon);
 
   if (!couponDiscount) {
     return null;
   }
 
-  const currency = couponDiscount.amount?.currency!;
-  const amount = roundPrice(
-    Number(`-${couponDiscount.amount?.value!}`),
-    currency,
-  );
+  const currency = couponDiscount.amount!.currency!;
+  const amount = Number(couponDiscount.amount!.value!);
 
   return props.children({
     formattedAmount: formatPrice(amount, currency),
+    amount,
+    currency,
   });
 }
 
@@ -299,7 +328,11 @@ export interface TaxProps {
 
 export interface TaxRenderProps {
   /** Tax rate */
-  rate: string;
+  rate: number;
+  /** Tax amount */
+  amount: number;
+  /** Tax currency */
+  currency: string;
   /** Formatted tax amount */
   formattedAmount: string;
   /** Tax name */
@@ -313,56 +346,66 @@ export interface TaxRenderProps {
  */
 export function Tax(props: TaxProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const tax = orderService.order.get().invoice!.tax;
 
-  if (!tax?.amount?.value) {
+  const order = orderService.order.get();
+  const tax = order.invoice!.tax;
+
+  if (!tax) {
     return null;
   }
 
-  const currency = tax.amount?.currency!;
-  const amount = roundPrice(Number(tax.amount?.value!), currency);
+  const currency = tax.amount!.currency!;
+  const amount = Number(tax.amount!.value!);
 
   return props.children({
-    rate: tax.rate!,
+    rate: Number(tax.rate!),
+    amount,
+    currency,
     formattedAmount: formatPrice(amount, currency),
     name: tax.name!,
   });
 }
 
-export interface ServiceFeeProps {
+export interface FeeProps {
   /** Render prop function */
-  children: (props: ServiceFeeRenderProps) => React.ReactNode;
+  children: (props: FeeRenderProps) => React.ReactNode;
 }
 
-export interface ServiceFeeRenderProps {
+export interface FeeRenderProps {
   /** Service fee rate */
-  rate: string;
+  rate: number;
+  /** Service fee amount */
+  amount: number;
+  /** Service fee currency */
+  currency: string;
   /** Formatted service fee amount */
   formattedAmount: string;
 }
 
 /**
- * Order ServiceFee core component that provides order service fee.
+ * Order Fee core component that provides order service fee.
  *
  * @component
  */
-export function ServiceFee(props: ServiceFeeProps): React.ReactNode {
+export function Fee(props: FeeProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const fees = orderService.order.get().invoice!.fees!;
-  const addedFee = fees.find(
-    ({ type }) => type === 'FEE_ADDED' || type === 'FEE_ADDED_AT_CHECKOUT',
-  );
+
+  const order = orderService.order.get();
+  const fees = order.invoice!.fees!;
+  const addedFee = fees.find(({ type }) => type === 'FEE_ADDED_AT_CHECKOUT');
 
   if (!addedFee) {
     return null;
   }
 
-  const currency = addedFee.amount?.currency!;
-  const amount = roundPrice(Number(addedFee.amount?.value!), currency);
+  const currency = addedFee.amount!.currency!;
+  const amount = Number(addedFee.amount!.value!);
 
   return props.children({
     formattedAmount: formatPrice(amount, currency),
-    rate: addedFee!.rate!,
+    rate: Number(addedFee!.rate!),
+    amount,
+    currency,
   });
 }
 
@@ -374,6 +417,10 @@ export interface TotalProps {
 export interface TotalRenderProps {
   /** Formatted total amount */
   formattedAmount: string;
+  /** Total amount */
+  amount: number;
+  /** Total currency */
+  currency: string;
 }
 
 /**
@@ -383,12 +430,16 @@ export interface TotalRenderProps {
  */
 export function Total(props: TotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
-  const total = orderService.order.get().invoice!.grandTotal!;
+
+  const order = orderService.order.get();
+  const total = order.invoice!.grandTotal!;
 
   const currency = total.currency!;
-  const amount = roundPrice(Number(total.value!), currency);
+  const amount = Number(total.value!);
 
   return props.children({
     formattedAmount: formatPrice(amount, currency),
+    amount,
+    currency,
   });
 }

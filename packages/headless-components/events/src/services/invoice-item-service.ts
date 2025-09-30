@@ -26,7 +26,7 @@ export const InvoiceItemService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const invoiceItem: Signal<InvoiceItem> = signalsService.signal(
+      const invoiceItem = signalsService.signal<InvoiceItem>(
         config.invoiceItem,
       );
 
