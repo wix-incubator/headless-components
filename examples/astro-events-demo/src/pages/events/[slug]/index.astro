@@ -4,7 +4,7 @@ import {
   loadEventListServiceConfig,
   loadTicketDefinitionListServiceConfig,
   loadScheduleListServiceConfig,
-  loadOccurrencesListServiceConfig,
+  loadOccurrenceListServiceConfig,
 } from '@wix/events/services';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import EventDetailsPage from '../../../react-pages/event-details';
@@ -33,11 +33,11 @@ const recurringCategoryId =
 const [
   ticketDefinitionListServiceConfig,
   scheduleListServiceConfig,
-  occurrencesListServiceConfig,
+  occurrenceListServiceConfig,
 ] = await Promise.all([
   loadTicketDefinitionListServiceConfig(eventId),
   loadScheduleListServiceConfig(eventId, 2),
-  loadOccurrencesListServiceConfig(recurringCategoryId),
+  loadOccurrenceListServiceConfig(recurringCategoryId),
 ]);
 ---
 
@@ -56,7 +56,7 @@ const [
       thankYouPageUrl: `${Astro.url.origin}/events/${slug}/thank-you`,
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
-    occurrencesListServiceConfig={occurrencesListServiceConfig}
+    occurrenceListServiceConfig={occurrenceListServiceConfig}
     eventDetailsPagePath="/events/:slug"
     formPagePath="/events/:slug/form"
   />

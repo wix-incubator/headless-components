@@ -9,7 +9,7 @@ import { getErrorMessage } from '../utils/errors.js';
 import { type Event } from './event-service.js';
 import { queryEvents } from './event-list-service.js';
 
-export interface OccurrencesListServiceAPI {
+export interface OccurrenceListServiceAPI {
   /** Reactive signal containing the list of occurrences */
   occurrences: Signal<Event[]>;
   /** Reactive signal indicating if more occurrences are currently being loaded */
@@ -28,7 +28,7 @@ export interface OccurrencesListServiceAPI {
   loadMoreOccurrences: () => Promise<void>;
 }
 
-export interface OccurrencesListServiceConfig {
+export interface OccurrenceListServiceConfig {
   recurringCategoryId?: string;
   occurrences?: Event[];
   pageSize?: number;
@@ -36,14 +36,14 @@ export interface OccurrencesListServiceConfig {
   totalPages?: number;
 }
 
-export const OccurrencesListServiceDefinition = defineService<
-  OccurrencesListServiceAPI,
-  OccurrencesListServiceConfig
->('occurrencesList');
+export const OccurrenceListServiceDefinition = defineService<
+  OccurrenceListServiceAPI,
+  OccurrenceListServiceConfig
+>('occurrenceList');
 
-export const OccurrencesListService =
-  implementService.withConfig<OccurrencesListServiceConfig>()(
-    OccurrencesListServiceDefinition,
+export const OccurrenceListService =
+  implementService.withConfig<OccurrenceListServiceConfig>()(
+    OccurrenceListServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
@@ -100,9 +100,9 @@ export const OccurrencesListService =
     },
   );
 
-export async function loadOccurrencesListServiceConfig(
+export async function loadOccurrenceListServiceConfig(
   recurringCategoryId: string,
-): Promise<OccurrencesListServiceConfig> {
+): Promise<OccurrenceListServiceConfig> {
   if (recurringCategoryId) {
     const response = await queryOccurrences(recurringCategoryId);
 

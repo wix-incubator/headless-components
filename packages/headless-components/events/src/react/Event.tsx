@@ -2,7 +2,7 @@ import { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type Event, type RichContent } from '../services/event-service.js';
-import { type OccurrencesListServiceConfig } from '../services/occurrences-list-service.js';
+import { type OccurrenceListServiceConfig } from '../services/occurrence-list-service.js';
 import { hasDescription } from '../utils/event.js';
 import * as CoreEvent from './core/Event.js';
 
@@ -28,8 +28,8 @@ enum TestIds {
 export interface RootProps {
   /** Event */
   event: Event;
-  /** Occurrences list service configuration */
-  occurrencesListServiceConfig?: OccurrencesListServiceConfig;
+  /** Occurrence list service configuration */
+  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components that will have access to the event */
@@ -65,7 +65,7 @@ export interface RootProps {
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const {
     event,
-    occurrencesListServiceConfig,
+    occurrenceListServiceConfig,
     asChild,
     children,
     className,
@@ -75,7 +75,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   return (
     <CoreEvent.Root
       event={event}
-      occurrencesListServiceConfig={occurrencesListServiceConfig}
+      occurrenceListServiceConfig={occurrenceListServiceConfig}
     >
       <AsChildSlot
         ref={ref}

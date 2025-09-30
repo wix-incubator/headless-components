@@ -8,10 +8,10 @@ import {
   type RichContent,
 } from '../../services/event-service.js';
 import {
-  OccurrencesListService,
-  OccurrencesListServiceDefinition,
-  type OccurrencesListServiceConfig,
-} from '../../services/occurrences-list-service.js';
+  OccurrenceListService,
+  OccurrenceListServiceDefinition,
+  type OccurrenceListServiceConfig,
+} from '../../services/occurrence-list-service.js';
 import { hasDescription } from '../../utils/event.js';
 import { formatFullDate, formatShortDate } from '../../utils/date.js';
 
@@ -20,8 +20,8 @@ export interface RootProps {
   children: React.ReactNode;
   /** Event */
   event: Event;
-  /** Occurrences list service configuration */
-  occurrencesListServiceConfig?: OccurrencesListServiceConfig;
+  /** Occurrence list service configuration */
+  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
 }
 
 /**
@@ -30,7 +30,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { children, event, occurrencesListServiceConfig } = props;
+  const { children, event, occurrenceListServiceConfig } = props;
 
   const eventServiceConfig: EventServiceConfig = {
     event,
@@ -41,9 +41,9 @@ export function Root(props: RootProps): React.ReactNode {
       servicesMap={createServicesMap()
         .addService(EventServiceDefinition, EventService, eventServiceConfig)
         .addService(
-          OccurrencesListServiceDefinition,
-          OccurrencesListService,
-          occurrencesListServiceConfig,
+          OccurrenceListServiceDefinition,
+          OccurrenceListService,
+          occurrenceListServiceConfig,
         )}
     >
       {children}

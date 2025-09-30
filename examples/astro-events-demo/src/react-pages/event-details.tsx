@@ -4,7 +4,7 @@ import {
   type TicketDefinitionListServiceConfig,
   type CheckoutServiceConfig,
   type ScheduleListServiceConfig,
-  type OccurrencesListServiceConfig,
+  type OccurrenceListServiceConfig,
 } from '@wix/events/services';
 import { EventDetails } from '../components/events/EventDetails';
 
@@ -14,7 +14,7 @@ interface EventDetailsPageProps {
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   checkoutServiceConfig: CheckoutServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
-  occurrencesListServiceConfig?: OccurrencesListServiceConfig;
+  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
   eventDetailsPagePath: string;
   formPagePath: string;
 }
@@ -25,7 +25,7 @@ export default function EventDetailsPage({
   ticketDefinitionListServiceConfig,
   checkoutServiceConfig,
   scheduleListServiceConfig,
-  occurrencesListServiceConfig,
+  occurrenceListServiceConfig,
   eventDetailsPagePath,
   formPagePath,
 }: EventDetailsPageProps) {
@@ -37,7 +37,7 @@ export default function EventDetailsPage({
         ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
         checkoutServiceConfig={checkoutServiceConfig}
         scheduleListServiceConfig={scheduleListServiceConfig}
-        occurrencesListServiceConfig={occurrencesListServiceConfig}
+        occurrenceListServiceConfig={occurrenceListServiceConfig}
         eventDetailsPagePath={eventDetailsPagePath}
         formPagePath={formPagePath}
       />
