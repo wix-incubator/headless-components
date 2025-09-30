@@ -7,6 +7,7 @@ A comprehensive CMS collection item component system built with composable primi
 ### Components
 
 - [CmsItem.Root](#cmsitemroot)
+- [CmsItem.Field](#cmsitemfield)
 - [CmsItem.TextField](#cmsitemtextfield)
 - [CmsItem.ImageField](#cmsitemimagefield)
 - [CmsItem.DateField](#cmsitemdatefield)
@@ -21,7 +22,6 @@ A comprehensive CMS collection item component system built with composable primi
 
 The CmsItem component system follows a compound component pattern where individual field components and actions can be composed together to create flexible CMS item displays. Each field type (TextField, ImageField, DateField, CustomField) provides specialized handling for different data types, while action components handle CRUD operations and e-commerce integration.
 
-
 ## Components
 
 ### CmsItem.Root
@@ -29,47 +29,151 @@ The CmsItem component system follows a compound component pattern where individu
 The root container that provides the cms item context to all child components.
 
 **Props**
+
 ```tsx
-interface CmsItemRootProps {
-  item: ItemData;
+interface RootProps {
   children: React.ReactNode;
+  item: {
+    collectionId: string;
+    id: string;
+    item?: any;
+  };
 }
 ```
 
 **Example**
+
 ```tsx
-<CmsItem.Root item={item}>
-  {/* All product components */}
+<CmsItem.Root item={{ collectionId: 'MyCollection', id: 'item-123' }}>
+  {/* All item field components */}
 </CmsItem.Root>
 
+// With pre-loaded item data
+<CmsItem.Root item={{
+  collectionId: 'MyCollection',
+  id: 'item-123',
+  item: itemData
+}}>
+  {/* All item field components */}
+</CmsItem.Root>
 ```
 
-- `data-testid="collection-item"`
-- `data-collection-item-id'="item-id"`
+**Data Attributes**
 
-*Note: Do we need a loading state?*
+- `data-testid="collection-item"` - Applied to item root container
+- `data-collection-item-id="item-id"` - Item identifier
 
 ---
 
-# *IMPORTANT!: We should implement Field (same as the custom field component) first and then see if we need additional fields*
+### CmsItem.Field
 
+**✅ IMPLEMENTED** - General-purpose field component that displays any CMS item field with customizable rendering.
+
+**Props**
+
+```tsx
+interface FieldProps {
+  asChild?: boolean;
+  children?: React.ForwardRefRenderFunction<HTMLElement, FieldRenderProps>;
+  fieldId: string;
+  className?: string;
+}
+
+interface FieldRenderProps {
+  fieldValue: any;
+  'data-testid'?: string;
+  'data-collection-item-field'?: string;
+}
+```
+
+**Example**
+
+```tsx
+// Text field
+<CmsItem.Field fieldId="title" asChild>
+  {({ fieldValue, ...props }, ref) => (
+    <h1 ref={ref} {...props} className="font-heading text-4xl font-bold text-foreground">
+      {fieldValue}
+    </h1>
+  )}
+</CmsItem.Field>
+
+// Image field
+<CmsItem.Field fieldId="heroImage" asChild>
+  {({ fieldValue, ...props }, ref) => (
+    <img
+      ref={ref}
+      {...props}
+      src={fieldValue?.url}
+      alt={fieldValue?.alt}
+      className="w-full h-auto rounded-lg"
+    />
+  )}
+</CmsItem.Field>
+
+// Date field
+<CmsItem.Field fieldId="publishDate" asChild>
+  {({ fieldValue, ...props }, ref) => (
+    <time
+      ref={ref}
+      {...props}
+      dateTime={fieldValue}
+      className="font-paragraph text-sm text-secondary-foreground"
+    >
+      {new Date(fieldValue).toLocaleDateString()}
+    </time>
+  )}
+</CmsItem.Field>
+
+// Complex field with custom logic
+<CmsItem.Field fieldId="rating" asChild>
+  {({ fieldValue, ...props }, ref) => (
+    <div ref={ref} {...props} className="flex items-center gap-1">
+      <StarRating value={fieldValue?.rating} />
+      <span className="font-paragraph text-sm text-secondary-foreground">
+        ({fieldValue?.rating}/5)
+      </span>
+    </div>
+  )}
+</CmsItem.Field>
+
+// Price field
+<CmsItem.Field fieldId="price" asChild>
+  {({ fieldValue, ...props }, ref) => (
+    <span ref={ref} {...props} className="font-heading text-lg font-bold text-primary">
+      ${fieldValue?.toFixed(2)}
+    </span>
+  )}
+</CmsItem.Field>
+```
+
+**Data Attributes**
+
+- `data-testid="field-id"` - Field identifier for testing
+- `data-collection-item-field="field-id"` - Field identifier within item
+
+**Note**: The `Field` component is the general-purpose implementation. The specific field components below (TextField, ImageField, DateField, CustomField) are specialized convenience wrappers that may be implemented in the future.
 
 ---
 
 ### CmsItem.TextField
 
+**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned convenience wrapper for text fields.
+
 Displays an item textual field with customizable rendering.
 
 **Props**
+
 ```tsx
 interface TextFieldProps {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {name: string}>;
+  children?: React.ForwardRefRenderFunction<HTMLElement, { name: string }>;
   fieldId: string; // in cms we can have inifinit fields, we need to have the collection fields data beforhand (we have it in vibe)
 }
 ```
 
 **Example**
+
 ```tsx
 // plain
 <CmsItem.TextField className="text-4xl font-bold">
@@ -90,27 +194,33 @@ interface TextFieldProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="field-id"`
 - `data-collection-item-field="field-id"`
 
-
-Note - this approach relies on the fact that the system generating the headless is aware of the fields beforhand as cms can have infinite field (should we do it differently?)
----
+## Note - this approach relies on the fact that the system generating the headless is aware of the fields beforhand as cms can have infinite field (should we do it differently?)
 
 ### CmsItem.ImageField
+
+**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned convenience wrapper for image fields.
 
 Displays an item image field with customizable rendering.
 
 **Props**
+
 ```tsx
 interface ImageField {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {src: string, alt: string}>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    { src: string; alt: string }
+  >;
   fieldId: string; // in cms we can have inifinit fields, we need to have the collection fields data beforhand (we have it in vibe)
 }
 ```
 
 **Example**
+
 ```tsx
 // plain
 <CmsItem.ImageField className="text-4xl font-bold">
@@ -130,6 +240,7 @@ interface ImageField {
 ```
 
 **Data Attributes**
+
 - `data-testid="field-id"`
 - `data-collection-item-field="field-id"`
 
@@ -137,18 +248,25 @@ interface ImageField {
 
 ### CmsItem.DateField
 
-Displays an item date field with customizable rendering. (could be text field as well)
+**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned convenience wrapper for date fields.
+
+Displays an item date field with customizable rendering.
 
 **Props**
+
 ```tsx
 interface DateField {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {date: string, formattedDate: string}>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLElement,
+    { date: string; formattedDate: string }
+  >;
   fieldId: string; // in cms we can have inifinit fields, we need to have the collection fields data beforhand (we have it in vibe)
 }
 ```
 
 **Example**
+
 ```tsx
 // plain
 <CmsItem.DateField className="text-sm text-content-secondary">
@@ -170,6 +288,7 @@ interface DateField {
 ```
 
 **Data Attributes**
+
 - `data-testid="field-id"`
 - `data-collection-item-field="field-id"`
 
@@ -177,18 +296,22 @@ interface DateField {
 
 ### CmsItem.CustomField
 
+**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned alias for the general Field component.
+
 Displays any field type without restriction
 
 **Props**
+
 ```tsx
 interface CustomField {
   asChild?: boolean;
-  children?: React.ForwardRefRenderFunction<HTMLElement, {fieldData: any}>;
+  children?: React.ForwardRefRenderFunction<HTMLElement, { fieldData: any }>;
   fieldId: string; // in cms we can have inifinit fields, we need to have the collection fields data beforhand (we have it in vibe)
 }
 ```
 
 **Example**
+
 ```tsx
 // asChild use with react component (mind the ref), only this form should be used with custom fields
 
@@ -214,30 +337,37 @@ interface CustomField {
 ```
 
 **Data Attributes**
+
 - `data-testid="field-id"`
 - `data-collection-item-field="field-id"`
 
 ---
 
-
 ### CmsItem.Action.Update
+
+**⚠️ NOT YET IMPLEMENTED** - Planned action component for updating CMS collection items.
 
 Update cms collection item
 
 **Props**
+
 ```tsx
 interface CmsItemActionUpdateProps {
   asChild?: boolean;
   label: string;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    disabled: boolean;
-    isLoading: boolean;
-    onClick: () => Promise<void>;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLButtonElement,
+    {
+      disabled: boolean;
+      isLoading: boolean;
+      onClick: () => Promise<void>;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <CmsItem.Action.Update label="save changes" className="w-full btn-primary" />
@@ -248,7 +378,7 @@ interface CmsItemActionUpdateProps {
 ```
 
 **Important**
-The implentation of these buttons should be done by rendering Cart.Actions.AddToCart and Cart.Actions.BuyNow which are ecommerce headless components.
+The implementation of these buttons should be done by rendering Cart.Actions.AddToCart and Cart.Actions.BuyNow which are ecommerce headless components.
 
 - `disabled` - can't perform action. i.e. - add to cart (missing values, out of stock, etc)
 - `data-in-progress` - the action is in progress. i.e. - add to cart (loading, etc)
@@ -257,22 +387,29 @@ The implentation of these buttons should be done by rendering Cart.Actions.AddTo
 
 ### CmsItem.Action.Delete
 
+**⚠️ NOT YET IMPLEMENTED** - Planned action component for deleting CMS collection items.
+
 Delete cms collection item
 
 **Props**
+
 ```tsx
 interface CmsItemActionDeleteProps {
   asChild?: boolean;
   label: string;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    disabled: boolean;
-    isLoading: boolean;
-    onClick: () => Promise<void>;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLButtonElement,
+    {
+      disabled: boolean;
+      isLoading: boolean;
+      onClick: () => Promise<void>;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <CmsItem.Action.Delete label="delete" className="w-full btn-primary" />
@@ -295,22 +432,29 @@ The implentation of these buttons should be done by rendering Cart.Actions.AddTo
 
 ### CmsItem.Action.AddToCart/CmsItem.Action.BuyNow/CmsItem.Action.PreOrder
 
-Add to cart action button. (do we need it?) applied only if it's cms ecom.
+**⚠️ NOT YET IMPLEMENTED** - Planned e-commerce action components for CMS items that are products.
+
+Add to cart action button. Applied only if it's CMS e-commerce.
 
 **Props**
+
 ```tsx
 interface CmsItemActionEcomProps {
   asChild?: boolean;
   label: string;
-  children?: React.ForwardRefRenderFunction<HTMLButtonElement, {
-    disabled: boolean;
-    isLoading: boolean;
-    onClick: () => Promise<void>;
-  }>;
+  children?: React.ForwardRefRenderFunction<
+    HTMLButtonElement,
+    {
+      disabled: boolean;
+      isLoading: boolean;
+      onClick: () => Promise<void>;
+    }
+  >;
 }
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <CmsItem.Action.AddToCart label="add to cart" className="w-full btn-primary" />
@@ -321,7 +465,7 @@ interface CmsItemActionEcomProps {
 ```
 
 **Important**
-The implentation of these buttons should be done by rendering Cart.Actions.AddToCart and Cart.Actions.BuyNow which are ecommerce headless components.
+The implementation of these buttons should be done by rendering Cart.Actions.AddToCart and Cart.Actions.BuyNow which are ecommerce headless components.
 
 - `disabled` - can't perform action. i.e. - add to cart (missing values, out of stock, etc)
 - `data-in-progress` - the action is in progress. i.e. - add to cart (loading, etc)
@@ -330,17 +474,17 @@ The implentation of these buttons should be done by rendering Cart.Actions.AddTo
 
 ## Data Attributes Summary
 
-| Attribute | Applied To | Purpose |
-|-----------|------------|---------|
-| `data-testid="collection-item"` | CmsItem.Root | Collection item root container |
-| `data-collection-item-id="item-id"` | CmsItem.Root | Item identifier |
-| `data-testid="field-id"` | Field components | Field identifier for testing |
-| `data-collection-item-field="field-id"` | Field components | Field identifier within item |
-| `data-testid="cms-item-action-update"` | CmsItem.Action.Update | Update action button |
-| `data-testid="cms-item-action-delete"` | CmsItem.Action.Delete | Delete action button |
-| `data-testid="cms-item-action-add-to-cart"` | CmsItem.Action.AddToCart | Add to cart action button |
-| `data-testid="cms-item-action-buy-now"` | CmsItem.Action.BuyNow | Buy now action button |
-| `data-testid="cms-item-action-pre-order"` | CmsItem.Action.PreOrder | Pre-order action button |
-| `data-loading` | Action components | Operation in progress status |
-| `data-in-progress` | Action components | Action execution status |
-| `disabled` | Action components | Action disabled state |
+| Attribute                                   | Applied To               | Purpose                                              |
+| ------------------------------------------- | ------------------------ | ---------------------------------------------------- |
+| `data-testid="collection-item"`             | CmsItem.Root             | Collection item root container                       |
+| `data-collection-item-id`                   | CmsItem.Root             | Item identifier                                      |
+| `data-testid="{fieldId}"`                   | CmsItem.Field            | Field identifier for testing (uses the fieldId prop) |
+| `data-collection-item-field="{fieldId}"`    | CmsItem.Field            | Field identifier within item (uses the fieldId prop) |
+| `data-testid="cms-item-action-update"`      | CmsItem.Action.Update    | Update action button                                 |
+| `data-testid="cms-item-action-delete"`      | CmsItem.Action.Delete    | Delete action button                                 |
+| `data-testid="cms-item-action-add-to-cart"` | CmsItem.Action.AddToCart | Add to cart action button                            |
+| `data-testid="cms-item-action-buy-now"`     | CmsItem.Action.BuyNow    | Buy now action button                                |
+| `data-testid="cms-item-action-pre-order"`   | CmsItem.Action.PreOrder  | Pre-order action button                              |
+| `data-loading`                              | Action components        | Operation in progress status                         |
+| `data-in-progress`                          | Action components        | Action execution status                              |
+| `disabled`                                  | Action components        | Action disabled state                                |
