@@ -55,6 +55,26 @@ export const TicketDefinitionRepeater =
   TicketsPickerPrimitive.TicketDefinitionRepeater;
 
 /**
+ * Provides totals data for the tickets picker.
+ *
+ * @component
+ */
+export const TicketsPickerTotals = React.forwardRef<
+  React.ElementRef<typeof TicketsPickerPrimitive.Totals>,
+  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Totals>
+>(({ className, ...props }, ref) => {
+  return (
+    <TicketsPickerPrimitive.Totals
+      {...props}
+      ref={ref}
+      className={cn('block font-paragraph text-foreground text-xl', className)}
+    />
+  );
+});
+
+TicketsPickerTotals.displayName = 'TicketsPickerTotals';
+
+/**
  * Error component for displaying checkout error.
  * Shows error message when checkout fails.
  *
@@ -68,7 +88,10 @@ export const CheckoutError = React.forwardRef<
     <TicketsPickerPrimitive.CheckoutError
       {...props}
       ref={ref}
-      className={cn('block font-paragraph text-status-danger', className)}
+      className={cn(
+        'block font-paragraph text-status-danger text-base',
+        className
+      )}
     />
   );
 });
@@ -89,7 +112,7 @@ export const CheckoutTrigger = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block bg-primary text-primary-foreground font-paragraph text-base py-2 sm:py-3 px-20 hover:bg-primary/80 w-full sm:w-auto',
+        'block bg-primary text-primary-foreground font-paragraph text-base py-2 sm:py-3 px-20 hover:bg-primary/80 w-full',
         className
       )}
     />

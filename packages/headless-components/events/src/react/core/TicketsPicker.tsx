@@ -17,6 +17,7 @@ import {
   CheckoutService,
   type CheckoutServiceConfig,
 } from '../../services/checkout-service.js';
+import { WIX_FEE_RATE } from '../../constants.js';
 
 export interface RootProps {
   /** Child components that will have access to necessary services */
@@ -85,6 +86,7 @@ export function TicketDefinitions(
   const ticketDefinitionListService = useService(
     TicketDefinitionListServiceDefinition,
   );
+
   const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const hasTicketDefinitions = !!ticketDefinitions.length;
 
@@ -112,6 +114,7 @@ export function TicketDefinitionRepeater(
   const ticketDefinitionListService = useService(
     TicketDefinitionListServiceDefinition,
   );
+
   const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
   const hasTicketDefinitions = !!ticketDefinitions.length;
 
@@ -120,6 +123,82 @@ export function TicketDefinitionRepeater(
   }
 
   return props.children({ ticketDefinitions });
+}
+
+export interface TotalsProps {
+  /** Render prop function */
+  children: (props: TotalsRenderProps) => React.ReactNode;
+}
+
+export interface TotalsRenderProps {
+  /** Total amount */
+  total: number;
+  /** Subtotal amount */
+  subtotal: number;
+  /** Tax amount */
+  tax: number;
+  /** Fee amount */
+  fee: number;
+  /** Currency */
+  currency: string;
+  /** Formatted total */
+  formattedTotal: string;
+  /** Formatted subtotal */
+  formattedSubtotal: string;
+  /** Formatted tax */
+  formattedTax: string;
+  /** Formatted fee */
+  formattedFee: string;
+  /** Tax name */
+  taxName: string | null;
+  /** Tax rate */
+  taxRate: number | null;
+  /** Whether tax is included in price */
+  taxIncluded: boolean;
+  /** Fee rate */
+  feeRate: number;
+}
+
+/**
+ * TicketsPicker Totals core component that provides totals data.
+ *
+ * @component
+ */
+export function Totals(props: TotalsProps): React.ReactNode {
+  const ticketDefinitionListService = useService(
+    TicketDefinitionListServiceDefinition,
+  );
+  const eventService = useService(EventServiceDefinition);
+
+  const {
+    total,
+    subtotal,
+    tax,
+    fee,
+    currency,
+    formattedTotal,
+    formattedSubtotal,
+    formattedTax,
+    formattedFee,
+  } = ticketDefinitionListService.totals.get();
+  const event = eventService.event.get();
+  const taxSettings = event.registration?.tickets?.taxSettings;
+
+  return props.children({
+    total,
+    subtotal,
+    tax,
+    fee,
+    currency,
+    formattedTotal,
+    formattedSubtotal,
+    formattedTax,
+    formattedFee,
+    taxName: taxSettings ? taxSettings.name! : null,
+    taxRate: taxSettings ? Number(taxSettings.rate!) : null,
+    taxIncluded: taxSettings?.type === 'INCLUDED_IN_PRICE',
+    feeRate: WIX_FEE_RATE,
+  });
 }
 
 export interface CheckoutErrorProps {

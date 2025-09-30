@@ -16,6 +16,7 @@ import {
   EventTitle,
   EventCoordinates,
   TicketsPicker,
+  TicketsPickerTotals,
   TicketDefinitions,
   TicketDefinitionRepeater,
   TicketDefinitionName,
@@ -157,7 +158,7 @@ export function EventDetails({
               >
                 Tickets
               </h2>
-              <TicketDefinitionRepeater className="group/ticket-definition border border-foreground/10 p-5 sm:p-8 mb-5 sm:mb-6">
+              <TicketDefinitionRepeater className="group/ticket-definition border border-foreground/10 p-5 sm:p-8 mt-5 sm:mt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                   <div className="md:border-r border-foreground/10">
                     <div className="text-sm font-paragraph text-foreground">
@@ -283,18 +284,62 @@ export function EventDetails({
             </TicketDefinitions>
             <CheckoutError asChild>
               {({ error }) => (
-                <div className="bg-status-danger-medium border border-status-danger text-center mb-5 sm:mb-6 p-2 sm:p-4">
+                <div className="bg-status-danger-medium border border-status-danger text-center mt-5 sm:mt-6 p-2 sm:p-4">
                   {error}
                 </div>
               )}
             </CheckoutError>
-            <CheckoutTrigger asChild className="ml-auto">
-              {({ isLoading, checkout }) => (
-                <button onClick={checkout}>
-                  {isLoading ? 'Processing...' : 'Checkout'}
-                </button>
-              )}
-            </CheckoutTrigger>
+            <div className="w-full sm:w-2/5 ml-auto mt-3">
+              <TicketsPickerTotals asChild>
+                {({
+                  total,
+                  subtotal,
+                  tax,
+                  fee,
+                  formattedTotal,
+                  formattedSubtotal,
+                  formattedTax,
+                  formattedFee,
+                  taxName,
+                  taxRate,
+                }) => (
+                  <div>
+                    {subtotal !== total && (
+                      <div className="flex justify-between text-base">
+                        <span>Subtotal</span>
+                        <span>{formattedSubtotal}</span>
+                      </div>
+                    )}
+                    {tax !== 0 && (
+                      <div className="flex justify-between text-base mt-1">
+                        <span>
+                          {taxName} ({taxRate}%)
+                        </span>
+                        <span>{formattedTax}</span>
+                      </div>
+                    )}
+                    {fee !== 0 && (
+                      <div className="flex justify-between text-base mt-1">
+                        <span>Ticket service fee</span>
+                        <span>{formattedFee}</span>
+                      </div>
+                    )}
+                    {subtotal !== total && <Separator className="mt-3 mb-2" />}
+                    <div className="flex justify-between">
+                      <span>Total</span>
+                      <span>{formattedTotal}</span>
+                    </div>
+                  </div>
+                )}
+              </TicketsPickerTotals>
+              <CheckoutTrigger asChild className="mt-3">
+                {({ isLoading, checkout }) => (
+                  <button onClick={checkout}>
+                    {isLoading ? 'Processing...' : 'Checkout'}
+                  </button>
+                )}
+              </CheckoutTrigger>
+            </div>
           </TicketsPicker>
         </div>
 
