@@ -22,22 +22,28 @@ import { OLOSettingsServiceDefinition } from '../../services/olo-settings-servic
 
 interface ItemDetailsRootProps {
   children: (props: { item: unknown }) => React.ReactNode;
-  itemDetailsServiceConfig: ItemServiceConfig;
+  itemDetailsServiceConfig?: ItemServiceConfig;
 }
 
-export const Root: React.FC<ItemDetailsRootProps> = ({ children }) => {
+export const Root: React.FC<ItemDetailsRootProps> = ({
+  children,
+  itemDetailsServiceConfig,
+}) => {
   const service = useService(OLOSettingsServiceDefinition);
   const selectedItem = service.selectedItem?.get();
-  const itemDetailsServiceConfig = loadItemServiceConfig({
-    item: selectedItem,
-    operationId: service.operation?.get()?._id ?? '',
-  });
+  let config = itemDetailsServiceConfig;
+  if (!config) {
+    config = loadItemServiceConfig({
+      item: selectedItem,
+      operationId: service.operation?.get()?._id ?? '',
+    });
+  }
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         ItemServiceDefinition,
         ItemService,
-        itemDetailsServiceConfig,
+        config,
       )}
     >
       {children({ item: selectedItem })}
