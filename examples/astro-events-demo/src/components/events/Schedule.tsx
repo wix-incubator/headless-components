@@ -73,6 +73,7 @@ export function Schedule({
                     <span>Filter by:</span>
                     <select
                       value={value}
+                      className="bg-background"
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                         onChange(e.target.value)
                       }
