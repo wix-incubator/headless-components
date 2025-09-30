@@ -202,14 +202,14 @@ interface ItemsProps {
   <CmsCollection.ItemRepeater>
     <CmsItem.Field fieldId="title" asChild>
       {({ fieldValue, ...props }, ref) => (
-        <h2 ref={ref} {...props} className="font-semibold mb-2">
+        <h2 ref={ref} {...props} className="font-heading font-semibold mb-2 text-foreground">
           {fieldValue}
         </h2>
       )}
     </CmsItem.Field>
     <CmsItem.Field fieldId="description" asChild>
       {({ fieldValue, ...props }, ref) => (
-        <p ref={ref} {...props} className="text-gray-600">
+        <p ref={ref} {...props} className="font-paragraph text-secondary-foreground">
           {fieldValue}
         </p>
       )}
@@ -226,10 +226,10 @@ interface ItemsProps {
   <CmsCollection.ItemRepeater>
     <CmsItem.Field fieldId="title" asChild>
       {({ fieldValue, ...props }, ref) => (
-        <h3 ref={ref} {...props}>{fieldValue}</h3>
+        <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
       )}
     </CmsItem.Field>
-    <CmsItem.Action.Edit label="Edit" />
+    <CmsItem.Action.Update label="Edit" />
   </CmsCollection.ItemRepeater>
 </CmsCollection.Items>
 
@@ -239,7 +239,7 @@ interface ItemsProps {
     <CmsCollection.ItemRepeater>
       <CmsItem.Field fieldId="title" asChild>
         {({ fieldValue, ...props }, ref) => (
-          <h3 ref={ref} {...props}>{fieldValue}</h3>
+          <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
         )}
       </CmsItem.Field>
     </CmsCollection.ItemRepeater>
@@ -251,9 +251,6 @@ interface ItemsProps {
 
 - `data-testid="cms-collection-items"` - Applied to items container
 - `data-empty` - Is collection empty
-- `data-variant` - Current layout variant (list/grid/table/card)
-- `data-grid-columns` - Number of columns (grid variant only)
-- `data-has-table-headers` - Present when table headers are provided
 - `data-infinite-scroll` - Whether infinite scroll is enabled
 
 ---
@@ -272,13 +269,17 @@ interface ItemRepeaterProps {
 }
 ```
 
+**Important Implementation Note**
+
+`ItemRepeater` automatically wraps each item with `CmsItem.Root`, so you don't need to manually wrap your field components. The item context is automatically provided.
+
 **Example**
 
 ```tsx
 <CmsCollection.ItemRepeater className="item-card">
   <CmsItem.Field fieldId="title" asChild>
     {({ fieldValue, ...props }, ref) => (
-      <h3 ref={ref} {...props}>{fieldValue}</h3>
+      <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
     )}
   </CmsItem.Field>
   <CmsItem.Field fieldId="image" asChild>
@@ -290,10 +291,10 @@ interface ItemRepeaterProps {
 
 // Using asChild pattern for custom wrapper
 <CmsCollection.ItemRepeater asChild>
-  <article className="flex gap-4 p-4 border-b">
+  <article className="flex gap-4 p-4 border-b border-foreground">
     <CmsItem.Field fieldId="title" asChild>
       {({ fieldValue, ...props }, ref) => (
-        <h3 ref={ref} {...props}>{fieldValue}</h3>
+        <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
       )}
     </CmsItem.Field>
   </article>
@@ -324,7 +325,7 @@ interface CmsCollectionShowMoreActionProps {
 **Example**
 
 ```tsx
-<CmsCollection.ShowMoreAction className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary">
+<CmsCollection.ShowMoreAction className="bg-primary text-primary-foreground font-paragraph font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
   Load More Products
 </CmsCollection.ShowMoreAction>
 
@@ -577,7 +578,7 @@ interface CmsCollectionBulkUpdateActionProps {
 // Default usage
 <CmsCollection.BulkUpdateAction
   label="Update Selected"
-  className="btn-secondary"
+  className="bg-secondary text-secondary-foreground"
   loadingState="Updating..."
 />
 
