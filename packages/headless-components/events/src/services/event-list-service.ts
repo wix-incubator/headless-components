@@ -59,8 +59,8 @@ export const EventListService =
       const events = signalsService.signal<Event[]>(config.events);
       const categories = signalsService.signal<Category[]>(config.categories);
       const selectedCategoryId = signalsService.signal<string | null>(null);
-      const isLoadingMore = signalsService.signal<boolean>(false);
       const isLoading = signalsService.signal<boolean>(false);
+      const isLoadingMore = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
       const pageSize = signalsService.signal<number>(config.pageSize);
       const currentPage = signalsService.signal<number>(config.currentPage);
@@ -75,12 +75,12 @@ export const EventListService =
         error.set(null);
 
         try {
-          const queryEventsResponse = await queryEvents(0, categoryId);
+          const queryEventsResponse = await queryEvents({ categoryId });
 
           events.set(queryEventsResponse.items);
           pageSize.set(queryEventsResponse.pageSize);
-          currentPage.set(queryEventsResponse.currentPage ?? 0);
-          totalPages.set(queryEventsResponse.totalPages ?? 0);
+          currentPage.set(queryEventsResponse.currentPage);
+          totalPages.set(queryEventsResponse.totalPages);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
@@ -94,15 +94,15 @@ export const EventListService =
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
-          const queryEventsResponse = await queryEvents(
+          const queryEventsResponse = await queryEvents({
             offset,
-            selectedCategoryId.get(),
-          );
+            categoryId: selectedCategoryId.get(),
+          });
 
           events.set([...events.get(), ...queryEventsResponse.items]);
           pageSize.set(queryEventsResponse.pageSize);
-          currentPage.set(queryEventsResponse.currentPage ?? 0);
-          totalPages.set(queryEventsResponse.totalPages ?? 0);
+          currentPage.set(queryEventsResponse.currentPage);
+          totalPages.set(queryEventsResponse.totalPages);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
@@ -134,15 +134,20 @@ export async function loadEventListServiceConfig(): Promise<EventListServiceConf
   ]);
 
   return {
-    events: queryEventsResponse.items ?? [],
+    events: queryEventsResponse.items,
     categories: queryCategoriesResponse.items ?? [],
     pageSize: queryEventsResponse.pageSize,
-    currentPage: queryEventsResponse.currentPage ?? 0,
-    totalPages: queryEventsResponse.totalPages ?? 0,
+    currentPage: queryEventsResponse.currentPage,
+    totalPages: queryEventsResponse.totalPages,
   };
 }
 
-function queryEvents(offset = 0, categoryId?: string | null) {
+export async function queryEvents({
+  offset = 0,
+  limit = 20,
+  categoryId,
+  status = [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED],
+}: QueryEventsParams = {}) {
   let eventsQuery = wixEventsV2
     .queryEvents({
       fields: [
@@ -152,8 +157,8 @@ function queryEvents(offset = 0, categoryId?: string | null) {
     })
     .ascending('dateAndTimeSettings.startDate')
     .descending('_createdDate')
-    .eq('status', wixEventsV2.Status.UPCOMING)
-    .limit(10)
+    .in('status', status)
+    .limit(limit)
     .skip(offset);
 
   if (categoryId) {
@@ -161,7 +166,14 @@ function queryEvents(offset = 0, categoryId?: string | null) {
     eventsQuery = eventsQuery.in('categories._id', [categoryId]);
   }
 
-  return eventsQuery.find();
+  const response = await eventsQuery.find();
+
+  return {
+    items: response.items ?? [],
+    pageSize: response.pageSize,
+    currentPage: response.currentPage ?? 0,
+    totalPages: response.totalPages ?? 0,
+  };
 }
 
 function queryCategories() {
@@ -170,4 +182,11 @@ function queryCategories() {
     .hasSome('states', [categories.State.MANUAL])
     .limit(100)
     .find();
+}
+
+interface QueryEventsParams {
+  offset?: number;
+  limit?: number;
+  categoryId?: string | null;
+  status?: wixEventsV2.Status[];
 }

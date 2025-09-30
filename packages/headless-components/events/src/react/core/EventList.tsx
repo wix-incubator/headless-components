@@ -20,15 +20,17 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
+  const { children, eventListServiceConfig } = props;
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         EventListServiceDefinition,
         EventListService,
-        props.eventListServiceConfig,
+        eventListServiceConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }

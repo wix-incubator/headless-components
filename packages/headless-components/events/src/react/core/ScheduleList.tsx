@@ -7,8 +7,8 @@ import {
 } from '@wix/headless-components/react';
 import {
   ScheduleListService,
-  type ScheduleListServiceConfig,
   ScheduleListServiceDefinition,
+  type ScheduleListServiceConfig,
 } from '../../services/schedule-list-service.js';
 import { type ScheduleItem } from '../../services/schedule-item-service.js';
 import { type ScheduleItemsGroup } from '../../services/schedule-items-group-service.js';
@@ -59,6 +59,7 @@ export interface ItemsRenderProps {
  */
 export function Items(props: ItemsProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
+
   const items = scheduleListService.items.get();
 
   if (!items.length) {
@@ -85,6 +86,7 @@ export interface ItemRepeaterRenderProps {
  */
 export function ItemRepeater(props: ItemRepeaterProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
+
   const items = scheduleListService.items.get();
 
   if (!items.length) {
@@ -111,6 +113,7 @@ export interface GroupsRenderProps {
  */
 export function Groups(props: GroupsProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
+
   const itemsGroups = scheduleListService.itemsGroups.get();
 
   return props.children({ itemsGroups });
@@ -134,6 +137,7 @@ export interface GroupRepeaterRenderProps {
  */
 export function GroupRepeater(props: GroupRepeaterProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
+
   const itemsGroups = scheduleListService.itemsGroups.get();
 
   if (!itemsGroups.length) {
@@ -166,6 +170,7 @@ export interface FiltersRenderProps {
  */
 export function Filters(props: FiltersProps): React.ReactNode {
   const scheduleListService = useService(ScheduleListServiceDefinition);
+
   const tags = scheduleListService.tags.get();
   const stageNames = scheduleListService.stageNames.get();
   const currentTagFilters = scheduleListService.tagFilters.get();

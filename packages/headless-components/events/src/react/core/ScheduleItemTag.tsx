@@ -20,9 +20,11 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { tag, children } = props;
+  const { children, tag } = props;
 
-  const tagServiceConfig: ScheduleItemTagServiceConfig = { tag };
+  const tagServiceConfig: ScheduleItemTagServiceConfig = {
+    tag,
+  };
 
   return (
     <WixServices

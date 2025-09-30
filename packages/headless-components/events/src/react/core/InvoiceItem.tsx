@@ -1,10 +1,10 @@
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
-  InvoiceItem,
   InvoiceItemService,
-  InvoiceItemServiceConfig,
   InvoiceItemServiceDefinition,
+  type InvoiceItem,
+  type InvoiceItemServiceConfig,
 } from '../../services/invoice-item-service.js';
 import { formatPrice } from '../../utils/price.js';
 
@@ -21,7 +21,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { invoiceItem, children } = props;
+  const { children, invoiceItem } = props;
 
   const invoiceItemServiceConfig: InvoiceItemServiceConfig = {
     invoiceItem,

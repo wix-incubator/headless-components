@@ -7,6 +7,11 @@ import {
   type Event,
   type RichContent,
 } from '../../services/event-service.js';
+import {
+  OccurrencesListService,
+  OccurrencesListServiceDefinition,
+  type OccurrencesListServiceConfig,
+} from '../../services/occurrences-list-service.js';
 import { hasDescription } from '../../utils/event.js';
 import { formatFullDate, formatShortDate } from '../../utils/date.js';
 
@@ -15,6 +20,8 @@ export interface RootProps {
   children: React.ReactNode;
   /** Event */
   event: Event;
+  /** Occurrences list service configuration */
+  occurrencesListServiceConfig?: OccurrencesListServiceConfig;
 }
 
 /**
@@ -23,23 +30,27 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { event, children } = props;
+  const { children, event, occurrencesListServiceConfig } = props;
 
   const eventServiceConfig: EventServiceConfig = {
     event,
   };
 
-  return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        EventServiceDefinition,
-        EventService,
-        eventServiceConfig,
-      )}
-    >
-      {children}
-    </WixServices>
+  const servicesMap = createServicesMap().addService(
+    EventServiceDefinition,
+    EventService,
+    eventServiceConfig,
   );
+
+  if (occurrencesListServiceConfig) {
+    servicesMap.addService(
+      OccurrencesListServiceDefinition,
+      OccurrencesListService,
+      occurrencesListServiceConfig,
+    );
+  }
+
+  return <WixServices servicesMap={servicesMap}>{children}</WixServices>;
 }
 
 export interface ImageProps {
