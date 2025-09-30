@@ -67,7 +67,7 @@ interface RootProps {
 
 ### CmsItem.Field
 
-**✅ IMPLEMENTED** - General-purpose field component that displays any CMS item field with customizable rendering.
+General-purpose field component that displays any CMS item field with customizable rendering.
 
 **Props**
 
@@ -158,7 +158,7 @@ interface FieldRenderProps {
 
 ### CmsItem.TextField
 
-**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned convenience wrapper for text fields.
+Use `CmsItem.Field` instead. This is a planned convenience wrapper for text fields.
 
 Displays an item textual field with customizable rendering.
 
@@ -202,7 +202,7 @@ interface TextFieldProps {
 
 ### CmsItem.ImageField
 
-**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned convenience wrapper for image fields.
+Use `CmsItem.Field` instead. This is a planned convenience wrapper for image fields.
 
 Displays an item image field with customizable rendering.
 
@@ -248,7 +248,7 @@ interface ImageField {
 
 ### CmsItem.DateField
 
-**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned convenience wrapper for date fields.
+Use `CmsItem.Field` instead. This is a planned convenience wrapper for date fields.
 
 Displays an item date field with customizable rendering.
 
@@ -296,7 +296,7 @@ interface DateField {
 
 ### CmsItem.CustomField
 
-**⚠️ NOT YET IMPLEMENTED** - Use `CmsItem.Field` instead. This is a planned alias for the general Field component.
+Use `CmsItem.Field` instead. This is a planned alias for the general Field component.
 
 Displays any field type without restriction
 
@@ -345,7 +345,7 @@ interface CustomField {
 
 ### CmsItem.Action.Update
 
-**⚠️ NOT YET IMPLEMENTED** - Planned action component for updating CMS collection items.
+Planned action component for updating CMS collection items.
 
 Update cms collection item
 
@@ -387,7 +387,7 @@ The implementation of these buttons should be done by rendering Cart.Actions.Add
 
 ### CmsItem.Action.Delete
 
-**⚠️ NOT YET IMPLEMENTED** - Planned action component for deleting CMS collection items.
+Planned action component for deleting CMS collection items.
 
 Delete cms collection item
 
@@ -432,7 +432,7 @@ The implentation of these buttons should be done by rendering Cart.Actions.AddTo
 
 ### CmsItem.Action.AddToCart/CmsItem.Action.BuyNow/CmsItem.Action.PreOrder
 
-**⚠️ NOT YET IMPLEMENTED** - Planned e-commerce action components for CMS items that are products.
+Planned e-commerce action components for CMS items that are products.
 
 Add to cart action button. Applied only if it's CMS e-commerce.
 

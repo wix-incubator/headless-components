@@ -695,28 +695,28 @@ interface ErrorRenderProps {
 
 ## Data Attributes Summary
 
-| Attribute                                      | Applied To                     | Purpose                                  |
-| ---------------------------------------------- | ------------------------------ | ---------------------------------------- |
-| `data-testid="cms-collection-root"`            | CmsCollection.Root             | Collection root container                |
-| `data-collection-id`                           | CmsCollection.Root             | Collection identifier                    |
-| `data-testid="cms-collection-sorting"`         | CmsCollection.Sort             | Sorting container (not implemented yet)  |
-| `data-testid="cms-collection-filters"`         | CmsCollection.Filters          | Filters container (not implemented yet)  |
-| `data-testid="cms-collection-items"`           | CmsCollection.Items            | Items container                          |
-| `data-testid="cms-collection-item"`            | CmsCollection.ItemRepeater     | Individual collection item               |
-| `data-collection-item-id`                      | CmsCollection.ItemRepeater     | Item identifier                          |
-| `data-testid="cms-collection-load-more"`       | CmsCollection.ShowMoreAction   | Load more button (not implemented yet)   |
-| `data-testid="cms-collection-next"`            | CmsCollection.NextAction       | Next page button                         |
-| `data-testid="cms-collection-prev"`            | CmsCollection.PrevAction       | Previous page button                     |
-| `data-testid="cms-collection-create-item"`     | CmsCollection.CreateItemAction | Create item button                       |
-| `data-testid="cms-collection-bulk-update"`     | CmsCollection.BulkUpdateAction | Bulk update button (not implemented yet) |
-| `data-testid="cms-collection-items-totals"`    | CmsCollection.Totals.Count     | Totals container                         |
-| `data-testid="cms-collection-items-displayed"` | CmsCollection.Totals.Displayed | Displayed count container                |
-| `data-empty`                                   | CmsCollection.Items            | Empty collection status                  |
-| `data-infinite-scroll`                         | CmsCollection.Items            | Infinite scroll mode                     |
-| `data-total`                                   | CmsCollection.Totals.Count     | Total number of items                    |
-| `data-displayed`                               | CmsCollection.Totals.Displayed | Number based on displayType              |
-| `data-display-type`                            | CmsCollection.Totals.Displayed | The displayType used                     |
-| `data-loading`                                 | Action components              | Operation in progress status             |
+| Attribute                                      | Applied To                     | Purpose                      |
+| ---------------------------------------------- | ------------------------------ | ---------------------------- |
+| `data-testid="cms-collection-root"`            | CmsCollection.Root             | Collection root container    |
+| `data-collection-id`                           | CmsCollection.Root             | Collection identifier        |
+| `data-testid="cms-collection-sorting"`         | CmsCollection.Sort             | Sorting container            |
+| `data-testid="cms-collection-filters"`         | CmsCollection.Filters          | Filters container            |
+| `data-testid="cms-collection-items"`           | CmsCollection.Items            | Items container              |
+| `data-testid="cms-collection-item"`            | CmsCollection.ItemRepeater     | Individual collection item   |
+| `data-collection-item-id`                      | CmsCollection.ItemRepeater     | Item identifier              |
+| `data-testid="cms-collection-load-more"`       | CmsCollection.ShowMoreAction   | Load more button             |
+| `data-testid="cms-collection-next"`            | CmsCollection.NextAction       | Next page button             |
+| `data-testid="cms-collection-prev"`            | CmsCollection.PrevAction       | Previous page button         |
+| `data-testid="cms-collection-create-item"`     | CmsCollection.CreateItemAction | Create item button           |
+| `data-testid="cms-collection-bulk-update"`     | CmsCollection.BulkUpdateAction | Bulk update button           |
+| `data-testid="cms-collection-items-totals"`    | CmsCollection.Totals.Count     | Totals container             |
+| `data-testid="cms-collection-items-displayed"` | CmsCollection.Totals.Displayed | Displayed count container    |
+| `data-empty`                                   | CmsCollection.Items            | Empty collection status      |
+| `data-infinite-scroll`                         | CmsCollection.Items            | Infinite scroll mode         |
+| `data-total`                                   | CmsCollection.Totals.Count     | Total number of items        |
+| `data-displayed`                               | CmsCollection.Totals.Displayed | Number based on displayType  |
+| `data-display-type`                            | CmsCollection.Totals.Displayed | The displayType used         |
+| `data-loading`                                 | Action components              | Operation in progress status |
 
 ## Usage Examples
 
