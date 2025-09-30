@@ -29,7 +29,7 @@ export function EventList({
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
       <EventListFilters allCategoriesLabel="All">
-        <FilterOptions className="border-b border-foreground/20 mb-6">
+        <FilterOptions className="border-b border-foreground/10 mb-6">
           <FilterOptionRepeater>
             <FilterOptionSingle variant="tabs" />
           </FilterOptionRepeater>
