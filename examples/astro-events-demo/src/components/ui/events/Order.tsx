@@ -138,8 +138,8 @@ export const OrderInvoiceItems = React.forwardRef<
 OrderInvoiceItems.displayName = 'OrderInvoiceItems';
 
 /**
- * Repeater component for order invoice items.
- * Renders InvoiceItem.Root for each item.
+ * Repeater component for individual invoice items.
+ * Handles the iteration over invoice items.
  *
  * @component
  */
