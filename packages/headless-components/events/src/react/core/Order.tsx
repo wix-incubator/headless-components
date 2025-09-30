@@ -97,7 +97,7 @@ export interface CreatedDateProps {
 
 export interface CreatedDateRenderProps {
   /** Created date */
-  createdDate: string;
+  createdDate: Date;
   /** Formatted date */
   formattedDate: string;
 }
@@ -111,7 +111,7 @@ export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
-  const createdDate = order.created!.toString();
+  const createdDate = order.created!;
   const formattedDate = formatDateMonthDayYear(createdDate);
 
   return props.children({ createdDate, formattedDate });
@@ -372,18 +372,18 @@ export interface FeeProps {
 }
 
 export interface FeeRenderProps {
-  /** Service fee rate */
+  /** Fee rate */
   rate: number;
-  /** Service fee amount */
+  /** Fee amount */
   amount: number;
-  /** Service fee currency */
+  /** Fee currency */
   currency: string;
-  /** Formatted service fee amount */
+  /** Formatted Fee amount */
   formattedAmount: string;
 }
 
 /**
- * Order Fee core component that provides order service fee.
+ * Order Fee core component that provides order fee.
  *
  * @component
  */
@@ -391,8 +391,8 @@ export function Fee(props: FeeProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
-  const fees = order.invoice!.fees!;
-  const addedFee = fees.find(({ type }) => type === 'FEE_ADDED_AT_CHECKOUT');
+  const fees = order.invoice!.fees;
+  const addedFee = fees?.find((fee) => fee.type === 'FEE_ADDED_AT_CHECKOUT');
 
   if (!addedFee) {
     return null;

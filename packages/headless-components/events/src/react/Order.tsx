@@ -190,7 +190,7 @@ export interface CreatedDateProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    createdDate: string;
+    createdDate: Date;
     formattedDate: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -236,7 +236,7 @@ export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
             data-testid={TestIds.orderCreatedDate}
             customElement={children}
             customElementProps={{ createdDate, formattedDate }}
-            content={createdDate}
+            content={formattedDate}
             {...otherProps}
           >
             <span>{formattedDate}</span>
@@ -721,7 +721,7 @@ export interface FeeProps {
 }
 
 /**
- * Displays the order service fee information with rate and formatted amount with customizable rendering.
+ * Displays the order fee information with rate and formatted amount with customizable rendering.
  *
  * @component
  * @example
