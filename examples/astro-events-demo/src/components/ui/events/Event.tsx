@@ -358,3 +358,52 @@ export const EventXShare = React.forwardRef<
 });
 
 EventXShare.displayName = 'EventXShare';
+
+/**
+ * Provides the event type.
+ *
+ * @component
+ */
+export const EventType = EventPrimitive.Type;
+
+/**
+ * Displays Google Calendar add button for the event.
+ * Allows users to add the event to their Google Calendar.
+ *
+ * @component
+ */
+export const EventAddToGoogleCalendar = React.forwardRef<
+  React.ElementRef<typeof EventPrimitive.AddToGoogleCalendar>,
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.AddToGoogleCalendar>
+>(({ className, ...props }, ref) => {
+  return (
+    <EventPrimitive.AddToGoogleCalendar
+      {...props}
+      ref={ref}
+      className={cn('font-paragraph text-foreground', className)}
+    />
+  );
+});
+
+EventAddToGoogleCalendar.displayName = 'EventAddToGoogleCalendar';
+
+/**
+ * Displays ICS Calendar add button for the event.
+ * Allows users to add the event to their calendar app (iCal, Outlook, etc.).
+ *
+ * @component
+ */
+export const EventAddToIcsCalendar = React.forwardRef<
+  React.ElementRef<typeof EventPrimitive.AddToIcsCalendar>,
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.AddToIcsCalendar>
+>(({ className, ...props }, ref) => {
+  return (
+    <EventPrimitive.AddToIcsCalendar
+      {...props}
+      ref={ref}
+      className={cn('font-paragraph text-foreground', className)}
+    />
+  );
+});
+
+EventAddToIcsCalendar.displayName = 'EventAddToIcsCalendar';

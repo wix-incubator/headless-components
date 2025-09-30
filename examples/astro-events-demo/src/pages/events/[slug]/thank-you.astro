@@ -1,5 +1,8 @@
 ---
-import { loadEventServiceConfig } from '@wix/events/services';
+import {
+  loadEventServiceConfig,
+  loadOrderServiceConfig,
+} from '@wix/events/services';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ThankYouPage from '../../../react-pages/thank-you';
 
@@ -10,6 +13,14 @@ const eventServiceConfigResult = await loadEventServiceConfig(slug);
 
 if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
+}
+
+const eventId = eventServiceConfigResult.config.event._id;
+const orderNumber = Astro.url.searchParams.get('orderNumber');
+
+let orderServiceConfig;
+if (orderNumber) {
+  orderServiceConfig = await loadOrderServiceConfig(eventId, orderNumber);
 }
 ---
 
@@ -24,6 +35,7 @@ if (eventServiceConfigResult.type === 'notFound') {
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}
+    orderServiceConfig={orderServiceConfig}
     eventPageUrl={`${Astro.url.origin}/events/${slug}`}
   />
 </BaseLayout>
