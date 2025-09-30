@@ -55,7 +55,7 @@ export const TicketDefinitionRepeater =
   TicketsPickerPrimitive.TicketDefinitionRepeater;
 
 /**
- * Displays the total amount.
+ * Provides totals data for the tickets picker.
  *
  * @component
  */
