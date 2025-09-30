@@ -22,22 +22,28 @@ import { OLOSettingsServiceDefinition } from '../../services/olo-settings-servic
 
 interface ItemDetailsRootProps {
   children: (props: { item: unknown }) => React.ReactNode;
-  itemDetailsServiceConfig: ItemServiceConfig;
+  itemDetailsServiceConfig?: ItemServiceConfig;
 }
 
-export const Root: React.FC<ItemDetailsRootProps> = ({ children }) => {
+export const Root: React.FC<ItemDetailsRootProps> = ({
+  children,
+  itemDetailsServiceConfig,
+}) => {
   const service = useService(OLOSettingsServiceDefinition);
   const selectedItem = service.selectedItem?.get();
-  const itemDetailsServiceConfig = loadItemServiceConfig({
-    item: selectedItem,
-    operationId: service.operation?.get()?._id ?? '',
-  });
+  let config = itemDetailsServiceConfig;
+  if (!config) {
+    config = loadItemServiceConfig({
+      item: selectedItem,
+      operationId: service.operation?.get()?._id ?? '',
+    });
+  }
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         ItemServiceDefinition,
         ItemService,
-        itemDetailsServiceConfig,
+        config,
       )}
     >
       {children({ item: selectedItem })}
@@ -62,7 +68,7 @@ export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
   const service = useService(ItemServiceDefinition) as ServiceAPI<
     typeof ItemServiceDefinition
   >;
-  const item = service.item.get();
+  const item = service.item?.get();
 
   // TODO: Check if modifiers exist on item type - might be in a different property
   const modifiers = (item as unknown as { modifiers: [] })?.modifiers || [];
@@ -88,7 +94,7 @@ export const VariantsRepeater: React.FC<ItemDetailsVariantsRepeaterProps> = ({
   const service = useService(ItemServiceDefinition) as ServiceAPI<
     typeof ItemServiceDefinition
   >;
-  const item = service.item.get();
+  const item = service.item?.get();
 
   // TODO: Check if variants exist on item type - might be in a different property
   const variants = (item as unknown as { variants: [] })?.variants || [];

@@ -60,7 +60,11 @@ export function EventList({
           </div>
         </EventRepeater>
       </Events>
-      <EventListLoadMoreTrigger className="mx-auto" />
+      <EventListLoadMoreTrigger asChild className="mx-auto mt-5">
+        {({ isLoading }) => (
+          <button>{isLoading ? 'Loading...' : 'Load More'}</button>
+        )}
+      </EventListLoadMoreTrigger>
       <EventListError className="mt-4" />
     </EventListPrimitive>
   );

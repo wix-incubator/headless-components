@@ -9,6 +9,7 @@ import * as CoreTicketsPicker from './core/TicketsPicker.js';
 
 enum TestIds {
   ticketsPickerTicketDefinitions = 'tickets-picker-ticket-definitions',
+  ticketsPickerTotals = 'tickets-picker-totals',
   ticketsPickerCheckoutError = 'tickets-picker-checkout-error',
   ticketsPickerCheckoutTrigger = 'tickets-picker-checkout-trigger',
 }
@@ -194,6 +195,114 @@ export const TicketDefinitionRepeater = (
     </CoreTicketsPicker.TicketDefinitionRepeater>
   );
 };
+
+/**
+ * Props for the TicketsPicker Totals component.
+ */
+export interface TotalsProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    total: number;
+    subtotal: number;
+    tax: number;
+    fee: number;
+    currency: string;
+    formattedTotal: string;
+    formattedSubtotal: string;
+    formattedTax: string;
+    formattedFee: string;
+    taxName: string | null;
+    taxRate: number | null;
+    taxIncluded: boolean;
+    feeRate: number;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Provides totals data for the tickets picker.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <TicketsPicker.Totals className="text-gray-500" />
+ *
+ * // asChild with primitive
+ * <TicketsPicker.Totals asChild className="text-gray-500">
+ *   <span />
+ * </TicketsPicker.Totals>
+ *
+ * // asChild with react component
+ * <TicketsPicker.Totals asChild className="text-gray-500">
+ *   {React.forwardRef(({total, subtotal, tax, fee, currency, formattedTotal, formattedSubtotal, formattedTax, formattedFee, taxName, taxRate, taxIncluded, feeRate, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       Subtotal: {formattedSubtotal}
+ *       Tax: {formattedTax}
+ *       Fee: {formattedFee}
+ *       Total: {formattedTotal}
+ *     </span>
+ *   ))}
+ * </TicketsPicker.Totals>
+ * ```
+ */
+export const Totals = React.forwardRef<HTMLElement, TotalsProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreTicketsPicker.Totals>
+        {({
+          total,
+          subtotal,
+          tax,
+          fee,
+          currency,
+          formattedTotal,
+          formattedSubtotal,
+          formattedTax,
+          formattedFee,
+          taxName,
+          taxRate,
+          taxIncluded,
+          feeRate,
+        }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.ticketsPickerTotals}
+              customElement={children}
+              customElementProps={{
+                total,
+                subtotal,
+                tax,
+                fee,
+                currency,
+                formattedTotal,
+                formattedSubtotal,
+                formattedTax,
+                formattedFee,
+                taxName,
+                taxRate,
+                taxIncluded,
+                feeRate,
+              }}
+              content={formattedTotal}
+              {...otherProps}
+            >
+              <span>{formattedTotal}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreTicketsPicker.Totals>
+    );
+  },
+);
 
 /**
  * Props for the TicketsPicker CheckoutError component.
