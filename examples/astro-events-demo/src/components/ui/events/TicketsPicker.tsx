@@ -59,12 +59,12 @@ export const TicketDefinitionRepeater =
  *
  * @component
  */
-export const TicketsPickerTotal = React.forwardRef<
-  React.ElementRef<typeof TicketsPickerPrimitive.Total>,
-  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Total>
+export const TicketsPickerTotals = React.forwardRef<
+  React.ElementRef<typeof TicketsPickerPrimitive.Totals>,
+  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Totals>
 >(({ className, ...props }, ref) => {
   return (
-    <TicketsPickerPrimitive.Total
+    <TicketsPickerPrimitive.Totals
       {...props}
       ref={ref}
       className={cn('block font-paragraph text-foreground text-xl', className)}
@@ -72,76 +72,7 @@ export const TicketsPickerTotal = React.forwardRef<
   );
 });
 
-TicketsPickerTotal.displayName = 'TicketsPickerTotal';
-
-/**
- * Displays the subtotal amount.
- *
- * @component
- */
-export const TicketsPickerSubtotal = React.forwardRef<
-  React.ElementRef<typeof TicketsPickerPrimitive.Subtotal>,
-  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Subtotal>
->(({ className, ...props }, ref) => {
-  return (
-    <TicketsPickerPrimitive.Subtotal
-      {...props}
-      ref={ref}
-      className={cn(
-        'block font-paragraph text-foreground text-base',
-        className
-      )}
-    />
-  );
-});
-
-TicketsPickerSubtotal.displayName = 'TicketsPickerSubtotal';
-
-/**
- * Displays the tax amount.
- *
- * @component
- */
-export const TicketsPickerTax = React.forwardRef<
-  React.ElementRef<typeof TicketsPickerPrimitive.Tax>,
-  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Tax>
->(({ className, ...props }, ref) => {
-  return (
-    <TicketsPickerPrimitive.Tax
-      {...props}
-      ref={ref}
-      className={cn(
-        'block font-paragraph text-foreground text-base',
-        className
-      )}
-    />
-  );
-});
-
-TicketsPickerTax.displayName = 'TicketsPickerTax';
-
-/**
- * Displays the fee amount.
- *
- * @component
- */
-export const TicketsPickerFee = React.forwardRef<
-  React.ElementRef<typeof TicketsPickerPrimitive.Fee>,
-  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.Fee>
->(({ className, ...props }, ref) => {
-  return (
-    <TicketsPickerPrimitive.Fee
-      {...props}
-      ref={ref}
-      className={cn(
-        'block font-paragraph text-foreground text-base',
-        className
-      )}
-    />
-  );
-});
-
-TicketsPickerFee.displayName = 'TicketsPickerFee';
+TicketsPickerTotals.displayName = 'TicketsPickerTotals';
 
 /**
  * Error component for displaying checkout error.

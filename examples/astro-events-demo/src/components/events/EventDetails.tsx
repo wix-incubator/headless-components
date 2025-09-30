@@ -16,10 +16,7 @@ import {
   EventTitle,
   EventCoordinates,
   TicketsPicker,
-  TicketsPickerTotal,
-  TicketsPickerSubtotal,
-  TicketsPickerTax,
-  TicketsPickerFee,
+  TicketsPickerTotals,
   TicketDefinitions,
   TicketDefinitionRepeater,
   TicketDefinitionName,
@@ -293,46 +290,48 @@ export function EventDetails({
               )}
             </CheckoutError>
             <div className="w-full sm:w-2/5 ml-auto mt-3">
-              <TicketsPickerSubtotal asChild>
-                {({ subtotal, formattedSubtotal }) =>
-                  subtotal === 0 ? null : (
+              <TicketsPickerTotals asChild>
+                {({
+                  total,
+                  subtotal,
+                  tax,
+                  fee,
+                  formattedTotal,
+                  formattedSubtotal,
+                  formattedTax,
+                  formattedFee,
+                  taxName,
+                  taxRate,
+                }) => (
+                  <div>
+                    {subtotal !== total && (
+                      <div className="flex justify-between text-base">
+                        <span>Subtotal</span>
+                        <span>{formattedSubtotal}</span>
+                      </div>
+                    )}
+                    {tax !== 0 && (
+                      <div className="flex justify-between text-base mt-1">
+                        <span>
+                          {taxName} ({taxRate}%)
+                        </span>
+                        <span>{formattedTax}</span>
+                      </div>
+                    )}
+                    {fee !== 0 && (
+                      <div className="flex justify-between text-base mt-1">
+                        <span>Ticket service fee</span>
+                        <span>{formattedFee}</span>
+                      </div>
+                    )}
+                    {subtotal !== total && <Separator className="mt-3 mb-2" />}
                     <div className="flex justify-between">
-                      <span>Subtotal</span>
-                      <span>{formattedSubtotal}</span>
+                      <span>Total</span>
+                      <span>{formattedTotal}</span>
                     </div>
-                  )
-                }
-              </TicketsPickerSubtotal>
-              <TicketsPickerTax asChild>
-                {({ name, rate, tax, formattedTax }) =>
-                  tax === 0 ? null : (
-                    <div className="flex justify-between">
-                      <span>
-                        {name} ({rate}%)
-                      </span>
-                      <span>{formattedTax}</span>
-                    </div>
-                  )
-                }
-              </TicketsPickerTax>
-              <TicketsPickerFee asChild>
-                {({ fee, formattedFee }) =>
-                  fee === 0 ? null : (
-                    <div className="flex justify-between">
-                      <span>Ticket service fee</span>
-                      <span>{formattedFee}</span>
-                    </div>
-                  )
-                }
-              </TicketsPickerFee>
-              <TicketsPickerTotal asChild className="mt-1">
-                {({ formattedTotal }) => (
-                  <div className="flex justify-between">
-                    <span>Total</span>
-                    <span>{formattedTotal}</span>
                   </div>
                 )}
-              </TicketsPickerTotal>
+              </TicketsPickerTotals>
               <CheckoutTrigger asChild className="mt-3">
                 {({ isLoading, checkout }) => (
                   <button onClick={checkout}>
