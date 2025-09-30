@@ -58,7 +58,7 @@ export const getTicketDefinitionFee = (
       ? getTicketDefinitionTax(taxSettings, price, currency)
       : undefined;
   const priceWithAddedTax = addedTax ? price + addedTax.taxAmount : price;
-  const amount = roundPrice((priceWithAddedTax * FEE_RATE) / 100, currency);
+  const amount = roundPrice(priceWithAddedTax * FEE_RATE, currency);
   const formattedAmount = formatPrice(amount, currency);
 
   return {
