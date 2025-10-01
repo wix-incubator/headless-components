@@ -131,7 +131,7 @@ export interface DateProps {
 
 export interface DateRenderProps {
   /** Formatted event date */
-  date: string;
+  formattedDate: string;
 }
 
 /**
@@ -145,13 +145,13 @@ export function Date(props: DateProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const date = event.dateAndTimeSettings!.dateAndTimeTbd
+  const formattedDate = event.dateAndTimeSettings!.dateAndTimeTbd
     ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
     : format === 'short'
       ? formatShortDate(event.dateAndTimeSettings!.startDate!)
       : formatFullDate(event.dateAndTimeSettings!.startDate!);
 
-  return props.children({ date });
+  return props.children({ formattedDate });
 }
 
 export interface LocationProps {
@@ -163,7 +163,11 @@ export interface LocationProps {
 
 export interface LocationRenderProps {
   /** Formatted event location */
-  location: string;
+  formattedLocation: string;
+  /** Event location latitude (null if TBD) */
+  latitude: number | null;
+  /** Event location longitude (null if TBD) */
+  longitude: number | null;
 }
 
 /**
@@ -177,46 +181,17 @@ export function Location(props: LocationProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const location =
+  const formattedLocation =
     event.location!.locationTbd || format === 'short'
       ? event.location!.name!
       : // @ts-expect-error
         `${event.location!.name}, ${event.location!.address!.formatted}`;
-
-  return props.children({ location });
-}
-
-export interface CoordinatesProps {
-  /** Render prop function */
-  children: (props: CoordinatesRenderProps) => React.ReactNode;
-}
-
-export interface CoordinatesRenderProps {
-  /** Event location latitude */
-  latitude: number;
-  /** Event location longitude */
-  longitude: number;
-}
-
-/**
- * Event Coordinates core component that provides event location coordinates. Not rendered if there are no coordinates.
- *
- * @component
- */
-export function Coordinates(props: CoordinatesProps): React.ReactNode {
-  const eventService = useService(EventServiceDefinition);
-
-  const event = eventService.event.get();
   // @ts-expect-error
   const latitude = event.location!.address?.location?.latitude;
   // @ts-expect-error
   const longitude = event.location!.address?.location?.longitude;
 
-  if (!latitude || !longitude) {
-    return null;
-  }
-
-  return props.children({ latitude, longitude });
+  return props.children({ formattedLocation, latitude, longitude });
 }
 
 export interface ShortDescriptionProps {

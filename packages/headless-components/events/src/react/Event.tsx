@@ -260,7 +260,7 @@ export interface DateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ date: string }>;
+  children?: AsChildChildren<{ formattedDate: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the event date */
@@ -283,9 +283,9 @@ export interface DateProps {
  *
  * // asChild with react component
  * <Event.Date asChild>
- *   {React.forwardRef(({ date, ...props }, ref) => (
+ *   {React.forwardRef(({ formattedDate, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
- *       {date}
+ *       {formattedDate}
  *     </span>
  *   ))}
  * </Event.Date>
@@ -302,18 +302,18 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
 
   return (
     <CoreEvent.Date format={format}>
-      {({ date }) => (
+      {({ formattedDate }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.eventDate}
           customElement={children}
-          customElementProps={{ date }}
-          content={date}
+          customElementProps={{ formattedDate }}
+          content={formattedDate}
           {...otherProps}
         >
-          <span>{date}</span>
+          <span>{formattedDate}</span>
         </AsChildSlot>
       )}
     </CoreEvent.Date>
@@ -327,7 +327,11 @@ export interface LocationProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ location: string }>;
+  children?: AsChildChildren<{
+    formattedLocation: string;
+    latitude: number | null;
+    longitude: number | null;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the event location */
@@ -350,9 +354,9 @@ export interface LocationProps {
  *
  * // asChild with react component
  * <Event.Location asChild>
- *   {React.forwardRef(({ location, ...props }, ref) => (
+ *   {React.forwardRef(({ formattedLocation, latitude, longitude, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
- *       {location}
+ *       {formattedLocation}
  *     </span>
  *   ))}
  * </Event.Location>
@@ -370,65 +374,21 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
 
     return (
       <CoreEvent.Location format={format}>
-        {({ location }) => (
+        {({ formattedLocation, latitude, longitude }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.eventLocation}
             customElement={children}
-            customElementProps={{ location }}
+            customElementProps={{ formattedLocation, latitude, longitude }}
             content={location}
             {...otherProps}
           >
-            <span>{location}</span>
+            <span>{formattedLocation}</span>
           </AsChildSlot>
         )}
       </CoreEvent.Location>
-    );
-  },
-);
-
-/**
- * Props for the Event Coordinates component.
- */
-export interface CoordinatesProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ latitude: number; longitude: number }>;
-}
-
-/**
- * Provides the event location coordinates. Only rendered if the event has coordinates.
- *
- * @component
- * @example
- * ```tsx
- * // asChild with react component
- * <Event.Coordinates asChild>
- *   {React.forwardRef(({ latitude, longitude, ...props }, ref) => (
- *     <MapComponent ref={ref} {...props} latitude={latitude} longitude={longitude} />
- *   ))}
- * </Event.Coordinates>
- * ```
- */
-export const Coordinates = React.forwardRef<HTMLElement, CoordinatesProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-
-    return (
-      <CoreEvent.Coordinates>
-        {({ latitude, longitude }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            customElement={children}
-            customElementProps={{ latitude, longitude }}
-            {...otherProps}
-          />
-        )}
-      </CoreEvent.Coordinates>
     );
   },
 );
