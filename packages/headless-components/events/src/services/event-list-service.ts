@@ -17,6 +17,8 @@ export interface EventListServiceAPI {
   categories: Signal<Category[]>;
   /** Reactive signal containing the selected category id */
   selectedCategoryId: Signal<string | null>;
+  /** Reactive signal containing the event status */
+  eventStatuses: Signal<wixEventsV2.Status[]>;
   /** Reactive signal indicating if events are currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal indicating if more events are currently being loaded */
@@ -59,6 +61,9 @@ export const EventListService =
       const events = signalsService.signal<Event[]>(config.events);
       const categories = signalsService.signal<Category[]>(config.categories);
       const selectedCategoryId = signalsService.signal<string | null>(null);
+      const eventStatuses = signalsService.signal<wixEventsV2.Status[]>([
+        wixEventsV2.Status.UPCOMING,
+      ]);
       const isLoadingMore = signalsService.signal<boolean>(false);
       const isLoading = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
@@ -75,7 +80,11 @@ export const EventListService =
         error.set(null);
 
         try {
-          const queryEventsResponse = await queryEvents(0, categoryId);
+          const queryEventsResponse = await queryEvents(
+            0,
+            categoryId,
+            eventStatuses.get(),
+          );
 
           events.set(queryEventsResponse.items);
           pageSize.set(queryEventsResponse.pageSize);
@@ -97,6 +106,7 @@ export const EventListService =
           const queryEventsResponse = await queryEvents(
             offset,
             selectedCategoryId.get(),
+            eventStatuses.get(),
           );
 
           events.set([...events.get(), ...queryEventsResponse.items]);
@@ -114,6 +124,7 @@ export const EventListService =
         events,
         categories,
         selectedCategoryId,
+        eventStatuses,
         isLoading,
         isLoadingMore,
         error,
@@ -142,7 +153,11 @@ export async function loadEventListServiceConfig(): Promise<EventListServiceConf
   };
 }
 
-function queryEvents(offset = 0, categoryId?: string | null) {
+function queryEvents(
+  offset = 0,
+  categoryId?: string | null,
+  eventStatuses = [wixEventsV2.Status.UPCOMING],
+) {
   let eventsQuery = wixEventsV2
     .queryEvents({
       fields: [
@@ -152,7 +167,7 @@ function queryEvents(offset = 0, categoryId?: string | null) {
     })
     .ascending('dateAndTimeSettings.startDate')
     .descending('_createdDate')
-    .eq('status', wixEventsV2.Status.UPCOMING)
+    .in('status', eventStatuses)
     .limit(10)
     .skip(offset);
 

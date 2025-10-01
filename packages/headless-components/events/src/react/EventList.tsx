@@ -3,7 +3,6 @@ import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import React from 'react';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
 import * as CoreEventList from './core/EventList.js';
-import * as CoreEventListFilters from './core/EventListFilters.js';
 import * as Event from './Event.js';
 
 enum TestIds {
@@ -300,9 +299,9 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 });
 
 /**
- * Props for the EventList Filters component.
+ * Props for the EventList CategoryFilter component.
  */
-export interface FiltersProps {
+export interface CategoryFilterProps {
   /** Child components */
   children: React.ReactNode;
   /** All categories label*/
@@ -310,23 +309,23 @@ export interface FiltersProps {
 }
 
 /**
- * Container for the event list filters. Not rendered if there are no categories.
+ * Container for the event list category filters. Not rendered if there are no categories.
  *
  * @component
  * @example
  * ```tsx
- * <EventList.Filters allCategoriesLabel="All">
+ * <EventList.CategoryFilter allCategoriesLabel="All">
  *   <Filter.FilterOptions className="border-b border-gray-500 mb-6">
  *     <Filter.FilterOptionRepeater>
  *       <Filter.FilterOption.SingleFilter className="flex gap-2" />
  *     </Filter.FilterOptionRepeater>
  *   </Filter.FilterOptions>
- * </EventList.Filters>
+ * </EventList.CategoryFilter>
  * ```
  */
-export const Filters = (props: FiltersProps): React.ReactNode => {
+export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
   return (
-    <CoreEventListFilters.Root allCategoriesLabel={props.allCategoriesLabel}>
+    <CoreEventList.CategoryFilter allCategoriesLabel={props.allCategoriesLabel}>
       {({ filterOptions, onChange, value }) => {
         return (
           <FilterPrimitive.Root
@@ -338,6 +337,6 @@ export const Filters = (props: FiltersProps): React.ReactNode => {
           </FilterPrimitive.Root>
         );
       }}
-    </CoreEventListFilters.Root>
+    </CoreEventList.CategoryFilter>
   );
 };

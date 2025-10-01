@@ -10,7 +10,7 @@ import {
   EventLocation,
   EventDate,
   EventRsvpButton,
-  EventListFilters,
+  EventListCategoryFilter,
   FilterOptions,
   FilterOptionRepeater,
   FilterOptionSingle,
@@ -29,7 +29,7 @@ export function EventList({
 }: EventListProps) {
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
-      <EventListFilters allCategoriesLabel="All">
+      <EventListCategoryFilter allCategoriesLabel="All">
         <FilterOptions className="border-b border-foreground/10 mb-6">
           <FilterOptionRepeater>
             <ScrollableTabs>
@@ -37,7 +37,7 @@ export function EventList({
             </ScrollableTabs>
           </FilterOptionRepeater>
         </FilterOptions>
-      </EventListFilters>
+      </EventListCategoryFilter>
       <Events className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
         <EventRepeater className="flex flex-col bg-background border border-foreground/10">
           <div className="relative w-full pt-[100%] bg-primary/80">
