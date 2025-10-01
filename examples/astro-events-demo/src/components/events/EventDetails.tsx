@@ -161,7 +161,7 @@ export function EventDetails({
               <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-4">
                 Schedule
               </h2>
-              <ScheduleListItemRepeater className="border-b sm:border border-foreground/10 pb-4 sm:py-8 sm:px-6 mb-4">
+              <ScheduleListItemRepeater className="border border-foreground/10 p-5 sm:py-8 sm:px-6 mb-4">
                 <div className="flex gap-2 sm:gap-6 flex-col sm:flex-row">
                   <div className="min-w-[150px]">
                     <ScheduleItemTimeSlot />
