@@ -57,11 +57,13 @@ import '@wix/ricos/css/plugin-video-viewer.global.css';
  */
 export const Event = EventPrimitive.Root;
 
-const eventTitleVariants = cva('font-heading text-foreground', {
+const eventTitleVariants = cva('text-foreground', {
   variants: {
     variant: {
-      lg: 'text-2xl',
-      xl: 'text-3xl sm:text-6xl',
+      sm: 'block font-paragraph text-base',
+      md: 'block font-paragraph text-lg',
+      lg: 'font-heading text-2xl',
+      xl: 'font-heading text-3xl sm:text-6xl',
     },
   },
   defaultVariants: {
@@ -81,6 +83,8 @@ export interface EventTitleProps
  * @example
  * ```tsx
  * <Event>
+ *   <EventTitle variant="sm" />
+ *   <EventTitle variant="md" />
  *   <EventTitle variant="xl" />
  *   <EventTitle variant="lg" />
  * </Event>
@@ -260,16 +264,22 @@ export const EventDescription = React.forwardRef<
 EventDescription.displayName = 'EventDescription';
 
 const eventRsvpButtonVariants = cva(
-  'bg-primary text-primary-foreground font-paragraph text-base text-center hover:bg-primary/80 w-full sm:w-auto',
+  'font-paragraph text-base text-center w-full sm:w-auto',
   {
     variants: {
       variant: {
+        primary: 'text-primary-foreground bg-primary hover:bg-primary/80',
+        outline:
+          'border border-foreground/10 bg-background text-foreground py-2 px-4 hover:underline',
+      },
+      size: {
         base: 'py-2 px-10',
         lg: 'py-2 px-10 sm:py-3',
       },
     },
     defaultVariants: {
-      variant: 'base',
+      variant: 'primary',
+      size: 'base',
     },
   }
 );
@@ -286,12 +296,12 @@ export interface EventRsvpButtonProps
 export const EventRsvpButton = React.forwardRef<
   React.ElementRef<typeof EventPrimitive.RsvpButton>,
   EventRsvpButtonProps
->(({ variant, className, label = 'RSVP', ...props }, ref) => {
+>(({ variant, size, className, label = 'RSVP', ...props }, ref) => {
   return (
     <EventPrimitive.RsvpButton
       {...props}
       ref={ref}
-      className={cn(eventRsvpButtonVariants({ variant }), className)}
+      className={cn(eventRsvpButtonVariants({ variant, size }), className)}
       label={label}
     />
   );
