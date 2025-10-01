@@ -327,7 +327,7 @@ const CoursesPageComponent: React.FC = () => {
                 <PricingPlans.PlanPaywall.Root
                   key={course.id}
                   planPaywallServiceConfig={{
-                    requiredPlanIds: course.accessedByPlanIds,
+                    accessPlanIds: course.accessedByPlanIds,
                   }}
                 >
                   <PricingPlans.PlanPaywall.Paywall>
