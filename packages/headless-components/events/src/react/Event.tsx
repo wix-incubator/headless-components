@@ -474,7 +474,7 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
             data-testid={TestIds.eventLocation}
             customElement={children}
             customElementProps={{ formattedLocation, latitude, longitude }}
-            content={location}
+            content={formattedLocation}
             {...otherProps}
           >
             <span>{formattedLocation}</span>
