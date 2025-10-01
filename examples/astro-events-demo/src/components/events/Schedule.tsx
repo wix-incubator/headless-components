@@ -43,7 +43,7 @@ export function Schedule({
     <Event event={eventServiceConfig.event}>
       <ScheduleList scheduleListServiceConfig={scheduleListServiceConfig}>
         <div className="max-w-5xl mx-auto px-5 py-6 sm:p-16">
-          <h1 className="text-6xl font-heading font-bold text-foreground mb-3">
+          <h1 className="text-6xl font-heading text-foreground mb-3">
             Schedule
           </h1>
           <div className="flex justify-between">

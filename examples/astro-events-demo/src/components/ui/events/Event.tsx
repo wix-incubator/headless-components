@@ -275,9 +275,9 @@ const eventRsvpButtonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'text-primary-foreground bg-primary hover:bg-primary/80',
+        primary: 'bg-primary text-primary-foreground hover:underline',
         outline:
-          'border border-foreground/10 bg-background text-foreground hover:underline',
+          'bg-background border border-foreground/10 text-foreground hover:underline',
       },
       size: {
         sm: 'py-2 px-4',
