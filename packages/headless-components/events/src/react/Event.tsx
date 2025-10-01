@@ -142,6 +142,98 @@ const RootContent = React.forwardRef<HTMLElement, RootContentProps>(
 );
 
 /**
+ * Props for the Event Slug component.
+ */
+export interface SlugProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ slug: string }>;
+}
+
+/**
+ * Provides event slug.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // asChild with react component
+ * <Event.Slug asChild>
+ *   {React.forwardRef(({ slug, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {slug}
+ *     </span>
+ *   ))}
+ * </Event.Slug>
+ * ```
+ */
+export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+
+  return (
+    <CoreEvent.Slug>
+      {({ slug }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          customElement={children}
+          customElementProps={{ slug }}
+          {...otherProps}
+        />
+      )}
+    </CoreEvent.Slug>
+  );
+});
+
+/**
+ * Props for the Event Type component.
+ */
+export interface TypeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    ticketed: boolean;
+    rsvp: boolean;
+    external: boolean;
+  }>;
+}
+
+/**
+ * Provides event type information.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // asChild with react component
+ * <Event.Type asChild>
+ *   {React.forwardRef(({ ticketed, rsvp, external, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {ticketed ? 'Ticketed' : rsvp ? 'RSVP' : external ? 'External' : ''}
+ *     </span>
+ *   ))}
+ * </Event.Type>
+ * ```
+ */
+export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+
+  return (
+    <CoreEvent.Type>
+      {({ ticketed, rsvp, external }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          customElement={children}
+          customElementProps={{ ticketed, rsvp, external }}
+          {...otherProps}
+        />
+      )}
+    </CoreEvent.Type>
+  );
+});
+
+/**
  * Props for the Event Image component.
  */
 export interface ImageProps
@@ -509,7 +601,7 @@ export interface RsvpButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ eventSlug: string; ticketed: boolean }>;
+  children?: AsChildChildren<{ slug: string; ticketed: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
@@ -532,7 +624,7 @@ export interface RsvpButtonProps {
  *
  * // asChild with react component
  * <Event.RsvpButton asChild>
- *   {React.forwardRef(({ eventSlug, ticketed, ...props }, ref) => (
+ *   {React.forwardRef(({ slug, ticketed, ...props }, ref) => (
  *     <button ref={ref} {...props}>
  *       {ticketed ? 'Buy Tickets' : 'RSVP'}
  *     </button>
@@ -546,7 +638,7 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
 
     return (
       <CoreEvent.RsvpButton>
-        {({ eventSlug, ticketed }) => (
+        {({ slug, ticketed }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -554,7 +646,7 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
             data-testid={TestIds.eventRsvpButton}
             data-ticketed={ticketed}
             customElement={children}
-            customElementProps={{ eventSlug, ticketed }}
+            customElementProps={{ slug, ticketed }}
             {...otherProps}
           >
             <button>{label}</button>
@@ -873,54 +965,6 @@ export const AddToIcsCalendar = React.forwardRef<
         );
       }}
     </CoreEvent.AddToIcsCalendar>
-  );
-});
-
-/**
- * Props for the Event Type component.
- */
-export interface TypeProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    ticketed: boolean;
-    rsvp: boolean;
-    external: boolean;
-  }>;
-}
-
-/**
- * Provides event type information.
- *
- * @component
- * @example
- * ```tsx
- * // asChild with react component
- * <Event.Type asChild>
- *   {React.forwardRef(({ ticketed, rsvp, external, ...props }, ref) => (
- *     <span ref={ref} {...props}>
- *       {ticketed ? 'Ticketed' : rsvp ? 'RSVP' : external ? 'External' : ''}
- *     </span>
- *   ))}
- * </Event.Type>
- * ```
- */
-export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
-
-  return (
-    <CoreEvent.Type>
-      {({ ticketed, rsvp, external }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          customElement={children}
-          customElementProps={{ ticketed, rsvp, external }}
-          {...otherProps}
-        />
-      )}
-    </CoreEvent.Type>
   );
 });
 

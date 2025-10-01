@@ -74,6 +74,60 @@ export function Raw(props: RawProps): React.ReactNode {
   return props.children({ event });
 }
 
+export interface SlugProps {
+  /** Render prop function */
+  children: (props: SlugRenderProps) => React.ReactNode;
+}
+
+export interface SlugRenderProps {
+  /** Event slug */
+  slug: string;
+}
+
+/**
+ * Event Slug core component that provides event slug.
+ *
+ * @component
+ */
+export function Slug(props: SlugProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+  const slug = event.slug!;
+
+  return props.children({ slug });
+}
+
+export interface TypeProps {
+  /** Render prop function */
+  children: (props: TypeRenderProps) => React.ReactNode;
+}
+
+export interface TypeRenderProps {
+  /** Is event ticketed */
+  ticketed: boolean;
+  /** Is event RSVP */
+  rsvp: boolean;
+  /** Is event external */
+  external: boolean;
+}
+
+/**
+ * Event Type core component that provides event type.
+ *
+ * @component
+ */
+export function Type(props: TypeProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+  const ticketed = event.registration?.type === 'TICKETING';
+  const rsvp = event.registration?.type === 'RSVP';
+  const external = event.registration?.type === 'EXTERNAL';
+
+  return props.children({ ticketed, rsvp, external });
+}
+
 export interface ImageProps {
   /** Render prop function */
   children: (props: ImageRenderProps) => React.ReactNode;
@@ -259,7 +313,7 @@ export interface RsvpButtonProps {
 
 export interface RsvpButtonRenderProps {
   /** Event slug */
-  eventSlug: string;
+  slug: string;
   /** Is event ticketed */
   ticketed: boolean;
 }
@@ -273,10 +327,10 @@ export function RsvpButton(props: RsvpButtonProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const eventSlug = event.slug!;
+  const slug = event.slug!;
   const ticketed = event.registration?.type === 'TICKETING';
 
-  return props.children({ eventSlug, ticketed });
+  return props.children({ slug, ticketed });
 }
 
 export interface AddToGoogleCalendarProps {
@@ -337,36 +391,6 @@ export function AddToIcsCalendar(
   }
 
   return props.children({ url });
-}
-
-export interface TypeProps {
-  /** Render prop function */
-  children: (props: TypeRenderProps) => React.ReactNode;
-}
-
-export interface TypeRenderProps {
-  /** Is event ticketed */
-  ticketed: boolean;
-  /** Is event RSVP */
-  rsvp: boolean;
-  /** Is event external */
-  external: boolean;
-}
-
-/**
- * Event Type core component that provides event type.
- *
- * @component
- */
-export function Type(props: TypeProps): React.ReactNode {
-  const eventService = useService(EventServiceDefinition);
-
-  const event = eventService.event.get();
-  const ticketed = event.registration?.type === 'TICKETING';
-  const rsvp = event.registration?.type === 'RSVP';
-  const external = event.registration?.type === 'EXTERNAL';
-
-  return props.children({ ticketed, rsvp, external });
 }
 
 export interface OccurrencesProps {
