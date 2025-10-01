@@ -152,7 +152,7 @@ export function EventDetails({
             <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-3 sm:mb-4">
               Time & Location
             </h2>
-            <div className="flex items-center justify-between">
+            <div className="flex gap-4 flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <EventDate format="full" />
                 <EventLocation format="full" />
