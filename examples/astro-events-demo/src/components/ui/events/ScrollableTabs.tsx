@@ -84,7 +84,8 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
           onClick={() => scroll(ScrollDirection.LEFT)}
           className={cn(
             `absolute left-0 top-0 bottom-0 z-10 ${arrows.left ? 'opacity-100' : 'opacity-0'}`,
-            'transition-opacity duration-300'
+            'transition-opacity duration-300',
+            'bg-background/80 backdrop-blur-sm'
           )}
           aria-label="Scroll left"
         >
@@ -107,7 +108,8 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
           onClick={() => scroll(ScrollDirection.RIGHT)}
           className={cn(
             `absolute right-0 top-0 bottom-0 z-10 ${arrows.right ? 'opacity-100' : 'opacity-0'}`,
-            'transition-opacity duration-300'
+            'transition-opacity duration-300',
+            'bg-background/80 backdrop-blur-sm'
           )}
           aria-label="Scroll right"
         >
