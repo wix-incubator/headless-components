@@ -9,6 +9,7 @@ import {
 import { useState } from 'react';
 import {
   Event,
+  EventSlug,
   EventDate,
   EventDescription,
   EventImage,
@@ -217,15 +218,16 @@ export function EventDetails({
                 </div>
               </ScheduleListItemRepeater>
               <div className="flex sm:justify-end">
-                <a
-                  href={schedulePagePath.replace(
-                    ':slug',
-                    eventServiceConfig.event.slug!
+                <EventSlug asChild>
+                  {({ slug }) => (
+                    <a
+                      href={schedulePagePath.replace(':slug', slug)}
+                      className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline text-center w-full sm:w-auto"
+                    >
+                      See All
+                    </a>
                   )}
-                  className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline text-center w-full sm:w-auto"
-                >
-                  See All
-                </a>
+                </EventSlug>
               </div>
             </ScheduleListItems>
           </ScheduleList>

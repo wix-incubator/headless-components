@@ -271,13 +271,12 @@ export const EventDescription = React.forwardRef<
 EventDescription.displayName = 'EventDescription';
 
 const eventRsvpButtonVariants = cva(
-  'font-paragraph text-base text-center w-full sm:w-auto',
+  'font-paragraph text-base text-center w-full sm:w-auto hover:underline',
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground hover:underline',
-        outline:
-          'bg-background border border-foreground/10 text-foreground hover:underline',
+        primary: 'bg-primary text-primary-foreground',
+        outline: 'bg-background text-foreground border border-foreground/10',
       },
       size: {
         sm: 'py-2 px-4',
