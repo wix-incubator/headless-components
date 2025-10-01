@@ -53,7 +53,7 @@ export const FilterOptionRepeater = FilterPrimitive.FilterOptionRepeater;
 const filterOptionSingleVariants = cva('font-paragraph text-foreground', {
   variants: {
     variant: {
-      tabs: 'flex [&_button]:px-2 [&_button]:border-b-4 [&_button]:border-transparent [&_button[data-state=on]]:border-primary [&_button]:-mb-px [&_button[data-state=on]]:relative [&_button]:font-light [&_button]:bg-transparent hover:[&_button]:text-primary/80',
+      tabs: '[&_button]:px-2 [&_button]:border-b-4 [&_button]:border-transparent [&_button[data-state=on]]:border-primary [&_button]:mb-[-1px] hover:[&_button]:text-primary/80',
     },
   },
 });

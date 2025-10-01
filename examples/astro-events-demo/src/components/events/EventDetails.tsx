@@ -157,7 +157,7 @@ export function EventDetails({
 
           {/* Schedule Section */}
           <ScheduleList scheduleListServiceConfig={scheduleListServiceConfig}>
-            <ScheduleListItems className="mb-6 mt-6 sm:mt-16">
+            <ScheduleListItems className="flex flex-col mt-6 sm:mt-16">
               <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-4">
                 Schedule
               </h2>
@@ -198,17 +198,15 @@ export function EventDetails({
                   </div>
                 </div>
               </ScheduleListItemRepeater>
-              <div className="flex sm:justify-end">
-                <a
-                  href={schedulePagePath.replace(
-                    ':slug',
-                    eventServiceConfig.event.slug!
-                  )}
-                  className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline w-full sm:w-auto text-center"
-                >
-                  See All
-                </a>
-              </div>
+              <a
+                href={schedulePagePath.replace(
+                  ':slug',
+                  eventServiceConfig.event.slug!
+                )}
+                className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline text-center ml-auto"
+              >
+                See All
+              </a>
             </ScheduleListItems>
           </ScheduleList>
 

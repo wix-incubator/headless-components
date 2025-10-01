@@ -29,6 +29,6 @@ const scheduleListServiceConfig = await loadScheduleListServiceConfig(
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}
     scheduleListServiceConfig={scheduleListServiceConfig}
-    eventsPagePath="/events"
+    eventPageUrl={`${Astro.url.origin}/events/${slug}`}
   />
 </BaseLayout>
