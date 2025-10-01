@@ -263,7 +263,6 @@ export type InstagramFeedServiceConfigResult =
 /**
  * Input object for loading Instagram feed service configuration
  */
-// Removed: previous temporary input interface in favor of using InstagramFeedServiceConfig directly
 
 /**
  * Loads Instagram feed service configuration from the Wix Instagram API for SSR initialization.
