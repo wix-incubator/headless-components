@@ -22,12 +22,8 @@ export default function IndexPage(props: {
         <InstagramFeed.Root instagramFeedServiceConfig={instagramConfig}>
           <div className="max-w-4xl mx-auto rounded-2xl border border-foreground bg-background backdrop-blur p-12 mb-10">
               <div className="text-center space-y-1">
-                <InstagramFeed.Title title="Follow Us on Instagram" className="text-sm opacity-80" />
                 <div className="text-lg font-medium">
                   <InstagramFeed.UserName />
-                </div>
-                <div className="opacity-70 text-sm">
-                  <InstagramFeed.Hashtag hashtag={instagramConfig.accountId || 'instagram'} />
                 </div>
               </div>
           </div>

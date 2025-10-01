@@ -12,9 +12,7 @@ import { MediaGallery } from '@wix/headless-media/react';
 
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'instagram_account_123', limit: 6 }}>
   <div>
-    <InstagramFeed.Title />
     <InstagramFeed.UserName />
-    <InstagramFeed.Hashtag hashtag="myhashtag" />
   </div>
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
@@ -40,18 +38,15 @@ import { MediaGallery } from '@wix/headless-media/react';
 </InstagramFeed.Root>
 ```
 
-Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the provided `hashtag` prop (adding a leading `#` if missing). It does not read hashtags from the feed or fetch anything.
 
 ### Complete Feed with Custom Layout
 
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'myaccount', limit: 12 }}>
   <header className="mb-6">
-    <InstagramFeed.Title className="text-3xl font-bold" />
     <div className="flex items-center gap-2 mt-2">
       <span className="text-gray-600">@</span>
       <InstagramFeed.UserName className="font-medium" />
-      <InstagramFeed.Hashtag hashtag="myaccount" className="text-blue-500" />
     </div>
   </header>
 
@@ -81,7 +76,6 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
 
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
-  <InstagramFeed.Title className="text-4xl font-bold text-center mb-2" />
   <InstagramFeed.UserName className="text-xl text-gray-600 text-center mb-6" />
 
   <InstagramFeed.InstagramMedias>
@@ -108,17 +102,10 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
 
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
-  <InstagramFeed.Title asChild>
-    <h1 className="instagram-title" />
-  </InstagramFeed.Title>
-
   <InstagramFeed.UserName asChild>
     <span className="username-display" />
   </InstagramFeed.UserName>
 
-  <InstagramFeed.Hashtag hashtag="myhashtag" asChild>
-    <span className="hashtag-display" />
-  </InstagramFeed.Hashtag>
 
   {/* List container does not support asChild */}
   <InstagramFeed.InstagramMedias>
@@ -143,14 +130,6 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
 
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
-  <InstagramFeed.Title asChild>
-    {React.forwardRef(({ title, ...props }, ref) => (
-      <h2 ref={ref} {...props} className="custom-title">
-        📷 {title}
-      </h2>
-    ))}
-  </InstagramFeed.Title>
-
   <InstagramFeed.UserName asChild>
     {React.forwardRef(({ displayName, ...props }, ref) => (
       <a
@@ -166,20 +145,6 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
     ))}
   </InstagramFeed.UserName>
 
-  <InstagramFeed.Hashtag hashtag="myhashtag" asChild>
-    {React.forwardRef(({ hashtag, ...props }, ref) => (
-      <a
-        ref={ref}
-        {...props}
-        href={`https://instagram.com/explore/tags/${hashtag.replace('#', '')}`}
-        className="hashtag-link"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {hashtag}
-      </a>
-    ))}
-  </InstagramFeed.Hashtag>
 
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
@@ -205,8 +170,6 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
 
 ```tsx
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
-  <InstagramFeed.Title />
-
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries
       emptyState={
@@ -233,20 +196,7 @@ Note: `InstagramFeed.Hashtag` is a pure UI component. It simply renders the prov
 </InstagramFeed.Root>
 ```
 
-### With Custom Title and Hashtag
-
-```tsx
-<InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
-  <InstagramFeed.Title title="Latest Posts" className="text-3xl font-bold" />
-  <InstagramFeed.UserName />
-
-  {/* Hashtag automatically adds # prefix if not present */}
-  <InstagramFeed.Hashtag hashtag="latestposts" /> {/* Renders: #latestposts */}
-  <InstagramFeed.Hashtag hashtag="#alreadyformatted" /> {/* Renders: #alreadyformatted */}
-
-  {/* Rest of the component */}
-</InstagramFeed.Root>
-```
+<!-- Removed: Title examples since Title is UI-only and not headless -->
 
 ## Core Components (Advanced)
 
@@ -256,12 +206,6 @@ Use core components for maximum control with render props:
 import { InstagramFeed } from '@wix/headless-instagram/core';
 
 <InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
-  <InstagramFeed.Title>
-    {({ title }) => (
-      <h2 className="custom-title">{title}</h2>
-    )}
-  </InstagramFeed.Title>
-
   <InstagramFeed.UserName>
     {({ displayName }) => (
       <span className="custom-username">@{displayName}</span>
@@ -281,16 +225,6 @@ interface RootProps {
 }
 ```
 
-### InstagramFeed.Title
-```tsx
-interface TitleProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ title: string }>;
-  className?: string;
-  title?: string; // Defaults to "Instagram Feed"
-}
-```
-
 ### InstagramFeed.UserName
 ```tsx
 interface UserNameProps {
@@ -300,16 +234,6 @@ interface UserNameProps {
 }
 ```
 
-### InstagramFeed.Hashtag
-Pure UI component. Renders the provided hashtag string and does not read from services or infer hashtags from the feed. If `hashtag` is not provided, it renders nothing. A leading `#` is added automatically if missing.
-```tsx
-interface HashtagProps {
-  asChild?: boolean;
-  children?: AsChildChildren<{ hashtag: string }>;
-  className?: string;
-  hashtag?: string; // Hashtag to display; renders nothing if omitted; adds # if missing
-}
-```
 
 ### InstagramFeed.InstagramMedias
 ```tsx
@@ -446,12 +370,19 @@ interface InstagramAccount {
 
 ### Server-Side Rendering (SSR)
 
+The function accepts an input object of type `InstagramFeedServiceConfig`.
+
 ```tsx
-import { loadInstagramFeedServiceConfig } from '@wix/headless-instagram/services';
+import { loadInstagramFeedServiceConfig, type InstagramFeedServiceConfig } from '@wix/headless-instagram/services';
 
 // In your SSR handler or server action
 export async function getServerSideProps() {
-  const configResult = await loadInstagramFeedServiceConfig('account123', 12);
+  const input: InstagramFeedServiceConfig = {
+    accountId: 'account123',
+    limit: 12,
+  };
+
+  const configResult = await loadInstagramFeedServiceConfig(input);
 
   if (configResult.type === 'success') {
     return {
@@ -549,9 +480,7 @@ Instagram components integrate seamlessly with Media Gallery components:
 
 ```
 InstagramFeed.Root (Service Provider)
-├── InstagramFeed.Title (Entity Display)
 ├── InstagramFeed.UserName (Entity Display)
-├── InstagramFeed.Hashtag (Entity Display)
 └── InstagramFeed.InstagramMedias (Container Level)
     └── InstagramMedia.MediaGalleries (List Container Level)
         └── InstagramMedia.MediaGalleryRepeater (Repeater Level)
@@ -570,7 +499,7 @@ InstagramFeed.Root (Service Provider)
 - **Media Gallery Integration**: Seamless integration with Media Gallery components
 - **No React Context**: Data flows through services, metadata through props
 - **AsChild Support**: Full customization with asChild pattern
-- **Prop-Based Components**: Simple components like Title and Hashtag use props instead of services
+- **Prop-Based Components**: Simple components avoid services and are UI-only
 - **Composable**: Mix and match components as needed
 
 ## Performance

@@ -261,12 +261,16 @@ export type InstagramFeedServiceConfigResult =
   | NotFoundInstagramFeedServiceConfigResult;
 
 /**
+ * Input object for loading Instagram feed service configuration
+ */
+// Removed: previous temporary input interface in favor of using InstagramFeedServiceConfig directly
+
+/**
  * Loads Instagram feed service configuration from the Wix Instagram API for SSR initialization.
  * This function is designed to be used during Server-Side Rendering (SSR) to preload
  * Instagram feed data that will be used to configure the InstagramFeedService.
  *
- * @param accountId The Instagram account ID to load
- * @param limit Optional limit for number of media items to load
+ * @param input InstagramFeedServiceConfig object containing accountId and optional limit
  * @returns Promise that resolves to InstagramFeedServiceConfigResult (success with config or notFound)
  *
  * @example
@@ -274,7 +278,10 @@ export type InstagramFeedServiceConfigResult =
  * import { loadInstagramFeedServiceConfig } from '@wix/instagram/services';
  *
  * // In your SSR handler or server action
- * const configResult = await loadInstagramFeedServiceConfig('instagram_account_123', 12);
+ * const configResult = await loadInstagramFeedServiceConfig({
+ *   accountId: 'instagram_account_123',
+ *   limit: 12
+ * });
  *
  * if (configResult.type === 'success') {
  *   // Use configResult.config to initialize InstagramFeedService
@@ -286,10 +293,14 @@ export type InstagramFeedServiceConfigResult =
  * ```
  */
 export async function loadInstagramFeedServiceConfig(
-  accountId: string,
-  limit?: number,
+  input: InstagramFeedServiceConfig,
 ): Promise<InstagramFeedServiceConfigResult> {
   try {
+    const { accountId, limit } = input;
+    if (!accountId) {
+      return { type: 'notFound' };
+    }
+
     // Load Instagram account information using SDK
     const accountResponse = await accounts.getInstagramAccount(accountId);
 
