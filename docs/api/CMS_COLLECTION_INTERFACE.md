@@ -13,16 +13,18 @@ A comprehensive CMS collection display component system built with composable pr
 - [CmsCollection.ItemRepeater](#cmscollectionitemrepeater)
 - [CmsCollection.ShowMoreAction](#cmscollectionshowmoreaction)
 - [CmsCollection.NextAction / PrevAction](#cmscollectionnextaction--prevaction)
-- [CmsCollection.Totals.Count/CmsCollection.Totals.Displayed](#cmscollectiontotalscountcmscollectiontotalsdisplayed)
+- [CmsCollection.Totals.Count](#cmscollectiontotalscount)
+- [CmsCollection.Totals.Displayed](#cmscollectiontotalsdisplayed)
 - [CmsCollection.CreateItemAction](#cmscollectioncreateitemaction)
 - [CmsCollection.BulkUpdateAction](#cmscollectionbulkupdateaction)
+- [CmsCollection.Loading](#cmscollectionloading)
+- [CmsCollection.Error](#cmscollectionerror)
 
 ---
 
 ## Architecture
 
 The CmsCollection component follows a compound component pattern where each part can be composed together to create flexible CMS collection displays. It supports both simplified and headless interfaces.
-
 
 ## Components
 
@@ -31,23 +33,40 @@ The CmsCollection component follows a compound component pattern where each part
 The root container that provides CMS collection context to all child components.
 
 **Props**
+
 ```tsx
-interface CmsCollectionProps {
-  collection: CollectionData;
+interface RootProps {
   children: React.ReactNode;
+  collection: {
+    id: string;
+    queryResult?: WixDataQueryResult;
+    queryOptions?: CmsQueryOptions;
+  };
 }
 ```
 
 **Example**
-```tsx
-<CMS.Root collection={collection}>
-  {/* CMS collection component */}
-</CMS.Root>
 
+```tsx
+<CmsCollection.Root collection={{ id: 'MyCollection' }}>
+  {/* CMS collection component */}
+</CmsCollection.Root>
+
+// With pre-loaded data
+<CmsCollection.Root collection={{
+  id: 'MyCollection',
+  queryResult: initialData,
+  queryOptions: { limit: 10 }
+}}>
+  {/* CMS collection component */}
+</CmsCollection.Root>
 ```
+
 **Data Attributes**
-- `data-testid="cms-collection"` - Applied to line cms container
-- `data-collection-id`="collection-id"` - Collection id
+
+- `data-testid="cms-collection-root"` - Applied to collection container
+- `data-collection-id="collection-id"` - Collection id
+
 ---
 
 ### CmsCollection.Sort/CmsCollection.SortOption
@@ -56,6 +75,7 @@ Displays sorting controls for the collection items.
 Plain wrappers for Sort.Root and Sort.Option.
 
 **Props**
+
 ```tsx
 interface CmsCollectionSortProps {
   children?: React.ForwardRefRenderFunction<HTMLElement, {
@@ -79,6 +99,7 @@ The implementation should generate a plain Sort object (we should go over cms im
 See [Sort.Root](./PLATFORM_INTERFACE.md#sortroot) and [Sort.Option](./PLATFORM_INTERFACE.md#sortoption) for more details.
 
 **Example**
+
 ```tsx
 <CmsCollection.Sort as="select" valueFormatter={({sortBy, sortDirection}) => `Sort by ${sortBy} (${sortDirection === 'asc' ? 'A-Z' : 'Z-A'})`} />
 
@@ -109,6 +130,7 @@ See [Sort.Root](./PLATFORM_INTERFACE.md#sortroot) and [Sort.Option](./PLATFORM_I
 ```
 
 **Data Attributes**
+
 - `data-testid="cms-collection-sorting"` - Applied to sorting container
 - `data-filtered` - Is collection currently filtered
 - `data-sorted-by` - Current sorting field
@@ -121,6 +143,7 @@ See [Sort.Root](./PLATFORM_INTERFACE.md#sortroot) and [Sort.Option](./PLATFORM_I
 Container for collection item filters and controls (we should go over cms implementation and update it).
 
 **Props**
+
 ```tsx
 interface CmsCollectionFiltersProps {
   children?: React.ReactNode;
@@ -130,6 +153,7 @@ interface CmsCollectionFiltersProps {
 ```
 
 **Example**
+
 ```tsx
 <CmsCollection.Filters className="flex gap-4"> // defines the <Filter.Root value={filter} onChange={setFilter}>
   <Filter.FilterOptions>
@@ -145,6 +169,7 @@ interface CmsCollectionFiltersProps {
 Refer to [Filter.Root](./PLATFORM_INTERFACE.md#filterroot) for more details.
 
 **Data Attributes**
+
 - `data-testid="cms-collection-filters"` - Applied to filters container
 - `data-has-active-filters` - Present when filters are active
 
@@ -152,97 +177,81 @@ Refer to [Filter.Root](./PLATFORM_INTERFACE.md#filterroot) for more details.
 
 ### CmsCollection.Items
 
-Main container for the collection items display with support for empty states and custom layouts.
+Main container for the collection items display with support for empty states and infinite scroll.
 
 **Props**
+
 ```tsx
-interface CmsCollectionItemsProps {
+interface ItemsProps {
   children: React.ReactNode;
   emptyState?: React.ReactNode;
   asChild?: boolean;
   className?: string;
   infiniteScroll?: boolean;
-  pageSize?: number;
-  variant?: 'list' | 'grid' | 'table' | 'card'; // Layout variant (default: 'list')
-  gridColumns?: number; // Number of columns for grid variant
-  tableHeaders?: string[]; // Column headers for table variant
 }
 ```
+
 **Example**
+
 ```tsx
-// Grid layout with 3 columns
+// Basic usage with empty state
 <CmsCollection.Items
-  variant="grid"
-  gridColumns={3}
   emptyState={<div>No items found</div>}
-  className="gap-6"
-  pageSize={9}
+  className="space-y-4"
 >
   <CmsCollection.ItemRepeater>
-    <CmsItem.ImageField fieldKey="image" className="aspect-square rounded-lg mb-4" />
-    <CmsItem.TextField fieldKey="title" className="font-semibold mb-2" />
-    <CmsItem.TextField fieldKey="description" className="text-sm text-muted" />
+    <CmsItem.Field fieldId="title" asChild>
+      {({ fieldValue, ...props }, ref) => (
+        <h2 ref={ref} {...props} className="font-heading font-semibold mb-2 text-foreground">
+          {fieldValue}
+        </h2>
+      )}
+    </CmsItem.Field>
+    <CmsItem.Field fieldId="description" asChild>
+      {({ fieldValue, ...props }, ref) => (
+        <p ref={ref} {...props} className="font-paragraph text-secondary-foreground">
+          {fieldValue}
+        </p>
+      )}
+    </CmsItem.Field>
   </CmsCollection.ItemRepeater>
 </CmsCollection.Items>
 
-// Table layout with headers
+// With infinite scroll enabled
 <CmsCollection.Items
-  variant="table"
-  tableHeaders={['Title', 'Status', 'Created', 'Actions']}
-  emptyState={<div>No data available</div>}
->
-  <CmsCollection.ItemRepeater>
-    <CmsItem.TextField fieldKey="title" />
-    <CmsItem.TextField fieldKey="status" />
-    <CmsItem.DateField fieldKey="created" />
-    <CmsItem.Action.Edit label="Edit" />
-  </CmsCollection.ItemRepeater>
-</CmsCollection.Items>
-
-// List layout (default)
-<CmsCollection.Items
-  variant="list"
-  emptyState={<div>No items found</div>}
   infiniteScroll
+  emptyState={<div>No data available</div>}
+  className="space-y-4"
 >
   <CmsCollection.ItemRepeater>
-    <div className="flex items-center gap-4 p-4 border-b">
-      <CmsItem.ImageField fieldKey="thumbnail" className="w-16 h-16 rounded" />
-      <div className="flex-1">
-        <CmsItem.TextField fieldKey="title" className="font-medium mb-1" />
-        <CmsItem.TextField fieldKey="description" className="text-sm text-muted" />
-      </div>
-      <CmsItem.DateField fieldKey="modified" className="text-xs" />
-    </div>
+    <CmsItem.Field fieldId="title" asChild>
+      {({ fieldValue, ...props }, ref) => (
+        <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
+      )}
+    </CmsItem.Field>
+    <CmsItem.Action.Update label="Edit" />
   </CmsCollection.ItemRepeater>
 </CmsCollection.Items>
 
-// Card layout
-<CmsCollection.Items
-  variant="card"
-  emptyState={<div>No items found</div>}
-  className="gap-4"
->
-  <CmsCollection.ItemRepeater>
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <CmsItem.TextField fieldKey="title" className="text-xl font-bold mb-4" />
-      <CmsItem.ImageField fieldKey="image" className="w-full aspect-video rounded mb-4" />
-      <CmsItem.TextField fieldKey="description" className="mb-4" />
-      <div className="flex gap-2">
-        <CmsItem.Action.Edit label="Edit" className="btn-primary" />
-        <CmsItem.Action.Delete label="Delete" className="btn-secondary" />
-      </div>
-    </div>
-  </CmsCollection.ItemRepeater>
+// Using asChild pattern for custom container
+<CmsCollection.Items asChild emptyState={<div>No data available</div>}>
+  <section className="grid grid-cols-3 gap-4">
+    <CmsCollection.ItemRepeater>
+      <CmsItem.Field fieldId="title" asChild>
+        {({ fieldValue, ...props }, ref) => (
+          <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
+        )}
+      </CmsItem.Field>
+    </CmsCollection.ItemRepeater>
+  </section>
 </CmsCollection.Items>
 ```
 
 **Data Attributes**
+
 - `data-testid="cms-collection-items"` - Applied to items container
 - `data-empty` - Is collection empty
-- `data-variant` - Current layout variant (list/grid/table/card)
-- `data-grid-columns` - Number of columns (grid variant only)
-- `data-has-table-headers` - Present when table headers are provided
+- `data-infinite-scroll` - Whether infinite scroll is enabled
 
 ---
 
@@ -251,26 +260,50 @@ interface CmsCollectionItemsProps {
 Repeats for each collection item in the list, providing individual item context.
 
 **Props**
+
 ```tsx
-interface CmsCollectionItemRepeaterProps {
+interface ItemRepeaterProps {
   children: React.ReactNode;
   asChild?: boolean;
   className?: string;
 }
 ```
 
+**Important Implementation Note**
+
+`ItemRepeater` automatically wraps each item with `CmsItem.Root`, so you don't need to manually wrap your field components. The item context is automatically provided.
+
 **Example**
+
 ```tsx
 <CmsCollection.ItemRepeater className="item-card">
-    <CmsItem.TextField />
-    <CmsItem.ImageField />
-    <CmsItem.DateField />
-    <CmsItem.CustomField />
+  <CmsItem.Field fieldId="title" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
+    )}
+  </CmsItem.Field>
+  <CmsItem.Field fieldId="image" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <img ref={ref} {...props} src={fieldValue?.url} alt={fieldValue?.alt} />
+    )}
+  </CmsItem.Field>
+</CmsCollection.ItemRepeater>
+
+// Using asChild pattern for custom wrapper
+<CmsCollection.ItemRepeater asChild>
+  <article className="flex gap-4 p-4 border-b border-foreground">
+    <CmsItem.Field fieldId="title" asChild>
+      {({ fieldValue, ...props }, ref) => (
+        <h3 ref={ref} {...props} className="font-heading text-foreground">{fieldValue}</h3>
+      )}
+    </CmsItem.Field>
+  </article>
 </CmsCollection.ItemRepeater>
 ```
 
 **Data Attributes**
-- `data-testid="product-list-item"` - Applied to each product item
+
+- `data-testid="cms-collection-item"` - Applied to each collection item
 - `data-collection-item-id` - Item ID
 
 ---
@@ -280,6 +313,7 @@ interface CmsCollectionItemRepeaterProps {
 Displays a button to load more items. Not rendered if infiniteScroll is false or no items are left to load.
 
 **Props**
+
 ```tsx
 interface CmsCollectionShowMoreActionProps {
   children: React.ReactNode;
@@ -289,8 +323,9 @@ interface CmsCollectionShowMoreActionProps {
 ```
 
 **Example**
+
 ```tsx
-<CmsCollection.ShowMoreAction className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary">
+<CmsCollection.ShowMoreAction className="bg-primary text-primary-foreground font-paragraph font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
   Load More Products
 </CmsCollection.ShowMoreAction>
 
@@ -301,6 +336,7 @@ interface CmsCollectionShowMoreActionProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="cms-collection-load-more"` - Applied to load more button
 
 ---
@@ -310,6 +346,7 @@ interface CmsCollectionShowMoreActionProps {
 Displays a button to load the next/prev page of items. Not rendered if infiniteScroll is true or no items are left to load.
 
 **Props**
+
 ```tsx
 interface CmsCollectionNextActionProps {
   children: React.ReactNode;
@@ -319,6 +356,7 @@ interface CmsCollectionNextActionProps {
 ```
 
 **Example**
+
 ```tsx
 <CmsCollection.NextAction className="text-content-primary font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 btn-primary">
   Next Page
@@ -332,36 +370,106 @@ interface CmsCollectionNextActionProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="cms-collection-next"` - Applied to next button / "cms-collection-prev"` - Applied to prev button
 
 ---
 
-### CmsCollection.Totals.Count/CmsCollection.Totals.Displayed
+### CmsCollection.Totals.Count
 
-Displays the total number of items and the number of items displayed.
+Displays the total number of items in the collection.
 
 **Props**
+
 ```tsx
-interface CmsCollectionTotalsCountProps {
-  children: React.ForwardRefRenderFunction<HTMLElement, {
-    total: number;
-  }>;
+interface TotalsCountProps {
   asChild?: boolean;
+  children?:
+    | AsChildChildren<{
+        total: number;
+      }>
+    | React.ReactNode;
   className?: string;
 }
-
-const CmsCollectionTotalsDisplayedProps = CmsCollectionTotalsCountProps;
 ```
 
 **Example**
+
 ```tsx
-<span>Showing <CmsCollection.Totals.Displayed /> of <CmsCollection.Totals.Count /> items</span>
+// Default usage
+<span>Total: <CmsCollection.Totals.Count /></span>
+
+// Custom implementation using asChild pattern
+<CmsCollection.Totals.Count asChild>
+  {({ total }) => (
+    <strong className="text-lg font-bold">
+      {total} items total
+    </strong>
+  )}
+</CmsCollection.Totals.Count>
 ```
 
 **Data Attributes**
-- `data-testid="cms-collection-itmes-totals"` - Applied to totals container
+
+- `data-testid="cms-collection-items-totals"` - Applied to totals container
 - `data-total` - Total number of items
-- `data-displayed` - Number of items displayed
+
+---
+
+### CmsCollection.Totals.Displayed
+
+Displays various count metrics based on the displayType prop.
+
+**Props**
+
+```tsx
+interface TotalsDisplayedProps {
+  displayType?: DisplayType;
+  asChild?: boolean;
+  children?:
+    | AsChildChildren<{
+        displayed: number;
+      }>
+    | React.ReactNode;
+  className?: string;
+}
+
+type DisplayType =
+  | 'displayed' // Number of items displayed up to current page (default)
+  | 'currentPageAmount' // Number of items on current page only
+  | 'currentPageNum' // Current page number
+  | 'totalPages'; // Total number of pages
+```
+
+**Example**
+
+```tsx
+// Default usage - displays total items shown up to current page
+<span>Showing <CmsCollection.Totals.Displayed /> of <CmsCollection.Totals.Count /> items</span>
+
+// Display current page number
+<span>Page <CmsCollection.Totals.Displayed displayType="currentPageNum" /> of <CmsCollection.Totals.Displayed displayType="totalPages" /></span>
+
+// Display items on current page only
+<span>Items on this page: <CmsCollection.Totals.Displayed displayType="currentPageAmount" /></span>
+
+// Custom implementation using asChild pattern
+<CmsCollection.Totals.Displayed displayType="displayed" asChild>
+  {({ displayed }) => (
+    <div className="count-badge">
+      <span className="count-number">{displayed}</span>
+      <span className="count-label">items shown</span>
+    </div>
+  )}
+</CmsCollection.Totals.Displayed>
+```
+
+**Data Attributes**
+
+- `data-testid="cms-collection-items-displayed"` - Applied to displayed container
+- `data-displayed` - Number based on displayType
+- `data-display-type` - The displayType used
+
 ---
 
 ### CmsCollection.CreateItemAction
@@ -369,40 +477,75 @@ const CmsCollectionTotalsDisplayedProps = CmsCollectionTotalsCountProps;
 Displays a button to create a new item in the collection. Integrates with the collection service to handle item creation with loading states.
 
 **Props**
+
 ```tsx
-interface CmsCollectionCreateItemActionProps {
+interface CreateItemActionProps {
   asChild?: boolean;
-  label: string;
-  children?: React.ReactNode;
+  label?: string;
+  children?:
+    | AsChildChildren<{
+        disabled: boolean;
+        isLoading: boolean;
+        onClick: () => void;
+      }>
+    | React.ReactNode;
   className?: string;
   loadingState?: string | React.ReactNode;
+  itemData?: Partial<WixDataItem>;
 }
 ```
 
 **Example**
-```tsx
-<CmsCollection.CreateItemAction label="Add Item" className="btn-primary" loadingState="Creating..."/>
 
-<CmsCollection.CreateItemAction asChild label="Add Item">
+```tsx
+// Default usage
+<CmsCollection.CreateItemAction
+  label="Add Item"
+  className="btn-primary"
+  loadingState="Creating..."
+  itemData={{ title: "New Item", status: "draft" }}
+/>
+
+// Simple content override
+<CmsCollection.CreateItemAction
+  label="New Post"
+  loadingState="Publishing..."
+  itemData={{ category: "blog", status: "published" }}
+>
+  📝 Create Post
+</CmsCollection.CreateItemAction>
+
+// With asChild pattern - custom button
+<CmsCollection.CreateItemAction asChild itemData={{ title: "New Article" }}>
   <Button>Add New Item</Button>
 </CmsCollection.CreateItemAction>
 
-<CmsCollection.CreateItemAction asChild label="Add Item">
+// With asChild pattern - full control
+<CmsCollection.CreateItemAction asChild itemData={{ status: "draft" }}>
   {({ disabled, isLoading, onClick }) => (
-    <Button
+    <button
       disabled={disabled}
       onClick={onClick}
-      className="gap-2"
+      className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
     >
-      {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-      <Plus className="h-4 w-4" />
-      Add Item
-    </Button>
+      {isLoading ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Creating...
+        </>
+      ) : (
+        <>
+          <Plus className="h-4 w-4" />
+          Add Item
+        </>
+      )}
+    </button>
   )}
 </CmsCollection.CreateItemAction>
 ```
 
 **Data Attributes**
+
 - `data-testid="cms-collection-create-item"` - Applied to create button
 - `data-loading` - Present when create operation is in progress
 
@@ -413,6 +556,7 @@ interface CmsCollectionCreateItemActionProps {
 Displays a button to update multiple modified items in the collection.
 
 **Props**
+
 ```tsx
 interface CmsCollectionBulkUpdateActionProps {
   asChild?: boolean;
@@ -429,11 +573,12 @@ interface CmsCollectionBulkUpdateActionProps {
 ```
 
 **Example**
+
 ```tsx
 // Default usage
 <CmsCollection.BulkUpdateAction
   label="Update Selected"
-  className="btn-secondary"
+  className="bg-secondary text-secondary-foreground"
   loadingState="Updating..."
 />
 
@@ -460,50 +605,124 @@ interface CmsCollectionBulkUpdateActionProps {
 ```
 
 **Data Attributes**
+
 - `data-testid="cms-collection-bulk-update"`
 - `data-loading` - Present when bulk update operation is in progress
 
 ---
 
+### CmsCollection.Loading
+
+Component that renders content during loading state. Only displays its children when the collection is currently loading.
+
+**Props**
+
+```tsx
+interface LoadingProps {
+  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+interface LoadingRenderProps {}
+```
+
+**Example**
+
+```tsx
+// Simple loading message
+<CmsCollection.Loading>
+  <div>Loading collection...</div>
+</CmsCollection.Loading>
+
+// With render function
+<CmsCollection.Loading>
+  {() => (
+    <div className="loading-spinner">
+      <div>Loading collection...</div>
+      <div className="spinner"></div>
+    </div>
+  )}
+</CmsCollection.Loading>
+```
+
+**Data Attributes**
+
+- None (renders only during loading state)
+
+---
+
+### CmsCollection.Error
+
+Component that renders content when there's an error loading collection. Only displays its children when an error has occurred.
+
+**Props**
+
+```tsx
+interface ErrorProps {
+  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
+}
+
+interface ErrorRenderProps {
+  error: string | null;
+}
+```
+
+**Example**
+
+```tsx
+// Simple error message
+<CmsCollection.Error>
+  <div className="error-state">Failed to load collection</div>
+</CmsCollection.Error>
+
+// With error details
+<CmsCollection.Error>
+  {({ error }) => (
+    <div className="error-state">
+      <h3>Error loading collection</h3>
+      <p>{error}</p>
+      <button onClick={() => window.location.reload()}>
+        Try Again
+      </button>
+    </div>
+  )}
+</CmsCollection.Error>
+```
+
+**Data Attributes**
+
+- None (renders only during error state)
+
+---
+
 ## Data Attributes Summary
 
-| Attribute | Applied To | Purpose |
-|-----------|------------|---------|
-| `data-testid="cms-collection"` | CmsCollection.Root | Collection root container |
-| `data-collection-id="collection-id"` | CmsCollection.Root | Collection identifier |
-| `data-testid="cms-collection-sorting"` | CmsCollection.Sort | Sorting container |
-| `data-testid="cms-collection-filters"` | CmsCollection.Filters | Filters container |
-| `data-testid="cms-collection-items"` | CmsCollection.Items | Items container |
-| `data-testid="cms-collection-item"` | CmsCollection.ItemRepeater | Individual collection item |
-| `data-testid="cms-collection-load-more"` | CmsCollection.ShowMoreAction | Load more button |
-| `data-testid="cms-collection-next"` | CmsCollection.NextAction | Next page button |
-| `data-testid="cms-collection-prev"` | CmsCollection.PrevAction | Previous page button |
-| `data-testid="cms-collection-create-item"` | CmsCollection.CreateItemAction | Create item button |
-| `data-testid="cms-collection-bulk-update"` | CmsCollection.BulkUpdateAction | Bulk update button |
-| `data-testid="cms-collection-items-totals"` | CmsCollection.Totals.Count/Displayed | Totals container |
-| `data-empty` | CmsCollection.Items | Empty collection status |
-| `data-variant` | CmsCollection.Items | Current layout variant |
-| `data-grid-columns` | CmsCollection.Items | Number of grid columns |
-| `data-has-table-headers` | CmsCollection.Items | Table headers present |
-| `data-filtered` | CmsCollection.Sort | Collection currently filtered status |
-| `data-sorted-by` | CmsCollection.Sort | Current sorting field |
-| `data-sort-direction` | CmsCollection.Sort | Current sort direction |
-| `data-has-active-filters` | CmsCollection.Filters | Active filters present |
-| `data-infinite-scroll` | CmsCollection.Items | Infinite scroll mode |
-| `data-page-size` | CmsCollection.Items | Current page size setting |
-| `data-total` | CmsCollection.Totals.Count | Total number of items |
-| `data-displayed` | CmsCollection.Totals.Displayed | Number of items displayed |
-| `data-selected-count` | CmsCollection.BulkUpdateAction | Number of selected items |
-| `data-loading` | Action components | Operation in progress status |
-
-
-
-
-
+| Attribute                                      | Applied To                     | Purpose                      |
+| ---------------------------------------------- | ------------------------------ | ---------------------------- |
+| `data-testid="cms-collection-root"`            | CmsCollection.Root             | Collection root container    |
+| `data-collection-id`                           | CmsCollection.Root             | Collection identifier        |
+| `data-testid="cms-collection-sorting"`         | CmsCollection.Sort             | Sorting container            |
+| `data-testid="cms-collection-filters"`         | CmsCollection.Filters          | Filters container            |
+| `data-testid="cms-collection-items"`           | CmsCollection.Items            | Items container              |
+| `data-testid="cms-collection-item"`            | CmsCollection.ItemRepeater     | Individual collection item   |
+| `data-collection-item-id`                      | CmsCollection.ItemRepeater     | Item identifier              |
+| `data-testid="cms-collection-load-more"`       | CmsCollection.ShowMoreAction   | Load more button             |
+| `data-testid="cms-collection-next"`            | CmsCollection.NextAction       | Next page button             |
+| `data-testid="cms-collection-prev"`            | CmsCollection.PrevAction       | Previous page button         |
+| `data-testid="cms-collection-create-item"`     | CmsCollection.CreateItemAction | Create item button           |
+| `data-testid="cms-collection-bulk-update"`     | CmsCollection.BulkUpdateAction | Bulk update button           |
+| `data-testid="cms-collection-items-totals"`    | CmsCollection.Totals.Count     | Totals container             |
+| `data-testid="cms-collection-items-displayed"` | CmsCollection.Totals.Displayed | Displayed count container    |
+| `data-empty`                                   | CmsCollection.Items            | Empty collection status      |
+| `data-infinite-scroll`                         | CmsCollection.Items            | Infinite scroll mode         |
+| `data-total`                                   | CmsCollection.Totals.Count     | Total number of items        |
+| `data-displayed`                               | CmsCollection.Totals.Displayed | Number based on displayType  |
+| `data-display-type`                            | CmsCollection.Totals.Displayed | The displayType used         |
+| `data-loading`                                 | Action components              | Operation in progress status |
 
 ## Usage Examples
 
 ### Basic CMS Collection with Sort and Filters
+
 ```tsx
 function CmsCollectionDisplay() {
   const collection = useCmsCollection();
@@ -514,13 +733,16 @@ function CmsCollectionDisplay() {
         {/* Header with Sorting and Filters */}
         <div className="flex justify-between items-center bg-surface-card p-4 rounded-lg">
           <div className="flex items-center gap-4">
-            <span>Showing <CmsCollection.Totals.Displayed /> of <CmsCollection.Totals.Count /> items</span>
+            <span>
+              Showing <CmsCollection.Totals.Displayed /> of{' '}
+              <CmsCollection.Totals.Count /> items
+            </span>
           </div>
 
           <div className="flex gap-4">
             <CmsCollection.Sort
               as="select"
-              valueFormatter={({sortBy, sortDirection}) =>
+              valueFormatter={({ sortBy, sortDirection }) =>
                 `${sortBy === 'title' ? 'Title' : sortBy === 'created' ? 'Date Created' : 'Modified'} (${sortDirection === 'asc' ? 'A-Z' : 'Z-A'})`
               }
             />
@@ -545,13 +767,28 @@ function CmsCollectionDisplay() {
           className="gap-6"
         >
           <CmsCollection.ItemRepeater className="bg-surface-card p-4 rounded-lg border border-surface-subtle hover:shadow-lg transition-shadow">
-            <CmsItem.ImageField fieldKey="image" className="aspect-video rounded-lg mb-4" />
-            <CmsItem.TextField fieldKey="title" className="text-lg font-semibold text-content-primary mb-2" />
-            <CmsItem.DateField fieldKey="created" className="text-sm text-content-muted mb-4" />
+            <CmsItem.ImageField
+              fieldKey="image"
+              className="aspect-video rounded-lg mb-4"
+            />
+            <CmsItem.TextField
+              fieldKey="title"
+              className="text-lg font-semibold text-content-primary mb-2"
+            />
+            <CmsItem.DateField
+              fieldKey="created"
+              className="text-sm text-content-muted mb-4"
+            />
 
             <div className="mt-4 space-y-2">
-              <CmsItem.Action.Edit label="Edit Item" className="w-full btn-primary" />
-              <CmsItem.Action.Delete label="Delete Item" className="w-full btn-secondary" />
+              <CmsItem.Action.Edit
+                label="Edit Item"
+                className="w-full btn-primary"
+              />
+              <CmsItem.Action.Delete
+                label="Delete Item"
+                className="w-full btn-secondary"
+              />
             </div>
           </CmsCollection.ItemRepeater>
         </CmsCollection.Items>
@@ -567,6 +804,7 @@ function CmsCollectionDisplay() {
 ```
 
 ### Advanced Example with Custom Sort Options
+
 ```tsx
 function AdvancedCmsCollection() {
   return (
@@ -619,18 +857,36 @@ function AdvancedCmsCollection() {
                 <p className="text-content-muted mb-6">
                   Create your first item to get started.
                 </p>
-                <CmsCollection.CreateItemAction label="Create Item" className="btn-primary" />
+                <CmsCollection.CreateItemAction
+                  label="Create Item"
+                  className="btn-primary"
+                />
               </CardContent>
             </Card>
           }
         >
           <CmsCollection.ItemRepeater className="hover:bg-surface-hover transition-colors">
-            <CmsItem.TextField fieldKey="title" className="font-medium text-content-primary" />
-            <CmsItem.TextField fieldKey="status" className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-status-success-light text-status-success" />
-            <CmsItem.DateField fieldKey="modified" className="text-content-muted text-sm" />
+            <CmsItem.TextField
+              fieldKey="title"
+              className="font-medium text-content-primary"
+            />
+            <CmsItem.TextField
+              fieldKey="status"
+              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-status-success-light text-status-success"
+            />
+            <CmsItem.DateField
+              fieldKey="modified"
+              className="text-content-muted text-sm"
+            />
             <div className="flex gap-2">
-              <CmsItem.Action.Edit label="Edit" className="btn-sm btn-secondary" />
-              <CmsItem.Action.Delete label="Delete" className="btn-sm btn-outline text-status-error" />
+              <CmsItem.Action.Edit
+                label="Edit"
+                className="btn-sm btn-secondary"
+              />
+              <CmsItem.Action.Delete
+                label="Delete"
+                className="btn-sm btn-outline text-status-error"
+              />
             </div>
           </CmsCollection.ItemRepeater>
         </CmsCollection.Items>
@@ -644,8 +900,12 @@ function AdvancedCmsCollection() {
           />
 
           <div className="flex gap-2">
-            <CmsCollection.PrevAction className="btn-outline">Previous</CmsCollection.PrevAction>
-            <CmsCollection.NextAction className="btn-outline">Next</CmsCollection.NextAction>
+            <CmsCollection.PrevAction className="btn-outline">
+              Previous
+            </CmsCollection.PrevAction>
+            <CmsCollection.NextAction className="btn-outline">
+              Next
+            </CmsCollection.NextAction>
           </div>
         </div>
       </div>
@@ -655,9 +915,12 @@ function AdvancedCmsCollection() {
 ```
 
 ### Complete Variant Examples
+
 ```tsx
 function CmsCollectionWithVariants() {
-  const [viewMode, setViewMode] = useState<'grid' | 'table' | 'list' | 'card'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'table' | 'list' | 'card'>(
+    'grid',
+  );
   const collection = useCmsCollection();
 
   return (
@@ -699,12 +962,27 @@ function CmsCollectionWithVariants() {
           <CmsCollection.Items variant="grid" gridColumns={3} className="gap-6">
             <CmsCollection.ItemRepeater>
               <div className="bg-white rounded-lg border p-4 hover:shadow-lg transition-shadow">
-                <CmsItem.ImageField fieldKey="image" className="w-full aspect-square rounded mb-3" />
-                <CmsItem.TextField fieldKey="title" className="font-semibold mb-2" />
-                <CmsItem.TextField fieldKey="description" className="text-sm text-gray-600 mb-3" />
+                <CmsItem.ImageField
+                  fieldKey="image"
+                  className="w-full aspect-square rounded mb-3"
+                />
+                <CmsItem.TextField
+                  fieldKey="title"
+                  className="font-semibold mb-2"
+                />
+                <CmsItem.TextField
+                  fieldKey="description"
+                  className="text-sm text-gray-600 mb-3"
+                />
                 <div className="flex gap-2">
-                  <CmsItem.Action.Edit label="Edit" className="btn-sm btn-primary" />
-                  <CmsItem.Action.Delete label="Delete" className="btn-sm btn-outline" />
+                  <CmsItem.Action.Edit
+                    label="Edit"
+                    className="btn-sm btn-primary"
+                  />
+                  <CmsItem.Action.Delete
+                    label="Delete"
+                    className="btn-sm btn-outline"
+                  />
                 </div>
               </div>
             </CmsCollection.ItemRepeater>
@@ -718,32 +996,65 @@ function CmsCollectionWithVariants() {
             className="bg-white rounded-lg border"
           >
             <CmsCollection.ItemRepeater className="border-b hover:bg-gray-50 transition-colors">
-              <CmsItem.ImageField fieldKey="image" className="w-12 h-12 rounded object-cover" />
+              <CmsItem.ImageField
+                fieldKey="image"
+                className="w-12 h-12 rounded object-cover"
+              />
               <CmsItem.TextField fieldKey="title" className="font-medium" />
               <CmsItem.TextField fieldKey="status" />
-              <CmsItem.DateField fieldKey="created" className="text-sm text-gray-500" />
+              <CmsItem.DateField
+                fieldKey="created"
+                className="text-sm text-gray-500"
+              />
               <div className="flex gap-1">
-                <CmsItem.Action.Edit label="Edit" className="btn-xs btn-secondary" />
-                <CmsItem.Action.Delete label="Delete" className="btn-xs btn-outline" />
+                <CmsItem.Action.Edit
+                  label="Edit"
+                  className="btn-xs btn-secondary"
+                />
+                <CmsItem.Action.Delete
+                  label="Delete"
+                  className="btn-xs btn-outline"
+                />
               </div>
             </CmsCollection.ItemRepeater>
           </CmsCollection.Items>
         )}
 
         {viewMode === 'list' && (
-          <CmsCollection.Items variant="list" className="bg-white rounded-lg border divide-y">
+          <CmsCollection.Items
+            variant="list"
+            className="bg-white rounded-lg border divide-y"
+          >
             <CmsCollection.ItemRepeater className="p-4 hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-4">
-                <CmsItem.ImageField fieldKey="image" className="w-16 h-16 rounded object-cover" />
+                <CmsItem.ImageField
+                  fieldKey="image"
+                  className="w-16 h-16 rounded object-cover"
+                />
                 <div className="flex-1">
-                  <CmsItem.TextField fieldKey="title" className="font-semibold mb-1" />
-                  <CmsItem.TextField fieldKey="description" className="text-sm text-gray-600" />
+                  <CmsItem.TextField
+                    fieldKey="title"
+                    className="font-semibold mb-1"
+                  />
+                  <CmsItem.TextField
+                    fieldKey="description"
+                    className="text-sm text-gray-600"
+                  />
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <CmsItem.DateField fieldKey="modified" className="text-xs text-gray-500" />
+                  <CmsItem.DateField
+                    fieldKey="modified"
+                    className="text-xs text-gray-500"
+                  />
                   <div className="flex gap-1">
-                    <CmsItem.Action.Edit label="Edit" className="btn-xs btn-primary" />
-                    <CmsItem.Action.Delete label="Delete" className="btn-xs btn-outline" />
+                    <CmsItem.Action.Edit
+                      label="Edit"
+                      className="btn-xs btn-primary"
+                    />
+                    <CmsItem.Action.Delete
+                      label="Delete"
+                      className="btn-xs btn-outline"
+                    />
                   </div>
                 </div>
               </div>
@@ -755,14 +1066,32 @@ function CmsCollectionWithVariants() {
           <CmsCollection.Items variant="card" className="gap-6">
             <CmsCollection.ItemRepeater>
               <div className="bg-white rounded-xl shadow-sm border p-8">
-                <CmsItem.TextField fieldKey="title" className="text-2xl font-bold mb-6" />
-                <CmsItem.ImageField fieldKey="image" className="w-full aspect-video rounded-lg mb-6" />
-                <CmsItem.TextField fieldKey="description" className="text-gray-700 leading-relaxed mb-6" />
+                <CmsItem.TextField
+                  fieldKey="title"
+                  className="text-2xl font-bold mb-6"
+                />
+                <CmsItem.ImageField
+                  fieldKey="image"
+                  className="w-full aspect-video rounded-lg mb-6"
+                />
+                <CmsItem.TextField
+                  fieldKey="description"
+                  className="text-gray-700 leading-relaxed mb-6"
+                />
                 <div className="flex items-center justify-between">
-                  <CmsItem.DateField fieldKey="created" className="text-sm text-gray-500" />
+                  <CmsItem.DateField
+                    fieldKey="created"
+                    className="text-sm text-gray-500"
+                  />
                   <div className="flex gap-3">
-                    <CmsItem.Action.Edit label="Edit Item" className="btn btn-primary" />
-                    <CmsItem.Action.Delete label="Delete" className="btn btn-outline" />
+                    <CmsItem.Action.Edit
+                      label="Edit Item"
+                      className="btn btn-primary"
+                    />
+                    <CmsItem.Action.Delete
+                      label="Delete"
+                      className="btn btn-outline"
+                    />
                   </div>
                 </div>
               </div>
