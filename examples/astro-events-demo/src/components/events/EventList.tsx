@@ -14,6 +14,7 @@ import {
   FilterOptions,
   FilterOptionRepeater,
   FilterOptionSingle,
+  ScrollableTabs,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
 
@@ -31,7 +32,9 @@ export function EventList({
       <EventListFilters allCategoriesLabel="All">
         <FilterOptions className="border-b border-foreground/10 mb-6">
           <FilterOptionRepeater>
-            <FilterOptionSingle variant="tabs" />
+            <ScrollableTabs>
+              <FilterOptionSingle variant="tabs" />
+            </ScrollableTabs>
           </FilterOptionRepeater>
         </FilterOptions>
       </EventListFilters>

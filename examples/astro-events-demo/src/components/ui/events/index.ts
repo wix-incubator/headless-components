@@ -8,5 +8,6 @@ export * from './ScheduleItem';
 export * from './ScheduleItemsGroup';
 export * from './ScheduleItemTag';
 export * from './ScheduleList';
+export * from './ScrollableTabs';
 export * from './TicketDefinition';
 export * from './TicketsPicker';
