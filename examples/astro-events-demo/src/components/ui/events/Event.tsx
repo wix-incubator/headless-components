@@ -277,9 +277,10 @@ const eventRsvpButtonVariants = cva(
       variant: {
         primary: 'text-primary-foreground bg-primary hover:bg-primary/80',
         outline:
-          'border border-foreground/10 bg-background text-foreground py-2 px-4 hover:underline',
+          'border border-foreground/10 bg-background text-foreground hover:underline',
       },
       size: {
+        sm: 'py-2 px-4',
         base: 'py-2 px-10',
         lg: 'py-2 px-10 sm:py-3',
       },
@@ -417,3 +418,30 @@ export const EventAddToIcsCalendar = React.forwardRef<
 });
 
 EventAddToIcsCalendar.displayName = 'EventAddToIcsCalendar';
+
+/**
+ * Container for event occurrences.
+ * Handles layout and spacing for multiple occurrences.
+ *
+ * @component
+ */
+export const EventOccurrences = React.forwardRef<
+  React.ElementRef<typeof EventPrimitive.Occurrences>,
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.Occurrences>
+>(({ className, ...props }, ref) => {
+  return (
+    <EventPrimitive.Occurrences {...props} ref={ref} className={cn(className)}>
+      {props.children}
+    </EventPrimitive.Occurrences>
+  );
+});
+
+EventOccurrences.displayName = 'EventOccurrences';
+
+/**
+ * Repeater component for individual event occurrences.
+ * Handles the iteration over occurrences.
+ *
+ * @component
+ */
+export const EventOccurrenceRepeater = EventPrimitive.OccurrenceRepeater;

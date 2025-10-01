@@ -319,7 +319,7 @@ export interface RsvpButtonRenderProps {
 }
 
 /**
- * Event RsvpButton core component that provides event.
+ * Event RsvpButton core component that provides event slug and ticketed status.
  *
  * @component
  */

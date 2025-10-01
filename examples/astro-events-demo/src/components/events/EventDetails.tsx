@@ -6,6 +6,7 @@ import {
   type ScheduleListServiceConfig,
   type OccurrenceListServiceConfig,
 } from '@wix/events/services';
+import { useState } from 'react';
 import {
   Event,
   EventDate,
@@ -52,6 +53,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { EventList } from './EventList';
 import { EventSocialShare } from './EventSocialShare';
+import { OccurrencesModal } from './OccurrencesModal';
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
@@ -76,6 +78,8 @@ export function EventDetails({
   formPagePath,
   schedulePagePath,
 }: EventDetailsProps) {
+  const [isOccurrencesModalOpen, setIsOccurrencesModalOpen] = useState(false);
+
   const currentEventId = eventServiceConfig.event._id;
   const otherUpcomingEvents = eventListServiceConfig.events
     .filter(
@@ -147,8 +151,18 @@ export function EventDetails({
             <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-3 sm:mb-4">
               Time & Location
             </h2>
-            <EventDate format="full" />
-            <EventLocation format="full" />
+            <div className="flex items-center justify-between">
+              <div>
+                <EventDate format="full" />
+                <EventLocation format="full" />
+              </div>
+              <button
+                className="border border-foreground/10 bg-background font-paragraph text-foreground text-base py-2 px-4 hover:underline group-data-[has-occurrences=false]/event:hidden"
+                onClick={() => setIsOccurrencesModalOpen(true)}
+              >
+                Select Different Date
+              </button>
+            </div>
           </div>
 
           {/* About the Event Section */}
@@ -464,6 +478,15 @@ export function EventDetails({
           </div>
         </div>
       ) : null}
+
+      {isOccurrencesModalOpen && (
+        <OccurrencesModal
+          eventServiceConfig={eventServiceConfig}
+          occurrenceListServiceConfig={occurrenceListServiceConfig}
+          eventDetailsPagePath={eventDetailsPagePath}
+          onClose={() => setIsOccurrencesModalOpen(false)}
+        />
+      )}
     </Event>
   );
 }

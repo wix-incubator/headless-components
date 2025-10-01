@@ -54,6 +54,7 @@ export function Schedule({
             </div>
             <EventRsvpButton
               asChild
+              size="sm"
               variant="outline"
               className="hidden sm:block h-fit"
             >
@@ -146,6 +147,7 @@ export function Schedule({
             </ScheduleListGroupRepeater>
             <EventRsvpButton
               asChild
+              size="sm"
               variant="outline"
               className="block sm:hidden"
             >
