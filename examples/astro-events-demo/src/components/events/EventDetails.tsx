@@ -482,12 +482,17 @@ export function EventDetails({
       ) : null}
 
       {isOccurrencesModalOpen && (
-        <OccurrencesModal
-          eventServiceConfig={eventServiceConfig}
-          occurrenceListServiceConfig={occurrenceListServiceConfig}
-          eventDetailsPagePath={eventDetailsPagePath}
-          onClose={() => setIsOccurrencesModalOpen(false)}
-        />
+        <EventSlug asChild>
+          {({ slug }) => (
+            <OccurrencesModal
+              currentOccurrenceSlug={slug}
+              eventServiceConfig={eventServiceConfig}
+              occurrenceListServiceConfig={occurrenceListServiceConfig}
+              eventDetailsPagePath={eventDetailsPagePath}
+              onClose={() => setIsOccurrencesModalOpen(false)}
+            />
+          )}
+        </EventSlug>
       )}
     </Event>
   );

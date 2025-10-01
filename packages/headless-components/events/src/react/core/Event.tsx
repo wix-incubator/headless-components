@@ -411,15 +411,10 @@ export interface OccurrencesRenderProps {
  * @component
  */
 export function Occurrences(props: OccurrencesProps): React.ReactNode {
-  const eventService = useService(EventServiceDefinition);
   const occurrenceListService = useService(OccurrenceListServiceDefinition);
 
-  const event = eventService.event.get();
   const occurrences = occurrenceListService.occurrences.get();
-  const filteredOccurrences = occurrences.filter(
-    (occurrence) => occurrence._id !== event._id,
-  );
-  const hasOccurrences = !!filteredOccurrences.length;
+  const hasOccurrences = occurrences.length > 1;
 
-  return props.children({ occurrences: filteredOccurrences, hasOccurrences });
+  return props.children({ occurrences, hasOccurrences });
 }
