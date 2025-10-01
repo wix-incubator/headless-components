@@ -306,6 +306,8 @@ export interface CategoryFilterProps {
   children: React.ReactNode;
   /** All categories label*/
   allCategoriesLabel: string;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
@@ -325,12 +327,16 @@ export interface CategoryFilterProps {
  */
 export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
   return (
-    <CoreEventList.CategoryFilter allCategoriesLabel={props.allCategoriesLabel}>
-      {({ filterOptions, onChange, value }) => {
+    <CoreEventList.CategoryFilter
+      allCategoriesLabel={props.allCategoriesLabel}
+      className={props.className}
+    >
+      {({ filterOptions, className, onChange, value }) => {
         return (
           <FilterPrimitive.Root
             value={value}
             onChange={onChange}
+            className={className}
             filterOptions={filterOptions}
           >
             {props.children}
@@ -338,5 +344,64 @@ export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
         );
       }}
     </CoreEventList.CategoryFilter>
+  );
+};
+
+/**
+ * Props for the EventList StatusFilter component.
+ */
+export interface StatusFilterProps {
+  /** Child components */
+  children: React.ReactNode;
+  /** All statuses label */
+  allStatusesLabel: string;
+  /** Upcoming events label */
+  upcomingLabel: string;
+  /** Past events label */
+  pastLabel: string;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Container for the event list status filters.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <EventList.StatusFilter
+ *   allStatusesLabel="All Events"
+ *   upcomingLabel="Upcoming"
+ *   pastLabel="Past"
+ * >
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.SingleFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </EventList.StatusFilter>
+ * ```
+ */
+export const StatusFilter = (props: StatusFilterProps): React.ReactNode => {
+  return (
+    <CoreEventList.StatusFilter
+      allStatusesLabel={props.allStatusesLabel}
+      upcomingLabel={props.upcomingLabel}
+      pastLabel={props.pastLabel}
+      className={props.className}
+    >
+      {({ filterOptions, className, onChange, value }) => {
+        return (
+          <FilterPrimitive.Root
+            value={value}
+            onChange={onChange}
+            filterOptions={filterOptions}
+            className={className}
+          >
+            {props.children}
+          </FilterPrimitive.Root>
+        );
+      }}
+    </CoreEventList.StatusFilter>
   );
 };

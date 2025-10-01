@@ -102,3 +102,11 @@ EventListError.displayName = 'EventListError';
  * @component
  */
 export const EventListCategoryFilter = EventListPrimitive.CategoryFilter;
+
+/**
+ * Container for event list status filter.
+ * Handles status filtering for events.
+ *
+ * @component
+ */
+export const EventListStatusFilter = EventListPrimitive.StatusFilter;

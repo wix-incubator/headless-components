@@ -11,7 +11,14 @@ import {
   type Category,
 } from '../../services/event-list-service.js';
 import { type Event } from '../../services/event-service.js';
-import { ALL_CATEGORIES, CATEGORIES_FILTER_KEY } from '../../constants.js';
+import {
+  ALL_CATEGORIES,
+  CATEGORIES_FILTER_KEY,
+  ALL_EVENTS,
+  STATUS_FILTER_KEY,
+  UPCOMING_EVENTS,
+  PAST_EVENTS,
+} from '../../constants.js';
 
 export interface RootProps {
   /** Child components that will have access to the event list service */
@@ -157,6 +164,8 @@ export interface CategoryFilterProps {
   children: (props: CategoryFilterRenderProps) => React.ReactNode;
   /** All categories label*/
   allCategoriesLabel: string;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 export interface CategoryFilterRenderProps {
@@ -166,6 +175,8 @@ export interface CategoryFilterRenderProps {
   value: FilterPrimitive.Filter;
   /** Function to handle category change */
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
@@ -201,6 +212,7 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
     filterOptions,
     value,
     onChange: handleCategoryChange,
+    className: props.className,
   });
 }
 
@@ -234,6 +246,105 @@ const buildFilterProps = (
   const value = {
     ...FILTER_BASE,
     categoryId: selectedCategoryId,
+  };
+
+  return { filterOptions, value };
+};
+
+export interface StatusFilterProps {
+  /** Render prop function */
+  children: (props: StatusFilterRenderProps) => React.ReactNode;
+  /** All statuses label */
+  allStatusesLabel: string;
+  /** Upcoming events label */
+  upcomingLabel: string;
+  /** Past events label */
+  pastLabel: string;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+export interface StatusFilterRenderProps {
+  /** Filter options */
+  filterOptions: FilterOption[];
+  /** Filter value */
+  value: FilterPrimitive.Filter;
+  /** Function to handle status change */
+  onChange: (value: FilterPrimitive.Filter) => Promise<void>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * StatusFilter core component that provides event list status filters data.
+ *
+ * @component
+ */
+export function StatusFilter(props: StatusFilterProps): React.ReactNode {
+  const eventListService = useService(EventListServiceDefinition);
+  const selectedStatusId =
+    eventListService.selectedStatusId.get() || UPCOMING_EVENTS;
+
+  const handleStatusChange = async (value: FilterPrimitive.Filter) => {
+    const statusId = value?.['statusId'];
+
+    await eventListService.loadEvents(
+      eventListService.selectedCategoryId.get() || undefined,
+      statusId,
+    );
+  };
+
+  const { filterOptions, value } = buildStatusFilterProps(
+    props.allStatusesLabel,
+    props.upcomingLabel,
+    props.pastLabel,
+    selectedStatusId,
+  );
+
+  return props.children({
+    filterOptions,
+    value,
+    onChange: handleStatusChange,
+    className: props.className,
+  });
+}
+
+const buildStatusFilterProps = (
+  allStatusesLabel: string,
+  upcomingLabel: string,
+  pastLabel: string,
+  selectedStatusId: string,
+) => {
+  const FILTER_BASE = {
+    key: STATUS_FILTER_KEY,
+    label: '',
+    type: 'single' as const,
+    displayType: 'text' as const,
+    fieldName: 'statusId',
+  };
+
+  const filterOptions = [
+    {
+      ...FILTER_BASE,
+      validValues: [ALL_EVENTS, UPCOMING_EVENTS, PAST_EVENTS],
+      valueFormatter: (value: string | number) => {
+        switch (value) {
+          case ALL_EVENTS:
+            return allStatusesLabel;
+          case UPCOMING_EVENTS:
+            return upcomingLabel;
+          case PAST_EVENTS:
+            return pastLabel;
+          default:
+            return allStatusesLabel;
+        }
+      },
+    },
+  ];
+
+  const value = {
+    ...FILTER_BASE,
+    statusId: selectedStatusId,
   };
 
   return { filterOptions, value };
