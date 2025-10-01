@@ -9,6 +9,12 @@ import {
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import type { DisplayType } from './core/CmsCollection.js';
 import * as CmsItem from './CmsItem.js';
+import {
+  Sort as SortPrimitive,
+  type SortValue,
+  type SortOption,
+} from '@wix/headless-components/react';
+import { CmsCollectionSort as CmsCollectionSortPrimitive } from './core/CmsCollectionSort.js';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -19,6 +25,7 @@ enum TestIds {
   cmsCollectionCreateItem = 'cms-collection-create-item',
   cmsCollectionItems = 'cms-collection-items',
   cmsCollectionItem = 'cms-collection-item',
+  cmsCollectionSort = 'cms-collection-sort',
 }
 
 /**
@@ -30,6 +37,7 @@ export interface RootProps {
     id: string;
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
+    initialSort?: SortValue;
   };
 }
 
@@ -70,6 +78,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       collectionId: collection.id,
       queryResult: collection?.queryResult,
       queryOptions: collection?.queryOptions,
+      initialSort: collection?.initialSort,
     };
 
     const attributes = {
@@ -874,3 +883,127 @@ export const CreateItemAction = React.forwardRef<
     </CoreCmsCollection.CreateItemAction>
   );
 });
+
+/**
+ * Props for CmsCollection.Sort component
+ */
+export interface SortProps {
+  /** Predefined sort options for declarative API */
+  sortOptions?: Array<SortOption>;
+  /** Render mode - 'select' uses native select, 'list' provides list (default: 'select') */
+  as?: 'select' | 'list';
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
+  /** Children components or render function */
+  children?: React.ReactNode;
+  /** CSS classes to apply */
+  className?: string;
+}
+
+/**
+ * Sort component that provides sorting controls for the collection items.
+ * Wraps the Sort primitive with CMS collection state management.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Native select with predefined options
+ * <CmsCollection.Sort
+ *   as="select"
+ *   sortOptions={[
+ *     { fieldName: 'title', order: 'ASC', label: 'Title (A-Z)' },
+ *     { fieldName: 'created', order: 'DESC', label: 'Newest First' },
+ *   ]}
+ *   className="w-full"
+ * />
+ *
+ * // List with custom options
+ * <CmsCollection.Sort as="list" className="flex gap-2">
+ *   <CmsCollection.SortOption fieldName="title" order="ASC" label="Title (A-Z)" />
+ *   <CmsCollection.SortOption fieldName="created" order="DESC" label="Newest" />
+ * </CmsCollection.Sort>
+ *
+ * // Custom implementation with asChild
+ * <CmsCollection.Sort asChild sortOptions={sortOptions}>
+ *   <MyCustomSortComponent />
+ * </CmsCollection.Sort>
+ * ```
+ */
+export const Sort = React.forwardRef<HTMLElement, SortProps>((props, ref) => {
+  const {
+    sortOptions,
+    as = 'select',
+    asChild,
+    children,
+    className,
+    ...otherProps
+  } = props;
+
+  return (
+    <CmsCollectionSortPrimitive>
+      {({ currentSort, setSort }) => {
+        const currentSortItem = currentSort?.[0];
+
+        return (
+          <SortPrimitive.Root
+            ref={ref}
+            value={currentSort}
+            onChange={setSort}
+            sortOptions={sortOptions}
+            as={as}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.cmsCollectionSort}
+            data-sorted-by={currentSortItem?.fieldName}
+            data-sort-direction={currentSortItem?.order}
+            {...otherProps}
+          >
+            {children}
+          </SortPrimitive.Root>
+        );
+      }}
+    </CmsCollectionSortPrimitive>
+  );
+});
+
+/**
+ * SortOption component for individual sort options.
+ * Direct export of the Sort primitive's Option component - no CMS-specific customization needed
+ * since CMS collections have dynamic schemas.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Set both field and order
+ * <CmsCollection.SortOption
+ *   fieldName="title"
+ *   order="ASC"
+ *   label="Title (A-Z)"
+ * />
+ *
+ * // Any custom field name from your collection
+ * <CmsCollection.SortOption
+ *   fieldName="customField"
+ *   order="DESC"
+ *   label="Custom Field"
+ * />
+ *
+ * // With asChild pattern
+ * <CmsCollection.SortOption
+ *   fieldName="created"
+ *   order="DESC"
+ *   label="Newest"
+ *   asChild
+ * >
+ *   <button className="sort-btn">Newest First</button>
+ * </CmsCollection.SortOption>
+ * ```
+ */
+const SortOptionComponent = SortPrimitive.Option;
+
+// Set display names
+Sort.displayName = 'CmsCollection.Sort';
+SortOptionComponent.displayName = 'CmsCollection.SortOption';
+
+// Export as named export
+export { SortOptionComponent as SortOption };
