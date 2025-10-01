@@ -15,6 +15,7 @@ interface EventDetailsPageProps {
   scheduleListServiceConfig: ScheduleListServiceConfig;
   eventDetailsPagePath: string;
   formPagePath: string;
+  schedulePagePath: string;
 }
 
 export default function EventDetailsPage({
@@ -25,6 +26,7 @@ export default function EventDetailsPage({
   scheduleListServiceConfig,
   eventDetailsPagePath,
   formPagePath,
+  schedulePagePath,
 }: EventDetailsPageProps) {
   return (
     <div className="bg-background">
@@ -36,6 +38,7 @@ export default function EventDetailsPage({
         scheduleListServiceConfig={scheduleListServiceConfig}
         eventDetailsPagePath={eventDetailsPagePath}
         formPagePath={formPagePath}
+        schedulePagePath={schedulePagePath}
       />
     </div>
   );

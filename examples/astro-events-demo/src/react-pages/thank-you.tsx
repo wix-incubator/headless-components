@@ -2,7 +2,6 @@ import {
   type EventServiceConfig,
   type OrderServiceConfig,
 } from '@wix/events/services';
-import { KitchensinkLayout } from '../layouts/KitchensinkLayout';
 import { ThankYou } from '../components/events/ThankYou';
 
 interface ThankYouPageProps {
@@ -17,14 +16,12 @@ export default function ThankYouPage({
   eventPageUrl,
 }: ThankYouPageProps) {
   return (
-    <KitchensinkLayout>
-      <div className="max-w-7xl mx-auto">
-        <ThankYou
-          eventServiceConfig={eventServiceConfig}
-          orderServiceConfig={orderServiceConfig}
-          eventPageUrl={eventPageUrl}
-        />
-      </div>
-    </KitchensinkLayout>
+    <div className="bg-background">
+      <ThankYou
+        eventServiceConfig={eventServiceConfig}
+        orderServiceConfig={orderServiceConfig}
+        eventPageUrl={eventPageUrl}
+      />
+    </div>
   );
 }
