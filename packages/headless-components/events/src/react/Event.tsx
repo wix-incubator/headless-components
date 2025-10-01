@@ -20,6 +20,7 @@ enum TestIds {
   eventXShare = 'event-x-share',
   eventAddToGoogleCalendar = 'event-add-to-google-calendar',
   eventAddToIcsCalendar = 'event-add-to-ics-calendar',
+  eventOccurrences = 'event-occurrences',
 }
 
 /**
@@ -924,3 +925,98 @@ export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
     </CoreEvent.Type>
   );
 });
+
+/**
+ * Props for the Event Occurrences component.
+ */
+export interface OccurrencesProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
+  children: React.ReactNode | AsChildChildren<{ occurrences: Event[] }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Container for the event occurrences.
+ * Follows List Container Level pattern.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Event.Occurrences>
+ *   <Event.OccurrenceRepeater>
+ *     <Event.Image />
+ *     <Event.Title />
+ *   <Event.OccurrenceRepeater>
+ * <Event.Occurrences>
+ * ```
+ */
+export const Occurrences = React.forwardRef<HTMLElement, OccurrencesProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreEvent.Occurrences>
+        {({ occurrences }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.eventOccurrences}
+              customElement={children}
+              customElementProps={{ occurrences }}
+              {...otherProps}
+            >
+              <div>{children as React.ReactNode}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreEvent.Occurrences>
+    );
+  },
+);
+
+/**
+ * Props for the Event OccurrenceRepeater component.
+ */
+export interface OccurrenceRepeaterProps {
+  /** Child components */
+  children: React.ReactNode;
+  /** CSS classes to apply to the occurrence element */
+  className?: string;
+}
+
+/**
+ * Repeater component that renders Event.Root for each occurrence.
+ * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Event.OccurrenceRepeater>
+ *   <Event.Image />
+ *   <Event.Title />
+ * </Event.OccurrenceRepeater>
+ * ```
+ */
+export const OccurrenceRepeater = (
+  props: OccurrenceRepeaterProps,
+): React.ReactNode => {
+  const { children, className } = props;
+
+  return (
+    <CoreEvent.Occurrences>
+      {({ occurrences }) => {
+        return occurrences.map((occurrence) => (
+          <Root key={occurrence._id} event={occurrence} className={className}>
+            {children}
+          </Root>
+        ));
+      }}
+    </CoreEvent.Occurrences>
+  );
+};

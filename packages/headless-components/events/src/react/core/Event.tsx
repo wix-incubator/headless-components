@@ -362,11 +362,43 @@ export interface TypeRenderProps {
  */
 export function Type(props: TypeProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
-  const event = eventService.event.get();
 
+  const event = eventService.event.get();
   const ticketed = event.registration?.type === 'TICKETING';
   const rsvp = event.registration?.type === 'RSVP';
   const external = event.registration?.type === 'EXTERNAL';
 
   return props.children({ ticketed, rsvp, external });
+}
+
+export interface OccurrencesProps {
+  /** Render prop function */
+  children: (props: OccurrencesRenderProps) => React.ReactNode;
+}
+
+export interface OccurrencesRenderProps {
+  /** List of occurrences */
+  occurrences: Event[];
+}
+
+/**
+ * Event Occurrences core component that provides occurrences.
+ *
+ * @component
+ */
+export function Occurrences(props: OccurrencesProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+  const occurrenceListService = useService(OccurrenceListServiceDefinition);
+
+  const event = eventService.event.get();
+  const occurrences = occurrenceListService.occurrences.get();
+  const filteredOccurrences = occurrences.filter(
+    (occurrence) => occurrence._id !== event._id,
+  );
+
+  if (!filteredOccurrences.length) {
+    return null;
+  }
+
+  return props.children({ occurrences: filteredOccurrences });
 }
