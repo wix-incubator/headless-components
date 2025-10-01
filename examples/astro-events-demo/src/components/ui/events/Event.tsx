@@ -264,16 +264,22 @@ export const EventDescription = React.forwardRef<
 EventDescription.displayName = 'EventDescription';
 
 const eventRsvpButtonVariants = cva(
-  'bg-primary text-primary-foreground font-paragraph text-base text-center hover:bg-primary/80 w-full sm:w-auto',
+  'font-paragraph text-base text-center w-full sm:w-auto',
   {
     variants: {
       variant: {
+        primary: 'text-primary-foreground bg-primary hover:bg-primary/80',
+        outline:
+          'border border-foreground/10 bg-background text-foreground py-2 px-4 hover:underline',
+      },
+      size: {
         base: 'py-2 px-10',
         lg: 'py-2 px-10 sm:py-3',
       },
     },
     defaultVariants: {
-      variant: 'base',
+      variant: 'primary',
+      size: 'base',
     },
   }
 );
@@ -290,12 +296,12 @@ export interface EventRsvpButtonProps
 export const EventRsvpButton = React.forwardRef<
   React.ElementRef<typeof EventPrimitive.RsvpButton>,
   EventRsvpButtonProps
->(({ variant, className, label = 'RSVP', ...props }, ref) => {
+>(({ variant, size, className, label = 'RSVP', ...props }, ref) => {
   return (
     <EventPrimitive.RsvpButton
       {...props}
       ref={ref}
-      className={cn(eventRsvpButtonVariants({ variant }), className)}
+      className={cn(eventRsvpButtonVariants({ variant, size }), className)}
       label={label}
     />
   );

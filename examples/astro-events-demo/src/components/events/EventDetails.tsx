@@ -116,7 +116,7 @@ export function EventDetails({
         <EventShortDescription className="max-w-2xl mt-5 sm:mt-6" />
         <EventRsvpButton
           asChild
-          variant="lg"
+          size="lg"
           className="inline-block mt-6 sm:mt-10"
         >
           {({ ticketed, eventSlug }) => (

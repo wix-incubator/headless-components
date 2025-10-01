@@ -52,12 +52,13 @@ export function Schedule({
               <EventDate format="full" />
               <EventLocation format="full" />
             </div>
-            <EventRsvpButton asChild>
+            <EventRsvpButton
+              asChild
+              variant="outline"
+              className="hidden sm:block h-fit"
+            >
               {({ eventSlug, ticketed }) => (
-                <a
-                  href={eventDetailsPagePath.replace(':slug', eventSlug)}
-                  className="hidden sm:block border border-secondary px-4 mb-auto"
-                >
+                <a href={eventDetailsPagePath.replace(':slug', eventSlug)}>
                   {ticketed ? 'Get Tickets' : 'RSVP'}
                 </a>
               )}
@@ -92,7 +93,7 @@ export function Schedule({
             </FilterOptions>
           </ScheduleListFilters>
           <ScheduleListGroups
-            className="flex flex-col space-y-10"
+            className="space-y-10"
             emptyState={
               <div className="font-paragraph text-foreground">
                 No schedule items available
@@ -143,12 +144,13 @@ export function Schedule({
                 </ScheduleItemsGroupItemRepeater>
               </ScheduleItemsGroupItems>
             </ScheduleListGroupRepeater>
-            <EventRsvpButton asChild>
+            <EventRsvpButton
+              asChild
+              variant="outline"
+              className="block sm:hidden"
+            >
               {({ eventSlug, ticketed }) => (
-                <a
-                  href={eventDetailsPagePath.replace(':slug', eventSlug)}
-                  className="sm:hidden border border-secondary px-4"
-                >
+                <a href={eventDetailsPagePath.replace(':slug', eventSlug)}>
                   {ticketed ? 'Get Tickets' : 'RSVP'}
                 </a>
               )}

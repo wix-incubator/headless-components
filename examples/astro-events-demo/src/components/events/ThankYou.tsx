@@ -78,7 +78,7 @@ export function ThankYou({
             <div className="flex gap-6 p-6 border-b border-foreground/10">
               <EventImage className="w-40 h-24" />
               <div className="flex flex-row justify-between w-full">
-                <div className="flex flex-col">
+                <div>
                   <EventTitle variant="md" className="mb-4" />
                   <div className="flex gap-1 items-center mb-1">
                     <svg width="20" height="20" viewBox="0 0 20 20">
