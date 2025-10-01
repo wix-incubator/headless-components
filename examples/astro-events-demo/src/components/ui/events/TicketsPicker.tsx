@@ -112,7 +112,7 @@ export const CheckoutTrigger = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block bg-primary text-primary-foreground font-paragraph text-base py-2 sm:py-3 px-20 hover:bg-primary/80 w-full',
+        'block bg-primary text-primary-foreground font-paragraph text-base py-2 sm:py-3 px-20 w-full hover:underline',
         className
       )}
     />

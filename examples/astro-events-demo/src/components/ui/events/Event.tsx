@@ -57,6 +57,20 @@ import '@wix/ricos/css/plugin-video-viewer.global.css';
  */
 export const Event = EventPrimitive.Root;
 
+/**
+ * Provides the event slug.
+ *
+ * @component
+ */
+export const EventSlug = EventPrimitive.Slug;
+
+/**
+ * Provides the event type.
+ *
+ * @component
+ */
+export const EventType = EventPrimitive.Type;
+
 const eventTitleVariants = cva('text-foreground', {
   variants: {
     variant: {
@@ -175,13 +189,6 @@ export const EventLocation = React.forwardRef<
 EventLocation.displayName = 'EventLocation';
 
 /**
- * Provides the event coordinates.
- *
- * @component
- */
-export const EventCoordinates = EventPrimitive.Coordinates;
-
-/**
  * Displays the event short description.
  * Brief summary of the event.
  *
@@ -264,15 +271,15 @@ export const EventDescription = React.forwardRef<
 EventDescription.displayName = 'EventDescription';
 
 const eventRsvpButtonVariants = cva(
-  'font-paragraph text-base text-center w-full sm:w-auto',
+  'font-paragraph text-base text-center w-full sm:w-auto hover:underline',
   {
     variants: {
       variant: {
-        primary: 'text-primary-foreground bg-primary hover:bg-primary/80',
-        outline:
-          'border border-foreground/10 bg-background text-foreground py-2 px-4 hover:underline',
+        primary: 'bg-primary text-primary-foreground',
+        outline: 'bg-background text-foreground border border-foreground/10',
       },
       size: {
+        sm: 'py-2 px-4',
         base: 'py-2 px-10',
         lg: 'py-2 px-10 sm:py-3',
       },
@@ -370,13 +377,6 @@ export const EventXShare = React.forwardRef<
 EventXShare.displayName = 'EventXShare';
 
 /**
- * Provides the event type.
- *
- * @component
- */
-export const EventType = EventPrimitive.Type;
-
-/**
  * Displays Google Calendar add button for the event.
  * Allows users to add the event to their Google Calendar.
  *
@@ -417,3 +417,30 @@ export const EventAddToIcsCalendar = React.forwardRef<
 });
 
 EventAddToIcsCalendar.displayName = 'EventAddToIcsCalendar';
+
+/**
+ * Container for event occurrences.
+ * Handles layout and spacing for multiple occurrences.
+ *
+ * @component
+ */
+export const EventOccurrences = React.forwardRef<
+  React.ElementRef<typeof EventPrimitive.Occurrences>,
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.Occurrences>
+>(({ className, ...props }, ref) => {
+  return (
+    <EventPrimitive.Occurrences {...props} ref={ref} className={cn(className)}>
+      {props.children}
+    </EventPrimitive.Occurrences>
+  );
+});
+
+EventOccurrences.displayName = 'EventOccurrences';
+
+/**
+ * Repeater component for individual event occurrences.
+ * Handles the iteration over occurrences.
+ *
+ * @component
+ */
+export const EventOccurrenceRepeater = EventPrimitive.OccurrenceRepeater;

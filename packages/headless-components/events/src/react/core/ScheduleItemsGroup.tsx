@@ -3,8 +3,8 @@ import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
   ScheduleItemsGroupService,
-  ScheduleItemsGroupServiceConfig,
   ScheduleItemsGroupServiceDefinition,
+  type ScheduleItemsGroupServiceConfig,
 } from '../../services/schedule-items-group-service.js';
 import { type ScheduleItem } from '../../services/schedule-item-service.js';
 import { type ScheduleItemsGroup } from '../../services/schedule-items-group-service.js';
@@ -22,7 +22,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { itemsGroup, children } = props;
+  const { children, itemsGroup } = props;
 
   const scheduleItemsGroupServiceConfig: ScheduleItemsGroupServiceConfig = {
     itemsGroup,
@@ -60,6 +60,7 @@ export interface DateLabelRenderProps {
  */
 export function DateLabel(props: DateLabelProps): React.ReactNode {
   const groupService = useService(ScheduleItemsGroupServiceDefinition);
+
   const { formattedDate, date } = groupService.itemsGroup.get();
 
   return props.children({ formattedDate, date });
@@ -83,6 +84,7 @@ export interface ItemsRenderProps {
  */
 export function Items(props: ItemsProps): React.ReactNode {
   const groupService = useService(ScheduleItemsGroupServiceDefinition);
+
   const { items } = groupService.itemsGroup.get();
 
   return props.children({ items });

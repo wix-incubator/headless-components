@@ -327,12 +327,12 @@ export interface FiltersProps {
 export const Filters = (props: FiltersProps): React.ReactNode => {
   return (
     <CoreEventListFilters.Root allCategoriesLabel={props.allCategoriesLabel}>
-      {({ filterOptions, onChange, value }) => {
+      {({ filterOptions, value, onChange }) => {
         return (
           <FilterPrimitive.Root
+            filterOptions={filterOptions}
             value={value}
             onChange={onChange}
-            filterOptions={filterOptions}
           >
             {props.children}
           </FilterPrimitive.Root>

@@ -37,10 +37,10 @@ export interface RootProps {
  */
 export function Root(props: RootProps): React.ReactNode {
   const {
+    children,
     eventServiceConfig,
     ticketDefinitionListServiceConfig,
     checkoutServiceConfig,
-    children,
   } = props;
 
   return (
@@ -223,6 +223,7 @@ export interface CheckoutErrorRenderProps {
  */
 export function CheckoutError(props: CheckoutErrorProps): React.ReactNode {
   const checkoutService = useService(CheckoutServiceDefinition);
+
   const error = checkoutService.error.get();
 
   if (!error) {

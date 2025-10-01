@@ -30,7 +30,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { pricingOption, children } = props;
+  const { children, pricingOption } = props;
 
   const pricingOptionServiceConfig: PricingOptionServiceConfig = {
     pricingOption,

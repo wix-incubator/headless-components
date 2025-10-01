@@ -34,10 +34,7 @@ export const ScheduleItemsGroupDateLabel = React.forwardRef<
     <ScheduleItemsGroupPrimitive.DateLabel
       {...props}
       ref={ref}
-      className={cn(
-        'block font-heading text-foreground text-2xl font-bold',
-        className
-      )}
+      className={cn('block font-heading text-foreground text-2xl', className)}
     />
   );
 });

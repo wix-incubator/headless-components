@@ -3,11 +3,11 @@ import { createServicesMap } from '@wix/services-manager';
 import {
   isOrderReady,
   OrderService,
-  OrderServiceConfig,
   OrderServiceDefinition,
+  type OrderServiceConfig,
 } from '../../services/order-service.js';
+import { type InvoiceItem } from '../../services/invoice-item-service.js';
 import { formatDateMonthDayYear } from '../../utils/date.js';
-import { InvoiceItem } from '../../services/invoice-item-service.js';
 import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {

@@ -32,6 +32,7 @@ export interface RootRenderProps {
  */
 export function Root(props: RootProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const categories = eventListService.categories.get();
   const selectedCategoryId =
     eventListService.selectedCategoryId.get() || ALL_CATEGORIES;
@@ -40,7 +41,7 @@ export function Root(props: RootProps): React.ReactNode {
     return null;
   }
 
-  const handleCategoryChange = async (value: FilterPrimitive.Filter) => {
+  const onChange = async (value: FilterPrimitive.Filter) => {
     const categoryId = value?.['categoryId'];
 
     await eventListService.loadEvents(
@@ -57,7 +58,7 @@ export function Root(props: RootProps): React.ReactNode {
   return props.children({
     filterOptions,
     value,
-    onChange: handleCategoryChange,
+    onChange,
   });
 }
 

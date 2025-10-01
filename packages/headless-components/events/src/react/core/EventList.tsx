@@ -20,15 +20,17 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
+  const { children, eventListServiceConfig } = props;
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         EventListServiceDefinition,
         EventListService,
-        props.eventListServiceConfig,
+        eventListServiceConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }
@@ -54,6 +56,7 @@ export interface EventsRenderProps {
  */
 export function Events(props: EventsProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const isLoading = eventListService.isLoading.get();
   const events = eventListService.events.get();
   const hasEvents = !!events.length;
@@ -78,6 +81,7 @@ export interface EventRepeaterRenderProps {
  */
 export function EventRepeater(props: EventRepeaterProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const events = eventListService.events.get();
   const hasEvents = !!events.length;
 
@@ -107,6 +111,7 @@ export interface LoadMoreTriggerRenderProps {
  */
 export function LoadMoreTrigger(props: LoadMoreTriggerProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const isLoading = eventListService.isLoadingMore.get();
   const hasMoreEvents = eventListService.hasMoreEvents.get();
 
@@ -137,6 +142,7 @@ export interface ErrorRenderProps {
  */
 export function Error(props: ErrorProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const error = eventListService.error.get();
 
   if (!error) {

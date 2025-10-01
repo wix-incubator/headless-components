@@ -2,9 +2,9 @@ import React from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
-  type ScheduleItem,
-  ScheduleItemServiceDefinition,
   ScheduleItemService,
+  ScheduleItemServiceDefinition,
+  type ScheduleItem,
   type ScheduleItemServiceConfig,
 } from '../../services/schedule-item-service.js';
 import { formatTimeRange, getDurationInMinutes } from '../../utils/date.js';
@@ -22,7 +22,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { item, children } = props;
+  const { children, item } = props;
 
   const scheduleItemServiceConfig: ScheduleItemServiceConfig = {
     item,
@@ -58,6 +58,7 @@ export interface NameRenderProps {
  */
 export function Name(props: NameProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
+
   const scheduleItem = scheduleItemService.item.get();
   const name = scheduleItem.name!;
 
@@ -85,6 +86,7 @@ export interface TimeSlotRenderProps {
  */
 export function TimeSlot(props: TimeSlotProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
+
   const scheduleItem = scheduleItemService.item.get();
   const startTime = new Date(scheduleItem.timeSlot!.start!);
   const endTime = new Date(scheduleItem.timeSlot!.end!);
@@ -110,6 +112,7 @@ export interface DurationRenderProps {
  */
 export function Duration(props: DurationProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
+
   const scheduleItem = scheduleItemService.item.get();
   const startTime = new Date(scheduleItem.timeSlot!.start!);
   const endTime = new Date(scheduleItem.timeSlot!.end!);
@@ -135,6 +138,7 @@ export interface DescriptionRenderProps {
  */
 export function Description(props: DescriptionProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
+
   const scheduleItem = scheduleItemService.item.get();
   const description = scheduleItem.description;
 
@@ -162,6 +166,7 @@ export interface StageRenderProps {
  */
 export function Stage(props: StageProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
+
   const scheduleItem = scheduleItemService.item.get();
   const stageName = scheduleItem.stageName;
 
@@ -189,6 +194,7 @@ export interface TagsRenderProps {
  */
 export function Tags(props: TagsProps): React.ReactNode {
   const scheduleItemService = useService(ScheduleItemServiceDefinition);
+
   const scheduleItem = scheduleItemService.item.get();
   const tags = scheduleItem.tags!;
 
