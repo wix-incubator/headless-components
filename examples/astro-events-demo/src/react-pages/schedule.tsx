@@ -7,20 +7,20 @@ import { Schedule } from '../components/events/Schedule';
 interface SchedulePageProps {
   eventServiceConfig: EventServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
-  eventPageUrl: string;
+  eventDetailsPagePath: string;
 }
 
 export default function SchedulePage({
   eventServiceConfig,
   scheduleListServiceConfig,
-  eventPageUrl,
+  eventDetailsPagePath,
 }: SchedulePageProps) {
   return (
     <div className="bg-background">
       <Schedule
         eventServiceConfig={eventServiceConfig}
         scheduleListServiceConfig={scheduleListServiceConfig}
-        eventPageUrl={eventPageUrl}
+        eventDetailsPagePath={eventDetailsPagePath}
       />
     </div>
   );

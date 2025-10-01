@@ -31,13 +31,13 @@ import {
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
-  eventPageUrl: string;
+  eventDetailsPagePath: string;
 }
 
 export function Schedule({
   eventServiceConfig,
   scheduleListServiceConfig,
-  eventPageUrl,
+  eventDetailsPagePath,
 }: ScheduleProps) {
   return (
     <Event event={eventServiceConfig.event}>
@@ -53,9 +53,9 @@ export function Schedule({
               <EventLocation format="full" />
             </div>
             <EventRsvpButton asChild>
-              {({ ticketed }) => (
+              {({ eventSlug, ticketed }) => (
                 <a
-                  href={eventPageUrl}
+                  href={eventDetailsPagePath.replace(':slug', eventSlug)}
                   className="hidden sm:block border border-secondary px-4 mb-auto"
                 >
                   {ticketed ? 'Get Tickets' : 'RSVP'}
@@ -144,9 +144,9 @@ export function Schedule({
               </ScheduleItemsGroupItems>
             </ScheduleListGroupRepeater>
             <EventRsvpButton asChild>
-              {({ ticketed }) => (
+              {({ eventSlug, ticketed }) => (
                 <a
-                  href={eventPageUrl}
+                  href={eventDetailsPagePath.replace(':slug', eventSlug)}
                   className="sm:hidden border border-secondary px-4"
                 >
                   {ticketed ? 'Get Tickets' : 'RSVP'}
