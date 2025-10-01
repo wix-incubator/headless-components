@@ -57,8 +57,8 @@ export function Schedule({
               variant="outline"
               className="hidden sm:block h-fit"
             >
-              {({ eventSlug, ticketed }) => (
-                <a href={eventDetailsPagePath.replace(':slug', eventSlug)}>
+              {({ slug, ticketed }) => (
+                <a href={eventDetailsPagePath.replace(':slug', slug)}>
                   {ticketed ? 'Get Tickets' : 'RSVP'}
                 </a>
               )}
@@ -149,8 +149,8 @@ export function Schedule({
               variant="outline"
               className="block sm:hidden"
             >
-              {({ eventSlug, ticketed }) => (
-                <a href={eventDetailsPagePath.replace(':slug', eventSlug)}>
+              {({ slug, ticketed }) => (
+                <a href={eventDetailsPagePath.replace(':slug', slug)}>
                   {ticketed ? 'Get Tickets' : 'RSVP'}
                 </a>
               )}

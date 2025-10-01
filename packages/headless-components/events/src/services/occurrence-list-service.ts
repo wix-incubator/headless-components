@@ -101,7 +101,7 @@ export const OccurrenceListService =
   );
 
 export async function loadOccurrenceListServiceConfig(
-  recurringCategoryId: string,
+  recurringCategoryId: string | undefined,
 ): Promise<OccurrenceListServiceConfig> {
   if (recurringCategoryId) {
     const response = await queryOccurrences(recurringCategoryId);

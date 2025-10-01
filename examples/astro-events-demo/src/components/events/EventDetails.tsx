@@ -15,7 +15,6 @@ import {
   EventRsvpButton,
   EventShortDescription,
   EventTitle,
-  EventCoordinates,
   TicketsPicker,
   TicketsPickerTotals,
   TicketDefinitions,
@@ -126,11 +125,9 @@ export function EventDetails({
           size="lg"
           className="inline-block mt-6 sm:mt-10"
         >
-          {({ ticketed, eventSlug }) => (
+          {({ ticketed, slug }) => (
             <a
-              href={
-                ticketed ? '#tickets' : formPagePath.replace(':slug', eventSlug)
-              }
+              href={ticketed ? '#tickets' : formPagePath.replace(':slug', slug)}
             >
               {ticketed ? 'Buy Tickets' : 'RSVP'}
             </a>
@@ -420,21 +417,23 @@ export function EventDetails({
         </div>
 
         {/* Map Section */}
-        <EventCoordinates asChild>
-          {({ latitude, longitude }) => (
-            <div className="mt-6 sm:mt-16 sm:px-16">
-              <div className="relative w-full pt-[56.25%] sm:pt-[32%]">
-                <iframe
-                  allowFullScreen
-                  className="absolute top-0 w-full h-full"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps?q=${latitude},${longitude}&hl=en&z=14&output=embed`}
-                />
+        <EventLocation asChild>
+          {({ latitude, longitude }) =>
+            latitude && longitude ? (
+              <div className="mt-6 sm:mt-16 sm:px-16">
+                <div className="relative w-full pt-[56.25%] sm:pt-[32%]">
+                  <iframe
+                    allowFullScreen
+                    className="absolute top-0 w-full h-full"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://www.google.com/maps?q=${latitude},${longitude}&hl=en&z=14&output=embed`}
+                  />
+                </div>
               </div>
-            </div>
-          )}
-        </EventCoordinates>
+            ) : null
+          }
+        </EventLocation>
 
         {/* Social Share Section */}
         <div className="max-w-5xl mx-auto mt-6 sm:mt-16 px-5 sm:px-16">

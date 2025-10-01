@@ -57,6 +57,20 @@ import '@wix/ricos/css/plugin-video-viewer.global.css';
  */
 export const Event = EventPrimitive.Root;
 
+/**
+ * Provides the event slug.
+ *
+ * @component
+ */
+export const EventSlug = EventPrimitive.Slug;
+
+/**
+ * Provides the event type.
+ *
+ * @component
+ */
+export const EventType = EventPrimitive.Type;
+
 const eventTitleVariants = cva('text-foreground', {
   variants: {
     variant: {
@@ -173,13 +187,6 @@ export const EventLocation = React.forwardRef<
 });
 
 EventLocation.displayName = 'EventLocation';
-
-/**
- * Provides the event coordinates.
- *
- * @component
- */
-export const EventCoordinates = EventPrimitive.Coordinates;
 
 /**
  * Displays the event short description.
@@ -368,13 +375,6 @@ export const EventXShare = React.forwardRef<
 });
 
 EventXShare.displayName = 'EventXShare';
-
-/**
- * Provides the event type.
- *
- * @component
- */
-export const EventType = EventPrimitive.Type;
 
 /**
  * Displays Google Calendar add button for the event.
