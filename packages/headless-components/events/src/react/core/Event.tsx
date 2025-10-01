@@ -51,6 +51,29 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
+export interface RawProps {
+  /** Render prop function */
+  children: (props: RawRenderProps) => React.ReactNode;
+}
+
+export interface RawRenderProps {
+  /** Event */
+  event: Event;
+}
+
+/**
+ * Event Raw core component that provides event.
+ *
+ * @component
+ */
+export function Raw(props: RawProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+
+  return props.children({ event });
+}
+
 export interface ImageProps {
   /** Render prop function */
   children: (props: ImageRenderProps) => React.ReactNode;
@@ -379,6 +402,8 @@ export interface OccurrencesProps {
 export interface OccurrencesRenderProps {
   /** List of occurrences */
   occurrences: Event[];
+  /** Indicates whether there are any event occurrences */
+  hasOccurrences: boolean;
 }
 
 /**
@@ -395,10 +420,7 @@ export function Occurrences(props: OccurrencesProps): React.ReactNode {
   const filteredOccurrences = occurrences.filter(
     (occurrence) => occurrence._id !== event._id,
   );
+  const hasOccurrences = !!filteredOccurrences.length;
 
-  if (!filteredOccurrences.length) {
-    return null;
-  }
-
-  return props.children({ occurrences: filteredOccurrences });
+  return props.children({ occurrences: filteredOccurrences, hasOccurrences });
 }

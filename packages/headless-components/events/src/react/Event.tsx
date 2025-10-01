@@ -78,30 +78,68 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
       event={event}
       occurrenceListServiceConfig={occurrenceListServiceConfig}
     >
-      <AsChildSlot
+      <RootContent
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.eventRoot}
-        data-upcoming={event.status === 'UPCOMING'}
-        data-started={event.status === 'STARTED'}
-        data-ended={event.status === 'ENDED'}
-        data-sold-out={!!event.registration?.tickets?.soldOut}
-        data-registration-closed={
-          event.registration?.status === 'CLOSED_MANUALLY' ||
-          event.registration?.status === 'CLOSED_AUTOMATICALLY'
-        }
-        data-has-image={!!event.mainImage}
-        data-has-description={hasDescription(event)}
-        customElement={children}
-        customElementProps={{}}
         {...otherProps}
       >
-        <div>{children}</div>
-      </AsChildSlot>
+        {children}
+      </RootContent>
     </CoreEvent.Root>
   );
 });
+
+/**
+ * Props for the internal Event RootContent component.
+ */
+interface RootContentProps
+  extends Omit<RootProps, 'event' | 'occurrenceListServiceConfig'> {}
+
+/**
+ * Internal Event RootContent component.
+ *
+ * @component
+ * @internal
+ */
+const RootContent = React.forwardRef<HTMLElement, RootContentProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreEvent.Raw>
+        {({ event }) => (
+          <CoreEvent.Occurrences>
+            {({ hasOccurrences }) => (
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.eventRoot}
+                data-upcoming={event.status === 'UPCOMING'}
+                data-started={event.status === 'STARTED'}
+                data-ended={event.status === 'ENDED'}
+                data-sold-out={!!event.registration?.tickets?.soldOut}
+                data-registration-closed={
+                  event.registration?.status === 'CLOSED_MANUALLY' ||
+                  event.registration?.status === 'CLOSED_AUTOMATICALLY'
+                }
+                data-has-image={!!event.mainImage}
+                data-has-description={hasDescription(event)}
+                data-has-occurrences={hasOccurrences}
+                customElement={children}
+                customElementProps={{}}
+                {...otherProps}
+              >
+                <div>{children}</div>
+              </AsChildSlot>
+            )}
+          </CoreEvent.Occurrences>
+        )}
+      </CoreEvent.Raw>
+    );
+  },
+);
 
 /**
  * Props for the Event Image component.
@@ -985,7 +1023,7 @@ export const Occurrences = React.forwardRef<HTMLElement, OccurrencesProps>(
 export interface OccurrenceRepeaterProps {
   /** Child components */
   children: React.ReactNode;
-  /** CSS classes to apply to the occurrence element */
+  /** CSS classes to apply to the event element */
   className?: string;
 }
 
