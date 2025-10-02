@@ -44,12 +44,12 @@ export function OccurrencesModal({
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="pl-6 pr-2" aria-describedby={undefined}>
+      <DialogContent className="pl-6 pr-3" aria-describedby={undefined}>
         <DialogTitle>Time & Location</DialogTitle>
         <OccurrenceList
           occurrenceListServiceConfig={occurrenceListServiceConfig}
         >
-          <div className="max-h-[50vh] overflow-y-auto pr-4">
+          <div className="max-h-[50vh] overflow-y-auto pr-3">
             <Occurrences className="space-y-3">
               <OccurrenceRepeater>
                 <EventSlug asChild>
@@ -74,7 +74,7 @@ export function OccurrencesModal({
             <OccurrenceListError className="mt-4" />
           </div>
         </OccurrenceList>
-        <DialogFooter className="gap-2 sm:gap-0 pr-4">
+        <DialogFooter className="gap-2 sm:gap-0 pr-3">
           <button
             className="bg-background border border-foreground/10 text-foreground font-paragraph text-base py-2 px-4 min-w-[100px] hover:underline"
             onClick={onClose}
