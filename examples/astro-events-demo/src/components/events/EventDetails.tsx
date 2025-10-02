@@ -88,6 +88,10 @@ export function EventDetails({
     )
     .slice(0, 3);
 
+  const openEventDetails = (slug: string) => {
+    window.location.href = eventDetailsPagePath.replace(':slug', slug);
+  };
+
   return (
     <Event
       event={eventServiceConfig.event}
@@ -486,9 +490,8 @@ export function EventDetails({
           {({ slug }) => (
             <OccurrencesModal
               currentOccurrenceSlug={slug}
-              eventServiceConfig={eventServiceConfig}
               occurrenceListServiceConfig={occurrenceListServiceConfig}
-              eventDetailsPagePath={eventDetailsPagePath}
+              onDone={openEventDetails}
               onClose={() => setIsOccurrencesModalOpen(false)}
             />
           )}

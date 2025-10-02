@@ -2,6 +2,7 @@ export * from './Event';
 export * from './EventList';
 export * from './Filter';
 export * from './InvoiceItem';
+export * from './OccurrenceList';
 export * from './Order';
 export * from './PricingOption';
 export * from './ScheduleItem';

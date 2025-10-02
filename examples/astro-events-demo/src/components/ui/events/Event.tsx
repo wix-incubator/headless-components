@@ -417,30 +417,3 @@ export const EventAddToIcsCalendar = React.forwardRef<
 });
 
 EventAddToIcsCalendar.displayName = 'EventAddToIcsCalendar';
-
-/**
- * Container for event occurrences.
- * Handles layout and spacing for multiple occurrences.
- *
- * @component
- */
-export const EventOccurrences = React.forwardRef<
-  React.ElementRef<typeof EventPrimitive.Occurrences>,
-  React.ComponentPropsWithoutRef<typeof EventPrimitive.Occurrences>
->(({ className, ...props }, ref) => {
-  return (
-    <EventPrimitive.Occurrences {...props} ref={ref} className={cn(className)}>
-      {props.children}
-    </EventPrimitive.Occurrences>
-  );
-});
-
-EventOccurrences.displayName = 'EventOccurrences';
-
-/**
- * Repeater component for individual event occurrences.
- * Handles the iteration over occurrences.
- *
- * @component
- */
-export const EventOccurrenceRepeater = EventPrimitive.OccurrenceRepeater;

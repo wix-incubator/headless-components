@@ -2,8 +2,8 @@ import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
   EventListService,
-  EventListServiceConfig,
   EventListServiceDefinition,
+  type EventListServiceConfig,
 } from '../../services/event-list-service.js';
 import { type Event } from '../../services/event-service.js';
 
