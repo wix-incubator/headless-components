@@ -89,18 +89,14 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
           )}
           aria-label="Scroll left"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-foreground"
-          >
-            <polyline points="15,18 9,12 15,6" />
+          <svg width="16" height="16">
+            <path
+              stroke="currentColor"
+              className="text-foreground"
+              strokeWidth="1.5"
+              d="M10 4l-4 4 4 4"
+              fill="none"
+            />
           </svg>
         </button>
 
@@ -113,18 +109,14 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
           )}
           aria-label="Scroll right"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-foreground"
-          >
-            <polyline points="9,18 15,12 9,6" />
+          <svg width="16" height="16">
+            <path
+              stroke="currentColor"
+              className="text-foreground"
+              strokeWidth="1.5"
+              d="M6 4l4 4-4 4"
+              fill="none"
+            />
           </svg>
         </button>
 
