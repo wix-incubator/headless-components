@@ -93,10 +93,8 @@ export function EventList({
               <EventLocation className="hidden sm:line-clamp-1" />
             </div>
             <EventRsvpButton asChild className="mt-auto">
-              {({ eventSlug }) => (
-                <a href={eventDetailsPagePath.replace(':slug', eventSlug)}>
-                  RSVP
-                </a>
+              {({ slug }) => (
+                <a href={eventDetailsPagePath.replace(':slug', slug)}>RSVP</a>
               )}
             </EventRsvpButton>
           </div>

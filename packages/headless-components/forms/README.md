@@ -42,5 +42,5 @@ All changes should be documented using `jsdoc` and updating `docs/api/FORM_INTER
      - "Forms SDK Exports Components"
      - "Forms SDK Exports Services"
   - Release new app version
-  - Check if update has been commited to `auto-sdk-packages` repo
+  - Check if update has been commited to `auto-sdk-packages` repo (might take around 20mins)
 

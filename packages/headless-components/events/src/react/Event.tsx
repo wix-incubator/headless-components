@@ -2,6 +2,7 @@ import { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type Event, type RichContent } from '../services/event-service.js';
+import { type OccurrenceListServiceConfig } from '../services/occurrence-list-service.js';
 import { hasDescription } from '../utils/event.js';
 import * as CoreEvent from './core/Event.js';
 
@@ -19,6 +20,7 @@ enum TestIds {
   eventXShare = 'event-x-share',
   eventAddToGoogleCalendar = 'event-add-to-google-calendar',
   eventAddToIcsCalendar = 'event-add-to-ics-calendar',
+  eventOccurrences = 'event-occurrences',
 }
 
 /**
@@ -27,6 +29,8 @@ enum TestIds {
 export interface RootProps {
   /** Event */
   event: Event;
+  /** Occurrence list service configuration */
+  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components that will have access to the event */
@@ -60,32 +64,172 @@ export interface RootProps {
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
-  const { event, asChild, children, className, ...otherProps } = props;
+  const {
+    event,
+    occurrenceListServiceConfig,
+    asChild,
+    children,
+    className,
+    ...otherProps
+  } = props;
 
   return (
-    <CoreEvent.Root event={event}>
-      <AsChildSlot
+    <CoreEvent.Root
+      event={event}
+      occurrenceListServiceConfig={occurrenceListServiceConfig}
+    >
+      <RootContent
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.eventRoot}
-        data-upcoming={event.status === 'UPCOMING'}
-        data-started={event.status === 'STARTED'}
-        data-ended={event.status === 'ENDED'}
-        data-sold-out={!!event.registration?.tickets?.soldOut}
-        data-registration-closed={
-          event.registration?.status === 'CLOSED_MANUALLY' ||
-          event.registration?.status === 'CLOSED_AUTOMATICALLY'
-        }
-        data-has-image={!!event.mainImage}
-        data-has-description={hasDescription(event)}
-        customElement={children}
-        customElementProps={{}}
         {...otherProps}
       >
-        <div>{children}</div>
-      </AsChildSlot>
+        {children}
+      </RootContent>
     </CoreEvent.Root>
+  );
+});
+
+/**
+ * Props for the internal Event RootContent component.
+ */
+interface RootContentProps
+  extends Omit<RootProps, 'event' | 'occurrenceListServiceConfig'> {}
+
+/**
+ * Internal Event RootContent component.
+ *
+ * @component
+ * @internal
+ */
+const RootContent = React.forwardRef<HTMLElement, RootContentProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreEvent.Raw>
+        {({ event }) => (
+          <CoreEvent.Occurrences>
+            {({ hasOccurrences }) => (
+              <AsChildSlot
+                ref={ref}
+                asChild={asChild}
+                className={className}
+                data-testid={TestIds.eventRoot}
+                data-upcoming={event.status === 'UPCOMING'}
+                data-started={event.status === 'STARTED'}
+                data-ended={event.status === 'ENDED'}
+                data-sold-out={!!event.registration?.tickets?.soldOut}
+                data-registration-closed={
+                  event.registration?.status === 'CLOSED_MANUALLY' ||
+                  event.registration?.status === 'CLOSED_AUTOMATICALLY'
+                }
+                data-has-image={!!event.mainImage}
+                data-has-description={hasDescription(event)}
+                data-has-occurrences={hasOccurrences}
+                customElement={children}
+                customElementProps={{}}
+                {...otherProps}
+              >
+                <div>{children}</div>
+              </AsChildSlot>
+            )}
+          </CoreEvent.Occurrences>
+        )}
+      </CoreEvent.Raw>
+    );
+  },
+);
+
+/**
+ * Props for the Event Slug component.
+ */
+export interface SlugProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ slug: string }>;
+}
+
+/**
+ * Provides event slug.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // asChild with react component
+ * <Event.Slug asChild>
+ *   {React.forwardRef(({ slug, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {slug}
+ *     </span>
+ *   ))}
+ * </Event.Slug>
+ * ```
+ */
+export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+
+  return (
+    <CoreEvent.Slug>
+      {({ slug }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          customElement={children}
+          customElementProps={{ slug }}
+          {...otherProps}
+        />
+      )}
+    </CoreEvent.Slug>
+  );
+});
+
+/**
+ * Props for the Event Type component.
+ */
+export interface TypeProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    ticketed: boolean;
+    rsvp: boolean;
+    external: boolean;
+  }>;
+}
+
+/**
+ * Provides event type information.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // asChild with react component
+ * <Event.Type asChild>
+ *   {React.forwardRef(({ ticketed, rsvp, external, ...props }, ref) => (
+ *     <span ref={ref} {...props}>
+ *       {ticketed ? 'Ticketed' : rsvp ? 'RSVP' : external ? 'External' : ''}
+ *     </span>
+ *   ))}
+ * </Event.Type>
+ * ```
+ */
+export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
+  const { asChild, children, ...otherProps } = props;
+
+  return (
+    <CoreEvent.Type>
+      {({ ticketed, rsvp, external }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          customElement={children}
+          customElementProps={{ ticketed, rsvp, external }}
+          {...otherProps}
+        />
+      )}
+    </CoreEvent.Type>
   );
 });
 
@@ -208,7 +352,7 @@ export interface DateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ date: string }>;
+  children?: AsChildChildren<{ formattedDate: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the event date */
@@ -231,9 +375,9 @@ export interface DateProps {
  *
  * // asChild with react component
  * <Event.Date asChild>
- *   {React.forwardRef(({ date, ...props }, ref) => (
+ *   {React.forwardRef(({ formattedDate, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
- *       {date}
+ *       {formattedDate}
  *     </span>
  *   ))}
  * </Event.Date>
@@ -250,18 +394,18 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
 
   return (
     <CoreEvent.Date format={format}>
-      {({ date }) => (
+      {({ formattedDate }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.eventDate}
           customElement={children}
-          customElementProps={{ date }}
-          content={date}
+          customElementProps={{ formattedDate }}
+          content={formattedDate}
           {...otherProps}
         >
-          <span>{date}</span>
+          <span>{formattedDate}</span>
         </AsChildSlot>
       )}
     </CoreEvent.Date>
@@ -275,7 +419,11 @@ export interface LocationProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ location: string }>;
+  children?: AsChildChildren<{
+    formattedLocation: string;
+    latitude: number | null;
+    longitude: number | null;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the event location */
@@ -298,9 +446,9 @@ export interface LocationProps {
  *
  * // asChild with react component
  * <Event.Location asChild>
- *   {React.forwardRef(({ location, ...props }, ref) => (
+ *   {React.forwardRef(({ formattedLocation, latitude, longitude, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
- *       {location}
+ *       {formattedLocation}
  *     </span>
  *   ))}
  * </Event.Location>
@@ -318,65 +466,21 @@ export const Location = React.forwardRef<HTMLElement, LocationProps>(
 
     return (
       <CoreEvent.Location format={format}>
-        {({ location }) => (
+        {({ formattedLocation, latitude, longitude }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.eventLocation}
             customElement={children}
-            customElementProps={{ location }}
-            content={location}
+            customElementProps={{ formattedLocation, latitude, longitude }}
+            content={formattedLocation}
             {...otherProps}
           >
-            <span>{location}</span>
+            <span>{formattedLocation}</span>
           </AsChildSlot>
         )}
       </CoreEvent.Location>
-    );
-  },
-);
-
-/**
- * Props for the Event Coordinates component.
- */
-export interface CoordinatesProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ latitude: number; longitude: number }>;
-}
-
-/**
- * Provides the event location coordinates. Only rendered if the event has coordinates.
- *
- * @component
- * @example
- * ```tsx
- * // asChild with react component
- * <Event.Coordinates asChild>
- *   {React.forwardRef(({ latitude, longitude, ...props }, ref) => (
- *     <MapComponent ref={ref} {...props} latitude={latitude} longitude={longitude} />
- *   ))}
- * </Event.Coordinates>
- * ```
- */
-export const Coordinates = React.forwardRef<HTMLElement, CoordinatesProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-
-    return (
-      <CoreEvent.Coordinates>
-        {({ latitude, longitude }) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            customElement={children}
-            customElementProps={{ latitude, longitude }}
-            {...otherProps}
-          />
-        )}
-      </CoreEvent.Coordinates>
     );
   },
 );
@@ -497,7 +601,7 @@ export interface RsvpButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ eventSlug: string; ticketed: boolean }>;
+  children?: AsChildChildren<{ slug: string; ticketed: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
@@ -520,7 +624,7 @@ export interface RsvpButtonProps {
  *
  * // asChild with react component
  * <Event.RsvpButton asChild>
- *   {React.forwardRef(({ eventSlug, ticketed, ...props }, ref) => (
+ *   {React.forwardRef(({ slug, ticketed, ...props }, ref) => (
  *     <button ref={ref} {...props}>
  *       {ticketed ? 'Buy Tickets' : 'RSVP'}
  *     </button>
@@ -534,7 +638,7 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
 
     return (
       <CoreEvent.RsvpButton>
-        {({ eventSlug, ticketed }) => (
+        {({ slug, ticketed }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -542,7 +646,7 @@ export const RsvpButton = React.forwardRef<HTMLElement, RsvpButtonProps>(
             data-testid={TestIds.eventRsvpButton}
             data-ticketed={ticketed}
             customElement={children}
-            customElementProps={{ eventSlug, ticketed }}
+            customElementProps={{ slug, ticketed }}
             {...otherProps}
           >
             <button>{label}</button>
@@ -865,49 +969,96 @@ export const AddToIcsCalendar = React.forwardRef<
 });
 
 /**
- * Props for the Event Type component.
+ * Props for the Event Occurrences component.
  */
-export interface TypeProps {
+export interface OccurrencesProps {
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    ticketed: boolean;
-    rsvp: boolean;
-    external: boolean;
-  }>;
+  /** Child components or custom render function when using asChild */
+  children: React.ReactNode | AsChildChildren<{ occurrences: Event[] }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
- * Provides event type information.
+ * Container for the event occurrences.
+ * Follows List Container Level pattern.
  *
  * @component
  * @example
  * ```tsx
- * // asChild with react component
- * <Event.Type asChild>
- *   {React.forwardRef(({ ticketed, rsvp, external, ...props }, ref) => (
- *     <span ref={ref} {...props}>
- *       {ticketed ? 'Ticketed' : rsvp ? 'RSVP' : external ? 'External' : ''}
- *     </span>
- *   ))}
- * </Event.Type>
+ * <Event.Occurrences>
+ *   <Event.OccurrenceRepeater>
+ *     <Event.Image />
+ *     <Event.Title />
+ *   <Event.OccurrenceRepeater>
+ * <Event.Occurrences>
  * ```
  */
-export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+export const Occurrences = React.forwardRef<HTMLElement, OccurrencesProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreEvent.Occurrences>
+        {({ occurrences }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.eventOccurrences}
+              customElement={children}
+              customElementProps={{ occurrences }}
+              {...otherProps}
+            >
+              <div>{children as React.ReactNode}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreEvent.Occurrences>
+    );
+  },
+);
+
+/**
+ * Props for the Event OccurrenceRepeater component.
+ */
+export interface OccurrenceRepeaterProps {
+  /** Child components */
+  children: React.ReactNode;
+  /** CSS classes to apply to the event element */
+  className?: string;
+}
+
+/**
+ * Repeater component that renders Event.Root for each occurrence.
+ * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Event.OccurrenceRepeater>
+ *   <Event.Image />
+ *   <Event.Title />
+ * </Event.OccurrenceRepeater>
+ * ```
+ */
+export const OccurrenceRepeater = (
+  props: OccurrenceRepeaterProps,
+): React.ReactNode => {
+  const { children, className } = props;
 
   return (
-    <CoreEvent.Type>
-      {({ ticketed, rsvp, external }) => (
-        <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          customElement={children}
-          customElementProps={{ ticketed, rsvp, external }}
-          {...otherProps}
-        />
-      )}
-    </CoreEvent.Type>
+    <CoreEvent.Occurrences>
+      {({ occurrences }) => {
+        return occurrences.map((occurrence) => (
+          <Root key={occurrence._id} event={occurrence} className={className}>
+            {children}
+          </Root>
+        ));
+      }}
+    </CoreEvent.Occurrences>
   );
-});
+};

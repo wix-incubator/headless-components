@@ -43,7 +43,7 @@ export function Schedule({
     <Event event={eventServiceConfig.event}>
       <ScheduleList scheduleListServiceConfig={scheduleListServiceConfig}>
         <div className="max-w-5xl mx-auto px-5 py-6 sm:p-16">
-          <h1 className="text-6xl font-heading font-bold text-foreground mb-3">
+          <h1 className="text-6xl font-heading text-foreground mb-3">
             Schedule
           </h1>
           <div className="flex justify-between">
@@ -54,11 +54,12 @@ export function Schedule({
             </div>
             <EventRsvpButton
               asChild
+              size="sm"
               variant="outline"
               className="hidden sm:block h-fit"
             >
-              {({ eventSlug, ticketed }) => (
-                <a href={eventDetailsPagePath.replace(':slug', eventSlug)}>
+              {({ slug, ticketed }) => (
+                <a href={eventDetailsPagePath.replace(':slug', slug)}>
                   {ticketed ? 'Get Tickets' : 'RSVP'}
                 </a>
               )}
@@ -146,11 +147,12 @@ export function Schedule({
             </ScheduleListGroupRepeater>
             <EventRsvpButton
               asChild
+              size="sm"
               variant="outline"
               className="block sm:hidden"
             >
-              {({ eventSlug, ticketed }) => (
-                <a href={eventDetailsPagePath.replace(':slug', eventSlug)}>
+              {({ slug, ticketed }) => (
+                <a href={eventDetailsPagePath.replace(':slug', slug)}>
                   {ticketed ? 'Get Tickets' : 'RSVP'}
                 </a>
               )}

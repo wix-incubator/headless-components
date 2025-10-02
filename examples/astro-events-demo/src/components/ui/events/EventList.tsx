@@ -62,7 +62,7 @@ export const EventListLoadMoreTrigger = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block bg-primary text-primary-foreground font-paragraph py-2 px-4 hover:bg-primary/80',
+        'block bg-primary text-primary-foreground font-paragraph text-base py-2 px-4 hover:underline',
         className
       )}
     />

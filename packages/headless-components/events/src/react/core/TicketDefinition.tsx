@@ -8,7 +8,7 @@ import {
   type TicketDefinitionServiceConfig,
 } from '../../services/ticket-definition-service.js';
 import { TicketDefinitionListServiceDefinition } from '../../services/ticket-definition-list-service.js';
-import { PricingOption } from '../../services/pricing-option-service.js';
+import { type PricingOption } from '../../services/pricing-option-service.js';
 import { EventServiceDefinition } from '../../services/event-service.js';
 import {
   getTicketDefinitionCurrency,
@@ -32,7 +32,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { ticketDefinition, children } = props;
+  const { children, ticketDefinition } = props;
 
   const ticketDefinitionServiceConfig: TicketDefinitionServiceConfig = {
     ticketDefinition,

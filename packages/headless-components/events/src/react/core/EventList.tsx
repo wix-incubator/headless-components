@@ -33,15 +33,17 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
+  const { children, eventListServiceConfig } = props;
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
         EventListServiceDefinition,
         EventListService,
-        props.eventListServiceConfig,
+        eventListServiceConfig,
       )}
     >
-      {props.children}
+      {children}
     </WixServices>
   );
 }
@@ -67,6 +69,7 @@ export interface EventsRenderProps {
  */
 export function Events(props: EventsProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const isLoading = eventListService.isLoading.get();
   const events = eventListService.events.get();
   const hasEvents = !!events.length;
@@ -91,6 +94,7 @@ export interface EventRepeaterRenderProps {
  */
 export function EventRepeater(props: EventRepeaterProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const events = eventListService.events.get();
   const hasEvents = !!events.length;
 
@@ -120,6 +124,7 @@ export interface LoadMoreTriggerRenderProps {
  */
 export function LoadMoreTrigger(props: LoadMoreTriggerProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const isLoading = eventListService.isLoadingMore.get();
   const hasMoreEvents = eventListService.hasMoreEvents.get();
 
@@ -150,6 +155,7 @@ export interface ErrorRenderProps {
  */
 export function Error(props: ErrorProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const error = eventListService.error.get();
 
   if (!error) {
@@ -186,6 +192,7 @@ export interface CategoryFilterRenderProps {
  */
 export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const categories = eventListService.categories.get();
   const selectedCategoryId =
     eventListService.selectedCategoryId.get() || ALL_CATEGORIES;
@@ -194,7 +201,7 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
     return null;
   }
 
-  const handleCategoryChange = async (value: FilterPrimitive.Filter) => {
+  const onChange = async (value: FilterPrimitive.Filter) => {
     const categoryId = value?.['categoryId'];
 
     await eventListService.loadEvents(
@@ -211,7 +218,7 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
   return props.children({
     filterOptions,
     value,
-    onChange: handleCategoryChange,
+    onChange,
     className: props.className,
   });
 }
@@ -282,10 +289,11 @@ export interface StatusFilterRenderProps {
  */
 export function StatusFilter(props: StatusFilterProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
+
   const selectedStatusId =
     eventListService.selectedStatusId.get() || UPCOMING_EVENTS;
 
-  const handleStatusChange = async (value: FilterPrimitive.Filter) => {
+  const onChange = async (value: FilterPrimitive.Filter) => {
     const statusId = value?.['statusId'];
 
     await eventListService.loadEvents(
@@ -304,7 +312,7 @@ export function StatusFilter(props: StatusFilterProps): React.ReactNode {
   return props.children({
     filterOptions,
     value,
-    onChange: handleStatusChange,
+    onChange,
     className: props.className,
   });
 }

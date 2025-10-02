@@ -331,13 +331,13 @@ export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
       allCategoriesLabel={props.allCategoriesLabel}
       className={props.className}
     >
-      {({ filterOptions, className, onChange, value }) => {
+      {({ filterOptions, className, value, onChange }) => {
         return (
           <FilterPrimitive.Root
+            filterOptions={filterOptions}
             value={value}
             onChange={onChange}
             className={className}
-            filterOptions={filterOptions}
           >
             {props.children}
           </FilterPrimitive.Root>
