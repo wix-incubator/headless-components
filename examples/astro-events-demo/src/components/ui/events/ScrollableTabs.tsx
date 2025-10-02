@@ -30,7 +30,10 @@ enum ScrollDirection {
 export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
   ({ children, className }, ref) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const [arrows, setArrows] = useState<{ left: boolean; right: boolean }>({
+    const [showArrows, setShowArrows] = useState<{
+      left: boolean;
+      right: boolean;
+    }>({
       left: false,
       right: false,
     });
@@ -43,7 +46,7 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
 
       const { scrollLeft, scrollWidth, clientWidth } = container;
 
-      setArrows({
+      setShowArrows({
         left: scrollLeft > 0,
         right: scrollLeft < scrollWidth - clientWidth - 1,
       });
@@ -83,7 +86,7 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
         <button
           onClick={() => scroll(ScrollDirection.LEFT)}
           className={cn(
-            `absolute left-0 top-0 bottom-0 z-10 ${arrows.left ? 'opacity-100' : 'opacity-0'}`,
+            `absolute left-0 top-0 bottom-0 z-10 ${showArrows.left ? 'opacity-100' : 'opacity-0'}`,
             'transition-opacity duration-300',
             'bg-background/80 backdrop-blur-sm'
           )}
@@ -101,7 +104,7 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
         <button
           onClick={() => scroll(ScrollDirection.RIGHT)}
           className={cn(
-            `absolute right-0 top-0 bottom-0 z-10 ${arrows.right ? 'opacity-100' : 'opacity-0'}`,
+            `absolute right-0 top-0 bottom-0 z-10 ${showArrows.right ? 'opacity-100' : 'opacity-0'}`,
             'transition-opacity duration-300',
             'bg-background/80 backdrop-blur-sm'
           )}
