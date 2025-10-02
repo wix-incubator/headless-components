@@ -88,7 +88,15 @@ export function EventDetails({
     )
     .slice(0, 3);
 
-  const openEventDetails = (slug: string) => {
+  const openOccurrencesModal = () => {
+    setIsOccurrencesModalOpen(true);
+  };
+
+  const closeOccurrencesModal = () => {
+    setIsOccurrencesModalOpen(false);
+  };
+
+  const navigateToEventDetails = (slug: string) => {
     window.location.href = eventDetailsPagePath.replace(':slug', slug);
   };
 
@@ -163,7 +171,7 @@ export function EventDetails({
               </div>
               <button
                 className="border border-foreground/10 bg-background font-paragraph text-foreground text-base py-2 px-4 hover:underline group-data-[has-occurrences=false]/event:hidden"
-                onClick={() => setIsOccurrencesModalOpen(true)}
+                onClick={openOccurrencesModal}
               >
                 Select Different Date
               </button>
@@ -491,8 +499,8 @@ export function EventDetails({
             <OccurrencesModal
               currentOccurrenceSlug={slug}
               occurrenceListServiceConfig={occurrenceListServiceConfig}
-              onDone={openEventDetails}
-              onClose={() => setIsOccurrencesModalOpen(false)}
+              onDone={navigateToEventDetails}
+              onClose={closeOccurrencesModal}
             />
           )}
         </EventSlug>
