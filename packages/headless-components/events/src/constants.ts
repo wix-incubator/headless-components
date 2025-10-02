@@ -4,7 +4,7 @@ export const STAGES_FILTER_KEY = 'stages';
 export const STATUS_FILTER_KEY = 'status';
 
 export const ALL_CATEGORIES = 'allCategories';
-export const ALL_EVENTS = 'upcoming&past';
+export const ALL_EVENTS = 'allEvents';
 export const UPCOMING_EVENTS = 'upcoming';
 export const PAST_EVENTS = 'past';
 
