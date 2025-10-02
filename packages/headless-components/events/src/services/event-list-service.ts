@@ -207,12 +207,16 @@ interface QueryEventsParams {
 function getStatusesFromId(statusId: string): wixEventsV2.Status[] {
   switch (statusId) {
     case UPCOMING_EVENTS:
-      return [wixEventsV2.Status.UPCOMING];
+      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
     case PAST_EVENTS:
       return [wixEventsV2.Status.ENDED];
     case ALL_EVENTS:
-      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.ENDED];
+      return [
+        wixEventsV2.Status.UPCOMING,
+        wixEventsV2.Status.STARTED,
+        wixEventsV2.Status.ENDED,
+      ];
     default:
-      return [wixEventsV2.Status.UPCOMING];
+      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
   }
 }
