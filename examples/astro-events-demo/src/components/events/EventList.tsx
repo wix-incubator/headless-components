@@ -37,7 +37,7 @@ export function EventList({
         >
           <FilterOptions>
             <FilterOptionRepeater>
-              <ScrollableTabs>
+              <ScrollableTabs className="w-[200px]">
                 <FilterOptionSingle variant="tabs" />
               </ScrollableTabs>
             </FilterOptionRepeater>
