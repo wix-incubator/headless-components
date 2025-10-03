@@ -1,0 +1,35 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@/integrations/*": [
+        "./integrations/*"
+      ],
+      "@/integrations": [
+        "./integrations"
+      ],
+      // TS: Mimick exported sdk from Wix TPAs
+      "@wix/blog/components": [
+        "../../packages/headless-components/blog/react"
+      ],
+      "@wix/blog/services": [
+        "../../packages/headless-components/blog/services"
+      ],
+      "@wix/pricing-plans/components": [
+        "../../packages/headless-components/pricing-plans/react"
+      ],
+      "@wix/pricing-plans/services": [
+        "../../packages/headless-components/pricing-plans/services"
+      ],
+    }
+  }
+}

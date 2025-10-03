@@ -1,0 +1,33 @@
+---
+description: Testing rules for headless components packages
+globs:
+alwaysApply: true
+---
+
+# Testing Rules
+
+## Non-Interactive Test Execution
+
+When running tests in headless-components packages, always use non-interactive modes to avoid hanging in watch mode:
+
+- **Use `yarn test --run`** instead of `yarn test` for one-time test execution
+- **Use `vitest run`** instead of `vitest` for direct vitest commands
+- **Never use interactive test commands** as they will hang waiting for user input
+
+### Examples:
+
+```bash
+# ✅ CORRECT - Non-interactive
+yarn test --run
+vitest run
+
+# ❌ WRONG - Interactive (hangs in watch mode)
+yarn test
+vitest
+```
+
+### Additional Vitest Flags:
+
+- Add `--reporter=verbose` for detailed output
+- Add `--coverage` if coverage reports are needed
+- Use `--run --reporter=verbose` for comprehensive one-time test runs
