@@ -344,7 +344,7 @@ const buildStatusFilterProps = (
           case PAST_EVENTS:
             return pastLabel;
           default:
-            return allStatusesLabel;
+            return upcomingLabel;
         }
       },
     },

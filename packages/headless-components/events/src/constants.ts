@@ -5,7 +5,7 @@ export const STATUS_FILTER_KEY = 'status';
 
 export const ALL_CATEGORIES = 'allCategories';
 export const ALL_EVENTS = 'allEvents';
-export const UPCOMING_EVENTS = 'upcoming';
-export const PAST_EVENTS = 'past';
+export const UPCOMING_EVENTS = 'upcomingEvents';
+export const PAST_EVENTS = 'pastEvents';
 
 export const WIX_FEE_RATE = 2.5;

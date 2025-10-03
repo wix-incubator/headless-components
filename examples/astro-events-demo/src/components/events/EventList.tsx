@@ -37,7 +37,7 @@ export function EventList({
         >
           <FilterOptions>
             <FilterOptionRepeater>
-              <ScrollableTabs>
+              <ScrollableTabs className="w-[200px]">
                 <FilterOptionSingle variant="tabs" />
               </ScrollableTabs>
             </FilterOptionRepeater>
@@ -50,29 +50,27 @@ export function EventList({
         >
           <FilterOptions>
             <FilterOptionRepeater>
-              <ScrollableTabs>
-                <FilterOptionSingle asChild>
-                  {({ value, onChange, validValues, valueFormatter }) => (
-                    <div>
-                      <span>Event Status:</span>
-                      <select
-                        value={value}
-                        className="bg-background"
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                          onChange(e.target.value)
-                        }
-                        data-filter-type="single"
-                      >
-                        {validValues?.map(value => (
-                          <option key={value} value={value}>
-                            {valueFormatter ? valueFormatter(value) : value}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                </FilterOptionSingle>
-              </ScrollableTabs>
+              <FilterOptionSingle asChild>
+                {({ value, onChange, validValues, valueFormatter }) => (
+                  <div>
+                    <span>Event Status:</span>
+                    <select
+                      value={value}
+                      className="bg-background"
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        onChange(e.target.value)
+                      }
+                      data-filter-type="single"
+                    >
+                      {validValues?.map(value => (
+                        <option key={value} value={value}>
+                          {valueFormatter ? valueFormatter(value) : value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </FilterOptionSingle>
             </FilterOptionRepeater>
           </FilterOptions>
         </EventListStatusFilter>

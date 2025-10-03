@@ -52,22 +52,6 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
       });
     };
 
-    useEffect(() => {
-      checkForOverflow();
-
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
-
-      const resizeObserver = new ResizeObserver(checkForOverflow);
-      resizeObserver.observe(container);
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }, []);
-
     const scroll = (direction: ScrollDirection) => {
       const container = scrollContainerRef.current;
       if (!container) {
@@ -80,6 +64,10 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
         behavior: 'smooth',
       });
     };
+
+    useEffect(() => {
+      checkForOverflow();
+    }, []);
 
     return (
       <div ref={ref} className={cn('relative', className)}>
@@ -121,7 +109,7 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
 
         <div
           ref={scrollContainerRef}
-          className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           onScroll={checkForOverflow}
         >
           <div className="min-w-max">{children}</div>
