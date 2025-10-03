@@ -10,10 +10,12 @@ import {
   EventLocation,
   EventDate,
   EventRsvpButton,
-  EventListFilters,
+  EventListCategoryFilter,
   FilterOptions,
   FilterOptionRepeater,
   FilterOptionSingle,
+  ScrollableTabs,
+  EventListStatusFilter,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
 
@@ -28,13 +30,51 @@ export function EventList({
 }: EventListProps) {
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
-      <EventListFilters allCategoriesLabel="All">
-        <FilterOptions className="border-b border-foreground/10 mb-6">
-          <FilterOptionRepeater>
-            <FilterOptionSingle variant="tabs" />
-          </FilterOptionRepeater>
-        </FilterOptions>
-      </EventListFilters>
+      <div className="flex flex-row gap-6 mb-6">
+        <EventListCategoryFilter
+          allCategoriesLabel="All"
+          className="flex-1 border-b border-foreground/10"
+        >
+          <FilterOptions>
+            <ScrollableTabs>
+              <FilterOptionRepeater>
+                <FilterOptionSingle variant="tabs" />
+              </FilterOptionRepeater>
+            </ScrollableTabs>
+          </FilterOptions>
+        </EventListCategoryFilter>
+        <EventListStatusFilter
+          allEventsLabel="Upcoming & Past"
+          upcomingEventsLabel="Upcoming"
+          pastEventsLabel="Past"
+        >
+          <FilterOptions>
+            <FilterOptionRepeater>
+              <FilterOptionSingle asChild>
+                {({ value, onChange, validValues, valueFormatter }) => (
+                  <div>
+                    <span>Event Status:</span>
+                    <select
+                      value={value}
+                      className="bg-background"
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        onChange(e.target.value)
+                      }
+                      data-filter-type="single"
+                    >
+                      {validValues?.map(value => (
+                        <option key={value} value={value}>
+                          {valueFormatter ? valueFormatter(value) : value}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </FilterOptionSingle>
+            </FilterOptionRepeater>
+          </FilterOptions>
+        </EventListStatusFilter>
+      </div>
       <Events className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
         <EventRepeater className="flex flex-col bg-background border border-foreground/10">
           <div className="relative w-full pt-[100%] bg-primary/80">

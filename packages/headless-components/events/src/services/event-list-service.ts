@@ -7,8 +7,11 @@ import {
 import { wixEventsV2, categories } from '@wix/events';
 import { getErrorMessage } from '../utils/errors.js';
 import { type Event } from './event-service.js';
+import { ALL_EVENTS, PAST_EVENTS, UPCOMING_EVENTS } from '../constants.js';
 
 export type Category = categories.Category;
+
+type StatusId = typeof UPCOMING_EVENTS | typeof PAST_EVENTS | typeof ALL_EVENTS;
 
 export interface EventListServiceAPI {
   /** Reactive signal containing the list of events */
@@ -17,6 +20,8 @@ export interface EventListServiceAPI {
   categories: Signal<Category[]>;
   /** Reactive signal containing the selected category id */
   selectedCategoryId: Signal<string | null>;
+  /** Reactive signal containing the selected status id */
+  selectedStatusId: Signal<StatusId>;
   /** Reactive signal indicating if events are currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal indicating if more events are currently being loaded */
@@ -32,7 +37,7 @@ export interface EventListServiceAPI {
   /** Reactive signal indicating if there are more events to load */
   hasMoreEvents: ReadOnlySignal<boolean>;
   /** Function to load events */
-  loadEvents: (categoryId?: string) => Promise<void>;
+  loadEvents: ({ categoryId, statusId }: LoadEventsParams) => Promise<void>;
   /** Function to load more events */
   loadMoreEvents: () => Promise<void>;
 }
@@ -59,6 +64,7 @@ export const EventListService =
       const events = signalsService.signal<Event[]>(config.events);
       const categories = signalsService.signal<Category[]>(config.categories);
       const selectedCategoryId = signalsService.signal<string | null>(null);
+      const selectedStatusId = signalsService.signal<StatusId>(UPCOMING_EVENTS);
       const isLoading = signalsService.signal<boolean>(false);
       const isLoadingMore = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
@@ -69,13 +75,20 @@ export const EventListService =
         () => currentPage.get() + 1 < totalPages.get(),
       );
 
-      const loadEvents = async (categoryId?: string) => {
-        selectedCategoryId.set(categoryId ?? null);
+      const loadEvents = async ({
+        categoryId = selectedCategoryId.get(),
+        statusId = selectedStatusId.get(),
+      }: LoadEventsParams) => {
+        const status = getStatusFromId(statusId);
+
+        selectedCategoryId.set(categoryId);
+        selectedStatusId.set(statusId);
+
         isLoading.set(true);
         error.set(null);
 
         try {
-          const response = await queryEvents({ categoryId });
+          const response = await queryEvents({ categoryId, status });
 
           events.set(response.items);
           pageSize.set(response.pageSize);
@@ -94,9 +107,11 @@ export const EventListService =
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
+          const status = getStatusFromId(selectedStatusId.get());
           const response = await queryEvents({
             offset,
             categoryId: selectedCategoryId.get(),
+            status,
           });
 
           events.set([...events.get(), ...response.items]);
@@ -114,6 +129,7 @@ export const EventListService =
         events,
         categories,
         selectedCategoryId,
+        selectedStatusId,
         isLoading,
         isLoadingMore,
         error,
@@ -189,4 +205,25 @@ interface QueryEventsParams {
   limit?: number;
   categoryId?: string | null;
   status?: wixEventsV2.Status[];
+}
+
+interface LoadEventsParams {
+  categoryId?: string | null;
+  statusId?: StatusId;
+}
+
+function getStatusFromId(statusId: StatusId) {
+  switch (statusId) {
+    case PAST_EVENTS:
+      return [wixEventsV2.Status.ENDED];
+    case ALL_EVENTS:
+      return [
+        wixEventsV2.Status.UPCOMING,
+        wixEventsV2.Status.STARTED,
+        wixEventsV2.Status.ENDED,
+      ];
+    case UPCOMING_EVENTS:
+    default:
+      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
+  }
 }
