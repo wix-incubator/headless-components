@@ -355,6 +355,7 @@ export interface QuantityProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    options: number[];
     quantity: number;
     maxQuantity: number;
     increment: () => void;
@@ -381,7 +382,7 @@ export interface QuantityProps {
  *
  * // asChild with react component
  * <PricingOption.Quantity asChild>
- *   {React.forwardRef(({ quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
+ *   {React.forwardRef(({ options, quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
  *     <div ref={ref} {...props} className="flex items-center space-x-2">
  *       <button disabled={quantity === 0} onClick={decrement}>-</button>
  *       <span>{quantity}</span>
@@ -397,7 +398,14 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
 
     return (
       <CorePricingOption.Quantity>
-        {({ quantity, maxQuantity, increment, decrement, setQuantity }) => (
+        {({
+          options,
+          quantity,
+          maxQuantity,
+          increment,
+          decrement,
+          setQuantity,
+        }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -405,6 +413,7 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
             data-testid={TestIds.pricingOptionQuantity}
             customElement={children}
             customElementProps={{
+              options,
               quantity,
               maxQuantity,
               increment,
@@ -418,9 +427,9 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
             {...otherProps}
           >
             <select>
-              {Array.from({ length: maxQuantity + 1 }).map((_, index) => (
-                <option key={index} value={index}>
-                  {index}
+              {options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
                 </option>
               ))}
             </select>

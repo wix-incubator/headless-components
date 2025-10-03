@@ -52,6 +52,13 @@ import {
   ScheduleItemTagLabel,
 } from '@/components/ui/events';
 import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { EventList } from './EventList';
 import { EventSocialShare } from './EventSocialShare';
@@ -363,7 +370,30 @@ export function EventDetails({
                               <div className="text-sm font-paragraph text-foreground mb-2">
                                 Quantity
                               </div>
-                              <PricingOptionQuantity />
+                              <PricingOptionQuantity asChild>
+                                {({ options, quantity, setQuantity }) => (
+                                  <Select
+                                    value={String(quantity)}
+                                    onValueChange={value =>
+                                      setQuantity(Number(value))
+                                    }
+                                  >
+                                    <SelectTrigger className="min-w-24 w-full sm:w-auto">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {options.map(option => (
+                                        <SelectItem
+                                          key={option}
+                                          value={String(option)}
+                                        >
+                                          {option}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
+                              </PricingOptionQuantity>
                             </div>
                           </div>
                         </TicketDefinitionPricingOptionRepeater>
@@ -373,7 +403,25 @@ export function EventDetails({
                       <div className="text-sm font-paragraph text-foreground mb-2">
                         Quantity
                       </div>
-                      <TicketDefinitionQuantity />
+                      <TicketDefinitionQuantity asChild>
+                        {({ options, quantity, setQuantity }) => (
+                          <Select
+                            value={String(quantity)}
+                            onValueChange={value => setQuantity(Number(value))}
+                          >
+                            <SelectTrigger className="min-w-24 w-full sm:w-auto">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {options.map(option => (
+                                <SelectItem key={option} value={String(option)}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </TicketDefinitionQuantity>
                     </div>
                     <TicketDefinitionBadge
                       label="Sold Out"

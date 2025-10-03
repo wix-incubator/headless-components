@@ -299,10 +299,7 @@ export const TicketDefinitionQuantity = React.forwardRef<
     <TicketDefinitionPrimitive.Quantity
       {...props}
       ref={ref}
-      className={cn(
-        'bg-background border border-foreground/60 py-2 px-3 font-paragraph text-foreground text-base min-w-24 w-full sm:w-auto',
-        className
-      )}
+      className={cn(className)}
     />
   );
 });
