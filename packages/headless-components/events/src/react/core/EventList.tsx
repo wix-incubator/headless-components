@@ -170,8 +170,6 @@ export interface CategoryFilterProps {
   children: (props: CategoryFilterRenderProps) => React.ReactNode;
   /** All categories label*/
   allCategoriesLabel: string;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 export interface CategoryFilterRenderProps {
@@ -181,8 +179,6 @@ export interface CategoryFilterRenderProps {
   value: FilterPrimitive.Filter;
   /** Function to handle category change */
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 /**
@@ -219,7 +215,6 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
     filterOptions,
     value,
     onChange,
-    className: props.className,
   });
 }
 
@@ -232,8 +227,6 @@ export interface StatusFilterProps {
   upcomingEventsLabel: string;
   /** Past events label */
   pastEventsLabel: string;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 export interface StatusFilterRenderProps {
@@ -243,8 +236,6 @@ export interface StatusFilterRenderProps {
   value: FilterPrimitive.Filter;
   /** Function to handle status change */
   onChange: (value: FilterPrimitive.Filter) => Promise<void>;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 /**
@@ -258,7 +249,7 @@ export function StatusFilter(props: StatusFilterProps): React.ReactNode {
   const selectedStatusId = eventListService.selectedStatusId.get();
 
   const onChange = async (value: FilterPrimitive.Filter) => {
-    const statusId = value?.['statusId'];
+    const statusId = value!['statusId'];
     const categoryId = eventListService.selectedCategoryId.get();
 
     await eventListService.loadEvents({ categoryId, statusId });
@@ -275,7 +266,6 @@ export function StatusFilter(props: StatusFilterProps): React.ReactNode {
     filterOptions,
     value,
     onChange,
-    className: props.className,
   });
 }
 

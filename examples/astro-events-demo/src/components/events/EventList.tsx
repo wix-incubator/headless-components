@@ -30,17 +30,17 @@ export function EventList({
 }: EventListProps) {
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
-      <div className="flex flex-row gap-6">
+      <div className="flex flex-row gap-6 mb-6">
         <EventListCategoryFilter
           allCategoriesLabel="All"
-          className="flex-1 border-b border-foreground/10 mb-6"
+          className="flex-1 border-b border-foreground/10"
         >
           <FilterOptions>
-            <FilterOptionRepeater>
-              <ScrollableTabs>
+            <ScrollableTabs>
+              <FilterOptionRepeater>
                 <FilterOptionSingle variant="tabs" />
-              </ScrollableTabs>
-            </FilterOptionRepeater>
+              </FilterOptionRepeater>
+            </ScrollableTabs>
           </FilterOptions>
         </EventListCategoryFilter>
         <EventListStatusFilter

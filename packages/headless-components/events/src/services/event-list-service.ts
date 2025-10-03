@@ -75,12 +75,14 @@ export const EventListService =
         () => currentPage.get() + 1 < totalPages.get(),
       );
 
-      const loadEvents = async ({ categoryId, statusId }: LoadEventsParams) => {
-        const selectedStatus = statusId || selectedStatusId.get();
-        const status = getStatusFromId(selectedStatus);
+      const loadEvents = async ({
+        categoryId,
+        statusId = selectedStatusId.get(),
+      }: LoadEventsParams) => {
+        const status = getStatusFromId(statusId);
 
         selectedCategoryId.set(categoryId ?? null);
-        selectedStatusId.set(selectedStatus);
+        selectedStatusId.set(statusId);
 
         isLoading.set(true);
         error.set(null);
@@ -212,8 +214,6 @@ interface LoadEventsParams {
 
 function getStatusFromId(statusId: StatusId) {
   switch (statusId) {
-    case UPCOMING_EVENTS:
-      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
     case PAST_EVENTS:
       return [wixEventsV2.Status.ENDED];
     case ALL_EVENTS:
@@ -222,6 +222,7 @@ function getStatusFromId(statusId: StatusId) {
         wixEventsV2.Status.STARTED,
         wixEventsV2.Status.ENDED,
       ];
+    case UPCOMING_EVENTS:
     default:
       return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
   }

@@ -30,36 +30,22 @@ enum ScrollDirection {
 export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
   ({ children, className }, ref) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const [showArrows, setShowArrows] = useState<{
-      left: boolean;
-      right: boolean;
-    }>({
-      left: false,
-      right: false,
-    });
+    const [showLeftArrow, setShowLeftArrow] = useState(false);
+    const [showRightArrow, setShowRightArrow] = useState(false);
 
     const checkForOverflow = () => {
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current!;
 
-      const { scrollLeft, scrollWidth, clientWidth } = container;
-
-      setShowArrows({
-        left: scrollLeft > 0,
-        right: scrollLeft < scrollWidth - clientWidth - 1,
-      });
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 1);
     };
 
     const scroll = (direction: ScrollDirection) => {
-      const container = scrollContainerRef.current;
-      if (!container) {
-        return;
-      }
+      const { clientWidth, scrollBy } = scrollContainerRef.current!;
+      const scrollAmount = clientWidth * 0.8;
 
-      const scrollAmount = container.clientWidth * 0.8;
-      container.scrollBy({
+      scrollBy({
         left: direction === ScrollDirection.LEFT ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
       });
@@ -70,15 +56,18 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
     }, []);
 
     return (
-      <div ref={ref} className={cn('relative', className)}>
+      <div
+        ref={ref}
+        className={cn('group relative', className)}
+        data-right-arrow-visible={showRightArrow}
+        data-left-arrow-visible={showLeftArrow}
+      >
         <button
-          onClick={() => scroll(ScrollDirection.LEFT)}
-          className={cn(
-            `absolute left-0 top-0 bottom-0 z-10 ${showArrows.left ? 'opacity-100' : 'opacity-0'}`,
-            'transition-opacity duration-300',
-            'bg-background/80 backdrop-blur-sm'
-          )}
+          className={
+            'absolute left-0 top-0 bottom-0 z-10 group-data-[left-arrow-visible=true]:opacity-100 group-data-[left-arrow-visible=false]:opacity-0 transition-opacity duration-300 bg-background/80'
+          }
           aria-label="Scroll left"
+          onClick={() => scroll(ScrollDirection.LEFT)}
         >
           <svg width="16" height="16" viewBox="0 0 16 16">
             <path
@@ -90,13 +79,11 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
         </button>
 
         <button
-          onClick={() => scroll(ScrollDirection.RIGHT)}
-          className={cn(
-            `absolute right-0 top-0 bottom-0 z-10 ${showArrows.right ? 'opacity-100' : 'opacity-0'}`,
-            'transition-opacity duration-300',
-            'bg-background/80 backdrop-blur-sm'
-          )}
+          className={
+            'absolute right-0 top-0 bottom-0 z-10 group-data-[right-arrow-visible=true]:opacity-100 group-data-[right-arrow-visible=false]:opacity-0 transition-opacity duration-300 bg-background/80'
+          }
           aria-label="Scroll right"
+          onClick={() => scroll(ScrollDirection.RIGHT)}
         >
           <svg width="16" height="16" viewBox="0 0 16 16">
             <path
