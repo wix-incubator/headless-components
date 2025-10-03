@@ -64,7 +64,7 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
       >
         <button
           className={
-            'absolute left-0 top-0 bottom-0 z-10 group-data-[left-arrow-visible=true]:opacity-100 group-data-[left-arrow-visible=false]:opacity-0 transition-opacity duration-300 bg-background/80'
+            'absolute left-0 top-0 bottom-0 z-1 group-data-[left-arrow-visible=true]:opacity-100 group-data-[left-arrow-visible=false]:opacity-0 transition-opacity duration-300 bg-background/80'
           }
           aria-label="Scroll left"
           onClick={() => scroll(ScrollDirection.LEFT)}
@@ -80,7 +80,7 @@ export const ScrollableTabs = forwardRef<HTMLDivElement, ScrollableTabsProps>(
 
         <button
           className={
-            'absolute right-0 top-0 bottom-0 z-10 group-data-[right-arrow-visible=true]:opacity-100 group-data-[right-arrow-visible=false]:opacity-0 transition-opacity duration-300 bg-background/80'
+            'absolute right-0 top-0 bottom-0 z-1 group-data-[right-arrow-visible=true]:opacity-100 group-data-[right-arrow-visible=false]:opacity-0 transition-opacity duration-300 bg-background/80'
           }
           aria-label="Scroll right"
           onClick={() => scroll(ScrollDirection.RIGHT)}
