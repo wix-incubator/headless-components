@@ -13,8 +13,6 @@ export type Category = categories.Category;
 
 type StatusId = typeof UPCOMING_EVENTS | typeof PAST_EVENTS | typeof ALL_EVENTS;
 
-type StatusMap = Record<StatusId, wixEventsV2.Status[]>;
-
 export interface EventListServiceAPI {
   /** Reactive signal containing the list of events */
   events: Signal<Event[]>;
@@ -39,7 +37,7 @@ export interface EventListServiceAPI {
   /** Reactive signal indicating if there are more events to load */
   hasMoreEvents: ReadOnlySignal<boolean>;
   /** Function to load events */
-  loadEvents: (categoryId?: string, statusId?: StatusId) => Promise<void>;
+  loadEvents: ({ categoryId, statusId }: LoadEventsParams) => Promise<void>;
   /** Function to load more events */
   loadMoreEvents: () => Promise<void>;
 }
@@ -77,7 +75,7 @@ export const EventListService =
         () => currentPage.get() + 1 < totalPages.get(),
       );
 
-      const loadEvents = async (categoryId?: string, statusId?: StatusId) => {
+      const loadEvents = async ({ categoryId, statusId }: LoadEventsParams) => {
         const selectedStatus = statusId || selectedStatusId.get();
         const status = getStatusFromId(selectedStatus);
 
@@ -207,19 +205,24 @@ interface QueryEventsParams {
   status?: wixEventsV2.Status[];
 }
 
-function getStatusFromId(statusId: StatusId): wixEventsV2.Status[] {
-  const STATUS_MAP: StatusMap = {
-    [UPCOMING_EVENTS]: [
-      wixEventsV2.Status.UPCOMING,
-      wixEventsV2.Status.STARTED,
-    ],
-    [PAST_EVENTS]: [wixEventsV2.Status.ENDED],
-    [ALL_EVENTS]: [
-      wixEventsV2.Status.UPCOMING,
-      wixEventsV2.Status.STARTED,
-      wixEventsV2.Status.ENDED,
-    ],
-  };
+interface LoadEventsParams {
+  categoryId?: string | null;
+  statusId?: StatusId;
+}
 
-  return STATUS_MAP[statusId];
+function getStatusFromId(statusId: StatusId) {
+  switch (statusId) {
+    case UPCOMING_EVENTS:
+      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
+    case PAST_EVENTS:
+      return [wixEventsV2.Status.ENDED];
+    case ALL_EVENTS:
+      return [
+        wixEventsV2.Status.UPCOMING,
+        wixEventsV2.Status.STARTED,
+        wixEventsV2.Status.ENDED,
+      ];
+    default:
+      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
+  }
 }

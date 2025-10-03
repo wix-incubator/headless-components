@@ -204,12 +204,12 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
   const onChange = async (value: FilterPrimitive.Filter) => {
     const categoryId = value?.['categoryId'];
 
-    await eventListService.loadEvents(
-      categoryId === ALL_CATEGORIES ? null : categoryId,
-    );
+    await eventListService.loadEvents({
+      categoryId: categoryId === ALL_CATEGORIES ? null : categoryId,
+    });
   };
 
-  const { filterOptions, value } = buildFilterProps(
+  const { filterOptions, value } = buildCategoryFilterProps(
     categories,
     props.allCategoriesLabel,
     selectedCategoryId,
@@ -222,41 +222,6 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
     className: props.className,
   });
 }
-
-const buildFilterProps = (
-  categories: Category[],
-  allCategoriesLabel: string,
-  selectedCategoryId: string,
-) => {
-  const FILTER_BASE = {
-    key: CATEGORIES_FILTER_KEY,
-    label: '',
-    type: 'single' as const,
-    displayType: 'text' as const,
-    fieldName: 'categoryId',
-  };
-
-  const filterOptions = [
-    {
-      ...FILTER_BASE,
-      validValues: [
-        ALL_CATEGORIES,
-        ...categories.map((category) => category._id!),
-      ],
-      valueFormatter: (value: string | number) =>
-        value === ALL_CATEGORIES
-          ? allCategoriesLabel
-          : categories.find((category) => category._id === value)!.name!,
-    },
-  ];
-
-  const value = {
-    ...FILTER_BASE,
-    categoryId: selectedCategoryId,
-  };
-
-  return { filterOptions, value };
-};
 
 export interface StatusFilterProps {
   /** Render prop function */
@@ -290,16 +255,13 @@ export interface StatusFilterRenderProps {
 export function StatusFilter(props: StatusFilterProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
 
-  const selectedStatusId =
-    eventListService.selectedStatusId.get() || UPCOMING_EVENTS;
+  const selectedStatusId = eventListService.selectedStatusId.get();
 
   const onChange = async (value: FilterPrimitive.Filter) => {
     const statusId = value?.['statusId'];
+    const categoryId = eventListService.selectedCategoryId.get();
 
-    await eventListService.loadEvents(
-      eventListService.selectedCategoryId.get() || undefined,
-      statusId,
-    );
+    await eventListService.loadEvents({ categoryId, statusId });
   };
 
   const { filterOptions, value } = buildStatusFilterProps(
@@ -316,6 +278,41 @@ export function StatusFilter(props: StatusFilterProps): React.ReactNode {
     className: props.className,
   });
 }
+
+const buildCategoryFilterProps = (
+  categories: Category[],
+  allCategoriesLabel: string,
+  selectedCategoryId: string,
+) => {
+  const FILTER_BASE = {
+    key: CATEGORIES_FILTER_KEY,
+    label: '',
+    type: 'single' as const,
+    displayType: 'text' as const,
+    fieldName: 'categoryId',
+  };
+
+  const filterOptions = [
+    {
+      ...FILTER_BASE,
+      validValues: [
+        ALL_CATEGORIES,
+        ...categories.map((category) => category._id!),
+      ],
+      valueFormatter: (value: string | number) =>
+        value === ALL_CATEGORIES
+          ? allCategoriesLabel
+          : categories.find((category) => category._id === value)!.name!,
+    },
+  ];
+
+  const value = {
+    ...FILTER_BASE,
+    categoryId: selectedCategoryId,
+  };
+
+  return { filterOptions, value };
+};
 
 const buildStatusFilterProps = (
   allStatusesLabel: string,
