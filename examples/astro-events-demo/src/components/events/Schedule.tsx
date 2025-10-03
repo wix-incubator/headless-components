@@ -54,9 +54,8 @@ export function Schedule({
             </div>
             <EventRsvpButton
               asChild
-              size="sm"
               variant="outline"
-              className="hidden sm:block h-fit"
+              className="hidden sm:block"
             >
               {({ slug, ticketed }) => (
                 <a href={eventDetailsPagePath.replace(':slug', slug)}>
@@ -73,12 +72,10 @@ export function Schedule({
                     <div>
                       <span>Filter by:</span>
                       <select
-                        value={value}
-                        className="bg-background"
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                          onChange(e.target.value)
-                        }
                         data-filter-type="single"
+                        className="bg-background"
+                        value={value}
+                        onChange={e => onChange(e.target.value)}
                       >
                         {validValues?.map(value => (
                           <option key={value} value={value}>
@@ -145,19 +142,18 @@ export function Schedule({
                 </ScheduleItemsGroupItemRepeater>
               </ScheduleItemsGroupItems>
             </ScheduleListGroupRepeater>
-            <EventRsvpButton
-              asChild
-              size="sm"
-              variant="outline"
-              className="block sm:hidden"
-            >
-              {({ slug, ticketed }) => (
-                <a href={eventDetailsPagePath.replace(':slug', slug)}>
-                  {ticketed ? 'Get Tickets' : 'RSVP'}
-                </a>
-              )}
-            </EventRsvpButton>
           </ScheduleListGroups>
+          <EventRsvpButton
+            asChild
+            variant="outline"
+            className="w-full mt-4 sm:hidden"
+          >
+            {({ slug, ticketed }) => (
+              <a href={eventDetailsPagePath.replace(':slug', slug)}>
+                {ticketed ? 'Get Tickets' : 'RSVP'}
+              </a>
+            )}
+          </EventRsvpButton>
         </div>
       </ScheduleList>
     </Event>
