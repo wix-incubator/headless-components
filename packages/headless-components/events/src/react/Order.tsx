@@ -93,7 +93,7 @@ export interface OrderNumberProps {
  *   className="font-light text-sm text-gray-700"
  * >
  *   {({ orderNumber }) => (
- *     <span>{`Order No. #${orderNumber}`}</span>
+ *     <span>Order No. #{orderNumber}</span>
  *   )}
  * </Order.OrderNumber>
  * ```
@@ -152,7 +152,7 @@ export interface GuestEmailProps {
  * // asChild with react component
  * <Order.GuestEmail asChild>
  *   {({ guestEmail }) => (
- *     <span>{`Email: ${guestEmail}`}</span>
+ *     <span>Email: {guestEmail}</span>
  *   )}
  * </Order.GuestEmail>
  * ```
@@ -217,7 +217,7 @@ export interface CreatedDateProps {
  *   className="font-light text-sm text-gray-700"
  * >
  *   {({ createdDate, formattedDate }) => (
- *     <span>{`Placed on: ${formattedDate}`}</span>
+ *     <span>Placed on: {formattedDate}</span>
  *   )}
  * </Order.CreatedDate>
  * ```
@@ -388,7 +388,7 @@ export const InvoiceItems = React.forwardRef<HTMLElement, InvoiceItemsProps>(
 export interface InvoiceItemRepeaterProps {
   /** Child components */
   children: React.ReactNode;
-  /** CSS classes to apply to the default element */
+  /** CSS classes to apply to the invoice item element */
   className?: string;
 }
 
@@ -535,7 +535,7 @@ export interface PaidPlanDiscountProps {
  * <Order.PaidPlanDiscount asChild>
  *   {({ formattedAmount, rate, amount, currency }) => (
  *     <div>
- *       <span>{`Paid Plan Discount (${rate}%)`}</span>
+ *       <span>Paid Plan Discount ({rate}%)</span>
  *       <span>{formattedAmount}</span>
  *     </div>
  *   )}
@@ -602,7 +602,8 @@ export interface CouponDiscountProps {
  * <Order.CouponDiscount asChild>
  *   {({ formattedAmount, amount, currency }) => (
  *     <div>
- *       <span>{`Coupon Discount (${formattedAmount})`}</span>
+ *       <span>Coupon Discount</span>
+ *       <span>{formattedAmount}</span>
  *     </div>
  *   )}
  * </Order.CouponDiscount>
@@ -673,7 +674,7 @@ export interface TaxProps {
  * >
  *   {({ rate, amount, currency, formattedAmount, name }) => (
  *     <div>
- *       <span>{`${name} (${rate}%)`}</span>
+ *       <span>{name} ({rate}%)</span>
  *       <span>{formattedAmount}</span>
  *     </div>
  *   )}
@@ -741,7 +742,7 @@ export interface FeeProps {
  * >
  *   {({ formattedAmount, rate, amount, currency }) => (
  *     <div>
- *       <span>{`Service Fee (${rate}%)`}</span>
+ *       <span>Service Fee ({rate}%)</span>
  *       <span>{formattedAmount}</span>
  *     </div>
  *   )}

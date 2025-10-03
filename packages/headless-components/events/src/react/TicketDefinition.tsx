@@ -265,27 +265,25 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
 
     return (
       <CoreTicketDefinition.FixedPricing>
-        {({ price, currency, formattedPrice, free }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.ticketDefinitionFixedPricing}
-              customElement={children}
-              customElementProps={{
-                price,
-                currency,
-                formattedPrice,
-                free,
-              }}
-              content={formattedPrice}
-              {...otherProps}
-            >
-              <span>{formattedPrice}</span>
-            </AsChildSlot>
-          );
-        }}
+        {({ price, currency, formattedPrice, free }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionFixedPricing}
+            customElement={children}
+            customElementProps={{
+              price,
+              currency,
+              formattedPrice,
+              free,
+            }}
+            content={formattedPrice}
+            {...otherProps}
+          >
+            <span>{formattedPrice}</span>
+          </AsChildSlot>
+        )}
       </CoreTicketDefinition.FixedPricing>
     );
   },
@@ -336,32 +334,30 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
 
     return (
       <CoreTicketDefinition.GuestPricing>
-        {({ minPrice, currency, formattedMinPrice, setPrice }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.ticketDefinitionGuestPricing}
-              customElement={children}
-              customElementProps={{
-                minPrice,
-                currency,
-                formattedMinPrice,
-                setPrice,
-              }}
-              type="number"
-              placeholder={formattedMinPrice}
-              min={minPrice}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setPrice(event.target.value)
-              }
-              {...otherProps}
-            >
-              <input />
-            </AsChildSlot>
-          );
-        }}
+        {({ minPrice, currency, formattedMinPrice, setPrice }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionGuestPricing}
+            customElement={children}
+            customElementProps={{
+              minPrice,
+              currency,
+              formattedMinPrice,
+              setPrice,
+            }}
+            type="number"
+            placeholder={formattedMinPrice}
+            min={minPrice}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setPrice(event.target.value)
+            }
+            {...otherProps}
+          >
+            <input />
+          </AsChildSlot>
+        )}
       </CoreTicketDefinition.GuestPricing>
     );
   },
@@ -423,29 +419,27 @@ export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
           formattedMinPrice,
           formattedMaxPrice,
           formattedPriceRange,
-        }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.ticketDefinitionPricingRange}
-              customElement={children}
-              customElementProps={{
-                minPrice,
-                maxPrice,
-                currency,
-                formattedMinPrice,
-                formattedMaxPrice,
-                formattedPriceRange,
-              }}
-              content={formattedPriceRange}
-              {...otherProps}
-            >
-              <span>{formattedPriceRange}</span>
-            </AsChildSlot>
-          );
-        }}
+        }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionPricingRange}
+            customElement={children}
+            customElementProps={{
+              minPrice,
+              maxPrice,
+              currency,
+              formattedMinPrice,
+              formattedMaxPrice,
+              formattedPriceRange,
+            }}
+            content={formattedPriceRange}
+            {...otherProps}
+          >
+            <span>{formattedPriceRange}</span>
+          </AsChildSlot>
+        )}
       </CoreTicketDefinition.PricingRange>
     );
   },
@@ -508,30 +502,28 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
         taxAmount,
         currency,
         formattedTaxAmount,
-      }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.ticketDefinitionTax}
-            customElement={children}
-            customElementProps={{
-              name,
-              rate,
-              included,
-              taxableAmount,
-              taxAmount,
-              currency,
-              formattedTaxAmount,
-            }}
-            content={formattedTaxAmount}
-            {...otherProps}
-          >
-            <span>{formattedTaxAmount}</span>
-          </AsChildSlot>
-        );
-      }}
+      }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.ticketDefinitionTax}
+          customElement={children}
+          customElementProps={{
+            name,
+            rate,
+            included,
+            taxableAmount,
+            taxAmount,
+            currency,
+            formattedTaxAmount,
+          }}
+          content={formattedTaxAmount}
+          {...otherProps}
+        >
+          <span>{formattedTaxAmount}</span>
+        </AsChildSlot>
+      )}
     </CoreTicketDefinition.Tax>
   );
 });
@@ -582,27 +574,25 @@ export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
 
   return (
     <CoreTicketDefinition.Fee>
-      {({ rate, amount, currency, formattedAmount }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.ticketDefinitionFee}
-            customElement={children}
-            customElementProps={{
-              rate,
-              amount,
-              currency,
-              formattedAmount,
-            }}
-            content={formattedAmount}
-            {...otherProps}
-          >
-            <span>{formattedAmount}</span>
-          </AsChildSlot>
-        );
-      }}
+      {({ rate, amount, currency, formattedAmount }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.ticketDefinitionFee}
+          customElement={children}
+          customElementProps={{
+            rate,
+            amount,
+            currency,
+            formattedAmount,
+          }}
+          content={formattedAmount}
+          {...otherProps}
+        >
+          <span>{formattedAmount}</span>
+        </AsChildSlot>
+      )}
     </CoreTicketDefinition.Fee>
   );
 });
@@ -649,22 +639,20 @@ export const Remaining = React.forwardRef<HTMLElement, RemainingProps>(
 
     return (
       <CoreTicketDefinition.Remaining>
-        {({ remaining }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.ticketDefinitionRemaining}
-              customElement={children}
-              customElementProps={{ remaining }}
-              content={remaining}
-              {...otherProps}
-            >
-              <span>{remaining}</span>
-            </AsChildSlot>
-          );
-        }}
+        {({ remaining }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionRemaining}
+            customElement={children}
+            customElementProps={{ remaining }}
+            content={remaining}
+            {...otherProps}
+          >
+            <span>{remaining}</span>
+          </AsChildSlot>
+        )}
       </CoreTicketDefinition.Remaining>
     );
   },
@@ -854,37 +842,35 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
 
     return (
       <CoreTicketDefinition.Quantity>
-        {({ quantity, maxQuantity, increment, decrement, setQuantity }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.ticketDefinitionQuantity}
-              customElement={children}
-              customElementProps={{
-                quantity,
-                maxQuantity,
-                increment,
-                decrement,
-                setQuantity,
-              }}
-              value={quantity}
-              onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                setQuantity(Number(event.target.value))
-              }
-              {...otherProps}
-            >
-              <select>
-                {Array.from({ length: maxQuantity + 1 }).map((_, index) => (
-                  <option key={index} value={index}>
-                    {index}
-                  </option>
-                ))}
-              </select>
-            </AsChildSlot>
-          );
-        }}
+        {({ quantity, maxQuantity, increment, decrement, setQuantity }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketDefinitionQuantity}
+            customElement={children}
+            customElementProps={{
+              quantity,
+              maxQuantity,
+              increment,
+              decrement,
+              setQuantity,
+            }}
+            value={quantity}
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+              setQuantity(Number(event.target.value))
+            }
+            {...otherProps}
+          >
+            <select>
+              {Array.from({ length: maxQuantity + 1 }).map((_, index) => (
+                <option key={index} value={index}>
+                  {index}
+                </option>
+              ))}
+            </select>
+          </AsChildSlot>
+        )}
       </CoreTicketDefinition.Quantity>
     );
   },
@@ -928,21 +914,19 @@ export const PricingOptions = React.forwardRef<
 
   return (
     <CoreTicketDefinition.PricingOptions>
-      {({ pricingOptions }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.ticketDefinitionPricingOptions}
-            customElement={children}
-            customElementProps={{ pricingOptions }}
-            {...otherProps}
-          >
-            <div>{children as React.ReactNode}</div>
-          </AsChildSlot>
-        );
-      }}
+      {({ pricingOptions }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.ticketDefinitionPricingOptions}
+          customElement={children}
+          customElementProps={{ pricingOptions }}
+          {...otherProps}
+        >
+          <div>{children as React.ReactNode}</div>
+        </AsChildSlot>
+      )}
     </CoreTicketDefinition.PricingOptions>
   );
 });
@@ -979,8 +963,8 @@ export const PricingOptionRepeater = (
 
   return (
     <CoreTicketDefinition.PricingOptionRepeater>
-      {({ pricingOptions }) => {
-        return pricingOptions.map((pricingOption) => (
+      {({ pricingOptions }) =>
+        pricingOptions.map((pricingOption) => (
           <PricingOption.Root
             key={pricingOption.optionId}
             pricingOption={pricingOption}
@@ -988,8 +972,8 @@ export const PricingOptionRepeater = (
           >
             {children}
           </PricingOption.Root>
-        ));
-      }}
+        ))
+      }
     </CoreTicketDefinition.PricingOptionRepeater>
   );
 };

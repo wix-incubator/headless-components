@@ -11,8 +11,6 @@ import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
   scheduleListGroups = 'schedule-list-groups',
-  scheduleListStageFilter = 'schedule-list-stage-filter',
-  scheduleListTagFilters = 'schedule-list-tag-filters',
 }
 
 /**
@@ -76,11 +74,7 @@ export interface ItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{
-        items: ScheduleItemType[];
-      }>;
+  children: React.ReactNode | AsChildChildren<{ items: ScheduleItemType[] }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -184,9 +178,7 @@ export interface GroupsProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{
-        itemsGroups: ScheduleItemsGroupType[];
-      }>;
+    | AsChildChildren<{ itemsGroups: ScheduleItemsGroupType[] }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Content to render when there are no groups */

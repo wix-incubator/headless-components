@@ -86,7 +86,7 @@ export const EventListError = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-status-danger text-center',
+        'block font-paragraph text-status-danger text-base text-center',
         className
       )}
     />

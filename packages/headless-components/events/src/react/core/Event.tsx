@@ -7,11 +7,6 @@ import {
   type Event,
   type RichContent,
 } from '../../services/event-service.js';
-import {
-  OccurrenceListService,
-  OccurrenceListServiceDefinition,
-  type OccurrenceListServiceConfig,
-} from '../../services/occurrence-list-service.js';
 import { hasDescription } from '../../utils/event.js';
 import { formatFullDate, formatShortDate } from '../../utils/date.js';
 
@@ -20,8 +15,6 @@ export interface RootProps {
   children: React.ReactNode;
   /** Event */
   event: Event;
-  /** Occurrence list service configuration */
-  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
 }
 
 /**
@@ -30,7 +23,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { children, event, occurrenceListServiceConfig } = props;
+  const { children, event } = props;
 
   const eventServiceConfig: EventServiceConfig = {
     event,
@@ -38,13 +31,11 @@ export function Root(props: RootProps): React.ReactNode {
 
   return (
     <WixServices
-      servicesMap={createServicesMap()
-        .addService(EventServiceDefinition, EventService, eventServiceConfig)
-        .addService(
-          OccurrenceListServiceDefinition,
-          OccurrenceListService,
-          occurrenceListServiceConfig,
-        )}
+      servicesMap={createServicesMap().addService(
+        EventServiceDefinition,
+        EventService,
+        eventServiceConfig,
+      )}
     >
       {children}
     </WixServices>
@@ -391,30 +382,4 @@ export function AddToIcsCalendar(
   }
 
   return props.children({ url });
-}
-
-export interface OccurrencesProps {
-  /** Render prop function */
-  children: (props: OccurrencesRenderProps) => React.ReactNode;
-}
-
-export interface OccurrencesRenderProps {
-  /** List of occurrences */
-  occurrences: Event[];
-  /** Indicates whether there are any event occurrences */
-  hasOccurrences: boolean;
-}
-
-/**
- * Event Occurrences core component that provides occurrences.
- *
- * @component
- */
-export function Occurrences(props: OccurrencesProps): React.ReactNode {
-  const occurrenceListService = useService(OccurrenceListServiceDefinition);
-
-  const occurrences = occurrenceListService.occurrences.get();
-  const hasOccurrences = occurrences.length > 1;
-
-  return props.children({ occurrences, hasOccurrences });
 }

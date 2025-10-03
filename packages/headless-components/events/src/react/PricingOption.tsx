@@ -172,26 +172,24 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
 
     return (
       <CorePricingOption.Pricing>
-        {({ price, currency, formattedPrice }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.pricingOptionPricing}
-              customElement={children}
-              customElementProps={{
-                price,
-                currency,
-                formattedPrice,
-              }}
-              content={formattedPrice}
-              {...otherProps}
-            >
-              <span>{formattedPrice}</span>
-            </AsChildSlot>
-          );
-        }}
+        {({ price, currency, formattedPrice }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.pricingOptionPricing}
+            customElement={children}
+            customElementProps={{
+              price,
+              currency,
+              formattedPrice,
+            }}
+            content={formattedPrice}
+            {...otherProps}
+          >
+            <span>{formattedPrice}</span>
+          </AsChildSlot>
+        )}
       </CorePricingOption.Pricing>
     );
   },
@@ -254,30 +252,28 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
         taxAmount,
         currency,
         formattedTaxAmount,
-      }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.pricingOptionTax}
-            customElement={children}
-            customElementProps={{
-              name,
-              rate,
-              included,
-              taxableAmount,
-              taxAmount,
-              currency,
-              formattedTaxAmount,
-            }}
-            content={formattedTaxAmount}
-            {...otherProps}
-          >
-            <span>{formattedTaxAmount}</span>
-          </AsChildSlot>
-        );
-      }}
+      }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.pricingOptionTax}
+          customElement={children}
+          customElementProps={{
+            name,
+            rate,
+            included,
+            taxableAmount,
+            taxAmount,
+            currency,
+            formattedTaxAmount,
+          }}
+          content={formattedTaxAmount}
+          {...otherProps}
+        >
+          <span>{formattedTaxAmount}</span>
+        </AsChildSlot>
+      )}
     </CorePricingOption.Tax>
   );
 });
@@ -328,27 +324,25 @@ export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
 
   return (
     <CorePricingOption.Fee>
-      {({ rate, amount, currency, formattedAmount }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.pricingOptionFee}
-            customElement={children}
-            customElementProps={{
-              rate,
-              amount,
-              currency,
-              formattedAmount,
-            }}
-            content={formattedAmount}
-            {...otherProps}
-          >
-            <span>{formattedAmount}</span>
-          </AsChildSlot>
-        );
-      }}
+      {({ rate, amount, currency, formattedAmount }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.pricingOptionFee}
+          customElement={children}
+          customElementProps={{
+            rate,
+            amount,
+            currency,
+            formattedAmount,
+          }}
+          content={formattedAmount}
+          {...otherProps}
+        >
+          <span>{formattedAmount}</span>
+        </AsChildSlot>
+      )}
     </CorePricingOption.Fee>
   );
 });
@@ -403,37 +397,35 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
 
     return (
       <CorePricingOption.Quantity>
-        {({ quantity, maxQuantity, increment, decrement, setQuantity }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.pricingOptionQuantity}
-              customElement={children}
-              customElementProps={{
-                quantity,
-                maxQuantity,
-                increment,
-                decrement,
-                setQuantity,
-              }}
-              value={quantity}
-              onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                setQuantity(Number(event.target.value))
-              }
-              {...otherProps}
-            >
-              <select>
-                {Array.from({ length: maxQuantity + 1 }).map((_, index) => (
-                  <option key={index} value={index}>
-                    {index}
-                  </option>
-                ))}
-              </select>
-            </AsChildSlot>
-          );
-        }}
+        {({ quantity, maxQuantity, increment, decrement, setQuantity }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.pricingOptionQuantity}
+            customElement={children}
+            customElementProps={{
+              quantity,
+              maxQuantity,
+              increment,
+              decrement,
+              setQuantity,
+            }}
+            value={quantity}
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+              setQuantity(Number(event.target.value))
+            }
+            {...otherProps}
+          >
+            <select>
+              {Array.from({ length: maxQuantity + 1 }).map((_, index) => (
+                <option key={index} value={index}>
+                  {index}
+                </option>
+              ))}
+            </select>
+          </AsChildSlot>
+        )}
       </CorePricingOption.Quantity>
     );
   },

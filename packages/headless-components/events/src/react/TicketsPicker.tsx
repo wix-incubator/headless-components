@@ -181,8 +181,8 @@ export const TicketDefinitionRepeater = (
 
   return (
     <CoreTicketsPicker.TicketDefinitionRepeater>
-      {({ ticketDefinitions }) => {
-        return ticketDefinitions.map((ticketDefinition) => (
+      {({ ticketDefinitions }) =>
+        ticketDefinitions.map((ticketDefinition) => (
           <TicketDefinition.Root
             key={ticketDefinition._id}
             ticketDefinition={ticketDefinition}
@@ -190,8 +190,8 @@ export const TicketDefinitionRepeater = (
           >
             {children}
           </TicketDefinition.Root>
-        ));
-      }}
+        ))
+      }
     </CoreTicketsPicker.TicketDefinitionRepeater>
   );
 };
@@ -269,36 +269,34 @@ export const Totals = React.forwardRef<HTMLElement, TotalsProps>(
           taxRate,
           taxIncluded,
           feeRate,
-        }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.ticketsPickerTotals}
-              customElement={children}
-              customElementProps={{
-                total,
-                subtotal,
-                tax,
-                fee,
-                currency,
-                formattedTotal,
-                formattedSubtotal,
-                formattedTax,
-                formattedFee,
-                taxName,
-                taxRate,
-                taxIncluded,
-                feeRate,
-              }}
-              content={formattedTotal}
-              {...otherProps}
-            >
-              <span>{formattedTotal}</span>
-            </AsChildSlot>
-          );
-        }}
+        }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketsPickerTotals}
+            customElement={children}
+            customElementProps={{
+              total,
+              subtotal,
+              tax,
+              fee,
+              currency,
+              formattedTotal,
+              formattedSubtotal,
+              formattedTax,
+              formattedFee,
+              taxName,
+              taxRate,
+              taxIncluded,
+              feeRate,
+            }}
+            content={formattedTotal}
+            {...otherProps}
+          >
+            <span>{formattedTotal}</span>
+          </AsChildSlot>
+        )}
       </CoreTicketsPicker.Totals>
     );
   },
@@ -346,22 +344,20 @@ export const CheckoutError = React.forwardRef<HTMLElement, CheckoutErrorProps>(
 
     return (
       <CoreTicketsPicker.CheckoutError>
-        {({ error }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.ticketsPickerCheckoutError}
-              customElement={children}
-              customElementProps={{ error }}
-              content={error}
-              {...otherProps}
-            >
-              <span>{error}</span>
-            </AsChildSlot>
-          );
-        }}
+        {({ error }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.ticketsPickerCheckoutError}
+            customElement={children}
+            customElementProps={{ error }}
+            content={error}
+            {...otherProps}
+          >
+            <span>{error}</span>
+          </AsChildSlot>
+        )}
       </CoreTicketsPicker.CheckoutError>
     );
   },
@@ -418,28 +414,26 @@ export const CheckoutTrigger = React.forwardRef<
 
   return (
     <CoreTicketsPicker.CheckoutTrigger>
-      {({ isLoading, error, hasSelectedTicketDefinitions, checkout }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.ticketsPickerCheckoutTrigger}
-            data-in-progress={isLoading}
-            disabled={isLoading}
-            customElement={children}
-            customElementProps={{
-              isLoading,
-              error,
-              hasSelectedTicketDefinitions,
-              checkout,
-            }}
-            {...otherProps}
-          >
-            <button>{label}</button>
-          </AsChildSlot>
-        );
-      }}
+      {({ isLoading, error, hasSelectedTicketDefinitions, checkout }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.ticketsPickerCheckoutTrigger}
+          data-in-progress={isLoading}
+          disabled={isLoading}
+          customElement={children}
+          customElementProps={{
+            isLoading,
+            error,
+            hasSelectedTicketDefinitions,
+            checkout,
+          }}
+          {...otherProps}
+        >
+          <button>{label}</button>
+        </AsChildSlot>
+      )}
     </CoreTicketsPicker.CheckoutTrigger>
   );
 });
