@@ -27,6 +27,13 @@ import {
   ScheduleItemsGroupItemRepeater,
   ScheduleItemTagLabel,
 } from '@/components/ui/events';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
@@ -66,23 +73,23 @@ export function Schedule({
           </div>
           <ScheduleListFilters allStagesLabel="All stages">
             <FilterOptions>
-              <FilterOptionRepeater className="flex flex-row justify-between mb-10 items-center">
+              <FilterOptionRepeater className="flex justify-between items-center mb-10">
                 <FilterOptionSingle asChild>
-                  {({ value, onChange, validValues, valueFormatter }) => (
-                    <div>
-                      <span>Filter by:</span>
-                      <select
-                        data-filter-type="single"
-                        className="bg-background"
-                        value={value}
-                        onChange={e => onChange(e.target.value)}
-                      >
-                        {validValues?.map(value => (
-                          <option key={value} value={value}>
-                            {valueFormatter ? valueFormatter(value) : value}
-                          </option>
-                        ))}
-                      </select>
+                  {({ validValues, value, valueFormatter, onChange }) => (
+                    <div className="flex gap-2 items-center">
+                      <span className="flex-shrink-0">Filter by:</span>
+                      <Select value={value} onValueChange={onChange}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {validValues?.map(value => (
+                            <SelectItem key={value} value={String(value)}>
+                              {valueFormatter ? valueFormatter(value) : value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                 </FilterOptionSingle>
