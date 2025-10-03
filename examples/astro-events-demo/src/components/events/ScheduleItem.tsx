@@ -17,7 +17,7 @@ interface ScheduleItemProps {
 export function ScheduleItem({
   descriptionVisible = false,
 }: ScheduleItemProps) {
-  const [open, setOpen] = useState(false);
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
 
   return (
     <div className="flex gap-2 sm:gap-6 flex-col sm:flex-row">
@@ -51,10 +51,10 @@ export function ScheduleItem({
         {descriptionVisible && (
           <div className="group-data-[has-description=false]/schedule-item:hidden mt-3">
             <button
-              onClick={() => setOpen(!open)}
+              onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
               className="text-foreground text-base font-paragraph hover:underline flex gap-1"
             >
-              {open ? (
+              {isDescriptionOpen ? (
                 <>
                   <span>Show Less</span>
                   <svg width="24" height="24" viewBox="0 0 24 24">
@@ -78,7 +78,7 @@ export function ScheduleItem({
                 </>
               )}
             </button>
-            {open && <ScheduleItemDescription className="mt-3" />}
+            {isDescriptionOpen && <ScheduleItemDescription className="mt-3" />}
           </div>
         )}
       </div>
