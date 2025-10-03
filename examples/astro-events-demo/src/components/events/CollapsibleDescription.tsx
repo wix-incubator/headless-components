@@ -8,7 +8,7 @@ export function CollapsibleDescription() {
     <div className="group-data-[has-description=false]/schedule-item:hidden mt-3">
       <button
         onClick={() => setOpen(!open)}
-        className="text-foreground text-base font-paragraph hover:underline flex items-center gap-1"
+        className="text-foreground text-base font-paragraph hover:underline flex gap-1"
       >
         {open ? (
           <>
