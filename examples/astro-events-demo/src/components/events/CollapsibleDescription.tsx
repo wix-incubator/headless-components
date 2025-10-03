@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { ScheduleItemDescription } from '../ui/events/ScheduleItem';
 
 export function CollapsibleDescription() {
-  const [opened, setOpened] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="group-data-[has-description=false]/schedule-item:hidden mt-3">
       <button
-        onClick={() => setOpened(!opened)}
+        onClick={() => setOpen(!open)}
         className="text-foreground text-base font-paragraph hover:underline flex items-center gap-1"
       >
-        {opened ? (
+        {open ? (
           <>
             <span>Show Less</span>
             <svg width="24" height="24" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@ export function CollapsibleDescription() {
           </>
         )}
       </button>
-      {opened && <ScheduleItemDescription />}
+      {open && <ScheduleItemDescription />}
     </div>
   );
 }
