@@ -353,12 +353,12 @@ export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
 export interface StatusFilterProps {
   /** Child components */
   children: React.ReactNode;
-  /** All statuses label */
-  allStatusesLabel: string;
+  /** All events label */
+  allEventsLabel: string;
   /** Upcoming events label */
-  upcomingLabel: string;
+  upcomingEventsLabel: string;
   /** Past events label */
-  pastLabel: string;
+  pastEventsLabel: string;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -370,9 +370,9 @@ export interface StatusFilterProps {
  * @example
  * ```tsx
  * <EventList.StatusFilter
- *   allStatusesLabel="All Events"
- *   upcomingLabel="Upcoming"
- *   pastLabel="Past"
+ *   allEventsLabel="All Events"
+ *   upcomingEventsLabel="Upcoming"
+ *   pastEventsLabel="Past"
  * >
  *   <Filter.FilterOptions>
  *     <Filter.FilterOptionRepeater>
@@ -385,9 +385,9 @@ export interface StatusFilterProps {
 export const StatusFilter = (props: StatusFilterProps): React.ReactNode => {
   return (
     <CoreEventList.StatusFilter
-      allStatusesLabel={props.allStatusesLabel}
-      upcomingLabel={props.upcomingLabel}
-      pastLabel={props.pastLabel}
+      allEventsLabel={props.allEventsLabel}
+      upcomingEventsLabel={props.upcomingEventsLabel}
+      pastEventsLabel={props.pastEventsLabel}
       className={props.className}
     >
       {({ filterOptions, className, onChange, value }) => {

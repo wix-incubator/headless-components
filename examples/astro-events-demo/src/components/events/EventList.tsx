@@ -37,16 +37,16 @@ export function EventList({
         >
           <FilterOptions>
             <FilterOptionRepeater>
-              <ScrollableTabs className="w-[200px]">
+              <ScrollableTabs>
                 <FilterOptionSingle variant="tabs" />
               </ScrollableTabs>
             </FilterOptionRepeater>
           </FilterOptions>
         </EventListCategoryFilter>
         <EventListStatusFilter
-          allStatusesLabel="Upcoming & Past"
-          upcomingLabel="Upcoming"
-          pastLabel="Past"
+          allEventsLabel="Upcoming & Past"
+          upcomingEventsLabel="Upcoming"
+          pastEventsLabel="Past"
         >
           <FilterOptions>
             <FilterOptionRepeater>

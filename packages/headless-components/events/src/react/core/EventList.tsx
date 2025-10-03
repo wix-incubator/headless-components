@@ -226,12 +226,12 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
 export interface StatusFilterProps {
   /** Render prop function */
   children: (props: StatusFilterRenderProps) => React.ReactNode;
-  /** All statuses label */
-  allStatusesLabel: string;
+  /** All events label */
+  allEventsLabel: string;
   /** Upcoming events label */
-  upcomingLabel: string;
+  upcomingEventsLabel: string;
   /** Past events label */
-  pastLabel: string;
+  pastEventsLabel: string;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -265,9 +265,9 @@ export function StatusFilter(props: StatusFilterProps): React.ReactNode {
   };
 
   const { filterOptions, value } = buildStatusFilterProps(
-    props.allStatusesLabel,
-    props.upcomingLabel,
-    props.pastLabel,
+    props.allEventsLabel,
+    props.upcomingEventsLabel,
+    props.pastEventsLabel,
     selectedStatusId,
   );
 
@@ -315,9 +315,9 @@ const buildCategoryFilterProps = (
 };
 
 const buildStatusFilterProps = (
-  allStatusesLabel: string,
-  upcomingLabel: string,
-  pastLabel: string,
+  allEventsLabel: string,
+  upcomingEventsLabel: string,
+  pastEventsLabel: string,
   selectedStatusId: string,
 ) => {
   const FILTER_BASE = {
@@ -335,13 +335,13 @@ const buildStatusFilterProps = (
       valueFormatter: (value: string | number) => {
         switch (value) {
           case ALL_EVENTS:
-            return allStatusesLabel;
+            return allEventsLabel;
           case UPCOMING_EVENTS:
-            return upcomingLabel;
+            return upcomingEventsLabel;
           case PAST_EVENTS:
-            return pastLabel;
+            return pastEventsLabel;
           default:
-            return upcomingLabel;
+            return upcomingEventsLabel;
         }
       },
     },
