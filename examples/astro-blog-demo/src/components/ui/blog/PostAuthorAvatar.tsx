@@ -46,14 +46,14 @@ export const PostAuthorAvatar = React.forwardRef<
 >(({ avatarSize, className }, ref) => {
   return (
     <Blog.Post.AuthorAvatar ref={ref} asChild>
-      {({ authorAvatarUrl, authorNameInitials }) => {
+      {({ authorAvatarUrl, authorAvatarInitials }) => {
         return (
           <Avatar
             className={cn(avatarSizeVariants({ size: avatarSize }), className)}
           >
             <AvatarImage src={authorAvatarUrl} />
             <AvatarFallback className="bg-inherit">
-              {authorNameInitials}
+              {authorAvatarInitials}
             </AvatarFallback>
           </Avatar>
         );
