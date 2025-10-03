@@ -27,6 +27,7 @@ import {
   ScheduleItemsGroupItemRepeater,
   ScheduleItemTagLabel,
 } from '@/components/ui/events';
+import { CollapsibleDescription } from './CollapsibleDescription';
 
 interface ScheduleProps {
   eventServiceConfig: EventServiceConfig;
@@ -106,7 +107,7 @@ export function Schedule({
                 <h2 />
               </ScheduleItemsGroupDateLabel>
               <ScheduleItemsGroupItems>
-                <ScheduleItemsGroupItemRepeater className="border border-foreground/10 p-5 sm:py-8 sm:px-6 mt-4 sm:mt-6">
+                <ScheduleItemsGroupItemRepeater className="group/schedule-item border border-foreground/10 p-5 sm:py-8 sm:px-6 mt-4 sm:mt-6">
                   <div className="flex gap-2 sm:gap-6 flex-col sm:flex-row">
                     <div className="min-w-[150px]">
                       <ScheduleItemTimeSlot />
@@ -140,6 +141,7 @@ export function Schedule({
                           <ScheduleItemTagLabel />
                         </ScheduleItemTagRepeater>
                       </ScheduleItemTags>
+                      <CollapsibleDescription />
                     </div>
                   </div>
                 </ScheduleItemsGroupItemRepeater>
