@@ -8,7 +8,7 @@ import {
   ScheduleItemTagRepeater,
   ScheduleItemTagLabel,
   ScheduleItemDescription,
-} from '../ui/events';
+} from '@/components/ui/events';
 
 interface ScheduleItemProps {
   descriptionVisible?: boolean;
