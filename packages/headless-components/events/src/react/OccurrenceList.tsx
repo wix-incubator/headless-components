@@ -95,21 +95,19 @@ export const Occurrences = React.forwardRef<HTMLElement, OccurrencesProps>(
 
     return (
       <CoreOccurrenceList.Occurrences>
-        {({ occurrences, hasOccurrences }) => {
-          return (
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              className={className}
-              data-testid={TestIds.occurrenceListOccurrences}
-              customElement={children}
-              customElementProps={{ occurrences, hasOccurrences }}
-              {...otherProps}
-            >
-              <div>{children as React.ReactNode}</div>
-            </AsChildSlot>
-          );
-        }}
+        {({ occurrences, hasOccurrences }) => (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.occurrenceListOccurrences}
+            customElement={children}
+            customElementProps={{ occurrences, hasOccurrences }}
+            {...otherProps}
+          >
+            <div>{children as React.ReactNode}</div>
+          </AsChildSlot>
+        )}
       </CoreOccurrenceList.Occurrences>
     );
   },
@@ -146,8 +144,8 @@ export const OccurrenceRepeater = (
 
   return (
     <CoreOccurrenceList.OccurrenceRepeater>
-      {({ occurrences }) => {
-        return occurrences.map((occurrence) => (
+      {({ occurrences }) =>
+        occurrences.map((occurrence) => (
           <Event.Root
             key={occurrence._id}
             event={occurrence}
@@ -155,8 +153,8 @@ export const OccurrenceRepeater = (
           >
             {children}
           </Event.Root>
-        ));
-      }}
+        ))
+      }
     </CoreOccurrenceList.OccurrenceRepeater>
   );
 };
@@ -210,23 +208,21 @@ export const LoadMoreTrigger = React.forwardRef<
 
   return (
     <CoreOccurrenceList.LoadMoreTrigger>
-      {({ isLoading, loadMoreOccurrences }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.occurrenceListLoadMore}
-            customElement={children}
-            customElementProps={{ isLoading, loadMoreOccurrences }}
-            disabled={isLoading}
-            onClick={loadMoreOccurrences}
-            {...otherProps}
-          >
-            <button>{label}</button>
-          </AsChildSlot>
-        );
-      }}
+      {({ isLoading, loadMoreOccurrences }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.occurrenceListLoadMore}
+          customElement={children}
+          customElementProps={{ isLoading, loadMoreOccurrences }}
+          disabled={isLoading}
+          onClick={loadMoreOccurrences}
+          {...otherProps}
+        >
+          <button>{label}</button>
+        </AsChildSlot>
+      )}
     </CoreOccurrenceList.LoadMoreTrigger>
   );
 });
@@ -272,22 +268,20 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 
   return (
     <CoreOccurrenceList.Error>
-      {({ error }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.occurrenceListError}
-            customElement={children}
-            customElementProps={{ error }}
-            content={error}
-            {...otherProps}
-          >
-            <span>{error}</span>
-          </AsChildSlot>
-        );
-      }}
+      {({ error }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.occurrenceListError}
+          customElement={children}
+          customElementProps={{ error }}
+          content={error}
+          {...otherProps}
+        >
+          <span>{error}</span>
+        </AsChildSlot>
+      )}
     </CoreOccurrenceList.Error>
   );
 });

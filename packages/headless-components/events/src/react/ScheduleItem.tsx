@@ -204,9 +204,7 @@ export interface DurationProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    durationMinutes: number;
-  }>;
+  children?: AsChildChildren<{ durationMinutes: number }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

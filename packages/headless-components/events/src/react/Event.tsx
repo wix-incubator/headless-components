@@ -531,22 +531,20 @@ export const ShortDescription = React.forwardRef<
 
   return (
     <CoreEvent.ShortDescription>
-      {({ shortDescription }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.eventShortDescription}
-            customElement={children}
-            customElementProps={{ shortDescription }}
-            content={shortDescription}
-            {...otherProps}
-          >
-            <span>{shortDescription}</span>
-          </AsChildSlot>
-        );
-      }}
+      {({ shortDescription }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventShortDescription}
+          customElement={children}
+          customElementProps={{ shortDescription }}
+          content={shortDescription}
+          {...otherProps}
+        >
+          <span>{shortDescription}</span>
+        </AsChildSlot>
+      )}
     </CoreEvent.ShortDescription>
   );
 });
@@ -579,18 +577,16 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
 
     return (
       <CoreEvent.Description>
-        {({ description }) => {
-          return (
-            <AsChildSlot
-              asChild
-              ref={ref}
-              data-testid={TestIds.eventDescription}
-              customElement={children}
-              customElementProps={{ description }}
-              {...otherProps}
-            />
-          );
-        }}
+        {({ description }) => (
+          <AsChildSlot
+            asChild
+            ref={ref}
+            data-testid={TestIds.eventDescription}
+            customElement={children}
+            customElementProps={{ description }}
+            {...otherProps}
+          />
+        )}
       </CoreEvent.Description>
     );
   },
@@ -668,7 +664,7 @@ export interface FacebookShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{}>;
+  children?: AsChildChildren<{ shareUrl: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -689,8 +685,8 @@ export interface FacebookShareProps {
  *
  * // asChild with react component
  * <Event.FacebookShare asChild eventPageUrl={eventPageUrl}>
- *   {React.forwardRef((props, ref) => (
- *     <button ref={ref} onClick={() => window.open(eventPageUrl, '_blank')} />
+ *   {React.forwardRef(({ shareUrl, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(shareUrl, '_blank')} />
  *   ))}
  * </Event.FacebookShare>
  * ```
@@ -699,7 +695,7 @@ export const FacebookShare = React.forwardRef<HTMLElement, FacebookShareProps>(
   (props, ref) => {
     const { eventPageUrl, asChild, children, className, ...otherProps } = props;
 
-    const href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventPageUrl)}`;
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventPageUrl)}`;
 
     return (
       <AsChildSlot
@@ -708,8 +704,8 @@ export const FacebookShare = React.forwardRef<HTMLElement, FacebookShareProps>(
         className={className}
         data-testid={TestIds.eventFacebookShare}
         customElement={children}
-        customElementProps={{}}
-        href={href}
+        customElementProps={{ shareUrl }}
+        href={shareUrl}
         target="_blank"
         rel="noreferrer"
         {...otherProps}
@@ -729,7 +725,7 @@ export interface LinkedInShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{}>;
+  children?: AsChildChildren<{ shareUrl: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -750,8 +746,8 @@ export interface LinkedInShareProps {
  *
  * // asChild with react component
  * <Event.LinkedInShare asChild>
- *   {React.forwardRef((props, ref) => (
- *     <button ref={ref} onClick={() => window.open(eventPageUrl, '_blank')} />
+ *   {React.forwardRef(({ shareUrl, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(shareUrl, '_blank')} />
  *   ))}
  * </Event.LinkedInShare>
  * ```
@@ -760,7 +756,7 @@ export const LinkedInShare = React.forwardRef<HTMLElement, LinkedInShareProps>(
   (props, ref) => {
     const { eventPageUrl, asChild, children, className, ...otherProps } = props;
 
-    const href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(eventPageUrl)}`;
+    const shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(eventPageUrl)}`;
 
     return (
       <AsChildSlot
@@ -769,8 +765,8 @@ export const LinkedInShare = React.forwardRef<HTMLElement, LinkedInShareProps>(
         className={className}
         data-testid={TestIds.eventLinkedInShare}
         customElement={children}
-        customElementProps={{}}
-        href={href}
+        customElementProps={{ shareUrl }}
+        href={shareUrl}
         target="_blank"
         rel="noreferrer"
         {...otherProps}
@@ -790,7 +786,7 @@ export interface XShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{}>;
+  children?: AsChildChildren<{ shareUrl: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -811,8 +807,8 @@ export interface XShareProps {
  *
  * // asChild with react component
  * <Event.XShare asChild>
- *   {React.forwardRef((props, ref) => (
- *     <button ref={ref} onClick={() => window.open(eventPageUrl, '_blank')} />
+ *   {React.forwardRef(({ shareUrl, ...props }, ref) => (
+ *     <button ref={ref} onClick={() => window.open(shareUrl, '_blank')} />
  *   ))}
  * </Event.XShare>
  * ```
@@ -821,7 +817,7 @@ export const XShare = React.forwardRef<HTMLElement, XShareProps>(
   (props, ref) => {
     const { eventPageUrl, asChild, children, className, ...otherProps } = props;
 
-    const href = `https://x.com/intent/post?url=${encodeURIComponent(eventPageUrl)}`;
+    const shareUrl = `https://x.com/intent/post?url=${encodeURIComponent(eventPageUrl)}`;
 
     return (
       <AsChildSlot
@@ -830,8 +826,8 @@ export const XShare = React.forwardRef<HTMLElement, XShareProps>(
         className={className}
         data-testid={TestIds.eventXShare}
         customElement={children}
-        customElementProps={{}}
-        href={href}
+        customElementProps={{ shareUrl }}
+        href={shareUrl}
         target="_blank"
         rel="noreferrer"
         {...otherProps}
@@ -884,24 +880,22 @@ export const AddToGoogleCalendar = React.forwardRef<
 
   return (
     <CoreEvent.AddToGoogleCalendar>
-      {({ url }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.eventAddToGoogleCalendar}
-            customElement={children}
-            customElementProps={{ url }}
-            href={url}
-            target="_blank"
-            rel="noreferrer"
-            {...otherProps}
-          >
-            <a />
-          </AsChildSlot>
-        );
-      }}
+      {({ url }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventAddToGoogleCalendar}
+          customElement={children}
+          customElementProps={{ url }}
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          {...otherProps}
+        >
+          <a />
+        </AsChildSlot>
+      )}
     </CoreEvent.AddToGoogleCalendar>
   );
 });
@@ -948,24 +942,22 @@ export const AddToIcsCalendar = React.forwardRef<
 
   return (
     <CoreEvent.AddToIcsCalendar>
-      {({ url }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.eventAddToIcsCalendar}
-            customElement={children}
-            customElementProps={{ url }}
-            href={url}
-            target="_blank"
-            rel="noreferrer"
-            {...otherProps}
-          >
-            <a />
-          </AsChildSlot>
-        );
-      }}
+      {({ url }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventAddToIcsCalendar}
+          customElement={children}
+          customElementProps={{ url }}
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          {...otherProps}
+        >
+          <a />
+        </AsChildSlot>
+      )}
     </CoreEvent.AddToIcsCalendar>
   );
 });

@@ -77,10 +77,7 @@ export interface DateLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{
-    formattedDate: string;
-    date: Date;
-  }>;
+  children?: AsChildChildren<{ formattedDate: string; date: Date }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -142,11 +139,7 @@ export interface ItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{
-        items: ScheduleItemType[];
-      }>;
+  children: React.ReactNode | AsChildChildren<{ items: ScheduleItemType[] }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

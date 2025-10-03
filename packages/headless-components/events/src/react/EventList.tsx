@@ -157,13 +157,13 @@ export const EventRepeater = (props: EventRepeaterProps): React.ReactNode => {
 
   return (
     <CoreEventList.EventRepeater>
-      {({ events }) => {
-        return events.map((event) => (
+      {({ events }) =>
+        events.map((event) => (
           <Event.Root key={event._id} event={event} className={className}>
             {children}
           </Event.Root>
-        ));
-      }}
+        ))
+      }
     </CoreEventList.EventRepeater>
   );
 };
@@ -217,23 +217,21 @@ export const LoadMoreTrigger = React.forwardRef<
 
   return (
     <CoreEventList.LoadMoreTrigger>
-      {({ isLoading, loadMoreEvents }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.eventListLoadMore}
-            customElement={children}
-            customElementProps={{ isLoading, loadMoreEvents }}
-            disabled={isLoading}
-            onClick={loadMoreEvents}
-            {...otherProps}
-          >
-            <button>{label}</button>
-          </AsChildSlot>
-        );
-      }}
+      {({ isLoading, loadMoreEvents }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventListLoadMore}
+          customElement={children}
+          customElementProps={{ isLoading, loadMoreEvents }}
+          disabled={isLoading}
+          onClick={loadMoreEvents}
+          {...otherProps}
+        >
+          <button>{label}</button>
+        </AsChildSlot>
+      )}
     </CoreEventList.LoadMoreTrigger>
   );
 });
@@ -279,22 +277,20 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 
   return (
     <CoreEventList.Error>
-      {({ error }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.eventListError}
-            customElement={children}
-            customElementProps={{ error }}
-            content={error}
-            {...otherProps}
-          >
-            <span>{error}</span>
-          </AsChildSlot>
-        );
-      }}
+      {({ error }) => (
+        <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventListError}
+          customElement={children}
+          customElementProps={{ error }}
+          content={error}
+          {...otherProps}
+        >
+          <span>{error}</span>
+        </AsChildSlot>
+      )}
     </CoreEventList.Error>
   );
 });
@@ -327,17 +323,15 @@ export interface FiltersProps {
 export const Filters = (props: FiltersProps): React.ReactNode => {
   return (
     <CoreEventListFilters.Root allCategoriesLabel={props.allCategoriesLabel}>
-      {({ filterOptions, value, onChange }) => {
-        return (
-          <FilterPrimitive.Root
-            filterOptions={filterOptions}
-            value={value}
-            onChange={onChange}
-          >
-            {props.children}
-          </FilterPrimitive.Root>
-        );
-      }}
+      {({ filterOptions, value, onChange }) => (
+        <FilterPrimitive.Root
+          filterOptions={filterOptions}
+          value={value}
+          onChange={onChange}
+        >
+          {props.children}
+        </FilterPrimitive.Root>
+      )}
     </CoreEventListFilters.Root>
   );
 };
