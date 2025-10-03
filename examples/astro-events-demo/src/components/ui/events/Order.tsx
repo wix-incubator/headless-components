@@ -1,6 +1,8 @@
 import { Order as OrderPrimitive } from '@wix/events/components';
 import React from 'react';
+import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 /**
  * Root component for order display.
@@ -100,16 +102,14 @@ OrderCreatedDate.displayName = 'OrderCreatedDate';
  */
 export const OrderDownloadTicketsButton = React.forwardRef<
   React.ElementRef<typeof OrderPrimitive.DownloadTicketsButton>,
-  React.ComponentPropsWithoutRef<typeof OrderPrimitive.DownloadTicketsButton>
->(({ className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof OrderPrimitive.DownloadTicketsButton> &
+    VariantProps<typeof buttonVariants>
+>(({ variant, size, className, ...props }, ref) => {
   return (
     <OrderPrimitive.DownloadTicketsButton
       {...props}
       ref={ref}
-      className={cn(
-        'bg-primary text-primary-foreground font-paragraph text-base text-center w-full sm:w-auto py-2 px-10 hover:underline',
-        className
-      )}
+      className={cn(buttonVariants({ variant, size }), className)}
     />
   );
 });
