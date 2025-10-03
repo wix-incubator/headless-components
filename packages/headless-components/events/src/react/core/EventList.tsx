@@ -6,8 +6,8 @@ import {
 } from '@wix/headless-components/react';
 import {
   EventListService,
-  EventListServiceConfig,
   EventListServiceDefinition,
+  type EventListServiceConfig,
   type Category,
 } from '../../services/event-list-service.js';
 import { type Event } from '../../services/event-service.js';
