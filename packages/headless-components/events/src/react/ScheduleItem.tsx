@@ -3,6 +3,7 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreScheduleItem from './core/ScheduleItem.js';
 import * as ScheduleItemTag from './ScheduleItemTag.js';
 import { type ScheduleItem } from '../services/schedule-item-service.js';
+import xss from 'xss';
 
 enum TestIds {
   scheduleItemRoot = 'schedule-item-root',
@@ -61,6 +62,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         asChild={asChild}
         className={className}
         data-testid={TestIds.scheduleItemRoot}
+        data-has-description={!!item.description}
         {...otherProps}
       >
         <div>{children}</div>
@@ -313,7 +315,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             content={description}
             {...otherProps}
           >
-            <span>{description}</span>
+            <div dangerouslySetInnerHTML={{ __html: xss(description) }} />
           </AsChildSlot>
         )}
       </CoreScheduleItem.Description>
