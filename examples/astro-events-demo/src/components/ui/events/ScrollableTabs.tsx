@@ -19,11 +19,11 @@ enum ScrollDirection {
  * @example
  * ```tsx
  *   <FilterOptions>
- *     <FilterOptionRepeater>
- *       <ScrollableTabs>
+ *     <ScrollableTabs>
+ *       <FilterOptionRepeater>
  *         <FilterOptionSingle variant="tabs" />
- *       </ScrollableTabs>
- *     </FilterOptionRepeater>
+ *       </FilterOptionRepeater>
+ *     </ScrollableTabs>
  *   </FilterOptions>
  * ```
  */

@@ -76,12 +76,12 @@ export const EventListService =
       );
 
       const loadEvents = async ({
-        categoryId,
+        categoryId = selectedCategoryId.get(),
         statusId = selectedStatusId.get(),
       }: LoadEventsParams) => {
         const status = getStatusFromId(statusId);
 
-        selectedCategoryId.set(categoryId ?? null);
+        selectedCategoryId.set(categoryId);
         selectedStatusId.set(statusId);
 
         isLoading.set(true);

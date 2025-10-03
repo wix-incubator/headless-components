@@ -198,7 +198,7 @@ export function CategoryFilter(props: CategoryFilterProps): React.ReactNode {
   }
 
   const onChange = async (value: FilterPrimitive.Filter) => {
-    const categoryId = value?.['categoryId'];
+    const categoryId = value!['categoryId'];
 
     await eventListService.loadEvents({
       categoryId: categoryId === ALL_CATEGORIES ? null : categoryId,
@@ -250,9 +250,8 @@ export function StatusFilter(props: StatusFilterProps): React.ReactNode {
 
   const onChange = async (value: FilterPrimitive.Filter) => {
     const statusId = value!['statusId'];
-    const categoryId = eventListService.selectedCategoryId.get();
 
-    await eventListService.loadEvents({ categoryId, statusId });
+    await eventListService.loadEvents({ statusId });
   };
 
   const { filterOptions, value } = buildStatusFilterProps(

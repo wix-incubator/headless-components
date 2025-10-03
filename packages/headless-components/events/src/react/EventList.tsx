@@ -322,7 +322,7 @@ export interface CategoryFilterProps {
  * ```
  */
 export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
-  const { className, allCategoriesLabel } = props;
+  const { children, className, allCategoriesLabel } = props;
 
   return (
     <CoreEventList.CategoryFilter allCategoriesLabel={allCategoriesLabel}>
@@ -333,7 +333,7 @@ export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
           value={value}
           onChange={onChange}
         >
-          {props.children}
+          {children}
         </FilterPrimitive.Root>
       )}
     </CoreEventList.CategoryFilter>
@@ -376,8 +376,13 @@ export interface StatusFilterProps {
  * ```
  */
 export const StatusFilter = (props: StatusFilterProps): React.ReactNode => {
-  const { className, allEventsLabel, upcomingEventsLabel, pastEventsLabel } =
-    props;
+  const {
+    children,
+    className,
+    allEventsLabel,
+    upcomingEventsLabel,
+    pastEventsLabel,
+  } = props;
 
   return (
     <CoreEventList.StatusFilter
@@ -392,7 +397,7 @@ export const StatusFilter = (props: StatusFilterProps): React.ReactNode => {
           value={value}
           onChange={onChange}
         >
-          {props.children}
+          {children}
         </FilterPrimitive.Root>
       )}
     </CoreEventList.StatusFilter>
