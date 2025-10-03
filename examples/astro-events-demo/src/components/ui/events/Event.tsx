@@ -277,13 +277,12 @@ export const EventRsvpButton = React.forwardRef<
   React.ElementRef<typeof EventPrimitive.RsvpButton>,
   React.ComponentPropsWithoutRef<typeof EventPrimitive.RsvpButton> &
     VariantProps<typeof buttonVariants>
->(({ variant, size, className, label = 'RSVP', ...props }, ref) => {
+>(({ variant, size, className, ...props }, ref) => {
   return (
     <EventPrimitive.RsvpButton
       {...props}
       ref={ref}
       className={cn(buttonVariants({ variant, size }), className)}
-      label={label}
     />
   );
 });

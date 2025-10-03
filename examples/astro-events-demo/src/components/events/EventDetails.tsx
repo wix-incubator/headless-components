@@ -51,6 +51,7 @@ import {
   ScheduleItemTagRepeater,
   ScheduleItemTagLabel,
 } from '@/components/ui/events';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { EventList } from './EventList';
 import { EventSocialShare } from './EventSocialShare';
@@ -137,7 +138,11 @@ export function EventDetails({
           <EventLocation />
         </div>
         <EventShortDescription className="max-w-2xl mt-5 sm:mt-6" />
-        <EventRsvpButton asChild size="lg" className="mt-6 sm:mt-10">
+        <EventRsvpButton
+          asChild
+          size="lg"
+          className="mt-6 sm:mt-10 w-full sm:w-auto"
+        >
           {({ ticketed, slug }) => (
             <a
               href={ticketed ? '#tickets' : formPagePath.replace(':slug', slug)}
@@ -228,12 +233,15 @@ export function EventDetails({
               <div className="flex sm:justify-end">
                 <EventSlug asChild>
                   {({ slug }) => (
-                    <a
-                      href={schedulePagePath.replace(':slug', slug)}
-                      className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline text-center w-full sm:w-auto"
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full sm:w-auto"
                     >
-                      See All
-                    </a>
+                      <a href={schedulePagePath.replace(':slug', slug)}>
+                        See All
+                      </a>
+                    </Button>
                   )}
                 </EventSlug>
               </div>
@@ -429,7 +437,7 @@ export function EventDetails({
                   </div>
                 )}
               </TicketsPickerTotals>
-              <CheckoutTrigger asChild className="mt-3">
+              <CheckoutTrigger asChild size="lg" className="mt-3 w-full">
                 {({ isLoading, checkout }) => (
                   <button onClick={checkout}>
                     {isLoading ? 'Processing...' : 'Checkout'}
