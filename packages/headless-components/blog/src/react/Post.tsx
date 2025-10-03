@@ -822,7 +822,7 @@ export interface AuthorAvatarProps {
   className?: string;
   children?:
     | AsChildChildren<{
-        authorNameInitials: string;
+        authorAvatarInitials: string;
         authorAvatarUrl: string | undefined;
       }>
     | React.ReactNode;

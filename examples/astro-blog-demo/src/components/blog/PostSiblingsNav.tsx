@@ -20,7 +20,7 @@ export default function PostSiblingsNav({
           Continue reading
         </h2>
 
-        <div className="grid rounded-2xl border p-3 md:grid-cols-[repeat(auto-fit,minmax(0,1fr))]">
+        <div className="grid rounded-2xl border border-foreground/15 p-3 md:grid-cols-[repeat(auto-fit,minmax(0,1fr))]">
           <Blog.Post.SiblingPosts.Older>
             <SiblingPostLink
               label="Previous"
