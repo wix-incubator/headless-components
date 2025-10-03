@@ -50,7 +50,7 @@ export function EventList({
               />
               <EventLocation className="hidden sm:line-clamp-1" />
             </div>
-            <EventRsvpButton asChild className="mt-auto">
+            <EventRsvpButton asChild size="lg" className="mt-auto">
               {({ slug }) => (
                 <a href={eventDetailsPagePath.replace(':slug', slug)}>RSVP</a>
               )}
@@ -58,7 +58,7 @@ export function EventList({
           </div>
         </EventRepeater>
       </Events>
-      <EventListLoadMoreTrigger asChild className="mx-auto mt-5">
+      <EventListLoadMoreTrigger asChild className="block mx-auto mt-5">
         {({ isLoading }) => (
           <button>{isLoading ? 'Loading...' : 'Load More'}</button>
         )}

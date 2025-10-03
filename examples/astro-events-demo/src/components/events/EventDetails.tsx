@@ -137,11 +137,7 @@ export function EventDetails({
           <EventLocation />
         </div>
         <EventShortDescription className="max-w-2xl mt-5 sm:mt-6" />
-        <EventRsvpButton
-          asChild
-          size="lg"
-          className="inline-block mt-6 sm:mt-10"
-        >
+        <EventRsvpButton asChild size="lg" className="mt-6 sm:mt-10">
           {({ ticketed, slug }) => (
             <a
               href={ticketed ? '#tickets' : formPagePath.replace(':slug', slug)}
