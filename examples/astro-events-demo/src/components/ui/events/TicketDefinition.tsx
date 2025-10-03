@@ -110,10 +110,7 @@ export const TicketDefinitionGuestPricing = React.forwardRef<
     <TicketDefinitionPrimitive.GuestPricing
       {...props}
       ref={ref}
-      className={cn(
-        'bg-background border border-foreground/60 py-2 px-3 font-paragraph text-foreground text-base placeholder:text-foreground/50 w-full sm:w-auto',
-        className
-      )}
+      className={cn(className)}
     />
   );
 });

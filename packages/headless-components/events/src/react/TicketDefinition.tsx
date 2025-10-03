@@ -297,6 +297,7 @@ export interface GuestPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    price: string | undefined;
     minPrice: number;
     currency: string;
     formattedMinPrice: string;
@@ -334,7 +335,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
 
     return (
       <CoreTicketDefinition.GuestPricing>
-        {({ minPrice, currency, formattedMinPrice, setPrice }) => (
+        {({ price, minPrice, currency, formattedMinPrice, setPrice }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -342,6 +343,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
             data-testid={TestIds.ticketDefinitionGuestPricing}
             customElement={children}
             customElementProps={{
+              price,
               minPrice,
               currency,
               formattedMinPrice,
@@ -349,6 +351,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
             }}
             type="number"
             placeholder={formattedMinPrice}
+            value={price}
             min={minPrice}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setPrice(event.target.value)

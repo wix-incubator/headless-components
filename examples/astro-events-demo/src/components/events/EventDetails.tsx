@@ -52,6 +52,7 @@ import {
   ScheduleItemTagLabel,
 } from '@/components/ui/events';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectTrigger,
@@ -297,7 +298,7 @@ export function EventDetails({
                       )}
                     </TicketDefinitionSaleEndDate>
                   </div>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+                  <div className="flex flex-col gap-3 sm:gap-8 sm:flex-row sm:justify-between">
                     <div className="flex-grow">
                       <div className="text-sm font-paragraph text-foreground group-data-[guest-pricing=true]/ticket-definition:hidden">
                         Price
@@ -306,7 +307,9 @@ export function EventDetails({
                         Write a price
                       </div>
                       <TicketDefinitionFixedPricing />
-                      <TicketDefinitionGuestPricing />
+                      <TicketDefinitionGuestPricing asChild>
+                        <Input />
+                      </TicketDefinitionGuestPricing>
                       <TicketDefinitionPricingRange asChild>
                         {({ formattedMinPrice, formattedMaxPrice }) => (
                           <span>

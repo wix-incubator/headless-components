@@ -152,6 +152,8 @@ export interface GuestPricingProps {
 }
 
 export interface GuestPricingRenderProps {
+  /** Current price */
+  price: string | undefined;
   /** Minimum price */
   minPrice: number;
   /** Price currency */
@@ -188,11 +190,14 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
     });
   };
 
+  const price =
+    ticketDefinitionListService.getCurrentPriceOverride(ticketDefinitionId);
   const minPrice = Number(guestPrice.value!);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
   const formattedMinPrice = formatPrice(minPrice, currency);
 
   return props.children({
+    price,
     minPrice,
     currency,
     formattedMinPrice,
