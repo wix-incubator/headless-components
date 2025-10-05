@@ -1,22 +1,18 @@
 import { defineService, implementService } from '@wix/services-definitions';
-import * as operationGroupsApi from '@wix/auto_sdk_restaurants_operation-groups';
 import * as operationsApi from '@wix/auto_sdk_restaurants_operations';
 import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 export interface OLOSettingsServiceAPI {
-  operationGroup: Signal<operationGroupsApi.OperationGroup | undefined>;
   operation: Signal<operationsApi.Operation | undefined>;
   selectedItem?: Signal<unknown>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
-  //   fetchOperationGroups: () => Promise<void>;
   //   fetchOperations: () => Promise<void>;
 }
 
 export interface OLOSettingsServiceConfig {
-  operationGroup?: operationGroupsApi.OperationGroup;
   operation?: operationsApi.Operation;
 }
 
@@ -28,9 +24,6 @@ export const OLOSettingsService =
     OLOSettingsServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
-      const operationGroup = signalsService.signal<
-        operationGroupsApi.OperationGroup | undefined
-      >(config.operationGroup);
       const operation = signalsService.signal<
         operationsApi.Operation | undefined
       >(config.operation);
@@ -39,7 +32,6 @@ export const OLOSettingsService =
       const error = signalsService.signal<string | null>(null);
 
       return {
-        operationGroup,
         operation,
         isLoading,
         error,
@@ -51,19 +43,14 @@ export const OLOSettingsService =
 export async function loadOLOSettingsServiceConfig() {
   try {
     // Fetch operation groups and operations in parallel
-    const [operationGroupsResponse, operationsResponse] = await Promise.all([
-      operationGroupsApi.queryOperationGroups().find(),
-      operationsApi.queryOperation().find(),
-    ]);
+    const operationsResponse = await operationsApi.queryOperation().find();
 
     return {
-      operationGroup: operationGroupsResponse.items[0] || undefined,
       operation: operationsResponse.items[0] || undefined,
     };
   } catch (error) {
     console.error('Failed to load OLO settings service config:', error);
     return {
-      operationGroup: undefined,
       operation: undefined,
       isLoading: false,
       error:
