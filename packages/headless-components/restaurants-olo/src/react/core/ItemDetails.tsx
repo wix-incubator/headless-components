@@ -39,7 +39,7 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
     });
   }
 
-  if (!selectedItem && config.item) {
+  if (config.item) {
     service.selectedItem?.set(config.item)
   }
 
