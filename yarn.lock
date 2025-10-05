@@ -4899,6 +4899,44 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@wix/astro-instagram-demo@workspace:examples/astro-instagram-demo":
+  version: 0.0.0-use.local
+  resolution: "@wix/astro-instagram-demo@workspace:examples/astro-instagram-demo"
+  dependencies:
+    "@astrojs/check": "npm:^0.9.4"
+    "@astrojs/cloudflare": "npm:^12.5.4"
+    "@astrojs/react": "npm:^4.3.0"
+    "@astrojs/sitemap": "npm:^3.4.1"
+    "@tailwindcss/vite": "npm:^4.0.13"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wix/astro": "npm:^1.0.22"
+    "@wix/cli": "npm:^1.1.95"
+    "@wix/dashboard": "npm:^1.3.35"
+    "@wix/essentials": "npm:^0.1.23"
+    "@wix/headless-components": "workspace:*"
+    "@wix/headless-instagram": "workspace:*"
+    "@wix/headless-media": "workspace:*"
+    "@wix/instagram-account": "npm:^1.0.16"
+    "@wix/instagram-media": "npm:^1.0.13"
+    "@wix/sdk": "npm:^1.15.23"
+    "@wix/services-definitions": "npm:^0.1.5"
+    "@wix/services-manager": "npm:^0.2.21"
+    "@wix/services-manager-react": "npm:^0.1.27"
+    "@wix/wix-vibe-plugins": "npm:^0.0.1"
+    astro: "npm:^5.9.0"
+    clsx: "npm:^2.1.1"
+    prettier: "npm:^3.6.2"
+    prettier-plugin-astro: "npm:^0.14.1"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-router-dom: "npm:^7.6.3"
+    sass-embedded: "npm:^1.89.0"
+    tailwindcss: "npm:^4.1.7"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "@wix/astro-online-programs-demo@workspace:examples/astro-online-programs-demo":
   version: 0.0.0-use.local
   resolution: "@wix/astro-online-programs-demo@workspace:examples/astro-online-programs-demo"
@@ -6096,13 +6134,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/auto_sdk_forms_forms@npm:1.0.66":
-  version: 1.0.66
-  resolution: "@wix/auto_sdk_forms_forms@npm:1.0.66"
+"@wix/auto_sdk_forms_forms@npm:1.0.68":
+  version: 1.0.68
+  resolution: "@wix/auto_sdk_forms_forms@npm:1.0.68"
   dependencies:
     "@wix/sdk-runtime": "npm:^0.5.0"
     "@wix/sdk-types": "npm:^1.13.35"
-  checksum: 10c0/e853923cda9c5332e7e342643c130ac85f3a412ac39cab14718a807214b53d128478372b645ec67b3186c973113e6ef44e6919e18a88c01337df95eafc1ea3c6
+  checksum: 10c0/d6e581b40c93bcd836eccd5eebd562a49849eb8e9bd7948dbf410511e360d8fb3b3eaa6c8fef465653b8c4dd4e54ad5696450b45737c44cbbb063d3101aaf50f
   languageName: node
   linkType: hard
 
@@ -6163,6 +6201,26 @@ __metadata:
     "@wix/sdk-runtime": "npm:^0.3.55"
     "@wix/sdk-types": "npm:^1.13.35"
   checksum: 10c0/d8179c37aeb380fa2beee711c62758a97f1729d4b368c9ef2a7606801b44a87f2262df1f6bacaec2108e899c2a1c0b4ffb1c3e8a69d93e9fa2b8c589302872bd
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_instagram-account_accounts@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@wix/auto_sdk_instagram-account_accounts@npm:1.0.10"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/3f2141f536bb60f46bcd4dd5c06197ec95efa43a66f850ca06e255d2452bb278517772e51cc11bf9b59445405e5d63e50487b20ed87c0199868580c90b1be764
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_instagram-media_media@npm:1.0.5":
+  version: 1.0.5
+  resolution: "@wix/auto_sdk_instagram-media_media@npm:1.0.5"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/1bd314cf2093ac5978c2be3f2e5b3bb2ca6349b5457a15364ebda74c81472c53e3a41d60d5fea8bd16d3c8c24d9aff1ce6a90002b8ed37f9515d4f744893a4f3
   languageName: node
   linkType: hard
 
@@ -7406,6 +7464,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/form-public@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "@wix/form-public@npm:0.15.0"
+  dependencies:
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.mapkeys: "npm:^4.6.0"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: 10c0/9526f5c3d0e32bc9d79bec12767e750b7514320f5fd768b6981b8cdd23dc0086cb256a951aa1113f6dd448d3adabeb764e198a135be03fd56339990c486134b4
+  languageName: node
+  linkType: hard
+
 "@wix/form-public@npm:^0.17.0":
   version: 0.17.0
   resolution: "@wix/form-public@npm:0.17.0"
@@ -7418,18 +7488,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/forms@npm:^1.0.292":
-  version: 1.0.320
-  resolution: "@wix/forms@npm:1.0.320"
+"@wix/forms@npm:^1.0.292, @wix/forms@npm:^1.0.329":
+  version: 1.0.329
+  resolution: "@wix/forms@npm:1.0.329"
   dependencies:
     "@wix/auto_sdk_forms_chat-settings": "npm:1.0.0"
     "@wix/auto_sdk_forms_form-spam-submission-reports": "npm:1.0.14"
     "@wix/auto_sdk_forms_form-submissions": "npm:1.0.5"
-    "@wix/auto_sdk_forms_forms": "npm:1.0.66"
+    "@wix/auto_sdk_forms_forms": "npm:1.0.68"
     "@wix/auto_sdk_forms_interactive-form-sessions": "npm:1.0.14"
     "@wix/auto_sdk_forms_submissions": "npm:1.0.60"
-    "@wix/headless-forms": "npm:0.0.1"
-  checksum: 10c0/c894d4b75c1cc04d472ada19478e1d6b3579c483fc462a9e5ed2c39a17265e3c43f0b7c27c50ea0081759bdd99d7f18a591affb4ab09c06946351400e8a0d6ae
+    "@wix/headless-forms": "npm:0.0.5"
+  checksum: 10c0/a966dea96e7f06f3dde08f74a1ccb4774370beb44e971a9aaab706f3c208c64e97a2a3378026f9d6617cc572a33b2cde49389a70b451e8485dbd8894d6fcfb41
   languageName: node
   linkType: hard
 
@@ -7694,6 +7764,7 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+    xss: "npm:^1.0.15"
   peerDependencies:
     "@wix/headless-components": "workspace:*"
   languageName: unknown
@@ -7735,15 +7806,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-forms@npm:0.0.1":
-  version: 0.0.1
-  resolution: "@wix/headless-forms@npm:0.0.1"
+"@wix/headless-forms@npm:0.0.5":
+  version: 0.0.5
+  resolution: "@wix/headless-forms@npm:0.0.5"
   dependencies:
+    "@wix/form-public": "npm:^0.15.0"
     "@wix/forms": "npm:^1.0.292"
     "@wix/headless-utils": "npm:0.0.3"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
-  checksum: 10c0/e40b7641cf38b1902c1f7962535803d2f3f9c4309113b96012b75aaae345f49db0b6c7c5fcc13d3074af63cef3152d10301cfe5dba79aa592168dd880552c5bf
+  checksum: 10c0/a07f5e356d36bede7a4d2808ed808eeaf79beb76fc6a7b0c0e9b3407926c7fa8f4e5cadee98541f678ce050651e429bcea8c41e8b86037d1a5a621c7ecf095ae
   languageName: node
   linkType: hard
 
@@ -7757,7 +7829,7 @@ __metadata:
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/form-public": "npm:^0.17.0"
-    "@wix/forms": "npm:^1.0.292"
+    "@wix/forms": "npm:^1.0.329"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
@@ -7765,6 +7837,32 @@ __metadata:
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
+
+"@wix/headless-instagram@workspace:*, @wix/headless-instagram@workspace:packages/headless-components/instagram":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-instagram@workspace:packages/headless-components/instagram"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.2.3"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/essentials": "npm:^0.1.24"
+    "@wix/headless-media": "workspace:*"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/instagram-account": "npm:^1.0.16"
+    "@wix/instagram-media": "npm:^1.0.13"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  peerDependencies:
+    "@wix/headless-components": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -8241,6 +8339,24 @@ __metadata:
     fastdom: "npm:^1.0.12"
     tslib: "npm:^2.8.1"
   checksum: 10c0/61919f171cb9d24e563ba9b2eb8295e167abe17d1d0780fbcdc7dff5d52a4da392176a20e6ed0c31590de2ffa9727288a6a79588c4732b968217fa02d6ff2723
+  languageName: node
+  linkType: hard
+
+"@wix/instagram-account@npm:^1.0.16":
+  version: 1.0.16
+  resolution: "@wix/instagram-account@npm:1.0.16"
+  dependencies:
+    "@wix/auto_sdk_instagram-account_accounts": "npm:1.0.10"
+  checksum: 10c0/a9770a1c222d5d2c2c6d1de6ecbdc12139cc2e8921e49a05be7bd5357dea143c340f4e7273fc72b88467ad0c24ce5cd6f985a8b32030f8ce071a3a6093e20ad5
+  languageName: node
+  linkType: hard
+
+"@wix/instagram-media@npm:^1.0.13":
+  version: 1.0.13
+  resolution: "@wix/instagram-media@npm:1.0.13"
+  dependencies:
+    "@wix/auto_sdk_instagram-media_media": "npm:1.0.5"
+  checksum: 10c0/b556c9d140386d0628deabbaa5553bfe851c94c38f18e186f592ee6a59a5f9f6d15b405426b22b0a50c2f8bb689567e7db4235aa22e06e12514bf5688dde0a94
   languageName: node
   linkType: hard
 
@@ -10046,6 +10162,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^2.20.3":
+  version: 2.20.3
+  resolution: "commander@npm:2.20.3"
+  checksum: 10c0/74c781a5248c2402a0a3e966a0a2bba3c054aad144f5c023364be83265e796b20565aa9feff624132ff629aa64e16999fa40a743c10c12f7c61e96a794b99288
+  languageName: node
+  linkType: hard
+
 "commander@npm:^4.0.0":
   version: 4.1.1
   resolution: "commander@npm:4.1.1"
@@ -10211,6 +10334,13 @@ __metadata:
   bin:
     cssesc: bin/cssesc
   checksum: 10c0/6bcfd898662671be15ae7827120472c5667afb3d7429f1f917737f3bf84c4176003228131b643ae74543f17a394446247df090c597bb9a728cce298606ed0aa7
+  languageName: node
+  linkType: hard
+
+"cssfilter@npm:0.0.10":
+  version: 0.0.10
+  resolution: "cssfilter@npm:0.0.10"
+  checksum: 10c0/478a227a616fb6e9bb338eb95f690df141b86231ec737cbea574484f31a09a51db894b4921afc4987459dae08d584355fd689ff2a7a7c7a74de4bb4c072ce553
   languageName: node
   linkType: hard
 
@@ -20999,6 +21129,18 @@ __metadata:
   version: 2.2.0
   resolution: "xmlchars@npm:2.2.0"
   checksum: 10c0/b64b535861a6f310c5d9bfa10834cf49127c71922c297da9d4d1b45eeaae40bf9b4363275876088fbe2667e5db028d2cd4f8ee72eed9bede840a67d57dab7593
+  languageName: node
+  linkType: hard
+
+"xss@npm:^1.0.15":
+  version: 1.0.15
+  resolution: "xss@npm:1.0.15"
+  dependencies:
+    commander: "npm:^2.20.3"
+    cssfilter: "npm:0.0.10"
+  bin:
+    xss: bin/xss
+  checksum: 10c0/9b31bee62a208f78e2b7bc8154e3ee87d980f4661dc4ab850ce6f4de7bc50eb152f0bdc13fa759ff8ab6d9bfdf8c0d79cf9f6f86249872b92181912309bccd08
   languageName: node
   linkType: hard
 

@@ -4,9 +4,12 @@ import {
   type TicketDefinitionListServiceConfig,
   type CheckoutServiceConfig,
   type ScheduleListServiceConfig,
+  type OccurrenceListServiceConfig,
 } from '@wix/events/services';
+import { useState } from 'react';
 import {
   Event,
+  EventSlug,
   EventDate,
   EventDescription,
   EventImage,
@@ -14,7 +17,6 @@ import {
   EventRsvpButton,
   EventShortDescription,
   EventTitle,
-  EventCoordinates,
   TicketsPicker,
   TicketsPickerTotals,
   TicketDefinitions,
@@ -38,10 +40,15 @@ import {
   PricingOptionQuantity,
   CheckoutError,
   CheckoutTrigger,
+  ScheduleList,
+  ScheduleListItems,
+  ScheduleListItemRepeater,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
 import { EventList } from './EventList';
 import { EventSocialShare } from './EventSocialShare';
+import { OccurrencesModal } from './OccurrencesModal';
+import { ScheduleItem } from './ScheduleItem';
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
@@ -49,8 +56,10 @@ interface EventDetailsProps {
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   checkoutServiceConfig: CheckoutServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
+  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
   eventDetailsPagePath: string;
   formPagePath: string;
+  schedulePagePath: string;
 }
 
 export function EventDetails({
@@ -58,10 +67,14 @@ export function EventDetails({
   eventListServiceConfig,
   ticketDefinitionListServiceConfig,
   checkoutServiceConfig,
-  // scheduleListServiceConfig,
+  scheduleListServiceConfig,
+  occurrenceListServiceConfig,
   eventDetailsPagePath,
   formPagePath,
+  schedulePagePath,
 }: EventDetailsProps) {
+  const [isOccurrencesModalOpen, setIsOccurrencesModalOpen] = useState(false);
+
   const currentEventId = eventServiceConfig.event._id;
   const otherUpcomingEvents = eventListServiceConfig.events
     .filter(
@@ -69,8 +82,24 @@ export function EventDetails({
     )
     .slice(0, 3);
 
+  const openOccurrencesModal = () => {
+    setIsOccurrencesModalOpen(true);
+  };
+
+  const closeOccurrencesModal = () => {
+    setIsOccurrencesModalOpen(false);
+  };
+
+  const navigateToEventDetails = (slug: string) => {
+    window.location.href = eventDetailsPagePath.replace(':slug', slug);
+  };
+
   return (
-    <Event event={eventServiceConfig.event} className="group/event">
+    <Event
+      event={eventServiceConfig.event}
+      occurrenceListServiceConfig={occurrenceListServiceConfig}
+      className="group/event"
+    >
       {/* Mobile Image Section */}
       <div className="relative w-full pt-[56.25%] group-data-[has-image=false]/event:hidden block sm:hidden">
         <EventImage className="absolute top-0 w-full h-full" />
@@ -104,14 +133,12 @@ export function EventDetails({
         <EventShortDescription className="max-w-2xl mt-5 sm:mt-6" />
         <EventRsvpButton
           asChild
-          variant="lg"
+          size="lg"
           className="inline-block mt-6 sm:mt-10"
         >
-          {({ ticketed, eventSlug }) => (
+          {({ ticketed, slug }) => (
             <a
-              href={
-                ticketed ? '#tickets' : formPagePath.replace(':slug', eventSlug)
-              }
+              href={ticketed ? '#tickets' : formPagePath.replace(':slug', slug)}
             >
               {ticketed ? 'Buy Tickets' : 'RSVP'}
             </a>
@@ -131,8 +158,18 @@ export function EventDetails({
             <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-3 sm:mb-4">
               Time & Location
             </h2>
-            <EventDate format="full" />
-            <EventLocation format="full" />
+            <div className="flex gap-4 flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <EventDate format="full" />
+                <EventLocation format="full" />
+              </div>
+              <button
+                className="border border-foreground/10 bg-background font-paragraph text-foreground text-base py-2 px-4 hover:underline group-data-[has-occurrences=false]/event:hidden"
+                onClick={openOccurrencesModal}
+              >
+                Select Different Date
+              </button>
+            </div>
           </div>
 
           {/* About the Event Section */}
@@ -142,6 +179,30 @@ export function EventDetails({
             </h2>
             <EventDescription />
           </div>
+
+          {/* Schedule Section */}
+          <ScheduleList scheduleListServiceConfig={scheduleListServiceConfig}>
+            <ScheduleListItems className="mt-6 sm:mt-16">
+              <h2 className="text-xl sm:text-3xl font-heading text-foreground mb-4">
+                Schedule
+              </h2>
+              <ScheduleListItemRepeater className="border border-foreground/10 p-5 sm:py-8 sm:px-6 mb-4">
+                <ScheduleItem />
+              </ScheduleListItemRepeater>
+              <div className="flex sm:justify-end">
+                <EventSlug asChild>
+                  {({ slug }) => (
+                    <a
+                      href={schedulePagePath.replace(':slug', slug)}
+                      className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline text-center w-full sm:w-auto"
+                    >
+                      See All
+                    </a>
+                  )}
+                </EventSlug>
+              </div>
+            </ScheduleListItems>
+          </ScheduleList>
 
           {/* Tickets Section */}
           <TicketsPicker
@@ -344,21 +405,23 @@ export function EventDetails({
         </div>
 
         {/* Map Section */}
-        <EventCoordinates asChild>
-          {({ latitude, longitude }) => (
-            <div className="mt-6 sm:mt-16 sm:px-16">
-              <div className="relative w-full pt-[56.25%] sm:pt-[32%]">
-                <iframe
-                  allowFullScreen
-                  className="absolute top-0 w-full h-full"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps?q=${latitude},${longitude}&hl=en&z=14&output=embed`}
-                />
+        <EventLocation asChild>
+          {({ latitude, longitude }) =>
+            latitude && longitude ? (
+              <div className="mt-6 sm:mt-16 sm:px-16">
+                <div className="relative w-full pt-[56.25%] sm:pt-[32%]">
+                  <iframe
+                    allowFullScreen
+                    className="absolute top-0 w-full h-full"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://www.google.com/maps?q=${latitude},${longitude}&hl=en&z=14&output=embed`}
+                  />
+                </div>
               </div>
-            </div>
-          )}
-        </EventCoordinates>
+            ) : null
+          }
+        </EventLocation>
 
         {/* Social Share Section */}
         <div className="max-w-5xl mx-auto mt-6 sm:mt-16 px-5 sm:px-16">
@@ -389,6 +452,19 @@ export function EventDetails({
           </div>
         </div>
       ) : null}
+
+      {isOccurrencesModalOpen && (
+        <EventSlug asChild>
+          {({ slug }) => (
+            <OccurrencesModal
+              currentOccurrenceSlug={slug}
+              occurrenceListServiceConfig={occurrenceListServiceConfig}
+              onDone={navigateToEventDetails}
+              onClose={closeOccurrencesModal}
+            />
+          )}
+        </EventSlug>
+      )}
     </Event>
   );
 }

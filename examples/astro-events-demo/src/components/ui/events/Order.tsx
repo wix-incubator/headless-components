@@ -107,7 +107,7 @@ export const OrderDownloadTicketsButton = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'bg-primary text-primary-foreground font-paragraph text-base text-center hover:bg-primary/80 w-full sm:w-auto py-2 px-10',
+        'bg-primary text-primary-foreground font-paragraph text-base text-center w-full sm:w-auto py-2 px-10 hover:underline',
         className
       )}
     />

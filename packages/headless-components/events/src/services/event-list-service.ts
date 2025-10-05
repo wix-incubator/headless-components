@@ -7,8 +7,11 @@ import {
 import { wixEventsV2, categories } from '@wix/events';
 import { getErrorMessage } from '../utils/errors.js';
 import { type Event } from './event-service.js';
+import { ALL_EVENTS, PAST_EVENTS, UPCOMING_EVENTS } from '../constants.js';
 
 export type Category = categories.Category;
+
+type StatusId = typeof UPCOMING_EVENTS | typeof PAST_EVENTS | typeof ALL_EVENTS;
 
 export interface EventListServiceAPI {
   /** Reactive signal containing the list of events */
@@ -17,6 +20,8 @@ export interface EventListServiceAPI {
   categories: Signal<Category[]>;
   /** Reactive signal containing the selected category id */
   selectedCategoryId: Signal<string | null>;
+  /** Reactive signal containing the selected status id */
+  selectedStatusId: Signal<StatusId>;
   /** Reactive signal indicating if events are currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal indicating if more events are currently being loaded */
@@ -32,7 +37,7 @@ export interface EventListServiceAPI {
   /** Reactive signal indicating if there are more events to load */
   hasMoreEvents: ReadOnlySignal<boolean>;
   /** Function to load events */
-  loadEvents: (categoryId?: string) => Promise<void>;
+  loadEvents: ({ categoryId, statusId }: LoadEventsParams) => Promise<void>;
   /** Function to load more events */
   loadMoreEvents: () => Promise<void>;
 }
@@ -59,8 +64,9 @@ export const EventListService =
       const events = signalsService.signal<Event[]>(config.events);
       const categories = signalsService.signal<Category[]>(config.categories);
       const selectedCategoryId = signalsService.signal<string | null>(null);
-      const isLoadingMore = signalsService.signal<boolean>(false);
+      const selectedStatusId = signalsService.signal<StatusId>(UPCOMING_EVENTS);
       const isLoading = signalsService.signal<boolean>(false);
+      const isLoadingMore = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
       const pageSize = signalsService.signal<number>(config.pageSize);
       const currentPage = signalsService.signal<number>(config.currentPage);
@@ -69,18 +75,25 @@ export const EventListService =
         () => currentPage.get() + 1 < totalPages.get(),
       );
 
-      const loadEvents = async (categoryId?: string) => {
-        selectedCategoryId.set(categoryId ?? null);
+      const loadEvents = async ({
+        categoryId = selectedCategoryId.get(),
+        statusId = selectedStatusId.get(),
+      }: LoadEventsParams) => {
+        const status = getStatusFromId(statusId);
+
+        selectedCategoryId.set(categoryId);
+        selectedStatusId.set(statusId);
+
         isLoading.set(true);
         error.set(null);
 
         try {
-          const queryEventsResponse = await queryEvents(0, categoryId);
+          const response = await queryEvents({ categoryId, status });
 
-          events.set(queryEventsResponse.items);
-          pageSize.set(queryEventsResponse.pageSize);
-          currentPage.set(queryEventsResponse.currentPage ?? 0);
-          totalPages.set(queryEventsResponse.totalPages ?? 0);
+          events.set(response.items);
+          pageSize.set(response.pageSize);
+          currentPage.set(response.currentPage);
+          totalPages.set(response.totalPages);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
@@ -94,15 +107,17 @@ export const EventListService =
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
-          const queryEventsResponse = await queryEvents(
+          const status = getStatusFromId(selectedStatusId.get());
+          const response = await queryEvents({
             offset,
-            selectedCategoryId.get(),
-          );
+            categoryId: selectedCategoryId.get(),
+            status,
+          });
 
-          events.set([...events.get(), ...queryEventsResponse.items]);
-          pageSize.set(queryEventsResponse.pageSize);
-          currentPage.set(queryEventsResponse.currentPage ?? 0);
-          totalPages.set(queryEventsResponse.totalPages ?? 0);
+          events.set([...events.get(), ...response.items]);
+          pageSize.set(response.pageSize);
+          currentPage.set(response.currentPage);
+          totalPages.set(response.totalPages);
         } catch (err) {
           error.set(getErrorMessage(err));
         } finally {
@@ -114,6 +129,7 @@ export const EventListService =
         events,
         categories,
         selectedCategoryId,
+        selectedStatusId,
         isLoading,
         isLoadingMore,
         error,
@@ -134,15 +150,20 @@ export async function loadEventListServiceConfig(): Promise<EventListServiceConf
   ]);
 
   return {
-    events: queryEventsResponse.items ?? [],
+    events: queryEventsResponse.items,
     categories: queryCategoriesResponse.items ?? [],
     pageSize: queryEventsResponse.pageSize,
-    currentPage: queryEventsResponse.currentPage ?? 0,
-    totalPages: queryEventsResponse.totalPages ?? 0,
+    currentPage: queryEventsResponse.currentPage,
+    totalPages: queryEventsResponse.totalPages,
   };
 }
 
-function queryEvents(offset = 0, categoryId?: string | null) {
+export async function queryEvents({
+  offset = 0,
+  limit = 20,
+  categoryId,
+  status = [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED],
+}: QueryEventsParams = {}) {
   let eventsQuery = wixEventsV2
     .queryEvents({
       fields: [
@@ -152,8 +173,8 @@ function queryEvents(offset = 0, categoryId?: string | null) {
     })
     .ascending('dateAndTimeSettings.startDate')
     .descending('_createdDate')
-    .eq('status', wixEventsV2.Status.UPCOMING)
-    .limit(10)
+    .in('status', status)
+    .limit(limit)
     .skip(offset);
 
   if (categoryId) {
@@ -161,7 +182,14 @@ function queryEvents(offset = 0, categoryId?: string | null) {
     eventsQuery = eventsQuery.in('categories._id', [categoryId]);
   }
 
-  return eventsQuery.find();
+  const response = await eventsQuery.find();
+
+  return {
+    items: response.items ?? [],
+    pageSize: response.pageSize,
+    currentPage: response.currentPage ?? 0,
+    totalPages: response.totalPages ?? 0,
+  };
 }
 
 function queryCategories() {
@@ -170,4 +198,32 @@ function queryCategories() {
     .hasSome('states', [categories.State.MANUAL])
     .limit(100)
     .find();
+}
+
+interface QueryEventsParams {
+  offset?: number;
+  limit?: number;
+  categoryId?: string | null;
+  status?: wixEventsV2.Status[];
+}
+
+interface LoadEventsParams {
+  categoryId?: string | null;
+  statusId?: StatusId;
+}
+
+function getStatusFromId(statusId: StatusId) {
+  switch (statusId) {
+    case PAST_EVENTS:
+      return [wixEventsV2.Status.ENDED];
+    case ALL_EVENTS:
+      return [
+        wixEventsV2.Status.UPCOMING,
+        wixEventsV2.Status.STARTED,
+        wixEventsV2.Status.ENDED,
+      ];
+    case UPCOMING_EVENTS:
+    default:
+      return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
+  }
 }

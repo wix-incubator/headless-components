@@ -62,7 +62,7 @@ export const EventListLoadMoreTrigger = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block bg-primary text-primary-foreground font-paragraph py-2 px-4 hover:bg-primary/80',
+        'block bg-primary text-primary-foreground font-paragraph text-base py-2 px-4 hover:underline',
         className
       )}
     />
@@ -86,7 +86,7 @@ export const EventListError = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-status-danger text-center',
+        'block font-paragraph text-status-danger text-base text-center',
         className
       )}
     />
@@ -94,3 +94,19 @@ export const EventListError = React.forwardRef<
 });
 
 EventListError.displayName = 'EventListError';
+
+/**
+ * Container for event list category filter.
+ * Handles category filtering for events.
+ *
+ * @component
+ */
+export const EventListCategoryFilter = EventListPrimitive.CategoryFilter;
+
+/**
+ * Container for event list status filter.
+ * Handles status filtering for events.
+ *
+ * @component
+ */
+export const EventListStatusFilter = EventListPrimitive.StatusFilter;

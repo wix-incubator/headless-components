@@ -23,7 +23,7 @@ export interface RootProps {
  * @component
  */
 export function Root(props: RootProps): React.ReactNode {
-  const { event, children } = props;
+  const { children, event } = props;
 
   const eventServiceConfig: EventServiceConfig = {
     event,
@@ -40,6 +40,83 @@ export function Root(props: RootProps): React.ReactNode {
       {children}
     </WixServices>
   );
+}
+
+export interface RawProps {
+  /** Render prop function */
+  children: (props: RawRenderProps) => React.ReactNode;
+}
+
+export interface RawRenderProps {
+  /** Event */
+  event: Event;
+}
+
+/**
+ * Event Raw core component that provides event.
+ *
+ * @component
+ */
+export function Raw(props: RawProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+
+  return props.children({ event });
+}
+
+export interface SlugProps {
+  /** Render prop function */
+  children: (props: SlugRenderProps) => React.ReactNode;
+}
+
+export interface SlugRenderProps {
+  /** Event slug */
+  slug: string;
+}
+
+/**
+ * Event Slug core component that provides event slug.
+ *
+ * @component
+ */
+export function Slug(props: SlugProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+  const slug = event.slug!;
+
+  return props.children({ slug });
+}
+
+export interface TypeProps {
+  /** Render prop function */
+  children: (props: TypeRenderProps) => React.ReactNode;
+}
+
+export interface TypeRenderProps {
+  /** Is event ticketed */
+  ticketed: boolean;
+  /** Is event RSVP */
+  rsvp: boolean;
+  /** Is event external */
+  external: boolean;
+}
+
+/**
+ * Event Type core component that provides event type.
+ *
+ * @component
+ */
+export function Type(props: TypeProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+  const ticketed = event.registration?.type === 'TICKETING';
+  const rsvp = event.registration?.type === 'RSVP';
+  const external = event.registration?.type === 'EXTERNAL';
+
+  return props.children({ ticketed, rsvp, external });
 }
 
 export interface ImageProps {
@@ -99,7 +176,7 @@ export interface DateProps {
 
 export interface DateRenderProps {
   /** Formatted event date */
-  date: string;
+  formattedDate: string;
 }
 
 /**
@@ -113,13 +190,13 @@ export function Date(props: DateProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const date = event.dateAndTimeSettings!.dateAndTimeTbd
+  const formattedDate = event.dateAndTimeSettings!.dateAndTimeTbd
     ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
     : format === 'short'
       ? formatShortDate(event.dateAndTimeSettings!.startDate!)
       : formatFullDate(event.dateAndTimeSettings!.startDate!);
 
-  return props.children({ date });
+  return props.children({ formattedDate });
 }
 
 export interface LocationProps {
@@ -131,7 +208,11 @@ export interface LocationProps {
 
 export interface LocationRenderProps {
   /** Formatted event location */
-  location: string;
+  formattedLocation: string;
+  /** Event location latitude (null if TBD) */
+  latitude: number | null;
+  /** Event location longitude (null if TBD) */
+  longitude: number | null;
 }
 
 /**
@@ -145,46 +226,17 @@ export function Location(props: LocationProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const location =
+  const formattedLocation =
     event.location!.locationTbd || format === 'short'
       ? event.location!.name!
       : // @ts-expect-error
         `${event.location!.name}, ${event.location!.address!.formatted}`;
-
-  return props.children({ location });
-}
-
-export interface CoordinatesProps {
-  /** Render prop function */
-  children: (props: CoordinatesRenderProps) => React.ReactNode;
-}
-
-export interface CoordinatesRenderProps {
-  /** Event location latitude */
-  latitude: number;
-  /** Event location longitude */
-  longitude: number;
-}
-
-/**
- * Event Coordinates core component that provides event location coordinates. Not rendered if there are no coordinates.
- *
- * @component
- */
-export function Coordinates(props: CoordinatesProps): React.ReactNode {
-  const eventService = useService(EventServiceDefinition);
-
-  const event = eventService.event.get();
   // @ts-expect-error
   const latitude = event.location!.address?.location?.latitude;
   // @ts-expect-error
   const longitude = event.location!.address?.location?.longitude;
 
-  if (!latitude || !longitude) {
-    return null;
-  }
-
-  return props.children({ latitude, longitude });
+  return props.children({ formattedLocation, latitude, longitude });
 }
 
 export interface ShortDescriptionProps {
@@ -252,13 +304,13 @@ export interface RsvpButtonProps {
 
 export interface RsvpButtonRenderProps {
   /** Event slug */
-  eventSlug: string;
+  slug: string;
   /** Is event ticketed */
   ticketed: boolean;
 }
 
 /**
- * Event RsvpButton core component that provides event.
+ * Event RsvpButton core component that provides event slug and ticketed status.
  *
  * @component
  */
@@ -266,10 +318,10 @@ export function RsvpButton(props: RsvpButtonProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const eventSlug = event.slug!;
+  const slug = event.slug!;
   const ticketed = event.registration?.type === 'TICKETING';
 
-  return props.children({ eventSlug, ticketed });
+  return props.children({ slug, ticketed });
 }
 
 export interface AddToGoogleCalendarProps {
@@ -330,34 +382,4 @@ export function AddToIcsCalendar(
   }
 
   return props.children({ url });
-}
-
-export interface TypeProps {
-  /** Render prop function */
-  children: (props: TypeRenderProps) => React.ReactNode;
-}
-
-export interface TypeRenderProps {
-  /** Is event ticketed */
-  ticketed: boolean;
-  /** Is event RSVP */
-  rsvp: boolean;
-  /** Is event external */
-  external: boolean;
-}
-
-/**
- * Event Type core component that provides event type.
- *
- * @component
- */
-export function Type(props: TypeProps): React.ReactNode {
-  const eventService = useService(EventServiceDefinition);
-  const event = eventService.event.get();
-
-  const ticketed = event.registration?.type === 'TICKETING';
-  const rsvp = event.registration?.type === 'RSVP';
-  const external = event.registration?.type === 'EXTERNAL';
-
-  return props.children({ ticketed, rsvp, external });
 }
