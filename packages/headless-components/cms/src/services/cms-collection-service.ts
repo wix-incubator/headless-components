@@ -54,6 +54,10 @@ export interface CmsQueryOptions {
   skip?: number;
   /** Whether to return the total count of items */
   returnTotalCount?: boolean;
+  /** List of field IDs for single reference fields to include */
+  singleRefFieldIds?: string[];
+  /** List of field IDs for multi reference fields to include */
+  multiRefFieldIds?: string[];
 }
 
 /**
@@ -69,7 +73,13 @@ const loadCollectionItems = async (
     throw new Error('No collection ID provided');
   }
 
-  const { limit, skip = 0, returnTotalCount = false } = options;
+  const {
+    limit,
+    skip = 0,
+    returnTotalCount = false,
+    singleRefFieldIds = [],
+    multiRefFieldIds = [],
+  } = options;
 
   let query = items.query(collectionId);
 
@@ -90,6 +100,12 @@ const loadCollectionItems = async (
   }
 
   query = query.skip(skip);
+
+  // Include reference fields if specified
+  const allRefFieldIds = [...singleRefFieldIds, ...multiRefFieldIds];
+  if (allRefFieldIds.length > 0) {
+    query = query.include(...allRefFieldIds);
+  }
 
   return await query.find({ returnTotalCount });
 };

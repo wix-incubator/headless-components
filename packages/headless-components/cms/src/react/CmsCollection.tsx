@@ -68,6 +68,28 @@ export interface RootProps {
  *     </CmsCollection.Root>
  *   );
  * }
+ *
+ * // With reference fields included
+ * function CollectionWithReferences() {
+ *   return (
+ *     <CmsCollection.Root
+ *       collection={{
+ *         id: 'MyCollection',
+ *         queryOptions: {
+ *           singleRefFieldIds: ['author', 'category'],
+ *           multiRefFieldIds: ['tags', 'relatedItems']
+ *         }
+ *       }}
+ *     >
+ *       <CmsCollection.Items>
+ *         <CmsCollection.ItemRepeater>
+ *           <CmsItem.Field fieldId="title" />
+ *           <CmsItem.Field fieldId="author" />
+ *         </CmsCollection.ItemRepeater>
+ *       </CmsCollection.Items>
+ *     </CmsCollection.Root>
+ *   );
+ * }
  * ```
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
