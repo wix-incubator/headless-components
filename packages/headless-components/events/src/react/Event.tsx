@@ -26,6 +26,8 @@ enum TestIds {
   eventOccurrences = 'event-occurrences',
 }
 
+const DATA_COMPONENT_TAG = 'events.event';
+
 /**
  * Props for the Event Root component.
  */
@@ -142,6 +144,7 @@ const RootContent = React.forwardRef<HTMLElement, RootContentProps>(
                 ref={ref}
                 asChild={asChild}
                 className={className}
+                data-component-tag={DATA_COMPONENT_TAG}
                 data-testid={TestIds.eventRoot}
                 data-upcoming={event.status === 'UPCOMING'}
                 data-started={event.status === 'STARTED'}

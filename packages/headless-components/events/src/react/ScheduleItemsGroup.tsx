@@ -19,7 +19,7 @@ export interface RootProps {
   itemsGroup: ScheduleItemsGroup;
   /** Whether to render as a child component */
   asChild?: boolean;
-  /** Child components that will have access to the schedule items group service */
+  /** Child components that will have access to the schedule items group */
   children: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
