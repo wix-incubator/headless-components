@@ -11,6 +11,8 @@ enum TestIds {
   eventListError = 'event-list-error',
 }
 
+const DATA_COMPONENT_TAG = 'events.event-list';
+
 /**
  * Props for the EventList Root component.
  */
@@ -113,7 +115,9 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
               ref={ref}
               asChild={asChild}
               className={className}
+              data-component-tag={DATA_COMPONENT_TAG}
               data-testid={TestIds.eventListEvents}
+              data-loading={isLoading}
               customElement={children}
               customElementProps={{ events, isLoading }}
               {...otherProps}

@@ -62,6 +62,8 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         className={className}
         data-testid={TestIds.scheduleItemRoot}
         data-has-description={!!item.description}
+        customElement={children}
+        customElementProps={{}}
         {...otherProps}
       >
         <div>{children}</div>
