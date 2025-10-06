@@ -195,7 +195,7 @@ export function EventDetails({
                 <ScheduleItem />
               </ScheduleListItemRepeater>
               <div className="flex sm:justify-end">
-                <EventSlug asChild>
+                <EventSlug>
                   {({ slug }) => (
                     <Button
                       asChild
@@ -507,7 +507,7 @@ export function EventDetails({
       </EventOtherEvents>
 
       {isOccurrencesModalOpen && occurrenceListServiceConfig ? (
-        <EventSlug asChild>
+        <EventSlug>
           {({ slug }) => (
             <OccurrencesModal
               currentOccurrenceSlug={slug}

@@ -53,7 +53,7 @@ export function OccurrencesModal({
           <div className="max-h-[50vh] overflow-y-auto pr-3">
             <Occurrences className="space-y-3">
               <OccurrenceRepeater>
-                <EventSlug asChild>
+                <EventSlug>
                   {({ slug }) => (
                     <button
                       data-selected={slug === selectedOccurenceSlug}

@@ -172,10 +172,8 @@ const RootContent = React.forwardRef<HTMLElement, RootContentProps>(
  * Props for the Event Slug component.
  */
 export interface SlugProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ slug: string }>;
+  /** Custom render function */
+  children: AsChildChildren<{ slug: string }>;
 }
 
 /**
@@ -195,14 +193,14 @@ export interface SlugProps {
  * ```
  */
 export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+  const { children, ...otherProps } = props;
 
   return (
     <CoreEvent.Slug>
       {({ slug }) => (
         <AsChildSlot
+          asChild
           ref={ref}
-          asChild={asChild}
           customElement={children}
           customElementProps={{ slug }}
           {...otherProps}
@@ -216,10 +214,8 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
  * Props for the Event Type component.
  */
 export interface TypeProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
+  /** Custom render function */
+  children: AsChildChildren<{
     ticketed: boolean;
     rsvp: boolean;
     external: boolean;
@@ -243,14 +239,14 @@ export interface TypeProps {
  * ```
  */
 export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+  const { children, ...otherProps } = props;
 
   return (
     <CoreEvent.Type>
       {({ ticketed, rsvp, external }) => (
         <AsChildSlot
+          asChild
           ref={ref}
-          asChild={asChild}
           customElement={children}
           customElementProps={{ ticketed, rsvp, external }}
           {...otherProps}
