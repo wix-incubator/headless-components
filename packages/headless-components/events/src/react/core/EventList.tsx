@@ -125,15 +125,16 @@ export interface LoadMoreTriggerRenderProps {
 export function LoadMoreTrigger(props: LoadMoreTriggerProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
 
-  const isLoading = eventListService.isLoadingMore.get();
+  const isLoading = eventListService.isLoading.get();
+  const isLoadingMore = eventListService.isLoadingMore.get();
   const hasMoreEvents = eventListService.hasMoreEvents.get();
 
-  if (!hasMoreEvents) {
+  if (isLoading || !hasMoreEvents) {
     return null;
   }
 
   return props.children({
-    isLoading,
+    isLoading: isLoadingMore,
     loadMoreEvents: eventListService.loadMoreEvents,
   });
 }
@@ -156,9 +157,10 @@ export interface ErrorRenderProps {
 export function Error(props: ErrorProps): React.ReactNode {
   const eventListService = useService(EventListServiceDefinition);
 
+  const isLoading = eventListService.isLoading.get();
   const error = eventListService.error.get();
 
-  if (!error) {
+  if (isLoading || !error) {
     return null;
   }
 
