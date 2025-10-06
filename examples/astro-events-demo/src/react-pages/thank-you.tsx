@@ -16,7 +16,7 @@ export default function ThankYouPage({
   eventPageUrl,
 }: ThankYouPageProps) {
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen">
       <ThankYou
         eventServiceConfig={eventServiceConfig}
         orderServiceConfig={orderServiceConfig}

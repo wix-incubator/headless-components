@@ -32,7 +32,7 @@ export default function EventDetailsPage({
   schedulePagePath,
 }: EventDetailsPageProps) {
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen">
       <EventDetails
         eventServiceConfig={eventServiceConfig}
         eventListServiceConfig={eventListServiceConfig}

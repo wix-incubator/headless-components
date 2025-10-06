@@ -16,7 +16,7 @@ export default function SchedulePage({
   eventDetailsPagePath,
 }: SchedulePageProps) {
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen">
       <Schedule
         eventServiceConfig={eventServiceConfig}
         scheduleListServiceConfig={scheduleListServiceConfig}
