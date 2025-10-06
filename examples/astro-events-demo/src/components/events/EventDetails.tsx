@@ -449,13 +449,12 @@ export function EventDetails({
                   </div>
                 )}
               </TicketsPickerTotals>
-              <CheckoutTrigger asChild size="lg" className="mt-3 w-full">
-                {({ isLoading, checkout }) => (
-                  <button onClick={checkout}>
-                    {isLoading ? 'Processing...' : 'Checkout'}
-                  </button>
-                )}
-              </CheckoutTrigger>
+              <CheckoutTrigger
+                size="lg"
+                className="mt-3 w-full"
+                label="Checkout"
+                loadingState="Processing..."
+              />
             </div>
           </TicketsPicker>
         </div>

@@ -68,13 +68,10 @@ export function OccurrencesModal({
               </OccurrenceRepeater>
             </Occurrences>
             <OccurrenceListLoadMoreTrigger
-              asChild
               className="block mx-auto mt-5"
-            >
-              {({ isLoading }) => (
-                <button>{isLoading ? 'Loading...' : 'Load More'}</button>
-              )}
-            </OccurrenceListLoadMoreTrigger>
+              label="Load More"
+              loadingState="Loading..."
+            />
             <OccurrenceListError className="mt-4" />
           </div>
         </OccurrenceList>

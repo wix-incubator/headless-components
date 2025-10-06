@@ -125,11 +125,11 @@ export function EventList({
           )
         }
       </Events>
-      <EventListLoadMoreTrigger asChild className="block mx-auto mt-5">
-        {({ isLoading }) => (
-          <button>{isLoading ? 'Loading...' : 'Load More'}</button>
-        )}
-      </EventListLoadMoreTrigger>
+      <EventListLoadMoreTrigger
+        className="block mx-auto mt-5"
+        label="Load More"
+        loadingState="Loading..."
+      />
       <EventListError className="mt-4" />
     </EventListPrimitive>
   );

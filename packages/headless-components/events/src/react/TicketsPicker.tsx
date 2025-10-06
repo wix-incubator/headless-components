@@ -380,6 +380,8 @@ export interface CheckoutTriggerProps {
   className?: string;
   /** The label to display inside the button */
   label?: string;
+  /** The loading state to display inside the button */
+  loadingState?: React.ReactNode;
 }
 
 /**
@@ -389,18 +391,18 @@ export interface CheckoutTriggerProps {
  * @example
  * ```tsx
  * // Default usage
- * <TicketsPicker.CheckoutTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Reserve" />
+ * <TicketsPicker.CheckoutTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Checkout" loadingState="Processing..." />
  *
  * // asChild with primitive
  * <TicketsPicker.CheckoutTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
- *   <button>Reserve</button>
+ *   <button>Checkout</button>
  * </TicketsPicker.CheckoutTrigger>
  *
  * // asChild with react component
  * <TicketsPicker.CheckoutTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
  *   {React.forwardRef(({ isLoading, error, hasSelectedTicketDefinitions, checkout, ...props }, ref) => (
  *     <button ref={ref} {...props} onClick={checkout}>
- *       {isLoading ? 'Reserving...' : 'Reserve'}
+ *       {isLoading ? 'Processing...' : 'Checkout'}
  *     </button>
  *   ))}
  * </TicketsPicker.CheckoutTrigger>
@@ -410,7 +412,14 @@ export const CheckoutTrigger = React.forwardRef<
   HTMLElement,
   CheckoutTriggerProps
 >((props, ref) => {
-  const { asChild, children, className, label, ...otherProps } = props;
+  const {
+    asChild,
+    children,
+    className,
+    label,
+    loadingState = label,
+    ...otherProps
+  } = props;
 
   return (
     <CoreTicketsPicker.CheckoutTrigger>
@@ -421,7 +430,6 @@ export const CheckoutTrigger = React.forwardRef<
           className={className}
           data-testid={TestIds.ticketsPickerCheckoutTrigger}
           data-in-progress={isLoading}
-          disabled={isLoading}
           customElement={children}
           customElementProps={{
             isLoading,
@@ -429,9 +437,11 @@ export const CheckoutTrigger = React.forwardRef<
             hasSelectedTicketDefinitions,
             checkout,
           }}
+          disabled={isLoading}
+          onClick={checkout}
           {...otherProps}
         >
-          <button>{label}</button>
+          <button>{isLoading ? loadingState : label}</button>
         </AsChildSlot>
       )}
     </CoreTicketsPicker.CheckoutTrigger>
