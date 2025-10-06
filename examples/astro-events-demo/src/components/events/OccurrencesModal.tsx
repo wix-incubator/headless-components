@@ -20,7 +20,7 @@ import {
 
 interface OccurrencesModalProps {
   currentOccurrenceSlug: string;
-  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
+  occurrenceListServiceConfig: OccurrenceListServiceConfig;
   onDone: (slug: string) => void;
   onClose: () => void;
 }

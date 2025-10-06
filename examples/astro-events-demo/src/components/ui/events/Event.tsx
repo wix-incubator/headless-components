@@ -390,3 +390,10 @@ export const EventAddToIcsCalendar = React.forwardRef<
 });
 
 EventAddToIcsCalendar.displayName = 'EventAddToIcsCalendar';
+
+/**
+ * Provides other events.
+ *
+ * @component
+ */
+export const EventOtherEvents = EventPrimitive.OtherEvents;

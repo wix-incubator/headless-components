@@ -30,61 +30,65 @@ import { EventListSkeleton } from './EventListSkeleton';
 interface EventListProps {
   eventListServiceConfig: EventListServiceConfig;
   eventDetailsPagePath: string;
+  isFiltersVisible?: boolean;
 }
 
 export function EventList({
   eventListServiceConfig,
   eventDetailsPagePath,
+  isFiltersVisible = true,
 }: EventListProps) {
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
-      <div className="flex flex-row gap-6 mb-6">
-        <EventListCategoryFilter
-          allCategoriesLabel="All"
-          className="flex-1 border-b border-foreground/10"
-        >
-          <FilterOptions>
-            <ScrollableTabs>
+      {isFiltersVisible && (
+        <div className="flex flex-row gap-6 mb-6">
+          <EventListCategoryFilter
+            allCategoriesLabel="All"
+            className="flex-1 border-b border-foreground/10"
+          >
+            <FilterOptions>
+              <ScrollableTabs>
+                <FilterOptionRepeater>
+                  <FilterOptionSingle variant="tabs" />
+                </FilterOptionRepeater>
+              </ScrollableTabs>
+            </FilterOptions>
+          </EventListCategoryFilter>
+          <EventListStatusFilter
+            allEventsLabel="Upcoming & Past"
+            upcomingEventsLabel="Upcoming"
+            pastEventsLabel="Past"
+          >
+            <FilterOptions>
               <FilterOptionRepeater>
-                <FilterOptionSingle variant="tabs" />
+                <FilterOptionSingle asChild>
+                  {({ value, onChange, validValues, valueFormatter }) => (
+                    <div className="flex gap-2 items-center">
+                      <span className="flex-shrink-0">Event status:</span>
+                      <Select
+                        data-filter-type="single"
+                        value={value}
+                        onValueChange={onChange}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {validValues?.map(value => (
+                            <SelectItem key={value} value={String(value)}>
+                              {valueFormatter ? valueFormatter(value) : value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </FilterOptionSingle>
               </FilterOptionRepeater>
-            </ScrollableTabs>
-          </FilterOptions>
-        </EventListCategoryFilter>
-        <EventListStatusFilter
-          allEventsLabel="Upcoming & Past"
-          upcomingEventsLabel="Upcoming"
-          pastEventsLabel="Past"
-        >
-          <FilterOptions>
-            <FilterOptionRepeater>
-              <FilterOptionSingle asChild>
-                {({ value, onChange, validValues, valueFormatter }) => (
-                  <div className="flex gap-2 items-center">
-                    <span className="flex-shrink-0">Event status:</span>
-                    <Select
-                      data-filter-type="single"
-                      value={value}
-                      onValueChange={onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {validValues?.map(value => (
-                          <SelectItem key={value} value={String(value)}>
-                            {valueFormatter ? valueFormatter(value) : value}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-              </FilterOptionSingle>
-            </FilterOptionRepeater>
-          </FilterOptions>
-        </EventListStatusFilter>
-      </div>
+            </FilterOptions>
+          </EventListStatusFilter>
+        </div>
+      )}
       <Events
         asChild
         emptyState={

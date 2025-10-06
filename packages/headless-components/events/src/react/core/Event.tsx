@@ -7,6 +7,7 @@ import {
   type Event,
   type RichContent,
 } from '../../services/event-service.js';
+import { EventListServiceDefinition } from '../../services/event-list-service.js';
 import { hasDescription } from '../../utils/event.js';
 import { formatFullDate, formatShortDate } from '../../utils/date.js';
 
@@ -382,4 +383,40 @@ export function AddToIcsCalendar(
   }
 
   return props.children({ url });
+}
+
+export interface OtherEventsProps {
+  /** Number of other events to display */
+  count: number;
+  /** Render prop function */
+  children: (props: OtherEventsRenderProps) => React.ReactNode;
+}
+
+export interface OtherEventsRenderProps {
+  /** Other events */
+  events: Event[];
+}
+
+/**
+ * Event OtherEvents core component that provides other events.
+ *
+ * @component
+ */
+export function OtherEvents(props: OtherEventsProps): React.ReactNode {
+  const { count } = props;
+
+  const eventService = useService(EventServiceDefinition);
+  const eventListService = useService(EventListServiceDefinition);
+
+  const event = eventService.event.get();
+  const events = eventListService.events.get();
+  const otherEvents = events
+    .filter((item) => item._id !== event._id)
+    .slice(0, count);
+
+  if (!otherEvents.length) {
+    return null;
+  }
+
+  return props.children({ events: otherEvents });
 }

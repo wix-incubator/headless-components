@@ -17,7 +17,7 @@ export interface RootProps {
   /** Child components */
   children: React.ReactNode;
   /** Configuration for the occurrence list service */
-  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
+  occurrenceListServiceConfig: OccurrenceListServiceConfig;
 }
 
 /**
