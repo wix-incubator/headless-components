@@ -10,6 +10,7 @@ import {
   OccurrenceListLoadMoreTrigger,
   OccurrenceListError,
 } from '@/components/ui/events';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -56,7 +57,7 @@ export function OccurrencesModal({
                   {({ slug }) => (
                     <button
                       data-selected={slug === selectedOccurenceSlug}
-                      className="border border-foreground/10 data-[selected=true]:border-primary p-4 w-full text-left"
+                      className="border border-foreground/10 data-[selected=true]:border-primary rounded-xl p-4 w-full text-left"
                       onClick={() => setSelectedOccurenceSlug(slug)}
                     >
                       <EventDate format="full" />
@@ -66,7 +67,10 @@ export function OccurrencesModal({
                 </EventSlug>
               </OccurrenceRepeater>
             </Occurrences>
-            <OccurrenceListLoadMoreTrigger asChild className="mx-auto mt-5">
+            <OccurrenceListLoadMoreTrigger
+              asChild
+              className="block mx-auto mt-5"
+            >
               {({ isLoading }) => (
                 <button>{isLoading ? 'Loading...' : 'Load More'}</button>
               )}
@@ -75,18 +79,10 @@ export function OccurrencesModal({
           </div>
         </OccurrenceList>
         <DialogFooter className="gap-2 sm:gap-0 pr-3">
-          <button
-            className="bg-background border border-foreground/10 text-foreground font-paragraph text-base py-2 px-4 min-w-[100px] hover:underline"
-            onClick={onClose}
-          >
+          <Button variant="outline" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            className="bg-primary text-primary-foreground font-paragraph text-base py-2 px-4 min-w-[100px] hover:underline"
-            onClick={handleDone}
-          >
-            Done
-          </button>
+          </Button>
+          <Button onClick={handleDone}>Done</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -172,12 +172,13 @@ export function EventDetails({
                 <EventDate format="full" />
                 <EventLocation format="full" />
               </div>
-              <button
-                className="border border-foreground/10 bg-background font-paragraph text-foreground text-base py-2 px-4 hover:underline group-data-[has-occurrences=false]/event:hidden"
+              <Button
+                variant="outline"
+                className="group-data-[has-occurrences=false]/event:hidden"
                 onClick={openOccurrencesModal}
               >
                 Select Different Date
-              </button>
+              </Button>
             </div>
           </div>
 

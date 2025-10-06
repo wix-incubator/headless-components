@@ -1,6 +1,8 @@
 import { OccurrenceList as OccurrenceListPrimitive } from '@wix/events/components';
 import React from 'react';
+import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 /**
  * Root component for occurrence list display and interaction.
@@ -59,16 +61,16 @@ export const OccurrenceRepeater = OccurrenceListPrimitive.OccurrenceRepeater;
  */
 export const OccurrenceListLoadMoreTrigger = React.forwardRef<
   React.ElementRef<typeof OccurrenceListPrimitive.LoadMoreTrigger>,
-  React.ComponentPropsWithoutRef<typeof OccurrenceListPrimitive.LoadMoreTrigger>
->(({ className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<
+    typeof OccurrenceListPrimitive.LoadMoreTrigger
+  > &
+    VariantProps<typeof buttonVariants>
+>(({ variant, size, className, ...props }, ref) => {
   return (
     <OccurrenceListPrimitive.LoadMoreTrigger
       {...props}
       ref={ref}
-      className={cn(
-        'block bg-primary text-primary-foreground font-paragraph text-base py-2 px-4 hover:underline',
-        className
-      )}
+      className={cn(buttonVariants({ variant, size }), className)}
     />
   );
 });
