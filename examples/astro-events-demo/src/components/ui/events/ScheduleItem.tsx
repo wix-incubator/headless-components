@@ -1,6 +1,7 @@
 import { ScheduleItem as ScheduleItemPrimitive } from '@wix/events/components';
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { RicosViewer, fromRichTextHtml } from '@wix/ricos';
 
 /**
  * Root component for schedule item display.
@@ -99,16 +100,25 @@ ScheduleItemDuration.displayName = 'ScheduleItemDuration';
 export const ScheduleItemDescription = React.forwardRef<
   React.ElementRef<typeof ScheduleItemPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof ScheduleItemPrimitive.Description>
->(({ className, ...props }, ref) => {
+>((props, ref) => {
   return (
-    <ScheduleItemPrimitive.Description
-      {...props}
-      ref={ref}
-      className={cn(
-        'block font-paragraph text-foreground text-base',
-        className
+    <ScheduleItemPrimitive.Description {...props} ref={ref}>
+      {({ description }) => (
+        <RicosViewer
+          content={fromRichTextHtml(description)}
+          theme={{
+            // TODO: add missing styles
+            customStyles: {
+              p: {
+                color: 'var(--wix-theme-foreground)',
+                fontFamily: 'var(--theme-font-family-paragraph)',
+                fontWeight: 'var(--theme-font-weight-normal)',
+              },
+            },
+          }}
+        />
       )}
-    />
+    </ScheduleItemPrimitive.Description>
   );
 });
 

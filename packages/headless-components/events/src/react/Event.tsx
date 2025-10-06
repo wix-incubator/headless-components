@@ -564,7 +564,7 @@ export interface DescriptionProps {
  * @example
  * ```tsx
  * // Usage with react component
- * <Event.Description asChild>
+ * <Event.Description>
  *   {React.forwardRef(({ description, ...props }, ref) => (
  *     <RicosViewer ref={ref} content={description} />
  *   ))}
