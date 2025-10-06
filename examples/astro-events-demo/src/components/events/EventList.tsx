@@ -18,6 +18,14 @@ import {
   EventListStatusFilter,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import { EventListSkeleton } from './EventListSkeleton';
 
 interface EventListProps {
   eventListServiceConfig: EventListServiceConfig;
@@ -52,22 +60,24 @@ export function EventList({
             <FilterOptionRepeater>
               <FilterOptionSingle asChild>
                 {({ value, onChange, validValues, valueFormatter }) => (
-                  <div>
-                    <span>Event Status:</span>
-                    <select
-                      value={value}
-                      className="bg-background"
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        onChange(e.target.value)
-                      }
+                  <div className="flex gap-2 items-center">
+                    <span className="flex-shrink-0">Event status:</span>
+                    <Select
                       data-filter-type="single"
+                      value={value}
+                      onValueChange={onChange}
                     >
-                      {validValues?.map(value => (
-                        <option key={value} value={value}>
-                          {valueFormatter ? valueFormatter(value) : value}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {validValues?.map(value => (
+                          <SelectItem key={value} value={String(value)}>
+                            {valueFormatter ? valueFormatter(value) : value}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
               </FilterOptionSingle>
@@ -75,30 +85,47 @@ export function EventList({
           </FilterOptions>
         </EventListStatusFilter>
       </div>
-      <Events className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
-        <EventRepeater className="flex flex-col bg-background border border-foreground/10">
-          <div className="relative w-full pt-[100%] bg-primary/80">
-            <EventImage className="absolute top-0 w-full h-full" />
+      <Events
+        asChild
+        emptyState={
+          <div className="font-paragraph text-foreground text-xl">
+            No events yet.
           </div>
-          <div className="p-5 sm:p-8 flex flex-col flex-grow sm:items-center sm:text-center">
-            <EventTitle className="line-clamp-2" />
-            <div className="mb-8 flex items-center gap-1">
-              <EventDate className="line-clamp-1" />
-              <Separator
-                orientation="vertical"
-                className="bg-foreground h-3 hidden sm:block"
-              />
-              <EventLocation className="hidden sm:line-clamp-1" />
+        }
+      >
+        {({ isLoading }) =>
+          isLoading ? (
+            <EventListSkeleton />
+          ) : (
+            <div className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
+              <EventRepeater className="flex flex-col bg-background border border-foreground/10">
+                <div className="relative w-full pt-[100%] bg-primary/80">
+                  <EventImage className="absolute top-0 w-full h-full" />
+                </div>
+                <div className="p-5 sm:p-8 flex flex-col flex-grow sm:items-center sm:text-center">
+                  <EventTitle className="line-clamp-2" />
+                  <div className="mb-8 flex items-center gap-1">
+                    <EventDate className="line-clamp-1" />
+                    <Separator
+                      orientation="vertical"
+                      className="bg-foreground h-3 hidden sm:block"
+                    />
+                    <EventLocation className="hidden sm:line-clamp-1" />
+                  </div>
+                  <EventRsvpButton asChild size="lg" className="mt-auto">
+                    {({ slug }) => (
+                      <a href={eventDetailsPagePath.replace(':slug', slug)}>
+                        RSVP
+                      </a>
+                    )}
+                  </EventRsvpButton>
+                </div>
+              </EventRepeater>
             </div>
-            <EventRsvpButton asChild className="mt-auto">
-              {({ slug }) => (
-                <a href={eventDetailsPagePath.replace(':slug', slug)}>RSVP</a>
-              )}
-            </EventRsvpButton>
-          </div>
-        </EventRepeater>
+          )
+        }
       </Events>
-      <EventListLoadMoreTrigger asChild className="mx-auto mt-5">
+      <EventListLoadMoreTrigger asChild className="block mx-auto mt-5">
         {({ isLoading }) => (
           <button>{isLoading ? 'Loading...' : 'Load More'}</button>
         )}

@@ -65,7 +65,7 @@ export function ThankYou({
                     <OrderGuestEmail asChild>
                       {({ guestEmail }) => (
                         <p>
-                          {`The ticket is on the way to your email: ${guestEmail}`}
+                          The ticket is on the way to your email: {guestEmail}
                         </p>
                       )}
                     </OrderGuestEmail>
@@ -105,7 +105,7 @@ export function ThankYou({
                   {({ ticketed }) => {
                     if (ticketed) {
                       return (
-                        <OrderDownloadTicketsButton className="h-fit" asChild>
+                        <OrderDownloadTicketsButton asChild size="lg">
                           {({ ticketsPdfUrl }) => (
                             <button
                               onClick={() =>

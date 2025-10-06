@@ -1,6 +1,8 @@
 import { EventList as EventListPrimitive } from '@wix/events/components';
 import React from 'react';
+import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 /**
  * Root component for event list display and interaction.
@@ -55,16 +57,14 @@ export const EventRepeater = EventListPrimitive.EventRepeater;
  */
 export const EventListLoadMoreTrigger = React.forwardRef<
   React.ElementRef<typeof EventListPrimitive.LoadMoreTrigger>,
-  React.ComponentPropsWithoutRef<typeof EventListPrimitive.LoadMoreTrigger>
->(({ className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof EventListPrimitive.LoadMoreTrigger> &
+    VariantProps<typeof buttonVariants>
+>(({ variant, size, className, ...props }, ref) => {
   return (
     <EventListPrimitive.LoadMoreTrigger
       {...props}
       ref={ref}
-      className={cn(
-        'block bg-primary text-primary-foreground font-paragraph text-base py-2 px-4 hover:underline',
-        className
-      )}
+      className={cn(buttonVariants({ variant, size }), className)}
     />
   );
 });

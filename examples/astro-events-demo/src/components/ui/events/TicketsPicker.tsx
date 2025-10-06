@@ -1,6 +1,8 @@
 import { TicketsPicker as TicketsPickerPrimitive } from '@wix/events/components';
 import React from 'react';
+import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 /**
  * Root component for tickets picker display and interaction.
@@ -105,16 +107,16 @@ CheckoutError.displayName = 'CheckoutError';
  */
 export const CheckoutTrigger = React.forwardRef<
   React.ElementRef<typeof TicketsPickerPrimitive.CheckoutTrigger>,
-  React.ComponentPropsWithoutRef<typeof TicketsPickerPrimitive.CheckoutTrigger>
->(({ className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<
+    typeof TicketsPickerPrimitive.CheckoutTrigger
+  > &
+    VariantProps<typeof buttonVariants>
+>(({ variant, size, className, ...props }, ref) => {
   return (
     <TicketsPickerPrimitive.CheckoutTrigger
       {...props}
       ref={ref}
-      className={cn(
-        'block bg-primary text-primary-foreground font-paragraph text-base py-2 sm:py-3 px-20 w-full hover:underline',
-        className
-      )}
+      className={cn(buttonVariants({ variant, size }), className)}
     />
   );
 });

@@ -20,6 +20,13 @@ import {
   ScheduleItemsGroupItems,
   ScheduleItemsGroupItemRepeater,
 } from '@/components/ui/events';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { ScheduleItem } from './ScheduleItem';
 
 interface ScheduleProps {
@@ -48,9 +55,8 @@ export function Schedule({
             </div>
             <EventRsvpButton
               asChild
-              size="sm"
               variant="outline"
-              className="hidden sm:block h-fit"
+              className="hidden sm:block"
             >
               {({ slug, ticketed }) => (
                 <a href={eventDetailsPagePath.replace(':slug', slug)}>
@@ -61,25 +67,27 @@ export function Schedule({
           </div>
           <ScheduleListFilters allStagesLabel="All stages">
             <FilterOptions>
-              <FilterOptionRepeater className="flex flex-row justify-between mb-10 items-center">
+              <FilterOptionRepeater className="flex justify-between items-center mb-10">
                 <FilterOptionSingle asChild>
-                  {({ value, onChange, validValues, valueFormatter }) => (
-                    <div>
-                      <span>Filter by:</span>
-                      <select
-                        value={value}
-                        className="bg-background"
-                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                          onChange(e.target.value)
-                        }
+                  {({ validValues, value, valueFormatter, onChange }) => (
+                    <div className="flex gap-2 items-center">
+                      <span className="flex-shrink-0">Filter by:</span>
+                      <Select
                         data-filter-type="single"
+                        value={value}
+                        onValueChange={onChange}
                       >
-                        {validValues?.map(value => (
-                          <option key={value} value={value}>
-                            {valueFormatter ? valueFormatter(value) : value}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {validValues?.map(value => (
+                            <SelectItem key={value} value={String(value)}>
+                              {valueFormatter ? valueFormatter(value) : value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                 </FilterOptionSingle>
@@ -105,19 +113,18 @@ export function Schedule({
                 </ScheduleItemsGroupItemRepeater>
               </ScheduleItemsGroupItems>
             </ScheduleListGroupRepeater>
-            <EventRsvpButton
-              asChild
-              size="sm"
-              variant="outline"
-              className="block sm:hidden"
-            >
-              {({ slug, ticketed }) => (
-                <a href={eventDetailsPagePath.replace(':slug', slug)}>
-                  {ticketed ? 'Get Tickets' : 'RSVP'}
-                </a>
-              )}
-            </EventRsvpButton>
           </ScheduleListGroups>
+          <EventRsvpButton
+            asChild
+            variant="outline"
+            className="w-full mt-4 sm:hidden"
+          >
+            {({ slug, ticketed }) => (
+              <a href={eventDetailsPagePath.replace(':slug', slug)}>
+                {ticketed ? 'Get Tickets' : 'RSVP'}
+              </a>
+            )}
+          </EventRsvpButton>
         </div>
       </ScheduleList>
     </Event>

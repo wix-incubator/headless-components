@@ -297,6 +297,7 @@ export interface GuestPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    price: string | undefined;
     minPrice: number;
     currency: string;
     formattedMinPrice: string;
@@ -334,7 +335,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
 
     return (
       <CoreTicketDefinition.GuestPricing>
-        {({ minPrice, currency, formattedMinPrice, setPrice }) => (
+        {({ price, minPrice, currency, formattedMinPrice, setPrice }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -342,6 +343,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
             data-testid={TestIds.ticketDefinitionGuestPricing}
             customElement={children}
             customElementProps={{
+              price,
               minPrice,
               currency,
               formattedMinPrice,
@@ -349,6 +351,7 @@ export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
             }}
             type="number"
             placeholder={formattedMinPrice}
+            value={price}
             min={minPrice}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setPrice(event.target.value)
@@ -800,6 +803,7 @@ export interface QuantityProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    options: number[];
     quantity: number;
     maxQuantity: number;
     increment: () => void;
@@ -826,7 +830,7 @@ export interface QuantityProps {
  *
  * // asChild with react component
  * <TicketDefinition.Quantity asChild>
- *   {React.forwardRef(({ quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
+ *   {React.forwardRef(({ options, quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
  *     <div ref={ref} {...props} className="flex items-center space-x-2">
  *       <button disabled={quantity === 0} onClick={decrement}>-</button>
  *       <span>{quantity}</span>
@@ -842,7 +846,14 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
 
     return (
       <CoreTicketDefinition.Quantity>
-        {({ quantity, maxQuantity, increment, decrement, setQuantity }) => (
+        {({
+          options,
+          quantity,
+          maxQuantity,
+          increment,
+          decrement,
+          setQuantity,
+        }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -850,6 +861,7 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
             data-testid={TestIds.ticketDefinitionQuantity}
             customElement={children}
             customElementProps={{
+              options,
               quantity,
               maxQuantity,
               increment,
@@ -863,9 +875,9 @@ export const Quantity = React.forwardRef<HTMLElement, QuantityProps>(
             {...otherProps}
           >
             <select>
-              {Array.from({ length: maxQuantity + 1 }).map((_, index) => (
-                <option key={index} value={index}>
-                  {index}
+              {options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
                 </option>
               ))}
             </select>

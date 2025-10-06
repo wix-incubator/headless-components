@@ -24,6 +24,7 @@ import {
 import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 import '@wix/ricos/css/ricos-viewer.global.css';
 import '@wix/ricos/css/plugin-audio-viewer.global.css';
@@ -85,10 +86,6 @@ const eventTitleVariants = cva('text-foreground', {
   },
 });
 
-export interface EventTitleProps
-  extends React.ComponentPropsWithoutRef<typeof EventPrimitive.Title>,
-    VariantProps<typeof eventTitleVariants> {}
-
 /**
  * Displays the event title.
  * Can be rendered with different variants for different contexts.
@@ -106,7 +103,8 @@ export interface EventTitleProps
  */
 export const EventTitle = React.forwardRef<
   React.ElementRef<typeof EventPrimitive.Title>,
-  EventTitleProps
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.Title> &
+    VariantProps<typeof eventTitleVariants>
 >(({ variant, className, ...props }, ref) => {
   return (
     <EventPrimitive.Title
@@ -270,31 +268,6 @@ export const EventDescription = React.forwardRef<
 
 EventDescription.displayName = 'EventDescription';
 
-const eventRsvpButtonVariants = cva(
-  'font-paragraph text-base text-center w-full sm:w-auto hover:underline',
-  {
-    variants: {
-      variant: {
-        primary: 'bg-primary text-primary-foreground',
-        outline: 'bg-background text-foreground border border-foreground/10',
-      },
-      size: {
-        sm: 'py-2 px-4',
-        base: 'py-2 px-10',
-        lg: 'py-2 px-10 sm:py-3',
-      },
-    },
-    defaultVariants: {
-      variant: 'primary',
-      size: 'base',
-    },
-  }
-);
-
-export interface EventRsvpButtonProps
-  extends React.ComponentPropsWithoutRef<typeof EventPrimitive.RsvpButton>,
-    VariantProps<typeof eventRsvpButtonVariants> {}
-
 /**
  * Displays the event RSVP button.
  *
@@ -302,14 +275,14 @@ export interface EventRsvpButtonProps
  */
 export const EventRsvpButton = React.forwardRef<
   React.ElementRef<typeof EventPrimitive.RsvpButton>,
-  EventRsvpButtonProps
->(({ variant, size, className, label = 'RSVP', ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.RsvpButton> &
+    VariantProps<typeof buttonVariants>
+>(({ variant, size, className, ...props }, ref) => {
   return (
     <EventPrimitive.RsvpButton
       {...props}
       ref={ref}
-      className={cn(eventRsvpButtonVariants({ variant, size }), className)}
-      label={label}
+      className={cn(buttonVariants({ variant, size }), className)}
     />
   );
 });

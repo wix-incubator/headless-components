@@ -222,6 +222,8 @@ export interface QuantityProps {
 }
 
 export interface QuantityRenderProps {
+  /** Array of quantity options */
+  options: number[];
   /** Current quantity */
   quantity: number;
   /** Maximum quantity allowed */
@@ -262,6 +264,8 @@ export function Quantity(props: QuantityProps): React.ReactNode {
   const maxQuantity =
     ticketDefinitionListService.getMaxQuantity(ticketDefinitionId);
 
+  const options = Array.from({ length: maxQuantity + 1 }, (_, index) => index);
+
   const increment = () =>
     ticketDefinitionListService.setQuantity({
       ticketDefinitionId,
@@ -284,6 +288,7 @@ export function Quantity(props: QuantityProps): React.ReactNode {
     });
 
   return props.children({
+    options,
     quantity,
     maxQuantity,
     increment,

@@ -11,7 +11,7 @@ export default function EventsPage({
   eventDetailsPagePath,
 }: EventsPageProps) {
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen">
       <EventList
         eventListServiceConfig={eventListServiceConfig}
         eventDetailsPagePath={eventDetailsPagePath}

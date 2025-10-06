@@ -44,6 +44,15 @@ import {
   ScheduleListItems,
   ScheduleListItemRepeater,
 } from '@/components/ui/events';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { EventList } from './EventList';
 import { EventSocialShare } from './EventSocialShare';
@@ -134,7 +143,7 @@ export function EventDetails({
         <EventRsvpButton
           asChild
           size="lg"
-          className="inline-block mt-6 sm:mt-10"
+          className="mt-6 sm:mt-10 w-full sm:w-auto"
         >
           {({ ticketed, slug }) => (
             <a
@@ -163,12 +172,13 @@ export function EventDetails({
                 <EventDate format="full" />
                 <EventLocation format="full" />
               </div>
-              <button
-                className="border border-foreground/10 bg-background font-paragraph text-foreground text-base py-2 px-4 hover:underline group-data-[has-occurrences=false]/event:hidden"
+              <Button
+                variant="outline"
+                className="group-data-[has-occurrences=false]/event:hidden"
                 onClick={openOccurrencesModal}
               >
                 Select Different Date
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -192,12 +202,15 @@ export function EventDetails({
               <div className="flex sm:justify-end">
                 <EventSlug asChild>
                   {({ slug }) => (
-                    <a
-                      href={schedulePagePath.replace(':slug', slug)}
-                      className="border border-foreground/10 font-paragraph text-foreground py-2 px-4 hover:underline text-center w-full sm:w-auto"
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full sm:w-auto"
                     >
-                      See All
-                    </a>
+                      <a href={schedulePagePath.replace(':slug', slug)}>
+                        See All
+                      </a>
+                    </Button>
                   )}
                 </EventSlug>
               </div>
@@ -246,7 +259,7 @@ export function EventDetails({
                       )}
                     </TicketDefinitionSaleEndDate>
                   </div>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+                  <div className="flex flex-col gap-3 sm:gap-8 sm:flex-row sm:justify-between">
                     <div className="flex-grow">
                       <div className="text-sm font-paragraph text-foreground group-data-[guest-pricing=true]/ticket-definition:hidden">
                         Price
@@ -255,7 +268,9 @@ export function EventDetails({
                         Write a price
                       </div>
                       <TicketDefinitionFixedPricing />
-                      <TicketDefinitionGuestPricing />
+                      <TicketDefinitionGuestPricing asChild>
+                        <Input />
+                      </TicketDefinitionGuestPricing>
                       <TicketDefinitionPricingRange asChild>
                         {({ formattedMinPrice, formattedMaxPrice }) => (
                           <span>
@@ -319,7 +334,30 @@ export function EventDetails({
                               <div className="text-sm font-paragraph text-foreground mb-2">
                                 Quantity
                               </div>
-                              <PricingOptionQuantity />
+                              <PricingOptionQuantity asChild>
+                                {({ options, quantity, setQuantity }) => (
+                                  <Select
+                                    value={String(quantity)}
+                                    onValueChange={value =>
+                                      setQuantity(Number(value))
+                                    }
+                                  >
+                                    <SelectTrigger className="min-w-24 w-full sm:w-auto">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {options.map(option => (
+                                        <SelectItem
+                                          key={option}
+                                          value={String(option)}
+                                        >
+                                          {option}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                )}
+                              </PricingOptionQuantity>
                             </div>
                           </div>
                         </TicketDefinitionPricingOptionRepeater>
@@ -329,7 +367,25 @@ export function EventDetails({
                       <div className="text-sm font-paragraph text-foreground mb-2">
                         Quantity
                       </div>
-                      <TicketDefinitionQuantity />
+                      <TicketDefinitionQuantity asChild>
+                        {({ options, quantity, setQuantity }) => (
+                          <Select
+                            value={String(quantity)}
+                            onValueChange={value => setQuantity(Number(value))}
+                          >
+                            <SelectTrigger className="min-w-24 w-full sm:w-auto">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {options.map(option => (
+                                <SelectItem key={option} value={String(option)}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </TicketDefinitionQuantity>
                     </div>
                     <TicketDefinitionBadge
                       label="Sold Out"
@@ -393,7 +449,7 @@ export function EventDetails({
                   </div>
                 )}
               </TicketsPickerTotals>
-              <CheckoutTrigger asChild className="mt-3">
+              <CheckoutTrigger asChild size="lg" className="mt-3 w-full">
                 {({ isLoading, checkout }) => (
                   <button onClick={checkout}>
                     {isLoading ? 'Processing...' : 'Checkout'}

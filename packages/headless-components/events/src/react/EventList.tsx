@@ -104,7 +104,7 @@ export const Events = React.forwardRef<HTMLElement, EventsProps>(
     return (
       <CoreEventList.Events>
         {({ events, hasEvents, isLoading }) => {
-          if (!hasEvents) {
+          if (!hasEvents && !isLoading) {
             return emptyState || null;
           }
 
@@ -390,7 +390,7 @@ export const StatusFilter = (props: StatusFilterProps): React.ReactNode => {
       upcomingEventsLabel={upcomingEventsLabel}
       pastEventsLabel={pastEventsLabel}
     >
-      {({ filterOptions, onChange, value }) => (
+      {({ filterOptions, value, onChange }) => (
         <FilterPrimitive.Root
           className={className}
           filterOptions={filterOptions}
