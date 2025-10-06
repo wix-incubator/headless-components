@@ -813,7 +813,6 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     return (
       <CoreFields>
         {({ form }) => {
-          console.log('Fields form', form);
           if (!form) return null;
 
           return (

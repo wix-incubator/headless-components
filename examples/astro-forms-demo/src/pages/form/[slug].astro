@@ -10,12 +10,11 @@ const guidRegex =
 if (typeof slug !== 'string' || !guidRegex.test(slug)) {
   return Astro.redirect('/404');
 }
-
 ---
 
 <BaseLayout>
   <title>Form</title>
   <meta name="description" content="Form" />
 
-  <FormsPage formServiceConfig={{formId: slug}} client:load />
+  <FormsPage formServiceConfig={{ formId: slug }} client:load />
 </BaseLayout>
