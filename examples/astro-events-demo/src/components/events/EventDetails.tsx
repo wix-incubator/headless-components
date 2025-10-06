@@ -494,7 +494,7 @@ export function EventDetails({
                 eventListServiceConfig={{
                   events,
                   categories: [],
-                  pageSize: 3,
+                  pageSize: events.length,
                   currentPage: 0,
                   totalPages: 1,
                 }}
