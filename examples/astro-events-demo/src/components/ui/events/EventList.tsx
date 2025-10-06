@@ -96,9 +96,17 @@ export const EventListError = React.forwardRef<
 EventListError.displayName = 'EventListError';
 
 /**
- * Container for event list filters.
+ * Container for event list category filter.
  * Handles category filtering for events.
  *
  * @component
  */
-export const EventListFilters = EventListPrimitive.Filters;
+export const EventListCategoryFilter = EventListPrimitive.CategoryFilter;
+
+/**
+ * Container for event list status filter.
+ * Handles status filtering for events.
+ *
+ * @component
+ */
+export const EventListStatusFilter = EventListPrimitive.StatusFilter;

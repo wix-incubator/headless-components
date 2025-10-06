@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-cms",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -32,6 +32,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@types/node": "^20.9.0",
     "@vitest/ui": "^3.1.4",
+    "@wix/headless-components": "workspace:*",
     "jsdom": "^26.1.0",
     "prettier": "^3.4.2",
     "typescript": "^5.8.3",

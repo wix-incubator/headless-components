@@ -3,7 +3,6 @@ import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import React from 'react';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
 import * as CoreEventList from './core/EventList.js';
-import * as CoreEventListFilters from './core/EventListFilters.js';
 import * as Event from './Event.js';
 
 enum TestIds {
@@ -296,42 +295,111 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
 });
 
 /**
- * Props for the EventList Filters component.
+ * Props for the EventList CategoryFilter component.
  */
-export interface FiltersProps {
+export interface CategoryFilterProps {
   /** Child components */
   children: React.ReactNode;
   /** All categories label*/
   allCategoriesLabel: string;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
- * Container for the event list filters. Not rendered if there are no categories.
+ * Container for the event list category filters. Not rendered if there are no categories.
  *
  * @component
  * @example
  * ```tsx
- * <EventList.Filters allCategoriesLabel="All">
+ * <EventList.CategoryFilter allCategoriesLabel="All">
  *   <Filter.FilterOptions className="border-b border-gray-500 mb-6">
  *     <Filter.FilterOptionRepeater>
  *       <Filter.FilterOption.SingleFilter className="flex gap-2" />
  *     </Filter.FilterOptionRepeater>
  *   </Filter.FilterOptions>
- * </EventList.Filters>
+ * </EventList.CategoryFilter>
  * ```
  */
-export const Filters = (props: FiltersProps): React.ReactNode => {
+export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
+  const { children, className, allCategoriesLabel } = props;
+
   return (
-    <CoreEventListFilters.Root allCategoriesLabel={props.allCategoriesLabel}>
+    <CoreEventList.CategoryFilter allCategoriesLabel={allCategoriesLabel}>
       {({ filterOptions, value, onChange }) => (
         <FilterPrimitive.Root
+          className={className}
           filterOptions={filterOptions}
           value={value}
           onChange={onChange}
         >
-          {props.children}
+          {children}
         </FilterPrimitive.Root>
       )}
-    </CoreEventListFilters.Root>
+    </CoreEventList.CategoryFilter>
+  );
+};
+
+/**
+ * Props for the EventList StatusFilter component.
+ */
+export interface StatusFilterProps {
+  /** Child components */
+  children: React.ReactNode;
+  /** All events label */
+  allEventsLabel: string;
+  /** Upcoming events label */
+  upcomingEventsLabel: string;
+  /** Past events label */
+  pastEventsLabel: string;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Container for the event list status filters.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <EventList.StatusFilter
+ *   allEventsLabel="All Events"
+ *   upcomingEventsLabel="Upcoming"
+ *   pastEventsLabel="Past"
+ * >
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.SingleFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </EventList.StatusFilter>
+ * ```
+ */
+export const StatusFilter = (props: StatusFilterProps): React.ReactNode => {
+  const {
+    children,
+    className,
+    allEventsLabel,
+    upcomingEventsLabel,
+    pastEventsLabel,
+  } = props;
+
+  return (
+    <CoreEventList.StatusFilter
+      allEventsLabel={allEventsLabel}
+      upcomingEventsLabel={upcomingEventsLabel}
+      pastEventsLabel={pastEventsLabel}
+    >
+      {({ filterOptions, onChange, value }) => (
+        <FilterPrimitive.Root
+          className={className}
+          filterOptions={filterOptions}
+          value={value}
+          onChange={onChange}
+        >
+          {children}
+        </FilterPrimitive.Root>
+      )}
+    </CoreEventList.StatusFilter>
   );
 };

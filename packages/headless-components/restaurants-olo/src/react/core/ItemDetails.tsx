@@ -38,6 +38,11 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
       operationId: service.operation?.get()?._id ?? '',
     });
   }
+
+  if (config.item) {
+    service.selectedItem?.set(config.item);
+  }
+
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -46,7 +51,7 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
         config,
       )}
     >
-      {children({ item: selectedItem })}
+      {children({ item: itemDetailsServiceConfig?.item ?? selectedItem })}
     </WixServices>
   );
 };

@@ -147,11 +147,11 @@ function filterScheduleItems(
 
     if (tagFilters.length > 0) {
       const itemTags = item.tags || [];
-      const hasAllTags = tagFilters.every((filterTag) =>
+      const hasAnyTag = tagFilters.some((filterTag) =>
         itemTags.includes(filterTag),
       );
 
-      if (!hasAllTags) {
+      if (!hasAnyTag) {
         return false;
       }
     }
