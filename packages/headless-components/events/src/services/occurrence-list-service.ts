@@ -29,11 +29,11 @@ export interface OccurrenceListServiceAPI {
 }
 
 export interface OccurrenceListServiceConfig {
-  recurringCategoryId?: string;
-  occurrences?: Event[];
-  pageSize?: number;
-  currentPage?: number;
-  totalPages?: number;
+  recurringCategoryId: string | undefined;
+  occurrences: Event[];
+  pageSize: number;
+  currentPage: number;
+  totalPages: number;
 }
 
 export const OccurrenceListServiceDefinition = defineService<
@@ -47,16 +47,12 @@ export const OccurrenceListService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
 
-      const occurrences = signalsService.signal<Event[]>(
-        config.occurrences ?? [],
-      );
+      const occurrences = signalsService.signal<Event[]>(config.occurrences);
       const isLoadingMore = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
-      const pageSize = signalsService.signal<number>(config.pageSize ?? 0);
-      const currentPage = signalsService.signal<number>(
-        config.currentPage ?? 0,
-      );
-      const totalPages = signalsService.signal<number>(config.totalPages ?? 0);
+      const pageSize = signalsService.signal<number>(config.pageSize);
+      const currentPage = signalsService.signal<number>(config.currentPage);
+      const totalPages = signalsService.signal<number>(config.totalPages);
       const hasMoreOccurrences = signalsService.computed<boolean>(
         () => currentPage.get() + 1 < totalPages.get(),
       );
@@ -115,7 +111,13 @@ export async function loadOccurrenceListServiceConfig(
     };
   }
 
-  return {};
+  return {
+    recurringCategoryId,
+    occurrences: [],
+    pageSize: 0,
+    currentPage: 0,
+    totalPages: 0,
+  };
 }
 
 async function queryOccurrences(recurringCategoryId: string, offset = 0) {

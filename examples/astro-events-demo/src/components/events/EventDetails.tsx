@@ -17,6 +17,7 @@ import {
   EventRsvpButton,
   EventShortDescription,
   EventTitle,
+  EventOtherEvents,
   TicketsPicker,
   TicketsPickerTotals,
   TicketDefinitions,
@@ -84,13 +85,6 @@ export function EventDetails({
 }: EventDetailsProps) {
   const [isOccurrencesModalOpen, setIsOccurrencesModalOpen] = useState(false);
 
-  const currentEventId = eventServiceConfig.event._id;
-  const otherUpcomingEvents = eventListServiceConfig.events
-    .filter(
-      event => event._id !== currentEventId && event.status === 'UPCOMING'
-    )
-    .slice(0, 3);
-
   const openOccurrencesModal = () => {
     setIsOccurrencesModalOpen(true);
   };
@@ -106,6 +100,7 @@ export function EventDetails({
   return (
     <Event
       event={eventServiceConfig.event}
+      eventListServiceConfig={eventListServiceConfig}
       occurrenceListServiceConfig={occurrenceListServiceConfig}
       className="group/event"
     >
@@ -200,7 +195,7 @@ export function EventDetails({
                 <ScheduleItem />
               </ScheduleListItemRepeater>
               <div className="flex sm:justify-end">
-                <EventSlug asChild>
+                <EventSlug>
                   {({ slug }) => (
                     <Button
                       asChild
@@ -449,13 +444,12 @@ export function EventDetails({
                   </div>
                 )}
               </TicketsPickerTotals>
-              <CheckoutTrigger asChild size="lg" className="mt-3 w-full">
-                {({ isLoading, checkout }) => (
-                  <button onClick={checkout}>
-                    {isLoading ? 'Processing...' : 'Checkout'}
-                  </button>
-                )}
-              </CheckoutTrigger>
+              <CheckoutTrigger
+                size="lg"
+                className="mt-3 w-full"
+                label="Checkout"
+                loadingState="Processing..."
+              />
             </div>
           </TicketsPicker>
         </div>
@@ -489,28 +483,31 @@ export function EventDetails({
       </div>
 
       {/* Other Events Section */}
-      {otherUpcomingEvents.length ? (
-        <div className="bg-secondary">
-          <div className="max-w-6xl mx-auto px-5 py-6 sm:p-16">
-            <h2 className="text-xl sm:text-3xl font-heading text-secondary-foreground mb-4 sm:mb-8">
-              You might also like
-            </h2>
-            <EventList
-              eventListServiceConfig={{
-                events: otherUpcomingEvents,
-                categories: [],
-                pageSize: 3,
-                currentPage: 0,
-                totalPages: 1,
-              }}
-              eventDetailsPagePath={eventDetailsPagePath}
-            />
+      <EventOtherEvents>
+        {({ events }) => (
+          <div className="bg-secondary">
+            <div className="max-w-6xl mx-auto px-5 py-6 sm:p-16">
+              <h2 className="text-xl sm:text-3xl font-heading text-secondary-foreground mb-4 sm:mb-8">
+                You might also like
+              </h2>
+              <EventList
+                eventListServiceConfig={{
+                  events,
+                  categories: [],
+                  pageSize: events.length,
+                  currentPage: 0,
+                  totalPages: 1,
+                }}
+                eventDetailsPagePath={eventDetailsPagePath}
+                isFiltersVisible={false}
+              />
+            </div>
           </div>
-        </div>
-      ) : null}
+        )}
+      </EventOtherEvents>
 
-      {isOccurrencesModalOpen && (
-        <EventSlug asChild>
+      {isOccurrencesModalOpen && occurrenceListServiceConfig ? (
+        <EventSlug>
           {({ slug }) => (
             <OccurrencesModal
               currentOccurrenceSlug={slug}
@@ -520,7 +517,7 @@ export function EventDetails({
             />
           )}
         </EventSlug>
-      )}
+      ) : null}
     </Event>
   );
 }

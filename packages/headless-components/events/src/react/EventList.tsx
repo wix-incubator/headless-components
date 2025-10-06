@@ -182,6 +182,8 @@ export interface LoadMoreTriggerProps {
   className?: string;
   /** The label to display inside the button */
   label?: string;
+  /** The loading state to display inside the button */
+  loadingState?: React.ReactNode;
 }
 
 /**
@@ -191,7 +193,7 @@ export interface LoadMoreTriggerProps {
  * @example
  * ```tsx
  * // Default usage
- * <EventList.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Load More" />
+ * <EventList.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Load More" loadingState="Loading..." />
  *
  * // asChild with primitive
  * <EventList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -212,7 +214,14 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { asChild, children, className, label, ...otherProps } = props;
+  const {
+    asChild,
+    children,
+    className,
+    label,
+    loadingState = label,
+    ...otherProps
+  } = props;
 
   return (
     <CoreEventList.LoadMoreTrigger>
@@ -228,7 +237,7 @@ export const LoadMoreTrigger = React.forwardRef<
           onClick={loadMoreEvents}
           {...otherProps}
         >
-          <button>{label}</button>
+          <button>{isLoading ? loadingState : label}</button>
         </AsChildSlot>
       )}
     </CoreEventList.LoadMoreTrigger>

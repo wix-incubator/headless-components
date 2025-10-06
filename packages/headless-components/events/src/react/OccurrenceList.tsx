@@ -17,7 +17,7 @@ export interface RootProps {
   /** Child components */
   children: React.ReactNode;
   /** Configuration for the occurrence list service */
-  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
+  occurrenceListServiceConfig: OccurrenceListServiceConfig;
 }
 
 /**
@@ -174,6 +174,8 @@ export interface LoadMoreTriggerProps {
   className?: string;
   /** The label to display inside the button */
   label?: string;
+  /** The loading state to display inside the button */
+  loadingState?: React.ReactNode;
 }
 
 /**
@@ -183,7 +185,7 @@ export interface LoadMoreTriggerProps {
  * @example
  * ```tsx
  * // Default usage
- * <OccurrenceList.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Load More" />
+ * <OccurrenceList.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Load More" loadingState="Loading..." />
  *
  * // asChild with primitive
  * <OccurrenceList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -204,7 +206,14 @@ export const LoadMoreTrigger = React.forwardRef<
   HTMLElement,
   LoadMoreTriggerProps
 >((props, ref) => {
-  const { asChild, children, className, label, ...otherProps } = props;
+  const {
+    asChild,
+    children,
+    className,
+    label,
+    loadingState = label,
+    ...otherProps
+  } = props;
 
   return (
     <CoreOccurrenceList.LoadMoreTrigger>
@@ -220,7 +229,7 @@ export const LoadMoreTrigger = React.forwardRef<
           onClick={loadMoreOccurrences}
           {...otherProps}
         >
-          <button>{label}</button>
+          <button>{isLoading ? loadingState : label}</button>
         </AsChildSlot>
       )}
     </CoreOccurrenceList.LoadMoreTrigger>

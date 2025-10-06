@@ -20,7 +20,7 @@ import {
 
 interface OccurrencesModalProps {
   currentOccurrenceSlug: string;
-  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
+  occurrenceListServiceConfig: OccurrenceListServiceConfig;
   onDone: (slug: string) => void;
   onClose: () => void;
 }
@@ -53,7 +53,7 @@ export function OccurrencesModal({
           <div className="max-h-[50vh] overflow-y-auto pr-3">
             <Occurrences className="space-y-3">
               <OccurrenceRepeater>
-                <EventSlug asChild>
+                <EventSlug>
                   {({ slug }) => (
                     <button
                       data-selected={slug === selectedOccurenceSlug}
@@ -68,13 +68,10 @@ export function OccurrencesModal({
               </OccurrenceRepeater>
             </Occurrences>
             <OccurrenceListLoadMoreTrigger
-              asChild
               className="block mx-auto mt-5"
-            >
-              {({ isLoading }) => (
-                <button>{isLoading ? 'Loading...' : 'Load More'}</button>
-              )}
-            </OccurrenceListLoadMoreTrigger>
+              label="Load More"
+              loadingState="Loading..."
+            />
             <OccurrenceListError className="mt-4" />
           </div>
         </OccurrenceList>

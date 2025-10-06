@@ -50,7 +50,7 @@ export function ThankYou({
             <h1 className="text-xl sm:text-3xl font-heading text-foreground mb-1">
               Thank you!
             </h1>
-            <EventType asChild>
+            <EventType>
               {({ ticketed, rsvp }) => {
                 if (rsvp) {
                   return (
@@ -101,7 +101,7 @@ export function ThankYou({
                     <EventLocation className="text-sm" format="short" />
                   </div>
                 </div>
-                <EventType asChild>
+                <EventType>
                   {({ ticketed }) => {
                     if (ticketed) {
                       return (
@@ -149,7 +149,7 @@ export function ThankYou({
                 <EventSocialShare eventPageUrl={eventPageUrl} />
               </div>
             </div>
-            <EventType asChild>
+            <EventType>
               {({ ticketed }) => {
                 if (ticketed) {
                   return (

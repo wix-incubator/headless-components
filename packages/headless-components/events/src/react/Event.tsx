@@ -2,9 +2,11 @@ import { WixMediaImage } from '@wix/headless-media/react';
 import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import { type Event, type RichContent } from '../services/event-service.js';
+import { type EventListServiceConfig } from '../services/event-list-service.js';
 import { type OccurrenceListServiceConfig } from '../services/occurrence-list-service.js';
 import { hasDescription } from '../utils/event.js';
 import * as CoreEvent from './core/Event.js';
+import * as CoreEventList from './core/EventList.js';
 import * as CoreOccurrenceList from './core/OccurrenceList.js';
 
 enum TestIds {
@@ -30,6 +32,8 @@ enum TestIds {
 export interface RootProps {
   /** Event */
   event: Event;
+  /** Event list service configuration */
+  eventListServiceConfig?: EventListServiceConfig;
   /** Occurrence list service configuration */
   occurrenceListServiceConfig?: OccurrenceListServiceConfig;
   /** Whether to render as a child component */
@@ -67,6 +71,7 @@ export interface RootProps {
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const {
     event,
+    eventListServiceConfig,
     occurrenceListServiceConfig,
     asChild,
     children,
@@ -76,18 +81,38 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 
   return (
     <CoreEvent.Root event={event}>
-      <CoreOccurrenceList.Root
-        occurrenceListServiceConfig={occurrenceListServiceConfig}
+      <CoreEventList.Root
+        eventListServiceConfig={
+          eventListServiceConfig ?? {
+            events: [],
+            categories: [],
+            pageSize: 0,
+            currentPage: 0,
+            totalPages: 0,
+          }
+        }
       >
-        <RootContent
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          {...otherProps}
+        <CoreOccurrenceList.Root
+          occurrenceListServiceConfig={
+            occurrenceListServiceConfig ?? {
+              recurringCategoryId: undefined,
+              occurrences: [],
+              pageSize: 0,
+              currentPage: 0,
+              totalPages: 0,
+            }
+          }
         >
-          {children}
-        </RootContent>
-      </CoreOccurrenceList.Root>
+          <RootContent
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            {...otherProps}
+          >
+            {children}
+          </RootContent>
+        </CoreOccurrenceList.Root>
+      </CoreEventList.Root>
     </CoreEvent.Root>
   );
 });
@@ -147,10 +172,8 @@ const RootContent = React.forwardRef<HTMLElement, RootContentProps>(
  * Props for the Event Slug component.
  */
 export interface SlugProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{ slug: string }>;
+  /** Custom render function */
+  children: AsChildChildren<{ slug: string }>;
 }
 
 /**
@@ -170,14 +193,14 @@ export interface SlugProps {
  * ```
  */
 export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+  const { children, ...otherProps } = props;
 
   return (
     <CoreEvent.Slug>
       {({ slug }) => (
         <AsChildSlot
+          asChild
           ref={ref}
-          asChild={asChild}
           customElement={children}
           customElementProps={{ slug }}
           {...otherProps}
@@ -191,10 +214,8 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
  * Props for the Event Type component.
  */
 export interface TypeProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
-  children?: AsChildChildren<{
+  /** Custom render function */
+  children: AsChildChildren<{
     ticketed: boolean;
     rsvp: boolean;
     external: boolean;
@@ -218,14 +239,14 @@ export interface TypeProps {
  * ```
  */
 export const Type = React.forwardRef<HTMLElement, TypeProps>((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+  const { children, ...otherProps } = props;
 
   return (
     <CoreEvent.Type>
       {({ ticketed, rsvp, external }) => (
         <AsChildSlot
+          asChild
           ref={ref}
-          asChild={asChild}
           customElement={children}
           customElementProps={{ ticketed, rsvp, external }}
           {...otherProps}
@@ -961,3 +982,54 @@ export const AddToIcsCalendar = React.forwardRef<
     </CoreEvent.AddToIcsCalendar>
   );
 });
+
+/**
+ * Props for the Event OtherEvents component.
+ */
+export interface OtherEventsProps {
+  /** Number of other events to display, default: 3 */
+  count?: number;
+  /** Custom render function */
+  children: AsChildChildren<{ events: Event[] }>;
+}
+
+/**
+ * Provides other events.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // usage with react component
+ * <Event.OtherEvents count={5}>
+ *   {({ events }) => (
+ *     <div>
+ *       {events.map((event) => (
+ *         <Event.Root key={event._id} event={event}>
+ *           <Event.Image />
+ *           <Event.Title />
+ *         </Event.Root>
+ *       ))}
+ *     </div>
+ *   )}
+ * </Event.OtherEvents>
+ * ```
+ */
+export const OtherEvents = React.forwardRef<HTMLElement, OtherEventsProps>(
+  (props, ref) => {
+    const { count = 3, children, ...otherProps } = props;
+
+    return (
+      <CoreEvent.OtherEvents count={count}>
+        {({ events }) => (
+          <AsChildSlot
+            asChild
+            ref={ref}
+            customElement={children}
+            customElementProps={{ events }}
+            {...otherProps}
+          />
+        )}
+      </CoreEvent.OtherEvents>
+    );
+  },
+);

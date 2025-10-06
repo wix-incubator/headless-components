@@ -72,6 +72,13 @@ export const EventSlug = EventPrimitive.Slug;
  */
 export const EventType = EventPrimitive.Type;
 
+/**
+ * Provides other events.
+ *
+ * @component
+ */
+export const EventOtherEvents = EventPrimitive.OtherEvents;
+
 const eventTitleVariants = cva('text-foreground', {
   variants: {
     variant: {
