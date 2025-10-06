@@ -3,7 +3,6 @@ import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreScheduleItem from './core/ScheduleItem.js';
 import * as ScheduleItemTag from './ScheduleItemTag.js';
 import { type ScheduleItem } from '../services/schedule-item-service.js';
-import xss from 'xss';
 
 enum TestIds {
   scheduleItemRoot = 'schedule-item-root',
@@ -266,12 +265,8 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
  * Props for the ScheduleItem Description component.
  */
 export interface DescriptionProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Custom render function when using asChild */
+  /** Custom render function */
   children?: AsChildChildren<{ description: string }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 /**
@@ -280,43 +275,30 @@ export interface DescriptionProps {
  * @component
  * @example
  * ```tsx
- * // Default usage
- * <ScheduleItem.Description className="text-gray-800 mt-2" />
- *
- * // asChild with primitive
- * <ScheduleItem.Description asChild>
- *   <p className="text-gray-800 mt-2"/>
- * </ScheduleItem.Description>
- *
- * // asChild with react component
- * <ScheduleItem.Description asChild>
+ * // Usage with react component
+ * // If using RicosViewer, use fromRichTextHtml from @wix/ricos to convert the description to RichContent
+ * <ScheduleItem.Description>
  *   {React.forwardRef(({ description, ...props }, ref) => (
- *     <p ref={ref} className="text-gray-800 mt-2" {...props}>
- *       {description}
- *     </p>
+ *     <RicosViewer ref={ref} content={fromRichTextHtml(description)} />
  *   ))}
  * </ScheduleItem.Description>
  * ```
  */
 export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { children, ...otherProps } = props;
 
     return (
       <CoreScheduleItem.Description>
         {({ description }) => (
           <AsChildSlot
+            asChild
             ref={ref}
-            asChild={asChild}
-            className={className}
             data-testid={TestIds.scheduleItemDescription}
             customElement={children}
             customElementProps={{ description }}
-            content={description}
             {...otherProps}
-          >
-            <div dangerouslySetInnerHTML={{ __html: xss(description) }} />
-          </AsChildSlot>
+          />
         )}
       </CoreScheduleItem.Description>
     );

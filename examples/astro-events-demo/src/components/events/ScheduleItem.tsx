@@ -51,8 +51,8 @@ export function ScheduleItem({
         {descriptionVisible && (
           <div className="group-data-[has-description=false]/schedule-item:hidden mt-3">
             <button
+              className={`text-foreground text-base font-paragraph hover:underline flex gap-1 ${isDescriptionOpen ? 'mb-3' : ''}`}
               onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
-              className="text-foreground text-base font-paragraph hover:underline flex gap-1"
             >
               {isDescriptionOpen ? (
                 <>
@@ -78,7 +78,7 @@ export function ScheduleItem({
                 </>
               )}
             </button>
-            {isDescriptionOpen && <ScheduleItemDescription className="mt-3" />}
+            {isDescriptionOpen && <ScheduleItemDescription />}
           </div>
         )}
       </div>
