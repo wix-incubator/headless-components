@@ -18,6 +18,13 @@ import {
   EventListStatusFilter,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 
 interface EventListProps {
   eventListServiceConfig: EventListServiceConfig;
@@ -52,22 +59,24 @@ export function EventList({
             <FilterOptionRepeater>
               <FilterOptionSingle asChild>
                 {({ value, onChange, validValues, valueFormatter }) => (
-                  <div>
-                    <span>Event Status:</span>
-                    <select
-                      value={value}
-                      className="bg-background"
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        onChange(e.target.value)
-                      }
+                  <div className="flex gap-2 items-center">
+                    <span className="flex-shrink-0">Event status:</span>
+                    <Select
                       data-filter-type="single"
+                      value={value}
+                      onValueChange={onChange}
                     >
-                      {validValues?.map(value => (
-                        <option key={value} value={value}>
-                          {valueFormatter ? valueFormatter(value) : value}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {validValues?.map(value => (
+                          <SelectItem key={value} value={String(value)}>
+                            {valueFormatter ? valueFormatter(value) : value}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
               </FilterOptionSingle>

@@ -72,7 +72,11 @@ export function Schedule({
                   {({ validValues, value, valueFormatter, onChange }) => (
                     <div className="flex gap-2 items-center">
                       <span className="flex-shrink-0">Filter by:</span>
-                      <Select value={value} onValueChange={onChange}>
+                      <Select
+                        data-filter-type="single"
+                        value={value}
+                        onValueChange={onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
