@@ -49,10 +49,10 @@ export function ScheduleItem({
           </ScheduleItemTagRepeater>
         </ScheduleItemTags>
         {descriptionVisible && (
-          <div className="group-data-[has-description=false]/schedule-item:hidden mt-3">
+          <div className="group-data-[has-description=false]/schedule-item:hidden flex flex-col gap-3 mt-3">
             <button
               onClick={() => setIsDescriptionOpen(!isDescriptionOpen)}
-              className={`text-foreground text-base font-paragraph hover:underline flex gap-1 ${isDescriptionOpen ? 'mb-3' : ''}`}
+              className="text-foreground text-base font-paragraph hover:underline flex gap-1"
             >
               {isDescriptionOpen ? (
                 <>
