@@ -14,6 +14,7 @@ import {
   EventDetailsPage,
   eventDetailsPageLoader,
 } from '@/components/events/EventDetails';
+import { FormPage, formPageLoader } from '@/components/events/Form';
 import { SchedulePage, schedulePageLoader } from '@/components/events/Schedule';
 import { ThankYouPage, thankYouPageLoader } from '@/components/events/ThankYou';
 import {
@@ -51,6 +52,11 @@ const router = createBrowserRouter(
             />
           ),
           loader: eventDetailsPageLoader,
+        },
+        {
+          path: '/events/:slug/form',
+          element: <FormPage />,
+          loader: formPageLoader,
         },
         {
           path: '/events/:slug/schedule',

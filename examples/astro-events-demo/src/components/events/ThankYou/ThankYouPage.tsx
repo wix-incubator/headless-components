@@ -58,11 +58,7 @@ export function ThankYouPage({ eventDetailsPagePath }: ThankYouPageProps) {
           <div className="wix-verticals-container">
             <ThankYou
               eventServiceConfig={eventServiceConfig}
-              eventPageUrl={
-                typeof window !== 'undefined'
-                  ? `${window.location.origin}${eventDetailsPagePath.replace(':slug', slug)}`
-                  : ''
-              }
+              eventPageUrl={`${window.location.origin}${eventDetailsPagePath.replace(':slug', slug)}`}
             />
           </div>
         )}

@@ -7,7 +7,6 @@ import {
   type OccurrenceListServiceConfig,
 } from '@wix/events/services';
 import { useState } from 'react';
-
 import {
   Event,
   EventSlug,

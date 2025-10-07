@@ -131,9 +131,9 @@ export function ThankYou({
                     className="underline hover:no-underline"
                   >
                     {({ url }) => (
-                      <a onClick={() => window.open(url, '_blank')}>
+                      <button onClick={() => window.open(url, '_blank')}>
                         Google Calendar
-                      </a>
+                      </button>
                     )}
                   </EventAddToGoogleCalendar>
                   <EventAddToIcsCalendar
@@ -141,7 +141,9 @@ export function ThankYou({
                     className="underline hover:no-underline"
                   >
                     {({ url }) => (
-                      <a onClick={() => window.open(url, '_blank')}>iCal</a>
+                      <button onClick={() => window.open(url, '_blank')}>
+                        iCal
+                      </button>
                     )}
                   </EventAddToIcsCalendar>
                   <EventAddToIcsCalendar
@@ -149,7 +151,9 @@ export function ThankYou({
                     className="underline hover:no-underline"
                   >
                     {({ url }) => (
-                      <a onClick={() => window.open(url, '_blank')}>Outlook</a>
+                      <button onClick={() => window.open(url, '_blank')}>
+                        Outlook
+                      </button>
                     )}
                   </EventAddToIcsCalendar>
                 </div>
