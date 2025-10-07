@@ -11,11 +11,11 @@ import {
   EventDate,
   EventRsvpButton,
   EventListCategoryFilter,
+  EventListStatusFilter,
   FilterOptions,
   FilterOptionRepeater,
   FilterOptionSingle,
   ScrollableTabs,
-  EventListStatusFilter,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
 import {
