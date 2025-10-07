@@ -3,6 +3,7 @@ import {
   RouterProvider,
   Navigate,
   Outlet,
+  Link,
 } from 'react-router-dom';
 import { ScrollToTop } from '@/lib/scroll-to-top';
 import {
@@ -15,6 +16,10 @@ import {
 } from '@/components/events/EventDetails';
 import { SchedulePage, schedulePageLoader } from '@/components/events/Schedule';
 import { ThankYouPage, thankYouPageLoader } from '@/components/events/ThankYou';
+import {
+  NavigationProvider,
+  type NavigationComponent,
+} from '@/components/NavigationContext';
 
 function Layout() {
   return (
@@ -65,10 +70,26 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename: import.meta.env.BASE_NAME,
+    basename: '/react-router',
   }
 );
 
 export default function AppRouter() {
-  return <RouterProvider router={router} />;
+  return (
+    <NavigationProvider navigationComponent={NavigationComponent}>
+      <RouterProvider router={router} />
+    </NavigationProvider>
+  );
 }
+
+const NavigationComponent: NavigationComponent = ({
+  route,
+  children,
+  ...props
+}) => {
+  return (
+    <Link to={route} {...props}>
+      {children}
+    </Link>
+  );
+};

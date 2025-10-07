@@ -1,4 +1,4 @@
-export const Head = () => {
+export function Head() {
   return (
     <>
       <meta charSet="UTF-8" />
@@ -7,4 +7,4 @@ export const Head = () => {
       <link rel="preconnect" href="https://static.parastorage.com" />
     </>
   );
-};
+}
