@@ -1045,12 +1045,12 @@ function AddressForm() {
 
   return (
     <div className="space-y-6">
-      <Address.Label
-        label="Shipping Address"
-        className="text-lg font-heading text-foreground"
-      />
-
       <Address.Root address={{ address: {}, countryList: countries }}>
+        <Address.Label
+          label="Shipping Address"
+          className="text-lg font-heading text-foreground"
+        />
+
         <Address.Form
           onAddressChange={setAddress}
           validation={{
@@ -1133,14 +1133,14 @@ function EditAddressForm({ existingAddress }) {
 
   return (
     <div className="space-y-6">
-      <Address.Label
-        label="Edit Address"
-        className="text-lg font-heading text-foreground"
-      />
-
       <Address.Root
         address={{ address: existingAddress, countryList: countries }}
       >
+        <Address.Label
+          label="Edit Address"
+          className="text-lg font-heading text-foreground"
+        />
+
         <Address.Form
           onAddressChange={setAddress}
           validation={{
@@ -1205,88 +1205,17 @@ function CheckoutAddresses() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Shipping Address */}
       <div className="space-y-4">
-        <Address.Label
-          label="Shipping Address"
-          required
-          className="text-lg font-heading text-foreground"
-        />
-
-        <Address.Form
-          onAddressChange={setShippingAddress}
-          validation={{
-            required: ['line1', 'city', 'postalCode', 'country'],
-          }}
+        <Address.Root
+          address={{ address: {}, countryList: getDefaultCountryList() }}
         >
-          <div className="space-y-4">
-            <Address.FormLine1Input
-              placeholder="Street address"
-              className="w-full px-3 py-2 border border-foreground rounded-lg"
-              required
-            />
-            <Address.FormLine2Input
-              placeholder="Apartment, suite, etc. (optional)"
-              className="w-full px-3 py-2 border border-foreground rounded-lg"
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <Address.FormCityInput
-                placeholder="City"
-                className="w-full px-3 py-2 border border-foreground rounded-lg"
-                required
-              />
-              <Address.FormStateInput
-                placeholder="State"
-                className="w-full px-3 py-2 border border-foreground rounded-lg"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Address.FormPostalCodeInput
-                placeholder="ZIP code"
-                className="w-full px-3 py-2 border border-foreground rounded-lg"
-                required
-              />
-              <Address.FormCountrySelect
-                placeholder="Country"
-                className="w-full px-3 py-2 border border-foreground rounded-lg"
-                required
-              />
-            </div>
-          </div>
-        </Address.Form>
-      </div>
-
-      {/* Billing Address */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
           <Address.Label
-            label="Billing Address"
+            label="Shipping Address"
+            required
             className="text-lg font-heading text-foreground"
           />
-          <label className="flex items-center gap-2 text-sm font-paragraph">
-            <input
-              type="checkbox"
-              checked={sameAsShipping}
-              onChange={(e) => setSameAsShipping(e.target.checked)}
-              className="rounded border-foreground"
-            />
-            Same as shipping
-          </label>
-        </div>
 
-        {sameAsShipping ? (
-          <Address.Root
-            address={{
-              address: shippingAddress,
-              format: 'multi-line',
-              locale: 'en-US',
-            }}
-          >
-            <div className="p-4 bg-background border border-foreground rounded-lg">
-              <Address.Formatted className="text-secondary-foreground whitespace-pre-line font-paragraph" />
-            </div>
-          </Address.Root>
-        ) : (
           <Address.Form
-            onAddressChange={setBillingAddress}
+            onAddressChange={setShippingAddress}
             validation={{
               required: ['line1', 'city', 'postalCode', 'country'],
             }}
@@ -1326,6 +1255,85 @@ function CheckoutAddresses() {
               </div>
             </div>
           </Address.Form>
+        </Address.Root>
+      </div>
+
+      {/* Billing Address */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Address.Label
+            label="Billing Address"
+            className="text-lg font-heading text-foreground"
+          />
+          <label className="flex items-center gap-2 text-sm font-paragraph">
+            <input
+              type="checkbox"
+              checked={sameAsShipping}
+              onChange={(e) => setSameAsShipping(e.target.checked)}
+              className="rounded border-foreground"
+            />
+            Same as shipping
+          </label>
+        </div>
+
+        {sameAsShipping ? (
+          <Address.Root
+            address={{
+              address: shippingAddress,
+              format: 'multi-line',
+              locale: 'en-US',
+            }}
+          >
+            <div className="p-4 bg-background border border-foreground rounded-lg">
+              <Address.Formatted className="text-secondary-foreground whitespace-pre-line font-paragraph" />
+            </div>
+          </Address.Root>
+        ) : (
+          <Address.Root
+            address={{ address: {}, countryList: getDefaultCountryList() }}
+          >
+            <Address.Form
+              onAddressChange={setBillingAddress}
+              validation={{
+                required: ['line1', 'city', 'postalCode', 'country'],
+              }}
+            >
+              <div className="space-y-4">
+                <Address.FormLine1Input
+                  placeholder="Street address"
+                  className="w-full px-3 py-2 border border-foreground rounded-lg"
+                  required
+                />
+                <Address.FormLine2Input
+                  placeholder="Apartment, suite, etc. (optional)"
+                  className="w-full px-3 py-2 border border-foreground rounded-lg"
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <Address.FormCityInput
+                    placeholder="City"
+                    className="w-full px-3 py-2 border border-foreground rounded-lg"
+                    required
+                  />
+                  <Address.FormStateInput
+                    placeholder="State"
+                    className="w-full px-3 py-2 border border-foreground rounded-lg"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Address.FormPostalCodeInput
+                    placeholder="ZIP code"
+                    className="w-full px-3 py-2 border border-foreground rounded-lg"
+                    required
+                  />
+                  <Address.FormCountrySelect
+                    placeholder="Country"
+                    className="w-full px-3 py-2 border border-foreground rounded-lg"
+                    required
+                  />
+                </div>
+              </div>
+            </Address.Form>
+          </Address.Root>
         )}
       </div>
     </div>
@@ -1366,84 +1374,90 @@ function InternationalAddress() {
   const selectedCountry = countries.find((c) => c.code === address.country);
 
   return (
-    <Address.Form onAddressChange={setAddress} countryList={countries}>
-      <div className="space-y-4">
-        <Address.FormCountrySelect
-          placeholder="Select country first"
-          className="w-full px-3 py-2 border border-foreground rounded-lg"
-          required
-        />
+    <Address.Root address={{ address: {}, countryList: countries }}>
+      <Address.Form onAddressChange={setAddress} countryList={countries}>
+        <div className="space-y-4">
+          <Address.FormCountrySelect
+            placeholder="Select country first"
+            className="w-full px-3 py-2 border border-foreground rounded-lg"
+            required
+          />
 
-        {address.country && (
-          <>
-            <Address.FormLine1Input
-              placeholder={
-                address.country === 'GB'
-                  ? 'House number and street name'
-                  : 'Street address'
-              }
-              className="w-full px-3 py-2 border border-foreground rounded-lg"
-              required
-            />
-
-            <Address.FormLine2Input
-              placeholder={
-                address.country === 'GB'
-                  ? 'Flat, suite, unit, building (optional)'
-                  : 'Apartment, suite, etc. (optional)'
-              }
-              className="w-full px-3 py-2 border border-foreground rounded-lg"
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Address.FormCityInput
-                placeholder={address.country === 'GB' ? 'Town or City' : 'City'}
+          {address.country && (
+            <>
+              <Address.FormLine1Input
+                placeholder={
+                  address.country === 'GB'
+                    ? 'House number and street name'
+                    : 'Street address'
+                }
                 className="w-full px-3 py-2 border border-foreground rounded-lg"
                 required
               />
 
-              {selectedCountry?.states ? (
-                <Address.FormStateInput
-                  type="select"
-                  placeholder={address.country === 'CA' ? 'Province' : 'State'}
-                  className="w-full px-3 py-2 border border-foreground rounded-lg"
-                />
-              ) : (
-                <Address.FormStateInput
+              <Address.FormLine2Input
+                placeholder={
+                  address.country === 'GB'
+                    ? 'Flat, suite, unit, building (optional)'
+                    : 'Apartment, suite, etc. (optional)'
+                }
+                className="w-full px-3 py-2 border border-foreground rounded-lg"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Address.FormCityInput
                   placeholder={
-                    address.country === 'GB'
-                      ? 'County (optional)'
-                      : 'State/Province'
+                    address.country === 'GB' ? 'Town or City' : 'City'
                   }
                   className="w-full px-3 py-2 border border-foreground rounded-lg"
+                  required
                 />
-              )}
-            </div>
 
-            <Address.FormPostalCodeInput
-              placeholder={
-                address.country === 'US'
-                  ? 'ZIP code'
-                  : address.country === 'CA'
-                    ? 'Postal code'
-                    : address.country === 'GB'
-                      ? 'Postcode'
-                      : 'Postal code'
-              }
-              pattern={
-                address.country === 'US'
-                  ? '^\\d{5}(-\\d{4})?$'
-                  : address.country === 'CA'
-                    ? '^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$'
-                    : undefined
-              }
-              className="w-full px-3 py-2 border border-foreground rounded-lg"
-              required
-            />
-          </>
-        )}
-      </div>
-    </Address.Form>
+                {selectedCountry?.states ? (
+                  <Address.FormStateInput
+                    type="select"
+                    placeholder={
+                      address.country === 'CA' ? 'Province' : 'State'
+                    }
+                    className="w-full px-3 py-2 border border-foreground rounded-lg"
+                  />
+                ) : (
+                  <Address.FormStateInput
+                    placeholder={
+                      address.country === 'GB'
+                        ? 'County (optional)'
+                        : 'State/Province'
+                    }
+                    className="w-full px-3 py-2 border border-foreground rounded-lg"
+                  />
+                )}
+              </div>
+
+              <Address.FormPostalCodeInput
+                placeholder={
+                  address.country === 'US'
+                    ? 'ZIP code'
+                    : address.country === 'CA'
+                      ? 'Postal code'
+                      : address.country === 'GB'
+                        ? 'Postcode'
+                        : 'Postal code'
+                }
+                pattern={
+                  address.country === 'US'
+                    ? '^\\d{5}(-\\d{4})?$'
+                    : address.country === 'CA'
+                      ? '^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$'
+                      : undefined
+                }
+                className="w-full px-3 py-2 border border-foreground rounded-lg"
+                required
+              />
+            </>
+          )}
+        </div>
+      </Address.Form>
+    </Address.Root>
   );
 }
 ```
