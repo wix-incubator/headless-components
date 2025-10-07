@@ -204,7 +204,7 @@ function AddressFormExample() {
   console.log('Form is valid:', isFormValid);
 
   return (
-    <Address.Root address={{address}}>
+    <Address.Root address={{ address }}>
       <div className="space-y-6">
         <Address.Label
           label="Shipping Address"
@@ -213,7 +213,6 @@ function AddressFormExample() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Address.Form
-            address={address}
             onAddressChange={(newAddress) => {
               console.log('Address changed:', newAddress);
               setAddress(newAddress);

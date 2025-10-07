@@ -790,7 +790,6 @@ Label.displayName = 'Address.Label';
 
 // Address.Form Component Props
 interface AddressFormProps {
-  address: Address;
   onAddressChange: (address: Address) => void;
   children: React.ReactNode;
   validation?: {
@@ -803,20 +802,50 @@ interface AddressFormProps {
 // Address.Form Component
 export const Form = React.forwardRef<HTMLElement, AddressFormProps>(
   (props, ref) => {
-    const { address, onAddressChange, children, validation, countryList } =
-      props;
+    const { onAddressChange, children, validation, countryList } = props;
 
     // Try to get country list from context if not provided in props
     const { addressData } = useAddressContext();
     const effectiveCountryList = countryList || addressData.countryList;
 
+    // Initialize address state from context if available, otherwise use empty state
+    const [address, setAddress] = React.useState<Address>(() => {
+      if (addressData?.address) {
+        return {
+          line1: addressData.address.line1 || '',
+          line2: addressData.address.line2 || '',
+          city: addressData.address.city || '',
+          state: addressData.address.state || '',
+          postalCode: addressData.address.postalCode || '',
+          country: addressData.address.country || '',
+          countryName: addressData.address.countryName,
+        };
+      }
+      return {
+        line1: '',
+        city: '',
+        postalCode: '',
+        country: '',
+        line2: '',
+        state: '',
+      };
+    });
+
     const errors = React.useMemo(() => {
       return validateAddress(address, validation);
     }, [address, validation]);
 
+    const handleAddressChange = React.useCallback(
+      (newAddress: Address) => {
+        setAddress(newAddress);
+        onAddressChange(newAddress);
+      },
+      [onAddressChange],
+    );
+
     const contextValue: AddressFormContextValue = {
       address,
-      onAddressChange,
+      onAddressChange: handleAddressChange,
       validation,
       countryList: effectiveCountryList,
       errors,

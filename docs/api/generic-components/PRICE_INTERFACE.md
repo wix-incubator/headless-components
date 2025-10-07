@@ -198,9 +198,9 @@ interface PriceCurrencyProps {
 // Custom rendering with forwardRef
 <Price.Currency asChild>
   {React.forwardRef(({currency, ...props}, ref) => (
-    <abbr ref={ref} {...props} title={getCurrencyName(currency)} className="text-sm text-content-muted">
+    <span ref={ref} {...props} title={getCurrencyName(currency)} className="text-sm text-content-muted">
       {currency}
-    </abbr>
+    </span>
   ))}
 </Price.Currency>
 ```

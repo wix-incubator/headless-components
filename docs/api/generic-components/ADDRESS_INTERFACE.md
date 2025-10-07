@@ -92,20 +92,6 @@ const addressData = {
 </Address.Root>;
 ```
 
-The default country list includes:
-
-- **United States** - All 50 states + DC
-- **Canada** - All provinces and territories
-- **United Kingdom** - England, Scotland, Wales, Northern Ireland
-- **Australia** - All states and territories
-- **Germany** - All federal states
-- **France, Italy, Spain, Netherlands, Belgium, Switzerland, Austria**
-- **Nordic countries** - Sweden, Norway, Denmark, Finland
-- **Japan, South Korea, China, India**
-- **Brazil, Mexico, Argentina, South Africa**
-
-Countries without states/provinces are included as simple options for the country selector.
-
 ---
 
 ## Components
@@ -456,14 +442,14 @@ interface AddressCountryCodeProps {
 // Custom rendering with forwardRef
 <Address.CountryCode asChild>
   {React.forwardRef(({ countryCode, ...props }, ref) => (
-    <abbr
+    <span
       ref={ref}
       {...props}
       title={getCountryName(countryCode)}
       className="text-secondary-foreground text-sm font-mono"
     >
       {countryCode}
-    </abbr>
+    </span>
   ))}
 </Address.CountryCode>
 ```
@@ -508,9 +494,9 @@ interface AddressFormattedProps {
 // Custom rendering with forwardRef
 <Address.Formatted asChild>
   {React.forwardRef(({ formattedAddress, ...props }, ref) => (
-    <address ref={ref} {...props} className="not-italic text-foreground">
+    <span ref={ref} {...props} className="not-italic text-foreground">
       {formattedAddress}
-    </address>
+    </span>
   ))}
 </Address.Formatted>
 ```
@@ -521,18 +507,17 @@ interface AddressFormattedProps {
 
 Container for address input form. Provides form context for address inputs.
 
-The Form component can get country data from two sources:
+The Form component can get address data and country data from two sources:
 
-1. **Props** - `countryList` prop (takes precedence)
-2. **Context** - `countryList` from parent `Address.Root` component
+1. **Initial Address Data** - Gets initial values from parent `Address.Root` component context
+2. **Country Data** - `countryList` prop (takes precedence) or from parent `Address.Root` component
 
-This allows you to either pass country data directly to the form or set it at the Address.Root level for use by all child components.
+This allows you to either pass country data directly to the form or set it at the Address.Root level for use by all child components. The form will automatically initialize with any address data provided by the Address.Root context, making it easy to create forms for editing existing addresses.
 
 **Props**
 
 ```tsx
 interface AddressFormProps {
-  address: Address;
   onAddressChange: (address: Address) => void;
   children: React.ReactNode;
   validation?: {
@@ -561,32 +546,28 @@ interface StateOption {
 **Example**
 
 ```tsx
-<Address.Form
-  address={addressData}
-  onAddressChange={setAddressData}
-  validation={{
-    required: ['line1', 'city', 'postalCode', 'country'],
-    customValidation: (address) => {
-      const errors: Record<string, string> = {};
+// Creating a new address form (starts empty)
+<Address.Root address={{ address: {}, countryList: countries }}>
+  <Address.Form onAddressChange={setAddressData}>
+    <Address.FormLine1Input />
+    <Address.FormCityInput />
+    <Address.FormPostalCodeInput />
+    <Address.FormCountrySelect />
+  </Address.Form>
+</Address.Root>
 
-      // Example: Validate US postal codes
-      if (address.country === 'US' && address.postalCode) {
-        const usZipPattern = /^\d{5}(-\d{4})?$/;
-        if (!usZipPattern.test(address.postalCode)) {
-          errors.postalCode =
-            'US ZIP code must be in format 12345 or 12345-6789';
-        }
-      }
-
-      return errors;
-    },
-  }}
->
-  <Address.FormLine1Input />
-  <Address.FormCityInput />
-  <Address.FormPostalCodeInput />
-  <Address.FormCountrySelect />
-</Address.Form>
+// Editing an existing address (pre-filled with data)
+<Address.Root address={{
+  address: existingAddress,
+  countryList: countries
+}}>
+  <Address.Form onAddressChange={setAddressData}>
+    <Address.FormLine1Input />
+    <Address.FormCityInput />
+    <Address.FormPostalCodeInput />
+    <Address.FormCountrySelect />
+  </Address.Form>
+</Address.Root>
 ```
 
 ---
@@ -1069,74 +1050,144 @@ function AddressForm() {
         className="text-lg font-heading text-foreground"
       />
 
-      <Address.Form
-        address={address}
-        onAddressChange={setAddress}
-        validation={{
-          required: ['line1', 'city', 'postalCode', 'country'],
-          customValidation: (address) => {
-            const errors: Record<string, string> = {};
+      <Address.Root address={{ address: {}, countryList: countries }}>
+        <Address.Form
+          onAddressChange={setAddress}
+          validation={{
+            required: ['line1', 'city', 'postalCode', 'country'],
+            customValidation: (address) => {
+              const errors: Record<string, string> = {};
 
-            // Custom validation for postal code based on country
-            if (address.country === 'US' && address.postalCode) {
-              const usZipPattern = /^\d{5}(-\d{4})?$/;
-              if (!usZipPattern.test(address.postalCode)) {
-                errors.postalCode =
-                  'US ZIP code must be in format 12345 or 12345-6789';
+              // Custom validation for postal code based on country
+              if (address.country === 'US' && address.postalCode) {
+                const usZipPattern = /^\d{5}(-\d{4})?$/;
+                if (!usZipPattern.test(address.postalCode)) {
+                  errors.postalCode =
+                    'US ZIP code must be in format 12345 or 12345-6789';
+                }
               }
-            }
 
-            // Custom validation for line1 length
-            if (address.line1 && address.line1.length < 5) {
-              errors.line1 =
-                'Street address must be at least 5 characters long';
-            }
+              // Custom validation for line1 length
+              if (address.line1 && address.line1.length < 5) {
+                errors.line1 =
+                  'Street address must be at least 5 characters long';
+              }
 
-            return errors;
-          },
-        }}
-        countryList={countries}
+              return errors;
+            },
+          }}
+        >
+          <div className="grid grid-cols-1 gap-4">
+            <Address.FormLine1Input
+              placeholder="Street address"
+              className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+              required
+            />
+
+            <Address.FormLine2Input
+              placeholder="Apartment, suite, unit, etc. (optional)"
+              className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Address.FormCityInput
+                placeholder="City"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+                required
+              />
+
+              <Address.FormStateInput
+                placeholder="State"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Address.FormPostalCodeInput
+                placeholder="ZIP / Postal code"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+                required
+              />
+
+              <Address.FormCountrySelect
+                placeholder="Select country"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+                required
+              />
+            </div>
+          </div>
+        </Address.Form>
+      </Address.Root>
+    </div>
+  );
+}
+```
+
+### Edit Existing Address
+
+```tsx
+function EditAddressForm({ existingAddress }) {
+  const [address, setAddress] = useState(existingAddress);
+
+  const countries = getDefaultCountryList();
+
+  return (
+    <div className="space-y-6">
+      <Address.Label
+        label="Edit Address"
+        className="text-lg font-heading text-foreground"
+      />
+
+      <Address.Root
+        address={{ address: existingAddress, countryList: countries }}
       >
-        <div className="grid grid-cols-1 gap-4">
-          <Address.FormLine1Input
-            placeholder="Street address"
-            className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
-            required
-          />
-
-          <Address.FormLine2Input
-            placeholder="Apartment, suite, unit, etc. (optional)"
-            className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Address.FormCityInput
-              placeholder="City"
+        <Address.Form
+          onAddressChange={setAddress}
+          validation={{
+            required: ['line1', 'city', 'postalCode', 'country'],
+          }}
+        >
+          <div className="grid grid-cols-1 gap-4">
+            <Address.FormLine1Input
+              placeholder="Street address"
               className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
               required
             />
 
-            <Address.FormStateInput
-              placeholder="State"
+            <Address.FormLine2Input
+              placeholder="Apartment, suite, unit, etc. (optional)"
               className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
             />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Address.FormCityInput
+                placeholder="City"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+                required
+              />
+
+              <Address.FormStateInput
+                placeholder="State"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Address.FormPostalCodeInput
+                placeholder="ZIP / Postal code"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+                required
+              />
+
+              <Address.FormCountrySelect
+                placeholder="Select country"
+                className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
+                required
+              />
+            </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Address.FormPostalCodeInput
-              placeholder="ZIP / Postal code"
-              className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
-              required
-            />
-
-            <Address.FormCountrySelect
-              placeholder="Select country"
-              className="w-full px-3 py-2 border border-foreground rounded-lg focus:ring-2 focus:ring-primary"
-              required
-            />
-          </div>
-        </div>
-      </Address.Form>
+        </Address.Form>
+      </Address.Root>
     </div>
   );
 }
@@ -1161,7 +1212,6 @@ function CheckoutAddresses() {
         />
 
         <Address.Form
-          address={shippingAddress}
           onAddressChange={setShippingAddress}
           validation={{
             required: ['line1', 'city', 'postalCode', 'country'],
@@ -1236,7 +1286,6 @@ function CheckoutAddresses() {
           </Address.Root>
         ) : (
           <Address.Form
-            address={billingAddress}
             onAddressChange={setBillingAddress}
             validation={{
               required: ['line1', 'city', 'postalCode', 'country'],
@@ -1317,11 +1366,7 @@ function InternationalAddress() {
   const selectedCountry = countries.find((c) => c.code === address.country);
 
   return (
-    <Address.Form
-      address={address}
-      onAddressChange={setAddress}
-      countryList={countries}
-    >
+    <Address.Form onAddressChange={setAddress} countryList={countries}>
       <div className="space-y-4">
         <Address.FormCountrySelect
           placeholder="Select country first"
