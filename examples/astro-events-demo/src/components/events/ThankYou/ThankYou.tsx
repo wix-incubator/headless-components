@@ -130,31 +130,19 @@ export function ThankYou({
                     asChild
                     className="underline hover:no-underline"
                   >
-                    {({ url }) => (
-                      <button onClick={() => window.open(url, '_blank')}>
-                        Google Calendar
-                      </button>
-                    )}
+                    <a>Google Calendar</a>
                   </EventAddToGoogleCalendar>
                   <EventAddToIcsCalendar
                     asChild
                     className="underline hover:no-underline"
                   >
-                    {({ url }) => (
-                      <button onClick={() => window.open(url, '_blank')}>
-                        iCal
-                      </button>
-                    )}
+                    <a>iCal</a>
                   </EventAddToIcsCalendar>
                   <EventAddToIcsCalendar
                     asChild
                     className="underline hover:no-underline"
                   >
-                    {({ url }) => (
-                      <button onClick={() => window.open(url, '_blank')}>
-                        Outlook
-                      </button>
-                    )}
+                    <a>Outlook</a>
                   </EventAddToIcsCalendar>
                 </div>
               </div>
