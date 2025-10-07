@@ -11,11 +11,11 @@ import {
   EventDate,
   EventRsvpButton,
   EventListCategoryFilter,
+  EventListStatusFilter,
   FilterOptions,
   FilterOptionRepeater,
   FilterOptionSingle,
   ScrollableTabs,
-  EventListStatusFilter,
 } from '@/components/ui/events';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -25,6 +25,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { useNavigation } from '@/components/NavigationContext';
 import { EventListSkeleton } from './EventListSkeleton';
 
 interface EventListProps {
@@ -38,6 +39,8 @@ export function EventList({
   eventDetailsPagePath,
   isFiltersVisible = true,
 }: EventListProps) {
+  const Navigation = useNavigation();
+
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
       {isFiltersVisible && (
@@ -118,9 +121,11 @@ export function EventList({
                   </div>
                   <EventRsvpButton asChild size="lg" className="mt-auto">
                     {({ slug }) => (
-                      <a href={eventDetailsPagePath.replace(':slug', slug)}>
+                      <Navigation
+                        route={eventDetailsPagePath.replace(':slug', slug)}
+                      >
                         RSVP
-                      </a>
+                      </Navigation>
                     )}
                   </EventRsvpButton>
                 </div>

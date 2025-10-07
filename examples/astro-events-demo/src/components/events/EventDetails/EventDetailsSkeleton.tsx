@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const EventDetailsSkeleton = () => {
+export function EventDetailsSkeleton() {
   return (
     <div>
       {/* Mobile Image Section */}
@@ -23,4 +23,4 @@ export const EventDetailsSkeleton = () => {
       </div>
     </div>
   );
-};
+}

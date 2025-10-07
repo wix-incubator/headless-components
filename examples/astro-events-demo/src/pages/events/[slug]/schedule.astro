@@ -3,8 +3,8 @@ import {
   loadEventServiceConfig,
   loadScheduleListServiceConfig,
 } from '@wix/events/services';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import SchedulePage from '../../../react-pages/schedule';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Schedule } from '@/components/events/Schedule';
 
 const { slug } = Astro.params;
 
@@ -24,7 +24,7 @@ const scheduleListServiceConfig = await loadScheduleListServiceConfig(
   <title>Schedule</title>
   <meta name="description" content="Schedule" />
 
-  <SchedulePage
+  <Schedule
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}

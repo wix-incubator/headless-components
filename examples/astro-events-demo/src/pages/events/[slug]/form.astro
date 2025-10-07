@@ -1,7 +1,7 @@
 ---
 import { loadEventServiceConfig } from '@wix/events/services';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import FormPage from '../../../react-pages/form';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Form } from '@/components/events/Form';
 
 const { slug } = Astro.params;
 
@@ -17,7 +17,7 @@ if (eventServiceConfigResult.type === 'notFound') {
   <title>RSVP Form</title>
   <meta name="description" content="RSVP Form" />
 
-  <FormPage
+  <Form
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}

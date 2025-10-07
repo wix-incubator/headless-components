@@ -1,4 +1,8 @@
 import {
+  type EventServiceConfig,
+  type OrderServiceConfig,
+} from '@wix/events/services';
+import {
   Event,
   EventType,
   EventImage,
@@ -25,11 +29,7 @@ import {
   InvoiceItemQuantity,
   InvoiceItemTotal,
 } from '@/components/ui/events';
-import {
-  type EventServiceConfig,
-  type OrderServiceConfig,
-} from '@wix/events/services';
-import { EventSocialShare } from './EventSocialShare';
+import { EventSocialShare } from '../EventSocialShare';
 
 interface ThankYouProps {
   eventServiceConfig: EventServiceConfig;
