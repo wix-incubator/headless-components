@@ -30,9 +30,10 @@ A comprehensive generic address display and input component system built with co
 
 The Address component follows a compound component pattern where each part can be composed together to create flexible address displays and input forms for various contexts including shipping, billing, contact information, and more.
 
+## Components
+
 ---
 
-## Components
 
 ### Address.Root
 
