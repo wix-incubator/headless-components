@@ -40,7 +40,7 @@ export const OrderNumber = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-foreground text-base',
+        'block font-paragraph text-foreground text-sm sm:text-base',
         className
       )}
     />
@@ -86,7 +86,7 @@ export const OrderCreatedDate = React.forwardRef<
       {...props}
       ref={ref}
       className={cn(
-        'block font-paragraph text-foreground text-base',
+        'block font-paragraph text-foreground text-sm sm:text-base',
         className
       )}
     />

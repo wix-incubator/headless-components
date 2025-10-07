@@ -47,7 +47,7 @@ export function ThankYou({
       <Event event={eventServiceConfig.event}>
         <Order orderServiceConfig={orderServiceConfig}>
           <div className="mb-10">
-            <h1 className="text-xl sm:text-3xl font-heading text-foreground mb-1">
+            <h1 className="text-3xl font-heading text-foreground mb-1">
               Thank you!
             </h1>
             <EventType>
@@ -75,9 +75,9 @@ export function ThankYou({
             </EventType>
           </div>
           <div className="border border-foreground/10">
-            <div className="flex gap-6 p-6 border-b border-foreground/10">
+            <div className="flex flex-col sm:flex-row gap-6 p-4 sm:p-6 border-b border-foreground/10">
               <EventImage className="w-40 h-24" />
-              <div className="flex flex-row justify-between w-full">
+              <div className="flex flex-col gap-4 sm:flex-row justify-between w-full">
                 <div>
                   <EventTitle variant="md" className="mb-4" />
                   <div className="flex gap-1 items-center mb-1">
@@ -122,29 +122,31 @@ export function ThankYou({
                 </EventType>
               </div>
             </div>
-            <div className="flex justify-between p-6">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row justify-between p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <span className="font-paragraph text-foreground">Add to</span>
-                <EventAddToGoogleCalendar
-                  asChild
-                  className="underline hover:no-underline"
-                >
-                  <a>Google Calendar</a>
-                </EventAddToGoogleCalendar>
-                <EventAddToIcsCalendar
-                  asChild
-                  className="underline hover:no-underline"
-                >
-                  <a>iCal</a>
-                </EventAddToIcsCalendar>
-                <EventAddToIcsCalendar
-                  asChild
-                  className="underline hover:no-underline"
-                >
-                  <a>Outlook</a>
-                </EventAddToIcsCalendar>
+                <div className="flex gap-3">
+                  <EventAddToGoogleCalendar
+                    asChild
+                    className="underline hover:no-underline"
+                  >
+                    <a>Google Calendar</a>
+                  </EventAddToGoogleCalendar>
+                  <EventAddToIcsCalendar
+                    asChild
+                    className="underline hover:no-underline"
+                  >
+                    <a>iCal</a>
+                  </EventAddToIcsCalendar>
+                  <EventAddToIcsCalendar
+                    asChild
+                    className="underline hover:no-underline"
+                  >
+                    <a>Outlook</a>
+                  </EventAddToIcsCalendar>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mt-5 sm:mt-0">
                 <span className="font-paragraph text-foreground">Share on</span>
                 <EventSocialShare eventPageUrl={eventPageUrl} />
               </div>
@@ -154,23 +156,49 @@ export function ThankYou({
                 if (ticketed) {
                   return (
                     <>
-                      <OrderInvoiceItems className="px-6 border-y border-foreground/10">
-                        <div className="flex border-b border-foreground/10 py-4 font-paragraph text-foreground">
-                          <div className="w-[35%]">Ticket type</div>
-                          <div className="w-[25%]">Price</div>
-                          <div className="w-[15%]">Quantity</div>
-                          <div className="w-[25%] text-right">Total</div>
+                      <OrderInvoiceItems className="px-4 sm:px-6 border-y border-foreground/10">
+                        {/* Mobile order items section */}
+                        <div className="block sm:hidden">
+                          <OrderInvoiceItemRepeater>
+                            <div className="py-4 border-b border-foreground/10">
+                              <InvoiceItemName />
+                              <InvoiceItemPrice asChild className="text-sm">
+                                {({ formattedAmount }) => (
+                                  <span>Price: {formattedAmount}</span>
+                                )}
+                              </InvoiceItemPrice>
+                              <div className="flex justify-between">
+                                <InvoiceItemQuantity asChild>
+                                  {({ quantity }) => (
+                                    <span>Qty: {quantity}</span>
+                                  )}
+                                </InvoiceItemQuantity>
+                                <InvoiceItemTotal />
+                              </div>
+                            </div>
+                          </OrderInvoiceItemRepeater>
                         </div>
-                        <OrderInvoiceItemRepeater>
-                          <div className="flex border-b border-foreground/10 py-4">
-                            <InvoiceItemName className="w-[35%]" />
-                            <InvoiceItemPrice className="w-[25%]" />
-                            <InvoiceItemQuantity className="w-[15%]" />
-                            <InvoiceItemTotal className="w-[25%] text-right" />
+
+                        {/* Desktop order items section */}
+                        <div className="hidden sm:block">
+                          <div className="flex border-b border-foreground/10 py-4 font-paragraph text-foreground">
+                            <div className="w-[35%]">Ticket type</div>
+                            <div className="w-[25%]">Price</div>
+                            <div className="w-[15%]">Quantity</div>
+                            <div className="w-[25%] text-right">Total</div>
                           </div>
-                        </OrderInvoiceItemRepeater>
+                          <OrderInvoiceItemRepeater>
+                            <div className="flex border-b border-foreground/10 py-4">
+                              <InvoiceItemName className="w-[35%]" />
+                              <InvoiceItemPrice className="w-[25%]" />
+                              <InvoiceItemQuantity className="w-[15%]" />
+                              <InvoiceItemTotal className="w-[25%] text-right" />
+                            </div>
+                          </OrderInvoiceItemRepeater>
+                        </div>
+
                         <div className="flex flex-row justify-end">
-                          <div className="w-[40%]">
+                          <div className="w-full sm:w-[40%]">
                             <div className="flex flex-col py-5 border-b border-foreground/10">
                               <OrderSubtotal
                                 asChild
@@ -244,7 +272,7 @@ export function ThankYou({
                           </div>
                         </div>
                       </OrderInvoiceItems>
-                      <div className="flex flex-row items-center px-6 py-3 gap-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center px-4 py-4 sm:px-6 py-3 gap-1">
                         <OrderNumber asChild>
                           {({ orderNumber }) => (
                             <span>Order No. #{orderNumber}</span>
