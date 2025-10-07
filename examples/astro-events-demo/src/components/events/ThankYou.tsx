@@ -47,7 +47,7 @@ export function ThankYou({
       <Event event={eventServiceConfig.event}>
         <Order orderServiceConfig={orderServiceConfig}>
           <div className="mb-10">
-            <h1 className="text-xl sm:text-3xl font-heading text-foreground mb-1">
+            <h1 className="text-3xl font-heading text-foreground mb-1">
               Thank you!
             </h1>
             <EventType>
@@ -75,9 +75,9 @@ export function ThankYou({
             </EventType>
           </div>
           <div className="border border-foreground/10">
-            <div className="flex gap-6 p-6 border-b border-foreground/10">
+            <div className="flex flex-col sm:flex-row gap-6 p-6 border-b border-foreground/10">
               <EventImage className="w-40 h-24" />
-              <div className="flex flex-row justify-between w-full">
+              <div className="flex flex-col gap-4 sm:flex-row justify-between w-full">
                 <div>
                   <EventTitle variant="md" className="mb-4" />
                   <div className="flex gap-1 items-center mb-1">
@@ -122,29 +122,31 @@ export function ThankYou({
                 </EventType>
               </div>
             </div>
-            <div className="flex justify-between p-6">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row justify-between p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <span className="font-paragraph text-foreground">Add to</span>
-                <EventAddToGoogleCalendar
-                  asChild
-                  className="underline hover:no-underline"
-                >
-                  <a>Google Calendar</a>
-                </EventAddToGoogleCalendar>
-                <EventAddToIcsCalendar
-                  asChild
-                  className="underline hover:no-underline"
-                >
-                  <a>iCal</a>
-                </EventAddToIcsCalendar>
-                <EventAddToIcsCalendar
-                  asChild
-                  className="underline hover:no-underline"
-                >
-                  <a>Outlook</a>
-                </EventAddToIcsCalendar>
+                <div className="flex gap-3">
+                  <EventAddToGoogleCalendar
+                    asChild
+                    className="underline hover:no-underline"
+                  >
+                    <a>Google Calendar</a>
+                  </EventAddToGoogleCalendar>
+                  <EventAddToIcsCalendar
+                    asChild
+                    className="underline hover:no-underline"
+                  >
+                    <a>iCal</a>
+                  </EventAddToIcsCalendar>
+                  <EventAddToIcsCalendar
+                    asChild
+                    className="underline hover:no-underline"
+                  >
+                    <a>Outlook</a>
+                  </EventAddToIcsCalendar>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 mt-5 sm:mt-0">
                 <span className="font-paragraph text-foreground">Share on</span>
                 <EventSocialShare eventPageUrl={eventPageUrl} />
               </div>
@@ -244,13 +246,13 @@ export function ThankYou({
                           </div>
                         </div>
                       </OrderInvoiceItems>
-                      <div className="flex flex-row items-center px-6 py-3 gap-1">
-                        <OrderNumber asChild>
+                      <div className="flex flex-col sm:flex-row sm:items-center px-6 py-3 gap-1">
+                        <OrderNumber asChild className='text-sm sm:text-base'>
                           {({ orderNumber }) => (
                             <span>Order No. #{orderNumber}</span>
                           )}
                         </OrderNumber>
-                        <OrderCreatedDate asChild>
+                        <OrderCreatedDate asChild className='text-sm sm:text-base'>
                           {({ formattedDate }) => (
                             <span>Placed on: {formattedDate}</span>
                           )}
