@@ -66,7 +66,7 @@ interface EventDetailsProps {
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
   checkoutServiceConfig: CheckoutServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
-  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
+  occurrenceListServiceConfig: OccurrenceListServiceConfig;
   eventDetailsPagePath: string;
   formPagePath: string;
   schedulePagePath: string;
@@ -506,7 +506,7 @@ export function EventDetails({
         )}
       </EventOtherEvents>
 
-      {isOccurrencesModalOpen && occurrenceListServiceConfig ? (
+      {isOccurrencesModalOpen ? (
         <EventSlug>
           {({ slug }) => (
             <OccurrencesModal

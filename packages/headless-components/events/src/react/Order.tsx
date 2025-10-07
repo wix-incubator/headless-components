@@ -326,9 +326,7 @@ export interface InvoiceItemsProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{
-        invoiceItems: InvoiceItemType[];
-      }>;
+    | AsChildChildren<{ invoiceItems: InvoiceItemType[] }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
