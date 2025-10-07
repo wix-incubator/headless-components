@@ -273,15 +273,12 @@ export function ThankYou({
                         </div>
                       </OrderInvoiceItems>
                       <div className="flex flex-col sm:flex-row sm:items-center px-4 py-4 sm:px-6 py-3 gap-1">
-                        <OrderNumber asChild className="text-sm sm:text-base">
+                        <OrderNumber asChild>
                           {({ orderNumber }) => (
                             <span>Order No. #{orderNumber}</span>
                           )}
                         </OrderNumber>
-                        <OrderCreatedDate
-                          asChild
-                          className="text-sm sm:text-base"
-                        >
+                        <OrderCreatedDate asChild>
                           {({ formattedDate }) => (
                             <span>Placed on: {formattedDate}</span>
                           )}
