@@ -30,11 +30,13 @@ A comprehensive generic address display and input component system built with co
 
 The Address component follows a compound component pattern where each part can be composed together to create flexible address displays and input forms for various contexts including shipping, billing, contact information, and more.
 
+---
+
 ## Components
 
 ### Address.Root
 
-The root container that provides address context to all child components.
+The root container for address display and interaction.
 
 **Props**
 
@@ -58,51 +60,6 @@ interface AddressData {
   countryList?: CountryOption[]; // Available countries for selection and validation
 }
 
-interface AddressRootProps {
-  address: AddressData;
-  children: React.ReactNode;
-}
-```
-
-## Country Data Utilities
-
-### getDefaultCountryList()
-
-The Address component provides a default country list with major countries and their states/provinces:
-
-```tsx
-import { Address, getDefaultCountryList } from '@wix/headless';
-
-const countries = getDefaultCountryList();
-
-// Use with AddressData
-const addressData = {
-  address: {
-    line1: '123 Main St',
-    city: 'New York',
-    state: 'NY',
-    postalCode: '10001',
-    country: 'US',
-  },
-  countryList: countries, // Provides validation and state options
-};
-
-<Address.Root address={addressData}>
-  <Address.Formatted />
-</Address.Root>;
-```
-
----
-
-## Components
-
-### Address.Root
-
-The root container for address display and interaction.
-
-**Props**
-
-```tsx
 interface AddressRootProps {
   address: AddressData;
   children: React.ReactNode;
