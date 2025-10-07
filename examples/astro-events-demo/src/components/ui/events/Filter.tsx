@@ -36,7 +36,7 @@ export const Filter = FilterPrimitive.Root;
 export const FilterOptions = React.forwardRef<
   React.ElementRef<typeof FilterPrimitive.FilterOptions>,
   React.ComponentPropsWithoutRef<typeof FilterPrimitive.FilterOptions>
->(({ className, ...props }) => {
+>(({ className, ...props }, _ref) => {
   return <FilterPrimitive.FilterOptions {...props} className={cn(className)} />;
 });
 

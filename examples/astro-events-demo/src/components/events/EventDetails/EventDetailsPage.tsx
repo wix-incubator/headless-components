@@ -56,10 +56,10 @@ export function eventDetailsPageLoader({
       throw new Response('Not Found', { status: 404 });
     }
 
-    const eventId = eventServiceConfigResult.config.event._id;
+    const eventId = eventServiceConfigResult.config.event._id!;
     const recurringCategoryId =
       eventServiceConfigResult.config.event.dateAndTimeSettings?.recurringEvents
-        ?.categoryId;
+        ?.categoryId ?? undefined;
 
     const [
       ticketDefinitionListServiceConfig,

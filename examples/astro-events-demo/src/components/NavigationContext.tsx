@@ -1,5 +1,4 @@
 import React, { createContext, useContext, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 
 export interface NavigationProps {
   route: string;
@@ -17,9 +16,9 @@ const DefaultNavigationComponent: NavigationComponent = ({
   ...props
 }) => {
   return (
-    <Link to={route} {...props}>
+    <a href={route} {...props}>
       {children}
-    </Link>
+    </a>
   );
 };
 

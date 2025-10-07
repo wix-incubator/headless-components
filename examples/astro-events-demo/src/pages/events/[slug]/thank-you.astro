@@ -4,7 +4,7 @@ import {
   loadOrderServiceConfig,
 } from '@wix/events/services';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import ThankYouPage from '../../../react-pages/thank-you';
+import { ThankYou } from '../../../components/events/ThankYou';
 
 const { slug } = Astro.params;
 
@@ -31,7 +31,7 @@ if (orderNumber) {
     content="Thank you for your RSVP! We have received your response for this event."
   />
 
-  <ThankYouPage
+  <ThankYou
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}

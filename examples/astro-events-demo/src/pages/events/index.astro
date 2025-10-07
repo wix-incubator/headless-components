@@ -1,7 +1,7 @@
 ---
 import { loadEventListServiceConfig } from '@wix/events/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import EventsPage from '../../react-pages/events';
+import { EventList } from '../../components/events/EventList';
 
 // Load initial event list data server-side
 const eventListServiceConfig = await loadEventListServiceConfig();
@@ -11,7 +11,7 @@ const eventListServiceConfig = await loadEventListServiceConfig();
   <title>Events</title>
   <meta name="description" content="Events" />
 
-  <EventsPage
+  <EventList
     client:load
     slot="body"
     eventListServiceConfig={eventListServiceConfig}
