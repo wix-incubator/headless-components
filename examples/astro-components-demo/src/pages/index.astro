@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ComponentsDemo from '../react-pages/index';
+---
+
+<Layout>
+  <title>Headless Components - Modern React Components</title>
+  <meta name="description" content="Modern headless React components for building exceptional user interfaces. Built with TypeScript, accessibility, and developer experience in mind." />
+
+  <ComponentsDemo client:load slot="body" />
+</Layout>
