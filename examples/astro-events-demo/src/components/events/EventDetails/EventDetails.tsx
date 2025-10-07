@@ -7,6 +7,7 @@ import {
   type OccurrenceListServiceConfig,
 } from '@wix/events/services';
 import { useState } from 'react';
+
 import {
   Event,
   EventSlug,
@@ -55,10 +56,11 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { EventList } from './EventList';
-import { EventSocialShare } from './EventSocialShare';
+import { useNavigation } from '@/components/NavigationContext';
+import { EventList } from '../EventList';
+import { EventSocialShare } from '../EventSocialShare';
+import { ScheduleItem } from '../Schedule';
 import { OccurrencesModal } from './OccurrencesModal';
-import { ScheduleItem } from './ScheduleItem';
 
 interface EventDetailsProps {
   eventServiceConfig: EventServiceConfig;
@@ -83,6 +85,8 @@ export function EventDetails({
   formPagePath,
   schedulePagePath,
 }: EventDetailsProps) {
+  const Navigation = useNavigation();
+
   const [isOccurrencesModalOpen, setIsOccurrencesModalOpen] = useState(false);
 
   const openOccurrencesModal = () => {
@@ -141,11 +145,13 @@ export function EventDetails({
           className="mt-6 sm:mt-10 w-full sm:w-auto"
         >
           {({ ticketed, slug }) => (
-            <a
-              href={ticketed ? '#tickets' : formPagePath.replace(':slug', slug)}
+            <Navigation
+              route={
+                ticketed ? '#tickets' : formPagePath.replace(':slug', slug)
+              }
             >
               {ticketed ? 'Buy Tickets' : 'RSVP'}
-            </a>
+            </Navigation>
           )}
         </EventRsvpButton>
       </div>
@@ -202,9 +208,11 @@ export function EventDetails({
                       variant="outline"
                       className="w-full sm:w-auto"
                     >
-                      <a href={schedulePagePath.replace(':slug', slug)}>
+                      <Navigation
+                        route={schedulePagePath.replace(':slug', slug)}
+                      >
                         See All
-                      </a>
+                      </Navigation>
                     </Button>
                   )}
                 </EventSlug>

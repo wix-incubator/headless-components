@@ -1,4 +1,8 @@
 import {
+  type EventServiceConfig,
+  type OrderServiceConfig,
+} from '@wix/events/services';
+import {
   Event,
   EventType,
   EventImage,
@@ -25,11 +29,7 @@ import {
   InvoiceItemQuantity,
   InvoiceItemTotal,
 } from '@/components/ui/events';
-import {
-  type EventServiceConfig,
-  type OrderServiceConfig,
-} from '@wix/events/services';
-import { EventSocialShare } from './EventSocialShare';
+import { EventSocialShare } from '../EventSocialShare';
 
 interface ThankYouProps {
   eventServiceConfig: EventServiceConfig;
@@ -130,19 +130,27 @@ export function ThankYou({
                     asChild
                     className="underline hover:no-underline"
                   >
-                    <a>Google Calendar</a>
+                    {({ url }) => (
+                      <a onClick={() => window.open(url, '_blank')}>
+                        Google Calendar
+                      </a>
+                    )}
                   </EventAddToGoogleCalendar>
                   <EventAddToIcsCalendar
                     asChild
                     className="underline hover:no-underline"
                   >
-                    <a>iCal</a>
+                    {({ url }) => (
+                      <a onClick={() => window.open(url, '_blank')}>iCal</a>
+                    )}
                   </EventAddToIcsCalendar>
                   <EventAddToIcsCalendar
                     asChild
                     className="underline hover:no-underline"
                   >
-                    <a>Outlook</a>
+                    {({ url }) => (
+                      <a onClick={() => window.open(url, '_blank')}>Outlook</a>
+                    )}
                   </EventAddToIcsCalendar>
                 </div>
               </div>

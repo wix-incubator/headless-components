@@ -27,6 +27,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
+import { useNavigation } from '@/components/NavigationContext';
 import { ScheduleItem } from './ScheduleItem';
 
 interface ScheduleProps {
@@ -40,13 +41,12 @@ export function Schedule({
   scheduleListServiceConfig,
   eventDetailsPagePath,
 }: ScheduleProps) {
+  const Navigation = useNavigation();
+
   return (
     <Event event={eventServiceConfig.event}>
       <ScheduleList scheduleListServiceConfig={scheduleListServiceConfig}>
         <div className="max-w-5xl mx-auto px-5 py-6 sm:p-16">
-          <h1 className="text-6xl font-heading text-foreground mb-3">
-            Schedule
-          </h1>
           <div className="flex justify-between">
             <div className="flex flex-col mb-10">
               <EventTitle variant="sm" />
@@ -59,9 +59,9 @@ export function Schedule({
               className="hidden sm:block"
             >
               {({ slug, ticketed }) => (
-                <a href={eventDetailsPagePath.replace(':slug', slug)}>
+                <Navigation route={eventDetailsPagePath.replace(':slug', slug)}>
                   {ticketed ? 'Get Tickets' : 'RSVP'}
-                </a>
+                </Navigation>
               )}
             </EventRsvpButton>
           </div>
@@ -120,9 +120,9 @@ export function Schedule({
             className="w-full mt-4 sm:hidden"
           >
             {({ slug, ticketed }) => (
-              <a href={eventDetailsPagePath.replace(':slug', slug)}>
+              <Navigation route={eventDetailsPagePath.replace(':slug', slug)}>
                 {ticketed ? 'Get Tickets' : 'RSVP'}
-              </a>
+              </Navigation>
             )}
           </EventRsvpButton>
         </div>

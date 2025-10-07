@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const EventListSkeleton = () => {
+export function EventListSkeleton() {
   return (
     <div className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
       {Array.from({ length: 3 }, (_, index) => (
@@ -32,4 +32,4 @@ export const EventListSkeleton = () => {
       ))}
     </div>
   );
-};
+}
