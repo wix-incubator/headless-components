@@ -1,7 +1,7 @@
 ---
 import { loadEventListServiceConfig } from '@wix/events/services';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { EventList } from '../../components/events/EventList';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { EventList } from '@/components/events/EventList';
 
 // Load initial event list data server-side
 const eventListServiceConfig = await loadEventListServiceConfig();
