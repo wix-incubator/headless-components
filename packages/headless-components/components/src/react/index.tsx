@@ -52,3 +52,55 @@ export type {
   GenericListTotalsProps,
   GenericListTotalsRenderProps,
 } from './generic-list.js';
+
+// Price Components
+export * as Price from './price.js';
+export type {
+  Money,
+  DiscountValue,
+  PriceRange,
+  Price as PriceData,
+  PriceContextValue,
+  PriceRangeContextValue,
+  PriceRootProps,
+  PriceRawProps,
+  PriceAmountProps,
+  PriceCurrencyProps,
+  PriceSymbolProps,
+  PriceFormattedProps,
+  PriceCompareAtProps,
+  PriceDiscountProps,
+  PriceDiscountPercentageProps,
+  PriceMinProps,
+  PriceMaxProps,
+  PriceRangeProps,
+} from './price.js';
+
+// Address Components
+export * as Address from './address.js';
+export { getDefaultCountryList } from './address.js';
+export type {
+  Address as AddressValue,
+  AddressData,
+  CountryOption,
+  StateOption,
+  AddressContextValue,
+  AddressFormContextValue,
+  AddressRootProps,
+  AddressLine1Props,
+  AddressLine2Props,
+  AddressCityProps,
+  AddressStateProps,
+  AddressPostalCodeProps,
+  AddressCountryProps,
+  AddressCountryCodeProps,
+  AddressFormattedProps,
+  AddressLabelProps,
+  AddressFormProps,
+  AddressFormLine1InputProps,
+  AddressFormLine2InputProps,
+  AddressFormCityInputProps,
+  AddressFormStateInputProps,
+  AddressFormPostalCodeInputProps,
+  AddressFormCountrySelectProps,
+} from './address.js';
