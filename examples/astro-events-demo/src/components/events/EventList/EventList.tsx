@@ -44,7 +44,7 @@ export function EventList({
   return (
     <EventListPrimitive eventListServiceConfig={eventListServiceConfig}>
       {isFiltersVisible && (
-        <div className="flex flex-row gap-6 mb-6">
+        <div className="flex flex-row items-center gap-6 mb-6">
           <EventListCategoryFilter
             allCategoriesLabel="All"
             className="flex-1 border-b border-foreground/10"
