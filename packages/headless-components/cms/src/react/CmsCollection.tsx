@@ -38,6 +38,10 @@ export interface RootProps {
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
     initialSort?: SortValue;
+    /** List of field IDs for single reference fields to include */
+    singleRefFieldIds?: string[];
+    /** List of field IDs for multi reference fields to include */
+    multiRefFieldIds?: string[];
   };
 }
 
@@ -75,10 +79,8 @@ export interface RootProps {
  *     <CmsCollection.Root
  *       collection={{
  *         id: 'MyCollection',
- *         queryOptions: {
- *           singleRefFieldIds: ['author', 'category'],
- *           multiRefFieldIds: ['tags', 'relatedItems']
- *         }
+ *         singleRefFieldIds: ['author', 'category'],
+ *         multiRefFieldIds: ['tags', 'relatedItems']
  *       }}
  *     >
  *       <CmsCollection.Items>
@@ -101,6 +103,8 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       queryResult: collection?.queryResult,
       queryOptions: collection?.queryOptions,
       initialSort: collection?.initialSort,
+      singleRefFieldIds: collection?.singleRefFieldIds,
+      multiRefFieldIds: collection?.multiRefFieldIds,
     };
 
     const attributes = {

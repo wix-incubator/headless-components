@@ -37,16 +37,14 @@ CMS collections support reference fields that link to items in other collections
 
 ### Including References in Queries
 
-Use the `singleRefFieldIds` and `multiRefFieldIds` properties in `queryOptions` to specify which reference fields should be included:
+Use the `singleRefFieldIds` and `multiRefFieldIds` properties to specify which reference fields should be included:
 
 ```tsx
 <CmsCollection.Root
   collection={{
     id: 'BlogPosts',
-    queryOptions: {
-      singleRefFieldIds: ['author', 'category'],
-      multiRefFieldIds: ['tags', 'relatedPosts'],
-    },
+    singleRefFieldIds: ['author', 'category'],
+    multiRefFieldIds: ['tags', 'relatedPosts'],
   }}
 >
   <CmsCollection.Items>
@@ -100,6 +98,10 @@ interface RootProps {
     id: string;
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
+    /** List of field IDs for single reference fields to include */
+    singleRefFieldIds?: string[];
+    /** List of field IDs for multi reference fields to include */
+    multiRefFieldIds?: string[];
   };
 }
 
@@ -110,10 +112,6 @@ interface CmsQueryOptions {
   skip?: number;
   /** Whether to return the total count of items */
   returnTotalCount?: boolean;
-  /** List of field IDs for single reference fields to include */
-  singleRefFieldIds?: string[];
-  /** List of field IDs for multi reference fields to include */
-  multiRefFieldIds?: string[];
 }
 ```
 
@@ -137,10 +135,10 @@ interface CmsQueryOptions {
 <CmsCollection.Root collection={{
   id: 'MyCollection',
   queryOptions: {
-    limit: 10,
-    singleRefFieldIds: ['author', 'category'],
-    multiRefFieldIds: ['tags', 'relatedItems']
-  }
+    limit: 10
+  },
+  singleRefFieldIds: ['author', 'category'],
+  multiRefFieldIds: ['tags', 'relatedItems']
 }}>
   <CmsCollection.Items>
     <CmsCollection.ItemRepeater>
@@ -904,10 +902,10 @@ function BlogPostsWithReferences() {
         queryOptions: {
           limit: 10,
           returnTotalCount: true,
-          // Include reference fields to get full item data
-          singleRefFieldIds: ['author', 'category'],
-          multiRefFieldIds: ['tags', 'relatedPosts'],
         },
+        // Include reference fields to get full item data
+        singleRefFieldIds: ['author', 'category'],
+        multiRefFieldIds: ['tags', 'relatedPosts'],
       }}
     >
       <div className="space-y-6">
@@ -1179,10 +1177,10 @@ function BlogPostsWithReferences() {
         queryOptions: {
           limit: 10,
           returnTotalCount: true,
-          // Include reference fields to get full item data
-          singleRefFieldIds: ['author', 'category'],
-          multiRefFieldIds: ['tags', 'relatedPosts'],
         },
+        // Include reference fields to get full item data
+        singleRefFieldIds: ['author', 'category'],
+        multiRefFieldIds: ['tags', 'relatedPosts'],
       }}
     >
       <div className="space-y-6">
@@ -1538,10 +1536,10 @@ function BlogPostsWithReferences() {
         queryOptions: {
           limit: 10,
           returnTotalCount: true,
-          // Include reference fields to get full item data
-          singleRefFieldIds: ['author', 'category'],
-          multiRefFieldIds: ['tags', 'relatedPosts'],
         },
+        // Include reference fields to get full item data
+        singleRefFieldIds: ['author', 'category'],
+        multiRefFieldIds: ['tags', 'relatedPosts'],
       }}
     >
       <div className="space-y-6">
