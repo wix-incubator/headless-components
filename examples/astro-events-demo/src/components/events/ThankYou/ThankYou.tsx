@@ -75,7 +75,7 @@ export function ThankYou({
             </EventType>
           </div>
           <div className="border border-foreground/10">
-            <div className="flex flex-col sm:flex-row gap-6 p-4 sm:p-6 border-b border-foreground/10">
+            <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 p-4 sm:p-6 border-b border-foreground/10">
               <EventImage className="w-40 h-24" />
               <div className="flex flex-col gap-4 sm:flex-row justify-between w-full">
                 <div>
@@ -105,7 +105,11 @@ export function ThankYou({
                   {({ ticketed }) => {
                     if (ticketed) {
                       return (
-                        <OrderDownloadTicketsButton asChild size="lg">
+                        <OrderDownloadTicketsButton
+                          asChild
+                          size="lg"
+                          className="w-fit"
+                        >
                           {({ ticketsPdfUrl }) => (
                             <button
                               onClick={() =>

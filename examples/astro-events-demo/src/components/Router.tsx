@@ -55,6 +55,7 @@ const router = createBrowserRouter(
               eventDetailsPagePath="/events/:slug"
               formPagePath="/events/:slug/form"
               schedulePagePath="/events/:slug/schedule"
+              thankYouPagePath="/events/:slug/thank-you"
             />
           ),
           loader: eventDetailsPageLoader,

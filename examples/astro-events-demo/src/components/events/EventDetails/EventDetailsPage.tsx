@@ -33,6 +33,7 @@ interface EventDetailsPageProps {
   eventDetailsPagePath: string;
   formPagePath: string;
   schedulePagePath: string;
+  thankYouPagePath: string;
 }
 
 export function eventDetailsPageLoader({
@@ -90,6 +91,7 @@ export function EventDetailsPage({
   eventDetailsPagePath,
   formPagePath,
   schedulePagePath,
+  thankYouPagePath,
 }: EventDetailsPageProps) {
   const { slug, data } = useLoaderData<typeof eventDetailsPageLoader>();
 
@@ -111,6 +113,7 @@ export function EventDetailsPage({
                 ticketDefinitionListServiceConfig
               }
               checkoutServiceConfig={{
+                thankYouPageUrl: `${window.location.origin}${thankYouPagePath.replace(':slug', slug)}`,
                 noTicketDefinitionsSelectedError: 'Select a ticket',
               }}
               scheduleListServiceConfig={scheduleListServiceConfig}
