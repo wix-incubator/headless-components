@@ -5,6 +5,33 @@ import {
   type FormValues,
   type FormError,
 } from '@wix/form-public';
+import {
+  type CheckboxGroupProps,
+  type CheckboxProps,
+  type PhoneInputProps,
+  type DateInputProps,
+  type DatePickerProps,
+  type DateTimeInputProps,
+  type DropdownProps,
+  type FileUploadProps,
+  type MultilineAddressProps,
+  type NumberInputProps,
+  type RadioGroupProps,
+  type RatingInputProps,
+  type RichTextProps,
+  type SignatureProps,
+  type SubmitButtonProps,
+  type TagsProps,
+  type TextAreaProps,
+  type TextInputProps,
+  type TimeInputProps,
+  type ProductListProps,
+  type FixedPaymentProps,
+  type PaymentInputProps,
+  type DonationProps,
+  type AppointmentProps,
+  type ImageChoiceProps,
+} from './types';
 
 import { type FormServiceConfig } from '../services/form-service';
 import {
@@ -15,34 +42,6 @@ import {
   Submitted as CoreSubmitted,
   Fields as CoreFields,
 } from './core/Form';
-
-import {
-  CheckboxGroupProps,
-  CheckboxProps,
-  PhoneInputProps,
-  DateInputProps,
-  DatePickerProps,
-  DateTimeInputProps,
-  DropdownProps,
-  FileUploadProps,
-  MultilineAddressProps,
-  NumberInputProps,
-  RadioGroupProps,
-  RatingInputProps,
-  RichTextProps,
-  SignatureProps,
-  SubmitButtonProps,
-  TagsProps,
-  TextAreaProps,
-  TextInputProps,
-  TimeInputProps,
-  ProductListProps,
-  FixedPaymentProps,
-  PaymentInputProps,
-  DonationProps,
-  AppointmentProps,
-  ImageChoiceProps,
-} from './types.js';
 
 enum TestIds {
   formRoot = 'form-root',
