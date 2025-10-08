@@ -25,10 +25,6 @@ export interface RootProps {
 export function Root(props: RootProps): React.ReactNode {
   const { children, orderServiceConfig } = props;
 
-  if (!orderServiceConfig) {
-    return children;
-  }
-
   return (
     <WixServices
       servicesMap={createServicesMap().addService(
@@ -61,6 +57,11 @@ export function OrderNumber(props: OrderNumberProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const orderNumber = order.orderNumber!;
 
   return props.children({ orderNumber });
@@ -85,6 +86,11 @@ export function GuestEmail(props: GuestEmailProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const guestEmail = order.email!;
 
   return props.children({ guestEmail });
@@ -111,7 +117,12 @@ export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
-  const createdDate = order.created!;
+
+  if (!order) {
+    return null;
+  }
+
+  const createdDate = new Date(order.created!);
   const formattedDate = formatDateMonthDayYear(createdDate);
 
   return props.children({ createdDate, formattedDate });
@@ -138,13 +149,16 @@ export function DownloadTicketsButton(
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const ticketsPdfUrl = order.ticketsPdf!;
   const isPolling = orderService.isPolling.get();
   const isReady = isOrderReady(order);
 
-  const isUrlReady = isReady && !isPolling;
-
-  if (!isUrlReady) {
+  if (!isReady || isPolling) {
     return null;
   }
 
@@ -170,6 +184,11 @@ export function InvoiceItems(props: InvoiceItemsProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const invoiceItems = order.invoice!.items!;
 
   return props.children({ invoiceItems });
@@ -196,6 +215,11 @@ export function InvoiceItemRepeater(
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const invoiceItems = order.invoice!.items!;
 
   return props.children({ invoiceItems });
@@ -224,8 +248,12 @@ export function Subtotal(props: SubtotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
-  const subtotal = order.invoice!.subTotal!;
 
+  if (!order) {
+    return null;
+  }
+
+  const subtotal = order.invoice!.subTotal!;
   const currency = subtotal.currency!;
   const amount = Number(subtotal.value!);
 
@@ -263,6 +291,11 @@ export function PaidPlanDiscount(
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const discounts = order.invoice!.discount?.discounts;
   const paidPlanDiscount = discounts?.find((item) => item.paidPlan);
 
@@ -304,6 +337,11 @@ export function CouponDiscount(props: CouponDiscountProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const discounts = order.invoice!.discount?.discounts;
   const couponDiscount = discounts?.find((item) => item.coupon);
 
@@ -348,6 +386,11 @@ export function Tax(props: TaxProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const tax = order.invoice!.tax;
 
   if (!tax) {
@@ -391,6 +434,11 @@ export function Fee(props: FeeProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
+
+  if (!order) {
+    return null;
+  }
+
   const fees = order.invoice!.fees;
   const addedFee = fees?.find((fee) => fee.type === 'FEE_ADDED_AT_CHECKOUT');
 
@@ -432,8 +480,12 @@ export function Total(props: TotalProps): React.ReactNode {
   const orderService = useService(OrderServiceDefinition);
 
   const order = orderService.order.get();
-  const total = order.invoice!.grandTotal!;
 
+  if (!order) {
+    return null;
+  }
+
+  const total = order.invoice!.grandTotal!;
   const currency = total.currency!;
   const amount = Number(total.value!);
 

@@ -59,7 +59,9 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
       }
     };
 
-    pollOrder();
+    if (config.order) {
+      pollOrder();
+    }
 
     return {
       order,

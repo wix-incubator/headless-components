@@ -308,6 +308,7 @@ export const DownloadTicketsButton = React.forwardRef<
           data-testid={TestIds.orderDownloadTicketsButton}
           customElement={children}
           customElementProps={{ ticketsPdfUrl }}
+          onClick={() => window.open(ticketsPdfUrl, '_blank')}
           {...otherProps}
         >
           <button>{label}</button>

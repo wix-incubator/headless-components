@@ -51,16 +51,14 @@ export function ThankYou({
               Thank you!
             </h1>
             <EventType>
-              {({ ticketed, rsvp }) => {
+              {({ rsvp }) => {
                 if (rsvp) {
                   return (
                     <p className="font-paragraph text-foreground">
                       An email with the event's details was sent to you.
                     </p>
                   );
-                }
-
-                if (ticketed) {
+                } else {
                   return (
                     <OrderGuestEmail asChild>
                       {({ guestEmail }) => (
@@ -77,7 +75,7 @@ export function ThankYou({
           <div className="border border-foreground/10">
             <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 p-4 sm:p-6 border-b border-foreground/10">
               <EventImage className="w-40 h-24" />
-              <div className="flex flex-col gap-4 sm:flex-row justify-between w-full">
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-4 w-full">
                 <div>
                   <EventTitle variant="md" className="mb-4" />
                   <div className="flex gap-1 items-center mb-1">
@@ -101,32 +99,14 @@ export function ThankYou({
                     <EventLocation className="text-sm" format="short" />
                   </div>
                 </div>
-                <EventType>
-                  {({ ticketed }) => {
-                    if (ticketed) {
-                      return (
-                        <OrderDownloadTicketsButton
-                          asChild
-                          size="lg"
-                          className="w-fit"
-                        >
-                          {({ ticketsPdfUrl }) => (
-                            <button
-                              onClick={() =>
-                                window.open(ticketsPdfUrl, '_blank')
-                              }
-                            >
-                              Download Tickets
-                            </button>
-                          )}
-                        </OrderDownloadTicketsButton>
-                      );
-                    }
-                  }}
-                </EventType>
+                <OrderDownloadTicketsButton
+                  size="lg"
+                  className="w-fit"
+                  label="Download Tickets"
+                />
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row justify-between p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <span className="font-paragraph text-foreground">Add to</span>
                 <div className="flex gap-3">
@@ -155,144 +135,120 @@ export function ThankYou({
                 <EventSocialShare eventPageUrl={eventPageUrl} />
               </div>
             </div>
-            <EventType>
-              {({ ticketed }) => {
-                if (ticketed) {
-                  return (
-                    <>
-                      <OrderInvoiceItems className="px-4 sm:px-6 border-y border-foreground/10">
-                        {/* Mobile order items section */}
-                        <div className="block sm:hidden">
-                          <OrderInvoiceItemRepeater>
-                            <div className="py-4 border-b border-foreground/10">
-                              <InvoiceItemName />
-                              <InvoiceItemPrice asChild className="text-sm">
-                                {({ formattedAmount }) => (
-                                  <span>Price: {formattedAmount}</span>
-                                )}
-                              </InvoiceItemPrice>
-                              <div className="flex justify-between">
-                                <InvoiceItemQuantity asChild>
-                                  {({ quantity }) => (
-                                    <span>Qty: {quantity}</span>
-                                  )}
-                                </InvoiceItemQuantity>
-                                <InvoiceItemTotal />
-                              </div>
-                            </div>
-                          </OrderInvoiceItemRepeater>
-                        </div>
+            <OrderInvoiceItems className="px-4 sm:px-6 border-y border-foreground/10">
+              {/* Mobile order items section */}
+              <div className="block sm:hidden">
+                <OrderInvoiceItemRepeater>
+                  <div className="py-4 border-b border-foreground/10">
+                    <InvoiceItemName />
+                    <InvoiceItemPrice asChild className="text-sm">
+                      {({ formattedAmount }) => (
+                        <span>Price: {formattedAmount}</span>
+                      )}
+                    </InvoiceItemPrice>
+                    <div className="flex justify-between">
+                      <InvoiceItemQuantity asChild>
+                        {({ quantity }) => <span>Qty: {quantity}</span>}
+                      </InvoiceItemQuantity>
+                      <InvoiceItemTotal />
+                    </div>
+                  </div>
+                </OrderInvoiceItemRepeater>
+              </div>
 
-                        {/* Desktop order items section */}
-                        <div className="hidden sm:block">
-                          <div className="flex border-b border-foreground/10 py-4 font-paragraph text-foreground">
-                            <div className="w-[35%]">Ticket type</div>
-                            <div className="w-[25%]">Price</div>
-                            <div className="w-[15%]">Quantity</div>
-                            <div className="w-[25%] text-right">Total</div>
-                          </div>
-                          <OrderInvoiceItemRepeater>
-                            <div className="flex border-b border-foreground/10 py-4">
-                              <InvoiceItemName className="w-[35%]" />
-                              <InvoiceItemPrice className="w-[25%]" />
-                              <InvoiceItemQuantity className="w-[15%]" />
-                              <InvoiceItemTotal className="w-[25%] text-right" />
-                            </div>
-                          </OrderInvoiceItemRepeater>
-                        </div>
+              {/* Desktop order items section */}
+              <div className="hidden sm:block">
+                <div className="flex border-b border-foreground/10 py-4 font-paragraph text-foreground">
+                  <div className="w-[35%]">Ticket type</div>
+                  <div className="w-[25%]">Price</div>
+                  <div className="w-[15%]">Quantity</div>
+                  <div className="w-[25%] text-right">Total</div>
+                </div>
+                <OrderInvoiceItemRepeater>
+                  <div className="flex border-b border-foreground/10 py-4">
+                    <InvoiceItemName className="w-[35%]" />
+                    <InvoiceItemPrice className="w-[25%]" />
+                    <InvoiceItemQuantity className="w-[15%]" />
+                    <InvoiceItemTotal className="w-[25%] text-right" />
+                  </div>
+                </OrderInvoiceItemRepeater>
+              </div>
 
-                        <div className="flex flex-row justify-end">
-                          <div className="w-full sm:w-[40%]">
-                            <div className="flex flex-col py-5 border-b border-foreground/10">
-                              <OrderSubtotal
-                                asChild
-                                className="flex justify-between"
-                              >
-                                {({ formattedAmount }) => (
-                                  <div>
-                                    <span>Subtotal</span>
-                                    <span>{formattedAmount}</span>
-                                  </div>
-                                )}
-                              </OrderSubtotal>
-                              <OrderPaidPlanDiscount
-                                asChild
-                                className="flex justify-between"
-                              >
-                                {({ formattedAmount, rate }) => (
-                                  <div>
-                                    <span>Paid Plan Discount ({rate}%)</span>
-                                    <span>-{formattedAmount}</span>
-                                  </div>
-                                )}
-                              </OrderPaidPlanDiscount>
-                              <OrderCouponDiscount
-                                asChild
-                                className="flex justify-between"
-                              >
-                                {({ formattedAmount }) => (
-                                  <div>
-                                    <span>Coupon Discount</span>
-                                    <span>-{formattedAmount}</span>
-                                  </div>
-                                )}
-                              </OrderCouponDiscount>
-                              <OrderTax
-                                asChild
-                                className="flex justify-between"
-                              >
-                                {({ rate, formattedAmount, name }) => (
-                                  <div>
-                                    <span>
-                                      {name} ({rate}%)
-                                    </span>
-                                    <span>{formattedAmount}</span>
-                                  </div>
-                                )}
-                              </OrderTax>
-                              <OrderFee
-                                asChild
-                                className="flex justify-between"
-                              >
-                                {({ formattedAmount, rate }) => (
-                                  <div>
-                                    <span>Ticket Service Fee ({rate}%)</span>
-                                    <span>{formattedAmount}</span>
-                                  </div>
-                                )}
-                              </OrderFee>
-                            </div>
-                            <OrderTotal
-                              asChild
-                              className="flex justify-between py-5 text-lg"
-                            >
-                              {({ formattedAmount }) => (
-                                <div>
-                                  <span>Total</span>
-                                  <span>{formattedAmount}</span>
-                                </div>
-                              )}
-                            </OrderTotal>
-                          </div>
+              <div className="flex flex-row justify-end">
+                <div className="w-full sm:w-[40%]">
+                  <div className="flex flex-col py-5 border-b border-foreground/10">
+                    <OrderSubtotal asChild className="flex justify-between">
+                      {({ formattedAmount }) => (
+                        <div>
+                          <span>Subtotal</span>
+                          <span>{formattedAmount}</span>
                         </div>
-                      </OrderInvoiceItems>
-                      <div className="flex flex-col sm:flex-row sm:items-center px-4 py-4 sm:px-6 py-3 gap-1">
-                        <OrderNumber asChild>
-                          {({ orderNumber }) => (
-                            <span>Order No. #{orderNumber}</span>
-                          )}
-                        </OrderNumber>
-                        <OrderCreatedDate asChild>
-                          {({ formattedDate }) => (
-                            <span>Placed on: {formattedDate}</span>
-                          )}
-                        </OrderCreatedDate>
+                      )}
+                    </OrderSubtotal>
+                    <OrderPaidPlanDiscount
+                      asChild
+                      className="flex justify-between"
+                    >
+                      {({ formattedAmount, rate }) => (
+                        <div>
+                          <span>Paid Plan Discount ({rate}%)</span>
+                          <span>-{formattedAmount}</span>
+                        </div>
+                      )}
+                    </OrderPaidPlanDiscount>
+                    <OrderCouponDiscount
+                      asChild
+                      className="flex justify-between"
+                    >
+                      {({ formattedAmount }) => (
+                        <div>
+                          <span>Coupon Discount</span>
+                          <span>-{formattedAmount}</span>
+                        </div>
+                      )}
+                    </OrderCouponDiscount>
+                    <OrderTax asChild className="flex justify-between">
+                      {({ rate, formattedAmount, name }) => (
+                        <div>
+                          <span>
+                            {name} ({rate}%)
+                          </span>
+                          <span>{formattedAmount}</span>
+                        </div>
+                      )}
+                    </OrderTax>
+                    <OrderFee asChild className="flex justify-between">
+                      {({ formattedAmount, rate }) => (
+                        <div>
+                          <span>Ticket Service Fee ({rate}%)</span>
+                          <span>{formattedAmount}</span>
+                        </div>
+                      )}
+                    </OrderFee>
+                  </div>
+                  <OrderTotal asChild className="flex justify-between py-5">
+                    {({ formattedAmount }) => (
+                      <div>
+                        <span>Total</span>
+                        <span>{formattedAmount}</span>
                       </div>
-                    </>
-                  );
-                }
-              }}
-            </EventType>
+                    )}
+                  </OrderTotal>
+                </div>
+              </div>
+            </OrderInvoiceItems>
+            <OrderNumber asChild>
+              {({ orderNumber }) => (
+                <OrderCreatedDate asChild>
+                  {({ formattedDate }) => (
+                    <div className="flex flex-col sm:flex-row sm:items-center px-4 py-4 sm:px-6 sm:py-3 gap-1">
+                      <span>Order No. #{orderNumber}</span>
+                      <span>Placed on: {formattedDate}</span>
+                    </div>
+                  )}
+                </OrderCreatedDate>
+              )}
+            </OrderNumber>
           </div>
         </Order>
       </Event>
