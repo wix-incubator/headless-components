@@ -56,9 +56,9 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { useNavigation } from '@/components/NavigationContext';
-import { EventList } from '../EventList';
+import { EventList } from '../EventList/EventList';
 import { EventSocialShare } from '../EventSocialShare';
-import { ScheduleItem } from '../Schedule';
+import { ScheduleItem } from '../Schedule/ScheduleItem';
 import { OccurrencesModal } from './OccurrencesModal';
 
 interface EventDetailsProps {
