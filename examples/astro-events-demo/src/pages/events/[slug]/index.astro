@@ -7,11 +7,11 @@ import {
   loadOccurrenceListServiceConfig,
 } from '@wix/events/services';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { EventDetails } from '@/components/events/EventDetails';
+import { EventDetails } from '@/components/events/EventDetails/EventDetails';
 
 const { slug } = Astro.params;
 
-if (!slug || slug.includes('site-bi-navigation')) {
+if (!slug) {
   return Astro.redirect('/');
 }
 
@@ -52,8 +52,8 @@ const [
     eventListServiceConfig={eventListServiceConfig}
     ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
     checkoutServiceConfig={{
-      noTicketDefinitionsSelectedError: 'Select a ticket',
       thankYouPageUrl: `${Astro.url.origin}/events/${slug}/thank-you`,
+      noTicketDefinitionsSelectedError: 'Select a ticket',
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
     occurrenceListServiceConfig={occurrenceListServiceConfig}

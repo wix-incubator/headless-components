@@ -9,14 +9,20 @@ import { ScrollToTop } from '@/lib/scroll-to-top';
 import {
   EventListPage,
   eventListPageLoader,
-} from '@/components/events/EventList';
+} from '@/components/events/EventList/EventListPage';
 import {
   EventDetailsPage,
   eventDetailsPageLoader,
-} from '@/components/events/EventDetails';
-import { FormPage, formPageLoader } from '@/components/events/Form';
-import { SchedulePage, schedulePageLoader } from '@/components/events/Schedule';
-import { ThankYouPage, thankYouPageLoader } from '@/components/events/ThankYou';
+} from '@/components/events/EventDetails/EventDetailsPage';
+import { FormPage, formPageLoader } from '@/components/events/Form/FormPage';
+import {
+  SchedulePage,
+  schedulePageLoader,
+} from '@/components/events/Schedule/SchedulePage';
+import {
+  ThankYouPage,
+  thankYouPageLoader,
+} from '@/components/events/ThankYou/ThankYouPage';
 import {
   NavigationProvider,
   type NavigationComponent,
@@ -24,10 +30,10 @@ import {
 
 function Layout() {
   return (
-    <>
+    <div className="min-h-screen bg-background">
       <ScrollToTop />
       <Outlet />
-    </>
+    </div>
   );
 }
 
@@ -49,6 +55,7 @@ const router = createBrowserRouter(
               eventDetailsPagePath="/events/:slug"
               formPagePath="/events/:slug/form"
               schedulePagePath="/events/:slug/schedule"
+              thankYouPagePath="/events/:slug/thank-you"
             />
           ),
           loader: eventDetailsPageLoader,
