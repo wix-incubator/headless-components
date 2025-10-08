@@ -179,7 +179,7 @@ export function Filters(props: FiltersProps): React.ReactNode {
   const onChange = async (value: FilterPrimitive.Filter) => {
     const stageFilter =
       value!['stage'] !== props.allStagesLabel ? value!['stage'] : null;
-    const tagFilters = value!['tag'] || [];
+    const tagFilters = value!['tag']?.$in || [];
 
     scheduleListService.setStageFilter(stageFilter);
     scheduleListService.setTagFilters(tagFilters);

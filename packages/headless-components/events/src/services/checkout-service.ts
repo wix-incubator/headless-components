@@ -100,16 +100,12 @@ export const CheckoutService =
               eventSlug,
             },
             callbacks: {
-              thankYouPageUrl:
-                config.thankYouPageUrl ||
-                (typeof window !== 'undefined' ? window.location.href : ''),
+              thankYouPageUrl: config.thankYouPageUrl || window.location.href,
             },
           });
 
           if (redirectSession?.fullUrl) {
-            if (typeof window !== 'undefined') {
-              window.location.href = redirectSession.fullUrl;
-            }
+            window.location.href = redirectSession.fullUrl;
           } else {
             throw new Error('Failed to create redirect session');
           }
