@@ -64,6 +64,8 @@ const loadCollectionItems = async (
   collectionId: string,
   options: CmsQueryOptions = {},
   sort?: SortValue,
+  singleRefFieldIds: string[] = [],
+  multiRefFieldIds: string[] = [],
 ) => {
   if (!collectionId) {
     throw new Error('No collection ID provided');
@@ -91,6 +93,12 @@ const loadCollectionItems = async (
 
   query = query.skip(skip);
 
+  // Include reference fields if specified
+  const allRefFieldIds = [...singleRefFieldIds, ...multiRefFieldIds];
+  if (allRefFieldIds.length > 0) {
+    query = query.include(...allRefFieldIds);
+  }
+
   return await query.find({ returnTotalCount });
 };
 
@@ -107,6 +115,10 @@ export interface CmsCollectionServiceConfig {
   queryOptions?: CmsQueryOptions;
   /** Optional initial sort value */
   initialSort?: SortValue;
+  /** List of field IDs for single reference fields to include */
+  singleRefFieldIds?: string[];
+  /** List of field IDs for multi reference fields to include */
+  multiRefFieldIds?: string[];
 }
 
 /**
@@ -152,6 +164,8 @@ export const CmsCollectionServiceImplementation =
             config.collectionId,
             mergedOptions,
             sortSignal.get(),
+            config.singleRefFieldIds,
+            config.multiRefFieldIds,
           );
 
           queryResultSignal.set(result);
@@ -301,15 +315,21 @@ export type CmsCollectionServiceConfigResult = {
  *
  * @param collectionId - The collection ID to load data from
  * @param options - Query options for pagination and filtering
+ * @param sort - Optional sort value
+ * @param singleRefFieldIds - List of field IDs for single reference fields to include
+ * @param multiRefFieldIds - List of field IDs for multi reference fields to include
  * @returns Promise resolving to service configuration with queryResult containing all data
  *
  * @example
  * ```tsx
  * // In Astro frontmatter or server action
- * const cmsConfig = await loadCmsCollectionServiceInitialData('MyCollection', {
- *   limit: 10,
- *   skip: 0
- * });
+ * const cmsConfig = await loadCmsCollectionServiceInitialData(
+ *   'MyCollection',
+ *   { limit: 10, skip: 0 },
+ *   undefined,
+ *   ['author', 'category'],
+ *   ['tags', 'relatedItems']
+ * );
  *
  * // Pass to React component
  * <MyPage cmsConfig={cmsConfig} />
@@ -319,6 +339,8 @@ export const loadCmsCollectionServiceInitialData = async (
   collectionId: string,
   options: CmsQueryOptions = {},
   sort?: SortValue,
+  singleRefFieldIds?: string[],
+  multiRefFieldIds?: string[],
 ): Promise<CmsCollectionServiceConfigResult> => {
   try {
     if (!collectionId) {
@@ -326,7 +348,13 @@ export const loadCmsCollectionServiceInitialData = async (
     }
 
     // Load collection items on the server using shared function
-    const result = await loadCollectionItems(collectionId, options, sort);
+    const result = await loadCollectionItems(
+      collectionId,
+      options,
+      sort,
+      singleRefFieldIds,
+      multiRefFieldIds,
+    );
 
     return {
       [CmsCollectionServiceDefinition]: {
@@ -334,6 +362,8 @@ export const loadCmsCollectionServiceInitialData = async (
         queryResult: result,
         queryOptions: options,
         initialSort: sort,
+        singleRefFieldIds,
+        multiRefFieldIds,
       },
     };
   } catch (error) {

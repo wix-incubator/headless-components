@@ -26,6 +26,63 @@ A comprehensive CMS collection display component system built with composable pr
 
 The CmsCollection component follows a compound component pattern where each part can be composed together to create flexible CMS collection displays. It supports both simplified and headless interfaces.
 
+## Working with Reference Fields
+
+CMS collections support reference fields that link to items in other collections. When querying collection items, you can include the full referenced item data instead of just the reference IDs.
+
+### Reference Field Types
+
+- **Single Reference Fields**: Fields that reference one item from another collection (e.g., `author`, `category`)
+- **Multi Reference Fields**: Fields that reference multiple items from other collections (e.g., `tags`, `relatedItems`)
+
+### Including References in Queries
+
+Use the `singleRefFieldIds` and `multiRefFieldIds` properties to specify which reference fields should be included:
+
+```tsx
+<CmsCollection.Root
+  collection={{
+    id: 'BlogPosts',
+    singleRefFieldIds: ['author', 'category'],
+    multiRefFieldIds: ['tags', 'relatedPosts'],
+  }}
+>
+  <CmsCollection.Items>
+    <CmsCollection.ItemRepeater>
+      {/* Access main item fields */}
+      <CmsItem.Field fieldId="title" />
+
+      {/* Access single reference field - returns full item */}
+      <CmsItem.Field fieldId="author" asChild>
+        {({ fieldValue, ...props }) => (
+          <div className="author" {...props}>
+            <span>{fieldValue?.name}</span>
+            <span>{fieldValue?.email}</span>
+          </div>
+        )}
+      </CmsItem.Field>
+
+      {/* Access multi reference field - returns array of items */}
+      <CmsItem.Field fieldId="tags" asChild>
+        {({ fieldValue, ...props }) => (
+          <div className="tags" {...props}>
+            {fieldValue?.map((tag) => (
+              <span key={tag._id}>{tag.name}</span>
+            ))}
+          </div>
+        )}
+      </CmsItem.Field>
+    </CmsCollection.ItemRepeater>
+  </CmsCollection.Items>
+</CmsCollection.Root>
+```
+
+**Important Notes:**
+
+- Without including references, reference fields will only contain the referenced item IDs
+- Including references requires additional API calls and may impact performance
+- Only include the reference fields you actually need to display
+
 ## Components
 
 ### CmsCollection.Root
@@ -41,7 +98,20 @@ interface RootProps {
     id: string;
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
+    /** List of field IDs for single reference fields to include */
+    singleRefFieldIds?: string[];
+    /** List of field IDs for multi reference fields to include */
+    multiRefFieldIds?: string[];
   };
+}
+
+interface CmsQueryOptions {
+  /** Number of items per page */
+  limit?: number;
+  /** Number of items to skip */
+  skip?: number;
+  /** Whether to return the total count of items */
+  returnTotalCount?: boolean;
 }
 ```
 
@@ -59,6 +129,24 @@ interface RootProps {
   queryOptions: { limit: 10 }
 }}>
   {/* CMS collection component */}
+</CmsCollection.Root>
+
+// With reference fields included
+<CmsCollection.Root collection={{
+  id: 'MyCollection',
+  queryOptions: {
+    limit: 10
+  },
+  singleRefFieldIds: ['author', 'category'],
+  multiRefFieldIds: ['tags', 'relatedItems']
+}}>
+  <CmsCollection.Items>
+    <CmsCollection.ItemRepeater>
+      <CmsItem.Field fieldId="title" />
+      <CmsItem.Field fieldId="author" />
+      <CmsItem.Field fieldId="tags" />
+    </CmsCollection.ItemRepeater>
+  </CmsCollection.Items>
 </CmsCollection.Root>
 ```
 
@@ -803,6 +891,170 @@ function CmsCollectionDisplay() {
 }
 ```
 
+### Working with Reference Fields Example
+
+```tsx
+function BlogPostsWithReferences() {
+  return (
+    <CmsCollection.Root
+      collection={{
+        id: 'BlogPosts',
+        queryOptions: {
+          limit: 10,
+          returnTotalCount: true,
+        },
+        // Include reference fields to get full item data
+        singleRefFieldIds: ['author', 'category'],
+        multiRefFieldIds: ['tags', 'relatedPosts'],
+      }}
+    >
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="font-heading text-3xl font-bold text-foreground">
+            Blog Posts
+          </h1>
+          <span className="font-paragraph text-secondary-foreground">
+            <CmsCollection.Totals.Displayed /> of <CmsCollection.Totals.Count />{' '}
+            posts
+          </span>
+        </div>
+
+        {/* Blog Posts List */}
+        <CmsCollection.Items
+          emptyState={
+            <div className="text-center py-12">
+              <p className="font-paragraph text-secondary-foreground">
+                No blog posts found
+              </p>
+            </div>
+          }
+          className="space-y-6"
+        >
+          <CmsCollection.ItemRepeater className="bg-background border border-foreground/10 rounded-lg p-6">
+            {/* Post Title */}
+            <CmsItem.Field fieldId="title" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <h2
+                  ref={ref}
+                  {...props}
+                  className="font-heading text-2xl font-bold text-foreground mb-4"
+                >
+                  {fieldValue}
+                </h2>
+              )}
+            </CmsItem.Field>
+
+            {/* Author (Single Reference) */}
+            <CmsItem.Field fieldId="author" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div
+                  ref={ref}
+                  {...props}
+                  className="flex items-center gap-3 mb-4"
+                >
+                  <img
+                    src={fieldValue?.avatar}
+                    alt={fieldValue?.name}
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <div>
+                    <p className="font-paragraph font-semibold text-foreground">
+                      {fieldValue?.name}
+                    </p>
+                    <p className="font-paragraph text-sm text-secondary-foreground">
+                      {fieldValue?.role}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </CmsItem.Field>
+
+            {/* Category (Single Reference) */}
+            <CmsItem.Field fieldId="category" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <span
+                  ref={ref}
+                  {...props}
+                  className="inline-block bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-paragraph mb-4"
+                >
+                  {fieldValue?.name}
+                </span>
+              )}
+            </CmsItem.Field>
+
+            {/* Post Excerpt */}
+            <CmsItem.Field fieldId="excerpt" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <p
+                  ref={ref}
+                  {...props}
+                  className="font-paragraph text-secondary-foreground mb-4"
+                >
+                  {fieldValue}
+                </p>
+              )}
+            </CmsItem.Field>
+
+            {/* Tags (Multi Reference) */}
+            <CmsItem.Field fieldId="tags" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div ref={ref} {...props} className="flex flex-wrap gap-2 mb-4">
+                  {fieldValue?.map((tag) => (
+                    <span
+                      key={tag._id}
+                      className="bg-secondary text-secondary-foreground px-2 py-1 rounded text-sm font-paragraph"
+                    >
+                      #{tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </CmsItem.Field>
+
+            {/* Related Posts (Multi Reference) */}
+            <CmsItem.Field fieldId="relatedPosts" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div
+                  ref={ref}
+                  {...props}
+                  className="mt-6 pt-6 border-t border-foreground/10"
+                >
+                  <h3 className="font-heading font-semibold text-foreground mb-3">
+                    Related Posts
+                  </h3>
+                  <div className="space-y-2">
+                    {fieldValue?.map((post) => (
+                      <a
+                        key={post._id}
+                        href={`/blog/${post.slug}`}
+                        className="block font-paragraph text-secondary-foreground hover:text-primary transition-colors"
+                      >
+                        → {post.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CmsItem.Field>
+          </CmsCollection.ItemRepeater>
+        </CmsCollection.Items>
+
+        {/* Pagination */}
+        <div className="flex gap-2 justify-center">
+          <CmsCollection.PrevAction className="bg-secondary text-secondary-foreground px-4 py-2 rounded">
+            Previous
+          </CmsCollection.PrevAction>
+          <CmsCollection.NextAction className="bg-primary text-primary-foreground px-4 py-2 rounded">
+            Next
+          </CmsCollection.NextAction>
+        </div>
+      </div>
+    </CmsCollection.Root>
+  );
+}
+```
+
 ### Advanced Example with Custom Sort Options
 
 ```tsx
@@ -907,6 +1159,170 @@ function AdvancedCmsCollection() {
               Next
             </CmsCollection.NextAction>
           </div>
+        </div>
+      </div>
+    </CmsCollection.Root>
+  );
+}
+```
+
+### Working with Reference Fields Example
+
+```tsx
+function BlogPostsWithReferences() {
+  return (
+    <CmsCollection.Root
+      collection={{
+        id: 'BlogPosts',
+        queryOptions: {
+          limit: 10,
+          returnTotalCount: true,
+        },
+        // Include reference fields to get full item data
+        singleRefFieldIds: ['author', 'category'],
+        multiRefFieldIds: ['tags', 'relatedPosts'],
+      }}
+    >
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="font-heading text-3xl font-bold text-foreground">
+            Blog Posts
+          </h1>
+          <span className="font-paragraph text-secondary-foreground">
+            <CmsCollection.Totals.Displayed /> of <CmsCollection.Totals.Count />{' '}
+            posts
+          </span>
+        </div>
+
+        {/* Blog Posts List */}
+        <CmsCollection.Items
+          emptyState={
+            <div className="text-center py-12">
+              <p className="font-paragraph text-secondary-foreground">
+                No blog posts found
+              </p>
+            </div>
+          }
+          className="space-y-6"
+        >
+          <CmsCollection.ItemRepeater className="bg-background border border-foreground/10 rounded-lg p-6">
+            {/* Post Title */}
+            <CmsItem.Field fieldId="title" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <h2
+                  ref={ref}
+                  {...props}
+                  className="font-heading text-2xl font-bold text-foreground mb-4"
+                >
+                  {fieldValue}
+                </h2>
+              )}
+            </CmsItem.Field>
+
+            {/* Author (Single Reference) */}
+            <CmsItem.Field fieldId="author" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div
+                  ref={ref}
+                  {...props}
+                  className="flex items-center gap-3 mb-4"
+                >
+                  <img
+                    src={fieldValue?.avatar}
+                    alt={fieldValue?.name}
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <div>
+                    <p className="font-paragraph font-semibold text-foreground">
+                      {fieldValue?.name}
+                    </p>
+                    <p className="font-paragraph text-sm text-secondary-foreground">
+                      {fieldValue?.role}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </CmsItem.Field>
+
+            {/* Category (Single Reference) */}
+            <CmsItem.Field fieldId="category" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <span
+                  ref={ref}
+                  {...props}
+                  className="inline-block bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-paragraph mb-4"
+                >
+                  {fieldValue?.name}
+                </span>
+              )}
+            </CmsItem.Field>
+
+            {/* Post Excerpt */}
+            <CmsItem.Field fieldId="excerpt" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <p
+                  ref={ref}
+                  {...props}
+                  className="font-paragraph text-secondary-foreground mb-4"
+                >
+                  {fieldValue}
+                </p>
+              )}
+            </CmsItem.Field>
+
+            {/* Tags (Multi Reference) */}
+            <CmsItem.Field fieldId="tags" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div ref={ref} {...props} className="flex flex-wrap gap-2 mb-4">
+                  {fieldValue?.map((tag) => (
+                    <span
+                      key={tag._id}
+                      className="bg-secondary text-secondary-foreground px-2 py-1 rounded text-sm font-paragraph"
+                    >
+                      #{tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </CmsItem.Field>
+
+            {/* Related Posts (Multi Reference) */}
+            <CmsItem.Field fieldId="relatedPosts" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div
+                  ref={ref}
+                  {...props}
+                  className="mt-6 pt-6 border-t border-foreground/10"
+                >
+                  <h3 className="font-heading font-semibold text-foreground mb-3">
+                    Related Posts
+                  </h3>
+                  <div className="space-y-2">
+                    {fieldValue?.map((post) => (
+                      <a
+                        key={post._id}
+                        href={`/blog/${post.slug}`}
+                        className="block font-paragraph text-secondary-foreground hover:text-primary transition-colors"
+                      >
+                        → {post.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CmsItem.Field>
+          </CmsCollection.ItemRepeater>
+        </CmsCollection.Items>
+
+        {/* Pagination */}
+        <div className="flex gap-2 justify-center">
+          <CmsCollection.PrevAction className="bg-secondary text-secondary-foreground px-4 py-2 rounded">
+            Previous
+          </CmsCollection.PrevAction>
+          <CmsCollection.NextAction className="bg-primary text-primary-foreground px-4 py-2 rounded">
+            Next
+          </CmsCollection.NextAction>
         </div>
       </div>
     </CmsCollection.Root>
@@ -1103,6 +1519,170 @@ function CmsCollectionWithVariants() {
         <CmsCollection.ShowMoreAction className="w-full btn-outline">
           Load More Items
         </CmsCollection.ShowMoreAction>
+      </div>
+    </CmsCollection.Root>
+  );
+}
+```
+
+### Working with Reference Fields Example
+
+```tsx
+function BlogPostsWithReferences() {
+  return (
+    <CmsCollection.Root
+      collection={{
+        id: 'BlogPosts',
+        queryOptions: {
+          limit: 10,
+          returnTotalCount: true,
+        },
+        // Include reference fields to get full item data
+        singleRefFieldIds: ['author', 'category'],
+        multiRefFieldIds: ['tags', 'relatedPosts'],
+      }}
+    >
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="font-heading text-3xl font-bold text-foreground">
+            Blog Posts
+          </h1>
+          <span className="font-paragraph text-secondary-foreground">
+            <CmsCollection.Totals.Displayed /> of <CmsCollection.Totals.Count />{' '}
+            posts
+          </span>
+        </div>
+
+        {/* Blog Posts List */}
+        <CmsCollection.Items
+          emptyState={
+            <div className="text-center py-12">
+              <p className="font-paragraph text-secondary-foreground">
+                No blog posts found
+              </p>
+            </div>
+          }
+          className="space-y-6"
+        >
+          <CmsCollection.ItemRepeater className="bg-background border border-foreground/10 rounded-lg p-6">
+            {/* Post Title */}
+            <CmsItem.Field fieldId="title" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <h2
+                  ref={ref}
+                  {...props}
+                  className="font-heading text-2xl font-bold text-foreground mb-4"
+                >
+                  {fieldValue}
+                </h2>
+              )}
+            </CmsItem.Field>
+
+            {/* Author (Single Reference) */}
+            <CmsItem.Field fieldId="author" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div
+                  ref={ref}
+                  {...props}
+                  className="flex items-center gap-3 mb-4"
+                >
+                  <img
+                    src={fieldValue?.avatar}
+                    alt={fieldValue?.name}
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <div>
+                    <p className="font-paragraph font-semibold text-foreground">
+                      {fieldValue?.name}
+                    </p>
+                    <p className="font-paragraph text-sm text-secondary-foreground">
+                      {fieldValue?.role}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </CmsItem.Field>
+
+            {/* Category (Single Reference) */}
+            <CmsItem.Field fieldId="category" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <span
+                  ref={ref}
+                  {...props}
+                  className="inline-block bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-paragraph mb-4"
+                >
+                  {fieldValue?.name}
+                </span>
+              )}
+            </CmsItem.Field>
+
+            {/* Post Excerpt */}
+            <CmsItem.Field fieldId="excerpt" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <p
+                  ref={ref}
+                  {...props}
+                  className="font-paragraph text-secondary-foreground mb-4"
+                >
+                  {fieldValue}
+                </p>
+              )}
+            </CmsItem.Field>
+
+            {/* Tags (Multi Reference) */}
+            <CmsItem.Field fieldId="tags" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div ref={ref} {...props} className="flex flex-wrap gap-2 mb-4">
+                  {fieldValue?.map((tag) => (
+                    <span
+                      key={tag._id}
+                      className="bg-secondary text-secondary-foreground px-2 py-1 rounded text-sm font-paragraph"
+                    >
+                      #{tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </CmsItem.Field>
+
+            {/* Related Posts (Multi Reference) */}
+            <CmsItem.Field fieldId="relatedPosts" asChild>
+              {({ fieldValue, ...props }, ref) => (
+                <div
+                  ref={ref}
+                  {...props}
+                  className="mt-6 pt-6 border-t border-foreground/10"
+                >
+                  <h3 className="font-heading font-semibold text-foreground mb-3">
+                    Related Posts
+                  </h3>
+                  <div className="space-y-2">
+                    {fieldValue?.map((post) => (
+                      <a
+                        key={post._id}
+                        href={`/blog/${post.slug}`}
+                        className="block font-paragraph text-secondary-foreground hover:text-primary transition-colors"
+                      >
+                        → {post.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CmsItem.Field>
+          </CmsCollection.ItemRepeater>
+        </CmsCollection.Items>
+
+        {/* Pagination */}
+        <div className="flex gap-2 justify-center">
+          <CmsCollection.PrevAction className="bg-secondary text-secondary-foreground px-4 py-2 rounded">
+            Previous
+          </CmsCollection.PrevAction>
+          <CmsCollection.NextAction className="bg-primary text-primary-foreground px-4 py-2 rounded">
+            Next
+          </CmsCollection.NextAction>
+        </div>
       </div>
     </CmsCollection.Root>
   );
