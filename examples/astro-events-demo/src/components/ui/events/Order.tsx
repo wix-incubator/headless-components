@@ -273,10 +273,7 @@ export const OrderTotal = React.forwardRef<
     <OrderPrimitive.Total
       {...props}
       ref={ref}
-      className={cn(
-        'block font-paragraph text-foreground text-base',
-        className
-      )}
+      className={cn('block font-paragraph text-foreground text-lg', className)}
     />
   );
 });

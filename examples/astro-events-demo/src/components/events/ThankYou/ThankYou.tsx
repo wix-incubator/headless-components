@@ -226,10 +226,7 @@ export function ThankYou({
                       )}
                     </OrderFee>
                   </div>
-                  <OrderTotal
-                    asChild
-                    className="flex justify-between py-5 text-lg"
-                  >
+                  <OrderTotal asChild className="flex justify-between py-5">
                     {({ formattedAmount }) => (
                       <div>
                         <span>Total</span>
