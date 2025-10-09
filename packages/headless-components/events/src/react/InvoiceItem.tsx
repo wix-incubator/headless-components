@@ -1,4 +1,4 @@
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type InvoiceItem } from '../services/invoice-item-service.js';
 import * as CoreInvoiceItem from './core/InvoiceItem.js';

@@ -1,4 +1,4 @@
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type OccurrenceListServiceConfig } from '../services/occurrence-list-service.js';
 import * as Event from './Event.js';

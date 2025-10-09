@@ -1,5 +1,5 @@
 import { Filter as FilterPrimitive } from '@wix/headless-components/react';
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';

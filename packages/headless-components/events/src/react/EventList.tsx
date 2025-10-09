@@ -1,4 +1,4 @@
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import React from 'react';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
