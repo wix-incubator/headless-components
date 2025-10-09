@@ -609,7 +609,7 @@ export const ShortDescription = React.forwardRef<
  */
 export interface DescriptionProps {
   /** Child element or custom render function */
-  children: AsChildChildren<{ content: RichContent }>;
+  children?: AsChildChildren<{ content: RichContent }>;
 }
 
 /**

@@ -59,13 +59,6 @@ import '@wix/ricos/css/plugin-video-viewer.global.css';
 export const Event = EventPrimitive.Root;
 
 /**
- * Provides the event slug.
- *
- * @component
- */
-export const EventSlug = EventPrimitive.Slug;
-
-/**
  * Provides the event type.
  *
  * @component
@@ -73,11 +66,24 @@ export const EventSlug = EventPrimitive.Slug;
 export const EventType = EventPrimitive.Type;
 
 /**
- * Provides other events.
+ * Displays the event slug.
  *
  * @component
+ * @example
+ * ```tsx
+ * <Event>
+ *   <EventSlug />
+ * </Event>
+ * ```
  */
-export const EventOtherEvents = EventPrimitive.OtherEvents;
+export const EventSlug = React.forwardRef<
+  React.ElementRef<typeof EventPrimitive.Slug>,
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.Slug>
+>(({ className, ...props }, ref) => {
+  return <EventPrimitive.Slug {...props} ref={ref} className={cn(className)} />;
+});
+
+EventSlug.displayName = 'EventSlug';
 
 const eventTitleVariants = cva('text-foreground', {
   variants: {
@@ -229,9 +235,9 @@ export const EventDescription = React.forwardRef<
 >((props, ref) => {
   return (
     <EventPrimitive.Description {...props} ref={ref}>
-      {({ description }) => (
+      {({ content }) => (
         <RicosViewer
-          content={description as RichContent}
+          content={content as RichContent}
           theme={{
             // TODO: add missing styles
             customStyles: {
@@ -397,3 +403,30 @@ export const EventAddToIcsCalendar = React.forwardRef<
 });
 
 EventAddToIcsCalendar.displayName = 'EventAddToIcsCalendar';
+
+/**
+ * Container for other events.
+ * Handles layout and spacing for multiple events.
+ *
+ * @component
+ */
+export const EventOtherEvents = React.forwardRef<
+  React.ElementRef<typeof EventPrimitive.OtherEvents>,
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.OtherEvents>
+>(({ className, ...props }, ref) => {
+  return (
+    <EventPrimitive.OtherEvents {...props} ref={ref} className={cn(className)}>
+      {props.children}
+    </EventPrimitive.OtherEvents>
+  );
+});
+
+EventOtherEvents.displayName = 'EventOtherEvents';
+
+/**
+ * Repeater component for individual events.
+ * Handles the iteration over events in the list.
+ *
+ * @component
+ */
+export const EventOtherEventRepeater = EventPrimitive.OtherEventRepeater;
