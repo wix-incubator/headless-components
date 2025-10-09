@@ -36,7 +36,7 @@ export const Filter = FilterPrimitive.Root;
 export const FilterOptions = React.forwardRef<
   React.ElementRef<typeof FilterPrimitive.FilterOptions>,
   React.ComponentPropsWithoutRef<typeof FilterPrimitive.FilterOptions>
->(({ className, ...props }) => {
+>(({ className, ...props }, _ref) => {
   return <FilterPrimitive.FilterOptions {...props} className={cn(className)} />;
 });
 
@@ -53,7 +53,7 @@ export const FilterOptionRepeater = FilterPrimitive.FilterOptionRepeater;
 const filterOptionSingleVariants = cva('font-paragraph text-foreground', {
   variants: {
     variant: {
-      tabs: '[&_button]:px-2 [&_button]:border-b-4 [&_button]:border-transparent [&_button[data-state=on]]:border-primary [&_button]:mb-[-1px] hover:[&_button]:text-primary/80',
+      tabs: 'text-base font-paragraph text-foreground [&_button]:px-3 [&_button]:py-3 [&_button]:border-b-4 [&_button]:border-transparent [&_button[data-state=on]]:border-primary hover:[&_button]:text-primary/80',
     },
   },
 });
@@ -109,7 +109,7 @@ export const FilterOptionMulti = React.forwardRef<
       ref={ref}
       className={cn(
         'text-sm font-paragraph text-foreground',
-        '[&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-foreground/10 [&_button]:rounded-full [&_button]:bg-background',
+        '[&_button]:px-3 [&_button]:py-1.5 [&_button]:border [&_button]:border-foreground/10 [&_button]:rounded-full [&_button]:bg-background hover:[&_button]:bg-primary/80',
         '[&_button[data-state=on]]:bg-primary [&_button[data-state=on]]:text-primary-foreground [&_button[data-state=on]]:border-primary',
         className
       )}

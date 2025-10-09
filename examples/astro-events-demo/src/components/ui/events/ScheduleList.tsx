@@ -59,13 +59,12 @@ export const ScheduleListItemRepeater = ScheduleListPrimitive.ItemRepeater;
 export const ScheduleListGroups = React.forwardRef<
   React.ElementRef<typeof ScheduleListPrimitive.Groups>,
   React.ComponentPropsWithoutRef<typeof ScheduleListPrimitive.Groups>
->(({ className, emptyState, ...props }, ref) => {
+>(({ className, ...props }, ref) => {
   return (
     <ScheduleListPrimitive.Groups
       {...props}
       ref={ref}
       className={cn(className)}
-      emptyState={emptyState}
     >
       {props.children}
     </ScheduleListPrimitive.Groups>

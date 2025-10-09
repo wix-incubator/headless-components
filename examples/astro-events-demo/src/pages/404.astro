@@ -1,6 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import NotFoundPage from '../react-pages/404';
+import BaseLayout from '@/layouts/BaseLayout.astro';
 
 // Ensure proper 404 HTTP status code
 Astro.response.status = 404;
@@ -13,5 +12,10 @@ Astro.response.status = 404;
     content="The page you're looking for could not be found."
   />
 
-  <NotFoundPage client:load slot="body" />
+  <div class="min-h-screen bg-background flex items-center justify-center">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h1 class="text-9xl font-bold text-foreground/20 mb-4">404</h1>
+      <h2 class="text-4xl font-bold text-foreground">Page Not Found</h2>
+    </div>
+  </div>
 </BaseLayout>

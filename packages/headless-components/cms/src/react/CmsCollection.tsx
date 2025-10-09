@@ -38,6 +38,10 @@ export interface RootProps {
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
     initialSort?: SortValue;
+    /** List of field IDs for single reference fields to include */
+    singleRefFieldIds?: string[];
+    /** List of field IDs for multi reference fields to include */
+    multiRefFieldIds?: string[];
   };
 }
 
@@ -68,6 +72,26 @@ export interface RootProps {
  *     </CmsCollection.Root>
  *   );
  * }
+ *
+ * // With reference fields included
+ * function CollectionWithReferences() {
+ *   return (
+ *     <CmsCollection.Root
+ *       collection={{
+ *         id: 'MyCollection',
+ *         singleRefFieldIds: ['author', 'category'],
+ *         multiRefFieldIds: ['tags', 'relatedItems']
+ *       }}
+ *     >
+ *       <CmsCollection.Items>
+ *         <CmsCollection.ItemRepeater>
+ *           <CmsItem.Field fieldId="title" />
+ *           <CmsItem.Field fieldId="author" />
+ *         </CmsCollection.ItemRepeater>
+ *       </CmsCollection.Items>
+ *     </CmsCollection.Root>
+ *   );
+ * }
  * ```
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
@@ -79,6 +103,8 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       queryResult: collection?.queryResult,
       queryOptions: collection?.queryOptions,
       initialSort: collection?.initialSort,
+      singleRefFieldIds: collection?.singleRefFieldIds,
+      multiRefFieldIds: collection?.multiRefFieldIds,
     };
 
     const attributes = {

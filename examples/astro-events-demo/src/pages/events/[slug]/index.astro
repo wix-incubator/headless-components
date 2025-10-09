@@ -6,12 +6,12 @@ import {
   loadScheduleListServiceConfig,
   loadOccurrenceListServiceConfig,
 } from '@wix/events/services';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import EventDetailsPage from '../../../react-pages/event-details';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { EventDetails } from '@/components/events/EventDetails/EventDetails';
 
 const { slug } = Astro.params;
 
-if (!slug || slug.includes('site-bi-navigation')) {
+if (!slug) {
   return Astro.redirect('/');
 }
 
@@ -45,15 +45,15 @@ const [
   <title>Event Details</title>
   <meta name="description" content="Event Details" />
 
-  <EventDetailsPage
+  <EventDetails
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}
     eventListServiceConfig={eventListServiceConfig}
     ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
     checkoutServiceConfig={{
-      noTicketDefinitionsSelectedError: 'Select a ticket',
       thankYouPageUrl: `${Astro.url.origin}/events/${slug}/thank-you`,
+      noTicketDefinitionsSelectedError: 'Select a ticket',
     }}
     scheduleListServiceConfig={scheduleListServiceConfig}
     occurrenceListServiceConfig={occurrenceListServiceConfig}
