@@ -430,3 +430,10 @@ EventOtherEvents.displayName = 'EventOtherEvents';
  * @component
  */
 export const EventOtherEventRepeater = EventPrimitive.OtherEventRepeater;
+
+/**
+ * Displays the event form.
+ *
+ * @component
+ */
+export const EventForm = EventPrimitive.Form;

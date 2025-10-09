@@ -62,7 +62,7 @@ const router = createBrowserRouter(
         },
         {
           path: '/events/:slug/form',
-          element: <FormPage />,
+          element: <FormPage thankYouPagePath="/events/:slug/thank-you" />,
           loader: formPageLoader,
         },
         {

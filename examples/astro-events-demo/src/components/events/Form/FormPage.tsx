@@ -14,7 +14,9 @@ interface FormPageLoaderData {
   eventServiceConfig: EventServiceConfig;
 }
 
-interface FormPageProps {}
+interface FormPageProps {
+  thankYouPagePath: string;
+}
 
 export function formPageLoader({ params: { slug } }: LoaderFunctionArgs): {
   slug: string;
@@ -42,7 +44,7 @@ export function formPageLoader({ params: { slug } }: LoaderFunctionArgs): {
   };
 }
 
-export function FormPage({}: FormPageProps) {
+export function FormPage({ thankYouPagePath }: FormPageProps) {
   const { slug, data } = useLoaderData<typeof formPageLoader>();
 
   return (
@@ -52,7 +54,9 @@ export function FormPage({}: FormPageProps) {
           <div className="wix-verticals-container">
             <Form
               eventServiceConfig={eventServiceConfig}
-              formServiceConfig={{ postFlowUrl: '' }}
+              formServiceConfig={{
+                postFlowUrl: `${window.location.origin}${thankYouPagePath.replace(':slug', slug)}`,
+              }}
             />
           </div>
         )}
