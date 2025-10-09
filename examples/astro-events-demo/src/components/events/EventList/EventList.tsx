@@ -65,7 +65,7 @@ export function EventList({
             <FilterOptions>
               <FilterOptionRepeater>
                 <FilterOptionSingle asChild>
-                  {({ value, onChange, validValues, valueFormatter }) => (
+                  {({ validValues, value, valueFormatter, onChange }) => (
                     <div className="flex gap-2 items-center">
                       <span className="flex-shrink-0">Event status:</span>
                       <Select
