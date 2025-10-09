@@ -130,6 +130,19 @@ export const EventTitle = React.forwardRef<
 
 EventTitle.displayName = 'EventTitle';
 
+const eventImageVariants = cva('relative w-full bg-primary/80', {
+  variants: {
+    variant: {
+      default: '',
+      horizontal: 'pt-[56.25%]',
+      square: 'pt-[100%]',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
 /**
  * Displays the event image.
  * Uses WixMediaImage component for optimized image rendering.
@@ -138,14 +151,17 @@ EventTitle.displayName = 'EventTitle';
  */
 export const EventImage = React.forwardRef<
   React.ElementRef<typeof EventPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof EventPrimitive.Image>
->(({ className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof EventPrimitive.Image> &
+    VariantProps<typeof eventImageVariants>
+>(({ variant, className, ...props }, ref) => {
   return (
-    <EventPrimitive.Image
-      {...props}
-      ref={ref}
-      className={cn('object-cover', className)}
-    />
+    <div className={cn(eventImageVariants({ variant }), className)}>
+      <EventPrimitive.Image
+        {...props}
+        ref={ref}
+        className="object-cover absolute top-0 w-full h-full"
+      />
+    </div>
   );
 });
 

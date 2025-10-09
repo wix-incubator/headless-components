@@ -108,9 +108,10 @@ export function EventDetails({
       className="group/event"
     >
       {/* Mobile Image Section */}
-      <div className="relative w-full pt-[56.25%] group-data-[has-image=false]/event:hidden block sm:hidden">
-        <EventImage className="absolute top-0 w-full h-full" />
-      </div>
+      <EventImage
+        variant="horizontal"
+        className="block group-data-[has-image=false]/event:hidden sm:hidden"
+      />
 
       {/* Header Section */}
       <div className="max-w-5xl mx-auto px-5 py-6 sm:p-16">
@@ -156,9 +157,10 @@ export function EventDetails({
       </div>
 
       {/* Desktop Image Section */}
-      <div className="relative w-full pt-[56.25%] group-data-[has-image=false]/event:hidden hidden sm:block">
-        <EventImage className="absolute top-0 w-full h-full" />
-      </div>
+      <EventImage
+        variant="horizontal"
+        className="hidden group-data-[has-image=false]/event:hidden sm:block"
+      />
 
       <div className="max-w-6xl mx-auto py-6 sm:py-16 group-data-[has-image=false]/event:sm:pt-0">
         <div className="max-w-5xl mx-auto px-5 sm:px-16">
