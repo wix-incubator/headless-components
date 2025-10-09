@@ -420,3 +420,28 @@ export function OtherEvents(props: OtherEventsProps): React.ReactNode {
 
   return props.children({ events: otherEvents });
 }
+
+export interface FormProps {
+  /** Render prop function */
+  children: (props: FormRenderProps) => React.ReactNode;
+}
+
+export interface FormRenderProps {
+  /** Form ID */
+  formId: string;
+}
+
+/**
+ * Event Form core component that provides form ID.
+ *
+ * @component
+ */
+export function Form(props: FormProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+  // @ts-expect-error
+  const formId = event.registration!.rsvp!.formId;
+
+  return props.children({ formId });
+}

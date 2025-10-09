@@ -1,9 +1,9 @@
-import * as CoreOrder from './core/Order.js';
-import { type OrderServiceConfig } from '../services/order-service.js';
-import React from 'react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import React from 'react';
+import { type OrderServiceConfig } from '../services/order-service.js';
 import { InvoiceItem as InvoiceItemType } from '../services/invoice-item-service.js';
 import * as InvoiceItem from './InvoiceItem.js';
+import * as CoreOrder from './core/Order.js';
 
 enum TestIds {
   orderNumber = 'order-number',
@@ -39,13 +39,11 @@ export interface RootProps {
  * ```tsx
  * <Order.Root orderServiceConfig={orderServiceConfig}>
  *   <Order.InvoiceItems className="px-6 border-b border-gray-300">
- *     <Order.InvoiceItemRepeater>
- *       <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
- *         <InvoiceItem.Name className="w-[35%]" />
- *         <InvoiceItem.Price className="w-[25%]" />
- *         <InvoiceItem.Quantity className="w-[15%]" />
- *         <InvoiceItem.Total className="w-[25%] text-right" />
- *       </div>
+ *     <Order.InvoiceItemRepeater className="flex border-b border-gray-200 py-4 font-light text-gray-700">
+ *       <InvoiceItem.Name className="w-[35%]" />
+ *       <InvoiceItem.Price className="w-[25%]" />
+ *       <InvoiceItem.Quantity className="w-[15%]" />
+ *       <InvoiceItem.Total className="w-[25%] text-right" />
  *     </Order.InvoiceItemRepeater>
  *   </Order.InvoiceItems>
  * </Order.Root>
@@ -251,14 +249,14 @@ export const CreatedDate = React.forwardRef<HTMLElement, CreatedDateProps>(
  * Props for the Order DownloadTicketsButton component.
  */
 export interface DownloadTicketsButtonProps {
-  /** The label to display inside the button */
-  label?: string;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{ ticketsPdfUrl: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** The label to display inside the button */
+  label?: React.ReactNode;
 }
 
 /**
@@ -268,26 +266,28 @@ export interface DownloadTicketsButtonProps {
  * @component
  * @example
  * ```tsx
- * // Default usage with custom label
+ * // Default usage
  * <Order.DownloadTicketsButton
- *   label="Download My Tickets"
+ *   label="Download Tickets"
  *   className="bg-blue-500 text-white px-4 py-2 rounded"
  * />
  *
  * // asChild with primitive
  * <Order.DownloadTicketsButton asChild>
- *   <a className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" />
+ *   <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+ *     Download Tickets
+ *   </button>
  * </Order.DownloadTicketsButton>
  *
  * // asChild with react component
  * <Order.DownloadTicketsButton asChild>
  *   {({ ticketsPdfUrl }) =>
- *       <button
- *         className="block font-light py-3 px-20 ml-auto bg-blue-500 text-white rounded"
- *         onClick={() => window.open(ticketsPdfUrl, '_blank')}
- *       >
- *         Download Tickets
- *       </button>
+ *     <button
+ *       className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+ *       onClick={() => window.open(ticketsPdfUrl, '_blank')}
+ *     >
+ *       Download Tickets
+ *     </button>
  *   }
  * </Order.DownloadTicketsButton>
  * ```
@@ -334,7 +334,6 @@ export interface InvoiceItemsProps {
 
 /**
  * Container for order invoice items with customizable rendering.
- * Provides access to the list of invoice items for further processing.
  *
  * @component
  * @example
@@ -346,13 +345,11 @@ export interface InvoiceItemsProps {
  *     <div className="w-[15%]">Quantity</div>
  *     <div className="w-[25%] text-right">Total</div>
  *   </div>
- *   <Order.InvoiceItemRepeater>
- *     <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
- *       <InvoiceItem.Name className="w-[35%]" />
- *       <InvoiceItem.Price className="w-[25%]" />
- *       <InvoiceItem.Quantity className="w-[15%]" />
- *       <InvoiceItem.Total className="w-[25%] text-right" />
- *     </div>
+ *   <Order.InvoiceItemRepeater className="flex border-b border-gray-200 py-4 font-light text-gray-700">
+ *     <InvoiceItem.Name className="w-[35%]" />
+ *     <InvoiceItem.Price className="w-[25%]" />
+ *     <InvoiceItem.Quantity className="w-[15%]" />
+ *     <InvoiceItem.Total className="w-[25%] text-right" />
  *   </Order.InvoiceItemRepeater>
  * </Order.InvoiceItems>
  * ```
@@ -399,13 +396,11 @@ export interface InvoiceItemRepeaterProps {
  * @example
  * ```tsx
  * <Order.InvoiceItems>
- *   <Order.InvoiceItemRepeater>
- *     <div className="flex border-b border-gray-200 py-4 font-light text-gray-700">
- *       <InvoiceItem.Name className="w-[35%]" />
- *       <InvoiceItem.Price className="w-[25%]" />
- *       <InvoiceItem.Quantity className="w-[15%]" />
- *       <InvoiceItem.Total className="w-[25%] text-right" />
- *     </div>
+ *   <Order.InvoiceItemRepeater className="flex border-b border-gray-200 py-4 font-light text-gray-700">
+ *     <InvoiceItem.Name className="w-[35%]" />
+ *     <InvoiceItem.Price className="w-[25%]" />
+ *     <InvoiceItem.Quantity className="w-[15%]" />
+ *     <InvoiceItem.Total className="w-[25%] text-right" />
  *   </Order.InvoiceItemRepeater>
  * </Order.InvoiceItems>
  * ```
@@ -447,7 +442,7 @@ export interface SubtotalProps {
 }
 
 /**
- * Displays the order formatted subtotal amount with customizable rendering.
+ * Displays the order subtotal amount with customizable rendering.
  *
  * @component
  * @example
@@ -517,7 +512,7 @@ export interface PaidPlanDiscountProps {
 }
 
 /**
- * Displays the order paid plan discount information with rate and formatted amount with customizable rendering.
+ * Displays the order paid plan discount with customizable rendering.
  *
  * @component
  * @example
@@ -584,7 +579,7 @@ export interface CouponDiscountProps {
 }
 
 /**
- * Displays the order coupon discount information with formatted amount with customizable rendering.
+ * Displays the order coupon discount with customizable rendering.
  *
  * @component
  * @example
@@ -653,7 +648,7 @@ export interface TaxProps {
 }
 
 /**
- * Displays the order tax information with rate, formatted amount and name with customizable rendering.
+ * Displays the order tax with customizable rendering.
  *
  * @component
  * @example
@@ -721,7 +716,7 @@ export interface FeeProps {
 }
 
 /**
- * Displays the order fee information with rate and formatted amount with customizable rendering.
+ * Displays the order fee with customizable rendering.
  *
  * @component
  * @example
@@ -788,7 +783,7 @@ export interface TotalProps {
 }
 
 /**
- * Displays the order formatted total amount with customizable rendering.
+ * Displays the order total amount with customizable rendering.
  * This represents the final amount to be paid including all fees and taxes.
  *
  * @component

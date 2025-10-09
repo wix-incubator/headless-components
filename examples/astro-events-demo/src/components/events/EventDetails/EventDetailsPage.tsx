@@ -11,15 +11,13 @@ import {
   loadOccurrenceListServiceConfig,
 } from '@wix/events/services';
 import React from 'react';
-import { Await, useLoaderData } from 'react-router-dom';
+import {
+  Await,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router-dom';
 import { EventDetails } from './EventDetails';
 import { EventDetailsSkeleton } from './EventDetailsSkeleton';
-
-interface EventDetailsPageLoaderParams {
-  params: {
-    slug?: string;
-  };
-}
 
 interface EventDetailsPageLoaderData {
   eventServiceConfig: EventServiceConfig;
@@ -38,7 +36,7 @@ interface EventDetailsPageProps {
 
 export function eventDetailsPageLoader({
   params: { slug },
-}: EventDetailsPageLoaderParams): {
+}: LoaderFunctionArgs): {
   slug: string;
   data: Promise<EventDetailsPageLoaderData>;
 } {

@@ -1,4 +1,4 @@
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type EventServiceConfig } from '../services/event-service.js';
 import { type TicketDefinitionListServiceConfig } from '../services/ticket-definition-list-service.js';
@@ -379,7 +379,7 @@ export interface CheckoutTriggerProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
-  label?: string;
+  label?: React.ReactNode;
   /** The loading state to display inside the button */
   loadingState?: React.ReactNode;
 }
@@ -401,7 +401,7 @@ export interface CheckoutTriggerProps {
  * // asChild with react component
  * <TicketsPicker.CheckoutTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
  *   {React.forwardRef(({ isLoading, error, hasSelectedTicketDefinitions, checkout, ...props }, ref) => (
- *     <button ref={ref} {...props} onClick={checkout}>
+ *     <button ref={ref} {...props}>
  *       {isLoading ? 'Processing...' : 'Checkout'}
  *     </button>
  *   ))}

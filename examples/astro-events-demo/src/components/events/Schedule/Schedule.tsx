@@ -98,7 +98,7 @@ export function Schedule({
           <ScheduleListGroups
             className="space-y-10"
             emptyState={
-              <div className="font-paragraph text-foreground">
+              <div className="font-paragraph text-foreground text-base">
                 No schedule items available
               </div>
             }

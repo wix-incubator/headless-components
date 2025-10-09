@@ -95,8 +95,8 @@ export function EventList({
       <Events
         asChild
         emptyState={
-          <div className="font-paragraph text-foreground text-xl">
-            No events yet.
+          <div className="font-paragraph text-foreground text-base">
+            No events available
           </div>
         }
       >

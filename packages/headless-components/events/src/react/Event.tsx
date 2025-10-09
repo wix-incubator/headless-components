@@ -1,5 +1,6 @@
+import { Form as FormPrimitive } from '@wix/headless-forms/react';
 import { WixMediaImage } from '@wix/headless-media/react';
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type Event, type RichContent } from '../services/event-service.js';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
@@ -11,6 +12,7 @@ import * as CoreOccurrenceList from './core/OccurrenceList.js';
 
 enum TestIds {
   eventRoot = 'event-root',
+  eventSlug = 'event-slug',
   eventImage = 'event-image',
   eventTitle = 'event-title',
   eventDate = 'event-date',
@@ -24,6 +26,8 @@ enum TestIds {
   eventAddToGoogleCalendar = 'event-add-to-google-calendar',
   eventAddToIcsCalendar = 'event-add-to-ics-calendar',
   eventOccurrences = 'event-occurrences',
+  eventOtherEvents = 'event-other-events',
+  eventForm = 'event-form',
 }
 
 const DATA_COMPONENT_TAG = 'events.event';
@@ -123,7 +127,10 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
  * Props for the internal Event RootContent component.
  */
 interface RootContentProps
-  extends Omit<RootProps, 'event' | 'occurrenceListServiceConfig'> {}
+  extends Omit<
+    RootProps,
+    'event' | 'eventListServiceConfig' | 'occurrenceListServiceConfig'
+  > {}
 
 /**
  * Internal Event RootContent component.
@@ -175,39 +182,56 @@ const RootContent = React.forwardRef<HTMLElement, RootContentProps>(
  * Props for the Event Slug component.
  */
 export interface SlugProps {
-  /** Custom render function */
-  children: AsChildChildren<{ slug: string }>;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ slug: string }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
- * Provides event slug.
+ * Displays the event slug with customizable rendering.
  *
  * @component
  * @example
  * ```tsx
- * // asChild with react component
+ * // Default usage
+ * <Event.Slug className="text-sm font-medium" />
+ *
+ * // asChild with primitive
  * <Event.Slug asChild>
+ *   <span className="text-sm font-medium" />
+ * </Event.Slug>
+ *
+ * // asChild with react component
+ * <Event.Slug>
  *   {React.forwardRef(({ slug, ...props }, ref) => (
- *     <span ref={ref} {...props}>
- *       {slug}
- *     </span>
+ *     <a ref={ref} {...props} href={`/events/${slug}`}>
+ *       Event Details
+ *     </a>
  *   ))}
  * </Event.Slug>
  * ```
  */
 export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
-  const { children, ...otherProps } = props;
+  const { asChild, children, className, ...otherProps } = props;
 
   return (
     <CoreEvent.Slug>
       {({ slug }) => (
         <AsChildSlot
-          asChild
           ref={ref}
+          asChild={asChild}
+          className={className}
+          data-testid={TestIds.eventSlug}
           customElement={children}
           customElementProps={{ slug }}
+          content={slug}
           {...otherProps}
-        />
+        >
+          <span>{slug}</span>
+        </AsChildSlot>
       )}
     </CoreEvent.Slug>
   );
@@ -287,6 +311,13 @@ export interface ImageProps
  * // asChild with primitive
  * <Event.Image asChild>
  *   <img className="w-full h-full object-cover" />
+ * </Event.Image>
+ *
+ * // asChild with react component
+ * <Event.Image asChild>
+ *   {React.forwardRef(({ src, alt, width, height, ...props }, ref) => (
+ *     <img ref={ref} src={src} alt={alt} width={width} height={height} {...props} />
+ *   ))}
  * </Event.Image>
  * ```
  */
@@ -577,20 +608,25 @@ export const ShortDescription = React.forwardRef<
  * Props for the Event Description component.
  */
 export interface DescriptionProps {
-  /** Custom render function */
-  children?: AsChildChildren<{ description: RichContent }>;
+  /** Child element or custom render function */
+  children: AsChildChildren<{ content: RichContent }>;
 }
 
 /**
- * Provides the event description.
+ * Displays the event description.
  *
  * @component
  * @example
  * ```tsx
+ * // Usage with primitive
+ * <Event.Description>
+ *   <RicosViewer />
+ * </Event.Description>
+ *
  * // Usage with react component
  * <Event.Description>
- *   {React.forwardRef(({ description, ...props }, ref) => (
- *     <RicosViewer ref={ref} content={description} />
+ *   {React.forwardRef(({ content, ...props }, ref) => (
+ *     <RicosViewer ref={ref} content={content} plugins={customPlugins} />
  *   ))}
  * </Event.Description>
  * ```
@@ -607,7 +643,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             ref={ref}
             data-testid={TestIds.eventDescription}
             customElement={children}
-            customElementProps={{ description }}
+            customElementProps={{ content: description }}
             {...otherProps}
           />
         )}
@@ -627,7 +663,7 @@ export interface RsvpButtonProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
-  label?: string;
+  label?: React.ReactNode;
 }
 
 /**
@@ -992,47 +1028,143 @@ export const AddToIcsCalendar = React.forwardRef<
 export interface OtherEventsProps {
   /** Number of other events to display, default: 3 */
   count?: number;
-  /** Custom render function */
-  children: AsChildChildren<{ events: Event[] }>;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components or custom render function when using asChild */
+  children: React.ReactNode | AsChildChildren<{ events: Event[] }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
 }
 
 /**
- * Provides other events.
+ * Container for other events.
+ * Follows List Container Level pattern.
  *
  * @component
  * @example
  * ```tsx
- * // usage with react component
  * <Event.OtherEvents count={5}>
- *   {({ events }) => (
- *     <div>
- *       {events.map((event) => (
- *         <Event.Root key={event._id} event={event}>
- *           <Event.Image />
- *           <Event.Title />
- *         </Event.Root>
- *       ))}
- *     </div>
- *   )}
+ *   <Event.OtherEventRepeater>
+ *     <Event.Image />
+ *     <Event.Title />
+ *   </Event.OtherEventRepeater>
  * </Event.OtherEvents>
  * ```
  */
 export const OtherEvents = React.forwardRef<HTMLElement, OtherEventsProps>(
   (props, ref) => {
-    const { count = 3, children, ...otherProps } = props;
+    const { count = 3, asChild, children, className, ...otherProps } = props;
 
     return (
       <CoreEvent.OtherEvents count={count}>
         {({ events }) => (
           <AsChildSlot
-            asChild
             ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventOtherEvents}
             customElement={children}
             customElementProps={{ events }}
             {...otherProps}
-          />
+          >
+            <div>{children as React.ReactNode}</div>
+          </AsChildSlot>
         )}
       </CoreEvent.OtherEvents>
+    );
+  },
+);
+
+/**
+ * Props for the Event OtherEventRepeater component.
+ */
+export interface OtherEventRepeaterProps {
+  /** Number of other events to display, default: 3 */
+  count?: number;
+  /** Child components */
+  children: React.ReactNode;
+  /** CSS classes to apply to the event element */
+  className?: string;
+}
+
+/**
+ * Repeater component that renders Event.Root for each event.
+ * Follows Repeater Level pattern.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Event.OtherEventRepeater>
+ *   <Event.Image />
+ *   <Event.Title />
+ * </Event.OtherEventRepeater>
+ * ```
+ */
+export const OtherEventRepeater = (
+  props: OtherEventRepeaterProps,
+): React.ReactNode => {
+  const { count = 3, children, className } = props;
+
+  return (
+    <CoreEvent.OtherEvents count={count}>
+      {({ events }) =>
+        events.map((event) => (
+          <Root key={event._id} event={event} className={className}>
+            {children}
+          </Root>
+        ))
+      }
+    </CoreEvent.OtherEvents>
+  );
+};
+
+/**
+ * Props for the Event Form component.
+ */
+export interface FormProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Displays the event form.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * <Event.Form>
+ *   <Form.Loading />
+ *   <Form.LoadingError />
+ *   <Form.Fields fieldMap={FIELD_MAP} />
+ * </Event.Form>
+ * ```
+ */
+export const Form = React.forwardRef<HTMLDivElement, FormProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreEvent.Form>
+        {({ formId }) => (
+          <FormPrimitive.Root
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.eventForm}
+            formServiceConfig={{ formId }}
+            {...otherProps}
+          >
+            {children}
+          </FormPrimitive.Root>
+        )}
+      </CoreEvent.Form>
     );
   },
 );

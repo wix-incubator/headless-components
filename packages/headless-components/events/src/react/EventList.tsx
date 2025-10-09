@@ -185,7 +185,7 @@ export interface LoadMoreTriggerProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
-  label?: string;
+  label?: React.ReactNode;
   /** The loading state to display inside the button */
   loadingState?: React.ReactNode;
 }
@@ -311,12 +311,14 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
  * Props for the EventList CategoryFilter component.
  */
 export interface CategoryFilterProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
   /** Child components */
   children: React.ReactNode;
-  /** All categories label*/
-  allCategoriesLabel: string;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** All categories label*/
+  allCategoriesLabel: string;
 }
 
 /**
@@ -334,39 +336,48 @@ export interface CategoryFilterProps {
  * </EventList.CategoryFilter>
  * ```
  */
-export const CategoryFilter = (props: CategoryFilterProps): React.ReactNode => {
-  const { children, className, allCategoriesLabel } = props;
+export const CategoryFilter = React.forwardRef<
+  HTMLDivElement,
+  CategoryFilterProps
+>((props, ref) => {
+  const { asChild, children, className, allCategoriesLabel, ...otherProps } =
+    props;
 
   return (
     <CoreEventList.CategoryFilter allCategoriesLabel={allCategoriesLabel}>
       {({ filterOptions, value, onChange }) => (
         <FilterPrimitive.Root
+          ref={ref}
+          asChild={asChild}
           className={className}
           filterOptions={filterOptions}
           value={value}
           onChange={onChange}
+          {...otherProps}
         >
           {children}
         </FilterPrimitive.Root>
       )}
     </CoreEventList.CategoryFilter>
   );
-};
+});
 
 /**
  * Props for the EventList StatusFilter component.
  */
 export interface StatusFilterProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
   /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
   /** All events label */
   allEventsLabel: string;
   /** Upcoming events label */
   upcomingEventsLabel: string;
   /** Past events label */
   pastEventsLabel: string;
-  /** CSS classes to apply to the default element */
-  className?: string;
 }
 
 /**
@@ -388,31 +399,38 @@ export interface StatusFilterProps {
  * </EventList.StatusFilter>
  * ```
  */
-export const StatusFilter = (props: StatusFilterProps): React.ReactNode => {
-  const {
-    children,
-    className,
-    allEventsLabel,
-    upcomingEventsLabel,
-    pastEventsLabel,
-  } = props;
+export const StatusFilter = React.forwardRef<HTMLDivElement, StatusFilterProps>(
+  (props, ref) => {
+    const {
+      asChild,
+      children,
+      className,
+      allEventsLabel,
+      upcomingEventsLabel,
+      pastEventsLabel,
+      ...otherProps
+    } = props;
 
-  return (
-    <CoreEventList.StatusFilter
-      allEventsLabel={allEventsLabel}
-      upcomingEventsLabel={upcomingEventsLabel}
-      pastEventsLabel={pastEventsLabel}
-    >
-      {({ filterOptions, value, onChange }) => (
-        <FilterPrimitive.Root
-          className={className}
-          filterOptions={filterOptions}
-          value={value}
-          onChange={onChange}
-        >
-          {children}
-        </FilterPrimitive.Root>
-      )}
-    </CoreEventList.StatusFilter>
-  );
-};
+    return (
+      <CoreEventList.StatusFilter
+        allEventsLabel={allEventsLabel}
+        upcomingEventsLabel={upcomingEventsLabel}
+        pastEventsLabel={pastEventsLabel}
+      >
+        {({ filterOptions, value, onChange }) => (
+          <FilterPrimitive.Root
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            filterOptions={filterOptions}
+            value={value}
+            onChange={onChange}
+            {...otherProps}
+          >
+            {children}
+          </FilterPrimitive.Root>
+        )}
+      </CoreEventList.StatusFilter>
+    );
+  },
+);

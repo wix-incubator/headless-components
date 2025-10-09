@@ -42,7 +42,8 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@wix/events": "^1.0.607",
+    "@wix/events": "^1.0.637",
+    "@wix/headless-forms": "workspace:*",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/redirects": "^1.0.83",

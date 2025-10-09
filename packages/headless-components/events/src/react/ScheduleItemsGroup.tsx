@@ -1,9 +1,9 @@
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import * as CoreScheduleItemsGroup from './core/ScheduleItemsGroup.js';
-import * as ScheduleItem from './ScheduleItem.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 import { type ScheduleItemsGroup } from '../services/schedule-items-group-service.js';
+import * as ScheduleItem from './ScheduleItem.js';
+import * as CoreScheduleItemsGroup from './core/ScheduleItemsGroup.js';
 
 enum TestIds {
   scheduleItemsGroupRoot = 'schedule-items-group-root',
@@ -145,12 +145,12 @@ export interface ItemsProps {
 }
 
 /**
- * Container for the schedule items in the group with support for empty state.
+ * Container for the schedule items in the group.
  *
  * @component
  * @example
  * ```tsx
- * <ScheduleItemsGroup.Items emptyState={<div>No schedule items available</div>}>
+ * <ScheduleItemsGroup.Items>
  *   <ScheduleItemsGroup.ItemRepeater>
  *     <ScheduleItem.Name />
  *     <ScheduleItem.TimeSlot />

@@ -1,12 +1,12 @@
-import React from 'react';
+import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import * as CoreScheduleList from './core/ScheduleList.js';
-import * as ScheduleItem from './ScheduleItem.js';
-import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
+import React from 'react';
 import { type ScheduleListServiceConfig } from '../services/schedule-list-service.js';
 import { type ScheduleItem as ScheduleItemType } from '../services/schedule-item-service.js';
 import { type ScheduleItemsGroup as ScheduleItemsGroupType } from '../services/schedule-items-group-service.js';
-import { Filter as FilterPrimitive } from '@wix/headless-components/react';
+import * as ScheduleItem from './ScheduleItem.js';
+import * as ScheduleItemsGroup from './ScheduleItemsGroup.js';
+import * as CoreScheduleList from './core/ScheduleList.js';
 
 enum TestIds {
   scheduleListItems = 'schedule-list-items',
@@ -241,6 +241,8 @@ export const Groups = React.forwardRef<HTMLElement, GroupsProps>(
 export interface GroupRepeaterProps {
   /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the group element */
+  className?: string;
 }
 
 /**
@@ -269,13 +271,17 @@ export interface GroupRepeaterProps {
  * ```
  */
 export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
-  const { children } = props;
+  const { children, className } = props;
 
   return (
     <CoreScheduleList.GroupRepeater>
       {({ itemsGroups }) =>
         itemsGroups.map((itemsGroup) => (
-          <ScheduleItemsGroup.Root key={itemsGroup.id} itemsGroup={itemsGroup}>
+          <ScheduleItemsGroup.Root
+            key={itemsGroup.id}
+            itemsGroup={itemsGroup}
+            className={className}
+          >
             {children}
           </ScheduleItemsGroup.Root>
         ))
@@ -288,8 +294,12 @@ export const GroupRepeater = (props: GroupRepeaterProps): React.ReactNode => {
  * Props for the ScheduleList Filters component.
  */
 export interface FiltersProps {
-  /** Child components or custom render function when using asChild */
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
   /** All stages label */
   allStagesLabel: string;
 }
@@ -309,18 +319,27 @@ export interface FiltersProps {
  * </ScheduleList.Filters>
  * ```
  */
-export const Filters = (props: FiltersProps): React.ReactNode => {
-  return (
-    <CoreScheduleList.Filters allStagesLabel={props.allStagesLabel}>
-      {({ filterOptions, value, onChange }) => (
-        <FilterPrimitive.Root
-          value={value}
-          onChange={onChange}
-          filterOptions={filterOptions}
-        >
-          {props.children}
-        </FilterPrimitive.Root>
-      )}
-    </CoreScheduleList.Filters>
-  );
-};
+export const Filters = React.forwardRef<HTMLDivElement, FiltersProps>(
+  (props, ref) => {
+    const { asChild, children, className, allStagesLabel, ...otherProps } =
+      props;
+
+    return (
+      <CoreScheduleList.Filters allStagesLabel={allStagesLabel}>
+        {({ filterOptions, value, onChange }) => (
+          <FilterPrimitive.Root
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            filterOptions={filterOptions}
+            value={value}
+            onChange={onChange}
+            {...otherProps}
+          >
+            {children}
+          </FilterPrimitive.Root>
+        )}
+      </CoreScheduleList.Filters>
+    );
+  },
+);

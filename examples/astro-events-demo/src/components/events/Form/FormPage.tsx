@@ -3,14 +3,12 @@ import {
   loadEventServiceConfig,
 } from '@wix/events/services';
 import React from 'react';
-import { Await, useLoaderData } from 'react-router-dom';
+import {
+  Await,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router-dom';
 import { Form } from './Form';
-
-interface FormPageLoaderParams {
-  params: {
-    slug?: string;
-  };
-}
 
 interface FormPageLoaderData {
   eventServiceConfig: EventServiceConfig;
@@ -18,7 +16,7 @@ interface FormPageLoaderData {
 
 interface FormPageProps {}
 
-export function formPageLoader({ params: { slug } }: FormPageLoaderParams): {
+export function formPageLoader({ params: { slug } }: LoaderFunctionArgs): {
   slug: string;
   data: Promise<FormPageLoaderData>;
 } {
