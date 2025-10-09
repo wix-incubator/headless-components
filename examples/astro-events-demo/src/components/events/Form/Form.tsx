@@ -21,7 +21,7 @@ interface FormProps {
 export function Form({ eventServiceConfig }: FormProps) {
   return (
     <Event event={eventServiceConfig.event} className="group/event">
-      <div className="flex flex-col-reverse md:flex-row gap-16 max-w-5xl mx-auto px-5 py-6 sm:p-16">
+      <div className="flex flex-col-reverse md:flex-row gap-8 md:gap-16 max-w-5xl mx-auto px-5 py-6 sm:p-16">
         <EventForm className="w-full md:w-[70%]">
           {/* @ts-expect-error */}
           <FormFields fieldMap={FIELD_MAP} />

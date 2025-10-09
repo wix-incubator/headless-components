@@ -608,25 +608,19 @@ export const ShortDescription = React.forwardRef<
  * Props for the Event Description component.
  */
 export interface DescriptionProps {
-  /** Child element or custom render function */
-  children?: AsChildChildren<{ content: RichContent }>;
+  /** Custom render function */
+  children?: AsChildChildren<{ description: RichContent }>;
 }
 
 /**
- * Displays the event description.
+ * Provides the event description. RicosViewer should be used to render the description.
  *
  * @component
  * @example
  * ```tsx
- * // Usage with primitive
  * <Event.Description>
- *   <RicosViewer />
- * </Event.Description>
- *
- * // Usage with react component
- * <Event.Description>
- *   {React.forwardRef(({ content, ...props }, ref) => (
- *     <RicosViewer ref={ref} content={content} plugins={customPlugins} />
+ *   {React.forwardRef(({ description, ...props }, ref) => (
+ *     <RicosViewer ref={ref} content={description} />
  *   ))}
  * </Event.Description>
  * ```
@@ -643,7 +637,7 @@ export const Description = React.forwardRef<HTMLElement, DescriptionProps>(
             ref={ref}
             data-testid={TestIds.eventDescription}
             customElement={children}
-            customElementProps={{ content: description }}
+            customElementProps={{ description }}
             {...otherProps}
           />
         )}
