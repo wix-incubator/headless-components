@@ -7408,7 +7408,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/events@npm:^1.0.637":
+"@wix/events@npm:^1.0.607, @wix/events@npm:^1.0.637":
   version: 1.0.637
   resolution: "@wix/events@npm:1.0.637"
   dependencies:
@@ -7718,7 +7718,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-events@npm:0.0.15, @wix/headless-events@workspace:*, @wix/headless-events@workspace:packages/headless-components/events":
+"@wix/headless-events@npm:0.0.15":
+  version: 0.0.15
+  resolution: "@wix/headless-events@npm:0.0.15"
+  dependencies:
+    "@wix/events": "npm:^1.0.607"
+    "@wix/headless-media": "npm:0.0.15"
+    "@wix/headless-utils": "npm:0.0.4"
+    "@wix/redirects": "npm:^1.0.83"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  peerDependencies:
+    "@wix/headless-components": 0.0.17
+  checksum: 10c0/88a8689cab9362704fcdcb4637f800c35152cde7f268b588c18ae30dda1bb241c7f1e4628e12821f090ccabc43a1c1caf53d726a132a2cca011ba0c2b7c31487
+  languageName: node
+  linkType: hard
+
+"@wix/headless-events@workspace:*, @wix/headless-events@workspace:packages/headless-components/events":
   version: 0.0.0-use.local
   resolution: "@wix/headless-events@workspace:packages/headless-components/events"
   dependencies:
@@ -7874,6 +7890,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/headless-media@npm:0.0.15, @wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
+  version: 0.0.0-use.local
+  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
+  dependencies:
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@testing-library/react": "npm:^16.3.0"
+    "@types/node": "npm:^20.9.0"
+    "@vitest/ui": "npm:^3.1.4"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/sdk": "npm:^1.17.1"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    jsdom: "npm:^26.1.0"
+    prettier: "npm:^3.4.2"
+    typescript: "npm:^5.8.3"
+    vitest: "npm:^3.1.4"
+  languageName: unknown
+  linkType: soft
+
 "@wix/headless-media@npm:0.0.8":
   version: 0.0.8
   resolution: "@wix/headless-media@npm:0.0.8"
@@ -7895,26 +7931,6 @@ __metadata:
   checksum: 10c0/e4c0b970d6ac84a1237dc624914679f53f0d375616893948c154e62652fa6f031c059afddcf4464a86a80473b6c3a8c920170e74a5b9a133e5320f55141ad5c6
   languageName: node
   linkType: hard
-
-"@wix/headless-media@workspace:*, @wix/headless-media@workspace:^, @wix/headless-media@workspace:packages/headless-components/media":
-  version: 0.0.0-use.local
-  resolution: "@wix/headless-media@workspace:packages/headless-components/media"
-  dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.6.3"
-    "@testing-library/react": "npm:^16.3.0"
-    "@types/node": "npm:^20.9.0"
-    "@vitest/ui": "npm:^3.1.4"
-    "@wix/headless-utils": "workspace:*"
-    "@wix/sdk": "npm:^1.17.1"
-    "@wix/services-definitions": "npm:^0.1.4"
-    "@wix/services-manager-react": "npm:^0.1.26"
-    jsdom: "npm:^26.1.0"
-    prettier: "npm:^3.4.2"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.1.4"
-  languageName: unknown
-  linkType: soft
 
 "@wix/headless-online-programs@npm:0.0.3":
   version: 0.0.3
@@ -8254,7 +8270,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-utils@workspace:*, @wix/headless-utils@workspace:^, @wix/headless-utils@workspace:packages/headless-components/utils":
+"@wix/headless-utils@npm:0.0.4, @wix/headless-utils@workspace:*, @wix/headless-utils@workspace:^, @wix/headless-utils@workspace:packages/headless-components/utils":
   version: 0.0.0-use.local
   resolution: "@wix/headless-utils@workspace:packages/headless-components/utils"
   dependencies:
