@@ -17,5 +17,5 @@ export const isDescriptionEmpty = (event: Event) => {
     );
   }
 
-  return !!nodes.length;
+  return !nodes.length;
 };

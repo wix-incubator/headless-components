@@ -1,8 +1,8 @@
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type OccurrenceListServiceConfig } from '../services/occurrence-list-service.js';
-import * as CoreOccurrenceList from './core/OccurrenceList.js';
 import * as Event from './Event.js';
+import * as CoreOccurrenceList from './core/OccurrenceList.js';
 
 enum TestIds {
   occurrenceListOccurrences = 'occurrence-list-occurrences',
@@ -173,7 +173,7 @@ export interface LoadMoreTriggerProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
-  label?: string;
+  label?: React.ReactNode;
   /** The loading state to display inside the button */
   loadingState?: React.ReactNode;
 }

@@ -44,7 +44,7 @@ export function ThankYou({
 }: ThankYouProps) {
   return (
     <div className="max-w-5xl mx-auto px-5 py-6 sm:p-16">
-      <Event event={eventServiceConfig.event}>
+      <Event event={eventServiceConfig.event} className="group/event">
         <Order orderServiceConfig={orderServiceConfig}>
           <div className="mb-10">
             <h1 className="text-3xl font-heading text-foreground mb-1">
@@ -74,7 +74,7 @@ export function ThankYou({
           </div>
           <div className="border border-foreground/10">
             <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 p-4 sm:p-6 border-b border-foreground/10">
-              <EventImage className="w-40 h-24" />
+              <EventImage className="w-40 h-24 flex-shrink-0 group-data-[has-image=false]/event:hidden" />
               <div className="flex flex-col sm:flex-row sm:justify-between gap-4 w-full">
                 <div>
                   <EventTitle variant="md" className="mb-4" />
@@ -108,7 +108,9 @@ export function ThankYou({
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between p-4 sm:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                <span className="font-paragraph text-foreground">Add to</span>
+                <span className="font-paragraph text-foreground text-base">
+                  Add to
+                </span>
                 <div className="flex gap-3">
                   <EventAddToGoogleCalendar
                     asChild
@@ -131,27 +133,27 @@ export function ThankYou({
                 </div>
               </div>
               <div className="flex items-center gap-3 mt-5 sm:mt-0">
-                <span className="font-paragraph text-foreground">Share on</span>
+                <span className="font-paragraph text-foreground text-base">
+                  Share on
+                </span>
                 <EventSocialShare eventPageUrl={eventPageUrl} />
               </div>
             </div>
             <OrderInvoiceItems className="px-4 sm:px-6 border-y border-foreground/10">
               {/* Mobile order items section */}
               <div className="block sm:hidden">
-                <OrderInvoiceItemRepeater>
-                  <div className="py-4 border-b border-foreground/10">
-                    <InvoiceItemName />
-                    <InvoiceItemPrice asChild className="text-sm">
-                      {({ formattedAmount }) => (
-                        <span>Price: {formattedAmount}</span>
-                      )}
-                    </InvoiceItemPrice>
-                    <div className="flex justify-between">
-                      <InvoiceItemQuantity asChild>
-                        {({ quantity }) => <span>Qty: {quantity}</span>}
-                      </InvoiceItemQuantity>
-                      <InvoiceItemTotal />
-                    </div>
+                <OrderInvoiceItemRepeater className="py-4 border-b border-foreground/10">
+                  <InvoiceItemName />
+                  <InvoiceItemPrice asChild className="text-sm">
+                    {({ formattedAmount }) => (
+                      <span>Price: {formattedAmount}</span>
+                    )}
+                  </InvoiceItemPrice>
+                  <div className="flex justify-between">
+                    <InvoiceItemQuantity asChild>
+                      {({ quantity }) => <span>Qty: {quantity}</span>}
+                    </InvoiceItemQuantity>
+                    <InvoiceItemTotal />
                   </div>
                 </OrderInvoiceItemRepeater>
               </div>
@@ -164,13 +166,11 @@ export function ThankYou({
                   <div className="w-[15%]">Quantity</div>
                   <div className="w-[25%] text-right">Total</div>
                 </div>
-                <OrderInvoiceItemRepeater>
-                  <div className="flex border-b border-foreground/10 py-4">
-                    <InvoiceItemName className="w-[35%]" />
-                    <InvoiceItemPrice className="w-[25%]" />
-                    <InvoiceItemQuantity className="w-[15%]" />
-                    <InvoiceItemTotal className="w-[25%] text-right" />
-                  </div>
+                <OrderInvoiceItemRepeater className="flex border-b border-foreground/10 py-4">
+                  <InvoiceItemName className="w-[35%]" />
+                  <InvoiceItemPrice className="w-[25%]" />
+                  <InvoiceItemQuantity className="w-[15%]" />
+                  <InvoiceItemTotal className="w-[25%] text-right" />
                 </OrderInvoiceItemRepeater>
               </div>
 

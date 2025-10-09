@@ -3,22 +3,22 @@ import {
   loadEventServiceConfig,
 } from '@wix/events/services';
 import React from 'react';
-import { Await, useLoaderData } from 'react-router-dom';
+import {
+  Await,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router-dom';
 import { Form } from './Form';
-
-interface FormPageLoaderParams {
-  params: {
-    slug?: string;
-  };
-}
 
 interface FormPageLoaderData {
   eventServiceConfig: EventServiceConfig;
 }
 
-interface FormPageProps {}
+interface FormPageProps {
+  thankYouPagePath: string;
+}
 
-export function formPageLoader({ params: { slug } }: FormPageLoaderParams): {
+export function formPageLoader({ params: { slug } }: LoaderFunctionArgs): {
   slug: string;
   data: Promise<FormPageLoaderData>;
 } {
@@ -44,7 +44,7 @@ export function formPageLoader({ params: { slug } }: FormPageLoaderParams): {
   };
 }
 
-export function FormPage({}: FormPageProps) {
+export function FormPage({ thankYouPagePath }: FormPageProps) {
   const { slug, data } = useLoaderData<typeof formPageLoader>();
 
   return (
@@ -54,7 +54,9 @@ export function FormPage({}: FormPageProps) {
           <div className="wix-verticals-container">
             <Form
               eventServiceConfig={eventServiceConfig}
-              formServiceConfig={{ postFlowUrl: '' }}
+              formServiceConfig={{
+                postFlowUrl: `${window.location.origin}${thankYouPagePath.replace(':slug', slug)}`,
+              }}
             />
           </div>
         )}

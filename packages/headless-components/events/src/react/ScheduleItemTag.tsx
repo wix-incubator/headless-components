@@ -1,5 +1,5 @@
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
-import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import * as CoreTag from './core/ScheduleItemTag.js';
 
 enum TestIds {
@@ -68,14 +68,13 @@ export interface LabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ tag: string }>;
+  children?: AsChildChildren<{ label: string }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the tag label as a simple span element.
- * Use this for non-interactive tag display.
+ * Displays the tag label.
  *
  * @component
  * @example
@@ -90,9 +89,9 @@ export interface LabelProps {
  *
  * // asChild with react component
  * <ScheduleItemTag.Label asChild>
- *   {React.forwardRef(({ tag, ...props }, ref) => (
+ *   {React.forwardRef(({ label, ...props }, ref) => (
  *     <span ref={ref} {...props} className="px-2 py-1 bg-gray-100 rounded">
- *       {tag}
+ *       {label}
  *     </span>
  *   ))}
  * </ScheduleItemTag.Label>
@@ -110,7 +109,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
           className={className}
           data-testid={TestIds.scheduleItemTagLabel}
           customElement={children}
-          customElementProps={{ tag }}
+          customElementProps={{ label: tag }}
           content={tag}
           {...otherProps}
         >

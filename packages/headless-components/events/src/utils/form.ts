@@ -1,31 +1,5 @@
 import { rsvpV2 } from '@wix/events';
 import { Event } from '../services/event-service.js';
-import { FormControl } from '../services/form-control-service.js';
-
-export const flattenFormControls = (controls: FormControl[]): FormControl[] =>
-  controls.flatMap((control) =>
-    control.type === 'GUEST_CONTROL'
-      ? [control]
-      : control.inputs!.flatMap((input) => {
-          const labels = input.labels?.length
-            ? input.labels
-            : [{ name: input.name, label: input.label }];
-
-          return labels.map((label) => ({
-            ...control,
-            inputs: [
-              {
-                ...input,
-                label: label.label,
-                name:
-                  control.type === 'ADDRESS_FULL'
-                    ? `${control._id}_${label.name}`
-                    : label.name,
-              },
-            ],
-          }));
-        }),
-  );
 
 export const getRequiredRsvpData = (
   event: Event,

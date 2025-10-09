@@ -65,7 +65,7 @@ export function EventList({
             <FilterOptions>
               <FilterOptionRepeater>
                 <FilterOptionSingle asChild>
-                  {({ value, onChange, validValues, valueFormatter }) => (
+                  {({ validValues, value, valueFormatter, onChange }) => (
                     <div className="flex gap-2 items-center">
                       <span className="flex-shrink-0">Event status:</span>
                       <Select
@@ -95,8 +95,8 @@ export function EventList({
       <Events
         asChild
         emptyState={
-          <div className="font-paragraph text-foreground text-xl">
-            No events yet.
+          <div className="font-paragraph text-foreground text-base">
+            No events available
           </div>
         }
       >
@@ -106,9 +106,7 @@ export function EventList({
           ) : (
             <div className="grid justify-center grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5">
               <EventRepeater className="flex flex-col bg-background border border-foreground/10">
-                <div className="relative w-full pt-[100%] bg-primary/80">
-                  <EventImage className="absolute top-0 w-full h-full" />
-                </div>
+                <EventImage variant="square" />
                 <div className="p-5 sm:p-8 flex flex-col flex-grow sm:items-center sm:text-center">
                   <EventTitle className="line-clamp-2" />
                   <div className="mb-8 flex items-center gap-1">
