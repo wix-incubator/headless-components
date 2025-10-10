@@ -1,0 +1,89 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Files
+<important>
+These files are guranteed to exist, not need to check their existence, you can just read them when needed.
+</important>
+the src folder has:
+* `pages` folder, containing astro pages. <important>Do not place astro components here, they'll be treated as pages</important>
+* `components` folder, containting React components. 
+* `react-pages` folder, containg the React code for pages. Each astro page in the `pages` folder has a corresponding react page in the folder structure in the `react-pages` folder.
+
+## Enhanced React/Astro Architecture Pattern
+<important>
+When implementing pages, follow this enhanced pattern:
+1. The Astro page handles ONLY server-side loading logic (authentication, data fetching, etc.) AND tags that go into <head>
+2. BaseLayout.astro renders the full HTML structure (html, head, body) and accepts slots for head content and body content
+3. React components can ONLY render content within the body element - NO HTML structure
+4. React layouts (in `layouts/` folder) handle navigation, page styling, and content layout but NOT HTML structure
+5. The Astro page structure should be:
+```astro
+---
+// Server-side logic here
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageComponent from "../react-pages/page";
+
+const data = await fetchData();
+---
+<BaseLayout>
+  <title>Page Title</title>
+  <meta name="description" content="Page description" />
+  
+  <PageComponent client:load data={data} slot="body" />
+</BaseLayout>
+```
+6. React page components use React layouts internally:
+```tsx
+import KitchensinkLayout from '../layouts/KitchensinkLayout';
+
+export default function PageComponent({ data }: Props) {
+  return (
+    <KitchensinkLayout>
+      {/* Page content */}
+    </KitchensinkLayout>
+  );
+}
+```
+7. React components for dialogs, forms, and UI elements go in the `components/` folder
+8. BaseLayout.astro handles ALL HTML structure, React layouts handle only content styling
+</important>
+* `layouts` folder, containing layout components:
+    * `layouts/BaseLayout.astro` - Handles HTML structure and accepts head content in default slot and body content in named "body" slot:
+```astro
+---
+import "../styles/global.css";
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <slot />
+  </head>
+  <body>
+    <slot name="body" />
+  </body>
+</html>
+```
+* `styles/global.css` - The global css that also imports tailwind.
+
+# Astro actions
+<important>
+In React components and client side scripts, only import actions from "astro:actions" and take the actions from there.
+```ts
+import { actions } from "astro:actions";
+// structure of actions is the same as the server export in src/actions.index.ts
+actions.someNamespace.someAction();
+```
+</important>
+
+# Stack
+
+* Style with tailwind. version: 4.1.7
+<important>
+ONLY STYLE USING TAILWIND AND IT'S BEST PRACTICES. BE SURE TO USE TAILWIND 4.
+</important>
+* Installed dependencies:
+    * `@wix/stores`

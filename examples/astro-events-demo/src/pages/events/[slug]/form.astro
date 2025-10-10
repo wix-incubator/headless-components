@@ -1,0 +1,26 @@
+---
+import { loadEventServiceConfig } from '@wix/events/services';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Form } from '@/components/events/Form/Form';
+
+const { slug } = Astro.params;
+
+// Load initial data server-side
+const eventServiceConfigResult = await loadEventServiceConfig(slug);
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout>
+  <title>RSVP Form</title>
+  <meta name="description" content="RSVP Form" />
+
+  <Form
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfigResult.config}
+    thankYouPageUrl={`${Astro.url.origin}/events/${slug}/thank-you`,}
+  />
+</BaseLayout>
