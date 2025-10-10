@@ -14,6 +14,12 @@
       ],
       "@wix/events/services": [
         "../../packages/headless-components/events/services"
+      ],
+      "@wix/forms/components": [
+        "../../packages/headless-components/forms/react"
+      ],
+      "@wix/forms/services": [
+        "../../packages/headless-components/forms/services"
       ]
     }
   }

@@ -1,3 +1,4 @@
+import { FormServiceConfig } from '@wix/headless-forms/services';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
@@ -429,6 +430,8 @@ export interface FormProps {
 export interface FormRenderProps {
   /** Form ID */
   formId: string;
+  /** Submit handler */
+  onSubmit: FormServiceConfig['onSubmit'];
 }
 
 /**
@@ -443,5 +446,14 @@ export function Form(props: FormProps): React.ReactNode {
   // @ts-expect-error
   const formId = event.registration!.rsvp!.formId;
 
-  return props.children({ formId });
+  const onSubmit: FormServiceConfig['onSubmit'] = async (
+    formId,
+    formValues,
+  ) => {
+    console.log('formId', formId);
+    console.log('formValues', formValues);
+    return { type: 'success' };
+  };
+
+  return props.children({ formId, onSubmit });
 }

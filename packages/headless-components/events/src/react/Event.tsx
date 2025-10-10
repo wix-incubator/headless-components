@@ -1146,13 +1146,13 @@ export const Form = React.forwardRef<HTMLDivElement, FormProps>(
 
     return (
       <CoreEvent.Form>
-        {({ formId }) => (
+        {({ formId, onSubmit }) => (
           <FormPrimitive.Root
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.eventForm}
-            formServiceConfig={{ formId }}
+            formServiceConfig={{ formId, onSubmit }}
             {...otherProps}
           >
             {children}
