@@ -1,9 +1,10 @@
-import { forms } from '@wix/forms';
+import { forms, submissions } from '@wix/forms';
 import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
+import { FormValues } from '../react/types.js';
 
 /**
  * Response type for form submission operations.
@@ -16,7 +17,7 @@ export type SubmitResponse =
 
 /**
  * API interface for the Form service, providing reactive form data management.
- * This service handles loading and managing form data, loading state, and errors.
+ * This service handles loading and managing form data, loading state, errors, and submissions.
  * It supports both pre-loaded form data and lazy loading with form IDs.
  *
  * @interface FormServiceAPI
@@ -28,8 +29,10 @@ export interface FormServiceAPI {
   isLoadingSignal: ReadOnlySignal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   errorSignal: ReadOnlySignal<string | null>;
-  // TODO: handle submit response
-  // submitResponseSignal: ReadOnlySignal<SubmitResponse>;
+  /** Reactive signal containing submission response state */
+  submitResponseSignal: ReadOnlySignal<SubmitResponse>;
+  /** Function to submit form with current values */
+  submitForm: (formValues: FormValues) => Promise<void>;
 }
 
 /**
@@ -41,20 +44,29 @@ export interface FormServiceAPI {
 export const FormServiceDefinition =
   defineService<FormServiceAPI>('formService');
 
+type OnSubmit = (
+  formId: string,
+  formValues: FormValues,
+) => Promise<SubmitResponse>;
 /**
  * Configuration type for the Form service.
  * Supports two distinct patterns for providing form data:
  * - Pre-loaded form data (SSR/SSG scenarios)
  * - Lazy loading with form ID (client-side routing)
  *
+ * Optionally accepts a custom submission handler to override default behavior.
+ *
  * @type {FormServiceConfig}
  */
-export type FormServiceConfig = { formId: string } | { form: forms.Form };
+export type FormServiceConfig =
+  | { formId: string; onSubmit?: OnSubmit }
+  | { form: forms.Form; onSubmit?: OnSubmit };
 
 /**
- * Implementation of the Form service that manages reactive form data.
- * This service provides signals for form data, loading state, and error handling.
+ * Implementation of the Form service that manages reactive form data and submissions.
+ * This service provides signals for form data, loading state, error handling, and submission state.
  * It supports both pre-loaded form data and lazy loading with form IDs.
+ * Consumers can provide a custom submission handler via config.
  *
  * @example
  * ```tsx
@@ -63,6 +75,16 @@ export type FormServiceConfig = { formId: string } | { form: forms.Form };
  *
  * // Lazy loading with form ID (client-side)
  * const formService = FormService.withConfig({ formId: 'form-123' });
+ *
+ * // With custom submission handler
+ * const formService = FormService.withConfig({
+ *   formId: 'form-123',
+ *   onSubmit: async (formId, formValues) => {
+ *     // Custom submission logic
+ *     await fetch('/api/submit', { method: 'POST', body: JSON.stringify({ formId, ...formValues }) });
+ *     return { type: 'success', message: 'Form submitted!' };
+ *   }
+ * });
  * ```
  */
 export const FormService = implementService.withConfig<FormServiceConfig>()(
@@ -71,6 +93,9 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     const signalsService = getService(SignalsServiceDefinition);
     const isLoadingSignal = signalsService.signal<boolean>(false);
     const errorSignal = signalsService.signal<string | null>(null);
+    const submitResponseSignal = signalsService.signal<SubmitResponse>({
+      type: 'idle',
+    });
     const hasSchema = 'form' in config;
     const formSignal = signalsService.signal<forms.Form | null>(
       hasSchema ? config.form : null,
@@ -100,10 +125,54 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       }
     }
 
+    async function defaultSubmitHandler(
+      formId: string,
+      formValues: FormValues,
+    ): Promise<SubmitResponse> {
+      try {
+        await submissions.createSubmission({ formId, ...formValues });
+        // TODO: add message
+        return { type: 'success' };
+      } catch (error) {
+        console.error('Form submission failed:', error);
+        return { type: 'error', message: 'Failed to submit form' };
+      }
+    }
+
+    /**
+     * Submits the form with the provided values.
+     * Uses custom handler if provided in config, otherwise uses default submission.
+     */
+    async function submitForm(formValues: FormValues): Promise<void> {
+      const form = formSignal.get();
+      if (!form) {
+        console.error('Cannot submit: form not loaded');
+        return;
+      }
+
+      // @ts-expect-error
+      const formId = form._id ? form._id : form.id;
+      submitResponseSignal.set({ type: 'idle' });
+
+      try {
+        const handler = config.onSubmit || defaultSubmitHandler;
+        const response = await handler(formId, formValues);
+        submitResponseSignal.set(response);
+      } catch (error) {
+        console.error('Unexpected error during submission:', error);
+        submitResponseSignal.set({
+          type: 'error',
+          message: 'Unexpected error during submission',
+        });
+      }
+    }
+
     return {
       formSignal: formSignal,
       isLoadingSignal: isLoadingSignal,
       errorSignal: errorSignal,
+      submitResponseSignal: submitResponseSignal,
+      submitForm: submitForm,
     };
   },
 );

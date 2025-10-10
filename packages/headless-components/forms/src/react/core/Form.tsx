@@ -7,6 +7,7 @@ import {
   FormServiceConfig,
   FormService,
 } from '../../services/form-service.js';
+import { FormValues } from '../types.js';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -228,9 +229,11 @@ export interface FormSubmitErrorRenderProps {
  * ```
  */
 export function Error(props: FormSubmitErrorProps) {
-  // TODO: Implement submit response handling when submitResponseSignal is added to service
-  const error = null;
-  const hasError = false;
+  const { submitResponseSignal } = useService(FormServiceDefinition);
+  const submitResponse = submitResponseSignal.get();
+
+  const error = submitResponse.type === 'error' ? submitResponse.message : null;
+  const hasError = submitResponse.type === 'error';
 
   return props.children({
     error,
@@ -283,9 +286,14 @@ export interface FormSubmittedRenderProps {
  * ```
  */
 export function Submitted(props: FormSubmittedProps) {
-  // TODO: Implement submit response handling when submitResponseSignal is added to service
-  const isSubmitted = false;
-  const message = DEFAULT_SUCCESS_MESSAGE;
+  const { submitResponseSignal } = useService(FormServiceDefinition);
+  const submitResponse = submitResponseSignal.get();
+
+  const isSubmitted = submitResponse.type === 'success';
+  const message =
+    submitResponse.type === 'success'
+      ? submitResponse.message || DEFAULT_SUCCESS_MESSAGE
+      : DEFAULT_SUCCESS_MESSAGE;
 
   return props.children({
     isSubmitted,
@@ -298,6 +306,7 @@ export function Submitted(props: FormSubmittedProps) {
  */
 interface FieldsRenderProps {
   form: forms.Form | null;
+  submitForm: (formValues: FormValues) => Promise<void>;
 }
 
 /**
@@ -308,12 +317,13 @@ interface FieldsProps {
 }
 
 /**
- * Fields component that provides form data to its children.
- * This component accesses the form data from the service and passes it to children via render props.
+ * Fields component that provides form data and actions to its children.
+ * This component accesses the form data and submitForm action from the service
+ * and passes them to children via render props.
  *
  * @component
  * @param {FieldsProps} props - Component props
- * @param {FieldsProps['children']} props.children - Render prop function that receives form data
+ * @param {FieldsProps['children']} props.children - Render prop function that receives form data and actions
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -321,11 +331,14 @@ interface FieldsProps {
  * function FormFields() {
  *   return (
  *     <Form.Fields>
- *       {({ form }) => (
+ *       {({ form, submitForm }) => (
  *         form ? (
  *           <div>
  *             <h2>{form.name}</h2>
  *             <p>{form.description}</p>
+ *             <button onClick={() => submitForm({ field1: 'value' })}>
+ *               Submit
+ *             </button>
  *           </div>
  *         ) : null
  *       )}
@@ -335,10 +348,11 @@ interface FieldsProps {
  * ```
  */
 export function Fields(props: FieldsProps) {
-  const { formSignal } = useService(FormServiceDefinition);
+  const { formSignal, submitForm } = useService(FormServiceDefinition);
   const form = formSignal.get();
 
   return props.children({
     form,
+    submitForm,
   });
 }

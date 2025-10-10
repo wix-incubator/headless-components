@@ -35,20 +35,29 @@ interface RootProps {
 
 **FormServiceConfig**
 
-The `FormServiceConfig` supports two distinct patterns for providing form data:
+The `FormServiceConfig` supports two distinct patterns for providing form data, with optional custom submission handling:
 
 - **Pre-loaded Form Data (SSR/SSG)**: Use when you have form data available at service initialization
 - **Lazy Loading with Form ID (Client-side)**: Use when you only have a form ID and need to load form data asynchronously
+- **Custom Submission Handler**: Optionally provide a custom handler to control form submission behavior
 
 ```tsx
-type FormServiceConfig = { formId: string } | { form: forms.Form };
+type FormServiceConfig =
+  | {
+      formId: string;
+      onSubmit?: (formId: string, formValues: FormValues) => Promise<SubmitResponse>;
+    }
+  | {
+      form: forms.Form;
+      onSubmit?: (formId: string, formValues: FormValues) => Promise<SubmitResponse>;
+    };
 ```
 
 **Configuration Options:**
 
 - `{ form: forms.Form }` - Pre-loaded form data. The service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios.
 - `{ formId: string }` - Form ID for lazy loading. The service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing.
-```
+- `onSubmit?: (formId, formValues) => Promise<SubmitResponse>` - Optional custom submission handler. If provided, it will be called instead of the default Wix Forms submission. Must return a `SubmitResponse` object.
 
 **Examples**
 
@@ -64,7 +73,90 @@ type FormServiceConfig = { formId: string } | { form: forms.Form };
   <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
   {/* All form components */}
 </Form.Root>
+
+// Pattern 3: Custom submission handler
+<Form.Root
+  formServiceConfig={{
+    formId: 'form-123',
+    onSubmit: async (formId, formValues) => {
+      // Custom submission logic
+      const response = await fetch('/api/submit', {
+        method: 'POST',
+        body: JSON.stringify({ formId, ...formValues })
+      });
+      return response.ok
+        ? { type: 'success', message: 'Thank you!' }
+        : { type: 'error', message: 'Failed to submit' };
+    }
+  }}
+>
+  <Form.Fields fieldMap={FIELD_MAP} />
+  <Form.Error />
+  <Form.Submitted />
+</Form.Root>
 ```
+
+### Custom Submission Handlers
+
+The Form component supports custom submission handlers, allowing you to control how form submissions are processed.
+
+**SubmitResponse Type**
+
+Custom handlers must return a `SubmitResponse`:
+
+```tsx
+type SubmitResponse =
+  | { type: 'success'; message?: string }
+  | { type: 'error'; message: string }
+  | { type: 'idle' };
+```
+
+- **`success`**: Form submitted successfully. Optional message displayed in `<Form.Submitted>`
+- **`error`**: Submission failed. Required message displayed in `<Form.Error>`
+- **`idle`**: Initial state (not used by custom handlers)
+
+**Example: Custom API Submission**
+
+```tsx
+import { Form, type FormValues } from '@wix/headless-forms/react';
+import { type SubmitResponse } from '@wix/headless-forms/services';
+
+const handleCustomSubmit = async (
+  formId: string,
+  formValues: FormValues
+): Promise<SubmitResponse> => {
+  try {
+    const response = await fetch('/api/custom-submission', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ formId, ...formValues }),
+    });
+
+    if (!response.ok) {
+      return { type: 'error', message: 'Failed to submit form' };
+    }
+
+    return { type: 'success', message: 'Form submitted successfully!' };
+  } catch (error) {
+    return { type: 'error', message: 'An error occurred during submission' };
+  }
+};
+
+<Form.Root
+  formServiceConfig={{
+    formId: 'form-123',
+    onSubmit: handleCustomSubmit
+  }}
+>
+  <Form.Fields fieldMap={FIELD_MAP} />
+  <Form.Error className="text-destructive p-4" />
+  <Form.Submitted className="text-green-500 p-4" />
+</Form.Root>
+```
+
+**Default Behavior**
+
+If no `onSubmit` handler is provided, the Form component uses the default Wix Forms submission API. Existing code continues to work without any changes.
 
 ### Form.Loading
 
@@ -581,20 +673,69 @@ function DynamicFormPage({ formId }) {
     </Form.Root>
   );
 }
+
+// Pattern 3: Custom submission handler
+function CustomFormPage({ formServiceConfig }) {
+  const handleCustomSubmit = async (formId, formValues) => {
+    try {
+      // Custom submission logic (e.g., custom API, analytics)
+      const response = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ formId, ...formValues }),
+      });
+
+      if (!response.ok) {
+        return { type: 'error', message: 'Failed to submit form' };
+      }
+
+      // Track analytics
+      analytics.track('form_submitted', { formId });
+
+      return { type: 'success', message: 'Thank you for your submission!' };
+    } catch (error) {
+      return { type: 'error', message: 'An error occurred during submission' };
+    }
+  };
+
+  return (
+    <Form.Root
+      formServiceConfig={{
+        ...formServiceConfig,
+        onSubmit: handleCustomSubmit,
+      }}
+    >
+      <Form.Loading className="flex justify-center p-4" />
+      <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
+      <Form.Fields fieldMap={FIELD_MAP} />
+      <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
+      <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
+    </Form.Root>
+  );
+}
 ```
 
 ## FormServiceConfig Type
 
-The `FormServiceConfig` type defines how form data is provided to the Form service. It supports two distinct patterns:
+The `FormServiceConfig` type defines how form data is provided to the Form service. It supports two distinct patterns with optional custom submission handling:
 
 ```tsx
-type FormServiceConfig = { formId: string } | { form: forms.Form };
+type FormServiceConfig =
+  | {
+      formId: string;
+      onSubmit?: (formId: string, formValues: FormValues) => Promise<SubmitResponse>;
+    }
+  | {
+      form: forms.Form;
+      onSubmit?: (formId: string, formValues: FormValues) => Promise<SubmitResponse>;
+    };
 ```
 
 **Configuration Options:**
 
 - `{ form: forms.Form }` - Pre-loaded form data. The service uses this data immediately without any network requests. Recommended for SSR/SSG scenarios.
 - `{ formId: string }` - Form ID for lazy loading. The service will fetch form data asynchronously from the Wix Forms API. Ideal for client-side routing.
+- `onSubmit?: (formId, formValues) => Promise<SubmitResponse>` - Optional custom submission handler. If provided, it will be called instead of the default Wix Forms submission. Must return a `SubmitResponse` object with structured data (`success`, `error`, or `idle`).
 
 ## Service Integration
 
@@ -602,9 +743,8 @@ The Form component integrates with Wix services through the `FormService` which 
 
 - **Form data management**: Access to form configuration and field definitions
 - **Dual loading patterns**: Support for both pre-loaded form data and lazy loading with form IDs
-- **Error handling**: Signal for form loading errors
+- **Submission handling**: Built-in submission with support for custom handlers
+- **Error handling**: Signals for both form loading errors and submission errors
 - **State management**: Reactive state updates using signals
 - **Loading states**: Built-in loading indicators for async form loading
-
-**Note**: Submit response handling and submission state management are planned features that will be added in future updates.
-
+- **Submission state**: Real-time submission status tracking (`success`, `error`, `idle`)

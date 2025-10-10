@@ -7488,6 +7488,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/form-public@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "@wix/form-public@npm:0.26.0"
+  dependencies:
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.mapkeys: "npm:^4.6.0"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: 10c0/8591ced39edcd2304957a870a36c1a8164c1bcc71213b9571ac3c302ee210f268a3c1cd6831dab2a391be251e604e58ddbba22d7d7d484661a81b68cde8cb84d
+  languageName: node
+  linkType: hard
+
 "@wix/forms@npm:^1.0.329, @wix/forms@npm:^1.0.330":
   version: 1.0.330
   resolution: "@wix/forms@npm:1.0.330"
@@ -7795,7 +7807,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-forms@npm:0.0.8, @wix/headless-forms@workspace:*, @wix/headless-forms@workspace:packages/headless-components/forms":
+"@wix/headless-forms@npm:0.0.8":
+  version: 0.0.8
+  resolution: "@wix/headless-forms@npm:0.0.8"
+  dependencies:
+    "@wix/form-public": "npm:^0.17.0"
+    "@wix/forms": "npm:^1.0.329"
+    "@wix/headless-utils": "npm:0.0.4"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/ee9067d97dfe7dcc89da47f1d7ee202dc3642e06f9dcce8d717388802cbecfefbbccc7dde3201ecc1bcbc71a9ce73dbd7da10f0d85c9ae27dc6c5aa4d8d33f2b
+  languageName: node
+  linkType: hard
+
+"@wix/headless-forms@workspace:*, @wix/headless-forms@workspace:packages/headless-components/forms":
   version: 0.0.0-use.local
   resolution: "@wix/headless-forms@workspace:packages/headless-components/forms"
   dependencies:
@@ -7804,8 +7829,8 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/form-public": "npm:^0.17.0"
-    "@wix/forms": "npm:^1.0.329"
+    "@wix/form-public": "npm:^0.26.0"
+    "@wix/forms": "npm:^1.0.330"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
