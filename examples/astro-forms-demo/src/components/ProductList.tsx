@@ -23,30 +23,38 @@ export default function ProductList({
   };
 
   return (
-    <div>
+    <div className="mb-6">
       {showLabel && (
-        <label className="field-label">
+        <label className="block text-foreground font-paragraph mb-3">
           {label}
-          {required && <span>*</span>}
+          {required && <span className="text-destructive ml-1">*</span>}
         </label>
       )}
 
-      <div className="product-options">
+      <div className="space-y-3">
         {options.map(option => {
           const isSelected =
             (value as string[])?.includes(option.value) || false;
 
           return (
-            <div key={option.id} className="product-option">
+            <div
+              key={option.id}
+              className="flex items-center gap-3 p-3 bg-background border border-foreground/20 rounded-lg hover:border-primary/50 transition-colors"
+            >
               <input
                 type="checkbox"
                 id={`${id}-${option.id}`}
                 checked={isSelected}
                 onChange={() => handleToggle(option.value)}
                 disabled={readOnly}
+                className="w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
               />
-              <label htmlFor={`${id}-${option.id}`}>
-                {option.label} - {option.price}
+              <label
+                htmlFor={`${id}-${option.id}`}
+                className="flex-1 text-foreground font-paragraph cursor-pointer"
+              >
+                <span className="font-semibold">{option.label}</span>
+                <span className="text-foreground/70"> - {option.price}</span>
               </label>
             </div>
           );

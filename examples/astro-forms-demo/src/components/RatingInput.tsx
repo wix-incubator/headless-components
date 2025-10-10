@@ -14,26 +14,34 @@ const RatingInput = ({
   onFocus,
 }: RatingInputProps) => {
   return (
-    <div>
-      {showLabel && <label htmlFor={id}>{label}</label>}
+    <div className="mb-6">
+      {showLabel && (
+        <label
+          htmlFor={id}
+          className="block text-foreground font-paragraph mb-2"
+        >
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      )}
 
-      <input
-        id={id}
-        type="number"
-        min="1"
-        max="5"
-        value={value || ''}
-        onChange={e => onChange(parseInt(e.target.value) || null)}
-        onBlur={onBlur}
-        onFocus={onFocus}
-        style={{
-          width: '100%',
-          maxWidth: '100px',
-          padding: '8px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-        }}
-      />
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map(rating => (
+          <button
+            key={rating}
+            type="button"
+            onClick={() => onChange(rating)}
+            onBlur={onBlur}
+            onFocus={onFocus}
+            disabled={readOnly}
+            className={`w-10 h-10 text-2xl ${
+              value && rating <= value ? 'text-secondary' : 'text-foreground/20'
+            } hover:text-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            ★
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

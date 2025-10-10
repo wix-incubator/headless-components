@@ -1,6 +1,6 @@
-@import "./fonts.css";
-@import "@wix/wix-vibe-plugins/plugins-vars.css";
-@import "@wix/wix-vibe-plugins/plugins-theme.css";
+@import './fonts.css';
+@import '@wix/wix-vibe-plugins/plugins-vars.css';
+@import '@wix/wix-vibe-plugins/plugins-theme.css';
 
 @tailwind base;
 @tailwind components;

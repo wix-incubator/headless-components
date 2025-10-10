@@ -22,8 +22,16 @@ const NumberInput = ({
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (
-    <div>
-      {showLabel && <label htmlFor={id}>{label}</label>}
+    <div className="mb-6">
+      {showLabel && (
+        <label
+          htmlFor={id}
+          className="block text-foreground font-paragraph mb-2"
+        >
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      )}
       <input
         id={id}
         type="number"
@@ -32,12 +40,13 @@ const NumberInput = ({
         readOnly={readOnly}
         placeholder={placeholder}
         aria-describedby={descriptionId}
+        className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         onChange={e => onChange(e.target.value)}
         onBlur={() => onBlur()}
         onFocus={() => onFocus()}
       />
       {description && (
-        <div id={descriptionId}>
+        <div id={descriptionId} className="mt-2 text-foreground/70 text-sm">
           <RicosViewer
             content={description as RichContent}
             plugins={quickStartViewerPlugins()}

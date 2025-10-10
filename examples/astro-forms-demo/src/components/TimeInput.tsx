@@ -28,13 +28,14 @@ const TimeInput = ({
   };
 
   return (
-    <div>
+    <div className="mb-6">
       {showLabel && (
-        <label htmlFor={id}>
+        <label
+          htmlFor={id}
+          className="block text-foreground font-paragraph mb-2"
+        >
           {label}
-          {required && (
-            <span style={{ color: 'red', marginLeft: '4px' }}>*</span>
-          )}
+          {required && <span className="text-destructive ml-1">*</span>}
         </label>
       )}
 
@@ -51,20 +52,11 @@ const TimeInput = ({
         onFocus={onFocus}
         aria-describedby={descriptionId}
         step={showSeconds ? '1' : undefined}
-        style={{
-          width: '100%',
-          maxWidth: '200px',
-          padding: '8px 12px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          fontSize: '14px',
-          backgroundColor: readOnly ? '#f5f5f5' : 'white',
-          cursor: readOnly ? 'not-allowed' : 'pointer',
-        }}
+        className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
       />
 
       {description && (
-        <div id={descriptionId} style={{ marginTop: '8px' }}>
+        <div id={descriptionId} className="mt-2 text-foreground/70 text-sm">
           <RicosViewer
             content={description as RichContent}
             plugins={quickStartViewerPlugins()}

@@ -27,10 +27,17 @@ const Tags = ({
   };
 
   return (
-    <div>
-      {showLabel && <label htmlFor={id}>{label}</label>}
+    <div className="mb-6">
+      {showLabel && (
+        <label
+          htmlFor={id}
+          className="block text-foreground font-paragraph mb-3"
+        >
+          {label}
+        </label>
+      )}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+      <div className="flex flex-wrap gap-2">
         {options.map(option => {
           const isSelected = currentValues.includes(option.value);
           return (
@@ -39,14 +46,11 @@ const Tags = ({
               type="button"
               onClick={() => handleTagToggle(option.value)}
               onFocus={onFocus}
-              style={{
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '16px',
-                backgroundColor: isSelected ? '#e3f2fd' : 'white',
-                color: isSelected ? '#1976d2' : 'inherit',
-                cursor: 'pointer',
-              }}
+              className={`px-4 py-2 rounded-full font-paragraph transition-all ${
+                isSelected
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-background text-foreground border border-foreground/20 hover:border-primary/50'
+              }`}
             >
               {option.label}
             </button>

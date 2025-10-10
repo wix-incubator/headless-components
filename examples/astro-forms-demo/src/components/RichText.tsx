@@ -8,14 +8,7 @@ import '@wix/ricos/css/all-plugins-viewer.css';
 
 const RichText = ({ content, maxShownParagraphs }: RichTextProps) => {
   return (
-    <div
-      style={{
-        fontWeight: '600',
-        color: '#333',
-        borderBottom: '2px solid #e0e0e0',
-        paddingBottom: '8px',
-      }}
-    >
+    <div className="mb-4 pb-2 border-b border-foreground/20 text-foreground font-paragraph font-semibold">
       <RicosViewer
         content={content as RichContent}
         plugins={quickStartViewerPlugins()}

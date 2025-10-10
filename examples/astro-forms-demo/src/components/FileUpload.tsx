@@ -50,8 +50,16 @@ const FileUpload = ({
     .join(',');
 
   return (
-    <div>
-      {showLabel && <label htmlFor={id}>{label}</label>}
+    <div className="mb-6">
+      {showLabel && (
+        <label
+          htmlFor={id}
+          className="block text-foreground font-paragraph mb-2"
+        >
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      )}
       <input
         id={id}
         type="file"
@@ -60,6 +68,7 @@ const FileUpload = ({
         accept={acceptString}
         multiple={maxFiles !== 1}
         aria-describedby={descriptionId}
+        className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-primary-foreground file:cursor-pointer"
         onChange={handleFileChange}
         onBlur={() => onBlur()}
         onFocus={() => onFocus()}
@@ -68,12 +77,13 @@ const FileUpload = ({
         <button
           type="button"
           onClick={() => document.getElementById(id)?.click()}
+          className="mt-2 px-4 py-2 bg-secondary text-secondary-foreground font-paragraph rounded-lg hover:opacity-90 transition-opacity"
         >
           {buttonText}
         </button>
       )}
       {description && (
-        <div id={descriptionId}>
+        <div id={descriptionId} className="mt-2 text-foreground/70 text-sm">
           <RicosViewer
             content={description as RichContent}
             plugins={quickStartViewerPlugins()}
@@ -81,14 +91,19 @@ const FileUpload = ({
         </div>
       )}
       {explanationText && (
-        <div className="file-upload-explanation">{explanationText}</div>
+        <div className="mt-2 text-foreground/60 text-sm">{explanationText}</div>
       )}
       {value && value.length > 0 && (
-        <div>
-          <p>Selected files:</p>
-          <ul>
+        <div className="mt-3 p-3 bg-background border border-foreground/10 rounded-lg">
+          <p className="text-foreground font-paragraph font-semibold mb-2">
+            Selected files:
+          </p>
+          <ul className="space-y-1">
             {value.map((file, index) => (
-              <li key={file.fileId || index}>
+              <li
+                key={file.fileId || index}
+                className="text-foreground/80 text-sm"
+              >
                 {file.displayName} ({file.fileType})
               </li>
             ))}
