@@ -251,9 +251,9 @@ export const EventDescription = React.forwardRef<
 >((props, ref) => {
   return (
     <EventPrimitive.Description {...props} ref={ref}>
-      {({ content }) => (
+      {({ description }) => (
         <RicosViewer
-          content={content as RichContent}
+          content={description as RichContent}
           theme={{
             // TODO: add missing styles
             customStyles: {
