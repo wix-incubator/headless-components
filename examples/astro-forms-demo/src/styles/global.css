@@ -1,12 +1,7 @@
-/*
+@import "./fonts.css";
+@import "@wix/wix-vibe-plugins/plugins-vars.css";
+@import "@wix/wix-vibe-plugins/plugins-theme.css";
 
-██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗
-██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝
-██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗
-██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║
-╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝
- ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝
-
-Do not put here anything, refer to the classes available at
-@wix/wix-vibe-plugins/plugins-theme.css
-*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

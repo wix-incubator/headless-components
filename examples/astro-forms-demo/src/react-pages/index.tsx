@@ -5,7 +5,6 @@ import {
   type SubmitResponse,
 } from '@wix/headless-forms/services';
 
-import '../styles/theme-1.css';
 import TextInput from '../components/TextInput';
 import TextArea from '../components/TextArea';
 import ContactsPhone from '../components/ContactsPhone';
