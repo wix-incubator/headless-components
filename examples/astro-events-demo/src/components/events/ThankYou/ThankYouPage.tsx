@@ -1,19 +1,20 @@
 import {
   type EventServiceConfig,
+  type OrderServiceConfig,
   loadEventServiceConfig,
+  loadOrderServiceConfig,
 } from '@wix/events/services';
 import React from 'react';
-import { Await, useLoaderData } from 'react-router-dom';
+import {
+  Await,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router-dom';
 import { ThankYou } from './ThankYou';
-
-interface ThankYouPageLoaderParams {
-  params: {
-    slug?: string;
-  };
-}
 
 interface ThankYouPageLoaderData {
   eventServiceConfig: EventServiceConfig;
+  orderServiceConfig?: OrderServiceConfig;
 }
 
 interface ThankYouPageProps {
@@ -22,7 +23,8 @@ interface ThankYouPageProps {
 
 export function thankYouPageLoader({
   params: { slug },
-}: ThankYouPageLoaderParams): {
+  request,
+}: LoaderFunctionArgs): {
   slug: string;
   data: Promise<ThankYouPageLoaderData>;
 } {
@@ -37,8 +39,17 @@ export function thankYouPageLoader({
       throw new Response('Not Found', { status: 404 });
     }
 
+    const url = new URL(request.url);
+    const orderNumber = url.searchParams.get('orderNumber');
+    const eventId = eventServiceConfigResult.config.event._id!;
+
+    const orderServiceConfig = orderNumber
+      ? await loadOrderServiceConfig(eventId, orderNumber)
+      : undefined;
+
     resolve({
       eventServiceConfig: eventServiceConfigResult.config,
+      orderServiceConfig,
     });
   });
 
@@ -54,10 +65,11 @@ export function ThankYouPage({ eventDetailsPagePath }: ThankYouPageProps) {
   return (
     <React.Suspense key={slug} fallback={null}>
       <Await resolve={data}>
-        {({ eventServiceConfig }) => (
+        {({ eventServiceConfig, orderServiceConfig }) => (
           <div className="wix-verticals-container">
             <ThankYou
               eventServiceConfig={eventServiceConfig}
+              orderServiceConfig={orderServiceConfig}
               eventPageUrl={`${window.location.origin}${eventDetailsPagePath.replace(':slug', slug)}`}
             />
           </div>

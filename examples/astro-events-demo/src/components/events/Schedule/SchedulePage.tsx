@@ -5,15 +5,13 @@ import {
   loadScheduleListServiceConfig,
 } from '@wix/events/services';
 import React from 'react';
-import { Await, useLoaderData } from 'react-router-dom';
+import {
+  Await,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from 'react-router-dom';
 import { Schedule } from './Schedule';
 import { ScheduleSkeleton } from './ScheduleSkeleton';
-
-interface SchedulePageLoaderParams {
-  params: {
-    slug?: string;
-  };
-}
 
 interface SchedulePageLoaderData {
   eventServiceConfig: EventServiceConfig;
@@ -24,9 +22,7 @@ interface SchedulePageProps {
   eventDetailsPagePath: string;
 }
 
-export function schedulePageLoader({
-  params: { slug },
-}: SchedulePageLoaderParams): {
+export function schedulePageLoader({ params: { slug } }: LoaderFunctionArgs): {
   slug: string;
   data: Promise<SchedulePageLoaderData>;
 } {

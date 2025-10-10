@@ -1,4 +1,4 @@
-import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { PricingOption } from '../services/pricing-option-service.js';
 import * as CorePricingOption from './core/PricingOption.js';

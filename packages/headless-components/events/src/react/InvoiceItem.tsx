@@ -1,5 +1,5 @@
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { type InvoiceItem } from '../services/invoice-item-service.js';
 import * as CoreInvoiceItem from './core/InvoiceItem.js';
 
@@ -137,7 +137,7 @@ export interface PriceProps {
 }
 
 /**
- * Displays the invoice item formatted price with customizable rendering.
+ * Displays the invoice item price with customizable rendering.
  *
  * @component
  * @example
@@ -154,7 +154,7 @@ export interface PriceProps {
  * <InvoiceItem.Price asChild>
  *   {React.forwardRef(({ formattedAmount, amount, currency, ...props }, ref) => (
  *     <p ref={ref} {...props} className="text-lg text-green-600">
- *       {`Price: ${formattedAmount}`}
+ *       Price: {formattedAmount}
  *     </p>
  *   ))}
  * </InvoiceItem.Price>
@@ -213,7 +213,7 @@ export interface QuantityProps {
  * <InvoiceItem.Quantity asChild>
  *   {React.forwardRef(({ quantity, ...props }, ref) => (
  *     <span ref={ref} {...props} className="badge">
- *       {`Qty: ${quantity}`}
+ *       Qty: {quantity}
  *     </span>
  *   ))}
  * </InvoiceItem.Quantity>
@@ -261,7 +261,7 @@ export interface TotalProps {
 }
 
 /**
- * Displays the invoice item formatted total amount with customizable rendering.
+ * Displays the invoice item total amount with customizable rendering.
  *
  * @component
  * @example
@@ -278,7 +278,7 @@ export interface TotalProps {
  * <InvoiceItem.Total asChild>
  *   {React.forwardRef(({ formattedAmount, amount, currency, ...props }, ref) => (
  *     <p ref={ref} {...props} className="font-bold text-xl text-green-600">
- *       {`Total: ${formattedAmount}`}
+ *       Total: {formattedAmount}
  *     </p>
  *   ))}
  * </InvoiceItem.Total>

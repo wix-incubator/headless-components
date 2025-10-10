@@ -1,8 +1,8 @@
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
-import { AsChildSlot, AsChildChildren } from '@wix/headless-utils/react';
-import * as CoreScheduleItem from './core/ScheduleItem.js';
-import * as ScheduleItemTag from './ScheduleItemTag.js';
 import { type ScheduleItem } from '../services/schedule-item-service.js';
+import * as ScheduleItemTag from './ScheduleItemTag.js';
+import * as CoreScheduleItem from './core/ScheduleItem.js';
 
 enum TestIds {
   scheduleItemRoot = 'schedule-item-root',
@@ -29,7 +29,7 @@ export interface RootProps {
 }
 
 /**
- * Root container that provides schedule item service data to all child components.
+ * Root container that provides schedule item service context to all child components.
  * Must be used as the top-level ScheduleItem component.
  *
  * @order 1
@@ -163,7 +163,7 @@ export interface TimeSlotProps {
  *
  * // asChild with react component
  * <ScheduleItem.TimeSlot asChild>
- *   {React.forwardRef(({ formattedTimeRange, startTime, ...props }, ref) => (
+ *   {React.forwardRef(({ formattedTimeRange, startTime, endTime, ...props }, ref) => (
  *     <time ref={ref} className="text-gray-600" {...props} dateTime={startTime.toISOString()}>
  *       {formattedTimeRange}
  *     </time>
@@ -249,9 +249,7 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
             className={className}
             data-testid={TestIds.scheduleItemDuration}
             customElement={children}
-            customElementProps={{
-              durationMinutes,
-            }}
+            customElementProps={{ durationMinutes }}
             content={durationMinutes}
             {...otherProps}
           >
@@ -379,15 +377,15 @@ export interface TagsProps {
 }
 
 /**
- * Container for the schedule item tags with conditional rendering.
+ * Container for the schedule item tags.
  *
  * @component
  * @example
  * ```tsx
  * <ScheduleItem.Tags>
- *     <ScheduleItem.TagRepeater>
- *       <ScheduleItemTag.Label />
- *     </ScheduleItem.TagRepeater>
+ *   <ScheduleItem.TagRepeater>
+ *     <ScheduleItemTag.Label />
+ *   </ScheduleItem.TagRepeater>
  * </ScheduleItem.Tags>
  * ```
  */
@@ -419,6 +417,8 @@ export const Tags = React.forwardRef<HTMLElement, TagsProps>((props, ref) => {
 export interface TagRepeaterProps {
   /** Child components */
   children: React.ReactNode;
+  /** CSS classes to apply to the tag element */
+  className?: string;
 }
 
 /**
@@ -433,13 +433,13 @@ export interface TagRepeaterProps {
  * ```
  */
 export const TagRepeater = (props: TagRepeaterProps): React.ReactNode => {
-  const { children } = props;
+  const { children, className } = props;
 
   return (
     <CoreScheduleItem.Tags>
       {({ tags }) =>
-        tags.map((tagValue, index) => (
-          <ScheduleItemTag.Root key={index} tag={tagValue}>
+        tags.map((tag, index) => (
+          <ScheduleItemTag.Root key={index} tag={tag} className={className}>
             {children}
           </ScheduleItemTag.Root>
         ))

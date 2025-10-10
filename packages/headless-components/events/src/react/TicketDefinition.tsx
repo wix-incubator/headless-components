@@ -1,4 +1,4 @@
-import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
+import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { type TicketDefinition } from '../services/ticket-definition-service.js';
 import { type PricingOption as PricingOptionType } from '../services/pricing-option-service.js';
@@ -323,7 +323,7 @@ export interface GuestPricingProps {
  *
  * // asChild with react component
  * <TicketDefinition.GuestPricing asChild>
- *   {React.forwardRef(({ minPrice, currency, formattedMinPrice, setPrice, ...props }, ref) => (
+ *   {React.forwardRef(({ price, minPrice, currency, formattedMinPrice, setPrice, ...props }, ref) => (
  *     <input ref={ref} {...props} className="border rounded px-3 py-2" />
  *   ))}
  * </TicketDefinition.GuestPricing>
@@ -401,9 +401,9 @@ export interface PricingRangeProps {
  *
  * // asChild with react component
  * <TicketDefinition.PricingRange asChild>
- *   {React.forwardRef(({ minPrice, maxPrice, currency, formattedPriceRange, ...props }, ref) => (
+ *   {React.forwardRef(({ minPrice, maxPrice, currency, formattedMinPrice, formattedMaxPrice, formattedPriceRange, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm text-gray-500">
- *       {formattedPriceRange}
+ *       From {formattedMinPrice} to {formattedMaxPrice}
  *     </span>
  *   ))}
  * </TicketDefinition.PricingRange>
