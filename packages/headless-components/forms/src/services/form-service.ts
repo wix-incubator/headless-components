@@ -44,6 +44,10 @@ export interface FormServiceAPI {
 export const FormServiceDefinition =
   defineService<FormServiceAPI>('formService');
 
+type OnSubmit = (
+  formId: string,
+  formValues: FormValues,
+) => Promise<SubmitResponse>;
 /**
  * Configuration type for the Form service.
  * Supports two distinct patterns for providing form data:
@@ -55,30 +59,8 @@ export const FormServiceDefinition =
  * @type {FormServiceConfig}
  */
 export type FormServiceConfig =
-  | {
-      formId: string;
-      /**
-       * Optional custom submission handler.
-       * If provided, it will be called instead of the default submission logic.
-       * Should return a SubmitResponse indicating success or error.
-       */
-      onSubmit?: (
-        formId: string,
-        formValues: FormValues,
-      ) => Promise<SubmitResponse>;
-    }
-  | {
-      form: forms.Form;
-      /**
-       * Optional custom submission handler.
-       * If provided, it will be called instead of the default submission logic.
-       * Should return a SubmitResponse indicating success or error.
-       */
-      onSubmit?: (
-        formId: string,
-        formValues: FormValues,
-      ) => Promise<SubmitResponse>;
-    };
+  | { formId: string; onSubmit?: OnSubmit }
+  | { form: forms.Form; onSubmit?: OnSubmit };
 
 /**
  * Implementation of the Form service that manages reactive form data and submissions.
