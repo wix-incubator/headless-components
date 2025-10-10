@@ -509,18 +509,16 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
   submitText,
   onSubmitClick,
   ...props
-}) => {
-  return (
-    <button
-      type="submit"
-      className="w-full bg-primary text-primary-foreground font-paragraph font-medium py-3 px-4 rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      onClick={onSubmitClick}
-      {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
-    >
-      {submitText}
-    </button>
-  );
-};
+}) => (
+  <button
+    type="submit"
+    className="w-full bg-primary text-primary-foreground font-paragraph font-medium py-3 px-4 rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+    onClick={onSubmitClick}
+    {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+  >
+    {submitText}
+  </button>
+);
 
 export const RichText: React.FC<RichTextProps> = ({
   content,

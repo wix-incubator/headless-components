@@ -3,7 +3,6 @@ import {
   loadEventServiceConfig,
 } from '@wix/events/services';
 import { useLoaderData, type LoaderFunctionArgs } from 'react-router-dom';
-
 import { Form } from './Form';
 
 interface FormPageLoaderData {
