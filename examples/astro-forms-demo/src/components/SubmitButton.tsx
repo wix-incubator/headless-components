@@ -13,12 +13,12 @@ export default function SubmitButton({
   isSubmitInProgress,
 }: SubmitButtonProps) {
   return (
-    <div>
+    <div className="flex gap-3 mt-8">
       {showPreviousButton && (
         <button
           type="button"
           onClick={() => onPreviousClick()}
-          className="bg-secondary text-secondary-foreground"
+          className="px-6 py-3 bg-secondary text-secondary-foreground font-paragraph font-semibold rounded-lg hover:opacity-90 transition-opacity"
         >
           {previousText}
         </button>
@@ -29,7 +29,7 @@ export default function SubmitButton({
           onClick={() => {
             onNextClick();
           }}
-          className="bg-primary text-primary-foreground"
+          className="px-6 py-3 bg-primary text-primary-foreground font-paragraph font-semibold rounded-lg hover:opacity-90 transition-opacity"
         >
           {nextText}
         </button>
@@ -39,7 +39,7 @@ export default function SubmitButton({
           type="submit"
           onClick={() => onSubmitClick()}
           disabled={isSubmitInProgress}
-          className="bg-primary text-primary-foreground"
+          className="px-6 py-3 bg-primary text-primary-foreground font-paragraph font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitInProgress ? 'Submitting...' : submitText}
         </button>

@@ -34,23 +34,28 @@ const CheckboxGroup = ({
   };
 
   return (
-    <div>
-      {showLabel && <label htmlFor={id}>{label}</label>}
+    <div className="mb-6">
+      {showLabel && (
+        <label className="block text-foreground font-paragraph mb-3">
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      )}
 
-      <div>
+      <div className="space-y-2">
         {options.map(option => {
           const isSelected = currentValues.includes(option.value);
           return (
             <label
               key={option.id}
-              style={{ display: 'block', marginBottom: '4px' }}
+              className="flex items-center gap-3 cursor-pointer text-foreground font-paragraph"
             >
               <input
                 type="checkbox"
                 checked={isSelected}
                 onChange={() => handleCheckboxChange(option.value)}
                 onFocus={onFocus}
-                style={{ marginRight: '8px' }}
+                className="w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50"
               />
               {option.label}
             </label>

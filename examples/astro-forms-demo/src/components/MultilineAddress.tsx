@@ -18,11 +18,19 @@ const MultilineAddress = ({
   };
 
   return (
-    <fieldset>
-      <legend>{label}</legend>
+    <fieldset className="mb-6 p-4 border border-foreground/20 rounded-lg">
+      <legend className="text-foreground font-paragraph font-semibold px-2">
+        {label}
+        {required && <span className="text-destructive ml-1">*</span>}
+      </legend>
 
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-streetNumber`}>Street Number</label>
+      <div className="mb-4">
+        <label
+          htmlFor={`${id}-streetNumber`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          Street Number
+        </label>
         <input
           id={`${id}-streetNumber`}
           type="text"
@@ -32,12 +40,17 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('streetNumber', e.target.value)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-streetName`}>Street Name</label>
+      <div className="mb-4">
+        <label
+          htmlFor={`${id}-streetName`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          Street Name
+        </label>
         <input
           id={`${id}-streetName`}
           type="text"
@@ -47,12 +60,17 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('streetName', e.target.value)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-addressLine`}>Address Line</label>
+      <div className="mb-4">
+        <label
+          htmlFor={`${id}-addressLine`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          Address Line
+        </label>
         <input
           id={`${id}-addressLine`}
           type="text"
@@ -62,13 +80,18 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('addressLine', e.target.value)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
       {showAddressLine2 && (
-        <div style={{ marginBottom: '8px' }}>
-          <label htmlFor={`${id}-addressLine2`}>Address Line 2</label>
+        <div className="mb-4">
+          <label
+            htmlFor={`${id}-addressLine2`}
+            className="block text-foreground font-paragraph text-sm mb-1"
+          >
+            Address Line 2
+          </label>
           <input
             id={`${id}-addressLine2`}
             type="text"
@@ -78,13 +101,18 @@ const MultilineAddress = ({
             onChange={e => handleFieldChange('addressLine2', e.target.value)}
             onBlur={() => onBlur()}
             onFocus={() => onFocus()}
-            style={{ width: '100%', marginTop: '4px' }}
+            className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
       )}
 
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-apartment`}>Apartment</label>
+      <div className="mb-4">
+        <label
+          htmlFor={`${id}-apartment`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          Apartment
+        </label>
         <input
           id={`${id}-apartment`}
           type="text"
@@ -93,12 +121,17 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('apartment', e.target.value)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-city`}>City</label>
+      <div className="mb-4">
+        <label
+          htmlFor={`${id}-city`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          City
+        </label>
         <input
           id={`${id}-city`}
           type="text"
@@ -108,13 +141,17 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('city', e.target.value)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
-      {/* Subdivision */}
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-subdivision`}>State/Province</label>
+      <div className="mb-4">
+        <label
+          htmlFor={`${id}-subdivision`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          State/Province
+        </label>
         <input
           id={`${id}-subdivision`}
           type="text"
@@ -123,12 +160,17 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('subdivision', e.target.value)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-postalCode`}>Postal Code</label>
+      <div className="mb-4">
+        <label
+          htmlFor={`${id}-postalCode`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          Postal Code
+        </label>
         <input
           id={`${id}-postalCode`}
           type="text"
@@ -138,12 +180,17 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('postalCode', e.target.value)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
 
-      <div style={{ marginBottom: '8px' }}>
-        <label htmlFor={`${id}-country`}>Country</label>
+      <div>
+        <label
+          htmlFor={`${id}-country`}
+          className="block text-foreground font-paragraph text-sm mb-1"
+        >
+          Country
+        </label>
         <select
           id={`${id}-country`}
           value={value?.country || ''}
@@ -152,7 +199,7 @@ const MultilineAddress = ({
           onChange={e => handleFieldChange('country', e.target.value as any)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
-          style={{ width: '100%', marginTop: '4px' }}
+          className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <option value="">Select Country</option>
           <option value="US">United States</option>
