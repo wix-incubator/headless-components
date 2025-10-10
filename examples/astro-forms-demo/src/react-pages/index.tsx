@@ -1,5 +1,9 @@
-import { Form } from '@wix/headless-forms/react';
-import { type FormServiceConfig } from '@wix/headless-forms/services';
+import { Form, type FormValues } from '@wix/headless-forms/react';
+import { submissions } from '@wix/forms';
+import {
+  type FormServiceConfig,
+  type SubmitResponse,
+} from '@wix/headless-forms/services';
 
 import '../styles/theme-1.css';
 import TextInput from '../components/TextInput';
@@ -61,6 +65,27 @@ const FIELD_MAP = {
 };
 
 export default function FormsPage({ formServiceConfig }: FormsPageProps) {
+  const handleCustomSubmit = async (
+    formId: string,
+    formValues: FormValues
+  ): Promise<SubmitResponse> => {
+    try {
+      const response = await submissions.createSubmission({
+        formId,
+        ...formValues,
+      });
+
+      if (!response) {
+        return { type: 'error', message: 'Failed to submit form' };
+      }
+
+      return { type: 'success', message: 'Form submitted successfully!' };
+    } catch (error) {
+      console.error('Submission error:', error);
+      return { type: 'error', message: 'An error occurred during submission' };
+    }
+  };
+
   return (
     <>
       <h1>
@@ -69,7 +94,12 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
           ? formServiceConfig.formId
           : formServiceConfig?.form?._id}
       </h1>
-      <Form.Root formServiceConfig={formServiceConfig}>
+      <Form.Root
+        formServiceConfig={{
+          ...formServiceConfig,
+          onSubmit: handleCustomSubmit,
+        }}
+      >
         <Form.Loading className="flex justify-center p-4" />
         <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
         <Form.Error className="text-destructive p-4 rounded-lg mb-4" />

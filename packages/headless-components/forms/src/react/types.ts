@@ -53,3 +53,5 @@ export type {
   AppointmentProps,
   ImageChoiceProps,
 };
+
+export type FormValues = Record<string, any>;

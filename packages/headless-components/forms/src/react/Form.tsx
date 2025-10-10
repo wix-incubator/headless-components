@@ -42,7 +42,6 @@ import {
   Submitted as CoreSubmitted,
   Fields as CoreFields,
 } from './core/Form';
-import { submissions } from '@wix/forms';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -810,17 +809,10 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
       setFormErrors(errors);
     }, []);
 
-    const handleSubmitForm = async (formId: string) => {
-      await submissions.createSubmission({ formId, ...formValues });
-    };
-
     return (
       <CoreFields>
-        {({ form }) => {
+        {({ form, submitForm }) => {
           if (!form) return null;
-
-          // @ts-expect-error
-          const formId = form._id ? form._id : form.id;
 
           return (
             <div ref={ref}>
@@ -831,7 +823,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
                 errors={formErrors}
                 onValidate={handleFormValidate}
                 fields={props.fieldMap}
-                submitForm={() => handleSubmitForm(formId)}
+                submitForm={() => submitForm(formValues)}
               />
             </div>
           );
