@@ -41,6 +41,10 @@ import {
   Error as CoreError,
   Submitted as CoreSubmitted,
   Fields as CoreFields,
+  Field as CoreField,
+  type FormView,
+  type Layout,
+  type FieldDefinition,
 } from './core/Form';
 
 enum TestIds {
@@ -50,6 +54,9 @@ enum TestIds {
   formLoadingError = 'form-loading-error',
   formError = 'form-error',
   formSubmitted = 'form-submitted',
+  fieldRoot = 'field-root',
+  fieldLabel = 'field-label',
+  fieldInput = 'field-input',
 }
 
 /**
@@ -832,3 +839,307 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     );
   },
 );
+
+/**
+ * Base props for all Field component variants
+ */
+interface BaseFieldProps {
+  /** The form configuration containing field layouts */
+  form: FormView;
+  /** The unique identifier for this field */
+  fieldId: string;
+  /** CSS classes to apply to the root element */
+  className?: string;
+}
+
+/**
+ * Props for Field.Root with custom children
+ */
+export interface FieldRootProps extends BaseFieldProps {
+  /** Custom content to render within the field container */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+}
+
+/**
+ * Props for Field.Label component
+ */
+export interface FieldLabelProps extends BaseFieldProps {
+  /** Label content to display */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+}
+
+/**
+ * Props for Field.Input component
+ */
+export interface FieldInputProps extends BaseFieldProps {
+  /** Input element to render */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Description text to display below the input */
+  description?: React.ReactNode;
+}
+
+/**
+ * Props for Field.Layout component with render functions
+ */
+export interface FieldLayoutProps extends BaseFieldProps {
+  /** Function to render the label element */
+  renderLabel: () => React.ReactNode;
+  /** Function to render the input element */
+  renderInput: () => React.ReactNode;
+  /** Function to render optional description text */
+  renderDescription?: () => React.ReactNode;
+}
+
+/**
+ * Root container component for a form field with grid layout support.
+ * Provides the base grid positioning for field content based on the
+ * default-field-layout functionality.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function CustomField({ form, fieldId }) {
+ *   return (
+ *     <Form.FieldRoot form={form} fieldId={fieldId}>
+ *       <div className="custom-field-content">
+ *         {/* Your custom field content *\/}
+ *       </div>
+ *     </Form.FieldRoot>
+ *   );
+ * }
+ * ```
+ */
+export const FieldRoot = React.forwardRef<HTMLDivElement, FieldRootProps>(
+  (props, ref) => {
+    const { form, fieldId, children, asChild, className, ...otherProps } =
+      props;
+
+    return (
+      <CoreField form={form} fieldId={fieldId}>
+        {({ gridStyles }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              style={gridStyles.container}
+              data-testid={TestIds.fieldRoot}
+              customElement={children}
+              customElementProps={{}}
+              {...otherProps}
+            >
+              <div>{children}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreField>
+    );
+  },
+);
+
+FieldRoot.displayName = 'Form.FieldRoot';
+
+/**
+ * Label component for a form field with automatic grid positioning.
+ * Renders in the label row of the field's grid layout based on the
+ * default-field-layout functionality.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormField({ form, fieldId }) {
+ *   return (
+ *     <>
+ *       <Form.FieldLabel form={form} fieldId={fieldId}>
+ *         <label className="text-foreground font-paragraph">Name</label>
+ *       </Form.FieldLabel>
+ *       <Form.FieldInput form={form} fieldId={fieldId}>
+ *         <input className="bg-background border-foreground" />
+ *       </Form.FieldInput>
+ *     </>
+ *   );
+ * }
+ * ```
+ */
+export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
+  (props, ref) => {
+    const { form, fieldId, children, asChild, className, ...otherProps } =
+      props;
+
+    return (
+      <CoreField form={form} fieldId={fieldId}>
+        {({ gridStyles }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              style={gridStyles.label}
+              data-testid={TestIds.fieldLabel}
+              customElement={children}
+              customElementProps={{}}
+              {...otherProps}
+            >
+              <div>{children}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreField>
+    );
+  },
+);
+
+FieldLabel.displayName = 'Form.FieldLabel';
+
+/**
+ * Input component for a form field with automatic grid positioning.
+ * Renders in the input row of the field's grid layout with optional description
+ * based on the default-field-layout functionality.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormField({ form, fieldId }) {
+ *   return (
+ *     <>
+ *       <Form.FieldLabel form={form} fieldId={fieldId}>
+ *         <label className="text-foreground font-paragraph">Email</label>
+ *       </Form.FieldLabel>
+ *       <Form.FieldInput
+ *         form={form}
+ *         fieldId={fieldId}
+ *         description={<span className="text-secondary-foreground">We'll never share your email</span>}
+ *       >
+ *         <input
+ *           type="email"
+ *           className="bg-background border-foreground text-foreground"
+ *         />
+ *       </Form.FieldInput>
+ *     </>
+ *   );
+ * }
+ * ```
+ */
+export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
+  (props, ref) => {
+    const {
+      form,
+      fieldId,
+      children,
+      description,
+      asChild,
+      className,
+      ...otherProps
+    } = props;
+
+    return (
+      <CoreField form={form} fieldId={fieldId}>
+        {({ gridStyles }) => {
+          const content = (
+            <>
+              {children}
+              {description}
+            </>
+          );
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              style={gridStyles.input}
+              data-testid={TestIds.fieldInput}
+              customElement={asChild ? children : undefined}
+              customElementProps={{}}
+              {...otherProps}
+            >
+              <div>{content}</div>
+            </AsChildSlot>
+          );
+        }}
+      </CoreField>
+    );
+  },
+);
+
+FieldInput.displayName = 'Form.FieldInput';
+
+/**
+ * Layout component that handles complete field layout with render functions.
+ * Provides a render-prop based API for rendering label, input, and description
+ * based on the default-field-layout functionality.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormField({ form, fieldId }) {
+ *   return (
+ *     <Form.FieldLayout
+ *       form={form}
+ *       fieldId={fieldId}
+ *       renderLabel={() => (
+ *         <label className="text-foreground font-paragraph">Username</label>
+ *       )}
+ *       renderInput={() => (
+ *         <input className="bg-background border-foreground text-foreground" />
+ *       )}
+ *       renderDescription={() => (
+ *         <span className="text-secondary-foreground text-sm">
+ *           Choose a unique username
+ *         </span>
+ *       )}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+export const FieldLayout = React.forwardRef<HTMLDivElement, FieldLayoutProps>(
+  (props, _ref) => {
+    const {
+      form,
+      fieldId,
+      renderLabel,
+      renderInput,
+      renderDescription,
+      ...otherProps
+    } = props;
+
+    return (
+      <CoreField form={form} fieldId={fieldId}>
+        {({ gridStyles }) => {
+          return (
+            <>
+              <div
+                style={gridStyles.label}
+                data-testid={TestIds.fieldLabel}
+                {...otherProps}
+              >
+                {renderLabel()}
+              </div>
+              <div style={gridStyles.input} data-testid={TestIds.fieldInput}>
+                {renderInput()}
+                {renderDescription?.()}
+              </div>
+            </>
+          );
+        }}
+      </CoreField>
+    );
+  },
+);
+
+FieldLayout.displayName = 'Form.FieldLayout';

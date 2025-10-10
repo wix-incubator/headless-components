@@ -356,3 +356,111 @@ export function Fields(props: FieldsProps) {
     submitForm,
   });
 }
+
+/**
+ * Form view interface containing field definitions
+ */
+export interface FormView {
+  fields: FieldDefinition[];
+}
+
+/**
+ * Field layout configuration
+ */
+export interface Layout {
+  column: number;
+  width: number;
+}
+
+/**
+ * Field definition including layout information
+ */
+export interface FieldDefinition {
+  id: string;
+  layout: Layout;
+}
+
+/**
+ * Render props for Field component
+ */
+export interface FieldRenderProps {
+  /** The field layout configuration */
+  layout: Layout;
+  /** Grid styles for container */
+  gridStyles: {
+    container: React.CSSProperties;
+    label: React.CSSProperties;
+    input: React.CSSProperties;
+  };
+}
+
+/**
+ * Props for Field headless component
+ */
+export interface FieldProps {
+  /** The form configuration containing field layouts */
+  form: FormView;
+  /** The unique identifier for this field */
+  fieldId: string;
+  /** Render prop function that receives field layout data */
+  children: (props: FieldRenderProps) => React.ReactNode;
+}
+
+/**
+ * Calculate grid styles for a field based on its layout configuration
+ */
+function calculateGridStyles(layout: Layout) {
+  const rows = [1, 2];
+  const gridRow = `1 / span ${rows.length}`;
+  const gridColumn = `${layout.column + 1} / span ${layout.width}`;
+  const labelRow = `${rows[0]} / span 1`;
+  const inputRow = `${rows[1]} / span 1`;
+
+  return {
+    container: { gridRow, gridColumn },
+    label: { gridRow: labelRow, gridColumn, display: 'flex', alignItems: 'flex-end' },
+    input: { gridRow: inputRow, gridColumn },
+  };
+}
+
+/**
+ * Headless Field component that provides field layout data and grid styles.
+ * This component accesses field configuration and calculates grid positioning.
+ *
+ * @component
+ * @param {FieldProps} props - Component props
+ * @param {FieldProps['children']} props.children - Render prop function that receives field layout data
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function CustomField({ form, fieldId }) {
+ *   return (
+ *     <Form.Field form={form} fieldId={fieldId}>
+ *       {({ layout, gridStyles }) => (
+ *         <div style={gridStyles.container}>
+ *           <div style={gridStyles.label}>Label</div>
+ *           <div style={gridStyles.input}>Input</div>
+ *         </div>
+ *       )}
+ *     </Form.Field>
+ *   );
+ * }
+ * ```
+ */
+export function Field(props: FieldProps) {
+  const { form, fieldId, children } = props;
+
+  const fieldView = form.fields.find((field) => field.id === fieldId);
+  if (!fieldView) {
+    return null;
+  }
+
+  const { layout } = fieldView;
+  const gridStyles = calculateGridStyles(layout);
+
+  return children({
+    layout,
+    gridStyles,
+  });
+}
