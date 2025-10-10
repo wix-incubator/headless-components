@@ -387,7 +387,7 @@ export interface FieldRenderProps {
   /** The form configuration */
   form: FormView;
   /** The field ID */
-  fieldId: string;
+  id: string;
   /** The field layout configuration */
   layout: Layout;
   /** Grid styles for container */
@@ -402,10 +402,8 @@ export interface FieldRenderProps {
  * Props for Field headless component
  */
 export interface FieldProps {
-  /** The form configuration containing field layouts */
-  form: FormView;
   /** The unique identifier for this field */
-  fieldId: string;
+  id: string;
   /** Render prop function that receives field layout data */
   children: (props: FieldRenderProps) => React.ReactNode;
 }
@@ -443,9 +441,9 @@ function calculateGridStyles(layout: Layout) {
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
- * function CustomField({ form, fieldId }) {
+ * function CustomField({ id }) {
  *   return (
- *     <Form.Field form={form} fieldId={fieldId}>
+ *     <Form.Field id={id}>
  *       {({ layout, gridStyles }) => (
  *         <div style={gridStyles.container}>
  *           <div style={gridStyles.label}>Label</div>
@@ -458,19 +456,28 @@ function calculateGridStyles(layout: Layout) {
  * ```
  */
 export function Field(props: FieldProps) {
-  const { form, fieldId, children } = props;
+  const { id, children } = props;
+  const { formSignal } = useService(FormServiceDefinition);
+  const form = formSignal.get();
+  // TODO: do not use FormView type?
+  const formView = form as unknown as FormView;
 
-  const fieldView = form.fields.find((field) => field.id === fieldId);
+  if (!formView) {
+    return null;
+  }
+
+  const fieldView = formView.fields.find((field) => field.id === id);
+
   if (!fieldView) {
     return null;
   }
 
-  const { layout } = fieldView;
+  const { layout } = fieldView!;
   const gridStyles = calculateGridStyles(layout);
 
   return children({
-    form,
-    fieldId,
+    form: formView,
+    id,
     layout,
     gridStyles,
   });

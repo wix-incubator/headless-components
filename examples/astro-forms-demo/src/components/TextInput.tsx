@@ -1,4 +1,4 @@
-import { type TextInputProps } from '@wix/headless-forms/react';
+import { Form, type TextInputProps } from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -24,31 +24,45 @@ const TextInput = ({
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (
-    <div>
-      {showLabel && <label htmlFor={id}>{label}</label>}
-      <input
-        id={id}
-        type="text"
-        value={value || ''}
-        required={required}
-        readOnly={readOnly}
-        placeholder={placeholder}
-        minLength={minLength}
-        maxLength={maxLength}
-        aria-describedby={descriptionId}
-        onChange={e => onChange(e.target.value)}
-        onBlur={() => onBlur()}
-        onFocus={() => onFocus()}
-      />
-      {description && (
-        <div id={descriptionId}>
-          <RicosViewer
-            content={description as RichContent}
-            plugins={quickStartViewerPlugins()}
-          />
-        </div>
+    <Form.Field id={id}>
+      {showLabel && (
+        <Form.Field.Label>
+          <label htmlFor={id} className="text-foreground font-paragraph">
+            {label}
+            {required && <span className="text-destructive ml-1">*</span>}
+          </label>
+        </Form.Field.Label>
       )}
-    </div>
+      <Form.Field.Input
+        description={
+          description ? (
+            <div id={descriptionId}>
+              <RicosViewer
+                content={description as RichContent}
+                plugins={quickStartViewerPlugins()}
+              />
+            </div>
+          ) : undefined
+        }
+      >
+        <input
+          id={id}
+          type="text"
+          value={value || ''}
+          required={required}
+          readOnly={readOnly}
+          placeholder={placeholder}
+          minLength={minLength}
+          maxLength={maxLength}
+          aria-describedby={descriptionId}
+          aria-invalid={!!(required && !value)}
+          aria-required={required}
+          onChange={e => onChange(e.target.value)}
+          onBlur={() => onBlur()}
+          onFocus={() => onFocus()}
+        />
+      </Form.Field.Input>
+    </Form.Field>
   );
 };
 
