@@ -8,6 +8,7 @@ import {
   FormService,
 } from '../../services/form-service.js';
 import { FormValues } from '../types.js';
+import { findFieldLayout } from '../utils.js';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -384,8 +385,6 @@ export interface FieldDefinition {
  * Render props for Field component
  */
 export interface FieldRenderProps {
-  /** The form configuration */
-  form: FormView;
   /** The field ID */
   id: string;
   /** The field layout configuration */
@@ -459,26 +458,22 @@ export function Field(props: FieldProps) {
   const { id, children } = props;
   const { formSignal } = useService(FormServiceDefinition);
   const form = formSignal.get();
-  // TODO: do not use FormView type?
-  const formView = form as unknown as FormView;
 
-  if (!formView) {
+  if (!form) {
     return null;
   }
 
-  const fieldView = formView.fields.find((field) => field.id === id);
+  const fieldLayout = findFieldLayout(form, id);
 
-  if (!fieldView) {
+  if (!fieldLayout) {
     return null;
   }
 
-  const { layout } = fieldView!;
-  const gridStyles = calculateGridStyles(layout);
+  const gridStyles = calculateGridStyles(fieldLayout);
 
   return children({
-    form: formView,
     id,
-    layout,
+    layout: fieldLayout,
     gridStyles,
   });
 }
