@@ -4,16 +4,11 @@ import {
   loadEventServiceConfig,
   loadScheduleListServiceConfig,
 } from '@wix/events/services';
-import React from 'react';
-import {
-  Await,
-  useLoaderData,
-  type LoaderFunctionArgs,
-} from 'react-router-dom';
+import { useLoaderData, type LoaderFunctionArgs } from 'react-router-dom';
 import { Schedule } from './Schedule';
-import { ScheduleSkeleton } from './ScheduleSkeleton';
 
 interface SchedulePageLoaderData {
+  slug: string;
   eventServiceConfig: EventServiceConfig;
   scheduleListServiceConfig: ScheduleListServiceConfig;
 }
@@ -22,53 +17,40 @@ interface SchedulePageProps {
   eventDetailsPagePath: string;
 }
 
-export function schedulePageLoader({ params: { slug } }: LoaderFunctionArgs): {
-  slug: string;
-  data: Promise<SchedulePageLoaderData>;
-} {
+export async function schedulePageLoader({
+  params: { slug },
+}: LoaderFunctionArgs): Promise<SchedulePageLoaderData> {
   if (!slug) {
     throw new Error('Event slug is required');
   }
 
-  const data = new Promise<SchedulePageLoaderData>(async resolve => {
-    const eventServiceConfigResult = await loadEventServiceConfig(slug);
+  const eventServiceConfigResult = await loadEventServiceConfig(slug);
 
-    if (eventServiceConfigResult.type === 'notFound') {
-      throw new Response('Not Found', { status: 404 });
-    }
+  if (eventServiceConfigResult.type === 'notFound') {
+    throw new Response('Not Found', { status: 404 });
+  }
 
-    const scheduleListServiceConfig = await loadScheduleListServiceConfig(
-      eventServiceConfigResult.config.event._id!
-    );
-
-    resolve({
-      eventServiceConfig: eventServiceConfigResult.config,
-      scheduleListServiceConfig,
-    });
-  });
+  const scheduleListServiceConfig = await loadScheduleListServiceConfig(
+    eventServiceConfigResult.config.event._id!
+  );
 
   return {
     slug,
-    data,
+    eventServiceConfig: eventServiceConfigResult.config,
+    scheduleListServiceConfig,
   };
 }
 
 export function SchedulePage({ eventDetailsPagePath }: SchedulePageProps) {
-  const { slug, data } = useLoaderData<typeof schedulePageLoader>();
+  const { slug, eventServiceConfig, scheduleListServiceConfig } =
+    useLoaderData<typeof schedulePageLoader>();
 
   return (
-    <React.Suspense key={slug} fallback={<ScheduleSkeleton />}>
-      <Await resolve={data}>
-        {({ eventServiceConfig, scheduleListServiceConfig }) => (
-          <div className="wix-verticals-container">
-            <Schedule
-              eventServiceConfig={eventServiceConfig}
-              scheduleListServiceConfig={scheduleListServiceConfig}
-              eventDetailsPagePath={eventDetailsPagePath}
-            />
-          </div>
-        )}
-      </Await>
-    </React.Suspense>
+    <Schedule
+      key={slug}
+      eventServiceConfig={eventServiceConfig}
+      scheduleListServiceConfig={scheduleListServiceConfig}
+      eventDetailsPagePath={eventDetailsPagePath}
+    />
   );
 }

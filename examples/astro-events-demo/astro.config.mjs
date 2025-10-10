@@ -17,6 +17,8 @@ export default defineConfig({
       alias: {
         '@wix/events/components': '@wix/headless-events/react',
         '@wix/events/services': '@wix/headless-events/services',
+        '@wix/forms/components': '@wix/headless-forms/react',
+        '@wix/forms/services': '@wix/headless-forms/services',
       },
     },
   },

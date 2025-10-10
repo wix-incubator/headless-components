@@ -70,7 +70,8 @@ export interface FileUploadProps {
 // Submit button props that match Wix Forms SubmitButtonProps
 export interface SubmitButtonProps {
   id: string;
-  text: string;
+  submitText: string;
+  onSubmitClick: () => void;
 }
 
 // Rich text props that match Wix Forms RichTextProps
@@ -505,15 +506,17 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 );
 
 export const SubmitButton: React.FC<SubmitButtonProps> = ({
-  text,
+  submitText,
+  onSubmitClick,
   ...props
 }) => (
   <button
     type="submit"
     className="w-full bg-primary text-primary-foreground font-paragraph font-medium py-3 px-4 rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+    onClick={onSubmitClick}
     {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
   >
-    {text}
+    {submitText}
   </button>
 );
 

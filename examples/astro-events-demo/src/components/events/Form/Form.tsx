@@ -1,7 +1,5 @@
-import {
-  type EventServiceConfig,
-  type FormServiceConfig,
-} from '@wix/events/services';
+import { type EventServiceConfig } from '@wix/events/services';
+import { Form as FormPrimitive } from '@wix/forms/components';
 import {
   Event,
   EventImage,
@@ -15,16 +13,20 @@ import { FIELD_MAP } from '@/components/forms';
 
 interface FormProps {
   eventServiceConfig: EventServiceConfig;
-  formServiceConfig: FormServiceConfig;
+  thankYouPageUrl: string;
 }
 
-export function Form({ eventServiceConfig }: FormProps) {
+export function Form({ eventServiceConfig, thankYouPageUrl }: FormProps) {
   return (
     <Event event={eventServiceConfig.event} className="group/event">
       <div className="flex flex-col-reverse md:flex-row gap-8 md:gap-16 max-w-5xl mx-auto px-5 py-6 sm:p-16">
-        <EventForm className="w-full md:w-[70%]">
+        <EventForm
+          className="w-full md:w-[70%]"
+          thankYouPageUrl={thankYouPageUrl}
+        >
           {/* @ts-expect-error */}
           <FormFields fieldMap={FIELD_MAP} />
+          <FormPrimitive.Error className="font-paragraph text-base text-status-danger text-center mt-2" />
         </EventForm>
         <div className="w-full md:max-w-[30%] h-fit border border-foreground/10 p-6 md:p-8">
           <EventTitle variant="md" className="mb-4" />
