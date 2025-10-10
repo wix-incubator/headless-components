@@ -41,12 +41,11 @@ export function FormPage({ thankYouPagePath }: FormPageProps) {
     <Form
       key={slug}
       eventServiceConfig={eventServiceConfig}
-      formServiceConfig={{
-        postFlowUrl:
-          typeof window !== 'undefined'
-            ? `${window.location.origin}${thankYouPagePath.replace(':slug', slug)}`
-            : '',
-      }}
+      thankYouPageUrl={
+        typeof window !== 'undefined'
+          ? `${window.location.origin}${thankYouPagePath.replace(':slug', slug)}`
+          : ''
+      }
     />
   );
 }
