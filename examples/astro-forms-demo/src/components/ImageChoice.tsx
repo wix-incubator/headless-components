@@ -58,9 +58,9 @@ const ImageChoice = ({
                 : 'border-foreground/20 bg-background hover:border-primary/50'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            {option.image && (
+            {option.image && option.image.url && (
               <img
-                src={option.image}
+                src={option.image.url}
                 alt={option.label}
                 className="w-full h-32 object-cover rounded mb-2"
               />

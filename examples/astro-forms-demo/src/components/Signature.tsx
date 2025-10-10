@@ -50,11 +50,7 @@ const Signature = ({
       />
       {value && (
         <div className="mt-3 p-3 bg-background border border-foreground/10 rounded-lg">
-          <img
-            src={value.url}
-            alt={value.name}
-            className="max-w-full h-auto rounded"
-          />
+          <img src={value.url} alt="" className="max-w-full h-auto rounded" />
         </div>
       )}
     </div>

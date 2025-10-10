@@ -12,7 +12,7 @@ export default function ProductList({
   onChange,
 }: ProductListProps) {
   const handleToggle = (productId: string) => {
-    const currentValue = (value as string[]) || [];
+    const currentValue = (value as unknown as string[]) || [];
     const isSelected = currentValue.includes(productId);
 
     if (isSelected) {
@@ -34,7 +34,7 @@ export default function ProductList({
       <div className="space-y-3">
         {options.map(option => {
           const isSelected =
-            (value as string[])?.includes(option.value) || false;
+            (value as unknown as string[])?.includes(option.value) || false;
 
           return (
             <div

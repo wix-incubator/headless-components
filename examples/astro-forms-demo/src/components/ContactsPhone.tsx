@@ -1,4 +1,4 @@
-import { type ContactsPhoneProps } from '@wix/headless-forms/react';
+import { type PhoneInputProps } from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -20,7 +20,7 @@ const ContactsPhone = ({
   onChange,
   onBlur,
   onFocus,
-}: ContactsPhoneProps) => {
+}: PhoneInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (

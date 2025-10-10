@@ -1,5 +1,11 @@
 import React from 'react';
 import { type FixedPaymentProps } from '@wix/headless-forms/react';
+import {
+  quickStartViewerPlugins,
+  RicosViewer,
+  type RichContent,
+} from '@wix/ricos';
+import '@wix/ricos/css/all-plugins-viewer.css';
 
 export default function FixedPayment({
   label,
@@ -21,7 +27,12 @@ export default function FixedPayment({
         {amount.toFixed(2)}
       </div>
       {description && (
-        <p className="mt-2 text-foreground/70 text-sm">{description}</p>
+        <div className="mt-2 text-foreground/70 text-sm">
+          <RicosViewer
+            content={description as RichContent}
+            plugins={quickStartViewerPlugins()}
+          />
+        </div>
       )}
     </div>
   );
