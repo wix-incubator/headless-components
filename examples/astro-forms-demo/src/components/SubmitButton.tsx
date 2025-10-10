@@ -4,9 +4,9 @@ export default function SubmitButton({
   submitText,
   previousText,
   nextText,
-  handleSubmitClick,
-  handlePreviousClick,
-  handleNextClick,
+  onSubmitClick,
+  onPreviousClick,
+  onNextClick,
   showPreviousButton,
   showNextButton,
   showSubmitButton,
@@ -17,7 +17,7 @@ export default function SubmitButton({
       {showPreviousButton && (
         <button
           type="button"
-          onClick={() => handlePreviousClick()}
+          onClick={() => onPreviousClick()}
           className="bg-secondary text-secondary-foreground"
         >
           {previousText}
@@ -27,17 +27,17 @@ export default function SubmitButton({
         <button
           type="button"
           onClick={() => {
-            handleNextClick();
+            onNextClick();
           }}
           className="bg-primary text-primary-foreground"
         >
-          {nextText}!!!
+          {nextText}
         </button>
       )}
       {showSubmitButton && (
         <button
           type="submit"
-          onClick={() => handleSubmitClick()}
+          onClick={() => onSubmitClick()}
           disabled={isSubmitInProgress}
           className="bg-primary text-primary-foreground"
         >

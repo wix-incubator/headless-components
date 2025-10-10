@@ -7488,15 +7488,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/form-public@npm:^0.25.0":
-  version: 0.25.0
-  resolution: "@wix/form-public@npm:0.25.0"
+"@wix/form-public@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "@wix/form-public@npm:0.26.0"
   dependencies:
     lodash.camelcase: "npm:^4.3.0"
     lodash.mapkeys: "npm:^4.6.0"
   peerDependencies:
     react: ^18.3.1
-  checksum: 10c0/c6607f2f04461c651d2976d974511c8085ca66525bae6c0cf247caa6b5f8457f385d8804d1f5a8f74dd5e158092536670c9153724e4409d9725d6316c0d84356
+  checksum: 10c0/8591ced39edcd2304957a870a36c1a8164c1bcc71213b9571ac3c302ee210f268a3c1cd6831dab2a391be251e604e58ddbba22d7d7d484661a81b68cde8cb84d
   languageName: node
   linkType: hard
 
@@ -7829,7 +7829,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/form-public": "npm:^0.25.0"
+    "@wix/form-public": "npm:^0.26.0"
     "@wix/forms": "npm:^1.0.330"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
