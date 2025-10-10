@@ -384,6 +384,10 @@ export interface FieldDefinition {
  * Render props for Field component
  */
 export interface FieldRenderProps {
+  /** The form configuration */
+  form: FormView;
+  /** The field ID */
+  fieldId: string;
   /** The field layout configuration */
   layout: Layout;
   /** Grid styles for container */
@@ -418,7 +422,12 @@ function calculateGridStyles(layout: Layout) {
 
   return {
     container: { gridRow, gridColumn },
-    label: { gridRow: labelRow, gridColumn, display: 'flex', alignItems: 'flex-end' },
+    label: {
+      gridRow: labelRow,
+      gridColumn,
+      display: 'flex',
+      alignItems: 'flex-end',
+    },
     input: { gridRow: inputRow, gridColumn },
   };
 }
@@ -460,6 +469,8 @@ export function Field(props: FieldProps) {
   const gridStyles = calculateGridStyles(layout);
 
   return children({
+    form,
+    fieldId,
     layout,
     gridStyles,
   });
