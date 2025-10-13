@@ -1,4 +1,4 @@
-import { type CheckboxGroupProps } from '@wix/headless-forms/react';
+import { Form, type CheckboxGroupProps } from '@wix/headless-forms/react';
 
 const CheckboxGroup = ({
   id,
@@ -34,35 +34,41 @@ const CheckboxGroup = ({
   };
 
   return (
-    <div className="mb-6">
+    <Form.Field id={id}>
       {showLabel && (
-        <label className="block text-foreground font-paragraph mb-3">
-          {label}
-          {required && <span className="text-destructive ml-1">*</span>}
-        </label>
+        <Form.Field.Label>
+          <label className="text-foreground font-paragraph mb-3">
+            {label}
+            {required && <span className="text-destructive ml-1">*</span>}
+          </label>
+        </Form.Field.Label>
       )}
-
-      <div className="space-y-2">
-        {options.map(option => {
-          const isSelected = currentValues.includes(option.value);
-          return (
-            <label
-              key={option.id}
-              className="flex items-center gap-3 cursor-pointer text-foreground font-paragraph"
-            >
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={() => handleCheckboxChange(option.value)}
-                onFocus={onFocus}
-                className="w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50"
-              />
-              {option.label}
-            </label>
-          );
-        })}
-      </div>
-    </div>
+      <Form.Field.Input>
+        <div className="space-y-2">
+          {options.map(option => {
+            const isSelected = currentValues.includes(option.value);
+            return (
+              <label
+                key={option.id}
+                className="flex items-center gap-3 cursor-pointer text-foreground font-paragraph"
+              >
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  disabled={readOnly}
+                  onChange={() => handleCheckboxChange(option.value)}
+                  onFocus={onFocus}
+                  className="w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-invalid={!!(required && currentValues.length === 0)}
+                  aria-required={required}
+                />
+                {option.label}
+              </label>
+            );
+          })}
+        </div>
+      </Form.Field.Input>
+    </Form.Field>
   );
 };
 

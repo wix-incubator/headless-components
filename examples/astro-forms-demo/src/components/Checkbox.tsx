@@ -1,4 +1,4 @@
-import { type CheckboxProps } from '@wix/headless-forms/react';
+import { Form, type CheckboxProps } from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -18,31 +18,36 @@ const Checkbox = ({
   onFocus,
 }: CheckboxProps) => {
   return (
-    <div className="mb-6">
-      <label
-        htmlFor={id}
-        className="flex items-start gap-3 cursor-pointer text-foreground font-paragraph"
-      >
-        <input
-          id={id}
-          type="checkbox"
-          checked={value}
-          defaultChecked={defaultValue}
-          required={required}
-          readOnly={readOnly}
-          className="mt-1 w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
-          onChange={e => onChange(e.target.checked)}
-          onBlur={() => onBlur()}
-          onFocus={() => onFocus()}
-        />
-        <span className="flex-1">
-          <RicosViewer
-            content={label as RichContent}
-            plugins={quickStartViewerPlugins()}
+    <Form.Field id={id}>
+      {/* TODO: it does not create empty grid element to keep label space empty */}
+      <Form.Field.Input asChild>
+        <label
+          htmlFor={id}
+          className="flex items-start gap-3 cursor-pointer text-foreground font-paragraph"
+        >
+          <input
+            id={id}
+            type="checkbox"
+            checked={value}
+            defaultChecked={defaultValue}
+            required={required}
+            readOnly={readOnly}
+            className="mt-1 w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            onChange={e => onChange(e.target.checked)}
+            onBlur={() => onBlur()}
+            onFocus={() => onFocus()}
+            aria-invalid={!!(required && !value)}
+            aria-required={required}
           />
-        </span>
-      </label>
-    </div>
+          <span className="flex-1">
+            <RicosViewer
+              content={label as RichContent}
+              plugins={quickStartViewerPlugins()}
+            />
+          </span>
+        </label>
+      </Form.Field.Input>
+    </Form.Field>
   );
 };
 

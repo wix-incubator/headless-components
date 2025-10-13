@@ -1,5 +1,5 @@
 import React from 'react';
-import { type FixedPaymentProps } from '@wix/headless-forms/react';
+import { Form, type FixedPaymentProps } from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -13,27 +13,34 @@ export default function FixedPayment({
   amount,
   currency,
   description,
+  // @ts-expect-error
+  id,
 }: FixedPaymentProps) {
   return (
-    <div className="mb-6">
+    <Form.Field id={id}>
       {showLabel && (
-        <label className="block text-foreground font-paragraph mb-2">
-          {label}
-        </label>
+        <Form.Field.Label asChild>
+          <label className="text-foreground font-paragraph mb-2">{label}</label>
+        </Form.Field.Label>
       )}
-
-      <div className="text-2xl font-paragraph font-bold text-foreground">
-        {currency}
-        {amount.toFixed(2)}
-      </div>
-      {description && (
-        <div className="mt-2 text-foreground/70 text-sm">
-          <RicosViewer
-            content={description as RichContent}
-            plugins={quickStartViewerPlugins()}
-          />
+      <Form.Field.Input
+        asChild
+        description={
+          description ? (
+            <div className="mt-2 text-foreground/70 text-sm">
+              <RicosViewer
+                content={description as RichContent}
+                plugins={quickStartViewerPlugins()}
+              />
+            </div>
+          ) : undefined
+        }
+      >
+        <div className="text-2xl font-paragraph font-bold text-foreground">
+          {currency}
+          {amount}
         </div>
-      )}
-    </div>
+      </Form.Field.Input>
+    </Form.Field>
   );
 }

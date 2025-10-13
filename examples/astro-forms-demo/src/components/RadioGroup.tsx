@@ -1,4 +1,4 @@
-import { type RadioGroupProps } from '@wix/headless-forms/react';
+import { Form, type RadioGroupProps } from '@wix/headless-forms/react';
 
 const RadioGroup = ({
   id,
@@ -16,35 +16,41 @@ const RadioGroup = ({
   onFocus,
 }: RadioGroupProps) => {
   return (
-    <div className="mb-6">
+    <Form.Field id={id}>
       {showLabel && (
-        <label className="block text-foreground font-paragraph mb-3">
-          {label}
-          {required && <span className="text-destructive ml-1">*</span>}
-        </label>
-      )}
-
-      <div className="space-y-2">
-        {options.map(option => (
-          <label
-            key={option.id}
-            className="flex items-center gap-3 cursor-pointer text-foreground font-paragraph"
-          >
-            <input
-              type="radio"
-              name={id}
-              value={option.value}
-              checked={value === option.value}
-              onChange={() => onChange(option.value)}
-              onBlur={onBlur}
-              onFocus={onFocus}
-              className="w-4 h-4 text-primary bg-background border-foreground/20 focus:ring-2 focus:ring-primary/50"
-            />
-            {option.label}
+        <Form.Field.Label>
+          <label className="text-foreground font-paragraph mb-3">
+            {label}
+            {required && <span className="text-destructive ml-1">*</span>}
           </label>
-        ))}
-      </div>
-    </div>
+        </Form.Field.Label>
+      )}
+      <Form.Field.Input>
+        <div className="space-y-2">
+          {options.map(option => (
+            <label
+              key={option.id}
+              className="flex items-center gap-3 cursor-pointer text-foreground font-paragraph"
+            >
+              <input
+                type="radio"
+                name={id}
+                value={option.value}
+                checked={value === option.value}
+                disabled={readOnly}
+                onChange={() => onChange(option.value)}
+                onBlur={onBlur}
+                onFocus={onFocus}
+                className="w-4 h-4 text-primary bg-background border-foreground/20 focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-invalid={!!(required && !value)}
+                aria-required={required}
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+      </Form.Field.Input>
+    </Form.Field>
   );
 };
 
