@@ -263,8 +263,8 @@ function TicketDefinition() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {options.map(option => (
-                            <SelectItem key={option} value={String(option)}>
+                          {options.map(String).map(option => (
+                            <SelectItem key={option} value={option}>
                               {option}
                             </SelectItem>
                           ))}
@@ -291,8 +291,8 @@ function TicketDefinition() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {options.map(option => (
-                    <SelectItem key={option} value={String(option)}>
+                  {options.map(String).map(option => (
+                    <SelectItem key={option} value={option}>
                       {option}
                     </SelectItem>
                   ))}
