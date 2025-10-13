@@ -1,7 +1,6 @@
 export * from './checkout-service.js';
 export * from './event-list-service.js';
 export * from './event-service.js';
-export * from './form-service.js';
 export * from './invoice-item-service.js';
 export * from './occurrence-list-service.js';
 export * from './order-service.js';

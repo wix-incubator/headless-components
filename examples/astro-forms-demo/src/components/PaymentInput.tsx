@@ -18,19 +18,24 @@ export default function PaymentInput({
   onFocus,
 }: PaymentInputProps) {
   return (
-    <div>
+    <div className="mb-6">
       {showLabel && (
-        <label htmlFor={id} className="field-label">
+        <label
+          htmlFor={id}
+          className="block text-foreground font-paragraph mb-2"
+        >
           {label}
-          {required && <span>*</span>}
+          {required && <span className="text-destructive ml-1">*</span>}
         </label>
       )}
 
-      <div className="payment-input-container">
-        <span className="currency-symbol">{currency}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-foreground font-paragraph font-semibold text-lg">
+          {currency}
+        </span>
         <input
           id={id}
-          type="text"
+          type="number"
           value={value || ''}
           onChange={onChange}
           onBlur={onBlur}
@@ -39,7 +44,7 @@ export default function PaymentInput({
           disabled={readOnly}
           min={minValue}
           max={maxValue}
-          className="payment-input"
+          className="flex-1 px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
     </div>

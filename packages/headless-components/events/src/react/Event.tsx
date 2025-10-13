@@ -1123,6 +1123,8 @@ export interface FormProps {
   children: React.ReactNode;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Thank you page URL */
+  thankYouPageUrl?: string;
 }
 
 /**
@@ -1142,17 +1144,18 @@ export interface FormProps {
  */
 export const Form = React.forwardRef<HTMLDivElement, FormProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, thankYouPageUrl, ...otherProps } =
+      props;
 
     return (
-      <CoreEvent.Form>
-        {({ formId }) => (
+      <CoreEvent.Form thankYouPageUrl={thankYouPageUrl}>
+        {({ formId, onSubmit }) => (
           <FormPrimitive.Root
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.eventForm}
-            formServiceConfig={{ formId }}
+            formServiceConfig={{ formId, onSubmit }}
             {...otherProps}
           >
             {children}

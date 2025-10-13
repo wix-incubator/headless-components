@@ -18,8 +18,11 @@ const Checkbox = ({
   onFocus,
 }: CheckboxProps) => {
   return (
-    <div>
-      <label htmlFor={id}>
+    <div className="mb-6">
+      <label
+        htmlFor={id}
+        className="flex items-start gap-3 cursor-pointer text-foreground font-paragraph"
+      >
         <input
           id={id}
           type="checkbox"
@@ -27,14 +30,17 @@ const Checkbox = ({
           defaultChecked={defaultValue}
           required={required}
           readOnly={readOnly}
+          className="mt-1 w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
           onChange={e => onChange(e.target.checked)}
           onBlur={() => onBlur()}
           onFocus={() => onFocus()}
         />
-        <RicosViewer
-          content={label as RichContent}
-          plugins={quickStartViewerPlugins()}
-        />
+        <span className="flex-1">
+          <RicosViewer
+            content={label as RichContent}
+            plugins={quickStartViewerPlugins()}
+          />
+        </span>
       </label>
     </div>
   );

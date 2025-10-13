@@ -31,9 +31,9 @@ import {
   type DonationProps,
   type AppointmentProps,
   type ImageChoiceProps,
-} from './types';
+} from './types.js';
 
-import { type FormServiceConfig } from '../services/form-service';
+import { type FormServiceConfig } from '../services/form-service.js';
 import {
   Root as CoreRoot,
   Loading as CoreLoading,
@@ -43,7 +43,7 @@ import {
   Fields as CoreFields,
   Field as CoreField,
   type Layout,
-} from './core/Form';
+} from './core/Form.js';
 
 enum TestIds {
   formRoot = 'form-root',

@@ -1,3 +1,5 @@
+import { rsvpV2 } from '@wix/events';
+import { FormServiceConfig } from '@wix/headless-forms/services';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import {
@@ -10,6 +12,7 @@ import {
 import { EventListServiceDefinition } from '../../services/event-list-service.js';
 import { hasDescription } from '../../utils/event.js';
 import { formatFullDate, formatShortDate } from '../../utils/date.js';
+import { getErrorMessage } from '../../utils/errors.js';
 
 export interface RootProps {
   /** Child components that will have access to the event service */
@@ -424,11 +427,15 @@ export function OtherEvents(props: OtherEventsProps): React.ReactNode {
 export interface FormProps {
   /** Render prop function */
   children: (props: FormRenderProps) => React.ReactNode;
+  /** Thank you page URL */
+  thankYouPageUrl?: string;
 }
 
 export interface FormRenderProps {
   /** Form ID */
   formId: string;
+  /** Submit handler */
+  onSubmit: FormServiceConfig['onSubmit'];
 }
 
 /**
@@ -443,5 +450,30 @@ export function Form(props: FormProps): React.ReactNode {
   // @ts-expect-error
   const formId = event.registration!.rsvp!.formId;
 
-  return props.children({ formId });
+  const onSubmit: FormServiceConfig['onSubmit'] = async (
+    _formId,
+    formValues,
+  ) => {
+    const { first_name: firstName, last_name: lastName, email } = formValues;
+
+    try {
+      await rsvpV2.createRsvp({
+        eventId: event._id,
+        status: 'YES',
+        firstName,
+        lastName,
+        email,
+      });
+
+      if (props.thankYouPageUrl) {
+        window.location.href = props.thankYouPageUrl;
+      }
+
+      return { type: 'success' };
+    } catch (err) {
+      return { type: 'error', message: getErrorMessage(err) };
+    }
+  };
+
+  return props.children({ formId, onSubmit });
 }

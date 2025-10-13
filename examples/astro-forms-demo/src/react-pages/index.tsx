@@ -5,7 +5,6 @@ import {
   type SubmitResponse,
 } from '@wix/headless-forms/services';
 
-import '../styles/theme-1.css';
 import TextInput from '../components/TextInput';
 import TextArea from '../components/TextArea';
 import ContactsPhone from '../components/ContactsPhone';
@@ -87,25 +86,23 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
   };
 
   return (
-    <>
-      <h1>
-        Form{' '}
-        {'formId' in formServiceConfig
-          ? formServiceConfig.formId
-          : formServiceConfig?.form?._id}
-      </h1>
-      <Form.Root
-        formServiceConfig={{
-          ...formServiceConfig,
-          onSubmit: handleCustomSubmit,
-        }}
-      >
-        <Form.Loading className="flex justify-center p-4" />
-        <Form.LoadingError className="bg-background border-foreground text-foreground px-4 py-3 rounded mb-4" />
-        <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
-        <Form.Submitted className="bg-background border-foreground text-foreground p-6 rounded-lg mb-4" />
-        <Form.Fields fieldMap={FIELD_MAP} />
-      </Form.Root>
-    </>
+    <div className="min-h-screen bg-background py-12 px-4">
+      <div className="max-w-2xl mx-auto">
+        <Form.Root
+          formServiceConfig={{
+            ...formServiceConfig,
+            onSubmit: handleCustomSubmit,
+          }}
+        >
+          <Form.Loading className="flex justify-center p-8 text-foreground font-paragraph" />
+          <Form.LoadingError className="bg-destructive/10 border border-destructive/20 text-destructive px-6 py-4 rounded-lg mb-6 font-paragraph" />
+          <Form.Error className="bg-destructive/10 border border-destructive/20 text-destructive px-6 py-4 rounded-lg mb-6 font-paragraph" />
+          <Form.Submitted className="bg-green-500/10 border border-green-500/20 text-green-500 px-6 py-4 rounded-lg mb-6 font-paragraph font-semibold" />
+          <div className="bg-background/50 backdrop-blur-sm p-8 rounded-xl border border-foreground/10 shadow-lg">
+            <Form.Fields fieldMap={FIELD_MAP} />
+          </div>
+        </Form.Root>
+      </div>
+    </div>
   );
 }
