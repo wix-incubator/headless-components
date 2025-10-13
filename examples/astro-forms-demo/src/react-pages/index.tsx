@@ -71,7 +71,7 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
     try {
       const response = await submissions.createSubmission({
         formId,
-        ...formValues,
+        submissions: formValues,
       });
 
       if (!response) {

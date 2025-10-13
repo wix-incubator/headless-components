@@ -13,7 +13,8 @@ import { FormValues } from '../react/types.js';
 export type SubmitResponse =
   | { type: 'success'; message?: string }
   | { type: 'error'; message: string }
-  | { type: 'idle' };
+  | { type: 'idle' }
+  | { type: 'loading' };
 
 /**
  * API interface for the Form service, providing reactive form data management.
@@ -130,7 +131,10 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       formValues: FormValues,
     ): Promise<SubmitResponse> {
       try {
-        await submissions.createSubmission({ formId, ...formValues });
+        await submissions.createSubmission({
+          formId,
+          submissions: formValues,
+        });
         // TODO: add message
         return { type: 'success' };
       } catch (error) {
@@ -152,7 +156,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
 
       // @ts-expect-error
       const formId = form._id ? form._id : form.id;
-      submitResponseSignal.set({ type: 'idle' });
+      submitResponseSignal.set({ type: 'loading' });
 
       try {
         const handler = config.onSubmit || defaultSubmitHandler;
