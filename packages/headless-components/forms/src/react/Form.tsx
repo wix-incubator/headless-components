@@ -1081,7 +1081,7 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
         className={className}
         style={gridStyles.input}
         data-testid={TestIds.fieldInput}
-        customElement={asChild ? children : undefined}
+        customElement={children}
         customElementProps={{}}
         {...otherProps}
       >

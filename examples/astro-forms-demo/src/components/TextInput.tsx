@@ -29,7 +29,7 @@ const TextInput = ({
         <Form.Field.Label>
           <label
             htmlFor={id}
-            className="block text-foreground font-paragraph mb-2"
+            className="text-foreground font-paragraph mb-2"
           >
             {label}
             {required && <span className="text-destructive ml-1">*</span>}
