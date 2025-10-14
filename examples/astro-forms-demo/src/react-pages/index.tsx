@@ -99,7 +99,7 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
           <Form.Error className="bg-destructive/10 border border-destructive/20 text-destructive px-6 py-4 rounded-lg mb-6 font-paragraph" />
           <Form.Submitted className="bg-green-500/10 border border-green-500/20 text-green-500 px-6 py-4 rounded-lg mb-6 font-paragraph font-semibold" />
           <div className="bg-background/50 backdrop-blur-sm p-8 rounded-xl border border-foreground/10 shadow-lg">
-            <Form.Fields fieldMap={FIELD_MAP} />
+            <Form.Fields fieldMap={FIELD_MAP} gridContainerClassName="flex flex-col gap-y-6" gridRowClassName="gap-x-12" />
           </div>
         </Form.Root>
       </div>
