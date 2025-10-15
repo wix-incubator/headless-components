@@ -13,6 +13,7 @@ import { EventListServiceDefinition } from '../../services/event-list-service.js
 import { hasDescription } from '../../utils/event.js';
 import { formatFullDate, formatShortDate } from '../../utils/date.js';
 import { getErrorMessage } from '../../utils/errors.js';
+import { getFormResponse, getRequiredRsvpData } from '../../utils/form.js';
 
 export interface RootProps {
   /** Child components that will have access to the event service */
@@ -454,15 +455,12 @@ export function Form(props: FormProps): React.ReactNode {
     _formId,
     formValues,
   ) => {
-    const { first_name: firstName, last_name: lastName, email } = formValues;
-
     try {
       await rsvpV2.createRsvp({
         eventId: event._id,
         status: 'YES',
-        firstName,
-        lastName,
-        email,
+        form: getFormResponse(event, formValues),
+        ...getRequiredRsvpData(event, formValues),
       });
 
       if (props.thankYouPageUrl) {

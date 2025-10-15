@@ -87,6 +87,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         data-fixed-pricing={!!ticketDefinition.pricingMethod?.fixedPrice}
         data-guest-pricing={!!ticketDefinition.pricingMethod?.guestPrice}
         data-pricing-options={!!ticketDefinition.pricingMethod?.pricingOptions}
+        data-has-description={!!ticketDefinition.description}
         data-available={isTicketDefinitionAvailable(ticketDefinition)}
         customElement={children}
         customElementProps={{}}

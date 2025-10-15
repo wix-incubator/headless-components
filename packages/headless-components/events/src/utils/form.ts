@@ -1,99 +1,71 @@
 import { rsvpV2 } from '@wix/events';
+import { type FormValues } from '@wix/headless-forms/react';
 import { Event } from '../services/event-service.js';
 
 export const getRequiredRsvpData = (
-  event: Event,
-  formData: FormData,
+  _event: Event,
+  formValues: FormValues,
 ): Pick<
   rsvpV2.Rsvp,
   'firstName' | 'lastName' | 'email' | 'additionalGuestDetails'
 > => {
-  const guestControl = event.form?.controls?.find(
-    (control) => control.type === 'GUEST_CONTROL',
-  );
-  const guestCountInput = guestControl?.inputs?.[0];
-  const guestNamesInput = guestControl?.inputs?.[1];
+  // const guestControl = event.form?.controls?.find(
+  //   (control) => control.type === 'GUEST_CONTROL',
+  // );
+  // const guestCountInput = guestControl?.inputs?.[0];
+  // const guestNamesInput = guestControl?.inputs?.[1];
 
-  const guestCount = guestCountInput
-    ? Number(formData.get(guestCountInput.name!)) || 0
-    : 0;
-  const guestNames = guestNamesInput?.mandatory
-    ? Array.from({ length: guestCount }).map(
-        (_, index) =>
-          `${formData.get(`${guestNamesInput.name}_${index}_firstName`)} ${formData.get(`${guestNamesInput.name}_${index}_lastName`)}`,
-      )
-    : [];
+  // const guestCount = guestCountInput
+  //   ? Number(formData.get(guestCountInput.name!)) || 0
+  //   : 0;
+  // const guestNames = guestNamesInput?.mandatory
+  //   ? Array.from({ length: guestCount }).map(
+  //       (_, index) =>
+  //         `${formData.get(`${guestNamesInput.name}_${index}_firstName`)} ${formData.get(`${guestNamesInput.name}_${index}_lastName`)}`,
+  //     )
+  //   : [];
 
   return {
-    firstName: formData.get('firstName') as string,
-    lastName: formData.get('lastName') as string,
-    email: formData.get('email') as string,
-    additionalGuestDetails: guestCount
-      ? {
-          guestCount,
-          guestNames,
-        }
-      : undefined,
+    firstName: formValues['first_name'],
+    lastName: formValues['last_name'],
+    email: formValues['email'],
+    // additionalGuestDetails: guestCount
+    //   ? {
+    //       guestCount,
+    //       guestNames,
+    //     }
+    //   : undefined,
   };
 };
 
 export const getFormResponse = (
   event: Event,
-  formData: FormData,
+  formValues: FormValues,
 ): rsvpV2.FormResponse => {
-  const guestControl = event.form?.controls?.find(
-    (control) => control.type === 'GUEST_CONTROL',
-  );
-  const guestCountInputName = guestControl?.inputs?.[0]?.name ?? '';
-  const guestNamesInputName = guestControl?.inputs?.[1]?.name ?? '';
+  // const guestControl = event.form?.controls?.find(
+  //   (control) => control.type === 'GUEST_CONTROL',
+  // );
+  // const guestCountInputName = guestControl?.inputs?.[0]?.name ?? '';
+  // const guestNamesInputName = guestControl?.inputs?.[1]?.name ?? '';
 
-  const data: Record<string, string[]> = {};
-  const uniqueKeys = new Set(formData.keys());
-
-  for (const key of uniqueKeys) {
-    const controlId = key.split('_')[0]!;
-    const values = formData.getAll(key) as string[];
-
-    if (
-      [
-        'firstName',
-        'lastName',
-        'email',
-        guestCountInputName,
-        guestNamesInputName,
-      ].includes(controlId)
-    ) {
-      continue;
-    }
-
-    if (data[controlId]) {
-      data[controlId].push(...values);
-    } else {
-      data[controlId] = values;
-    }
-  }
+  const { first_name, last_name, email, ...values } = formValues;
 
   return {
-    inputValues: Object.entries(data)
-      .filter(([, values]) => values.some((value) => !!value))
-      .map(([inputName, values]) => {
-        const controlType = event.form?.controls?.find(
-          (control) => control._id === inputName,
-        )?.type;
+    inputValues: Object.entries(values)
+      .filter(([, value]) => !!value)
+      .map(([inputName, value]) => {
+        const control = event.form!.controls!.find((control) =>
+          inputName.endsWith(control._id!.replaceAll('-', '_')),
+        );
 
         const inputValue: rsvpV2.InputValue = {
-          inputName,
+          inputName: control!._id,
         };
 
-        if (
-          values.length > 1 ||
-          controlType === 'ADDRESS_FULL' ||
-          controlType === 'ADDRESS_SHORT' ||
-          controlType === 'CHECKBOX'
-        ) {
-          inputValue.values = values;
+        if (Array.isArray(value)) {
+          inputValue.values = value;
         } else {
-          inputValue.value = values[0];
+          inputValue.value = value;
         }
 
         return inputValue;

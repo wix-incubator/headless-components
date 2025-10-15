@@ -31,7 +31,12 @@ export function Form({ eventServiceConfig, thankYouPageUrl }: FormProps) {
         <div className="w-full md:max-w-[30%] h-fit border border-foreground/10 p-6 md:p-8">
           <EventTitle variant="md" className="mb-4" />
           <div className="flex items-center gap-1 mb-1">
-            <svg width="20" height="20" viewBox="0 0 20 20">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              className="flex-shrink-0"
+            >
               <path
                 className="text-foreground"
                 fill="currentColor"
@@ -41,7 +46,12 @@ export function Form({ eventServiceConfig, thankYouPageUrl }: FormProps) {
             <EventDate format="short" />
           </div>
           <div className="flex items-center gap-1">
-            <svg width="20" height="20" viewBox="0 0 20 20">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              className="flex-shrink-0"
+            >
               <path
                 className="text-foreground"
                 fill="currentColor"
