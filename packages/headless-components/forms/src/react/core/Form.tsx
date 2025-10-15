@@ -388,13 +388,13 @@ export interface FieldRenderProps {
   /** The field ID */
   id: string;
   /** The field layout configuration */
-  layout: Layout;
+  // layout: Layout;
   /** Grid styles for container */
-  gridStyles: {
-    container: React.CSSProperties;
-    label: React.CSSProperties;
-    input: React.CSSProperties;
-  };
+  // gridStyles: {
+  //   container: React.CSSProperties;
+  //   label: React.CSSProperties;
+  //   input: React.CSSProperties;
+  // };
 }
 
 /**
@@ -441,17 +441,17 @@ export function Field(props: FieldProps) {
     return null;
   }
 
-  const fieldLayout = findFieldLayout(form, id);
+  // const fieldLayout = findFieldLayout(form, id);
 
-  if (!fieldLayout) {
-    return null;
-  }
+  // if (!fieldLayout) {
+  //   return null;
+  // }
 
-  const gridStyles = calculateGridStyles(fieldLayout);
+  // const gridStyles = calculateGridStyles(fieldLayout);
 
   return children({
     id,
-    layout: fieldLayout,
-    gridStyles,
+    // layout: fieldLayout,
+    // gridStyles,
   });
 }

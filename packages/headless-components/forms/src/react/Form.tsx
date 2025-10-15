@@ -901,7 +901,6 @@ const FieldsWithForm = ({
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(12, 1fr)',
-          gap: '1rem',
         }}
       >
         {/* TODO: strongly type */}
@@ -912,25 +911,19 @@ const FieldsWithForm = ({
           const gridRowStart = layout.row + 1;
           const gridRowEnd = layout.row + layout.height + 1;
 
-          // const Component = fieldMap[field.fieldType as keyof FieldMap];
+          const Component = fieldMap[field.fieldType as keyof FieldMap];
+
+          console.log('Component',field);
 
           return (
             <div
-              key={field.target}
+              key={field.id}
               style={{
                 gridColumn: `${gridColumnStart} / ${gridColumnEnd}`,
                 gridRow: `${gridRowStart} / ${gridRowEnd}`,
               }}
-              onClick={() => {
-                console.log('clicked', field);
-                if (field.fieldType === 'SUBMIT_BUTTON') {
-                  renderProps?.fieldActions.actions.setNextStep();
-                }
-              }}
             >
-                {field.fieldType} {field.target}
-                {/* TODO: use component */}
-              {/* <Component {...field} /> */}
+              <Component {...field.properties} />
             </div>
           );
         })}
@@ -944,12 +937,12 @@ const FieldsWithForm = ({
  */
 interface FieldContextValue {
   id: string;
-  layout: Layout;
-  gridStyles: {
-    container: React.CSSProperties;
-    label: React.CSSProperties;
-    input: React.CSSProperties;
-  };
+  // layout: Layout;
+  // gridStyles: {
+  //   container: React.CSSProperties;
+  //   label: React.CSSProperties;
+  //   input: React.CSSProperties;
+  // };
 }
 
 const FieldContext = React.createContext<FieldContextValue | null>(null);
@@ -1050,8 +1043,8 @@ const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
       {(fieldData) => {
         const contextValue: FieldContextValue = {
           id,
-          layout: fieldData.layout,
-          gridStyles: fieldData.gridStyles,
+          // layout: fieldData.layout,
+          // gridStyles: fieldData.gridStyles,
         };
 
         return (
@@ -1060,7 +1053,7 @@ const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
               ref={ref}
               asChild={asChild}
               className={className}
-              style={fieldData.gridStyles.container}
+              // style={fieldData.gridStyles.container}
               data-testid={TestIds.fieldRoot}
               customElement={children}
               customElementProps={{}}
@@ -1100,14 +1093,14 @@ FieldRoot.displayName = 'Form.Field';
 export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
   (props, ref) => {
     const { children, asChild, className, ...otherProps } = props;
-    const { gridStyles } = useFieldContext();
+    // const { gridStyles } = useFieldContext();
 
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
         className={className}
-        style={gridStyles.label}
+        // style={gridStyles.label}
         data-testid={TestIds.fieldLabel}
         customElement={children}
         customElementProps={{}}
@@ -1144,7 +1137,7 @@ FieldLabel.displayName = 'Form.Field.Label';
 export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
   (props, ref) => {
     const { children, description, asChild, className, ...otherProps } = props;
-    const { gridStyles } = useFieldContext();
+    // const { gridStyles } = useFieldContext();
 
     const content = (
       <>
@@ -1158,7 +1151,7 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
         ref={ref}
         asChild={asChild}
         className={className}
-        style={gridStyles.input}
+        // style={gridStyles.input}
         data-testid={TestIds.fieldInput}
         customElement={children}
         customElementProps={{}}
