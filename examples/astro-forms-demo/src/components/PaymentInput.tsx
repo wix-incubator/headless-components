@@ -16,9 +16,11 @@ export default function PaymentInput({
   onChange,
   onBlur,
   onFocus,
+  // @ts-expect-error
+  layout,
 }: PaymentInputProps) {
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       {showLabel && (
         <Form.Field.Label asChild>
           <label htmlFor={id} className="text-foreground font-paragraph mb-2">

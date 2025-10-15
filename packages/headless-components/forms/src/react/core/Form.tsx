@@ -8,7 +8,7 @@ import {
   FormService,
 } from '../../services/form-service.js';
 import { FormValues } from '../types.js';
-import { calculateGridStyles, findFieldLayout } from '../utils.js';
+import { calculateGridStyles } from '../utils.js';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -370,6 +370,8 @@ export interface FormView {
  */
 export interface Layout {
   column: number;
+  row: number;
+  height: number;
   width: number;
 }
 
@@ -388,13 +390,13 @@ export interface FieldRenderProps {
   /** The field ID */
   id: string;
   /** The field layout configuration */
-  // layout: Layout;
+  layout: Layout;
   /** Grid styles for container */
-  // gridStyles: {
-  //   container: React.CSSProperties;
-  //   label: React.CSSProperties;
-  //   input: React.CSSProperties;
-  // };
+  gridStyles: {
+    container: React.CSSProperties;
+    label: React.CSSProperties;
+    input: React.CSSProperties;
+  };
 }
 
 /**
@@ -403,6 +405,8 @@ export interface FieldRenderProps {
 export interface FieldProps {
   /** The unique identifier for this field */
   id: string;
+  /** The field layout configuration */
+  layout: Layout;
   /** Render prop function that receives field layout data */
   children: (props: FieldRenderProps) => React.ReactNode;
 }
@@ -433,7 +437,7 @@ export interface FieldProps {
  * ```
  */
 export function Field(props: FieldProps) {
-  const { id, children } = props;
+  const { id, children, layout } = props;
   const { formSignal } = useService(FormServiceDefinition);
   const form = formSignal.get();
 
@@ -441,17 +445,11 @@ export function Field(props: FieldProps) {
     return null;
   }
 
-  // const fieldLayout = findFieldLayout(form, id);
-
-  // if (!fieldLayout) {
-  //   return null;
-  // }
-
-  // const gridStyles = calculateGridStyles(fieldLayout);
+  const gridStyles = calculateGridStyles(layout);
 
   return children({
     id,
-    // layout: fieldLayout,
-    // gridStyles,
+    layout,
+    gridStyles,
   });
 }

@@ -14,9 +14,11 @@ const ImageChoice = ({
   onChange,
   onBlur,
   onFocus,
+  // @ts-expect-error
+  layout,
 }: ImageChoiceProps) => {
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       {showLabel && (
         <Form.Field.Label>
           <label
