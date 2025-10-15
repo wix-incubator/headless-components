@@ -1,4 +1,4 @@
-import { type DropdownProps } from '@wix/headless-forms/react';
+import { Form, type DropdownProps } from '@wix/headless-forms/react';
 
 const Dropdown = ({
   id,
@@ -15,33 +15,39 @@ const Dropdown = ({
   onFocus,
 }: DropdownProps) => {
   return (
-    <div className="mb-6">
+    <Form.Field id={id}>
       {showLabel && (
-        <label
-          htmlFor={id}
-          className="block text-foreground font-paragraph mb-2"
-        >
-          {label}
-          {required && <span className="text-destructive ml-1">*</span>}
-        </label>
+        <Form.Field.Label>
+          <label htmlFor={id} className="text-foreground font-paragraph mb-2">
+            {label}
+            {required && <span className="text-destructive ml-1">*</span>}
+          </label>
+        </Form.Field.Label>
       )}
-
-      <select
-        id={id}
-        value={value || ''}
-        onChange={e => onChange(e.target.value || null)}
-        onBlur={onBlur}
-        onFocus={onFocus}
+      <Form.Field.Input
+        asChild
         className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <option value="">{placeholder}</option>
-        {options.map(option => (
-          <option key={option.id} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </div>
+        <select
+          id={id}
+          value={value || ''}
+          required={required}
+          disabled={readOnly}
+          onChange={e => onChange(e.target.value || null)}
+          onBlur={onBlur}
+          onFocus={onFocus}
+          aria-invalid={!!(required && !value)}
+          aria-required={required}
+        >
+          <option value="">{placeholder}</option>
+          {options.map(option => (
+            <option key={option.id} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </Form.Field.Input>
+    </Form.Field>
   );
 };
 
