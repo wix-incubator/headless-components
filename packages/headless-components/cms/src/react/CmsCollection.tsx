@@ -14,8 +14,11 @@ import {
   Sort as SortPrimitive,
   type SortValue,
   type SortOption,
+  Filter as FilterPrimitive,
+  type FilterOption,
 } from '@wix/headless-components/react';
 import { CmsCollectionSort as CmsCollectionSortPrimitive } from './core/CmsCollectionSort.js';
+import * as CoreCmsCollectionFilters from './core/CmsCollectionFilters.js';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -27,6 +30,8 @@ enum TestIds {
   cmsCollectionItems = 'cms-collection-items',
   cmsCollectionItem = 'cms-collection-item',
   cmsCollectionSort = 'cms-collection-sort',
+  cmsCollectionFilters = 'cms-collection-filters',
+  cmsCollectionFilterResetTrigger = 'cms-collection-filter-reset-trigger',
 }
 
 /**
@@ -1106,3 +1111,190 @@ SortOptionComponent.displayName = 'CmsCollection.SortOption';
 
 // Export as named export
 export { SortOptionComponent as SortOption };
+
+/**
+ * Props for CmsCollection.Filters component
+ */
+export interface FiltersProps {
+  /** Filter options configuration */
+  filterOptions: FilterOption[];
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components that will have access to filter functionality */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Filter component that provides comprehensive filtering functionality for CMS collections.
+ * This component integrates with the CmsCollection service and wraps the generic Filter primitive.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage with generic Filter primitives
+ * <CmsCollection.Filters
+ *   filterOptions={[
+ *     {
+ *       key: 'category',
+ *       label: 'Category',
+ *       type: 'single',
+ *       displayType: 'text',
+ *       fieldName: 'category',
+ *       validValues: ['tech', 'lifestyle', 'business'],
+ *     },
+ *     {
+ *       key: 'dateRange',
+ *       label: 'Date',
+ *       type: 'range',
+ *       displayType: 'range',
+ *       fieldName: ['createdDate.min', 'createdDate.max'],
+ *       validValues: [0, Date.now()],
+ *     },
+ *   ]}
+ * >
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.Label />
+ *       <Filter.FilterOption.SingleFilter />
+ *       <Filter.FilterOption.MultiFilter />
+ *       <Filter.FilterOption.RangeFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </CmsCollection.Filters>
+ *
+ * // With custom container using asChild
+ * <CmsCollection.Filters
+ *   asChild
+ *   filterOptions={filterOptions}
+ * >
+ *   <aside className="filter-sidebar">
+ *     <Filter.FilterOptions>
+ *       <Filter.FilterOptionRepeater>
+ *         <Filter.FilterOption.Label />
+ *         <Filter.FilterOption.MultiFilter />
+ *       </Filter.FilterOptionRepeater>
+ *     </Filter.FilterOptions>
+ *   </aside>
+ * </CmsCollection.Filters>
+ * ```
+ */
+export const Filters = React.forwardRef<HTMLElement, FiltersProps>(
+  (props, ref) => {
+    const { filterOptions, asChild, children, className, ...otherProps } =
+      props;
+
+    return (
+      <CoreCmsCollectionFilters.CmsCollectionFilters
+        filterOptions={filterOptions}
+      >
+        {({ filterValue, updateFilter }) => (
+          <FilterPrimitive.Root
+            value={filterValue}
+            onChange={updateFilter}
+            filterOptions={filterOptions}
+          >
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.cmsCollectionFilters}
+              customElement={children}
+              {...otherProps}
+            >
+              <div>{children}</div>
+            </AsChildSlot>
+          </FilterPrimitive.Root>
+        )}
+      </CoreCmsCollectionFilters.CmsCollectionFilters>
+    );
+  },
+);
+
+Filters.displayName = 'CmsCollection.Filters';
+
+/**
+ * Props for CmsCollection.FilterResetTrigger component
+ */
+export interface FilterResetTriggerProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    resetFilters: () => void;
+    isFiltered: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the button */
+  label?: string;
+}
+
+/**
+ * Reset trigger component for clearing all applied filters.
+ * Provides reset functionality and filter state to custom render functions.
+ * Only renders when filters are applied.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <CmsCollection.FilterResetTrigger
+ *   label="Clear All Filters"
+ *   className="reset-btn"
+ * />
+ *
+ * // Custom rendering with asChild
+ * <CmsCollection.FilterResetTrigger asChild>
+ *   {({ resetFilters, isFiltered }, ref) => (
+ *     <button
+ *       ref={ref}
+ *       onClick={resetFilters}
+ *       disabled={!isFiltered}
+ *       className="custom-reset-button"
+ *     >
+ *       Reset All Filters
+ *     </button>
+ *   )}
+ * </CmsCollection.FilterResetTrigger>
+ * ```
+ */
+export const FilterResetTrigger = React.forwardRef<
+  HTMLButtonElement,
+  FilterResetTriggerProps
+>((props, ref) => {
+  const { asChild, children, className, label = 'Reset Filters', ...otherProps } = props;
+
+  return (
+    <CoreCmsCollectionFilters.ResetTrigger>
+      {({ resetFilters, isFiltered }) => {
+        if (!isFiltered) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={resetFilters}
+            disabled={!isFiltered}
+            data-testid={TestIds.cmsCollectionFilterResetTrigger}
+            data-filtered={isFiltered}
+            customElement={children}
+            customElementProps={{ resetFilters, isFiltered }}
+            content={label}
+            {...otherProps}
+          >
+            <button disabled={!isFiltered}>{label}</button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreCmsCollectionFilters.ResetTrigger>
+  );
+});
+
+FilterResetTrigger.displayName = 'CmsCollection.FilterResetTrigger';
+
+export type { FilterOption };

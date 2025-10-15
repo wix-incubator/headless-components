@@ -4,7 +4,10 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 import { items } from '@wix/data';
-import type { SortValue } from '@wix/headless-components/react';
+import type {
+  SortValue,
+  FilterValue as Filter,
+} from '@wix/headless-components/react';
 
 export type WixDataItem = items.WixDataItem;
 export type WixDataQueryResult = items.WixDataResult;
@@ -60,6 +63,8 @@ export const CmsCollectionServiceDefinition = defineService<{
   queryResultSignal: Signal<WixDataQueryResult | null>;
   /** Reactive signal containing the current sort value */
   sortSignal: Signal<SortValue>;
+  /** Reactive signal containing the current filter value */
+  filterSignal: Signal<Filter | null>;
   /** Function to load the next page of items */
   loadNextPage: () => Promise<void>;
   /** Function to load the previous page of items */
@@ -74,6 +79,12 @@ export const CmsCollectionServiceDefinition = defineService<{
   ) => Promise<WixDataItem | void>;
   /** Function to update the sort value */
   setSort: (sort: SortValue) => void;
+  /** Function to update the filter value */
+  setFilter: (filter: Filter) => void;
+  /** Function to reset all filters */
+  resetFilter: () => void;
+  /** Function to check if filters are applied */
+  isFiltered: () => boolean;
   /** The collection ID */
   collectionId: string;
 }>('cms-collection');
@@ -91,6 +102,112 @@ export interface CmsQueryOptions {
 }
 
 /**
+ * Converts platform Filter format to WixDataFilter and applies it to the query
+ */
+function applyFilterToQuery(
+  query: items.WixDataQuery,
+  filter: Filter,
+): items.WixDataQuery {
+  if (!filter) {
+    return query;
+  }
+
+  let wixFilter = items.filter();
+  let hasFilters = false;
+
+  for (const [fieldPath, value] of Object.entries(filter)) {
+    if (value === null || value === undefined) {
+      continue;
+    }
+
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      // Handle operators
+      for (const [operator, operandValue] of Object.entries(value)) {
+        if (operandValue === null || operandValue === undefined) {
+          continue;
+        }
+
+        hasFilters = true;
+
+        switch (operator) {
+          case '$eq':
+            wixFilter = wixFilter.eq(fieldPath, operandValue as any);
+            break;
+          case '$ne':
+            wixFilter = wixFilter.ne(fieldPath, operandValue as any);
+            break;
+          case '$gt':
+            wixFilter = wixFilter.gt(fieldPath, operandValue as any);
+            break;
+          case '$gte':
+            wixFilter = wixFilter.ge(fieldPath, operandValue as any);
+            break;
+          case '$lt':
+            wixFilter = wixFilter.lt(fieldPath, operandValue as any);
+            break;
+          case '$lte':
+            wixFilter = wixFilter.le(fieldPath, operandValue as any);
+            break;
+          case '$in':
+            if (Array.isArray(operandValue) && operandValue.length > 0) {
+              wixFilter = wixFilter.hasSome(fieldPath, operandValue as any);
+            }
+            break;
+          case '$hasSome':
+            if (Array.isArray(operandValue) && operandValue.length > 0) {
+              wixFilter = wixFilter.hasSome(fieldPath, operandValue as any);
+            }
+            break;
+          case '$hasAll':
+            if (Array.isArray(operandValue) && operandValue.length > 0) {
+              wixFilter = wixFilter.hasAll(fieldPath, operandValue as any);
+            }
+            break;
+          case '$startsWith':
+            wixFilter = wixFilter.startsWith(fieldPath, operandValue as string);
+            break;
+          case '$endsWith':
+            wixFilter = wixFilter.endsWith(fieldPath, operandValue as string);
+            break;
+          case '$contains':
+            wixFilter = wixFilter.contains(fieldPath, operandValue as string);
+            break;
+          case '$isEmpty':
+            wixFilter = wixFilter.isEmpty(fieldPath);
+            break;
+          case '$isNotEmpty':
+            wixFilter = wixFilter.isNotEmpty(fieldPath);
+            break;
+          case '$between':
+            if (
+              Array.isArray(operandValue) &&
+              operandValue.length === 2 &&
+              operandValue[0] !== null &&
+              operandValue[1] !== null
+            ) {
+              wixFilter = wixFilter.between(
+                fieldPath,
+                operandValue[0] as any,
+                operandValue[1] as any,
+              );
+            }
+            break;
+          // Skip unsupported operators
+          default:
+            break;
+        }
+      }
+    } else {
+      // Direct value means equality
+      hasFilters = true;
+      wixFilter = wixFilter.eq(fieldPath, value);
+    }
+  }
+
+  return hasFilters ? (query as any).filter(wixFilter) : query; // (query as any).filter(wixFilter) or query.and(wixFilter) ??
+}
+
+/**
  * Shared function to load collection items from Wix Data with pagination support.
  * Returns a WixDataQueryResult that contains items, pagination info, and navigation methods.
  */
@@ -98,6 +215,7 @@ const loadCollectionItems = async (
   collectionId: string,
   options: CmsQueryOptions = {},
   sort?: SortValue,
+  filter?: Filter | null,
   singleRefFieldIds: string[] = [],
   multiRefFieldIds: string[] = [],
 ) => {
@@ -108,6 +226,10 @@ const loadCollectionItems = async (
   const { limit, skip = 0, returnTotalCount = false } = options;
 
   let query = items.query(collectionId);
+
+  if (filter && Object.keys(filter).length > 0) {
+    query = applyFilterToQuery(query, filter);
+  }
 
   if (sort && sort.length > 0 && sort[0]) {
     const { fieldName, order } = sort[0];
@@ -149,6 +271,8 @@ export interface CmsCollectionServiceConfig {
   queryOptions?: CmsQueryOptions;
   /** Optional initial sort value */
   initialSort?: SortValue;
+  /** Optional initial filter value */
+  initialFilter?: Filter | null;
   /** List of field IDs for single reference fields to include */
   singleRefFieldIds?: string[];
   /** List of field IDs for multi reference fields to include */
@@ -178,6 +302,11 @@ export const CmsCollectionServiceImplementation =
         config.initialSort || [],
       );
 
+      // Initialize filter signal
+      const filterSignal = signalsService.signal<Filter | null>(
+        config.initialFilter || null,
+      );
+
       // Track current query result for cursor-based pagination
       let currentQueryResult: WixDataQueryResult | null =
         queryResultSignal.get();
@@ -198,6 +327,7 @@ export const CmsCollectionServiceImplementation =
             config.collectionId,
             mergedOptions,
             sortSignal.get(),
+            filterSignal.get(),
             config.singleRefFieldIds,
             config.multiRefFieldIds,
           );
@@ -340,6 +470,23 @@ export const CmsCollectionServiceImplementation =
         loadItems();
       };
 
+      const setFilter = (filter: Filter) => {
+        filterSignal.set(filter);
+        // Reload items with new filter, reset to first page
+        loadItems({ skip: 0 });
+      };
+
+      const resetFilter = () => {
+        filterSignal.set(null);
+        // Reload items without filter, reset to first page
+        loadItems({ skip: 0 });
+      };
+
+      const isFiltered = (): boolean => {
+        const filter = filterSignal.get();
+        return filter !== null && Object.keys(filter).length > 0;
+      };
+
       // Auto-load items on service initialization only if not pre-loaded
       if (!config.queryResult) {
         loadItems();
@@ -350,12 +497,16 @@ export const CmsCollectionServiceImplementation =
         errorSignal,
         queryResultSignal,
         sortSignal,
+        filterSignal,
         loadItems,
         invalidate,
         loadNextPage,
         loadPrevPage,
         insertItemOrReference,
         setSort,
+        setFilter,
+        resetFilter,
+        isFiltered,
         collectionId: config.collectionId,
       };
     },
@@ -374,6 +525,7 @@ export type CmsCollectionServiceConfigResult = {
  * @param collectionId - The collection ID to load data from
  * @param options - Query options for pagination and filtering
  * @param sort - Optional sort value
+ * @param filter - Optional filter value
  * @param singleRefFieldIds - List of field IDs for single reference fields to include
  * @param multiRefFieldIds - List of field IDs for multi reference fields to include
  * @returns Promise resolving to service configuration with queryResult containing all data
@@ -385,6 +537,7 @@ export type CmsCollectionServiceConfigResult = {
  *   'MyCollection',
  *   { limit: 10, skip: 0 },
  *   undefined,
+ *   { status: { $eq: 'published' } },
  *   ['author', 'category'],
  *   ['tags', 'relatedItems']
  * );
@@ -397,6 +550,7 @@ export const loadCmsCollectionServiceInitialData = async (
   collectionId: string,
   options: CmsQueryOptions = {},
   sort?: SortValue,
+  filter?: Filter | null,
   singleRefFieldIds?: string[],
   multiRefFieldIds?: string[],
 ): Promise<CmsCollectionServiceConfigResult> => {
@@ -410,6 +564,7 @@ export const loadCmsCollectionServiceInitialData = async (
       collectionId,
       options,
       sort,
+      filter,
       singleRefFieldIds,
       multiRefFieldIds,
     );
@@ -420,6 +575,7 @@ export const loadCmsCollectionServiceInitialData = async (
         queryResult: result,
         queryOptions: options,
         initialSort: sort,
+        initialFilter: filter,
         singleRefFieldIds,
         multiRefFieldIds,
       },
