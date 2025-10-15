@@ -657,8 +657,6 @@ export interface FieldMap {
  */
 interface FieldsProps {
   fieldMap: FieldMap;
-  gridContainerClassName: string;
-  gridRowClassName: string;
 }
 
 /**
@@ -853,8 +851,6 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
                 onValidate={handleFormValidate}
                 fields={props.fieldMap}
                 submitForm={() => submitForm(formValues)}
-                gridContainerClassName={props.gridContainerClassName}
-                gridRowClassName={props.gridRowClassName}
               />
             </div>
           );
