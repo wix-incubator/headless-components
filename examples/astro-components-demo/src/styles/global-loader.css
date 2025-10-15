@@ -1,0 +1,63 @@
+/* using tailwindcss as a base for styles */
+@import 'tailwindcss';
+
+/* Semantic theme classes - these will be available as regular CSS classes */
+.text-content-primary {
+  color: var(--theme-text-content);
+}
+
+.text-content-muted {
+  color: var(--theme-text-content-60);
+}
+
+.text-content-secondary {
+  color: var(--theme-text-content-80);
+}
+
+.text-status-success {
+  color: var(--theme-text-success);
+}
+
+.text-status-error {
+  color: var(--theme-text-error);
+}
+
+.bg-surface-card {
+  background-color: var(--theme-bg-card);
+}
+
+.bg-surface-options {
+  background-color: var(--theme-bg-options);
+}
+
+.border-surface-card {
+  border-color: var(--theme-border-card);
+}
+
+.border-surface-card-hover {
+  border-color: var(--theme-border-card-hover);
+}
+
+.btn-primary {
+  background: var(--theme-btn-primary);
+  color: var(--theme-btn-primary-text);
+}
+
+.btn-primary:hover {
+  background: var(--theme-btn-primary-hover);
+}
+
+.gradient-primary {
+  background: var(--theme-gradient-primary);
+}
+
+.gradient-hero-text {
+  background: var(--theme-hero-text-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-hero-card {
+  background: var(--theme-hero-card-gradient);
+}
