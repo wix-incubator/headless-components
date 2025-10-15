@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 import {
-  Form as FormViewer,
   type FormValues,
   type FormError,
+  useForm,
+  FormProps,
+  FormProvider,
 } from '@wix/form-public';
 import {
   type CheckboxGroupProps,
@@ -816,15 +818,24 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormViewer
+              <FormProvider
+                i18n={{ getFixedT: () => {} }}
                 form={form}
-                values={formValues}
-                onChange={handleFormChange}
-                errors={formErrors}
-                onValidate={handleFormValidate}
+                locale="en"
+                regionalFormat="en"
                 fields={props.fieldMap}
-                submitForm={() => submitForm(formValues)}
-              />
+                WixRicosViewer={() => null}
+              >
+                <FieldsWithForm
+                  form={form}
+                  values={formValues}
+                  onChange={handleFormChange}
+                  errors={formErrors}
+                  onValidate={handleFormValidate}
+                  fields={props.fieldMap}
+                  submitForm={() => submitForm(formValues)}
+                />
+              </FormProvider>
             </div>
           );
         }}
@@ -832,3 +843,72 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     );
   },
 );
+
+const FieldsWithForm = ({
+  form,
+  submitForm,
+  values,
+  onChange,
+  errors,
+  onValidate,
+  fields: fieldMap,
+}: FormProps) => {
+  const renderProps = useForm({
+    form,
+    values,
+    onChange,
+    errors,
+    onValidate,
+    fields: fieldMap,
+    submitForm,
+  });
+
+  console.log('renderProps', renderProps);
+  const fields = renderProps?.currentView?.fields || [];
+
+  return (
+    // TODO: use readOnly, isDisabled
+    // TODO: step title a11y support
+    // TODO: mobile support?
+    <form onSubmit={(e) => e.preventDefault()}>
+      <fieldset
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(12, 1fr)',
+          gap: '1rem',
+        }}
+      >
+        {/* TODO: strongly type */}
+        {fields.map((field: any) => {
+          const layout = field.layout;
+          const gridColumnStart = layout.column + 1;
+          const gridColumnEnd = layout.column + layout.width + 1;
+          const gridRowStart = layout.row + 1;
+          const gridRowEnd = layout.row + layout.height + 1;
+
+          // const Component = fieldMap[field.fieldType as keyof FieldMap];
+
+          return (
+            <div
+              key={field.target}
+              style={{
+                gridColumn: `${gridColumnStart} / ${gridColumnEnd}`,
+                gridRow: `${gridRowStart} / ${gridRowEnd}`,
+              }}
+              onClick={() => {
+                console.log('clicked', field);
+                if (field.fieldType === 'SUBMIT_BUTTON') {
+                  renderProps?.fieldActions.actions.setNextStep();
+                }
+              }}
+            >
+                {field.fieldType} {field.target}
+                {/* TODO: use component */}
+              {/* <Component {...field} /> */}
+            </div>
+          );
+        })}
+      </fieldset>
+    </form>
+  );
+};
