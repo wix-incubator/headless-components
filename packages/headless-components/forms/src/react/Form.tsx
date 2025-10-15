@@ -1140,13 +1140,6 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
     const { children, description, asChild, className, ...otherProps } = props;
     const { gridStyles } = useFieldContext();
 
-    const content = (
-      <>
-        {children}
-        {description}
-      </>
-    );
-
     return (
       <AsChildSlot
         ref={ref}
@@ -1154,11 +1147,11 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
         className={className}
         style={gridStyles.input}
         data-testid={TestIds.fieldInput}
-        customElement={content}
+        customElement={children}
         customElementProps={{}}
         {...otherProps}
       >
-        <div>{content}</div>
+        <div>{children}</div>
       </AsChildSlot>
     );
   },
