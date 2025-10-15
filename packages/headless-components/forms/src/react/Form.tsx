@@ -41,6 +41,8 @@ import {
   Error as CoreError,
   Submitted as CoreSubmitted,
   Fields as CoreFields,
+  Field as CoreField,
+  type Layout,
 } from './core/Form.js';
 
 enum TestIds {
@@ -50,6 +52,9 @@ enum TestIds {
   formLoadingError = 'form-loading-error',
   formError = 'form-error',
   formSubmitted = 'form-submitted',
+  fieldRoot = 'field-root',
+  fieldLabel = 'field-label',
+  fieldInput = 'field-input',
 }
 
 /**
@@ -532,6 +537,9 @@ export const Submitted = React.forwardRef<HTMLElement, SubmittedProps>(
 /**
  * Mapping of form field types to their corresponding React components.
  *
+ * ALL field components in this map MUST use Form.Field for proper
+ * grid layout positioning.
+ *
  * Each key represents a field type identifier that matches the field types defined
  * in the form configuration, and each value is a React component that will receive
  * the field's props and render the appropriate UI element.
@@ -776,23 +784,41 @@ interface FieldsProps {
  *
  * @example
  * ```tsx
- * // Advanced usage with custom field components
- * const CustomTextField = ({ value, onChange, label, error, ...props }) => (
- *   <div className="form-field">
- *     <label className="text-foreground font-paragraph">{label}</label>
- *     <input
- *       value={value || ''}
- *       onChange={(e) => onChange(e.target.value)}
- *       className="bg-background border-foreground text-foreground"
- *       {...props}
- *     />
- *     {error && <span className="text-destructive">{error}</span>}
- *   </div>
- * );
+ * // Creating custom field components - ALL field components MUST use Form.Field
+ * // This example shows the REQUIRED structure for a TEXT_INPUT component
+ * import { Form, type TextInputProps } from '@wix/headless-forms/react';
+ *
+ * const TextInput = (props: TextInputProps) => {
+ *   const { id, value, onChange, label, error, required, ...inputProps } = props;
+ *
+ *   // Form.Field provides automatic grid layout positioning
+ *   return (
+ *     <Form.Field id={id}>
+ *       <Form.Field.Label>
+ *         <label className="text-foreground font-paragraph">
+ *           {label}
+ *           {required && <span className="text-destructive ml-1">*</span>}
+ *         </label>
+ *       </Form.Field.Label>
+ *       <Form.Field.Input
+ *         description={error && <span className="text-destructive text-sm">{error}</span>}
+ *       >
+ *         <input
+ *           type="text"
+ *           value={value || ''}
+ *           onChange={(e) => onChange(e.target.value)}
+ *           className="bg-background border-foreground text-foreground"
+ *           aria-invalid={!!error}
+ *           {...inputProps}
+ *         />
+ *       </Form.Field.Input>
+ *     </Form.Field>
+ *   );
+ * };
  *
  * const FIELD_MAP = {
- *   TEXT_INPUT: CustomTextField,
- *   // ... other field components
+ *   TEXT_INPUT: TextInput,
+ *   // ... all other field components must also use Form.Field
  * };
  * ```
  */
@@ -832,3 +858,240 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     );
   },
 );
+
+/**
+ * Context for sharing field data between Field container and its children
+ */
+interface FieldContextValue {
+  id: string;
+  layout: Layout;
+  gridStyles: {
+    container: React.CSSProperties;
+    label: React.CSSProperties;
+    input: React.CSSProperties;
+  };
+}
+
+const FieldContext = React.createContext<FieldContextValue | null>(null);
+
+/**
+ * Hook to access field context
+ */
+function useFieldContext(): FieldContextValue {
+  const context = React.useContext(FieldContext);
+  if (!context) {
+    throw new globalThis.Error(
+      'Field components must be used within a Form.Field component',
+    );
+  }
+  return context;
+}
+
+/**
+ * Props for Field container component
+ */
+export interface FieldProps {
+  /** The unique identifier for this field */
+  id: string;
+  /** Child components (Field.Label, Field.Input, etc.) */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the root element */
+  className?: string;
+}
+
+/**
+ * Field component with sub-components
+ */
+interface FieldComponent
+  extends React.ForwardRefExoticComponent<
+    FieldProps & React.RefAttributes<HTMLDivElement>
+  > {
+  Label: typeof FieldLabel;
+  Input: typeof FieldInput;
+}
+
+/**
+ * Props for Field.Label component
+ */
+export interface FieldLabelProps {
+  /** Label content to display */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the label element */
+  className?: string;
+}
+
+/**
+ * Props for Field.Input component
+ */
+export interface FieldInputProps {
+  /** Input element to render */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the input element */
+  className?: string;
+  /** Description text to display below the input */
+  description?: React.ReactNode;
+}
+
+/**
+ * Container component for a form field with grid layout support.
+ * Provides context to Field.Label and Field.Input child components.
+ * Based on the default-field-layout functionality.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function FormFields() {
+ *   return (
+ *     <Form.Field id="username">
+ *       <Form.Field.Label>
+ *         <label className="text-foreground font-paragraph">Username</label>
+ *       </Form.Field.Label>
+ *       <Form.Field.Input description={<span className="text-secondary-foreground">Required</span>}>
+ *         <input className="bg-background border-foreground text-foreground" />
+ *       </Form.Field.Input>
+ *     </Form.Field>
+ *   );
+ * }
+ * ```
+ */
+const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
+  const { id, children, asChild, className, ...otherProps } = props;
+
+  return (
+    <CoreField id={id}>
+      {(fieldData) => {
+        const contextValue: FieldContextValue = {
+          id,
+          layout: fieldData.layout,
+          gridStyles: fieldData.gridStyles,
+        };
+
+        return (
+          <FieldContext.Provider value={contextValue}>
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              style={fieldData.gridStyles.container}
+              data-testid={TestIds.fieldRoot}
+              customElement={children}
+              customElementProps={{}}
+              {...otherProps}
+            >
+              <div>{children}</div>
+            </AsChildSlot>
+          </FieldContext.Provider>
+        );
+      }}
+    </CoreField>
+  );
+});
+
+FieldRoot.displayName = 'Form.Field';
+
+/**
+ * Label component for a form field with automatic grid positioning.
+ * Must be used within a Form.Field component.
+ * Renders in the label row of the field's grid layout.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * <Form.Field id="email">
+ *   <Form.Field.Label>
+ *     <label className="text-foreground font-paragraph">Email Address</label>
+ *   </Form.Field.Label>
+ *   <Form.Field.Input>
+ *     <input type="email" className="bg-background border-foreground" />
+ *   </Form.Field.Input>
+ * </Form.Field>
+ * ```
+ */
+export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
+  (props, ref) => {
+    const { children, asChild, className, ...otherProps } = props;
+    const { gridStyles } = useFieldContext();
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        style={gridStyles.label}
+        data-testid={TestIds.fieldLabel}
+        customElement={children}
+        customElementProps={{}}
+        {...otherProps}
+      >
+        <div>{children}</div>
+      </AsChildSlot>
+    );
+  },
+);
+
+FieldLabel.displayName = 'Form.Field.Label';
+
+/**
+ * Input component for a form field with automatic grid positioning.
+ * Must be used within a Form.Field component.
+ * Renders in the input row of the field's grid layout with optional description.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * <Form.Field id="password">
+ *   <Form.Field.Label>
+ *     <label className="text-foreground font-paragraph">Password</label>
+ *   </Form.Field.Label>
+ *   <Form.Field.Input description={<span className="text-secondary-foreground">Min 8 characters</span>}>
+ *     <input type="password" className="bg-background border-foreground text-foreground" />
+ *   </Form.Field.Input>
+ * </Form.Field>
+ * ```
+ */
+export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
+  (props, ref) => {
+    const { children, description, asChild, className, ...otherProps } = props;
+    const { gridStyles } = useFieldContext();
+
+    const content = (
+      <>
+        {children}
+        {description}
+      </>
+    );
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        style={gridStyles.input}
+        data-testid={TestIds.fieldInput}
+        customElement={children}
+        customElementProps={{}}
+        {...otherProps}
+      >
+        <div>{content}</div>
+      </AsChildSlot>
+    );
+  },
+);
+
+FieldInput.displayName = 'Form.Field.Input';
+
+export const Field = FieldRoot as FieldComponent;
+Field.Label = FieldLabel;
+Field.Input = FieldInput;

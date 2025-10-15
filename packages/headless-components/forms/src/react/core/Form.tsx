@@ -8,6 +8,7 @@ import {
   FormService,
 } from '../../services/form-service.js';
 import { FormValues } from '../types.js';
+import { calculateGridStyles, findFieldLayout } from '../utils.js';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -354,5 +355,103 @@ export function Fields(props: FieldsProps) {
   return props.children({
     form,
     submitForm,
+  });
+}
+
+/**
+ * Form view interface containing field definitions
+ */
+export interface FormView {
+  fields: FieldDefinition[];
+}
+
+/**
+ * Field layout configuration
+ */
+export interface Layout {
+  column: number;
+  width: number;
+}
+
+/**
+ * Field definition including layout information
+ */
+export interface FieldDefinition {
+  id: string;
+  layout: Layout;
+}
+
+/**
+ * Render props for Field component
+ */
+export interface FieldRenderProps {
+  /** The field ID */
+  id: string;
+  /** The field layout configuration */
+  layout: Layout;
+  /** Grid styles for container */
+  gridStyles: {
+    container: React.CSSProperties;
+    label: React.CSSProperties;
+    input: React.CSSProperties;
+  };
+}
+
+/**
+ * Props for Field headless component
+ */
+export interface FieldProps {
+  /** The unique identifier for this field */
+  id: string;
+  /** Render prop function that receives field layout data */
+  children: (props: FieldRenderProps) => React.ReactNode;
+}
+
+/**
+ * Headless Field component that provides field layout data and grid styles.
+ * This component accesses field configuration and calculates grid positioning.
+ *
+ * @component
+ * @param {FieldProps} props - Component props
+ * @param {FieldProps['children']} props.children - Render prop function that receives field layout data
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * function CustomField({ id }) {
+ *   return (
+ *     <Form.Field id={id}>
+ *       {({ layout, gridStyles }) => (
+ *         <div style={gridStyles.container}>
+ *           <div style={gridStyles.label}>Label</div>
+ *           <div style={gridStyles.input}>Input</div>
+ *         </div>
+ *       )}
+ *     </Form.Field>
+ *   );
+ * }
+ * ```
+ */
+export function Field(props: FieldProps) {
+  const { id, children } = props;
+  const { formSignal } = useService(FormServiceDefinition);
+  const form = formSignal.get();
+
+  if (!form) {
+    return null;
+  }
+
+  const fieldLayout = findFieldLayout(form, id);
+
+  if (!fieldLayout) {
+    return null;
+  }
+
+  const gridStyles = calculateGridStyles(fieldLayout);
+
+  return children({
+    id,
+    layout: fieldLayout,
+    gridStyles,
   });
 }
