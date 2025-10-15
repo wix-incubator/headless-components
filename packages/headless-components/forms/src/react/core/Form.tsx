@@ -8,7 +8,7 @@ import {
   FormService,
 } from '../../services/form-service.js';
 import { FormValues } from '../types.js';
-import { findFieldLayout } from '../utils.js';
+import { calculateGridStyles, findFieldLayout } from '../utils.js';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -405,28 +405,6 @@ export interface FieldProps {
   id: string;
   /** Render prop function that receives field layout data */
   children: (props: FieldRenderProps) => React.ReactNode;
-}
-
-/**
- * Calculate grid styles for a field based on its layout configuration
- */
-function calculateGridStyles(layout: Layout) {
-  const rows = [1, 2];
-  const gridRow = `1 / span ${rows.length}`;
-  const gridColumn = `${layout.column + 1} / span ${layout.width}`;
-  const labelRow = `${rows[0]} / span 1`;
-  const inputRow = `${rows[1]} / span 1`;
-
-  return {
-    container: { gridRow, gridColumn },
-    label: {
-      gridRow: labelRow,
-      gridColumn,
-      display: 'flex',
-      alignItems: 'flex-end',
-    },
-    input: { gridRow: inputRow, gridColumn },
-  };
 }
 
 /**

@@ -788,7 +788,6 @@ interface FieldsProps {
  * // This example shows the REQUIRED structure for a TEXT_INPUT component
  * import { Form, type TextInputProps } from '@wix/headless-forms/react';
  *
- * // ✅ REQUIRED: All field components must wrap their content with Form.Field
  * const TextInput = (props: TextInputProps) => {
  *   const { id, value, onChange, label, error, required, ...inputProps } = props;
  *
