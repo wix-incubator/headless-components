@@ -17,7 +17,7 @@ if (!slug) {
 
 // Load initial data server-side
 const [eventServiceConfigResult, eventListServiceConfig] = await Promise.all([
-  loadEventServiceConfig(slug),
+  loadEventServiceConfig({ slug }),
   loadEventListServiceConfig(),
 ]);
 
@@ -25,19 +25,19 @@ if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
 }
 
-const eventId = eventServiceConfigResult.config.event._id;
+const eventId = eventServiceConfigResult.config.event._id!;
 const recurringCategoryId =
   eventServiceConfigResult.config.event.dateAndTimeSettings?.recurringEvents
-    ?.categoryId;
+    ?.categoryId ?? undefined;
 
 const [
   ticketDefinitionListServiceConfig,
   scheduleListServiceConfig,
   occurrenceListServiceConfig,
 ] = await Promise.all([
-  loadTicketDefinitionListServiceConfig(eventId),
-  loadScheduleListServiceConfig(eventId, 2),
-  loadOccurrenceListServiceConfig(recurringCategoryId),
+  loadTicketDefinitionListServiceConfig({ eventId }),
+  loadScheduleListServiceConfig({ eventId, limit: 2 }),
+  loadOccurrenceListServiceConfig({ recurringCategoryId }),
 ]);
 ---
 
