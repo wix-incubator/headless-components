@@ -1003,6 +1003,33 @@ describe('AsChildSlot', () => {
         );
         expect(secondElement).not.toHaveAttribute('data-component-tag');
       });
+
+      it('should inject data-component-tag into first element of fragment with asChild=false', () => {
+        render(
+          <TestComponent
+            asChild={false}
+            data-component-tag="fragment-no-asChild"
+          >
+            <>
+              <div data-testid="fragment-first-no-asChild">
+                First element in fragment
+              </div>
+              <span data-testid="fragment-second-no-asChild">
+                Second element in fragment
+              </span>
+            </>
+          </TestComponent>,
+        );
+
+        const firstElement = screen.getByTestId('fragment-first-no-asChild');
+        const secondElement = screen.getByTestId('fragment-second-no-asChild');
+
+        expect(firstElement).toHaveAttribute(
+          'data-component-tag',
+          'fragment-no-asChild',
+        );
+        expect(secondElement).not.toHaveAttribute('data-component-tag');
+      });
     });
 
     describe('edge cases', () => {
