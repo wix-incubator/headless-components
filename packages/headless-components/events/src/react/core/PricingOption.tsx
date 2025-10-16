@@ -112,6 +112,8 @@ export function Pricing(props: PricingProps): React.ReactNode {
 export interface TaxProps {
   /** Render prop function */
   children: (props: TaxRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface TaxRenderProps {
@@ -121,14 +123,14 @@ export interface TaxRenderProps {
   rate: number;
   /** Whether tax is included in price */
   included: boolean;
-  /** Taxable amount */
-  taxableAmount: number;
-  /** Tax amount */
-  taxAmount: number;
+  /** Taxable value */
+  taxableValue: number;
+  /** Tax value */
+  taxValue: number;
   /** Tax currency */
   currency: string;
-  /** Formatted tax amount */
-  formattedTaxAmount: string;
+  /** Formatted tax value */
+  formattedTaxValue: string;
 }
 
 /**
@@ -151,34 +153,36 @@ export function Tax(props: TaxProps): React.ReactNode {
   const price = Number(pricingOption.price!.value!);
   const currency = pricingOption.price!.currency!;
 
-  const { name, rate, included, taxableAmount, taxAmount, formattedTaxAmount } =
-    getTicketDefinitionTax(taxSettings, price, currency);
+  const { name, rate, included, taxableValue, taxValue, formattedTaxValue } =
+    getTicketDefinitionTax(taxSettings, price, currency, props.locale);
 
   return props.children({
     name,
     rate,
     included,
-    taxableAmount,
-    taxAmount,
+    taxableValue,
+    taxValue,
     currency,
-    formattedTaxAmount,
+    formattedTaxValue,
   });
 }
 
 export interface FeeProps {
   /** Render prop function */
   children: (props: FeeRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface FeeRenderProps {
   /** Fee rate */
   rate: number;
-  /** Fee amount */
-  amount: number;
+  /** Fee value */
+  value: number;
   /** Fee currency */
   currency: string;
-  /** Formatted fee amount */
-  formattedAmount: string;
+  /** Formatted fee value */
+  formattedValue: string;
 }
 
 /**
@@ -203,18 +207,19 @@ export function Fee(props: FeeProps): React.ReactNode {
   const price = Number(pricingOption.price!.value!);
   const currency = pricingOption.price!.currency!;
 
-  const { rate, amount, formattedAmount } = getTicketDefinitionFee(
+  const { rate, value, formattedValue } = getTicketDefinitionFee(
     taxSettings,
     price,
     currency,
     false,
+    props.locale,
   );
 
   return props.children({
     rate,
-    amount,
+    value,
     currency,
-    formattedAmount,
+    formattedValue,
   });
 }
 

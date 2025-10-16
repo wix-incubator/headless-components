@@ -55,6 +55,7 @@ export interface TicketReservationTotals {
 
 export interface TicketDefinitionListServiceConfig {
   ticketDefinitions: TicketDefinition[];
+  locale: Intl.LocalesArgument;
 }
 
 export const TicketDefinitionListServiceDefinition = defineService<
@@ -82,6 +83,7 @@ export const TicketDefinitionListService =
           eventService.event.get(),
           ticketDefinitions.get(),
           selectedQuantities.get(),
+          config.locale,
         ),
       );
 
@@ -175,6 +177,7 @@ export const TicketDefinitionListService =
 
 export async function loadTicketDefinitionListServiceConfig(
   eventId: string,
+  locale: Intl.LocalesArgument,
 ): Promise<TicketDefinitionListServiceConfig> {
   // @ts-expect-error
   const response = await ticketDefinitionsV2.queryAvailableTicketDefinitions({
@@ -190,13 +193,14 @@ export async function loadTicketDefinitionListServiceConfig(
   });
   const ticketDefinitions = response.ticketDefinitions ?? [];
 
-  return { ticketDefinitions };
+  return { ticketDefinitions, locale };
 }
 
 function getTicketReservationTotals(
   event: Event,
   ticketDefinitions: TicketDefinition[],
   selectedQuantities: TicketReservationQuantity[],
+  locale: Intl.LocalesArgument,
 ): TicketReservationTotals {
   const taxSettings = event.registration?.tickets?.taxSettings;
   const currency = ticketDefinitions[0]
@@ -210,10 +214,10 @@ function getTicketReservationTotals(
       tax: 0,
       fee: 0,
       total: 0,
-      formattedSubtotal: formatPrice(0, currency),
-      formattedTax: formatPrice(0, currency),
-      formattedFee: formatPrice(0, currency),
-      formattedTotal: formatPrice(0, currency),
+      formattedSubtotal: formatPrice(0, currency, locale),
+      formattedTax: formatPrice(0, currency, locale),
+      formattedFee: formatPrice(0, currency, locale),
+      formattedTotal: formatPrice(0, currency, locale),
     };
   }
 
@@ -253,24 +257,26 @@ function getTicketReservationTotals(
         !free &&
         (!guestPricing || taxSettings.appliedToDonations)
       ) {
-        const { taxAmount } = getTicketDefinitionTax(
+        const { taxValue } = getTicketDefinitionTax(
           taxSettings,
           price,
           currency,
+          locale,
         );
 
-        tax = roundPrice(tax + taxAmount * quantity!, currency);
+        tax = roundPrice(tax + taxValue * quantity!, currency);
       }
 
       if (ticketDefinition.feeType === 'FEE_ADDED_AT_CHECKOUT' && !free) {
-        const { amount } = getTicketDefinitionFee(
+        const { value } = getTicketDefinitionFee(
           taxSettings,
           price,
           currency,
           guestPricing,
+          locale,
         );
 
-        fee = roundPrice(fee + amount * quantity!, currency);
+        fee = roundPrice(fee + value * quantity!, currency);
       }
     },
   );
@@ -289,9 +295,9 @@ function getTicketReservationTotals(
     tax,
     fee,
     total,
-    formattedSubtotal: formatPrice(subtotal, currency),
-    formattedTax: formatPrice(tax, currency),
-    formattedFee: formatPrice(fee, currency),
-    formattedTotal: formatPrice(total, currency),
+    formattedSubtotal: formatPrice(subtotal, currency, locale),
+    formattedTax: formatPrice(tax, currency, locale),
+    formattedFee: formatPrice(fee, currency, locale),
+    formattedTotal: formatPrice(total, currency, locale),
   };
 }

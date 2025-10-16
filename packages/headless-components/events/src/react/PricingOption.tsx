@@ -208,13 +208,15 @@ export interface TaxProps {
     name: string;
     rate: number;
     included: boolean;
-    taxableAmount: number;
-    taxAmount: number;
+    taxableValue: number;
+    taxValue: number;
     currency: string;
-    formattedTaxAmount: string;
+    formattedTaxValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -233,27 +235,27 @@ export interface TaxProps {
  *
  * // asChild with react component
  * <PricingOption.Tax asChild>
- *   {React.forwardRef(({ name, rate, included, taxableAmount, taxAmount, currency, formattedTaxAmount, ...props }, ref) => (
+ *   {React.forwardRef(({ name, rate, included, taxableValue, taxValue, currency, formattedTaxValue, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm text-gray-500">
- *       {included ? `${name} included` : `+${formattedTaxAmount} ${name}`}
+ *       {included ? `${name} included` : `+${formattedTaxValue} ${name}`}
  *     </span>
  *   ))}
  * </PricingOption.Tax>
  * ```
  */
 export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, locale, ...otherProps } = props;
 
   return (
-    <CorePricingOption.Tax>
+    <CorePricingOption.Tax locale={locale}>
       {({
         name,
         rate,
         included,
-        taxableAmount,
-        taxAmount,
+        taxableValue,
+        taxValue,
         currency,
-        formattedTaxAmount,
+        formattedTaxValue,
       }) => (
         <AsChildSlot
           ref={ref}
@@ -265,15 +267,15 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
             name,
             rate,
             included,
-            taxableAmount,
-            taxAmount,
+            taxableValue,
+            taxValue,
             currency,
-            formattedTaxAmount,
+            formattedTaxValue,
           }}
-          content={formattedTaxAmount}
+          content={formattedTaxValue}
           {...otherProps}
         >
-          <span>{formattedTaxAmount}</span>
+          <span>{formattedTaxValue}</span>
         </AsChildSlot>
       )}
     </CorePricingOption.Tax>
@@ -289,12 +291,14 @@ export interface FeeProps {
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
     rate: number;
-    amount: number;
+    value: number;
     currency: string;
-    formattedAmount: string;
+    formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -313,20 +317,20 @@ export interface FeeProps {
  *
  * // asChild with react component
  * <PricingOption.Fee asChild>
- *   {React.forwardRef(({ rate, amount, currency, formattedAmount, ...props }, ref) => (
+ *   {React.forwardRef(({ rate, value, currency, formattedValue, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm text-gray-500">
- *       +{formattedAmount} service fee
+ *       +{formattedValue} service fee
  *     </span>
  *   ))}
  * </PricingOption.Fee>
  * ```
  */
 export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, locale, ...otherProps } = props;
 
   return (
-    <CorePricingOption.Fee>
-      {({ rate, amount, currency, formattedAmount }) => (
+    <CorePricingOption.Fee locale={locale}>
+      {({ rate, value, currency, formattedValue }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
@@ -335,14 +339,14 @@ export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
           customElement={children}
           customElementProps={{
             rate,
-            amount,
+            value,
             currency,
-            formattedAmount,
+            formattedValue,
           }}
-          content={formattedAmount}
+          content={formattedValue}
           {...otherProps}
         >
-          <span>{formattedAmount}</span>
+          <span>{formattedValue}</span>
         </AsChildSlot>
       )}
     </CorePricingOption.Fee>
