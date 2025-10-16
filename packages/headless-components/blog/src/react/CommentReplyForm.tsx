@@ -298,15 +298,15 @@ export const Input = React.forwardRef<HTMLElement, InputProps>((props, ref) => {
   const { replyText, setReplyText, isLoading, maxLength, htmlId } = useCreateReplyFormContext();
 
   const handleChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setReplyText(e.target.value);
     },
     [setReplyText],
   );
 
-  const inputAttributes: React.ComponentProps<'input'> = {
+  const inputAttributes: React.ComponentProps<'textarea'> = {
     value: replyText,
-    onInput: handleChange,
+    onChange: handleChange,
     minLength: 1,
     disabled: isLoading,
     maxLength,

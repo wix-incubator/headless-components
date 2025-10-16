@@ -1,17 +1,17 @@
 import { MemberAvatar } from "@/components/ui/blog/MemberAvatar";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useMember } from "@/integrations/members";
-import { cn } from "@/lib/utils";
-import { Blog } from "@wix/blog/components";
-import { Loader2Icon, LogOutIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import { Textarea } from "@/components/ui/textarea";
+import { useMember } from "@/integrations/members";
+import { cn } from "@/lib/utils";
+import { Blog } from "@wix/blog/components";
+import { Loader2Icon, LogOutIcon } from "lucide-react";
 
 interface CommentFormProps {
   reply?: boolean;

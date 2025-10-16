@@ -1,9 +1,9 @@
+import { SortSelect } from "@/components/ui/blog/SortSelect";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Blog } from "@wix/blog/components";
 import type { BlogPostServiceConfig } from "@wix/blog/services";
 import { Loader2Icon } from "lucide-react";
-import { SortSelect } from "../ui/blog/SortSelect";
 import { CommentBlock } from "./CommentBlock";
 import { CommentForm } from "./CommentForm";
 import { CommentReplies } from "./CommentReplies";

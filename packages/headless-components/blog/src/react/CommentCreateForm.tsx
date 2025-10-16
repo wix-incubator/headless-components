@@ -295,13 +295,13 @@ export const Input = React.forwardRef<HTMLElement, CreateCommentFormInputProps>(
   const disabled = isLoading;
 
   const handleChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setCommentText(e.target.value),
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => setCommentText(e.target.value),
     [setCommentText],
   );
 
-  const inputAttributes: React.ComponentProps<'input'> = {
+  const inputAttributes: React.ComponentProps<'textarea'> = {
     value: commentText,
-    onInput: handleChange,
+    onChange: handleChange,
     minLength: 1,
     disabled,
     maxLength,

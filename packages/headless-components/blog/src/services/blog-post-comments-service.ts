@@ -99,13 +99,13 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
     const getComment = (commentId: string): CommentWithResolvedFields | undefined => {
       const threadStates = threadStatesSignal.get();
       const rootComments = threadStates[ROOT_ID]?.comments ?? [];
-      const allThreadComents = rootComments.flatMap((comment) => {
+      const allThreadComments = rootComments.flatMap((comment) => {
         if (comment._id) {
           return threadStates[comment._id]?.comments ?? [];
         }
         return [];
       });
-      const allComments = [...rootComments, ...allThreadComents];
+      const allComments = [...rootComments, ...allThreadComments];
 
       return allComments.find((comment) => comment._id === commentId);
     };
