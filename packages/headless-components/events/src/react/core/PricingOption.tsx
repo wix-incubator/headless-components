@@ -76,15 +76,17 @@ export function Name(props: NameProps): React.ReactNode {
 export interface PricingProps {
   /** Render prop function */
   children: (props: PricingRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface PricingRenderProps {
   /** Price */
-  price: number;
+  value: number;
   /** Price currency */
   currency: string;
   /** Formatted price */
-  formattedPrice: string;
+  formattedValue: string;
 }
 
 /**
@@ -96,14 +98,14 @@ export function Pricing(props: PricingProps): React.ReactNode {
   const pricingOptionService = useService(PricingOptionServiceDefinition);
 
   const pricingOption = pricingOptionService.pricingOption.get();
-  const price = Number(pricingOption.price!.value!);
+  const value = Number(pricingOption.price!.value!);
   const currency = pricingOption.price!.currency!;
-  const formattedPrice = formatPrice(price, currency);
+  const formattedValue = formatPrice(value, currency, props.locale);
 
   return props.children({
-    price,
+    value,
     currency,
-    formattedPrice,
+    formattedValue,
   });
 }
 

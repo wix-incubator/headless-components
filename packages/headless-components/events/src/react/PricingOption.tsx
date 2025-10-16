@@ -134,12 +134,14 @@ interface PricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: number;
+    value: number;
     currency: string;
-    formattedPrice: string;
+    formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -158,9 +160,9 @@ interface PricingProps {
  *
  * // asChild with react component
  * <PricingOption.Pricing asChild>
- *   {React.forwardRef(({ price, currency, formattedPrice, ...props }, ref) => (
+ *   {React.forwardRef(({ value, currency, formattedValue, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-lg font-semibold">
- *       {formattedPrice}
+ *       {formattedValue}
  *     </span>
  *   ))}
  * </PricingOption.Pricing>
@@ -168,11 +170,11 @@ interface PricingProps {
  */
 export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CorePricingOption.Pricing>
-        {({ price, currency, formattedPrice }) => (
+      <CorePricingOption.Pricing locale={locale}>
+        {({ value, currency, formattedValue }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -180,14 +182,14 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
             data-testid={TestIds.pricingOptionPricing}
             customElement={children}
             customElementProps={{
-              price,
+              value,
               currency,
-              formattedPrice,
+              formattedValue,
             }}
-            content={formattedPrice}
+            content={formattedValue}
             {...otherProps}
           >
-            <span>{formattedPrice}</span>
+            <span>{formattedValue}</span>
           </AsChildSlot>
         )}
       </CorePricingOption.Pricing>
