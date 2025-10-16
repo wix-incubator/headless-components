@@ -9,5 +9,3 @@ export const UPCOMING_EVENTS = 'upcomingEvents';
 export const PAST_EVENTS = 'pastEvents';
 
 export const WIX_FEE_RATE = 2.5;
-
-export const DEFAULT_LOCALE = 'en-US';

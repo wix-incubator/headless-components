@@ -69,7 +69,7 @@ export interface TimeSlotProps {
   /** Render prop function */
   children: (props: TimeSlotRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TimeSlotRenderProps {

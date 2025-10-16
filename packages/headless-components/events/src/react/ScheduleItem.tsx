@@ -147,7 +147,7 @@ export interface TimeSlotProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**

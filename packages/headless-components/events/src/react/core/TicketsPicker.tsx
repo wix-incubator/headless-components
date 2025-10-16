@@ -131,23 +131,23 @@ export interface TotalsProps {
 }
 
 export interface TotalsRenderProps {
-  /** Total amount */
+  /** Total value */
   total: number;
-  /** Subtotal amount */
+  /** Subtotal value */
   subtotal: number;
-  /** Tax amount */
+  /** Tax value */
   tax: number;
-  /** Fee amount */
+  /** Fee value */
   fee: number;
   /** Currency */
   currency: string;
-  /** Formatted total */
+  /** Formatted total value */
   formattedTotal: string;
-  /** Formatted subtotal */
+  /** Formatted subtotal value */
   formattedSubtotal: string;
-  /** Formatted tax */
+  /** Formatted tax value */
   formattedTax: string;
-  /** Formatted fee */
+  /** Formatted fee value */
   formattedFee: string;
   /** Tax name */
   taxName: string | null;

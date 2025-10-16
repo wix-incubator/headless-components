@@ -235,7 +235,7 @@ export interface FixedPricingProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -309,7 +309,7 @@ export interface GuestPricingProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -389,7 +389,7 @@ export interface PricingRangeProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -474,7 +474,7 @@ export interface TaxProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -556,7 +556,7 @@ export interface FeeProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -688,7 +688,7 @@ export interface SaleStartDateProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -758,7 +758,7 @@ export interface SaleEndDateProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**

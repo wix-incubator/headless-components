@@ -178,7 +178,7 @@ export interface DateProps {
   /** Format of the event date */
   format?: 'short' | 'full'; // Default: 'short'
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface DateRenderProps {

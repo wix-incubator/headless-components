@@ -107,7 +107,7 @@ export interface FixedPricingProps {
   /** Render prop function */
   children: (props: FixedPricingRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface FixedPricingRenderProps {
@@ -152,7 +152,7 @@ export interface GuestPricingProps {
   /** Render prop function */
   children: (props: GuestPricingRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface GuestPricingRenderProps {
@@ -213,7 +213,7 @@ export interface PricingRangeProps {
   /** Render prop function */
   children: (props: PricingRangeRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface PricingRangeRenderProps {
@@ -272,7 +272,7 @@ export interface TaxProps {
   /** Render prop function */
   children: (props: TaxRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TaxRenderProps {
@@ -346,7 +346,7 @@ export interface FeeProps {
   /** Render prop function */
   children: (props: FeeRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface FeeRenderProps {
@@ -439,7 +439,7 @@ export interface SaleStartDateProps {
   /** Render prop function */
   children: (props: SaleStartDateRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface SaleStartDateRenderProps {
@@ -482,7 +482,7 @@ export interface SaleEndDateProps {
   /** Render prop function */
   children: (props: SaleEndDateRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface SaleEndDateRenderProps {

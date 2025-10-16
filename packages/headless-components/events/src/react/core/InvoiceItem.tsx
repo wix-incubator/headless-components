@@ -68,7 +68,7 @@ export interface PriceProps {
   /** Render prop function */
   children: (props: PriceRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface PriceRenderProps {
@@ -128,7 +128,7 @@ export interface TotalProps {
   /** Render prop function */
   children: (props: TotalRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TotalRenderProps {

@@ -100,7 +100,7 @@ export interface CreatedDateProps {
   /** Render prop function */
   children: (props: CreatedDateRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface CreatedDateRenderProps {
@@ -235,7 +235,7 @@ export interface SubtotalProps {
   /** Render prop function */
   children: (props: SubtotalRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface SubtotalRenderProps {
@@ -276,7 +276,7 @@ export interface PaidPlanDiscountProps {
   /** Render prop function */
   children: (props: PaidPlanDiscountRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface PaidPlanDiscountRenderProps {
@@ -328,7 +328,7 @@ export interface CouponDiscountProps {
   /** Render prop function */
   children: (props: CouponDiscountRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface CouponDiscountRenderProps {
@@ -375,7 +375,7 @@ export interface TaxProps {
   /** Render prop function */
   children: (props: TaxRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TaxRenderProps {
@@ -427,7 +427,7 @@ export interface FeeProps {
   /** Render prop function */
   children: (props: FeeRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface FeeRenderProps {
@@ -477,7 +477,7 @@ export interface TotalProps {
   /** Render prop function */
   children: (props: TotalRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TotalRenderProps {

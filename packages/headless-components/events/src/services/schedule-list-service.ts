@@ -28,7 +28,7 @@ export interface ScheduleListServiceAPI {
 
 export interface ScheduleListServiceConfig {
   items: ScheduleItem[];
-  locale?: Intl.LocalesArgument;
+  locale: Intl.LocalesArgument;
 }
 
 export const ScheduleListServiceDefinition = defineService<

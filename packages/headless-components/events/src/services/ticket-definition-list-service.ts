@@ -177,7 +177,7 @@ export const TicketDefinitionListService =
 
 export async function loadTicketDefinitionListServiceConfig(
   eventId: string,
-  locale: Intl.LocalesArgument,
+  locale?: Intl.LocalesArgument,
 ): Promise<TicketDefinitionListServiceConfig> {
   // @ts-expect-error
   const response = await ticketDefinitionsV2.queryAvailableTicketDefinitions({

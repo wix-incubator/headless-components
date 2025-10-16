@@ -135,7 +135,7 @@ export interface PriceProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -261,7 +261,7 @@ export interface TotalProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**

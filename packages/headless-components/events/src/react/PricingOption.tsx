@@ -141,7 +141,7 @@ interface PricingProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -216,7 +216,7 @@ export interface TaxProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -298,7 +298,7 @@ export interface FeeProps {
   /** CSS classes to apply to the default element */
   className?: string;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 /**

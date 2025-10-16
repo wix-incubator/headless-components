@@ -1,5 +1,3 @@
-import { DEFAULT_LOCALE } from '../constants.js';
-
 export const formatShortDate = (
   date: string | Date,
   timeZone: string,
@@ -31,7 +29,7 @@ export const formatFullDate = (
 export const formatMonthDayYear = (
   date: string | Date,
   timeZone?: string,
-  locale: Intl.LocalesArgument = DEFAULT_LOCALE,
+  locale?: Intl.LocalesArgument,
 ) =>
   new Date(date).toLocaleDateString(locale, {
     timeZone,

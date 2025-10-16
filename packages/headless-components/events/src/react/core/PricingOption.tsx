@@ -77,7 +77,7 @@ export interface PricingProps {
   /** Render prop function */
   children: (props: PricingRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface PricingRenderProps {
@@ -113,7 +113,7 @@ export interface TaxProps {
   /** Render prop function */
   children: (props: TaxRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TaxRenderProps {
@@ -171,7 +171,7 @@ export interface FeeProps {
   /** Render prop function */
   children: (props: FeeRenderProps) => React.ReactNode;
   /** Locale */
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
 }
 
 export interface FeeRenderProps {
