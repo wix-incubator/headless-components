@@ -125,7 +125,11 @@ export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   }
 
   const createdDate = new Date(order.created!);
-  const formattedDate = formatMonthDayYear(createdDate, props.locale);
+  const formattedDate = formatMonthDayYear(
+    createdDate,
+    undefined,
+    props.locale,
+  );
 
   return props.children({ createdDate, formattedDate });
 }
