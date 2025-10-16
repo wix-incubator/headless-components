@@ -8,6 +8,7 @@ import {
 } from '../../services/schedule-items-group-service.js';
 import { type ScheduleItem } from '../../services/schedule-item-service.js';
 import { type ScheduleItemsGroup } from '../../services/schedule-items-group-service.js';
+import { formatShortDate } from '../../utils/date.js';
 
 export interface RootProps {
   /** Child components that will have access to the schedule items group service */
@@ -44,13 +45,17 @@ export function Root(props: RootProps): React.ReactNode {
 export interface DateLabelProps {
   /** Render prop function */
   children: (props: DateLabelRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface DateLabelRenderProps {
-  /** Formatted date label (e.g., "Mon, 07 Jul") */
-  formattedDate: string;
   /** Date object for the group */
   date: Date;
+  /** Time zone ID */
+  timeZoneId: string;
+  /** Formatted date label (e.g., "Mon, 07 Jul") */
+  formattedDate: string;
 }
 
 /**
@@ -61,9 +66,12 @@ export interface DateLabelRenderProps {
 export function DateLabel(props: DateLabelProps): React.ReactNode {
   const groupService = useService(ScheduleItemsGroupServiceDefinition);
 
-  const { formattedDate, date } = groupService.itemsGroup.get();
+  const itemsGroup = groupService.itemsGroup.get();
+  const date = itemsGroup.date;
+  const timeZoneId = itemsGroup.timeZoneId;
+  const formattedDate = formatShortDate(date, timeZoneId, props.locale);
 
-  return props.children({ formattedDate, date });
+  return props.children({ date, timeZoneId, formattedDate });
 }
 
 export interface ItemsProps {
@@ -85,7 +93,8 @@ export interface ItemsRenderProps {
 export function Items(props: ItemsProps): React.ReactNode {
   const groupService = useService(ScheduleItemsGroupServiceDefinition);
 
-  const { items } = groupService.itemsGroup.get();
+  const itemsGroup = groupService.itemsGroup.get();
+  const items = itemsGroup.items;
 
   return props.children({ items });
 }

@@ -7,7 +7,6 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { type ScheduleItem } from './schedule-item-service.js';
 import { type ScheduleItemsGroup } from './schedule-items-group-service.js';
-import { formatShortDate } from '../utils/date.js';
 
 enum StateFilter {
   PUBLISHED = schedule.StateFilter.PUBLISHED,
@@ -28,7 +27,6 @@ export interface ScheduleListServiceAPI {
 
 export interface ScheduleListServiceConfig {
   items: ScheduleItem[];
-  locale: Intl.LocalesArgument;
 }
 
 export const ScheduleListServiceDefinition = defineService<
@@ -58,7 +56,7 @@ export const ScheduleListService =
           currentTagFilters,
         );
 
-        return groupScheduleItemsByDate(filteredItems, config.locale);
+        return groupScheduleItemsByDate(filteredItems);
       });
 
       const stageNames = signalsService.computed(() => {
@@ -98,7 +96,6 @@ export const ScheduleListService =
 export async function loadScheduleListServiceConfig({
   eventId,
   limit,
-  locale,
 }: LoadScheduleListServiceConfigParams): Promise<ScheduleListServiceConfig> {
   const loadAll = !limit;
   const pageSize = limit ?? 100;
@@ -125,7 +122,7 @@ export async function loadScheduleListServiceConfig({
 
   const allItems = responses.flatMap((response) => response.items || []);
 
-  return { items: allItems, locale };
+  return { items: allItems };
 }
 
 function listScheduleItems({
@@ -168,26 +165,18 @@ function filterScheduleItems(
   });
 }
 
-function groupScheduleItemsByDate(
-  items: ScheduleItem[],
-  locale: Intl.LocalesArgument,
-): ScheduleItemsGroup[] {
+function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
   const grouped = new Map<string, ScheduleItemsGroup>();
 
   items.forEach((item) => {
     const startDate = new Date(item.timeSlot!.start!);
     const dateKey = startDate.toDateString();
-    const formattedDate = formatShortDate(
-      startDate,
-      item.timeSlot!.timeZoneId!,
-      locale,
-    );
 
     if (!grouped.has(dateKey)) {
       grouped.set(dateKey, {
         id: Math.random().toString(36).substring(2, 11),
-        formattedDate,
         date: startDate,
+        timeZoneId: item.timeSlot!.timeZoneId!,
         items: [],
       });
     }
@@ -227,7 +216,6 @@ function getAvailableTags(items: ScheduleItem[]): string[] {
 interface LoadScheduleListServiceConfigParams {
   eventId: string;
   limit?: number;
-  locale?: Intl.LocalesArgument;
 }
 
 interface ListScheduleItemsParams {
