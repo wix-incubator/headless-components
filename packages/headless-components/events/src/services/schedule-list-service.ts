@@ -95,14 +95,15 @@ export const ScheduleListService =
     },
   );
 
-export async function loadScheduleListServiceConfig(
-  eventId: string,
-  { limit, locale }: LoadScheduleListServiceConfigParams = {},
-): Promise<ScheduleListServiceConfig> {
+export async function loadScheduleListServiceConfig({
+  eventId,
+  limit,
+  locale,
+}: LoadScheduleListServiceConfigParams): Promise<ScheduleListServiceConfig> {
   const loadAll = !limit;
   const pageSize = limit ?? 100;
 
-  const response = await listScheduleItems(eventId, pageSize);
+  const response = await listScheduleItems({ eventId, limit: pageSize });
   const totalItems = response.pagingMetadata!.total!;
   const itemsCount = response.items!.length;
   const responses = [response];
@@ -110,11 +111,13 @@ export async function loadScheduleListServiceConfig(
   if (itemsCount < totalItems && loadAll) {
     const requestCount = Math.ceil(totalItems / pageSize) - 1;
     const moreResponses = await Promise.all(
-      new Array(requestCount)
-        .fill(null)
-        .map((_, index) =>
-          listScheduleItems(eventId, pageSize, (index + 1) * pageSize),
-        ),
+      new Array(requestCount).fill(null).map((_, index) =>
+        listScheduleItems({
+          eventId,
+          limit: pageSize,
+          offset: (index + 1) * pageSize,
+        }),
+      ),
     );
 
     responses.push(...moreResponses);
@@ -125,7 +128,11 @@ export async function loadScheduleListServiceConfig(
   return { items: allItems, locale };
 }
 
-function listScheduleItems(eventId: string, limit: number, offset = 0) {
+function listScheduleItems({
+  eventId,
+  limit,
+  offset = 0,
+}: ListScheduleItemsParams) {
   return schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
@@ -218,6 +225,13 @@ function getAvailableTags(items: ScheduleItem[]): string[] {
 }
 
 interface LoadScheduleListServiceConfigParams {
+  eventId: string;
   limit?: number;
   locale?: Intl.LocalesArgument;
+}
+
+interface ListScheduleItemsParams {
+  eventId: string;
+  limit: number;
+  offset?: number;
 }

@@ -175,10 +175,10 @@ export const TicketDefinitionListService =
     },
   );
 
-export async function loadTicketDefinitionListServiceConfig(
-  eventId: string,
-  locale?: Intl.LocalesArgument,
-): Promise<TicketDefinitionListServiceConfig> {
+export async function loadTicketDefinitionListServiceConfig({
+  eventId,
+  locale,
+}: LoadTicketDefinitionListServiceConfigParams): Promise<TicketDefinitionListServiceConfig> {
   // @ts-expect-error
   const response = await ticketDefinitionsV2.queryAvailableTicketDefinitions({
     filter: {
@@ -300,4 +300,9 @@ function getTicketReservationTotals(
     formattedFee: formatPrice(fee, currency, locale),
     formattedTotal: formatPrice(total, currency, locale),
   };
+}
+
+interface LoadTicketDefinitionListServiceConfigParams {
+  eventId: string;
+  locale?: Intl.LocalesArgument;
 }
