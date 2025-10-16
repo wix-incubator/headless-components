@@ -33,6 +33,7 @@ export function getFieldsByRow(fields: any[]): any[][] {
 
   return fieldsByRow;
 }
+
 export const getRowGridStyle = ({ layout }: { layout: any }) => {
   return {
     display: 'grid',

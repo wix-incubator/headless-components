@@ -880,7 +880,7 @@ const FieldsWithForm = ({
   onValidate,
   fields: fieldMap,
 }: FormProps) => {
-  const renderProps = useForm({
+  const formData = useForm({
     form,
     values,
     onChange,
@@ -890,8 +890,11 @@ const FieldsWithForm = ({
     submitForm,
   });
 
-  console.log('renderProps', renderProps);
-  const fields = renderProps?.currentView?.fields || [];
+  if (!formData) return null;
+
+  const { fields, grid, normalizedValues, onFieldChange } = formData;
+
+  console.log('formData', formData);
   const fieldsByRow = getFieldsByRow(fields);
 
   return (
@@ -914,7 +917,7 @@ const FieldsWithForm = ({
                 key={field.id}
                 // TODO: pass tailwind gap
                 style={getRowGridStyle({
-                  layout: renderProps?.currentView?.grid,
+                  layout: grid,
                 })}
               >
                 {field.map((field: any) => {
@@ -924,6 +927,8 @@ const FieldsWithForm = ({
 
                   return (
                     <Component
+                      onChange={(value) => onFieldChange(field.target, value)}
+                      value={normalizedValues[field.target]}
                       key={field.id}
                       id={field.id}
                       {...field.properties}
