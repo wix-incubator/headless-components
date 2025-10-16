@@ -42,7 +42,10 @@ export default function RoutePost({
           uiLocale={uiLocale}
         />
         <div className="mx-auto mb-14 max-w-3xl">
-          <PostCommentsSection blogPostServiceConfig={blogPostServiceConfig} uiLocale={uiLocale} />
+          <PostCommentsSection
+            blogPostServiceConfig={blogPostServiceConfig}
+            uiLocale={uiLocale}
+          />
         </div>
       </div>
     </div>

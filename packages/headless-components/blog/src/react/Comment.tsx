@@ -34,9 +34,7 @@ CommentContext.displayName = 'Blog.Post.Comment.CommentContext';
 export function useCommentContext(): CommentContextValue {
   const context = React.useContext(CommentContext);
   if (!context) {
-    throw new Error(
-      'useCommentContext must be used within a Blog.Post.Comment.Root component',
-    );
+    throw new Error('useCommentContext must be used within a Blog.Post.Comment.Root component');
   }
   return context;
 }
@@ -391,24 +389,26 @@ export interface ReplyItemRepeaterProps {
  * </Blog.Post.Comment.ReplyItems>
  * ```
  */
-export const ReplyItemRepeater = React.forwardRef<HTMLElement, ReplyItemRepeaterProps>((props, _ref) => {
-  const { children } = props;
-  const { comment } = useCommentContext();
+export const ReplyItemRepeater = React.forwardRef<HTMLElement, ReplyItemRepeaterProps>(
+  (props, _ref) => {
+    const { children } = props;
+    const { comment } = useCommentContext();
 
-  return (
-    <CoreComments.Comment commentId={comment._id || ''}>
-      {({ replies }) =>
-        replies.map((reply) => {
-          return (
-            <Root key={reply._id} comment={reply}>
-              {children}
-            </Root>
-          );
-        })
-      }
-    </CoreComments.Comment>
-  );
-});
+    return (
+      <CoreComments.Comment commentId={comment._id || ''}>
+        {({ replies }) =>
+          replies.map((reply) => {
+            return (
+              <Root key={reply._id} comment={reply}>
+                {children}
+              </Root>
+            );
+          })
+        }
+      </CoreComments.Comment>
+    );
+  },
+);
 
 ReplyItemRepeater.displayName = 'Blog.Post.Comment.ReplyItemRepeater';
 
