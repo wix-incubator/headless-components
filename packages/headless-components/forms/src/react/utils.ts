@@ -33,12 +33,3 @@ export function getFieldsByRow(fields: any[]): any[][] {
 
   return fieldsByRow;
 }
-
-export const getRowGridStyle = ({ layout }: { layout: any }) => {
-  return {
-    display: 'grid',
-    width: '100%',
-    gridTemplateColumns: `repeat(${layout.columns}, 1fr)`,
-    gridAutoRows: 'minmax(min-content, max-content) 1fr',
-  };
-};

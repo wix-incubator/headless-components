@@ -46,7 +46,7 @@ import {
   Field as CoreField,
   type Layout,
 } from './core/Form.js';
-import { getFieldsByRow, getRowGridStyle } from './utils.js';
+import { getFieldsByRow } from './utils.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -886,13 +886,12 @@ const FieldsWithForm = ({
     onChange,
     errors,
     onValidate,
-    fields: fieldMap,
     submitForm,
   });
 
   if (!formData) return null;
 
-  const { fields, grid, normalizedValues, onFieldChange } = formData;
+  const { fields, columnCount, normalizedValues, onFieldChange } = formData;
 
   console.log('formData', formData);
   const fieldsByRow = getFieldsByRow(fields);
@@ -916,9 +915,12 @@ const FieldsWithForm = ({
               <div
                 key={field.id}
                 // TODO: pass tailwind gap
-                style={getRowGridStyle({
-                  layout: grid,
-                })}
+                style={{
+                  display: 'grid',
+                  width: '100%',
+                  gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+                  gridAutoRows: 'minmax(min-content, max-content) 1fr',
+                }}
               >
                 {field.map((field: any) => {
                   const Component = fieldMap[field.fieldType as keyof FieldMap];
