@@ -79,7 +79,10 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{
+    /** Schedule item name */
+    name: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -139,9 +142,13 @@ export interface TimeSlotProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Schedule item start time */
     startTime: Date;
+    /** Schedule item end time */
     endTime: Date;
+    /** Schedule item time zone ID */
     timeZoneId: string;
+    /** Formatted time range string (e.g., "18:30 - 19:00") */
     formattedTimeRange: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -211,7 +218,10 @@ export interface DurationProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ durationMinutes: number }>;
+  children?: AsChildChildren<{
+    /** Duration in minutes */
+    durationMinutes: number;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -270,7 +280,10 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
  */
 export interface DescriptionProps {
   /** Custom render function */
-  children?: AsChildChildren<{ description: string }>;
+  children?: AsChildChildren<{
+    /** Schedule item description */
+    description: string;
+  }>;
 }
 
 /**
@@ -316,7 +329,10 @@ export interface StageProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ stageName: string }>;
+  children?: AsChildChildren<{
+    /** Schedule item stage name */
+    stageName: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -375,7 +391,12 @@ export interface TagsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ tags: string[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        /** Schedule item tags */
+        tags: string[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

@@ -74,7 +74,10 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{
+    /** Pricing option name */
+    name: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -134,8 +137,11 @@ export interface PricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Price */
     value: number;
+    /** Price currency */
     currency: string;
+    /** Formatted price */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -205,12 +211,19 @@ export interface TaxProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Tax name */
     name: string;
+    /** Tax rate */
     rate: number;
+    /** Whether tax is included in price */
     included: boolean;
+    /** Taxable value */
     taxableValue: number;
+    /** Tax value */
     taxValue: number;
+    /** Tax currency */
     currency: string;
+    /** Formatted tax value */
     formattedTaxValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -290,9 +303,13 @@ export interface FeeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Fee rate */
     rate: number;
+    /** Fee value */
     value: number;
+    /** Fee currency */
     currency: string;
+    /** Formatted fee value */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -361,11 +378,17 @@ export interface QuantityProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Array of quantity options */
     options: number[];
+    /** Current quantity */
     quantity: number;
+    /** Maximum quantity allowed */
     maxQuantity: number;
+    /** Function to increment quantity */
     increment: () => void;
+    /** Function to decrement quantity */
     decrement: () => void;
+    /** Function to set specific quantity */
     setQuantity: (quantity: number) => void;
   }>;
   /** CSS classes to apply to the default element */

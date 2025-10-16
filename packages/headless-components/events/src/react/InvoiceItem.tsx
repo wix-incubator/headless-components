@@ -74,7 +74,10 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{
+    /** Invoice item name */
+    name: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -134,8 +137,11 @@ export interface PriceProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Invoice item price value */
     value: number;
+    /** Invoice item price currency */
     currency: string;
+    /** Formatted invoice item price value */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -198,7 +204,10 @@ export interface QuantityProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ quantity: number }>;
+  children?: AsChildChildren<{
+    /** Invoice item quantity */
+    quantity: number;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -260,8 +269,11 @@ export interface TotalProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Invoice item total value */
     value: number;
+    /** Invoice item total currency */
     currency: string;
+    /** Formatted invoice item total value */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */

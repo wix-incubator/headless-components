@@ -246,8 +246,11 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
 export interface TypeProps {
   /** Custom render function */
   children: AsChildChildren<{
+    /** Is event ticketed */
     ticketed: boolean;
+    /** Is event RSVP */
     rsvp: boolean;
+    /** Is event external */
     external: boolean;
   }>;
 }
@@ -663,7 +666,10 @@ export const ShortDescription = React.forwardRef<
  */
 export interface DescriptionProps {
   /** Custom render function */
-  children?: AsChildChildren<{ description: RichContent }>;
+  children?: AsChildChildren<{
+    /** Event description in rich content format */
+    description: RichContent;
+  }>;
 }
 
 /**
@@ -707,7 +713,12 @@ export interface RsvpButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ slug: string; ticketed: boolean }>;
+  children?: AsChildChildren<{
+    /** Event slug */
+    slug: string;
+    /** Is event ticketed */
+    ticketed: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
@@ -772,7 +783,10 @@ export interface FacebookShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shareUrl: string }>;
+  children?: AsChildChildren<{
+    /** Facebook share URL */
+    shareUrl: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -833,7 +847,10 @@ export interface LinkedInShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shareUrl: string }>;
+  children?: AsChildChildren<{
+    /** LinkedIn share URL */
+    shareUrl: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -894,7 +911,10 @@ export interface XShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shareUrl: string }>;
+  children?: AsChildChildren<{
+    /** X (Twitter) share URL */
+    shareUrl: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -953,7 +973,10 @@ export interface AddToGoogleCalendarProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ url: string }>;
+  children?: AsChildChildren<{
+    /** Google calendar URL */
+    url: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -1015,7 +1038,10 @@ export interface AddToIcsCalendarProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ url: string }>;
+  children?: AsChildChildren<{
+    /** ICS calendar URL */
+    url: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -1079,7 +1105,12 @@ export interface OtherEventsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ events: Event[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        /** Other events */
+        events: Event[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

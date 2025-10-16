@@ -68,7 +68,10 @@ export interface LabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ label: string }>;
+  children?: AsChildChildren<{
+    /** Tag label */
+    label: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
