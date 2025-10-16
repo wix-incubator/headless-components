@@ -101,4 +101,7 @@ interface LoadOrderServiceConfigParams {
   orderNumber: string;
 }
 
-interface LoadOrderParams extends LoadOrderServiceConfigParams {}
+interface LoadOrderParams {
+  eventId: string;
+  orderNumber: string;
+}

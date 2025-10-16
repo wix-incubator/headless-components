@@ -28,8 +28,8 @@ export const formatFullDate = (
 
 export const formatMonthDayYear = (
   date: string | Date,
-  timeZone?: string,
-  locale?: Intl.LocalesArgument,
+  timeZone: string | undefined,
+  locale: Intl.LocalesArgument,
 ) =>
   new Date(date).toLocaleDateString(locale, {
     timeZone,

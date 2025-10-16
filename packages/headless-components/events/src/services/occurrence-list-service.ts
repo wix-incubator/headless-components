@@ -135,7 +135,7 @@ interface LoadOccurrenceListServiceConfigParams {
   recurringCategoryId: string | undefined;
 }
 
-interface QueryOccurrencesParams
-  extends Required<LoadOccurrenceListServiceConfigParams> {
+interface QueryOccurrencesParams {
+  recurringCategoryId: string;
   offset?: number;
 }
