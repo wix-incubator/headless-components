@@ -145,8 +145,8 @@ export function ThankYou({
                 <OrderInvoiceItemRepeater className="py-4 border-b border-foreground/10">
                   <InvoiceItemName />
                   <InvoiceItemPrice asChild className="text-sm">
-                    {({ formattedAmount }) => (
-                      <span>Price: {formattedAmount}</span>
+                    {({ formattedValue }) => (
+                      <span>Price: {formattedValue}</span>
                     )}
                   </InvoiceItemPrice>
                   <div className="flex justify-between">
@@ -178,10 +178,10 @@ export function ThankYou({
                 <div className="w-full sm:w-[40%]">
                   <div className="flex flex-col py-5 border-b border-foreground/10">
                     <OrderSubtotal asChild className="flex justify-between">
-                      {({ formattedAmount }) => (
+                      {({ formattedValue }) => (
                         <div>
                           <span>Subtotal</span>
-                          <span>{formattedAmount}</span>
+                          <span>{formattedValue}</span>
                         </div>
                       )}
                     </OrderSubtotal>
@@ -189,10 +189,10 @@ export function ThankYou({
                       asChild
                       className="flex justify-between"
                     >
-                      {({ formattedAmount, rate }) => (
+                      {({ formattedValue, rate }) => (
                         <div>
                           <span>Paid Plan Discount ({rate}%)</span>
-                          <span>-{formattedAmount}</span>
+                          <span>-{formattedValue}</span>
                         </div>
                       )}
                     </OrderPaidPlanDiscount>
@@ -200,37 +200,37 @@ export function ThankYou({
                       asChild
                       className="flex justify-between"
                     >
-                      {({ formattedAmount }) => (
+                      {({ formattedValue }) => (
                         <div>
                           <span>Coupon Discount</span>
-                          <span>-{formattedAmount}</span>
+                          <span>-{formattedValue}</span>
                         </div>
                       )}
                     </OrderCouponDiscount>
                     <OrderTax asChild className="flex justify-between">
-                      {({ rate, formattedAmount, name }) => (
+                      {({ rate, formattedValue, name }) => (
                         <div>
                           <span>
                             {name} ({rate}%)
                           </span>
-                          <span>{formattedAmount}</span>
+                          <span>{formattedValue}</span>
                         </div>
                       )}
                     </OrderTax>
                     <OrderFee asChild className="flex justify-between">
-                      {({ formattedAmount, rate }) => (
+                      {({ formattedValue, rate }) => (
                         <div>
                           <span>Ticket Service Fee ({rate}%)</span>
-                          <span>{formattedAmount}</span>
+                          <span>{formattedValue}</span>
                         </div>
                       )}
                     </OrderFee>
                   </div>
                   <OrderTotal asChild className="flex justify-between py-5">
-                    {({ formattedAmount }) => (
+                    {({ formattedValue }) => (
                       <div>
                         <span>Total</span>
-                        <span>{formattedAmount}</span>
+                        <span>{formattedValue}</span>
                       </div>
                     )}
                   </OrderTotal>

@@ -25,7 +25,7 @@ export async function thankYouPageLoader({
     throw new Error('Event slug is required');
   }
 
-  const eventServiceConfigResult = await loadEventServiceConfig(slug);
+  const eventServiceConfigResult = await loadEventServiceConfig({ slug });
 
   if (eventServiceConfigResult.type === 'notFound') {
     throw new Response('Not Found', { status: 404 });
@@ -36,7 +36,7 @@ export async function thankYouPageLoader({
   const eventId = eventServiceConfigResult.config.event._id!;
 
   const orderServiceConfig = orderNumber
-    ? await loadOrderServiceConfig(eventId, orderNumber)
+    ? await loadOrderServiceConfig({ eventId, orderNumber })
     : undefined;
 
   return {

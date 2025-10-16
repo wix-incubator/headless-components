@@ -208,22 +208,22 @@ function TicketDefinition() {
             )}
           </TicketDefinitionPricingRange>
           <TicketDefinitionTax asChild>
-            {({ name, rate, included, taxAmount, formattedTaxAmount }) => (
+            {({ name, rate, included, taxValue, formattedTaxValue }) => (
               <span>
                 {included
                   ? `${name} included`
-                  : taxAmount === 0
+                  : taxValue === 0
                     ? `+${rate}% ${name}`
-                    : `+${formattedTaxAmount} ${name}`}
+                    : `+${formattedTaxValue} ${name}`}
               </span>
             )}
           </TicketDefinitionTax>
           <TicketDefinitionFee asChild>
-            {({ amount, formattedAmount }) => (
+            {({ value, formattedValue }) => (
               <span>
-                {amount === 0
+                {value === 0
                   ? `+Ticket service fee`
-                  : `+${formattedAmount} ticket service fee`}
+                  : `+${formattedValue} ticket service fee`}
               </span>
             )}
           </TicketDefinitionFee>
@@ -235,17 +235,17 @@ function TicketDefinition() {
                   <PricingOptionName />
                   <PricingOptionPricing />
                   <PricingOptionTax asChild>
-                    {({ name, included, formattedTaxAmount }) => (
+                    {({ name, included, formattedTaxValue }) => (
                       <span>
                         {included
                           ? `${name} included`
-                          : `+${formattedTaxAmount} ${name}`}
+                          : `+${formattedTaxValue} ${name}`}
                       </span>
                     )}
                   </PricingOptionTax>
                   <PricingOptionFee asChild>
-                    {({ formattedAmount }) => (
-                      <span>{`+${formattedAmount} ticket service fee`}</span>
+                    {({ formattedValue }) => (
+                      <span>{`+${formattedValue} ticket service fee`}</span>
                     )}
                   </PricingOptionFee>
                 </div>
