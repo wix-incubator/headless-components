@@ -39,7 +39,7 @@ export interface RootProps {
  *   return (
  *     <ScheduleItemsGroup.Root itemsGroup={itemsGroup}>
  *       <ScheduleItemsGroup.DateLabel />
- *       <ScheduleItemsGroup.Items emptyState={<div>No schedule items available</div>}>
+ *       <ScheduleItemsGroup.Items>
  *         <ScheduleItemsGroup.ItemRepeater>
  *           <ScheduleItem.Name />
  *           <ScheduleItem.TimeSlot />
@@ -90,7 +90,6 @@ export interface DateLabelProps {
 
 /**
  * Displays the date label for a schedule group (e.g., "Mon, 07 Jul").
- * Must be used within a ScheduleItemsGroup.Root component.
  *
  * @component
  * @example

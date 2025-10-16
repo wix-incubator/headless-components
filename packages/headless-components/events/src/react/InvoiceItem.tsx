@@ -26,19 +26,25 @@ export interface RootProps {
 }
 
 /**
- * InvoiceItem Root core component that provides invoice item service context.
- * Must be used as the top-level component for invoice item functionality.
+ * Root container that provides invoice item service context to all child components.
+ * Must be used as the top-level InvoiceItem component.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * <InvoiceItem.Root invoiceItem={invoiceItem}>
- *   <InvoiceItem.Name />
- *   <InvoiceItem.Price />
- *   <InvoiceItem.Quantity />
- *   <InvoiceItem.Total />
- * </InvoiceItem.Root>
+ * import { InvoiceItem } from '@wix/events/components';
+ *
+ * function InvoiceItemComponent({ invoiceItem }) {
+ *   return (
+ *     <InvoiceItem.Root invoiceItem={invoiceItem}>
+ *       <InvoiceItem.Name />
+ *       <InvoiceItem.Price />
+ *       <InvoiceItem.Quantity />
+ *       <InvoiceItem.Total />
+ *     </InvoiceItem.Root>
+ *   );
+ * }
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {

@@ -185,7 +185,10 @@ export interface SlugProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ slug: string }>;
+  children?: AsChildChildren<{
+    /** Event slug */
+    slug: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -292,9 +295,13 @@ export interface ImageProps
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Image source URL */
     src: string;
+    /** Image width */
     width?: number;
+    /** Image height */
     height?: number;
+    /** Image alt text */
     alt: string;
   }>;
 }
@@ -350,7 +357,10 @@ export interface TitleProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ title: string }>;
+  children?: AsChildChildren<{
+    /** Event title */
+    title: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -410,13 +420,21 @@ export interface DateProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Event start date, null if TBD */
     startDate: Date | null;
+    /** Event end date, null if TBD */
     endDate: Date | null;
+    /** Event time zone ID, null if TBD */
     timeZoneId: string | null;
+    /** Whether the event date and time is TBD */
     dateAndTimeTbd: boolean;
+    /** Message to display if the event date and time is TBD */
     dateAndTimeTbdMessage: string | null;
+    /** Whether to hide the end date */
     hideEndDate: boolean;
+    /** Whether to show the time zone */
     showTimeZone: boolean;
+    /** Formatted event date */
     formattedDate: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -507,8 +525,11 @@ export interface LocationProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Formatted event location */
     formattedLocation: string;
+    /** Event location latitude (null if TBD) */
     latitude: number | null;
+    /** Event location longitude (null if TBD) */
     longitude: number | null;
   }>;
   /** CSS classes to apply to the default element */
@@ -579,7 +600,10 @@ export interface ShortDescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shortDescription: string }>;
+  children?: AsChildChildren<{
+    /** Event short description */
+    shortDescription: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

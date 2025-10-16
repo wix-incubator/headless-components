@@ -129,7 +129,7 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 /**
  * Props for the PricingOption Pricing component.
  */
-interface PricingProps {
+export interface PricingProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */

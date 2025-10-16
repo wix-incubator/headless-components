@@ -9,7 +9,7 @@ enum TestIds {
 }
 
 /**
- * Props for the Tag Root component.
+ * Props for the ScheduleItemTag Root component.
  */
 export interface RootProps {
   /** Tag data */
@@ -23,7 +23,7 @@ export interface RootProps {
 }
 
 /**
- * Root container that provides tag context to all child components.
+ * Root container that provides schedule item tag context to all child components.
  * Must be used as the top-level ScheduleItemTag component.
  *
  * @order 1
@@ -32,7 +32,7 @@ export interface RootProps {
  * ```tsx
  * import { ScheduleItemTag } from '@wix/events/components';
  *
- * function TagComponent({ tag }) {
+ * function ScheduleItemTagComponent({ tag }) {
  *   return (
  *     <ScheduleItemTag.Root tag={tag}>
  *       <ScheduleItemTag.Label />
@@ -62,7 +62,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 });
 
 /**
- * Props for the Tag Label component.
+ * Props for the ScheduleItemTag Label component.
  */
 export interface LabelProps {
   /** Whether to render as a child component */
@@ -74,7 +74,7 @@ export interface LabelProps {
 }
 
 /**
- * Displays the tag label.
+ * Displays the schedule item tag label.
  *
  * @component
  * @example

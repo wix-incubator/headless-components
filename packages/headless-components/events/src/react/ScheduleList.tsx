@@ -252,9 +252,9 @@ export interface GroupRepeaterProps {
  * @example
  * ```tsx
  * <ScheduleList.GroupRepeater>
- *   <ScheduleItemsGroup.GroupDateLabel />
- *   <ScheduleItemsGroup.GroupItems>
- *     <ScheduleItemsGroup.GroupItemRepeater>
+ *   <ScheduleItemsGroup.DateLabel />
+ *   <ScheduleItemsGroup.Items>
+ *     <ScheduleItemsGroup.ItemRepeater>
  *       <ScheduleItem.Name />
  *       <ScheduleItem.TimeSlot />
  *       <ScheduleItem.Duration />
@@ -265,8 +265,8 @@ export interface GroupRepeaterProps {
  *           <ScheduleItemTag.Label />
  *         </ScheduleItem.TagRepeater>
  *       </ScheduleItem.Tags>
- *     </ScheduleItemsGroup.GroupItemRepeater>
- *   </ScheduleItemsGroup.GroupItems>
+ *     </ScheduleItemsGroup.ItemRepeater>
+ *   </ScheduleItemsGroup.Items>
  * </ScheduleList.GroupRepeater>
  * ```
  */

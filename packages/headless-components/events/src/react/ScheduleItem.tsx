@@ -95,7 +95,7 @@ export interface NameProps {
  *
  * // asChild with primitive
  * <ScheduleItem.Name asChild>
- *   <h2 className="font-bold text-lg"/>
+ *   <h2 className="font-bold text-lg" />
  * </ScheduleItem.Name>
  *
  * // asChild with react component
@@ -161,7 +161,7 @@ export interface TimeSlotProps {
  *
  * // asChild with primitive
  * <ScheduleItem.TimeSlot asChild>
- *   <div className="text-gray-600"/>
+ *   <div className="text-gray-600" />
  * </ScheduleItem.TimeSlot>
  *
  * // asChild with react component
@@ -217,7 +217,7 @@ export interface DurationProps {
 }
 
 /**
- * Displays the schedule item duration information.
+ * Displays the schedule item duration.
  *
  * @component
  * @example
@@ -227,7 +227,7 @@ export interface DurationProps {
  *
  * // asChild with primitive
  * <ScheduleItem.Duration asChild>
- *   <div className="text-sm text-gray-500"/>
+ *   <div className="text-sm text-gray-500" />
  * </ScheduleItem.Duration>
  *
  * // asChild with react component
@@ -274,7 +274,7 @@ export interface DescriptionProps {
 }
 
 /**
- * Displays the schedule item description.
+ * Provides the schedule item description. RicosViewer should be used to render the description.
  *
  * @component
  * @example
@@ -322,7 +322,7 @@ export interface StageProps {
 }
 
 /**
- * Displays the schedule item stage information.
+ * Displays the schedule item stage.
  *
  * @component
  * @example
@@ -332,7 +332,7 @@ export interface StageProps {
  *
  * // asChild with primitive
  * <ScheduleItem.Stage asChild>
- *   <span className="text-blue-600 font-medium"/>
+ *   <span className="text-blue-600 font-medium" />
  * </ScheduleItem.Stage>
  *
  * // asChild with react component

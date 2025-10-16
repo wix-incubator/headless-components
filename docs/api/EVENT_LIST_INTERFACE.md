@@ -69,7 +69,6 @@ interface EventsProps {
 ### EventList.EventRepeater
 
 Repeater component that renders [Event.Root](./EVENT_INTERFACE.md#eventroot) for each event.
-Note: Repeater components do NOT support asChild as per architecture rules.
 
 **Props**
 
