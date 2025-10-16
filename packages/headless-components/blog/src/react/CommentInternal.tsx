@@ -3,6 +3,12 @@ import type { CommentWithResolvedFields } from '../services/blog-post-comments-s
 
 const TopLevelCommentContext = React.createContext<CommentWithResolvedFields | null>(null);
 
+/**
+ * Hook to access the top-level comment context.
+ * Used internally for reply functionality to reference the root comment.
+ *
+ * @internal
+ */
 export function useTopLevelCommentContext(): CommentWithResolvedFields {
   const context = React.useContext(TopLevelCommentContext);
 
@@ -20,6 +26,12 @@ type TopLevelCommentRootProps = {
   children: React.ReactNode;
 };
 
+/**
+ * Internal component that provides top-level comment context.
+ * Used by the CommentRepeater to establish the root comment for nested replies.
+ *
+ * @internal
+ */
 export const TopLevelCommentRoot = (props: TopLevelCommentRootProps) => {
   const { comment, children } = props;
 

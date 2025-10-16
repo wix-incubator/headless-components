@@ -18,6 +18,10 @@ type PostCommentsSectionProps = {
   uiLocale: string;
 };
 
+/**
+ * Main comments section component that displays all comments for a blog post.
+ * Includes sort controls, comment creation form, and load more functionality.
+ */
 export default function PostCommentsSection({
   blogPostServiceConfig,
   uiLocale,

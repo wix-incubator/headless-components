@@ -21,6 +21,11 @@ interface CommentFormProps {
   withMemberActions?: boolean;
 }
 
+/**
+ * Unified form component for creating both top-level comments and replies.
+ * Displays member avatar and provides submit/cancel actions.
+ * Switches between CreateCommentForm and CommentReplyForm based on the reply prop.
+ */
 export function CommentForm({
   reply,
   onCommentAdded,

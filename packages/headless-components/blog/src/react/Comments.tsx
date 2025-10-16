@@ -22,6 +22,13 @@ interface CommentsContextValue {
 
 const CommentsContext = React.createContext<CommentsContextValue | null>(null);
 
+/**
+ * Hook to access the comments context.
+ * Must be used within a Blog.Post.Comments.Root component.
+ *
+ * @returns The comments context containing comments list and loading state
+ * @throws Error if used outside of Blog.Post.Comments.Root
+ */
 export function useCommentsContext(): CommentsContextValue {
   const context = React.useContext(CommentsContext);
   if (!context) {
@@ -48,9 +55,7 @@ export interface BlogPostCommentsRootProps {
 /**
  * Root container for blog post comments that provides comments context to all child components.
  * Uses IntersectionObserver for lazy loading - comments are loaded when the container becomes visible.
- * Follows Container Level pattern from architecture rules.
  *
- * @order 1
  * @component
  * @example
  * ```tsx
@@ -59,7 +64,7 @@ export interface BlogPostCommentsRootProps {
  * function PostPage() {
  *   return (
  *     <Blog.Post.Root blogPostServiceConfig={blogPostServiceConfig}>
- *       <Blog.Post.Comments.Root emptyState={<div>No comments yet</div>}>
+ *       <Blog.Post.Comments.Root>
  *         <Blog.Post.Comments.CommentRepeater>
  *           <Blog.Post.Comment.Author />
  *           <Blog.Post.Comment.Content />

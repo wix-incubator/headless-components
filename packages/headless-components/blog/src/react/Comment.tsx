@@ -22,6 +22,13 @@ interface CommentContextValue {
 
 const CommentContext = React.createContext<CommentContextValue | null>(null);
 
+/**
+ * Hook to access the current comment context.
+ * Must be used within a Blog.Post.Comment.Root or Blog.Post.Comment.ReplyRepeater component.
+ *
+ * @returns The comment context containing comment data, replies, and delete function
+ * @throws Error if used outside of Blog.Post.Comment.Root
+ */
 export function useCommentContext(): CommentContextValue {
   const context = React.useContext(CommentContext);
   if (!context) {
@@ -60,6 +67,20 @@ type RootProps = {
   className?: string;
 };
 
+/**
+ * Root component for rendering a single comment.
+ * Provides comment context to all child components.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Blog.Post.Comment.Root comment={comment}>
+ *   <Blog.Post.Comment.Author />
+ *   <Blog.Post.Comment.Content />
+ *   <Blog.Post.Comment.CommentDate />
+ * </Blog.Post.Comment.Root>
+ * ```
+ */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => {
   const { comment, children, className, asChild } = props;
 
@@ -147,6 +168,21 @@ export interface AuthorProps {
     | React.ReactNode;
 }
 
+/**
+ * Displays the comment author's name.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comment.Author />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comment.Author asChild>
+ *   {({ author }) => author?.profile?.nickname ?? 'Unknown'} />}
+ * </Blog.Post.Comment.Author>
+ * ```
+ */
 export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) => {
   const { asChild, children, className } = props;
   const { comment } = useCommentContext();
@@ -180,6 +216,24 @@ export interface CommentDateProps {
   children?: AsChildChildren<{ commentDate: string }> | React.ReactNode;
 }
 
+/**
+ * Displays the comment date in a formatted way.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comment.CommentDate />
+ *
+ * // With custom locale
+ * <Blog.Post.Comment.CommentDate locale="en-US" />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comment.CommentDate asChild>
+ *   {({ commentDate }) => <RelativeDate date={commentDate} />}
+ * </Blog.Post.Comment.CommentDate>
+ * ```
+ */
 export const CommentDate = React.forwardRef<HTMLElement, CommentDateProps>((props, ref) => {
   const { asChild, children, className, locale } = props;
   const { comment } = useCommentContext();
@@ -226,6 +280,23 @@ export interface StatusProps {
     | React.ReactNode;
 }
 
+/**
+ * Displays or provides access to the comment status (PUBLISHED, PENDING, DELETED, etc.).
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comment.Status />
+ *
+ * // Conditional rendering with asChild
+ * <Blog.Post.Comment.Status asChild>
+ *   {({ status, isPending }) => (
+ *     status === 'PENDING' ? <span>Awaiting approval</span> : null
+ *   )}
+ * </Blog.Post.Comment.Status>
+ * ```
+ */
 export const Status = React.forwardRef<HTMLElement, StatusProps>((props, ref) => {
   const { asChild, children, className } = props;
   const { comment } = useCommentContext();
@@ -306,6 +377,21 @@ export interface ReplyRepeaterProps {
   children: React.ReactNode;
 }
 
+/**
+ * Repeater component that renders all replies to a comment.
+ * Must be used within Blog.Post.Comment.Replies.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Blog.Post.Comment.Replies>
+ *   <Blog.Post.Comment.ReplyRepeater>
+ *     <Blog.Post.Comment.Author />
+ *     <Blog.Post.Comment.Content />
+ *   </Blog.Post.Comment.ReplyRepeater>
+ * </Blog.Post.Comment.Replies>
+ * ```
+ */
 export const ReplyRepeater = React.forwardRef<HTMLElement, ReplyRepeaterProps>((props, _ref) => {
   const { children } = props;
   const { comment } = useCommentContext();
@@ -329,6 +415,29 @@ ReplyRepeater.displayName = 'Blog.Post.Comment.ReplyRepeater';
 
 export interface ParentCommentProps extends Omit<RootProps, 'comment'> {}
 
+/**
+ * Displays the parent comment when the current comment is a reply to another reply.
+ * Only renders if the parent is not a top-level comment.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comment.ParentComment>
+ *   <Blog.Post.Comment.Author />
+ *   <Blog.Post.Comment.Content />
+ * </Blog.Post.Comment.ParentComment>
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comment.ParentComment asChild>
+ *   {({ comment: parentComment }) => (
+ *     <div>
+ *       Replying to: <CommentPreview comment={parentComment} />
+ *     </div>
+ *   )}
+ * </Blog.Post.Comment.ParentComment>
+ * ```
+ */
 export const ParentComment = React.forwardRef<HTMLDivElement, ParentCommentProps>((props, ref) => {
   const { children, asChild, className } = props;
   const { comments } = useCommentsContext();
@@ -377,6 +486,26 @@ export interface LoadMoreRepliesProps {
     | React.ReactNode;
 }
 
+/**
+ * Button to load more replies when there are additional pages.
+ * Only renders when there are more replies to load.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comment.LoadMoreReplies />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comment.LoadMoreReplies asChild>
+ *   {({ hasNextPage, isLoading, loadNextPage }) => (
+ *     <button onClick={loadNextPage} disabled={isLoading}>
+ *       {isLoading ? 'Loading...' : 'Show more replies'}
+ *     </button>
+ *   )}
+ * </Blog.Post.Comment.LoadMoreReplies>
+ * ```
+ */
 export const LoadMoreReplies = React.forwardRef<HTMLElement, LoadMoreRepliesProps>((props, ref) => {
   const { asChild, children, className, loadingState } = props;
   const { comment } = useCommentContext();

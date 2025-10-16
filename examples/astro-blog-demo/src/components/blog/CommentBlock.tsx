@@ -26,6 +26,11 @@ interface CommentBlockProps {
   uiLocale: string;
 }
 
+/**
+ * Displays a single comment with author information, content, date, and actions.
+ * Handles nested replies and shows parent comment context when replying to a reply.
+ * Includes delete functionality for comment owners.
+ */
 export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
   ({ children, className, uiLocale, ...props }, ref) => {
     const { isAuthenticated, member } = useMember();
@@ -140,6 +145,10 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
   }
 );
 
+/**
+ * Internal component that creates a clickable link to scroll to a parent comment.
+ * Adds a smooth scroll animation and visual highlight effect when clicked.
+ */
 function ScrollAnchor({
   targetHtmlId,
   children,

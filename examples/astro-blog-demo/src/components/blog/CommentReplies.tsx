@@ -18,6 +18,10 @@ interface CommentReplyActionProps {
   onCommentAdded?: () => void;
 }
 
+/**
+ * Manages the display of comment replies with expand/collapse functionality.
+ * Handles loading more replies and provides a reply action button.
+ */
 export function CommentReplies({ uiLocale }: { uiLocale: string }) {
   const { replies } = Comment.useCommentContext();
   const hasReplies = useMemo(() => replies.length > 0, [replies]);
@@ -86,6 +90,10 @@ export function CommentReplies({ uiLocale }: { uiLocale: string }) {
   );
 }
 
+/**
+ * Internal component that renders a reply button and the reply form.
+ * Toggles the reply form visibility and auto-focuses the textarea when opened.
+ */
 function ReplyAction({ onCommentAdded }: CommentReplyActionProps) {
   const [isReplyOpen, setIsReplyOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);

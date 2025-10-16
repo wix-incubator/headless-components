@@ -6,6 +6,10 @@ interface CommentContentProps {
   asPlainText?: boolean;
 }
 
+/**
+ * Displays comment content using RicosViewer for rich text rendering.
+ * Can optionally display as plain text.
+ */
 export function CommentContent({
   className,
   asPlainText = false,

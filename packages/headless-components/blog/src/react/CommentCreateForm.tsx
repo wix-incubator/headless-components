@@ -270,6 +270,21 @@ export interface CreateCommentFormInputProps {
     | React.ReactNode;
 }
 
+/**
+ * Textarea input component for the comment form.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comments.CreateCommentForm.Input />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comments.CreateCommentForm.Input asChild>
+ *   <Textarea placeholder="Write a comment" rows={3} />
+ * </Blog.Post.Comments.CreateCommentForm.Input>
+ * ```
+ */
 export const Input = React.forwardRef<HTMLElement, CreateCommentFormInputProps>((props, ref) => {
   const { asChild, children, className } = props;
   const { commentText, setCommentText, isLoading, maxLength, htmlId } =
@@ -377,6 +392,22 @@ export interface CreateCommentFormSubmitButtonProps {
     | React.ReactNode;
 }
 
+/**
+ * Submit button for the comment form.
+ * Automatically disabled when the form is empty or submitting.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comments.CreateCommentForm.SubmitButton />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comments.CreateCommentForm.SubmitButton asChild>
+ *   <Button>Post comment</Button>
+ * </Blog.Post.Comments.CreateCommentForm.SubmitButton>
+ * ```
+ */
 export const SubmitButton = React.forwardRef<HTMLElement, CreateCommentFormSubmitButtonProps>(
   (props, ref) => {
     const { asChild, children, className, loadingState } = props;
@@ -429,6 +460,26 @@ export interface CreateCommentFormCancelButtonProps {
     | React.ReactNode;
 }
 
+/**
+ * Cancel button for the comment form.
+ * Clears the form input when clicked.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comments.CreateCommentForm.CancelButton />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comments.CreateCommentForm.CancelButton asChild>
+ *   {({ handleCancel }) => (
+ *     <Button variant="ghost" onClick={handleCancel}>
+ *       Cancel
+ *     </Button>
+ *   )}
+ * </Blog.Post.Comments.CreateCommentForm.CancelButton>
+ * ```
+ */
 export const CancelButton = React.forwardRef<HTMLElement, CreateCommentFormCancelButtonProps>(
   (props, ref) => {
     const { asChild, children, className } = props;

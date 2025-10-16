@@ -5,6 +5,9 @@ import { MemberAvatar, type MemberAvatarProps } from "./MemberAvatar";
 interface CommentAuthorAvatarProps
   extends Pick<MemberAvatarProps, "className" | "size"> {}
 
+/**
+ * Displays the comment author's avatar using the Blog.Post.Comment.Author component.
+ */
 export const CommentAuthorAvatar = React.forwardRef<
   HTMLElement,
   CommentAuthorAvatarProps

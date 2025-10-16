@@ -400,6 +400,26 @@ export interface CancelButtonProps {
     | React.ReactNode;
 }
 
+/**
+ * Cancel button for the reply form.
+ * Clears the form input when clicked.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comment.CommentReplyForm.CancelButton />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comment.CommentReplyForm.CancelButton asChild>
+ *   {({ handleCancel }) => (
+ *     <Button variant="ghost" onClick={handleCancel}>
+ *       Cancel
+ *     </Button>
+ *   )}
+ * </Blog.Post.Comment.CommentReplyForm.CancelButton>
+ * ```
+ */
 export const CancelButton = React.forwardRef<HTMLElement, CancelButtonProps>((props, ref) => {
   const { asChild, children, className } = props;
   const { replyText, isLoading, setReplyText } = useCreateReplyFormContext();
@@ -455,6 +475,22 @@ export interface SubmitButtonProps {
     | React.ReactNode;
 }
 
+/**
+ * Submit button for the reply form.
+ * Automatically disabled when the form is empty or submitting.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default rendering
+ * <Blog.Post.Comment.CommentReplyForm.SubmitButton />
+ *
+ * // Custom rendering with asChild
+ * <Blog.Post.Comment.CommentReplyForm.SubmitButton asChild>
+ *   <Button>Post reply</Button>
+ * </Blog.Post.Comment.CommentReplyForm.SubmitButton>
+ * ```
+ */
 export const SubmitButton = React.forwardRef<HTMLElement, SubmitButtonProps>((props, ref) => {
   const { asChild, children, className, loadingState } = props;
   const { replyText, isLoading } = useCreateReplyFormContext();
