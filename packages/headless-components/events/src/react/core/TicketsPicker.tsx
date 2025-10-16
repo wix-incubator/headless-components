@@ -2,6 +2,7 @@ import { useService, WixServices } from '@wix/services-manager-react';
 import { createServicesMap } from '@wix/services-manager';
 import React from 'react';
 import {
+  getTicketReservationTotals,
   TicketDefinitionListService,
   TicketDefinitionListServiceDefinition,
   type TicketDefinitionListServiceConfig,
@@ -128,6 +129,8 @@ export function TicketDefinitionRepeater(
 export interface TotalsProps {
   /** Render prop function */
   children: (props: TotalsRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TotalsRenderProps {
@@ -165,10 +168,19 @@ export interface TotalsRenderProps {
  * @component
  */
 export function Totals(props: TotalsProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
   const ticketDefinitionListService = useService(
     TicketDefinitionListServiceDefinition,
   );
-  const eventService = useService(EventServiceDefinition);
+
+  const event = eventService.event.get();
+  const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
+  const selectedQuantities =
+    ticketDefinitionListService.selectedQuantities.get();
+
+  if (!ticketDefinitions.length) {
+    return null;
+  }
 
   const {
     total,
@@ -180,14 +192,13 @@ export function Totals(props: TotalsProps): React.ReactNode {
     formattedSubtotal,
     formattedTax,
     formattedFee,
-  } = ticketDefinitionListService.totals.get();
-  const ticketDefinitions = ticketDefinitionListService.ticketDefinitions.get();
-  const event = eventService.event.get();
+  } = getTicketReservationTotals(
+    event,
+    ticketDefinitions,
+    selectedQuantities,
+    props.locale,
+  );
   const taxSettings = event.registration?.tickets?.taxSettings;
-
-  if (!ticketDefinitions.length) {
-    return null;
-  }
 
   return props.children({
     total,

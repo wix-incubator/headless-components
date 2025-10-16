@@ -2,12 +2,11 @@ import { defineService, implementService } from '@wix/services-definitions';
 import {
   SignalsServiceDefinition,
   type Signal,
-  type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
 import { ticketDefinitionsV2 } from '@wix/events';
 import { type TicketDefinition } from './ticket-definition-service.js';
 import { CheckoutServiceDefinition } from './checkout-service.js';
-import { type Event, EventServiceDefinition } from './event-service.js';
+import { type Event } from './event-service.js';
 import {
   getTicketDefinitionTax,
   getTicketDefinitionFee,
@@ -18,7 +17,6 @@ import { formatPrice, roundPrice } from '../utils/price.js';
 export interface TicketDefinitionListServiceAPI {
   ticketDefinitions: Signal<TicketDefinition[]>;
   selectedQuantities: Signal<TicketReservationQuantity[]>;
-  totals: ReadOnlySignal<TicketReservationTotals>;
   setQuantity: (params: {
     ticketDefinitionId: string;
     quantity?: number;
@@ -55,7 +53,6 @@ export interface TicketReservationTotals {
 
 export interface TicketDefinitionListServiceConfig {
   ticketDefinitions: TicketDefinition[];
-  locale: Intl.LocalesArgument;
 }
 
 export const TicketDefinitionListServiceDefinition = defineService<
@@ -69,7 +66,6 @@ export const TicketDefinitionListService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
       const checkoutService = getService(CheckoutServiceDefinition);
-      const eventService = getService(EventServiceDefinition);
 
       const ticketDefinitions = signalsService.signal<TicketDefinition[]>(
         config.ticketDefinitions,
@@ -77,15 +73,6 @@ export const TicketDefinitionListService =
       const selectedQuantities = signalsService.signal<
         TicketReservationQuantity[]
       >([]);
-
-      const totals = signalsService.computed<TicketReservationTotals>(() =>
-        getTicketReservationTotals(
-          eventService.event.get(),
-          ticketDefinitions.get(),
-          selectedQuantities.get(),
-          config.locale,
-        ),
-      );
 
       const findTicketDefinition = (ticketDefinitionId: string) =>
         ticketDefinitions
@@ -165,7 +152,6 @@ export const TicketDefinitionListService =
       return {
         ticketDefinitions,
         selectedQuantities,
-        totals,
         setQuantity,
         getMaxQuantity,
         getCurrentQuantity,
@@ -177,7 +163,6 @@ export const TicketDefinitionListService =
 
 export async function loadTicketDefinitionListServiceConfig({
   eventId,
-  locale,
 }: LoadTicketDefinitionListServiceConfigParams): Promise<TicketDefinitionListServiceConfig> {
   // @ts-expect-error
   const response = await ticketDefinitionsV2.queryAvailableTicketDefinitions({
@@ -193,10 +178,10 @@ export async function loadTicketDefinitionListServiceConfig({
   });
   const ticketDefinitions = response.ticketDefinitions ?? [];
 
-  return { ticketDefinitions, locale };
+  return { ticketDefinitions };
 }
 
-function getTicketReservationTotals(
+export function getTicketReservationTotals(
   event: Event,
   ticketDefinitions: TicketDefinition[],
   selectedQuantities: TicketReservationQuantity[],
@@ -304,5 +289,4 @@ function getTicketReservationTotals(
 
 interface LoadTicketDefinitionListServiceConfigParams {
   eventId: string;
-  locale?: Intl.LocalesArgument;
 }
