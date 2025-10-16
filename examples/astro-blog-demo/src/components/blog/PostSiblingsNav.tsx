@@ -1,7 +1,7 @@
 import { PostTitle } from "@/components/ui/blog/PostTitle";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Blog } from "@wix/headless-blog/react";
+import { Blog } from "@wix/blog/components";
 import { useNavigation } from "./NavigationContext";
 
 export interface PostSiblingsNavProps {
@@ -28,7 +28,7 @@ export default function PostSiblingsNav({
               className="text-start"
             />
           </Blog.Post.SiblingPosts.Older>
-          <Separator className="my-2 md:hidden first:hidden last:hidden" />
+          <Separator className="my-2 first:hidden last:hidden md:hidden" />
           <Blog.Post.SiblingPosts.Newer>
             <SiblingPostLink
               label="Next"

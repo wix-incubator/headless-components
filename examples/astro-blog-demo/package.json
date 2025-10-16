@@ -25,7 +25,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
-    "@wix/astro": "^1.0.30",
+    "@wix/astro": "^1.0.31",
     "@wix/headless-blog": "workspace:*",
     "@wix/headless-components": "workspace:*",
     "@wix/headless-pricing-plans": "workspace:*",
@@ -43,7 +43,7 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.6.3",
+    "react-router-dom": "^7.9.3",
     "sass-embedded": "^1.89.0",
     "tailwind-merge": "^3.3.1",
     "typescript": "^5.8.3"

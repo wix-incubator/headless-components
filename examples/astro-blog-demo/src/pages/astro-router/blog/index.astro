@@ -1,16 +1,15 @@
 ---
-import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
-import FeedPage from "@/components/blog/FeedPage";
 import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
   loadBlogFeedServiceConfig,
 } from "@wix/blog/services";
 
-import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { SEO } from "@wix/seo/components";
+import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { ClientRouter } from "astro:transitions";
 
+import RouteFeed from "@/components/blog/RouteFeed";
 import "@/styles/global.css";
 
 export const prerender = false;
@@ -71,22 +70,15 @@ const customCategoriesToPrepend = [
     <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
   </head>
   <body>
-    <div class="min-h-screen bg-background">
-      <div class="mx-auto max-w-6xl px-6 py-12">
-        <BlogCategoriesSection
-          pathname={Astro.url.pathname}
-          categoryPageBaseUrl="/astro-router/blog/category/"
-          blogCategoriesServiceConfig={blogCategoriesServiceConfig}
-          customCategoriesToPrepend={customCategoriesToPrepend}
-        />
-        <FeedPage
-          client:load
-          blogFeedServiceConfig={blogFeedServiceConfig}
-          postPageBaseUrl="/astro-router/blog/post/"
-          categoryPageBaseUrl="/astro-router/blog/category/"
-          uiLocale="en-US"
-        />
-      </div>
-    </div>
+    <RouteFeed
+      client:load
+      pathname={Astro.url.pathname}
+      blogCategoriesServiceConfig={blogCategoriesServiceConfig}
+      customCategoriesToPrepend={customCategoriesToPrepend}
+      blogFeedServiceConfig={blogFeedServiceConfig}
+      postPageBaseUrl="/astro-router/blog/post/"
+      categoryPageBaseUrl="/astro-router/blog/category/"
+      uiLocale="en-US"
+    />
   </body>
 </html>

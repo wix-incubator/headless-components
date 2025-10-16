@@ -26,7 +26,7 @@ export const SeparatedItems = React.forwardRef<
   return (
     <div
       className={cn(
-        'flex items-center gap-x-1 sm:gap-x-2 [&>*:not(:first-child)]:before:mr-1 [&>*:not(:first-child)]:before:content-["•"] sm:[&>*:not(:first-child)]:before:mr-2',
+        'flex items-center gap-x-1 sm:gap-x-2 [&>*:not(:first-child)]:before:me-1 [&>*:not(:first-child)]:before:content-["•"] sm:[&>*:not(:first-child)]:before:me-2',
         className
       )}
       ref={ref}

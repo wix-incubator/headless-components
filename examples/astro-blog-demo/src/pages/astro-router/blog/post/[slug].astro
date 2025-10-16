@@ -1,5 +1,4 @@
 ---
-import RecentPostsSection from "@/components/blog/RecentPostsSection";
 import {
   loadBlogFeedServiceConfig,
   loadBlogPostServiceConfig,
@@ -7,7 +6,7 @@ import {
 import { SEO } from "@wix/seo/components";
 import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 import { ClientRouter } from "astro:transitions";
-import { PostPage } from "./PostPageWithProviders";
+import RoutePost from "./RoutePostWithProviders";
 
 import "@/styles/global.css";
 
@@ -56,26 +55,14 @@ const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
     <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
   </head>
   <body>
-    <div class="min-h-screen bg-background">
-      <div class="px-6 py-12">
-        <div class="mx-auto mb-14 max-w-3xl">
-          <PostPage
-            client:load
-            blogPostServiceConfig={blogPostServiceConfig}
-            feedPageHref="/astro-router/blog/"
-            categoryPageBaseUrl="/astro-router/blog/category/"
-            postPageBaseUrl="/astro-router/blog/post/"
-            uiLocale="en-US"
-          />
-        </div>
-        <RecentPostsSection
-          client:load
-          recentPostsServiceConfig={recentPostsServiceConfig}
-          postPageBaseUrl="/astro-router/blog/post/"
-          categoryPageBaseUrl="/astro-router/blog/category/"
-          uiLocale="en-US"
-        />
-      </div>
-    </div>
+    <RoutePost
+      client:load
+      blogPostServiceConfig={blogPostServiceConfig}
+      recentPostsServiceConfig={recentPostsServiceConfig}
+      feedPageHref="/astro-router/blog/"
+      categoryPageBaseUrl="/astro-router/blog/category/"
+      postPageBaseUrl="/astro-router/blog/post/"
+      uiLocale="en-US"
+    />
   </body>
 </html>

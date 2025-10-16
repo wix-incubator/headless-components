@@ -1,5 +1,7 @@
 import { PostCategories } from "@/components/ui/blog/PostCategories";
 import { PostExcerpt } from "@/components/ui/blog/PostExcerpt";
+import { PostPublishDate } from "@/components/ui/blog/PostPublishDate";
+import { PostReadingTime } from "@/components/ui/blog/PostReadingTime";
 import { PostTitle } from "@/components/ui/blog/PostTitle";
 import { SeparatedItems } from "@/components/ui/blog/SeparatedItems";
 import { Button } from "@/components/ui/button";
@@ -68,11 +70,8 @@ export function BlogFeedCardSideBySide({
         <PostExcerpt className="mb-4" />
 
         <SeparatedItems className="font-paragraph text-sm text-foreground/80">
-          <Blog.Post.PublishDate locale={uiLocale} />
-
-          <Blog.Post.ReadingTime asChild>
-            {({ readingTime }) => <span>{readingTime} min read</span>}
-          </Blog.Post.ReadingTime>
+          <PostPublishDate uiLocale={uiLocale} />
+          <PostReadingTime />
         </SeparatedItems>
 
         <div className="mb-0 mt-auto"></div>
@@ -140,11 +139,8 @@ export function BlogFeedCardEditorial({
       <div className="mb-0 mt-auto"></div>
 
       <SeparatedItems className="font-paragraph text-sm text-foreground/80">
-        <Blog.Post.PublishDate locale={uiLocale} />
-
-        <Blog.Post.ReadingTime asChild>
-          {({ readingTime }) => <span>{readingTime} min read</span>}
-        </Blog.Post.ReadingTime>
+        <PostPublishDate uiLocale={uiLocale} />
+        <PostReadingTime />
       </SeparatedItems>
 
       {readMoreText && (
