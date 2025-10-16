@@ -72,12 +72,12 @@ export interface PriceProps {
 }
 
 export interface PriceRenderProps {
-  /** Invoice item price amount */
-  amount: number;
+  /** Invoice item price value */
+  value: number;
   /** Invoice item price currency */
   currency: string;
-  /** Formatted invoice item price amount */
-  formattedAmount: string;
+  /** Formatted invoice item price value */
+  formattedValue: string;
 }
 
 /**
@@ -90,13 +90,13 @@ export function Price(props: PriceProps): React.ReactNode {
 
   const invoiceItem = invoiceItemService.invoiceItem.get();
   const price = invoiceItem.price!;
-  const amount = Number(price.value!);
+  const value = Number(price.value!);
   const currency = price.currency!;
 
   return props.children({
-    amount,
+    value,
     currency,
-    formattedAmount: formatPrice(amount, currency, props.locale),
+    formattedValue: formatPrice(value, currency, props.locale),
   });
 }
 
@@ -132,12 +132,12 @@ export interface TotalProps {
 }
 
 export interface TotalRenderProps {
-  /** Invoice item total amount */
-  amount: number;
+  /** Invoice item total value */
+  value: number;
   /** Invoice item total currency */
   currency: string;
-  /** Formatted invoice item total amount */
-  formattedAmount: string;
+  /** Formatted invoice item total value */
+  formattedValue: string;
 }
 
 /**
@@ -150,12 +150,12 @@ export function Total(props: TotalProps): React.ReactNode {
 
   const invoiceItem = invoiceItemService.invoiceItem.get();
   const total = invoiceItem.total!;
-  const amount = Number(total.value!);
+  const value = Number(total.value!);
   const currency = total.currency!;
 
   return props.children({
-    amount,
+    value,
     currency,
-    formattedAmount: formatPrice(amount, currency, props.locale),
+    formattedValue: formatPrice(value, currency, props.locale),
   });
 }
