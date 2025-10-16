@@ -28,6 +28,7 @@ export interface ScheduleListServiceAPI {
 
 export interface ScheduleListServiceConfig {
   items: ScheduleItem[];
+  locale?: Intl.LocalesArgument;
 }
 
 export const ScheduleListServiceDefinition = defineService<
@@ -57,7 +58,7 @@ export const ScheduleListService =
           currentTagFilters,
         );
 
-        return groupScheduleItemsByDate(filteredItems);
+        return groupScheduleItemsByDate(filteredItems, config.locale);
       });
 
       const stageNames = signalsService.computed(() => {
@@ -96,7 +97,7 @@ export const ScheduleListService =
 
 export async function loadScheduleListServiceConfig(
   eventId: string,
-  limit?: number,
+  { limit, locale }: LoadScheduleListServiceConfigParams = {},
 ): Promise<ScheduleListServiceConfig> {
   const loadAll = !limit;
   const pageSize = limit ?? 100;
@@ -121,7 +122,7 @@ export async function loadScheduleListServiceConfig(
 
   const allItems = responses.flatMap((response) => response.items || []);
 
-  return { items: allItems };
+  return { items: allItems, locale };
 }
 
 function listScheduleItems(eventId: string, limit: number, offset = 0) {
@@ -160,13 +161,20 @@ function filterScheduleItems(
   });
 }
 
-function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
+function groupScheduleItemsByDate(
+  items: ScheduleItem[],
+  locale: Intl.LocalesArgument,
+): ScheduleItemsGroup[] {
   const grouped = new Map<string, ScheduleItemsGroup>();
 
   items.forEach((item) => {
     const startDate = new Date(item.timeSlot!.start!);
     const dateKey = startDate.toDateString();
-    const formattedDate = formatShortDate(startDate);
+    const formattedDate = formatShortDate(
+      startDate,
+      item.timeSlot!.timeZoneId!,
+      locale,
+    );
 
     if (!grouped.has(dateKey)) {
       grouped.set(dateKey, {
@@ -207,4 +215,9 @@ function getAvailableTags(items: ScheduleItem[]): string[] {
   });
 
   return Array.from(tags).sort();
+}
+
+interface LoadScheduleListServiceConfigParams {
+  limit?: number;
+  locale?: Intl.LocalesArgument;
 }

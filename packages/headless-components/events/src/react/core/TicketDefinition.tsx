@@ -450,17 +450,25 @@ export interface SaleStartDateRenderProps {
  * @component
  */
 export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
+  const event = eventService.event.get();
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
+  const timeZoneId = event.dateAndTimeSettings!.timeZoneId!;
 
   if (!saleScheduled) {
     return null;
   }
 
   const startDate = new Date(ticketDefinition.salePeriod!.startDate!);
-  const startDateFormatted = formatFullDate(startDate, false, props.locale);
+  const startDateFormatted = formatFullDate(
+    startDate,
+    timeZoneId,
+    false,
+    props.locale,
+  );
 
   return props.children({ startDate, startDateFormatted });
 }
@@ -487,18 +495,26 @@ export interface SaleEndDateRenderProps {
  * @component
  */
 export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
+  const event = eventService.event.get();
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
   const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
+  const timeZoneId = event.dateAndTimeSettings!.timeZoneId!;
 
   if (saleScheduled || !ticketDefinition.salePeriod) {
     return null;
   }
 
   const endDate = new Date(ticketDefinition.salePeriod!.endDate!);
-  const endDateFormatted = formatFullDate(endDate, false, props.locale);
+  const endDateFormatted = formatFullDate(
+    endDate,
+    timeZoneId,
+    false,
+    props.locale,
+  );
 
   return props.children({ endDate, endDateFormatted, saleEnded });
 }
