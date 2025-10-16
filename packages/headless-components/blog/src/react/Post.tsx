@@ -45,8 +45,6 @@ const enum TestIds {
   blogPostContent = 'blog-post-content',
   blogPostCoverImage = 'blog-post-cover-image',
   blogPostAuthor = 'blog-post-author',
-  blogPostAuthorName = 'blog-post-author-name',
-  blogPostAuthorAvatar = 'blog-post-author-avatar',
   blogPostPublishDate = 'blog-post-publish-date',
   blogPostReadingTime = 'blog-post-reading-time',
   blogPostCategories = 'blog-post-categories',
@@ -89,21 +87,16 @@ export interface BlogPostRootProps {
  *         <Blog.Post.Content>
  *           {RicosViewer}
  *         </Blog.Post.Content>
- *         <Blog.Post.Tags>
- *           <Blog.Post.TagRepeater>
- *             <Blog.Post.Tag />
- *           </Blog.Post.TagRepeater>
- *         </Blog.Post.Tags>
- *         <Blog.Post.Categories>
- *           <Blog.Post.CategoryRepeater>
- *             <Blog.Categories.Link baseUrl="/category/" />
- *           </Blog.Post.CategoryRepeater>
- *         </Blog.Post.Categories>
- *         <Blog.Post.AuthorName />
- *         <Blog.Post.AuthorAvatar />
- *         <Blog.Post.ShareUrlToFacebook href={location.href} />
- *         <Blog.Post.ShareUrlToX href={location.href} />
- *         <Blog.Post.ShareUrlToLinkedIn href={location.href} />
+ *         <Blog.Post.TagItems>
+ *           <Blog.Post.TagItemRepeater>
+ *             <Blog.Tag.Label />
+ *           </Blog.Post.TagItemRepeater>
+ *         </Blog.Post.TagItems>
+ *         <Blog.Post.CategoryItems>
+ *           <Blog.Categories.CategoryItemRepeater>
+ *             <Blog.Category.Link baseUrl="/category/" />
+ *           </Blog.Categories.CategoryItemRepeater>
+ *         </Blog.Post.CategoryItems>
  *       </article>
  *     </Blog.Post.Root>
  *   );
@@ -174,6 +167,10 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>((props, ref
   }
 
   // Otherwise, use service to get post data
+  if (!blogPostServiceConfig) {
+    throw new Error('blogPostServiceConfig is required');
+  }
+
   return (
     <WixServices
       // key: Ensure we re-render the component when the post changes
@@ -464,7 +461,7 @@ Content.displayName = 'Blog.Post.Content';
 export interface PublishDateProps {
   asChild?: boolean;
   className?: string;
-  locale: Intl.LocalesArgument;
+  locale?: Intl.LocalesArgument;
   children?: AsChildChildren<{ publishDate: string; formattedDate: string }> | React.ReactNode;
 }
 
@@ -778,72 +775,25 @@ export const TagItemRepeater = React.forwardRef<HTMLElement, TagItemRepeaterProp
 
 TagItemRepeater.displayName = 'Blog.Post.TagRepeater';
 
-export interface AuthorNameProps {
-  asChild?: boolean;
-  className?: string;
-  children?: AsChildChildren<{ authorName: string }> | React.ReactNode;
-}
-
-export const AuthorName = React.forwardRef<HTMLElement, AuthorNameProps>((props, ref) => {
-  const { asChild, children, className } = props;
-  const { post } = usePostContext();
-
-  const owner = post?.resolvedFields?.owner;
-  if (!owner) return null;
-
-  const { authorName } = createAuthorName(owner);
-  if (!authorName) return null;
-
-  const attributes = {
-    'data-testid': TestIds.blogPostAuthorName,
-  };
-
-  return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      {...attributes}
-      customElement={children}
-      customElementProps={{
-        authorName,
-      }}
-      content={authorName}
-    >
-      <span>{authorName}</span>
-    </AsChildSlot>
-  );
-});
-
-AuthorName.displayName = 'Blog.Post.AuthorName';
-
-export interface AuthorAvatarProps {
+export interface AuthorProps {
   asChild?: boolean;
   className?: string;
   children?:
     | AsChildChildren<{
-        authorAvatarInitials: string;
-        authorAvatarUrl: string | undefined;
+        author: members.Member | null | undefined;
       }>
     | React.ReactNode;
 }
 
-export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>((props, ref) => {
+export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) => {
   const { asChild, children, className } = props;
   const { post } = usePostContext();
-  const [error, setError] = React.useState(false);
-  const onError = React.useCallback(() => setError(true), []);
-
   const owner = post?.resolvedFields?.owner;
+
   if (!owner) return null;
 
-  const { authorAvatarInitials } = createAuthorName(owner);
-  const authorAvatarUrl = owner.profile?.photo?.url;
-
-  if (!authorAvatarInitials && !authorAvatarUrl) return null;
-
   const attributes = {
-    'data-testid': TestIds.blogPostAuthorAvatar,
+    'data-testid': TestIds.blogPostAuthor,
   };
 
   return (
@@ -853,21 +803,14 @@ export const AuthorAvatar = React.forwardRef<HTMLElement, AuthorAvatarProps>((pr
       className={className}
       {...attributes}
       customElement={children}
-      customElementProps={{
-        authorAvatarUrl,
-        authorAvatarInitials,
-      }}
+      customElementProps={{ author: owner }}
     >
-      {authorAvatarUrl && !error ? (
-        <img src={authorAvatarUrl} alt={authorAvatarInitials} onError={onError} />
-      ) : (
-        <span>{authorAvatarInitials}</span>
-      )}
+      <span>{owner.profile?.nickname}</span>
     </AsChildSlot>
   );
 });
 
-AuthorAvatar.displayName = 'Blog.Post.AuthorAvatar';
+Author.displayName = 'Blog.Post.Author';
 
 export interface SiblingPostsRootProps {
   className?: string;
@@ -991,29 +934,3 @@ export const SiblingPosts = {
   Newer: SiblingPostNewer,
   Older: SiblingPostOlder,
 };
-
-/**
- * Helper function to create author name from member data
- */
-function createAuthorName(owner: members.Member | null | undefined): {
-  authorName: string;
-  authorAvatarInitials: string;
-} {
-  const formattedFirstName = owner?.contact?.firstName?.trim();
-  const formattedLastName = owner?.contact?.lastName?.trim();
-  const nickname = owner?.profile?.nickname?.trim();
-
-  const authorName =
-    nickname || `${formattedFirstName || ''} ${formattedLastName || ''}`.trim() || '';
-
-  const authorAvatarInitials = authorName
-    ?.split(' ')
-    .map((name) => name[0]?.toLocaleUpperCase())
-    .filter((char) => char && /[A-Z]/i.test(char))
-    .join('');
-
-  return {
-    authorName,
-    authorAvatarInitials,
-  };
-}
