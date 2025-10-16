@@ -409,11 +409,22 @@ export interface DateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedDate: string }>;
+  children?: AsChildChildren<{
+    startDate: Date | null;
+    endDate: Date | null;
+    timeZoneId: string | null;
+    dateAndTimeTbd: boolean;
+    dateAndTimeTbdMessage: string | null;
+    hideEndDate: boolean;
+    showTimeZone: boolean;
+    formattedDate: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the event date */
   format?: 'short' | 'full'; // Default: 'short'
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -446,26 +457,45 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
     children,
     className,
     format = 'short',
+    locale,
     ...otherProps
   } = props;
 
   return (
-    <CoreEvent.Date format={format}>
-      {({ formattedDate }) => (
+    <CoreEvent.DateCore format={format} locale={locale}>
+      {({
+        startDate,
+        endDate,
+        timeZoneId,
+        dateAndTimeTbd,
+        dateAndTimeTbdMessage,
+        hideEndDate,
+        showTimeZone,
+        formattedDate,
+      }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.eventDate}
           customElement={children}
-          customElementProps={{ formattedDate }}
+          customElementProps={{
+            startDate,
+            endDate,
+            timeZoneId,
+            dateAndTimeTbd,
+            dateAndTimeTbdMessage,
+            hideEndDate,
+            showTimeZone,
+            formattedDate,
+          }}
           content={formattedDate}
           {...otherProps}
         >
           <span>{formattedDate}</span>
         </AsChildSlot>
       )}
-    </CoreEvent.Date>
+    </CoreEvent.DateCore>
   );
 });
 

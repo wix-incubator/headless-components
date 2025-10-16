@@ -28,7 +28,7 @@ export function ScheduleItem({
           {({ durationMinutes }) => <span>{durationMinutes} minutes</span>}
         </ScheduleItemDuration>
       </div>
-      <div>
+      <div className="flex-grow">
         <ScheduleItemName />
         <ScheduleItemStage asChild className="flex gap-1 items-center">
           {({ stageName }) => (

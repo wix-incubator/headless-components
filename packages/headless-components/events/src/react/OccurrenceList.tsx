@@ -1,5 +1,6 @@
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
+import { type Event as EventType } from '../services/event-service.js';
 import { type OccurrenceListServiceConfig } from '../services/occurrence-list-service.js';
 import * as Event from './Event.js';
 import * as CoreOccurrenceList from './core/OccurrenceList.js';
@@ -69,7 +70,7 @@ export interface OccurrencesProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ occurrences: Event[]; hasOccurrences: boolean }>;
+    | AsChildChildren<{ occurrences: EventType[]; hasOccurrences: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

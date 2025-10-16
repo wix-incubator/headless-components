@@ -5,8 +5,12 @@ import { Form } from '@/components/events/Form/Form';
 
 const { slug } = Astro.params;
 
+if (!slug) {
+  return Astro.redirect('/');
+}
+
 // Load initial data server-side
-const eventServiceConfigResult = await loadEventServiceConfig(slug);
+const eventServiceConfigResult = await loadEventServiceConfig({ slug });
 
 if (eventServiceConfigResult.type === 'notFound') {
   return Astro.redirect('/404');
@@ -21,6 +25,6 @@ if (eventServiceConfigResult.type === 'notFound') {
     client:load
     slot="body"
     eventServiceConfig={eventServiceConfigResult.config}
-    thankYouPageUrl={`${Astro.url.origin}/events/${slug}/thank-you`,}
+    thankYouPageUrl={`${Astro.url.origin}/events/${slug}/thank-you`}
   />
 </BaseLayout>

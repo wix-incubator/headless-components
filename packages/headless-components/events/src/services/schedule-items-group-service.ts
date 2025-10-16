@@ -7,8 +7,8 @@ import { type ScheduleItem } from './schedule-item-service.js';
 
 export interface ScheduleItemsGroup {
   id: string;
-  formattedDate: string;
   date: Date;
+  timeZoneId: string;
   items: ScheduleItem[];
 }
 

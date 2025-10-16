@@ -24,15 +24,15 @@ export async function schedulePageLoader({
     throw new Error('Event slug is required');
   }
 
-  const eventServiceConfigResult = await loadEventServiceConfig(slug);
+  const eventServiceConfigResult = await loadEventServiceConfig({ slug });
 
   if (eventServiceConfigResult.type === 'notFound') {
     throw new Response('Not Found', { status: 404 });
   }
 
-  const scheduleListServiceConfig = await loadScheduleListServiceConfig(
-    eventServiceConfigResult.config.event._id!
-  );
+  const scheduleListServiceConfig = await loadScheduleListServiceConfig({
+    eventId: eventServiceConfigResult.config.event._id!,
+  });
 
   return {
     slug,

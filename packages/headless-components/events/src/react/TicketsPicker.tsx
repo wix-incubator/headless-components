@@ -220,6 +220,8 @@ export interface TotalsProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -251,10 +253,10 @@ export interface TotalsProps {
  */
 export const Totals = React.forwardRef<HTMLElement, TotalsProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreTicketsPicker.Totals>
+      <CoreTicketsPicker.Totals locale={locale}>
         {({
           total,
           subtotal,

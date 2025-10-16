@@ -77,9 +77,15 @@ export interface DateLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedDate: string; date: Date }>;
+  children?: AsChildChildren<{
+    date: Date;
+    timeZoneId: string;
+    formattedDate: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -99,7 +105,7 @@ export interface DateLabelProps {
  *
  * // asChild with react component
  * <ScheduleItemsGroup.DateLabel asChild>
- *   {React.forwardRef(({ formattedDate, date, ...props }, ref) => (
+ *   {React.forwardRef(({ date, timeZoneId, formattedDate, ...props }, ref) => (
  *     <h3 ref={ref} {...props} className="text-lg font-semibold">
  *       {formattedDate}
  *     </h3>
@@ -109,18 +115,18 @@ export interface DateLabelProps {
  */
 export const DateLabel = React.forwardRef<HTMLElement, DateLabelProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreScheduleItemsGroup.DateLabel>
-        {({ formattedDate, date }) => (
+      <CoreScheduleItemsGroup.DateLabel locale={locale}>
+        {({ date, timeZoneId, formattedDate }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.scheduleItemsGroupDateLabel}
             customElement={children}
-            customElementProps={{ formattedDate, date }}
+            customElementProps={{ date, timeZoneId, formattedDate }}
             content={formattedDate}
             {...otherProps}
           >

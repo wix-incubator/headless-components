@@ -200,18 +200,6 @@ function queryCategories() {
     .find();
 }
 
-interface QueryEventsParams {
-  offset?: number;
-  limit?: number;
-  categoryId?: string | null;
-  status?: wixEventsV2.Status[];
-}
-
-interface LoadEventsParams {
-  categoryId?: string | null;
-  statusId?: StatusId;
-}
-
 function getStatusFromId(statusId: StatusId) {
   switch (statusId) {
     case PAST_EVENTS:
@@ -226,4 +214,16 @@ function getStatusFromId(statusId: StatusId) {
     default:
       return [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED];
   }
+}
+
+interface QueryEventsParams {
+  offset?: number;
+  limit?: number;
+  categoryId?: string | null;
+  status?: wixEventsV2.Status[];
+}
+
+interface LoadEventsParams {
+  categoryId?: string | null;
+  statusId?: StatusId;
 }

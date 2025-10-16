@@ -106,15 +106,17 @@ export function Description(props: DescriptionProps): React.ReactNode {
 export interface FixedPricingProps {
   /** Render prop function */
   children: (props: FixedPricingRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface FixedPricingRenderProps {
-  /** Fixed price */
-  price: number;
+  /** Fixed price value */
+  value: number;
   /** Price currency */
   currency: string;
-  /** Formatted price */
-  formattedPrice: string;
+  /** Formatted price value */
+  formattedValue: string;
   /** Whether ticket definition is free */
   free: boolean;
 }
@@ -134,14 +136,14 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
     return null;
   }
 
-  const price = Number(fixedPrice.value!);
+  const value = Number(fixedPrice.value!);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
-  const formattedPrice = formatPrice(price, currency);
+  const formattedValue = formatPrice(value, currency, props.locale);
 
   return props.children({
-    price,
+    value,
     currency,
-    formattedPrice,
+    formattedValue,
     free: ticketDefinition.pricingMethod!.free!,
   });
 }
@@ -149,6 +151,8 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
 export interface GuestPricingProps {
   /** Render prop function */
   children: (props: GuestPricingRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface GuestPricingRenderProps {
@@ -194,7 +198,7 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
     ticketDefinitionListService.getCurrentPriceOverride(ticketDefinitionId);
   const minPrice = Number(guestPrice.value!);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
-  const formattedMinPrice = formatPrice(minPrice, currency);
+  const formattedMinPrice = formatPrice(minPrice, currency, props.locale);
 
   return props.children({
     price,
@@ -208,6 +212,8 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
 export interface PricingRangeProps {
   /** Render prop function */
   children: (props: PricingRangeRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface PricingRangeRenderProps {
@@ -245,8 +251,8 @@ export function PricingRange(props: PricingRangeProps): React.ReactNode {
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
-  const formattedMinPrice = formatPrice(minPrice, currency);
-  const formattedMaxPrice = formatPrice(maxPrice, currency);
+  const formattedMinPrice = formatPrice(minPrice, currency, props.locale);
+  const formattedMaxPrice = formatPrice(maxPrice, currency, props.locale);
   const formattedPriceRange =
     minPrice === maxPrice
       ? formattedMinPrice
@@ -265,6 +271,8 @@ export function PricingRange(props: PricingRangeProps): React.ReactNode {
 export interface TaxProps {
   /** Render prop function */
   children: (props: TaxRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface TaxRenderProps {
@@ -274,14 +282,14 @@ export interface TaxRenderProps {
   rate: number;
   /** Whether tax is included in price */
   included: boolean;
-  /** Taxable amount */
-  taxableAmount: number;
-  /** Tax amount */
-  taxAmount: number;
+  /** Taxable value */
+  taxableValue: number;
+  /** Tax value */
+  taxValue: number;
   /** Tax currency */
   currency: string;
-  /** Formatted tax amount */
-  formattedTaxAmount: string;
+  /** Formatted tax value */
+  formattedTaxValue: string;
 }
 
 /**
@@ -320,34 +328,36 @@ export function Tax(props: TaxProps): React.ReactNode {
   const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
 
-  const { name, rate, included, taxableAmount, taxAmount, formattedTaxAmount } =
-    getTicketDefinitionTax(taxSettings, price, currency);
+  const { name, rate, included, taxableValue, taxValue, formattedTaxValue } =
+    getTicketDefinitionTax(taxSettings, price, currency, props.locale);
 
   return props.children({
     name,
     rate,
     included,
-    taxableAmount,
-    taxAmount,
+    taxableValue,
+    taxValue,
     currency,
-    formattedTaxAmount,
+    formattedTaxValue,
   });
 }
 
 export interface FeeProps {
   /** Render prop function */
   children: (props: FeeRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface FeeRenderProps {
   /** Fee rate */
   rate: number;
-  /** Fee amount */
-  amount: number;
+  /** Fee value */
+  value: number;
   /** Fee currency */
   currency: string;
-  /** Formatted fee amount */
-  formattedAmount: string;
+  /** Formatted fee value */
+  formattedValue: string;
 }
 
 /**
@@ -385,18 +395,19 @@ export function Fee(props: FeeProps): React.ReactNode {
   const price = Number(guestPrice ? priceOverride || '0' : fixedPrice!.value);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
 
-  const { rate, amount, formattedAmount } = getTicketDefinitionFee(
+  const { rate, value, formattedValue } = getTicketDefinitionFee(
     taxSettings,
     price,
     currency,
     !!guestPrice,
+    props.locale,
   );
 
   return props.children({
     rate,
-    amount,
+    value,
     currency,
-    formattedAmount,
+    formattedValue,
   });
 }
 
@@ -427,6 +438,8 @@ export function Remaining(props: RemainingProps): React.ReactNode {
 export interface SaleStartDateProps {
   /** Render prop function */
   children: (props: SaleStartDateRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface SaleStartDateRenderProps {
@@ -442,17 +455,25 @@ export interface SaleStartDateRenderProps {
  * @component
  */
 export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
+  const event = eventService.event.get();
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
+  const timeZoneId = event.dateAndTimeSettings!.timeZoneId!;
 
   if (!saleScheduled) {
     return null;
   }
 
   const startDate = new Date(ticketDefinition.salePeriod!.startDate!);
-  const startDateFormatted = formatFullDate(startDate);
+  const startDateFormatted = formatFullDate(
+    startDate,
+    timeZoneId,
+    false,
+    props.locale,
+  );
 
   return props.children({ startDate, startDateFormatted });
 }
@@ -460,6 +481,8 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
 export interface SaleEndDateProps {
   /** Render prop function */
   children: (props: SaleEndDateRenderProps) => React.ReactNode;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface SaleEndDateRenderProps {
@@ -477,18 +500,26 @@ export interface SaleEndDateRenderProps {
  * @component
  */
 export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
+  const eventService = useService(EventServiceDefinition);
   const ticketDefinitionService = useService(TicketDefinitionServiceDefinition);
 
+  const event = eventService.event.get();
   const ticketDefinition = ticketDefinitionService.ticketDefinition.get();
   const saleScheduled = ticketDefinition.saleStatus === 'SALE_SCHEDULED';
   const saleEnded = ticketDefinition.saleStatus === 'SALE_ENDED';
+  const timeZoneId = event.dateAndTimeSettings!.timeZoneId!;
 
   if (saleScheduled || !ticketDefinition.salePeriod) {
     return null;
   }
 
   const endDate = new Date(ticketDefinition.salePeriod!.endDate!);
-  const endDateFormatted = formatFullDate(endDate);
+  const endDateFormatted = formatFullDate(
+    endDate,
+    timeZoneId,
+    false,
+    props.locale,
+  );
 
   return props.children({ endDate, endDateFormatted, saleEnded });
 }

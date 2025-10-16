@@ -67,10 +67,10 @@ export const OccurrenceListService =
 
         try {
           const offset = pageSize.get() * (currentPage.get() + 1);
-          const response = await queryOccurrences(
-            config.recurringCategoryId,
+          const response = await queryOccurrences({
             offset,
-          );
+            recurringCategoryId: config.recurringCategoryId,
+          });
 
           occurrences.set([...occurrences.get(), ...response.items]);
           pageSize.set(response.pageSize);
@@ -96,11 +96,11 @@ export const OccurrenceListService =
     },
   );
 
-export async function loadOccurrenceListServiceConfig(
-  recurringCategoryId: string | undefined,
-): Promise<OccurrenceListServiceConfig> {
+export async function loadOccurrenceListServiceConfig({
+  recurringCategoryId,
+}: LoadOccurrenceListServiceConfigParams): Promise<OccurrenceListServiceConfig> {
   if (recurringCategoryId) {
-    const response = await queryOccurrences(recurringCategoryId);
+    const response = await queryOccurrences({ recurringCategoryId });
 
     return {
       recurringCategoryId,
@@ -120,10 +120,22 @@ export async function loadOccurrenceListServiceConfig(
   };
 }
 
-async function queryOccurrences(recurringCategoryId: string, offset = 0) {
+async function queryOccurrences({
+  recurringCategoryId,
+  offset = 0,
+}: QueryOccurrencesParams) {
   return queryEvents({
     offset,
     categoryId: recurringCategoryId,
     status: [wixEventsV2.Status.UPCOMING, wixEventsV2.Status.STARTED],
   });
+}
+
+interface LoadOccurrenceListServiceConfigParams {
+  recurringCategoryId: string | undefined;
+}
+
+interface QueryOccurrencesParams {
+  recurringCategoryId: string;
+  offset?: number;
 }
