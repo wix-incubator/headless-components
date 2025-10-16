@@ -7,7 +7,7 @@ import {
   type OrderServiceConfig,
 } from '../../services/order-service.js';
 import { type InvoiceItem } from '../../services/invoice-item-service.js';
-import { formatDateMonthDayYear } from '../../utils/date.js';
+import { formatMonthDayYear } from '../../utils/date.js';
 import { formatPrice } from '../../utils/price.js';
 
 export interface RootProps {
@@ -99,6 +99,8 @@ export function GuestEmail(props: GuestEmailProps): React.ReactNode {
 export interface CreatedDateProps {
   /** Render prop function */
   children: (props: CreatedDateRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface CreatedDateRenderProps {
@@ -123,7 +125,7 @@ export function CreatedDate(props: CreatedDateProps): React.ReactNode {
   }
 
   const createdDate = new Date(order.created!);
-  const formattedDate = formatDateMonthDayYear(createdDate);
+  const formattedDate = formatMonthDayYear(createdDate, props.locale);
 
   return props.children({ createdDate, formattedDate });
 }
@@ -228,15 +230,17 @@ export function InvoiceItemRepeater(
 export interface SubtotalProps {
   /** Render prop function */
   children: (props: SubtotalRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface SubtotalRenderProps {
-  /** Formatted subtotal amount */
-  formattedAmount: string;
-  /** Subtotal amount */
-  amount: number;
+  /** Subtotal value */
+  value: number;
   /** Subtotal currency */
   currency: string;
+  /** Formatted subtotal value */
+  formattedValue: string;
 }
 
 /**
@@ -254,30 +258,32 @@ export function Subtotal(props: SubtotalProps): React.ReactNode {
   }
 
   const subtotal = order.invoice!.subTotal!;
+  const value = Number(subtotal.value!);
   const currency = subtotal.currency!;
-  const amount = Number(subtotal.value!);
 
   return props.children({
-    formattedAmount: formatPrice(amount, currency),
-    amount,
+    value,
     currency,
+    formattedValue: formatPrice(value, currency, props.locale),
   });
 }
 
 export interface PaidPlanDiscountProps {
   /** Render prop function */
   children: (props: PaidPlanDiscountRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface PaidPlanDiscountRenderProps {
-  /** Formatted paid plan discount amount */
-  formattedAmount: string;
-  /** Paid plan discount rate */
-  rate: number;
-  /** Paid plan discount amount */
-  amount: number;
+  /** Paid plan discount value */
+  value: number;
   /** Paid plan discount currency */
   currency: string;
+  /** Formatted paid plan discount value */
+  formattedValue: string;
+  /** Paid plan discount rate */
+  rate: number;
 }
 
 /**
@@ -303,29 +309,31 @@ export function PaidPlanDiscount(
     return null;
   }
 
+  const value = Number(paidPlanDiscount.amount!.value!);
   const currency = paidPlanDiscount.amount!.currency!;
-  const amount = Number(paidPlanDiscount.amount!.value!);
 
   return props.children({
-    formattedAmount: formatPrice(amount, currency),
-    rate: Number(paidPlanDiscount.paidPlan!.percentDiscount!.rate!),
-    amount,
+    value,
     currency,
+    formattedValue: formatPrice(value, currency, props.locale),
+    rate: Number(paidPlanDiscount.paidPlan!.percentDiscount!.rate!),
   });
 }
 
 export interface CouponDiscountProps {
   /** Render prop function */
   children: (props: CouponDiscountRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface CouponDiscountRenderProps {
-  /** Formatted coupon discount amount */
-  formattedAmount: string;
-  /** Coupon discount amount */
-  amount: number;
+  /** Coupon discount value */
+  value: number;
   /** Coupon discount currency */
   currency: string;
+  /** Formatted coupon discount value */
+  formattedValue: string;
 }
 
 /**
@@ -349,30 +357,32 @@ export function CouponDiscount(props: CouponDiscountProps): React.ReactNode {
     return null;
   }
 
+  const value = Number(couponDiscount.amount!.value!);
   const currency = couponDiscount.amount!.currency!;
-  const amount = Number(couponDiscount.amount!.value!);
 
   return props.children({
-    formattedAmount: formatPrice(amount, currency),
-    amount,
+    value,
     currency,
+    formattedValue: formatPrice(value, currency, props.locale),
   });
 }
 
 export interface TaxProps {
   /** Render prop function */
   children: (props: TaxRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface TaxRenderProps {
-  /** Tax rate */
-  rate: number;
-  /** Tax amount */
-  amount: number;
+  /** Tax value */
+  value: number;
   /** Tax currency */
   currency: string;
-  /** Formatted tax amount */
-  formattedAmount: string;
+  /** Formatted tax value */
+  formattedValue: string;
+  /** Tax rate */
+  rate: number;
   /** Tax name */
   name: string;
 }
@@ -397,14 +407,14 @@ export function Tax(props: TaxProps): React.ReactNode {
     return null;
   }
 
+  const value = Number(tax.amount!.value!);
   const currency = tax.amount!.currency!;
-  const amount = Number(tax.amount!.value!);
 
   return props.children({
-    rate: Number(tax.rate!),
-    amount,
+    value,
     currency,
-    formattedAmount: formatPrice(amount, currency),
+    formattedValue: formatPrice(value, currency, props.locale),
+    rate: Number(tax.rate!),
     name: tax.name!,
   });
 }
@@ -412,17 +422,19 @@ export function Tax(props: TaxProps): React.ReactNode {
 export interface FeeProps {
   /** Render prop function */
   children: (props: FeeRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface FeeRenderProps {
-  /** Fee rate */
-  rate: number;
-  /** Fee amount */
-  amount: number;
+  /** Fee value */
+  value: number;
   /** Fee currency */
   currency: string;
-  /** Formatted fee amount */
-  formattedAmount: string;
+  /** Formatted fee value */
+  formattedValue: string;
+  /** Fee rate */
+  rate: number;
 }
 
 /**
@@ -446,29 +458,31 @@ export function Fee(props: FeeProps): React.ReactNode {
     return null;
   }
 
+  const value = Number(addedFee.amount!.value!);
   const currency = addedFee.amount!.currency!;
-  const amount = Number(addedFee.amount!.value!);
 
   return props.children({
-    formattedAmount: formatPrice(amount, currency),
-    rate: Number(addedFee!.rate!),
-    amount,
+    value,
     currency,
+    formattedValue: formatPrice(value, currency, props.locale),
+    rate: Number(addedFee!.rate!),
   });
 }
 
 export interface TotalProps {
   /** Render prop function */
   children: (props: TotalRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface TotalRenderProps {
-  /** Formatted total amount */
-  formattedAmount: string;
-  /** Total amount */
-  amount: number;
+  /** Total value */
+  value: number;
   /** Total currency */
   currency: string;
+  /** Formatted total value */
+  formattedValue: string;
 }
 
 /**
@@ -486,12 +500,12 @@ export function Total(props: TotalProps): React.ReactNode {
   }
 
   const total = order.invoice!.grandTotal!;
+  const value = Number(total.value!);
   const currency = total.currency!;
-  const amount = Number(total.value!);
 
   return props.children({
-    formattedAmount: formatPrice(amount, currency),
-    amount,
+    value,
     currency,
+    formattedValue: formatPrice(value, currency, props.locale),
   });
 }
