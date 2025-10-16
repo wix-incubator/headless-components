@@ -41,15 +41,15 @@ export function CommentReplies({ uiLocale }: { uiLocale: string }) {
               Hide all replies <ChevronUpIcon />
             </Button>
           </div>
-          <Comment.Replies>
+          <Comment.ReplyItems>
             <div className="space-y-6">
-              <Comment.ReplyRepeater>
+              <Comment.ReplyItemRepeater>
                 <CommentBlock uiLocale={uiLocale}>
                   <ReplyAction />
                 </CommentBlock>
-              </Comment.ReplyRepeater>
+              </Comment.ReplyItemRepeater>
             </div>
-          </Comment.Replies>
+          </Comment.ReplyItems>
         </>
       )}
       <Comment.LoadMoreReplies asChild>

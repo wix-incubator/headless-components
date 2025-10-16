@@ -96,12 +96,14 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
                         <header className="grid flex-grow font-paragraph text-sm leading-normal">
                           <div className="flex gap-2">
                             <CommentAuthorName />
+                            {status === "PENDING" ? (
+                              <span>Awaiting approval</span>
+                            ) : null}
                           </div>
                           <CommentDate
                             className="text-foreground/80"
                             uiLocale={uiLocale}
                           />
-                          {status === "PENDING" ? <span>Pending</span> : null}
                         </header>
                         {isAuthenticated && isOwner ? (
                           <DropdownMenu>

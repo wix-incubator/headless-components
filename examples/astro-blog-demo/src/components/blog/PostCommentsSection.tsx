@@ -44,7 +44,7 @@ export default function PostCommentsSection({
             <CommentForm withMemberActions />
           </LoginGuard>
 
-          <Comments.Comments
+          <Comments.CommentItems
             loadingState={
               <p className="font-paragraph text-foreground/80">
                 Loading comments...
@@ -57,11 +57,11 @@ export default function PostCommentsSection({
             }
             className="space-y-6"
           >
-            <Comments.CommentRepeater>
+            <Comments.CommentItemRepeater>
               <CommentBlock uiLocale={uiLocale}>
                 <CommentReplies uiLocale={uiLocale} />
               </CommentBlock>
-            </Comments.CommentRepeater>
+            </Comments.CommentItemRepeater>
 
             <Comments.LoadMore
               asChild
@@ -76,7 +76,7 @@ export default function PostCommentsSection({
                 Load More
               </Button>
             </Comments.LoadMore>
-          </Comments.Comments>
+          </Comments.CommentItems>
         </section>
       </Comments.Root>
     </Blog.Post.Root>

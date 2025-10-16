@@ -5,7 +5,6 @@ import { Blog } from "@wix/blog/components";
 import { type BlogFeedServiceConfig } from "@wix/blog/services";
 import { Loader2Icon } from "lucide-react";
 import { BlogFeedCardEditorial, BlogFeedCardSideBySide } from "./BlogFeedCard";
-import { SortSelect } from "../ui/blog/SortSelect";
 
 interface FeedPageProps {
   /** Loaded result of `loadBlogFeedServiceConfig` */

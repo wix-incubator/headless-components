@@ -22,9 +22,11 @@ interface CommentContextValue {
 
 const CommentContext = React.createContext<CommentContextValue | null>(null);
 
+CommentContext.displayName = 'Blog.Post.Comment.CommentContext';
+
 /**
  * Hook to access the current comment context.
- * Must be used within a Blog.Post.Comment.Root or Blog.Post.Comment.ReplyRepeater component.
+ * Must be used within a Blog.Post.Comment.Root or Blog.Post.Comment.ReplyItemRepeater component.
  *
  * @returns The comment context containing comment data, replies, and delete function
  * @throws Error if used outside of Blog.Post.Comment.Root
@@ -33,7 +35,7 @@ export function useCommentContext(): CommentContextValue {
   const context = React.useContext(CommentContext);
   if (!context) {
     throw new Error(
-      'useCommentContext must be used within a Blog.Post.Comments.CommentRepeater component',
+      'useCommentContext must be used within a Blog.Post.Comment.Root component',
     );
   }
   return context;
@@ -46,16 +48,11 @@ const enum TestIds {
   blogPostCommentDate = 'blog-post-comment-date',
   blogPostCommentStatus = 'blog-post-comment-status',
 
-  // Replies
-  blogPostCommentReplies = 'blog-post-comment-replies',
-  blogPostCommentReply = 'blog-post-comment-reply',
+  // Reply Items
+  blogPostCommentReplyItems = 'blog-post-comment-reply-items',
+  blogPostCommentReplyItem = 'blog-post-comment-reply-item',
   blogPostCommentLoadMoreReplies = 'blog-post-comment-load-more-replies',
   blogPostCommentCreateReply = 'blog-post-comment-create-reply',
-
-  // Reply functionality
-  blogPostCommentReplyToggle = 'blog-post-comment-reply-toggle',
-  blogPostCommentRepliesSection = 'blog-post-comment-replies-section',
-  blogPostCommentReplyItem = 'blog-post-comment-reply-item',
 }
 
 type RootProps = {
@@ -327,28 +324,29 @@ export const Status = React.forwardRef<HTMLElement, StatusProps>((props, ref) =>
 
 Status.displayName = 'Blog.Post.Comment.Status';
 
-export interface RepliesProps {
+export interface ReplyItemsProps {
   className?: string;
   children: React.ReactNode;
 }
 
 /**
- * Simple container for comment replies that shows replies expanded by default.
+ * Container for comment replies with empty state support.
+ * Follows List Container Level pattern from architecture rules.
  * Always renders if there are total replies, even if no replies are loaded initially.
  *
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comment.CommentReplies>
- *   <Blog.Post.Comment.CommentReplyRepeater>
+ * <Blog.Post.Comment.ReplyItems>
+ *   <Blog.Post.Comment.ReplyItemRepeater>
  *     <Blog.Post.Comment.Author />
  *     <Blog.Post.Comment.Content />
- *   </Blog.Post.Comment.CommentReplyRepeater>
+ *   </Blog.Post.Comment.ReplyItemRepeater>
  *   <Blog.Post.Comment.LoadMoreReplies />
- * </Blog.Post.Comment.CommentReplies>
+ * </Blog.Post.Comment.ReplyItems>
  * ```
  */
-export const Replies = React.forwardRef<HTMLElement, RepliesProps>((props, ref) => {
+export const ReplyItems = React.forwardRef<HTMLElement, ReplyItemsProps>((props, ref) => {
   const { children, className } = props;
   const { comment } = useCommentContext();
 
@@ -358,7 +356,7 @@ export const Replies = React.forwardRef<HTMLElement, RepliesProps>((props, ref) 
         if ((parentComment?.replyCount ?? 0) === 0) return null;
 
         const attributes = {
-          'data-testid': TestIds.blogPostCommentRepliesSection,
+          'data-testid': TestIds.blogPostCommentReplyItems,
         };
 
         return (
@@ -371,28 +369,29 @@ export const Replies = React.forwardRef<HTMLElement, RepliesProps>((props, ref) 
   );
 });
 
-Replies.displayName = 'Blog.Post.Comment.Replies';
+ReplyItems.displayName = 'Blog.Post.Comment.ReplyItems';
 
-export interface ReplyRepeaterProps {
+export interface ReplyItemRepeaterProps {
   children: React.ReactNode;
 }
 
 /**
  * Repeater component that renders all replies to a comment.
- * Must be used within Blog.Post.Comment.Replies.
+ * Follows Repeater Level pattern from architecture rules.
+ * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comment.Replies>
- *   <Blog.Post.Comment.ReplyRepeater>
+ * <Blog.Post.Comment.ReplyItems>
+ *   <Blog.Post.Comment.ReplyItemRepeater>
  *     <Blog.Post.Comment.Author />
  *     <Blog.Post.Comment.Content />
- *   </Blog.Post.Comment.ReplyRepeater>
- * </Blog.Post.Comment.Replies>
+ *   </Blog.Post.Comment.ReplyItemRepeater>
+ * </Blog.Post.Comment.ReplyItems>
  * ```
  */
-export const ReplyRepeater = React.forwardRef<HTMLElement, ReplyRepeaterProps>((props, _ref) => {
+export const ReplyItemRepeater = React.forwardRef<HTMLElement, ReplyItemRepeaterProps>((props, _ref) => {
   const { children } = props;
   const { comment } = useCommentContext();
 
@@ -411,7 +410,7 @@ export const ReplyRepeater = React.forwardRef<HTMLElement, ReplyRepeaterProps>((
   );
 });
 
-ReplyRepeater.displayName = 'Blog.Post.Comment.ReplyRepeater';
+ReplyItemRepeater.displayName = 'Blog.Post.Comment.ReplyItemRepeater';
 
 export interface ParentCommentProps extends Omit<RootProps, 'comment'> {}
 

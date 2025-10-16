@@ -3,7 +3,6 @@ import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import type { CommentWithResolvedFields } from '../services/blog-post-comments-service.js';
 import { useCommentContext } from './Comment.js';
-import { useTopLevelCommentContext } from './CommentInternal.js';
 import * as CoreComments from './core/Comments.js';
 import { isValidChildren } from './helpers.js';
 
@@ -32,11 +31,13 @@ interface CreateReplyFormContextValue {
 
 const CreateReplyFormContext = React.createContext<CreateReplyFormContextValue | null>(null);
 
+CreateReplyFormContext.displayName = 'Blog.Post.Comment.CommentReplyFormContext';
+
 function useCreateReplyFormContext(): CreateReplyFormContextValue {
   const context = React.useContext(CreateReplyFormContext);
   if (!context) {
     throw new Error(
-      'useCreateReplyFormContext must be used within a Blog.Post.Comment.ReplyForm.Root component',
+      'useCreateReplyFormContext must be used within a Blog.Post.Comment.CommentReplyForm.Root component',
     );
   }
   return context;
@@ -96,7 +97,7 @@ export interface RootProps {
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { asChild, children, className, maxLength = 500, onCommentAdded } = props;
 
-  const topLevelComment = useTopLevelCommentContext();
+  const topLevelComment = CoreComments.useTopLevelCommentContext();
   const parentComment = useCommentContext().comment;
 
   return (

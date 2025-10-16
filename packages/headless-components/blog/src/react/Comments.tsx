@@ -8,7 +8,6 @@ import type {
   QueryCommentsSort,
 } from '../services/blog-post-comments-service.js';
 import * as Comment from './Comment.js';
-import { TopLevelCommentRoot } from './CommentInternal.js';
 import * as CoreComments from './core/Comments.js';
 import { isValidChildren, useIntersectionObserver } from './helpers.js';
 import { usePostContext } from './Post.js';
@@ -22,17 +21,19 @@ interface CommentsContextValue {
 
 const CommentsContext = React.createContext<CommentsContextValue | null>(null);
 
+CommentsContext.displayName = 'Blog.Post.Comments.CommentsContext';
+
 /**
  * Hook to access the comments context.
  * Must be used within a Blog.Post.Comments.Root component.
  *
- * @returns The comments context containing comments list and loading state
- * @throws Error if used outside of Blog.Post.Comments.Root
+ * @returns The comments context containing comments list and loading state.
+ * @throws Error if used outside of Blog.Post.Comments.Root.
  */
 export function useCommentsContext(): CommentsContextValue {
   const context = React.useContext(CommentsContext);
   if (!context) {
-    throw new Error('useCommentsContext must be used within a BlogPostComments.Root component');
+    throw new Error('useCommentsContext must be used within a Blog.Post.Comments.Root component');
   }
   return context;
 }
@@ -65,10 +66,10 @@ export interface BlogPostCommentsRootProps {
  *   return (
  *     <Blog.Post.Root blogPostServiceConfig={blogPostServiceConfig}>
  *       <Blog.Post.Comments.Root>
- *         <Blog.Post.Comments.CommentRepeater>
+ *         <Blog.Post.Comments.CommentItemRepeater>
  *           <Blog.Post.Comment.Author />
  *           <Blog.Post.Comment.Content />
- *         </Blog.Post.Comments.CommentRepeater>
+ *         </Blog.Post.Comments.CommentItemRepeater>
  *       </Blog.Post.Comments.Root>
  *     </Blog.Post.Root>
  *   );
@@ -134,7 +135,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostCommentsRootProps>(
 
 Root.displayName = 'Blog.Post.Comments.Root';
 
-export interface CommentsProps {
+export interface CommentItemsProps {
   children: React.ReactNode;
   className?: string;
   emptyState?: React.ReactNode;
@@ -148,15 +149,15 @@ export interface CommentsProps {
  * @component
  * @example
  * ```tsx
- * <BlogPostComments.Comments emptyState={<div>No comments yet</div>}>
- *   <BlogPostComments.CommentRepeater>
- *     <BlogPostComments.CommentAuthor />
- *     <BlogPostComments.CommentContent />
- *   </BlogPostComments.CommentRepeater>
- * </BlogPostComments.Comments>
+ * <Blog.Post.Comments.CommentItems emptyState={<div>No comments yet</div>}>
+ *   <Blog.Post.Comments.CommentItemRepeater>
+ *     <Blog.Post.Comment.Author />
+ *     <Blog.Post.Comment.Content />
+ *   </Blog.Post.Comments.CommentItemRepeater>
+ * </Blog.Post.Comments.CommentItems>
  * ```
  */
-export const Comments = React.forwardRef<HTMLElement, CommentsProps>((props, ref) => {
+export const CommentItems = React.forwardRef<HTMLElement, CommentItemsProps>((props, ref) => {
   const { children, emptyState, loadingState, className } = props;
   const { comments, isLoading } = useCommentsContext();
 
@@ -179,7 +180,7 @@ export const Comments = React.forwardRef<HTMLElement, CommentsProps>((props, ref
   );
 });
 
-Comments.displayName = 'Blog.Post.Comments.Comments';
+CommentItems.displayName = 'Blog.Post.Comments.CommentItems';
 
 export interface SortProps {
   /**
@@ -192,7 +193,7 @@ export interface SortProps {
    *
    * @example
    * ```tsx
-   * <BlogPostComments.Sort asChild>
+   * <Blog.Post.Comments.Sort asChild>
    *   {({ currentSort, sortOptions, setSort }) => (
    *     <CustomSortSelect
    *       value={currentSort}
@@ -200,7 +201,7 @@ export interface SortProps {
    *       onChange={setSort}
    *     />
    *   )}
-   * </BlogPostComments.Sort>
+   * </Blog.Post.Comments.Sort>
    * ```
    */
   children?: (props: {
@@ -237,20 +238,20 @@ export interface SortProps {
 /**
  * Sort component for comments that provides sorting functionality.
  *
- * This component integrates with the BlogPostComments service to provide predefined sort options
+ * This component integrates with the Blog.Post.Comments.Root service to provide predefined sort options
  * and supports both controlled rendering via the asChild pattern and default UI rendering.
  *
  * @component
  * @example
  * ```tsx
  * // Default select dropdown
- * <BlogPostComments.Sort />
+ * <Blog.Post.Comments.Sort />
  *
  * // As list of clickable options
- * <BlogPostComments.Sort as="list" />
+ * <Blog.Post.Comments.Sort as="list" />
  *
  * // With custom styling
- * <BlogPostComments.Sort
+ * <Blog.Post.Comments.Sort
  *   as="select"
  *   className="custom-sort-select"
  * />
@@ -299,7 +300,7 @@ export const Sort = React.forwardRef<HTMLElement, SortProps>(
 
 Sort.displayName = 'Blog.Post.Comments.Sort';
 
-export interface CommentRepeaterProps {
+export interface CommentItemRepeaterProps {
   children: React.ReactNode;
 }
 
@@ -311,14 +312,14 @@ export interface CommentRepeaterProps {
  * @component
  * @example
  * ```tsx
- * <BlogPostComments.CommentRepeater>
- *   <BlogPostComments.CommentAuthor />
- *   <BlogPostComments.CommentContent />
- *   <BlogPostComments.CommentDate />
- * </BlogPostComments.CommentRepeater>
+ * <Blog.Post.Comments.CommentItemRepeater>
+ *   <Blog.Post.Comment.Author />
+ *   <Blog.Post.Comment.Content />
+ *   <Blog.Post.Comment.CommentDate />
+ * </Blog.Post.Comments.CommentItemRepeater>
  * ```
  */
-export const CommentRepeater = React.forwardRef<HTMLElement, CommentRepeaterProps>(
+export const CommentItemRepeater = React.forwardRef<HTMLElement, CommentItemRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
     const { comments } = useCommentsContext();
@@ -327,17 +328,17 @@ export const CommentRepeater = React.forwardRef<HTMLElement, CommentRepeaterProp
 
     return comments.map((comment) => {
       return (
-        <TopLevelCommentRoot key={comment._id} comment={comment}>
+        <CoreComments.TopLevelCommentRoot key={comment._id} comment={comment}>
           <Comment.Root comment={comment} asChild>
             {children}
           </Comment.Root>
-        </TopLevelCommentRoot>
+        </CoreComments.TopLevelCommentRoot>
       );
     });
   },
 );
 
-CommentRepeater.displayName = 'Blog.Post.Comments.CommentRepeater';
+CommentItemRepeater.displayName = 'Blog.Post.Comments.CommentItemRepeater';
 
 export interface LoadMoreProps {
   asChild?: boolean;
@@ -357,7 +358,7 @@ export interface LoadMoreProps {
  * @component
  * @example
  * ```tsx
- * <BlogPostComments.LoadMore asChild>
+ * <Blog.Post.Comments.LoadMore asChild>
  *   {({ hasNextPage, isLoading, loadNextPage }) => (
  *     <button
  *       onClick={loadNextPage}
@@ -366,7 +367,7 @@ export interface LoadMoreProps {
  *       {isLoading ? 'Loading...' : 'Load More Comments'}
  *     </button>
  *   )}
- * </BlogPostComments.LoadMore>
+ * </Blog.Post.Comments.LoadMore>
  * ```
  */
 export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>((props, ref) => {

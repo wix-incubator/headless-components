@@ -10,16 +10,13 @@ import type {
 } from '../../services/blog-post-comments-service.js';
 import { BlogPostCommentsServiceDefinition } from '../../services/blog-post-comments-service.js';
 
-/**
- * Props for BlogPostComments Root core component
- */
 export interface RootProps {
   children: React.ReactNode;
   commentsConfig?: BlogPostCommentsServiceConfig;
 }
 
 /**
- * Core BlogPostComments Root component that provides BlogPostComments service context.
+ * Core Blog.Post.Comments.Root component that provides Blog.Post.Comments.Root service context.
  * This is the service-connected component that should be wrapped by the public API.
  *
  * @component
@@ -30,11 +27,8 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => 
   return <div ref={ref}>{children}</div>;
 });
 
-Root.displayName = 'Blog.Post.Comments.Root/Core';
+Root.displayName = 'Blog.Post.Comments.Root (core)';
 
-/**
- * Props for BlogPostComments Comments core component
- */
 export interface CommentsProps {
   children: (props: CommentsRenderProps) => React.ReactNode;
 }
@@ -48,9 +42,6 @@ export interface CommentsRenderProps {
   loadMore: BlogPostCommentsServiceAPI['loadMore'];
 }
 
-/**
- * Core Comments component that provides comments data access
- */
 export const Comments = (props: CommentsProps) => {
   const service = useService(BlogPostCommentsServiceDefinition);
 
@@ -64,7 +55,7 @@ export const Comments = (props: CommentsProps) => {
   });
 };
 
-Comments.displayName = 'Blog.Post.Comments.Comments/Core';
+Comments.displayName = 'Blog.Post.Comments.Comments (core)';
 
 export interface SortProps {
   children: (props: {
@@ -74,14 +65,9 @@ export interface SortProps {
   }) => React.ReactNode;
 }
 
-/**
- * Core Sort component for comment sorting functionality
- */
 export const Sort = (props: SortProps) => {
   const service = useService(BlogPostCommentsServiceDefinition);
 
-  // Note: We need to get the current sort from somewhere - this might need to be adjusted
-  // based on how we store the current sort in the service
   const currentSort = service.sort.get();
 
   const sortOptions: SortPrimitive.SortOption[] = [
@@ -102,11 +88,8 @@ export const Sort = (props: SortProps) => {
   });
 };
 
-Sort.displayName = 'Blog.Post.Comments.Sort/Core';
+Sort.displayName = 'Blog.Post.Comments.Sort (core)';
 
-/**
- * Props for BlogPostComments CreateComment core component
- */
 export interface CreateCommentProps {
   children: (props: CreateCommentRenderProps) => React.ReactNode;
 }
@@ -117,9 +100,6 @@ export interface CreateCommentRenderProps {
   error: string | null;
 }
 
-/**
- * Core CreateComment component for comment creation functionality
- */
 export const CreateComment = (props: CreateCommentProps) => {
   const service = useService(BlogPostCommentsServiceDefinition);
 
@@ -130,7 +110,7 @@ export const CreateComment = (props: CreateCommentProps) => {
   });
 };
 
-CreateComment.displayName = 'Blog.Post.Comments.CreateComment/Core';
+CreateComment.displayName = 'Blog.Post.Comments.CreateComment (core)';
 
 export interface CommentProps {
   commentId: string;
@@ -171,11 +151,8 @@ export const Comment = (props: CommentProps) => {
   });
 };
 
-Comment.displayName = 'Blog.Post.Comment/Core';
+Comment.displayName = 'Blog.Post.Comment (core)';
 
-/**
- * Props for BlogPostComments CreateReply core component
- */
 export interface CreateReplyProps {
   topCommentId: string;
   parentCommentId: string;
@@ -188,9 +165,6 @@ export interface CreateReplyRenderProps {
   replyError: string | null;
 }
 
-/**
- * Core CreateReply component for reply creation functionality
- */
 export const CreateReply = (props: CreateReplyProps) => {
   const { parentCommentId, topCommentId } = props;
   const service = useService(BlogPostCommentsServiceDefinition);
@@ -209,4 +183,33 @@ export const CreateReply = (props: CreateReplyProps) => {
   });
 };
 
-CreateReply.displayName = 'Blog.Post.Comment.CreateReply/Core';
+CreateReply.displayName = 'Blog.Post.Comment.CreateReply (core)';
+
+const TopLevelCommentContext = React.createContext<CommentWithResolvedFields | null>(null);
+
+export function useTopLevelCommentContext(): CommentWithResolvedFields {
+  const context = React.useContext(TopLevelCommentContext);
+
+  if (!context) {
+    throw new Error(
+      'useTopLevelCommentContext must be used within a Blog.Post.Comments.CommentItemRepeater component',
+    );
+  }
+
+  return context;
+}
+
+type TopLevelCommentRootProps = {
+  comment: CommentWithResolvedFields;
+  children: React.ReactNode;
+};
+
+export const TopLevelCommentRoot = (props: TopLevelCommentRootProps) => {
+  const { comment, children } = props;
+
+  return (
+    <TopLevelCommentContext.Provider value={comment}>{children}</TopLevelCommentContext.Provider>
+  );
+};
+
+TopLevelCommentRoot.displayName = 'Blog.Post.Comments.TopLevelCommentRoot (core)';

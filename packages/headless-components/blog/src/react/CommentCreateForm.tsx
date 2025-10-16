@@ -31,11 +31,13 @@ interface CreateCommentFormContextValue {
 
 const CreateCommentFormContext = React.createContext<CreateCommentFormContextValue | null>(null);
 
+CreateCommentFormContext.displayName = 'Blog.Post.Comments.CreateCommentFormContext';
+
 function useCreateCommentFormContext(): CreateCommentFormContextValue {
   const context = React.useContext(CreateCommentFormContext);
   if (!context) {
     throw new Error(
-      'useCreateCommentFormContext must be used within a CreateCommentForm component',
+      'useCreateCommentFormContext must be used within a Blog.Post.Comments.CreateCommentForm.Root component',
     );
   }
   return context;
@@ -74,9 +76,9 @@ export interface RootProps {
  *     className="w-full border rounded-lg p-3"
  *     placeholder="What are your thoughts?"
  *   />
- *   <Blog.Post.Comments.CreateCommentForm.ErrorMessage className="text-red-600" />
+ *   <Blog.Post.Comments.CreateCommentForm.Message className="text-red-600" />
  *   <Blog.Post.Comments.CreateCommentForm.SubmitButton className="btn-primary" />
- * </BlogPostComments.CreateCommentForm>
+ * </Blog.Post.Comments.CreateCommentForm>
  *
  * // Custom rendering with asChild
  * <Blog.Post.Comments.CreateCommentForm.Root asChild>
@@ -214,13 +216,13 @@ export interface CreateCommentFormLabelProps {
  * <Blog.Post.Comments.CommentCreateForm.Label className="text-gray-700 font-medium mb-2" />
  *
  * // Custom rendering with asChild
- * <BlogPostComments.CreateCommentFormLabel asChild>
+ * <Blog.Post.Comments.CreateCommentForm.Label asChild>
  *   {({ htmlFor, labelText }) => (
  *     <label htmlFor={htmlFor} className="custom-label">
  *       {labelText}
  *     </label>
  *   )}
- * </BlogPostComments.CreateCommentFormLabel>
+ * </Blog.Post.Comments.CreateCommentForm.Label>
  * ```
  */
 export const Label = React.forwardRef<HTMLElement, CreateCommentFormLabelProps>((props, ref) => {
