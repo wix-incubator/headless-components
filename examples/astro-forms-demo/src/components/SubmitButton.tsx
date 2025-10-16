@@ -12,9 +12,11 @@ export default function SubmitButton({
   showNextButton,
   showSubmitButton,
   isSubmitInProgress,
+  // @ts-expect-error
+  layout,
 }: SubmitButtonProps) {
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       <Form.Field.Input asChild>
         <div className="flex gap-3 mt-8">
           {showPreviousButton && (

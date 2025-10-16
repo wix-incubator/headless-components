@@ -20,11 +20,13 @@ const TextArea = ({
   onChange,
   onBlur,
   onFocus,
+  // @ts-expect-error
+  layout,
 }: TextAreaProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       {showLabel && (
         <Form.Field.Label>
           <label htmlFor={id} className="text-foreground font-paragraph mb-2">

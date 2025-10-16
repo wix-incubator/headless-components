@@ -11,10 +11,12 @@ const RichText = ({
   id,
   content,
   maxShownParagraphs,
+  // @ts-expect-error
+  layout,
   ...rest
 }: RichTextProps) => {
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       <Form.Field.Input asChild>
         <div className="w-full mb-4 pb-2 border-b border-foreground/20 text-foreground font-paragraph font-semibold">
           <RicosViewer

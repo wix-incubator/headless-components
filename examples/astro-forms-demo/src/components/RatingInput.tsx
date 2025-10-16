@@ -12,9 +12,11 @@ const RatingInput = ({
   onChange,
   onBlur,
   onFocus,
+  // @ts-expect-error
+  layout,
 }: RatingInputProps) => {
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       {showLabel && (
         <Form.Field.Label>
           <label htmlFor={id} className="text-foreground font-paragraph mb-2">

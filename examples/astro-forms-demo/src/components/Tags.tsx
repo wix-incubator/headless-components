@@ -9,6 +9,8 @@ const Tags = ({
   onChange,
   onBlur,
   onFocus,
+  // @ts-expect-error
+  layout,
 }: TagsProps) => {
   const currentValues = value || [];
 
@@ -27,7 +29,7 @@ const Tags = ({
   };
 
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       {showLabel && (
         <Form.Field.Label>
           <label htmlFor={id} className="text-foreground font-paragraph mb-3">

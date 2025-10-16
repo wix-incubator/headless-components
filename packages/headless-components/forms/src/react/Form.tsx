@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 import {
-  Form as FormViewer,
   type FormValues,
   type FormError,
+  useForm,
+  FormProps,
+  FormProvider,
 } from '@wix/form-public';
 import {
   type CheckboxGroupProps,
@@ -44,6 +46,7 @@ import {
   Field as CoreField,
   type Layout,
 } from './core/Form.js';
+import { getFieldsByRow, getRowGridStyle } from './utils.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -842,15 +845,24 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormViewer
+              <FormProvider
+                i18n={{ getFixedT: () => {} }}
                 form={form}
-                values={formValues}
-                onChange={handleFormChange}
-                errors={formErrors}
-                onValidate={handleFormValidate}
+                locale="en"
+                regionalFormat="en"
                 fields={props.fieldMap}
-                submitForm={() => submitForm(formValues)}
-              />
+                WixRicosViewer={() => null}
+              >
+                <FieldsWithForm
+                  form={form}
+                  values={formValues}
+                  onChange={handleFormChange}
+                  errors={formErrors}
+                  onValidate={handleFormValidate}
+                  fields={props.fieldMap}
+                  submitForm={() => submitForm(formValues)}
+                />
+              </FormProvider>
             </div>
           );
         }}
@@ -858,6 +870,75 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     );
   },
 );
+
+const FieldsWithForm = ({
+  form,
+  submitForm,
+  values,
+  onChange,
+  errors,
+  onValidate,
+  fields: fieldMap,
+}: FormProps) => {
+  const renderProps = useForm({
+    form,
+    values,
+    onChange,
+    errors,
+    onValidate,
+    fields: fieldMap,
+    submitForm,
+  });
+
+  console.log('renderProps', renderProps);
+  const fields = renderProps?.currentView?.fields || [];
+  const fieldsByRow = getFieldsByRow(fields);
+
+  return (
+    // TODO: use readOnly, isDisabled
+    // TODO: step title a11y support
+    // TODO: mobile support?
+    <form onSubmit={(e) => e.preventDefault()}>
+      <fieldset>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            gap: '24px', // TODO: pass tailwind gap
+          }}
+        >
+          {fieldsByRow.map((field: any) => {
+            return (
+              <div
+                key={field.id}
+                // TODO: pass tailwind gap
+                style={getRowGridStyle({
+                  layout: renderProps?.currentView?.grid,
+                })}
+              >
+                {field.map((field: any) => {
+                  const Component = fieldMap[field.fieldType as keyof FieldMap];
+
+                  console.log('Component', field);
+
+                  return (
+                    <Component
+                      key={field.id}
+                      id={field.id}
+                      {...field.properties}
+                      layout={field.layout}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </fieldset>
+    </form>
+  );
+};
 
 /**
  * Context for sharing field data between Field container and its children
@@ -899,6 +980,8 @@ export interface FieldProps {
   asChild?: boolean;
   /** CSS classes to apply to the root element */
   className?: string;
+  /** The field layout configuration */
+  layout: Layout;
 }
 
 /**
@@ -963,10 +1046,10 @@ export interface FieldInputProps {
  * ```
  */
 const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
-  const { id, children, asChild, className, ...otherProps } = props;
+  const { id, children, asChild, className, layout, ...otherProps } = props;
 
   return (
-    <CoreField id={id}>
+    <CoreField id={id} layout={layout}>
       {(fieldData) => {
         const contextValue: FieldContextValue = {
           id,
@@ -986,7 +1069,7 @@ const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
               customElementProps={{}}
               {...otherProps}
             >
-              <div>{children}</div>
+              {children}
             </AsChildSlot>
           </FieldContext.Provider>
         );
@@ -1066,13 +1149,6 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
     const { children, description, asChild, className, ...otherProps } = props;
     const { gridStyles } = useFieldContext();
 
-    const content = (
-      <>
-        {children}
-        {description}
-      </>
-    );
-
     return (
       <AsChildSlot
         ref={ref}
@@ -1084,7 +1160,7 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
         customElementProps={{}}
         {...otherProps}
       >
-        <div>{content}</div>
+        <div>{children}</div>
       </AsChildSlot>
     );
   },

@@ -10,6 +10,8 @@ export default function ProductList({
   showLabel,
   options,
   onChange,
+  // @ts-expect-error
+  layout,
 }: ProductListProps) {
   const handleToggle = (productId: string) => {
     const currentValue = (value as unknown as string[]) || [];
@@ -23,7 +25,7 @@ export default function ProductList({
   };
 
   return (
-    <Form.Field id={id}>
+    <Form.Field id={id} layout={layout}>
       {showLabel && (
         <Form.Field.Label>
           <label className="text-foreground font-paragraph mb-3">

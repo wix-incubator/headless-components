@@ -1,4 +1,3 @@
-import { forms } from '@wix/forms';
 import { Layout } from './core/Form';
 
 export function calculateGridStyles(layout: Layout) {
@@ -20,32 +19,25 @@ export function calculateGridStyles(layout: Layout) {
   };
 }
 
-export function findFieldLayout(
-  form: forms.Form,
-  fieldId: string,
-): Layout | undefined {
-  if (!form.steps) {
-    return undefined;
-  }
+export function getFieldsByRow(fields: any[]): any[][] {
+  const fieldsByRow = fields.reduce<any[][]>((result, item) => {
+    const row = item.layout.row;
 
-  for (const step of form.steps) {
-    if (step.layout?.large?.items) {
-      const layoutItem = step.layout.large.items.find(
-        (item) => item.fieldId === fieldId,
-      );
-
-      if (
-        layoutItem &&
-        typeof layoutItem.column === 'number' &&
-        typeof layoutItem.width === 'number'
-      ) {
-        return {
-          column: layoutItem.column,
-          width: layoutItem.width,
-        };
-      }
+    if (result[row]) {
+      result[row].push(item);
+    } else {
+      result[row] = [item];
     }
-  }
+    return result;
+  }, []);
 
-  return undefined;
+  return fieldsByRow;
 }
+export const getRowGridStyle = ({ layout }: { layout: any }) => {
+  return {
+    display: 'grid',
+    width: '100%',
+    gridTemplateColumns: `repeat(${layout.columns}, 1fr)`,
+    gridAutoRows: 'minmax(min-content, max-content) 1fr',
+  };
+};
