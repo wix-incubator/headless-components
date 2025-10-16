@@ -46,6 +46,7 @@ import {
   Field as CoreField,
   type Layout,
 } from './core/Form.js';
+import { getFieldsByRow, getRowGridStyle } from './utils.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -891,18 +892,14 @@ const FieldsWithForm = ({
 
   console.log('renderProps', renderProps);
   const fields = renderProps?.currentView?.fields || [];
+  const fieldsByRow = getFieldsByRow(fields);
 
   return (
     // TODO: use readOnly, isDisabled
     // TODO: step title a11y support
     // TODO: mobile support?
     <form onSubmit={(e) => e.preventDefault()}>
-      <fieldset
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(12, 1fr)',
-        }}
-      >
+      <fieldset>
         <div
           style={{
             display: 'flex',
@@ -911,18 +908,30 @@ const FieldsWithForm = ({
             gap: '24px', // TODO: pass tailwind gap
           }}
         >
-          {fields.map((field: any) => {
-            const Component = fieldMap[field.fieldType as keyof FieldMap];
-
-            console.log('Component', field);
-
+          {fieldsByRow.map((field: any) => {
             return (
-              <Component
+              <div
                 key={field.id}
-                id={field.id}
-                {...field.properties}
-                layout={field.layout}
-              />
+                // TODO: pass tailwind gap
+                style={getRowGridStyle({
+                  layout: renderProps?.currentView?.grid,
+                })}
+              >
+                {field.map((field: any) => {
+                  const Component = fieldMap[field.fieldType as keyof FieldMap];
+
+                  console.log('Component', field);
+
+                  return (
+                    <Component
+                      key={field.id}
+                      id={field.id}
+                      {...field.properties}
+                      layout={field.layout}
+                    />
+                  );
+                })}
+              </div>
             );
           })}
         </div>
@@ -1060,7 +1069,7 @@ const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
               customElementProps={{}}
               {...otherProps}
             >
-              <div>{children}</div>
+              {children}
             </AsChildSlot>
           </FieldContext.Provider>
         );

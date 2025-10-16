@@ -18,3 +18,26 @@ export function calculateGridStyles(layout: Layout) {
     input: { gridRow: inputRow, gridColumn },
   };
 }
+
+export function getFieldsByRow(fields: any[]): any[][] {
+  const fieldsByRow = fields.reduce<any[][]>((result, item) => {
+    const row = item.layout.row;
+
+    if (result[row]) {
+      result[row].push(item);
+    } else {
+      result[row] = [item];
+    }
+    return result;
+  }, []);
+
+  return fieldsByRow;
+}
+export const getRowGridStyle = ({ layout }: { layout: any }) => {
+  return {
+    display: 'grid',
+    width: '100%',
+    gridTemplateColumns: `repeat(${layout.columns}, 1fr)`,
+    gridAutoRows: 'minmax(min-content, max-content) 1fr',
+  };
+};
