@@ -1,6 +1,6 @@
 import { rsvpV2 } from '@wix/events';
 import { type FormValues } from '@wix/headless-forms/react';
-import { Event } from '../services/event-service.js';
+import { type Event } from '../services/event-service.js';
 
 export const getRequiredRsvpData = (
   _event: Event,
