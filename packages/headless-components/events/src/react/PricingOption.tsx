@@ -80,7 +80,7 @@ export interface NameProps {
 }
 
 /**
- * Displays the pricing option name with customizable rendering.
+ * Displays the pricing option name.
  *
  * @component
  * @example
@@ -145,7 +145,7 @@ export interface PricingProps {
 }
 
 /**
- * Displays the pricing option price with customizable rendering.
+ * Displays the pricing option price.
  *
  * @component
  * @example

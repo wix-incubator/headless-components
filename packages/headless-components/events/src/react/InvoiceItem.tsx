@@ -80,7 +80,7 @@ export interface NameProps {
 }
 
 /**
- * Displays the invoice item name with customizable rendering.
+ * Displays the invoice item name.
  *
  * @component
  * @example
@@ -145,7 +145,7 @@ export interface PriceProps {
 }
 
 /**
- * Displays the invoice item price with customizable rendering.
+ * Displays the invoice item price.
  *
  * @component
  * @example
@@ -204,7 +204,7 @@ export interface QuantityProps {
 }
 
 /**
- * Displays the invoice item quantity with customizable rendering.
+ * Displays the invoice item quantity.
  *
  * @component
  * @example
@@ -271,7 +271,7 @@ export interface TotalProps {
 }
 
 /**
- * Displays the invoice item total amount with customizable rendering.
+ * Displays the invoice item total amount.
  *
  * @component
  * @example

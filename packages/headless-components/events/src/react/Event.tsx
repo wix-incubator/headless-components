@@ -194,7 +194,7 @@ export interface SlugProps {
 }
 
 /**
- * Displays the event slug with customizable rendering.
+ * Displays the event slug.
  *
  * @component
  * @example
@@ -307,7 +307,7 @@ export interface ImageProps
 }
 
 /**
- * Displays the event image using WixMediaImage component with customizable rendering.
+ * Displays the event image using WixMediaImage component.
  *
  * @component
  * @example
@@ -366,7 +366,7 @@ export interface TitleProps {
 }
 
 /**
- * Displays the event title with customizable rendering.
+ * Displays the event title.
  *
  * @component
  * @example
@@ -446,7 +446,7 @@ export interface DateProps {
 }
 
 /**
- * Displays the event date with customizable rendering and format options.
+ * Displays the event date.
  *
  * @component
  * @example
@@ -539,7 +539,7 @@ export interface LocationProps {
 }
 
 /**
- * Displays the event location with customizable rendering and format options.
+ * Displays the event location.
  *
  * @component
  * @example
@@ -609,7 +609,7 @@ export interface ShortDescriptionProps {
 }
 
 /**
- * Displays the event short description with customizable rendering.
+ * Displays the event short description.
  *
  * @component
  * @example
@@ -715,7 +715,7 @@ export interface RsvpButtonProps {
 }
 
 /**
- * Displays the event RSVP button with customizable rendering.
+ * Displays the event RSVP button.
  *
  * @component
  * @example
@@ -778,7 +778,7 @@ export interface FacebookShareProps {
 }
 
 /**
- * Displays Facebook share element with customizable rendering.
+ * Displays Facebook share element.
  *
  * @component
  * @example
@@ -839,7 +839,7 @@ export interface LinkedInShareProps {
 }
 
 /**
- * Displays LinkedIn share element with customizable rendering.
+ * Displays LinkedIn share element.
  *
  * @component
  * @example
@@ -900,7 +900,7 @@ export interface XShareProps {
 }
 
 /**
- * Displays X share element with customizable rendering.
+ * Displays X share element.
  *
  * @component
  * @example
@@ -959,7 +959,7 @@ export interface AddToGoogleCalendarProps {
 }
 
 /**
- * Displays the event add to Google calendar link with customizable rendering.
+ * Displays link to add the event to Google calendar.
  *
  * @component
  * @example
@@ -1021,7 +1021,7 @@ export interface AddToIcsCalendarProps {
 }
 
 /**
- * Displays the event add to ICS calendar link with customizable rendering.
+ * Displays link to add the event to ICS calendar.
  *
  * @component
  * @example

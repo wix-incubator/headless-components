@@ -72,7 +72,7 @@ export interface OrderNumberProps {
 }
 
 /**
- * Displays the order number with customizable rendering.
+ * Displays the order number.
  *
  * @component
  * @example
@@ -134,7 +134,7 @@ export interface GuestEmailProps {
 }
 
 /**
- * Displays the guest email with customizable rendering.
+ * Displays the guest email.
  *
  * @component
  * @example
@@ -198,7 +198,7 @@ export interface CreatedDateProps {
 }
 
 /**
- * Displays the order creation date with customizable rendering.
+ * Displays the order creation date.
  *
  * @component
  * @example
@@ -335,7 +335,7 @@ export interface InvoiceItemsProps {
 }
 
 /**
- * Container for order invoice items with customizable rendering.
+ * Container for order invoice items.
  *
  * @component
  * @example
@@ -446,7 +446,7 @@ export interface SubtotalProps {
 }
 
 /**
- * Displays the order subtotal amount with customizable rendering.
+ * Displays the order subtotal amount.
  *
  * @component
  * @example
@@ -518,7 +518,7 @@ export interface PaidPlanDiscountProps {
 }
 
 /**
- * Displays the order paid plan discount with customizable rendering.
+ * Displays the order paid plan discount.
  *
  * @component
  * @example
@@ -587,7 +587,7 @@ export interface CouponDiscountProps {
 }
 
 /**
- * Displays the order coupon discount with customizable rendering.
+ * Displays the order coupon discount.
  *
  * @component
  * @example
@@ -658,7 +658,7 @@ export interface TaxProps {
 }
 
 /**
- * Displays the order tax with customizable rendering.
+ * Displays the order tax.
  *
  * @component
  * @example
@@ -728,7 +728,7 @@ export interface FeeProps {
 }
 
 /**
- * Displays the order fee with customizable rendering.
+ * Displays the order fee.
  *
  * @component
  * @example
@@ -797,7 +797,7 @@ export interface TotalProps {
 }
 
 /**
- * Displays the order total amount with customizable rendering.
+ * Displays the order total amount.
  * This represents the final amount to be paid including all fees and taxes.
  *
  * @component

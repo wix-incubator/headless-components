@@ -112,7 +112,7 @@ export interface NameProps {
 }
 
 /**
- * Displays the ticket definition name with customizable rendering.
+ * Displays the ticket definition name.
  *
  * @component
  * @example
@@ -171,7 +171,7 @@ export interface DescriptionProps {
 }
 
 /**
- * Displays the ticket definition description with customizable rendering. Not rendered if there is no description.
+ * Displays the ticket definition description. Not rendered if there is no description.
  *
  * @component
  * @example
