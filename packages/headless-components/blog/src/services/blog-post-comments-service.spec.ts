@@ -10,6 +10,7 @@ vi.mock('@wix/comments', () => ({
   comments: {
     createComment: vi.fn(),
     listCommentsByResource: vi.fn(),
+    deleteComment: vi.fn(),
   },
 }));
 
@@ -234,6 +235,188 @@ describe('BlogPostCommentsService', () => {
       // Assert
       expect(result).toBeNull();
       expect(service.getError(commentA._id!)).toBe('Failed to create reply');
+    });
+  });
+
+  describe('deleteComment', () => {
+    it('should delete a root comment without replies', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment' });
+      const commentB = aComment({ id: 'B', message: '2nd comment' });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA, commentB],
+        },
+      });
+
+      // Mock successful deletion
+      vi.mocked(commentsModule.deleteComment).mockResolvedValueOnce(undefined as any);
+
+      // Execute
+      const deletePromise = service.deleteComment(commentA._id!);
+
+      // Assert - during deletion
+      expect(service.isLoading(commentA._id!)).toEqual('saving');
+
+      await deletePromise;
+
+      // Assert - after deletion
+      expect(service.isLoading()).toEqual(false);
+      expect(service.getComments()).toHaveLength(1);
+      expect(service.getComments()).toEqual([aEnhancedComment(commentB)]);
+    });
+
+    it('should delete a root comment with replies by marking it as DELETED', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment', replyCount: 1 });
+      const commentB = aComment({ id: 'B', message: 'Reply to A', parentId: commentA._id! });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+          commentReplies: {
+            [commentA._id!]: {
+              replies: [commentB],
+            },
+          },
+        },
+      });
+
+      // Mock successful deletion
+      vi.mocked(commentsModule.deleteComment).mockResolvedValueOnce(undefined as any);
+
+      // Execute
+      const deletePromise = service.deleteComment(commentA._id!);
+
+      // Assert - during deletion
+      expect(service.isLoading(commentA._id!)).toEqual('saving');
+
+      await deletePromise;
+
+      // Assert - after deletion
+      expect(service.isLoading()).toEqual(false);
+      expect(service.getComments()).toHaveLength(1);
+
+      const deletedComment = service.getComment(commentA._id!);
+      expect(deletedComment?.status).toBe('DELETED');
+      expect(deletedComment?.content).toBeUndefined();
+      expect(deletedComment?.author).toBeUndefined();
+      expect(deletedComment?.resolvedFields.author).toBeUndefined();
+      expect(deletedComment?.resolvedFields.parentAuthor).toBeUndefined();
+
+      // Reply should still exist
+      expect(service.getComments(commentA._id!)).toHaveLength(1);
+      expect(service.getComments(commentA._id!)).toEqual([aEnhancedComment(commentB)]);
+    });
+
+    it('should delete a reply without nested replies by removing it', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment', replyCount: 2 });
+      const commentB = aComment({ id: 'B', message: 'Reply 1 to A', parentId: commentA._id! });
+      const commentC = aComment({ id: 'C', message: 'Reply 2 to A', parentId: commentA._id! });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+          commentReplies: {
+            [commentA._id!]: {
+              replies: [commentB, commentC],
+            },
+          },
+        },
+      });
+
+      // Mock successful deletion
+      vi.mocked(commentsModule.deleteComment).mockResolvedValueOnce(undefined as any);
+
+      // Execute
+      const deletePromise = service.deleteComment(commentB._id!);
+
+      // Assert - during deletion
+      expect(service.isLoading(commentB._id!)).toEqual('saving');
+
+      await deletePromise;
+
+      // Assert - after deletion
+      expect(service.isLoading(commentA._id!)).toEqual(false);
+      expect(service.getComments(commentA._id!)).toHaveLength(1);
+      expect(service.getComments(commentA._id!)).toEqual([aEnhancedComment(commentC)]);
+    });
+
+    it('should delete a reply with nested replies by marking it as DELETED', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment', replyCount: 2 });
+      const commentB = aComment({ id: 'B', message: 'Reply to A', parentId: commentA._id! });
+      const commentC = aComment({ id: 'C', message: 'Nested reply to B', parentId: commentB._id! });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+          commentReplies: {
+            [commentA._id!]: {
+              replies: [commentB, commentC],
+            },
+          },
+        },
+      });
+
+      // Mock successful deletion
+      vi.mocked(commentsModule.deleteComment).mockResolvedValueOnce(undefined as any);
+
+      // Execute
+      const deletePromise = service.deleteComment(commentB._id!);
+
+      // Assert - during deletion
+      expect(service.isLoading(commentB._id!)).toEqual('saving');
+
+      await deletePromise;
+
+      // Assert - after deletion
+      expect(service.isLoading(commentA._id!)).toEqual(false);
+      expect(service.getComments(commentA._id!)).toHaveLength(2);
+
+      const deletedComment = service.getComment(commentB._id!);
+      expect(deletedComment?.status).toBe('DELETED');
+      expect(deletedComment?.content).toBeUndefined();
+      expect(deletedComment?.author).toBeUndefined();
+      expect(deletedComment?.resolvedFields.author).toBeUndefined();
+      expect(deletedComment?.resolvedFields.parentAuthor).toBeUndefined();
+
+      // Nested reply should still exist
+      const nestedReply = service.getComment(commentC._id!);
+      expect(nestedReply).toEqual(aEnhancedComment(commentC));
+    });
+
+    it('should handle deletion of non-existent comment', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment' });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+        },
+      });
+
+      // Mock successful deletion
+      vi.mocked(commentsModule.deleteComment).mockResolvedValueOnce(undefined as any);
+
+      // Execute
+      await service.deleteComment('non-existent-id');
+
+      // Assert
+      expect(service.getComments()).toHaveLength(1);
+      expect(service.getComments()).toEqual([aEnhancedComment(commentA)]);
+    });
+
+    it('should handle API failure during deletion', async () => {
+      const commentA = aComment({ id: 'A', message: '1st comment' });
+      const { service } = await setup({
+        listCommentsByResourceResponse: {
+          comments: [commentA],
+        },
+      });
+
+      // Mock deletion failure
+      vi.mocked(commentsModule.deleteComment).mockRejectedValueOnce(new Error('Failed to delete'));
+
+      // Execute
+      await service.deleteComment(commentA._id!);
+
+      // Assert
+      expect(service.getError(commentA._id!)).toBe('Failed to delete comment');
+      expect(service.getComments()).toHaveLength(1);
+      expect(service.getComments()).toEqual([aEnhancedComment(commentA)]);
     });
   });
 

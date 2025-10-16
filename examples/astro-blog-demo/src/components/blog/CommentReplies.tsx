@@ -19,15 +19,13 @@ interface CommentReplyActionProps {
 }
 
 export function CommentReplies({ uiLocale }: { uiLocale: string }) {
-  const { replies } = Comment.useCommentContext();
+  const { comment, replies } = Comment.useCommentContext();
   const hasReplies = useMemo(() => replies.length > 0, [replies]);
   const [isOpen, setIsOpen] = useState(hasReplies);
 
   return (
     <>
-      <LoginGuard>
-        <ReplyAction onCommentAdded={() => setIsOpen(true)} />
-      </LoginGuard>
+      <ReplyAction onCommentAdded={() => setIsOpen(true)} />
       {isOpen && (
         <>
           <div className="mb-4">
@@ -43,9 +41,7 @@ export function CommentReplies({ uiLocale }: { uiLocale: string }) {
             <div className="space-y-6">
               <Comment.ReplyRepeater>
                 <CommentBlock uiLocale={uiLocale}>
-                  <LoginGuard>
-                    <ReplyAction />
-                  </LoginGuard>
+                  <ReplyAction />
                 </CommentBlock>
               </Comment.ReplyRepeater>
             </div>
@@ -60,7 +56,6 @@ export function CommentReplies({ uiLocale }: { uiLocale: string }) {
 
           const loadingText = isLoading ? "Loading..." : undefined;
           const buttonText = isOpen ? "Load more replies" : "Show more replies";
-
 
           return (
             <div>
@@ -108,21 +103,37 @@ function ReplyAction({ onCommentAdded }: CommentReplyActionProps) {
 
   return (
     <>
-      <Button variant="link" className="place-self-start h-auto p-0" onClick={handleClick}>
-        <MessageSquareReplyIcon />
-        Reply
-      </Button>
-      {isReplyOpen && (
-        <CommentForm
-          reply
-          textareaRef={textareaRef}
-          onCommentAdded={() => {
-            setIsReplyOpen(false);
-            onCommentAdded?.();
-          }}
-          onCancelClick={() => setIsReplyOpen(false)}
-        />
-      )}
+      <Comment.Status asChild>
+        {({ status }) => {
+          if (status === "PUBLISHED") {
+            return (
+              <LoginGuard>
+                <Button
+                  variant="link"
+                  className="h-auto place-self-start p-0"
+                  onClick={handleClick}
+                >
+                  <MessageSquareReplyIcon />
+                  Reply
+                </Button>
+                {isReplyOpen && (
+                  <CommentForm
+                    reply
+                    textareaRef={textareaRef}
+                    onCommentAdded={() => {
+                      setIsReplyOpen(false);
+                      onCommentAdded?.();
+                    }}
+                    onCancelClick={() => setIsReplyOpen(false)}
+                  />
+                )}
+              </LoginGuard>
+            );
+          }
+
+          return null;
+        }}
+      </Comment.Status>
     </>
   );
 }

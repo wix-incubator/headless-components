@@ -57,6 +57,7 @@ export const BlogPostCommentsServiceDefinition = defineService<{
     parentCommentId: string,
     content: comments.CommentContent,
   ) => Promise<CommentWithResolvedFields | null>;
+  deleteComment: (commentId: string) => Promise<void>;
   loadMore: () => Promise<void>;
   loadMoreReplies: (commentId: string) => Promise<void>;
 }>('blogPostCommentsService');
@@ -99,13 +100,34 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
       return allComments.find((comment) => comment._id === commentId);
     };
 
+    const getAllComments = (): CommentWithResolvedFields[] => {
+      return Object.values(threadStatesSignal.get()).flatMap((threadState) => threadState.comments);
+    };
+
+    const getHasLeafComments = (commentId: string): boolean => {
+      const allComments = getAllComments();
+      return allComments.some((comment) => comment.parentComment?._id === commentId);
+    };
+
+    const findThreadStateByCommentId = (
+      commentId: string,
+    ):
+      | {
+          threadState: ThreadState;
+          threadStateId: string | RootCommentId;
+        }
+      | undefined => {
+      const threadState = Object.entries(threadStatesSignal.get()).find(([, threadState]) =>
+        threadState.comments.some((comment) => comment._id === commentId),
+      );
+
+      return threadState
+        ? { threadStateId: threadState[0], threadState: threadState[1] }
+        : undefined;
+    };
 
     const getMemberMap = (): RecordOfMembers => {
-      const threadStates = threadStatesSignal.get();
-
-      const allComments = Object.values(threadStates).flatMap(
-        (threadState) => threadState.comments,
-      );
+      const allComments = getAllComments();
 
       const membersMap: RecordOfMembers = {};
 
@@ -379,6 +401,38 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
       }
     };
 
+    const deleteComment = async (commentIdToDelete: string): Promise<void> => {
+      try {
+        setThreadState.loading(commentIdToDelete, 'saving');
+        await comments.deleteComment(commentIdToDelete);
+
+        const hasLeafComments = getHasLeafComments(commentIdToDelete);
+        const commentIdThread = findThreadStateByCommentId(commentIdToDelete);
+
+        if (!commentIdThread) {
+          console.warn('Comment not found in any thread');
+          return;
+        }
+
+        const nextComments = hasLeafComments
+          ? commentIdThread.threadState.comments.map<CommentWithResolvedFields>((comment) =>
+              comment._id === commentIdToDelete ? toDeletedComment(comment) : comment,
+            )
+          : commentIdThread.threadState.comments.filter(
+              (comment) => comment._id !== commentIdToDelete,
+            );
+
+        setThreadState.loaded(
+          commentIdThread.threadStateId,
+          nextComments,
+          commentIdThread.threadState.nextCursor,
+        );
+      } catch (err) {
+        console.error('Failed to delete comment:', err);
+        setThreadState.error(commentIdToDelete, 'Failed to delete comment');
+      }
+    };
+
     return {
       getComments,
       getComment,
@@ -395,6 +449,7 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
       setSort,
       createComment,
       createReply,
+      deleteComment,
     };
   },
 );
@@ -513,6 +568,16 @@ async function fetchReplies(params: FetchRepliesParams): Promise<{
   return {
     items: enhancedReplies,
     cursors: response.pagingMetadata?.cursors ?? { next: undefined, prev: undefined },
+  };
+}
+
+function toDeletedComment(comment: CommentWithResolvedFields): CommentWithResolvedFields {
+  return {
+    ...comment,
+    status: 'DELETED',
+    content: undefined,
+    author: undefined,
+    resolvedFields: { author: undefined, parentAuthor: undefined },
   };
 }
 

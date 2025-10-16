@@ -17,6 +17,7 @@ export interface CommentContentProps {
 interface CommentContextValue {
   comment: CommentWithResolvedFields;
   replies: CommentWithResolvedFields[];
+  deleteComment: () => Promise<void>;
 }
 
 const CommentContext = React.createContext<CommentContextValue | null>(null);
@@ -69,10 +70,11 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => 
 
   return (
     <CoreComments.Comment commentId={comment._id || ''}>
-      {({ replies }) => {
+      {({ replies, deleteComment }) => {
         const contextValue: CommentContextValue = {
           comment,
           replies,
+          deleteComment,
         };
         return (
           <CommentContext.Provider key={comment._id} value={contextValue}>
@@ -220,7 +222,9 @@ CommentDate.displayName = 'Blog.Post.Comment.CommentDate';
 export interface StatusProps {
   asChild?: boolean;
   className?: string;
-  children?: AsChildChildren<{ status: comments.Status; isPending: boolean }> | React.ReactNode;
+  children?:
+    | AsChildChildren<{ status: comments.Comment['status']; isPending: boolean }>
+    | React.ReactNode;
 }
 
 export const Status = React.forwardRef<HTMLElement, StatusProps>((props, ref) => {
@@ -279,9 +283,9 @@ export const Replies = React.forwardRef<HTMLElement, RepliesProps>((props, ref) 
   const { comment } = useCommentContext();
 
   return (
-    <CoreComments.Replies commentId={comment._id || ''}>
-      {({ totalReplies }) => {
-        if (totalReplies === 0) return null;
+    <CoreComments.Comment commentId={comment._id || ''}>
+      {({ parentComment }) => {
+        if ((parentComment?.replyCount ?? 0) === 0) return null;
 
         const attributes = {
           'data-testid': TestIds.blogPostCommentRepliesSection,
@@ -293,7 +297,7 @@ export const Replies = React.forwardRef<HTMLElement, RepliesProps>((props, ref) 
           </div>
         );
       }}
-    </CoreComments.Replies>
+    </CoreComments.Comment>
   );
 });
 
@@ -308,7 +312,7 @@ export const ReplyRepeater = React.forwardRef<HTMLElement, ReplyRepeaterProps>((
   const { comment } = useCommentContext();
 
   return (
-    <CoreComments.Replies commentId={comment._id || ''}>
+    <CoreComments.Comment commentId={comment._id || ''}>
       {({ replies }) =>
         replies.map((reply) => {
           return (
@@ -318,7 +322,7 @@ export const ReplyRepeater = React.forwardRef<HTMLElement, ReplyRepeaterProps>((
           );
         })
       }
-    </CoreComments.Replies>
+    </CoreComments.Comment>
   );
 });
 
@@ -382,15 +386,9 @@ export const LoadMoreReplies = React.forwardRef<HTMLElement, LoadMoreRepliesProp
   if (!commentId) return null;
 
   return (
-    <CoreComments.Replies commentId={commentId}>
-      {({
-        hasNextPage,
-        loadNextPage,
-        isLoading,
-        totalReplies,
-        replies,
-      }) => {
-        if (totalReplies === 0) return null;
+    <CoreComments.Comment commentId={commentId}>
+      {({ hasNextPage, loadNextPage, isLoading, parentComment, replies }) => {
+        if ((parentComment?.replyCount ?? 0) === 0) return null;
 
         const attributes = {
           'data-testid': TestIds.blogPostCommentLoadMoreReplies,
@@ -418,7 +416,7 @@ export const LoadMoreReplies = React.forwardRef<HTMLElement, LoadMoreRepliesProp
           </AsChildSlot>
         );
       }}
-    </CoreComments.Replies>
+    </CoreComments.Comment>
   );
 });
 

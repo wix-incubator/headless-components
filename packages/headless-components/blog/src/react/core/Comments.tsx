@@ -74,15 +74,34 @@ export interface CommentProps {
 export interface CommentRenderProps {
   comment: ReturnType<BlogPostCommentsServiceAPI['getComment']>;
   replies: ReturnType<BlogPostCommentsServiceAPI['getComments']>;
+  deleteComment: () => ReturnType<BlogPostCommentsServiceAPI['deleteComment']>;
+  hasNextPage: ReturnType<BlogPostCommentsServiceAPI['hasNextPage']>;
+  isLoading: boolean;
+  loadNextPage: () => ReturnType<BlogPostCommentsServiceAPI['loadMoreReplies']>;
+  parentComment: CommentWithResolvedFields | undefined;
 }
 
 export const Comment = (props: CommentProps) => {
   const { commentId } = props;
   const service = useService(BlogPostCommentsServiceDefinition);
+  const parentComment = service.getComments().find((c) => c._id === commentId);
+
+  const isLoading =
+    service.isLoading(commentId) === 'more' || service.isLoading(commentId) === 'initial';
+
+  const loadNextPage = React.useCallback(
+    () => service.loadMoreReplies(commentId),
+    [service, commentId],
+  );
 
   return props.children({
     comment: service.getComment(commentId),
     replies: service.getComments(commentId),
+    hasNextPage: service.hasNextPage(commentId),
+    isLoading,
+    loadNextPage,
+    parentComment,
+    deleteComment: () => service.deleteComment(commentId),
   });
 };
 
@@ -191,51 +210,3 @@ export const CreateReply = (props: CreateReplyProps) => {
 };
 
 CreateReply.displayName = 'Blog.Post.Comments.CreateReply/Core';
-
-/**
- * Props for CommentReplies core component
- */
-export interface RepliesProps {
-  commentId: string;
-  children: (props: {
-    replies: CommentWithResolvedFields[];
-    hasNextPage: boolean;
-    totalReplies: number;
-    isLoading: boolean;
-    loadNextPage: () => Promise<void>;
-  }) => React.ReactNode;
-}
-
-/**
- * Core CommentReplies component that provides replies data for a specific comment.
- *
- * @component
- */
-export const Replies = React.forwardRef<HTMLElement, RepliesProps>((props, _ref) => {
-  const { commentId, children } = props;
-  const commentsService = useService(BlogPostCommentsServiceDefinition);
-
-  const replies = commentsService.getComments(commentId);
-
-  const hasNextPage = commentsService.hasNextPage(commentId);
-  const parentComment = commentsService.getComments().find((c) => c._id === commentId);
-
-  const isLoading =
-    commentsService.isLoading(commentId) === 'more' ||
-    commentsService.isLoading(commentId) === 'initial';
-
-  const loadNextPage = React.useCallback(
-    () => commentsService.loadMoreReplies(commentId),
-    [commentsService, commentId],
-  );
-
-  return children({
-    replies,
-    hasNextPage,
-    isLoading,
-    totalReplies: parentComment?.replyCount || 0,
-    loadNextPage,
-  });
-});
-
-Replies.displayName = 'Blog.Post.Comments.Replies/Core';

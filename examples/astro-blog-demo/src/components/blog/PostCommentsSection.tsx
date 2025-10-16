@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Blog } from "@wix/blog/components";
 import type { BlogPostServiceConfig } from "@wix/blog/services";
-import { ChevronDownIcon, Loader2Icon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
+import { SortSelect } from "../ui/blog/SortSelect";
 import { CommentBlock } from "./CommentBlock";
 import { CommentForm } from "./CommentForm";
 import { CommentReplies } from "./CommentReplies";
@@ -30,12 +31,7 @@ export default function PostCommentsSection({
               Comments
             </h3>
 
-            <div className="relative flex w-fit">
-              <Comments.Sort className="appearance-none bg-transparent pe-5 text-sm text-foreground" />
-              <ChevronDownIcon
-                className="pointer-events-none absolute inset-[auto_0_auto_auto] flex h-full w-4 items-center"
-              />
-            </div>
+            <SortSelect sortComponent={Comments.Sort} />
           </div>
 
           <Separator className="-mt-1" />
