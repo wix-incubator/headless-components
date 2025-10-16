@@ -31,7 +31,7 @@ interface RootProps {
 
 **Data Attributes**
 
-- `data-testid="pricing-option"` - Applied to pricing option element
+- `data-testid="pricing-option-root"` - Applied to pricing option element
 
 ---
 
@@ -78,15 +78,20 @@ interface NameProps {
 
 ### PricingOption.Pricing
 
-Displays the pricing option price.
+Displays the pricing option price with customizable rendering.
 
 **Props**
 
 ```tsx
 interface PricingProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ value: string; currency: string }>;
+  children?: AsChildChildren<{
+    value: number;
+    currency: string;
+    formattedValue: string;
+  }>;
   className?: string;
+  locale?: Intl.LocalesArgument;
 }
 ```
 
@@ -103,9 +108,9 @@ interface PricingProps {
 
 // asChild with react component
 <PricingOption.Pricing asChild>
-  {React.forwardRef(({ value, currency, ...props }, ref) => (
+  {React.forwardRef(({ value, currency, formattedValue, ...props }, ref) => (
     <span ref={ref} {...props} className="text-lg font-semibold">
-      {value} {currency}
+      {formattedValue}
     </span>
   ))}
 </PricingOption.Pricing>
@@ -117,9 +122,106 @@ interface PricingProps {
 
 ---
 
+### PricingOption.Tax
+
+Displays the tax for the pricing option. Only renders when event has tax settings.
+
+**Props**
+
+```tsx
+interface TaxProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{
+    name: string;
+    rate: number;
+    included: boolean;
+    taxableValue: number;
+    taxValue: number;
+    currency: string;
+    formattedTaxValue: string;
+  }>;
+  className?: string;
+  locale?: Intl.LocalesArgument;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<PricingOption.Tax className="text-sm text-gray-500" />
+
+// asChild with primitive
+<PricingOption.Tax asChild>
+  <span className="text-sm text-gray-500" />
+</PricingOption.Tax>
+
+// asChild with react component
+<PricingOption.Tax asChild>
+  {React.forwardRef(({ name, rate, included, taxableValue, taxValue, currency, formattedTaxValue, ...props }, ref) => (
+    <span ref={ref} {...props} className="text-sm text-gray-500">
+      {included ? `${name} included` : `+${formattedTaxValue} ${name}`}
+    </span>
+  ))}
+</PricingOption.Tax>
+```
+
+**Data Attributes**
+
+- `data-testid="pricing-option-tax"` - Applied to tax element
+
+---
+
+### PricingOption.Fee
+
+Displays the fee for the pricing option. Only renders when ticket definition has fee enabled.
+
+**Props**
+
+```tsx
+interface FeeProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{
+    rate: number;
+    value: number;
+    currency: string;
+    formattedValue: string;
+  }>;
+  className?: string;
+  locale?: Intl.LocalesArgument;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<PricingOption.Fee className="text-sm text-gray-500" />
+
+// asChild with primitive
+<PricingOption.Fee asChild>
+  <span className="text-sm text-gray-500" />
+</PricingOption.Fee>
+
+// asChild with react component
+<PricingOption.Fee asChild>
+  {React.forwardRef(({ rate, value, currency, formattedValue, ...props }, ref) => (
+    <span ref={ref} {...props} className="text-sm text-gray-500">
+      +{formattedValue} service fee
+    </span>
+  ))}
+</PricingOption.Fee>
+```
+
+**Data Attributes**
+
+- `data-testid="pricing-option-fee"` - Applied to fee element
+
+---
+
 ### PricingOption.Quantity
 
-Displays a quantity selector for the pricing option.
+Displays a quantity selector for the pricing option. Only renders when the sale has started and the ticket definition is not sold out.
 
 **Props**
 
@@ -127,6 +229,7 @@ Displays a quantity selector for the pricing option.
 interface QuantityProps {
   asChild?: boolean;
   children?: AsChildChildren<{
+    options: number[];
     quantity: number;
     maxQuantity: number;
     increment: () => void;
@@ -150,11 +253,11 @@ interface QuantityProps {
 
 // asChild with react component
 <PricingOption.Quantity asChild>
-  {React.forwardRef(({ quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
+  {React.forwardRef(({ options, quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
     <div ref={ref} {...props} className="flex items-center space-x-2">
-      <button onClick={decrement} disabled={quantity === 0}>-</button>
+      <button disabled={quantity === 0} onClick={decrement}>-</button>
       <span>{quantity}</span>
-      <button onClick={increment} disabled={quantity >= maxQuantity}>+</button>
+      <button disabled={quantity >= maxQuantity} onClick={increment}>+</button>
     </div>
   ))}
 </PricingOption.Quantity>
@@ -170,7 +273,9 @@ interface QuantityProps {
 
 | Attribute                               | Applied To             | Purpose                          |
 | --------------------------------------- | ---------------------- | -------------------------------- |
-| `data-testid="pricing-option"`          | PricingOption.Root     | Pricing option element           |
+| `data-testid="pricing-option-root"`     | PricingOption.Root     | Pricing option element           |
 | `data-testid="pricing-option-name"`     | PricingOption.Name     | Pricing option name element      |
 | `data-testid="pricing-option-pricing"`  | PricingOption.Pricing  | Pricing option pricing element   |
+| `data-testid="pricing-option-tax"`      | PricingOption.Tax      | Pricing option tax element       |
+| `data-testid="pricing-option-fee"`      | PricingOption.Fee      | Pricing option fee element       |
 | `data-testid="pricing-option-quantity"` | PricingOption.Quantity | Pricing option quantity selector |

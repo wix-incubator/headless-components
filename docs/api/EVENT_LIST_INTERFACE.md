@@ -39,7 +39,10 @@ Container for the event list with support for empty state.
 
 ```tsx
 interface EventsProps {
-  children: React.ReactNode;
+  asChild?: boolean;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ events: Event[]; isLoading: boolean }>;
   emptyState?: React.ReactNode;
   className?: string;
 }
@@ -59,13 +62,14 @@ interface EventsProps {
 **Data Attributes**
 
 - `data-testid="event-list-events"` - Applied to events container
-- `data-filtered` - Is list filtered
+- `data-loading` - Is list loading
 
 ---
 
 ### EventList.EventRepeater
 
 Repeater component that renders [Event.Root](./EVENT_INTERFACE.md#eventroot) for each event.
+Note: Repeater components do NOT support asChild as per architecture rules.
 
 **Props**
 
@@ -105,7 +109,8 @@ interface LoadMoreTriggerProps {
     loadMoreEvents: () => void;
   }>;
   className?: string;
-  label?: string;
+  label?: React.ReactNode;
+  loadingState?: React.ReactNode;
 }
 ```
 
@@ -113,7 +118,11 @@ interface LoadMoreTriggerProps {
 
 ```tsx
 // Default usage
-<EventList.LoadMoreTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Load More" />
+<EventList.LoadMoreTrigger
+  className="bg-blue-600 hover:bg-blue-700 text-white"
+  label="Load More"
+  loadingState="Loading..."
+/>
 
 // asChild with primitive
 <EventList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -122,9 +131,9 @@ interface LoadMoreTriggerProps {
 
 // asChild with react component
 <EventList.LoadMoreTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-  {React.forwardRef(({ isLoading, loadMoreEvents, ...props }) => (
+  {React.forwardRef(({ isLoading, loadMoreEvents, ...props }, ref) => (
     <button ref={ref} {...props}>
-      {isLoading ? 'Loading' : 'Load More'}
+      {isLoading ? 'Loading...' : 'Load More'}
     </button>
   ))}
 </EventList.LoadMoreTrigger>
@@ -177,115 +186,77 @@ interface ErrorProps {
 
 ---
 
-### EventList.CategoryFilters
+### EventList.CategoryFilter
 
 Container for the event list category filters. Not rendered if there are no categories.
+Uses the Filter component from `@wix/headless-components/react`.
 
 **Props**
 
 ```tsx
-interface CategoryFilters {
+interface CategoryFilterProps {
+  asChild?: boolean;
   children: React.ReactNode;
   className?: string;
+  allCategoriesLabel: string;
 }
 ```
 
 **Example**
 
 ```tsx
-<EventList.CategoryFilters>
-  <EventList.CategoryFilterRepeater>
-    <CategoryFilter.Name />
-  </EventList.CategoryFilterRepeater>
-</EventList.CategoryFilters>
-```
-
-**Data Attributes**
-
-- `data-testid="event-list-category-filters"` - Applied to category filters container
-
----
-
-### EventList.CategoryFilterRepeater
-
-Repeater component that renders CategoryFilter.Root for each category.
-
-**Props**
-
-```tsx
-interface CategoryFilterRepeaterProps {
-  children: React.ReactNode;
-}
-```
-
-**Example**
-
-```tsx
-<EventList.CategoryFilterRepeater>
-  <CategoryFilter.Name />
-</EventList.CategoryFilterRepeater>
+<EventList.CategoryFilter allCategoriesLabel="All">
+  <Filter.FilterOptions className="border-b border-gray-500 mb-6">
+    <Filter.FilterOptionRepeater>
+      <Filter.FilterOption.SingleFilter className="flex gap-2" />
+    </Filter.FilterOptionRepeater>
+  </Filter.FilterOptions>
+</EventList.CategoryFilter>
 ```
 
 ---
 
-### EventList.StatusFilters
+### EventList.StatusFilter
 
 Container for the event list status filters.
+Uses the Filter component from `@wix/headless-components/react`.
 
 **Props**
 
 ```tsx
-interface StatusFilters {
+interface StatusFilterProps {
+  asChild?: boolean;
   children: React.ReactNode;
   className?: string;
+  allEventsLabel: string;
+  upcomingEventsLabel: string;
+  pastEventsLabel: string;
 }
 ```
 
 **Example**
 
 ```tsx
-<EventList.StatusFilters>
-  <EventList.StatusFilterRepeater>
-    <StatusFilter.Name />
-  </EventList.StatusFilterRepeater>
-</EventList.StatusFilters>
-```
-
-**Data Attributes**
-
-- `data-testid="event-list-status-filters"` - Applied to status filters container
-
----
-
-### EventList.StatusFilterRepeater
-
-Repeater component that renders StatusFilter.Root for each category.
-
-**Props**
-
-```tsx
-interface StatusFilterRepeaterProps {
-  children: React.ReactNode;
-}
-```
-
-**Example**
-
-```tsx
-<EventList.StatusFilterRepeater>
-  <StatusFilter.Name />
-</EventList.StatusFilterRepeater>
+<EventList.StatusFilter
+  allEventsLabel="All Events"
+  upcomingEventsLabel="Upcoming"
+  pastEventsLabel="Past"
+>
+  <Filter.FilterOptions>
+    <Filter.FilterOptionRepeater>
+      <Filter.FilterOption.SingleFilter />
+    </Filter.FilterOptionRepeater>
+  </Filter.FilterOptions>
+</EventList.StatusFilter>
 ```
 
 ---
 
 ## Data Attributes Summary
 
-| Attribute                                   | Applied To                | Purpose                    |
-| ------------------------------------------- | ------------------------- | -------------------------- |
-| `data-testid="event-list-events"`           | EventList.Events          | Events container           |
-| `data-testid="event-list-load-more"`        | EventList.LoadMoreTrigger | Load more element          |
-| `data-testid="event-list-error"`            | EventList.Error           | Error element              |
-| `data-testid="event-list-category-filters"` | EventList.CategoryFilters | Category filters container |
-| `data-testid="event-list-status-filters"`   | EventList.StatusFilters   | Status filters container   |
-| `data-filtered`                             | EventList.Events          | Filtering status           |
+| Attribute                            | Applied To                | Purpose           |
+| ------------------------------------ | ------------------------- | ----------------- |
+| `data-testid="event-list-events"`    | EventList.Events          | Events container  |
+| `data-testid="event-list-load-more"` | EventList.LoadMoreTrigger | Load more element |
+| `data-testid="event-list-error"`     | EventList.Error           | Error element     |
+| `data-loading`                       | EventList.Events          | Loading status    |

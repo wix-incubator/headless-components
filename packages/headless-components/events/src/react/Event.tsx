@@ -443,7 +443,7 @@ export interface DateProps {
  *
  * // asChild with react component
  * <Event.Date asChild>
- *   {React.forwardRef(({ formattedDate, ...props }, ref) => (
+ *   {React.forwardRef(({ startDate, endDate, timeZoneId, dateAndTimeTbd, dateAndTimeTbdMessage, hideEndDate, showTimeZone, formattedDate, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
  *       {formattedDate}
  *     </span>
