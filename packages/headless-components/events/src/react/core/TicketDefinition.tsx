@@ -106,15 +106,17 @@ export function Description(props: DescriptionProps): React.ReactNode {
 export interface FixedPricingProps {
   /** Render prop function */
   children: (props: FixedPricingRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface FixedPricingRenderProps {
-  /** Fixed price */
-  price: number;
+  /** Fixed price value */
+  value: number;
   /** Price currency */
   currency: string;
-  /** Formatted price */
-  formattedPrice: string;
+  /** Formatted price value */
+  formattedValue: string;
   /** Whether ticket definition is free */
   free: boolean;
 }
@@ -134,14 +136,14 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
     return null;
   }
 
-  const price = Number(fixedPrice.value!);
+  const value = Number(fixedPrice.value!);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
-  const formattedPrice = formatPrice(price, currency);
+  const formattedValue = formatPrice(value, currency, props.locale);
 
   return props.children({
-    price,
+    value,
     currency,
-    formattedPrice,
+    formattedValue,
     free: ticketDefinition.pricingMethod!.free!,
   });
 }
@@ -149,6 +151,8 @@ export function FixedPricing(props: FixedPricingProps): React.ReactNode {
 export interface GuestPricingProps {
   /** Render prop function */
   children: (props: GuestPricingRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface GuestPricingRenderProps {
@@ -194,7 +198,7 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
     ticketDefinitionListService.getCurrentPriceOverride(ticketDefinitionId);
   const minPrice = Number(guestPrice.value!);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
-  const formattedMinPrice = formatPrice(minPrice, currency);
+  const formattedMinPrice = formatPrice(minPrice, currency, props.locale);
 
   return props.children({
     price,
@@ -208,6 +212,8 @@ export function GuestPricing(props: GuestPricingProps): React.ReactNode {
 export interface PricingRangeProps {
   /** Render prop function */
   children: (props: PricingRangeRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface PricingRangeRenderProps {
@@ -245,8 +251,8 @@ export function PricingRange(props: PricingRangeProps): React.ReactNode {
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
   const currency = getTicketDefinitionCurrency(ticketDefinition);
-  const formattedMinPrice = formatPrice(minPrice, currency);
-  const formattedMaxPrice = formatPrice(maxPrice, currency);
+  const formattedMinPrice = formatPrice(minPrice, currency, props.locale);
+  const formattedMaxPrice = formatPrice(maxPrice, currency, props.locale);
   const formattedPriceRange =
     minPrice === maxPrice
       ? formattedMinPrice
@@ -427,6 +433,8 @@ export function Remaining(props: RemainingProps): React.ReactNode {
 export interface SaleStartDateProps {
   /** Render prop function */
   children: (props: SaleStartDateRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface SaleStartDateRenderProps {
@@ -452,7 +460,7 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
   }
 
   const startDate = new Date(ticketDefinition.salePeriod!.startDate!);
-  const startDateFormatted = formatFullDate(startDate);
+  const startDateFormatted = formatFullDate(startDate, false, props.locale);
 
   return props.children({ startDate, startDateFormatted });
 }
@@ -460,6 +468,8 @@ export function SaleStartDate(props: SaleStartDateProps): React.ReactNode {
 export interface SaleEndDateProps {
   /** Render prop function */
   children: (props: SaleEndDateRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface SaleEndDateRenderProps {
@@ -488,7 +498,7 @@ export function SaleEndDate(props: SaleEndDateProps): React.ReactNode {
   }
 
   const endDate = new Date(ticketDefinition.salePeriod!.endDate!);
-  const endDateFormatted = formatFullDate(endDate);
+  const endDateFormatted = formatFullDate(endDate, false, props.locale);
 
   return props.children({ endDate, endDateFormatted, saleEnded });
 }

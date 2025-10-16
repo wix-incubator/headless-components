@@ -227,13 +227,15 @@ export interface FixedPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: number;
+    value: number;
     currency: string;
-    formattedPrice: string;
+    formattedValue: string;
     free: boolean;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -252,9 +254,9 @@ export interface FixedPricingProps {
  *
  * // asChild with react component
  * <TicketDefinition.FixedPricing asChild>
- *   {React.forwardRef(({ free, price, currency, formattedPrice, ...props }, ref) => (
+ *   {React.forwardRef(({ value, currency, formattedValue, free, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-lg font-semibold">
- *       {free ? 'Free' : `${formattedPrice}`}
+ *       {free ? 'Free' : `${formattedValue}`}
  *     </span>
  *   ))}
  * </TicketDefinition.FixedPricing>
@@ -262,11 +264,11 @@ export interface FixedPricingProps {
  */
 export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreTicketDefinition.FixedPricing>
-        {({ price, currency, formattedPrice, free }) => (
+      <CoreTicketDefinition.FixedPricing locale={locale}>
+        {({ value, currency, formattedValue, free }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -274,15 +276,15 @@ export const FixedPricing = React.forwardRef<HTMLElement, FixedPricingProps>(
             data-testid={TestIds.ticketDefinitionFixedPricing}
             customElement={children}
             customElementProps={{
-              price,
+              value,
               currency,
-              formattedPrice,
+              formattedValue,
               free,
             }}
-            content={formattedPrice}
+            content={formattedValue}
             {...otherProps}
           >
-            <span>{formattedPrice}</span>
+            <span>{formattedValue}</span>
           </AsChildSlot>
         )}
       </CoreTicketDefinition.FixedPricing>
@@ -306,6 +308,8 @@ export interface GuestPricingProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -332,10 +336,10 @@ export interface GuestPricingProps {
  */
 export const GuestPricing = React.forwardRef<HTMLElement, GuestPricingProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreTicketDefinition.GuestPricing>
+      <CoreTicketDefinition.GuestPricing locale={locale}>
         {({ price, minPrice, currency, formattedMinPrice, setPrice }) => (
           <AsChildSlot
             ref={ref}
@@ -384,6 +388,8 @@ export interface PricingRangeProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -412,10 +418,10 @@ export interface PricingRangeProps {
  */
 export const PricingRange = React.forwardRef<HTMLElement, PricingRangeProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreTicketDefinition.PricingRange>
+      <CoreTicketDefinition.PricingRange locale={locale}>
         {({
           minPrice,
           maxPrice,
@@ -677,6 +683,8 @@ export interface SaleStartDateProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -705,10 +713,10 @@ export interface SaleStartDateProps {
  */
 export const SaleStartDate = React.forwardRef<HTMLElement, SaleStartDateProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreTicketDefinition.SaleStartDate>
+      <CoreTicketDefinition.SaleStartDate locale={locale}>
         {({ startDate, startDateFormatted }) => (
           <AsChildSlot
             ref={ref}
@@ -745,6 +753,8 @@ export interface SaleEndDateProps {
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -773,10 +783,10 @@ export interface SaleEndDateProps {
  */
 export const SaleEndDate = React.forwardRef<HTMLElement, SaleEndDateProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreTicketDefinition.SaleEndDate>
+      <CoreTicketDefinition.SaleEndDate locale={locale}>
         {({ endDate, endDateFormatted, saleEnded }) => (
           <AsChildSlot
             ref={ref}
