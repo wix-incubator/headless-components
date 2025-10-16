@@ -141,10 +141,13 @@ export interface TimeSlotProps {
   children?: AsChildChildren<{
     startTime: Date;
     endTime: Date;
+    timeZoneId: string;
     formattedTimeRange: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 /**
@@ -163,7 +166,7 @@ export interface TimeSlotProps {
  *
  * // asChild with react component
  * <ScheduleItem.TimeSlot asChild>
- *   {React.forwardRef(({ formattedTimeRange, startTime, endTime, ...props }, ref) => (
+ *   {React.forwardRef(({ startTime, endTime, timeZoneId, formattedTimeRange, ...props }, ref) => (
  *     <time ref={ref} className="text-gray-600" {...props} dateTime={startTime.toISOString()}>
  *       {formattedTimeRange}
  *     </time>
@@ -173,11 +176,11 @@ export interface TimeSlotProps {
  */
 export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreScheduleItem.TimeSlot>
-        {({ startTime, endTime, formattedTimeRange }) => (
+      <CoreScheduleItem.TimeSlot locale={locale}>
+        {({ startTime, endTime, timeZoneId, formattedTimeRange }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -187,6 +190,7 @@ export const TimeSlot = React.forwardRef<HTMLElement, TimeSlotProps>(
             customElementProps={{
               startTime,
               endTime,
+              timeZoneId,
               formattedTimeRange,
             }}
             content={formattedTimeRange}

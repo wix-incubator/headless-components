@@ -68,6 +68,8 @@ export function Name(props: NameProps): React.ReactNode {
 export interface TimeSlotProps {
   /** Render prop function */
   children: (props: TimeSlotRenderProps) => React.ReactNode;
+  /** Locale */
+  locale: Intl.LocalesArgument;
 }
 
 export interface TimeSlotRenderProps {
@@ -75,6 +77,8 @@ export interface TimeSlotRenderProps {
   startTime: Date;
   /** Schedule item end time */
   endTime: Date;
+  /** Schedule item time zone ID */
+  timeZoneId: string;
   /** Formatted time range string (e.g., "18:30 - 19:00") */
   formattedTimeRange: string;
 }
@@ -90,9 +94,15 @@ export function TimeSlot(props: TimeSlotProps): React.ReactNode {
   const scheduleItem = scheduleItemService.item.get();
   const startTime = new Date(scheduleItem.timeSlot!.start!);
   const endTime = new Date(scheduleItem.timeSlot!.end!);
-  const formattedTimeRange = formatTimeRange(startTime, endTime);
+  const timeZoneId = scheduleItem.timeSlot!.timeZoneId!;
+  const formattedTimeRange = formatTimeRange(
+    startTime,
+    endTime,
+    timeZoneId,
+    props.locale,
+  );
 
-  return props.children({ startTime, endTime, formattedTimeRange });
+  return props.children({ startTime, endTime, timeZoneId, formattedTimeRange });
 }
 
 export interface DurationProps {
