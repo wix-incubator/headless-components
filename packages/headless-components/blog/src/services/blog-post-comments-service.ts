@@ -19,7 +19,17 @@ export interface CommentWithResolvedFields extends comments.Comment {
   resolvedFields: CommentResolvedFields;
 }
 
-type QueryCommentsSortField = comments.CommentSort['order'];
+type RawQueryCommentsSortField = NonNullable<comments.CommentSort['order']>;
+
+const supportedSortFields = [
+  'NEWEST_FIRST',
+  'OLDEST_FIRST',
+] as const satisfies RawQueryCommentsSortField[];
+
+type QueryCommentsSortField = Extract<
+  RawQueryCommentsSortField,
+  (typeof supportedSortFields)[number]
+>;
 
 export type QueryCommentsSort = {
   fieldName: QueryCommentsSortField;

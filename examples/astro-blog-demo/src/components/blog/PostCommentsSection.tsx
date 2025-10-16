@@ -10,7 +10,7 @@ import { CommentReplies } from "./CommentReplies";
 import LoginGuard from "./LoginGuard";
 
 const {
-  Post: { Comments, Comment },
+  Post: { Comments },
 } = Blog;
 
 type PostCommentsSectionProps = {

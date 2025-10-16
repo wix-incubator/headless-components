@@ -45,7 +45,6 @@ export interface BlogPostCommentsRootProps {
   commentsConfig?: BlogPostCommentsServiceConfig;
 }
 
-
 /**
  * Root container for blog post comments that provides comments context to all child components.
  * Uses IntersectionObserver for lazy loading - comments are loaded when the container becomes visible.

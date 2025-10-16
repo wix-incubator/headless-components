@@ -66,47 +66,6 @@ export const Comments = (props: CommentsProps) => {
 
 Comments.displayName = 'Blog.Post.Comments.Comments/Core';
 
-export interface CommentProps {
-  commentId: string;
-  children: (props: CommentRenderProps) => React.ReactNode;
-}
-
-export interface CommentRenderProps {
-  comment: ReturnType<BlogPostCommentsServiceAPI['getComment']>;
-  replies: ReturnType<BlogPostCommentsServiceAPI['getComments']>;
-  deleteComment: () => ReturnType<BlogPostCommentsServiceAPI['deleteComment']>;
-  hasNextPage: ReturnType<BlogPostCommentsServiceAPI['hasNextPage']>;
-  isLoading: boolean;
-  loadNextPage: () => ReturnType<BlogPostCommentsServiceAPI['loadMoreReplies']>;
-  parentComment: CommentWithResolvedFields | undefined;
-}
-
-export const Comment = (props: CommentProps) => {
-  const { commentId } = props;
-  const service = useService(BlogPostCommentsServiceDefinition);
-  const parentComment = service.getComments().find((c) => c._id === commentId);
-
-  const isLoading =
-    service.isLoading(commentId) === 'more' || service.isLoading(commentId) === 'initial';
-
-  const loadNextPage = React.useCallback(
-    () => service.loadMoreReplies(commentId),
-    [service, commentId],
-  );
-
-  return props.children({
-    comment: service.getComment(commentId),
-    replies: service.getComments(commentId),
-    hasNextPage: service.hasNextPage(commentId),
-    isLoading,
-    loadNextPage,
-    parentComment,
-    deleteComment: () => service.deleteComment(commentId),
-  });
-};
-
-Comment.displayName = 'Blog.Post.Comments.Comment/Core';
-
 export interface SortProps {
   children: (props: {
     currentSort: QueryCommentsSort[];
@@ -173,6 +132,47 @@ export const CreateComment = (props: CreateCommentProps) => {
 
 CreateComment.displayName = 'Blog.Post.Comments.CreateComment/Core';
 
+export interface CommentProps {
+  commentId: string;
+  children: (props: CommentRenderProps) => React.ReactNode;
+}
+
+export interface CommentRenderProps {
+  comment: ReturnType<BlogPostCommentsServiceAPI['getComment']>;
+  replies: ReturnType<BlogPostCommentsServiceAPI['getComments']>;
+  deleteComment: () => ReturnType<BlogPostCommentsServiceAPI['deleteComment']>;
+  hasNextPage: ReturnType<BlogPostCommentsServiceAPI['hasNextPage']>;
+  isLoading: boolean;
+  loadNextPage: () => ReturnType<BlogPostCommentsServiceAPI['loadMoreReplies']>;
+  parentComment: CommentWithResolvedFields | undefined;
+}
+
+export const Comment = (props: CommentProps) => {
+  const { commentId } = props;
+  const service = useService(BlogPostCommentsServiceDefinition);
+  const parentComment = service.getComments().find((c) => c._id === commentId);
+
+  const isLoading =
+    service.isLoading(commentId) === 'more' || service.isLoading(commentId) === 'initial';
+
+  const loadNextPage = React.useCallback(
+    () => service.loadMoreReplies(commentId),
+    [service, commentId],
+  );
+
+  return props.children({
+    comment: service.getComment(commentId),
+    replies: service.getComments(commentId),
+    hasNextPage: service.hasNextPage(commentId),
+    isLoading,
+    loadNextPage,
+    parentComment,
+    deleteComment: () => service.deleteComment(commentId),
+  });
+};
+
+Comment.displayName = 'Blog.Post.Comment/Core';
+
 /**
  * Props for BlogPostComments CreateReply core component
  */
@@ -209,4 +209,4 @@ export const CreateReply = (props: CreateReplyProps) => {
   });
 };
 
-CreateReply.displayName = 'Blog.Post.Comments.CreateReply/Core';
+CreateReply.displayName = 'Blog.Post.Comment.CreateReply/Core';

@@ -10,17 +10,9 @@ export const CommentAuthorAvatar = React.forwardRef<
   CommentAuthorAvatarProps
 >((props, ref) => {
   return (
-    <Blog.Post.Comment.Status asChild>
-      {({ status }) =>
-        (status === "DELETED" || status === 'HIDDEN') ? (
-          <MemberAvatar member={undefined} {...props} />
-        ) : (
-          <Blog.Post.Comment.Author asChild ref={ref}>
-            {({ author }) => <MemberAvatar member={author} {...props} />}
-          </Blog.Post.Comment.Author>
-        )
-      }
-    </Blog.Post.Comment.Status>
+    <Blog.Post.Comment.Author asChild ref={ref}>
+      {({ author }) => <MemberAvatar member={author} {...props} />}
+    </Blog.Post.Comment.Author>
   );
 });
 

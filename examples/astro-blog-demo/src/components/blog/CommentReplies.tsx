@@ -19,7 +19,7 @@ interface CommentReplyActionProps {
 }
 
 export function CommentReplies({ uiLocale }: { uiLocale: string }) {
-  const { comment, replies } = Comment.useCommentContext();
+  const { replies } = Comment.useCommentContext();
   const hasReplies = useMemo(() => replies.length > 0, [replies]);
   const [isOpen, setIsOpen] = useState(hasReplies);
 

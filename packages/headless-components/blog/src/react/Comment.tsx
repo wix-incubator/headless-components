@@ -152,7 +152,6 @@ export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) =>
   const { comment } = useCommentContext();
 
   const author = comment?.resolvedFields?.author;
-  if (!author) return null;
 
   const attributes = {
     'data-testid': TestIds.blogPostCommentAuthor,
@@ -167,7 +166,7 @@ export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) =>
       customElement={children}
       customElementProps={{ author }}
     >
-      <span>{author.profile?.nickname}</span>
+      <span>{author?.profile?.nickname ?? 'Unknown'}</span>
     </AsChildSlot>
   );
 });
