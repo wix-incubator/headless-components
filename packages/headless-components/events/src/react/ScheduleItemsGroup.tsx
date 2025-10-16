@@ -78,8 +78,11 @@ export interface DateLabelProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Date object for the group */
     date: Date;
+    /** Time zone ID */
     timeZoneId: string;
+    /** Formatted date label (e.g., "Mon, 07 Jul") */
     formattedDate: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -144,7 +147,12 @@ export interface ItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ items: ScheduleItemType[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        /** List of schedule items */
+        items: ScheduleItemType[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

@@ -1108,7 +1108,7 @@ export interface OtherEventsProps {
   children:
     | React.ReactNode
     | AsChildChildren<{
-        /** Other events */
+        /** List of other events */
         events: Event[];
       }>;
   /** CSS classes to apply to the default element */

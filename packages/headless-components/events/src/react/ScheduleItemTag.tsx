@@ -12,7 +12,7 @@ enum TestIds {
  * Props for the ScheduleItemTag Root component.
  */
 export interface RootProps {
-  /** Tag data */
+  /** Tag */
   tag: string;
   /** Whether to render as a child component */
   asChild?: boolean;

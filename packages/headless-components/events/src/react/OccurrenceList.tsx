@@ -70,7 +70,12 @@ export interface OccurrencesProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ occurrences: EventType[]; hasOccurrences: boolean }>;
+    | AsChildChildren<{
+        /** List of occurrences */
+        occurrences: EventType[];
+        /** Indicates whether there are any occurrences in the list */
+        hasOccurrences: boolean;
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -168,7 +173,9 @@ export interface LoadMoreTriggerProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Indicates whether more occurrences are being loaded */
     isLoading: boolean;
+    /** Function to load more occurrences */
     loadMoreOccurrences: () => void;
   }>;
   /** CSS classes to apply to the default element */
@@ -244,7 +251,10 @@ export interface ErrorProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ error: string }>;
+  children?: AsChildChildren<{
+    /** Occurrence list error message */
+    error: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
