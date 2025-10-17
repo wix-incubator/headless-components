@@ -593,7 +593,6 @@ interface PricingOptionsProps {
 ### TicketDefinition.PricingOptionRepeater
 
 Repeater component that renders [PricingOption.Root](./EVENT_PRICING_OPTION_INTERFACE.md#pricingoptionroot) for each pricing option.
-Note: Repeater components do NOT support asChild as per architecture rules.
 
 **Props**
 

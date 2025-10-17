@@ -185,7 +185,7 @@ export interface LoadMoreTriggerProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    /** Indicates whether more events are being loaded */
+    /** Indicates whether more events are currently being loaded */
     isLoading: boolean;
     /** Function to load more events */
     loadMoreEvents: () => void;

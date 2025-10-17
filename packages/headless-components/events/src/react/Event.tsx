@@ -912,7 +912,7 @@ export interface XShareProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    /** X (Twitter) share URL */
+    /** X share URL */
     shareUrl: string;
   }>;
   /** CSS classes to apply to the default element */
