@@ -31,3 +31,45 @@ export function isActiveCategory(
 
   return currentPathWithTrimmedSlash === categoryPathWithTrimmedSlash;
 }
+
+export function useIntersectionObserver(forwardedRef: React.ForwardedRef<HTMLElement>) {
+  const [element, setElement] = React.useState<HTMLElement | null>(null);
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  // Set up intersection observer for lazy loading
+  React.useEffect(() => {
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry && entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+          observer.disconnect(); // Only load once
+        }
+      },
+      {
+        rootMargin: '100px', // Start loading when 100px away from viewport
+        threshold: 0.1, // Trigger when 10% visible
+      },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [element, isVisible]);
+
+  // Combined ref to handle both forwarded ref and observer ref
+  const ref = React.useCallback(
+    (el: HTMLElement | null) => {
+      setElement(el);
+      if (typeof forwardedRef === 'function') {
+        forwardedRef(el);
+      } else if (forwardedRef) {
+        forwardedRef.current = el;
+      }
+    },
+    [forwardedRef],
+  );
+
+  return { ref, element, isVisible };
+}
