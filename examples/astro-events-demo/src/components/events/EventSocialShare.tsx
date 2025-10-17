@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   EventFacebookShare,
   EventXShare,
@@ -9,8 +10,16 @@ interface EventSocialShareProps {
 }
 
 export function EventSocialShare({
-  eventPageUrl = typeof window !== 'undefined' ? window.location.href : '',
+  eventPageUrl: eventPageUrlProp,
 }: EventSocialShareProps) {
+  const [eventPageUrl, setEventPageUrl] = useState(eventPageUrlProp ?? '');
+
+  useEffect(() => {
+    if (!eventPageUrl) {
+      setEventPageUrl(window.location.href);
+    }
+  }, []);
+
   return (
     <div className="flex gap-3">
       <EventFacebookShare asChild eventPageUrl={eventPageUrl}>
