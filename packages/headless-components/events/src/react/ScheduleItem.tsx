@@ -287,7 +287,7 @@ export interface DescriptionProps {
 }
 
 /**
- * Provides the schedule item description. RicosViewer should be used to render the description.
+ * Provides the schedule item description in rich text format, e.g. <p><strong>Description</strong></p>.
  *
  * @component
  * @example
