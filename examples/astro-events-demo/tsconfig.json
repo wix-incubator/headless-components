@@ -1,0 +1,26 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/components/*": ["src/components/*"],
+      "@wix/events/components": [
+        "../../packages/headless-components/events/react"
+      ],
+      "@wix/events/services": [
+        "../../packages/headless-components/events/services"
+      ],
+      "@wix/forms/components": [
+        "../../packages/headless-components/forms/react"
+      ],
+      "@wix/forms/services": [
+        "../../packages/headless-components/forms/services"
+      ]
+    }
+  }
+}

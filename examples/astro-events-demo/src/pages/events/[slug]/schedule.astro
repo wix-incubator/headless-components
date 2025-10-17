@@ -1,0 +1,38 @@
+---
+import {
+  loadEventServiceConfig,
+  loadScheduleListServiceConfig,
+} from '@wix/events/services';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { Schedule } from '@/components/events/Schedule/Schedule';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/');
+}
+
+// Load initial data server-side
+const eventServiceConfigResult = await loadEventServiceConfig({ slug });
+
+if (eventServiceConfigResult.type === 'notFound') {
+  return Astro.redirect('/404');
+}
+
+const scheduleListServiceConfig = await loadScheduleListServiceConfig({
+  eventId: eventServiceConfigResult.config.event._id!,
+});
+---
+
+<BaseLayout>
+  <title>Schedule</title>
+  <meta name="description" content="Schedule" />
+
+  <Schedule
+    client:load
+    slot="body"
+    eventServiceConfig={eventServiceConfigResult.config}
+    scheduleListServiceConfig={scheduleListServiceConfig}
+    eventDetailsPagePath="/events/:slug"
+  />
+</BaseLayout>
