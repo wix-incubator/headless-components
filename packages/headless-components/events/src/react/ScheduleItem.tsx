@@ -79,7 +79,10 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{
+    /** Schedule item name */
+    name: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -95,7 +98,7 @@ export interface NameProps {
  *
  * // asChild with primitive
  * <ScheduleItem.Name asChild>
- *   <h2 className="font-bold text-lg"/>
+ *   <h2 className="font-bold text-lg" />
  * </ScheduleItem.Name>
  *
  * // asChild with react component
@@ -139,9 +142,13 @@ export interface TimeSlotProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Schedule item start time */
     startTime: Date;
+    /** Schedule item end time */
     endTime: Date;
+    /** Schedule item time zone ID */
     timeZoneId: string;
+    /** Formatted time range string (e.g., "18:30 - 19:00") */
     formattedTimeRange: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -161,7 +168,7 @@ export interface TimeSlotProps {
  *
  * // asChild with primitive
  * <ScheduleItem.TimeSlot asChild>
- *   <div className="text-gray-600"/>
+ *   <div className="text-gray-600" />
  * </ScheduleItem.TimeSlot>
  *
  * // asChild with react component
@@ -211,13 +218,16 @@ export interface DurationProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ durationMinutes: number }>;
+  children?: AsChildChildren<{
+    /** Duration in minutes */
+    durationMinutes: number;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the schedule item duration information.
+ * Displays the schedule item duration.
  *
  * @component
  * @example
@@ -227,7 +237,7 @@ export interface DurationProps {
  *
  * // asChild with primitive
  * <ScheduleItem.Duration asChild>
- *   <div className="text-sm text-gray-500"/>
+ *   <div className="text-sm text-gray-500" />
  * </ScheduleItem.Duration>
  *
  * // asChild with react component
@@ -270,11 +280,14 @@ export const Duration = React.forwardRef<HTMLElement, DurationProps>(
  */
 export interface DescriptionProps {
   /** Custom render function */
-  children?: AsChildChildren<{ description: string }>;
+  children?: AsChildChildren<{
+    /** Schedule item description */
+    description: string;
+  }>;
 }
 
 /**
- * Displays the schedule item description.
+ * Provides the schedule item description in rich text format, e.g. <p><strong>Description</strong></p>.
  *
  * @component
  * @example
@@ -316,13 +329,16 @@ export interface StageProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ stageName: string }>;
+  children?: AsChildChildren<{
+    /** Schedule item stage name */
+    stageName: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the schedule item stage information.
+ * Displays the schedule item stage.
  *
  * @component
  * @example
@@ -332,7 +348,7 @@ export interface StageProps {
  *
  * // asChild with primitive
  * <ScheduleItem.Stage asChild>
- *   <span className="text-blue-600 font-medium"/>
+ *   <span className="text-blue-600 font-medium" />
  * </ScheduleItem.Stage>
  *
  * // asChild with react component
@@ -375,7 +391,12 @@ export interface TagsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ tags: string[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        /** Schedule item tags */
+        tags: string[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

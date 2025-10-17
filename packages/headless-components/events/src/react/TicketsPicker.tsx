@@ -97,7 +97,10 @@ export interface TicketDefinitionsProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ ticketDefinitions: TicketDefinitionType[] }>;
+    | AsChildChildren<{
+        /** List of ticket definitions */
+        ticketDefinitions: TicketDefinitionType[];
+      }>;
   /** Empty state to display when no ticket definitions are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -204,18 +207,31 @@ export interface TotalsProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Total value */
     total: number;
+    /** Subtotal value */
     subtotal: number;
+    /** Tax value */
     tax: number;
+    /** Fee value */
     fee: number;
+    /** Currency */
     currency: string;
+    /** Formatted total value */
     formattedTotal: string;
+    /** Formatted subtotal value */
     formattedSubtotal: string;
+    /** Formatted tax value */
     formattedTax: string;
+    /** Formatted fee value */
     formattedFee: string;
+    /** Tax name */
     taxName: string | null;
+    /** Tax rate */
     taxRate: number | null;
+    /** Whether tax is included in price */
     taxIncluded: boolean;
+    /** Fee rate */
     feeRate: number;
   }>;
   /** CSS classes to apply to the default element */
@@ -311,7 +327,10 @@ export interface CheckoutErrorProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ error: string }>;
+  children?: AsChildChildren<{
+    /** Error message */
+    error: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -373,9 +392,13 @@ export interface CheckoutTriggerProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Whether the checkout is in progress */
     isLoading: boolean;
+    /** Error message if any */
     error: string | null;
+    /** Whether any ticket definitions are selected */
     hasSelectedTicketDefinitions: boolean;
+    /** Function to trigger the checkout */
     checkout: () => Promise<void>;
   }>;
   /** CSS classes to apply to the default element */

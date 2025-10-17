@@ -66,13 +66,16 @@ export interface OrderNumberProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ orderNumber: string }>;
+  children?: AsChildChildren<{
+    /** Order number */
+    orderNumber: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the order number with customizable rendering.
+ * Displays the order number.
  *
  * @component
  * @example
@@ -128,13 +131,16 @@ export interface GuestEmailProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ guestEmail: string }>;
+  children?: AsChildChildren<{
+    /** Guest email */
+    guestEmail: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the guest email with customizable rendering.
+ * Displays the guest email.
  *
  * @component
  * @example
@@ -188,7 +194,9 @@ export interface CreatedDateProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Created date */
     createdDate: Date;
+    /** Formatted date */
     formattedDate: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -198,7 +206,7 @@ export interface CreatedDateProps {
 }
 
 /**
- * Displays the order creation date with customizable rendering.
+ * Displays the order creation date.
  *
  * @component
  * @example
@@ -254,7 +262,10 @@ export interface DownloadTicketsButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ ticketsPdfUrl: string }>;
+  children?: AsChildChildren<{
+    /** Tickets PDF URL */
+    ticketsPdfUrl: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
@@ -329,13 +340,16 @@ export interface InvoiceItemsProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ invoiceItems: InvoiceItemType[] }>;
+    | AsChildChildren<{
+        /** Invoice items */
+        invoiceItems: InvoiceItemType[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Container for order invoice items with customizable rendering.
+ * Container for order invoice items.
  *
  * @component
  * @example
@@ -435,8 +449,11 @@ export interface SubtotalProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Subtotal value */
     value: number;
+    /** Subtotal currency */
     currency: string;
+    /** Formatted subtotal value */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -446,7 +463,7 @@ export interface SubtotalProps {
 }
 
 /**
- * Displays the order subtotal amount with customizable rendering.
+ * Displays the order subtotal amount.
  *
  * @component
  * @example
@@ -506,9 +523,13 @@ export interface PaidPlanDiscountProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Paid plan discount value */
     value: number;
+    /** Paid plan discount currency */
     currency: string;
+    /** Formatted paid plan discount value */
     formattedValue: string;
+    /** Paid plan discount rate */
     rate: number;
   }>;
   /** CSS classes to apply to the default element */
@@ -518,7 +539,7 @@ export interface PaidPlanDiscountProps {
 }
 
 /**
- * Displays the order paid plan discount with customizable rendering.
+ * Displays the order paid plan discount.
  *
  * @component
  * @example
@@ -576,8 +597,11 @@ export interface CouponDiscountProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Coupon discount value */
     value: number;
+    /** Coupon discount currency */
     currency: string;
+    /** Formatted coupon discount value */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -587,7 +611,7 @@ export interface CouponDiscountProps {
 }
 
 /**
- * Displays the order coupon discount with customizable rendering.
+ * Displays the order coupon discount.
  *
  * @component
  * @example
@@ -645,10 +669,15 @@ export interface TaxProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Tax value */
     value: number;
+    /** Tax currency */
     currency: string;
+    /** Formatted tax value */
     formattedValue: string;
+    /** Tax rate */
     rate: number;
+    /** Tax name */
     name: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -658,7 +687,7 @@ export interface TaxProps {
 }
 
 /**
- * Displays the order tax with customizable rendering.
+ * Displays the order tax.
  *
  * @component
  * @example
@@ -716,9 +745,13 @@ export interface FeeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Fee value */
     value: number;
+    /** Fee currency */
     currency: string;
+    /** Formatted fee value */
     formattedValue: string;
+    /** Fee rate */
     rate: number;
   }>;
   /** CSS classes to apply to the default element */
@@ -728,7 +761,7 @@ export interface FeeProps {
 }
 
 /**
- * Displays the order fee with customizable rendering.
+ * Displays the order fee.
  *
  * @component
  * @example
@@ -786,8 +819,11 @@ export interface TotalProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Total value */
     value: number;
+    /** Total currency */
     currency: string;
+    /** Formatted total value */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -797,7 +833,7 @@ export interface TotalProps {
 }
 
 /**
- * Displays the order total amount with customizable rendering.
+ * Displays the order total amount.
  * This represents the final amount to be paid including all fees and taxes.
  *
  * @component

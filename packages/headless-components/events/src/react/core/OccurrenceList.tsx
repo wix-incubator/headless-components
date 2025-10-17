@@ -97,7 +97,7 @@ export interface LoadMoreTriggerProps {
 }
 
 export interface LoadMoreTriggerRenderProps {
-  /** Indicates whether more occurrences are being loaded */
+  /** Indicates whether more occurrences are currently being loaded */
   isLoading: boolean;
   /** Function to load more occurrences */
   loadMoreOccurrences: () => void;

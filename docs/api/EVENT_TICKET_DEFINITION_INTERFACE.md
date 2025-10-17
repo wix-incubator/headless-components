@@ -17,7 +17,9 @@ Root container that provides ticket definition context to all child components.
 ```tsx
 interface RootProps {
   ticketDefinition: TicketDefinition;
+  asChild?: boolean;
   children: React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -34,16 +36,19 @@ interface RootProps {
 - `data-testid="ticket-definition-root"` - Applied to ticket definition element
 - `data-sold-out` - Ticket definition is sold out
 - `data-sale-started` - Sale has started
+- `data-sale-ended` - Sale has ended
 - `data-free` - Ticket definition is free
 - `data-fixed-pricing` - Ticket definition has fixed pricing method
 - `data-guest-pricing` - Ticket definition has guest pricing method
 - `data-pricing-options` - Ticket definition has pricing options
+- `data-has-description` - Ticket definition has description
+- `data-available` - Ticket definition is available
 
 ---
 
 ### TicketDefinition.Name
 
-Displays the ticket definition name with customizable rendering.
+Displays the ticket definition name.
 
 **Props**
 
@@ -84,7 +89,7 @@ interface NameProps {
 
 ### TicketDefinition.Description
 
-Displays the ticket definition description with customizable rendering.
+Displays the ticket definition description. Not rendered if there is no description.
 
 **Props**
 
@@ -125,15 +130,21 @@ interface DescriptionProps {
 
 ### TicketDefinition.FixedPricing
 
-Displays the fixed pricing for the ticket definition. Only renders when the ticket has a fixed price pricing method.
+Displays the fixed pricing for the ticket definition. Only renders when ticket definition has fixed price pricing method.
 
 **Props**
 
 ```tsx
 interface FixedPricingProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ value: string; currency: string }>;
+  children?: AsChildChildren<{
+    value: number;
+    currency: string;
+    formattedValue: string;
+    free: boolean;
+  }>;
   className?: string;
+  locale?: Intl.LocalesArgument;
 }
 ```
 
@@ -150,9 +161,9 @@ interface FixedPricingProps {
 
 // asChild with react component
 <TicketDefinition.FixedPricing asChild>
-  {React.forwardRef(({ value, currency, ...props }, ref) => (
+  {React.forwardRef(({ value, currency, formattedValue, free, ...props }, ref) => (
     <span ref={ref} {...props} className="text-lg font-semibold">
-      {value} {currency}
+      {free ? 'Free' : `${formattedValue}`}
     </span>
   ))}
 </TicketDefinition.FixedPricing>
@@ -166,15 +177,22 @@ interface FixedPricingProps {
 
 ### TicketDefinition.GuestPricing
 
-Displays an input for guest pricing (pay-what-you-want). Only renders when the ticket has guest price pricing method.
+Displays an input for guest pricing (pay-what-you-want). Only renders when ticket definition has guest price pricing method.
 
 **Props**
 
 ```tsx
 interface GuestPricingProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ min: string; currency: string }>;
+  children?: AsChildChildren<{
+    price: string | undefined;
+    minPrice: number;
+    currency: string;
+    formattedMinPrice: string;
+    setPrice: (price: string) => void;
+  }>;
   className?: string;
+  locale?: Intl.LocalesArgument;
 }
 ```
 
@@ -191,14 +209,8 @@ interface GuestPricingProps {
 
 // asChild with react component
 <TicketDefinition.GuestPricing asChild>
-  {React.forwardRef(({ min, currency, ...props }, ref) => (
-    <input
-      ref={ref}
-      {...props}
-      min={min}
-      placeholder={`${min} ${currency}`}
-      className="border rounded px-3 py-2"
-    />
+  {React.forwardRef(({ price, minPrice, currency, formattedMinPrice, setPrice, ...props }, ref) => (
+    <input ref={ref} {...props} className="border rounded px-3 py-2" />
   ))}
 </TicketDefinition.GuestPricing>
 ```
@@ -209,9 +221,155 @@ interface GuestPricingProps {
 
 ---
 
+### TicketDefinition.PricingRange
+
+Displays the pricing range for the ticket definition. Only renders when ticket definition has pricing options.
+
+**Props**
+
+```tsx
+interface PricingRangeProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{
+    minPrice: number;
+    maxPrice: number;
+    currency: string;
+    formattedMinPrice: string;
+    formattedMaxPrice: string;
+    formattedPriceRange: string;
+  }>;
+  className?: string;
+  locale?: Intl.LocalesArgument;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<TicketDefinition.PricingRange className="text-sm text-gray-500" />
+
+// asChild with primitive
+<TicketDefinition.PricingRange asChild>
+  <span className="text-sm text-gray-500" />
+</TicketDefinition.PricingRange>
+
+// asChild with react component
+<TicketDefinition.PricingRange asChild>
+  {React.forwardRef(({ minPrice, maxPrice, currency, formattedMinPrice, formattedMaxPrice, formattedPriceRange, ...props }, ref) => (
+    <span ref={ref} {...props} className="text-sm text-gray-500">
+      From {formattedMinPrice} to {formattedMaxPrice}
+    </span>
+  ))}
+</TicketDefinition.PricingRange>
+```
+
+**Data Attributes**
+
+- `data-testid="ticket-definition-pricing-range"` - Applied to pricing range element
+
+---
+
+### TicketDefinition.Tax
+
+Displays the tax for the ticket definition. Only renders when event has tax settings, ticket definition is not free and has no pricing options, or ticket definition has guest pricing and tax is applied to donations.
+
+**Props**
+
+```tsx
+interface TaxProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{
+    name: string;
+    rate: number;
+    included: boolean;
+    taxableValue: number;
+    taxValue: number;
+    currency: string;
+    formattedTaxValue: string;
+  }>;
+  className?: string;
+  locale?: Intl.LocalesArgument;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<TicketDefinition.Tax className="text-sm text-gray-500" />
+
+// asChild with primitive
+<TicketDefinition.Tax asChild>
+  <span className="text-sm text-gray-500" />
+</TicketDefinition.Tax>
+
+// asChild with react component
+<TicketDefinition.Tax asChild>
+  {React.forwardRef(({ name, rate, included, taxableValue, taxValue, currency, formattedTaxValue, ...props }, ref) => (
+    <span ref={ref} {...props} className="text-sm text-gray-500">
+      {included ? `${name} included` : `+${formattedTaxValue} ${name}`}
+    </span>
+  ))}
+</TicketDefinition.Tax>
+```
+
+**Data Attributes**
+
+- `data-testid="ticket-definition-tax"` - Applied to tax element
+
+---
+
+### TicketDefinition.Fee
+
+Displays the fee for the ticket definition. Only renders when ticket definition has fee enabled, is not free and has no pricing options.
+
+**Props**
+
+```tsx
+interface FeeProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{
+    rate: number;
+    value: number;
+    currency: string;
+    formattedValue: string;
+  }>;
+  className?: string;
+  locale?: Intl.LocalesArgument;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<TicketDefinition.Fee className="text-sm text-gray-500" />
+
+// asChild with primitive
+<TicketDefinition.Fee asChild>
+  <span className="text-sm text-gray-500" />
+</TicketDefinition.Fee>
+
+// asChild with react component
+<TicketDefinition.Fee asChild>
+  {React.forwardRef(({ rate, value, currency, formattedValue, ...props }, ref) => (
+    <span ref={ref} {...props} className="text-sm text-gray-500">
+      +{formattedValue} service fee
+    </span>
+  ))}
+</TicketDefinition.Fee>
+```
+
+**Data Attributes**
+
+- `data-testid="ticket-definition-fee"` - Applied to fee element
+
+---
+
 ### TicketDefinition.Remaining
 
-Displays the remaining ticket count.
+Displays the remaining count.
 
 **Props**
 
@@ -252,7 +410,7 @@ interface RemainingProps {
 
 ### TicketDefinition.SaleStartDate
 
-Displays the sale start date. Only renders when the ticket sale is scheduled to start in the future.
+Displays the sale start date. Only renders when the sale is scheduled to start in the future.
 
 **Props**
 
@@ -260,10 +418,14 @@ Displays the sale start date. Only renders when the ticket sale is scheduled to 
 interface SaleStartDateProps {
   asChild?: boolean;
   children?: AsChildChildren<{
-    startDate: Date | null;
+    /** Sale start date */
+    startDate: Date;
+    /** Formatted sale start date */
     startDateFormatted: string;
   }>;
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 ```
 
@@ -271,17 +433,17 @@ interface SaleStartDateProps {
 
 ```tsx
 // Default usage
-<TicketDefinition.SaleStartDate className="text-sm text-orange-600" />
+<TicketDefinition.SaleStartDate className="text-sm" />
 
 // asChild with primitive
 <TicketDefinition.SaleStartDate asChild>
-  <span className="text-sm text-orange-600" />
+  <span className="text-sm" />
 </TicketDefinition.SaleStartDate>
 
 // asChild with react component
 <TicketDefinition.SaleStartDate asChild>
   {React.forwardRef(({ startDate, startDateFormatted, ...props }, ref) => (
-    <span ref={ref} {...props} className="text-sm text-orange-600">
+    <span ref={ref} {...props} className="text-sm">
       Sale starts: {startDateFormatted}
     </span>
   ))}
@@ -296,7 +458,7 @@ interface SaleStartDateProps {
 
 ### TicketDefinition.SaleEndDate
 
-Displays the sale end date. Only renders when the ticket sale has started or ended.
+Displays the sale end date. Only renders when the sale has started or ended.
 
 **Props**
 
@@ -304,10 +466,16 @@ Displays the sale end date. Only renders when the ticket sale has started or end
 interface SaleEndDateProps {
   asChild?: boolean;
   children?: AsChildChildren<{
-    endDate: Date | null;
+    /** Sale end date */
+    endDate: Date;
+    /** Formatted sale end date */
     endDateFormatted: string;
+    /** Whether sale has ended */
+    saleEnded: boolean;
   }>;
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 ```
 
@@ -324,9 +492,9 @@ interface SaleEndDateProps {
 
 // asChild with react component
 <TicketDefinition.SaleEndDate asChild>
-  {React.forwardRef(({ endDate, endDateFormatted, ...props }, ref) => (
+  {React.forwardRef(({ endDate, endDateFormatted, saleEnded, ...props }, ref) => (
     <span ref={ref} {...props} className="text-sm text-red-600">
-      Sale ends: {endDateFormatted}
+      {saleEnded ? 'Sale ended' : 'Sale ends'}: {endDateFormatted}
     </span>
   ))}
 </TicketDefinition.SaleEndDate>
@@ -340,7 +508,7 @@ interface SaleEndDateProps {
 
 ### TicketDefinition.Quantity
 
-Displays a quantity selector for the ticket. Only renders for tickets without pricing options and when the sale has started.
+Displays a quantity selector for the ticket definition. Only renders when there are no pricing options, the sale has started, and the ticket definition is not sold out.
 
 **Props**
 
@@ -348,6 +516,7 @@ Displays a quantity selector for the ticket. Only renders for tickets without pr
 interface QuantityProps {
   asChild?: boolean;
   children?: AsChildChildren<{
+    options: number[];
     quantity: number;
     maxQuantity: number;
     increment: () => void;
@@ -371,11 +540,11 @@ interface QuantityProps {
 
 // asChild with react component
 <TicketDefinition.Quantity asChild>
-  {React.forwardRef(({ quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
+  {React.forwardRef(({ options, quantity, maxQuantity, increment, decrement, setQuantity, ...props }, ref) => (
     <div ref={ref} {...props} className="flex items-center space-x-2">
-      <button onClick={decrement} disabled={quantity === 0}>-</button>
+      <button disabled={quantity === 0} onClick={decrement}>-</button>
       <span>{quantity}</span>
-      <button onClick={increment} disabled={quantity >= maxQuantity}>+</button>
+      <button disabled={quantity >= maxQuantity} onClick={increment}>+</button>
     </div>
   ))}
 </TicketDefinition.Quantity>
@@ -389,13 +558,16 @@ interface QuantityProps {
 
 ### TicketDefinition.PricingOptions
 
-Container for pricing options. Only renders when the ticket has pricing options available.
+Container for pricing options. Only renders when there are pricing options available.
 
 **Props**
 
 ```tsx
 interface PricingOptionsProps {
-  children: React.ReactNode;
+  asChild?: boolean;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ pricingOptions: PricingOption[] }>;
   className?: string;
 }
 ```
@@ -427,6 +599,7 @@ Repeater component that renders [PricingOption.Root](./EVENT_PRICING_OPTION_INTE
 ```tsx
 interface PricingOptionRepeaterProps {
   children: React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -446,12 +619,14 @@ interface PricingOptionRepeaterProps {
 
 | Attribute                                         | Applied To                      | Purpose                                    |
 | ------------------------------------------------- | ------------------------------- | ------------------------------------------ |
-| `data-testid="ticket-definition"`                 | TicketDefinition.Root           | Ticket definition element                  |
+| `data-testid="ticket-definition-root"`            | TicketDefinition.Root           | Ticket definition element                  |
 | `data-testid="ticket-definition-name"`            | TicketDefinition.Name           | Ticket definition name element             |
 | `data-testid="ticket-definition-description"`     | TicketDefinition.Description    | Ticket definition description element      |
 | `data-testid="ticket-definition-fixed-pricing"`   | TicketDefinition.FixedPricing   | Fixed pricing element                      |
 | `data-testid="ticket-definition-guest-pricing"`   | TicketDefinition.GuestPricing   | Guest pricing input element                |
 | `data-testid="ticket-definition-pricing-range"`   | TicketDefinition.PricingRange   | Pricing range element                      |
+| `data-testid="ticket-definition-tax"`             | TicketDefinition.Tax            | Tax element                                |
+| `data-testid="ticket-definition-fee"`             | TicketDefinition.Fee            | Fee element                                |
 | `data-testid="ticket-definition-remaining"`       | TicketDefinition.Remaining      | Remaining tickets element                  |
 | `data-testid="ticket-definition-sale-start-date"` | TicketDefinition.SaleStartDate  | Sale start date element                    |
 | `data-testid="ticket-definition-sale-end-date"`   | TicketDefinition.SaleEndDate    | Sale end date element                      |
@@ -459,7 +634,10 @@ interface PricingOptionRepeaterProps {
 | `data-testid="ticket-definition-pricing-options"` | TicketDefinition.PricingOptions | Pricing options container                  |
 | `data-sold-out`                                   | TicketDefinition.Root           | Ticket definition is sold out              |
 | `data-sale-started`                               | TicketDefinition.Root           | Sale has started                           |
+| `data-sale-ended`                                 | TicketDefinition.Root           | Sale has ended                             |
 | `data-free`                                       | TicketDefinition.Root           | Ticket definition is free                  |
 | `data-fixed-pricing`                              | TicketDefinition.Root           | Ticket definition has fixed pricing method |
 | `data-guest-pricing`                              | TicketDefinition.Root           | Ticket definition has guest pricing method |
 | `data-pricing-options`                            | TicketDefinition.Root           | Ticket definition has pricing options      |
+| `data-has-description`                            | TicketDefinition.Root           | Ticket definition has description          |
+| `data-available`                                  | TicketDefinition.Root           | Ticket definition is available             |

@@ -16,10 +16,10 @@ Root container that provides tickets picker context to all child components.
 
 ```tsx
 interface RootProps {
+  children: React.ReactNode;
   eventServiceConfig: EventServiceConfig;
   ticketDefinitionListServiceConfig: TicketDefinitionListServiceConfig;
-  children: React.ReactNode;
-  className?: string;
+  checkoutServiceConfig: CheckoutServiceConfig;
 }
 ```
 
@@ -29,6 +29,7 @@ interface RootProps {
 <TicketsPicker.Root
   eventServiceConfig={eventServiceConfig}
   ticketDefinitionListServiceConfig={ticketDefinitionListServiceConfig}
+  checkoutServiceConfig={checkoutServiceConfig}
 >
   {/* All tickets picker components */}
 </TicketsPicker.Root>
@@ -44,7 +45,10 @@ Container for the ticket definition list with support for empty state.
 
 ```tsx
 interface TicketDefinitionsProps {
-  children: React.ReactNode;
+  asChild?: boolean;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ ticketDefinitions: TicketDefinition[] }>;
   emptyState?: React.ReactNode;
   className?: string;
 }
@@ -70,13 +74,14 @@ interface TicketDefinitionsProps {
 
 ### TicketsPicker.TicketDefinitionRepeater
 
-Repeater component that renders [TicketDefinition.Root](./TICKET_DEFINITION_INTERFACE.md#ticketdefinitionroot) for each ticket definition.
+Repeater component that renders [TicketDefinition.Root](./EVENT_TICKET_DEFINITION_INTERFACE.md#ticketdefinitionroot) for each ticket definition.
 
 **Props**
 
 ```tsx
 interface TicketDefinitionRepeaterProps {
   children: React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -88,6 +93,80 @@ interface TicketDefinitionRepeaterProps {
   <TicketDefinition.Description />
 </TicketsPicker.TicketDefinitionRepeater>
 ```
+
+---
+
+### TicketsPicker.Totals
+
+Provides totals data for the tickets picker.
+
+**Props**
+
+```tsx
+interface TotalsProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{
+    total: number;
+    subtotal: number;
+    tax: number;
+    fee: number;
+    currency: string;
+    formattedTotal: string;
+    formattedSubtotal: string;
+    formattedTax: string;
+    formattedFee: string;
+    taxName: string | null;
+    taxRate: number | null;
+    taxIncluded: boolean;
+    feeRate: number;
+  }>;
+  className?: string;
+  locale?: Intl.LocalesArgument;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<TicketsPicker.Totals className="text-gray-500" />
+
+// asChild with primitive
+<TicketsPicker.Totals asChild className="text-gray-500">
+  <span />
+</TicketsPicker.Totals>
+
+// asChild with react component
+<TicketsPicker.Totals asChild className="text-gray-500">
+  {React.forwardRef(({
+    total,
+    subtotal,
+    tax,
+    fee,
+    currency,
+    formattedTotal,
+    formattedSubtotal,
+    formattedTax,
+    formattedFee,
+    taxName,
+    taxRate,
+    taxIncluded,
+    feeRate,
+    ...props
+  }, ref) => (
+    <span ref={ref} {...props}>
+      Subtotal: {formattedSubtotal}
+      Tax: {formattedTax}
+      Fee: {formattedFee}
+      Total: {formattedTotal}
+    </span>
+  ))}
+</TicketsPicker.Totals>
+```
+
+**Data Attributes**
+
+- `data-testid="tickets-picker-totals"` - Applied to totals element
 
 ---
 
@@ -148,7 +227,8 @@ interface CheckoutTriggerProps {
     checkout: () => Promise<void>;
   }>;
   className?: string;
-  label?: string;
+  label?: React.ReactNode;
+  loadingState?: React.ReactNode;
 }
 ```
 
@@ -156,18 +236,22 @@ interface CheckoutTriggerProps {
 
 ```tsx
 // Default usage
-<TicketsPicker.CheckoutTrigger className="bg-blue-600 hover:bg-blue-700 text-white" label="Reserve" />
+<TicketsPicker.CheckoutTrigger
+  className="bg-blue-600 hover:bg-blue-700 text-white"
+  label="Checkout"
+  loadingState="Processing..."
+/>
 
 // asChild with primitive
 <TicketsPicker.CheckoutTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-  <button>Reserve</button>
+  <button>Checkout</button>
 </TicketsPicker.CheckoutTrigger>
 
 // asChild with react component
 <TicketsPicker.CheckoutTrigger asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-  {React.forwardRef(({ isLoading, error, hasSelectedTickets, checkout, ...props }) => (
-    <button ref={ref} {...props} onClick={checkout}>
-      {isLoading ? 'Reserving...' : 'Reserve'}
+  {React.forwardRef(({ isLoading, error, hasSelectedTicketDefinitions, checkout, ...props }, ref) => (
+    <button ref={ref} {...props}>
+      {isLoading ? 'Processing...' : 'Checkout'}
     </button>
   ))}
 </TicketsPicker.CheckoutTrigger>
@@ -185,6 +269,7 @@ interface CheckoutTriggerProps {
 | Attribute                                         | Applied To                      | Purpose                 |
 | ------------------------------------------------- | ------------------------------- | ----------------------- |
 | `data-testid="tickets-picker-ticket-definitions"` | TicketsPicker.TicketDefinitions | Ticket definitions list |
+| `data-testid="tickets-picker-totals"`             | TicketsPicker.Totals            | Totals element          |
 | `data-testid="tickets-picker-checkout-error"`     | TicketsPicker.CheckoutError     | Checkout error element  |
 | `data-testid="tickets-picker-checkout-trigger"`   | TicketsPicker.CheckoutTrigger   | Checkout element        |
 | `data-in-progress`                                | TicketsPicker.CheckoutTrigger   | Checkout status         |

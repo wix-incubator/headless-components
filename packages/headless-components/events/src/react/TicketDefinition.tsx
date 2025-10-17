@@ -106,13 +106,16 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{
+    /** Ticket definition name */
+    name: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the ticket definition name with customizable rendering.
+ * Displays the ticket definition name.
  *
  * @component
  * @example
@@ -165,13 +168,16 @@ export interface DescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ description: string }>;
+  children?: AsChildChildren<{
+    /** Ticket definition description */
+    description: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the ticket definition description with customizable rendering. Not rendered if there is no description.
+ * Displays the ticket definition description. Not rendered if there is no description.
  *
  * @component
  * @example
@@ -227,9 +233,13 @@ export interface FixedPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Fixed price value */
     value: number;
+    /** Price currency */
     currency: string;
+    /** Formatted price value */
     formattedValue: string;
+    /** Whether ticket definition is free */
     free: boolean;
   }>;
   /** CSS classes to apply to the default element */
@@ -300,10 +310,15 @@ export interface GuestPricingProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Current price */
     price: string | undefined;
+    /** Minimum price */
     minPrice: number;
+    /** Price currency */
     currency: string;
+    /** Formatted minimum price */
     formattedMinPrice: string;
+    /** Function to set price */
     setPrice: (price: string) => void;
   }>;
   /** CSS classes to apply to the default element */
@@ -379,11 +394,17 @@ export interface PricingRangeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Minimum price */
     minPrice: number;
+    /** Maximum price */
     maxPrice: number;
+    /** Price currency */
     currency: string;
+    /** Formatted minimum price */
     formattedMinPrice: string;
+    /** Formatted maximum price */
     formattedMaxPrice: string;
+    /** Formatted price range */
     formattedPriceRange: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -463,12 +484,19 @@ export interface TaxProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Tax name */
     name: string;
+    /** Tax rate */
     rate: number;
+    /** Whether tax is included in price */
     included: boolean;
+    /** Taxable value */
     taxableValue: number;
+    /** Tax value */
     taxValue: number;
+    /** Tax currency */
     currency: string;
+    /** Formatted tax value */
     formattedTaxValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -548,9 +576,13 @@ export interface FeeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Fee rate */
     rate: number;
+    /** Fee value */
     value: number;
+    /** Fee currency */
     currency: string;
+    /** Formatted fee value */
     formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
@@ -618,7 +650,10 @@ export interface RemainingProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ remaining: number }>;
+  children?: AsChildChildren<{
+    /** Remaining tickets count */
+    remaining: number;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -818,11 +853,17 @@ export interface QuantityProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Array of quantity options */
     options: number[];
+    /** Current quantity */
     quantity: number;
+    /** Maximum quantity allowed */
     maxQuantity: number;
+    /** Function to increment quantity */
     increment: () => void;
+    /** Function to decrement quantity */
     decrement: () => void;
+    /** Function to set specific quantity */
     setQuantity: (quantity: number) => void;
   }>;
   /** CSS classes to apply to the default element */
@@ -912,7 +953,10 @@ export interface PricingOptionsProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ pricingOptions: PricingOptionType[] }>;
+    | AsChildChildren<{
+        /** List of pricing options */
+        pricingOptions: PricingOptionType[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
