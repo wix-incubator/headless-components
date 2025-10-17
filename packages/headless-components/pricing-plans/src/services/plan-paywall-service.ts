@@ -15,10 +15,12 @@ export const PlanPaywallServiceDefinition = defineService<{
   isLoadingSignal: ReadOnlySignal<boolean>;
   errorSignal: ReadOnlySignal<string | null>;
   hasAccessSignal: ReadOnlySignal<boolean>;
+  isLoggedInSignal: ReadOnlySignal<boolean>;
+  accessPlanIds: string[];
 }>('planPaywallService');
 
 export interface PlanPaywallServiceConfig {
-  requiredPlanIds: string[];
+  accessPlanIds: string[];
   memberOrders?: orders.Order[];
 }
 
@@ -33,6 +35,8 @@ export const PlanPaywallService =
       const signalsService = getService(SignalsServiceDefinition);
       const isLoadingSignal = signalsService.signal<boolean>(false);
       const errorSignal = signalsService.signal<string | null>(null);
+      const isLoggedInSignal =
+        signalsService.signal<boolean>(isMemberLoggedIn());
       const memberOrdersSignal = signalsService.signal<orders.Order[] | null>(
         config.memberOrders ?? null,
       );
@@ -43,7 +47,7 @@ export const PlanPaywallService =
           const activePlanOrders = memberOrders.filter(
             (order) =>
               order.status === 'ACTIVE' &&
-              config.requiredPlanIds.includes(order.planId!),
+              config.accessPlanIds.includes(order.planId!),
           );
           return activePlanOrders.length > 0;
         }
@@ -51,20 +55,21 @@ export const PlanPaywallService =
       });
 
       if (!config.memberOrders) {
-        loadMemberOrders(config.requiredPlanIds);
+        loadMemberOrders(config.accessPlanIds);
       }
 
-      async function loadMemberOrders(requiredPlanIds: string[]) {
+      async function loadMemberOrders(accessPlanIds: string[]) {
         try {
           isLoadingSignal.set(true);
           errorSignal.set(null);
           const isLoggedIn = isMemberLoggedIn();
+          isLoggedInSignal.set(isLoggedIn);
           if (!isLoggedIn) {
             memberOrdersSignal.set(null);
             return;
           }
 
-          const memberOrders = await fetchMemberOrders(requiredPlanIds);
+          const memberOrders = await fetchMemberOrders(accessPlanIds);
           memberOrdersSignal.set(memberOrders);
         } catch (error) {
           errorSignal.set(
@@ -81,6 +86,8 @@ export const PlanPaywallService =
         isLoadingSignal,
         errorSignal,
         hasAccessSignal,
+        isLoggedInSignal,
+        accessPlanIds: config.accessPlanIds,
       };
     },
   );
@@ -106,12 +113,12 @@ function isMemberLoggedIn(): boolean {
 }
 
 export async function loadPlanPaywallServiceConfig(
-  requiredPlanIds: string[],
+  accessPlanIds: string[],
 ): Promise<PlanPaywallServiceConfig> {
   if (!isMemberLoggedIn()) {
-    return { memberOrders: [], requiredPlanIds };
+    return { memberOrders: [], accessPlanIds };
   }
 
-  const memberOrders = await fetchMemberOrders(requiredPlanIds);
-  return { memberOrders: memberOrders ?? [], requiredPlanIds };
+  const memberOrders = await fetchMemberOrders(accessPlanIds);
+  return { memberOrders: memberOrders ?? [], accessPlanIds };
 }
