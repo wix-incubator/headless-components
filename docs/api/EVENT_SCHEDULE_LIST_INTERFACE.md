@@ -180,7 +180,7 @@ interface GroupRepeaterProps {
 
 ### ScheduleList.Filters
 
-Container for the schedule list filters. Not rendered if there are no stages.
+Container for the schedule list filters.
 
 **Props**
 
