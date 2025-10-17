@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-events",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
