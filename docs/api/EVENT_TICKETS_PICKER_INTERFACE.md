@@ -45,7 +45,10 @@ Container for the ticket definition list with support for empty state.
 
 ```tsx
 interface TicketDefinitionsProps {
-  children: React.ReactNode;
+  asChild?: boolean;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ ticketDefinitions: TicketDefinition[] }>;
   emptyState?: React.ReactNode;
   className?: string;
 }
@@ -71,13 +74,14 @@ interface TicketDefinitionsProps {
 
 ### TicketsPicker.TicketDefinitionRepeater
 
-Repeater component that renders [TicketDefinition.Root](./TICKET_DEFINITION_INTERFACE.md#ticketdefinitionroot) for each ticket definition.
+Repeater component that renders [TicketDefinition.Root](./EVENT_TICKET_DEFINITION_INTERFACE.md#ticketdefinitionroot) for each ticket definition.
 
 **Props**
 
 ```tsx
 interface TicketDefinitionRepeaterProps {
   children: React.ReactNode;
+  className?: string;
 }
 ```
 

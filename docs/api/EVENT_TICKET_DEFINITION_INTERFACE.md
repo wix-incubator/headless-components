@@ -17,7 +17,9 @@ Root container that provides ticket definition context to all child components.
 ```tsx
 interface RootProps {
   ticketDefinition: TicketDefinition;
+  asChild?: boolean;
   children: React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -46,7 +48,7 @@ interface RootProps {
 
 ### TicketDefinition.Name
 
-Displays the ticket definition name with customizable rendering.
+Displays the ticket definition name.
 
 **Props**
 
@@ -87,7 +89,7 @@ interface NameProps {
 
 ### TicketDefinition.Description
 
-Displays the ticket definition description with customizable rendering. Not rendered if there is no description.
+Displays the ticket definition description. Not rendered if there is no description.
 
 **Props**
 

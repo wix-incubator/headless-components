@@ -47,7 +47,7 @@ interface RootProps {
 
 ### Event.Slug
 
-Displays the event slug with customizable rendering.
+Displays the event slug.
 
 **Props**
 
@@ -119,7 +119,7 @@ interface TypeProps {
 
 ### Event.Image
 
-Displays the event image using WixMediaImage component with customizable rendering.
+Displays the event image using WixMediaImage component.
 
 **Props**
 
@@ -163,7 +163,7 @@ interface ImageProps
 
 ### Event.Title
 
-Displays the event title with customizable rendering.
+Displays the event title.
 
 **Props**
 
@@ -204,7 +204,7 @@ interface TitleProps {
 
 ### Event.Date
 
-Displays the event date with customizable rendering and format options.
+Displays the event date.
 
 **Props**
 
@@ -256,7 +256,7 @@ interface DateProps {
 
 ### Event.Location
 
-Displays the event location with customizable rendering and format options.
+Displays the event location.
 
 **Props**
 
@@ -302,7 +302,7 @@ interface LocationProps {
 
 ### Event.ShortDescription
 
-Displays the event short description with customizable rendering.
+Displays the event short description.
 
 **Props**
 
@@ -371,7 +371,7 @@ interface DescriptionProps {
 
 ### Event.RsvpButton
 
-Displays the event RSVP button with customizable rendering.
+Displays the event RSVP button.
 
 **Props**
 
@@ -414,7 +414,7 @@ interface RsvpButtonProps {
 
 ### Event.FacebookShare
 
-Displays Facebook share element with customizable rendering.
+Displays Facebook share element.
 
 **Props**
 
@@ -454,7 +454,7 @@ interface FacebookShareProps {
 
 ### Event.LinkedInShare
 
-Displays LinkedIn share element with customizable rendering.
+Displays LinkedIn share element.
 
 **Props**
 
@@ -494,7 +494,7 @@ interface LinkedInShareProps {
 
 ### Event.XShare
 
-Displays X share element with customizable rendering.
+Displays X share element.
 
 **Props**
 
@@ -534,7 +534,7 @@ interface XShareProps {
 
 ### Event.AddToGoogleCalendar
 
-Displays the event add to Google calendar link with customizable rendering.
+Displays link to add the event to Google calendar.
 
 **Props**
 
@@ -573,7 +573,7 @@ interface AddToGoogleCalendarProps {
 
 ### Event.AddToIcsCalendar
 
-Displays the event add to ICS calendar link with customizable rendering.
+Displays link to add the event to ICS calendar.
 
 **Props**
 

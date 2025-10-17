@@ -17,7 +17,9 @@ Root container that provides pricing option context to all child components.
 ```tsx
 interface RootProps {
   pricingOption: PricingOption;
+  asChild?: boolean;
   children: React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -78,7 +80,7 @@ interface NameProps {
 
 ### PricingOption.Pricing
 
-Displays the pricing option price with customizable rendering.
+Displays the pricing option price.
 
 **Props**
 
