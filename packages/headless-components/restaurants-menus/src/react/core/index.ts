@@ -4,19 +4,19 @@ import {
   ErrorState,
   MenuSelector,
   LocationSelector,
-} from './Menus';
+} from './Menus.js';
 import {
   Menu,
   useMenuContext,
   Name as MenuName,
   Description as MenuDescription,
-} from './Menu';
+} from './Menu.js';
 import {
   Section,
   useSectionContext,
   Name as SectionName,
   Description as SectionDescription,
-} from './Section';
+} from './Section.js';
 import {
   Item,
   useItemContext,
@@ -25,30 +25,30 @@ import {
   Price,
   Image,
   AdditionalImages,
-} from './Item';
+} from './Item.js';
 import {
   Label as CoreLabel,
   useLabelContext,
   Name as LabelName,
   Icon as LabelIcon,
-} from './Label';
+} from './Label.js';
 import {
   ModifierGroup as CoreModifierGroup,
   useModifierGroupContext,
   Name as ModifierGroupName,
-} from './ModifierGroup';
+} from './ModifierGroup.js';
 import {
   Modifier as CoreModifier,
   useModifierContext,
   Name as ModifierName,
   Price as ModifierPrice,
-} from './Modifier';
+} from './Modifier.js';
 import {
   Variant as CoreVariant,
   useVariantContext,
   Name as VariantName,
   Price as VariantPrice,
-} from './Variant';
+} from './Variant.js';
 
 export {
   Menus,

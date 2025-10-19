@@ -1,16 +1,16 @@
-import * as MenusModule from './Menus';
-import * as MenuModule from './Menu';
-import * as SectionModule from './Section';
-import * as ItemModule from './Item';
-import * as VariantModule from './Variant';
-import * as LabelModule from './Label';
-import * as ModifierGroupModule from './ModifierGroup';
-import * as ModifierModule from './Modifier';
+import * as MenusModule from './Menus.js';
+import * as MenuModule from './Menu.js';
+import * as SectionModule from './Section.js';
+import * as ItemModule from './Item.js';
+import * as VariantModule from './Variant.js';
+import * as LabelModule from './Label.js';
+import * as ModifierGroupModule from './ModifierGroup.js';
+import * as ModifierModule from './Modifier.js';
 import {
   useMenuContext,
   useSectionContext,
   useItemContext,
-} from './core/index';
+} from './core/index.js';
 
 export const Menus = MenusModule;
 export const Menu = MenuModule;
@@ -21,8 +21,4 @@ export const Label = LabelModule;
 export const ModifierGroup = ModifierGroupModule;
 export const Modifier = ModifierModule;
 
-export {
-  useMenuContext,
-  useSectionContext,
-  useItemContext,
-};
+export { useMenuContext, useSectionContext, useItemContext };
