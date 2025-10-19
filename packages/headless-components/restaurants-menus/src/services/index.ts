@@ -4,7 +4,7 @@ import {
   loadMenusServiceConfig,
   type MenusServiceConfig,
   type MenusServiceAPI,
-} from './menus-service';
+} from './menus-service.js';
 
 export {
   MenusServiceDefinition,
