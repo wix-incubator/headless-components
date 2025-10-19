@@ -1,13 +1,28 @@
-export * as Menus from './Menus.js';
-export * as Menu from './Menu.js';
-export * as Section from './Section.js';
-export * as Item from './Item.js';
-export * as Variant from './Variant.js';
-export * as Label from './Label.js';
-export * as ModifierGroup from './ModifierGroup.js';
-export * as Modifier from './Modifier.js';
+import * as MenusModule from './Menus';
+import * as MenuModule from './Menu';
+import * as SectionModule from './Section';
+import * as ItemModule from './Item';
+import * as VariantModule from './Variant';
+import * as LabelModule from './Label';
+import * as ModifierGroupModule from './ModifierGroup';
+import * as ModifierModule from './Modifier';
+import {
+  useMenuContext,
+  useSectionContext,
+  useItemContext,
+} from './core/index';
+
+export const Menus = MenusModule;
+export const Menu = MenuModule;
+export const Section = SectionModule;
+export const Item = ItemModule;
+export const Variant = VariantModule;
+export const Label = LabelModule;
+export const ModifierGroup = ModifierGroupModule;
+export const Modifier = ModifierModule;
+
 export {
   useMenuContext,
   useSectionContext,
   useItemContext,
-} from './core/index.js';
+};
