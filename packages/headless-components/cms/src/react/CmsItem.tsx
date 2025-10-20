@@ -78,20 +78,20 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   },
 );
 
-export interface FieldProps {
+export interface FieldProps<T = any> {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: React.ForwardRefRenderFunction<HTMLElement, FieldRenderProps>;
+  children?: React.ForwardRefRenderFunction<HTMLElement, FieldRenderProps<T>>;
   /** ID of the field to extract from the item */
   fieldId: string;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
-export interface FieldRenderProps {
+export interface FieldRenderProps<T = any> {
   /** The raw field value */
-  fieldValue: any;
+  fieldValue: T;
   /** Data attribute for testing */
   'data-testid'?: string;
   /** Data attribute for field identification */
@@ -105,28 +105,32 @@ export interface FieldRenderProps {
  * @example
  * ```tsx
  * // Simple text field
- * <CmsItem.Field fieldId="title" asChild>
+ * <CmsItem.Field<string> fieldId="title" asChild>
  *   {({ fieldValue, ...props }, ref) => (
  *     <h1 ref={ref} {...props} className="text-4xl font-bold">
- *       {fieldValue}
+ *       {fieldValue.toUpperCase()}
  *     </h1>
  *   )}
  * </CmsItem.Field>
  *
  * // Image field
- * <CmsItem.Field fieldId="heroImage" asChild>
+ * interface ImageField {
+ *   url: string;
+ *   alt: string;
+ * }
+ * <CmsItem.Field<ImageField> fieldId="heroImage" asChild>
  *   {({ fieldValue, ...props }, ref) => (
  *     <img
  *       ref={ref}
  *       {...props}
- *       src={fieldValue?.url}
- *       alt={fieldValue?.alt}
+ *       src={fieldValue.url}
+ *       alt={fieldValue.alt}
  *       className="w-full h-auto rounded-lg"
  *     />
  *   )}
  * </CmsItem.Field>
  *
- * // Complex field with custom logic
+ * // Complex field with custom logic, Without generic (defaults to any)
  * <CmsItem.Field fieldId="rating" asChild>
  *   {({ fieldValue, ...props }, ref) => (
  *     <div ref={ref} {...props} className="flex items-center gap-1">
@@ -139,37 +143,45 @@ export interface FieldRenderProps {
  * </CmsItem.Field>
  * ```
  */
-export const Field = React.forwardRef<HTMLElement, FieldProps>((props, ref) => {
-  const { asChild, children, fieldId, className, ...otherProps } = props;
+const FieldComponent = React.forwardRef<HTMLElement, FieldProps<any>>(
+  (props, ref) => {
+    const { asChild, children, fieldId, className, ...otherProps } = props;
 
-  return (
-    <CoreCmsItem.Field fieldId={fieldId}>
-      {({ fieldValue }) => {
-        const dataAttributes = {
-          'data-testid': fieldId,
-          'data-collection-item-field': fieldId,
-        };
+    return (
+      <CoreCmsItem.Field fieldId={fieldId}>
+        {({ fieldValue }) => {
+          const dataAttributes = {
+            'data-testid': fieldId,
+            'data-collection-item-field': fieldId,
+          };
 
-        // If no children provided and not asChild, render nothing (similar to Product.Raw)
-        if (!asChild || !children) {
-          return null;
-        }
+          // If no children provided and not asChild, render nothing (similar to Product.Raw)
+          if (!asChild || !children) {
+            return null;
+          }
 
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            {...dataAttributes}
-            customElement={children}
-            customElementProps={{
-              fieldValue,
-              ...dataAttributes,
-            }}
-            {...otherProps}
-          />
-        );
-      }}
-    </CoreCmsItem.Field>
-  );
-});
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              {...dataAttributes}
+              customElement={children}
+              customElementProps={{
+                fieldValue,
+                ...dataAttributes,
+              }}
+              {...otherProps}
+            />
+          );
+        }}
+      </CoreCmsItem.Field>
+    );
+  },
+);
+
+FieldComponent.displayName = 'CmsItem.Field';
+
+export const Field = FieldComponent as <T = any>(
+  props: FieldProps<T> & { ref?: React.Ref<HTMLElement> },
+) => React.ReactElement;
