@@ -39,7 +39,7 @@ export interface RootProps {
  *   return (
  *     <ScheduleItemsGroup.Root itemsGroup={itemsGroup}>
  *       <ScheduleItemsGroup.DateLabel />
- *       <ScheduleItemsGroup.Items emptyState={<div>No schedule items available</div>}>
+ *       <ScheduleItemsGroup.Items>
  *         <ScheduleItemsGroup.ItemRepeater>
  *           <ScheduleItem.Name />
  *           <ScheduleItem.TimeSlot />
@@ -77,14 +77,22 @@ export interface DateLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedDate: string; date: Date }>;
+  children?: AsChildChildren<{
+    /** Date object for the group */
+    date: Date;
+    /** Time zone ID */
+    timeZoneId: string;
+    /** Formatted date label (e.g., "Mon, 07 Jul") */
+    formattedDate: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
  * Displays the date label for a schedule group (e.g., "Mon, 07 Jul").
- * Must be used within a ScheduleItemsGroup.Root component.
  *
  * @component
  * @example
@@ -99,7 +107,7 @@ export interface DateLabelProps {
  *
  * // asChild with react component
  * <ScheduleItemsGroup.DateLabel asChild>
- *   {React.forwardRef(({ formattedDate, date, ...props }, ref) => (
+ *   {React.forwardRef(({ date, timeZoneId, formattedDate, ...props }, ref) => (
  *     <h3 ref={ref} {...props} className="text-lg font-semibold">
  *       {formattedDate}
  *     </h3>
@@ -109,18 +117,18 @@ export interface DateLabelProps {
  */
 export const DateLabel = React.forwardRef<HTMLElement, DateLabelProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CoreScheduleItemsGroup.DateLabel>
-        {({ formattedDate, date }) => (
+      <CoreScheduleItemsGroup.DateLabel locale={locale}>
+        {({ date, timeZoneId, formattedDate }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.scheduleItemsGroupDateLabel}
             customElement={children}
-            customElementProps={{ formattedDate, date }}
+            customElementProps={{ date, timeZoneId, formattedDate }}
             content={formattedDate}
             {...otherProps}
           >
@@ -139,7 +147,12 @@ export interface ItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ items: ScheduleItemType[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        /** List of schedule items */
+        items: ScheduleItemType[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

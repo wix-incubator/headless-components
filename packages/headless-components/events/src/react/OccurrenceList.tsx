@@ -1,5 +1,6 @@
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
+import { type Event as EventType } from '../services/event-service.js';
 import { type OccurrenceListServiceConfig } from '../services/occurrence-list-service.js';
 import * as Event from './Event.js';
 import * as CoreOccurrenceList from './core/OccurrenceList.js';
@@ -69,7 +70,12 @@ export interface OccurrencesProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ occurrences: Event[]; hasOccurrences: boolean }>;
+    | AsChildChildren<{
+        /** List of occurrences */
+        occurrences: EventType[];
+        /** Indicates whether there are any occurrences in the list */
+        hasOccurrences: boolean;
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -167,7 +173,9 @@ export interface LoadMoreTriggerProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Indicates whether more occurrences are currently being loaded */
     isLoading: boolean;
+    /** Function to load more occurrences */
     loadMoreOccurrences: () => void;
   }>;
   /** CSS classes to apply to the default element */
@@ -243,7 +251,10 @@ export interface ErrorProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ error: string }>;
+  children?: AsChildChildren<{
+    /** Occurrence list error message */
+    error: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

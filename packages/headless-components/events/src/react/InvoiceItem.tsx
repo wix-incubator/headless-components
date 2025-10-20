@@ -26,19 +26,25 @@ export interface RootProps {
 }
 
 /**
- * InvoiceItem Root core component that provides invoice item service context.
- * Must be used as the top-level component for invoice item functionality.
+ * Root container that provides invoice item service context to all child components.
+ * Must be used as the top-level InvoiceItem component.
  *
  * @order 1
  * @component
  * @example
  * ```tsx
- * <InvoiceItem.Root invoiceItem={invoiceItem}>
- *   <InvoiceItem.Name />
- *   <InvoiceItem.Price />
- *   <InvoiceItem.Quantity />
- *   <InvoiceItem.Total />
- * </InvoiceItem.Root>
+ * import { InvoiceItem } from '@wix/events/components';
+ *
+ * function InvoiceItemComponent({ invoiceItem }) {
+ *   return (
+ *     <InvoiceItem.Root invoiceItem={invoiceItem}>
+ *       <InvoiceItem.Name />
+ *       <InvoiceItem.Price />
+ *       <InvoiceItem.Quantity />
+ *       <InvoiceItem.Total />
+ *     </InvoiceItem.Root>
+ *   );
+ * }
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
@@ -68,13 +74,16 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{
+    /** Invoice item name */
+    name: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the invoice item name with customizable rendering.
+ * Displays the invoice item name.
  *
  * @component
  * @example
@@ -128,16 +137,21 @@ export interface PriceProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    formattedAmount: string;
-    amount: number;
+    /** Invoice item price value */
+    value: number;
+    /** Invoice item price currency */
     currency: string;
+    /** Formatted invoice item price value */
+    formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
- * Displays the invoice item price with customizable rendering.
+ * Displays the invoice item price.
  *
  * @component
  * @example
@@ -152,31 +166,31 @@ export interface PriceProps {
  *
  * // asChild with React component
  * <InvoiceItem.Price asChild>
- *   {React.forwardRef(({ formattedAmount, amount, currency, ...props }, ref) => (
+ *   {React.forwardRef(({ value, currency, formattedValue, ...props }, ref) => (
  *     <p ref={ref} {...props} className="text-lg text-green-600">
- *       Price: {formattedAmount}
+ *       Price: {formattedValue}
  *     </p>
  *   ))}
  * </InvoiceItem.Price>
  * ```
  */
 export const Price = React.forwardRef<HTMLElement, PriceProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, locale, ...otherProps } = props;
 
   return (
-    <CoreInvoiceItem.Price>
-      {({ formattedAmount, amount, currency }) => (
+    <CoreInvoiceItem.Price locale={locale}>
+      {({ value, currency, formattedValue }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.invoiceItemPrice}
           customElement={children}
-          customElementProps={{ formattedAmount, amount, currency }}
-          content={formattedAmount}
+          customElementProps={{ value, currency, formattedValue }}
+          content={formattedValue}
           {...otherProps}
         >
-          <span>{formattedAmount}</span>
+          <span>{formattedValue}</span>
         </AsChildSlot>
       )}
     </CoreInvoiceItem.Price>
@@ -190,13 +204,16 @@ export interface QuantityProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ quantity: number }>;
+  children?: AsChildChildren<{
+    /** Invoice item quantity */
+    quantity: number;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the invoice item quantity with customizable rendering.
+ * Displays the invoice item quantity.
  *
  * @component
  * @example
@@ -252,16 +269,21 @@ export interface TotalProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    formattedAmount: string;
-    amount: number;
+    /** Invoice item total value */
+    value: number;
+    /** Invoice item total currency */
     currency: string;
+    /** Formatted invoice item total value */
+    formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
- * Displays the invoice item total amount with customizable rendering.
+ * Displays the invoice item total amount.
  *
  * @component
  * @example
@@ -276,31 +298,31 @@ export interface TotalProps {
  *
  * // asChild with React component
  * <InvoiceItem.Total asChild>
- *   {React.forwardRef(({ formattedAmount, amount, currency, ...props }, ref) => (
+ *   {React.forwardRef(({ value, currency, formattedValue, ...props }, ref) => (
  *     <p ref={ref} {...props} className="font-bold text-xl text-green-600">
- *       Total: {formattedAmount}
+ *       Total: {formattedValue}
  *     </p>
  *   ))}
  * </InvoiceItem.Total>
  * ```
  */
 export const Total = React.forwardRef<HTMLElement, TotalProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, locale, ...otherProps } = props;
 
   return (
-    <CoreInvoiceItem.Total>
-      {({ formattedAmount, amount, currency }) => (
+    <CoreInvoiceItem.Total locale={locale}>
+      {({ value, currency, formattedValue }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.invoiceItemTotal}
           customElement={children}
-          customElementProps={{ formattedAmount, amount, currency }}
-          content={formattedAmount}
+          customElementProps={{ value, currency, formattedValue }}
+          content={formattedValue}
           {...otherProps}
         >
-          <span>{formattedAmount}</span>
+          <span>{formattedValue}</span>
         </AsChildSlot>
       )}
     </CoreInvoiceItem.Total>

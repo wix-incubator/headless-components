@@ -18,6 +18,7 @@ export const getTicketDefinitionTax = (
   taxSettings: wixEventsV2.TaxSettings,
   price: number,
   currency: string,
+  locale: Intl.LocalesArgument,
 ) => {
   const name = taxSettings.name!;
   const rate = Number(taxSettings.rate!);
@@ -27,19 +28,19 @@ export const getTicketDefinitionTax = (
     name,
     rate,
     included,
-    taxableAmount: 0,
-    taxAmount: 0,
-    formattedTaxAmount: '',
+    taxableValue: 0,
+    taxValue: 0,
+    formattedTaxValue: '',
   };
 
   if (included) {
-    tax.taxableAmount = roundPrice((price * 100) / (100 + rate), currency);
-    tax.taxAmount = roundPrice(price - tax.taxableAmount, currency);
-    tax.formattedTaxAmount = formatPrice(tax.taxAmount, currency);
+    tax.taxableValue = roundPrice((price * 100) / (100 + rate), currency);
+    tax.taxValue = roundPrice(price - tax.taxableValue, currency);
+    tax.formattedTaxValue = formatPrice(tax.taxValue, currency, locale);
   } else {
-    tax.taxableAmount = price;
-    tax.taxAmount = roundPrice(price * (rate / 100), currency);
-    tax.formattedTaxAmount = formatPrice(tax.taxAmount, currency);
+    tax.taxableValue = price;
+    tax.taxValue = roundPrice(price * (rate / 100), currency);
+    tax.formattedTaxValue = formatPrice(tax.taxValue, currency, locale);
   }
 
   return tax;
@@ -50,20 +51,21 @@ export const getTicketDefinitionFee = (
   price: number,
   currency: string,
   guestPricing: boolean,
+  locale: Intl.LocalesArgument,
 ) => {
   const addedTax =
     taxSettings?.type === 'ADDED_AT_CHECKOUT' &&
     (!guestPricing || taxSettings.appliedToDonations)
-      ? getTicketDefinitionTax(taxSettings, price, currency)
+      ? getTicketDefinitionTax(taxSettings, price, currency, locale)
       : undefined;
-  const priceWithAddedTax = addedTax ? price + addedTax.taxAmount : price;
-  const amount = roundPrice(priceWithAddedTax * (WIX_FEE_RATE / 100), currency);
-  const formattedAmount = formatPrice(amount, currency);
+  const priceWithAddedTax = addedTax ? price + addedTax.taxValue : price;
+  const value = roundPrice(priceWithAddedTax * (WIX_FEE_RATE / 100), currency);
+  const formattedValue = formatPrice(value, currency, locale);
 
   return {
     rate: WIX_FEE_RATE,
-    amount,
-    formattedAmount,
+    value,
+    formattedValue,
   };
 };
 

@@ -74,7 +74,12 @@ export interface ItemsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ items: ScheduleItemType[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        /** List of schedule items */
+        items: ScheduleItemType[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
@@ -178,7 +183,10 @@ export interface GroupsProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ itemsGroups: ScheduleItemsGroupType[] }>;
+    | AsChildChildren<{
+        /** List of grouped schedule items */
+        itemsGroups: ScheduleItemsGroupType[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Content to render when there are no groups */
@@ -252,9 +260,9 @@ export interface GroupRepeaterProps {
  * @example
  * ```tsx
  * <ScheduleList.GroupRepeater>
- *   <ScheduleItemsGroup.GroupDateLabel />
- *   <ScheduleItemsGroup.GroupItems>
- *     <ScheduleItemsGroup.GroupItemRepeater>
+ *   <ScheduleItemsGroup.DateLabel />
+ *   <ScheduleItemsGroup.Items>
+ *     <ScheduleItemsGroup.ItemRepeater>
  *       <ScheduleItem.Name />
  *       <ScheduleItem.TimeSlot />
  *       <ScheduleItem.Duration />
@@ -265,8 +273,8 @@ export interface GroupRepeaterProps {
  *           <ScheduleItemTag.Label />
  *         </ScheduleItem.TagRepeater>
  *       </ScheduleItem.Tags>
- *     </ScheduleItemsGroup.GroupItemRepeater>
- *   </ScheduleItemsGroup.GroupItems>
+ *     </ScheduleItemsGroup.ItemRepeater>
+ *   </ScheduleItemsGroup.Items>
  * </ScheduleList.GroupRepeater>
  * ```
  */

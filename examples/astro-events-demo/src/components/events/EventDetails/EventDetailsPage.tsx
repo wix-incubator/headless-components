@@ -37,7 +37,7 @@ export async function eventDetailsPageLoader({
   }
 
   const [eventServiceConfigResult, eventListServiceConfig] = await Promise.all([
-    loadEventServiceConfig(slug),
+    loadEventServiceConfig({ slug }),
     loadEventListServiceConfig(),
   ]);
 
@@ -54,9 +54,9 @@ export async function eventDetailsPageLoader({
     scheduleListServiceConfig,
     occurrenceListServiceConfig,
   ] = await Promise.all([
-    loadTicketDefinitionListServiceConfig(eventId),
-    loadScheduleListServiceConfig(eventId, 2),
-    loadOccurrenceListServiceConfig(recurringCategoryId),
+    loadTicketDefinitionListServiceConfig({ eventId }),
+    loadScheduleListServiceConfig({ eventId, limit: 2 }),
+    loadOccurrenceListServiceConfig({ recurringCategoryId }),
   ]);
 
   return {

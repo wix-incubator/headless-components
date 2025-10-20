@@ -4,9 +4,8 @@ import {
 } from "@wix/blog/services";
 import React from "react";
 
-import PostPage from "@/components/blog/PostPage";
-import RecentPostsSection from "@/components/blog/RecentPostsSection";
 import { useLoaderData } from "react-router-dom";
+import RoutePost from "@/components/blog/RoutePost";
 
 export function BlogPostRoute() {
   const { blogPostServiceConfig, recentPostsServiceConfig } =
@@ -14,25 +13,14 @@ export function BlogPostRoute() {
 
   return (
     <React.Suspense fallback={<div>Loading blog post...</div>}>
-      <div className="min-h-screen bg-background">
-        <div className="px-6 py-12">
-          <div className="mx-auto mb-14 max-w-3xl">
-            <PostPage
-              blogPostServiceConfig={blogPostServiceConfig}
-              feedPageHref="/react-router/blog/"
-              categoryPageBaseUrl="/react-router/blog/category/"
-              postPageBaseUrl="/react-router/blog/post/"
-              uiLocale="en-US"
-            />
-          </div>
-          <RecentPostsSection
-            recentPostsServiceConfig={recentPostsServiceConfig}
-            postPageBaseUrl="/react-router/blog/post/"
-            categoryPageBaseUrl="/react-router/blog/category/"
-            uiLocale="en-US"
-          />
-        </div>
-      </div>
+      <RoutePost
+        blogPostServiceConfig={blogPostServiceConfig}
+        recentPostsServiceConfig={recentPostsServiceConfig}
+        feedPageHref="/react-router/blog/"
+        categoryPageBaseUrl="/react-router/blog/category/"
+        postPageBaseUrl="/react-router/blog/post/"
+        uiLocale="en-US"
+      />
     </React.Suspense>
   );
 }

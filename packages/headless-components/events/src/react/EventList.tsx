@@ -1,6 +1,7 @@
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { Filter as FilterPrimitive } from '@wix/headless-components/react';
 import React from 'react';
+import { type Event as EventType } from '../services/event-service.js';
 import { type EventListServiceConfig } from '../services/event-list-service.js';
 import * as CoreEventList from './core/EventList.js';
 import * as Event from './Event.js';
@@ -77,7 +78,12 @@ export interface EventsProps {
   /** Child components or custom render function when using asChild */
   children:
     | React.ReactNode
-    | AsChildChildren<{ events: Event[]; isLoading: boolean }>;
+    | AsChildChildren<{
+        /** List of events */
+        events: EventType[];
+        /** Indicates whether events are currently being loaded */
+        isLoading: boolean;
+      }>;
   /** Empty state to display when no events are available */
   emptyState?: React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -179,7 +185,9 @@ export interface LoadMoreTriggerProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Indicates whether more events are currently being loaded */
     isLoading: boolean;
+    /** Function to load more events */
     loadMoreEvents: () => void;
   }>;
   /** CSS classes to apply to the default element */
@@ -255,7 +263,10 @@ export interface ErrorProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ error: string }>;
+  children?: AsChildChildren<{
+    /** Event list error message */
+    error: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

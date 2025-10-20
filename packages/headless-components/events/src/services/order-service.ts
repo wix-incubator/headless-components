@@ -43,7 +43,7 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
       try {
         await poll({
           callback: async () => {
-            const response = await loadOrder(eventId, orderNumber);
+            const response = await loadOrder({ eventId, orderNumber });
 
             order.set(response);
 
@@ -70,19 +70,20 @@ export const OrderService = implementService.withConfig<OrderServiceConfig>()(
   },
 );
 
-export async function loadOrderServiceConfig(
-  eventId: string,
-  orderNumber: string,
-): Promise<OrderServiceConfig> {
-  const order = await loadOrder(eventId, orderNumber);
+export async function loadOrderServiceConfig({
+  eventId,
+  orderNumber,
+}: LoadOrderServiceConfigParams): Promise<OrderServiceConfig> {
+  const order = await loadOrder({ eventId, orderNumber });
 
   return { order, eventId, orderNumber };
 }
 
-export const isOrderReady = (order: Order) =>
-  order.ticketsQuantity === order.tickets?.length;
+export function isOrderReady(order: Order) {
+  return order.ticketsQuantity === order.tickets?.length;
+}
 
-const loadOrder = async (eventId: string, orderNumber: string) => {
+function loadOrder({ eventId, orderNumber }: LoadOrderParams) {
   return orders.getOrder(
     { eventId, orderNumber },
     {
@@ -93,4 +94,14 @@ const loadOrder = async (eventId: string, orderNumber: string) => {
       ],
     },
   );
-};
+}
+
+interface LoadOrderServiceConfigParams {
+  eventId: string;
+  orderNumber: string;
+}
+
+interface LoadOrderParams {
+  eventId: string;
+  orderNumber: string;
+}

@@ -185,13 +185,16 @@ export interface SlugProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ slug: string }>;
+  children?: AsChildChildren<{
+    /** Event slug */
+    slug: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the event slug with customizable rendering.
+ * Displays the event slug.
  *
  * @component
  * @example
@@ -243,8 +246,11 @@ export const Slug = React.forwardRef<HTMLElement, SlugProps>((props, ref) => {
 export interface TypeProps {
   /** Custom render function */
   children: AsChildChildren<{
+    /** Is event ticketed */
     ticketed: boolean;
+    /** Is event RSVP */
     rsvp: boolean;
+    /** Is event external */
     external: boolean;
   }>;
 }
@@ -292,15 +298,19 @@ export interface ImageProps
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Image source URL */
     src: string;
+    /** Image width */
     width?: number;
+    /** Image height */
     height?: number;
+    /** Image alt text */
     alt: string;
   }>;
 }
 
 /**
- * Displays the event image using WixMediaImage component with customizable rendering.
+ * Displays the event image using WixMediaImage component.
  *
  * @component
  * @example
@@ -350,13 +360,16 @@ export interface TitleProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ title: string }>;
+  children?: AsChildChildren<{
+    /** Event title */
+    title: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the event title with customizable rendering.
+ * Displays the event title.
  *
  * @component
  * @example
@@ -409,15 +422,34 @@ export interface DateProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ formattedDate: string }>;
+  children?: AsChildChildren<{
+    /** Event start date, null if TBD */
+    startDate: Date | null;
+    /** Event end date, null if TBD */
+    endDate: Date | null;
+    /** Event time zone ID, null if TBD */
+    timeZoneId: string | null;
+    /** Whether the event date and time is TBD */
+    dateAndTimeTbd: boolean;
+    /** Message to display if the event date and time is TBD */
+    dateAndTimeTbdMessage: string | null;
+    /** Whether to hide the end date */
+    hideEndDate: boolean;
+    /** Whether to show the time zone */
+    showTimeZone: boolean;
+    /** Formatted event date */
+    formattedDate: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** Format of the event date */
   format?: 'short' | 'full'; // Default: 'short'
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
- * Displays the event date with customizable rendering and format options.
+ * Displays the event date.
  *
  * @component
  * @example
@@ -432,7 +464,7 @@ export interface DateProps {
  *
  * // asChild with react component
  * <Event.Date asChild>
- *   {React.forwardRef(({ formattedDate, ...props }, ref) => (
+ *   {React.forwardRef(({ startDate, endDate, timeZoneId, dateAndTimeTbd, dateAndTimeTbdMessage, hideEndDate, showTimeZone, formattedDate, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm font-medium">
  *       {formattedDate}
  *     </span>
@@ -446,26 +478,45 @@ export const Date = React.forwardRef<HTMLElement, DateProps>((props, ref) => {
     children,
     className,
     format = 'short',
+    locale,
     ...otherProps
   } = props;
 
   return (
-    <CoreEvent.Date format={format}>
-      {({ formattedDate }) => (
+    <CoreEvent.DateCore format={format} locale={locale}>
+      {({
+        startDate,
+        endDate,
+        timeZoneId,
+        dateAndTimeTbd,
+        dateAndTimeTbdMessage,
+        hideEndDate,
+        showTimeZone,
+        formattedDate,
+      }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
           className={className}
           data-testid={TestIds.eventDate}
           customElement={children}
-          customElementProps={{ formattedDate }}
+          customElementProps={{
+            startDate,
+            endDate,
+            timeZoneId,
+            dateAndTimeTbd,
+            dateAndTimeTbdMessage,
+            hideEndDate,
+            showTimeZone,
+            formattedDate,
+          }}
           content={formattedDate}
           {...otherProps}
         >
           <span>{formattedDate}</span>
         </AsChildSlot>
       )}
-    </CoreEvent.Date>
+    </CoreEvent.DateCore>
   );
 });
 
@@ -477,8 +528,11 @@ export interface LocationProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Formatted event location */
     formattedLocation: string;
+    /** Event location latitude (null if TBD) */
     latitude: number | null;
+    /** Event location longitude (null if TBD) */
     longitude: number | null;
   }>;
   /** CSS classes to apply to the default element */
@@ -488,7 +542,7 @@ export interface LocationProps {
 }
 
 /**
- * Displays the event location with customizable rendering and format options.
+ * Displays the event location.
  *
  * @component
  * @example
@@ -549,13 +603,16 @@ export interface ShortDescriptionProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shortDescription: string }>;
+  children?: AsChildChildren<{
+    /** Event short description */
+    shortDescription: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the event short description with customizable rendering.
+ * Displays the event short description.
  *
  * @component
  * @example
@@ -609,7 +666,10 @@ export const ShortDescription = React.forwardRef<
  */
 export interface DescriptionProps {
   /** Custom render function */
-  children?: AsChildChildren<{ description: RichContent }>;
+  children?: AsChildChildren<{
+    /** Event description in rich content format */
+    description: RichContent;
+  }>;
 }
 
 /**
@@ -653,7 +713,12 @@ export interface RsvpButtonProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ slug: string; ticketed: boolean }>;
+  children?: AsChildChildren<{
+    /** Event slug */
+    slug: string;
+    /** Is event ticketed */
+    ticketed: boolean;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
   /** The label to display inside the button */
@@ -661,7 +726,7 @@ export interface RsvpButtonProps {
 }
 
 /**
- * Displays the event RSVP button with customizable rendering.
+ * Displays the event RSVP button.
  *
  * @component
  * @example
@@ -718,13 +783,16 @@ export interface FacebookShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shareUrl: string }>;
+  children?: AsChildChildren<{
+    /** Facebook share URL */
+    shareUrl: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays Facebook share element with customizable rendering.
+ * Displays Facebook share element.
  *
  * @component
  * @example
@@ -779,13 +847,16 @@ export interface LinkedInShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shareUrl: string }>;
+  children?: AsChildChildren<{
+    /** LinkedIn share URL */
+    shareUrl: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays LinkedIn share element with customizable rendering.
+ * Displays LinkedIn share element.
  *
  * @component
  * @example
@@ -840,13 +911,16 @@ export interface XShareProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ shareUrl: string }>;
+  children?: AsChildChildren<{
+    /** X share URL */
+    shareUrl: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays X share element with customizable rendering.
+ * Displays X share element.
  *
  * @component
  * @example
@@ -899,13 +973,16 @@ export interface AddToGoogleCalendarProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ url: string }>;
+  children?: AsChildChildren<{
+    /** Google calendar URL */
+    url: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the event add to Google calendar link with customizable rendering.
+ * Displays link to add the event to Google calendar.
  *
  * @component
  * @example
@@ -961,13 +1038,16 @@ export interface AddToIcsCalendarProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ url: string }>;
+  children?: AsChildChildren<{
+    /** ICS calendar URL */
+    url: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the event add to ICS calendar link with customizable rendering.
+ * Displays link to add the event to ICS calendar.
  *
  * @component
  * @example
@@ -1025,7 +1105,12 @@ export interface OtherEventsProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Child components or custom render function when using asChild */
-  children: React.ReactNode | AsChildChildren<{ events: Event[] }>;
+  children:
+    | React.ReactNode
+    | AsChildChildren<{
+        /** List of other events */
+        events: Event[];
+      }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }

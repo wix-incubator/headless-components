@@ -38,16 +38,15 @@ export const EventService = implementService.withConfig<EventServiceConfig>()(
   },
 );
 
-export async function loadEventServiceConfig(
-  slug: string,
-): Promise<EventServiceConfigResult> {
+export async function loadEventServiceConfig({
+  slug,
+}: LoadEventServiceConfigParams): Promise<EventServiceConfigResult> {
   try {
     const { event } = await wixEventsV2.getEventBySlug(slug, {
       fields: [
         wixEventsV2.RequestedFields.DETAILS,
         wixEventsV2.RequestedFields.REGISTRATION,
         wixEventsV2.RequestedFields.TEXTS,
-        wixEventsV2.RequestedFields.FORM,
       ],
     });
 
@@ -66,4 +65,8 @@ export async function loadEventServiceConfig(
   return {
     type: 'notFound',
   };
+}
+
+interface LoadEventServiceConfigParams {
+  slug: string;
 }

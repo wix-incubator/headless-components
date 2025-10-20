@@ -1,23 +1,23 @@
-export {
+import {
   Menus,
   Loading,
   ErrorState,
   MenuSelector,
   LocationSelector,
 } from './Menus.js';
-export {
+import {
   Menu,
   useMenuContext,
   Name as MenuName,
   Description as MenuDescription,
 } from './Menu.js';
-export {
+import {
   Section,
   useSectionContext,
   Name as SectionName,
   Description as SectionDescription,
 } from './Section.js';
-export {
+import {
   Item,
   useItemContext,
   Name as ItemName,
@@ -26,26 +26,64 @@ export {
   Image,
   AdditionalImages,
 } from './Item.js';
-export {
+import {
   Label as CoreLabel,
   useLabelContext,
   Name as LabelName,
   Icon as LabelIcon,
 } from './Label.js';
-export {
+import {
   ModifierGroup as CoreModifierGroup,
   useModifierGroupContext,
   Name as ModifierGroupName,
 } from './ModifierGroup.js';
-export {
+import {
   Modifier as CoreModifier,
   useModifierContext,
   Name as ModifierName,
   Price as ModifierPrice,
 } from './Modifier.js';
-export {
+import {
   Variant as CoreVariant,
   useVariantContext,
   Name as VariantName,
   Price as VariantPrice,
 } from './Variant.js';
+
+export {
+  Menus,
+  Loading,
+  ErrorState,
+  MenuSelector,
+  LocationSelector,
+  Menu,
+  useMenuContext,
+  MenuName,
+  MenuDescription,
+  Section,
+  useSectionContext,
+  SectionName,
+  SectionDescription,
+  Item,
+  useItemContext,
+  ItemName,
+  ItemDescription,
+  Price,
+  Image,
+  AdditionalImages,
+  CoreLabel,
+  useLabelContext,
+  LabelName,
+  LabelIcon,
+  CoreModifierGroup,
+  useModifierGroupContext,
+  ModifierGroupName,
+  CoreModifier,
+  useModifierContext,
+  ModifierName,
+  ModifierPrice,
+  CoreVariant,
+  useVariantContext,
+  VariantName,
+  VariantPrice,
+};

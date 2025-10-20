@@ -1,30 +1,45 @@
 const colors = require("tailwindcss/colors");
 
-const colorsLightTheme = {
-  primary: colors.slate[900],
-  "primary-foreground": "#ffffff",
-  secondary: "#8b5cf6",
-  "secondary-foreground": "#ffffff",
-  background: "#ffffff",
-  foreground: "#1e293b",
+const colorTheme = {
+  light: {
+    primary: colors.slate[900],
+    "primary-foreground": "#ffffff",
+    secondary: "#8b5cf6",
+    "secondary-foreground": "#ffffff",
+    background: "#ffffff",
+    foreground: "#1e293b",
+  },
+  dark: {
+    primary: "#3b82f6",
+    "primary-foreground": "#ffffff",
+    secondary: "#8b5cf6",
+    "secondary-foreground": "#ffffff",
+    background: "#1e293b",
+    foreground: "#f1f5f9",
+  },
+  vibe: {
+    foreground: "#FFFFFF",
+    background: "#0A0A0A",
+    secondary: "#1A1A2E",
+    "secondary-foreground": "#FFFFFF",
+    "primary-foreground": "#000000",
+    primary: "#FF6B35",
+  },
 };
 
-const colorsDarkTheme = {
-  primary: "#3b82f6",
-  "primary-foreground": "#ffffff",
-  secondary: "#8b5cf6",
-  "secondary-foreground": "#ffffff",
-  background: "#1e293b",
-  foreground: "#f1f5f9",
-};
-
-const colorsVibeTheme = {
-  foreground: "#FFFFFF",
-  background: "#0A0A0A",
-  secondary: "#1A1A2E",
-  "secondary-foreground": "#FFFFFF",
-  "primary-foreground": "#000000",
-  primary: "#FF6B35",
+const fontTheme = {
+  slabSerif: {
+    heading: ["'Epunda Slab'", "sans-serif"],
+    paragraph: ["'Crimson Text'", "serif"],
+  },
+  rubik: {
+    heading: ["'Rubik'", "sans-serif"],
+    paragraph: ["'Rubik'", "sans-serif"],
+  },
+  comic: {
+    heading: ["'Gluten'", "sans-serif"],
+    paragraph: ["'Comic Relief'", "sans-serif"],
+  },
 };
 
 /** @type {import('tailwindcss').Config} */
@@ -89,15 +104,8 @@ export default {
           { lineHeight: "1", letterSpacing: "-0.01em", fontWeight: "bold" },
         ],
       },
-      fontFamily: {
-        heading: ["'Epunda Slab'", "sans-serif"],
-        paragraph: ["'Crimson Text'", "serif"],
-      },
-      colors: {
-        ...colorsLightTheme,
-        // ...colorsDarkTheme,
-        // ...colorsVibeTheme,
-      },
+      fontFamily: fontTheme.comic,
+      colors: colorTheme.dark,
     },
   },
   future: {

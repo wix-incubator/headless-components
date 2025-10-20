@@ -7,7 +7,6 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { type ScheduleItem } from './schedule-item-service.js';
 import { type ScheduleItemsGroup } from './schedule-items-group-service.js';
-import { formatShortDate } from '../utils/date.js';
 
 enum StateFilter {
   PUBLISHED = schedule.StateFilter.PUBLISHED,
@@ -94,14 +93,14 @@ export const ScheduleListService =
     },
   );
 
-export async function loadScheduleListServiceConfig(
-  eventId: string,
-  limit?: number,
-): Promise<ScheduleListServiceConfig> {
+export async function loadScheduleListServiceConfig({
+  eventId,
+  limit,
+}: LoadScheduleListServiceConfigParams): Promise<ScheduleListServiceConfig> {
   const loadAll = !limit;
   const pageSize = limit ?? 100;
 
-  const response = await listScheduleItems(eventId, pageSize);
+  const response = await listScheduleItems({ eventId, limit: pageSize });
   const totalItems = response.pagingMetadata!.total!;
   const itemsCount = response.items!.length;
   const responses = [response];
@@ -109,11 +108,13 @@ export async function loadScheduleListServiceConfig(
   if (itemsCount < totalItems && loadAll) {
     const requestCount = Math.ceil(totalItems / pageSize) - 1;
     const moreResponses = await Promise.all(
-      new Array(requestCount)
-        .fill(null)
-        .map((_, index) =>
-          listScheduleItems(eventId, pageSize, (index + 1) * pageSize),
-        ),
+      new Array(requestCount).fill(null).map((_, index) =>
+        listScheduleItems({
+          eventId,
+          limit: pageSize,
+          offset: (index + 1) * pageSize,
+        }),
+      ),
     );
 
     responses.push(...moreResponses);
@@ -124,7 +125,11 @@ export async function loadScheduleListServiceConfig(
   return { items: allItems };
 }
 
-function listScheduleItems(eventId: string, limit: number, offset = 0) {
+function listScheduleItems({
+  eventId,
+  limit,
+  offset = 0,
+}: ListScheduleItemsParams) {
   return schedule.listScheduleItems({
     eventId: [eventId],
     state: [StateFilter.PUBLISHED, StateFilter.VISIBLE],
@@ -166,13 +171,12 @@ function groupScheduleItemsByDate(items: ScheduleItem[]): ScheduleItemsGroup[] {
   items.forEach((item) => {
     const startDate = new Date(item.timeSlot!.start!);
     const dateKey = startDate.toDateString();
-    const formattedDate = formatShortDate(startDate);
 
     if (!grouped.has(dateKey)) {
       grouped.set(dateKey, {
         id: Math.random().toString(36).substring(2, 11),
-        formattedDate,
         date: startDate,
+        timeZoneId: item.timeSlot!.timeZoneId!,
         items: [],
       });
     }
@@ -207,4 +211,15 @@ function getAvailableTags(items: ScheduleItem[]): string[] {
   });
 
   return Array.from(tags).sort();
+}
+
+interface LoadScheduleListServiceConfigParams {
+  eventId: string;
+  limit?: number;
+}
+
+interface ListScheduleItemsParams {
+  eventId: string;
+  limit: number;
+  offset?: number;
 }

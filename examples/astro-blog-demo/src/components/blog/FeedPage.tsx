@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/ui/blog/EmptyState";
+import { SortSelect } from "@/components/ui/blog/SortSelect";
 import { Button } from "@/components/ui/button";
 import { Blog } from "@wix/blog/components";
 import { type BlogFeedServiceConfig } from "@wix/blog/services";
@@ -39,7 +40,7 @@ export default function FeedPage({
 }: FeedPageProps) {
   return (
     <Blog.Feed.Root blogFeedServiceConfig={blogFeedServiceConfig}>
-      <Blog.Feed.Sort className="mb-4 bg-transparent text-foreground" />
+      <SortSelect sortComponent={Blog.Feed.Sort} />
       <Blog.Feed.PostItems
         className="grid gap-x-8 gap-y-12 lg:grid-cols-2 xl:grid-cols-3"
         emptyState={

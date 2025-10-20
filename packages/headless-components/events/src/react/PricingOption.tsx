@@ -74,13 +74,16 @@ export interface NameProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
-  children?: AsChildChildren<{ name: string }>;
+  children?: AsChildChildren<{
+    /** Pricing option name */
+    name: string;
+  }>;
   /** CSS classes to apply to the default element */
   className?: string;
 }
 
 /**
- * Displays the pricing option name with customizable rendering.
+ * Displays the pricing option name.
  *
  * @component
  * @example
@@ -129,21 +132,26 @@ export const Name = React.forwardRef<HTMLElement, NameProps>((props, ref) => {
 /**
  * Props for the PricingOption Pricing component.
  */
-interface PricingProps {
+export interface PricingProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: number;
+    /** Price */
+    value: number;
+    /** Price currency */
     currency: string;
-    formattedPrice: string;
+    /** Formatted price */
+    formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
- * Displays the pricing option price with customizable rendering.
+ * Displays the pricing option price.
  *
  * @component
  * @example
@@ -158,9 +166,9 @@ interface PricingProps {
  *
  * // asChild with react component
  * <PricingOption.Pricing asChild>
- *   {React.forwardRef(({ price, currency, formattedPrice, ...props }, ref) => (
+ *   {React.forwardRef(({ value, currency, formattedValue, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-lg font-semibold">
- *       {formattedPrice}
+ *       {formattedValue}
  *     </span>
  *   ))}
  * </PricingOption.Pricing>
@@ -168,11 +176,11 @@ interface PricingProps {
  */
 export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, locale, ...otherProps } = props;
 
     return (
-      <CorePricingOption.Pricing>
-        {({ price, currency, formattedPrice }) => (
+      <CorePricingOption.Pricing locale={locale}>
+        {({ value, currency, formattedValue }) => (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
@@ -180,14 +188,14 @@ export const Pricing = React.forwardRef<HTMLElement, PricingProps>(
             data-testid={TestIds.pricingOptionPricing}
             customElement={children}
             customElementProps={{
-              price,
+              value,
               currency,
-              formattedPrice,
+              formattedValue,
             }}
-            content={formattedPrice}
+            content={formattedValue}
             {...otherProps}
           >
-            <span>{formattedPrice}</span>
+            <span>{formattedValue}</span>
           </AsChildSlot>
         )}
       </CorePricingOption.Pricing>
@@ -203,16 +211,25 @@ export interface TaxProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Tax name */
     name: string;
+    /** Tax rate */
     rate: number;
+    /** Whether tax is included in price */
     included: boolean;
-    taxableAmount: number;
-    taxAmount: number;
+    /** Taxable value */
+    taxableValue: number;
+    /** Tax value */
+    taxValue: number;
+    /** Tax currency */
     currency: string;
-    formattedTaxAmount: string;
+    /** Formatted tax value */
+    formattedTaxValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -231,27 +248,27 @@ export interface TaxProps {
  *
  * // asChild with react component
  * <PricingOption.Tax asChild>
- *   {React.forwardRef(({ name, rate, included, taxableAmount, taxAmount, currency, formattedTaxAmount, ...props }, ref) => (
+ *   {React.forwardRef(({ name, rate, included, taxableValue, taxValue, currency, formattedTaxValue, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm text-gray-500">
- *       {included ? `${name} included` : `+${formattedTaxAmount} ${name}`}
+ *       {included ? `${name} included` : `+${formattedTaxValue} ${name}`}
  *     </span>
  *   ))}
  * </PricingOption.Tax>
  * ```
  */
 export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, locale, ...otherProps } = props;
 
   return (
-    <CorePricingOption.Tax>
+    <CorePricingOption.Tax locale={locale}>
       {({
         name,
         rate,
         included,
-        taxableAmount,
-        taxAmount,
+        taxableValue,
+        taxValue,
         currency,
-        formattedTaxAmount,
+        formattedTaxValue,
       }) => (
         <AsChildSlot
           ref={ref}
@@ -263,15 +280,15 @@ export const Tax = React.forwardRef<HTMLElement, TaxProps>((props, ref) => {
             name,
             rate,
             included,
-            taxableAmount,
-            taxAmount,
+            taxableValue,
+            taxValue,
             currency,
-            formattedTaxAmount,
+            formattedTaxValue,
           }}
-          content={formattedTaxAmount}
+          content={formattedTaxValue}
           {...otherProps}
         >
-          <span>{formattedTaxAmount}</span>
+          <span>{formattedTaxValue}</span>
         </AsChildSlot>
       )}
     </CorePricingOption.Tax>
@@ -286,13 +303,19 @@ export interface FeeProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Fee rate */
     rate: number;
-    amount: number;
+    /** Fee value */
+    value: number;
+    /** Fee currency */
     currency: string;
-    formattedAmount: string;
+    /** Formatted fee value */
+    formattedValue: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 /**
@@ -311,20 +334,20 @@ export interface FeeProps {
  *
  * // asChild with react component
  * <PricingOption.Fee asChild>
- *   {React.forwardRef(({ rate, amount, currency, formattedAmount, ...props }, ref) => (
+ *   {React.forwardRef(({ rate, value, currency, formattedValue, ...props }, ref) => (
  *     <span ref={ref} {...props} className="text-sm text-gray-500">
- *       +{formattedAmount} service fee
+ *       +{formattedValue} service fee
  *     </span>
  *   ))}
  * </PricingOption.Fee>
  * ```
  */
 export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, locale, ...otherProps } = props;
 
   return (
-    <CorePricingOption.Fee>
-      {({ rate, amount, currency, formattedAmount }) => (
+    <CorePricingOption.Fee locale={locale}>
+      {({ rate, value, currency, formattedValue }) => (
         <AsChildSlot
           ref={ref}
           asChild={asChild}
@@ -333,14 +356,14 @@ export const Fee = React.forwardRef<HTMLElement, FeeProps>((props, ref) => {
           customElement={children}
           customElementProps={{
             rate,
-            amount,
+            value,
             currency,
-            formattedAmount,
+            formattedValue,
           }}
-          content={formattedAmount}
+          content={formattedValue}
           {...otherProps}
         >
-          <span>{formattedAmount}</span>
+          <span>{formattedValue}</span>
         </AsChildSlot>
       )}
     </CorePricingOption.Fee>
@@ -355,11 +378,17 @@ export interface QuantityProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
+    /** Array of quantity options */
     options: number[];
+    /** Current quantity */
     quantity: number;
+    /** Maximum quantity allowed */
     maxQuantity: number;
+    /** Function to increment quantity */
     increment: () => void;
+    /** Function to decrement quantity */
     decrement: () => void;
+    /** Function to set specific quantity */
     setQuantity: (quantity: number) => void;
   }>;
   /** CSS classes to apply to the default element */

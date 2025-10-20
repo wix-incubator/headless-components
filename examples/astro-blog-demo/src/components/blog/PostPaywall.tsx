@@ -168,7 +168,7 @@ export default function PostPaywall({
                   <PricingPlans.Plan.Perks className="mx-auto max-w-fit space-y-2">
                     <PricingPlans.Plan.PerksRepeater>
                       <div className="flex items-center font-paragraph text-sm text-foreground/80">
-                        <CheckIcon className="mr-2 h-4 w-4 flex-shrink-0 text-primary" />
+                        <CheckIcon className="ms-2 h-4 w-4 flex-shrink-0 text-primary" />
                         <PricingPlans.Plan.PerkItem />
                       </div>
                     </PricingPlans.Plan.PerksRepeater>

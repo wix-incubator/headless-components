@@ -17,7 +17,11 @@ Root container that provides event context to all child components.
 ```tsx
 interface RootProps {
   event: Event;
+  eventListServiceConfig?: EventListServiceConfig;
+  occurrenceListServiceConfig?: OccurrenceListServiceConfig;
+  asChild?: boolean;
   children: React.ReactNode;
+  className?: string;
 }
 ```
 
@@ -37,18 +41,98 @@ interface RootProps {
 - `data-registration-closed` - Registration is closed
 - `data-has-image` - Event has image
 - `data-has-description` - Event has description
+- `data-has-occurrences` - Event has occurrences
+
+---
+
+### Event.Slug
+
+Displays the event slug.
+
+**Props**
+
+```tsx
+interface SlugProps {
+  asChild?: boolean;
+  children?: AsChildChildren<{ slug: string }>;
+  className?: string;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<Event.Slug className="text-sm font-medium" />
+
+// asChild with primitive
+<Event.Slug asChild>
+  <span className="text-sm font-medium" />
+</Event.Slug>
+
+// asChild with react component
+<Event.Slug asChild>
+  {React.forwardRef(({ slug, ...props }, ref) => (
+    <a ref={ref} {...props} href={`/events/${slug}`}>
+      Event Details
+    </a>
+  ))}
+</Event.Slug>
+```
+
+**Data Attributes**
+
+- `data-testid="event-slug"` - Applied to slug element
+
+---
+
+### Event.Type
+
+Provides event type information.
+
+**Props**
+
+```tsx
+interface TypeProps {
+  children: AsChildChildren<{
+    ticketed: boolean;
+    rsvp: boolean;
+    external: boolean;
+  }>;
+}
+```
+
+**Example**
+
+```tsx
+// asChild with react component
+<Event.Type>
+  {React.forwardRef(({ ticketed, rsvp, external, ...props }, ref) => (
+    <span ref={ref} {...props}>
+      {ticketed ? 'Ticketed' : rsvp ? 'RSVP' : external ? 'External' : ''}
+    </span>
+  ))}
+</Event.Type>
+```
 
 ---
 
 ### Event.Image
 
-Displays the event image using WixMediaImage component with customizable rendering.
+Displays the event image using WixMediaImage component.
 
 **Props**
 
 ```tsx
-interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface ImageProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'children'> {
   asChild?: boolean;
+  children?: AsChildChildren<{
+    src: string;
+    width?: number;
+    height?: number;
+    alt: string;
+  }>;
 }
 ```
 
@@ -62,6 +146,13 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 <Event.Image asChild>
   <img className="w-full h-full object-cover" />
 </Event.Image>
+
+// asChild with react component
+<Event.Image asChild>
+  {React.forwardRef(({ src, alt, width, height, ...props }, ref) => (
+    <img ref={ref} src={src} alt={alt} width={width} height={height} {...props} />
+  ))}
+</Event.Image>
 ```
 
 **Data Attributes**
@@ -72,7 +163,7 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 
 ### Event.Title
 
-Displays the event title with customizable rendering.
+Displays the event title.
 
 **Props**
 
@@ -113,16 +204,26 @@ interface TitleProps {
 
 ### Event.Date
 
-Displays the event date with customizable rendering and format options.
+Displays the event date.
 
 **Props**
 
 ```tsx
 interface DateProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ date: string }>;
+  children?: AsChildChildren<{
+    startDate: Date | null;
+    endDate: Date | null;
+    timeZoneId: string | null;
+    dateAndTimeTbd: boolean;
+    dateAndTimeTbdMessage: string | null;
+    hideEndDate: boolean;
+    showTimeZone: boolean;
+    formattedDate: string;
+  }>;
   className?: string;
   format?: 'short' | 'full'; // Default: 'short'
+  locale?: Intl.LocalesArgument;
 }
 ```
 
@@ -139,9 +240,9 @@ interface DateProps {
 
 // asChild with react component
 <Event.Date asChild>
-  {React.forwardRef(({ date, ...props }, ref) => (
+  {React.forwardRef(({ startDate, endDate, timeZoneId, dateAndTimeTbd, dateAndTimeTbdMessage, hideEndDate, showTimeZone, formattedDate, ...props }, ref) => (
     <span ref={ref} {...props} className="text-sm font-medium">
-      {date}
+      {formattedDate}
     </span>
   ))}
 </Event.Date>
@@ -155,14 +256,18 @@ interface DateProps {
 
 ### Event.Location
 
-Displays the event location with customizable rendering and format options.
+Displays the event location.
 
 **Props**
 
 ```tsx
 interface LocationProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ location: string }>;
+  children?: AsChildChildren<{
+    formattedLocation: string;
+    latitude: number | null;
+    longitude: number | null;
+  }>;
   className?: string;
   format?: 'short' | 'full'; // Default: 'short'
 }
@@ -181,9 +286,9 @@ interface LocationProps {
 
 // asChild with react component
 <Event.Location asChild>
-  {React.forwardRef(({ location, ...props }, ref) => (
+  {React.forwardRef(({ formattedLocation, latitude, longitude, ...props }, ref) => (
     <span ref={ref} {...props} className="text-sm font-medium">
-      {location}
+      {formattedLocation}
     </span>
   ))}
 </Event.Location>
@@ -197,7 +302,7 @@ interface LocationProps {
 
 ### Event.ShortDescription
 
-Displays the event short description with customizable rendering.
+Displays the event short description.
 
 **Props**
 
@@ -238,62 +343,44 @@ interface ShortDescriptionProps {
 
 ### Event.Description
 
-Displays the event description with customizable rendering.
+Provides the event description. RicosViewer should be used to render the description.
 
 **Props**
 
 ```tsx
 interface DescriptionProps {
-  asChild?: boolean;
   children?: AsChildChildren<{ description: RichContent }>;
-  className?: string;
-  customStyles?: RicosCustomStyles;
 }
 ```
 
 **Example**
 
 ```tsx
-// Default usage with built-in Ricos viewer
-<Event.Description
-  className="max-w-5xl"
-  customStyles={{
-    p: {
-      fontSize: 'var(--text-lg)',
-      lineHeight: 'var(--leading-relaxed)',
-      color: 'var(--color-content-primary)',
-    }
-  }}
-/>
-
-// asChild with react component
-<Event.Description asChild>
+<Event.Description>
   {React.forwardRef(({ description, ...props }, ref) => (
-    <div>
-      <RicosViewer ref={ref} content={description} plugins={customPlugins} />
-    </div>
+    <RicosViewer ref={ref} content={description} />
   ))}
 </Event.Description>
 ```
 
 **Data Attributes**
 
-- `data-testid="event-description"` - Applied to description container element
+- `data-testid="event-description"` - Applied to description element
 
 ---
 
 ### Event.RsvpButton
 
-Displays the event RSVP button with customizable rendering.
+Displays the event RSVP button.
 
 **Props**
 
 ```tsx
 interface RsvpButtonProps {
   asChild?: boolean;
-  children?: AsChildChildren<{ eventSlug: string; ticketed: boolean }>;
+  children?: AsChildChildren<{ slug: string; ticketed: boolean }>;
   className?: string;
-  label?: string;
+  label?: React.ReactNode;
 }
 ```
 
@@ -310,7 +397,7 @@ interface RsvpButtonProps {
 
 // asChild with react component
 <Event.RsvpButton asChild>
-  {React.forwardRef(({ eventSlug, ticketed, ...props }, ref) => (
+  {React.forwardRef(({ slug, ticketed, ...props }, ref) => (
     <button ref={ref} {...props}>
       {ticketed ? 'Buy Tickets' : 'RSVP'}
     </button>
@@ -327,7 +414,7 @@ interface RsvpButtonProps {
 
 ### Event.FacebookShare
 
-Displays the event Facebook share link with customizable rendering.
+Displays Facebook share element.
 
 **Props**
 
@@ -335,7 +422,7 @@ Displays the event Facebook share link with customizable rendering.
 interface FacebookShareProps {
   eventPageUrl: string;
   asChild?: boolean;
-  children?: AsChildChildren<{ url: string }>;
+  children?: AsChildChildren<{ shareUrl: string }>;
   className?: string;
 }
 ```
@@ -344,17 +431,17 @@ interface FacebookShareProps {
 
 ```tsx
 // Default usage
-<Event.FacebookShare />
+<Event.FacebookShare eventPageUrl={eventPageUrl} />
 
 // asChild with primitive
-<Event.FacebookShare asChild>
+<Event.FacebookShare asChild eventPageUrl={eventPageUrl}>
   <a />
 </Event.FacebookShare>
 
 // asChild with react component
-<Event.FacebookShare asChild>
-  {React.forwardRef(({ url, ...props }, ref) => (
-    <button ref={ref} onClick={() => window.open(url, '_blank')} />
+<Event.FacebookShare asChild eventPageUrl={eventPageUrl}>
+  {React.forwardRef(({ shareUrl, ...props }, ref) => (
+    <button ref={ref} onClick={() => window.open(shareUrl, '_blank')} />
   ))}
 </Event.FacebookShare>
 ```
@@ -367,7 +454,7 @@ interface FacebookShareProps {
 
 ### Event.LinkedInShare
 
-Displays the event LinkedIn share link with customizable rendering.
+Displays LinkedIn share element.
 
 **Props**
 
@@ -375,7 +462,7 @@ Displays the event LinkedIn share link with customizable rendering.
 interface LinkedInShareProps {
   eventPageUrl: string;
   asChild?: boolean;
-  children?: AsChildChildren<{ url: string }>;
+  children?: AsChildChildren<{ shareUrl: string }>;
   className?: string;
 }
 ```
@@ -384,17 +471,17 @@ interface LinkedInShareProps {
 
 ```tsx
 // Default usage
-<Event.LinkedInShare />
+<Event.LinkedInShare eventPageUrl={eventPageUrl} />
 
 // asChild with primitive
-<Event.LinkedInShare asChild>
+<Event.LinkedInShare asChild eventPageUrl={eventPageUrl}>
   <a />
 </Event.LinkedInShare>
 
 // asChild with react component
 <Event.LinkedInShare asChild>
-  {React.forwardRef(({ url, ...props }, ref) => (
-    <button ref={ref} onClick={() => window.open(url, '_blank')} />
+  {React.forwardRef(({ shareUrl, ...props }, ref) => (
+    <button ref={ref} onClick={() => window.open(shareUrl, '_blank')} />
   ))}
 </Event.LinkedInShare>
 ```
@@ -407,7 +494,7 @@ interface LinkedInShareProps {
 
 ### Event.XShare
 
-Displays the event X share link with customizable rendering.
+Displays X share element.
 
 **Props**
 
@@ -415,7 +502,7 @@ Displays the event X share link with customizable rendering.
 interface XShareProps {
   eventPageUrl: string;
   asChild?: boolean;
-  children?: AsChildChildren<{ url: string }>;
+  children?: AsChildChildren<{ shareUrl: string }>;
   className?: string;
 }
 ```
@@ -424,17 +511,17 @@ interface XShareProps {
 
 ```tsx
 // Default usage
-<Event.XShare />
+<Event.XShare eventPageUrl={eventPageUrl} />
 
 // asChild with primitive
-<Event.XShare asChild>
+<Event.XShare asChild eventPageUrl={eventPageUrl}>
   <a />
 </Event.XShare>
 
 // asChild with react component
 <Event.XShare asChild>
-  {React.forwardRef(({ url, ...props }, ref) => (
-    <button ref={ref} onClick={() => window.open(url, '_blank')} />
+  {React.forwardRef(({ shareUrl, ...props }, ref) => (
+    <button ref={ref} onClick={() => window.open(shareUrl, '_blank')} />
   ))}
 </Event.XShare>
 ```
@@ -447,7 +534,7 @@ interface XShareProps {
 
 ### Event.AddToGoogleCalendar
 
-Displays the event add to Google calendar link with customizable rendering.
+Displays link to add the event to Google calendar.
 
 **Props**
 
@@ -486,7 +573,7 @@ interface AddToGoogleCalendarProps {
 
 ### Event.AddToIcsCalendar
 
-Displays the event add to ICS calendar link with customizable rendering.
+Displays link to add the event to ICS calendar.
 
 **Props**
 
@@ -523,6 +610,96 @@ interface AddToIcsCalendarProps {
 
 ---
 
+### Event.OtherEvents
+
+Container for other events.
+
+**Props**
+
+```tsx
+interface OtherEventsProps {
+  count?: number; // Default: 3
+  asChild?: boolean;
+  children: React.ReactNode | AsChildChildren<{ events: Event[] }>;
+  className?: string;
+}
+```
+
+**Example**
+
+```tsx
+<Event.OtherEvents count={5}>
+  <Event.OtherEventRepeater>
+    <Event.Image />
+    <Event.Title />
+  </Event.OtherEventRepeater>
+</Event.OtherEvents>
+```
+
+**Data Attributes**
+
+- `data-testid="event-other-events"` - Applied to other events container
+
+---
+
+### Event.OtherEventRepeater
+
+Repeater component that renders Event.Root for each event.
+
+**Props**
+
+```tsx
+interface OtherEventRepeaterProps {
+  count?: number; // Default: 3
+  children: React.ReactNode;
+  className?: string;
+}
+```
+
+**Example**
+
+```tsx
+<Event.OtherEventRepeater>
+  <Event.Image />
+  <Event.Title />
+</Event.OtherEventRepeater>
+```
+
+---
+
+### Event.Form
+
+Displays the event form.
+
+**Props**
+
+```tsx
+interface FormProps {
+  asChild?: boolean;
+  children: React.ReactNode;
+  className?: string;
+  thankYouPageUrl?: string;
+}
+```
+
+**Example**
+
+```tsx
+import { Form } from '@wix/headless-forms/react';
+
+<Event.Form>
+  <Form.Loading />
+  <Form.LoadingError />
+  <Form.Fields fieldMap={FIELD_MAP} />
+</Event.Form>;
+```
+
+**Data Attributes**
+
+- `data-testid="event-form"` - Applied to form element
+
+---
+
 ## Data Attributes Summary
 
 | Attribute                                    | Applied To                | Purpose                              |
@@ -540,6 +717,9 @@ interface AddToIcsCalendarProps {
 | `data-testid="event-x-share"`                | Event.XShare              | Event X share element                |
 | `data-testid="event-add-to-google-calendar"` | Event.AddToGoogleCalendar | Event add to Google calendar element |
 | `data-testid="event-add-to-ics-calendar"`    | Event.AddToIcsCalendar    | Event add to ICS calendar element    |
+| `data-testid="event-slug"`                   | Event.Slug                | Event slug element                   |
+| `data-testid="event-other-events"`           | Event.OtherEvents         | Event other events container         |
+| `data-testid="event-form"`                   | Event.Form                | Event form element                   |
 | `data-upcoming`                              | Event.Root                | Event is upcoming                    |
 | `data-started`                               | Event.Root                | Event has started                    |
 | `data-ended`                                 | Event.Root                | Event has ended                      |
@@ -547,4 +727,5 @@ interface AddToIcsCalendarProps {
 | `data-registration-closed`                   | Event.Root                | Registration is closed               |
 | `data-has-image`                             | Event.Root                | Event has image                      |
 | `data-has-description`                       | Event.Root                | Event has description                |
+| `data-has-occurrences`                       | Event.Root                | Event has occurrences                |
 | `data-ticketed`                              | Event.RsvpButton          | Event is ticketed                    |

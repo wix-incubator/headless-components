@@ -1,8 +1,11 @@
 import { Chip } from "@/components/ui/blog/Chip";
 import { EmptyState } from "@/components/ui/blog/EmptyState";
 import { PostAuthorAvatar } from "@/components/ui/blog/PostAuthorAvatar";
+import { PostAuthorName } from "@/components/ui/blog/PostAuthorName";
 import { PostCategories } from "@/components/ui/blog/PostCategories";
 import { PostContent } from "@/components/ui/blog/PostContent";
+import { PostPublishDate } from "@/components/ui/blog/PostPublishDate";
+import { PostReadingTime } from "@/components/ui/blog/PostReadingTime";
 import { PostTitle } from "@/components/ui/blog/PostTitle";
 import { SeparatedItems } from "@/components/ui/blog/SeparatedItems";
 import { Button } from "@/components/ui/button";
@@ -74,30 +77,24 @@ export default function PostPage({
             <div className="text-sm text-foreground/80">
               <SeparatedItems className="hidden font-paragraph text-foreground/80 sm:flex">
                 <div className="flex items-center gap-x-2">
-                  <PostAuthorAvatar avatarSize="md" />
-                  <Blog.Post.AuthorName />
+                  <PostAuthorAvatar />
+                  <PostAuthorName />
                 </div>
 
-                <Blog.Post.PublishDate locale={uiLocale} />
-
-                <Blog.Post.ReadingTime asChild>
-                  {({ readingTime }) => <span>{readingTime} min read</span>}
-                </Blog.Post.ReadingTime>
+                <PostPublishDate uiLocale={uiLocale} />
+                <PostReadingTime />
               </SeparatedItems>
               <div className="grid grid-cols-[auto_1fr] grid-rows-2 items-center gap-x-2 sm:hidden">
-                <PostAuthorAvatar className="row-span-2" avatarSize="md" />
-                <Blog.Post.AuthorName />
+                <PostAuthorAvatar className="row-span-2" />
+                <PostAuthorName />
                 <SeparatedItems className="text-sm text-foreground/80">
-                  <Blog.Post.PublishDate locale={uiLocale} />
-
-                  <Blog.Post.ReadingTime asChild>
-                    {({ readingTime }) => <span>{readingTime} min read</span>}
-                  </Blog.Post.ReadingTime>
+                  <PostPublishDate uiLocale={uiLocale} />
+                  <PostReadingTime />
                 </SeparatedItems>
               </div>
             </div>
 
-            <section className="-ml-2 -mt-2">
+            <section className="-ms-2 -mt-2">
               <SharePostActions />
             </section>
           </div>
@@ -114,7 +111,7 @@ export default function PostPage({
 
         <Separator />
 
-        <section className="-ml-2">
+        <section className="-ms-2">
           <SharePostActions />
         </section>
 

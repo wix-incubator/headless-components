@@ -177,9 +177,25 @@ export interface DateProps {
   children: (props: DateRenderProps) => React.ReactNode;
   /** Format of the event date */
   format?: 'short' | 'full'; // Default: 'short'
+  /** Locale */
+  locale?: Intl.LocalesArgument;
 }
 
 export interface DateRenderProps {
+  /** Event start date, null if TBD */
+  startDate: Date | null;
+  /** Event end date, null if TBD */
+  endDate: Date | null;
+  /** Event time zone ID, null if TBD */
+  timeZoneId: string | null;
+  /** Whether the event date and time is TBD */
+  dateAndTimeTbd: boolean;
+  /** Message to display if the event date and time is TBD */
+  dateAndTimeTbdMessage: string | null;
+  /** Whether to hide the end date */
+  hideEndDate: boolean;
+  /** Whether to show the time zone */
+  showTimeZone: boolean;
   /** Formatted event date */
   formattedDate: string;
 }
@@ -189,19 +205,40 @@ export interface DateRenderProps {
  *
  * @component
  */
-export function Date(props: DateProps): React.ReactNode {
-  const { format = 'short' } = props;
+export function DateCore(props: DateProps): React.ReactNode {
+  const { format = 'short', locale } = props;
 
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
-  const formattedDate = event.dateAndTimeSettings!.dateAndTimeTbd
-    ? event.dateAndTimeSettings!.dateAndTimeTbdMessage!
-    : format === 'short'
-      ? formatShortDate(event.dateAndTimeSettings!.startDate!)
-      : formatFullDate(event.dateAndTimeSettings!.startDate!);
 
-  return props.children({ formattedDate });
+  const {
+    startDate,
+    endDate,
+    timeZoneId,
+    dateAndTimeTbd,
+    dateAndTimeTbdMessage,
+    hideEndDate,
+    showTimeZone,
+  } = event.dateAndTimeSettings!;
+  const formattedDate = dateAndTimeTbd
+    ? dateAndTimeTbdMessage!
+    : format === 'short'
+      ? formatShortDate(startDate!, timeZoneId!, locale)
+      : hideEndDate
+        ? formatFullDate(startDate!, timeZoneId!, showTimeZone!, locale)
+        : `${formatFullDate(startDate!, timeZoneId!, false, locale)} - ${formatFullDate(endDate!, timeZoneId!, showTimeZone!, locale)}`;
+
+  return props.children({
+    startDate: dateAndTimeTbd ? null : new Date(startDate!),
+    endDate: dateAndTimeTbd ? null : new Date(endDate!),
+    timeZoneId: dateAndTimeTbd ? null : timeZoneId!,
+    dateAndTimeTbd: dateAndTimeTbd!,
+    dateAndTimeTbdMessage: dateAndTimeTbd ? dateAndTimeTbdMessage! : null,
+    hideEndDate: hideEndDate!,
+    showTimeZone: showTimeZone!,
+    formattedDate: formattedDate!,
+  });
 }
 
 export interface LocationProps {

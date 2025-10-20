@@ -40,24 +40,8 @@ export function usePostsContext(): PostsContextValue {
 const enum TestIds {
   blogFeedRoot = 'blog-feed-root',
   blogFeedPosts = 'blog-feed-posts',
-  blogFeedPost = 'blog-feed-post',
   blogFeedSort = 'blog-feed-sort',
   blogFeedLoadMore = 'blog-feed-load-more',
-  blogFeedPostTitle = 'blog-feed-post-title',
-  blogFeedPostExcerpt = 'blog-feed-post-excerpt',
-  blogFeedPostContent = 'blog-feed-post-content',
-  blogFeedPostCoverImage = 'blog-feed-post-cover-image',
-  blogFeedPostAuthorName = 'blog-feed-post-author-name',
-  blogFeedPostAuthorAvatar = 'blog-feed-post-author-avatar',
-  blogFeedPostPublishDate = 'blog-feed-post-publish-date',
-  blogFeedPostReadingTime = 'blog-feed-post-reading-time',
-  blogFeedPostTags = 'blog-feed-post-tags',
-  blogFeedPostTagOptions = 'blog-feed-post-tag-options',
-  blogFeedPostTag = 'blog-feed-post-tag',
-  blogFeedPostCategories = 'blog-feed-post-categories',
-  blogFeedPostCategoryOptions = 'blog-feed-post-category-options',
-  blogFeedPostCategory = 'blog-feed-post-category',
-  blogFeedPostLink = 'blog-feed-post-link',
 }
 
 export interface BlogFeedRootProps {
@@ -320,7 +304,6 @@ export interface PostItemRepeaterProps {
  * <Blog.Feed.PostItemRepeater>
  *   <Blog.Post.Title />
  *   <Blog.Post.Excerpt />
- *   <Blog.Post.AuthorName />
  *   <Blog.Post.PublishDate />
  * </Blog.Feed.PostItemRepeater>
  * ```
@@ -406,11 +389,8 @@ export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>((props, ref
             className={className}
             {...attributes}
             customElement={children}
+            customElementProps={{ isLoading, loadNextPage }}
             content={isLoading && loadingState ? loadingState : undefined}
-            customElementProps={{
-              isLoading,
-              loadNextPage,
-            }}
           >
             <button>{isValidChildren(children) ? children : null}</button>
           </AsChildSlot>
