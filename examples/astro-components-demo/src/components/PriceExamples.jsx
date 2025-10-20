@@ -4,77 +4,76 @@ import { Price } from '@wix/headless-components';
 // Sample data for different price scenarios
 const samplePrices = {
   regular: {
-    current: {
-      amount: 2999, // $29.99 in cents
+    money: {
+      amount: 29.99,
       currency: 'USD',
-      symbol: '$',
-      formatted: '$29.99',
     },
     locale: 'en-US',
     precision: 2,
   },
 
-  onSale: {
-    current: {
-      amount: 1999, // $19.99 in cents
+  discounted: {
+    money: {
+      amount: 19.99,
       currency: 'USD',
-      symbol: '$',
-      formatted: '$19.99',
     },
-    compareAt: {
-      amount: 2999, // $29.99 in cents
-      currency: 'USD',
-      symbol: '$',
-      formatted: '$29.99',
-    },
-    discount: {
-      amount: {
-        amount: 1000, // $10.00 discount
-        currency: 'USD',
-        symbol: '$',
-        formatted: '$10.00',
-      },
-      percentage: 33.33,
-    },
-    isOnSale: true,
     locale: 'en-US',
     precision: 2,
   },
 
-  priceRange: {
-    current: {
-      amount: 1500, // $15.00 in cents
+  originalPrice: {
+    money: {
+      amount: 29.99,
       currency: 'USD',
-      symbol: '$',
-      formatted: '$15.00',
     },
-    range: {
-      min: {
-        amount: 1500, // $15.00 in cents
-        currency: 'USD',
-        symbol: '$',
-        formatted: '$15.00',
-      },
-      max: {
-        amount: 4500, // $45.00 in cents
-        currency: 'USD',
-        symbol: '$',
-        formatted: '$45.00',
-      },
+    locale: 'en-US',
+    precision: 2,
+  },
+
+  lowPrice: {
+    money: {
+      amount: 15.0,
+      currency: 'USD',
+    },
+    locale: 'en-US',
+    precision: 2,
+  },
+
+  highPrice: {
+    money: {
+      amount: 45.0,
+      currency: 'USD',
     },
     locale: 'en-US',
     precision: 2,
   },
 
   euroPrice: {
-    current: {
-      amount: 2550, // €25.50 in cents
+    money: {
+      amount: 25.5,
       currency: 'EUR',
-      symbol: '€',
-      formatted: '€25.50',
     },
     locale: 'de-DE',
     precision: 2,
+  },
+
+  yen: {
+    money: {
+      amount: 2999,
+      currency: 'JPY',
+    },
+    locale: 'ja-JP',
+    precision: 0,
+  },
+
+  accounting: {
+    money: {
+      amount: -50.0,
+      currency: 'USD',
+    },
+    locale: 'en-US',
+    precision: 2,
+    currencySign: 'accounting',
   },
 };
 
@@ -134,18 +133,16 @@ function PriceExamples() {
             description="Simple price display using the formatted price"
             price={samplePrices.regular}
             code={`const regularPrice = {
-  current: {
-    amount: 2999, // $29.99 in cents
+  money: {
+    amount: 29.99,
     currency: 'USD',
-    symbol: '$',
-    formatted: '$29.99',
   },
   locale: 'en-US',
   precision: 2,
 };
 
 <Price.Root price={regularPrice}>
-  <Price.Formatted className="text-2xl font-bold" />
+  <Price.Formatted className="text-2xl font-heading text-foreground" />
 </Price.Root>`}
           >
             <Price.Formatted className="text-2xl font-heading text-foreground" />
@@ -157,11 +154,9 @@ function PriceExamples() {
             description="Display individual price components separately"
             price={samplePrices.regular}
             code={`const regularPrice = {
-  current: {
-    amount: 2999, // $29.99 in cents
+  money: {
+    amount: 29.99,
     currency: 'USD',
-    symbol: '$',
-    formatted: '$29.99',
   },
   locale: 'en-US',
   precision: 2,
@@ -169,127 +164,115 @@ function PriceExamples() {
 
 <Price.Root price={regularPrice}>
   <div className="flex items-center gap-2">
-    <span>
-      <Price.Symbol className="text-xl font-paragraph" />
+    <span className="flex items-center">
+      <Price.Currency className="text-xl font-paragraph" />
       <Price.Amount className="text-xl font-heading text-foreground" />
     </span>
-    <Price.Currency className="text-sm text-gray-500" />
+    <span className="text-sm text-secondary-foreground font-paragraph">USD</span>
   </div>
 </Price.Root>`}
           >
             <div className="flex items-center gap-2">
-              <span>
-                <Price.Symbol className="text-xl font-paragraph" />
+              <span className="flex items-center">
+                <Price.Currency className="text-xl font-paragraph" />
                 <Price.Amount className="text-xl font-heading text-foreground" />
               </span>
-              <Price.Currency className="text-sm text-secondary-foreground font-paragraph" />
+              <span className="text-sm text-secondary-foreground font-paragraph">
+                USD
+              </span>
             </div>
           </ExampleSection>
 
-          {/* Sale Price with Discount */}
+          {/* Sale Price Comparison */}
           <ExampleSection
-            title="Sale Price with Discount"
-            description="Show current price, original price, and discount information"
-            price={samplePrices.onSale}
+            title="Sale Price Comparison"
+            description="Compare sale price with original price using multiple Price components"
+            price={samplePrices.discounted}
             code={`const salePrice = {
-  current: {
-    amount: 1999, // $19.99 in cents
+  money: {
+    amount: 19.99,
     currency: 'USD',
-    symbol: '$',
-    formatted: '$19.99',
   },
-  compareAt: {
-    amount: 2999, // $29.99 in cents
-    currency: 'USD',
-    symbol: '$',
-    formatted: '$29.99',
-  },
-  discount: {
-    amount: {
-      amount: 1000, // $10.00 discount
-      currency: 'USD',
-      symbol: '$',
-      formatted: '$10.00',
-    },
-    percentage: 33.33,
-  },
-  isOnSale: true,
   locale: 'en-US',
   precision: 2,
 };
 
-<Price.Root price={salePrice}>
-  <div className="flex items-center gap-3">
-    <Price.Formatted className="text-2xl font-bold text-green-500" />
-    <Price.CompareAt className="text-lg line-through text-gray-500" />
-    <div className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">
-      <Price.DiscountPercentage /> OFF
-    </div>
+const originalPrice = {
+  money: {
+    amount: 29.99,
+    currency: 'USD',
+  },
+  locale: 'en-US',
+  precision: 2,
+};
+
+<div className="flex items-center gap-3">
+  <Price.Root price={salePrice}>
+    <Price.Formatted className="text-2xl font-heading text-green-500" />
+  </Price.Root>
+  <Price.Root price={originalPrice}>
+    <Price.Formatted className="text-lg line-through text-secondary-foreground font-paragraph" />
+  </Price.Root>
+  <div className="bg-destructive text-primary-foreground px-2 py-1 rounded text-sm font-paragraph">
+    33% OFF
   </div>
-  <div className="mt-2 text-sm text-gray-600">
-    You save <Price.Discount className="font-bold" />
-  </div>
-</Price.Root>`}
+</div>`}
           >
             <div className="flex items-center gap-3">
-              <Price.Formatted className="text-2xl font-heading text-green-500" />
-              <Price.CompareAt className="text-lg line-through text-secondary-foreground font-paragraph" />
+              <Price.Root price={samplePrices.discounted}>
+                <Price.Formatted className="text-2xl font-heading text-green-500" />
+              </Price.Root>
+              <Price.Root price={samplePrices.originalPrice}>
+                <Price.Formatted className="text-lg line-through text-secondary-foreground font-paragraph" />
+              </Price.Root>
               <div className="bg-destructive text-primary-foreground px-2 py-1 rounded text-sm font-paragraph">
-                <Price.DiscountPercentage /> OFF
+                33% OFF
               </div>
-            </div>
-            <div className="mt-2 text-sm text-secondary-foreground font-paragraph">
-              You save <Price.Discount className="font-heading" />
             </div>
           </ExampleSection>
 
           {/* Price Range Display */}
           <ExampleSection
             title="Price Range Display"
-            description="Show price ranges with minimum and maximum values"
-            price={samplePrices.priceRange}
-            code={`const rangePrice = {
-  current: {
-    amount: 1500, // $15.00 in cents
+            description="Show price ranges with minimum and maximum values using multiple Price components"
+            price={samplePrices.lowPrice}
+            code={`const lowPrice = {
+  money: {
+    amount: 15.00,
     currency: 'USD',
-    symbol: '$',
-    formatted: '$15.00',
-  },
-  range: {
-    min: {
-      amount: 1500, // $15.00 in cents
-      currency: 'USD',
-      symbol: '$',
-      formatted: '$15.00',
-    },
-    max: {
-      amount: 4500, // $45.00 in cents
-      currency: 'USD',
-      symbol: '$',
-      formatted: '$45.00',
-    },
   },
   locale: 'en-US',
   precision: 2,
 };
 
-<Price.Root price={rangePrice}>
-  <Price.Range>
-    <div className="flex items-center gap-2">
-      <Price.Min className="font-bold" />
-      <span>-</span>
-      <Price.Max className="font-bold" />
-    </div>
-  </Price.Range>
-</Price.Root>`}
+const highPrice = {
+  money: {
+    amount: 45.00,
+    currency: 'USD',
+  },
+  locale: 'en-US',
+  precision: 2,
+};
+
+<div className="flex items-center gap-2">
+  <Price.Root price={lowPrice}>
+    <Price.Formatted className="font-heading text-foreground" />
+  </Price.Root>
+  <span className="text-foreground font-paragraph">-</span>
+  <Price.Root price={highPrice}>
+    <Price.Formatted className="font-heading text-foreground" />
+  </Price.Root>
+</div>`}
           >
-            <Price.Range>
-              <div className="flex items-center gap-2">
-                <Price.Min className="font-heading text-foreground" />
-                <span className="text-foreground font-paragraph">-</span>
-                <Price.Max className="font-heading text-foreground" />
-              </div>
-            </Price.Range>
+            <div className="flex items-center gap-2">
+              <Price.Root price={samplePrices.lowPrice}>
+                <Price.Formatted className="font-heading text-foreground" />
+              </Price.Root>
+              <span className="text-foreground font-paragraph">-</span>
+              <Price.Root price={samplePrices.highPrice}>
+                <Price.Formatted className="font-heading text-foreground" />
+              </Price.Root>
+            </div>
           </ExampleSection>
 
           {/* International Currency */}
@@ -298,11 +281,9 @@ function PriceExamples() {
             description="Price display with European formatting and currency"
             price={samplePrices.euroPrice}
             code={`const euroPrice = {
-  current: {
-    amount: 2550, // €25.50 in cents
+  money: {
+    amount: 25.50,
     currency: 'EUR',
-    symbol: '€',
-    formatted: '€25.50',
   },
   locale: 'de-DE',
   precision: 2,
@@ -310,8 +291,8 @@ function PriceExamples() {
 
 <Price.Root price={euroPrice}>
   <div className="text-center">
-    <Price.Formatted className="text-3xl font-bold" />
-    <div className="mt-1 text-sm text-gray-500">
+    <Price.Formatted className="text-3xl font-heading text-foreground" />
+    <div className="mt-1 text-sm text-secondary-foreground font-paragraph">
       Formatted for German locale (de-DE)
     </div>
   </div>
@@ -329,47 +310,42 @@ function PriceExamples() {
           <ExampleSection
             title="Product Card Example"
             description="Complete product card with price on sale"
-            price={samplePrices.onSale}
+            price={samplePrices.discounted}
             code={`const salePrice = {
-  current: {
-    amount: 1999, // $19.99 in cents
+  money: {
+    amount: 19.99,
     currency: 'USD',
-    symbol: '$',
-    formatted: '$19.99',
   },
-  compareAt: {
-    amount: 2999, // $29.99 in cents
-    currency: 'USD',
-    symbol: '$',
-    formatted: '$29.99',
-  },
-  discount: {
-    amount: {
-      amount: 1000, // $10.00 discount
-      currency: 'USD',
-      symbol: '$',
-      formatted: '$10.00',
-    },
-    percentage: 33.33,
-  },
-  isOnSale: true,
   locale: 'en-US',
   precision: 2,
 };
 
-<Price.Root price={salePrice}>
-  <div className="border rounded-lg p-4 max-w-sm">
-    <div className="h-32 bg-gray-200 rounded mb-4"></div>
-    <h3 className="font-bold text-lg mb-2">Sample Product</h3>
-    <div className="flex justify-between items-end">
-      <div>
-        <Price.Formatted className="text-2xl font-bold text-green-600" />
-        <Price.CompareAt className="text-sm line-through text-gray-500 block" />
-      </div>
-      <Price.DiscountPercentage className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm" />
+const originalPrice = {
+  money: {
+    amount: 29.99,
+    currency: 'USD',
+  },
+  locale: 'en-US',
+  precision: 2,
+};
+
+<div className="border border-foreground rounded-lg p-4 max-w-sm bg-background">
+  <div className="h-32 bg-secondary rounded mb-4"></div>
+  <h3 className="font-heading text-lg text-foreground mb-2">Sample Product</h3>
+  <div className="flex justify-between items-end">
+    <div>
+      <Price.Root price={salePrice}>
+        <Price.Formatted className="text-2xl font-heading text-green-500" />
+      </Price.Root>
+      <Price.Root price={originalPrice}>
+        <Price.Formatted className="text-sm line-through text-secondary-foreground block font-paragraph" />
+      </Price.Root>
     </div>
+    <span className="bg-destructive text-primary-foreground px-2 py-1 rounded text-sm font-paragraph">
+      33% OFF
+    </span>
   </div>
-</Price.Root>`}
+</div>`}
           >
             <div className="border border-foreground rounded-lg p-4 max-w-sm bg-background">
               <div className="h-32 bg-secondary rounded mb-4"></div>
@@ -378,10 +354,100 @@ function PriceExamples() {
               </h3>
               <div className="flex justify-between items-end">
                 <div>
-                  <Price.Formatted className="text-2xl font-heading text-green-500" />
-                  <Price.CompareAt className="text-sm line-through text-secondary-foreground block font-paragraph" />
+                  <Price.Root price={samplePrices.discounted}>
+                    <Price.Formatted className="text-2xl font-heading text-green-500" />
+                  </Price.Root>
+                  <Price.Root price={samplePrices.originalPrice}>
+                    <Price.Formatted className="text-sm line-through text-secondary-foreground block font-paragraph" />
+                  </Price.Root>
                 </div>
-                <Price.DiscountPercentage className="bg-destructive text-primary-foreground px-2 py-1 rounded text-sm font-paragraph" />
+                <span className="bg-destructive text-primary-foreground px-2 py-1 rounded text-sm font-paragraph">
+                  33% OFF
+                </span>
+              </div>
+            </div>
+          </ExampleSection>
+        </div>
+
+        {/* Add more examples with new features */}
+        <div className="space-y-12">
+          {/* Japanese Yen Example */}
+          <ExampleSection
+            title="Japanese Yen (No Decimals)"
+            description="Currency with zero precision formatting"
+            price={samplePrices.yen}
+            code={`const yenPrice = {
+  money: {
+    amount: 2999,
+    currency: 'JPY',
+  },
+  locale: 'ja-JP',
+  precision: 0, // No decimal places for Yen
+};
+
+<Price.Root price={yenPrice}>
+  <div className="text-center">
+    <Price.Formatted className="text-3xl font-heading text-foreground" />
+    <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
+      <div>
+        <span className="text-secondary-foreground font-paragraph">Amount: </span>
+        <Price.Amount className="font-heading" />
+      </div>
+      <div>
+        <span className="text-secondary-foreground font-paragraph">Symbol: </span>
+        <Price.Currency className="font-heading" />
+      </div>
+    </div>
+  </div>
+</Price.Root>`}
+          >
+            <div className="text-center">
+              <Price.Formatted className="text-3xl font-heading text-foreground" />
+              <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-secondary-foreground font-paragraph">
+                    Amount:{' '}
+                  </span>
+                  <Price.Amount className="font-heading" />
+                </div>
+                <div>
+                  <span className="text-secondary-foreground font-paragraph">
+                    Symbol:{' '}
+                  </span>
+                  <Price.Currency className="font-heading" />
+                </div>
+              </div>
+            </div>
+          </ExampleSection>
+
+          {/* Accounting Format Example */}
+          <ExampleSection
+            title="Accounting Format (Negative)"
+            description="Negative prices with accounting format (parentheses instead of minus)"
+            price={samplePrices.accounting}
+            code={`const accountingPrice = {
+  money: {
+    amount: -50.00,
+    currency: 'USD',
+  },
+  locale: 'en-US',
+  precision: 2,
+  currencySign: 'accounting', // Use parentheses for negative values
+};
+
+<Price.Root price={accountingPrice}>
+  <div className="text-center">
+    <Price.Formatted className="text-2xl font-heading text-destructive" />
+    <div className="mt-1 text-sm text-secondary-foreground font-paragraph">
+      Accounting format uses parentheses for negative values
+    </div>
+  </div>
+</Price.Root>`}
+          >
+            <div className="text-center">
+              <Price.Formatted className="text-2xl font-heading text-destructive" />
+              <div className="mt-1 text-sm text-secondary-foreground font-paragraph">
+                Accounting format uses parentheses for negative values
               </div>
             </div>
           </ExampleSection>
@@ -395,58 +461,43 @@ function PriceExamples() {
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-heading text-foreground mb-2">
-                Basic Components:
+                Core Components:
               </h4>
               <ul className="space-y-1 text-secondary-foreground font-paragraph text-sm">
                 <li>
-                  • <code>Price.Root</code> - Context provider
+                  • <code>Price.Root</code> - Context provider, takes price
+                  object
                 </li>
                 <li>
                   • <code>Price.Formatted</code> - Complete formatted price
+                  string
                 </li>
                 <li>
-                  • <code>Price.Amount</code> - Price amount only
+                  • <code>Price.Amount</code> - Numeric amount only (no
+                  currency)
                 </li>
                 <li>
-                  • <code>Price.Symbol</code> - Currency symbol
-                </li>
-                <li>
-                  • <code>Price.Currency</code> - Currency code
+                  • <code>Price.Currency</code> - Currency symbol or code
                 </li>
               </ul>
             </div>
             <div>
               <h4 className="font-heading text-foreground mb-2">
-                Sale Components:
+                Price Object Structure:
               </h4>
-              <ul className="space-y-1 text-secondary-foreground font-paragraph text-sm">
-                <li>
-                  • <code>Price.CompareAt</code> - Original price
-                </li>
-                <li>
-                  • <code>Price.Discount</code> - Discount amount
-                </li>
-                <li>
-                  • <code>Price.DiscountPercentage</code> - Discount %
-                </li>
-              </ul>
+              <div className="bg-background p-3 rounded text-xs font-paragraph">
+                <pre>{`interface Price {
+  money: {
+    amount: number;
+    currency?: string;
+  };
+  locale?: string;
+  precision?: number;
+  currencyDisplay?: 'code' | 'symbol' | 'narrowSymbol' | 'name';
+  currencySign?: 'standard' | 'accounting';
+}`}</pre>
+              </div>
             </div>
-          </div>
-          <div className="mt-4">
-            <h4 className="font-heading text-foreground mb-2">
-              Range Components:
-            </h4>
-            <ul className="space-y-1 text-secondary-foreground font-paragraph text-sm">
-              <li>
-                • <code>Price.Range</code> - Range context provider
-              </li>
-              <li>
-                • <code>Price.Min</code> - Minimum price
-              </li>
-              <li>
-                • <code>Price.Max</code> - Maximum price
-              </li>
-            </ul>
           </div>
         </div>
       </div>

@@ -1,716 +1,664 @@
 import React, { useState } from 'react';
-import { Address, getDefaultCountryList } from '@wix/headless-components';
+import { Address } from '@wix/headless-components';
 
-// Basic address display example
-function BasicAddressExample() {
-  const addressData = {
-    address: {
-      line1: '123 Main Street',
-      line2: 'Apt 4B',
-      city: 'New York',
-      state: 'NY',
-      postalCode: '10001',
-      country: 'US',
-      countryName: 'United States',
-    },
-    countryList: getDefaultCountryList(),
-    locale: 'en-US',
-    format: 'multi-line',
-    showCountry: true,
-  };
+// Sample address data for different scenarios
+const sampleAddresses = {
+  usAddress: {
+    houseNumber: '301',
+    road: 'Hamilton Avenue',
+    neighbourhood: 'Crescent Park',
+    city: 'Palo Alto',
+    postcode: '94303',
+    county: 'Santa Clara County',
+    state: 'California',
+    country: 'United States of America',
+    countryCode: 'US',
+  },
 
-  return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-heading text-foreground">
-        Multi-line Format
-      </h3>
-      <Address.Root address={addressData}>
-        <div className="p-4 border border-foreground rounded-lg bg-background">
-          <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line" />
-        </div>
-      </Address.Root>
-    </div>
-  );
-}
+  simpleUsAddress: {
+    houseNumber: '123',
+    road: 'Main Street',
+    city: 'Springfield',
+    state: 'IL',
+    postcode: '62701',
+    countryCode: 'US',
+  },
 
-// Address formats example
-function AddressFormatsExample() {
-  const baseAddress = {
-    line1: '123 Main Street',
-    line2: 'Suite 456',
+  ukAddress: {
+    houseNumber: '10',
+    road: 'Downing Street',
+    city: 'London',
+    postcode: 'SW1A 2AA',
+    countryCode: 'GB',
+  },
+
+  frenchAddress: {
+    houseNumber: '55',
+    road: 'Rue du Faubourg Saint-Honoré',
+    city: 'Paris',
+    postcode: '75008',
+    countryCode: 'FR',
+  },
+
+  germanAddress: {
+    road: 'Platz der Republik 1',
+    city: 'Berlin',
+    postcode: '11011',
+    countryCode: 'DE',
+  },
+
+  businessAddress: {
+    houseNumber: '1',
+    road: 'Apple Park Way',
+    city: 'Cupertino',
+    state: 'CA',
+    postcode: '95014',
+    countryCode: 'US',
+  },
+
+  customAddress: {
+    houseNumber: '456',
+    road: 'Oak Avenue',
+    city: 'Los Angeles',
+    state: 'CA',
+    postcode: '90210',
+    countryCode: 'US',
+  },
+
+  nyAddress: {
+    houseNumber: '350',
+    road: 'Fifth Avenue',
     city: 'New York',
     state: 'NY',
-    postalCode: '10001',
-    country: 'US',
-    countryName: 'United States',
-  };
+    postcode: '10118',
+    countryCode: 'US',
+  },
+};
 
-  const countryList = getDefaultCountryList();
-
-  const formats = [
-    { format: 'multi-line', title: 'Multi-line Format' },
-    { format: 'single-line', title: 'Single-line Format' },
-    { format: 'compact', title: 'Compact Format' },
-  ];
-
+function CodeBlock({ children }) {
   return (
-    <div className="space-y-6">
-      {formats.map((formatOption) => (
-        <div key={formatOption.format} className="space-y-2">
-          <h3 className="text-lg font-heading text-foreground">
-            {formatOption.title}
-          </h3>
-          <Address.Root
-            address={{
-              address: baseAddress,
-              countryList,
-              format: formatOption.format,
-              showCountry: true,
-            }}
-          >
-            <div className="p-4 border border-foreground rounded-lg bg-background">
-              <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line" />
-            </div>
-          </Address.Root>
+    <pre className="bg-secondary text-secondary-foreground p-4 rounded-lg text-sm overflow-x-auto font-paragraph">
+      <code>{children}</code>
+    </pre>
+  );
+}
+
+function ExampleSection({ title, description, address, children, code }) {
+  return (
+    <div className="mb-12 border-b border-foreground pb-8 last:border-b-0">
+      <div className="mb-6">
+        <h3 className="text-2xl font-heading text-foreground mb-2">{title}</h3>
+        <p className="text-secondary-foreground font-paragraph">
+          {description}
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        <div>
+          <h4 className="text-lg font-heading text-foreground mb-4">Result:</h4>
+          <div className="bg-background border border-foreground rounded-lg p-6">
+            <Address.Root address={address}>{children}</Address.Root>
+          </div>
         </div>
-      ))}
+
+        <div>
+          <h4 className="text-lg font-heading text-foreground mb-4">Code:</h4>
+          <CodeBlock>{code}</CodeBlock>
+        </div>
+      </div>
     </div>
   );
 }
 
-// International addresses example
-function InternationalAddressExample() {
-  const addresses = [
-    {
-      title: 'US Address',
-      address: {
-        line1: '1600 Pennsylvania Avenue NW',
-        city: 'Washington',
-        state: 'DC',
-        postalCode: '20500',
-        country: 'US',
-        countryName: 'United States',
-      },
-    },
-    {
-      title: 'UK Address',
-      address: {
-        line1: '10 Downing Street',
-        city: 'London',
-        postalCode: 'SW1A 2AA',
-        country: 'GB',
-        countryName: 'United Kingdom',
-      },
-    },
-    {
-      title: 'Canadian Address',
-      address: {
-        line1: '24 Sussex Drive',
-        city: 'Ottawa',
-        state: 'ON',
-        postalCode: 'K1M 1M4',
-        country: 'CA',
-        countryName: 'Canada',
-      },
-    },
-    {
-      title: 'German Address',
-      address: {
-        line1: 'Platz der Republik 1',
-        city: 'Berlin',
-        postalCode: '11011',
-        country: 'DE',
-        countryName: 'Germany',
-      },
-    },
-  ];
-
-  const countryList = getDefaultCountryList();
-
+function AddressExamples() {
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {addresses.map((addressInfo) => (
-          <div key={addressInfo.title} className="space-y-2">
-            <h3 className="text-lg font-heading text-foreground">
-              {addressInfo.title}
-            </h3>
-            <Address.Root
-              address={{
-                address: addressInfo.address,
-                countryList,
-                format: 'multi-line',
-                showCountry: true,
-              }}
-            >
-              <div className="p-4 border border-foreground rounded-lg bg-background">
-                <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line" />
-              </div>
-            </Address.Root>
+    <div className="bg-background min-h-screen p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-heading text-foreground mb-4">
+            Address Component Examples
+          </h2>
+          <p className="text-lg text-secondary-foreground font-paragraph">
+            Explore different ways to use the Address component for
+            international address formatting
+          </p>
+        </div>
+
+        <div className="space-y-12">
+          {/* Basic Address Display */}
+          <ExampleSection
+            title="Basic Address Display"
+            description="Simple address display using Address.Formatted component with automatic international formatting"
+            address={sampleAddresses.usAddress}
+            code={`const address = {
+  houseNumber: '301',
+  road: 'Hamilton Avenue',
+  neighbourhood: 'Crescent Park',
+  city: 'Palo Alto',
+  postcode: '94303',
+  county: 'Santa Clara County',
+  state: 'California',
+  country: 'United States of America',
+  countryCode: 'US',
+};
+
+<Address.Root address={address}>
+  <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line" />
+</Address.Root>`}
+          >
+            <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line" />
+          </ExampleSection>
+
+          {/* Formatting Options */}
+          <ExampleSection
+            title="Abbreviated Format"
+            description="Use the abbreviate prop to shorten common address terms (Avenue → Ave, Street → St)"
+            address={sampleAddresses.simpleUsAddress}
+            code={`const address = {
+  houseNumber: '123',
+  road: 'Main Street',
+  city: 'Springfield',
+  state: 'IL',
+  postcode: '62701',
+  countryCode: 'US',
+};
+
+<Address.Root address={address}>
+  <Address.Formatted
+    abbreviate
+    className="text-foreground whitespace-pre-line font-paragraph"
+  />
+</Address.Root>`}
+          >
+            <Address.Formatted
+              abbreviate
+              className="text-foreground whitespace-pre-line font-paragraph"
+            />
+          </ExampleSection>
+
+          {/* With Country */}
+          <ExampleSection
+            title="Address with Country"
+            description="Include country information in the formatted address using appendCountry prop"
+            address={sampleAddresses.simpleUsAddress}
+            code={`<Address.Root address={address}>
+  <Address.Formatted
+    appendCountry
+    className="text-foreground whitespace-pre-line font-paragraph"
+  />
+</Address.Root>`}
+          >
+            <Address.Formatted
+              appendCountry
+              className="text-foreground whitespace-pre-line font-paragraph"
+            />
+          </ExampleSection>
+
+          {/* Single Line Format */}
+          <ExampleSection
+            title="Single Line Format"
+            description="Convert address lines to a single line using Address.Lines with custom formatting"
+            address={sampleAddresses.simpleUsAddress}
+            code={`<Address.Root address={address}>
+  <Address.Lines asChild>
+    {React.forwardRef(({ lines, ...props }, ref) => (
+      <span
+        ref={ref}
+        {...props}
+        className="text-foreground font-paragraph"
+      >
+        {lines.join(', ')}
+      </span>
+    ))}
+  </Address.Lines>
+</Address.Root>`}
+          >
+            <Address.Lines asChild>
+              {React.forwardRef(({ lines, ...props }, ref) => (
+                <span
+                  ref={ref}
+                  {...props}
+                  className="text-foreground font-paragraph"
+                >
+                  {lines.join(', ')}
+                </span>
+              ))}
+            </Address.Lines>
+          </ExampleSection>
+
+          {/* UK Address */}
+          <ExampleSection
+            title="UK Address Format"
+            description="British addresses follow UK postal conventions with proper formatting"
+            address={sampleAddresses.ukAddress}
+            code={`const ukAddress = {
+  houseNumber: '10',
+  road: 'Downing Street',
+  city: 'London',
+  postcode: 'SW1A 2AA',
+  countryCode: 'GB',
+};
+
+<Address.Root address={ukAddress}>
+  <Address.Formatted
+    appendCountry
+    className="text-foreground font-paragraph whitespace-pre-line"
+  />
+</Address.Root>`}
+          >
+            <Address.Formatted
+              appendCountry
+              className="text-foreground font-paragraph whitespace-pre-line"
+            />
+          </ExampleSection>
+
+          {/* French Address */}
+          <ExampleSection
+            title="French Address Format"
+            description="French addresses with proper European formatting conventions"
+            address={sampleAddresses.frenchAddress}
+            code={`const frenchAddress = {
+  houseNumber: '55',
+  road: 'Rue du Faubourg Saint-Honoré',
+  city: 'Paris',
+  postcode: '75008',
+  countryCode: 'FR',
+};
+
+<Address.Root address={frenchAddress}>
+  <Address.Formatted
+    appendCountry
+    className="text-foreground font-paragraph whitespace-pre-line"
+  />
+</Address.Root>`}
+          >
+            <Address.Formatted
+              appendCountry
+              className="text-foreground font-paragraph whitespace-pre-line"
+            />
+          </ExampleSection>
+
+          {/* German Address */}
+          <ExampleSection
+            title="German Address Format"
+            description="German addresses demonstrating European address formatting without house number separation"
+            address={sampleAddresses.germanAddress}
+            code={`const germanAddress = {
+  road: 'Platz der Republik 1',
+  city: 'Berlin',
+  postcode: '11011',
+  countryCode: 'DE',
+};
+
+<Address.Root address={germanAddress}>
+  <Address.Formatted
+    appendCountry
+    className="text-foreground font-paragraph whitespace-pre-line"
+  />
+</Address.Root>`}
+          >
+            <Address.Formatted
+              appendCountry
+              className="text-foreground font-paragraph whitespace-pre-line"
+            />
+          </ExampleSection>
+
+          {/* Custom Styled Lines */}
+          <ExampleSection
+            title="Custom Line Styling"
+            description="Style each address line differently using Address.Lines with custom rendering"
+            address={sampleAddresses.customAddress}
+            code={`<Address.Root address={address}>
+  <Address.Lines asChild>
+    {React.forwardRef(({ lines, ...props }, ref) => (
+      <div ref={ref} {...props} className="space-y-1">
+        {lines.map((line, index) => (
+          <div
+            key={index}
+            className={\`
+              \${index === 0 ? 'font-heading text-lg text-foreground' : 'font-paragraph text-secondary-foreground'}
+              \${index === lines.length - 1 ? 'text-xs uppercase tracking-wide' : ''}
+            \`}
+          >
+            {line}
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-// Address form example with validation and submission
-function AddressFormExample() {
-  const [address, setAddress] = useState({
-    line1: '',
-    line2: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: '',
-  });
-
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [submittedAddress, setSubmittedAddress] = useState(null);
-
-  const countries = getDefaultCountryList();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted with address:', address);
-    setSubmittedAddress({ ...address });
-    setIsSubmitted(true);
-
-    // Reset confirmation after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setSubmittedAddress(null);
-    }, 3000);
-  };
-
-  const handleReset = () => {
-    console.log('Form reset');
-    setAddress({
-      line1: '',
-      line2: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: '',
-    });
-    setIsSubmitted(false);
-    setSubmittedAddress(null);
-  };
-
-  const isFormValid =
-    address.line1 && address.city && address.postalCode && address.country;
-
-  console.log('Current address state:', address);
-  console.log('Form is valid:', isFormValid);
-
-  return (
-    <Address.Root address={{ address }}>
-      <div className="space-y-6">
-        <Address.Label
-          label="Shipping Address"
-          className="text-lg font-heading text-foreground"
-        />
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Address.Form
-            onAddressChange={(newAddress) => {
-              console.log('Address changed:', newAddress);
-              setAddress(newAddress);
-            }}
-            validation={{
-              required: ['line1', 'city', 'postalCode', 'country'],
-              customValidation: (address) => {
-                const errors = {};
-
-                // Custom validation for postal code based on country
-                if (address.country === 'US' && address.postalCode) {
-                  const usZipPattern = /^\d{5}(-\d{4})?$/;
-                  if (!usZipPattern.test(address.postalCode)) {
-                    errors.postalCode =
-                      'US ZIP code must be in format 12345 or 12345-6789';
-                  }
-                }
-
-                if (address.country === 'CA' && address.postalCode) {
-                  const caPostalPattern =
-                    /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
-                  if (!caPostalPattern.test(address.postalCode)) {
-                    errors.postalCode = 'Canadian postal code format: A1A 1A1';
-                  }
-                }
-
-                // Custom validation for line1 length
-                if (address.line1 && address.line1.length < 5) {
-                  errors.line1 =
-                    'Street address must be at least 5 characters long';
-                }
-
-                return errors;
-              },
-            }}
-            countryList={countries}
+    ))}
+  </Address.Lines>
+</Address.Root>`}
           >
-            <div className="grid grid-cols-1 gap-4">
-              <Address.FormLine1Input
-                placeholder="Street address"
-                className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
+            <Address.Lines asChild>
+              {React.forwardRef(({ lines, ...props }, ref) => (
+                <div ref={ref} {...props} className="space-y-1">
+                  {lines.map((line, index) => (
+                    <div
+                      key={index}
+                      className={`
+                        ${index === 0 ? 'font-heading text-lg text-foreground' : 'font-paragraph text-secondary-foreground'}
+                        ${index === lines.length - 1 ? 'text-xs uppercase tracking-wide' : ''}
+                      `}
+                    >
+                      {line}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </Address.Lines>
+          </ExampleSection>
 
-              <Address.FormLine2Input
-                placeholder="Apartment, suite, unit, etc. (optional)"
-                className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph focus:outline-none focus:ring-2 focus:ring-primary"
-              />
+          {/* Horizontal Layout */}
+          <ExampleSection
+            title="Horizontal Layout with Separators"
+            description="Display address lines horizontally with custom separators"
+            address={sampleAddresses.customAddress}
+            code={`<Address.Root address={address}>
+  <Address.Lines asChild>
+    {React.forwardRef(({ lines, ...props }, ref) => (
+      <span
+        ref={ref}
+        {...props}
+        className="text-foreground font-paragraph"
+      >
+        {lines.join(' • ')}
+      </span>
+    ))}
+  </Address.Lines>
+</Address.Root>`}
+          >
+            <Address.Lines asChild>
+              {React.forwardRef(({ lines, ...props }, ref) => (
+                <span
+                  ref={ref}
+                  {...props}
+                  className="text-foreground font-paragraph"
+                >
+                  {lines.join(' • ')}
+                </span>
+              ))}
+            </Address.Lines>
+          </ExampleSection>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Address.FormCityInput
-                  placeholder="City"
-                  className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
-                />
+          {/* List Format */}
+          <ExampleSection
+            title="List Format"
+            description="Render address lines as an unordered list with bullet points"
+            address={sampleAddresses.customAddress}
+            code={`<Address.Root address={address}>
+  <Address.Lines asChild>
+    {React.forwardRef(({ lines, ...props }, ref) => (
+      <ul
+        ref={ref}
+        {...props}
+        className="list-disc list-inside space-y-1"
+      >
+        {lines.map((line, index) => (
+          <li
+            key={index}
+            className="text-foreground font-paragraph"
+          >
+            {line}
+          </li>
+        ))}
+      </ul>
+    ))}
+  </Address.Lines>
+</Address.Root>`}
+          >
+            <Address.Lines asChild>
+              {React.forwardRef(({ lines, ...props }, ref) => (
+                <ul
+                  ref={ref}
+                  {...props}
+                  className="list-disc list-inside space-y-1"
+                >
+                  {lines.map((line, index) => (
+                    <li key={index} className="text-foreground font-paragraph">
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </Address.Lines>
+          </ExampleSection>
 
-                <Address.FormStateInput
-                  placeholder="State / Province"
-                  className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Address.FormPostalCodeInput
-                  placeholder="ZIP / Postal code"
-                  className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
-                />
-
-                <Address.FormCountrySelect
-                  placeholder="Select country"
-                  className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
-                />
-              </div>
-            </div>
-          </Address.Form>
-
-          <div className="flex gap-3">
-            <button
-              type="submit"
-              disabled={!isFormValid}
-              className={`px-6 py-2 rounded-lg font-paragraph transition-colors ${
-                isFormValid
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                  : 'bg-secondary text-secondary-foreground cursor-not-allowed opacity-50'
-              }`}
-            >
-              {isSubmitted ? '✅ Address Saved!' : 'Save Address'}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleReset}
-              className="px-6 py-2 rounded-lg border border-foreground text-foreground hover:bg-secondary font-paragraph transition-colors"
-            >
-              Reset Form
-            </button>
-          </div>
-        </form>
-
-        {/* Debug info */}
-        <div className="mt-4 p-3 bg-secondary/20 rounded-lg text-sm font-paragraph">
-          <strong>Debug Info:</strong>
-          <div>Line1: {address.line1 || '(empty)'}</div>
-          <div>City: {address.city || '(empty)'}</div>
-          <div>PostalCode: {address.postalCode || '(empty)'}</div>
-          <div>Country: {address.country || '(empty)'}</div>
-          <div>Form Valid: {isFormValid ? 'Yes' : 'No'}</div>
-        </div>
-
-        {/* Live preview */}
-        {address.line1 && (
-          <div className="mt-6 p-4 border border-foreground rounded-lg bg-secondary">
-            <h3 className="text-lg font-heading text-foreground mb-2">
-              Live Preview:
-            </h3>
-            <Address.Root address={{ address, countryList: countries }}>
-              <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line" />
-            </Address.Root>
-          </div>
-        )}
-
-        {/* Submitted address confirmation */}
-        {isSubmitted && submittedAddress && (
-          <div className="mt-6 p-4 border border-green-500 bg-green-500/20 rounded-lg">
-            <h3 className="text-lg font-heading text-foreground mb-2">
-              ✅ Address Successfully Saved:
-            </h3>
-            <Address.Root
-              address={{ address: submittedAddress, countryList: countries }}
-            >
-              <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line" />
-            </Address.Root>
-          </div>
-        )}
+          {/* Badge Style */}
+          <ExampleSection
+            title="Badge Style Layout"
+            description="Display address lines as styled badges with different colors"
+            address={sampleAddresses.customAddress}
+            code={`<Address.Root address={address}>
+  <Address.Lines asChild>
+    {React.forwardRef(({ lines, ...props }, ref) => (
+      <div ref={ref} {...props} className="flex flex-wrap gap-2">
+        {lines.map((line, index) => (
+          <span
+            key={index}
+            className={\`px-3 py-1 rounded-full text-sm font-paragraph \${
+              index === 0
+                ? 'bg-primary/20 text-primary border border-primary'
+                : 'bg-secondary/20 text-secondary-foreground border border-secondary'
+            }\`}
+          >
+            {line}
+          </span>
+        ))}
       </div>
-    </Address.Root>
-  );
-}
+    ))}
+  </Address.Lines>
+</Address.Root>`}
+          >
+            <Address.Lines asChild>
+              {React.forwardRef(({ lines, ...props }, ref) => (
+                <div ref={ref} {...props} className="flex flex-wrap gap-2">
+                  {lines.map((line, index) => (
+                    <span
+                      key={index}
+                      className={`px-3 py-1 rounded-full text-sm font-paragraph ${
+                        index === 0
+                          ? 'bg-primary/20 text-primary border border-primary'
+                          : 'bg-secondary/20 text-secondary-foreground border border-secondary'
+                      }`}
+                    >
+                      {line}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </Address.Lines>
+          </ExampleSection>
 
-// Individual address components example
-function IndividualComponentsExample() {
-  const address = {
-    line1: '1 Apple Park Way',
-    line2: 'Building A',
+          {/* Business Card Layout */}
+          <ExampleSection
+            title="Business Card Layout"
+            description="Real-world example of address formatting in a business card context"
+            address={sampleAddresses.businessAddress}
+            code={`const contact = {
+  name: 'John Smith',
+  title: 'Software Engineer',
+  phone: '+1 (555) 123-4567',
+  email: 'john.smith@example.com',
+  address: {
+    houseNumber: '1',
+    road: 'Apple Park Way',
     city: 'Cupertino',
     state: 'CA',
-    postalCode: '95014',
-    country: 'US',
-    countryName: 'United States',
-  };
+    postcode: '95014',
+    countryCode: 'US',
+  },
+};
 
-  const countryList = getDefaultCountryList();
-
-  return (
-    <div className="space-y-6">
-      <Address.Root address={{ address, countryList }}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-heading text-foreground">
-              Address Lines
-            </h3>
-
-            <div className="space-y-2">
-              <label className="text-sm font-paragraph text-secondary-foreground">
-                Street Address:
-              </label>
-              <div className="p-3 border border-foreground rounded-lg bg-background">
-                <Address.Line1 className="text-foreground font-paragraph" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-paragraph text-secondary-foreground">
-                Address Line 2:
-              </label>
-              <div className="p-3 border border-foreground rounded-lg bg-background">
-                <Address.Line2 className="text-foreground font-paragraph" />
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-heading text-foreground">
-              Location Details
-            </h3>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-paragraph text-secondary-foreground">
-                  City:
-                </label>
-                <div className="p-3 border border-foreground rounded-lg bg-background">
-                  <Address.City className="text-foreground font-paragraph" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-paragraph text-secondary-foreground">
-                  State:
-                </label>
-                <div className="p-3 border border-foreground rounded-lg bg-background">
-                  <Address.State className="text-foreground font-paragraph" />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-paragraph text-secondary-foreground">
-                  Postal Code:
-                </label>
-                <div className="p-3 border border-foreground rounded-lg bg-background">
-                  <Address.PostalCode className="text-foreground font-paragraph" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-paragraph text-secondary-foreground">
-                  Country:
-                </label>
-                <div className="p-3 border border-foreground rounded-lg bg-background">
-                  <Address.Country className="text-foreground font-paragraph" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <h3 className="text-lg font-heading text-foreground mb-4">
-            Complete Address
-          </h3>
-          <div className="p-4 border-2 border-primary rounded-lg bg-primary/10">
-            <Address.Formatted className="text-foreground font-paragraph whitespace-pre-line text-lg" />
-          </div>
-        </div>
-      </Address.Root>
+<div className="max-w-sm bg-background border border-foreground rounded-lg p-6 shadow-lg">
+  <div className="space-y-4">
+    <div>
+      <h2 className="font-heading text-xl text-foreground">
+        {contact.name}
+      </h2>
+      <p className="font-paragraph text-secondary-foreground">
+        {contact.title}
+      </p>
     </div>
-  );
-}
 
-// Simple working form example as fallback
-function SimpleFormExample() {
-  const [address, setAddress] = useState({
-    line1: '',
-    line2: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: '',
-  });
-
-  const handleInputChange = (field, value) => {
-    console.log(`Changing ${field} to:`, value);
-    setAddress((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert('Form submitted! Check console for details.');
-    console.log('Submitted address:', address);
-  };
-
-  const isValid =
-    address.line1 && address.city && address.postalCode && address.country;
-
-  return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-heading text-foreground">
-        Simple Working Form
-      </h3>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Street Address"
-          value={address.line1}
-          onChange={(e) => handleInputChange('line1', e.target.value)}
-          className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph"
-        />
-
-        <input
-          type="text"
-          placeholder="City"
-          value={address.city}
-          onChange={(e) => handleInputChange('city', e.target.value)}
-          className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph"
-        />
-
-        <input
-          type="text"
-          placeholder="Postal Code"
-          value={address.postalCode}
-          onChange={(e) => handleInputChange('postalCode', e.target.value)}
-          className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph"
-        />
-
-        <select
-          value={address.country}
-          onChange={(e) => handleInputChange('country', e.target.value)}
-          className="w-full px-3 py-2 border border-foreground rounded-lg font-paragraph"
-        >
-          <option value="">Select Country</option>
-          <option value="US">United States</option>
-          <option value="CA">Canada</option>
-          <option value="GB">United Kingdom</option>
-        </select>
-
-        <button
-          type="submit"
-          disabled={!isValid}
-          className={`px-6 py-2 rounded-lg font-paragraph transition-colors ${
-            isValid
-              ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-              : 'bg-secondary text-secondary-foreground cursor-not-allowed opacity-50'
-          }`}
-        >
-          Submit Simple Form
-        </button>
-      </form>
-
-      <div className="p-3 bg-secondary/20 rounded-lg text-sm font-paragraph">
-        <strong>Current Values:</strong>
-        <pre>{JSON.stringify(address, null, 2)}</pre>
-      </div>
-    </div>
-  );
-}
-
-// AsChild pattern example
-function AsChildPatternExample() {
-  const address = {
-    line1: '350 Fifth Avenue',
-    city: 'New York',
-    state: 'NY',
-    postalCode: '10118',
-    country: 'US',
-    countryName: 'United States',
-  };
-
-  const countryList = getDefaultCountryList();
-
-  return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h3 className="text-lg font-heading text-foreground">
-          Custom Card Layout
-        </h3>
-        <Address.Root address={{ address, countryList }}>
-          <div className="bg-gradient-to-br from-primary/20 to-secondary/20 p-6 rounded-xl border border-primary/30">
-            <div className="flex items-start justify-between">
-              <div className="space-y-2">
-                <Address.Line1 asChild>
-                  <h4 className="text-xl font-heading text-foreground" />
-                </Address.Line1>
-                <div className="text-secondary-foreground font-paragraph">
-                  <Address.City className="inline" />
-                  <span className="mx-1">•</span>
-                  <Address.State className="inline" />
-                  <span className="mx-1">•</span>
-                  <Address.PostalCode className="inline" />
-                </div>
-                <Address.Country asChild>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/20 text-primary border border-primary/30" />
-                </Address.Country>
+    <Address.Root address={contact.address}>
+      <Address.Lines asChild>
+        {React.forwardRef(({ lines, ...props }, ref) => (
+          <div ref={ref} {...props} className="space-y-0.5">
+            {lines.map((line, index) => (
+              <div
+                key={index}
+                className="text-sm text-secondary-foreground font-paragraph"
+              >
+                {line}
               </div>
-              <div className="text-right">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                  <span className="text-primary text-xl">📍</span>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </Address.Root>
-      </div>
+        ))}
+      </Address.Lines>
+    </Address.Root>
 
-      <div className="space-y-4">
-        <h3 className="text-lg font-heading text-foreground">
-          Badge Style Components
-        </h3>
-        <Address.Root address={{ address, countryList }}>
-          <div className="flex flex-wrap gap-2">
-            <Address.Line1 asChild>
-              <div className="px-3 py-1 bg-background border border-foreground rounded-full text-sm font-paragraph text-foreground" />
-            </Address.Line1>
-            <Address.City asChild>
-              <div className="px-3 py-1 bg-primary/20 border border-primary rounded-full text-sm font-paragraph text-primary" />
-            </Address.City>
-            <Address.State asChild>
-              <div className="px-3 py-1 bg-secondary/20 border border-secondary rounded-full text-sm font-paragraph text-secondary-foreground" />
-            </Address.State>
-            <Address.PostalCode asChild>
-              <div className="px-3 py-1 bg-background border border-foreground rounded-full text-sm font-paragraph text-foreground" />
-            </Address.PostalCode>
-            <Address.Country asChild>
-              <div className="px-3 py-1 bg-green-500/20 border border-green-500 rounded-full text-sm font-paragraph text-green-500" />
-            </Address.Country>
-          </div>
-        </Address.Root>
-      </div>
+    <div className="text-sm text-secondary-foreground font-paragraph">
+      <div>{contact.phone}</div>
+      <div>{contact.email}</div>
     </div>
-  );
-}
-
-// Main component that exports all examples
-export default function AddressExamples() {
-  const [selectedExample, setSelectedExample] = useState('display');
-
-  const examples = [
-    {
-      id: 'display',
-      title: 'Basic Display',
-      component: <BasicAddressExample />,
-      description: 'Simple address display with default formatting',
-    },
-    {
-      id: 'formats',
-      title: 'Format Options',
-      component: <AddressFormatsExample />,
-      description:
-        'Different address formatting options: multi-line, single-line, and compact',
-    },
-    {
-      id: 'international',
-      title: 'International',
-      component: <InternationalAddressExample />,
-      description: 'International addresses from different countries',
-    },
-    {
-      id: 'form',
-      title: 'Interactive Form',
-      component: <AddressFormExample />,
-      description:
-        'Complete address form with validation, submission, and country/state support',
-    },
-    {
-      id: 'simple',
-      title: 'Simple Form Test',
-      component: <SimpleFormExample />,
-      description: 'Basic working form to test functionality (debugging)',
-    },
-    {
-      id: 'components',
-      title: 'Individual Components',
-      component: <IndividualComponentsExample />,
-      description: 'Using individual address components separately',
-    },
-    {
-      id: 'aschild',
-      title: 'Custom Styling',
-      component: <AsChildPatternExample />,
-      description: 'Custom styling using the asChild pattern',
-    },
-  ];
-
-  return (
-    <div className="w-full space-y-8">
-      <div className="flex flex-wrap gap-2 mb-6">
-        {examples.map((example) => (
-          <button
-            key={example.id}
-            onClick={() => setSelectedExample(example.id)}
-            className={`px-4 py-2 rounded-lg border transition-colors font-paragraph ${
-              selectedExample === example.id
-                ? 'bg-primary text-primary-foreground border-primary'
-                : 'bg-background text-foreground border-foreground hover:bg-secondary'
-            }`}
+  </div>
+</div>`}
           >
-            {example.title}
+            <div className="max-w-sm bg-background border border-foreground rounded-lg p-6 shadow-lg">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="font-heading text-xl text-foreground">
+                    John Smith
+                  </h2>
+                  <p className="font-paragraph text-secondary-foreground">
+                    Software Engineer
+                  </p>
+                </div>
+
+                <Address.Lines asChild>
+                  {React.forwardRef(({ lines, ...props }, ref) => (
+                    <div ref={ref} {...props} className="space-y-0.5">
+                      {lines.map((line, index) => (
+                        <div
+                          key={index}
+                          className="text-sm text-secondary-foreground font-paragraph"
+                        >
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </Address.Lines>
+
+                <div className="text-sm text-secondary-foreground font-paragraph">
+                  <div>+1 (555) 123-4567</div>
+                  <div>john.smith@example.com</div>
+                </div>
+              </div>
+            </div>
+          </ExampleSection>
+
+          {/* AsChild Pattern with Custom Elements */}
+          <ExampleSection
+            title="AsChild Pattern - Custom Formatted Element"
+            description="Use asChild to render address with custom elements and styling"
+            address={sampleAddresses.nyAddress}
+            code={`<Address.Root address={address}>
+  <Address.Formatted asChild>
+    {React.forwardRef(({ formattedAddress, ...props }, ref) => (
+      <h4
+        ref={ref}
+        {...props}
+        className="text-xl font-heading text-foreground"
+      >
+        📍 {formattedAddress}
+      </h4>
+    ))}
+  </Address.Formatted>
+</Address.Root>`}
+          >
+            <div className="bg-gradient-to-br from-primary/20 to-secondary/20 p-6 rounded-xl border border-primary/30">
+              <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                  <Address.Formatted asChild>
+                    {React.forwardRef(({ formattedAddress, ...props }, ref) => (
+                      <h4
+                        ref={ref}
+                        {...props}
+                        className="text-xl font-heading text-foreground"
+                      >
+                        📍 {formattedAddress}
+                      </h4>
+                    ))}
+                  </Address.Formatted>
+                </div>
+                <div className="text-right">
+                  <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                    <span className="text-primary text-xl">🏢</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ExampleSection>
+
+          {/* Interactive Address Lines */}
+          <ExampleSection
+            title="Interactive Address Lines"
+            description="Make address lines interactive with custom onClick handlers"
+            address={sampleAddresses.nyAddress}
+            code={`<Address.Root address={address}>
+  <Address.Lines asChild>
+    {React.forwardRef(({ lines, ...props }, ref) => (
+      <div ref={ref} {...props} className="space-y-2">
+        {lines.map((line, index) => (
+          <button
+            key={index}
+            onClick={() => alert(\`You clicked: \${line}\`)}
+            className={\`
+              w-full text-left px-4 py-2 rounded-lg border transition-colors
+              \${
+                index === 0
+                  ? 'border-primary bg-primary/10 hover:bg-primary/20 text-primary'
+                  : 'border-foreground bg-background hover:bg-secondary text-foreground'
+              } font-paragraph
+            \`}
+          >
+            {line}
           </button>
         ))}
       </div>
-
-      <div className="space-y-4">
-        {examples
-          .filter((example) => example.id === selectedExample)
-          .map((example) => (
-            <div key={example.id} className="space-y-4">
-              <div>
-                <h3 className="text-xl font-heading text-foreground mb-2">
-                  {example.title}
-                </h3>
-                <p className="text-secondary-foreground font-paragraph">
-                  {example.description}
-                </p>
-              </div>
-
-              <div className="border border-foreground rounded-lg p-6 bg-background">
-                {example.component}
-              </div>
+    ))}
+  </Address.Lines>
+</Address.Root>`}
+          >
+            <div className="space-y-3">
+              <Address.Lines asChild>
+                {React.forwardRef(({ lines, ...props }, ref) => (
+                  <div ref={ref} {...props} className="space-y-2">
+                    {lines.map((line, index) => (
+                      <button
+                        key={index}
+                        onClick={() => alert(`You clicked: ${line}`)}
+                        className={`
+                          w-full text-left px-4 py-2 rounded-lg border transition-colors
+                          ${
+                            index === 0
+                              ? 'border-primary bg-primary/10 hover:bg-primary/20 text-primary'
+                              : 'border-foreground bg-background hover:bg-secondary text-foreground'
+                          } font-paragraph
+                        `}
+                      >
+                        {line}
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </Address.Lines>
             </div>
-          ))}
+          </ExampleSection>
+        </div>
       </div>
     </div>
   );
 }
+
+export default AddressExamples;
