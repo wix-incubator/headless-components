@@ -268,11 +268,12 @@ export function Location(props: LocationProps): React.ReactNode {
   const eventService = useService(EventServiceDefinition);
 
   const event = eventService.event.get();
+  // @ts-expect-error
+  const formattedAddress = event.location!.address?.formatted;
   const formattedLocation =
-    event.location!.locationTbd || format === 'short'
+    event.location!.locationTbd || !formattedAddress || format === 'short'
       ? event.location!.name!
-      : // @ts-expect-error
-        `${event.location!.name}, ${event.location!.address!.formatted}`;
+      : `${event.location!.name}, ${formattedAddress}`;
   // @ts-expect-error
   const latitude = event.location!.address?.location?.latitude;
   // @ts-expect-error
