@@ -16,6 +16,10 @@ export interface RootProps {
     collectionId: string;
     id: string;
     item?: any;
+    /** List of field IDs for single reference fields to include */
+    singleRefFieldIds?: string[];
+    /** List of field IDs for multi reference fields to include */
+    multiRefFieldIds?: string[];
   };
 }
 
@@ -28,6 +32,7 @@ export interface RootProps {
  * ```tsx
  * import { CmsItem } from '@wix/cms/components';
  *
+ * // Basic usage
  * function ItemPage() {
  *   return (
  *     <CmsItem.Root item={{ collectionId: 'MyCollection', id: 'item-123' }}>
@@ -51,6 +56,32 @@ export interface RootProps {
  *     </CmsItem.Root>
  *   );
  * }
+ *
+ * // With reference fields included
+ * function ItemWithReferences() {
+ *   return (
+ *     <CmsItem.Root
+ *       item={{
+ *         collectionId: 'MyCollection',
+ *         id: 'item-123',
+ *         singleRefFieldIds: ['author', 'category'],
+ *         multiRefFieldIds: ['tags', 'relatedItems']
+ *       }}
+ *     >
+ *       <CmsItem.Field fieldId="title" asChild>
+ *         {({ fieldValue, ...props }, ref) => (
+ *           <h1 ref={ref} {...props}>{fieldValue}</h1>
+ *         )}
+ *       </CmsItem.Field>
+ *
+ *       <CmsItem.Field fieldId="author" asChild>
+ *         {({ fieldValue, ...props }, ref) => (
+ *           <span ref={ref} {...props}>{fieldValue?.name}</span>
+ *         )}
+ *       </CmsItem.Field>
+ *     </CmsItem.Root>
+ *   );
+ * }
  * ```
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
@@ -61,6 +92,8 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       collectionId: item.collectionId,
       itemId: item.id,
       item: item.item,
+      singleRefFieldIds: item.singleRefFieldIds,
+      multiRefFieldIds: item.multiRefFieldIds,
     };
 
     const attributes = {
