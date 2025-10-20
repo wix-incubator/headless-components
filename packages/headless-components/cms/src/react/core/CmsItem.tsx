@@ -30,22 +30,22 @@ export function Root(props: RootProps): React.ReactNode {
   );
 }
 
-export interface FieldProps {
+export interface FieldProps<T = any> {
   /** Render prop function that receives field data */
-  children: (props: FieldRenderProps) => React.ReactNode;
+  children: (props: FieldRenderProps<T>) => React.ReactNode;
   /** ID of the field to extract from the item */
   fieldId: string;
 }
 
-export interface FieldRenderProps {
+export interface FieldRenderProps<T = any> {
   /** The raw field value */
-  fieldValue: any;
+  fieldValue: T;
 }
 
 /**
  * Core headless component for CMS item field display
  */
-export function Field(props: FieldProps) {
+export function Field<T = any>(props: FieldProps<T>) {
   const { children, fieldId } = props;
 
   const service = useService(CmsItemServiceDefinition) as ServiceAPI<
@@ -58,6 +58,6 @@ export function Field(props: FieldProps) {
   const fieldValue = item?.[fieldId] ?? null;
 
   return children({
-    fieldValue,
+    fieldValue: fieldValue as T,
   });
 }
