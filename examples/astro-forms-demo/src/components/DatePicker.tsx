@@ -20,8 +20,6 @@ const DatePicker = ({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: DatePickerProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -40,7 +38,7 @@ const DatePicker = ({
   };
 
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {showLabel && (
         <Form.Field.Label>
           <label htmlFor={id} className="text-foreground font-paragraph mb-2">

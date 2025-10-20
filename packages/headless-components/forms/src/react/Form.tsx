@@ -4,8 +4,8 @@ import {
   type FormValues,
   type FormError,
   useForm,
-  FormProps,
   FormProvider,
+  FormStatusProvider,
 } from '@wix/form-public';
 import {
   type CheckboxGroupProps,
@@ -46,7 +46,167 @@ import {
   Field as CoreField,
   type Layout,
 } from './core/Form.js';
-import { getFieldsByRow } from './utils.js';
+import { forms } from '@wix/forms';
+
+/**
+ * Field types that are used in the FieldMap
+ */
+type FieldType = keyof FieldMap;
+
+/**
+ * Mapping from schema field types (from API) to field types (in FieldMap).
+ * This mapping ensures that fields from the form schema are correctly
+ * matched to their corresponding React components.
+ */
+const FIELD_TYPE_MAP: Record<string, FieldType> = {
+  // CONTACTS_FIELD_TYPES
+  CONTACTS_COMPANY: 'TEXT_INPUT',
+  CONTACTS_POSITION: 'TEXT_INPUT',
+  CONTACTS_TAX_ID: 'TEXT_INPUT',
+  CONTACTS_FIRST_NAME: 'TEXT_INPUT',
+  CONTACTS_LAST_NAME: 'TEXT_INPUT',
+  CONTACTS_EMAIL: 'TEXT_INPUT',
+  CONTACTS_BIRTHDATE: 'DATE_INPUT',
+  CONTACTS_PHONE: 'PHONE_INPUT',
+  CONTACTS_ADDRESS: 'TEXT_INPUT',
+  CONTACTS_SUBSCRIBE: 'CHECKBOX',
+
+  // QUIZ_FIELD_TYPES
+  QUIZ_MULTI_CHOICE: 'CHECKBOX_GROUP',
+  QUIZ_SINGLE_CHOICE: 'RADIO_GROUP',
+  QUIZ_SHORT_TEXT: 'TEXT_INPUT',
+  QUIZ_LONG_TEXT: 'TEXT_AREA',
+  QUIZ_NUMBER: 'NUMBER_INPUT',
+  QUIZ_FILE_UPLOAD: 'FILE_UPLOAD',
+  QUIZ_IMAGE_CHOICE: 'IMAGE_CHOICE',
+
+  // DEXT_FIELD_TYPES
+  DEXT_TEXT_INPUT: 'TEXT_INPUT',
+  DEXT_TEXT_AREA: 'TEXT_AREA',
+  DEXT_DROPDOWN: 'DROPDOWN',
+  DEXT_URL_INPUT: 'TEXT_INPUT',
+  DEXT_RADIO_GROUP: 'RADIO_GROUP',
+  DEXT_NUMBER_INPUT: 'NUMBER_INPUT',
+  DEXT_CHECKBOX: 'CHECKBOX',
+  DEXT_CHECKBOX_GROUP: 'CHECKBOX_GROUP',
+  DEXT_EMAIL: 'TEXT_INPUT',
+  DEXT_PHONE: 'PHONE_INPUT',
+  DEXT_RATING_INPUT: 'RATING_INPUT',
+  DEXT_DATE_PICKER: 'DATE_PICKER',
+  DEXT_TAGS: 'TAGS',
+
+  // SCHEDULING_FIELD_TYPES
+  APPOINTMENT: 'APPOINTMENT',
+  SERVICES_DROPDOWN: 'DROPDOWN',
+
+  // ECOM_FIELD_TYPES
+  ECOM_ADDITIONAL_INFO: 'TEXT_AREA',
+  ECOM_ADDRESS: 'TEXT_INPUT',
+  ECOM_FULL_NAME: 'TEXT_INPUT',
+  ECOM_PHONE: 'PHONE_INPUT',
+  ECOM_COMPANY_NAME: 'TEXT_INPUT',
+  ECOM_EMAIL: 'TEXT_INPUT',
+  ECOM_SUBSCRIPTION: 'CHECKBOX',
+  ECOM_CONTACT_DETAILS: 'TEXT',
+  ECOM_SHIPPING_DETAILS: 'TEXT',
+
+  // BOOKINGS_FIELD_TYPES
+  BOOKINGS_FIRST_NAME: 'TEXT_INPUT',
+  BOOKINGS_LAST_NAME: 'TEXT_INPUT',
+  BOOKINGS_EMAIL: 'TEXT_INPUT',
+  BOOKINGS_PHONE: 'PHONE_INPUT',
+  BOOKINGS_ADDRESS: 'TEXT_INPUT',
+  BOOKINGS_HEADER: 'TEXT',
+  BOOKINGS_RICH_TEXT: 'TEXT',
+
+  // PAYMENTS_FIELD_TYPES
+  PRODUCT_LIST: 'PRODUCT_LIST',
+  DONATION: 'DONATION',
+  PAYMENT_INPUT: 'PAYMENT_INPUT',
+  FIXED_PAYMENT: 'FIXED_PAYMENT',
+
+  // EVENTS_FIELD_TYPES
+  EVENTS_RSVP: 'RADIO_GROUP',
+  EVENTS_HEADER: 'TEXT',
+
+  // COMMON_FIELD_TYPES + READONLY
+  TEXT_INPUT: 'TEXT_INPUT',
+  NUMBER_INPUT: 'NUMBER_INPUT',
+  URL_INPUT: 'TEXT_INPUT',
+  TEXT_AREA: 'TEXT_AREA',
+  DATE_INPUT: 'DATE_INPUT',
+  DATE_TIME_INPUT: 'DATE_TIME_INPUT',
+  TIME_INPUT: 'TIME_INPUT',
+  RADIO_GROUP: 'RADIO_GROUP',
+  CHECKBOX_GROUP: 'CHECKBOX_GROUP',
+  FILE_UPLOAD: 'FILE_UPLOAD',
+  CHECKBOX: 'CHECKBOX',
+  DROPDOWN: 'DROPDOWN',
+  MULTILINE_ADDRESS: 'MULTILINE_ADDRESS',
+  MLA_COUNTRY: 'DROPDOWN',
+  MLA_CITY: 'TEXT_INPUT',
+  MLA_ADDRESS_LINE: 'TEXT_INPUT',
+  MLA_ADDRESS_LINE_2: 'TEXT_INPUT',
+  MLA_POSTAL_CODE: 'TEXT_INPUT',
+  MLA_SUBDIVISION: 'DROPDOWN',
+  MLA_STREET_NAME: 'TEXT_INPUT',
+  MLA_STREET_NUMBER: 'TEXT_INPUT',
+  MLA_APARTMENT: 'TEXT_INPUT',
+  FULL_NAME_FIRST_NAME: 'TEXT_INPUT',
+  FULL_NAME_LAST_NAME: 'TEXT_INPUT',
+  FULL_NAME: 'TEXT_INPUT',
+  VAT_ID: 'TEXT_INPUT',
+  SIGNATURE: 'SIGNATURE',
+  RATING_INPUT: 'RATING_INPUT',
+  TAGS: 'TAGS',
+  DATE_PICKER: 'DATE_PICKER',
+  HEADER: 'TEXT',
+  RICH_TEXT: 'TEXT',
+  SUBMIT_BUTTON: 'SUBMIT_BUTTON',
+  SERVICES_MULTI_CHOICE: 'CHECKBOX_GROUP',
+};
+
+/**
+ * Maps a user-provided fieldMap to include all schema field types.
+ * This function creates a complete mapping from schema field types (e.g., 'CONTACTS_FIRST_NAME')
+ * to their corresponding React components by using the FIELD_TYPE_MAP.
+ *
+ * @param userFieldMap - The fieldMap provided by the user with FieldType keys
+ * @returns A complete field map with both FieldType and SchemaFieldType keys
+ *
+ * @example
+ * ```tsx
+ * const userFieldMap = {
+ *   TEXT_INPUT: TextInputComponent,
+ *   CHECKBOX: CheckboxComponent,
+ * };
+ *
+ * const fullFieldMap = mapFieldMapToSchema(userFieldMap);
+ * // Result includes:
+ * // {
+ * //   TEXT_INPUT: TextInputComponent,
+ * //   CONTACTS_FIRST_NAME: TextInputComponent,
+ * //   CONTACTS_LAST_NAME: TextInputComponent,
+ * //   ...
+ * //   CHECKBOX: CheckboxComponent,
+ * //   CONTACTS_SUBSCRIBE: CheckboxComponent,
+ * //   ...
+ * // }
+ * ```
+ */
+function mapFieldMapToSchema(userFieldMap: FieldMap): Record<string, any> {
+  const fullFieldMap: Record<string, any> = { ...userFieldMap };
+
+  // Map each schema field type to its corresponding component
+  Object.entries(FIELD_TYPE_MAP).forEach(([schemaType, fieldType]) => {
+    const component = userFieldMap[fieldType];
+    if (component) {
+      fullFieldMap[schemaType] = component;
+    }
+  });
+
+  return fullFieldMap;
+}
 
 enum TestIds {
   formRoot = 'form-root',
@@ -838,6 +998,11 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
       setFormErrors(errors);
     }, []);
 
+    const fullFieldMap = React.useMemo(
+      () => mapFieldMapToSchema(props.fieldMap),
+      [props.fieldMap],
+    );
+
     return (
       <CoreFields>
         {({ form, submitForm }) => {
@@ -850,18 +1015,20 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
                 form={form}
                 locale="en"
                 regionalFormat="en"
-                fields={props.fieldMap}
+                fields={fullFieldMap}
                 WixRicosViewer={() => null}
               >
-                <FieldsWithForm
-                  form={form}
-                  values={formValues}
-                  onChange={handleFormChange}
-                  errors={formErrors}
-                  onValidate={handleFormValidate}
-                  fields={props.fieldMap}
-                  submitForm={() => submitForm(formValues)}
-                />
+                <FormStatusProvider>
+                  <FieldsWithForm
+                    form={form}
+                    values={formValues}
+                    onChange={handleFormChange}
+                    errors={formErrors}
+                    onValidate={handleFormValidate}
+                    fields={props.fieldMap}
+                    submitForm={() => submitForm(formValues)}
+                  />
+                </FormStatusProvider>
               </FormProvider>
             </div>
           );
@@ -879,7 +1046,15 @@ const FieldsWithForm = ({
   errors,
   onValidate,
   fields: fieldMap,
-}: FormProps) => {
+}: {
+  form: forms.Form;
+  submitForm: () => void;
+  values: FormValues;
+  onChange: (values: FormValues) => void;
+  errors: FormError[];
+  onValidate: (errors: FormError[]) => void;
+  fields: FieldMap;
+}) => {
   const formData = useForm({
     form,
     values,
@@ -887,65 +1062,74 @@ const FieldsWithForm = ({
     errors,
     onValidate,
     submitForm,
+    fieldMap,
   });
 
   if (!formData) return null;
-
-  const { fields, columnCount, normalizedValues, onFieldChange } = formData;
-
   console.log('formData', formData);
-  const fieldsByRow = getFieldsByRow(fields);
+  const { columnCount, fieldElements, fieldsLayout } = formData;
 
   return (
     // TODO: use readOnly, isDisabled
     // TODO: step title a11y support
     // TODO: mobile support?
-    <form onSubmit={(e) => e.preventDefault()}>
-      <fieldset>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            gap: '24px', // TODO: pass tailwind gap
-          }}
+    <FieldLayoutProvider value={fieldsLayout}>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <fieldset
+          // TODO: pass tailwind gap
+          style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
         >
-          {fieldsByRow.map((field: any) => {
+          {fieldElements.map((rowElements, index) => {
             return (
               <div
-                key={field.id}
-                // TODO: pass tailwind gap
+                key={index}
                 style={{
                   display: 'grid',
                   width: '100%',
                   gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
-                  gridAutoRows: 'minmax(min-content, max-content) 1fr',
+                  gridAutoRows: 'minmax(min-content, max-content)',
+                  columnGap: '16px', // TODO: pass tailwind gap
                 }}
               >
-                {field.map((field: any) => {
-                  const Component = fieldMap[field.fieldType as keyof FieldMap];
-
-                  console.log('Component', field);
-
-                  return (
-                    <Component
-                      onChange={(value) => onFieldChange(field.target, value)}
-                      value={normalizedValues[field.target]}
-                      key={field.id}
-                      id={field.id}
-                      {...field.properties}
-                      layout={field.layout}
-                    />
-                  );
-                })}
+                {rowElements}
               </div>
             );
           })}
-        </div>
-      </fieldset>
-    </form>
+        </fieldset>
+      </form>
+    </FieldLayoutProvider>
   );
 };
+
+interface FieldLayoutMap {
+  [fieldId: string]: Layout;
+}
+
+const FieldLayoutContext = React.createContext<FieldLayoutMap | null>(null);
+
+interface FieldLayoutProviderProps {
+  value: FieldLayoutMap;
+  children: React.ReactNode;
+}
+
+const FieldLayoutProvider: React.FC<FieldLayoutProviderProps> = ({
+  value,
+  children,
+}) => {
+  return (
+    <FieldLayoutContext.Provider value={value}>
+      {children}
+    </FieldLayoutContext.Provider>
+  );
+};
+
+function useFieldLayout(fieldId: string): Layout | null {
+  const layoutMap = React.useContext(FieldLayoutContext);
+  if (!layoutMap) {
+    return null;
+  }
+  return layoutMap[fieldId] || null;
+}
 
 /**
  * Context for sharing field data between Field container and its children
@@ -987,8 +1171,6 @@ export interface FieldProps {
   asChild?: boolean;
   /** CSS classes to apply to the root element */
   className?: string;
-  /** The field layout configuration */
-  layout: Layout;
 }
 
 /**
@@ -1053,7 +1235,13 @@ export interface FieldInputProps {
  * ```
  */
 const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
-  const { id, children, asChild, className, layout, ...otherProps } = props;
+  const { id, children, asChild, className, ...otherProps } = props;
+
+  const layout = useFieldLayout(id);
+
+  if (!layout) {
+    return null;
+  }
 
   return (
     <CoreField id={id} layout={layout}>
@@ -1070,7 +1258,7 @@ const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
               ref={ref}
               asChild={asChild}
               className={className}
-              style={fieldData.gridStyles.container}
+              // style={fieldData.gridStyles.container}
               data-testid={TestIds.fieldRoot}
               customElement={children}
               customElementProps={{}}

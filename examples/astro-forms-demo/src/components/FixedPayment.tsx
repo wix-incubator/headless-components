@@ -13,13 +13,10 @@ export default function FixedPayment({
   amount,
   currency,
   description,
-  // @ts-expect-error
   id,
-  // @ts-expect-error
-  layout,
 }: FixedPaymentProps) {
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {showLabel && (
         <Form.Field.Label asChild>
           <label className="text-foreground font-paragraph mb-2">{label}</label>

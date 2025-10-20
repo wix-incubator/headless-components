@@ -17,8 +17,6 @@ export default function Donation({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: DonationProps) {
   const handleOptionSelect = (optionValue: string) => {
     onChange(optionValue);
@@ -31,7 +29,7 @@ export default function Donation({
   console.log('donation', options);
 
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {showLabel && (
         <Form.Field.Label>
           <label className="text-foreground font-paragraph mb-3">

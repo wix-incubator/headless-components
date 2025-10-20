@@ -11,8 +11,6 @@ const MultilineAddress = ({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: MultilineAddressProps) => {
   const handleFieldChange = (field: keyof typeof value, fieldValue: string) => {
     const newValue = { ...value, [field]: fieldValue };
@@ -20,7 +18,7 @@ const MultilineAddress = ({
   };
 
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       <Form.Field.Input asChild>
         <fieldset className="mb-6 p-4 border border-foreground/20 rounded-lg">
           <legend className="text-foreground font-paragraph font-semibold px-2">

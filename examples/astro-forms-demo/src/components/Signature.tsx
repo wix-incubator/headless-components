@@ -12,11 +12,9 @@ const Signature = ({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: SignatureProps) => {
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {showLabel && (
         <Form.Field.Label>
           <label htmlFor={id} className="text-foreground font-paragraph mb-2">

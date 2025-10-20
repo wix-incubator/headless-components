@@ -12,15 +12,13 @@ export default function Appointment({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: AppointmentProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
   };
 
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {showLabel && (
         <Form.Field.Label>
           <label htmlFor={id} className="text-foreground font-paragraph mb-2">

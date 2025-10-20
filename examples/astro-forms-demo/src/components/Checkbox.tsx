@@ -16,11 +16,9 @@ const Checkbox = ({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: CheckboxProps) => {
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {/* TODO: it does not create empty grid element to keep label space empty */}
       <Form.Field.Input asChild>
         <label

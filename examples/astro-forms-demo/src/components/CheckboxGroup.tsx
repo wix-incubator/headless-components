@@ -16,8 +16,6 @@ const CheckboxGroup = ({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: CheckboxGroupProps) => {
   const currentValues = value || [];
 
@@ -36,7 +34,7 @@ const CheckboxGroup = ({
   };
 
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {showLabel && (
         <Form.Field.Label>
           <label className="text-foreground font-paragraph mb-3">

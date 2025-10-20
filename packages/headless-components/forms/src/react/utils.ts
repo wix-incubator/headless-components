@@ -1,35 +1,24 @@
 import { Layout } from './core/Form';
 
 export function calculateGridStyles(layout: Layout) {
-  const rows = [1, 2];
-  const gridRow = `1 / span ${rows.length}`;
+  // Since each row is now a separate grid, calculate positions relative to the row
+  // Each field uses 2 rows within its grid container (label row + input row)
+  const labelRow = 1; // Always row 1 within the grid
+  const inputRow = 2; // Always row 2 within the grid
   const gridColumn = `${layout.column + 1} / span ${layout.width}`;
-  const labelRow = `${rows[0]} / span 1`;
-  const inputRow = `${rows[1]} / span 1`;
 
   return {
-    container: { gridRow, gridColumn },
+    // TODO: remove container
+    container: {},
     label: {
-      gridRow: labelRow,
+      gridRow: `${labelRow} / span 1`,
       gridColumn,
       display: 'flex',
       alignItems: 'flex-end',
     },
-    input: { gridRow: inputRow, gridColumn },
+    input: {
+      gridRow: `${inputRow} / span 1`,
+      gridColumn,
+    },
   };
-}
-
-export function getFieldsByRow(fields: any[]): any[][] {
-  const fieldsByRow = fields.reduce<any[][]>((result, item) => {
-    const row = item.layout.row;
-
-    if (result[row]) {
-      result[row].push(item);
-    } else {
-      result[row] = [item];
-    }
-    return result;
-  }, []);
-
-  return fieldsByRow;
 }

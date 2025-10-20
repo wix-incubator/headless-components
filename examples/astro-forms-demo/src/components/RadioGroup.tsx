@@ -14,11 +14,9 @@ const RadioGroup = ({
   onChange,
   onBlur,
   onFocus,
-  // @ts-expect-error
-  layout,
 }: RadioGroupProps) => {
   return (
-    <Form.Field id={id} layout={layout}>
+    <Form.Field id={id}>
       {showLabel && (
         <Form.Field.Label>
           <label className="text-foreground font-paragraph mb-3">
