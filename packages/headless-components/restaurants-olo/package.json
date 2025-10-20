@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-restaurants-olo",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
@@ -51,6 +51,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@wix/auto_sdk_restaurants_items": "^1.0.48",
     "@wix/headless-media": "workspace:*",
+    "@wix/headless-restaurants-menus": "workspace:^",
     "@wix/headless-utils": "workspace:^",
     "@wix/redirects": "^1.0.0",
     "@wix/restaurants": "^1.0.396",

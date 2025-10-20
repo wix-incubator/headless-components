@@ -8116,7 +8116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus":
+"@wix/headless-restaurants-menus@workspace:^, @wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus":
   version: 0.0.0-use.local
   resolution: "@wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus"
   dependencies:
@@ -8156,6 +8156,7 @@ __metadata:
     "@vitest/ui": "npm:^3.1.4"
     "@wix/auto_sdk_restaurants_items": "npm:^1.0.48"
     "@wix/headless-media": "workspace:*"
+    "@wix/headless-restaurants-menus": "workspace:^"
     "@wix/headless-utils": "workspace:^"
     "@wix/redirects": "npm:^1.0.0"
     "@wix/restaurants": "npm:^1.0.396"

@@ -9,7 +9,7 @@ import {
   Modifier,
   ModifierGroup,
   Variant,
-} from '@wix/restaurants/components';
+} from '@wix/headless-restaurants-menus/react';
 import * as CoreItemDetails from './core/ItemDetails.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
 
