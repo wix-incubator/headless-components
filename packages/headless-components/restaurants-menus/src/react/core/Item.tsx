@@ -89,11 +89,11 @@ export function Image(props: ItemImageProps) {
   const { item } = useItemContext();
 
   const hasImage = !!item.image;
-  const altText = item.name ?? '';
+  const altText = item.image?.altText ?? item.name ?? '';
 
   return props.children({
     hasImage,
-    image: item.image,
+    image: item.image?.image,
     altText,
   });
 }
