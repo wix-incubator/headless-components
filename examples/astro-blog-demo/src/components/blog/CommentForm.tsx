@@ -10,34 +10,27 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useMember } from "@/integrations/members";
 import { cn } from "@/lib/utils";
-import { Blog, Comment } from "@wix/blog/components";
+import { Comment } from "@wix/blog/components";
 import { Loader2Icon, LogOutIcon } from "lucide-react";
 
 interface CommentFormProps {
-  reply?: boolean;
+  isReply?: boolean;
   onCommentAdded?: () => void;
   onCancelClick?: () => void;
   textareaRef?: React.RefObject<HTMLTextAreaElement>;
-  withMemberActions?: boolean;
 }
 
 /**
  * Unified form component for creating both top-level comments and replies.
  * Displays member avatar and provides submit/cancel actions.
- * Switches between CreateCommentForm and CommentReplyForm based on the reply prop.
  */
 export function CommentForm({
-  reply,
+  isReply,
   onCommentAdded,
   onCancelClick,
   textareaRef,
-  withMemberActions,
 }: CommentFormProps) {
   const { isAuthenticated, member, actions } = useMember();
-
-  const Form = reply
-    ? Comment.CommentReplyForm
-    : Blog.Post.Comments.CommentCreateForm;
 
   const avatar = isAuthenticated ? <MemberAvatar member={member} /> : null;
 
@@ -64,44 +57,44 @@ export function CommentForm({
   ) : null;
 
   return (
-    <Form.Root onCommentAdded={onCommentAdded}>
+    <Comment.Form.Root onCommentAdded={onCommentAdded}>
       <div className="flex gap-3">
-        {withMemberActions ? avatarWithMemberActions : avatar}
+        {isReply ? avatar : avatarWithMemberActions}
         <div className="grid flex-1 gap-3">
-          <Form.Label className="sr-only">Comment</Form.Label>
+          <Comment.Form.Label className="sr-only">{isReply ? "Reply" : "Comment"}</Comment.Form.Label>
           <div className="grid items-baseline gap-3 sm:grid-cols-2">
-            <Form.Input ref={textareaRef} asChild>
+            <Comment.Form.Input ref={textareaRef} asChild>
               <Textarea
-                placeholder="Write a comment"
+                placeholder={isReply ? "Write a reply" : "Write a comment"}
                 name="comment"
                 rows={3}
                 className={cn(
                   "peer col-span-full min-h-[calc(1.5em+24px)] border-none bg-foreground/5 p-3 font-paragraph leading-normal hover:bg-foreground/10 md:text-base [&:not(:focus-visible)]:cursor-pointer",
                   {
-                    "[&:not(:focus-visible)]:empty:max-h-[1em]": !reply,
+                    "[&:not(:focus-visible)]:empty:max-h-[1em]": !isReply,
                   }
                 )}
               />
-            </Form.Input>
-            <Form.Message className="font-paragraph text-sm text-red-700" />
+            </Comment.Form.Input>
+            <Comment.Form.Message className="font-paragraph text-sm text-red-700" />
             <div
               className={cn("flex flex-row-reverse gap-2 sm:col-start-2", {
                 "peer-invalid:hidden peer-[&:not(:focus-visible)]:peer-empty:hidden":
-                  !reply,
+                  !isReply,
               })}
             >
-              <Form.SubmitButton
+              <Comment.Form.SubmitButton
                 loadingState={
                   <>
                     <Loader2Icon className="animate-spin" />
-                    {reply ? "Posting..." : "Posting..."}
+                    Posting...
                   </>
                 }
                 asChild
               >
-                <Button>{reply ? "Send reply" : "Comment"}</Button>
-              </Form.SubmitButton>
-              <Form.CancelButton asChild>
+                <Button>{isReply ? "Send reply" : "Comment"}</Button>
+              </Comment.Form.SubmitButton>
+              <Comment.Form.CancelButton asChild>
                 {({ handleCancel }) => (
                   <Button
                     variant="ghost"
@@ -116,11 +109,11 @@ export function CommentForm({
                     Cancel
                   </Button>
                 )}
-              </Form.CancelButton>
+              </Comment.Form.CancelButton>
             </div>
           </div>
         </div>
       </div>
-    </Form.Root>
+    </Comment.Form.Root>
   );
 }

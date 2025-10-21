@@ -9,7 +9,7 @@ import {
 } from '../services/blog-post-comments-service.js';
 import * as CoreComments from './core/Comments.js';
 
-export * as CommentReplyForm from './CommentReplyForm.js';
+export * as Form from './CommentForm.js';
 
 export interface CommentContentProps {
   asChild?: boolean;
@@ -24,7 +24,7 @@ interface CommentContextValue {
   currentMemberId: string | undefined;
 }
 
-const CommentContext = React.createContext<CommentContextValue | null>(null);
+export const CommentContext = React.createContext<CommentContextValue | null>(null);
 
 CommentContext.displayName = 'Comment.CommentContext';
 

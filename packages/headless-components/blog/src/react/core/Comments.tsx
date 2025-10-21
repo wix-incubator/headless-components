@@ -71,11 +71,13 @@ export const Sort = (props: SortProps) => {
 Sort.displayName = 'Blog.Post.Comments.Sort (core)';
 
 export interface CreateCommentProps {
+  parentCommentId?: string | null;
+  topCommentId?: string | null;
   children: (props: CreateCommentRenderProps) => React.ReactNode;
 }
 
 export interface CreateCommentRenderProps {
-  createComment: (content: comments.CommentContent) => Promise<CommentWithResolvedFields | null>;
+  createComment: (content: string) => Promise<CommentWithResolvedFields | null>;
   clearError: () => void;
   isLoading: boolean;
   error: string | null;
@@ -83,12 +85,26 @@ export interface CreateCommentRenderProps {
 
 export const CreateComment = (props: CreateCommentProps) => {
   const service = useService(BlogPostCommentsServiceDefinition);
+  const { parentCommentId: parrentCommentIdOrNull, topCommentId } = props;
+  const parentCommentId = parrentCommentIdOrNull ?? undefined;
 
   return props.children({
-    createComment: service.createComment,
-    isLoading: service.isLoading() === 'saving',
-    error: service.getError(),
-    clearError: service.clearError,
+    createComment: (content: string) => {
+      const contentAsRichContent: comments.CommentContent = {
+        richContent: {
+          nodes: [{ type: 'PARAGRAPH', nodes: [{ type: 'TEXT', textData: { text: content } }] }],
+        },
+      };
+
+      if (parentCommentId && topCommentId) {
+        return service.createReply(topCommentId, parentCommentId, contentAsRichContent);
+      }
+
+      return service.createComment(contentAsRichContent);
+    },
+    isLoading: service.isLoading(parentCommentId) === 'saving',
+    error: service.getError(parentCommentId),
+    clearError: () => service.clearError(parentCommentId),
   });
 };
 
@@ -135,53 +151,7 @@ export const Comment = (props: CommentProps) => {
 
 Comment.displayName = 'Comment (core)';
 
-export interface CreateReplyProps {
-  topCommentId: string;
-  parentCommentId: string;
-  children: (props: CreateReplyRenderProps) => React.ReactNode;
-}
-
-export interface CreateReplyRenderProps {
-  createReply: (content: comments.CommentContent) => Promise<CommentWithResolvedFields | null>;
-  isLoading: boolean;
-  replyError: string | null;
-  clearError: () => void;
-}
-
-export const CreateReply = (props: CreateReplyProps) => {
-  const { parentCommentId, topCommentId } = props;
-  const service = useService(BlogPostCommentsServiceDefinition);
-
-  const createReply = React.useCallback(
-    (content: comments.CommentContent) => {
-      return service.createReply(topCommentId, parentCommentId, content);
-    },
-    [service, parentCommentId, topCommentId],
-  );
-
-  return props.children({
-    createReply,
-    isLoading: service.isLoading(parentCommentId) === 'saving',
-    replyError: service.getError(parentCommentId),
-    clearError: () => service.clearError(parentCommentId),
-  });
-};
-
-CreateReply.displayName = 'Comment.CreateReply (core)';
-
-const TopLevelCommentContext = React.createContext<CommentWithResolvedFields | null>(null);
-
-export function useTopLevelCommentContext(): CommentWithResolvedFields {
-  const context = React.useContext(TopLevelCommentContext);
-
-  if (!context) {
-    throw new Error(
-      'useTopLevelCommentContext must be used within a Blog.Post.Comments.CommentItemRepeater component',
-    );
-  }
-
-  return context;
-}
+export const TopLevelCommentContext = React.createContext<CommentWithResolvedFields | null>(null);
 
 type TopLevelCommentRootProps = {
   comment: CommentWithResolvedFields;

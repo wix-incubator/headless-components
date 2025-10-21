@@ -13,8 +13,6 @@ import * as CoreComments from './core/Comments.js';
 import { isValidChildren, useIntersectionObserver } from './helpers.js';
 import { usePostContext } from './Post.js';
 
-export * as CommentCreateForm from './CommentCreateForm.js';
-
 const enum TestIds {
   blogPostCommentsRoot = 'blog-post-comments-root',
 

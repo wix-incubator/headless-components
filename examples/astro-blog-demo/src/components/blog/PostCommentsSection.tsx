@@ -44,7 +44,7 @@ export default function PostCommentsSection({
           <Separator className="-mt-1" />
 
           <LoginGuard>
-            <CommentForm withMemberActions />
+            <CommentForm />
           </LoginGuard>
 
           <Comments.CommentItems

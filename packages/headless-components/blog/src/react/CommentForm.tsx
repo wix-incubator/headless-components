@@ -1,44 +1,43 @@
-import type { comments } from '@wix/comments';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
 import type { CommentWithResolvedFields } from '../services/blog-post-comments-service.js';
-import { useCommentContext } from './Comment.js';
+import { CommentContext } from './Comment.js';
 import * as CoreComments from './core/Comments.js';
 import { isValidChildren } from './helpers.js';
 
 const enum TestIds {
-  root = 'comment-create-reply',
-  messsage = 'comment-create-reply-message',
-  cancel = 'comment-create-reply-cancel',
-  submit = 'comment-create-reply-submit',
-  label = 'comment-create-reply-label',
-  input = 'comment-create-reply-input',
+  root = 'comment-form-root',
+  messsage = 'comment-form-message',
+  cancel = 'comment-form-cancel',
+  submit = 'comment-form-submit',
+  label = 'comment-form-label',
+  input = 'comment-form-input',
 }
 
 /**
- * Context for sharing form state between CreateReplyForm components
+ * Context for sharing form state between Comment.Form components
  */
-interface CreateReplyFormContextValue {
-  replyText: string;
-  setReplyText: (text: string) => void;
+interface CreateCommentFormContextValue {
+  commentText: string;
+  setCommentText: (text: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   handleCancel: () => void;
-  createReply: (content: comments.CommentContent) => Promise<CommentWithResolvedFields | null>;
+  createComment: (content: string) => Promise<CommentWithResolvedFields | null>;
   isLoading: boolean;
-  replyError: string | null;
+  error: string | null;
   maxLength: number;
   htmlId: string;
 }
 
-const CreateReplyFormContext = React.createContext<CreateReplyFormContextValue | null>(null);
+const CommentFormContext = React.createContext<CreateCommentFormContextValue | null>(null);
 
-CreateReplyFormContext.displayName = 'Comment.CommentReplyFormContext';
+CommentFormContext.displayName = 'Comment.CommentFormContext';
 
-function useCreateReplyFormContext(): CreateReplyFormContextValue {
-  const context = React.useContext(CreateReplyFormContext);
+function useCommentFormContext(): CreateCommentFormContextValue {
+  const context = React.useContext(CommentFormContext);
   if (!context) {
     throw new Error(
-      'useCreateReplyFormContext must be used within a Comment.CommentReplyForm.Root component',
+      'useCommentFormContext must be used within a Comment.CommentForm.Root component',
     );
   }
   return context;
@@ -51,21 +50,19 @@ export interface RootProps {
   onCommentAdded?: () => void;
   children?:
     | AsChildChildren<{
-        createReply: (
-          content: comments.CommentContent,
-        ) => Promise<CommentWithResolvedFields | null>;
+        createComment: (content: string) => Promise<CommentWithResolvedFields | null>;
         isLoading: boolean;
-        replyError: string | null;
-        replyText: string;
-        setReplyText: (text: string) => void;
-        isSubmitting: boolean;
+        error: string | null;
+        commentText: string;
+        setCommentText: (text: string) => void;
         handleSubmit: (e: React.FormEvent) => Promise<void>;
+        handleCancel: () => void;
       }>
     | React.ReactNode;
 }
 
 /**
- * Form component for creating replies to comments.
+ * Form component for creating comments.
  * Provides context for sub-components to share form state.
  * Must contain composable sub-components as children.
  *
@@ -73,63 +70,62 @@ export interface RootProps {
  * @example
  * ```tsx
  * // Composable form with sub-components
- * <Comment.CommentReplyForm className="space-y-3">
- *   <Comment.CommentReplyForm.Field
+ * <Comment.Form.Root className="space-y-3">
+ *   <Comment.Form.Input
  *     className="w-full border rounded-lg p-3"
  *     placeholder="Write your reply..."
  *   />
- *   <Comment.CommentReplyForm.Message className="text-red-600" />
- *   <Comment.CommentReplyForm.SubmitButton className="btn-primary" />
- * </Comment.CommentReplyForm>
+ *   <Comment.Form.Message className="text-red-600" />
+ *   <Comment.Form.SubmitButton className="btn-primary" />
+ * </Comment.Form.Root>
  *
  * // Custom rendering with asChild
- * <Comment.CommentReplyForm asChild>
- *   {({ createReply, isLoading, replyError, replyText, handleSubmit }) => (
- *     <CustomReplyForm
- *       onSubmit={handleSubmit}
+ * <Comment.Form.Root asChild>
+ *   {({ createComment, isLoading, error, commentText, setCommentText, handleSubmit, handleCancel }) => (
+ *     <CustomCommentForm
+ *       onCommentAdded={onCommentAdded}
  *       loading={isLoading}
- *       error={replyError}
- *       value={replyText}
+ *       error={error}
+ *       commentText={commentText}
+ *       setCommentText={setCommentText}
+ *       handleSubmit={handleSubmit}
+ *       handleCancel={handleCancel}
  *     />
  *   )}
- * </Comment.CommentReplyForm>
+ * </Comment.Form.Root>
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
   const { asChild, children, className, maxLength = 500, onCommentAdded } = props;
 
-  const topLevelComment = CoreComments.useTopLevelCommentContext();
-  const parentComment = useCommentContext().comment;
+  const topLevelComment = React.useContext(CoreComments.TopLevelCommentContext);
+  const parentComment = React.useContext(CommentContext);
 
   return (
-    <CoreComments.CreateReply
-      parentCommentId={parentComment._id ?? ''}
-      topCommentId={topLevelComment._id ?? ''}
+    <CoreComments.CreateComment
+      parentCommentId={parentComment?.comment._id}
+      topCommentId={topLevelComment?._id}
     >
-      {({ createReply, isLoading, replyError, clearError }) => {
-        const [replyText, setReplyText] = React.useState('');
-        const htmlId = `reply-text-field-${React.useId()}`;
+      {({ createComment, isLoading, error, clearError }) => {
+        const [commentText, setCommentText] = React.useState('');
+        const htmlId = `text-field-${React.useId()}`;
 
         const handleSubmit = React.useCallback(
           async (e: React.FormEvent) => {
             e.preventDefault();
 
-            const text = replyText.trim();
+            const text = commentText.trim();
             if (!text || isLoading) {
               return;
             }
 
             try {
               // Create reply content structure for Wix Comments API
-              const result = await createReply({
-                richContent: {
-                  nodes: [{ type: 'PARAGRAPH', nodes: [{ type: 'TEXT', textData: { text } }] }],
-                },
-              });
+              const result = await createComment(text);
 
               if (result) {
                 // Clear form on success
-                setReplyText('');
+                setCommentText('');
                 onCommentAdded?.();
               }
             } catch (err) {
@@ -137,22 +133,22 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
               console.error('Failed to create reply:', err);
             }
           },
-          [replyText, createReply, isLoading],
+          [commentText, createComment, isLoading],
         );
 
         const handleCancel = React.useCallback(() => {
-          setReplyText('');
+          setCommentText('');
           clearError();
-        }, [setReplyText, clearError]);
+        }, [setCommentText, clearError]);
 
-        const contextValue: CreateReplyFormContextValue = {
-          replyText,
-          setReplyText,
+        const contextValue: CreateCommentFormContextValue = {
+          commentText,
+          setCommentText,
           handleSubmit,
           handleCancel,
-          createReply,
+          createComment,
           isLoading,
-          replyError,
+          error,
           maxLength,
           htmlId,
         };
@@ -163,7 +159,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         };
 
         return (
-          <CreateReplyFormContext.Provider value={contextValue}>
+          <CommentFormContext.Provider value={contextValue}>
             <AsChildSlot
               ref={ref}
               asChild={asChild}
@@ -171,12 +167,13 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
               {...attributes}
               customElement={children}
               customElementProps={{
-                createReply,
+                createComment,
                 isLoading,
-                replyError,
-                replyText,
-                setReplyText,
+                error,
+                commentText,
+                setCommentText,
                 handleSubmit,
+                handleCancel,
               }}
             >
               {isValidChildren(children) ? (
@@ -185,10 +182,10 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
                 children
               )}
             </AsChildSlot>
-          </CreateReplyFormContext.Provider>
+          </CommentFormContext.Provider>
         );
       }}
-    </CoreComments.CreateReply>
+    </CoreComments.CreateComment>
   );
 });
 
@@ -204,30 +201,30 @@ export interface LabelProps {
 }
 
 /**
- * Label component for reply form input.
+ * Label component for comment form input.
  *
  * @component
  * @example
  * ```tsx
  * // Default label
- * <Comment.CommentReplyForm.Label />
+ * <Comment.Form.Label />
  *
  * // Custom styling
- * <Comment.CommentReplyForm.Label className="text-gray-700 font-medium mb-2" />
+ * <Comment.Form.Label className="text-gray-700 font-medium mb-2" />
  *
  * // Custom rendering with asChild
- * <Comment.CommentReplyForm.Label asChild>
+ * <Comment.Form.Label asChild>
  *   {({ htmlFor, labelText }) => (
  *     <label htmlFor={htmlFor} className="custom-label">
  *       {labelText}
  *     </label>
  *   )}
- * </Comment.CommentReplyForm.Label>
+ * </Comment.Form.Label>
  * ```
  */
 export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const { htmlId } = useCreateReplyFormContext();
+  const { htmlId } = useCommentFormContext();
 
   const attributes = {
     'data-testid': TestIds.label,
@@ -242,15 +239,15 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
       customElement={children}
       customElementProps={{
         htmlFor: htmlId,
-        labelText: 'Reply',
+        labelText: 'Comment',
       }}
     >
-      <label htmlFor={htmlId}>Reply</label>
+      <label htmlFor={htmlId}>Comment</label>
     </AsChildSlot>
   );
 });
 
-Label.displayName = 'Comment.CommentReplyForm.Label';
+Label.displayName = 'Comment.Form.Label';
 
 export interface InputProps {
   asChild?: boolean;
@@ -270,23 +267,23 @@ export interface InputProps {
 }
 
 /**
- * Input component for reply form textarea.
+ * Input component for form textarea.
  *
  * @component
  * @example
  * ```tsx
  * // Default textarea
- * <Comment.CommentReplyForm.Input placeholder="Write your reply..." />
+ * <Comment.Form.Input placeholder="Write your comment..." />
  *
  * // Custom styling
- * <Comment.CommentReplyForm.Input
+ * <Comment.Form.Input
  *   className="w-full h-24 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
- *   placeholder="What's your reply?"
+ *   placeholder="Write your comment..."
  *   rows={3}
  * />
  *
  * // Custom rendering with asChild
- * <Comment.CommentReplyForm.Input asChild>
+ * <Comment.Form.Input asChild>
  *   {({ value, onChange, disabled, placeholder, maxLength, id }) => (
  *     <RichTextEditor
  *       id={id}
@@ -297,22 +294,22 @@ export interface InputProps {
  *       maxLength={maxLength}
  *     />
  *   )}
- * </Comment.CommentReplyForm.Input>
+ * </Comment.Form.Input>
  * ```
  */
 export const Input = React.forwardRef<HTMLElement, InputProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const { replyText, setReplyText, isLoading, maxLength, htmlId } = useCreateReplyFormContext();
+  const { commentText, setCommentText, isLoading, maxLength, htmlId } = useCommentFormContext();
 
   const handleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setReplyText(e.target.value);
+      setCommentText(e.target.value);
     },
-    [setReplyText],
+    [setCommentText],
   );
 
   const inputAttributes: React.ComponentProps<'textarea'> = {
-    value: replyText,
+    value: commentText,
     onChange: handleChange,
     minLength: 1,
     disabled: isLoading,
@@ -339,7 +336,7 @@ export const Input = React.forwardRef<HTMLElement, InputProps>((props, ref) => {
   );
 });
 
-Input.displayName = 'Comment.CommentReplyForm.Input';
+Input.displayName = 'Comment.Form.Input';
 
 export interface MessageProps {
   asChild?: boolean;
@@ -348,30 +345,30 @@ export interface MessageProps {
 }
 
 /**
- * Error message display component for reply form.
+ * Error message display component for comment form.
  *
  * @component
  * @example
  * ```tsx
  * // Default error display
- * <Comment.CommentReplyForm.Message />
+ * <Comment.Form.Message />
  *
  * // Custom styling
- * <Comment.CommentReplyForm.Message className="text-red-600 text-sm bg-red-50 p-2 rounded" />
+ * <Comment.Form.Message className="text-red-600 text-sm bg-red-50 p-2 rounded" />
  *
  * // Custom rendering with asChild
- * <Comment.CommentReplyForm.Message asChild>
+ * <Comment.Form.Message asChild>
  *   {({ error, hasError }) => (
  *     hasError && <CustomErrorAlert message={error} />
  *   )}
- * </Comment.CommentReplyForm.Message>
+ * </Comment.Form.Message>
  * ```
  */
 export const Message = React.forwardRef<HTMLElement, MessageProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const { replyError } = useCreateReplyFormContext();
+  const { error } = useCommentFormContext();
 
-  const hasError = Boolean(replyError);
+  const hasError = Boolean(error);
 
   if (!hasError) return null;
 
@@ -387,14 +384,14 @@ export const Message = React.forwardRef<HTMLElement, MessageProps>((props, ref) 
       className={className}
       {...attributes}
       customElement={children}
-      customElementProps={{ error: replyError!, hasError }}
+      customElementProps={{ error: error!, hasError }}
     >
-      <div>{replyError}</div>
+      <div>{error}</div>
     </AsChildSlot>
   );
 });
 
-Message.displayName = 'Comment.CommentReplyForm.Message';
+Message.displayName = 'Comment.Form.Message';
 
 export interface CancelButtonProps {
   asChild?: boolean;
@@ -409,30 +406,30 @@ export interface CancelButtonProps {
 }
 
 /**
- * Cancel button for the reply form.
+ * Cancel button for the comment form.
  * Clears the form input when clicked.
  *
  * @component
  * @example
  * ```tsx
  * // Default rendering
- * <Comment.CommentReplyForm.CancelButton />
+ * <Comment.Form.CancelButton />
  *
  * // Custom rendering with asChild
- * <Comment.CommentReplyForm.CancelButton asChild>
+ * <Comment.Form.CancelButton asChild>
  *   {({ handleCancel }) => (
  *     <Button variant="ghost" onClick={handleCancel}>
  *       Cancel
  *     </Button>
  *   )}
- * </Comment.CommentReplyForm.CancelButton>
+ * </Comment.Form.CancelButton>
  * ```
  */
 export const CancelButton = React.forwardRef<HTMLElement, CancelButtonProps>((props, ref) => {
   const { asChild, children, className } = props;
-  const { replyText, isLoading, handleCancel } = useCreateReplyFormContext();
+  const { commentText, isLoading, handleCancel } = useCommentFormContext();
 
-  const isDisabled = !replyText.trim();
+  const isDisabled = !commentText.trim();
 
   const buttonAttributes: React.ComponentProps<'button'> = {
     type: 'reset',
@@ -464,7 +461,7 @@ export const CancelButton = React.forwardRef<HTMLElement, CancelButtonProps>((pr
   );
 });
 
-CancelButton.displayName = 'Comment.CommentReplyForm.CancelButton';
+CancelButton.displayName = 'Comment.Form.CancelButton';
 
 export interface SubmitButtonProps {
   asChild?: boolean;
@@ -480,26 +477,26 @@ export interface SubmitButtonProps {
 }
 
 /**
- * Submit button for the reply form.
+ * Submit button for the comment form.
  * Automatically disabled when the form is empty or submitting.
  *
  * @component
  * @example
  * ```tsx
  * // Default rendering
- * <Comment.CommentReplyForm.SubmitButton />
+ * <Comment.Form.SubmitButton />
  *
  * // Custom rendering with asChild
- * <Comment.CommentReplyForm.SubmitButton asChild>
+ * <Comment.Form.SubmitButton asChild>
  *   <Button>Post reply</Button>
- * </Comment.CommentReplyForm.SubmitButton>
+ * </Comment.Form.SubmitButton>
  * ```
  */
 export const SubmitButton = React.forwardRef<HTMLElement, SubmitButtonProps>((props, ref) => {
   const { asChild, children, className, loadingState } = props;
-  const { replyText, isLoading } = useCreateReplyFormContext();
+  const { commentText, isLoading } = useCommentFormContext();
 
-  const isDisabled = !replyText.trim();
+  const isDisabled = !commentText.trim();
 
   const buttonAttributes: React.ComponentProps<'button'> = {
     type: 'submit',
@@ -526,9 +523,9 @@ export const SubmitButton = React.forwardRef<HTMLElement, SubmitButtonProps>((pr
       }}
       content={isLoading && loadingState ? loadingState : undefined}
     >
-      <button>Post reply</button>
+      <button>Post comment</button>
     </AsChildSlot>
   );
 });
 
-SubmitButton.displayName = 'Comment.CommentReplyForm.SubmitButton';
+SubmitButton.displayName = 'Comment.Form.SubmitButton';

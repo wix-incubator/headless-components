@@ -122,7 +122,7 @@ function ReplyAction({ onCommentAdded }: CommentReplyActionProps) {
                 </Button>
                 {isReplyOpen && (
                   <CommentForm
-                    reply
+                    isReply
                     textareaRef={textareaRef}
                     onCommentAdded={() => {
                       setIsReplyOpen(false);

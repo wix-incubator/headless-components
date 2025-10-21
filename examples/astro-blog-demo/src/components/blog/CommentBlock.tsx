@@ -1,3 +1,4 @@
+import { Chip } from "@/components/ui/blog/Chip";
 import { CommentAuthorAvatar } from "@/components/ui/blog/CommentAuthorAvatar";
 import { CommentAuthorName } from "@/components/ui/blog/CommentAuthorName";
 import { CommentContent } from "@/components/ui/blog/CommentContent";
@@ -10,12 +11,10 @@ import {
   DropdownMenuPortal,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useMember } from "@/integrations/members";
 import { cn } from "@/lib/utils";
 import { Comment } from "@wix/blog/components";
 import { ClockIcon, EllipsisVerticalIcon, TrashIcon } from "lucide-react";
 import React from "react";
-import { Chip } from "../ui/blog/Chip";
 
 interface CommentBlockProps {
   children?: React.ReactNode;
@@ -30,7 +29,6 @@ interface CommentBlockProps {
  */
 export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
   ({ children, className, uiLocale, ...props }, ref) => {
-    const { isAuthenticated, member } = useMember();
     const { deleteComment, comment } = Comment.useCommentContext();
 
     return (
