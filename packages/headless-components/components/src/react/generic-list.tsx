@@ -156,7 +156,6 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
           data-has-items={items.length > 0}
           data-is-loading={isLoading}
           data-has-more={hasMore}
-          data-variant={variant}
           customElement={children}
           {...otherProps}
         >
@@ -323,9 +322,33 @@ export const Repeater = <T extends ListItem = ListItem>({
   children,
   renderItem,
 }: GenericListRepeaterProps<T>) => {
-  const { items } = useGenericListContext<T>();
+  const { items, variant } = useGenericListContext<T>();
 
   if (items.length === 0) return null;
+
+  // temporary variants until migrate with gallery
+
+  if (variant === 'grid') {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {items.map((item, index) => renderItem(item, children, index))}
+      </div>
+    );
+  } else if (variant === 'table') {
+    return (
+      <table className="table-auto">
+        <tbody>
+          {items.map((item, index) => renderItem(item, children, index))}
+        </tbody>
+      </table>
+    );
+  } else if (variant === 'list') {
+    return (
+      <ul className="list-none">
+        {items.map((item, index) => renderItem(item, children, index))}
+      </ul>
+    );
+  }
 
   return <>{items.map((item, index) => renderItem(item, children, index))}</>;
 };
