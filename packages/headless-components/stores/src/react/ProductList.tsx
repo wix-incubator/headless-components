@@ -224,7 +224,7 @@ export interface ProductRepeaterProps {
 
 /**
  * Repeater component that renders Product.Root for each product.
- * Follows Repeater Level pattern.
+ * Follows Repeater Level pattern and uses GenericList.Repeater for consistency.
  * Note: Repeater components do NOT support asChild as per architecture rules.
  *
  * @component
@@ -244,15 +244,13 @@ export const ProductRepeater = React.forwardRef<
   ProductRepeaterProps
 >((props, _ref) => {
   const { children } = props;
-  const productsListService = useService(ProductsListServiceDefinition);
-  const products = productsListService.products.get();
-  const hasProducts = products.length > 0;
-
-  if (!hasProducts) return null;
 
   return (
-    <>
-      {products.map((product: V3Product) => (
+    <GenericList.Repeater
+      renderItem={(
+        product: V3Product & { id: string },
+        children: React.ReactNode,
+      ) => (
         <Product.Root
           key={product._id}
           product={product}
@@ -263,8 +261,10 @@ export const ProductRepeater = React.forwardRef<
         >
           {children}
         </Product.Root>
-      ))}
-    </>
+      )}
+    >
+      {children}
+    </GenericList.Repeater>
   );
 });
 
