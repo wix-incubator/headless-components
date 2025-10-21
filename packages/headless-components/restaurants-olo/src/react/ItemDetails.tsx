@@ -324,14 +324,17 @@ export interface ItemDetailsVariantsProps {
 }
 
 export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
-  ({
-    children,
-    className,
-    asChild,
-    variantNameClassName,
-    variantPriceClassName,
-    emptyState
-  }, ref) => {
+  (
+    {
+      children,
+      className,
+      asChild,
+      variantNameClassName,
+      variantPriceClassName,
+      emptyState,
+    },
+    ref,
+  ) => {
     return (
       <CoreItemDetails.VariantsComponent>
         {({ variants, hasVariants, selectedVariantId, onVariantChange }) => {
@@ -346,7 +349,12 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
               testId={TestIds.itemVariants}
               className={className}
               customElement={children}
-              customElementProps={{ variants, hasVariants, selectedVariantId, onVariantChange }}
+              customElementProps={{
+                variants,
+                hasVariants,
+                selectedVariantId,
+                onVariantChange,
+              }}
             >
               <RadioGroupPrimitive.Root
                 value={selectedVariantId}
@@ -358,11 +366,11 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
                     value={variant._id}
                   >
                     <div>
-                      <div className={variantNameClassName}>
-                        {variant.name}
-                      </div>
+                      <div className={variantNameClassName}>{variant.name}</div>
                       <div className={variantPriceClassName}>
-                        {variant.priceInfo?.formattedPrice || variant.priceInfo?.price || ''}
+                        {variant.priceInfo?.formattedPrice ||
+                          variant.priceInfo?.price ||
+                          ''}
                       </div>
                     </div>
                   </RadioGroupPrimitive.Item>

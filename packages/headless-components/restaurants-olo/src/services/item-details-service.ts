@@ -109,8 +109,10 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
     const lineItem: Signal<LineItem> = signalsService.signal({});
 
     const priceVariants = (config.item as any)?.priceVariants || [];
-    const initialVariant = priceVariants.length > 0 ? priceVariants[0] : undefined;
-    const selectedVariant: Signal<Variant | undefined> = signalsService.signal(initialVariant);
+    const initialVariant =
+      priceVariants.length > 0 ? priceVariants[0] : undefined;
+    const selectedVariant: Signal<Variant | undefined> =
+      signalsService.signal(initialVariant);
 
     if (config.item) {
       console.log('config.item', config.item);

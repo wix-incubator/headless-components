@@ -10,7 +10,7 @@ import {
   useMenuContext,
   useSectionContext,
   useItemContext,
-  useVariantContext
+  useVariantContext,
 } from './core/index.js';
 
 export const Menus = MenusModule;
