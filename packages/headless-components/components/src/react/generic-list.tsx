@@ -298,6 +298,40 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
 
 Totals.displayName = 'GenericList.Totals';
 
+/**
+ * Props for the GenericList Repeater component
+ */
+export interface GenericListRepeaterProps<T extends ListItem = ListItem> {
+  /** Function that renders content for each item */
+  children: React.ReactNode;
+  /** Function that wraps each item with its container/root component */
+  renderItem: (
+    item: T,
+    children: React.ReactNode,
+    index: number,
+  ) => React.ReactNode;
+}
+
+/**
+ * Generic repeater component that maps over items from GenericList context.
+ * This component provides a reusable pattern for rendering lists of items
+ * where each item needs to be wrapped in a specific Root component.
+ *
+ * @component
+ */
+export const Repeater = <T extends ListItem = ListItem>({
+  children,
+  renderItem,
+}: GenericListRepeaterProps<T>) => {
+  const { items } = useGenericListContext<T>();
+
+  if (items.length === 0) return null;
+
+  return <>{items.map((item, index) => renderItem(item, children, index))}</>;
+};
+
+Repeater.displayName = 'GenericList.Repeater';
+
 export const Actions = {
   LoadMore,
 };
@@ -305,6 +339,7 @@ export const Actions = {
 export const GenericList = {
   Root,
   Items,
+  Repeater,
   Actions,
   Totals,
 };
