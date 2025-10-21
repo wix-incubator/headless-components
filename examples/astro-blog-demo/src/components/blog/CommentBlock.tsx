@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Comment } from "@wix/blog/components";
 import { ClockIcon, EllipsisVerticalIcon, TrashIcon } from "lucide-react";
 import React from "react";
+import { CommentParentQuote, toScrollAnchorHtmlId } from "./CommentParentQuote";
 
 interface CommentBlockProps {
   children?: React.ReactNode;
@@ -32,7 +33,7 @@ const confirmDelete = () =>
  */
 export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
   ({ children, className, uiLocale, ...props }, ref) => {
-    const { deleteComment, comment } = Comment.useCommentContext();
+    const { comment } = Comment.useCommentContext();
 
     return (
       <article
@@ -40,155 +41,56 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
           "grid grid-cols-[auto_1fr] gap-x-3 rounded text-foreground outline-2 outline-offset-[12px]",
           className
         )}
-        id={comment._id ?? undefined}
+        id={toScrollAnchorHtmlId(comment._id)}
         ref={ref}
         {...props}
       >
-        <Comment.ParentComment asChild>
-          {({ comment: parentComment }) => (
-            <div className="col-span-full mb-3 flex items-center gap-2 font-paragraph">
-              <div className="-mb-1 ms-4 h-4 w-5 self-end rounded-tl border-s-2 border-t-2 border-foreground/20"></div>
-
-              <ScrollAnchor targetHtmlId={parentComment._id}>
-                <Comment.Status asChild>
-                  {({ status }) =>
-                    status === "DELETED" || status === "HIDDEN" ? (
-                      <span className="font-paragraph text-sm text-foreground/60">
-                        Replying to a deleted comment
-                      </span>
-                    ) : (
-                      <>
-                        <CommentAuthorAvatar size="sm" />
-                        <CommentContent
-                          asPlainText
-                          className="line-clamp-1 flex-1 font-paragraph text-sm text-foreground/60"
-                        />
-                      </>
-                    )
-                  }
-                </Comment.Status>
-              </ScrollAnchor>
-            </div>
-          )}
-        </Comment.ParentComment>
+        <CommentParentQuote className="col-span-full mb-3 ms-4" />
         <CommentAuthorAvatar />
         <div className="grid flex-1 gap-y-3">
-          <Comment.Status asChild>
-            {({ status }) => {
-              switch (status) {
-                case "HIDDEN":
-                case "DELETED":
-                  return (
-                    <div className="grid min-h-8 items-center">
-                      <span className="font-paragraph text-foreground/60">
-                        This comment has been deleted
-                      </span>
-                    </div>
-                  );
-                default:
-                  return (
-                    <>
-                      <div className="-mt-1 flex items-center gap-2">
-                        <header className="grid flex-grow font-paragraph text-sm leading-normal">
-                          <div className="flex gap-2">
-                            <CommentAuthorName />
-                          </div>
-                          <CommentDate
-                            className="text-foreground/80"
-                            uiLocale={uiLocale}
-                          />
-                        </header>
-                        <Comment.Owner>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <EllipsisVerticalIcon className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuPortal>
-                              <DropdownMenuContent>
-                                <Comment.Action.Delete onDelete={confirmDelete}>
-                                  <DropdownMenuItem>
-                                    <TrashIcon className="h-4 w-4" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </Comment.Action.Delete>
-                              </DropdownMenuContent>
-                            </DropdownMenuPortal>
-                          </DropdownMenu>
-                        </Comment.Owner>
-                      </div>
-                      {status === "PENDING" ? (
-                        <div>
-                          <Chip variant="secondary">
-                            <ClockIcon className="me-0.5 h-4 w-4" />
-                            Pending
-                          </Chip>
-                        </div>
-                      ) : null}
-                      <CommentContent />
-                    </>
-                  );
-              }
-            }}
-          </Comment.Status>
-
+          <Comment.Status className="peer hidden" />
+          <div className="hidden min-h-8 items-center peer-data-[status='DELETED']:grid peer-data-[status='HIDDEN']:grid">
+            <span className="font-paragraph text-foreground/60">
+              This comment has been deleted
+            </span>
+          </div>
+          <div className="-mt-1 flex items-center gap-2 peer-data-[status='DELETED']:hidden peer-data-[status='HIDDEN']:hidden">
+            <header className="grid flex-grow font-paragraph text-sm leading-normal">
+              <div className="flex gap-2">
+                <CommentAuthorName />
+              </div>
+              <CommentDate className="text-foreground/80" uiLocale={uiLocale} />
+            </header>
+            <Comment.Owner>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <EllipsisVerticalIcon className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuContent>
+                    <Comment.Action.Delete onDelete={confirmDelete}>
+                      <DropdownMenuItem>
+                        <TrashIcon className="h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </Comment.Action.Delete>
+                  </DropdownMenuContent>
+                </DropdownMenuPortal>
+              </DropdownMenu>
+            </Comment.Owner>
+          </div>
+          <div className="hidden peer-data-[status='PENDING']:block">
+            <Chip variant="secondary">
+              <ClockIcon className="me-0.5 h-4 w-4" />
+              Pending
+            </Chip>
+          </div>
+          <CommentContent className="hidden peer-data-[status='PUBLISHED']:block" />
           {children}
         </div>
       </article>
     );
   }
 );
-
-/**
- * Internal component that creates a clickable link to scroll to a parent comment.
- * Adds a smooth scroll animation and visual highlight effect when clicked.
- */
-function ScrollAnchor({
-  targetHtmlId,
-  children,
-}: {
-  targetHtmlId: string | null | undefined;
-  children: React.ReactNode;
-}) {
-  const scrollToComment = React.useCallback(() => {
-    if (!targetHtmlId) return;
-
-    const targetElement = document.getElementById(targetHtmlId);
-    if (targetElement) {
-      targetElement.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-
-      targetElement.getAnimations().forEach((animation) => animation.cancel());
-      targetElement
-        .animate(
-          [
-            { outline: "2px solid transparent" },
-            { outline: "2px solid currentColor" },
-            { outline: "2px solid transparent" },
-          ],
-          {
-            duration: 2000,
-            delay: 200,
-            easing: "cubic-bezier(0, 0, 0.2, 1)",
-          }
-        )
-        .play();
-    }
-  }, [targetHtmlId]);
-
-  return (
-    <a
-      className="contents cursor-pointer"
-      onClick={(e) => {
-        e.preventDefault();
-        scrollToComment();
-      }}
-      href={`#${targetHtmlId}`}
-    >
-      {children}
-    </a>
-  );
-}
