@@ -4,6 +4,7 @@ import {
   GenericListTotalsRenderProps,
   GenericListLoadMoreRenderProps,
   GenericList,
+  ListVariant,
 } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
@@ -38,6 +39,7 @@ export interface ProductListRootProps {
   products?: V3Product[];
   productsListConfig?: ProductsListServiceConfig;
   className?: string;
+  variant?: ListVariant;
 }
 
 /**
@@ -65,7 +67,8 @@ export interface ProductListRootProps {
  */
 export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   (props, ref) => {
-    const { children, products, productsListConfig, className } = props;
+    const { children, products, productsListConfig, className, variant } =
+      props;
 
     const serviceConfig = productsListConfig || {
       products: products || [],
@@ -87,6 +90,7 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
           children={children as any}
           className={className}
           ref={ref}
+          variant={variant}
         />
       </CoreProductList.Root>
     );
@@ -103,9 +107,10 @@ const RootContent = React.forwardRef<
   {
     children?: any;
     className?: string;
+    variant?: ListVariant;
   }
 >((props, ref) => {
-  const { children, className } = props;
+  const { children, className, variant } = props;
   const productsListService = useService(ProductsListServiceDefinition);
 
   const items = productsListService.products.get().map((product) => ({
@@ -123,6 +128,7 @@ const RootContent = React.forwardRef<
       ref={ref}
       data-component-tag={DataComponentTags.productListRoot}
       data-testid={TestIds.productListRoot}
+      variant={variant}
     >
       {children}
     </GenericList.Root>

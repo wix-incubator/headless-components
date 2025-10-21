@@ -257,7 +257,7 @@ export function CategoryPage({
   categoriesListConfig,
 }: StoreCollectionPageProps) {
   return (
-    <ProductList.Root productsListConfig={productsListConfig}>
+    <ProductList.Root productsListConfig={productsListConfig} variant="grid">
       <ProductGridContent categoriesListConfig={categoriesListConfig} />
       <LoadMoreSection />
     </ProductList.Root>
