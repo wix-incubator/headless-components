@@ -1,6 +1,9 @@
 import React from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 
+/** List display variants */
+export type ListVariant = 'list' | 'table' | 'grid';
+
 /** List item interface - generic item with id */
 export interface ListItem {
   id: string | number;
@@ -12,6 +15,7 @@ interface GenericListContextValue<T extends ListItem = ListItem> {
   hasMore: boolean;
   isLoading: boolean;
   loadMore?: () => void;
+  variant?: ListVariant;
 }
 
 const GenericListContext = React.createContext<GenericListContextValue | null>(
@@ -42,6 +46,8 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   hasMore?: boolean;
   /** Whether items are currently loading */
   isLoading?: boolean;
+  /** Display variant - affects layout structure (default: 'list') */
+  variant?: ListVariant;
   /** Children components - required */
   children: React.ReactNode;
   /** CSS classes */
@@ -121,6 +127,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       loadMore,
       hasMore = false,
       isLoading = false,
+      variant,
       children,
       className,
       ...otherProps
@@ -136,8 +143,9 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
         hasMore,
         isLoading,
         loadMore,
+        variant,
       }),
-      [items, hasMore, isLoading, loadMore],
+      [items, hasMore, isLoading, loadMore, variant],
     );
 
     return (
@@ -148,6 +156,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
           data-has-items={items.length > 0}
           data-is-loading={isLoading}
           data-has-more={hasMore}
+          data-variant={variant}
           customElement={children}
           {...otherProps}
         >
