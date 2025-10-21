@@ -879,7 +879,7 @@ export const CreateItemAction = React.forwardRef<
             ref={ref}
             asChild={asChild}
             className={className}
-            onClick={children ? undefined :() => createItem(itemData)}
+            onClick={children ? undefined : () => createItem(itemData)}
             disabled={disabled}
             data-testid={TestIds.cmsCollectionCreateItem}
             data-loading={isLoading}
