@@ -1,11 +1,12 @@
 import { Sort as SortPrimitive } from '@wix/headless-components/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 
+import { useService } from '@wix/services-manager-react';
 import React from 'react';
-import type {
-  BlogPostCommentsServiceConfig,
-  CommentWithResolvedFields,
-  QueryCommentsSort,
+import {
+  BlogPostCommentsServiceDefinition,
+  type BlogPostCommentsServiceConfig,
+  type QueryCommentsSort,
 } from '../services/blog-post-comments-service.js';
 import * as Comment from './Comment.js';
 import * as CoreComments from './core/Comments.js';
@@ -13,30 +14,6 @@ import { isValidChildren, useIntersectionObserver } from './helpers.js';
 import { usePostContext } from './Post.js';
 
 export * as CommentCreateForm from './CommentCreateForm.js';
-
-interface CommentsContextValue {
-  isLoading: boolean;
-  comments: CommentWithResolvedFields[];
-}
-
-const CommentsContext = React.createContext<CommentsContextValue | null>(null);
-
-CommentsContext.displayName = 'Blog.Post.Comments.CommentsContext';
-
-/**
- * Hook to access the comments context.
- * Must be used within a Blog.Post.Comments.Root component.
- *
- * @returns The comments context containing comments list and loading state.
- * @throws Error if used outside of Blog.Post.Comments.Root.
- */
-export function useCommentsContext(): CommentsContextValue {
-  const context = React.useContext(CommentsContext);
-  if (!context) {
-    throw new Error('useCommentsContext must be used within a Blog.Post.Comments.Root component');
-  }
-  return context;
-}
 
 const enum TestIds {
   blogPostCommentsRoot = 'blog-post-comments-root',
@@ -50,8 +27,25 @@ export interface BlogPostCommentsRootProps {
   asChild?: boolean;
   className?: string;
   children: AsChildChildren<{ hasComments: boolean }> | React.ReactNode;
+  currentMember?: unknown;
   commentsConfig?: BlogPostCommentsServiceConfig;
 }
+
+const CurrentMemberContext = React.createContext<unknown | undefined>(undefined);
+
+const useCurrentMemberId = (): string | undefined => {
+  const currentMember = React.useContext(CurrentMemberContext);
+
+  const currentMemberId =
+    typeof currentMember === 'object' &&
+    currentMember !== null &&
+    '_id' in currentMember &&
+    typeof currentMember._id === 'string'
+      ? currentMember._id
+      : undefined;
+
+  return currentMemberId;
+};
 
 /**
  * Root container for blog post comments that provides comments context to all child components.
@@ -78,7 +72,7 @@ export interface BlogPostCommentsRootProps {
  */
 export const Root = React.forwardRef<HTMLElement, BlogPostCommentsRootProps>(
   (props, forwardedRef) => {
-    const { asChild, children, className } = props;
+    const { asChild, children, className, currentMember } = props;
     const { ref, isVisible } = useIntersectionObserver(forwardedRef);
     const { post } = usePostContext();
 
@@ -94,28 +88,23 @@ export const Root = React.forwardRef<HTMLElement, BlogPostCommentsRootProps>(
     }
 
     return (
-      <CoreComments.Comments>
-        {({ comments, initialLoad, isLoading }) => {
-          // Trigger initial load when component becomes visible
-          React.useEffect(() => {
-            if (isVisible) {
-              initialLoad();
-            }
-          }, [isVisible, initialLoad]);
+      <CurrentMemberContext.Provider value={currentMember}>
+        <CoreComments.Comments>
+          {({ initialLoad, isLoading }) => {
+            // Trigger initial load when component becomes visible
+            React.useEffect(() => {
+              if (isVisible) {
+                initialLoad();
+              }
+            }, [isVisible, initialLoad]);
 
-          const contextValue: CommentsContextValue = {
-            comments,
-            isLoading: isLoading() === 'initial',
-          };
+            const attributes = {
+              'data-testid': TestIds.blogPostCommentsRoot,
+              'data-visible': isVisible,
+              'data-loading': isLoading() === 'initial',
+            };
 
-          const attributes = {
-            'data-testid': TestIds.blogPostCommentsRoot,
-            'data-visible': isVisible,
-            'data-loading': contextValue.isLoading,
-          };
-
-          return (
-            <CommentsContext.Provider value={contextValue}>
+            return (
               <AsChildSlot
                 ref={ref}
                 asChild={asChild}
@@ -125,10 +114,10 @@ export const Root = React.forwardRef<HTMLElement, BlogPostCommentsRootProps>(
               >
                 <div>{isValidChildren(children) ? children : null}</div>
               </AsChildSlot>
-            </CommentsContext.Provider>
-          );
-        }}
-      </CoreComments.Comments>
+            );
+          }}
+        </CoreComments.Comments>
+      </CurrentMemberContext.Provider>
     );
   },
 );
@@ -159,7 +148,9 @@ export interface CommentItemsProps {
  */
 export const CommentItems = React.forwardRef<HTMLElement, CommentItemsProps>((props, ref) => {
   const { children, emptyState, loadingState, className } = props;
-  const { comments, isLoading } = useCommentsContext();
+  const service = useService(BlogPostCommentsServiceDefinition);
+  const comments = service.getComments();
+  const isLoading = service.isLoading() === 'initial';
 
   if (isLoading && loadingState) {
     return loadingState;
@@ -322,14 +313,16 @@ export interface CommentItemRepeaterProps {
 export const CommentItemRepeater = React.forwardRef<HTMLElement, CommentItemRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
-    const { comments } = useCommentsContext();
+    const service = useService(BlogPostCommentsServiceDefinition);
+    const comments = service.getComments();
+    const currentMemberId = useCurrentMemberId();
 
     if (comments.length === 0) return null;
 
     return comments.map((comment) => {
       return (
         <CoreComments.TopLevelCommentRoot key={comment._id} comment={comment}>
-          <Comment.Root comment={comment} asChild>
+          <Comment.Root comment={comment} asChild currentMemberId={currentMemberId}>
             {children}
           </Comment.Root>
         </CoreComments.TopLevelCommentRoot>

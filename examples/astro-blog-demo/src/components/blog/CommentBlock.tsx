@@ -32,8 +32,6 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
   ({ children, className, uiLocale, ...props }, ref) => {
     const { isAuthenticated, member } = useMember();
     const { deleteComment, comment } = Comment.useCommentContext();
-    // @ts-expect-error TODO -- Make this cleaner
-    const isOwner = comment.author?.memberId === member?._id;
 
     return (
       <article
@@ -99,7 +97,7 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
                             uiLocale={uiLocale}
                           />
                         </header>
-                        {isAuthenticated && isOwner ? (
+                        <Comment.Owner>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
@@ -125,12 +123,12 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
                               </DropdownMenuContent>
                             </DropdownMenuPortal>
                           </DropdownMenu>
-                        ) : null}
+                        </Comment.Owner>
                       </div>
                       {status === "PENDING" ? (
                         <div>
                           <Chip variant="secondary">
-                            <ClockIcon className="h-4 w-4 me-0.5" />
+                            <ClockIcon className="me-0.5 h-4 w-4" />
                             Pending
                           </Chip>
                         </div>

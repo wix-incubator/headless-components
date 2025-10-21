@@ -1,9 +1,12 @@
 import type { comments } from '@wix/comments';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import type { members } from '@wix/members';
+import { useService } from '@wix/services-manager-react';
 import React from 'react';
-import type { CommentWithResolvedFields } from '../services/blog-post-comments-service.js';
-import { useCommentsContext } from './Comments.js';
+import {
+  BlogPostCommentsServiceDefinition,
+  type CommentWithResolvedFields,
+} from '../services/blog-post-comments-service.js';
 import * as CoreComments from './core/Comments.js';
 
 export * as CommentReplyForm from './CommentReplyForm.js';
@@ -18,6 +21,7 @@ interface CommentContextValue {
   comment: CommentWithResolvedFields;
   replies: CommentWithResolvedFields[];
   deleteComment: () => Promise<void>;
+  currentMemberId: string | undefined;
 }
 
 const CommentContext = React.createContext<CommentContextValue | null>(null);
@@ -60,6 +64,7 @@ type RootProps = {
     | AsChildChildren<{ comment: CommentWithResolvedFields; replies: CommentWithResolvedFields[] }>;
   asChild?: boolean;
   className?: string;
+  currentMemberId: string | undefined;
 };
 
 /**
@@ -77,7 +82,7 @@ type RootProps = {
  * ```
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => {
-  const { comment, children, className, asChild } = props;
+  const { comment, children, className, asChild, currentMemberId } = props;
 
   const attributes = {
     'data-testid': TestIds.blogPostComment,
@@ -91,7 +96,9 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => 
           comment,
           replies,
           deleteComment,
+          currentMemberId,
         };
+
         return (
           <CommentContext.Provider key={comment._id} value={contextValue}>
             <AsChildSlot
@@ -275,6 +282,30 @@ export interface StatusProps {
     | React.ReactNode;
 }
 
+export interface OwnerProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export const Owner = React.forwardRef<HTMLDivElement, OwnerProps>((props, ref) => {
+  const { children, className } = props;
+  const { currentMemberId, comment } = useCommentContext();
+
+  if (
+    !currentMemberId ||
+    !comment.author?.memberId ||
+    comment.author.memberId !== currentMemberId
+  ) {
+    return null;
+  }
+
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  );
+});
+
 /**
  * Displays or provides access to the comment status (PUBLISHED, PENDING, DELETED, etc.).
  *
@@ -392,14 +423,14 @@ export interface ReplyItemRepeaterProps {
 export const ReplyItemRepeater = React.forwardRef<HTMLElement, ReplyItemRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
-    const { comment } = useCommentContext();
+    const { comment, currentMemberId } = useCommentContext();
 
     return (
       <CoreComments.Comment commentId={comment._id || ''}>
         {({ replies }) =>
           replies.map((reply) => {
             return (
-              <Root key={reply._id} comment={reply}>
+              <Root key={reply._id} comment={reply} currentMemberId={currentMemberId}>
                 {children}
               </Root>
             );
@@ -412,7 +443,7 @@ export const ReplyItemRepeater = React.forwardRef<HTMLElement, ReplyItemRepeater
 
 ReplyItemRepeater.displayName = 'Comment.ReplyItemRepeater';
 
-export interface ParentCommentProps extends Omit<RootProps, 'comment'> {}
+export interface ParentCommentProps extends Omit<RootProps, 'comment' | 'currentMemberId'> {}
 
 /**
  * Displays the parent comment when the current comment is a reply to another reply.
@@ -439,8 +470,9 @@ export interface ParentCommentProps extends Omit<RootProps, 'comment'> {}
  */
 export const ParentComment = React.forwardRef<HTMLDivElement, ParentCommentProps>((props, ref) => {
   const { children, asChild, className } = props;
-  const { comments } = useCommentsContext();
-  const { comment } = useCommentContext();
+  const service = useService(BlogPostCommentsServiceDefinition);
+  const comments = service.getComments();
+  const { comment, currentMemberId } = useCommentContext();
 
   if (!comment.parentComment?._id) return null;
 
@@ -461,6 +493,7 @@ export const ParentComment = React.forwardRef<HTMLDivElement, ParentCommentProps
             ref={ref}
             asChild={asChild}
             className={className}
+            currentMemberId={currentMemberId}
           >
             {children}
           </Root>

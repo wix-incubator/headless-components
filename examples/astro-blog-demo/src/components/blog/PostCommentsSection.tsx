@@ -8,6 +8,7 @@ import { CommentBlock } from "./CommentBlock";
 import { CommentForm } from "./CommentForm";
 import { CommentReplies } from "./CommentReplies";
 import LoginGuard from "./LoginGuard";
+import { useMember } from "@/integrations/members";
 
 const {
   Post: { Comments },
@@ -26,9 +27,11 @@ export default function PostCommentsSection({
   blogPostServiceConfig,
   uiLocale,
 }: PostCommentsSectionProps) {
+  const { member } = useMember();
+
   return (
     <Blog.Post.Root blogPostServiceConfig={blogPostServiceConfig}>
-      <Comments.Root className="space-y-4">
+      <Comments.Root className="space-y-4" currentMember={member}>
         <section className="mt-16 grid gap-y-6">
           <div className="flex items-baseline justify-between gap-4">
             <h3 className="font-heading text-xl font-semibold text-foreground">
