@@ -12,6 +12,7 @@ import {
 } from '@wix/headless-restaurants-menus/react';
 import * as CoreItemDetails from './core/ItemDetails.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
+import { EnhancedModifierGroup, EnhancedVariant } from '@wix/headless-restaurants-menus/services';
 
 enum TestIds {
   itemName = 'item-name',
@@ -260,7 +261,7 @@ Labels.displayName = 'ItemDetails.Labels';
  * ```
  */
 export interface ItemDetailsModifierGroupsProps {
-  children?: AsChildChildren<{ modifierGroup: any }>;
+  children?: AsChildChildren<{ modifierGroup: EnhancedModifierGroup }>;
   className?: string;
   asChild?: boolean;
   modifierNameClassName?: string;
@@ -310,8 +311,8 @@ export const ModifierGroups = React.forwardRef<
  */
 export interface ItemDetailsVariantsProps {
   children?: AsChildChildren<{
-    variant: any;
-    variants: any[];
+    variant: EnhancedVariant;
+    variants: EnhancedVariant[];
     hasVariants: boolean;
     selectedVariantId?: string;
     onVariantChange?: (variantId: string) => void;
@@ -363,7 +364,7 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
                 {variants.map((variant) => (
                   <RadioGroupPrimitive.Item
                     key={variant._id}
-                    value={variant._id}
+                    value={variant._id ?? ''}
                   >
                     <div>
                       <div className={variantNameClassName}>{variant.name}</div>

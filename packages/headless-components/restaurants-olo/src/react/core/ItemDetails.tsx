@@ -11,6 +11,7 @@ import {
 } from '../../services/item-details-service.js';
 import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service.js';
 import { useItemContext } from '@wix/headless-restaurants-menus/react';
+import { EnhancedItem, EnhancedVariant } from '@wix/headless-restaurants-menus/services';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -35,7 +36,7 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
   let config = itemDetailsServiceConfig;
   if (!config) {
     config = loadItemServiceConfig({
-      item: selectedItem,
+      item: selectedItem as EnhancedItem,
       operationId: service.operation?.get()?._id ?? '',
     });
   }
@@ -55,32 +56,6 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
       {children({ item: itemDetailsServiceConfig?.item ?? selectedItem })}
     </WixServices>
   );
-};
-
-// ========================================
-// MODIFIERS REPEATER COMPONENT
-// ========================================
-
-interface ItemDetailsModifiersRepeaterProps {
-  children: (props: {
-    modifiers: []; // TODO: Use proper Modifier type
-    hasModifiers: boolean;
-  }) => React.ReactNode;
-}
-
-export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
-  children,
-}) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<
-    typeof ItemServiceDefinition
-  >;
-  const item = service.item?.get();
-
-  // TODO: Check if modifiers exist on item type - might be in a different property
-  const modifiers = (item as unknown as { modifiers: [] })?.modifiers || [];
-  const hasModifiers = modifiers.length > 0;
-
-  return children({ modifiers, hasModifiers });
 };
 
 // ========================================
@@ -177,11 +152,11 @@ export const QuantityComponent: React.FC<ItemDetailsQuantityProps> = ({
 
 interface ItemDetailsVariantsProps {
   children: (props: {
-    variants: any[];
+    variants: EnhancedVariant[];
     hasVariants: boolean;
     selectedVariantId?: string;
     onVariantChange?: (variantId: string) => void;
-    selectedVariant?: any;
+    selectedVariant?: EnhancedVariant;
   }) => React.ReactNode;
 }
 
@@ -195,12 +170,12 @@ export const VariantsComponent: React.FC<ItemDetailsVariantsProps> = ({
   const selectedVariant = service.selectedVariant?.get?.();
 
   // Get variants from item context
-  const variants = (item as any)?.priceVariants || [];
+  const variants = item?.priceVariants || [];
   const hasVariants = variants.length > 0;
   const selectedVariantId = selectedVariant?._id ?? undefined;
 
   const onVariantChange = (variantId: string) => {
-    const variant = variants.find((v: any) => v._id === variantId);
+    const variant = variants.find((v: EnhancedVariant) => v._id === variantId);
     if (variant) {
       service.updateSelectedVariant?.(variant);
     }
