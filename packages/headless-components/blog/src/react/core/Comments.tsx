@@ -76,6 +76,7 @@ export interface CreateCommentProps {
 
 export interface CreateCommentRenderProps {
   createComment: (content: comments.CommentContent) => Promise<CommentWithResolvedFields | null>;
+  clearError: () => void;
   isLoading: boolean;
   error: string | null;
 }
@@ -87,6 +88,7 @@ export const CreateComment = (props: CreateCommentProps) => {
     createComment: service.createComment,
     isLoading: service.isLoading() === 'saving',
     error: service.getError(),
+    clearError: service.clearError,
   });
 };
 
@@ -143,6 +145,7 @@ export interface CreateReplyRenderProps {
   createReply: (content: comments.CommentContent) => Promise<CommentWithResolvedFields | null>;
   isLoading: boolean;
   replyError: string | null;
+  clearError: () => void;
 }
 
 export const CreateReply = (props: CreateReplyProps) => {
@@ -160,6 +163,7 @@ export const CreateReply = (props: CreateReplyProps) => {
     createReply,
     isLoading: service.isLoading(parentCommentId) === 'saving',
     replyError: service.getError(parentCommentId),
+    clearError: () => service.clearError(parentCommentId),
   });
 };
 

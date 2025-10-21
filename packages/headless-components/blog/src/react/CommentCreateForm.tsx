@@ -22,6 +22,7 @@ interface CreateCommentFormContextValue {
   commentText: string;
   setCommentText: (text: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
+  handleCancel: () => void;
   createComment: (content: comments.CommentContent) => Promise<CommentWithResolvedFields | null>;
   isLoading: boolean;
   error: string | null;
@@ -98,7 +99,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
 
   return (
     <CoreComments.CreateComment>
-      {({ createComment, isLoading, error }) => {
+      {({ createComment, isLoading, error, clearError }) => {
         const [commentText, setCommentText] = React.useState('');
         const htmlId = `comment-text-field-${useId()}`;
 
@@ -145,10 +146,16 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
           [commentText, createComment, isLoading],
         );
 
+        const handleCancel = React.useCallback(() => {
+          setCommentText('');
+          clearError();
+        }, [setCommentText, clearError]);
+
         const contextValue: CreateCommentFormContextValue = {
           commentText,
           setCommentText,
           handleSubmit,
+          handleCancel,
           createComment,
           isLoading,
           error,
@@ -485,13 +492,10 @@ export interface CreateCommentFormCancelButtonProps {
 export const CancelButton = React.forwardRef<HTMLElement, CreateCommentFormCancelButtonProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
-    const { commentText, isLoading, setCommentText } = useCreateCommentFormContext();
+    const { commentText, isLoading, handleCancel } = useCreateCommentFormContext();
 
     const isDisabled = !commentText.trim();
 
-    const handleCancel = () => {
-      setCommentText('');
-    };
     const buttonAttributes: React.ComponentProps<'button'> = {
       type: 'reset',
       disabled: isDisabled,

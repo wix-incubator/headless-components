@@ -56,6 +56,7 @@ export const BlogPostCommentsServiceDefinition = defineService<{
   getComments: (commentId?: string) => CommentWithResolvedFields[];
   getComment: (commentId: string) => CommentWithResolvedFields | undefined;
   getError: (commentId?: string) => string | null;
+  clearError: (commentId?: string) => void;
   initialLoad: () => Promise<void>;
   sort: Signal<QueryCommentsSort[]>;
   setSort: (sort: QueryCommentsSort[]) => void;
@@ -211,6 +212,13 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
 
     const getError = (commentId?: string): string | null => {
       return threadStatesSignal.get()[commentId || ROOT_ID]?.error ?? null;
+    };
+
+    const clearError = (commentId?: string): void => {
+      threadStatesSignal.set({
+        ...threadStatesSignal.get(),
+        [commentId || ROOT_ID]: { ...threadStatesSignal.get()[commentId || ROOT_ID], error: null },
+      });
     };
 
     const getNextCursor = (commentId?: string): string | undefined => {
@@ -451,6 +459,7 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
       isLoading,
       hasNextPage,
       getError,
+      clearError,
       loadMore,
       loadMoreReplies,
 
