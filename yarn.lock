@@ -2775,6 +2775,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-radio-group@npm:^1.1.3":
+  version: 1.3.8
+  resolution: "@radix-ui/react-radio-group@npm:1.3.8"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.3"
+    "@radix-ui/react-compose-refs": "npm:1.1.2"
+    "@radix-ui/react-context": "npm:1.1.2"
+    "@radix-ui/react-direction": "npm:1.1.1"
+    "@radix-ui/react-presence": "npm:1.1.5"
+    "@radix-ui/react-primitive": "npm:2.1.3"
+    "@radix-ui/react-roving-focus": "npm:1.1.11"
+    "@radix-ui/react-use-controllable-state": "npm:1.2.2"
+    "@radix-ui/react-use-previous": "npm:1.1.1"
+    "@radix-ui/react-use-size": "npm:1.1.1"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/23af8e8b833da1fc4aa4e67c3607dedee4fc5b39278d2e2b820bec7f7b3c0891b006a8a35c57ba436ddf18735bbd8dad9a598d14632a328753a875fde447975c
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-roving-focus@npm:1.1.11":
   version: 1.1.11
   resolution: "@radix-ui/react-roving-focus@npm:1.1.11"
@@ -8116,7 +8144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus":
+"@wix/headless-restaurants-menus@workspace:^, @wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus":
   version: 0.0.0-use.local
   resolution: "@wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus"
   dependencies:
@@ -8146,6 +8174,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@wix/headless-restaurants-olo@workspace:packages/headless-components/restaurants-olo"
   dependencies:
+    "@radix-ui/react-radio-group": "npm:^1.1.3"
     "@radix-ui/react-slot": "npm:^1.1.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
@@ -8156,6 +8185,7 @@ __metadata:
     "@vitest/ui": "npm:^3.1.4"
     "@wix/auto_sdk_restaurants_items": "npm:^1.0.48"
     "@wix/headless-media": "workspace:*"
+    "@wix/headless-restaurants-menus": "workspace:^"
     "@wix/headless-utils": "workspace:^"
     "@wix/redirects": "npm:^1.0.0"
     "@wix/restaurants": "npm:^1.0.396"

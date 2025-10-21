@@ -10,6 +10,7 @@ import {
   loadItemServiceConfig,
 } from '../../services/item-details-service.js';
 import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service.js';
+import { useItemContext } from '@wix/headless-restaurants-menus/react';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -80,32 +81,6 @@ export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
   const hasModifiers = modifiers.length > 0;
 
   return children({ modifiers, hasModifiers });
-};
-
-// ========================================
-// VARIANTS REPEATER COMPONENT
-// ========================================
-
-interface ItemDetailsVariantsRepeaterProps {
-  children: (props: {
-    variants: []; // TODO: Use proper Variant type
-    hasVariants: boolean;
-  }) => React.ReactNode;
-}
-
-export const VariantsRepeater: React.FC<ItemDetailsVariantsRepeaterProps> = ({
-  children,
-}) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<
-    typeof ItemServiceDefinition
-  >;
-  const item = service.item?.get();
-
-  // TODO: Check if variants exist on item type - might be in a different property
-  const variants = (item as unknown as { variants: [] })?.variants || [];
-  const hasVariants = variants.length > 0;
-
-  return children({ variants, hasVariants });
 };
 
 // ========================================
@@ -193,5 +168,49 @@ export const QuantityComponent: React.FC<ItemDetailsQuantityProps> = ({
     canIncrement,
     canDecrement,
     onValueChange,
+  });
+};
+
+// ========================================
+// VARIANTS COMPONENT
+// ========================================
+
+interface ItemDetailsVariantsProps {
+  children: (props: {
+    variants: any[];
+    hasVariants: boolean;
+    selectedVariantId?: string;
+    onVariantChange?: (variantId: string) => void;
+    selectedVariant?: any;
+  }) => React.ReactNode;
+}
+
+export const VariantsComponent: React.FC<ItemDetailsVariantsProps> = ({
+  children,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
+  const { item } = useItemContext();
+  const selectedVariant = service.selectedVariant?.get?.();
+
+  // Get variants from item context
+  const variants = (item as any)?.priceVariants || [];
+  const hasVariants = variants.length > 0;
+  const selectedVariantId = selectedVariant?._id ?? undefined;
+
+  const onVariantChange = (variantId: string) => {
+    const variant = variants.find((v: any) => v._id === variantId);
+    if (variant) {
+      service.updateSelectedVariant?.(variant);
+    }
+  };
+
+  return children({
+    variants,
+    hasVariants,
+    selectedVariantId,
+    onVariantChange,
+    selectedVariant,
   });
 };
