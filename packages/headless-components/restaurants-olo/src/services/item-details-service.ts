@@ -5,6 +5,9 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import * as items from '@wix/auto_sdk_restaurants_items';
 import { type LineItem } from '@wix/ecom/services';
+import { itemVariants } from '@wix/restaurants';
+
+type Variant = itemVariants.Variant;
 
 /**
  * API interface for the Item Detailsservice, providing reactive item data management.
@@ -18,6 +21,7 @@ export interface ItemServiceAPI {
   quantity: Signal<number>;
   specialRequest: Signal<string>;
   lineItem: Signal<LineItem>;
+  selectedVariant: Signal<Variant | undefined>;
   /** Reactive signal indicating if a item is currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
@@ -26,6 +30,8 @@ export interface ItemServiceAPI {
   updateQuantity: (quantity: number) => void;
   /** Function to update the special request of the item */
   updateSpecialRequest: (specialRequest: string) => void;
+  /** Function to update the selected variant of the item */
+  updateSelectedVariant: (variant: Variant) => void;
 }
 
 /**
@@ -102,6 +108,10 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
     const specialRequest: Signal<string> = signalsService.signal('');
     const lineItem: Signal<LineItem> = signalsService.signal({});
 
+    const priceVariants = (config.item as any)?.priceVariants || [];
+    const initialVariant = priceVariants.length > 0 ? priceVariants[0] : undefined;
+    const selectedVariant: Signal<Variant | undefined> = signalsService.signal(initialVariant);
+
     if (config.item) {
       console.log('config.item', config.item);
       lineItem.set({
@@ -145,15 +155,21 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       });
     };
 
+    const updateSelectedVariant = (variant: Variant) => {
+      selectedVariant.set(variant);
+    };
+
     return {
       item,
       quantity,
       updateQuantity,
       updateSpecialRequest,
+      updateSelectedVariant,
       isLoading,
       error,
       specialRequest,
       lineItem,
+      selectedVariant,
     };
   },
 );
