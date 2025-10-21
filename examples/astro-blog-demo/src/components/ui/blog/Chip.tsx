@@ -4,16 +4,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import React from "react";
 
 const chipVariants = cva(
-  "inline-flex items-center rounded-full border border-foreground/20 px-3 py-1 font-paragraph text-sm font-medium text-foreground transition-colors",
+  "inline-flex items-center gap-1 rounded-full font-paragraph font-medium text-foreground transition-colors",
   {
     variants: {
       size: {
-        default: "text-sm leading-relaxed",
-        sm: "px-2 text-xs leading-tight",
+        md: "px-3 py-2 text-sm leading-none",
+        sm: "px-2 py-1 text-xs leading-none",
+      },
+      variant: {
+        primary: "border border-foreground/20",
+        secondary: "border border-transparent bg-foreground/5",
       },
     },
     defaultVariants: {
-      size: "default",
+      size: "md",
+      variant: "primary",
     },
   }
 );
@@ -41,12 +46,12 @@ export interface ChipProps
  * Chip component for displaying tags, categories, or labels with customizable styling.
  */
 export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
-  ({ className, size, asChild = false, ...props }, ref) => {
+  ({ className, size, variant, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "span";
 
     return (
       <Comp
-        className={cn(chipVariants({ size, className }))}
+        className={cn(chipVariants({ size, variant, className }))}
         ref={ref}
         {...props}
       />
