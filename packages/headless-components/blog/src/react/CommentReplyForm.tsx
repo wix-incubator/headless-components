@@ -7,12 +7,12 @@ import * as CoreComments from './core/Comments.js';
 import { isValidChildren } from './helpers.js';
 
 const enum TestIds {
-  blogPostCommentCreateReply = 'blog-post-comment-create-reply',
-  blogPostCommentsCreateReplyMessage = 'blog-post-comments-create-reply-message',
-  blogPostCommentsCreateReplyCancel = 'blog-post-comments-create-reply-cancel',
-  blogPostCommentsCreateReplySubmit = 'blog-post-comments-create-reply-submit',
-  blogPostCommentsCreateReplyLabel = 'blog-post-comments-create-reply-label',
-  blogPostCommentsCreateReplyInput = 'blog-post-comments-create-reply-input',
+  root = 'comment-create-reply',
+  messsage = 'comment-create-reply-message',
+  cancel = 'comment-create-reply-cancel',
+  submit = 'comment-create-reply-submit',
+  label = 'comment-create-reply-label',
+  input = 'comment-create-reply-input',
 }
 
 /**
@@ -31,13 +31,13 @@ interface CreateReplyFormContextValue {
 
 const CreateReplyFormContext = React.createContext<CreateReplyFormContextValue | null>(null);
 
-CreateReplyFormContext.displayName = 'Blog.Post.Comment.CommentReplyFormContext';
+CreateReplyFormContext.displayName = 'Comment.CommentReplyFormContext';
 
 function useCreateReplyFormContext(): CreateReplyFormContextValue {
   const context = React.useContext(CreateReplyFormContext);
   if (!context) {
     throw new Error(
-      'useCreateReplyFormContext must be used within a Blog.Post.Comment.CommentReplyForm.Root component',
+      'useCreateReplyFormContext must be used within a Comment.CommentReplyForm.Root component',
     );
   }
   return context;
@@ -72,17 +72,17 @@ export interface RootProps {
  * @example
  * ```tsx
  * // Composable form with sub-components
- * <Blog.Post.Comment.CommentReplyForm className="space-y-3">
- *   <Blog.Post.Comment.CommentReplyForm.Field
+ * <Comment.CommentReplyForm className="space-y-3">
+ *   <Comment.CommentReplyForm.Field
  *     className="w-full border rounded-lg p-3"
  *     placeholder="Write your reply..."
  *   />
- *   <Blog.Post.Comment.CommentReplyForm.Message className="text-red-600" />
- *   <Blog.Post.Comment.CommentReplyForm.SubmitButton className="btn-primary" />
- * </Blog.Post.Comment.CommentReplyForm>
+ *   <Comment.CommentReplyForm.Message className="text-red-600" />
+ *   <Comment.CommentReplyForm.SubmitButton className="btn-primary" />
+ * </Comment.CommentReplyForm>
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.CommentReplyForm asChild>
+ * <Comment.CommentReplyForm asChild>
  *   {({ createReply, isLoading, replyError, replyText, handleSubmit }) => (
  *     <CustomReplyForm
  *       onSubmit={handleSubmit}
@@ -91,7 +91,7 @@ export interface RootProps {
  *       value={replyText}
  *     />
  *   )}
- * </Blog.Post.Comment.CommentReplyForm>
+ * </Comment.CommentReplyForm>
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
@@ -151,7 +151,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>((props, ref) => {
         };
 
         const attributes = {
-          'data-testid': TestIds.blogPostCommentCreateReply,
+          'data-testid': TestIds.root,
           'data-loading': isLoading,
         };
 
@@ -203,19 +203,19 @@ export interface LabelProps {
  * @example
  * ```tsx
  * // Default label
- * <Blog.Post.Comment.CommentReplyForm.Label />
+ * <Comment.CommentReplyForm.Label />
  *
  * // Custom styling
- * <Blog.Post.Comment.CommentReplyForm.Label className="text-gray-700 font-medium mb-2" />
+ * <Comment.CommentReplyForm.Label className="text-gray-700 font-medium mb-2" />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.CommentReplyForm.Label asChild>
+ * <Comment.CommentReplyForm.Label asChild>
  *   {({ htmlFor, labelText }) => (
  *     <label htmlFor={htmlFor} className="custom-label">
  *       {labelText}
  *     </label>
  *   )}
- * </Blog.Post.Comment.CommentReplyForm.Label>
+ * </Comment.CommentReplyForm.Label>
  * ```
  */
 export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
@@ -223,7 +223,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   const { htmlId } = useCreateReplyFormContext();
 
   const attributes = {
-    'data-testid': TestIds.blogPostCommentsCreateReplyLabel,
+    'data-testid': TestIds.label,
   };
 
   return (
@@ -243,7 +243,7 @@ export const Label = React.forwardRef<HTMLElement, LabelProps>((props, ref) => {
   );
 });
 
-Label.displayName = 'Blog.Post.Comment.CommentReplyForm.Label';
+Label.displayName = 'Comment.CommentReplyForm.Label';
 
 export interface InputProps {
   asChild?: boolean;
@@ -269,17 +269,17 @@ export interface InputProps {
  * @example
  * ```tsx
  * // Default textarea
- * <Blog.Post.Comment.CommentReplyForm.Input placeholder="Write your reply..." />
+ * <Comment.CommentReplyForm.Input placeholder="Write your reply..." />
  *
  * // Custom styling
- * <Blog.Post.Comment.CommentReplyForm.Input
+ * <Comment.CommentReplyForm.Input
  *   className="w-full h-24 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
  *   placeholder="What's your reply?"
  *   rows={3}
  * />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.CommentReplyForm.Input asChild>
+ * <Comment.CommentReplyForm.Input asChild>
  *   {({ value, onChange, disabled, placeholder, maxLength, id }) => (
  *     <RichTextEditor
  *       id={id}
@@ -290,7 +290,7 @@ export interface InputProps {
  *       maxLength={maxLength}
  *     />
  *   )}
- * </Blog.Post.Comment.CommentReplyForm.Input>
+ * </Comment.CommentReplyForm.Input>
  * ```
  */
 export const Input = React.forwardRef<HTMLElement, InputProps>((props, ref) => {
@@ -313,7 +313,7 @@ export const Input = React.forwardRef<HTMLElement, InputProps>((props, ref) => {
     id: htmlId,
   };
   const dataAttributes = {
-    'data-testid': TestIds.blogPostCommentsCreateReplyInput,
+    'data-testid': TestIds.input,
     'data-loading': isLoading,
   };
 
@@ -332,7 +332,7 @@ export const Input = React.forwardRef<HTMLElement, InputProps>((props, ref) => {
   );
 });
 
-Input.displayName = 'Blog.Post.Comment.CommentReplyForm.Input';
+Input.displayName = 'Comment.CommentReplyForm.Input';
 
 export interface MessageProps {
   asChild?: boolean;
@@ -347,17 +347,17 @@ export interface MessageProps {
  * @example
  * ```tsx
  * // Default error display
- * <Blog.Post.Comment.CommentReplyForm.Message />
+ * <Comment.CommentReplyForm.Message />
  *
  * // Custom styling
- * <Blog.Post.Comment.CommentReplyForm.Message className="text-red-600 text-sm bg-red-50 p-2 rounded" />
+ * <Comment.CommentReplyForm.Message className="text-red-600 text-sm bg-red-50 p-2 rounded" />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.CommentReplyForm.Message asChild>
+ * <Comment.CommentReplyForm.Message asChild>
  *   {({ error, hasError }) => (
  *     hasError && <CustomErrorAlert message={error} />
  *   )}
- * </Blog.Post.Comment.CommentReplyForm.Message>
+ * </Comment.CommentReplyForm.Message>
  * ```
  */
 export const Message = React.forwardRef<HTMLElement, MessageProps>((props, ref) => {
@@ -369,7 +369,7 @@ export const Message = React.forwardRef<HTMLElement, MessageProps>((props, ref) 
   if (!hasError) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostCommentsCreateReplyMessage,
+    'data-testid': TestIds.messsage,
     'data-has-error': hasError,
   };
 
@@ -387,7 +387,7 @@ export const Message = React.forwardRef<HTMLElement, MessageProps>((props, ref) 
   );
 });
 
-Message.displayName = 'Blog.Post.Comment.CommentReplyForm.Message';
+Message.displayName = 'Comment.CommentReplyForm.Message';
 
 export interface CancelButtonProps {
   asChild?: boolean;
@@ -409,16 +409,16 @@ export interface CancelButtonProps {
  * @example
  * ```tsx
  * // Default rendering
- * <Blog.Post.Comment.CommentReplyForm.CancelButton />
+ * <Comment.CommentReplyForm.CancelButton />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.CommentReplyForm.CancelButton asChild>
+ * <Comment.CommentReplyForm.CancelButton asChild>
  *   {({ handleCancel }) => (
  *     <Button variant="ghost" onClick={handleCancel}>
  *       Cancel
  *     </Button>
  *   )}
- * </Blog.Post.Comment.CommentReplyForm.CancelButton>
+ * </Comment.CommentReplyForm.CancelButton>
  * ```
  */
 export const CancelButton = React.forwardRef<HTMLElement, CancelButtonProps>((props, ref) => {
@@ -437,7 +437,7 @@ export const CancelButton = React.forwardRef<HTMLElement, CancelButtonProps>((pr
   };
 
   const dataAttributes = {
-    'data-testid': TestIds.blogPostCommentsCreateReplyCancel,
+    'data-testid': TestIds.cancel,
     'data-disabled': isDisabled,
     'data-loading': isLoading,
   };
@@ -461,7 +461,7 @@ export const CancelButton = React.forwardRef<HTMLElement, CancelButtonProps>((pr
   );
 });
 
-CancelButton.displayName = 'Blog.Post.Comment.CommentReplyForm.CancelButton';
+CancelButton.displayName = 'Comment.CommentReplyForm.CancelButton';
 
 export interface SubmitButtonProps {
   asChild?: boolean;
@@ -484,12 +484,12 @@ export interface SubmitButtonProps {
  * @example
  * ```tsx
  * // Default rendering
- * <Blog.Post.Comment.CommentReplyForm.SubmitButton />
+ * <Comment.CommentReplyForm.SubmitButton />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.CommentReplyForm.SubmitButton asChild>
+ * <Comment.CommentReplyForm.SubmitButton asChild>
  *   <Button>Post reply</Button>
- * </Blog.Post.Comment.CommentReplyForm.SubmitButton>
+ * </Comment.CommentReplyForm.SubmitButton>
  * ```
  */
 export const SubmitButton = React.forwardRef<HTMLElement, SubmitButtonProps>((props, ref) => {
@@ -504,7 +504,7 @@ export const SubmitButton = React.forwardRef<HTMLElement, SubmitButtonProps>((pr
   };
 
   const dataAttributes = {
-    'data-testid': TestIds.blogPostCommentsCreateReplySubmit,
+    'data-testid': TestIds.submit,
     'data-disabled': isDisabled,
     'data-loading': isLoading,
   };
@@ -528,4 +528,4 @@ export const SubmitButton = React.forwardRef<HTMLElement, SubmitButtonProps>((pr
   );
 });
 
-SubmitButton.displayName = 'Blog.Post.Comment.CommentReplyForm.SubmitButton';
+SubmitButton.displayName = 'Comment.CommentReplyForm.SubmitButton';

@@ -1,4 +1,4 @@
-import { Blog } from "@wix/blog/components";
+import { Comment } from "@wix/blog/components";
 import { PlainTextRicosViewer, RicosViewer } from "./RicosViewer";
 
 interface CommentContentProps {
@@ -15,7 +15,7 @@ export function CommentContent({
   asPlainText = false,
 }: CommentContentProps) {
   return (
-    <Blog.Post.Comment.Content asChild className={className}>
+    <Comment.Content asChild className={className}>
       {({ content }) =>
         asPlainText ? (
           <PlainTextRicosViewer content={content} />
@@ -23,7 +23,7 @@ export function CommentContent({
           <RicosViewer content={content} />
         )
       }
-    </Blog.Post.Comment.Content>
+    </Comment.Content>
   );
 }
 

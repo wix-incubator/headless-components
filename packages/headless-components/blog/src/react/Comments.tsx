@@ -60,15 +60,15 @@ export interface BlogPostCommentsRootProps {
  * @component
  * @example
  * ```tsx
- * import { Blog } from '@wix/blog/components';
+ * import { Blog, Comment } from '@wix/blog/components';
  *
  * function PostPage() {
  *   return (
  *     <Blog.Post.Root blogPostServiceConfig={blogPostServiceConfig}>
  *       <Blog.Post.Comments.Root>
  *         <Blog.Post.Comments.CommentItemRepeater>
- *           <Blog.Post.Comment.Author />
- *           <Blog.Post.Comment.Content />
+ *           <Comment.Author />
+ *           <Comment.Content />
  *         </Blog.Post.Comments.CommentItemRepeater>
  *       </Blog.Post.Comments.Root>
  *     </Blog.Post.Root>
@@ -151,8 +151,8 @@ export interface CommentItemsProps {
  * ```tsx
  * <Blog.Post.Comments.CommentItems emptyState={<div>No comments yet</div>}>
  *   <Blog.Post.Comments.CommentItemRepeater>
- *     <Blog.Post.Comment.Author />
- *     <Blog.Post.Comment.Content />
+ *     <Comment.Author />
+ *     <Comment.Content />
  *   </Blog.Post.Comments.CommentItemRepeater>
  * </Blog.Post.Comments.CommentItems>
  * ```
@@ -313,9 +313,9 @@ export interface CommentItemRepeaterProps {
  * @example
  * ```tsx
  * <Blog.Post.Comments.CommentItemRepeater>
- *   <Blog.Post.Comment.Author />
- *   <Blog.Post.Comment.Content />
- *   <Blog.Post.Comment.CommentDate />
+ *   <Comment.Author />
+ *   <Comment.Content />
+ *   <Comment.CommentDate />
  * </Blog.Post.Comments.CommentItemRepeater>
  * ```
  */

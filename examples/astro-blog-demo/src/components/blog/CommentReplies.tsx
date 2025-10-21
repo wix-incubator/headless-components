@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Blog } from "@wix/blog/components";
+import { Comment } from "@wix/blog/components";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -9,10 +9,6 @@ import { useMemo, useRef, useState } from "react";
 import { CommentBlock } from "./CommentBlock";
 import { CommentForm } from "./CommentForm";
 import LoginGuard from "./LoginGuard";
-
-const {
-  Post: { Comment },
-} = Blog;
 
 interface CommentReplyActionProps {
   onCommentAdded?: () => void;

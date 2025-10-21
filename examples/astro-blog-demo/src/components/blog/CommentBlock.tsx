@@ -12,13 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useMember } from "@/integrations/members";
 import { cn } from "@/lib/utils";
-import { Blog } from "@wix/blog/components";
+import { Comment } from "@wix/blog/components";
 import { EllipsisVerticalIcon, TrashIcon } from "lucide-react";
 import React from "react";
-
-const {
-  Post: { Comment },
-} = Blog;
 
 interface CommentBlockProps {
   children?: React.ReactNode;
@@ -54,7 +50,7 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
               <div className="-mb-1 ms-4 h-4 w-5 self-end rounded-tl border-s-2 border-t-2 border-foreground/20"></div>
 
               <ScrollAnchor targetHtmlId={parentComment._id}>
-                <Blog.Post.Comment.Status asChild>
+                <Comment.Status asChild>
                   {({ status }) =>
                     status === "DELETED" || status === "HIDDEN" ? (
                       <span className="font-paragraph text-sm text-foreground/60">
@@ -70,7 +66,7 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
                       </>
                     )
                   }
-                </Blog.Post.Comment.Status>
+                </Comment.Status>
               </ScrollAnchor>
             </div>
           )}

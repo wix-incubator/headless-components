@@ -1,4 +1,4 @@
-import { Blog } from "@wix/blog/components";
+import { Comment } from "@wix/blog/components";
 import { RelativeDate } from "./RelativeDate";
 
 /**
@@ -12,11 +12,11 @@ export function CommentDate({
   uiLocale: string;
 }) {
   return (
-    <Blog.Post.Comment.CommentDate asChild className={className}>
+    <Comment.CommentDate asChild className={className}>
       {({ commentDate }) => (
         <RelativeDate date={commentDate} locale={uiLocale} />
       )}
-    </Blog.Post.Comment.CommentDate>
+    </Comment.CommentDate>
   );
 }
 

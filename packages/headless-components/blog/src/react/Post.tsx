@@ -19,7 +19,6 @@ import {
 } from '../services/blog-post-service.js';
 import { isValidChildren } from './helpers.js';
 
-export * as Comment from './Comment.js';
 export * as Comments from './Comments.js';
 
 /** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=cb293890-7b26-4bcf-8c87-64f624c59158 */

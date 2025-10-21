@@ -4,30 +4,10 @@ import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import type {
   BlogPostCommentsServiceAPI,
-  BlogPostCommentsServiceConfig,
   CommentWithResolvedFields,
   QueryCommentsSort,
 } from '../../services/blog-post-comments-service.js';
 import { BlogPostCommentsServiceDefinition } from '../../services/blog-post-comments-service.js';
-
-export interface RootProps {
-  children: React.ReactNode;
-  commentsConfig?: BlogPostCommentsServiceConfig;
-}
-
-/**
- * Core Blog.Post.Comments.Root component that provides Blog.Post.Comments.Root service context.
- * This is the service-connected component that should be wrapped by the public API.
- *
- * @component
- */
-export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => {
-  const { children } = props;
-
-  return <div ref={ref}>{children}</div>;
-});
-
-Root.displayName = 'Blog.Post.Comments.Root (core)';
 
 export interface CommentsProps {
   children: (props: CommentsRenderProps) => React.ReactNode;
@@ -151,7 +131,7 @@ export const Comment = (props: CommentProps) => {
   });
 };
 
-Comment.displayName = 'Blog.Post.Comment (core)';
+Comment.displayName = 'Comment (core)';
 
 export interface CreateReplyProps {
   topCommentId: string;
@@ -183,7 +163,7 @@ export const CreateReply = (props: CreateReplyProps) => {
   });
 };
 
-CreateReply.displayName = 'Blog.Post.Comment.CreateReply (core)';
+CreateReply.displayName = 'Comment.CreateReply (core)';
 
 const TopLevelCommentContext = React.createContext<CommentWithResolvedFields | null>(null);
 
@@ -212,4 +192,4 @@ export const TopLevelCommentRoot = (props: TopLevelCommentRootProps) => {
   );
 };
 
-TopLevelCommentRoot.displayName = 'Blog.Post.Comments.TopLevelCommentRoot (core)';
+TopLevelCommentRoot.displayName = 'Comment.TopLevelCommentRoot (core)';

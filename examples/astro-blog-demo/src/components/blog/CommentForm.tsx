@@ -10,7 +10,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useMember } from "@/integrations/members";
 import { cn } from "@/lib/utils";
-import { Blog } from "@wix/blog/components";
+import { Blog, Comment } from "@wix/blog/components";
 import { Loader2Icon, LogOutIcon } from "lucide-react";
 
 interface CommentFormProps {
@@ -36,7 +36,7 @@ export function CommentForm({
   const { isAuthenticated, member, actions } = useMember();
 
   const Form = reply
-    ? Blog.Post.Comment.CommentReplyForm
+    ? Comment.CommentReplyForm
     : Blog.Post.Comments.CommentCreateForm;
 
   const avatar = isAuthenticated ? <MemberAvatar member={member} /> : null;

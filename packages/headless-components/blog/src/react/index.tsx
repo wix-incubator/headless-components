@@ -4,6 +4,7 @@ import * as Feed from './Feed.js';
 import * as Post from './Post.js';
 import * as Tag from './Tag.js';
 
+export * as Comment from './Comment.js';
 export const Blog = {
   Categories,
   Category,

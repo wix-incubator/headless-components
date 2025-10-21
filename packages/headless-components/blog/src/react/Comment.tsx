@@ -22,35 +22,35 @@ interface CommentContextValue {
 
 const CommentContext = React.createContext<CommentContextValue | null>(null);
 
-CommentContext.displayName = 'Blog.Post.Comment.CommentContext';
+CommentContext.displayName = 'Comment.CommentContext';
 
 /**
  * Hook to access the current comment context.
- * Must be used within a Blog.Post.Comment.Root or Blog.Post.Comment.ReplyItemRepeater component.
+ * Must be used within a Comment.Root or Comment.ReplyItemRepeater component.
  *
  * @returns The comment context containing comment data, replies, and delete function
- * @throws Error if used outside of Blog.Post.Comment.Root
+ * @throws Error if used outside of Comment.Root
  */
 export function useCommentContext(): CommentContextValue {
   const context = React.useContext(CommentContext);
   if (!context) {
-    throw new Error('useCommentContext must be used within a Blog.Post.Comment.Root component');
+    throw new Error('useCommentContext must be used within a Comment.Root component');
   }
   return context;
 }
 
 const enum TestIds {
-  blogPostComment = 'blog-post-comment',
-  blogPostCommentContent = 'blog-post-comment-content',
-  blogPostCommentAuthor = 'blog-post-comment-author',
-  blogPostCommentDate = 'blog-post-comment-date',
-  blogPostCommentStatus = 'blog-post-comment-status',
+  blogPostComment = 'comment',
+  blogPostCommentContent = 'comment-content',
+  blogPostCommentAuthor = 'comment-author',
+  blogPostCommentDate = 'comment-date',
+  blogPostCommentStatus = 'comment-status',
 
   // Reply Items
-  blogPostCommentReplyItems = 'blog-post-comment-reply-items',
-  blogPostCommentReplyItem = 'blog-post-comment-reply-item',
-  blogPostCommentLoadMoreReplies = 'blog-post-comment-load-more-replies',
-  blogPostCommentCreateReply = 'blog-post-comment-create-reply',
+  blogPostCommentReplyItems = 'comment-reply-items',
+  blogPostCommentReplyItem = 'comment-reply-item',
+  blogPostCommentLoadMoreReplies = 'comment-load-more-replies',
+  blogPostCommentCreateReply = 'comment-create-reply',
 }
 
 type RootProps = {
@@ -69,11 +69,11 @@ type RootProps = {
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comment.Root comment={comment}>
- *   <Blog.Post.Comment.Author />
- *   <Blog.Post.Comment.Content />
- *   <Blog.Post.Comment.CommentDate />
- * </Blog.Post.Comment.Root>
+ * <Comment.Root comment={comment}>
+ *   <Comment.Author />
+ *   <Comment.Content />
+ *   <Comment.CommentDate />
+ * </Comment.Root>
  * ```
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => {
@@ -111,7 +111,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => 
   );
 });
 
-Root.displayName = 'Blog.Post.Comment.Root';
+Root.displayName = 'Comment.Root';
 
 /**
  * Displays the comment content with rich text support.
@@ -120,13 +120,13 @@ Root.displayName = 'Blog.Post.Comment.Root';
  * @example
  * ```tsx
  * // Custom rendering with asChild
- * <Blog.Post.Comment.Content asChild>
+ * <Comment.Content asChild>
  *   {({ content }) => (
  *     <div className="comment-content">
  *       <RicosViewer content={content} />
  *     </div>
  *   )}
- * </Blog.Post.Comment.Content>
+ * </Comment.Content>
  * ```
  */
 export const Content = React.forwardRef<HTMLElement, CommentContentProps>((props, ref) => {
@@ -151,7 +151,7 @@ export const Content = React.forwardRef<HTMLElement, CommentContentProps>((props
   );
 });
 
-Content.displayName = 'Blog.Post.Comment.Content';
+Content.displayName = 'Comment.Content';
 
 export interface AuthorProps {
   asChild?: boolean;
@@ -170,12 +170,12 @@ export interface AuthorProps {
  * @example
  * ```tsx
  * // Default rendering
- * <Blog.Post.Comment.Author />
+ * <Comment.Author />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.Author asChild>
+ * <Comment.Author asChild>
  *   {({ author }) => author?.profile?.nickname ?? 'Unknown'} />}
- * </Blog.Post.Comment.Author>
+ * </Comment.Author>
  * ```
  */
 export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) => {
@@ -202,7 +202,7 @@ export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) =>
   );
 });
 
-Author.displayName = 'Blog.Post.Comment.Author';
+Author.displayName = 'Comment.Author';
 
 export interface CommentDateProps {
   asChild?: boolean;
@@ -218,15 +218,15 @@ export interface CommentDateProps {
  * @example
  * ```tsx
  * // Default rendering
- * <Blog.Post.Comment.CommentDate />
+ * <Comment.CommentDate />
  *
  * // With custom locale
- * <Blog.Post.Comment.CommentDate locale="en-US" />
+ * <Comment.CommentDate locale="en-US" />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.CommentDate asChild>
+ * <Comment.CommentDate asChild>
  *   {({ commentDate }) => <RelativeDate date={commentDate} />}
- * </Blog.Post.Comment.CommentDate>
+ * </Comment.CommentDate>
  * ```
  */
 export const CommentDate = React.forwardRef<HTMLElement, CommentDateProps>((props, ref) => {
@@ -265,7 +265,7 @@ export const CommentDate = React.forwardRef<HTMLElement, CommentDateProps>((prop
   );
 });
 
-CommentDate.displayName = 'Blog.Post.Comment.CommentDate';
+CommentDate.displayName = 'Comment.CommentDate';
 
 export interface StatusProps {
   asChild?: boolean;
@@ -282,14 +282,14 @@ export interface StatusProps {
  * @example
  * ```tsx
  * // Default rendering
- * <Blog.Post.Comment.Status />
+ * <Comment.Status />
  *
  * // Conditional rendering with asChild
- * <Blog.Post.Comment.Status asChild>
+ * <Comment.Status asChild>
  *   {({ status, isPending }) => (
  *     status === 'PENDING' ? <span>Awaiting approval</span> : null
  *   )}
- * </Blog.Post.Comment.Status>
+ * </Comment.Status>
  * ```
  */
 export const Status = React.forwardRef<HTMLElement, StatusProps>((props, ref) => {
@@ -320,7 +320,7 @@ export const Status = React.forwardRef<HTMLElement, StatusProps>((props, ref) =>
   );
 });
 
-Status.displayName = 'Blog.Post.Comment.Status';
+Status.displayName = 'Comment.Status';
 
 export interface ReplyItemsProps {
   className?: string;
@@ -335,13 +335,13 @@ export interface ReplyItemsProps {
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comment.ReplyItems>
- *   <Blog.Post.Comment.ReplyItemRepeater>
- *     <Blog.Post.Comment.Author />
- *     <Blog.Post.Comment.Content />
- *   </Blog.Post.Comment.ReplyItemRepeater>
- *   <Blog.Post.Comment.LoadMoreReplies />
- * </Blog.Post.Comment.ReplyItems>
+ * <Comment.ReplyItems>
+ *   <Comment.ReplyItemRepeater>
+ *     <Comment.Author />
+ *     <Comment.Content />
+ *   </Comment.ReplyItemRepeater>
+ *   <Comment.LoadMoreReplies />
+ * </Comment.ReplyItems>
  * ```
  */
 export const ReplyItems = React.forwardRef<HTMLElement, ReplyItemsProps>((props, ref) => {
@@ -367,7 +367,7 @@ export const ReplyItems = React.forwardRef<HTMLElement, ReplyItemsProps>((props,
   );
 });
 
-ReplyItems.displayName = 'Blog.Post.Comment.ReplyItems';
+ReplyItems.displayName = 'Comment.ReplyItems';
 
 export interface ReplyItemRepeaterProps {
   children: React.ReactNode;
@@ -381,12 +381,12 @@ export interface ReplyItemRepeaterProps {
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comment.ReplyItems>
- *   <Blog.Post.Comment.ReplyItemRepeater>
- *     <Blog.Post.Comment.Author />
- *     <Blog.Post.Comment.Content />
- *   </Blog.Post.Comment.ReplyItemRepeater>
- * </Blog.Post.Comment.ReplyItems>
+ * <Comment.ReplyItems>
+ *   <Comment.ReplyItemRepeater>
+ *     <Comment.Author />
+ *     <Comment.Content />
+ *   </Comment.ReplyItemRepeater>
+ * </Comment.ReplyItems>
  * ```
  */
 export const ReplyItemRepeater = React.forwardRef<HTMLElement, ReplyItemRepeaterProps>(
@@ -410,7 +410,7 @@ export const ReplyItemRepeater = React.forwardRef<HTMLElement, ReplyItemRepeater
   },
 );
 
-ReplyItemRepeater.displayName = 'Blog.Post.Comment.ReplyItemRepeater';
+ReplyItemRepeater.displayName = 'Comment.ReplyItemRepeater';
 
 export interface ParentCommentProps extends Omit<RootProps, 'comment'> {}
 
@@ -422,19 +422,19 @@ export interface ParentCommentProps extends Omit<RootProps, 'comment'> {}
  * @example
  * ```tsx
  * // Default rendering
- * <Blog.Post.Comment.ParentComment>
- *   <Blog.Post.Comment.Author />
- *   <Blog.Post.Comment.Content />
- * </Blog.Post.Comment.ParentComment>
+ * <Comment.ParentComment>
+ *   <Comment.Author />
+ *   <Comment.Content />
+ * </Comment.ParentComment>
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.ParentComment asChild>
+ * <Comment.ParentComment asChild>
  *   {({ comment: parentComment }) => (
  *     <div>
  *       Replying to: <CommentPreview comment={parentComment} />
  *     </div>
  *   )}
- * </Blog.Post.Comment.ParentComment>
+ * </Comment.ParentComment>
  * ```
  */
 export const ParentComment = React.forwardRef<HTMLDivElement, ParentCommentProps>((props, ref) => {
@@ -470,7 +470,7 @@ export const ParentComment = React.forwardRef<HTMLDivElement, ParentCommentProps
   );
 });
 
-ParentComment.displayName = 'Blog.Post.Comment.ParentComment';
+ParentComment.displayName = 'Comment.ParentComment';
 
 export interface LoadMoreRepliesProps {
   asChild?: boolean;
@@ -493,16 +493,16 @@ export interface LoadMoreRepliesProps {
  * @example
  * ```tsx
  * // Default rendering
- * <Blog.Post.Comment.LoadMoreReplies />
+ * <Comment.LoadMoreReplies />
  *
  * // Custom rendering with asChild
- * <Blog.Post.Comment.LoadMoreReplies asChild>
+ * <Comment.LoadMoreReplies asChild>
  *   {({ hasNextPage, isLoading, loadNextPage }) => (
  *     <button onClick={loadNextPage} disabled={isLoading}>
  *       {isLoading ? 'Loading...' : 'Show more replies'}
  *     </button>
  *   )}
- * </Blog.Post.Comment.LoadMoreReplies>
+ * </Comment.LoadMoreReplies>
  * ```
  */
 export const LoadMoreReplies = React.forwardRef<HTMLElement, LoadMoreRepliesProps>((props, ref) => {
@@ -547,4 +547,4 @@ export const LoadMoreReplies = React.forwardRef<HTMLElement, LoadMoreRepliesProp
   );
 });
 
-LoadMoreReplies.displayName = 'Blog.Post.Comment.LoadMoreReplies';
+LoadMoreReplies.displayName = 'Comment.LoadMoreReplies';
