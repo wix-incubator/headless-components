@@ -8,6 +8,7 @@ import {
   type CommentWithResolvedFields,
 } from '../services/blog-post-comments-service.js';
 import * as CoreComments from './core/Comments.js';
+import { isValidChildren } from './helpers.js';
 
 export * as Form from './CommentForm.js';
 
@@ -44,17 +45,14 @@ export function useCommentContext(): CommentContextValue {
 }
 
 const enum TestIds {
-  blogPostComment = 'comment',
-  blogPostCommentContent = 'comment-content',
-  blogPostCommentAuthor = 'comment-author',
-  blogPostCommentDate = 'comment-date',
-  blogPostCommentStatus = 'comment-status',
-
-  // Reply Items
-  blogPostCommentReplyItems = 'comment-reply-items',
-  blogPostCommentReplyItem = 'comment-reply-item',
-  blogPostCommentLoadMoreReplies = 'comment-load-more-replies',
-  blogPostCommentCreateReply = 'comment-create-reply',
+  root = 'comment',
+  content = 'comment-content',
+  author = 'comment-author',
+  commentDate = 'comment-date',
+  status = 'comment-status',
+  replyItems = 'comment-reply-items',
+  loadMoreReplies = 'comment-load-more-replies',
+  actionDelete = 'comment-action-delete',
 }
 
 type RootProps = {
@@ -85,7 +83,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>((props, ref) => 
   const { comment, children, className, asChild, currentMemberId } = props;
 
   const attributes = {
-    'data-testid': TestIds.blogPostComment,
+    'data-testid': TestIds.root,
     'data-comment-id': comment._id,
   };
 
@@ -143,7 +141,7 @@ export const Content = React.forwardRef<HTMLElement, CommentContentProps>((props
   if (!comment?.content) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostCommentContent,
+    'data-testid': TestIds.content,
   };
 
   return (
@@ -192,7 +190,7 @@ export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) =>
   const author = comment?.resolvedFields?.author;
 
   const attributes = {
-    'data-testid': TestIds.blogPostCommentAuthor,
+    'data-testid': TestIds.author,
   };
 
   return (
@@ -254,7 +252,7 @@ export const CommentDate = React.forwardRef<HTMLElement, CommentDateProps>((prop
   const dateTimeString = typeof commentDate === 'string' ? commentDate : commentDate.toISOString();
 
   const attributes = {
-    'data-testid': TestIds.blogPostCommentDate,
+    'data-testid': TestIds.commentDate,
   };
 
   return (
@@ -274,21 +272,23 @@ export const CommentDate = React.forwardRef<HTMLElement, CommentDateProps>((prop
 
 CommentDate.displayName = 'Comment.CommentDate';
 
-export interface StatusProps {
-  asChild?: boolean;
-  className?: string;
-  children?:
-    | AsChildChildren<{ status: comments.Comment['status']; isPending: boolean }>
-    | React.ReactNode;
-}
-
 export interface OwnerProps {
-  className?: string;
   children?: React.ReactNode;
 }
 
-export const Owner = React.forwardRef<HTMLDivElement, OwnerProps>((props, ref) => {
-  const { children, className } = props;
+/**
+ * Renders if the current member is the owner of the comment.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <Comment.Owner>
+ *   <Comment.Action.Delete />
+ * </Comment.Owner>
+ * ```
+ */
+export const Owner = (props: OwnerProps) => {
+  const { children } = props;
   const { currentMemberId, comment } = useCommentContext();
 
   if (
@@ -299,12 +299,18 @@ export const Owner = React.forwardRef<HTMLDivElement, OwnerProps>((props, ref) =
     return null;
   }
 
-  return (
-    <div ref={ref} className={className}>
-      {children}
-    </div>
-  );
-});
+  return children;
+};
+
+Owner.displayName = 'Comment.Owner';
+
+export interface StatusProps {
+  asChild?: boolean;
+  className?: string;
+  children?:
+    | AsChildChildren<{ status: comments.Comment['status']; isPending: boolean }>
+    | React.ReactNode;
+}
 
 /**
  * Displays or provides access to the comment status (PUBLISHED, PENDING, DELETED, etc.).
@@ -317,7 +323,7 @@ export const Owner = React.forwardRef<HTMLDivElement, OwnerProps>((props, ref) =
  *
  * // Conditional rendering with asChild
  * <Comment.Status asChild>
- *   {({ status, isPending }) => (
+ *   {({ status }) => (
  *     status === 'PENDING' ? <span>Awaiting approval</span> : null
  *   )}
  * </Comment.Status>
@@ -330,10 +336,9 @@ export const Status = React.forwardRef<HTMLElement, StatusProps>((props, ref) =>
   if (!comment?.status) return null;
 
   const status = comment.status;
-  const isPending = status === 'PENDING';
 
   const attributes = {
-    'data-testid': TestIds.blogPostCommentStatus,
+    'data-testid': TestIds.status,
     'data-status': status,
   };
 
@@ -344,7 +349,7 @@ export const Status = React.forwardRef<HTMLElement, StatusProps>((props, ref) =>
       className={className}
       {...attributes}
       customElement={children}
-      customElementProps={{ status, isPending }}
+      customElementProps={{ status }}
     >
       <span>{status}</span>
     </AsChildSlot>
@@ -385,7 +390,7 @@ export const ReplyItems = React.forwardRef<HTMLElement, ReplyItemsProps>((props,
         if ((parentComment?.replyCount ?? 0) === 0) return null;
 
         const attributes = {
-          'data-testid': TestIds.blogPostCommentReplyItems,
+          'data-testid': TestIds.replyItems,
         };
 
         return (
@@ -551,7 +556,7 @@ export const LoadMoreReplies = React.forwardRef<HTMLElement, LoadMoreRepliesProp
         if ((parentComment?.replyCount ?? 0) === 0) return null;
 
         const attributes = {
-          'data-testid': TestIds.blogPostCommentLoadMoreReplies,
+          'data-testid': TestIds.loadMoreReplies,
           'data-loading': isLoading,
         };
 
@@ -581,3 +586,45 @@ export const LoadMoreReplies = React.forwardRef<HTMLElement, LoadMoreRepliesProp
 });
 
 LoadMoreReplies.displayName = 'Comment.LoadMoreReplies';
+
+export interface DeleteActionProps {
+  /** If callback returns false, the delete action will not be performed. */
+  onDelete?: () => boolean;
+  asChild?: boolean;
+  className?: string;
+  children?: React.ReactNode | AsChildChildren<{ deleteComment: () => Promise<void> }>;
+}
+
+const DeleteAction = React.forwardRef<HTMLButtonElement, DeleteActionProps>((props, ref) => {
+  const { asChild, children, className, onDelete } = props;
+  const { deleteComment } = useCommentContext();
+
+  const attributes = {
+    'data-testid': TestIds.actionDelete,
+  };
+
+  const handleDelete = React.useCallback(async () => {
+    if (onDelete && !onDelete()) return;
+    await deleteComment();
+  }, [deleteComment, onDelete]);
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      onClick={handleDelete}
+      customElement={children}
+      customElementProps={{ deleteComment }}
+    >
+      {isValidChildren(children) ? children : <button>Delete</button>}
+    </AsChildSlot>
+  );
+});
+
+DeleteAction.displayName = 'Comment.Action.Delete';
+
+export const Action = {
+  Delete: DeleteAction,
+};

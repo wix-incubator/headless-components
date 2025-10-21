@@ -22,6 +22,9 @@ interface CommentBlockProps {
   uiLocale: string;
 }
 
+const confirmDelete = () =>
+  confirm("Are you sure you want to delete this comment?");
+
 /**
  * Displays a single comment with author information, content, date, and actions.
  * Handles nested replies and shows parent comment context when replying to a reply.
@@ -104,20 +107,12 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
                             </DropdownMenuTrigger>
                             <DropdownMenuPortal>
                               <DropdownMenuContent>
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    if (
-                                      confirm(
-                                        "Are you sure you want to delete this comment?"
-                                      )
-                                    ) {
-                                      deleteComment();
-                                    }
-                                  }}
-                                >
-                                  <TrashIcon className="h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
+                                <Comment.Action.Delete onDelete={confirmDelete}>
+                                  <DropdownMenuItem>
+                                    <TrashIcon className="h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </Comment.Action.Delete>
                               </DropdownMenuContent>
                             </DropdownMenuPortal>
                           </DropdownMenu>
