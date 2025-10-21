@@ -887,7 +887,8 @@ export const CreateItemAction = React.forwardRef<
             customElementProps={{
               disabled,
               isLoading,
-              createItemToCollection: (itemData: Partial<WixDataItem>) => createItem(itemData),
+              createItemToCollection: (itemData: Partial<WixDataItem>) =>
+                createItem(itemData),
             }}
             content={isLoading ? loadingState : label}
             {...otherProps}
