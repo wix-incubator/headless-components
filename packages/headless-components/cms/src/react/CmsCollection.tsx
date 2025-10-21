@@ -873,21 +873,13 @@ export const CreateItemAction = React.forwardRef<
     <CoreCmsCollection.CreateItemAction>
       {({ createItem, isLoading }) => {
         const disabled = isLoading;
-        // const onClick = async () => {
-        //   try {
-        //     await createItem(itemData);
-        //   } catch (error) {
-        //     // Error handling is managed by the service
-        //     console.error('Failed to create item:', error);
-        //   }
-        // };
 
         return (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
-            onClick={() => createItem(itemData)}
+            onClick={children ? undefined :() => createItem(itemData)}
             disabled={disabled}
             data-testid={TestIds.cmsCollectionCreateItem}
             data-loading={isLoading}
@@ -895,7 +887,7 @@ export const CreateItemAction = React.forwardRef<
             customElementProps={{
               disabled,
               isLoading,
-              onClick: () => createItem(itemData),
+              createItemToCollection: () => createItem(itemData),
             }}
             content={isLoading ? loadingState : label}
             {...otherProps}
