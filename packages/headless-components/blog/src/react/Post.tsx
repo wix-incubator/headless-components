@@ -944,6 +944,19 @@ interface CommentsProps {
   children: React.ReactNode;
 }
 
+/**
+ * Renders `Comments.Root` linked to post. Doesn't render anything if post has no comment support (is under a paywall or commenting is disabled).
+ * @example
+ * ```tsx
+ * <Blog.Post.Comments currentMember={member}>
+ *   <Comments.CommentItemRepeater>
+ *     <Comment.Author />
+ *     <Comment.CommentDate />
+ *     <Comment.Content />
+ *   </Comments.CommentItemRepeater>
+ * </Blog.Post.Comments>
+ * ```
+ */
 export const Comments = React.forwardRef<HTMLElement, CommentsProps>((props, ref) => {
   const { currentMember, commentsServiceConfig, children, className } = props;
   const { post } = usePostContext();
