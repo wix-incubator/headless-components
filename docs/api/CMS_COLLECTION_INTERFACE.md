@@ -307,22 +307,6 @@ interface ItemsProps {
   </CmsCollection.ItemRepeater>
 </CmsCollection.Items>
 
-// Using render props to handle loading state (prevents animation race conditions)
-<CmsCollection.Items emptyState={<div>No items found</div>}>
-  {({ items, isLoading, error }) => {
-    if (isLoading) return <div className="skeleton h-24 animate-pulse" />;
-    if (error) return <div className="text-destructive">Error: {error}</div>;
-
-    return (
-      <motion.div whileInView="animate" viewport={{ once: true }}>
-        <CmsCollection.ItemRepeater>
-          <CmsItem.Field fieldId="title" />
-        </CmsCollection.ItemRepeater>
-      </motion.div>
-    );
-  }}
-</CmsCollection.Items>
-
 // With infinite scroll enabled
 <CmsCollection.Items
   infiniteScroll
@@ -475,14 +459,6 @@ interface CmsCollectionNextActionProps {
   <button>⬅️</button>
 </CmsCollection.PrevAction>
 
-// With loading state handling
-<CmsCollection.NextAction asChild>
-  {({ loadNext, hasNext, isLoading, error }) => (
-    <button onClick={loadNext} disabled={isLoading || !hasNext}>
-      {isLoading ? 'Loading...' : 'Next'}
-    </button>
-  )}
-</CmsCollection.NextAction>
 ```
 
 **Data Attributes**
