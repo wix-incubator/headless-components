@@ -27,65 +27,57 @@ export default function PostCommentsSection({
 
   return (
     <Blog.Post.Root blogPostServiceConfig={blogPostServiceConfig}>
-      <Blog.Post.CommentsIdProvider>
-        {({ contextId, resourceId }) => (
-          <Comments.Root
-            className="space-y-4"
-            currentMember={member}
-            commentsServiceConfig={{ contextId, resourceId }}
+      <Blog.Post.Comments currentMember={member}>
+        <section className="mt-16 grid gap-y-6">
+          <div className="flex items-baseline justify-between gap-4">
+            <h3 className="font-heading text-xl font-semibold text-foreground">
+              Comments
+            </h3>
+
+            <SortSelect sortComponent={Comments.Sort} />
+          </div>
+
+          <Separator className="-mt-1" />
+
+          <LoginGuard>
+            <CommentForm />
+          </LoginGuard>
+
+          <Comments.CommentItems
+            loadingState={
+              <p className="font-paragraph text-foreground/80">
+                Loading comments...
+              </p>
+            }
+            emptyState={
+              <p className="font-paragraph text-foreground/80">
+                No comments yet. Be the first to comment!
+              </p>
+            }
+            className="space-y-6"
           >
-            <section className="mt-16 grid gap-y-6">
-              <div className="flex items-baseline justify-between gap-4">
-                <h3 className="font-heading text-xl font-semibold text-foreground">
-                  Comments
-                </h3>
+            <Comments.CommentItemRepeater>
+              <CommentBlock uiLocale={uiLocale}>
+                <CommentReplies uiLocale={uiLocale} />
+              </CommentBlock>
+            </Comments.CommentItemRepeater>
 
-                <SortSelect sortComponent={Comments.Sort} />
-              </div>
-
-              <Separator className="-mt-1" />
-
-              <LoginGuard>
-                <CommentForm />
-              </LoginGuard>
-
-              <Comments.CommentItems
-                loadingState={
-                  <p className="font-paragraph text-foreground/80">
-                    Loading comments...
-                  </p>
-                }
-                emptyState={
-                  <p className="font-paragraph text-foreground/80">
-                    No comments yet. Be the first to comment!
-                  </p>
-                }
-                className="space-y-6"
-              >
-                <Comments.CommentItemRepeater>
-                  <CommentBlock uiLocale={uiLocale}>
-                    <CommentReplies uiLocale={uiLocale} />
-                  </CommentBlock>
-                </Comments.CommentItemRepeater>
-
-                <Comments.LoadMore
-                  asChild
-                  loadingState={
-                    <>
-                      <Loader2Icon className="animate-spin" />
-                      Loading...
-                    </>
-                  }
-                >
-                  <Button className="w-full" variant="outline">
-                    Load More
-                  </Button>
-                </Comments.LoadMore>
-              </Comments.CommentItems>
-            </section>
-          </Comments.Root>
-        )}
-      </Blog.Post.CommentsIdProvider>
+            <Comments.LoadMore
+              asChild
+              loadingState={
+                <>
+                  <Loader2Icon className="animate-spin" />
+                  Loading...
+                </>
+              }
+            >
+              <Button className="w-full" variant="outline">
+                Load More
+              </Button>
+            </Comments.LoadMore>
+          </Comments.CommentItems>
+        </section>
+      </Blog.Post.Comments>
     </Blog.Post.Root>
   );
 }

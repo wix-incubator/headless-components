@@ -1,9 +1,5 @@
 import { posts, tags } from '@wix/blog';
-import {
-  AsChildChildren,
-  AsChildSlot,
-  type AsChildRenderFunction,
-} from '@wix/headless-utils/react';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import * as BlogCategories from './Categories.js';
@@ -17,6 +13,8 @@ import {
   BlogPostServiceDefinition,
   type BlogPostServiceConfig,
 } from '../services/blog-post-service.js';
+import type { CommentsServiceConfig } from '../services/comments-service.js';
+import { Root as CommentsRoot } from './Comments.js';
 import { isValidChildren } from './helpers.js';
 
 /** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=cb293890-7b26-4bcf-8c87-64f624c59158 */
@@ -56,7 +54,6 @@ const enum TestIds {
   siblingPosts = 'blog-post-sibling-posts',
   siblingNewerPost = 'blog-post-sibling-newer-post',
   siblingOlderPost = 'blog-post-sibling-older-post',
-  comments = 'post-comments',
 }
 
 export interface BlogPostRootProps {
@@ -941,32 +938,32 @@ export const SiblingPosts = {
 };
 
 interface CommentsProps {
+  currentMember: unknown;
+  commentsServiceConfig?: Omit<CommentsServiceConfig, 'resourceId' | 'contextId'>;
   className?: string;
-  children: AsChildRenderFunction<{ contextId: string; resourceId: string }>;
+  children: React.ReactNode;
 }
 
-export const CommentsIdProvider = React.forwardRef<HTMLElement, CommentsProps>((props, ref) => {
-  const { children, className } = props;
+export const Comments = React.forwardRef<HTMLElement, CommentsProps>((props, ref) => {
+  const { currentMember, commentsServiceConfig, children, className } = props;
   const { post } = usePostContext();
 
   if (!post || post.preview || !post.commentingEnabled || !post.referenceId) return null;
 
-  const attributes = {
-    'data-testid': TestIds.comments,
-  };
-
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild
+    <CommentsRoot
       className={className}
-      {...attributes}
-      customElement={children}
-      customElementProps={{ contextId: post.referenceId, resourceId: post.referenceId }}
+      ref={ref}
+      currentMember={currentMember}
+      commentsServiceConfig={{
+        ...commentsServiceConfig,
+        contextId: post.referenceId,
+        resourceId: post.referenceId,
+      }}
     >
       {children}
-    </AsChildSlot>
+    </CommentsRoot>
   );
 });
 
-CommentsIdProvider.displayName = 'Blog.Post.CommentsIdProvider';
+Comments.displayName = 'Blog.Post.Comments';
