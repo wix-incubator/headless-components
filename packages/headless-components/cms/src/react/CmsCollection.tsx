@@ -438,6 +438,7 @@ export interface NextActionProps {
         loadNext: () => void;
         hasNext: boolean;
         isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -486,7 +487,7 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
 
     return (
       <CoreCmsCollection.NextAction>
-        {({ loadNext, hasNext, isLoading }) => {
+        {({ loadNext, hasNext, isLoading, error }) => {
           // Don't render if no next page available
           if (!hasNext) {
             return null;
@@ -506,6 +507,7 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
                 loadNext,
                 hasNext,
                 isLoading,
+                error,
               }}
               content="Next"
               {...otherProps}
@@ -531,6 +533,7 @@ export interface PrevActionProps {
         loadPrev: () => void;
         hasPrev: boolean;
         isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -579,7 +582,7 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
 
     return (
       <CoreCmsCollection.PrevAction>
-        {({ loadPrev, hasPrev, isLoading }) => {
+        {({ loadPrev, hasPrev, isLoading, error }) => {
           // Don't render if no previous page available
           if (!hasPrev) {
             return null;
@@ -599,6 +602,7 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
                 loadPrev,
                 hasPrev,
                 isLoading,
+                error,
               }}
               content="Previous"
               {...otherProps}
@@ -622,6 +626,8 @@ export interface TotalsCountProps {
   children?:
     | AsChildChildren<{
         total: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -647,9 +653,9 @@ export interface TotalsCountProps {
  * function CustomTotalCount() {
  *   return (
  *     <CmsCollection.Totals.Count asChild>
- *       {({ total }) => (
+ *       {({ total, isLoading, error }) => (
  *         <strong className="text-lg font-bold">
- *           {total} items total
+ *           {isLoading ? 'Loading...' : error ? 'Error' : `${total} items total`}
  *         </strong>
  *       )}
  *     </CmsCollection.Totals.Count>
@@ -662,7 +668,7 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
 
   return (
     <CoreCmsCollection.TotalsCount>
-      {({ total }) => {
+      {({ total, isLoading, error }) => {
         return (
           <AsChildSlot
             ref={ref}
@@ -673,6 +679,8 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
             customElement={children}
             customElementProps={{
               total,
+              isLoading,
+              error,
             }}
             content={total}
             {...otherProps}
@@ -697,6 +705,8 @@ export interface TotalsDisplayedProps {
   children?:
     | AsChildChildren<{
         displayed: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -727,10 +737,18 @@ export interface TotalsDisplayedProps {
  * function CustomDisplayedCount() {
  *   return (
  *     <CmsCollection.Totals.Displayed displayType="displayed" asChild>
- *       {({ displayed }) => (
+ *       {({ displayed, isLoading, error }) => (
  *         <div className="count-badge">
- *           <span className="count-number">{displayed}</span>
- *           <span className="count-label">items shown</span>
+ *           {isLoading ? (
+ *             <span className="count-label">Loading...</span>
+ *           ) : error ? (
+ *             <span className="count-label text-destructive">Error</span>
+ *           ) : (
+ *             <>
+ *               <span className="count-number">{displayed}</span>
+ *               <span className="count-label">items shown</span>
+ *             </>
+ *           )}
  *         </div>
  *       )}
  *     </CmsCollection.Totals.Displayed>
@@ -744,7 +762,7 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
 
     return (
       <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
-        {({ displayed }) => {
+        {({ displayed, isLoading, error }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -756,6 +774,8 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
               customElement={children}
               customElementProps={{
                 displayed,
+                isLoading,
+                error,
               }}
               content={displayed}
               {...otherProps}

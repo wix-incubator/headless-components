@@ -98,6 +98,8 @@ export interface NextActionRenderProps {
   hasNext: boolean;
   /** Whether a page is currently loading */
   isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
   /** Current page number */
   currentPage: WixDataQueryResult['currentPage'];
   /** Total number of items */
@@ -117,6 +119,7 @@ export function NextAction(props: NextActionProps) {
   >;
 
   const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
   const queryResult = service.queryResultSignal.get();
   const loadNext = service.loadNextPage;
 
@@ -124,6 +127,7 @@ export function NextAction(props: NextActionProps) {
     loadNext,
     hasNext: queryResult?.hasNext() ?? false,
     isLoading,
+    error,
     currentPage: queryResult?.currentPage,
     totalCount: queryResult?.totalCount,
     pageSize: queryResult?.pageSize,
@@ -149,6 +153,8 @@ export interface PrevActionRenderProps {
   hasPrev: boolean;
   /** Whether a page is currently loading */
   isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
   /** Current page number */
   currentPage: WixDataQueryResult['currentPage'];
   /** Total number of items */
@@ -168,6 +174,7 @@ export function PrevAction(props: PrevActionProps) {
   >;
 
   const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
   const queryResult = service.queryResultSignal.get();
   const loadPrev = service.loadPrevPage;
 
@@ -175,6 +182,7 @@ export function PrevAction(props: PrevActionProps) {
     loadPrev,
     hasPrev: queryResult?.hasPrev() ?? false,
     isLoading,
+    error,
     currentPage: queryResult?.currentPage,
     totalCount: queryResult?.totalCount,
     pageSize: queryResult?.pageSize,
@@ -196,6 +204,10 @@ export interface TotalsCountProps {
 export interface TotalsCountRenderProps {
   /** Total number of items in the collection */
   total: number;
+  /** Whether the collection is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
 }
 
 /**
@@ -207,9 +219,13 @@ export function TotalsCount(props: TotalsCountProps) {
   >;
 
   const queryResult = service.queryResultSignal.get();
+  const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
 
   return props.children({
     total: queryResult?.totalCount ?? 0,
+    isLoading,
+    error,
   });
 }
 
@@ -238,6 +254,10 @@ export interface TotalsDisplayedProps {
 export interface TotalsDisplayedRenderProps {
   /** Number based on the specified displayType */
   displayed: number;
+  /** Whether the collection is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
 }
 
 /**
@@ -250,6 +270,8 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
   >;
 
   const queryResult = service.queryResultSignal.get();
+  const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
 
   // Extract data from queryResult
   const currentPage = queryResult?.currentPage ?? 0; // 0-based index
@@ -282,6 +304,8 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
 
   return props.children({
     displayed,
+    isLoading,
+    error,
   });
 }
 

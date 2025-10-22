@@ -271,7 +271,9 @@ Main container for the collection items display with support for empty states an
 
 ```tsx
 interface ItemsProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { items: WixDataItem[]; isLoading: boolean; error: string | null }) => React.ReactNode);
   emptyState?: React.ReactNode;
   asChild?: boolean;
   className?: string;
@@ -437,7 +439,9 @@ Displays a button to load the next/prev page of items. Not rendered if infiniteS
 
 ```tsx
 interface CmsCollectionNextActionProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { loadNext: () => void; hasNext: boolean; isLoading: boolean; error: string | null }) => React.ReactNode);
   asChild?: boolean;
   className?: string;
 }
@@ -475,6 +479,8 @@ interface TotalsCountProps {
   children?:
     | AsChildChildren<{
         total: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;
@@ -517,6 +523,8 @@ interface TotalsDisplayedProps {
   children?:
     | AsChildChildren<{
         displayed: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;
