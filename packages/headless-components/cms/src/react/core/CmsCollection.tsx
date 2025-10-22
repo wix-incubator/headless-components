@@ -6,6 +6,7 @@ import {
   CmsCollectionServiceImplementation,
   type WixDataItem,
   type WixDataQueryResult,
+  type InsertItemOrReferenceParams,
 } from '../../services/cms-collection-service.js';
 import { createServicesMap } from '@wix/services-manager';
 
@@ -296,8 +297,10 @@ export interface CreateItemActionProps {
  * Render props for CmsCollection.CreateItemAction component
  */
 export interface CreateItemActionRenderProps {
-  /** Function to create a new item */
-  createItem: (itemData: Partial<WixDataItem>) => Promise<void>;
+  /** Function to create a new item or insert a reference. Returns the created item when creating, or void when inserting references. */
+  insertItemOrReference: (
+    params: InsertItemOrReferenceParams,
+  ) => Promise<WixDataItem | void>;
   /** Whether creation is currently in progress */
   isLoading: boolean;
   /** Error message if creation failed, null otherwise */
@@ -336,10 +339,10 @@ export function CreateItemAction(props: CreateItemActionProps) {
 
   const isLoading = service.loadingSignal.get();
   const error = service.errorSignal.get();
-  const createItem = service.createItem;
+  const insertItemOrReference = service.insertItemOrReference;
 
   return props.children({
-    createItem,
+    insertItemOrReference,
     isLoading,
     error,
   });
