@@ -47,7 +47,6 @@ import {
 } from './core/Form.js';
 import { forms } from '@wix/forms';
 
-
 enum TestIds {
   formRoot = 'form-root',
   form = 'form',
@@ -964,7 +963,6 @@ interface FieldContextValue {
   id: string;
   layout: Layout;
   gridStyles: {
-    container: React.CSSProperties;
     label: React.CSSProperties;
     input: React.CSSProperties;
   };
@@ -1084,7 +1082,6 @@ const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
               ref={ref}
               asChild={asChild}
               className={className}
-              // style={fieldData.gridStyles.container}
               data-testid={TestIds.fieldRoot}
               customElement={children}
               customElementProps={{}}

@@ -393,7 +393,6 @@ export interface FieldRenderProps {
   layout: Layout;
   /** Grid styles for container */
   gridStyles: {
-    container: React.CSSProperties;
     label: React.CSSProperties;
     input: React.CSSProperties;
   };
@@ -426,7 +425,7 @@ export interface FieldProps {
  *   return (
  *     <Form.Field id={id}>
  *       {({ layout, gridStyles }) => (
- *         <div style={gridStyles.container}>
+ *         <div>
  *           <div style={gridStyles.label}>Label</div>
  *           <div style={gridStyles.input}>Input</div>
  *         </div>
