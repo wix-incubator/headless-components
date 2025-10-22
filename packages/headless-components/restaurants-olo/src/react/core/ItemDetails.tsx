@@ -10,8 +10,14 @@ import {
   loadItemServiceConfig,
 } from '../../services/item-details-service.js';
 import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service.js';
-import { useItemContext } from '@wix/headless-restaurants-menus/react';
-import { EnhancedItem, EnhancedVariant } from '@wix/headless-restaurants-menus/services';
+import {
+  useItemContext,
+  useModifierGroupContext,
+} from '@wix/headless-restaurants-menus/react';
+import {
+  EnhancedItem,
+  EnhancedVariant,
+} from '@wix/headless-restaurants-menus/services';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -187,5 +193,45 @@ export const VariantsComponent: React.FC<ItemDetailsVariantsProps> = ({
     selectedVariantId,
     onVariantChange,
     selectedVariant,
+  });
+};
+
+// ========================================
+// MODIFIER COMPONENT
+// ========================================
+
+interface ItemDetailsModifiersProps {
+  children: (props: {
+    selectedModifierIds: string[];
+    onToggle: (modifierId: string) => void;
+  }) => React.ReactNode;
+  singleSelect?: boolean;
+}
+
+export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
+  children,
+  singleSelect,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
+  const { modifierGroup } = useModifierGroupContext();
+  const selectedModifiers = service.selectedModifiers?.get?.() ?? {};
+
+  // Get selected modifier IDs for this group
+  const groupId = modifierGroup._id;
+  const groupSelectedModifierIds = groupId
+    ? selectedModifiers[groupId] || []
+    : [];
+
+  const onToggle = (modifierId: string) => {
+    if (groupId) {
+      service.toggleModifier?.(groupId, modifierId, singleSelect);
+    }
+  };
+
+  return children({
+    selectedModifierIds: groupSelectedModifierIds,
+    onToggle,
   });
 };

@@ -5,7 +5,10 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { type LineItem } from '@wix/ecom/services';
 import { itemVariants } from '@wix/restaurants';
-import type { EnhancedItem, EnhancedModifier, EnhancedModifierGroup } from '@wix/headless-restaurants-menus/services';
+import type {
+  EnhancedItem,
+  EnhancedModifierGroup,
+} from '@wix/headless-restaurants-menus/services';
 
 type Variant = itemVariants.Variant;
 
@@ -22,12 +25,7 @@ export interface ItemServiceAPI {
   specialRequest: Signal<string>;
   lineItem: Signal<LineItem>;
   selectedVariant: Signal<Variant | undefined>;
-  selectedModifiers: Signal<
-    Record<
-      string,
-      Array<EnhancedModifier>
-    >
-  >;
+  selectedModifiers: Signal<Record<string, Array<string>>>;
   /** Reactive signal indicating if a item is currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
@@ -39,7 +37,11 @@ export interface ItemServiceAPI {
   /** Function to update the selected variant of the item */
   updateSelectedVariant: (variant: Variant) => void;
   /** Function to toggle a modifier instance in a specific group */
-  toggleModifier: (modifierGroupId: string, modifier: EnhancedModifier) => void;
+  toggleModifier: (
+    modifierGroupId: string,
+    modifierId: string,
+    singleSelect?: boolean,
+  ) => void;
 }
 
 /**
@@ -123,21 +125,14 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       signalsService.signal(initialVariant);
 
     const modifierGroups = config.item?.modifierGroups || [];
-    const initialSelectedModifiers: Record<
-      string,
-      Array<EnhancedModifier>
-    > = {};
+    const initialSelectedModifiers: Record<string, Array<string>> = {};
     modifierGroups.forEach((group: EnhancedModifierGroup) => {
       if (group._id) {
         initialSelectedModifiers[group._id] = [];
       }
     });
-    const selectedModifiers: Signal<
-      Record<
-        string,
-        Array<EnhancedModifier>
-      >
-    > = signalsService.signal(initialSelectedModifiers);
+    const selectedModifiers: Signal<Record<string, Array<string>>> =
+      signalsService.signal(initialSelectedModifiers);
 
     if (config.item) {
       console.log('config.item', config.item);
@@ -186,27 +181,41 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       selectedVariant.set(variant);
     };
 
-    const toggleModifier = (modifierGroupId: string, modifier: EnhancedModifier) => {
+    const toggleModifier = (
+      modifierGroupId: string,
+      modifierId: string,
+      singleSelect: boolean = false,
+    ) => {
       const currentSelectedModifiers = selectedModifiers.get();
-      const groupModifiers = currentSelectedModifiers[modifierGroupId] || [];
+      const groupModifierIds = currentSelectedModifiers[modifierGroupId] || [];
 
       // Check if this modifier is already selected
-      const existingModifier = groupModifiers.find((m) => m._id === modifier._id);
+      const isModifierSelected = groupModifierIds.includes(modifierId);
 
-      if (existingModifier) {
-        // Remove the modifier if it exists
-        const updatedModifiers = groupModifiers.filter(
-          (m) => m._id !== modifier._id,
-        );
+      if (singleSelect) {
+        // Single select behavior: select the modifier, replacing any existing selection
         selectedModifiers.set({
           ...currentSelectedModifiers,
-          [modifierGroupId]: updatedModifiers,
+          [modifierGroupId]: [modifierId],
         });
       } else {
-        selectedModifiers.set({
-          ...currentSelectedModifiers,
-          [modifierGroupId]: [...groupModifiers, modifier],
-        });
+        // Multi-select behavior: toggle the modifier
+        if (isModifierSelected) {
+          // Remove the modifier if it exists
+          const updatedModifierIds = groupModifierIds.filter(
+            (id) => id !== modifierId,
+          );
+          selectedModifiers.set({
+            ...currentSelectedModifiers,
+            [modifierGroupId]: updatedModifierIds,
+          });
+        } else {
+          // Add the modifier to the existing selection
+          selectedModifiers.set({
+            ...currentSelectedModifiers,
+            [modifierGroupId]: [...groupModifierIds, modifierId],
+          });
+        }
       }
     };
 
