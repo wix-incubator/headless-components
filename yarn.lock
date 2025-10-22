@@ -9415,6 +9415,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"astro-restaurants-table-reservations-demo@workspace:examples/astro-restaurants-table-reservations-demo":
+  version: 0.0.0-use.local
+  resolution: "astro-restaurants-table-reservations-demo@workspace:examples/astro-restaurants-table-reservations-demo"
+  dependencies:
+    "@astrojs/check": "npm:^0.9.4"
+    "@astrojs/cloudflare": "npm:^12.5.4"
+    "@astrojs/react": "npm:^4.3.0"
+    "@astrojs/sitemap": "npm:^3.5.1"
+    "@radix-ui/react-tabs": "npm:^1.1.13"
+    "@tailwindcss/vite": "npm:^4.0.13"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wix/astro": "npm:^1.0.30"
+    "@wix/cli": "npm:^1.1.114"
+    "@wix/headless-components": "workspace:*"
+    "@wix/headless-seo": "workspace:*"
+    "@wix/headless-utils": "workspace:*"
+    "@wix/services-manager": "npm:^0.2.21"
+    "@wix/services-manager-react": "npm:^0.1.27"
+    "@wix/wix-vibe-plugins": "npm:^0.0.1"
+    astro: "npm:^5.13.6"
+    clsx: "npm:^2.1.1"
+    prettier: "npm:^3.6.2"
+    prettier-plugin-astro: "npm:^0.14.1"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    react-router-dom: "npm:^7.6.3"
+    sass-embedded: "npm:^1.89.0"
+    tailwindcss: "npm:^4.1.7"
+    typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
 "astro@npm:^5.13.4, astro@npm:^5.13.6, astro@npm:^5.8.0, astro@npm:^5.9.0":
   version: 5.13.11
   resolution: "astro@npm:5.13.11"
