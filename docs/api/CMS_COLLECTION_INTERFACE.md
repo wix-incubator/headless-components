@@ -271,7 +271,9 @@ Main container for the collection items display with support for empty states an
 
 ```tsx
 interface ItemsProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { items: WixDataItem[]; isLoading: boolean; error: string | null }) => React.ReactNode);
   emptyState?: React.ReactNode;
   asChild?: boolean;
   className?: string;
@@ -303,6 +305,22 @@ interface ItemsProps {
       )}
     </CmsItem.Field>
   </CmsCollection.ItemRepeater>
+</CmsCollection.Items>
+
+// Using render props to handle loading state (prevents animation race conditions)
+<CmsCollection.Items emptyState={<div>No items found</div>}>
+  {({ items, isLoading, error }) => {
+    if (isLoading) return <div className="skeleton h-24 animate-pulse" />;
+    if (error) return <div className="text-destructive">Error: {error}</div>;
+
+    return (
+      <motion.div whileInView="animate" viewport={{ once: true }}>
+        <CmsCollection.ItemRepeater>
+          <CmsItem.Field fieldId="title" />
+        </CmsCollection.ItemRepeater>
+      </motion.div>
+    );
+  }}
 </CmsCollection.Items>
 
 // With infinite scroll enabled
@@ -437,7 +455,9 @@ Displays a button to load the next/prev page of items. Not rendered if infiniteS
 
 ```tsx
 interface CmsCollectionNextActionProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { loadNext: () => void; hasNext: boolean; isLoading: boolean; error: string | null }) => React.ReactNode);
   asChild?: boolean;
   className?: string;
 }
@@ -455,6 +475,14 @@ interface CmsCollectionNextActionProps {
   <button>⬅️</button>
 </CmsCollection.PrevAction>
 
+// With loading state handling
+<CmsCollection.NextAction asChild>
+  {({ loadNext, hasNext, isLoading, error }) => (
+    <button onClick={loadNext} disabled={isLoading || !hasNext}>
+      {isLoading ? 'Loading...' : 'Next'}
+    </button>
+  )}
+</CmsCollection.NextAction>
 ```
 
 **Data Attributes**
@@ -475,6 +503,8 @@ interface TotalsCountProps {
   children?:
     | AsChildChildren<{
         total: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;
@@ -517,6 +547,8 @@ interface TotalsDisplayedProps {
   children?:
     | AsChildChildren<{
         displayed: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;

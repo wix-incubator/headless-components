@@ -125,6 +125,10 @@ export interface FieldProps<T = any> {
 export interface FieldRenderProps<T = any> {
   /** The raw field value */
   fieldValue: T;
+  /** Whether the item is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
   /** Data attribute for testing */
   'data-testid'?: string;
   /** Data attribute for field identification */
@@ -139,9 +143,9 @@ export interface FieldRenderProps<T = any> {
  * ```tsx
  * // Simple text field
  * <CmsItem.Field<string> fieldId="title" asChild>
- *   {({ fieldValue, ...props }, ref) => (
+ *   {({ fieldValue, isLoading, error, ...props }, ref) => (
  *     <h1 ref={ref} {...props} className="text-4xl font-bold">
- *       {fieldValue.toUpperCase()}
+ *       {isLoading ? 'Loading...' : error ? 'Error' : fieldValue.toUpperCase()}
  *     </h1>
  *   )}
  * </CmsItem.Field>
@@ -152,7 +156,7 @@ export interface FieldRenderProps<T = any> {
  *   alt: string;
  * }
  * <CmsItem.Field<ImageField> fieldId="heroImage" asChild>
- *   {({ fieldValue, ...props }, ref) => (
+ *   {({ fieldValue, isLoading, error, ...props }, ref) => (
  *     <img
  *       ref={ref}
  *       {...props}
@@ -165,12 +169,20 @@ export interface FieldRenderProps<T = any> {
  *
  * // Complex field with custom logic, Without generic (defaults to any)
  * <CmsItem.Field fieldId="rating" asChild>
- *   {({ fieldValue, ...props }, ref) => (
+ *   {({ fieldValue, isLoading, error, ...props }, ref) => (
  *     <div ref={ref} {...props} className="flex items-center gap-1">
- *       <StarRating value={fieldValue?.rating} />
- *       <span className="text-sm text-content-secondary">
- *         ({fieldValue?.rating}/5)
- *       </span>
+ *       {isLoading ? (
+ *         <span>Loading rating...</span>
+ *       ) : error ? (
+ *         <span className="text-destructive">Failed to load</span>
+ *       ) : (
+ *         <>
+ *           <StarRating value={fieldValue?.rating} />
+ *           <span className="text-sm text-content-secondary">
+ *             ({fieldValue?.rating}/5)
+ *           </span>
+ *         </>
+ *       )}
  *     </div>
  *   )}
  * </CmsItem.Field>
@@ -182,7 +194,7 @@ const FieldComponent = React.forwardRef<HTMLElement, FieldProps<any>>(
 
     return (
       <CoreCmsItem.Field fieldId={fieldId}>
-        {({ fieldValue }) => {
+        {({ fieldValue, isLoading, error }) => {
           const dataAttributes = {
             'data-testid': fieldId,
             'data-collection-item-field': fieldId,
@@ -202,6 +214,8 @@ const FieldComponent = React.forwardRef<HTMLElement, FieldProps<any>>(
               customElement={children}
               customElementProps={{
                 fieldValue,
+                isLoading,
+                error,
                 ...dataAttributes,
               }}
               {...otherProps}
