@@ -10,6 +10,7 @@ import {
   useMenuContext,
   useSectionContext,
   useItemContext,
+  useVariantContext,
 } from './core/index.js';
 
 export const Menus = MenusModule;
@@ -21,4 +22,4 @@ export const Label = LabelModule;
 export const ModifierGroup = ModifierGroupModule;
 export const Modifier = ModifierModule;
 
-export { useMenuContext, useSectionContext, useItemContext };
+export { useMenuContext, useSectionContext, useItemContext, useVariantContext };

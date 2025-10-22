@@ -3,13 +3,13 @@ import { Commerce } from '@wix/ecom/components';
 import { type LineItem } from '@wix/ecom/services';
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { Quantity as QuantityComponent } from '@wix/headless-components/react';
+import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 import {
   Item,
   Label,
   Modifier,
   ModifierGroup,
-  Variant,
-} from '@wix/restaurants/components';
+} from '@wix/headless-restaurants-menus/react';
 import * as CoreItemDetails from './core/ItemDetails.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
 
@@ -297,8 +297,8 @@ export const ModifierGroups = React.forwardRef<
   },
 );
 /**
- * Wrapper component for Item.VariantsRepeater.
- * Renders the variants for the item using the headless component.
+ * Wrapper component for CoreItemDetails.VariantsComponent.
+ * Renders the variants for the item using Radix UI RadioGroup.
  *
  * @component
  * @example
@@ -309,34 +309,77 @@ export const ModifierGroups = React.forwardRef<
  * ```
  */
 export interface ItemDetailsVariantsProps {
-  children?: AsChildChildren<{ variant: any }>;
+  children?: AsChildChildren<{
+    variant: any;
+    variants: any[];
+    hasVariants: boolean;
+    selectedVariantId?: string;
+    onVariantChange?: (variantId: string) => void;
+  }>;
   className?: string;
   asChild?: boolean;
   variantNameClassName?: string;
   variantPriceClassName?: string;
+  emptyState?: React.ReactNode;
 }
 
 export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
-  ({
-    children,
-    className,
-    asChild,
-    variantNameClassName,
-    variantPriceClassName,
-    ...rest
-  }) => {
+  (
+    {
+      children,
+      className,
+      asChild,
+      variantNameClassName,
+      variantPriceClassName,
+      emptyState,
+    },
+    ref,
+  ) => {
     return (
-      <Item.VariantsRepeater {...rest}>
-        <AsChildSlot
-          asChild={asChild}
-          testId={TestIds.itemVariants}
-          className={className}
-          customElement={children}
-        >
-          <Variant.Name className={variantNameClassName} />
-          <Variant.Price className={variantPriceClassName} />
-        </AsChildSlot>
-      </Item.VariantsRepeater>
+      <CoreItemDetails.VariantsComponent>
+        {({ variants, hasVariants, selectedVariantId, onVariantChange }) => {
+          if (!hasVariants) {
+            return emptyState || null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              testId={TestIds.itemVariants}
+              className={className}
+              customElement={children}
+              customElementProps={{
+                variants,
+                hasVariants,
+                selectedVariantId,
+                onVariantChange,
+              }}
+            >
+              <RadioGroupPrimitive.Root
+                value={selectedVariantId}
+                onValueChange={onVariantChange}
+              >
+                {variants.map((variant) => (
+                  <RadioGroupPrimitive.Item
+                    key={variant._id}
+                    value={variant._id}
+                  >
+                    <div>
+                      <div className={variantNameClassName}>{variant.name}</div>
+                      <div className={variantPriceClassName}>
+                        {variant.priceInfo?.formattedPrice ||
+                          variant.priceInfo?.price ||
+                          ''}
+                      </div>
+                    </div>
+                  </RadioGroupPrimitive.Item>
+                ))}
+              </RadioGroupPrimitive.Root>
+            </AsChildSlot>
+          );
+        }}
+      </CoreItemDetails.VariantsComponent>
     );
   },
 );

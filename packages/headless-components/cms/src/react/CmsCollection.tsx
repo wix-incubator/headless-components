@@ -5,6 +5,7 @@ import {
   type CmsCollectionServiceConfig,
   type WixDataItem,
   type CmsQueryOptions,
+  type InsertItemOrReferenceParams,
 } from '../services/cms-collection-service.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import type { DisplayType } from './core/CmsCollection.js';
@@ -437,6 +438,7 @@ export interface NextActionProps {
         loadNext: () => void;
         hasNext: boolean;
         isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -485,7 +487,7 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
 
     return (
       <CoreCmsCollection.NextAction>
-        {({ loadNext, hasNext, isLoading }) => {
+        {({ loadNext, hasNext, isLoading, error }) => {
           // Don't render if no next page available
           if (!hasNext) {
             return null;
@@ -505,6 +507,7 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
                 loadNext,
                 hasNext,
                 isLoading,
+                error,
               }}
               content="Next"
               {...otherProps}
@@ -530,6 +533,7 @@ export interface PrevActionProps {
         loadPrev: () => void;
         hasPrev: boolean;
         isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -578,7 +582,7 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
 
     return (
       <CoreCmsCollection.PrevAction>
-        {({ loadPrev, hasPrev, isLoading }) => {
+        {({ loadPrev, hasPrev, isLoading, error }) => {
           // Don't render if no previous page available
           if (!hasPrev) {
             return null;
@@ -598,6 +602,7 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
                 loadPrev,
                 hasPrev,
                 isLoading,
+                error,
               }}
               content="Previous"
               {...otherProps}
@@ -621,6 +626,8 @@ export interface TotalsCountProps {
   children?:
     | AsChildChildren<{
         total: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -646,9 +653,9 @@ export interface TotalsCountProps {
  * function CustomTotalCount() {
  *   return (
  *     <CmsCollection.Totals.Count asChild>
- *       {({ total }) => (
+ *       {({ total, isLoading, error }) => (
  *         <strong className="text-lg font-bold">
- *           {total} items total
+ *           {isLoading ? 'Loading...' : error ? 'Error' : `${total} items total`}
  *         </strong>
  *       )}
  *     </CmsCollection.Totals.Count>
@@ -661,7 +668,7 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
 
   return (
     <CoreCmsCollection.TotalsCount>
-      {({ total }) => {
+      {({ total, isLoading, error }) => {
         return (
           <AsChildSlot
             ref={ref}
@@ -672,6 +679,8 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
             customElement={children}
             customElementProps={{
               total,
+              isLoading,
+              error,
             }}
             content={total}
             {...otherProps}
@@ -696,6 +705,8 @@ export interface TotalsDisplayedProps {
   children?:
     | AsChildChildren<{
         displayed: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -726,10 +737,18 @@ export interface TotalsDisplayedProps {
  * function CustomDisplayedCount() {
  *   return (
  *     <CmsCollection.Totals.Displayed displayType="displayed" asChild>
- *       {({ displayed }) => (
+ *       {({ displayed, isLoading, error }) => (
  *         <div className="count-badge">
- *           <span className="count-number">{displayed}</span>
- *           <span className="count-label">items shown</span>
+ *           {isLoading ? (
+ *             <span className="count-label">Loading...</span>
+ *           ) : error ? (
+ *             <span className="count-label text-destructive">Error</span>
+ *           ) : (
+ *             <>
+ *               <span className="count-number">{displayed}</span>
+ *               <span className="count-label">items shown</span>
+ *             </>
+ *           )}
  *         </div>
  *       )}
  *     </CmsCollection.Totals.Displayed>
@@ -743,7 +762,7 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
 
     return (
       <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
-        {({ displayed }) => {
+        {({ displayed, isLoading, error }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -755,6 +774,8 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
               customElement={children}
               customElementProps={{
                 displayed,
+                isLoading,
+                error,
               }}
               content={displayed}
               {...otherProps}
@@ -798,58 +819,94 @@ export interface CreateItemActionProps {
   loadingState?: string | React.ReactNode;
   /** Data to use when creating the item. If not provided, creates an empty item. */
   itemData?: Partial<WixDataItem>;
+  /** Reference property name (for insertReference) */
+  referenceFieldId?: string;
+  /** Item ID (for insertReference) */
+  itemId?: string;
+  /** Referenced item ID(s) - can be a single ID or array of IDs (for insertReference) */
+  referencedItemIds?: string | string[];
 }
 
 /**
- * Displays a button to create a new item in the collection. Integrates with the collection service to handle item creation with loading states.
+ * Button component for creating new items in a CMS collection or inserting references between items.
+ * Handles loading states, errors, and supports both simple prop-based and advanced asChild patterns.
  *
  * @component
  * @example
  * ```tsx
  * import { CmsCollection } from '@wix/cms/components';
  *
- * // Default usage
+ * // MODE 1: Create new item - Simple usage with direct props
  * function CreateButton() {
  *   return (
  *     <CmsCollection.CreateItemAction
- *       label="Add Item"
- *       className="btn-primary"
+ *       label="Add Article"
  *       loadingState="Creating..."
- *       itemData={{ title: "New Item", status: "draft" }}
+ *       itemData={{ title: "New Article", status: "draft" }}
  *     />
  *   );
  * }
  *
- * // Custom implementation using asChild pattern
+ * // MODE 1: Create new item - Custom design with asChild
  * function CustomCreateButton() {
  *   return (
- *     <CmsCollection.CreateItemAction
- *       asChild
- *       itemData={{ title: "New Article", status: "draft" }}
- *     >
- *       {({ disabled, isLoading, onClick }) => (
+ *     <CmsCollection.CreateItemAction asChild>
+ *       {({ insertItemOrReference, disabled, isLoading }) => (
  *         <button
  *           disabled={disabled}
- *           onClick={onClick}
- *           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+ *           onClick={() => insertItemOrReference({ itemData: { title: "New Article", status: "draft" } })}
+ *           className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
  *         >
- *           <PlusIcon className="w-4 h-4" />
- *           {isLoading ? 'Creating...' : 'Add New Article'}
+ *           {isLoading ? 'Creating...' : 'Add Article'}
  *         </button>
  *       )}
  *     </CmsCollection.CreateItemAction>
  *   );
  * }
  *
- * // Simple content override
- * function SimpleCreateButton() {
+ * // MODE 2: Insert reference - Link existing items (single or multiple)
+ * function LinkActorButton() {
  *   return (
  *     <CmsCollection.CreateItemAction
- *       label="New Post"
- *       loadingState="Publishing..."
- *       itemData={{ category: "blog", status: "published" }}
- *     >
- *       📝 Create Post
+ *       label="Add Actor to Movie"
+ *       referenceFieldId="actors"
+ *       itemId="movie-123"
+ *       referencedItemIds="actor-456"  // Single ID
+ *       // Or multiple: referencedItemIds={["actor-456", "actor-789"]}
+ *     />
+ *   );
+ * }
+ *
+ * // ADVANCED: Chaining - Create item then add references
+ * function CreatePostWithTags() {
+ *   return (
+ *     <CmsCollection.CreateItemAction asChild>
+ *       {({ insertItemOrReference, disabled, isLoading }) => {
+ *         const [title, setTitle] = useState('');
+ *         const [tags, setTags] = useState(['tag-1', 'tag-2']);
+ *
+ *         const handleSubmit = async () => {
+ *           // Step 1: Create the post
+ *           const newPost = await insertItemOrReference({
+ *             itemData: { title, status: 'published' }
+ *           });
+ *
+ *           // Step 2: Add tags using the returned ID (can pass array of IDs)
+ *           if (newPost?._id) {
+ *             await insertItemOrReference({
+ *               referenceFieldId: 'tags',
+ *               itemId: newPost._id,
+ *               referencedItemIds: tags  // Pass array of tag IDs
+ *             });
+ *           }
+ *         };
+ *
+ *         return (
+ *           <button onClick={handleSubmit} disabled={disabled}>
+ *             {isLoading ? 'Creating...' : 'Create Post with Tags'}
+ *           </button>
+ *         );
+ *       }}
  *     </CmsCollection.CreateItemAction>
  *   );
  * }
@@ -866,28 +923,39 @@ export const CreateItemAction = React.forwardRef<
     label = 'Create Item',
     loadingState = 'Creating...',
     itemData = {},
+    referenceFieldId,
+    itemId,
+    referencedItemIds,
     ...otherProps
   } = props;
 
   return (
     <CoreCmsCollection.CreateItemAction>
-      {({ createItem, isLoading }) => {
+      {({ insertItemOrReference, isLoading }) => {
         const disabled = isLoading;
-        // const onClick = async () => {
-        //   try {
-        //     await createItem(itemData);
-        //   } catch (error) {
-        //     // Error handling is managed by the service
-        //     console.error('Failed to create item:', error);
-        //   }
-        // };
+
+        // Build params based on provided props
+        const getCreateParams = () => {
+          if (referenceFieldId && itemId && referencedItemIds) {
+            return {
+              referenceFieldId,
+              itemId,
+              referencedItemIds,
+            };
+          }
+          return { itemData };
+        };
 
         return (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
-            onClick={() => createItem(itemData)}
+            onClick={
+              children
+                ? undefined
+                : () => insertItemOrReference(getCreateParams())
+            }
             disabled={disabled}
             data-testid={TestIds.cmsCollectionCreateItem}
             data-loading={isLoading}
@@ -895,7 +963,8 @@ export const CreateItemAction = React.forwardRef<
             customElementProps={{
               disabled,
               isLoading,
-              onClick: () => createItem(itemData),
+              insertItemOrReference: (params: InsertItemOrReferenceParams) =>
+                insertItemOrReference(params),
             }}
             content={isLoading ? loadingState : label}
             {...otherProps}

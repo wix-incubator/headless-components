@@ -18,6 +18,67 @@ A comprehensive CMS collection item component system built with composable primi
 
 The CmsItem component system follows a compound component pattern where individual field components and actions can be composed together to create flexible CMS item displays. Each field type (TextField, ImageField, DateField, CustomField) provides specialized handling for different data types, while action components handle CRUD operations and e-commerce integration.
 
+## Working with Reference Fields
+
+CMS items support reference fields that link to items in other collections. When fetching an individual item, you can include the full referenced item data instead of just the reference IDs.
+
+### Reference Field Types
+
+- **Single Reference Fields**: Fields that reference one item from another collection (e.g., `author`, `category`)
+- **Multi Reference Fields**: Fields that reference multiple items from other collections (e.g., `tags`, `relatedItems`)
+
+### Including References When Fetching Items
+
+Use the `singleRefFieldIds` and `multiRefFieldIds` properties in `CmsItem.Root` to specify which reference fields should be included:
+
+```tsx
+<CmsItem.Root
+  item={{
+    collectionId: 'BlogPosts',
+    id: 'post-123',
+    singleRefFieldIds: ['author', 'category'],
+    multiRefFieldIds: ['tags', 'relatedPosts'],
+  }}
+>
+  {/* Access main item fields */}
+  <CmsItem.Field fieldId="title" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <h1 ref={ref} {...props}>
+        {fieldValue}
+      </h1>
+    )}
+  </CmsItem.Field>
+
+  {/* Access single reference field - returns full item */}
+  <CmsItem.Field fieldId="author" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <div ref={ref} {...props}>
+        <span>{fieldValue?.name}</span>
+        <span>{fieldValue?.email}</span>
+      </div>
+    )}
+  </CmsItem.Field>
+
+  {/* Access multi reference field - returns array of items */}
+  <CmsItem.Field fieldId="tags" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <div ref={ref} {...props}>
+        {fieldValue?.map((tag) => (
+          <span key={tag._id}>{tag.name}</span>
+        ))}
+      </div>
+    )}
+  </CmsItem.Field>
+</CmsItem.Root>
+```
+
+**Important Notes:**
+
+- Without including references, reference fields will only contain the referenced item IDs
+- Including references requires using `query()` instead of `get()` in the underlying implementation
+- Only include the reference fields you actually need to display
+- Invalid field IDs are silently ignored by the Wix Data API
+
 ## Components
 
 ### CmsItem.Root
@@ -33,6 +94,10 @@ interface RootProps {
     collectionId: string;
     id: string;
     item?: any;
+    /** List of field IDs for single reference fields to include */
+    singleRefFieldIds?: string[];
+    /** List of field IDs for multi reference fields to include */
+    multiRefFieldIds?: string[];
   };
 }
 ```
@@ -40,6 +105,7 @@ interface RootProps {
 **Example**
 
 ```tsx
+// Basic usage
 <CmsItem.Root item={{ collectionId: 'MyCollection', id: 'item-123' }}>
   {/* All item field components */}
 </CmsItem.Root>
@@ -51,6 +117,40 @@ interface RootProps {
   item: itemData
 }}>
   {/* All item field components */}
+</CmsItem.Root>
+
+// With reference fields included
+<CmsItem.Root
+  item={{
+    collectionId: 'BlogPosts',
+    id: 'post-123',
+    singleRefFieldIds: ['author', 'category'],
+    multiRefFieldIds: ['tags', 'relatedPosts']
+  }}
+>
+  <CmsItem.Field fieldId="title" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <h1 ref={ref} {...props}>{fieldValue}</h1>
+    )}
+  </CmsItem.Field>
+
+  {/* Access referenced author data */}
+  <CmsItem.Field fieldId="author" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <span ref={ref} {...props}>{fieldValue?.name}</span>
+    )}
+  </CmsItem.Field>
+
+  {/* Access referenced tags array */}
+  <CmsItem.Field fieldId="tags" asChild>
+    {({ fieldValue, ...props }, ref) => (
+      <div ref={ref} {...props}>
+        {fieldValue?.map((tag) => (
+          <span key={tag._id}>{tag.name}</span>
+        ))}
+      </div>
+    )}
+  </CmsItem.Field>
 </CmsItem.Root>
 ```
 
@@ -278,6 +378,249 @@ The implementation of these buttons should be done by rendering Cart.Actions.Add
 
 - `disabled` - can't perform action. i.e. - add to cart (missing values, out of stock, etc)
 - `data-in-progress` - the action is in progress. i.e. - add to cart (loading, etc)
+
+---
+
+## Usage Examples
+
+### Basic Item Display
+
+```tsx
+function BlogPostPage({ postId }: { postId: string }) {
+  return (
+    <CmsItem.Root item={{ collectionId: 'BlogPosts', id: postId }}>
+      <article className="bg-background p-6 rounded-lg">
+        <CmsItem.Field fieldId="title" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <h1
+              ref={ref}
+              {...props}
+              className="font-heading text-4xl font-bold text-foreground mb-4"
+            >
+              {fieldValue}
+            </h1>
+          )}
+        </CmsItem.Field>
+
+        <CmsItem.Field fieldId="publishDate" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <time
+              ref={ref}
+              {...props}
+              className="font-paragraph text-sm text-secondary-foreground"
+            >
+              {new Date(fieldValue).toLocaleDateString()}
+            </time>
+          )}
+        </CmsItem.Field>
+
+        <CmsItem.Field fieldId="content" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <div
+              ref={ref}
+              {...props}
+              className="font-paragraph text-foreground mt-6"
+              dangerouslySetInnerHTML={{ __html: fieldValue }}
+            />
+          )}
+        </CmsItem.Field>
+      </article>
+    </CmsItem.Root>
+  );
+}
+```
+
+### Item with Reference Fields
+
+```tsx
+function ProductPage({ productId }: { productId: string }) {
+  return (
+    <CmsItem.Root
+      item={{
+        collectionId: 'Products',
+        id: productId,
+        singleRefFieldIds: ['category', 'brand', 'manufacturer'],
+        multiRefFieldIds: ['relatedProducts', 'reviews', 'tags'],
+      }}
+    >
+      <div className="bg-background p-6 rounded-lg">
+        {/* Product Name */}
+        <CmsItem.Field fieldId="name" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <h1
+              ref={ref}
+              {...props}
+              className="font-heading text-3xl font-bold text-foreground mb-4"
+            >
+              {fieldValue}
+            </h1>
+          )}
+        </CmsItem.Field>
+
+        {/* Category (Single Reference) */}
+        <CmsItem.Field fieldId="category" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <div ref={ref} {...props} className="mb-4">
+              <span className="font-paragraph text-sm text-secondary-foreground">
+                Category:
+              </span>
+              <span className="font-paragraph font-semibold text-foreground ml-2">
+                {fieldValue?.name}
+              </span>
+            </div>
+          )}
+        </CmsItem.Field>
+
+        {/* Brand (Single Reference) */}
+        <CmsItem.Field fieldId="brand" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <div ref={ref} {...props} className="flex items-center gap-2 mb-4">
+              <img
+                src={fieldValue?.logo}
+                alt={fieldValue?.name}
+                className="w-8 h-8"
+              />
+              <span className="font-paragraph text-foreground">
+                {fieldValue?.name}
+              </span>
+            </div>
+          )}
+        </CmsItem.Field>
+
+        {/* Product Image */}
+        <CmsItem.Field fieldId="image" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <img
+              ref={ref}
+              {...props}
+              src={fieldValue?.url}
+              alt={fieldValue?.alt}
+              className="w-full h-auto rounded-lg mb-6"
+            />
+          )}
+        </CmsItem.Field>
+
+        {/* Product Description */}
+        <CmsItem.Field fieldId="description" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <p
+              ref={ref}
+              {...props}
+              className="font-paragraph text-secondary-foreground mb-6"
+            >
+              {fieldValue}
+            </p>
+          )}
+        </CmsItem.Field>
+
+        {/* Tags (Multi Reference) */}
+        <CmsItem.Field fieldId="tags" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <div ref={ref} {...props} className="flex flex-wrap gap-2 mb-6">
+              {fieldValue?.map((tag: any) => (
+                <span
+                  key={tag._id}
+                  className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm font-paragraph"
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          )}
+        </CmsItem.Field>
+
+        {/* Related Products (Multi Reference) */}
+        <CmsItem.Field fieldId="relatedProducts" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <div
+              ref={ref}
+              {...props}
+              className="mt-8 pt-8 border-t border-foreground/10"
+            >
+              <h3 className="font-heading text-xl font-bold text-foreground mb-4">
+                Related Products
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {fieldValue?.map((product: any) => (
+                  <a
+                    key={product._id}
+                    href={`/products/${product._id}`}
+                    className="block"
+                  >
+                    <img
+                      src={product.image?.url}
+                      alt={product.name}
+                      className="w-full aspect-square object-cover rounded-lg mb-2"
+                    />
+                    <p className="font-paragraph text-sm text-foreground">
+                      {product.name}
+                    </p>
+                    <p className="font-paragraph text-sm font-bold text-primary">
+                      ${product.price}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </CmsItem.Field>
+
+        {/* Reviews (Multi Reference) */}
+        <CmsItem.Field fieldId="reviews" asChild>
+          {({ fieldValue, ...props }, ref) => (
+            <div
+              ref={ref}
+              {...props}
+              className="mt-8 pt-8 border-t border-foreground/10"
+            >
+              <h3 className="font-heading text-xl font-bold text-foreground mb-4">
+                Customer Reviews
+              </h3>
+              <div className="space-y-4">
+                {fieldValue?.map((review: any) => (
+                  <div
+                    key={review._id}
+                    className="bg-background border border-foreground/10 rounded-lg p-4"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-paragraph font-semibold text-foreground">
+                        {review.author?.name}
+                      </span>
+                      <span className="font-paragraph text-sm text-secondary-foreground">
+                        {new Date(review.date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="font-paragraph text-secondary-foreground">
+                      {review.comment}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CmsItem.Field>
+      </div>
+    </CmsItem.Root>
+  );
+}
+```
+
+### Server-Side Data Loading
+
+```tsx
+// In Astro frontmatter or server action
+import { loadCmsItemServiceInitialData } from '@wix/headless-cms/services';
+
+const cmsItemConfig = await loadCmsItemServiceInitialData(
+  'BlogPosts',
+  'post-123',
+  ['author', 'category'], // single reference fields
+  ['tags', 'relatedPosts'], // multi-reference fields
+);
+
+// Pass to React component
+<MyItemPage cmsItemConfig={cmsItemConfig} />;
+```
 
 ---
 

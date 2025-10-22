@@ -271,7 +271,9 @@ Main container for the collection items display with support for empty states an
 
 ```tsx
 interface ItemsProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { items: WixDataItem[]; isLoading: boolean; error: string | null }) => React.ReactNode);
   emptyState?: React.ReactNode;
   asChild?: boolean;
   className?: string;
@@ -437,7 +439,9 @@ Displays a button to load the next/prev page of items. Not rendered if infiniteS
 
 ```tsx
 interface CmsCollectionNextActionProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { loadNext: () => void; hasNext: boolean; isLoading: boolean; error: string | null }) => React.ReactNode);
   asChild?: boolean;
   className?: string;
 }
@@ -475,6 +479,8 @@ interface TotalsCountProps {
   children?:
     | AsChildChildren<{
         total: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;
@@ -517,6 +523,8 @@ interface TotalsDisplayedProps {
   children?:
     | AsChildChildren<{
         displayed: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;
@@ -562,7 +570,13 @@ type DisplayType =
 
 ### CmsCollection.CreateItemAction
 
-Displays a button to create a new item in the collection. Integrates with the collection service to handle item creation with loading states.
+Button component for creating new items in a CMS collection or inserting references between items. Handles loading and errors states.
+
+**Two Operation Modes:**
+
+1. **Create New Item Mode** - Use when adding a new item to a collection. Pass `itemData` prop with the item's field values.
+
+2. **Insert Reference Mode** - Use when linking existing items via reference fields. Pass `referenceFieldId`, `itemId`, and `referencedItemIds` (single ID or array of IDs).
 
 **Props**
 
@@ -574,47 +588,61 @@ interface CreateItemActionProps {
     | AsChildChildren<{
         disabled: boolean;
         isLoading: boolean;
-        onClick: () => void;
+        insertItemOrReference: (params: InsertItemOrReferenceParams) => Promise<WixDataItem | void>;
       }>
     | React.ReactNode;
   className?: string;
   loadingState?: string | React.ReactNode;
+  // For creating new items:
   itemData?: Partial<WixDataItem>;
+  // For inserting references:
+  referenceFieldId?: string;
+  itemId?: string;
+  referencedItemIds?: string | string[]; // Single ID or array of IDs
 }
+
+type InsertItemOrReferenceParams =
+  | { itemData: Partial<WixDataItem> }
+  | { referenceFieldId: string; itemId: string; referencedItemIds: string | string[] };
 ```
 
-**Example**
+**Examples**
 
 ```tsx
-// Default usage
+// MODE 1: Create new item - Simple usage with direct props
 <CmsCollection.CreateItemAction
-  label="Add Item"
-  className="btn-primary"
+  label="Add Article"
   loadingState="Creating..."
-  itemData={{ title: "New Item", status: "draft" }}
+  itemData={{ title: "New Article", status: "draft" }}
 />
 
-// Simple content override
-<CmsCollection.CreateItemAction
-  label="New Post"
-  loadingState="Publishing..."
-  itemData={{ category: "blog", status: "published" }}
->
-  📝 Create Post
-</CmsCollection.CreateItemAction>
+// MODE 1: Create new item - With dynamic data from state
+function DynamicCreateButton() {
+  const [formData, setFormData] = useState({ title: '', content: '' });
 
-// With asChild pattern - custom button
-<CmsCollection.CreateItemAction asChild itemData={{ title: "New Article" }}>
-  <Button>Add New Item</Button>
-</CmsCollection.CreateItemAction>
+  return (
+    <>
+      <input
+        value={formData.title}
+        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+      />
+      <CmsCollection.CreateItemAction
+        label="Submit"
+        itemData={formData}
+      />
+    </>
+  );
+}
 
-// With asChild pattern - full control
-<CmsCollection.CreateItemAction asChild itemData={{ status: "draft" }}>
-  {({ disabled, isLoading, onClick }) => (
+// MODE 1: Create new item - Custom design with asChild
+<CmsCollection.CreateItemAction asChild>
+  {({ insertItemOrReference, disabled, isLoading }) => (
     <button
       disabled={disabled}
-      onClick={onClick}
-      className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+      onClick={() => insertItemOrReference({
+        itemData: { title: "New Article", status: "draft" }
+      })}
+      className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
     >
       {isLoading ? (
         <>
@@ -624,13 +652,77 @@ interface CreateItemActionProps {
       ) : (
         <>
           <Plus className="h-4 w-4" />
-          Add Item
+          Add Article
         </>
       )}
     </button>
   )}
 </CmsCollection.CreateItemAction>
+
+// MODE 2: Insert reference - Link existing items (single ID)
+<CmsCollection.CreateItemAction
+  label="Add Actor to Movie"
+  referenceFieldId="actors"
+  itemId="movie-123"
+  referencedItemIds="actor-456"
+/>
+
+// MODE 2: Insert reference - Link multiple items at once
+<CmsCollection.CreateItemAction
+  label="Add Multiple Actors"
+  referenceFieldId="actors"
+  itemId="movie-123"
+  referencedItemIds={["actor-456", "actor-789", "actor-321"]}
+/>
+
+// ADVANCED: Chaining - Create item then add references
+<CmsCollection.CreateItemAction asChild>
+  {({ insertItemOrReference, disabled, isLoading }) => {
+    const [title, setTitle] = useState('');
+    const [tags, setTags] = useState(['tag-1', 'tag-2']);
+
+    const handleSubmit = async () => {
+      try {
+        // Step 1: Create the post
+        const newPost = await insertItemOrReference({
+          itemData: { title, status: 'published' }
+        });
+
+        // Step 2: Add tags using the returned ID
+        if (newPost?._id) {
+          await insertItemOrReference({
+            referenceFieldId: 'tags',
+            itemId: newPost._id,
+            referencedItemIds: tags  // Pass array of tag IDs
+          });
+        }
+
+        alert('Post created with tags!');
+      } catch (error) {
+        console.error('Failed:', error);
+      }
+    };
+
+    return (
+      <button
+        onClick={handleSubmit}
+        disabled={disabled}
+        className="btn-primary"
+      >
+        {isLoading ? 'Creating...' : 'Create Post with Tags'}
+      </button>
+    );
+  }}
+</CmsCollection.CreateItemAction>
 ```
+
+**Key Features**
+
+- **Dual functionality**: Create items OR insert references
+- **Returns created item**: Enables chaining operations (create → reference)
+- **Flexible reference insertion**: Accept single ID or array of IDs
+- **Automatic loading states**: Handles loading/disabled states internally
+- **Error handling**: Catches and reports errors automatically
 
 **Data Attributes**
 

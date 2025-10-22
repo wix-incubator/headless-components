@@ -24,6 +24,8 @@ export const CmsItemServiceDefinition = defineService<{
 const loadItem = async (
   collectionId: string,
   itemId: string,
+  singleRefFieldIds: string[] = [],
+  multiRefFieldIds: string[] = [],
 ): Promise<WixDataItem> => {
   if (!collectionId) {
     throw new Error('No collection ID provided');
@@ -33,13 +35,27 @@ const loadItem = async (
     throw new Error('No item ID provided');
   }
 
-  const result = await items.get(collectionId, itemId);
+  // Use query instead of get to support include() for reference fields
+  let query = items.query(collectionId).eq('_id', itemId);
 
-  if (!result) {
+  // Include reference fields if specified
+  const allRefFieldIds = [...singleRefFieldIds, ...multiRefFieldIds];
+  if (allRefFieldIds.length > 0) {
+    query = query.include(...allRefFieldIds);
+  }
+
+  const result = await query.find();
+
+  if (!result.items || result.items.length === 0) {
     throw new Error('Item not found');
   }
 
-  return result;
+  const item = result.items[0];
+  if (!item) {
+    throw new Error('Item not found');
+  }
+
+  return item;
 };
 
 /**
@@ -52,6 +68,10 @@ export interface CmsItemServiceConfig {
   itemId: string;
   /** Optional pre-loaded item to initialize the service with */
   item?: WixDataItem;
+  /** List of field IDs for single reference fields to include */
+  singleRefFieldIds?: string[];
+  /** List of field IDs for multi reference fields to include */
+  multiRefFieldIds?: string[];
 }
 
 /**
@@ -75,7 +95,12 @@ export const CmsItemServiceImplementation =
         errorSignal.set(null);
 
         try {
-          const item = await loadItem(config.collectionId, config.itemId);
+          const item = await loadItem(
+            config.collectionId,
+            config.itemId,
+            config.singleRefFieldIds,
+            config.multiRefFieldIds,
+          );
           itemSignal.set(item);
         } catch (err) {
           const errorMessage =
@@ -117,6 +142,8 @@ export type CmsItemServiceConfigResult = {
 export const loadCmsItemServiceInitialData = async (
   collectionId: string,
   itemId: string,
+  singleRefFieldIds?: string[],
+  multiRefFieldIds?: string[],
 ): Promise<CmsItemServiceConfigResult> => {
   try {
     if (!collectionId) {
@@ -128,13 +155,20 @@ export const loadCmsItemServiceInitialData = async (
     }
 
     // Load item on the server using shared function
-    const item = await loadItem(collectionId, itemId);
+    const item = await loadItem(
+      collectionId,
+      itemId,
+      singleRefFieldIds,
+      multiRefFieldIds,
+    );
 
     return {
       [CmsItemServiceDefinition]: {
         collectionId,
         itemId,
         item,
+        singleRefFieldIds,
+        multiRefFieldIds,
       },
     };
   } catch (error) {
