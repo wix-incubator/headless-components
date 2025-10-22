@@ -4,16 +4,15 @@ import { defineService, implementService, type ServiceAPI } from '@wix/services-
 import type { Signal } from '@wix/services-definitions/core-services/signals';
 import { SignalsServiceDefinition } from '@wix/services-definitions/core-services/signals';
 
-const DEFAULT_PAGE_SIZE = 5;
+const DEFAULT_PAGE_SIZE = 10;
 const BLOG_APP_ID = '14bcded7-0066-7c35-14d7-466cb3f09103';
+const ROOT_ID = 'ROOT';
+type RootCommentId = typeof ROOT_ID;
 
 export interface CommentResolvedFields {
   author: members.Member | null | undefined;
   parentAuthor: members.Member | null | undefined;
 }
-
-const ROOT_ID = 'ROOT';
-type RootCommentId = typeof ROOT_ID;
 
 export interface CommentWithResolvedFields extends comments.Comment {
   resolvedFields: CommentResolvedFields;
@@ -35,6 +34,9 @@ export type QueryCommentsSort = {
   fieldName: QueryCommentsSortField;
 };
 
+const DEFAULT_COMMENTS_SORT: [QueryCommentsSort] = [{ fieldName: 'NEWEST_FIRST' }];
+const DEFAULT_REPLIES_SORT: [QueryCommentsSort] = [{ fieldName: 'OLDEST_FIRST' }];
+
 type LoadingState = 'initial' | 'saving' | 'more' | false;
 
 type ThreadState = {
@@ -49,7 +51,7 @@ type RecordWithRoot<T> = Record<RootCommentId | (string & {}), T>;
 /** Serves as a cache for member objects to avoid duplicate calls to the members service */
 type RecordOfMembers = Record<string, members.Member | null | undefined>;
 
-export const BlogPostCommentsServiceDefinition = defineService<{
+export const CommentsServiceDefinition = defineService<{
   isEmpty: (commentId?: string) => boolean;
   hasNextPage: (commentId?: string) => boolean;
   isLoading: (commentId?: string) => LoadingState;
@@ -71,25 +73,34 @@ export const BlogPostCommentsServiceDefinition = defineService<{
   deleteComment: (commentId: string) => Promise<void>;
   loadMore: () => Promise<void>;
   loadMoreReplies: (commentId: string) => Promise<void>;
-}>('blogPostCommentsService');
+}>('commentsService');
 
-export type BlogPostCommentsServiceAPI = ServiceAPI<typeof BlogPostCommentsServiceDefinition>;
+export type CommentsServiceAPI = ServiceAPI<typeof CommentsServiceDefinition>;
 
-export type BlogPostCommentsServiceConfig = {
-  postReferenceId: string;
-  pageSize: number;
-  sort: QueryCommentsSort[];
+export type CommentsServiceConfig = {
+  contextId: string;
+  resourceId: string;
+  pageSize?: number;
+  sort?: QueryCommentsSort[];
 };
 
-export const BlogPostCommentsService = implementService.withConfig<BlogPostCommentsServiceConfig>()(
-  BlogPostCommentsServiceDefinition,
+export const CommentsService = implementService.withConfig<CommentsServiceConfig>()(
+  CommentsServiceDefinition,
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
     const threadStatesSignal = signalsService.signal<RecordWithRoot<ThreadState>>({
       [ROOT_ID]: { comments: [], isLoading: false },
     });
-    const sortSignal = signalsService.signal(config.sort);
+
+    const sortSignal = signalsService.signal(config.sort ?? DEFAULT_COMMENTS_SORT);
+    const resourceId = config.resourceId;
+    const contextId = config.contextId;
+    const pageSize = config.pageSize || DEFAULT_PAGE_SIZE;
+
+    if (!contextId || !resourceId) {
+      throw new Error('contextId and resourceId are required');
+    }
 
     const getComments = (threadId?: string): CommentWithResolvedFields[] => {
       const threadStates = threadStatesSignal.get();
@@ -247,10 +258,11 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
         setThreadState.loading(ROOT_ID, shouldLoadMore ? 'more' : 'initial');
 
         const result = await fetchComments({
-          postReferenceId: config.postReferenceId,
+          contextId,
+          resourceId,
           nextCursor: shouldLoadMore ? nextCursor : undefined,
           sort: sortSignal.get(),
-          pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
+          pageSize,
           memberMap: getMemberMap(),
         });
 
@@ -302,8 +314,9 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
       try {
         const response = await fetchReplies({
           commentId,
-          postReferenceId: config.postReferenceId,
-          pageSize: config.pageSize || DEFAULT_PAGE_SIZE,
+          contextId: config.contextId,
+          resourceId: config.resourceId,
+          pageSize,
           nextCursor,
           memberMap: getMemberMap(),
         });
@@ -326,8 +339,8 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
 
         const newComment = await comments.createComment({
           appId: BLOG_APP_ID,
-          contextId: config.postReferenceId,
-          resourceId: config.postReferenceId,
+          contextId: config.contextId,
+          resourceId: config.resourceId,
           content,
         });
 
@@ -366,8 +379,8 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
 
         const newReply = await comments.createComment({
           appId: BLOG_APP_ID,
-          contextId: config.postReferenceId,
-          resourceId: config.postReferenceId,
+          contextId: config.contextId,
+          resourceId: config.resourceId,
           content,
           parentComment: {
             _id: parentCommentId,
@@ -475,7 +488,8 @@ export const BlogPostCommentsService = implementService.withConfig<BlogPostComme
 
 type FetchCommentsParams = {
   sort: QueryCommentsSort[];
-  postReferenceId: string;
+  contextId: string;
+  resourceId: string;
   pageSize: number;
   nextCursor: string | undefined;
   memberMap: RecordOfMembers;
@@ -494,10 +508,10 @@ async function fetchComments(params: FetchCommentsParams): Promise<{
   commentThreads: ThreadWithResolvedFields[];
 }> {
   const options: comments.ListCommentsByResourceOptions = {
-    contextId: params.postReferenceId,
-    resourceId: params.postReferenceId,
+    contextId: params.contextId,
+    resourceId: params.resourceId,
     commentSort: {
-      order: params.sort[0]?.fieldName || 'NEWEST_FIRST',
+      order: params.sort[0]?.fieldName || DEFAULT_COMMENTS_SORT[0].fieldName,
     },
     replySort: {
       order: 'OLDEST_FIRST',
@@ -543,7 +557,8 @@ async function fetchComments(params: FetchCommentsParams): Promise<{
 
 type FetchRepliesParams = {
   commentId: string;
-  postReferenceId: string;
+  contextId: string;
+  resourceId: string;
   pageSize: number;
   nextCursor: string | undefined;
   memberMap: RecordOfMembers;
@@ -561,14 +576,14 @@ async function fetchReplies(params: FetchRepliesParams): Promise<{
   }
 
   const options: comments.ListCommentsByResourceOptions = {
-    contextId: params.postReferenceId,
-    resourceId: params.postReferenceId,
+    contextId: params.contextId,
+    resourceId: params.resourceId,
     cursorPaging: {
       limit: params.pageSize || DEFAULT_PAGE_SIZE,
       cursor: nextCursor,
     },
     replySort: {
-      order: 'OLDEST_FIRST',
+      order: DEFAULT_REPLIES_SORT[0].fieldName,
       keepMarkedInOriginalOrder: false,
     },
   };

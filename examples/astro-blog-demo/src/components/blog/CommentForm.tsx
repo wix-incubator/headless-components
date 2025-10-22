@@ -61,7 +61,9 @@ export function CommentForm({
       <div className="flex gap-3">
         {isReply ? avatar : avatarWithMemberActions}
         <div className="grid flex-1 gap-3">
-          <Comment.Form.Label className="sr-only">{isReply ? "Reply" : "Comment"}</Comment.Form.Label>
+          <Comment.Form.Label className="sr-only">
+            {isReply ? "Reply" : "Comment"}
+          </Comment.Form.Label>
           <div className="grid items-baseline gap-3 sm:grid-cols-2">
             <Comment.Form.Input ref={textareaRef} asChild>
               <Textarea

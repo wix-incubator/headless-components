@@ -1,6 +1,6 @@
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import React from 'react';
-import type { CommentWithResolvedFields } from '../services/blog-post-comments-service.js';
+import type { CommentWithResolvedFields } from '../services/comments-service.js';
 import { CommentContext } from './Comment.js';
 import * as CoreComments from './core/Comments.js';
 import { isValidChildren } from './helpers.js';

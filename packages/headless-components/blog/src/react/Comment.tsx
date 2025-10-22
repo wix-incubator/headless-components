@@ -4,9 +4,9 @@ import type { members } from '@wix/members';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import {
-  BlogPostCommentsServiceDefinition,
+  CommentsServiceDefinition,
   type CommentWithResolvedFields,
-} from '../services/blog-post-comments-service.js';
+} from '../services/comments-service.js';
 import * as CoreComments from './core/Comments.js';
 import { isValidChildren } from './helpers.js';
 
@@ -475,7 +475,7 @@ export interface ParentCommentProps extends Omit<RootProps, 'comment' | 'current
  */
 export const ParentComment = React.forwardRef<HTMLDivElement, ParentCommentProps>((props, ref) => {
   const { children, asChild, className } = props;
-  const service = useService(BlogPostCommentsServiceDefinition);
+  const service = useService(CommentsServiceDefinition);
   const comments = service.getComments();
   const { comment, currentMemberId } = useCommentContext();
 

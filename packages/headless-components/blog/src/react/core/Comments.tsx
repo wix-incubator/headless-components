@@ -3,27 +3,27 @@ import { Sort as SortPrimitive } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import type {
-  BlogPostCommentsServiceAPI,
+  CommentsServiceAPI,
   CommentWithResolvedFields,
   QueryCommentsSort,
-} from '../../services/blog-post-comments-service.js';
-import { BlogPostCommentsServiceDefinition } from '../../services/blog-post-comments-service.js';
+} from '../../services/comments-service.js';
+import { CommentsServiceDefinition } from '../../services/comments-service.js';
 
 export interface CommentsProps {
   children: (props: CommentsRenderProps) => React.ReactNode;
 }
 
 export interface CommentsRenderProps {
-  comments: ReturnType<BlogPostCommentsServiceAPI['getComments']>;
-  isEmpty: BlogPostCommentsServiceAPI['isEmpty'];
-  hasNextPage: BlogPostCommentsServiceAPI['hasNextPage'];
-  isLoading: BlogPostCommentsServiceAPI['isLoading'];
-  initialLoad: BlogPostCommentsServiceAPI['initialLoad'];
-  loadMore: BlogPostCommentsServiceAPI['loadMore'];
+  comments: ReturnType<CommentsServiceAPI['getComments']>;
+  isEmpty: CommentsServiceAPI['isEmpty'];
+  hasNextPage: CommentsServiceAPI['hasNextPage'];
+  isLoading: CommentsServiceAPI['isLoading'];
+  initialLoad: CommentsServiceAPI['initialLoad'];
+  loadMore: CommentsServiceAPI['loadMore'];
 }
 
 export const Comments = (props: CommentsProps) => {
-  const service = useService(BlogPostCommentsServiceDefinition);
+  const service = useService(CommentsServiceDefinition);
 
   return props.children({
     comments: service.getComments(),
@@ -35,7 +35,7 @@ export const Comments = (props: CommentsProps) => {
   });
 };
 
-Comments.displayName = 'Blog.Post.Comments.Comments (core)';
+Comments.displayName = 'Comments.Comments (core)';
 
 export interface SortProps {
   children: (props: {
@@ -46,7 +46,7 @@ export interface SortProps {
 }
 
 export const Sort = (props: SortProps) => {
-  const service = useService(BlogPostCommentsServiceDefinition);
+  const service = useService(CommentsServiceDefinition);
 
   const currentSort = service.sort.get();
 
@@ -68,7 +68,7 @@ export const Sort = (props: SortProps) => {
   });
 };
 
-Sort.displayName = 'Blog.Post.Comments.Sort (core)';
+Sort.displayName = 'Comments.Sort (core)';
 
 export interface CreateCommentProps {
   parentCommentId?: string | null;
@@ -84,7 +84,7 @@ export interface CreateCommentRenderProps {
 }
 
 export const CreateComment = (props: CreateCommentProps) => {
-  const service = useService(BlogPostCommentsServiceDefinition);
+  const service = useService(CommentsServiceDefinition);
   const { parentCommentId: parrentCommentIdOrNull, topCommentId } = props;
   const parentCommentId = parrentCommentIdOrNull ?? undefined;
 
@@ -108,7 +108,7 @@ export const CreateComment = (props: CreateCommentProps) => {
   });
 };
 
-CreateComment.displayName = 'Blog.Post.Comments.CreateComment (core)';
+CreateComment.displayName = 'Comments.CreateComment (core)';
 
 export interface CommentProps {
   commentId: string;
@@ -116,18 +116,18 @@ export interface CommentProps {
 }
 
 export interface CommentRenderProps {
-  comment: ReturnType<BlogPostCommentsServiceAPI['getComment']>;
-  replies: ReturnType<BlogPostCommentsServiceAPI['getComments']>;
-  deleteComment: () => ReturnType<BlogPostCommentsServiceAPI['deleteComment']>;
-  hasNextPage: ReturnType<BlogPostCommentsServiceAPI['hasNextPage']>;
+  comment: ReturnType<CommentsServiceAPI['getComment']>;
+  replies: ReturnType<CommentsServiceAPI['getComments']>;
+  deleteComment: () => ReturnType<CommentsServiceAPI['deleteComment']>;
+  hasNextPage: ReturnType<CommentsServiceAPI['hasNextPage']>;
   isLoading: boolean;
-  loadNextPage: () => ReturnType<BlogPostCommentsServiceAPI['loadMoreReplies']>;
+  loadNextPage: () => ReturnType<CommentsServiceAPI['loadMoreReplies']>;
   parentComment: CommentWithResolvedFields | undefined;
 }
 
 export const Comment = (props: CommentProps) => {
   const { commentId } = props;
-  const service = useService(BlogPostCommentsServiceDefinition);
+  const service = useService(CommentsServiceDefinition);
   const parentComment = service.getComments().find((c) => c._id === commentId);
 
   const isLoading =

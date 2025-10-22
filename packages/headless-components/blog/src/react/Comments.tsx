@@ -1,32 +1,32 @@
 import { Sort as SortPrimitive } from '@wix/headless-components/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-
-import { useService } from '@wix/services-manager-react';
+import { createServicesMap } from '@wix/services-manager';
+import { WixServices, useService } from '@wix/services-manager-react';
 import React from 'react';
 import {
-  BlogPostCommentsServiceDefinition,
-  type BlogPostCommentsServiceConfig,
+  CommentsService,
+  CommentsServiceDefinition,
+  type CommentsServiceConfig,
   type QueryCommentsSort,
-} from '../services/blog-post-comments-service.js';
+} from '../services/comments-service.js';
 import * as Comment from './Comment.js';
 import * as CoreComments from './core/Comments.js';
 import { isValidChildren, useIntersectionObserver } from './helpers.js';
-import { usePostContext } from './Post.js';
+// import { usePostContext } from './Post.js';
 
 const enum TestIds {
-  blogPostCommentsRoot = 'blog-post-comments-root',
-
-  blogPostComments = 'blog-post-comments',
-  blogPostCommentsSort = 'blog-post-comments-sort',
-  blogPostCommentsLoadMore = 'blog-post-comments-load-more',
+  root = 'comments-root',
+  items = 'comments-items',
+  sort = 'comments-sort',
+  loadMore = 'comments-load-more',
 }
 
-export interface BlogPostCommentsRootProps {
+export interface CommentsRootProps {
   asChild?: boolean;
   className?: string;
   children: AsChildChildren<{ hasComments: boolean }> | React.ReactNode;
   currentMember?: unknown;
-  commentsConfig?: BlogPostCommentsServiceConfig;
+  commentsServiceConfig: CommentsServiceConfig;
 }
 
 const CurrentMemberContext = React.createContext<unknown | undefined>(undefined);
@@ -46,7 +46,7 @@ const useCurrentMemberId = (): string | undefined => {
 };
 
 /**
- * Root container for blog post comments that provides comments context to all child components.
+ * Root container for comments that provides comments context to all child components.
  * Uses IntersectionObserver for lazy loading - comments are loaded when the container becomes visible.
  *
  * @component
@@ -54,38 +54,32 @@ const useCurrentMemberId = (): string | undefined => {
  * ```tsx
  * import { Blog, Comment } from '@wix/blog/components';
  *
- * function PostPage() {
+ * function CommentsSection() {
  *   return (
- *     <Blog.Post.Root blogPostServiceConfig={blogPostServiceConfig}>
- *       <Blog.Post.Comments.Root>
- *         <Blog.Post.Comments.CommentItemRepeater>
- *           <Comment.Author />
- *           <Comment.Content />
- *         </Blog.Post.Comments.CommentItemRepeater>
- *       </Blog.Post.Comments.Root>
- *     </Blog.Post.Root>
+ *     <Comments.Root commentsServiceConfig={{ contextId, resourceId }}>
+ *       <Comments.CommentItemRepeater>
+ *         <Comment.Author />
+ *         <Comment.Content />
+ *       </Comments.CommentItemRepeater>
+ *     </Comments.Root>
  *   );
  * }
  * ```
  */
-export const Root = React.forwardRef<HTMLElement, BlogPostCommentsRootProps>(
-  (props, forwardedRef) => {
-    const { asChild, children, className, currentMember } = props;
-    const { ref, isVisible } = useIntersectionObserver(forwardedRef);
-    const { post } = usePostContext();
+export const Root = React.forwardRef<HTMLElement, CommentsRootProps>((props, forwardedRef) => {
+  const { asChild, children, className, currentMember, commentsServiceConfig } = props;
+  const { ref, isVisible } = useIntersectionObserver(forwardedRef);
 
-    if (!post) {
-      throw new Error('Blog.Post.Comments.Root must be used within a Blog.Post.Root component');
-    }
-
-    const isPaywalled = post.preview ?? false;
-    const isDisabledComments = !post.commentingEnabled;
-
-    if (isPaywalled || isDisabledComments) {
-      return null;
-    }
-
-    return (
+  return (
+    <WixServices
+      // key: Ensure we re-render the component when the comments config changes
+      key={`${commentsServiceConfig.contextId}-${commentsServiceConfig.resourceId}`}
+      servicesMap={createServicesMap().addService(
+        CommentsServiceDefinition,
+        CommentsService,
+        commentsServiceConfig,
+      )}
+    >
       <CurrentMemberContext.Provider value={currentMember}>
         <CoreComments.Comments>
           {({ initialLoad, isLoading }) => {
@@ -97,7 +91,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostCommentsRootProps>(
             }, [isVisible, initialLoad]);
 
             const attributes = {
-              'data-testid': TestIds.blogPostCommentsRoot,
+              'data-testid': TestIds.root,
               'data-visible': isVisible,
               'data-loading': isLoading() === 'initial',
             };
@@ -116,11 +110,11 @@ export const Root = React.forwardRef<HTMLElement, BlogPostCommentsRootProps>(
           }}
         </CoreComments.Comments>
       </CurrentMemberContext.Provider>
-    );
-  },
-);
+    </WixServices>
+  );
+});
 
-Root.displayName = 'Blog.Post.Comments.Root';
+Root.displayName = 'Comments.Root';
 
 export interface CommentItemsProps {
   children: React.ReactNode;
@@ -136,17 +130,17 @@ export interface CommentItemsProps {
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comments.CommentItems emptyState={<div>No comments yet</div>}>
- *   <Blog.Post.Comments.CommentItemRepeater>
+ * <Comments.CommentItems emptyState={<div>No comments yet</div>}>
+ *   <Comments.CommentItemRepeater>
  *     <Comment.Author />
  *     <Comment.Content />
- *   </Blog.Post.Comments.CommentItemRepeater>
- * </Blog.Post.Comments.CommentItems>
+ *   </Comments.CommentItemRepeater>
+ * </Comments.CommentItems>
  * ```
  */
 export const CommentItems = React.forwardRef<HTMLElement, CommentItemsProps>((props, ref) => {
   const { children, emptyState, loadingState, className } = props;
-  const service = useService(BlogPostCommentsServiceDefinition);
+  const service = useService(CommentsServiceDefinition);
   const comments = service.getComments();
   const isLoading = service.isLoading() === 'initial';
 
@@ -159,7 +153,7 @@ export const CommentItems = React.forwardRef<HTMLElement, CommentItemsProps>((pr
   }
 
   const attributes = {
-    'data-testid': TestIds.blogPostComments,
+    'data-testid': TestIds.items,
   };
 
   return (
@@ -169,7 +163,7 @@ export const CommentItems = React.forwardRef<HTMLElement, CommentItemsProps>((pr
   );
 });
 
-CommentItems.displayName = 'Blog.Post.Comments.CommentItems';
+CommentItems.displayName = 'Comments.CommentItems';
 
 export interface SortProps {
   /**
@@ -182,7 +176,7 @@ export interface SortProps {
    *
    * @example
    * ```tsx
-   * <Blog.Post.Comments.Sort asChild>
+   * <Comments.Sort asChild>
    *   {({ currentSort, sortOptions, setSort }) => (
    *     <CustomSortSelect
    *       value={currentSort}
@@ -190,7 +184,7 @@ export interface SortProps {
    *       onChange={setSort}
    *     />
    *   )}
-   * </Blog.Post.Comments.Sort>
+   * </Comments.Sort>
    * ```
    */
   children?: (props: {
@@ -227,20 +221,17 @@ export interface SortProps {
 /**
  * Sort component for comments that provides sorting functionality.
  *
- * This component integrates with the Blog.Post.Comments.Root service to provide predefined sort options
- * and supports both controlled rendering via the asChild pattern and default UI rendering.
- *
  * @component
  * @example
  * ```tsx
  * // Default select dropdown
- * <Blog.Post.Comments.Sort />
+ * <Comments.Sort />
  *
  * // As list of clickable options
- * <Blog.Post.Comments.Sort as="list" />
+ * <Comments.Sort as="list" />
  *
  * // With custom styling
- * <Blog.Post.Comments.Sort
+ * <Comments.Sort
  *   as="select"
  *   className="custom-sort-select"
  * />
@@ -263,7 +254,7 @@ export const Sort = React.forwardRef<HTMLElement, SortProps>(
               sortOptions={sortOptions}
               as={as}
               className={className}
-              data-testid={TestIds.blogPostCommentsSort}
+              data-testid={TestIds.sort}
             >
               {sortOptions.map((option) => {
                 if ('fieldName' in option) {
@@ -287,7 +278,7 @@ export const Sort = React.forwardRef<HTMLElement, SortProps>(
   },
 );
 
-Sort.displayName = 'Blog.Post.Comments.Sort';
+Sort.displayName = 'Comments.Sort';
 
 export interface CommentItemRepeaterProps {
   children: React.ReactNode;
@@ -301,17 +292,17 @@ export interface CommentItemRepeaterProps {
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comments.CommentItemRepeater>
+ * <Comments.CommentItemRepeater>
  *   <Comment.Author />
  *   <Comment.Content />
  *   <Comment.CommentDate />
- * </Blog.Post.Comments.CommentItemRepeater>
+ * </Comments.CommentItemRepeater>
  * ```
  */
 export const CommentItemRepeater = React.forwardRef<HTMLElement, CommentItemRepeaterProps>(
   (props, _ref) => {
     const { children } = props;
-    const service = useService(BlogPostCommentsServiceDefinition);
+    const service = useService(CommentsServiceDefinition);
     const comments = service.getComments();
     const currentMemberId = useCurrentMemberId();
 
@@ -329,7 +320,7 @@ export const CommentItemRepeater = React.forwardRef<HTMLElement, CommentItemRepe
   },
 );
 
-CommentItemRepeater.displayName = 'Blog.Post.Comments.CommentItemRepeater';
+CommentItemRepeater.displayName = 'Comments.CommentItemRepeater';
 
 export interface LoadMoreProps {
   asChild?: boolean;
@@ -349,7 +340,7 @@ export interface LoadMoreProps {
  * @component
  * @example
  * ```tsx
- * <Blog.Post.Comments.LoadMore asChild>
+ * <Comments.LoadMore asChild>
  *   {({ hasNextPage, isLoading, loadNextPage }) => (
  *     <button
  *       onClick={loadNextPage}
@@ -358,7 +349,7 @@ export interface LoadMoreProps {
  *       {isLoading ? 'Loading...' : 'Load More Comments'}
  *     </button>
  *   )}
- * </Blog.Post.Comments.LoadMore>
+ * </Comments.LoadMore>
  * ```
  */
 export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>((props, ref) => {
@@ -377,7 +368,7 @@ export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>((props, ref
           loadMore();
         };
         const dataAttributes = {
-          'data-testid': TestIds.blogPostCommentsLoadMore,
+          'data-testid': TestIds.loadMore,
           'data-loading': isLoading,
           'data-has-next-page': hasNextPage,
         };
@@ -405,4 +396,4 @@ export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>((props, ref
   );
 });
 
-LoadMore.displayName = 'Blog.Post.Comments.LoadMore';
+LoadMore.displayName = 'Comments.LoadMore';

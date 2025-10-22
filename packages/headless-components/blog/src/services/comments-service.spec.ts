@@ -1,10 +1,10 @@
 import { createServicesManager, createServicesMap } from '@wix/services-manager';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  BlogPostCommentsService,
-  BlogPostCommentsServiceDefinition,
+  CommentsService,
+  CommentsServiceDefinition,
   type CommentWithResolvedFields,
-} from './blog-post-comments-service.js';
+} from './comments-service.js';
 
 vi.mock('@wix/comments', () => ({
   comments: {
@@ -63,23 +63,20 @@ const mockCreateComment = (comment: comments.Comment) => {
   vi.mocked(commentsModule.createComment).mockResolvedValueOnce(comment as any);
 };
 
-describe('BlogPostCommentsService', () => {
+describe('CommentsService', () => {
   const mockConfig = {
-    postReferenceId: 'post-123',
+    contextId: 'context-123',
+    resourceId: 'resource-123',
     pageSize: 5,
     sort: [{ fieldName: 'NEWEST_FIRST' as const }],
   };
 
   const createServiceInstance = () => {
     const servicesManager = createServicesManager(
-      createServicesMap().addService(
-        BlogPostCommentsServiceDefinition,
-        BlogPostCommentsService,
-        mockConfig,
-      ),
+      createServicesMap().addService(CommentsServiceDefinition, CommentsService, mockConfig),
     );
 
-    return servicesManager.getService(BlogPostCommentsServiceDefinition);
+    return servicesManager.getService(CommentsServiceDefinition);
   };
 
   beforeEach(() => {
