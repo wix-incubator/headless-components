@@ -10,7 +10,6 @@ const RichText = ({
   id,
   content,
   maxShownParagraphs,
-
   ...rest
 }: RichTextProps) => {
   return (

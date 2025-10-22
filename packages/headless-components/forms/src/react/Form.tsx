@@ -5,7 +5,6 @@ import {
   type FormError,
   useForm,
   FormProvider,
-  FormStatusProvider,
 } from '@wix/form-public';
 import {
   type CheckboxGroupProps,
@@ -48,165 +47,6 @@ import {
 } from './core/Form.js';
 import { forms } from '@wix/forms';
 
-/**
- * Field types that are used in the FieldMap
- */
-type FieldType = keyof FieldMap;
-
-/**
- * Mapping from schema field types (from API) to field types (in FieldMap).
- * This mapping ensures that fields from the form schema are correctly
- * matched to their corresponding React components.
- */
-const FIELD_TYPE_MAP: Record<string, FieldType> = {
-  // CONTACTS_FIELD_TYPES
-  CONTACTS_COMPANY: 'TEXT_INPUT',
-  CONTACTS_POSITION: 'TEXT_INPUT',
-  CONTACTS_TAX_ID: 'TEXT_INPUT',
-  CONTACTS_FIRST_NAME: 'TEXT_INPUT',
-  CONTACTS_LAST_NAME: 'TEXT_INPUT',
-  CONTACTS_EMAIL: 'TEXT_INPUT',
-  CONTACTS_BIRTHDATE: 'DATE_INPUT',
-  CONTACTS_PHONE: 'PHONE_INPUT',
-  CONTACTS_ADDRESS: 'TEXT_INPUT',
-  CONTACTS_SUBSCRIBE: 'CHECKBOX',
-
-  // QUIZ_FIELD_TYPES
-  QUIZ_MULTI_CHOICE: 'CHECKBOX_GROUP',
-  QUIZ_SINGLE_CHOICE: 'RADIO_GROUP',
-  QUIZ_SHORT_TEXT: 'TEXT_INPUT',
-  QUIZ_LONG_TEXT: 'TEXT_AREA',
-  QUIZ_NUMBER: 'NUMBER_INPUT',
-  QUIZ_FILE_UPLOAD: 'FILE_UPLOAD',
-  QUIZ_IMAGE_CHOICE: 'IMAGE_CHOICE',
-
-  // DEXT_FIELD_TYPES
-  DEXT_TEXT_INPUT: 'TEXT_INPUT',
-  DEXT_TEXT_AREA: 'TEXT_AREA',
-  DEXT_DROPDOWN: 'DROPDOWN',
-  DEXT_URL_INPUT: 'TEXT_INPUT',
-  DEXT_RADIO_GROUP: 'RADIO_GROUP',
-  DEXT_NUMBER_INPUT: 'NUMBER_INPUT',
-  DEXT_CHECKBOX: 'CHECKBOX',
-  DEXT_CHECKBOX_GROUP: 'CHECKBOX_GROUP',
-  DEXT_EMAIL: 'TEXT_INPUT',
-  DEXT_PHONE: 'PHONE_INPUT',
-  DEXT_RATING_INPUT: 'RATING_INPUT',
-  DEXT_DATE_PICKER: 'DATE_PICKER',
-  DEXT_TAGS: 'TAGS',
-
-  // SCHEDULING_FIELD_TYPES
-  APPOINTMENT: 'APPOINTMENT',
-  SERVICES_DROPDOWN: 'DROPDOWN',
-
-  // ECOM_FIELD_TYPES
-  ECOM_ADDITIONAL_INFO: 'TEXT_AREA',
-  ECOM_ADDRESS: 'TEXT_INPUT',
-  ECOM_FULL_NAME: 'TEXT_INPUT',
-  ECOM_PHONE: 'PHONE_INPUT',
-  ECOM_COMPANY_NAME: 'TEXT_INPUT',
-  ECOM_EMAIL: 'TEXT_INPUT',
-  ECOM_SUBSCRIPTION: 'CHECKBOX',
-  ECOM_CONTACT_DETAILS: 'TEXT',
-  ECOM_SHIPPING_DETAILS: 'TEXT',
-
-  // BOOKINGS_FIELD_TYPES
-  BOOKINGS_FIRST_NAME: 'TEXT_INPUT',
-  BOOKINGS_LAST_NAME: 'TEXT_INPUT',
-  BOOKINGS_EMAIL: 'TEXT_INPUT',
-  BOOKINGS_PHONE: 'PHONE_INPUT',
-  BOOKINGS_ADDRESS: 'TEXT_INPUT',
-  BOOKINGS_HEADER: 'TEXT',
-  BOOKINGS_RICH_TEXT: 'TEXT',
-
-  // PAYMENTS_FIELD_TYPES
-  PRODUCT_LIST: 'PRODUCT_LIST',
-  DONATION: 'DONATION',
-  PAYMENT_INPUT: 'PAYMENT_INPUT',
-  FIXED_PAYMENT: 'FIXED_PAYMENT',
-
-  // EVENTS_FIELD_TYPES
-  EVENTS_RSVP: 'RADIO_GROUP',
-  EVENTS_HEADER: 'TEXT',
-
-  // COMMON_FIELD_TYPES + READONLY
-  TEXT_INPUT: 'TEXT_INPUT',
-  NUMBER_INPUT: 'NUMBER_INPUT',
-  URL_INPUT: 'TEXT_INPUT',
-  TEXT_AREA: 'TEXT_AREA',
-  DATE_INPUT: 'DATE_INPUT',
-  DATE_TIME_INPUT: 'DATE_TIME_INPUT',
-  TIME_INPUT: 'TIME_INPUT',
-  RADIO_GROUP: 'RADIO_GROUP',
-  CHECKBOX_GROUP: 'CHECKBOX_GROUP',
-  FILE_UPLOAD: 'FILE_UPLOAD',
-  CHECKBOX: 'CHECKBOX',
-  DROPDOWN: 'DROPDOWN',
-  MULTILINE_ADDRESS: 'MULTILINE_ADDRESS',
-  MLA_COUNTRY: 'DROPDOWN',
-  MLA_CITY: 'TEXT_INPUT',
-  MLA_ADDRESS_LINE: 'TEXT_INPUT',
-  MLA_ADDRESS_LINE_2: 'TEXT_INPUT',
-  MLA_POSTAL_CODE: 'TEXT_INPUT',
-  MLA_SUBDIVISION: 'DROPDOWN',
-  MLA_STREET_NAME: 'TEXT_INPUT',
-  MLA_STREET_NUMBER: 'TEXT_INPUT',
-  MLA_APARTMENT: 'TEXT_INPUT',
-  FULL_NAME_FIRST_NAME: 'TEXT_INPUT',
-  FULL_NAME_LAST_NAME: 'TEXT_INPUT',
-  FULL_NAME: 'TEXT_INPUT',
-  VAT_ID: 'TEXT_INPUT',
-  SIGNATURE: 'SIGNATURE',
-  RATING_INPUT: 'RATING_INPUT',
-  TAGS: 'TAGS',
-  DATE_PICKER: 'DATE_PICKER',
-  HEADER: 'TEXT',
-  RICH_TEXT: 'TEXT',
-  SUBMIT_BUTTON: 'SUBMIT_BUTTON',
-  SERVICES_MULTI_CHOICE: 'CHECKBOX_GROUP',
-};
-
-/**
- * Maps a user-provided fieldMap to include all schema field types.
- * This function creates a complete mapping from schema field types (e.g., 'CONTACTS_FIRST_NAME')
- * to their corresponding React components by using the FIELD_TYPE_MAP.
- *
- * @param userFieldMap - The fieldMap provided by the user with FieldType keys
- * @returns A complete field map with both FieldType and SchemaFieldType keys
- *
- * @example
- * ```tsx
- * const userFieldMap = {
- *   TEXT_INPUT: TextInputComponent,
- *   CHECKBOX: CheckboxComponent,
- * };
- *
- * const fullFieldMap = mapFieldMapToSchema(userFieldMap);
- * // Result includes:
- * // {
- * //   TEXT_INPUT: TextInputComponent,
- * //   CONTACTS_FIRST_NAME: TextInputComponent,
- * //   CONTACTS_LAST_NAME: TextInputComponent,
- * //   ...
- * //   CHECKBOX: CheckboxComponent,
- * //   CONTACTS_SUBSCRIBE: CheckboxComponent,
- * //   ...
- * // }
- * ```
- */
-function mapFieldMapToSchema(userFieldMap: FieldMap): Record<string, any> {
-  const fullFieldMap: Record<string, any> = { ...userFieldMap };
-
-  // Map each schema field type to its corresponding component
-  Object.entries(FIELD_TYPE_MAP).forEach(([schemaType, fieldType]) => {
-    const component = userFieldMap[fieldType];
-    if (component) {
-      fullFieldMap[schemaType] = component;
-    }
-  });
-
-  return fullFieldMap;
-}
 
 enum TestIds {
   formRoot = 'form-root',
@@ -998,11 +838,6 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
       setFormErrors(errors);
     }, []);
 
-    const fullFieldMap = React.useMemo(
-      () => mapFieldMapToSchema(props.fieldMap),
-      [props.fieldMap],
-    );
-
     return (
       <CoreFields>
         {({ form, submitForm }) => {
@@ -1010,25 +845,16 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormProvider
-                i18n={{ getFixedT: () => {} }}
-                form={form}
-                locale="en"
-                regionalFormat="en"
-                fields={fullFieldMap}
-                WixRicosViewer={() => null}
-              >
-                <FormStatusProvider>
-                  <FieldsWithForm
-                    form={form}
-                    values={formValues}
-                    onChange={handleFormChange}
-                    errors={formErrors}
-                    onValidate={handleFormValidate}
-                    fields={props.fieldMap}
-                    submitForm={() => submitForm(formValues)}
-                  />
-                </FormStatusProvider>
+              <FormProvider>
+                <FieldsWithForm
+                  form={form}
+                  values={formValues}
+                  onChange={handleFormChange}
+                  errors={formErrors}
+                  onValidate={handleFormValidate}
+                  fields={props.fieldMap}
+                  submitForm={() => submitForm(formValues)}
+                />
               </FormProvider>
             </div>
           );
