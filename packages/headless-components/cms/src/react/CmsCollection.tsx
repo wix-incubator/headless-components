@@ -760,33 +760,33 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
   (props, ref) => {
     const { children, asChild, className, displayType, ...otherProps } = props;
 
-  return (
-    <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
-      {({ displayed, isLoading, error }) => {
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            data-testid={TestIds.cmsCollectionItemsDisplayed}
-            data-displayed={displayed}
-            data-display-type={displayType || 'displayed'}
-            customElement={children}
-            customElementProps={{
-              displayed,
-              isLoading,
-              error,
-            }}
-            content={displayed}
-            {...otherProps}
-          >
-            <span>{displayed}</span>
-          </AsChildSlot>
-        );
-      }}
-    </CoreCmsCollection.TotalsDisplayed>
-  );
-},
+    return (
+      <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
+        {({ displayed, isLoading, error }) => {
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.cmsCollectionItemsDisplayed}
+              data-displayed={displayed}
+              data-display-type={displayType || 'displayed'}
+              customElement={children}
+              customElementProps={{
+                displayed,
+                isLoading,
+                error,
+              }}
+              content={displayed}
+              {...otherProps}
+            >
+              <span>{displayed}</span>
+            </AsChildSlot>
+          );
+        }}
+      </CoreCmsCollection.TotalsDisplayed>
+    );
+  },
 );
 
 /**
