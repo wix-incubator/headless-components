@@ -10,10 +10,42 @@ export type WixDataItem = items.WixDataItem;
 export type WixDataQueryResult = items.WixDataResult;
 
 /**
+ * Parameters for creating a regular item
+ */
+export interface InsertItemParams {
+  itemData: Partial<WixDataItem>;
+}
+
+/**
+ * Parameters for inserting a reference between items
+ */
+export interface InsertReferenceParams {
+  referenceFieldId: string;
+  itemId: string;
+  referencedItemIds: string | string[];
+}
+
+/**
+ * Union type for insertItem parameters
+ */
+export type InsertItemOrReferenceParams =
+  | InsertItemParams
+  | InsertReferenceParams;
+
+/**
  * Utility function to extract error messages consistently
  */
 function extractErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
+}
+
+/**
+ * Type guard to check if params are for inserting a reference
+ */
+function isInsertReferenceParams(
+  params: InsertItemOrReferenceParams,
+): params is InsertReferenceParams {
+  return 'referenceFieldId' in params;
 }
 
 /**
@@ -36,8 +68,10 @@ export const CmsCollectionServiceDefinition = defineService<{
   invalidate: () => Promise<void>;
   /** Function to load items with optional query options */
   loadItems: (options?: CmsQueryOptions) => Promise<void>;
-  /** Function to create a new item in the collection */
-  createItem: (itemData: Partial<WixDataItem>) => Promise<void>;
+  /** Function to create a new item in the collection or insert a reference between items. Returns the created item when creating, or void when inserting references. */
+  insertItemOrReference: (
+    params: InsertItemOrReferenceParams,
+  ) => Promise<WixDataItem | void>;
   /** Function to update the sort value */
   setSort: (sort: SortValue) => void;
   /** The collection ID */
@@ -255,19 +289,43 @@ export const CmsCollectionServiceImplementation =
         }
       };
 
-      const createItem = async (itemData: Partial<WixDataItem>) => {
+      const insertItemOrReference = async (
+        params: InsertItemOrReferenceParams,
+      ): Promise<WixDataItem | void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
         try {
-          await items.insert(config.collectionId, itemData);
+          let createdItem: WixDataItem | undefined;
+
+          if (isInsertReferenceParams(params)) {
+            // Insert reference between items
+            await items.insertReference(
+              config.collectionId,
+              params.referenceFieldId,
+              params.itemId,
+              params.referencedItemIds,
+            );
+          } else {
+            // Regular item creation - capture the returned item
+            createdItem = await items.insert(
+              config.collectionId,
+              params.itemData,
+            );
+          }
 
           // Invalidate + refetch to maintain consistency with backend query logic
           await invalidate();
+
+          // Return the created item if available
+          return createdItem;
         } catch (err) {
-          errorSignal.set(extractErrorMessage(err, 'Failed to create item'));
+          const errorMessage = isInsertReferenceParams(params)
+            ? 'Failed to insert reference'
+            : 'Failed to create item';
+          errorSignal.set(extractErrorMessage(err, errorMessage));
           console.error(
-            `Failed to create item in collection "${config.collectionId}":`,
+            `${errorMessage} in collection "${config.collectionId}":`,
             err,
           );
           throw err; // Re-throw for component error handling
@@ -296,7 +354,7 @@ export const CmsCollectionServiceImplementation =
         invalidate,
         loadNextPage,
         loadPrevPage,
-        createItem,
+        insertItemOrReference,
         setSort,
         collectionId: config.collectionId,
       };
