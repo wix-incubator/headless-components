@@ -298,7 +298,9 @@ export interface CreateItemActionProps {
  */
 export interface CreateItemActionRenderProps {
   /** Function to create a new item or insert a reference. Returns the created item when creating, or void when inserting references. */
-  insertItemOrReference: (params: InsertItemOrReferenceParams) => Promise<WixDataItem | void>;
+  insertItemOrReference: (
+    params: InsertItemOrReferenceParams,
+  ) => Promise<WixDataItem | void>;
   /** Whether creation is currently in progress */
   isLoading: boolean;
   /** Error message if creation failed, null otherwise */

@@ -916,11 +916,7 @@ export const CreateItemAction = React.forwardRef<
 
         // Build params based on provided props
         const getCreateParams = () => {
-          if (
-            referenceFieldId &&
-            itemId &&
-            referencedItemIds
-          ) {
+          if (referenceFieldId && itemId && referencedItemIds) {
             return {
               referenceFieldId,
               itemId,
@@ -936,7 +932,9 @@ export const CreateItemAction = React.forwardRef<
             asChild={asChild}
             className={className}
             onClick={
-              children ? undefined : () => insertItemOrReference(getCreateParams())
+              children
+                ? undefined
+                : () => insertItemOrReference(getCreateParams())
             }
             disabled={disabled}
             data-testid={TestIds.cmsCollectionCreateItem}
