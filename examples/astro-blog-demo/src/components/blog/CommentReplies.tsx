@@ -107,37 +107,30 @@ function ReplyAction({ onCommentAdded }: CommentReplyActionProps) {
 
   return (
     <>
-      <Comment.Status asChild>
-        {({ status }) => {
-          if (status === "PUBLISHED") {
-            return (
-              <LoginGuard>
-                <Button
-                  variant="link"
-                  className="h-auto place-self-start p-0"
-                  onClick={handleClick}
-                >
-                  <MessageSquareReplyIcon />
-                  Reply
-                </Button>
-                {isReplyOpen && (
-                  <CommentForm
-                    isReply
-                    textareaRef={textareaRef}
-                    onCommentAdded={() => {
-                      setIsReplyOpen(false);
-                      onCommentAdded?.();
-                    }}
-                    onCancelClick={() => setIsReplyOpen(false)}
-                  />
-                )}
-              </LoginGuard>
-            );
-          }
-
-          return null;
-        }}
-      </Comment.Status>
+      <Comment.Status className="peer hidden" />
+      <div className="hidden peer-data-[status='PUBLISHED']:block space-y-3">
+        <LoginGuard>
+          <Button
+            variant="link"
+            className="h-auto place-self-start p-0"
+            onClick={handleClick}
+          >
+            <MessageSquareReplyIcon />
+            Reply
+          </Button>
+          {isReplyOpen && (
+            <CommentForm
+              isReply
+              textareaRef={textareaRef}
+              onCommentAdded={() => {
+                setIsReplyOpen(false);
+                onCommentAdded?.();
+              }}
+              onCancelClick={() => setIsReplyOpen(false)}
+            />
+          )}
+        </LoginGuard>
+      </div>
     </>
   );
 }
