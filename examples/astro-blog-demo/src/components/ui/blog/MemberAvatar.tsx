@@ -11,9 +11,9 @@ const defaultSize = "md";
 const memberAvatarVariants = cva("bg-foreground/10", {
   variants: {
     size: {
-      sm: "h-6 w-6",
-      md: "h-8 w-8",
-      lg: "h-10 w-10",
+      sm: "h-6 w-6 text-xs",
+      md: "h-8 w-8 text-sm",
+      lg: "h-10 w-10 text-base",
     },
   },
   defaultVariants: {
