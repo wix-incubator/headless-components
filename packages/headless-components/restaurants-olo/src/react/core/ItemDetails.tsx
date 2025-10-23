@@ -16,6 +16,8 @@ import {
 } from '@wix/headless-restaurants-menus/react';
 import {
   EnhancedItem,
+  EnhancedModifier,
+  EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
 // ========================================
@@ -204,6 +206,8 @@ interface ItemDetailsModifiersProps {
   children: (props: {
     selectedModifierIds: string[];
     onToggle: (modifierId: string) => void;
+    modifierGroup: EnhancedModifierGroup;
+    modifiers: EnhancedModifier[];
   }) => React.ReactNode;
   singleSelect?: boolean;
 }
@@ -233,5 +237,10 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
   return children({
     selectedModifierIds: groupSelectedModifierIds,
     onToggle,
+    modifierGroup,
+    modifiers: modifierGroup.modifiers.map((modifier, index) => ({
+      ...modifier,
+      _id: `${modifier._id}~${index}`,
+    })),
   });
 };

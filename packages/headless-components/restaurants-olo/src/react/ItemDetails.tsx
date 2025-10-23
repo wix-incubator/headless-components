@@ -13,7 +13,7 @@ import {
 } from '@wix/headless-restaurants-menus/react';
 import * as CoreItemDetails from './core/ItemDetails.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
-import { EnhancedVariant } from '@wix/headless-restaurants-menus/services';
+import { EnhancedModifier, EnhancedModifierGroup, EnhancedVariant } from '@wix/headless-restaurants-menus/services';
 
 enum TestIds {
   itemName = 'item-name',
@@ -211,6 +211,8 @@ export interface ItemDetailsModifiersSingleSelectProps {
   children?: AsChildChildren<{
     selectedModifierIds: string[];
     onToggle: (modifierId: string) => void;
+    modifierGroup: EnhancedModifierGroup;
+    modifiers: EnhancedModifier[];
   }>;
   className?: string;
   asChild?: boolean;
@@ -324,7 +326,7 @@ export const ModifiersSingleSelect = React.forwardRef<
   }) => {
     return (
       <CoreItemDetails.ModifiersComponent singleSelect={true}>
-        {({ selectedModifierIds, onToggle }) => {
+        {({ selectedModifierIds, onToggle, modifierGroup, modifiers }) => {
           const selectedModifierId =
             selectedModifierIds.length > 0 ? selectedModifierIds[0] : '';
 
@@ -337,6 +339,8 @@ export const ModifiersSingleSelect = React.forwardRef<
               customElementProps={{
                 selectedModifierIds,
                 onToggle,
+                modifierGroup,
+                modifiers,
               }}
               {...rest}
             >
@@ -364,6 +368,8 @@ export interface ItemDetailsModifiersMultiSelectProps {
   children?: AsChildChildren<{
     selectedModifierIds: string[];
     onToggle: (modifierId: string) => void;
+    modifierGroup: EnhancedModifierGroup;
+    modifiers: EnhancedModifier[];
   }>;
   className?: string;
   asChild?: boolean;
@@ -385,7 +391,7 @@ export const ModifiersMultiSelect = React.forwardRef<
   }) => {
     return (
       <CoreItemDetails.ModifiersComponent singleSelect={false}>
-        {({ selectedModifierIds, onToggle }) => {
+        {({ selectedModifierIds, onToggle, modifierGroup, modifiers }) => {
           return (
             <AsChildSlot
               asChild={asChild}
@@ -395,6 +401,8 @@ export const ModifiersMultiSelect = React.forwardRef<
               customElementProps={{
                 selectedModifierIds,
                 onToggle,
+                modifierGroup,
+                modifiers,
               }}
               {...rest}
             >
