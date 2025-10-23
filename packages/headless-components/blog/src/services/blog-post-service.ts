@@ -67,7 +67,7 @@ export async function loadBlogPostServiceConfig(
 
   try {
     const { post } = await posts.getPostBySlug(postSlug, {
-      fieldsets: ['RICH_CONTENT', 'SEO'],
+      fieldsets: ['RICH_CONTENT', 'SEO', 'REFERENCE_ID'],
     });
 
     if (!post) {
