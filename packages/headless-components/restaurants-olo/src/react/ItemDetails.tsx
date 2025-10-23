@@ -13,7 +13,11 @@ import {
 } from '@wix/headless-restaurants-menus/react';
 import * as CoreItemDetails from './core/ItemDetails.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
-import { EnhancedModifier, EnhancedModifierGroup, EnhancedVariant } from '@wix/headless-restaurants-menus/services';
+import {
+  EnhancedModifier,
+  EnhancedModifierGroup,
+  EnhancedVariant,
+} from '@wix/headless-restaurants-menus/services';
 
 enum TestIds {
   itemName = 'item-name',
