@@ -1,5 +1,5 @@
-import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ChevronDownIcon } from "lucide-react";
 
 type SortSelectProps = {
   sortComponent: React.ComponentType<{ className?: string }>;
