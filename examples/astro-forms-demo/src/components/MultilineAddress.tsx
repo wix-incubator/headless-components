@@ -19,8 +19,9 @@ const MultilineAddress = ({
 
   return (
     <Form.Field id={id}>
-      <Form.Field.Input asChild>
-        <fieldset className="mb-6 p-4 border border-foreground/20 rounded-lg">
+      <Form.Field.InputWrapper>
+        <Form.Field.Input asChild>
+          <fieldset className="mb-6 p-4 border border-foreground/20 rounded-lg">
           <legend className="text-foreground font-paragraph font-semibold px-2">
             {label}
             {required && <span className="text-destructive ml-1">*</span>}
@@ -214,12 +215,18 @@ const MultilineAddress = ({
               <option value="AU">Australia</option>
               <option value="DE">Germany</option>
               <option value="FR">France</option>
-            </select>
-          </div>
-        </fieldset>
-      </Form.Field.Input>
-    </Form.Field>
-  );
+          </select>
+        </div>
+      </fieldset>
+    </Form.Field.Input>
+    <Form.Field.Error>
+      <span className="text-destructive text-sm font-paragraph">
+        This field is required
+      </span>
+    </Form.Field.Error>
+  </Form.Field.InputWrapper>
+</Form.Field>
+);
 };
 
 export default MultilineAddress;

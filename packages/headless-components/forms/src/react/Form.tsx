@@ -56,7 +56,9 @@ enum TestIds {
   formSubmitted = 'form-submitted',
   fieldRoot = 'field-root',
   fieldLabel = 'field-label',
+  fieldInputWrapper = 'field-input-wrapper',
   fieldInput = 'field-input',
+  fieldError = 'field-error',
 }
 
 /**
@@ -1051,7 +1053,9 @@ interface FieldComponent
     FieldProps & React.RefAttributes<HTMLDivElement>
   > {
   Label: typeof FieldLabel;
+  InputWrapper: typeof FieldInputWrapper;
   Input: typeof FieldInput;
+  Error: typeof FieldError;
 }
 
 /**
@@ -1063,6 +1067,18 @@ export interface FieldLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** CSS classes to apply to the label element */
+  className?: string;
+}
+
+/**
+ * Props for Field.InputWrapper component
+ */
+export interface FieldInputWrapperProps {
+  /** Child components (typically Field.Input and Field.Error) */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the wrapper element */
   className?: string;
 }
 
@@ -1081,8 +1097,20 @@ export interface FieldInputProps {
 }
 
 /**
+ * Props for Field.Error component
+ */
+export interface FieldErrorProps {
+  /** Error message content to display */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the error element */
+  className?: string;
+}
+
+/**
  * Container component for a form field with grid layout support.
- * Provides context to Field.Label and Field.Input child components.
+ * Provides context to Field.Label, Field.InputWrapper, Field.Input, and Field.Error child components.
  * Based on the default-field-layout functionality.
  *
  * @component
@@ -1096,9 +1124,14 @@ export interface FieldInputProps {
  *       <Form.Field.Label>
  *         <label className="text-foreground font-paragraph">Username</label>
  *       </Form.Field.Label>
- *       <Form.Field.Input description={<span className="text-secondary-foreground">Required</span>}>
- *         <input className="bg-background border-foreground text-foreground" />
- *       </Form.Field.Input>
+ *       <Form.Field.InputWrapper>
+ *         <Form.Field.Input description={<span className="text-secondary-foreground">Required</span>}>
+ *           <input className="bg-background border-foreground text-foreground" />
+ *         </Form.Field.Input>
+ *         <Form.Field.Error>
+ *           <span className="text-destructive text-sm font-paragraph">Username is required</span>
+ *         </Form.Field.Error>
+ *       </Form.Field.InputWrapper>
  *     </Form.Field>
  *   );
  * }
@@ -1158,9 +1191,11 @@ FieldRoot.displayName = 'Form.Field';
  *   <Form.Field.Label>
  *     <label className="text-foreground font-paragraph">Email Address</label>
  *   </Form.Field.Label>
- *   <Form.Field.Input>
- *     <input type="email" className="bg-background border-foreground" />
- *   </Form.Field.Input>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input>
+ *       <input type="email" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *   </Form.Field.InputWrapper>
  * </Form.Field>
  * ```
  */
@@ -1189,9 +1224,59 @@ export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
 FieldLabel.displayName = 'Form.Field.Label';
 
 /**
- * Input component for a form field with automatic grid positioning.
+ * InputWrapper component that wraps input and error elements with grid positioning.
  * Must be used within a Form.Field component.
- * Renders in the input row of the field's grid layout with optional description.
+ * This wrapper applies the grid positioning styles to contain both the input and error.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * <Form.Field id="email">
+ *   <Form.Field.Label>
+ *     <label className="text-foreground font-paragraph">Email Address</label>
+ *   </Form.Field.Label>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input>
+ *       <input type="email" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *     <Form.Field.Error>
+ *       <span className="text-destructive text-sm font-paragraph">Please enter a valid email</span>
+ *     </Form.Field.Error>
+ *   </Form.Field.InputWrapper>
+ * </Form.Field>
+ * ```
+ */
+export const FieldInputWrapper = React.forwardRef<
+  HTMLDivElement,
+  FieldInputWrapperProps
+>((props, ref) => {
+  const { children, asChild, className, ...otherProps } = props;
+  const { gridStyles } = useFieldContext();
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      style={gridStyles.input}
+      data-testid={TestIds.fieldInputWrapper}
+      customElement={children}
+      customElementProps={{}}
+      {...otherProps}
+    >
+      <div>{children}</div>
+    </AsChildSlot>
+  );
+});
+
+FieldInputWrapper.displayName = 'Form.Field.InputWrapper';
+
+/**
+ * Input component for a form field.
+ * Must be used within a Form.Field.InputWrapper component.
+ * Renders the actual input element without grid positioning.
  *
  * @component
  * @example
@@ -1202,23 +1287,23 @@ FieldLabel.displayName = 'Form.Field.Label';
  *   <Form.Field.Label>
  *     <label className="text-foreground font-paragraph">Password</label>
  *   </Form.Field.Label>
- *   <Form.Field.Input description={<span className="text-secondary-foreground">Min 8 characters</span>}>
- *     <input type="password" className="bg-background border-foreground text-foreground" />
- *   </Form.Field.Input>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input description={<span className="text-secondary-foreground">Min 8 characters</span>}>
+ *       <input type="password" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *   </Form.Field.InputWrapper>
  * </Form.Field>
  * ```
  */
 export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
   (props, ref) => {
     const { children, description, asChild, className, ...otherProps } = props;
-    const { gridStyles } = useFieldContext();
 
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
         className={className}
-        style={gridStyles.input}
         data-testid={TestIds.fieldInput}
         customElement={children}
         customElementProps={{}}
@@ -1232,6 +1317,55 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
 
 FieldInput.displayName = 'Form.Field.Input';
 
+/**
+ * Error component for displaying field-level validation errors.
+ * Must be used within a Form.Field.InputWrapper component.
+ * Renders error messages that flow naturally after the input field.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * <Form.Field id="email">
+ *   <Form.Field.Label>
+ *     <label className="text-foreground font-paragraph">Email Address</label>
+ *   </Form.Field.Label>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input>
+ *       <input type="email" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *     <Form.Field.Error>
+ *       <span className="text-destructive text-sm font-paragraph">Please enter a valid email address</span>
+ *     </Form.Field.Error>
+ *   </Form.Field.InputWrapper>
+ * </Form.Field>
+ * ```
+ */
+export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
+  (props, ref) => {
+    const { children, asChild, className, ...otherProps } = props;
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-testid={TestIds.fieldError}
+        customElement={children}
+        customElementProps={{}}
+        {...otherProps}
+      >
+        <div>{children}</div>
+      </AsChildSlot>
+    );
+  },
+);
+
+FieldError.displayName = 'Form.Field.Error';
+
 export const Field = FieldRoot as FieldComponent;
 Field.Label = FieldLabel;
+Field.InputWrapper = FieldInputWrapper;
 Field.Input = FieldInput;
+Field.Error = FieldError;
