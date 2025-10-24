@@ -94,16 +94,16 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
             onSubmit: handleCustomSubmit,
           }}
         >
-          <Form.Loading className="flex justify-center p-8 text-foreground font-paragraph" />
-          <Form.LoadingError className="bg-destructive/10 border border-destructive/20 text-destructive px-6 py-4 rounded-lg mb-6 font-paragraph" />
-          <Form.Error className="bg-destructive/10 border border-destructive/20 text-destructive px-6 py-4 rounded-lg mb-6 font-paragraph" />
-          <Form.Submitted className="bg-green-500/10 border border-green-500/20 text-green-500 px-6 py-4 rounded-lg mb-6 font-paragraph font-semibold" />
           <div className="bg-background/50 backdrop-blur-sm p-8 rounded-xl border border-foreground/10 shadow-lg">
             <Form.Fields
               fieldMap={FIELD_MAP}
               rowGapClassname="gap-y-6"
               columnGapClassname="gap-x-4"
             />
+            <Form.Loading className="mt-4 flex justify-center p-8 text-foreground font-paragraph" />
+            <Form.LoadingError className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-6 py-4 rounded-lg mb-6 font-paragraph" />
+            <Form.Error className="mt-4 bg-destructive/10 border border-destructive/20 text-destructive px-6 py-4 rounded-lg mb-6 font-paragraph" />
+            <Form.Submitted className="mt-4 bg-green-500/10 border border-green-500/20 text-green-500 px-6 py-4 rounded-lg mb-6 font-paragraph font-semibold" />
           </div>
         </Form.Root>
       </div>
