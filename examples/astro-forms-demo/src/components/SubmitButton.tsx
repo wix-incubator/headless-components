@@ -16,7 +16,7 @@ export default function SubmitButton({
   return (
     <Form.Field id={id}>
       <Form.Field.Input asChild>
-        <div className="flex gap-3 mt-8">
+        <div className="flex gap-3 justify-between">
           {showPreviousButton && (
             <button
               type="button"
@@ -32,7 +32,7 @@ export default function SubmitButton({
               onClick={() => {
                 onNextClick();
               }}
-              className="px-6 py-3 bg-primary text-primary-foreground font-paragraph font-semibold rounded-lg hover:opacity-90 transition-opacity"
+              className="ml-auto px-6 py-3 bg-primary text-primary-foreground font-paragraph font-semibold rounded-lg hover:opacity-90 transition-opacity"
             >
               {nextText}
             </button>
@@ -42,7 +42,7 @@ export default function SubmitButton({
               type="submit"
               onClick={() => onSubmitClick()}
               disabled={isSubmitInProgress}
-              className="px-6 py-3 bg-primary text-primary-foreground font-paragraph font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ml-auto px-6 py-3 bg-primary text-primary-foreground font-paragraph font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitInProgress ? 'Submitting...' : submitText}
             </button>

@@ -7,7 +7,6 @@ import {
 import '@wix/ricos/css/all-plugins-viewer.css';
 
 const RichText = ({
-  // @ts-expect-error
   id,
   content,
   maxShownParagraphs,
@@ -16,7 +15,7 @@ const RichText = ({
   return (
     <Form.Field id={id}>
       <Form.Field.Input asChild>
-        <div className="w-full mb-4 pb-2 border-b border-foreground/20 text-foreground font-paragraph font-semibold">
+        <div className="w-full text-foreground font-paragraph font-semibold">
           <RicosViewer
             content={content as RichContent}
             plugins={quickStartViewerPlugins()}
