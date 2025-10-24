@@ -403,7 +403,7 @@ export interface ContentProps {
     | React.ReactElement<{ content: any }>;
 }
 /**
- * Exposes blog post rich content
+ * Exposes blog post rich content, only available if `blogPostServiceConfig` is provided to `Blog.Post.Root`. Use `Blog.Post.Excerpt` to display the post excerpt otherwise.
  *
  * @component
  * @example
@@ -432,29 +432,27 @@ export interface ContentProps {
  */
 export const Content = React.forwardRef<HTMLElement, ContentProps>((props, ref) => {
   const { children, className } = props;
+  const { post } = usePostContext();
   const asChild = true;
+
+  const content = post?.richContent;
+  const pricingPlanIds = post?.pricingPlanIds ?? [];
+
+  if (!content) return null;
 
   const attributes = {
     'data-testid': TestIds.content,
   };
 
   return (
-    <CoreBlogPost.RichContent>
-      {({ content, pricingPlanIds }) => {
-        if (!content) return null;
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            {...attributes}
-            customElement={children}
-            customElementProps={{ content, pricingPlanIds }}
-          ></AsChildSlot>
-        );
-      }}
-    </CoreBlogPost.RichContent>
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      {...attributes}
+      customElement={children}
+      customElementProps={{ content, pricingPlanIds }}
+    ></AsChildSlot>
   );
 });
 

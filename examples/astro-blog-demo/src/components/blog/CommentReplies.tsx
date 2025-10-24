@@ -108,7 +108,7 @@ function ReplyAction({ onCommentAdded }: CommentReplyActionProps) {
   return (
     <>
       <Comment.Status className="peer hidden" />
-      <div className="hidden peer-data-[status='PUBLISHED']:block space-y-3">
+      <div className="hidden space-y-3 peer-data-[status='PUBLISHED']:block">
         <LoginGuard>
           <Button
             variant="link"
