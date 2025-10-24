@@ -659,6 +659,8 @@ export interface FieldMap {
  */
 interface FieldsProps {
   fieldMap: FieldMap;
+  rowGapClassname: string;
+  columnGapClassname: string;
 }
 
 /**
@@ -853,6 +855,8 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
                   onValidate={handleFormValidate}
                   fields={props.fieldMap}
                   submitForm={() => submitForm(formValues)}
+                  rowGapClassname={props.rowGapClassname}
+                  columnGapClassname={props.columnGapClassname}
                 />
               </FormProvider>
             </div>
@@ -871,6 +875,8 @@ const FieldsWithForm = ({
   errors,
   onValidate,
   fields: fieldMap,
+  rowGapClassname,
+  columnGapClassname,
 }: {
   form: forms.Form;
   submitForm: () => void;
@@ -879,6 +885,8 @@ const FieldsWithForm = ({
   errors: FormError[];
   onValidate: (errors: FormError[]) => void;
   fields: FieldMap;
+  rowGapClassname: string;
+  columnGapClassname: string;
 }) => {
   const formData = useForm({
     form,
@@ -901,8 +909,8 @@ const FieldsWithForm = ({
     <FieldLayoutProvider value={fieldsLayout}>
       <form onSubmit={(e) => e.preventDefault()}>
         <fieldset
-          // TODO: pass tailwind gap
-          style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+          style={{ display: 'flex', flexDirection: 'column' }}
+          className={rowGapClassname}
         >
           {fieldElements.map((rowElements, index) => {
             return (
@@ -913,8 +921,8 @@ const FieldsWithForm = ({
                   width: '100%',
                   gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
                   gridAutoRows: 'minmax(min-content, max-content)',
-                  columnGap: '16px', // TODO: pass tailwind gap
                 }}
+                className={columnGapClassname}
               >
                 {rowElements}
               </div>

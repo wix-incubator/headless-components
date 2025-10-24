@@ -15,7 +15,7 @@ const RichText = ({
   return (
     <Form.Field id={id}>
       <Form.Field.Input asChild>
-        <div className="w-full mb-4 pb-2 text-foreground font-paragraph font-semibold">
+        <div className="w-full text-foreground font-paragraph font-semibold">
           <RicosViewer
             content={content as RichContent}
             plugins={quickStartViewerPlugins()}
