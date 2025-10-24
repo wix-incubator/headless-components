@@ -40,7 +40,7 @@ export default function FeedPage({
 }: FeedPageProps) {
   return (
     <Blog.Feed.Root blogFeedServiceConfig={blogFeedServiceConfig}>
-      <SortSelect sortComponent={Blog.Feed.Sort} />
+      <SortSelect sortComponent={Blog.Feed.Sort} className="mb-2" />
       <Blog.Feed.PostItems
         className="grid gap-x-8 gap-y-12 lg:grid-cols-2 xl:grid-cols-3"
         emptyState={
