@@ -641,6 +641,8 @@ export interface FieldMap {
  *
  * @interface FieldsProps
  * @property {FieldMap} fieldMap - A mapping of field types to their corresponding React components
+ * @property {string} rowGapClassname - CSS class name for gap between rows
+ * @property {string} columnGapClassname - CSS class name for gap between columns
  * @example
  * ```tsx
  * const FIELD_MAP = {
@@ -654,7 +656,7 @@ export interface FieldMap {
  *   // ... remaining field components
  * };
  *
- * <Form.Fields fieldMap={FIELD_MAP} />
+ * <Form.Fields fieldMap={FIELD_MAP} rowGapClassname="gap-y-4" columnGapClassname="gap-x-2" />
  * ```
  */
 interface FieldsProps {
@@ -671,6 +673,8 @@ interface FieldsProps {
  * @component
  * @param {FieldsProps} props - Component props
  * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components
+ * @param {string} props.rowGapClassname - CSS class name for gap between rows
+ * @param {string} props.columnGapClassname - CSS class name for gap between columns
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -689,7 +693,11 @@ interface FieldsProps {
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
- *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Fields
+ *         fieldMap={FIELD_MAP}
+ *         rowGapClassname="gap-y-4"
+ *         columnGapClassname="gap-x-2"
+ *       />
  *     </Form.Root>
  *   );
  * }
@@ -705,12 +713,15 @@ interface FieldsProps {
  * - Field validation and error display
  * - Form state management
  * - Field value updates
+ * - Grid layout with configurable row and column gaps
  *
  * Must be used within Form.Root to access form context.
  *
  * @component
  * @param {FieldsProps} props - The component props
  * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components. Each key represents a field type (e.g., 'TEXT_INPUT', 'CHECKBOX') and the value is the React component that should render that field type.
+ * @param {string} props.rowGapClassname - CSS class name for gap between form rows
+ * @param {string} props.columnGapClassname - CSS class name for gap between form columns
  *
  * @example
  * ```tsx
@@ -778,7 +789,11 @@ interface FieldsProps {
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
- *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Fields
+ *         fieldMap={FIELD_MAP}
+ *         rowGapClassname="gap-y-4"
+ *         columnGapClassname="gap-x-2"
+ *       />
  *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
  *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
  *     </Form.Root>
@@ -934,17 +949,34 @@ const FieldsWithForm = ({
   );
 };
 
+/**
+ * Mapping of field IDs to their layout configurations
+ */
 interface FieldLayoutMap {
   [fieldId: string]: Layout;
 }
 
+/**
+ * Context for sharing field layout data across the form
+ * @internal
+ */
 const FieldLayoutContext = React.createContext<FieldLayoutMap | null>(null);
 
+/**
+ * Props for FieldLayoutProvider component
+ * @internal
+ */
 interface FieldLayoutProviderProps {
+  /** The layout map to provide to children */
   value: FieldLayoutMap;
+  /** Child components that need access to layout data */
   children: React.ReactNode;
 }
 
+/**
+ * Provider component that makes field layout data available to child components
+ * @internal
+ */
 const FieldLayoutProvider: React.FC<FieldLayoutProviderProps> = ({
   value,
   children,
@@ -956,6 +988,12 @@ const FieldLayoutProvider: React.FC<FieldLayoutProviderProps> = ({
   );
 };
 
+/**
+ * Hook to access layout configuration for a specific field
+ * @internal
+ * @param {string} fieldId - The unique identifier of the field
+ * @returns {Layout | null} The layout configuration for the field, or null if not found
+ */
 function useFieldLayout(fieldId: string): Layout | null {
   const layoutMap = React.useContext(FieldLayoutContext);
   if (!layoutMap) {

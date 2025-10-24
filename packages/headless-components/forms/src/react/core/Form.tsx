@@ -187,7 +187,7 @@ export function LoadingError(props: FormErrorProps) {
 }
 
 /**
- * Props for Form Error headless component
+ * Props for Form Submit Error headless component
  */
 export interface FormSubmitErrorProps {
   /** Render prop function that receives submit error state data */
@@ -195,7 +195,7 @@ export interface FormSubmitErrorProps {
 }
 
 /**
- * Render props for Form Error component
+ * Render props for Form Submit Error component
  */
 export interface FormSubmitErrorRenderProps {
   /** Submit error message */
@@ -305,15 +305,18 @@ export function Submitted(props: FormSubmittedProps) {
 /**
  * Render props for Fields component
  */
-interface FieldsRenderProps {
+export interface FieldsRenderProps {
+  /** The form data, or null if not loaded */
   form: forms.Form | null;
+  /** Function to submit the form with values */
   submitForm: (formValues: FormValues) => Promise<void>;
 }
 
 /**
  * Props for Fields headless component
  */
-interface FieldsProps {
+export interface FieldsProps {
+  /** Render prop function that receives form data and submit handler */
   children: (props: FieldsRenderProps) => React.ReactNode;
 }
 
@@ -421,11 +424,11 @@ export interface FieldProps {
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
- * function CustomField({ id }) {
+ * function CustomField({ id, layout }) {
  *   return (
- *     <Form.Field id={id}>
- *       {({ layout, gridStyles }) => (
- *         <div>
+ *     <Form.Field id={id} layout={layout}>
+ *       {({ id, layout, gridStyles }) => (
+ *         <div data-field-id={id}>
  *           <div style={gridStyles.label}>Label</div>
  *           <div style={gridStyles.input}>Input</div>
  *         </div>
