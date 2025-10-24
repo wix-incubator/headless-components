@@ -1,0 +1,37 @@
+{
+  "name": "@wix/headless-utils",
+  "version": "0.0.4",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "test": "vitest",
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "files": [
+    "dist",
+    "cjs",
+    "react"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./cjs/dist/react/index.js"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3"
+  },
+  "peerDependencies": {
+    "react": ">=16.3.0"
+  }
+}
