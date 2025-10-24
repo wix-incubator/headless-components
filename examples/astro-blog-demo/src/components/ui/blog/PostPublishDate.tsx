@@ -15,4 +15,4 @@ export const PostPublishDate = ({ uiLocale }: PostPublishDateProps) => {
   );
 };
 
-PostPublishDate.displayName = 'PostPublishDate';
+PostPublishDate.displayName = "PostPublishDate";

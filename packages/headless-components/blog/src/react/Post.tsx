@@ -1,11 +1,11 @@
 import { posts, tags } from '@wix/blog';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
-import type { members } from '@wix/members';
 import React from 'react';
 import type { PostWithResolvedFields } from '../services/blog-feed-service.js';
 import * as BlogCategories from './Categories.js';
 import * as CoreBlogPost from './core/Post.js';
 
+import type { members } from '@wix/members';
 import { createServicesMap } from '@wix/services-manager';
 import { WixServices } from '@wix/services-manager-react';
 import {
@@ -13,6 +13,8 @@ import {
   BlogPostServiceDefinition,
   type BlogPostServiceConfig,
 } from '../services/blog-post-service.js';
+import type { CommentsServiceConfig } from '../services/comments-service.js';
+import { Root as CommentsRoot } from './Comments.js';
 import { isValidChildren } from './helpers.js';
 
 /** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=cb293890-7b26-4bcf-8c87-64f624c59158 */
@@ -38,20 +40,20 @@ export function usePostContext(): PostContextValue {
 }
 
 const enum TestIds {
-  blogPostRoot = 'blog-post-root',
-  blogPostLink = 'blog-post-link',
-  blogPostTitle = 'blog-post-title',
-  blogPostExcerpt = 'blog-post-excerpt',
-  blogPostContent = 'blog-post-content',
-  blogPostCoverImage = 'blog-post-cover-image',
-  blogPostAuthor = 'blog-post-author',
-  blogPostPublishDate = 'blog-post-publish-date',
-  blogPostReadingTime = 'blog-post-reading-time',
-  blogPostCategories = 'blog-post-categories',
-  blogPostTags = 'blog-post-tags',
-  blogPostSiblingPosts = 'blog-post-sibling-posts',
-  blogPostSiblingNewerPost = 'blog-post-sibling-newer-post',
-  blogPostSiblingOlderPost = 'blog-post-sibling-older-post',
+  root = 'blog-post-root',
+  link = 'blog-post-link',
+  title = 'blog-post-title',
+  excerpt = 'blog-post-excerpt',
+  content = 'blog-post-content',
+  coverImage = 'blog-post-cover-image',
+  author = 'blog-post-author',
+  publishDate = 'blog-post-publish-date',
+  readingTime = 'blog-post-reading-time',
+  categories = 'blog-post-categories',
+  tags = 'blog-post-tags',
+  siblingPosts = 'blog-post-sibling-posts',
+  siblingNewerPost = 'blog-post-sibling-newer-post',
+  siblingOlderPost = 'blog-post-sibling-older-post',
 }
 
 export interface BlogPostRootProps {
@@ -138,7 +140,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>((props, ref
     };
     const attributes = {
       'data-component-tag': HTML_CODE_TAG,
-      'data-testid': TestIds.blogPostRoot,
+      'data-testid': TestIds.root,
       'data-post-id': post._id,
       'data-post-slug': post.slug,
       'data-post-pinned': post.pinned,
@@ -174,7 +176,7 @@ export const Root = React.forwardRef<HTMLElement, BlogPostRootProps>((props, ref
   return (
     <WixServices
       // key: Ensure we re-render the component when the post changes
-      key={blogPostServiceConfig?.post._id}
+      key={blogPostServiceConfig.post._id}
       servicesMap={createServicesMap().addService(
         BlogPostServiceDefinition,
         BlogPostService,
@@ -211,7 +213,7 @@ export const CoverImage = React.forwardRef<HTMLElement, CoverImageProps>((props,
   if (!coverImageUrl) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostCoverImage,
+    'data-testid': TestIds.coverImage,
   };
 
   return (
@@ -268,7 +270,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) 
   const href = `${baseUrl}${slug}`;
 
   const attributes = {
-    'data-testid': TestIds.blogPostLink,
+    'data-testid': TestIds.link,
   };
 
   return (
@@ -322,7 +324,7 @@ export const Excerpt = React.forwardRef<HTMLElement, ExcerptProps>((props, ref) 
 
   const excerpt = post.excerpt;
   const attributes = {
-    'data-testid': TestIds.blogPostExcerpt,
+    'data-testid': TestIds.excerpt,
   };
 
   return (
@@ -374,7 +376,7 @@ export const Title = React.forwardRef<HTMLElement, TitleProps>((props, ref) => {
 
   const title = post.title;
   const attributes = {
-    'data-testid': TestIds.blogPostTitle,
+    'data-testid': TestIds.title,
   };
 
   return (
@@ -433,7 +435,7 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>((props, ref) 
   const asChild = true;
 
   const attributes = {
-    'data-testid': TestIds.blogPostContent,
+    'data-testid': TestIds.content,
   };
 
   return (
@@ -497,7 +499,7 @@ export const PublishDate = React.forwardRef<HTMLElement, PublishDateProps>((prop
   const publishDate = post?.firstPublishedDate;
   if (!publishDate) return null;
 
-  const formattedDate = new Date(publishDate).toLocaleDateString(locale, {
+  const formattedDate = new Date(publishDate).toLocaleDateString(locale ?? 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -507,7 +509,7 @@ export const PublishDate = React.forwardRef<HTMLElement, PublishDateProps>((prop
   const dateTimeString = typeof publishDate === 'string' ? publishDate : publishDate.toISOString();
 
   const attributes = {
-    'data-testid': TestIds.blogPostPublishDate,
+    'data-testid': TestIds.publishDate,
   };
 
   return (
@@ -541,7 +543,7 @@ export const ReadingTime = React.forwardRef<HTMLElement, ReadingTimeProps>((prop
   if (readingTime <= 0) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostReadingTime,
+    'data-testid': TestIds.readingTime,
   };
 
   return (
@@ -663,7 +665,7 @@ export const CategoryItems = React.forwardRef<HTMLElement, CategoryItemsProps>((
   };
 
   const attributes = {
-    'data-testid': TestIds.blogPostCategories,
+    'data-testid': TestIds.categories,
   };
 
   return (
@@ -713,7 +715,7 @@ export const TagItems = React.forwardRef<HTMLElement, TagItemsProps>((props, ref
   };
 
   const attributes = {
-    'data-testid': TestIds.blogPostTags,
+    'data-testid': TestIds.tags,
   };
 
   return (
@@ -793,7 +795,7 @@ export const Author = React.forwardRef<HTMLElement, AuthorProps>((props, ref) =>
   if (!owner) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostAuthor,
+    'data-testid': TestIds.author,
   };
 
   return (
@@ -839,7 +841,7 @@ const SiblingPostsRoot = React.forwardRef<HTMLElement, SiblingPostsRootProps>((p
   if (!olderPost && !newerPost) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostSiblingPosts,
+    'data-testid': TestIds.siblingPosts,
   };
 
   return (
@@ -872,7 +874,7 @@ const SiblingPostNewer = React.forwardRef<HTMLElement, SiblingPostNextProps>((pr
   if (!newerPost) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostSiblingNewerPost,
+    'data-testid': TestIds.siblingNewerPost,
   };
 
   return (
@@ -911,7 +913,7 @@ const SiblingPostOlder = React.forwardRef<HTMLElement, SiblingPostOlderProps>((p
   if (!olderPost) return null;
 
   const attributes = {
-    'data-testid': TestIds.blogPostSiblingOlderPost,
+    'data-testid': TestIds.siblingOlderPost,
   };
 
   return (
@@ -934,3 +936,47 @@ export const SiblingPosts = {
   Newer: SiblingPostNewer,
   Older: SiblingPostOlder,
 };
+
+interface CommentsProps {
+  currentMember: unknown;
+  commentsServiceConfig?: Omit<CommentsServiceConfig, 'resourceId' | 'contextId'>;
+  className?: string;
+  children: React.ReactNode;
+}
+
+/**
+ * Renders `Comments.Root` linked to post. Doesn't render anything if post has no comment support (is under a paywall or commenting is disabled).
+ * @example
+ * ```tsx
+ * <Blog.Post.Comments currentMember={member}>
+ *   <Comments.CommentItemRepeater>
+ *     <Comment.Author />
+ *     <Comment.CommentDate />
+ *     <Comment.Content />
+ *   </Comments.CommentItemRepeater>
+ * </Blog.Post.Comments>
+ * ```
+ */
+export const Comments = React.forwardRef<HTMLElement, CommentsProps>((props, ref) => {
+  const { currentMember, commentsServiceConfig, children, className } = props;
+  const { post } = usePostContext();
+
+  if (!post || post.preview || !post.commentingEnabled || !post.referenceId) return null;
+
+  return (
+    <CommentsRoot
+      className={className}
+      ref={ref}
+      currentMember={currentMember}
+      commentsServiceConfig={{
+        ...commentsServiceConfig,
+        contextId: post.referenceId,
+        resourceId: post.referenceId,
+      }}
+    >
+      {children}
+    </CommentsRoot>
+  );
+});
+
+Comments.displayName = 'Blog.Post.Comments';

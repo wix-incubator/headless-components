@@ -1,3 +1,4 @@
+import RouteFeed from "@/components/blog/RouteFeed";
 import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
@@ -5,7 +6,6 @@ import {
 } from "@wix/blog/services";
 import React from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
-import RouteFeed from "@/components/blog/RouteFeed";
 
 export function BlogIndexRoute() {
   const { blogFeedServiceConfig, blogCategoriesServiceConfig } =

@@ -8,4 +8,4 @@ export const PostReadingTime = () => {
   );
 };
 
-PostReadingTime.displayName = 'PostReadingTime';
+PostReadingTime.displayName = "PostReadingTime";

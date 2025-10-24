@@ -2,6 +2,7 @@ import type {
   BlogFeedServiceConfig,
   BlogPostServiceConfig,
 } from "@wix/blog/services";
+import PostCommentsSection from "./PostCommentsSection";
 import PostPage from "./PostPage";
 import RecentPostsSection from "./RecentPostsSection";
 
@@ -40,6 +41,12 @@ export default function RoutePost({
           categoryPageBaseUrl={categoryPageBaseUrl}
           uiLocale={uiLocale}
         />
+        <div className="mx-auto mb-14 max-w-3xl">
+          <PostCommentsSection
+            blogPostServiceConfig={blogPostServiceConfig}
+            uiLocale={uiLocale}
+          />
+        </div>
       </div>
     </div>
   );

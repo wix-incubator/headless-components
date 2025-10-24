@@ -1,6 +1,6 @@
 {
   "name": "@wix/headless-blog",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "type": "module",
   "scripts": {
     "prebuild": "cd ../utils && yarn build && cd ../components && yarn build && cd ../media && yarn build",
@@ -47,6 +47,7 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
     "@wix/blog": "^1.0.477",
+    "@wix/comments": "^1.0.133",
     "@wix/headless-media": "workspace:*",
     "@wix/headless-utils": "workspace:*",
     "@wix/members": "^1.0.322",

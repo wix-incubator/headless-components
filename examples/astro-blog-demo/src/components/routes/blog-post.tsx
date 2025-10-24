@@ -4,8 +4,8 @@ import {
 } from "@wix/blog/services";
 import React from "react";
 
-import { useLoaderData } from "react-router-dom";
 import RoutePost from "@/components/blog/RoutePost";
+import { useLoaderData } from "react-router-dom";
 
 export function BlogPostRoute() {
   const { blogPostServiceConfig, recentPostsServiceConfig } =
