@@ -1,23 +1,13 @@
 import React, { createContext, useContext } from 'react';
-import type { Modifier } from '../../services/types.js';
+import type { EnhancedModifier } from '../../services/types.js';
 
 export interface ModifierProps {
   children: React.ReactNode;
-  modifier: Modifier & {
-    additionalChargeInfo?: {
-      additionalCharge?: string;
-      formattedAdditionalCharge?: string;
-    };
-  };
+  modifier: EnhancedModifier;
 }
 
 interface ModifierContextValue {
-  modifier: Modifier & {
-    additionalChargeInfo?: {
-      additionalCharge?: string;
-      formattedAdditionalCharge?: string;
-    };
-  };
+  modifier: EnhancedModifier;
 }
 
 const ModifierContext = createContext<ModifierContextValue | null>(null);

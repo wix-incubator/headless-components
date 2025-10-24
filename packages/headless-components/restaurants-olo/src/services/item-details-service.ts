@@ -3,9 +3,12 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import * as items from '@wix/auto_sdk_restaurants_items';
 import { type LineItem } from '@wix/ecom/services';
 import { itemVariants } from '@wix/restaurants';
+import type {
+  EnhancedItem,
+  EnhancedModifierGroup,
+} from '@wix/headless-restaurants-menus/services';
 
 type Variant = itemVariants.Variant;
 
@@ -17,11 +20,12 @@ type Variant = itemVariants.Variant;
  */
 export interface ItemServiceAPI {
   /** Reactive signal containing the current item data */
-  item?: Signal<items.Item | undefined>;
+  item?: Signal<EnhancedItem | undefined>;
   quantity: Signal<number>;
   specialRequest: Signal<string>;
   lineItem: Signal<LineItem>;
   selectedVariant: Signal<Variant | undefined>;
+  selectedModifiers: Signal<Record<string, Array<string>>>;
   /** Reactive signal indicating if a item is currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
@@ -32,6 +36,12 @@ export interface ItemServiceAPI {
   updateSpecialRequest: (specialRequest: string) => void;
   /** Function to update the selected variant of the item */
   updateSelectedVariant: (variant: Variant) => void;
+  /** Function to toggle a modifier instance in a specific group */
+  toggleModifier: (
+    modifierGroupId: string,
+    modifierId: string,
+    singleSelect?: boolean,
+  ) => void;
 }
 
 /**
@@ -50,7 +60,7 @@ export const ItemServiceDefinition = defineService<ItemServiceAPI>('item');
  */
 export interface ItemServiceConfig {
   /** The initial item data to configure the service with */
-  item?: items.Item;
+  item?: EnhancedItem;
 
   itemId?: string;
 
@@ -97,7 +107,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
-    const item: Signal<items.Item | undefined> = signalsService.signal(
+    const item: Signal<EnhancedItem | undefined> = signalsService.signal(
       config.item,
     );
     const isLoading: Signal<boolean> = signalsService.signal(!!config.item);
@@ -108,11 +118,21 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
     const specialRequest: Signal<string> = signalsService.signal('');
     const lineItem: Signal<LineItem> = signalsService.signal({});
 
-    const priceVariants = (config.item as any)?.priceVariants || [];
+    const priceVariants = config.item?.priceVariants || [];
     const initialVariant =
       priceVariants.length > 0 ? priceVariants[0] : undefined;
     const selectedVariant: Signal<Variant | undefined> =
       signalsService.signal(initialVariant);
+
+    const modifierGroups = config.item?.modifierGroups || [];
+    const initialSelectedModifiers: Record<string, Array<string>> = {};
+    modifierGroups.forEach((group: EnhancedModifierGroup) => {
+      if (group._id) {
+        initialSelectedModifiers[group._id] = [];
+      }
+    });
+    const selectedModifiers: Signal<Record<string, Array<string>>> =
+      signalsService.signal(initialSelectedModifiers);
 
     if (config.item) {
       console.log('config.item', config.item);
@@ -161,17 +181,57 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       selectedVariant.set(variant);
     };
 
+    const toggleModifier = (
+      modifierGroupId: string,
+      modifierId: string,
+      singleSelect: boolean = false,
+    ) => {
+      const currentSelectedModifiers = selectedModifiers.get();
+      const groupModifierIds = currentSelectedModifiers[modifierGroupId] || [];
+
+      // Check if this modifier is already selected
+      const isModifierSelected = groupModifierIds.includes(modifierId);
+
+      if (singleSelect) {
+        // Single select behavior: select the modifier, replacing any existing selection
+        selectedModifiers.set({
+          ...currentSelectedModifiers,
+          [modifierGroupId]: [modifierId],
+        });
+      } else {
+        // Multi-select behavior: toggle the modifier
+        if (isModifierSelected) {
+          // Remove the modifier if it exists
+          const updatedModifierIds = groupModifierIds.filter(
+            (id) => id !== modifierId,
+          );
+          selectedModifiers.set({
+            ...currentSelectedModifiers,
+            [modifierGroupId]: updatedModifierIds,
+          });
+        } else {
+          // Add the modifier to the existing selection
+          selectedModifiers.set({
+            ...currentSelectedModifiers,
+            [modifierGroupId]: [...groupModifierIds, modifierId],
+          });
+        }
+      }
+    };
+
     return {
       item,
       quantity,
       updateQuantity,
       updateSpecialRequest,
       updateSelectedVariant,
+      toggleModifier,
       isLoading,
       error,
       specialRequest,
       lineItem,
       selectedVariant,
+      selectedModifiers,
     };
   },
 );
@@ -280,7 +340,7 @@ export function loadItemServiceConfig({
   item,
   operationId,
 }: {
-  item: any;
+  item: EnhancedItem;
   operationId: string;
 }): ItemServiceConfig {
   return { item, operationId };
