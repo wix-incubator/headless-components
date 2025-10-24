@@ -38,7 +38,7 @@ export const CommentBlock = React.forwardRef<HTMLDivElement, CommentBlockProps>(
     return (
       <article
         className={cn(
-          "grid grid-cols-[auto_1fr] gap-x-3 rounded text-foreground outline-2 outline-offset-[12px]",
+          "grid grid-cols-[auto_1fr] gap-x-3 rounded text-foreground outline-2 outline-offset-[12px] scroll-mt-32",
           className
         )}
         id={toScrollAnchorHtmlId(comment._id)}

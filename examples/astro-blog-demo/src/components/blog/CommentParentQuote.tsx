@@ -66,7 +66,7 @@ function ScrollAnchor({
     if (targetElement) {
       targetElement.scrollIntoView({
         behavior: "smooth",
-        block: "center",
+        block: "start",
       });
 
       targetElement.getAnimations().forEach((animation) => animation.cancel());
