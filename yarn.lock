@@ -2656,6 +2656,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-dropdown-menu@npm:^2.1.16":
+  version: 2.1.16
+  resolution: "@radix-ui/react-dropdown-menu@npm:2.1.16"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.3"
+    "@radix-ui/react-compose-refs": "npm:1.1.2"
+    "@radix-ui/react-context": "npm:1.1.2"
+    "@radix-ui/react-id": "npm:1.1.1"
+    "@radix-ui/react-menu": "npm:2.1.16"
+    "@radix-ui/react-primitive": "npm:2.1.3"
+    "@radix-ui/react-use-controllable-state": "npm:1.2.2"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/8caaa8dd791ccb284568720adafa59855e13860aa29eb20e10a04ba671cbbfa519a4c5d3a339a4d9fb08009eeb1065f4a8b5c3c8ef45e9753161cc560106b935
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-focus-guards@npm:1.1.3":
   version: 1.1.3
   resolution: "@radix-ui/react-focus-guards@npm:1.1.3"
@@ -2711,6 +2736,42 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/7d12e76818763d592c331277ef62b197e2e64945307e650bd058f0090e5ae48bbd07691b23b7e9e977901ef4eadcb3e2d5eaeb17a13859083384be83fc1292c7
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-menu@npm:2.1.16":
+  version: 2.1.16
+  resolution: "@radix-ui/react-menu@npm:2.1.16"
+  dependencies:
+    "@radix-ui/primitive": "npm:1.1.3"
+    "@radix-ui/react-collection": "npm:1.1.7"
+    "@radix-ui/react-compose-refs": "npm:1.1.2"
+    "@radix-ui/react-context": "npm:1.1.2"
+    "@radix-ui/react-direction": "npm:1.1.1"
+    "@radix-ui/react-dismissable-layer": "npm:1.1.11"
+    "@radix-ui/react-focus-guards": "npm:1.1.3"
+    "@radix-ui/react-focus-scope": "npm:1.1.7"
+    "@radix-ui/react-id": "npm:1.1.1"
+    "@radix-ui/react-popper": "npm:1.2.8"
+    "@radix-ui/react-portal": "npm:1.1.9"
+    "@radix-ui/react-presence": "npm:1.1.5"
+    "@radix-ui/react-primitive": "npm:2.1.3"
+    "@radix-ui/react-roving-focus": "npm:1.1.11"
+    "@radix-ui/react-slot": "npm:1.2.3"
+    "@radix-ui/react-use-callback-ref": "npm:1.1.1"
+    aria-hidden: "npm:^1.2.4"
+    react-remove-scroll: "npm:^2.6.3"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/27516b2b987fa9181c4da8645000af8f60691866a349d7a46b9505fa7d2e9d92b9e364db4f7305d08e9e57d0e1afc8df8354f8ee3c12aa05c0100c16b0e76c27
   languageName: node
   linkType: hard
 
@@ -4873,6 +4934,7 @@ __metadata:
     "@astrojs/sitemap": "npm:^3.5.1"
     "@radix-ui/react-avatar": "npm:^1.1.10"
     "@radix-ui/react-dialog": "npm:^1.1.15"
+    "@radix-ui/react-dropdown-menu": "npm:^2.1.16"
     "@radix-ui/react-icons": "npm:^1.3.2"
     "@radix-ui/react-separator": "npm:^1.1.7"
     "@radix-ui/react-tooltip": "npm:^1.2.8"
@@ -4883,6 +4945,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.1"
     "@wix/astro": "npm:^1.0.31"
     "@wix/cli": "npm:^1.1.119"
+    "@wix/comments": "npm:^1.0.133"
     "@wix/headless-blog": "workspace:*"
     "@wix/headless-components": "workspace:*"
     "@wix/headless-pricing-plans": "workspace:*"
@@ -5431,6 +5494,36 @@ __metadata:
     "@wix/sdk-runtime": "npm:^0.3.55"
     "@wix/sdk-types": "npm:^1.13.35"
   checksum: 10c0/f21a4f37871e6f4461521ff4dda5eedc0c02ce8c23cabaec5e516e4c409df1482d95f0e5146a49da4c9f7e8d491fac9a9ddffa8d125fc5553c0e6b69e84cd1a4
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_comments_categories@npm:1.0.24":
+  version: 1.0.24
+  resolution: "@wix/auto_sdk_comments_categories@npm:1.0.24"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/e75a2a8927a1f79f4b702660bbe1f5e8ff4b92aea8422bd185f1b4b0eb80a9a34be5ac22ce661046ca4f3706827d92d09bdab84fcec2ee425e9093092ca09c47
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_comments_comments@npm:1.0.27":
+  version: 1.0.27
+  resolution: "@wix/auto_sdk_comments_comments@npm:1.0.27"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/ad60612e0e95bb82ce2c9dc788fd39fd74a72f5d6330d9e95ddc7c8f03cd5198a8d2e566a6a676bd76c186944290dc7e0c0142b8099cf2c88f00f98d7e4e3784
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_comments_widgets@npm:1.0.19":
+  version: 1.0.19
+  resolution: "@wix/auto_sdk_comments_widgets@npm:1.0.19"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.3.55"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/ab689b16574b04838589a1695e92feeb0fce63a962821c495ed42237cf0dbd07e72048d7476d3ae135ab9a2db518e9f67eec4ab83aba28e676c88bc6a8686ce5
   languageName: node
   linkType: hard
 
@@ -7232,6 +7325,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/comments@npm:^1.0.133":
+  version: 1.0.133
+  resolution: "@wix/comments@npm:1.0.133"
+  dependencies:
+    "@wix/auto_sdk_comments_categories": "npm:1.0.24"
+    "@wix/auto_sdk_comments_comments": "npm:1.0.27"
+    "@wix/auto_sdk_comments_widgets": "npm:1.0.19"
+  checksum: 10c0/81867b74861b9c03d3d51b1779f911149fc41b11e008bbabd77019d9415d122a783efbf402d959c7225a16d3b45db49feca08fe827ea8dac5802cdbdac3893a8
+  languageName: node
+  linkType: hard
+
 "@wix/communication-channel@npm:1.0.6":
   version: 1.0.6
   resolution: "@wix/communication-channel@npm:1.0.6"
@@ -7595,15 +7699,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/form-public@npm:^0.30.0":
-  version: 0.30.0
-  resolution: "@wix/form-public@npm:0.30.0"
+"@wix/form-public@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "@wix/form-public@npm:0.26.0"
   dependencies:
     lodash.camelcase: "npm:^4.3.0"
     lodash.mapkeys: "npm:^4.6.0"
   peerDependencies:
     react: ^18.3.1
-  checksum: 10c0/ceaea7d951ecf9cc73923d6bf0056727181634c9e68d63f399d736b4bcae36d3f53dd4656eddc78274a4ff5c4add58316f1a95712c70d0582862f426c2437895
+  checksum: 10c0/8591ced39edcd2304957a870a36c1a8164c1bcc71213b9571ac3c302ee210f268a3c1cd6831dab2a391be251e604e58ddbba22d7d7d484661a81b68cde8cb84d
+  languageName: node
+  linkType: hard
+
+"@wix/form-public@npm:^0.40.0":
+  version: 0.40.0
+  resolution: "@wix/form-public@npm:0.40.0"
+  dependencies:
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.mapkeys: "npm:^4.6.0"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: 10c0/93986a968222ca83bf542799b2027f3e68b8f1b335132e8807170255eb9d58b0f53a9eb62f2fbe86e2fc4bbfc38a2245a6b6694af1eebc167768fd53be09e0cb
   languageName: node
   linkType: hard
 
@@ -7653,6 +7769,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^3.2.4"
     "@vitest/ui": "npm:^3.1.4"
     "@wix/blog": "npm:^1.0.477"
+    "@wix/comments": "npm:^1.0.133"
     "@wix/headless-media": "workspace:*"
     "@wix/headless-utils": "workspace:*"
     "@wix/members": "npm:^1.0.322"
@@ -7915,7 +8032,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-forms@npm:0.0.10, @wix/headless-forms@workspace:*, @wix/headless-forms@workspace:packages/headless-components/forms":
+"@wix/headless-forms@npm:0.0.10":
+  version: 0.0.10
+  resolution: "@wix/headless-forms@npm:0.0.10"
+  dependencies:
+    "@wix/form-public": "npm:^0.26.0"
+    "@wix/forms": "npm:^1.0.330"
+    "@wix/headless-utils": "npm:0.0.4"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  checksum: 10c0/c6fc225f46a8556c426783fa309922f2c205229c6281ddd909c1a8a4c07f6ad3b38d4523099c257f2a5f04e235b7a701f305b39f2c277ecd4b3b98ac77dd406c
+  languageName: node
+  linkType: hard
+
+"@wix/headless-forms@workspace:*, @wix/headless-forms@workspace:packages/headless-components/forms":
   version: 0.0.0-use.local
   resolution: "@wix/headless-forms@workspace:packages/headless-components/forms"
   dependencies:
@@ -7924,7 +8054,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/form-public": "npm:^0.30.0"
+    "@wix/form-public": "npm:^0.40.0"
     "@wix/forms": "npm:^1.0.331"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"

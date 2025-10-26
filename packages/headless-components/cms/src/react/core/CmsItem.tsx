@@ -40,6 +40,10 @@ export interface FieldProps<T = any> {
 export interface FieldRenderProps<T = any> {
   /** The raw field value */
   fieldValue: T;
+  /** Whether the item is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
 }
 
 /**
@@ -53,11 +57,15 @@ export function Field<T = any>(props: FieldProps<T>) {
   >;
 
   const item = service.itemSignal.get();
+  const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
 
   // Extract field value by fieldId from the item's data
   const fieldValue = item?.[fieldId] ?? null;
 
   return children({
     fieldValue: fieldValue as T,
+    isLoading,
+    error,
   });
 }

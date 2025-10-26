@@ -259,6 +259,7 @@ export const ProductRepeater = React.forwardRef<
           data-testid={TestIds.productListItem}
           data-product-id={product._id}
           data-product-available={true}
+          data-item-id={product._id}
         >
           {children}
         </Product.Root>

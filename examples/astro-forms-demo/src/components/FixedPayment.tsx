@@ -13,7 +13,6 @@ export default function FixedPayment({
   amount,
   currency,
   description,
-  // @ts-expect-error
   id,
 }: FixedPaymentProps) {
   return (
