@@ -811,7 +811,9 @@ export interface CreateItemActionProps {
         disabled: boolean;
         isLoading: boolean;
         error: string | null;
-        insertItemOrReference: (params: InsertItemOrReferenceParams) => Promise<WixDataItem | void>;
+        insertItemOrReference: (
+          params: InsertItemOrReferenceParams,
+        ) => Promise<WixDataItem | void>;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
