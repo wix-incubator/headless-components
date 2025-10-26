@@ -67,14 +67,13 @@ function usePriceContext(): PriceContextValue {
 // Utility Functions
 // ==========================================
 
-function formatPrice(
-  amount: number,
+function createPriceFormatter(
   currency: string = 'USD',
   locale: string = 'en-US',
-  precision: number = 2,
-  currencyDisplay: CurrencyDisplay = 'symbol',
-  currencySign: CurrencySign = 'standard',
-): string {
+  precision?: number,
+  currencyDisplay?: CurrencyDisplay,
+  currencySign?: CurrencySign,
+): ReturnType<typeof Intl.NumberFormat> {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
@@ -82,30 +81,68 @@ function formatPrice(
     maximumFractionDigits: precision,
     currencyDisplay,
     currencySign,
-  }).format(amount);
+  });
 }
 
-function formatAmount(amount: number, precision: number = 2): string {
-  return amount.toFixed(precision);
+function formatPrice(
+  amount: number,
+  currency: string = 'USD',
+  locale: string = 'en-US',
+  precision: number,
+  currencyDisplay: CurrencyDisplay,
+  currencySign: CurrencySign,
+): string {
+  return createPriceFormatter(
+    currency,
+    locale,
+    precision,
+    currencyDisplay,
+    currencySign,
+  ).format(amount);
+}
+
+function formatAmount(
+  amount: number,
+  currency: string = 'USD',
+  locale: string = 'en-US',
+  precision?: number,
+): string {
+  const formatter = createPriceFormatter(currency, locale, precision);
+
+  const parts = formatter
+    ?.formatToParts(amount)
+    ?.reduce((parts, { type, value }) => {
+      parts[type] = value;
+
+      return parts;
+    }, {} as any);
+
+  return `${parts['integer'] ?? ''}${parts['decimal'] ?? ''}${parts['fraction'] ?? ''}`;
 }
 
 function formatCurrency(
-  currencyCode: string,
-  locale = 'en-US',
-  currencyDisplay: CurrencyDisplay = 'symbol',
-  currencySign: CurrencySign = 'standard',
-) {
-  const formatter = new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currencyCode,
+  currency: string = 'USD',
+  locale: string = 'en-US',
+  currencyDisplay: CurrencyDisplay,
+  currencySign: CurrencySign,
+): string {
+  const formatter = createPriceFormatter(
+    currency,
+    locale,
+    undefined,
     currencyDisplay,
     currencySign,
-  });
-
-  return (
-    formatter?.formatToParts(0)?.find((part) => part.type === 'currency')
-      ?.value ?? currencyCode
   );
+
+  const parts = formatter
+    ?.formatToParts(0)
+    ?.reduce((parts, { type, value }) => {
+      parts[type] = value;
+
+      return parts;
+    }, {} as any);
+
+  return `${parts['currency'] ?? ''}`;
 }
 
 // ==========================================
@@ -172,8 +209,15 @@ export const Amount = React.forwardRef<HTMLElement, PriceAmountProps>(
   (props, ref) => {
     const { asChild, children, className } = props;
     const { price } = usePriceContext();
-    const precision = price.precision ?? 2;
-    const formattedAmount = formatAmount(price.money.amount, precision);
+    const precision = price.precision;
+    const { currency, locale } = useService(CurrencyServiceDefinition);
+
+    const formattedAmount = formatAmount(
+      price.money.amount,
+      price.money.currency ?? currency.get(),
+      price.locale ?? locale.get(),
+      precision,
+    );
 
     return (
       <AsChildSlot
