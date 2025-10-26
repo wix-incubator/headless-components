@@ -3,7 +3,10 @@ import { useWixClient } from '../hooks/useWixClient';
 import { getLevelBadgeClass } from '../utils/course-utils';
 import { PlanCardContent } from './PlanCard';
 import type { Course } from '../utils/demo-courses';
-import { PricingPlans } from '@wix/headless-pricing-plans/react';
+import {
+  PricingPlans,
+  type PlanPaywallFallbackData,
+} from '@wix/headless-pricing-plans/react';
 
 interface CoursePageComponentProps {
   course: Course;
@@ -17,7 +20,7 @@ export const CoursePageComponent = (props: CoursePageComponentProps) => {
     return (
       <PricingPlans.PlanPaywall.Root
         planPaywallServiceConfig={{
-          requiredPlanIds: props.course.accessedByPlanIds,
+          accessPlanIds: props.course.accessedByPlanIds,
         }}
       >
         <PricingPlans.PlanPaywall.Paywall>
@@ -25,7 +28,16 @@ export const CoursePageComponent = (props: CoursePageComponentProps) => {
             <CourseData {...props} />
           </PricingPlans.PlanPaywall.RestrictedContent>
           <PricingPlans.PlanPaywall.Fallback>
-            <RestrictedCourseFallback course={props.course} />
+            {React.forwardRef<HTMLDivElement, PlanPaywallFallbackData>(
+              ({ accessPlanIds, isLoggedIn }, ref) => (
+                <RestrictedCourseFallback
+                  course={props.course}
+                  ref={ref}
+                  accessPlanIds={accessPlanIds}
+                  isLoggedIn={isLoggedIn}
+                />
+              ),
+            )}
           </PricingPlans.PlanPaywall.Fallback>
         </PricingPlans.PlanPaywall.Paywall>
       </PricingPlans.PlanPaywall.Root>
@@ -35,11 +47,11 @@ export const CoursePageComponent = (props: CoursePageComponentProps) => {
   return <CourseData {...props} />;
 };
 
-const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
-  course,
-}) => {
-  const { getIsLoggedIn, login, logout } = useWixClient();
-  const [isLoggedIn] = useState<boolean>(getIsLoggedIn());
+const RestrictedCourseFallback = React.forwardRef<
+  HTMLDivElement,
+  PlanPaywallFallbackData & { course: Course }
+>(({ course, isLoggedIn, accessPlanIds }, ref) => {
+  const { login, logout } = useWixClient();
 
   const authLinkText = isLoggedIn ? 'Logout' : 'Login';
 
@@ -52,7 +64,10 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div
+      ref={ref}
+      className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50"
+    >
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-primary-100 sticky top-0 z-50 shadow-subtle">
         <div className="container mx-auto px-6 py-4">
@@ -184,8 +199,7 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
           <div className="max-w-6xl mx-auto text-center">
             <PricingPlans.PlanList.Root
               planListServiceConfig={{
-                // TODO: Don't render plans if user has access to the course
-                planIds: course.accessedByPlanIds || [],
+                planIds: accessPlanIds,
               }}
             >
               <PricingPlans.PlanList.Plans
@@ -216,7 +230,7 @@ const RestrictedCourseFallback: React.FC<CoursePageComponentProps> = ({
       </main>
     </div>
   );
-};
+});
 
 const CourseData: React.FC<CoursePageComponentProps> = ({ course }) => {
   const { getIsLoggedIn, login, logout } = useWixClient();

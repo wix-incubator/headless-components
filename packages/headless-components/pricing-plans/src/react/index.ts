@@ -16,6 +16,11 @@ export type {
   PlanDescriptionData,
 } from './Plan.js';
 
+export type {
+  PlanPaywallFallbackData,
+  PlanPaywallErrorData,
+} from './PlanPaywall.js';
+
 export const PricingPlans = {
   Plan,
   PlanList,
