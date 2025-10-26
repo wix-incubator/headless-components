@@ -29,6 +29,8 @@ enum TestIds {
   itemLabels = 'item-labels',
   itemVariants = 'item-variants',
   itemModifier = 'item-modifier',
+  itemAvailability = 'item-availability',
+
 }
 
 const CheckIcon = () => (
@@ -735,3 +737,43 @@ export const SpecialRequest = React.forwardRef<
 );
 
 SpecialRequest.displayName = 'SpecialRequest';
+
+
+export interface ItemDetailsAvailabilityProps {
+  asChild?: boolean;
+  className?: string;
+  children: (props: {
+    shouldShowAvailabilityStatusText: boolean;
+    availabilityStatusText: string;
+    availabilityStatusButtonText: string;
+    shouldShowAvailabilityStatusButton: boolean;
+    openAvailabilityModal: () => void;
+  }) => React.ReactNode;
+}
+
+
+export const AvailabilityComponent= React.forwardRef<HTMLElement, ItemDetailsAvailabilityProps>(({ asChild, children, className, ...rest }, ref) => {
+  return (
+    <CoreItemDetails.AvailabilityComponent>
+      {({ shouldShowAvailabilityStatusText, availabilityStatusText, availabilityStatusButtonText, shouldShowAvailabilityStatusButton, openAvailabilityModal }: { shouldShowAvailabilityStatusText: boolean; availabilityStatusText: string; availabilityStatusButtonText: string; shouldShowAvailabilityStatusButton: boolean; openAvailabilityModal?: () => void }) => {
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            data-testid={TestIds.itemAvailability}
+            customElement={children}
+            customElementProps={{ shouldShowAvailabilityStatusText, availabilityStatusText, availabilityStatusButtonText, shouldShowAvailabilityStatusButton, openAvailabilityModal }}
+            {...rest}
+          >
+            {shouldShowAvailabilityStatusText && <span>{availabilityStatusText}</span>}
+            {shouldShowAvailabilityStatusButton && <button onClick={openAvailabilityModal}>{availabilityStatusButtonText}</button>}
+          </AsChildSlot>
+        );
+        }}
+      </CoreItemDetails.AvailabilityComponent>
+    );
+  },
+);
+
+AvailabilityComponent.displayName = 'AvailabilityComponent';

@@ -23,6 +23,11 @@ export interface ItemServiceAPI {
   item?: Signal<EnhancedItem | undefined>;
   quantity: Signal<number>;
   specialRequest: Signal<string>;
+  shouldShowAvailabilityStatusText: Signal<boolean>;
+  availabilityStatusText: Signal<string>;
+  availabilityStatusButtonText: Signal<string>;
+  shouldShowAvailabilityStatusButton: Signal<boolean>;
+  openAvailabilityModal: Signal<() => void>;
   lineItem: Signal<LineItem>;
   selectedVariant: Signal<Variant | undefined>;
   selectedModifiers: Signal<Record<string, Array<string>>>;
@@ -65,6 +70,14 @@ export interface ItemServiceConfig {
   itemId?: string;
 
   operationId?: string;
+  availabilityStatus?: {
+    isMenuOfItemAvailable?: boolean;
+    shouldCollapseAvailabilityStatus?: boolean;
+    dispatchType?: string;
+    text?: string;
+    hasNextAvailability?: boolean;
+    openAvailabilityModal?: () => void;
+  };
 }
 
 /**
@@ -111,6 +124,34 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       config.item,
     );
     const isLoading: Signal<boolean> = signalsService.signal(!!config.item);
+    const itemModal_menuAvailabilityStatus_pickup_canUpdateTime_text = "To add this item to your cart, update your pickup time.";
+    const itemModal_menuAvailabilityStatus_delivery_canUpdateTime_text = "To add this item to your cart, update your delivery time.";
+    const itemModal_menuAvailabilityStatus_pickup_canUpdateTime_button = "Schedule Pickup Time";
+    const itemModal_menuAvailabilityStatus_delivery_canUpdateTime_button = "Schedule Delivery Time";
+
+    let canUpdateTimeText = '';
+    canUpdateTimeText = config.availabilityStatus?.hasNextAvailability ? config.availabilityStatus?.dispatchType === 'pickup' ? itemModal_menuAvailabilityStatus_pickup_canUpdateTime_text : itemModal_menuAvailabilityStatus_delivery_canUpdateTime_text : '';
+
+    const statusText = `${config.availabilityStatus?.text ?? ''} ${canUpdateTimeText}`;
+    const shouldShowStatusButton = config.availabilityStatus?.hasNextAvailability;
+    const statusButtonText = config.availabilityStatus?.hasNextAvailability ? config.availabilityStatus?.dispatchType === 'pickup' ? itemModal_menuAvailabilityStatus_pickup_canUpdateTime_button : itemModal_menuAvailabilityStatus_delivery_canUpdateTime_button : '';
+    const shouldShowAvailabilityStatusText: Signal<boolean> = signalsService.signal(
+      (!config.availabilityStatus?.isMenuOfItemAvailable || !config.availabilityStatus?.shouldCollapseAvailabilityStatus) ?? false
+    );
+
+    const availabilityStatusText: Signal<string> = signalsService.signal(
+      statusText
+    );
+    const availabilityStatusButtonText: Signal<string> = signalsService.signal(
+      statusButtonText
+    );
+    const shouldShowAvailabilityStatusButton: Signal<boolean> = signalsService.signal(
+      shouldShowStatusButton??false
+    );
+    const openAvailabilityModal: Signal<() => void> = signalsService.signal(
+      config.availabilityStatus?.openAvailabilityModal ?? (() => {})
+    );
+
     const error: Signal<string | null> = signalsService.signal(
       config.item ? null : 'Item not found',
     );
@@ -137,6 +178,8 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
     if (config.item) {
       console.log('config.item', config.item);
       lineItem.set({
+        availability:{
+status: signalsService.signal(shouldShowAvailabilityStatusText) ? 'NOT_AVAILABLE':'AVAILABLE'         },
         quantity: quantity.get(),
         catalogReference: {
           // @ts-expect-error - item is not typed
@@ -232,6 +275,11 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       lineItem,
       selectedVariant,
       selectedModifiers,
+      shouldShowAvailabilityStatusText,
+      availabilityStatusText,
+      availabilityStatusButtonText,
+      shouldShowAvailabilityStatusButton,
+      openAvailabilityModal,
     };
   },
 );
@@ -339,11 +387,20 @@ export interface NotFoundItemServiceConfigResult {
 export function loadItemServiceConfig({
   item,
   operationId,
+  availabilityStatus,
 }: {
   item: EnhancedItem;
   operationId: string;
+  availabilityStatus?: {
+    isMenuOfItemAvailable?: boolean;
+    shouldCollapseAvailabilityStatus?: boolean;
+    dispatchType?: string;
+    text?: string;
+    hasNextAvailability?: boolean;
+    openAvailabilityModal?: () => void;
+  };
 }): ItemServiceConfig {
-  return { item, operationId };
+  return { item, operationId, availabilityStatus };
 }
 // try {
 //   if (item === null) {
