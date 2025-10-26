@@ -515,14 +515,18 @@ export const ModifierGroupsRepeater = (
 
   const itemModifierGroups = item.modifierGroups!;
 
-  return itemModifierGroups.map((modifierGroup: EnhancedModifierGroup) => (
-    <ModifierGroupComponent.Root
-      key={modifierGroup._id}
-      modifierGroup={modifierGroup}
-    >
-      {children}
-    </ModifierGroupComponent.Root>
-  ));
+  return (
+    <>
+      {itemModifierGroups.map((modifierGroup: EnhancedModifierGroup) => (
+        <ModifierGroupComponent.Root
+          key={modifierGroup._id}
+          modifierGroup={modifierGroup}
+        >
+          {children}
+        </ModifierGroupComponent.Root>
+      ))}
+    </>
+  );
 };
 
 LabelsRepeater.displayName = 'Item.LabelsRepeater';

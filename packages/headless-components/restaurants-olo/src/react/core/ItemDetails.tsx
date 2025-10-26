@@ -10,7 +10,16 @@ import {
   loadItemServiceConfig,
 } from '../../services/item-details-service.js';
 import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service.js';
-import { useItemContext } from '@wix/headless-restaurants-menus/react';
+import {
+  useItemContext,
+  useModifierGroupContext,
+} from '@wix/headless-restaurants-menus/react';
+import {
+  EnhancedItem,
+  EnhancedModifier,
+  EnhancedModifierGroup,
+  EnhancedVariant,
+} from '@wix/headless-restaurants-menus/services';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -35,7 +44,7 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
   let config = itemDetailsServiceConfig;
   if (!config) {
     config = loadItemServiceConfig({
-      item: selectedItem,
+      item: selectedItem as EnhancedItem,
       operationId: service.operation?.get()?._id ?? '',
     });
   }
@@ -55,32 +64,6 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
       {children({ item: itemDetailsServiceConfig?.item ?? selectedItem })}
     </WixServices>
   );
-};
-
-// ========================================
-// MODIFIERS REPEATER COMPONENT
-// ========================================
-
-interface ItemDetailsModifiersRepeaterProps {
-  children: (props: {
-    modifiers: []; // TODO: Use proper Modifier type
-    hasModifiers: boolean;
-  }) => React.ReactNode;
-}
-
-export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
-  children,
-}) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<
-    typeof ItemServiceDefinition
-  >;
-  const item = service.item?.get();
-
-  // TODO: Check if modifiers exist on item type - might be in a different property
-  const modifiers = (item as unknown as { modifiers: [] })?.modifiers || [];
-  const hasModifiers = modifiers.length > 0;
-
-  return children({ modifiers, hasModifiers });
 };
 
 // ========================================
@@ -177,11 +160,11 @@ export const QuantityComponent: React.FC<ItemDetailsQuantityProps> = ({
 
 interface ItemDetailsVariantsProps {
   children: (props: {
-    variants: any[];
+    variants: EnhancedVariant[];
     hasVariants: boolean;
     selectedVariantId?: string;
     onVariantChange?: (variantId: string) => void;
-    selectedVariant?: any;
+    selectedVariant?: EnhancedVariant;
   }) => React.ReactNode;
 }
 
@@ -195,12 +178,12 @@ export const VariantsComponent: React.FC<ItemDetailsVariantsProps> = ({
   const selectedVariant = service.selectedVariant?.get?.();
 
   // Get variants from item context
-  const variants = (item as any)?.priceVariants || [];
+  const variants = item?.priceVariants || [];
   const hasVariants = variants.length > 0;
   const selectedVariantId = selectedVariant?._id ?? undefined;
 
   const onVariantChange = (variantId: string) => {
-    const variant = variants.find((v: any) => v._id === variantId);
+    const variant = variants.find((v: EnhancedVariant) => v._id === variantId);
     if (variant) {
       service.updateSelectedVariant?.(variant);
     }
@@ -212,5 +195,52 @@ export const VariantsComponent: React.FC<ItemDetailsVariantsProps> = ({
     selectedVariantId,
     onVariantChange,
     selectedVariant,
+  });
+};
+
+// ========================================
+// MODIFIER COMPONENT
+// ========================================
+
+interface ItemDetailsModifiersProps {
+  children: (props: {
+    selectedModifierIds: string[];
+    onToggle: (modifierId: string) => void;
+    modifierGroup: EnhancedModifierGroup;
+    modifiers: EnhancedModifier[];
+  }) => React.ReactNode;
+  singleSelect?: boolean;
+}
+
+export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
+  children,
+  singleSelect,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
+  const { modifierGroup } = useModifierGroupContext();
+  const selectedModifiers = service.selectedModifiers?.get?.() ?? {};
+
+  // Get selected modifier IDs for this group
+  const groupId = modifierGroup._id;
+  const groupSelectedModifierIds = groupId
+    ? selectedModifiers[groupId] || []
+    : [];
+
+  const onToggle = (modifierId: string) => {
+    if (groupId) {
+      service.toggleModifier?.(groupId, modifierId, singleSelect);
+    }
+  };
+
+  return children({
+    selectedModifierIds: groupSelectedModifierIds,
+    onToggle,
+    modifierGroup,
+    modifiers: modifierGroup.modifiers.map((modifier, index) => ({
+      ...modifier,
+      _id: `${modifier._id}~${index}`,
+    })),
   });
 };
