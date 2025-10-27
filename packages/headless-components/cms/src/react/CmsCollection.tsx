@@ -1203,7 +1203,7 @@ export const Filters = React.forwardRef<HTMLElement, FiltersProps>(
               customElement={children}
               {...otherProps}
             >
-              <div>{children}</div>
+              {children}
             </AsChildSlot>
           </FilterPrimitive.Root>
         )}
