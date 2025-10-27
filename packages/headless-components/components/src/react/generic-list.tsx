@@ -322,9 +322,13 @@ export const Repeater = <T extends ListItem = ListItem>({
   children,
   renderItem,
 }: GenericListRepeaterProps<T>) => {
-  const { items } = useGenericListContext<T>();
+  const { items, variant } = useGenericListContext<T>();
 
   if (items.length === 0) return null;
+
+  if (variant) {
+    return <div>Gallery</div>;
+  }
 
   return <>{items.map((item, index) => renderItem(item, children, index))}</>;
 };
