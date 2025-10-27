@@ -13,7 +13,9 @@ export default function FixedPayment({
   amount,
   currency,
   description,
+  // TODO: check props & type
   id,
+  target,
 }: FixedPaymentProps) {
   return (
     <Form.Field id={id}>
@@ -22,24 +24,31 @@ export default function FixedPayment({
           <label className="text-foreground font-paragraph mb-2">{label}</label>
         </Form.Field.Label>
       )}
-      <Form.Field.Input
-        asChild
-        description={
-          description ? (
-            <div className="mt-2 text-foreground/70 text-sm">
-              <RicosViewer
-                content={description as RichContent}
-                plugins={quickStartViewerPlugins()}
-              />
-            </div>
-          ) : undefined
-        }
-      >
-        <div className="text-2xl font-paragraph font-bold text-foreground">
-          {currency}
-          {amount}
-        </div>
-      </Form.Field.Input>
+      <Form.Field.InputWrapper>
+        <Form.Field.Input
+          asChild
+          description={
+            description ? (
+              <div className="mt-2 text-foreground/70 text-sm">
+                <RicosViewer
+                  content={description as RichContent}
+                  plugins={quickStartViewerPlugins()}
+                />
+              </div>
+            ) : undefined
+          }
+        >
+          <div className="text-2xl font-paragraph font-bold text-foreground">
+            {currency}
+            {amount}
+          </div>
+        </Form.Field.Input>
+        <Form.Field.Error path={target}>
+          <span className="text-destructive text-sm font-paragraph">
+            This field is required
+          </span>
+        </Form.Field.Error>
+      </Form.Field.InputWrapper>
     </Form.Field>
   );
 }

@@ -14,14 +14,16 @@ const RichText = ({
 }: RichTextProps) => {
   return (
     <Form.Field id={id}>
-      <Form.Field.Input asChild>
-        <div className="w-full text-foreground font-paragraph font-semibold">
-          <RicosViewer
-            content={content as RichContent}
-            plugins={quickStartViewerPlugins()}
-          />
-        </div>
-      </Form.Field.Input>
+      <Form.Field.InputWrapper>
+        <Form.Field.Input asChild>
+          <div className="w-full text-foreground font-paragraph font-semibold">
+            <RicosViewer
+              content={content as RichContent}
+              plugins={quickStartViewerPlugins()}
+            />
+          </div>
+        </Form.Field.Input>
+      </Form.Field.InputWrapper>
     </Form.Field>
   );
 };
