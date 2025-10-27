@@ -43,9 +43,21 @@ import {
   Submitted as CoreSubmitted,
   Fields as CoreFields,
   Field as CoreField,
-  type Layout,
 } from './core/Form.js';
 import { forms } from '@wix/forms';
+import {
+  FieldContext,
+  useFieldContext,
+  type FieldContextValue,
+} from './context/FieldContext.js';
+import {
+  FieldLayoutProvider,
+  useFieldLayout,
+} from './context/FieldLayoutContext.js';
+import {
+  FormErrorsContext,
+  FormErrorsProvider,
+} from './context/FormErrorsContext.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -950,118 +962,6 @@ const FieldsWithForm = ({
     </FormErrorsProvider>
   );
 };
-
-/**
- * Mapping of field IDs to their layout configurations
- */
-interface FieldLayoutMap {
-  [fieldId: string]: Layout;
-}
-
-/**
- * Context for sharing field layout data across the form
- * @internal
- */
-const FieldLayoutContext = React.createContext<FieldLayoutMap | null>(null);
-
-/**
- * Props for FieldLayoutProvider component
- * @internal
- */
-interface FieldLayoutProviderProps {
-  /** The layout map to provide to children */
-  value: FieldLayoutMap;
-  /** Child components that need access to layout data */
-  children: React.ReactNode;
-}
-
-/**
- * Provider component that makes field layout data available to child components
- * @internal
- */
-const FieldLayoutProvider: React.FC<FieldLayoutProviderProps> = ({
-  value,
-  children,
-}) => {
-  return (
-    <FieldLayoutContext.Provider value={value}>
-      {children}
-    </FieldLayoutContext.Provider>
-  );
-};
-
-/**
- * Context for sharing form errors across the form
- * @internal
- */
-const FormErrorsContext = React.createContext<FormError[]>([]);
-
-/**
- * Props for FormErrorsProvider component
- * @internal
- */
-interface FormErrorsProviderProps {
-  /** The errors array to provide to children */
-  errors: FormError[];
-  /** Child components that need access to form errors */
-  children: React.ReactNode;
-}
-
-/**
- * Provider component that makes form errors available to child components
- * @internal
- */
-const FormErrorsProvider: React.FC<FormErrorsProviderProps> = ({
-  errors,
-  children,
-}) => {
-  return (
-    <FormErrorsContext.Provider value={errors}>
-      {children}
-    </FormErrorsContext.Provider>
-  );
-};
-
-/**
- * Hook to access layout configuration for a specific field
- * @internal
- * @param {string} fieldId - The unique identifier of the field
- * @returns {Layout | null} The layout configuration for the field, or null if not found
- */
-function useFieldLayout(fieldId: string): Layout | null {
-  const layoutMap = React.useContext(FieldLayoutContext);
-  if (!layoutMap) {
-    return null;
-  }
-  return layoutMap[fieldId] || null;
-}
-
-/**
- * Context for sharing field data between Field container and its children
- */
-interface FieldContextValue {
-  id: string;
-  layout: Layout;
-  gridStyles: {
-    label: React.CSSProperties;
-    input: React.CSSProperties;
-  };
-}
-
-const FieldContext = React.createContext<FieldContextValue | null>(null);
-
-/**
- * Hook to access field context
- */
-function useFieldContext(): FieldContextValue {
-  const context = React.useContext(FieldContext);
-  if (!context) {
-    throw new globalThis.Error(
-      'Field components must be used within a Form.Field component',
-    );
-  }
-  return context;
-}
 
 /**
  * Props for Field container component
