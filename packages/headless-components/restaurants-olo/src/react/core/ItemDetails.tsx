@@ -252,10 +252,8 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
 
 interface ItemDetailsAvailabilityProps {
   children: (props: {
-availabilityStatusText: string;
-availabilityStatusButtonText: string;
-shouldShowAvailabilityStatusText: boolean;
-shouldShowAvailabilityStatusButton: boolean;
+availabilityStatusText: string|undefined;
+availabilityStatusButtonText: string|undefined;
 openAvailabilityModal: () => void;
   className?: string;
   asChild?: boolean;
@@ -268,16 +266,12 @@ export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
   const service = useService(ItemServiceDefinition) as ServiceAPI<
     typeof ItemServiceDefinition
   >;
-    const shouldShowAvailabilityStatusText = service.shouldShowAvailabilityStatusText?.get?.() ?? true;
   const availabilityStatusText = service.availabilityStatusText?.get?.() ?? undefined;
   const availabilityStatusButtonText = service.availabilityStatusButtonText?.get?.() ?? undefined;
-  const shouldShowAvailabilityStatusButton = service.shouldShowAvailabilityStatusButton?.get?.() ?? true;
   const openAvailabilityModal = service.openAvailabilityModal?.get?.() ?? (() => {});
   return children({
-  shouldShowAvailabilityStatusText,
-  availabilityStatusText: availabilityStatusText ?? '',
-  availabilityStatusButtonText: availabilityStatusButtonText ?? '',
-  shouldShowAvailabilityStatusButton,
+  availabilityStatusText: availabilityStatusText,
+  availabilityStatusButtonText: availabilityStatusButtonText,
   openAvailabilityModal,
   });
 };

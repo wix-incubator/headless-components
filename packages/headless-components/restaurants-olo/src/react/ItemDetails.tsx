@@ -743,10 +743,8 @@ export interface ItemDetailsAvailabilityProps {
   asChild?: boolean;
   className?: string;
   children: (props: {
-    shouldShowAvailabilityStatusText: boolean;
-    availabilityStatusText: string;
-    availabilityStatusButtonText: string;
-    shouldShowAvailabilityStatusButton: boolean;
+    availabilityStatusText: string|undefined;
+    availabilityStatusButtonText: string|undefined;
     openAvailabilityModal: () => void;
   }) => React.ReactNode;
 }
@@ -755,7 +753,7 @@ export interface ItemDetailsAvailabilityProps {
 export const AvailabilityComponent= React.forwardRef<HTMLElement, ItemDetailsAvailabilityProps>(({ asChild, children, className, ...rest }, ref) => {
   return (
     <CoreItemDetails.AvailabilityComponent>
-      {({ shouldShowAvailabilityStatusText, availabilityStatusText, availabilityStatusButtonText, shouldShowAvailabilityStatusButton, openAvailabilityModal }: { shouldShowAvailabilityStatusText: boolean; availabilityStatusText: string; availabilityStatusButtonText: string; shouldShowAvailabilityStatusButton: boolean; openAvailabilityModal?: () => void }) => {
+      {({ openAvailabilityModal, availabilityStatusText, availabilityStatusButtonText }: {  openAvailabilityModal: () => void; availabilityStatusText: string|undefined; availabilityStatusButtonText: string|undefined; }) => {
         return (
           <AsChildSlot
             ref={ref}
@@ -763,11 +761,11 @@ export const AvailabilityComponent= React.forwardRef<HTMLElement, ItemDetailsAva
             className={className}
             data-testid={TestIds.itemAvailability}
             customElement={children}
-            customElementProps={{ shouldShowAvailabilityStatusText, availabilityStatusText, availabilityStatusButtonText, shouldShowAvailabilityStatusButton, openAvailabilityModal }}
+            customElementProps={{ openAvailabilityModal, availabilityStatusText, availabilityStatusButtonText }}
             {...rest}
           >
-            {shouldShowAvailabilityStatusText && <span>{availabilityStatusText}</span>}
-            {shouldShowAvailabilityStatusButton && <button onClick={openAvailabilityModal}>{availabilityStatusButtonText}</button>}
+            {availabilityStatusText && <span>{availabilityStatusText}</span>}
+            {availabilityStatusButtonText && <button onClick={openAvailabilityModal}>{availabilityStatusButtonText}</button>}
           </AsChildSlot>
         );
         }}
