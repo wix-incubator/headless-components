@@ -16,6 +16,7 @@ import {
   type SortOption,
   Filter as FilterPrimitive,
   type FilterOption,
+  type FilterValue as Filter,
 } from '@wix/headless-components/react';
 import { CmsCollectionSort as CmsCollectionSortPrimitive } from './core/CmsCollectionSort.js';
 import * as CoreCmsCollectionFilters from './core/CmsCollectionFilters.js';
@@ -44,6 +45,8 @@ export interface RootProps {
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
     initialSort?: SortValue;
+    /** Initial filter to apply before user interactions */
+    initialFilter?: Filter;
     /** List of field IDs for single reference fields to include */
     singleRefFieldIds?: string[];
     /** List of field IDs for multi reference fields to include */
@@ -79,6 +82,27 @@ export interface RootProps {
  *   );
  * }
  *
+ * // With initial filter applied
+ * function CollectionWithFilter() {
+ *   return (
+ *     <CmsCollection.Root
+ *       collection={{
+ *         id: 'MyCollection',
+ *         initialFilter: {
+ *           status: { $eq: 'published' },
+ *           category: { $hasSome: ['tech', 'lifestyle'] }
+ *         }
+ *       }}
+ *     >
+ *       <CmsCollection.Items>
+ *         <CmsCollection.ItemRepeater>
+ *           <CmsItem.Field fieldId="title" />
+ *         </CmsCollection.ItemRepeater>
+ *       </CmsCollection.Items>
+ *     </CmsCollection.Root>
+ *   );
+ * }
+ *
  * // With reference fields included
  * function CollectionWithReferences() {
  *   return (
@@ -109,6 +133,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       queryResult: collection?.queryResult,
       queryOptions: collection?.queryOptions,
       initialSort: collection?.initialSort,
+      initialFilter: collection?.initialFilter,
       singleRefFieldIds: collection?.singleRefFieldIds,
       multiRefFieldIds: collection?.multiRefFieldIds,
     };
@@ -1303,4 +1328,4 @@ export const FilterResetTrigger = React.forwardRef<
 
 FilterResetTrigger.displayName = 'CmsCollection.FilterResetTrigger';
 
-export type { FilterOption };
+export type { FilterOption, Filter };
