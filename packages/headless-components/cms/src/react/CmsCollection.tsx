@@ -810,7 +810,10 @@ export interface CreateItemActionProps {
     | AsChildChildren<{
         disabled: boolean;
         isLoading: boolean;
-        onClick: () => void;
+        error: string | null;
+        insertItemOrReference: (
+          params: InsertItemOrReferenceParams,
+        ) => Promise<WixDataItem | void>;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -931,7 +934,7 @@ export const CreateItemAction = React.forwardRef<
 
   return (
     <CoreCmsCollection.CreateItemAction>
-      {({ insertItemOrReference, isLoading }) => {
+      {({ insertItemOrReference, isLoading, error }) => {
         const disabled = isLoading;
 
         // Build params based on provided props
@@ -963,6 +966,7 @@ export const CreateItemAction = React.forwardRef<
             customElementProps={{
               disabled,
               isLoading,
+              error,
               insertItemOrReference: (params: InsertItemOrReferenceParams) =>
                 insertItemOrReference(params),
             }}

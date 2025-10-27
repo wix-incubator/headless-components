@@ -47,6 +47,7 @@ export async function loadEventServiceConfig({
         wixEventsV2.RequestedFields.DETAILS,
         wixEventsV2.RequestedFields.REGISTRATION,
         wixEventsV2.RequestedFields.TEXTS,
+        wixEventsV2.RequestedFields.FORM,
       ],
     });
 
