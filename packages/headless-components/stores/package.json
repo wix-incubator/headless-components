@@ -68,7 +68,7 @@
     "@wix/redirects": "^1.0.83",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26",
-    "@wix/site": "https://cdn.dev.wixpress.com/@wix/site/efac38897f9e403c083d339bebb24c28f6bfdd7aaeacbb16e40058f6.tar.gz"
+    "@wix/site": "^1.27.0"
   },
   "peerDependencies": {
     "@wix/headless-components": "workspace:*"
