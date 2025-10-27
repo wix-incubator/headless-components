@@ -14,6 +14,7 @@ const ImageChoice = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: ImageChoiceProps) => {
   return (
     <Form.Field id={id}>
@@ -82,7 +83,7 @@ const ImageChoice = ({
             })}
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

@@ -17,6 +17,7 @@ export default function Donation({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: DonationProps) {
   const handleOptionSelect = (optionValue: string) => {
     onChange(optionValue);
@@ -86,7 +87,7 @@ export default function Donation({
             )}
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

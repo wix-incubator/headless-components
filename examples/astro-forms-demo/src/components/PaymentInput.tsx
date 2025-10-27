@@ -16,6 +16,7 @@ export default function PaymentInput({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: PaymentInputProps) {
   return (
     <Form.Field id={id}>
@@ -51,7 +52,7 @@ export default function PaymentInput({
             />
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

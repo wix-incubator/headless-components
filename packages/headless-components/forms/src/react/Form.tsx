@@ -909,45 +909,45 @@ const FieldsWithForm = ({
     form,
     values,
     onChange,
-    errors,
     onValidate,
     submitForm,
     fieldMap,
   });
 
   if (!formData) return null;
-  console.log('formData', formData);
   const { columnCount, fieldElements, fieldsLayout } = formData;
 
   return (
     // TODO: use readOnly, isDisabled
     // TODO: step title a11y support
     // TODO: mobile support?
-    <FieldLayoutProvider value={fieldsLayout}>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <fieldset
-          style={{ display: 'flex', flexDirection: 'column' }}
-          className={rowGapClassname}
-        >
-          {fieldElements.map((rowElements, index) => {
-            return (
-              <div
-                key={index}
-                style={{
-                  display: 'grid',
-                  width: '100%',
-                  gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
-                  gridAutoRows: 'minmax(min-content, max-content)',
-                }}
-                className={columnGapClassname}
-              >
-                {rowElements}
-              </div>
-            );
-          })}
-        </fieldset>
-      </form>
-    </FieldLayoutProvider>
+    <FormErrorsProvider errors={errors}>
+      <FieldLayoutProvider value={fieldsLayout}>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <fieldset
+            style={{ display: 'flex', flexDirection: 'column' }}
+            className={rowGapClassname}
+          >
+            {fieldElements.map((rowElements, index) => {
+              return (
+                <div
+                  key={index}
+                  style={{
+                    display: 'grid',
+                    width: '100%',
+                    gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+                    gridAutoRows: 'minmax(min-content, max-content)',
+                  }}
+                  className={columnGapClassname}
+                >
+                  {rowElements}
+                </div>
+              );
+            })}
+          </fieldset>
+        </form>
+      </FieldLayoutProvider>
+    </FormErrorsProvider>
   );
 };
 
@@ -987,6 +987,38 @@ const FieldLayoutProvider: React.FC<FieldLayoutProviderProps> = ({
     <FieldLayoutContext.Provider value={value}>
       {children}
     </FieldLayoutContext.Provider>
+  );
+};
+
+/**
+ * Context for sharing form errors across the form
+ * @internal
+ */
+const FormErrorsContext = React.createContext<FormError[]>([]);
+
+/**
+ * Props for FormErrorsProvider component
+ * @internal
+ */
+interface FormErrorsProviderProps {
+  /** The errors array to provide to children */
+  errors: FormError[];
+  /** Child components that need access to form errors */
+  children: React.ReactNode;
+}
+
+/**
+ * Provider component that makes form errors available to child components
+ * @internal
+ */
+const FormErrorsProvider: React.FC<FormErrorsProviderProps> = ({
+  errors,
+  children,
+}) => {
+  return (
+    <FormErrorsContext.Provider value={errors}>
+      {children}
+    </FormErrorsContext.Provider>
   );
 };
 
@@ -1106,6 +1138,8 @@ export interface FieldErrorProps {
   asChild?: boolean;
   /** CSS classes to apply to the error element */
   className?: string;
+  /** The path of the error */
+  path?: string;
 }
 
 /**
@@ -1321,6 +1355,7 @@ FieldInput.displayName = 'Form.Field.Input';
  * Error component for displaying field-level validation errors.
  * Must be used within a Form.Field.InputWrapper component.
  * Renders error messages that flow naturally after the input field.
+ * Only renders when there is an error for the current field.
  *
  * @component
  * @example
@@ -1344,7 +1379,13 @@ FieldInput.displayName = 'Form.Field.Input';
  */
 export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
   (props, ref) => {
-    const { children, asChild, className, ...otherProps } = props;
+    const { children, asChild, className, path, ...otherProps } = props;
+    const formErrors = React.useContext(FormErrorsContext);
+    const fieldError = formErrors.find((error) => error.path === path);
+
+    if (!fieldError) {
+      return null;
+    }
 
     return (
       <AsChildSlot

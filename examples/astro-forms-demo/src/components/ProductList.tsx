@@ -10,6 +10,7 @@ export default function ProductList({
   showLabel,
   options,
   onChange,
+  target,
 }: ProductListProps) {
   const handleToggle = (productId: string) => {
     const currentValue = (value as unknown as string[]) || [];
@@ -52,7 +53,9 @@ export default function ProductList({
                     disabled={readOnly}
                     className="w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-invalid={
-                      !!(required && (value as unknown as string[])?.length === 0)
+                      !!(
+                        required && (value as unknown as string[])?.length === 0
+                      )
                     }
                     aria-required={required}
                   />
@@ -61,14 +64,17 @@ export default function ProductList({
                     className="flex-1 text-foreground font-paragraph cursor-pointer"
                   >
                     <span className="font-semibold">{option.label}</span>
-                    <span className="text-foreground/70"> - {option.price}</span>
+                    <span className="text-foreground/70">
+                      {' '}
+                      - {option.price}
+                    </span>
                   </label>
                 </div>
               );
             })}
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

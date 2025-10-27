@@ -16,6 +16,7 @@ const Checkbox = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: CheckboxProps) => {
   return (
     <Form.Field id={id}>
@@ -48,7 +49,7 @@ const Checkbox = ({
             </span>
           </label>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

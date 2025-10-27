@@ -12,6 +12,7 @@ export default function Appointment({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: AppointmentProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
@@ -45,7 +46,7 @@ export default function Appointment({
             aria-required={required}
           />
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

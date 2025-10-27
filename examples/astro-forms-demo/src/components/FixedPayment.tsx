@@ -13,7 +13,9 @@ export default function FixedPayment({
   amount,
   currency,
   description,
+  // TODO: check props & type
   id,
+  target,
 }: FixedPaymentProps) {
   return (
     <Form.Field id={id}>
@@ -41,7 +43,7 @@ export default function FixedPayment({
             {amount}
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

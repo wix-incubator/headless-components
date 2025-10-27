@@ -12,6 +12,7 @@ const RatingInput = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: RatingInputProps) => {
   return (
     <Form.Field id={id}>
@@ -25,7 +26,11 @@ const RatingInput = ({
       )}
       <Form.Field.InputWrapper>
         <Form.Field.Input>
-          <div className="flex gap-1" role="radiogroup" aria-required={required}>
+          <div
+            className="flex gap-1"
+            role="radiogroup"
+            aria-required={required}
+          >
             {[1, 2, 3, 4, 5].map(rating => (
               <button
                 key={rating}
@@ -47,7 +52,7 @@ const RatingInput = ({
             ))}
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

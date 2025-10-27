@@ -13,6 +13,7 @@ const Dropdown = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: DropdownProps) => {
   return (
     <Form.Field id={id}>
@@ -48,7 +49,7 @@ const Dropdown = ({
             ))}
           </select>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

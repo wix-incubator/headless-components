@@ -12,6 +12,7 @@ const Signature = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: SignatureProps) => {
   return (
     <Form.Field id={id}>
@@ -51,11 +52,15 @@ const Signature = ({
           />
           {value && (
             <div className="mt-3 p-3 bg-background border border-foreground/10 rounded-lg">
-              <img src={value.url} alt="" className="max-w-full h-auto rounded" />
+              <img
+                src={value.url}
+                alt=""
+                className="max-w-full h-auto rounded"
+              />
             </div>
           )}
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

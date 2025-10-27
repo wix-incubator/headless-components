@@ -9,6 +9,7 @@ const Tags = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: TagsProps) => {
   const currentValues = value || [];
 
@@ -59,7 +60,7 @@ const Tags = ({
             })}
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

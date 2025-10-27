@@ -21,6 +21,7 @@ const FileUpload = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: FileUploadProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -64,7 +65,10 @@ const FileUpload = ({
           className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-primary-foreground file:cursor-pointer"
           description={
             description ? (
-              <div id={descriptionId} className="mt-2 text-foreground/70 text-sm">
+              <div
+                id={descriptionId}
+                className="mt-2 text-foreground/70 text-sm"
+              >
                 <RicosViewer
                   content={description as RichContent}
                   plugins={quickStartViewerPlugins()}
@@ -119,7 +123,7 @@ const FileUpload = ({
             </div>
           )}
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>

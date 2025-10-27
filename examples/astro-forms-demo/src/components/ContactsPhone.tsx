@@ -20,6 +20,7 @@ const ContactsPhone = ({
   onChange,
   onBlur,
   onFocus,
+  target,
 }: PhoneInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -37,7 +38,10 @@ const ContactsPhone = ({
         <Form.Field.Input
           description={
             description ? (
-              <div id={descriptionId} className="mt-2 text-foreground/70 text-sm">
+              <div
+                id={descriptionId}
+                className="mt-2 text-foreground/70 text-sm"
+              >
                 <RicosViewer
                   content={description as RichContent}
                   plugins={quickStartViewerPlugins()}
@@ -76,7 +80,7 @@ const ContactsPhone = ({
             />
           </div>
         </Form.Field.Input>
-        <Form.Field.Error>
+        <Form.Field.Error path={target}>
           <span className="text-destructive text-sm font-paragraph">
             This field is required
           </span>
