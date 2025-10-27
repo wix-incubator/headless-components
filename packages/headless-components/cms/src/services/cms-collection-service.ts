@@ -148,11 +148,6 @@ function applyFilterToQuery(
           case '$lte':
             wixFilter = wixFilter.le(fieldPath, operandValue as any);
             break;
-          case '$in':
-            if (Array.isArray(operandValue) && operandValue.length > 0) {
-              wixFilter = wixFilter.hasSome(fieldPath, operandValue as any);
-            }
-            break;
           case '$hasSome':
             if (Array.isArray(operandValue) && operandValue.length > 0) {
               wixFilter = wixFilter.hasSome(fieldPath, operandValue as any);
