@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import {
   type FormValues,
   type FormError,
@@ -1029,11 +1029,23 @@ export interface FieldInputProps {
 }
 
 /**
+ * Render props for Field.Error component
+ */
+export interface FieldErrorRenderProps {
+  /** The error type */
+  type: FormError['type'];
+  /** The error message */
+  message: string;
+}
+
+/**
  * Props for Field.Error component
  */
 export interface FieldErrorProps {
-  /** Error message content to display */
-  children: React.ReactNode;
+  /** Error message content to display, or a render function that receives error details */
+  children:
+    | React.ReactNode
+    | AsChildChildren<{ type: FormError['type']; message: string }>;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** CSS classes to apply to the error element */
@@ -1270,8 +1282,28 @@ FieldInput.displayName = 'Form.Field.Input';
  *     <Form.Field.Input>
  *       <input type="email" className="bg-background border-foreground text-foreground" />
  *     </Form.Field.Input>
- *     <Form.Field.Error>
+ *     <Form.Field.Error path="email">
  *       <span className="text-destructive text-sm font-paragraph">Please enter a valid email address</span>
+ *     </Form.Field.Error>
+ *   </Form.Field.InputWrapper>
+ * </Form.Field>
+ *
+ * // Render prop pattern for dynamic error messages
+ * <Form.Field id="username">
+ *   <Form.Field.Label>
+ *     <label className="text-foreground font-paragraph">Username</label>
+ *   </Form.Field.Label>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input>
+ *       <input className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *     <Form.Field.Error path="username">
+ *       {({ type, message }) => {
+ *         if (type === 'required') {
+ *           return <span className="text-destructive text-sm font-paragraph">This field is required</span>;
+ *         }
+ *         return <span className="text-destructive text-sm font-paragraph">{message}</span>;
+ *       }}
  *     </Form.Field.Error>
  *   </Form.Field.InputWrapper>
  * </Form.Field>
@@ -1281,9 +1313,9 @@ export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
   (props, ref) => {
     const { children, asChild, className, path, ...otherProps } = props;
     const formErrors = React.useContext(FormErrorsContext);
-    const fieldError = formErrors.find((error) => error.path === path);
+    const error = formErrors.find((error) => error.path === path);
 
-    if (!fieldError) {
+    if (!error) {
       return null;
     }
 
@@ -1294,10 +1326,10 @@ export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
         className={className}
         data-testid={TestIds.fieldError}
         customElement={children}
-        customElementProps={{}}
+        customElementProps={{ type: error.type, message: error.message }}
         {...otherProps}
       >
-        <div>{children}</div>
+        {children}
       </AsChildSlot>
     );
   },
