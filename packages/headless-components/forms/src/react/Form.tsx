@@ -920,6 +920,7 @@ const FieldsWithForm = ({
   const formData = useForm({
     form,
     values,
+    errors,
     onChange,
     onValidate,
     submitForm,
@@ -1033,7 +1034,7 @@ export interface FieldInputProps {
  */
 export interface FieldErrorRenderProps {
   /** The error type */
-  type: FormError['type'];
+  type: FormError['errorType'];
   /** The error message */
   message: string;
 }
@@ -1045,7 +1046,7 @@ export interface FieldErrorProps {
   /** Error message content to display, or a render function that receives error details */
   children:
     | React.ReactNode
-    | AsChildChildren<{ type: FormError['type']; message: string }>;
+    | AsChildChildren<{ type: FormError['errorType']; message: string }>;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** CSS classes to apply to the error element */
@@ -1313,7 +1314,7 @@ export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
   (props, ref) => {
     const { children, asChild, className, path, ...otherProps } = props;
     const formErrors = React.useContext(FormErrorsContext);
-    const error = formErrors.find((error) => error.path === path);
+    const error = formErrors.find((error) => error.errorPath === path);
 
     if (!error) {
       return null;
@@ -1326,7 +1327,10 @@ export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
         className={className}
         data-testid={TestIds.fieldError}
         customElement={children}
-        customElementProps={{ type: error.type, message: error.message }}
+        customElementProps={{
+          type: error.errorType,
+          message: error.errorMessage,
+        }}
         {...otherProps}
       >
         {children}
