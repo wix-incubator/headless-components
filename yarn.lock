@@ -4924,6 +4924,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/analytics@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@wix/analytics@npm:1.5.0"
+  checksum: 10c0/64e808129e255615e0f2db3be4cd84fbe0fe58d023299d46442452a632d099aea390804bc3093121a9fa1c0cc7dadd93b73c57b85feb3db058ad6e86acb7b96b
+  languageName: node
+  linkType: hard
+
 "@wix/astro-blog-demo@workspace:examples/astro-blog-demo":
   version: 0.0.0-use.local
   resolution: "@wix/astro-blog-demo@workspace:examples/astro-blog-demo"
@@ -7346,6 +7353,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/consent-policy-manager@npm:1.10.0":
+  version: 1.10.0
+  resolution: "@wix/consent-policy-manager@npm:1.10.0"
+  checksum: 10c0/823c1309aaedf0e49f6ac18b55432b7af14cb6432326754238b19e8aff8b7a34b1e9e4b4403e8b130eaa21db61f0a2b7ada59b823719420924bb215bcc900e7f
+  languageName: node
+  linkType: hard
+
 "@wix/dashboard@npm:^1.3.35, @wix/dashboard@npm:^1.3.36, @wix/dashboard@npm:^1.3.39":
   version: 1.3.40
   resolution: "@wix/dashboard@npm:1.3.40"
@@ -8502,6 +8516,7 @@ __metadata:
     "@wix/redirects": "npm:^1.0.83"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
+    "@wix/site": "npm:^1.27.0"
     jsdom: "npm:^26.1.0"
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
@@ -8919,7 +8934,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk-types@npm:1.14.0, @wix/sdk-types@npm:^1.13.35, @wix/sdk-types@npm:^1.13.39, @wix/sdk-types@npm:^1.13.41":
+"@wix/sdk-types@npm:1.14.0, @wix/sdk-types@npm:^1.13.2, @wix/sdk-types@npm:^1.13.35, @wix/sdk-types@npm:^1.13.39, @wix/sdk-types@npm:^1.13.41":
   version: 1.14.0
   resolution: "@wix/sdk-types@npm:1.14.0"
   dependencies:
@@ -8994,6 +9009,18 @@ __metadata:
     "@wix/sdk-context": "npm:0.0.1"
     "@wix/services-definitions": "npm:^0.1.5"
   checksum: 10c0/4b5bb4f91ac2a0ee96b6e33778bcbd1383603ac1f496b5e5b2b0bd8077973e70184537221f3cca052cc1b2dc49ba523d48aeeac5d73e4f87c1c367e822139fb2
+  languageName: node
+  linkType: hard
+
+"@wix/site@npm:^1.27.0":
+  version: 1.27.0
+  resolution: "@wix/site@npm:1.27.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.0.0"
+    "@wix/analytics": "npm:1.5.0"
+    "@wix/consent-policy-manager": "npm:1.10.0"
+    "@wix/sdk-types": "npm:^1.13.2"
+  checksum: 10c0/94af8fbfd53102c0553eaf67a6dcaa4b3727f9dfc9f0b32b750fd53ce9db9b3e7545865d875dde7b5906f19732f0c38c651cee9f8a127ae73a18e0836634db9d
   languageName: node
   linkType: hard
 
