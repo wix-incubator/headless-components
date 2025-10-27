@@ -1,7 +1,10 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 import { CmsCollectionServiceDefinition } from '../../services/cms-collection-service.js';
-import type { FilterValue as Filter, FilterOption } from '@wix/headless-components/react';
+import type {
+  FilterValue as Filter,
+  FilterOption,
+} from '@wix/headless-components/react';
 
 /**
  * Props for CmsCollectionFilters headless component
@@ -10,7 +13,9 @@ export interface CmsCollectionFiltersProps {
   /** Filter options configuration for the collection */
   filterOptions: FilterOption[];
   /** Render prop function that receives filter controls */
-  children: ((props: CmsCollectionFiltersRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: CmsCollectionFiltersRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -64,7 +69,13 @@ export function CmsCollectionFilters(props: CmsCollectionFiltersProps) {
   const hasFilters = service.isFiltered();
 
   return typeof children === 'function'
-    ? children({ filterValue, filterOptions, updateFilter, clearFilters, hasFilters })
+    ? children({
+        filterValue,
+        filterOptions,
+        updateFilter,
+        clearFilters,
+        hasFilters,
+      })
     : children;
 }
 
@@ -73,7 +84,9 @@ export function CmsCollectionFilters(props: CmsCollectionFiltersProps) {
  */
 export interface ResetTriggerProps {
   /** Content to display (can be a render function receiving reset controls or ReactNode) */
-  children: ((props: ResetTriggerRenderProps) => React.ReactNode) | React.ReactNode;
+  children:
+    | ((props: ResetTriggerRenderProps) => React.ReactNode)
+    | React.ReactNode;
 }
 
 /**
@@ -124,4 +137,3 @@ export function ResetTrigger(props: ResetTriggerProps) {
     ? props.children({ resetFilters, isFiltered })
     : props.children;
 }
-

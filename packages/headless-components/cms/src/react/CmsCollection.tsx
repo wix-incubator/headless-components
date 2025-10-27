@@ -1264,7 +1264,13 @@ export const FilterResetTrigger = React.forwardRef<
   HTMLButtonElement,
   FilterResetTriggerProps
 >((props, ref) => {
-  const { asChild, children, className, label = 'Reset Filters', ...otherProps } = props;
+  const {
+    asChild,
+    children,
+    className,
+    label = 'Reset Filters',
+    ...otherProps
+  } = props;
 
   return (
     <CoreCmsCollectionFilters.ResetTrigger>
