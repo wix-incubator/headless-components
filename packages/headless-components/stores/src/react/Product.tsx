@@ -136,6 +136,9 @@ export interface ProductRootProps {
 export const Root = (props: ProductRootProps): React.ReactNode => {
   const { children, product, ...attrs } = props;
 
+  // NOT GOOD - this code is rendered also while the product list is being rendered
+  console.log('Product Root rendered', props.product);
+
   return (
     <CoreProduct.Root productServiceConfig={{ product: props.product }}>
       <MediaGallery.Root
@@ -1715,7 +1718,8 @@ export const ProductActionAddToCart = React.forwardRef<
           return null;
         }
 
-        const onClick = addToCart;
+        const onClick = () => addToCart();
+
         const disabled = !canAddToCart || isLoading;
 
         if (asChild && children) {
@@ -1748,6 +1752,7 @@ export const ProductActionAddToCart = React.forwardRef<
             loadingState={loadingState}
             data-testid={TestIds.productActionAddToCart}
             data-in-progress={isLoading}
+            onClick={onClick}
           />
         );
       }}

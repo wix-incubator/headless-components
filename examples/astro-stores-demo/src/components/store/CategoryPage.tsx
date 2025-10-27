@@ -207,6 +207,9 @@ export const ProductGridContent = ({
                           <a
                             ref={ref}
                             href={`/${slug}`}
+                            onClick={() => {
+                              console.log('View Product button clicked');
+                            }}
                             className="w-full text-content-primary font-semibold py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 btn-secondary"
                           >
                             View Product

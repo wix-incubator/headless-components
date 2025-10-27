@@ -4898,6 +4898,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/analytics@https://cdn.dev.wixpress.com/@wix/analytics/3b9178b8fad2832d73060e904407a9599656cb341da6f125e543763b.tar.gz":
+  version: 0.0.0-3b9178b8fad2832d73060e904407a9599656cb341da6f125e543763b
+  resolution: "@wix/analytics@https://cdn.dev.wixpress.com/@wix/analytics/3b9178b8fad2832d73060e904407a9599656cb341da6f125e543763b.tar.gz"
+  checksum: 10c0/d7b448fd67fa0af03c2f46bf2c15e73945eaba1e4247922153e167caab565dd12c7eb80530251284503a1943774a4d411910f818d297ffffd77b3e85fbeb020e
+  languageName: node
+  linkType: hard
+
 "@wix/astro-blog-demo@workspace:examples/astro-blog-demo":
   version: 0.0.0-use.local
   resolution: "@wix/astro-blog-demo@workspace:examples/astro-blog-demo"
@@ -8475,6 +8482,7 @@ __metadata:
     "@wix/redirects": "npm:^1.0.83"
     "@wix/services-definitions": "npm:^0.1.4"
     "@wix/services-manager-react": "npm:^0.1.26"
+    "@wix/site": "https://cdn.dev.wixpress.com/@wix/site/efac38897f9e403c083d339bebb24c28f6bfdd7aaeacbb16e40058f6.tar.gz"
     jsdom: "npm:^26.1.0"
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
@@ -8892,7 +8900,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/sdk-types@npm:1.14.0, @wix/sdk-types@npm:^1.13.35, @wix/sdk-types@npm:^1.13.39, @wix/sdk-types@npm:^1.13.41":
+"@wix/sdk-types@npm:1.14.0, @wix/sdk-types@npm:^1.13.2, @wix/sdk-types@npm:^1.13.35, @wix/sdk-types@npm:^1.13.39, @wix/sdk-types@npm:^1.13.41":
   version: 1.14.0
   resolution: "@wix/sdk-types@npm:1.14.0"
   dependencies:
@@ -8967,6 +8975,17 @@ __metadata:
     "@wix/sdk-context": "npm:0.0.1"
     "@wix/services-definitions": "npm:^0.1.5"
   checksum: 10c0/4b5bb4f91ac2a0ee96b6e33778bcbd1383603ac1f496b5e5b2b0bd8077973e70184537221f3cca052cc1b2dc49ba523d48aeeac5d73e4f87c1c367e822139fb2
+  languageName: node
+  linkType: hard
+
+"@wix/site@https://cdn.dev.wixpress.com/@wix/site/efac38897f9e403c083d339bebb24c28f6bfdd7aaeacbb16e40058f6.tar.gz":
+  version: 0.0.0-efac38897f9e403c083d339bebb24c28f6bfdd7aaeacbb16e40058f6
+  resolution: "@wix/site@https://cdn.dev.wixpress.com/@wix/site/efac38897f9e403c083d339bebb24c28f6bfdd7aaeacbb16e40058f6.tar.gz"
+  dependencies:
+    "@babel/runtime": "npm:^7.0.0"
+    "@wix/analytics": "https://cdn.dev.wixpress.com/@wix/analytics/3b9178b8fad2832d73060e904407a9599656cb341da6f125e543763b.tar.gz"
+    "@wix/sdk-types": "npm:^1.13.2"
+  checksum: 10c0/5d5065f88019c1c383676153d11e2b270dfe8ff84b8b37195e9bfafe3726524cf6fe6abc8192dc62fdbbf4f5df05eacaaf7a44293517a91f1e87661d42c8ff26
   languageName: node
   linkType: hard
 

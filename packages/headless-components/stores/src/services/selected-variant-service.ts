@@ -9,6 +9,7 @@ import * as inventoryItemsV3 from '@wix/auto_sdk_stores_inventory-items-v-3';
 import { CurrentCartServiceDefinition } from '@wix/headless-ecom/services';
 import { MediaGalleryServiceDefinition } from '@wix/headless-media/services';
 import { ProductServiceDefinition } from './product-service.js';
+import { analytics }  from '@wix/site';
 
 type V3Product = productsV3.V3Product;
 type Variant = productsV3.Variant;
@@ -571,6 +572,16 @@ export const SelectedVariantService =
         modifiers?: Record<string, any>,
       ) => {
         try {
+          console.log('SelectedVariantService addToCart trackEvent', modifiers);
+          /*
+          Use this to get the product and variant details for the trackEvent parameters.
+          Maybe it's better to do this in the component that calls the addToCart function, and propogate it downstream
+          Note that createLineItems is also doing this, so we need to make sure we're not duplicating the logic.
+            const prod = v3Product.get();
+            const variant = currentVariant.get();
+          */
+          analytics.trackEvent('AddToCart', /* parameters */);
+
           isLoading.set(true);
           error.set(null);
 
