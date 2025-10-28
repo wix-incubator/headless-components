@@ -6,16 +6,21 @@ import { createServicesMap } from '@wix/services-manager';
 import {
   InstagramMediaItemServiceDefinition,
   InstagramMediaItemService,
+  InstagramMediaItem,
 } from '../services/index.js';
 import * as CoreInstagramMedias from './core/InstagramMedias.js';
 import { MediaGallery } from '@wix/headless-media/react';
 
 export interface MediaGalleryRepeaterProps {
-  children: React.ReactNode;
+  children: (props: {
+    mediaItem: InstagramMediaItem;
+    index: number;
+  }) => React.ReactNode;
 }
 
 /**
  * Repeats children for each Instagram media item, providing a per-item service context.
+ * Uses render props pattern to provide mediaItem and index directly to children.
  */
 export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
   children,
@@ -23,13 +28,11 @@ export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
   return (
     <CoreInstagramMedias.InstagramMedias>
       {({ hasItems, mediaItems }) => {
-        console.log('mediaItems', mediaItems);
         if (!hasItems) return null;
 
         return (
           <>
             {mediaItems.map((mediaItem, index) => {
-              console.log('mediaItem', mediaItem.mediaGalleryItems);
               return (
                 <WixServices
                   key={mediaItem.id || index}
@@ -44,7 +47,7 @@ export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
                       media: mediaItem.mediaGalleryItems,
                     }}
                   >
-                    {children as React.ReactElement}
+                    {children({ mediaItem, index })}
                   </MediaGallery.Root>
                 </WixServices>
               );
