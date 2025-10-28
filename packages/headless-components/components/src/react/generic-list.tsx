@@ -1,5 +1,6 @@
 import React from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
+import { BaseItem, GalleryWrapper, LayoutType } from '@wix/fast-gallery-ui';
 
 /** List display variants */
 export type ListVariant = 'list' | 'table' | 'grid';
@@ -327,13 +328,22 @@ export const Repeater = <T extends ListItem = ListItem>({
   if (items.length === 0) return null;
 
   if (variant) {
-    return React.isValidElement(children)
-      ? React.cloneElement(children, {
-          items,
-          itemRenderer: renderItem,
-          variant,
-        })
-      : children;
+    // return React.isValidElement(children)
+    //   ? React.cloneElement(children, {
+    //       items,
+    //       itemRenderer: renderItem,
+    //       variant,
+    //     })
+    //   : children;
+    return (
+      <GalleryWrapper
+        items={items as BaseItem[]}
+        itemRenderer={(item: BaseItem, index: number) =>
+          renderItem(item as T, children, index)
+        }
+        variant={variant as LayoutType}
+      />
+    );
   }
 
   return <>{items.map((item, index) => renderItem(item, children, index))}</>;

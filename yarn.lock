@@ -7705,6 +7705,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/fast-gallery-ui@link:/Users/nitayn/dev/showcase/packages/fast-gallery-packages/fast-gallery-ui::locator=%40wix%2Fheadless-components%40workspace%3Apackages%2Fheadless-components%2Fcomponents":
+  version: 0.0.0-use.local
+  resolution: "@wix/fast-gallery-ui@link:/Users/nitayn/dev/showcase/packages/fast-gallery-packages/fast-gallery-ui::locator=%40wix%2Fheadless-components%40workspace%3Apackages%2Fheadless-components%2Fcomponents"
+  languageName: node
+  linkType: soft
+
 "@wix/feedback-loop-structure@npm:^1.32.0":
   version: 1.33.0
   resolution: "@wix/feedback-loop-structure@npm:1.33.0"
@@ -7884,6 +7890,7 @@ __metadata:
     "@radix-ui/react-slider": "npm:^1.3.6"
     "@radix-ui/react-toggle-group": "npm:^1.1.11"
     "@types/node": "npm:^20.9.0"
+    "@wix/fast-gallery-ui": "link:/Users/nitayn/dev/showcase/packages/fast-gallery-packages/fast-gallery-ui"
     "@wix/headless-utils": "workspace:*"
     prettier: "npm:^3.4.2"
     typescript: "npm:^5.8.3"
