@@ -268,13 +268,4 @@ export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
   const availabilityStatus = oloSettingsService.availabilityStatus?.get?.();
   const availabilityAction = oloSettingsService.availabilityAction?.get?.();
   return children({ availabilityStatus, availabilityAction,availabilityStatusText: availabilityStatusMap[availabilityStatus].text, availabilityStatusButtonText: availabilityStatusMap[availabilityStatus].buttonText });
-
-  // const availabilityStatusText = service.availabilityStatusText?.get?.() ?? undefined;
-  // const availabilityStatusButtonText = service.availabilityStatusButtonText?.get?.() ?? undefined;
-  // const openAvailabilityModal = service.openAvailabilityModal?.get?.() ?? (() => {});
-  // return children({
-  // availabilityStatusText: availabilityStatusText,
-  // availabilityStatusButtonText: availabilityStatusButtonText,
-  // openAvailabilityModal,
-  // });
 };
