@@ -5,10 +5,8 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { type LineItem } from '@wix/ecom/services';
 import { itemVariants } from '@wix/restaurants';
-import type {
-  EnhancedItem,
-  EnhancedModifierGroup,
-} from '@wix/headless-restaurants-menus/services';
+import type { EnhancedItem } from '@wix/headless-restaurants-menus/services';
+import { getModifiersInitState } from './utils.js';
 
 type Variant = itemVariants.Variant;
 
@@ -42,6 +40,8 @@ export interface ItemServiceAPI {
     modifierId: string,
     singleSelect?: boolean,
   ) => void;
+  /** Function to get the selected modifiers for a specific group */
+  getSelectedModifiers: (modifierGroupId: string) => Array<string>;
 }
 
 /**
@@ -125,12 +125,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       signalsService.signal(initialVariant);
 
     const modifierGroups = config.item?.modifierGroups || [];
-    const initialSelectedModifiers: Record<string, Array<string>> = {};
-    modifierGroups.forEach((group: EnhancedModifierGroup) => {
-      if (group._id) {
-        initialSelectedModifiers[group._id] = [];
-      }
-    });
+    const initialSelectedModifiers = getModifiersInitState(modifierGroups);
     const selectedModifiers: Signal<Record<string, Array<string>>> =
       signalsService.signal(initialSelectedModifiers);
 
@@ -181,7 +176,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       selectedVariant.set(variant);
     };
 
-    const toggleModifier = (
+    const getModifierIds = (
       modifierGroupId: string,
       modifierId: string,
       singleSelect: boolean = false,
@@ -194,10 +189,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
 
       if (singleSelect) {
         // Single select behavior: select the modifier, replacing any existing selection
-        selectedModifiers.set({
-          ...currentSelectedModifiers,
-          [modifierGroupId]: [modifierId],
-        });
+        return [modifierId];
       } else {
         // Multi-select behavior: toggle the modifier
         if (isModifierSelected) {
@@ -205,18 +197,36 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
           const updatedModifierIds = groupModifierIds.filter(
             (id) => id !== modifierId,
           );
-          selectedModifiers.set({
-            ...currentSelectedModifiers,
-            [modifierGroupId]: updatedModifierIds,
-          });
+
+          return updatedModifierIds;
         } else {
           // Add the modifier to the existing selection
-          selectedModifiers.set({
-            ...currentSelectedModifiers,
-            [modifierGroupId]: [...groupModifierIds, modifierId],
-          });
+          return [...groupModifierIds, modifierId];
         }
       }
+    };
+
+    const toggleModifier = (
+      modifierGroupId: string,
+      modifierId: string,
+      singleSelect: boolean = false,
+    ) => {
+      const currentSelectedModifiers = selectedModifiers.get();
+      const modifierIds = getModifierIds(
+        modifierGroupId,
+        modifierId,
+        singleSelect,
+      );
+
+      selectedModifiers.set({
+        ...currentSelectedModifiers,
+        [modifierGroupId]: modifierIds,
+      });
+    };
+
+    const getSelectedModifiers = (modifierGroupId: string) => {
+      const currentSelectedModifiers = selectedModifiers.get();
+      return currentSelectedModifiers[modifierGroupId] || [];
     };
 
     return {
@@ -232,6 +242,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       lineItem,
       selectedVariant,
       selectedModifiers,
+      getSelectedModifiers,
     };
   },
 );

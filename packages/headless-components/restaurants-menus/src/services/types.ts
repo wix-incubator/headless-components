@@ -56,4 +56,5 @@ export type EnhancedModifier = Modifier & {
     additionalCharge?: string;
     formattedAdditionalCharge?: string;
   };
+  preSelected?: boolean;
 };
