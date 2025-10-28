@@ -328,7 +328,11 @@ export const Repeater = <T extends ListItem = ListItem>({
 
   if (variant) {
     return React.isValidElement(children)
-      ? React.cloneElement(children, { items, renderItem, variant })
+      ? React.cloneElement(children, {
+          items,
+          itemRenderer: renderItem,
+          variant,
+        })
       : children;
   }
 
