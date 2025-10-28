@@ -327,7 +327,9 @@ export const Repeater = <T extends ListItem = ListItem>({
   if (items.length === 0) return null;
 
   if (variant) {
-    return <div>Gallery</div>;
+    return React.isValidElement(children)
+      ? React.cloneElement(children, { items, renderItem, variant })
+      : children;
   }
 
   return <>{items.map((item, index) => renderItem(item, children, index))}</>;
