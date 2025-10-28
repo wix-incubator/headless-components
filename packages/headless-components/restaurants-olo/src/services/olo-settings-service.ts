@@ -5,12 +5,17 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
+import type { ReadOnlySignal } from '@wix/services-definitions/core-services/signals';
+import { AvailabilityStatus } from './common-types.js';
+
 export interface OLOSettingsServiceAPI {
   operationGroup: Signal<operationGroupsApi.OperationGroup | undefined>;
   operation: Signal<operationsApi.Operation | undefined>;
   selectedItem?: Signal<unknown>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
+  availabilityStatus: ReadOnlySignal<AvailabilityStatus>;
+  availabilityAction: ReadOnlySignal<undefined| (() => void)>;
   //   fetchOperationGroups: () => Promise<void>;
   //   fetchOperations: () => Promise<void>;
 }
@@ -18,6 +23,8 @@ export interface OLOSettingsServiceAPI {
 export interface OLOSettingsServiceConfig {
   operationGroup?: operationGroupsApi.OperationGroup;
   operation?: operationsApi.Operation;
+  availabilityStatus?: AvailabilityStatus;
+    availabilityAction?:() => void;
 }
 
 export const OLOSettingsServiceDefinition =
@@ -28,6 +35,8 @@ export const OLOSettingsService =
     OLOSettingsServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
+      const availabilityStatus = signalsService.signal<AvailabilityStatus>(config.availabilityStatus ?? AvailabilityStatus.AVAILABLE);
+      const availabilityAction = signalsService.signal<undefined| (() => void)>(config.availabilityAction);
       const operationGroup = signalsService.signal<
         operationGroupsApi.OperationGroup | undefined
       >(config.operationGroup);
@@ -44,6 +53,8 @@ export const OLOSettingsService =
         isLoading,
         error,
         selectedItem,
+        availabilityStatus,
+        availabilityAction,
       };
     },
   );

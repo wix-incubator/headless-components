@@ -18,6 +18,7 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
+import { AvailabilityStatus } from '../services/common-types.js';
 
 enum TestIds {
   itemName = 'item-name',
@@ -30,7 +31,6 @@ enum TestIds {
   itemVariants = 'item-variants',
   itemModifier = 'item-modifier',
   itemAvailability = 'item-availability',
-
 }
 
 const CheckIcon = () => (
@@ -738,40 +738,50 @@ export const SpecialRequest = React.forwardRef<
 
 SpecialRequest.displayName = 'SpecialRequest';
 
-
 export interface ItemDetailsAvailabilityProps {
   asChild?: boolean;
   className?: string;
+  availabilityStatusMap: Record<AvailabilityStatus, { text: string, buttonText: string }>;
   children: (props: {
-    availabilityStatusText: string|undefined;
-    availabilityStatusButtonText: string|undefined;
-    openAvailabilityModal: () => void;
+    availabilityStatus: AvailabilityStatus;
+    availabilityStatusText: string;
+    availabilityStatusButtonText: string;
+    availabilityAction: (() => void) | undefined;
   }) => React.ReactNode;
 }
 
-
-export const AvailabilityComponent= React.forwardRef<HTMLElement, ItemDetailsAvailabilityProps>(({ asChild, children, className, ...rest }, ref) => {
+export const AvailabilityComponent = React.forwardRef<
+  HTMLElement,
+  ItemDetailsAvailabilityProps
+>(({ asChild, children, className, availabilityStatusMap, ...rest }, ref) => {
   return (
-    <CoreItemDetails.AvailabilityComponent>
-      {({ openAvailabilityModal, availabilityStatusText, availabilityStatusButtonText }: {  openAvailabilityModal: () => void; availabilityStatusText: string|undefined; availabilityStatusButtonText: string|undefined; }) => {
+    <CoreItemDetails.AvailabilityComponent availabilityStatusMap={availabilityStatusMap}>
+      {({ availabilityStatus, availabilityAction, availabilityStatusText, availabilityStatusButtonText }: { availabilityStatus: AvailabilityStatus, availabilityAction: undefined| (() => void), availabilityStatusText: string, availabilityStatusButtonText: string }) => {
+        if (availabilityStatus === AvailabilityStatus.AVAILABLE) {
+          return null;
+        }
+
         return (
           <AsChildSlot
-            ref={ref}
             asChild={asChild}
             className={className}
             data-testid={TestIds.itemAvailability}
             customElement={children}
-            customElementProps={{ openAvailabilityModal, availabilityStatusText, availabilityStatusButtonText }}
+            customElementProps={{ availabilityStatus, availabilityStatusText, availabilityStatusButtonText, availabilityAction }}
+            ref={ref}
             {...rest}
           >
-            {availabilityStatusText && <span>{availabilityStatusText}</span>}
-            {availabilityStatusButtonText && <button onClick={openAvailabilityModal}>{availabilityStatusButtonText}</button>}
+            <p className={className}>
+              {availabilityStatusText}
+            </p>
+            {availabilityStatusButtonText &&availabilityAction && <button onClick={availabilityAction}>
+              {availabilityStatusButtonText}
+            </button>}
           </AsChildSlot>
         );
-        }}
-      </CoreItemDetails.AvailabilityComponent>
-    );
-  },
-);
+      }}
+    </CoreItemDetails.AvailabilityComponent>
+  );
+});
 
 AvailabilityComponent.displayName = 'AvailabilityComponent';

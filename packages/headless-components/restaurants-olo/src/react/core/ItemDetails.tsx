@@ -20,6 +20,7 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
+import { AvailabilityStatus } from '../../services/common-types.js';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -249,29 +250,31 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
 // Availability COMPONENT
 // ========================================
 
-
 interface ItemDetailsAvailabilityProps {
+  availabilityStatusMap: Record<AvailabilityStatus, { text: string, buttonText: string }>;
   children: (props: {
-availabilityStatusText: string|undefined;
-availabilityStatusButtonText: string|undefined;
-openAvailabilityModal: () => void;
-  className?: string;
-  asChild?: boolean;
+    availabilityStatus: AvailabilityStatus;
+    availabilityAction: undefined | (() => void);
+    availabilityStatusText: string;
+    availabilityStatusButtonText: string;
   }) => React.ReactNode;
 }
 
 export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
   children,
+  availabilityStatusMap,
 }) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<
-    typeof ItemServiceDefinition
-  >;
-  const availabilityStatusText = service.availabilityStatusText?.get?.() ?? undefined;
-  const availabilityStatusButtonText = service.availabilityStatusButtonText?.get?.() ?? undefined;
-  const openAvailabilityModal = service.openAvailabilityModal?.get?.() ?? (() => {});
-  return children({
-  availabilityStatusText: availabilityStatusText,
-  availabilityStatusButtonText: availabilityStatusButtonText,
-  openAvailabilityModal,
-  });
+  const oloSettingsService = useService(OLOSettingsServiceDefinition);
+  const availabilityStatus = oloSettingsService.availabilityStatus?.get?.();
+  const availabilityAction = oloSettingsService.availabilityAction?.get?.();
+  return children({ availabilityStatus, availabilityAction,availabilityStatusText: availabilityStatusMap[availabilityStatus].text, availabilityStatusButtonText: availabilityStatusMap[availabilityStatus].buttonText });
+
+  // const availabilityStatusText = service.availabilityStatusText?.get?.() ?? undefined;
+  // const availabilityStatusButtonText = service.availabilityStatusButtonText?.get?.() ?? undefined;
+  // const openAvailabilityModal = service.openAvailabilityModal?.get?.() ?? (() => {});
+  // return children({
+  // availabilityStatusText: availabilityStatusText,
+  // availabilityStatusButtonText: availabilityStatusButtonText,
+  // openAvailabilityModal,
+  // });
 };

@@ -10,6 +10,7 @@ import type {
   EnhancedModifierGroup,
 } from '@wix/headless-restaurants-menus/services';
 
+
 type Variant = itemVariants.Variant;
 
 /**
@@ -23,9 +24,6 @@ export interface ItemServiceAPI {
   item?: Signal<EnhancedItem | undefined>;
   quantity: Signal<number>;
   specialRequest: Signal<string>;
-  availabilityStatusText: Signal<string|undefined>;
-  availabilityStatusButtonText: Signal<string|undefined>;
-  openAvailabilityModal: Signal<() => void>;
   lineItem: Signal<LineItem>;
   selectedVariant: Signal<Variant | undefined>;
   selectedModifiers: Signal<Record<string, Array<string>>>;
@@ -68,18 +66,6 @@ export interface ItemServiceConfig {
   itemId?: string;
 
   operationId?: string;
-  availabilityStatus?: {
-    isMenuOfItemAvailable?: boolean;
-    shouldCollapseAvailabilityStatus?: boolean;
-    dispatchType?: string;
-    availabilityText?: string;
-    hasNextAvailability?: boolean;
-    openAvailabilityModal?: () => void;
-    availabilityText_pickup_updateTime: string;
-    availabilityText_delivery_updateTime: string;
-    availabilityButtonText_pickup_updateTime: string;
-    availabilityButtonText_delivery_updateTime: string;
-  };
 }
 
 /**
@@ -116,8 +102,7 @@ export interface ItemServiceConfig {
  * ```
  */
 const APP_ID = '9a5d83fd-8570-482e-81ab-cfa88942ee60';
-type Keys = 'availabilityText_pickup_updateTime_text' | 'availabilityText_delivery_updateTime_text' | 'availabilityButtonText_pickup_updateTime' | 'availabilityButtonText_delivery_updateTime';
-type t: (keys: Keys):string =>
+
 export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ItemServiceDefinition,
   ({ getService, config }) => {
@@ -127,26 +112,6 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       config.item,
     );
     const isLoading: Signal<boolean> = signalsService.signal(!!config.item);
-    const availabilityText_pickup_updateTime = config.availabilityStatus?.availabilityText_pickup_updateTime;
-    const availabilityText_delivery_updateTime = config.availabilityStatus?.availabilityText_delivery_updateTime;
-    const availabilityButtonText_pickup_updateTime = config.availabilityStatus?.availabilityButtonText_pickup_updateTime;
-    const availabilityButtonText_delivery_updateTime = config.availabilityStatus?.availabilityButtonText_delivery_updateTime;
-
-    let canUpdateTimeText = '';
-    canUpdateTimeText = config.availabilityStatus?.hasNextAvailability ? config.availabilityStatus?.dispatchType === 'pickup' ? availabilityText_pickup_updateTime_text??'' : availabilityText_delivery_updateTime_text??'' :"" ;
-
-    const statusText = (!config.availabilityStatus?.isMenuOfItemAvailable || !config.availabilityStatus?.shouldCollapseAvailabilityStatus)?`${config.availabilityStatus?.availabilityText ?? ''} ${canUpdateTimeText}`:undefined;
-    const statusButtonText = config.availabilityStatus?.hasNextAvailability ? config.availabilityStatus?.dispatchType === 'pickup' ? availabilityButtonText_pickup_updateTime : availabilityButtonText_delivery_updateTime : undefined;
-
-    const availabilityStatusText: Signal<string|undefined> = signalsService.signal(
-      statusText
-    );
-    const availabilityStatusButtonText: Signal<string|undefined> = signalsService.signal(
-      statusButtonText
-    );
-    const openAvailabilityModal: Signal<() => void> = signalsService.signal(
-      config.availabilityStatus?.openAvailabilityModal ?? (() => {})
-    );
 
     const error: Signal<string | null> = signalsService.signal(
       config.item ? null : 'Item not found',
@@ -174,9 +139,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
     if (config.item) {
       console.log('config.item', config.item);
       lineItem.set({
-        availability:{
-        status: (config.availabilityStatus?.isMenuOfItemAvailable && config.availabilityStatus?.shouldCollapseAvailabilityStatus) ? 'AVAILABLE':'NOT_AVAILABLE'},// add out of stock concerns
-        quantity: quantity.get(),
+         quantity: quantity.get(),
         catalogReference: {
           // @ts-expect-error - item is not typed
           catalogItemId: config.item._id,
@@ -271,9 +234,6 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       lineItem,
       selectedVariant,
       selectedModifiers,
-      availabilityStatusText,
-      availabilityStatusButtonText,
-      openAvailabilityModal,
     };
   },
 );
@@ -381,20 +341,11 @@ export interface NotFoundItemServiceConfigResult {
 export function loadItemServiceConfig({
   item,
   operationId,
-  availabilityStatus,
 }: {
   item: EnhancedItem;
   operationId: string;
-  availabilityStatus?: {
-    isMenuOfItemAvailable?: boolean;
-    shouldCollapseAvailabilityStatus?: boolean;
-    dispatchType?: string;
-    availabilityText?: string;
-    hasNextAvailability?: boolean;
-    openAvailabilityModal?: () => void;
-  };
 }): ItemServiceConfig {
-  return { item, operationId, availabilityStatus };
+  return { item, operationId };
 }
 // try {
 //   if (item === null) {
