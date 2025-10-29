@@ -280,7 +280,7 @@ export const ProductRepeater = React.forwardRef<
   const { children, asChild = false } = props;
 
   return (
-    <GenericList.Repeater
+    <GenericList.Repeater<V3Product & { id: string }>
       ref={ref}
       asChild={asChild}
       renderItem={(
@@ -299,7 +299,7 @@ export const ProductRepeater = React.forwardRef<
         </Product.Root>
       )}
     >
-      {children as any}
+      {children}
     </GenericList.Repeater>
   );
 });
