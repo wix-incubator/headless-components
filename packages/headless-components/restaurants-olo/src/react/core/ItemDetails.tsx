@@ -20,6 +20,7 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
+import { convertModifierToFormModifier } from '../../services/utils.js';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -220,13 +221,12 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
     typeof ItemServiceDefinition
   >;
   const { modifierGroup } = useModifierGroupContext();
-  const selectedModifiers = service.selectedModifiers?.get?.() ?? {};
 
   // Get selected modifier IDs for this group
   const groupId = modifierGroup._id;
-  const groupSelectedModifierIds = groupId
-    ? selectedModifiers[groupId] || []
-    : [];
+  const groupSelectedModifierIds = service.getSelectedModifiers?.(
+    groupId ?? '',
+  );
 
   const onToggle = (modifierId: string) => {
     if (groupId) {
@@ -238,9 +238,6 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
     selectedModifierIds: groupSelectedModifierIds,
     onToggle,
     modifierGroup,
-    modifiers: modifierGroup.modifiers.map((modifier, index) => ({
-      ...modifier,
-      _id: `${modifier._id}~${index}`,
-    })),
+    modifiers: modifierGroup.modifiers.map(convertModifierToFormModifier),
   });
 };
