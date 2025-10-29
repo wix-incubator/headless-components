@@ -96,7 +96,11 @@ export function Root(props: ItemRootProps) {
     return null;
   }
 
-  return <CoreItem item={props.item}>{props.children}</CoreItem>;
+  return <CoreItem item={props.item}>
+    <div data-featured={props.item.featured ?? false} className='group'>
+      {props.children}
+    </div>
+    </CoreItem>;
 }
 
 /**
