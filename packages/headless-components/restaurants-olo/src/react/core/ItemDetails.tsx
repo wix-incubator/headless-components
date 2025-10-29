@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, createContext } from 'react';
 import { useService, WixServices } from '@wix/services-manager-react';
 import { ServiceAPI } from '@wix/services-manager/types';
 import { createServicesMap } from '@wix/services-manager';
@@ -20,7 +20,38 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
-import { convertModifierToFormModifier } from '../../services/utils.js';
+import {
+  convertModifierToFormModifier,
+  getModifierGroupRuleType,
+  isSingleSelectRule,
+} from '../../services/utils.js';
+import { RuleType } from '../../services/common-types.js';
+
+// ========================================
+// MODIFIERS CONTEXT
+// ========================================
+
+interface ModifiersContextValue {
+  selectedModifierIds: string[];
+  onToggle: (modifierId: string) => void;
+  modifierGroup: EnhancedModifierGroup;
+  modifiers: EnhancedModifier[];
+  ruleType: RuleType;
+  isSingleSelect: boolean;
+}
+
+const ModifiersContext = createContext<ModifiersContextValue | null>(null);
+
+export function useModifiersContext(): ModifiersContextValue {
+  const context = React.useContext(ModifiersContext);
+  if (!context) {
+    throw new Error(
+      'useModifiersContext must be used within a ModifiersComponent',
+    );
+  }
+  return context;
+}
+
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -203,17 +234,12 @@ export const VariantsComponent: React.FC<ItemDetailsVariantsProps> = ({
 // MODIFIER COMPONENT
 // ========================================
 
-interface ItemDetailsModifiersProps {
-  children: (props: {
-    selectedModifierIds: string[];
-    onToggle: (modifierId: string) => void;
-    modifierGroup: EnhancedModifierGroup;
-    modifiers: EnhancedModifier[];
-  }) => React.ReactNode;
+interface ModifiersComponentProps {
+  children: React.ReactNode;
   singleSelect?: boolean;
 }
 
-export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
+export const ModifiersComponent: React.FC<ModifiersComponentProps> = ({
   children,
   singleSelect,
 }) => {
@@ -234,10 +260,22 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
     }
   };
 
-  return children({
+  const ruleType = getModifierGroupRuleType(modifierGroup.rule);
+
+  const isSingleSelect = isSingleSelectRule(modifierGroup.rule ?? {}) ?? false;
+
+  const contextValue: ModifiersContextValue = {
     selectedModifierIds: groupSelectedModifierIds,
     onToggle,
     modifierGroup,
     modifiers: modifierGroup.modifiers.map(convertModifierToFormModifier),
-  });
+    ruleType,
+    isSingleSelect,
+  };
+
+  return (
+    <ModifiersContext.Provider value={contextValue}>
+      {children}
+    </ModifiersContext.Provider>
+  );
 };
