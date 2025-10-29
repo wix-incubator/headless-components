@@ -7,6 +7,8 @@ import {
 import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
+import type { BaseItem, LayoutType } from '@wix/fast-gallery-ui';
+import { GalleryWrapper } from '@wix/fast-gallery-ui';
 import * as StyledMediaGallery from '../media/MediaGallery';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';
@@ -102,7 +104,31 @@ export const ProductGridContent = ({
               <div className="text-content-primary">No products found</div>
             }
           >
-            <ProductList.ProductRepeater>
+            <ProductList.ProductRepeater
+              renderWrapper={({
+                items,
+                itemRenderer,
+                variant,
+              }: {
+                items: (productsV3.V3Product & { id: string })[];
+                itemRenderer: (
+                  item: productsV3.V3Product & { id: string },
+                  index: number
+                ) => React.ReactNode;
+                variant?: string;
+                children: React.ReactNode;
+              }) => (
+                <GalleryWrapper
+                  items={items as BaseItem[]}
+                  itemRenderer={(item: BaseItem, index: number) => {
+                    // Convert BaseItem back to V3Product for the itemRenderer
+                    const originalItem = items[index];
+                    return itemRenderer(originalItem, index);
+                  }}
+                  variant={variant as LayoutType}
+                />
+              )}
+            >
               <div className="relative bg-surface-card backdrop-blur-sm rounded-xl p-4 border border-surface-primary hover:border-surface-hover transition-all duration-200 hover:scale-105 group h-full flex flex-col">
                 <Product.Ribbon className="bg-purple-500 text-white font-bold px-3 py-1 rounded-full text-sm absolute top-2 z-10" />
 
