@@ -298,64 +298,103 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
 Totals.displayName = 'GenericList.Totals';
 
 /**
+ * Render props for GenericList Repeater asChild pattern
+ */
+export interface GenericListRepeaterRenderProps<T extends ListItem = ListItem> {
+  items: T[];
+  variant?: ListVariant;
+  itemRenderer: (item: T, index: number) => React.ReactNode;
+}
+
+/**
  * Props for the GenericList Repeater component
  */
 export interface GenericListRepeaterProps<T extends ListItem = ListItem> {
   /** Function that renders content for each item */
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((
+        props: GenericListRepeaterRenderProps<T>,
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
   /** Function that wraps each item with its container/root component */
   renderItem: (
     item: T,
     children: React.ReactNode,
     index: number,
   ) => React.ReactNode;
+  /** Whether to render as child component (asChild pattern) */
+  asChild?: boolean;
+  /** CSS classes */
+  className?: string;
 }
 
 /**
  * Generic repeater component that maps over items from GenericList context.
  * This component provides a reusable pattern for rendering lists of items
  * where each item needs to be wrapped in a specific Root component.
+ * Supports asChild pattern for advanced layout components.
  *
  * @component
  */
-export const Repeater = <T extends ListItem = ListItem>({
-  children,
-  renderItem,
-}: GenericListRepeaterProps<T>) => {
+export const Repeater = <T extends ListItem = ListItem>(
+  props: GenericListRepeaterProps<T> & { ref?: React.Ref<HTMLElement> },
+) => {
+  const {
+    ref,
+    children,
+    renderItem,
+    asChild = false,
+    className,
+    ...otherProps
+  } = props;
   const { items, variant } = useGenericListContext<T>();
 
   if (items.length === 0) return null;
 
-  // Create itemRenderer function for wrapper
-  // const itemRenderer = (item: T, index: number) =>
-  //   renderItem(item, children, index);
-
-  // // Use custom renderWrapper if provided and variant is set
-  // if (variant && renderWrapper) {
-  //   return renderWrapper({
-  //     items,
-  //     itemRenderer,
-  //     variant,
-  //     children,
-  //   });
-  // }
-
-  if (variant) {
-    return React.cloneElement(children as React.ReactElement, {
-      items,
-      variant,
-      itemRenderer: (item: T, index: number) =>
-        renderItem(item, children, index),
-    }) as React.ReactElement;
-  }
+  // Create itemRenderer for asChild pattern
 
   const getChildrenForIndex = (index: number): React.ReactNode => {
-    if (React.Children.count(children) > 1) {
-      const childrenArray = React.Children.toArray(children);
+    if (typeof children === 'function') return null; // Function children handled separately
+    if (React.Children.count(children as React.ReactNode) > 1) {
+      const childrenArray = React.Children.toArray(children as React.ReactNode);
       return childrenArray[index] || childrenArray[0] || children;
     }
     return children;
   };
+
+  const itemRenderer = React.useCallback(
+    (item: T, index: number) => {
+      // For asChild pattern, we need to render the item without children
+      // since the asChild component will handle its own content
+      if (asChild) {
+        return renderItem(item, null, index);
+      }
+      return renderItem(item, getChildrenForIndex(index), index);
+    },
+    [children, renderItem, asChild],
+  );
+
+  if (asChild) {
+    const renderProps: GenericListRepeaterRenderProps<T> = {
+      items,
+      variant,
+      itemRenderer,
+    };
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        data-component="generic-list-repeater"
+        data-variant={variant}
+        customElement={children}
+        customElementProps={renderProps}
+        {...otherProps}
+      />
+    );
+  }
 
   return (
     <>
