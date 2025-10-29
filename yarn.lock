@@ -3920,7 +3920,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/typography@npm:^0.5.10, @tailwindcss/typography@npm:^0.5.15, @tailwindcss/typography@npm:^0.5.18":
+"@tailwindcss/typography@npm:^0.5.10, @tailwindcss/typography@npm:^0.5.15, @tailwindcss/typography@npm:^0.5.18, @tailwindcss/typography@npm:^0.5.19":
   version: 0.5.19
   resolution: "@tailwindcss/typography@npm:0.5.19"
   dependencies:
@@ -5178,6 +5178,31 @@ __metadata:
     react-dom: "npm:18.3.1"
     tailwindcss: "npm:^3.4.17"
     typescript: "npm:^5.8.3"
+  languageName: unknown
+  linkType: soft
+
+"@wix/astro-restaurants-menus-demo@workspace:examples/astro-restaurants-menus-demo":
+  version: 0.0.0-use.local
+  resolution: "@wix/astro-restaurants-menus-demo@workspace:examples/astro-restaurants-menus-demo"
+  dependencies:
+    "@astrojs/cloudflare": "npm:^12.5.4"
+    "@astrojs/react": "npm:^4.3.0"
+    "@playwright/test": "npm:^1.51.1"
+    "@tailwindcss/container-queries": "npm:^0.1.1"
+    "@tailwindcss/typography": "npm:^0.5.19"
+    "@tailwindcss/vite": "npm:^4.0.13"
+    "@types/react": "npm:^18.3.1"
+    "@types/react-dom": "npm:^18.3.1"
+    "@wix/astro": "npm:^1.0.22"
+    "@wix/cli": "npm:^1.1.95"
+    "@wix/cli-edge": "npm:^1.1.74"
+    "@wix/dashboard": "npm:^1.3.39"
+    "@wix/headless-restaurants-menus": "workspace:*"
+    "@wix/services-manager-react": "npm:^0.1.26"
+    astro: "npm:^5.9.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    tailwindcss: "npm:^4.1.7"
   languageName: unknown
   linkType: soft
 
@@ -8300,7 +8325,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-restaurants-menus@workspace:^, @wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus":
+"@wix/headless-restaurants-menus@workspace:*, @wix/headless-restaurants-menus@workspace:^, @wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus":
   version: 0.0.0-use.local
   resolution: "@wix/headless-restaurants-menus@workspace:packages/headless-components/restaurants-menus"
   dependencies:
