@@ -2,7 +2,7 @@ import React from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 
 /** List display variants */
-export type ListVariant = 'list' | 'table' | 'grid';
+export type ListVariant = 'list' | 'grid';
 
 /** List item interface - generic item with id */
 export interface ListItem {
