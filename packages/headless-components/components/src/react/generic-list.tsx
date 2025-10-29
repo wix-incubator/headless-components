@@ -303,11 +303,7 @@ Totals.displayName = 'GenericList.Totals';
 export interface GenericListRepeaterRenderProps<T extends ListItem = ListItem> {
   items: T[];
   variant?: ListVariant;
-  itemRenderer: (
-    item: T,
-    index: number,
-    children?: React.ReactNode,
-  ) => React.ReactNode;
+  itemRenderer: (item: T, index: number) => React.ReactNode;
 }
 
 /**
@@ -356,34 +352,24 @@ export const Repeater = <T extends ListItem = ListItem>(
 
   if (items.length === 0) return null;
 
-  // Helper function to distribute children across items (for non-asChild pattern)
-
   const getChildrenForItemIndex = (index: number): React.ReactNode => {
-    // Function children are handled by asChild pattern, not distributed per item
     if (typeof children === 'function') return null;
 
-    // If multiple children provided, distribute them by index (fallback to first/all)
     if (React.Children.count(children as React.ReactNode) > 1) {
       const childrenArray = React.Children.toArray(children as React.ReactNode);
       return childrenArray[index] || childrenArray[0] || children;
     }
 
-    // Single child or ReactNode - use for all items
     return children;
   };
 
-  const createItemRenderer = React.useCallback(
+  const itemRenderer = React.useCallback(
     (item: T, index: number, customChildren?: React.ReactNode) => {
-      // For asChild pattern, if customChildren provided, use them instead of null
       if (asChild && customChildren !== undefined) {
         return renderItem(item, customChildren, index);
       }
-      // For asChild pattern without custom children, render wrapper only
-      if (asChild) {
-        return renderItem(item, null, index);
-      }
-      // For standard pattern, render with distributed children
-      return renderItem(item, getChildrenForItemIndex(index), index);
+
+      return renderItem(item, null, index);
     },
     [children, renderItem, asChild],
   );
@@ -392,7 +378,7 @@ export const Repeater = <T extends ListItem = ListItem>(
     const asChildRenderProps: GenericListRepeaterRenderProps<T> = {
       items,
       variant,
-      itemRenderer: createItemRenderer,
+      itemRenderer,
     };
 
     return (
