@@ -222,37 +222,67 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
 );
 
 /**
+ * Render props for ProductRepeater asChild pattern
+ */
+export interface ProductRepeaterRenderProps {
+  items: (V3Product & { id: string })[];
+  variant?: ListVariant;
+  itemRenderer: (
+    item: V3Product & { id: string },
+    index: number,
+  ) => React.ReactNode;
+}
+
+/**
  * Props for ProductList ProductRepeater component
  */
 export interface ProductRepeaterProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((
+        props: ProductRepeaterRenderProps,
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
+  /** Whether to render as child component (asChild pattern) */
+  asChild?: boolean;
 }
 
 /**
  * Repeater component that renders Product.Root for each product.
  * Follows Repeater Level pattern and uses GenericList.Repeater for consistency.
- * Note: Repeater components do NOT support asChild as per architecture rules.
+ * Supports asChild pattern for advanced layout components like GalleryWrapper.
  *
  * @component
  * @example
  * ```tsx
+ * // Standard usage
  * <ProductList.ProductRepeater>
  *   <Product.Name />
  *   <Product.Price />
- *   <Product.MediaGallery>
- *     <MediaGallery.Viewport />
- *   </Product.MediaGallery>
+ * </ProductList.ProductRepeater>
+ *
+ * // AsChild usage with GalleryWrapper
+ * <ProductList.ProductRepeater asChild>
+ *   {({ items, variant, itemRenderer }) => (
+ *     <GalleryWrapper
+ *       items={items}
+ *       variant={variant}
+ *       itemRenderer={itemRenderer}
+ *     />
+ *   )}
  * </ProductList.ProductRepeater>
  * ```
  */
 export const ProductRepeater = React.forwardRef<
   HTMLElement,
   ProductRepeaterProps
->((props, _ref) => {
-  const { children } = props;
+>((props, ref) => {
+  const { children, asChild = false } = props;
 
   return (
     <GenericList.Repeater
+      ref={ref}
+      asChild={asChild}
       renderItem={(
         product: V3Product & { id: string },
         children: React.ReactNode,
@@ -269,7 +299,7 @@ export const ProductRepeater = React.forwardRef<
         </Product.Root>
       )}
     >
-      {children}
+      {children as any}
     </GenericList.Repeater>
   );
 });

@@ -341,7 +341,12 @@ export const Repeater = <T extends ListItem = ListItem>({
   // }
 
   if (variant) {
-    console.log('variant', variant);
+    return React.cloneElement(children as React.ReactElement, {
+      items,
+      variant,
+      itemRenderer: (item: T, index: number) =>
+        renderItem(item, children, index),
+    }) as React.ReactElement;
   }
 
   const getChildrenForIndex = (index: number): React.ReactNode => {
