@@ -386,8 +386,6 @@ export const Repeater = <T extends ListItem = ListItem>(
         ref={ref}
         asChild={asChild}
         className={className}
-        data-component="generic-list-repeater"
-        data-variant={variant}
         customElement={children}
         customElementProps={asChildRenderProps}
         {...otherProps}
