@@ -1,6 +1,7 @@
 import React from 'react';
 import { CoreOLO } from './core/index.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
+import { OLOSettingsServiceConfig } from '../services/olo-settings-service.js';
 
 // ========================================
 // OLO HEADLESS COMPONENTS
@@ -16,9 +17,9 @@ interface OLORootProps {
   /** The ID of the item to load */
   itemId?: string;
   /** Pre-loaded item service config (optional) */
-  itemServiceConfig?: any; // TODO: Use proper ItemServiceConfig type
+  itemServiceConfig?: ItemServiceConfig;
   /** Pre-loaded OLO settings service config (optional) */
-  oloSettingsServiceConfig?: any; // TODO: Use proper OLOSettingsServiceConfig type
+  oloSettingsServiceConfig?: OLOSettingsServiceConfig;
   /** Children render prop that receives the service state */
   // children: (props: {
   //   isLoading: boolean;

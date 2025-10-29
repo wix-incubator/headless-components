@@ -11,3 +11,8 @@ export {
   type OLOSettingsServiceConfig,
   type OLOSettingsServiceAPI,
 } from './olo-settings-service.js';
+export {
+  FulfillmentsService,
+  FulfillmentsServiceDefinition,
+  loadFulfillmentsServiceConfig,
+} from './fulfillments-service.js';
