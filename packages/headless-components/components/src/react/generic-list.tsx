@@ -309,13 +309,6 @@ export interface GenericListRepeaterProps<T extends ListItem = ListItem> {
     children: React.ReactNode,
     index: number,
   ) => React.ReactNode;
-  /** Optional render prop for custom wrapper component (e.g., GalleryWrapper) */
-  renderWrapper?: (props: {
-    items: T[];
-    itemRenderer: (item: T, index: number) => React.ReactNode;
-    variant?: string;
-    children: React.ReactNode;
-  }) => React.ReactNode;
 }
 
 /**
@@ -328,27 +321,44 @@ export interface GenericListRepeaterProps<T extends ListItem = ListItem> {
 export const Repeater = <T extends ListItem = ListItem>({
   children,
   renderItem,
-  renderWrapper,
 }: GenericListRepeaterProps<T>) => {
   const { items, variant } = useGenericListContext<T>();
 
   if (items.length === 0) return null;
 
   // Create itemRenderer function for wrapper
-  const itemRenderer = (item: T, index: number) =>
-    renderItem(item, children, index);
+  // const itemRenderer = (item: T, index: number) =>
+  //   renderItem(item, children, index);
 
-  // Use custom renderWrapper if provided and variant is set
-  if (variant && renderWrapper) {
-    return renderWrapper({
-      items,
-      itemRenderer,
-      variant,
-      children,
-    });
+  // // Use custom renderWrapper if provided and variant is set
+  // if (variant && renderWrapper) {
+  //   return renderWrapper({
+  //     items,
+  //     itemRenderer,
+  //     variant,
+  //     children,
+  //   });
+  // }
+
+  if (variant) {
+    console.log('variant', variant);
   }
 
-  return <>{items.map((item, index) => renderItem(item, children, index))}</>;
+  const getChildrenForIndex = (index: number): React.ReactNode => {
+    if (React.Children.count(children) > 1) {
+      const childrenArray = React.Children.toArray(children);
+      return childrenArray[index] || childrenArray[0] || children;
+    }
+    return children;
+  };
+
+  return (
+    <>
+      {items.map((item, index) =>
+        renderItem(item, getChildrenForIndex(index), index),
+      )}
+    </>
+  );
 };
 
 Repeater.displayName = 'GenericList.Repeater';

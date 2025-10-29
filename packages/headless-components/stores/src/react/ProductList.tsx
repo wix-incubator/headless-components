@@ -226,16 +226,6 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
  */
 export interface ProductRepeaterProps {
   children: React.ReactNode;
-  /** Optional render prop for custom wrapper component (e.g., GalleryWrapper) */
-  renderWrapper?: (props: {
-    items: (V3Product & { id: string })[];
-    itemRenderer: (
-      item: V3Product & { id: string },
-      index: number,
-    ) => React.ReactNode;
-    variant?: string;
-    children: React.ReactNode;
-  }) => React.ReactNode;
 }
 
 /**
@@ -259,7 +249,7 @@ export const ProductRepeater = React.forwardRef<
   HTMLElement,
   ProductRepeaterProps
 >((props, _ref) => {
-  const { children, renderWrapper } = props;
+  const { children } = props;
 
   return (
     <GenericList.Repeater
@@ -278,7 +268,6 @@ export const ProductRepeater = React.forwardRef<
           {children}
         </Product.Root>
       )}
-      {...(renderWrapper && { renderWrapper })}
     >
       {children}
     </GenericList.Repeater>

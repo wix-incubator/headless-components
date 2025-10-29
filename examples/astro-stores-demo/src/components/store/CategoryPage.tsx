@@ -105,16 +105,16 @@ export const ProductGridContent = ({
             }
           >
             <ProductList.ProductRepeater
-              renderWrapper={({ items, itemRenderer, variant }) => (
-                <GalleryWrapper
-                  items={items as BaseItem[]}
-                  itemRenderer={(item: BaseItem, index: number) => {
-                    const originalItem = items[index];
-                    return itemRenderer(originalItem, index);
-                  }}
-                  variant={variant as LayoutType}
-                />
-              )}
+            // renderWrapper={({ items, itemRenderer, variant }) => (
+            //   <GalleryWrapper
+            //     items={items as BaseItem[]}
+            //     itemRenderer={(item: BaseItem, index: number) => {
+            //       const originalItem = items[index];
+            //       return itemRenderer(originalItem, index);
+            //     }}
+            //     variant={variant as LayoutType}
+            //   />
+            // )}
             >
               <div className="relative bg-surface-card backdrop-blur-sm rounded-xl p-4 border border-surface-primary hover:border-surface-hover transition-all duration-200 hover:scale-105 group h-full flex flex-col">
                 <Product.Ribbon className="bg-purple-500 text-white font-bold px-3 py-1 rounded-full text-sm absolute top-2 z-10" />
