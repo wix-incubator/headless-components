@@ -105,23 +105,10 @@ export const ProductGridContent = ({
             }
           >
             <ProductList.ProductRepeater
-              renderWrapper={({
-                items,
-                itemRenderer,
-                variant,
-              }: {
-                items: (productsV3.V3Product & { id: string })[];
-                itemRenderer: (
-                  item: productsV3.V3Product & { id: string },
-                  index: number
-                ) => React.ReactNode;
-                variant?: string;
-                children: React.ReactNode;
-              }) => (
+              renderWrapper={({ items, itemRenderer, variant }) => (
                 <GalleryWrapper
                   items={items as BaseItem[]}
                   itemRenderer={(item: BaseItem, index: number) => {
-                    // Convert BaseItem back to V3Product for the itemRenderer
                     const originalItem = items[index];
                     return itemRenderer(originalItem, index);
                   }}
