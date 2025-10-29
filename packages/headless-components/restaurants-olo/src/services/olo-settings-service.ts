@@ -5,7 +5,6 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import type { ReadOnlySignal } from '@wix/services-definitions/core-services/signals';
 import { AvailabilityStatus } from './common-types.js';
 
 export interface OLOSettingsServiceAPI {
@@ -14,8 +13,7 @@ export interface OLOSettingsServiceAPI {
   selectedItem?: Signal<unknown>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
-  availabilityStatus: ReadOnlySignal<AvailabilityStatus>;
-  availabilityAction: ReadOnlySignal<undefined| (() => void)>;
+  getAvailabilityStatus: Signal<(menuId: string) => AvailabilityStatus>;
   //   fetchOperationGroups: () => Promise<void>;
   //   fetchOperations: () => Promise<void>;
 }
@@ -23,8 +21,7 @@ export interface OLOSettingsServiceAPI {
 export interface OLOSettingsServiceConfig {
   operationGroup?: operationGroupsApi.OperationGroup;
   operation?: operationsApi.Operation;
-  availabilityStatus?: AvailabilityStatus;
-    availabilityAction?:() => void;
+  availabilityStatusMenuMap: Record<string, AvailabilityStatus>;
 }
 
 export const OLOSettingsServiceDefinition =
@@ -35,8 +32,7 @@ export const OLOSettingsService =
     OLOSettingsServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
-      const availabilityStatus = signalsService.signal<AvailabilityStatus>(config.availabilityStatus ?? AvailabilityStatus.AVAILABLE);
-      const availabilityAction = signalsService.signal<undefined| (() => void)>(config.availabilityAction);
+      const availabilityStatusMenuMap = signalsService.signal<Record<string,AvailabilityStatus>>(config.availabilityStatusMenuMap);
       const operationGroup = signalsService.signal<
         operationGroupsApi.OperationGroup | undefined
       >(config.operationGroup);
@@ -47,14 +43,18 @@ export const OLOSettingsService =
       const isLoading = signalsService.signal<boolean>(false);
       const error = signalsService.signal<string | null>(null);
 
+      const getAvailabilityStatusFn = (menuId: string) => {
+        return availabilityStatusMenuMap.get()?.[menuId] ?? AvailabilityStatus.AVAILABLE;
+      };
+      const getAvailabilityStatus = signalsService.signal<(menuId: string) => AvailabilityStatus>(getAvailabilityStatusFn);
+
       return {
         operationGroup,
         operation,
         isLoading,
         error,
         selectedItem,
-        availabilityStatus,
-        availabilityAction,
+        getAvailabilityStatus,
       };
     },
   );

@@ -741,12 +741,12 @@ SpecialRequest.displayName = 'SpecialRequest';
 export interface ItemDetailsAvailabilityProps {
   asChild?: boolean;
   className?: string;
-  availabilityStatusMap: Record<AvailabilityStatus, { text: string, buttonText: string }>;
+  availabilityStatusMap: Record<AvailabilityStatus, { text?: string, buttonText?: string }>;
   children: (props: {
     availabilityStatus: AvailabilityStatus;
-    availabilityStatusText: string;
-    availabilityStatusButtonText: string;
-    availabilityAction: (() => void) | undefined;
+    availabilityStatusText?: string;
+    availabilityStatusButtonText?: string;
+    availabilityAction?: () => void;
   }) => React.ReactNode;
 }
 
@@ -756,7 +756,7 @@ export const AvailabilityComponent = React.forwardRef<
 >(({ asChild, children, className, availabilityStatusMap, ...rest }, ref) => {
   return (
     <CoreItemDetails.AvailabilityComponent availabilityStatusMap={availabilityStatusMap}>
-      {({ availabilityStatus, availabilityAction, availabilityStatusText, availabilityStatusButtonText }: { availabilityStatus: AvailabilityStatus, availabilityAction: undefined| (() => void), availabilityStatusText: string, availabilityStatusButtonText: string }) => {
+      {({ availabilityStatus, availabilityAction, availabilityStatusText, availabilityStatusButtonText }: { availabilityStatus: AvailabilityStatus, availabilityAction?: (() => void) | undefined, availabilityStatusText?: string | undefined, availabilityStatusButtonText?: string | undefined }) => {
         if (availabilityStatus === AvailabilityStatus.AVAILABLE) {
           return null;
         }

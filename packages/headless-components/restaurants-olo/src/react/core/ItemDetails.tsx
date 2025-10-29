@@ -251,12 +251,12 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
 // ========================================
 
 interface ItemDetailsAvailabilityProps {
-  availabilityStatusMap: Record<AvailabilityStatus, { text: string, buttonText: string }>;
+  availabilityStatusMap: Record<AvailabilityStatus, { text?: string, buttonText?: string, action?: () => void }>;
   children: (props: {
     availabilityStatus: AvailabilityStatus;
-    availabilityAction: undefined | (() => void);
-    availabilityStatusText: string;
-    availabilityStatusButtonText: string;
+    availabilityAction?: () => void;
+    availabilityStatusText?: string;
+    availabilityStatusButtonText?: string;
   }) => React.ReactNode;
 }
 
@@ -264,8 +264,7 @@ export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
   children,
   availabilityStatusMap,
 }) => {
-  const oloSettingsService = useService(OLOSettingsServiceDefinition);
-  const availabilityStatus = oloSettingsService.availabilityStatus?.get?.();
-  const availabilityAction = oloSettingsService.availabilityAction?.get?.();
-  return children({ availabilityStatus, availabilityAction,availabilityStatusText: availabilityStatusMap[availabilityStatus].text, availabilityStatusButtonText: availabilityStatusMap[availabilityStatus].buttonText });
+    const itemService = useService(ItemServiceDefinition);
+  const availabilityStatus: AvailabilityStatus = itemService.availabilityStatus?.get?.() ?? AvailabilityStatus.AVAILABLE;
+  return children({ availabilityStatus, availabilityAction:availabilityStatusMap[availabilityStatus].action ,availabilityStatusText: availabilityStatusMap[availabilityStatus].text, availabilityStatusButtonText: availabilityStatusMap[availabilityStatus].buttonText });
 };
