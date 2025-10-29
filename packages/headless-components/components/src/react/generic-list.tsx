@@ -303,7 +303,11 @@ Totals.displayName = 'GenericList.Totals';
 export interface GenericListRepeaterRenderProps<T extends ListItem = ListItem> {
   items: T[];
   variant?: ListVariant;
-  itemRenderer: (item: T, index: number) => React.ReactNode;
+  itemRenderer: (
+    item: T,
+    index: number,
+    children?: React.ReactNode,
+  ) => React.ReactNode;
 }
 
 /**
@@ -352,34 +356,43 @@ export const Repeater = <T extends ListItem = ListItem>(
 
   if (items.length === 0) return null;
 
-  // Create itemRenderer for asChild pattern
+  // Helper function to distribute children across items (for non-asChild pattern)
 
-  const getChildrenForIndex = (index: number): React.ReactNode => {
-    if (typeof children === 'function') return null; // Function children handled separately
+  const getChildrenForItemIndex = (index: number): React.ReactNode => {
+    // Function children are handled by asChild pattern, not distributed per item
+    if (typeof children === 'function') return null;
+
+    // If multiple children provided, distribute them by index (fallback to first/all)
     if (React.Children.count(children as React.ReactNode) > 1) {
       const childrenArray = React.Children.toArray(children as React.ReactNode);
       return childrenArray[index] || childrenArray[0] || children;
     }
+
+    // Single child or ReactNode - use for all items
     return children;
   };
 
-  const itemRenderer = React.useCallback(
-    (item: T, index: number) => {
-      // For asChild pattern, we need to render the item without children
-      // since the asChild component will handle its own content
+  const createItemRenderer = React.useCallback(
+    (item: T, index: number, customChildren?: React.ReactNode) => {
+      // For asChild pattern, if customChildren provided, use them instead of null
+      if (asChild && customChildren !== undefined) {
+        return renderItem(item, customChildren, index);
+      }
+      // For asChild pattern without custom children, render wrapper only
       if (asChild) {
         return renderItem(item, null, index);
       }
-      return renderItem(item, getChildrenForIndex(index), index);
+      // For standard pattern, render with distributed children
+      return renderItem(item, getChildrenForItemIndex(index), index);
     },
     [children, renderItem, asChild],
   );
 
   if (asChild) {
-    const renderProps: GenericListRepeaterRenderProps<T> = {
+    const asChildRenderProps: GenericListRepeaterRenderProps<T> = {
       items,
       variant,
-      itemRenderer,
+      itemRenderer: createItemRenderer,
     };
 
     return (
@@ -390,7 +403,7 @@ export const Repeater = <T extends ListItem = ListItem>(
         data-component="generic-list-repeater"
         data-variant={variant}
         customElement={children}
-        customElementProps={renderProps}
+        customElementProps={asChildRenderProps}
         {...otherProps}
       />
     );
@@ -399,7 +412,7 @@ export const Repeater = <T extends ListItem = ListItem>(
   return (
     <>
       {items.map((item, index) =>
-        renderItem(item, getChildrenForIndex(index), index),
+        renderItem(item, getChildrenForItemIndex(index), index),
       )}
     </>
   );
