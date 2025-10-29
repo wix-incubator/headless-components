@@ -230,6 +230,7 @@ export interface ProductRepeaterRenderProps {
   itemRenderer: (
     item: V3Product & { id: string },
     index: number,
+    children?: React.ReactNode,
   ) => React.ReactNode;
 }
 
