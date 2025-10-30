@@ -113,6 +113,7 @@ function createEnhancedEntities(
               ? {
                   ...modifier,
                   additionalChargeInfo: modifierRef.additionalChargeInfo,
+                  preSelected: modifierRef.preSelected,
                 }
               : null;
           })
