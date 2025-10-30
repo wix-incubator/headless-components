@@ -156,6 +156,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
           data-has-items={items.length > 0}
           data-is-loading={isLoading}
           data-has-more={hasMore}
+          data-variant={variant}
           customElement={children}
           {...otherProps}
         >
