@@ -52,7 +52,6 @@
     "@astrojs/cloudflare": "^12.5.4",
     "@tailwindcss/vite": "^4.0.13",
     "@wix/cli": "^1.1.95",
-    "@wix/fast-gallery-core": "https://cdn.dev.wixpress.com/@wix/fast-gallery-core/2a565b8ef8c75f7851a725a9e458d90c14ce17a20fb7129a30978586.tar.gz",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "tailwindcss": "^4.1.7"
