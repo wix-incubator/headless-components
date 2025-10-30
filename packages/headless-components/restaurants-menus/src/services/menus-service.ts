@@ -305,10 +305,13 @@ export async function loadMenusServiceConfig(): Promise<MenusServiceConfig> {
         'menus',
       ),
       fetchAllPaginated<Section>(
-        (paging) => sections.listSections({ paging }),
+        (paging) => sections.listSections({ onlyVisible: true, paging }),
         'sections',
       ),
-      fetchAllPaginated<Item>((paging) => items.listItems({ paging }), 'items'),
+      fetchAllPaginated<Item>(
+        (paging) => items.listItems({ onlyVisible: true, paging }),
+        'items',
+      ),
       fetchAllPaginated<Variant>(
         (paging) => itemVariants.listVariants({ paging }),
         'variants',

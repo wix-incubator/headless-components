@@ -147,7 +147,6 @@ export const Icon = React.forwardRef<HTMLImageElement, LabelIconProps>(
       <LabelIcon>
         {({ icon, hasIcon, altText }) => {
           if (asChild && children) {
-            // Call the ForwardRefRenderFunction with the specific props
             return children({ hasIcon, icon, altText }, ref);
           }
 

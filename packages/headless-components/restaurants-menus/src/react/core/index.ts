@@ -23,8 +23,8 @@ import {
   Name as ItemName,
   Description as ItemDescription,
   Price,
-  Image,
-  AdditionalImages,
+  Images,
+  Featured,
 } from './Item.js';
 import {
   Label as CoreLabel,
@@ -69,8 +69,8 @@ export {
   ItemName,
   ItemDescription,
   Price,
-  Image,
-  AdditionalImages,
+  Images,
+  Featured,
   CoreLabel,
   useLabelContext,
   LabelName,
