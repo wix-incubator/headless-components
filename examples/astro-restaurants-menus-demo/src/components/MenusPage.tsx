@@ -52,8 +52,8 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
                         <div className="relative">
                           <Item.Images
                             className="w-full h-48 object-cover"
-                            previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg"
-                            nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg"
+                            previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
+                            nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
                             indicatorClassName="absolute bottom-2 left-1/2 -translate-x-1/2 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-lg z-20"
                           />
                         </div>
