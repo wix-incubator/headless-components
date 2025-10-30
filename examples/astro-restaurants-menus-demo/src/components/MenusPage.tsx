@@ -49,7 +49,14 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <Section.ItemsRepeater>
                       <div className="bg-secondary border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden group">
-                        <Item.Image className="w-full h-48 object-cover" />
+                        <div className="relative">
+                          <Item.Images
+                            className="w-full h-48 object-cover"
+                            previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg"
+                            nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg"
+                            indicatorClassName="absolute bottom-2 left-1/2 -translate-x-1/2 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-lg z-20"
+                          />
+                        </div>
                         <div className="p-4">
                           <div className="flex items-center gap-2 mb-2">
                             <Item.Featured className="w-4 h-4 text-foreground" />

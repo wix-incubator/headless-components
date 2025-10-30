@@ -4,8 +4,7 @@ import {
   ItemName,
   ItemDescription,
   Price as CorePrice,
-  Image as CoreImage,
-  AdditionalImages as CoreAdditionalImages,
+  Images as CoreImages,
   Featured as CoreFeatured,
   useItemContext,
 } from './core/index.js';
@@ -21,7 +20,11 @@ import type {
 } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds.js';
 import { WixMediaImage, MediaGallery } from '@wix/headless-media/react';
-import { StarFilledIcon } from '@radix-ui/react-icons';
+import {
+  StarFilledIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from '@radix-ui/react-icons';
 import * as VariantComponent from './Variant.js';
 import * as LabelComponent from './Label.js';
 import * as ModifierGroupComponent from './ModifierGroup.js';
@@ -62,25 +65,6 @@ export interface ItemPriceProps {
   className?: string;
 }
 
-export interface ItemImageProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /**
-   * Custom render function when using asChild.
-   * Receives an object with:
-   * - hasImage: boolean - whether the item has an image
-   * - image: string - the actual image element (WixMediaImage)
-   * - altText: string - the alt text for the image
-   */
-  children?: AsChildRenderFunction<{
-    hasImage: boolean;
-    image?: string;
-    altText: string;
-  }>;
-  /** CSS classes to apply to the default element */
-  className?: string;
-}
-
 export interface ItemVariantsRepeaterProps {
   children: React.ReactNode;
 }
@@ -107,11 +91,16 @@ export function Root(props: ItemRootProps) {
     return null;
   }
 
-  return <CoreItem item={props.item}>
-    <div data-featured={props.item.featured ? 'true' : 'false'} className='group'>
-      {props.children}
-    </div>
-    </CoreItem>;
+  return (
+    <CoreItem item={props.item}>
+      <div
+        data-featured={props.item.featured ? 'true' : 'false'}
+        className="group"
+      >
+        {props.children}
+      </div>
+    </CoreItem>
+  );
 }
 
 /**
@@ -267,177 +256,163 @@ export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
   },
 );
 
-/**
- * Displays the item image with customizable rendering following the documented API.
- * Provides the actual image element when available.
- *
- * @component
- * @example
- * ```tsx
- * // Default usage
- * <Item.Image className="w-20 h-20 object-cover rounded-lg" />
- *
- * // asChild with primitive
- * <Item.Image asChild>
- *   <img className="w-20 h-20 object-cover rounded-lg" />
- * </Item.Image>
- *
- * // asChild with custom component
- * <Item.Image asChild>
- *   {React.forwardRef(({hasImage, imageElement, ...props}, ref) => (
- *     <div ref={ref} {...props} className="w-20 h-20">
- *       {hasImage ? imageElement : <div>No image</div>}
- *     </div>
- *   ))}
- * </Item.Image>
- *
- * // Custom render function
- * <Item.Image>
- *   {({ hasImage, imageElement }) => (
- *     <div className="w-20 h-20 flex-shrink-0">
- *       {hasImage ? imageElement : <div>No image</div>}
- *     </div>
- *   )}
- * </Item.Image>
- * ```
- */
-export const Image = React.forwardRef<HTMLImageElement, ItemImageProps>(
-  (props, ref) => {
-    const { asChild, children, ...otherProps } = props;
-
-    return (
-      <CoreImage>
-        {({ image, hasImage, altText }) => {
-          if (asChild && children) {
-            // Call the ForwardRefRenderFunction with the specific props
-            return children({ hasImage, image, altText }, ref);
-          }
-
-          return (
-            <WixMediaImage
-              ref={ref}
-              media={{ image: image }}
-              alt={altText ?? ''}
-              data-testid={TestIds.itemImage}
-              {...otherProps}
-            />
-          );
-        }}
-      </CoreImage>
-    );
-  },
-);
-
-export interface ItemAdditionalImagesProps {
+export interface ItemImagesProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildRenderFunction<{
-    hasImages: boolean;
-    images?: string[];
+    images: string[];
     altText: string;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** CSS classes to apply to the previous button */
+  previousClassName?: string;
+  /** CSS classes to apply to the next button */
+  nextClassName?: string;
+  /** CSS classes to apply to the indicator */
+  indicatorClassName?: string;
+  /** CSS classes to apply to the previous chevron icon */
+  previousIconClassName?: string;
+  /** CSS classes to apply to the next chevron icon */
+  nextIconClassName?: string;
 }
 
 /**
- * Displays additional images using MediaGallery component with customizable rendering.
- * Provides the actual images when available.
+ * Displays item images intelligently based on available images.
+ * - No images: returns null
+ * - Single image: renders WixMediaImage
+ * - Multiple images: renders MediaGallery
  *
  * @component
  * @example
  * ```tsx
  * // Default usage
- * <Item.AdditionalImages className="w-full h-64" />
+ * <Item.Images className="w-full h-48" />
+ *
+ * // With custom gallery controls styling
+ * <Item.Images
+ *   className="w-full h-48"
+ *   previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+ *   nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+ *   indicatorClassName="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1"
+ *   previousIconClassName="text-white drop-shadow-sm"
+ *   nextIconClassName="text-white drop-shadow-sm"
+ * />
  *
  * // asChild with primitive
- * <Item.AdditionalImages asChild>
- *   <div className="w-full h-64" />
- * </Item.AdditionalImages>
+ * <Item.Images asChild>
+ *   <div className="w-full h-48" />
+ * </Item.Images>
  *
  * // asChild with custom component
- * <Item.AdditionalImages asChild>
- *   {React.forwardRef(({hasImages, images, altText, ...props}, ref) => (
- *     <div ref={ref} {...props} className="w-full h-64">
- *       {hasImages && (
- *         <MediaGallery.Root mediaGalleryServiceConfig={{ media: images.map(img => ({ image: img })) }}>
- *           <MediaGallery.Viewport />
- *           <MediaGallery.Previous />
- *           <MediaGallery.Next />
- *         </MediaGallery.Root>
+ * <Item.Images asChild>
+ *   {React.forwardRef(({images, altText, ...props}, ref) => (
+ *     <div ref={ref} {...props} className="w-full h-48">
+ *       {images.length > 0 && (
+ *         images.length === 1 ? (
+ *           <WixMediaImage media={{ image: images[0] }} alt={altText} />
+ *         ) : (
+ *           <MediaGallery.Root mediaGalleryServiceConfig={{ media: images.map(img => ({ image: img })) }}>
+ *             <MediaGallery.Viewport />
+ *             <MediaGallery.Previous />
+ *             <MediaGallery.Next />
+ *           </MediaGallery.Root>
+ *         )
  *       )}
  *     </div>
  *   ))}
- * </Item.AdditionalImages>
+ * </Item.Images>
  *
  * // Custom render function
- * <Item.AdditionalImages>
- *   {({ hasImages, images, altText }) => (
- *     <div className="w-full h-64">
- *       {hasImages && (
- *         <MediaGallery.Root mediaGalleryServiceConfig={{ media: images.map(img => ({ image: img })) }}>
- *           <MediaGallery.Viewport />
- *           <MediaGallery.Thumbnails>
- *             <MediaGallery.ThumbnailRepeater>
- *               <MediaGallery.ThumbnailItem />
- *             </MediaGallery.ThumbnailRepeater>
- *           </MediaGallery.Thumbnails>
- *         </MediaGallery.Root>
+ * <Item.Images>
+ *   {({ images, altText }) => (
+ *     <div className="w-full h-48">
+ *       {images.length > 0 && (
+ *         images.length === 1 ? (
+ *           <WixMediaImage media={{ image: images[0] }} alt={altText} />
+ *         ) : (
+ *           <MediaGallery.Root mediaGalleryServiceConfig={{ media: images.map(img => ({ image: img })) }}>
+ *             <MediaGallery.Viewport />
+ *             <MediaGallery.Previous />
+ *             <MediaGallery.Next />
+ *             <MediaGallery.Indicator />
+ *           </MediaGallery.Root>
+ *         )
  *       )}
  *     </div>
  *   )}
- * </Item.AdditionalImages>
+ * </Item.Images>
  * ```
  */
-export const AdditionalImages = React.forwardRef<
-  HTMLElement,
-  ItemAdditionalImagesProps
->((props, ref) => {
-  const { asChild, children, ...otherProps } = props;
+export const Images = React.forwardRef<HTMLElement, ItemImagesProps>(
+  (props, ref) => {
+    const {
+      asChild,
+      children,
+      className,
+      previousClassName,
+      nextClassName,
+      indicatorClassName,
+      previousIconClassName,
+      nextIconClassName,
+      ...otherProps
+    } = props;
 
-  return (
-    <CoreAdditionalImages>
-      {({
-        hasImages,
-        images,
-        altText,
-      }: {
-        hasImages: boolean;
-        images?: string[];
-        altText: string;
-      }) => {
-        if (asChild && children) {
-          return children({ hasImages, images, altText }, ref);
-        }
+    return (
+      <CoreImages>
+        {({ images, altText }: { images: string[]; altText: string }) => {
+          if (asChild && children) {
+            return children({ images, altText }, ref);
+          }
 
-        if (!hasImages) {
-          return null;
-        }
+          if (images.length === 0) {
+            return null;
+          }
 
-        const mediaItems = images?.map((image: string) => ({ image })) || [];
+          if (images.length === 1) {
+            return (
+              <WixMediaImage
+                media={{ image: images[0] }}
+                alt={altText}
+                data-testid={TestIds.itemImages}
+                className={className}
+                {...otherProps}
+              />
+            );
+          }
 
-        return (
-          <MediaGallery.Root mediaGalleryServiceConfig={{ media: mediaItems }}>
-            <AsChildSlot
-              ref={ref}
-              asChild={asChild}
-              data-testid={TestIds.itemAdditionalImages}
-              {...otherProps}
+          const mediaItems = images.map((image: string) => ({ image }));
+
+          return (
+            <MediaGallery.Root
+              mediaGalleryServiceConfig={{ media: mediaItems }}
             >
-              <div>
-                <MediaGallery.Viewport />
-                <MediaGallery.Previous />
-                <MediaGallery.Next />
-                <MediaGallery.Indicator />
-              </div>
-            </AsChildSlot>
-          </MediaGallery.Root>
-        );
-      }}
-    </CoreAdditionalImages>
-  );
-});
+              <MediaGallery.Viewport asChild>
+                {({ src, alt }) => (
+                  <WixMediaImage
+                    media={{ image: src }}
+                    alt={alt}
+                    className={className}
+                    data-testid={TestIds.itemImages}
+                    {...otherProps}
+                  />
+                )}
+              </MediaGallery.Viewport>
+              <MediaGallery.Previous className={previousClassName}>
+                <ChevronLeftIcon className={previousIconClassName} />
+              </MediaGallery.Previous>
+              <MediaGallery.Next className={nextClassName}>
+                <ChevronRightIcon className={nextIconClassName} />
+              </MediaGallery.Next>
+              <MediaGallery.Indicator className={indicatorClassName} />
+            </MediaGallery.Root>
+          );
+        }}
+      </CoreImages>
+    );
+  },
+);
 
 /**
  * Displays the item featured status with customizable rendering.
@@ -546,8 +521,7 @@ export const VariantsRepeater = React.forwardRef<
 Name.displayName = 'Item.Name';
 Description.displayName = 'Item.Description';
 Price.displayName = 'Item.Price';
-Image.displayName = 'Item.Image';
-AdditionalImages.displayName = 'Item.AdditionalImages';
+Images.displayName = 'Item.Images';
 VariantsRepeater.displayName = 'Item.VariantsRepeater';
 
 export const LabelsRepeater = (props: ItemLabelsRepeaterProps) => {
@@ -617,10 +591,8 @@ export const Item = {
   Description,
   /** Item price component */
   Price,
-  /** Item image component */
-  Image,
-  /** Item additional images component */
-  AdditionalImages,
+  /** Item images component (intelligent single/multiple) */
+  Images,
   /** Item featured component */
   Featured,
   /** Item variants repeater component */

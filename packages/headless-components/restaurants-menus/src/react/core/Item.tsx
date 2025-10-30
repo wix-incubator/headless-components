@@ -47,19 +47,11 @@ export interface ItemPriceProps {
   }) => React.ReactNode;
 }
 
-export interface ItemImageProps {
-  children: (props: {
-    hasImage: boolean;
-    altText: string;
-    image?: string;
-  }) => React.ReactNode;
-}
 
-export interface ItemAdditionalImagesProps {
+export interface ItemImagesProps {
   children: (props: {
-    hasImages: boolean;
+    images: string[];
     altText: string;
-    images?: string[];
   }) => React.ReactNode;
 }
 
@@ -89,28 +81,17 @@ export function Price(props: ItemPriceProps) {
   return props.children({ price, formattedPrice });
 }
 
-export function Image(props: ItemImageProps) {
+
+export function Images(props: ItemImagesProps) {
   const { item } = useItemContext();
 
-  const hasImage = !!item.image;
+  const mainImage = item.image;
+  const additionalImages = item.additionalImages || [];
+  const images = mainImage ? [mainImage, ...additionalImages] : additionalImages;
   const altText = item.name ?? '';
 
   return props.children({
-    hasImage,
-    image: item.image,
-    altText,
-  });
-}
-
-export function AdditionalImages(props: ItemAdditionalImagesProps) {
-  const { item } = useItemContext();
-
-  const hasImages = !!item.additionalImages;
-  const altText = item.name ?? '';
-
-  return props.children({
-    hasImages: hasImages,
-    images: item.additionalImages,
+    images,
     altText,
   });
 }
