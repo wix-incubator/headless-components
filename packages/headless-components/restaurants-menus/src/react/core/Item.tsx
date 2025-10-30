@@ -47,12 +47,8 @@ export interface ItemPriceProps {
   }) => React.ReactNode;
 }
 
-
 export interface ItemImagesProps {
-  children: (props: {
-    images: string[];
-    altText: string;
-  }) => React.ReactNode;
+  children: (props: { images: string[]; altText: string }) => React.ReactNode;
 }
 
 export interface ItemFeaturedProps {
@@ -81,13 +77,14 @@ export function Price(props: ItemPriceProps) {
   return props.children({ price, formattedPrice });
 }
 
-
 export function Images(props: ItemImagesProps) {
   const { item } = useItemContext();
 
   const mainImage = item.image;
   const additionalImages = item.additionalImages || [];
-  const images = mainImage ? [mainImage, ...additionalImages] : additionalImages;
+  const images = mainImage
+    ? [mainImage, ...additionalImages]
+    : additionalImages;
   const altText = item.name ?? '';
 
   return props.children({

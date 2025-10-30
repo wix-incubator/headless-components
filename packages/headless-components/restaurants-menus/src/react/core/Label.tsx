@@ -53,7 +53,6 @@ export function Name(props: LabelNameProps) {
 export function Icon(props: LabelIconProps) {
   const { label } = useLabelContext();
 
-  // Use the icon property from the label
   const icon = label.icon ?? null;
   const hasIcon = !!icon;
 

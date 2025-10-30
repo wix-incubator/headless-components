@@ -24,7 +24,7 @@ import {
   Description as ItemDescription,
   Price,
   Images,
-  Featured
+  Featured,
 } from './Item.js';
 import {
   Label as CoreLabel,
