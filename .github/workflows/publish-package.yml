@@ -1,0 +1,40 @@
+name: Publish Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_name:
+        description: "Package name to publish (e.g., stores, components, ecom)"
+        required: true
+        type: string
+        default: "stores"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build packages
+        run: yarn build:headless-components
+
+      - name: Publish specific package with dependencies
+        run: |
+          cd packages/headless-components/${{ inputs.package_name }}
+          yarn npm publish --access public
+          echo "Published ${{ inputs.package_name }}"
+        env:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

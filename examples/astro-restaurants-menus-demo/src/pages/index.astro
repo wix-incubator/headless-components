@@ -1,0 +1,11 @@
+---
+import { MenusPage } from '../components/MenusPage'
+import Layout from '../layouts/Layout.astro'
+import { loadMenusServiceConfig } from "@wix/headless-restaurants-menus/services";
+
+const menusServiceConfig = await loadMenusServiceConfig();
+
+---
+<Layout>
+  <MenusPage client:load menusServiceConfig={menusServiceConfig} />
+</Layout>
