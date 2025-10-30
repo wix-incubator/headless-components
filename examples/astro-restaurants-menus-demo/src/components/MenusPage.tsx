@@ -31,12 +31,14 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
             className="mb-6"
             optionClassName="relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm text-foreground outline-none focus:bg-foreground/5 focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
           />
-          <Menus.MenuSelector
-            allText="All Menus"
-            listClassName="inline-flex h-11 items-center justify-center rounded-lg bg-foreground/10 p-1 font-medium text-sm text-foreground/60 hover:text-foreground/90"
-            className="mb-6"
-            triggerClassName="inline-flex items-center justify-center whitespace-nowrap rounded-md h-full px-3 py-1 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-          />
+          <div className="mb-6 overflow-x-auto">
+            <Menus.MenuSelector
+              allText="All Menus"
+              listClassName="inline-flex h-11 items-center justify-center rounded-lg bg-foreground/10 p-1 font-medium text-sm text-foreground/60 hover:text-foreground/90 min-w-max"
+              className=""
+              triggerClassName="inline-flex items-center justify-center whitespace-nowrap rounded-md h-full px-3 py-1 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            />
+          </div>
           <Menus.MenusRepeater>
             <div className="mb-12">
               <Menu.Name className="text-3xl text-foreground mb-2 font-heading" />
@@ -52,8 +54,8 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
                         <div className="relative">
                           <Item.Images
                             className="w-full h-48 object-cover"
-                            previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
-                            nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-0 group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
+                            previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
+                            nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
                             indicatorClassName="absolute bottom-2 left-1/2 -translate-x-1/2 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-lg z-20"
                           />
                         </div>
