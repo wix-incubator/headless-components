@@ -4,6 +4,7 @@ import {
   GenericListTotalsRenderProps,
   GenericListLoadMoreRenderProps,
   GenericList,
+  ListVariant,
 } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
@@ -38,6 +39,7 @@ export interface ProductListRootProps {
   products?: V3Product[];
   productsListConfig?: ProductsListServiceConfig;
   className?: string;
+  variant?: ListVariant;
 }
 
 /**
@@ -65,7 +67,8 @@ export interface ProductListRootProps {
  */
 export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
   (props, ref) => {
-    const { children, products, productsListConfig, className } = props;
+    const { children, products, productsListConfig, className, variant } =
+      props;
 
     const serviceConfig = productsListConfig || {
       products: products || [],
@@ -87,6 +90,7 @@ export const Root = React.forwardRef<HTMLElement, ProductListRootProps>(
           children={children as any}
           className={className}
           ref={ref}
+          variant={variant}
         />
       </CoreProductList.Root>
     );
@@ -103,9 +107,10 @@ const RootContent = React.forwardRef<
   {
     children?: any;
     className?: string;
+    variant?: ListVariant;
   }
 >((props, ref) => {
-  const { children, className } = props;
+  const { children, className, variant } = props;
   const productsListService = useService(ProductsListServiceDefinition);
 
   const items = productsListService.products.get().map((product) => ({
@@ -123,6 +128,7 @@ const RootContent = React.forwardRef<
       ref={ref}
       data-component-tag={DataComponentTags.productListRoot}
       data-testid={TestIds.productListRoot}
+      variant={variant}
     >
       {children}
     </GenericList.Root>
@@ -216,43 +222,72 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
 );
 
 /**
+ * Render props for ProductRepeater asChild pattern
+ */
+export interface ProductRepeaterRenderProps {
+  items: (V3Product & { id: string })[];
+  variant?: ListVariant;
+  itemRenderer: (
+    item: V3Product & { id: string },
+    index: number,
+    children?: React.ReactNode,
+  ) => React.ReactNode;
+}
+
+/**
  * Props for ProductList ProductRepeater component
  */
 export interface ProductRepeaterProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((
+        props: ProductRepeaterRenderProps,
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
+  /** Whether to render as child component (asChild pattern) */
+  asChild?: boolean;
 }
 
 /**
  * Repeater component that renders Product.Root for each product.
- * Follows Repeater Level pattern.
- * Note: Repeater components do NOT support asChild as per architecture rules.
+ * Follows Repeater Level pattern and uses GenericList.Repeater for consistency.
+ * Supports asChild pattern for advanced layout components like GalleryWrapper.
  *
  * @component
  * @example
  * ```tsx
+ * // Standard usage
  * <ProductList.ProductRepeater>
  *   <Product.Name />
  *   <Product.Price />
- *   <Product.MediaGallery>
- *     <MediaGallery.Viewport />
- *   </Product.MediaGallery>
+ * </ProductList.ProductRepeater>
+ *
+ * // AsChild usage with GalleryWrapper
+ * <ProductList.ProductRepeater asChild>
+ *   {({ items, variant, itemRenderer }) => (
+ *     <GalleryWrapper
+ *       items={items}
+ *       variant={variant}
+ *       itemRenderer={itemRenderer}
+ *     />
+ *   )}
  * </ProductList.ProductRepeater>
  * ```
  */
 export const ProductRepeater = React.forwardRef<
   HTMLElement,
   ProductRepeaterProps
->((props, _ref) => {
-  const { children } = props;
-  const productsListService = useService(ProductsListServiceDefinition);
-  const products = productsListService.products.get();
-  const hasProducts = products.length > 0;
-
-  if (!hasProducts) return null;
+>((props, ref) => {
+  const { children, asChild = false } = props;
 
   return (
-    <>
-      {products.map((product: V3Product) => (
+    <GenericList.Repeater<V3Product & { id: string }>
+      ref={ref}
+      asChild={asChild}
+      renderItem={(
+        product: V3Product & { id: string },
+        children: React.ReactNode,
+      ) => (
         <Product.Root
           key={product._id}
           product={product}
@@ -263,8 +298,10 @@ export const ProductRepeater = React.forwardRef<
         >
           {children}
         </Product.Root>
-      ))}
-    </>
+      )}
+    >
+      {children}
+    </GenericList.Repeater>
   );
 });
 

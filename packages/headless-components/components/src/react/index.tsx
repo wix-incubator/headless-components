@@ -45,10 +45,12 @@ export type {
 export * as GenericList from './generic-list.js';
 export type {
   ListItem,
+  ListVariant,
   GenericListRootProps,
   GenericListItemsProps,
   GenericListLoadMoreProps,
   GenericListLoadMoreRenderProps,
   GenericListTotalsProps,
   GenericListTotalsRenderProps,
+  GenericListRepeaterProps,
 } from './generic-list.js';
