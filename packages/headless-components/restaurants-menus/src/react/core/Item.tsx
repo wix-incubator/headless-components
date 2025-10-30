@@ -63,6 +63,10 @@ export interface ItemAdditionalImagesProps {
   }) => React.ReactNode;
 }
 
+export interface ItemFeaturedProps {
+  children: (props: { featured: boolean }) => React.ReactNode;
+}
+
 export function Name(props: ItemNameProps) {
   const { item } = useItemContext();
 
@@ -109,4 +113,10 @@ export function AdditionalImages(props: ItemAdditionalImagesProps) {
     images: item.additionalImages,
     altText,
   });
+}
+
+export function Featured(props: ItemFeaturedProps) {
+  const { item } = useItemContext();
+
+  return props.children({ featured: !!item.featured });
 }

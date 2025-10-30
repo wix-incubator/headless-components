@@ -48,10 +48,13 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <Section.ItemsRepeater>
-                      <div className="bg-secondary border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+                      <div className="bg-secondary border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden group">
                         <Item.Image className="w-full h-48 object-cover" />
                         <div className="p-4">
-                          <Item.Name className="text-lg text-foreground mb-2 font-heading" />
+                          <div className="flex items-center gap-2 mb-2">
+                            <Item.Featured className="w-4 h-4 text-foreground" />
+                            <Item.Name className="text-lg text-foreground font-heading" />
+                          </div>
                           <Item.Description className="text-sm text-foreground mb-3 font-paragraph" />
 
                           <Item.VariantsRepeater>

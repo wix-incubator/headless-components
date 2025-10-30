@@ -6,6 +6,7 @@ import {
   Price as CorePrice,
   Image as CoreImage,
   AdditionalImages as CoreAdditionalImages,
+  Featured as CoreFeatured,
   useItemContext,
 } from './core/index.js';
 import type {
@@ -20,6 +21,7 @@ import type {
 } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds.js';
 import { WixMediaImage, MediaGallery } from '@wix/headless-media/react';
+import { StarFilledIcon } from '@radix-ui/react-icons';
 import * as VariantComponent from './Variant.js';
 import * as LabelComponent from './Label.js';
 import * as ModifierGroupComponent from './ModifierGroup.js';
@@ -91,13 +93,22 @@ export interface ItemModifierGroupsRepeaterProps {
   children: React.ReactNode;
 }
 
+export interface ItemFeaturedProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{ featured: boolean }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
 export function Root(props: ItemRootProps) {
   if (!props.item) {
     return null;
   }
 
   return <CoreItem item={props.item}>
-    <div data-featured={props.item.featured ?? false} className='group'>
+    <div data-featured={props.item.featured ? 'true' : 'false'} className='group'>
       {props.children}
     </div>
     </CoreItem>;
@@ -429,6 +440,63 @@ export const AdditionalImages = React.forwardRef<
 });
 
 /**
+ * Displays the item featured status with customizable rendering.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <Item.Featured className="w-4 h-4 text-blue-500" />
+ *
+ * // asChild with primitive
+ * <Item.Featured asChild>
+ *   <StarFilledIcon className="w-4 h-4 text-blue-500" />
+ * </Item.Featured>
+ *
+ * // asChild with react component
+ * <Item.Featured asChild>
+ *   {React.forwardRef(({featured, ...props}, ref) => (
+ *     <StarFilledIcon ref={ref} {...props} className="w-4 h-4 text-blue-500" />
+ *   ))}
+ * </Item.Featured>
+ *
+ * // Custom render function
+ * <Item.Featured>
+ *   {({ featured }) => (
+ *     <StarFilledIcon className="w-4 h-4 text-blue-500" />
+ *   )}
+ * </Item.Featured>
+ * ```
+ */
+export const Featured = React.forwardRef<HTMLElement, ItemFeaturedProps>(
+  (props, ref) => {
+    const { asChild, children, className, ...otherProps } = props;
+
+    return (
+      <CoreFeatured>
+        {({ featured }: { featured: boolean }) => {
+          if (!featured) {
+            return null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              data-testid={TestIds.itemFeatured}
+              className={className}
+              {...otherProps}
+            >
+              <StarFilledIcon className={className} />
+            </AsChildSlot>
+          );
+        }}
+      </CoreFeatured>
+    );
+  },
+);
+
+/**
  * Repeater component for rendering individual variants.
  *
  * @component
@@ -553,6 +621,8 @@ export const Item = {
   Image,
   /** Item additional images component */
   AdditionalImages,
+  /** Item featured component */
+  Featured,
   /** Item variants repeater component */
   VariantsRepeater,
   /** Item labels repeater component */

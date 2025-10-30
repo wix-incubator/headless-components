@@ -4,6 +4,7 @@ export const TestIds = {
   itemPrice: 'item-price',
   itemImage: 'item-image',
   itemAdditionalImages: 'item-additional-images',
+  itemFeatured: 'item-featured',
   itemVariants: 'item-variants',
   itemPriceVariants: 'item-price-variants',
   itemModifierGroups: 'item-modifier-groups',

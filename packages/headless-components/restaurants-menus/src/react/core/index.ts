@@ -25,6 +25,7 @@ import {
   Price,
   Image,
   AdditionalImages,
+  Featured
 } from './Item.js';
 import {
   Label as CoreLabel,
@@ -71,6 +72,7 @@ export {
   Price,
   Image,
   AdditionalImages,
+  Featured,
   CoreLabel,
   useLabelContext,
   LabelName,
