@@ -20,7 +20,7 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
-import { AvailabilityStatus } from '../../services/common-types.js';
+import { AvailabilityStatus, AvailabilityStatusMap } from '../../services/common-types.js';
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -251,7 +251,7 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
 // ========================================
 
 interface ItemDetailsAvailabilityProps {
-  availabilityStatusMap: Record<AvailabilityStatus, { text?: string, buttonText?: string, action?: () => void }>;
+  availabilityStatusMap: AvailabilityStatusMap;
   children: (props: {
     availabilityStatus: AvailabilityStatus;
     availabilityAction?: () => void;
@@ -264,7 +264,17 @@ export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
   children,
   availabilityStatusMap,
 }) => {
+  const oloSettingsService = useService(OLOSettingsServiceDefinition);
+  const availabilityDispatchAction = oloSettingsService.availabilityDispatchAction?.get?.();
     const itemService = useService(ItemServiceDefinition);
   const availabilityStatus: AvailabilityStatus = itemService.availabilityStatus?.get?.() ?? AvailabilityStatus.AVAILABLE;
-  return children({ availabilityStatus, availabilityAction:availabilityStatusMap[availabilityStatus].action ,availabilityStatusText: availabilityStatusMap[availabilityStatus].text, availabilityStatusButtonText: availabilityStatusMap[availabilityStatus].buttonText });
+  const availabilityStatusWithAction = availabilityStatus===AvailabilityStatus.NEXT_AVAILABILITY_PICKUP || availabilityStatus===AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
+  const availabilirtStatuaObject = availabilityStatusMap[availabilityStatus];
+  const availabilityStatusButtonText = availabilityStatusWithAction ? (availabilirtStatuaObject as { buttonText?: string })?.buttonText : undefined;
+  return children({
+    availabilityStatus,
+    availabilityAction: availabilityStatusWithAction ? availabilityDispatchAction : undefined,
+    availabilityStatusText: availabilirtStatuaObject?.text,
+    availabilityStatusButtonText,
+  });
 };

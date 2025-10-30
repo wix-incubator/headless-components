@@ -18,7 +18,7 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
-import { AvailabilityStatus } from '../services/common-types.js';
+import { AvailabilityStatus, AvailabilityStatusMap } from '../services/common-types.js';
 
 enum TestIds {
   itemName = 'item-name',
@@ -740,8 +740,9 @@ SpecialRequest.displayName = 'SpecialRequest';
 
 export interface ItemDetailsAvailabilityProps {
   asChild?: boolean;
-  className?: string;
-  availabilityStatusMap: Record<AvailabilityStatus, { text?: string, buttonText?: string }>;
+  textClassName?: string;
+  buttonClassName?: string;
+  availabilityStatusMap: AvailabilityStatusMap;
   children: (props: {
     availabilityStatus: AvailabilityStatus;
     availabilityStatusText?: string;
@@ -753,7 +754,7 @@ export interface ItemDetailsAvailabilityProps {
 export const AvailabilityComponent = React.forwardRef<
   HTMLElement,
   ItemDetailsAvailabilityProps
->(({ asChild, children, className, availabilityStatusMap, ...rest }, ref) => {
+>(({ asChild, children, textClassName, buttonClassName, availabilityStatusMap, ...rest }, ref) => {
   return (
     <CoreItemDetails.AvailabilityComponent availabilityStatusMap={availabilityStatusMap}>
       {({ availabilityStatus, availabilityAction, availabilityStatusText, availabilityStatusButtonText }: { availabilityStatus: AvailabilityStatus, availabilityAction?: (() => void) | undefined, availabilityStatusText?: string | undefined, availabilityStatusButtonText?: string | undefined }) => {
@@ -764,17 +765,16 @@ export const AvailabilityComponent = React.forwardRef<
         return (
           <AsChildSlot
             asChild={asChild}
-            className={className}
             data-testid={TestIds.itemAvailability}
             customElement={children}
             customElementProps={{ availabilityStatus, availabilityStatusText, availabilityStatusButtonText, availabilityAction }}
             ref={ref}
             {...rest}
           >
-            <p className={className}>
+            <p className={textClassName}>
               {availabilityStatusText}
             </p>
-            {availabilityStatusButtonText &&availabilityAction && <button onClick={availabilityAction}>
+            {availabilityStatusButtonText &&availabilityAction && <button className={buttonClassName} onClick={availabilityAction}>
               {availabilityStatusButtonText}
             </button>}
           </AsChildSlot>

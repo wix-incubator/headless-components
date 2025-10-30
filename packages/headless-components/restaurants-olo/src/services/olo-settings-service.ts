@@ -14,6 +14,7 @@ export interface OLOSettingsServiceAPI {
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
   getAvailabilityStatus: Signal<(menuId: string) => AvailabilityStatus>;
+  availabilityDispatchAction?: Signal<(() => void) | undefined>;
   //   fetchOperationGroups: () => Promise<void>;
   //   fetchOperations: () => Promise<void>;
 }
@@ -22,6 +23,7 @@ export interface OLOSettingsServiceConfig {
   operationGroup?: operationGroupsApi.OperationGroup;
   operation?: operationsApi.Operation;
   availabilityStatusMenuMap: Record<string, AvailabilityStatus>;
+  availabilityDispatchAction?: () => void;
 }
 
 export const OLOSettingsServiceDefinition =
@@ -33,6 +35,7 @@ export const OLOSettingsService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
       const availabilityStatusMenuMap = signalsService.signal<Record<string,AvailabilityStatus>>(config.availabilityStatusMenuMap);
+      const availabilityDispatchAction = signalsService.signal<(() => void) | undefined>(config.availabilityDispatchAction);
       const operationGroup = signalsService.signal<
         operationGroupsApi.OperationGroup | undefined
       >(config.operationGroup);
@@ -55,6 +58,7 @@ export const OLOSettingsService =
         error,
         selectedItem,
         getAvailabilityStatus,
+        availabilityDispatchAction,
       };
     },
   );
