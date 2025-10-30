@@ -1,17 +1,17 @@
 // @ts-check
-import { defineConfig } from "astro/config";
-import wix from "@wix/astro";
-import cloudflare from "@astrojs/cloudflare";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@astrojs/react";
+import { defineConfig } from 'astro/config';
+import wix from '@wix/astro';
+import cloudflare from '@astrojs/cloudflare';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@astrojs/react';
 
-import sitemap from "@astrojs/sitemap";
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://kitchensink-netanelg4.wix-host.com",
+  site: 'https://kitchensink-netanelg4.wix-host.com',
 
-  output: "server",
+  output: 'server',
 
   adapter: cloudflare(),
 
@@ -19,13 +19,17 @@ export default defineConfig({
     plugins: [tailwindcss()],
     // Bundle @wix/image for SSR compatibility to fix module loading issues
     ssr: {
-      noExternal: ["@wix/image"],
+      noExternal: [
+        '@wix/image',
+        '@wix/fast-gallery-ui',
+        '@wix/fast-gallery-core',
+      ],
+    },
+    resolve: {
+      // Force Vite to not follow symlinks back to source
+      preserveSymlinks: false,
     },
   },
 
-  integrations: [
-    react(),
-    wix(),
-    sitemap(),
-  ],
+  integrations: [react(), wix(), sitemap()],
 });

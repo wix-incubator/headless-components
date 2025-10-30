@@ -25,7 +25,7 @@
     "@wix/astro": "^1.0.22",
     "@wix/categories": "^1.0.133",
     "@wix/ecom": "^1.0.1278",
-    "@wix/fast-gallery-ui": "link:/Users/nitayn/dev/showcase/packages/fast-gallery-packages/fast-gallery-ui",
+    "@wix/fast-gallery-ui": "https://cdn.dev.wixpress.com/@wix/fast-gallery-ui/52da315d51f3d551dd47b342c08d8c5785183ce3b51d6a6ff3ee2ada.tar.gz",
     "@wix/headless-components": "workspace:*",
     "@wix/headless-ecom": "workspace:*",
     "@wix/headless-media": "workspace:*",
@@ -52,6 +52,7 @@
     "@astrojs/cloudflare": "^12.5.4",
     "@tailwindcss/vite": "^4.0.13",
     "@wix/cli": "^1.1.95",
+    "@wix/fast-gallery-core": "https://cdn.dev.wixpress.com/@wix/fast-gallery-core/2a565b8ef8c75f7851a725a9e458d90c14ce17a20fb7129a30978586.tar.gz",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "tailwindcss": "^4.1.7"
