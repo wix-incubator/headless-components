@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Menus,
   Menu,
@@ -8,15 +8,14 @@ import {
   Label,
   ModifierGroup,
   Modifier,
-} from "@wix/headless-restaurants-menus/react";
-import type { MenusServiceConfig } from "@wix/headless-restaurants-menus/services";
+} from '@wix/headless-restaurants-menus/react';
+import type { MenusServiceConfig } from '@wix/headless-restaurants-menus/services';
 
 export interface MenusPageProps {
   menusServiceConfig: MenusServiceConfig;
 }
 
 export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
-
   return (
     <div className="min-h-screen bg-background">
       <Menus.Root config={menusServiceConfig}>
@@ -50,19 +49,19 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <Section.ItemsRepeater>
-                      <div className="bg-secondary border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden group">
+                      <div className="bg-secondary rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden group h-full flex flex-col">
                         <div className="relative">
                           <Item.Images
                             className="w-full h-48 object-cover"
                             previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
                             nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
-                            indicatorClassName="absolute bottom-2 left-1/2 -translate-x-1/2 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-lg z-20"
+                            indicatorClassName="absolute top-2 right-2 bg-secondary text-foreground px-3 py-1 rounded-full text-sm font-medium shadow-sm z-20"
                           />
                         </div>
                         <div className="p-4">
                           <div className="flex items-center gap-2 mb-2">
                             <Item.Featured className="w-4 h-4 text-foreground" />
-                            <Item.Name className="text-lg text-foreground font-heading" />
+                            <Item.Name className="text-lg text-foreground font-heading group-data-[featured=true]:font-medium" />
                           </div>
                           <Item.Description className="text-sm text-foreground mb-3 font-paragraph" />
 
