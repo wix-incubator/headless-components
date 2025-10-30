@@ -34,8 +34,12 @@ export const OLOSettingsService =
     OLOSettingsServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
-      const availabilityStatusMenuMap = signalsService.signal<Record<string,AvailabilityStatus>>(config.availabilityStatusMenuMap);
-      const availabilityDispatchAction = signalsService.signal<(() => void) | undefined>(config.availabilityDispatchAction);
+      const availabilityStatusMenuMap = signalsService.signal<
+        Record<string, AvailabilityStatus>
+      >(config.availabilityStatusMenuMap);
+      const availabilityDispatchAction = signalsService.signal<
+        (() => void) | undefined
+      >(config.availabilityDispatchAction);
       const operationGroup = signalsService.signal<
         operationGroupsApi.OperationGroup | undefined
       >(config.operationGroup);
@@ -47,9 +51,14 @@ export const OLOSettingsService =
       const error = signalsService.signal<string | null>(null);
 
       const getAvailabilityStatusFn = (menuId: string) => {
-        return availabilityStatusMenuMap.get()?.[menuId] ?? AvailabilityStatus.AVAILABLE;
+        return (
+          availabilityStatusMenuMap.get()?.[menuId] ??
+          AvailabilityStatus.AVAILABLE
+        );
       };
-      const getAvailabilityStatus = signalsService.signal<(menuId: string) => AvailabilityStatus>(getAvailabilityStatusFn);
+      const getAvailabilityStatus = signalsService.signal<
+        (menuId: string) => AvailabilityStatus
+      >(getAvailabilityStatusFn);
 
       return {
         operationGroup,

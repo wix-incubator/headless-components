@@ -11,6 +11,20 @@ export enum AvailabilityStatus {
   NEXT_AVAILABILITY_DELIVERY,
 }
 
-export type AvailabilityStatusMap =
-  Partial<Record<Exclude<AvailabilityStatus, AvailabilityStatus.NEXT_AVAILABILITY_PICKUP | AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY>, { text?: string }>> &
-  Partial<Record<AvailabilityStatus.NEXT_AVAILABILITY_PICKUP | AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY, { text?: string; buttonText?: string; }>>;
+export type AvailabilityStatusMap = Partial<
+  Record<
+    Exclude<
+      AvailabilityStatus,
+      | AvailabilityStatus.NEXT_AVAILABILITY_PICKUP
+      | AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY
+    >,
+    { text?: string }
+  >
+> &
+  Partial<
+    Record<
+      | AvailabilityStatus.NEXT_AVAILABILITY_PICKUP
+      | AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY,
+      { text?: string; buttonText?: string }
+    >
+  >;

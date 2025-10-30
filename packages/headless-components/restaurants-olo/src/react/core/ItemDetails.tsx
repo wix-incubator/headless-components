@@ -20,7 +20,10 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
-import { AvailabilityStatus, AvailabilityStatusMap } from '../../services/common-types.js';
+import {
+  AvailabilityStatus,
+  AvailabilityStatusMap,
+} from '../../services/common-types.js';
 import { convertModifierToFormModifier } from '../../services/utils.js';
 
 // ========================================
@@ -263,15 +266,23 @@ export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
   availabilityStatusMap,
 }) => {
   const oloSettingsService = useService(OLOSettingsServiceDefinition);
-  const availabilityDispatchAction = oloSettingsService.availabilityDispatchAction?.get?.();
-    const itemService = useService(ItemServiceDefinition);
-  const availabilityStatus: AvailabilityStatus = itemService.availabilityStatus?.get?.() ?? AvailabilityStatus.AVAILABLE;
-  const availabilityStatusWithAction = availabilityStatus===AvailabilityStatus.NEXT_AVAILABILITY_PICKUP || availabilityStatus===AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
+  const availabilityDispatchAction =
+    oloSettingsService.availabilityDispatchAction?.get?.();
+  const itemService = useService(ItemServiceDefinition);
+  const availabilityStatus: AvailabilityStatus =
+    itemService.availabilityStatus?.get?.() ?? AvailabilityStatus.AVAILABLE;
+  const availabilityStatusWithAction =
+    availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_PICKUP ||
+    availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
   const availabilirtStatuaObject = availabilityStatusMap[availabilityStatus];
-  const availabilityStatusButtonText = availabilityStatusWithAction ? (availabilirtStatuaObject as { buttonText?: string })?.buttonText : undefined;
+  const availabilityStatusButtonText = availabilityStatusWithAction
+    ? (availabilirtStatuaObject as { buttonText?: string })?.buttonText
+    : undefined;
   return children({
     availabilityStatus,
-    availabilityAction: availabilityStatusWithAction ? availabilityDispatchAction : undefined,
+    availabilityAction: availabilityStatusWithAction
+      ? availabilityDispatchAction
+      : undefined,
     availabilityStatusText: availabilirtStatuaObject?.text,
     availabilityStatusButtonText,
   });

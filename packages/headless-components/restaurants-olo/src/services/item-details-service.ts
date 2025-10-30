@@ -5,14 +5,10 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 import { type LineItem } from '@wix/ecom/services';
 import { itemVariants } from '@wix/restaurants';
-import type {
-  EnhancedItem,
-} from '@wix/headless-restaurants-menus/services';
+import type { EnhancedItem } from '@wix/headless-restaurants-menus/services';
 import { OLOSettingsServiceDefinition } from './olo-settings-service.js';
 import { AvailabilityStatus } from './common-types.js';
 import { getModifiersInitState } from './utils.js';
-
-
 
 type Variant = itemVariants.Variant;
 
@@ -115,9 +111,13 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
     const oloSettingsService = getService(OLOSettingsServiceDefinition);
-    const getAvailabilityStatusFn = oloSettingsService.getAvailabilityStatus?.get?.();
-    const initialAvailabilityStatus = getAvailabilityStatusFn?.(config.menuId ?? '') ?? AvailabilityStatus.AVAILABLE;
-    const availabilityStatus: Signal<AvailabilityStatus> = signalsService.signal(initialAvailabilityStatus);
+    const getAvailabilityStatusFn =
+      oloSettingsService.getAvailabilityStatus?.get?.();
+    const initialAvailabilityStatus =
+      getAvailabilityStatusFn?.(config.menuId ?? '') ??
+      AvailabilityStatus.AVAILABLE;
+    const availabilityStatus: Signal<AvailabilityStatus> =
+      signalsService.signal(initialAvailabilityStatus);
     const item: Signal<EnhancedItem | undefined> = signalsService.signal(
       config.item,
     );
@@ -144,7 +144,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
     if (config.item) {
       console.log('config.item', config.item);
       lineItem.set({
-         quantity: quantity.get(),
+        quantity: quantity.get(),
         catalogReference: {
           // @ts-expect-error - item is not typed
           catalogItemId: config.item._id,
@@ -256,7 +256,6 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       selectedModifiers,
       availabilityStatus,
       getSelectedModifiers,
-
     };
   },
 );
