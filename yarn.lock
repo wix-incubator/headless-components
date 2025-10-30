@@ -5265,7 +5265,6 @@ __metadata:
     "@wix/categories": "npm:^1.0.133"
     "@wix/cli": "npm:^1.1.95"
     "@wix/ecom": "npm:^1.0.1278"
-    "@wix/fast-gallery-core": "https://cdn.dev.wixpress.com/@wix/fast-gallery-core/2a565b8ef8c75f7851a725a9e458d90c14ce17a20fb7129a30978586.tar.gz"
     "@wix/fast-gallery-ui": "https://cdn.dev.wixpress.com/@wix/fast-gallery-ui/52da315d51f3d551dd47b342c08d8c5785183ce3b51d6a6ff3ee2ada.tar.gz"
     "@wix/headless-components": "workspace:*"
     "@wix/headless-ecom": "workspace:*"
