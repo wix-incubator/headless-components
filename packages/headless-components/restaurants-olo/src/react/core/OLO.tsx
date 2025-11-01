@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createServicesMap } from '@wix/services-manager';
 import { WixServices } from '@wix/services-manager-react';
 // import { ItemService, ItemServiceDefinition, loadItemServiceConfig } from '@/components/restaurants-olo/services/itemDetailsService';
@@ -8,6 +8,12 @@ import {
 } from '@wix/headless-restaurants-olo/services';
 import { OLOSettingsServiceConfig } from '../../services/olo-settings-service.js';
 import { ItemServiceConfig } from '../../services/item-details-service.js';
+import {
+  FulfillmentsService,
+  FulfillmentsServiceDefinition,
+  loadFulfillmentsServiceConfig,
+} from '../../services/fulfillments-service.js';
+import { FulfillmentsServiceConfig } from '../../types/fulfillments-types.js';
 
 // import { OLOSettingsService, OLOSettingsServiceDefinition } from '../../services/OLOSettingsService';
 
@@ -62,6 +68,10 @@ export const Root: React.FC<CoreOLORootProps> = ({
   oloSettingsServiceConfig,
   children,
 }) => {
+  const [fulfillmentsServiceConfig, setFulfillmentsServiceConfig] =
+    useState<FulfillmentsServiceConfig>({
+      operation: oloSettingsServiceConfig?.operation ?? undefined,
+    });
   // const [servicesManager, setServicesManager] = useState<ServicesManager | null>(null);
   // const [isLoading, setIsLoading] = useState(true);
   // const [error, setError] = useState<string | undefined>();
@@ -129,13 +139,30 @@ export const Root: React.FC<CoreOLORootProps> = ({
 
   console.log('oloSettingsServiceConfig', oloSettingsServiceConfig);
 
+  useEffect(() => {
+    if (oloSettingsServiceConfig?.operation?._id) {
+      loadFulfillmentsServiceConfig(
+        oloSettingsServiceConfig.operation,
+      ).then((config) => {
+        console.log('config', config);
+        setFulfillmentsServiceConfig(config);
+      });
+    }
+  }, [oloSettingsServiceConfig?.operation?._id]);
+
   return (
     <WixServices
-      servicesMap={createServicesMap().addService(
-        OLOSettingsServiceDefinition,
-        OLOSettingsService,
-        oloSettingsServiceConfig,
-      )}
+      servicesMap={createServicesMap()
+        .addService(
+          OLOSettingsServiceDefinition,
+          OLOSettingsService,
+          oloSettingsServiceConfig,
+        )
+        .addService(
+          FulfillmentsServiceDefinition,
+          FulfillmentsService,
+          fulfillmentsServiceConfig,
+        )}
     >
       {children}
     </WixServices>

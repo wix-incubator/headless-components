@@ -129,8 +129,8 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
     const selectedModifiers: Signal<Record<string, Array<string>>> =
       signalsService.signal(initialSelectedModifiers);
 
+    console.log('config.item', config.item);
     if (config.item) {
-      console.log('config.item', config.item);
       lineItem.set({
         quantity: quantity.get(),
         catalogReference: {
