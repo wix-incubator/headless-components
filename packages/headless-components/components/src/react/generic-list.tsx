@@ -353,17 +353,6 @@ export const Repeater = <T extends ListItem = ListItem>(
 
   if (items.length === 0) return null;
 
-  const getChildrenForItemIndex = (index: number): React.ReactNode => {
-    if (typeof children === 'function') return null;
-
-    if (React.Children.count(children as React.ReactNode) > 1) {
-      const childrenArray = React.Children.toArray(children as React.ReactNode);
-      return childrenArray[index] || childrenArray[0] || children;
-    }
-
-    return children;
-  };
-
   const itemRenderer = React.useCallback(
     (item: T, index: number, customChildren?: React.ReactNode) => {
       if (asChild && customChildren !== undefined) {
@@ -397,7 +386,7 @@ export const Repeater = <T extends ListItem = ListItem>(
   return (
     <>
       {items.map((item, index) =>
-        renderItem(item, getChildrenForItemIndex(index), index),
+        renderItem(item, children as React.ReactNode, index),
       )}
     </>
   );
