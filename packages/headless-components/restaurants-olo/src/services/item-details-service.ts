@@ -6,6 +6,8 @@ import {
 import { type LineItem } from '@wix/ecom/services';
 import { itemVariants } from '@wix/restaurants';
 import type { EnhancedItem } from '@wix/headless-restaurants-menus/services';
+import { OLOSettingsServiceDefinition } from './olo-settings-service.js';
+import { AvailabilityStatus } from './common-types.js';
 import { getModifiersInitState } from './utils.js';
 
 type Variant = itemVariants.Variant;
@@ -24,6 +26,7 @@ export interface ItemServiceAPI {
   lineItem: Signal<LineItem>;
   selectedVariant: Signal<Variant | undefined>;
   selectedModifiers: Signal<Record<string, Array<string>>>;
+  availabilityStatus: Signal<AvailabilityStatus>;
   /** Reactive signal indicating if a item is currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
@@ -65,6 +68,7 @@ export interface ItemServiceConfig {
   itemId?: string;
 
   operationId?: string;
+  menuId?: string;
 }
 
 /**
@@ -106,11 +110,19 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ItemServiceDefinition,
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
-
+    const oloSettingsService = getService(OLOSettingsServiceDefinition);
+    const getAvailabilityStatusFn =
+      oloSettingsService.getAvailabilityStatus?.get?.();
+    const initialAvailabilityStatus =
+      getAvailabilityStatusFn?.(config.menuId ?? '') ??
+      AvailabilityStatus.AVAILABLE;
+    const availabilityStatus: Signal<AvailabilityStatus> =
+      signalsService.signal(initialAvailabilityStatus);
     const item: Signal<EnhancedItem | undefined> = signalsService.signal(
       config.item,
     );
     const isLoading: Signal<boolean> = signalsService.signal(!!config.item);
+
     const error: Signal<string | null> = signalsService.signal(
       config.item ? null : 'Item not found',
     );
@@ -242,6 +254,7 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       lineItem,
       selectedVariant,
       selectedModifiers,
+      availabilityStatus,
       getSelectedModifiers,
     };
   },
