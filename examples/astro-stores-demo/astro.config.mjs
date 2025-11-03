@@ -21,7 +21,7 @@ export default defineConfig({
     ssr: {
       noExternal: [
         '@wix/image',
-        '@wix/fast-gallery-ui',
+        '@wix/fast-gallery-vibe',
         '@wix/fast-gallery-core',
       ],
     },

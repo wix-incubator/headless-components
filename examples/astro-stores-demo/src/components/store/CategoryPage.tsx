@@ -7,8 +7,8 @@ import {
 import type { CategoriesListServiceConfig } from '@wix/headless-stores/services';
 import { type ProductsListServiceConfig } from '@wix/headless-stores/services';
 import { productsV3 } from '@wix/stores';
-import type { BaseItem, LayoutType } from '@wix/fast-gallery-ui';
-import { GalleryWrapper } from '@wix/fast-gallery-ui';
+import type { BaseItem, LayoutType } from '@wix/fast-gallery-vibe';
+import { GalleryWrapper } from '@wix/fast-gallery-vibe';
 import * as StyledMediaGallery from '../media/MediaGallery';
 import { CategoryPicker } from './CategoryPicker';
 import { ProductActionButtons } from './ProductActionButtons';

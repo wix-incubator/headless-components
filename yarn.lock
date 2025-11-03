@@ -5265,7 +5265,7 @@ __metadata:
     "@wix/categories": "npm:^1.0.133"
     "@wix/cli": "npm:^1.1.95"
     "@wix/ecom": "npm:^1.0.1278"
-    "@wix/fast-gallery-ui": "https://cdn.dev.wixpress.com/@wix/fast-gallery-ui/52da315d51f3d551dd47b342c08d8c5785183ce3b51d6a6ff3ee2ada.tar.gz"
+    "@wix/fast-gallery-vibe": "https://cdn.dev.wixpress.com/@wix/fast-gallery-vibe/2223325cd89895336072e2e63d5133128ec64f265e105827a5de3a4e.tar.gz"
     "@wix/headless-components": "workspace:*"
     "@wix/headless-ecom": "workspace:*"
     "@wix/headless-media": "workspace:*"
@@ -7748,9 +7748,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/fast-gallery-core@https://cdn.dev.wixpress.com/@wix/fast-gallery-core/2a565b8ef8c75f7851a725a9e458d90c14ce17a20fb7129a30978586.tar.gz":
-  version: 0.0.0-2a565b8ef8c75f7851a725a9e458d90c14ce17a20fb7129a30978586
-  resolution: "@wix/fast-gallery-core@https://cdn.dev.wixpress.com/@wix/fast-gallery-core/2a565b8ef8c75f7851a725a9e458d90c14ce17a20fb7129a30978586.tar.gz"
+"@wix/fast-gallery-core@https://cdn.dev.wixpress.com/@wix/fast-gallery-core/e5b2a10c1cbaefcb67fcb3a592aeb0229d8a328f108a4dacbc174db1.tar.gz":
+  version: 0.0.0-e5b2a10c1cbaefcb67fcb3a592aeb0229d8a328f108a4dacbc174db1
+  resolution: "@wix/fast-gallery-core@https://cdn.dev.wixpress.com/@wix/fast-gallery-core/e5b2a10c1cbaefcb67fcb3a592aeb0229d8a328f108a4dacbc174db1.tar.gz"
   dependencies:
     "@babel/runtime": "npm:^7.28.2"
     "@emotion/serialize": "npm:^1.3.3"
@@ -7759,22 +7759,22 @@ __metadata:
   peerDependencies:
     react: ^18.3.1
     react-dom: ^18.3.1
-  checksum: 10c0/fa5a53ffb07aadead10118b10679101a64431282cc8bd739a7bf0c7ea9b79a2b915213e6753cdd8c1b8b00889aa4dba3ffe4555386ab5bfe6305ece1c1b3c6d4
+  checksum: 10c0/7af7232d5642f61c0fce866fbd08a0eb1e830ed6712e3443d3c475ea8113c34f684bd70571cfc6da22eccfe2816b07daba58093608262ef7747ab0af4da0910a
   languageName: node
   linkType: hard
 
-"@wix/fast-gallery-ui@https://cdn.dev.wixpress.com/@wix/fast-gallery-ui/52da315d51f3d551dd47b342c08d8c5785183ce3b51d6a6ff3ee2ada.tar.gz":
-  version: 0.0.0-52da315d51f3d551dd47b342c08d8c5785183ce3b51d6a6ff3ee2ada
-  resolution: "@wix/fast-gallery-ui@https://cdn.dev.wixpress.com/@wix/fast-gallery-ui/52da315d51f3d551dd47b342c08d8c5785183ce3b51d6a6ff3ee2ada.tar.gz"
+"@wix/fast-gallery-vibe@https://cdn.dev.wixpress.com/@wix/fast-gallery-vibe/2223325cd89895336072e2e63d5133128ec64f265e105827a5de3a4e.tar.gz":
+  version: 0.0.0-2223325cd89895336072e2e63d5133128ec64f265e105827a5de3a4e
+  resolution: "@wix/fast-gallery-vibe@https://cdn.dev.wixpress.com/@wix/fast-gallery-vibe/2223325cd89895336072e2e63d5133128ec64f265e105827a5de3a4e.tar.gz"
   dependencies:
     "@babel/runtime": "npm:^7.28.2"
-    "@wix/fast-gallery-core": "https://cdn.dev.wixpress.com/@wix/fast-gallery-core/2a565b8ef8c75f7851a725a9e458d90c14ce17a20fb7129a30978586.tar.gz"
+    "@wix/fast-gallery-core": "https://cdn.dev.wixpress.com/@wix/fast-gallery-core/e5b2a10c1cbaefcb67fcb3a592aeb0229d8a328f108a4dacbc174db1.tar.gz"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
   peerDependencies:
     react: ^18.3.1
     react-dom: ^18.3.1
-  checksum: 10c0/c72a88d7499bd930e650f876abf93862e40cb7d9cfc9cd4710b7751b1af2f9a9afaa8840bcdba7c82ae8027c167c269825f5c88b540e3cdaf62812fcf8961210
+  checksum: 10c0/13f6c4832e15f0cdfbf04c56d743771a3fdd6dfb79e622b970b659c103ac978d4a56d62d24d795047a92c37c73388504aa9bacd4aaa386b79f0a07c67b82666f
   languageName: node
   linkType: hard
 
