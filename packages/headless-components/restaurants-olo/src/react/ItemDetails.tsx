@@ -516,54 +516,6 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
 );
 Variants.displayName = 'ItemDetails.Variants';
 
-export interface AddToCartActionProps {
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** Text label for the button */
-  label: string;
-  /** Custom render function when using asChild */
-  lineItems: LineItem[];
-  /** CSS classes to apply to the button */
-  className?: string;
-  /** Content to display when loading */
-  loadingState?: string | React.ReactNode;
-  children?: React.ReactNode;
-}
-
-/**
- * Add to Cart button for the menu item.
- * Triggers the action to add the selected item (and its modifiers/variants) to the cart.
- *
- * @component
- * @example
- * ```tsx
- * <ItemDetails>
- *   <AddToCart
- *     label="Add to Cart"
- *     lineItems={[{ catalogReference: { ... }, quantity: 1 }]}
- *   />
- * </ItemDetails>
- * ```
- */
-export const AddToCart = React.forwardRef<
-  HTMLButtonElement,
-  AddToCartActionProps
->(({ lineItems, className, label, ...props }, ref) => {
-  return (
-    <Commerce.Actions.AddToCart
-      ref={ref}
-      asChild={false}
-      label={label}
-      className={className}
-      lineItems={lineItems}
-    >
-      {props.children}
-    </Commerce.Actions.AddToCart>
-  );
-});
-
-AddToCart.displayName = 'AddToCart';
-
 /**
  * Multi-line text input component for special requests or instructions.
  * Provides a textarea for customers to add custom notes or modifications.
@@ -614,7 +566,6 @@ export interface AddToCartButtonProps
   children?: React.ReactNode;
   className?: string;
   label?: string;
-  onClick?: () => void;
 }
 
 export interface ItemDetailsQuantityProps {
@@ -622,34 +573,24 @@ export interface ItemDetailsQuantityProps {
 }
 
 export const AddToCartButton: React.FC<AddToCartButtonProps> = ({
-  asChild = false,
+  asChild,
   children,
   className,
-  onClick,
   label = 'Add to cart',
   ...props
 }) => {
   return (
     <CoreItemDetails.LineItemComponent>
       {({ lineItem }: { lineItem: LineItem }) => (
-        <AsChildSlot
+        <Commerce.Actions.AddToCart
           asChild={asChild}
+          label={label}
           className={className}
-          customElement={children}
-          customElementProps={{
-            onClick,
-          }}
+          lineItems={[lineItem]}
+          {...props}
         >
-          <Commerce.Actions.AddToCart
-            asChild={false}
-            label={label}
-            className={className}
-            lineItems={[lineItem]}
-            {...props}
-          >
-            {children}
-          </Commerce.Actions.AddToCart>
-        </AsChildSlot>
+          {children}
+        </Commerce.Actions.AddToCart>
       )}
     </CoreItemDetails.LineItemComponent>
   );

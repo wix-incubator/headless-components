@@ -42,6 +42,7 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
 }) => {
   const service = useService(OLOSettingsServiceDefinition);
   const selectedItem = service.selectedItem?.get();
+  console.log('selectedItem', selectedItem, itemDetailsServiceConfig);
   let config = itemDetailsServiceConfig;
   if (!config) {
     config = loadItemServiceConfig({
