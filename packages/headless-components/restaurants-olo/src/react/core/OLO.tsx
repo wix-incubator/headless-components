@@ -141,12 +141,12 @@ export const Root: React.FC<CoreOLORootProps> = ({
 
   useEffect(() => {
     if (oloSettingsServiceConfig?.operation?._id) {
-      loadFulfillmentsServiceConfig(
-        oloSettingsServiceConfig.operation,
-      ).then((config) => {
-        console.log('config', config);
-        setFulfillmentsServiceConfig(config);
-      });
+      loadFulfillmentsServiceConfig(oloSettingsServiceConfig.operation).then(
+        (config) => {
+          console.log('config', config);
+          setFulfillmentsServiceConfig(config);
+        },
+      );
     }
   }, [oloSettingsServiceConfig?.operation?._id]);
 

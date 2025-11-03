@@ -2,8 +2,8 @@ import { defineService, implementService } from '@wix/services-definitions';
 import {
   operations as operationsSDK,
   operationGroups as operationGroupsSDK,
-  menuOrderingSettings as menuOrderingSettingsSDK
-} from "@wix/restaurants";
+  menuOrderingSettings as menuOrderingSettingsSDK,
+} from '@wix/restaurants';
 import {
   SignalsServiceDefinition,
   type Signal,
@@ -38,7 +38,7 @@ export const OLOSettingsService =
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
       const operationGroup = signalsService.signal<
-      operationGroupsSDK.OperationGroup | undefined
+        operationGroupsSDK.OperationGroup | undefined
       >(config.operationGroup);
       const operation = signalsService.signal<
         operationsSDK.Operation | undefined

@@ -516,7 +516,6 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
 );
 Variants.displayName = 'ItemDetails.Variants';
 
-
 /**
  * Multi-line text input component for special requests or instructions.
  * Provides a textarea for customers to add custom notes or modifications.

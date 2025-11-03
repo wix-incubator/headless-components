@@ -55,7 +55,7 @@ export const FulfillmentsService =
             ) ?? [],
           );
           fulfillments.set(
-          // @ts-expect-error - operation is not typed
+            // @ts-expect-error - operation is not typed
             fulfillmentsMap.get(config.operation?.id ?? '') ?? [],
           );
           console.log('fulfillments', fulfillments.get());
