@@ -11,7 +11,4 @@ export {
   type OLOSettingsServiceConfig,
   type OLOSettingsServiceAPI,
 } from './olo-settings-service.js';
-export {
-  AvailabilityStatus,
-  AvailabilityStatusMap,
-} from './common-types.js';
+export { AvailabilityStatus, AvailabilityStatusMap } from './common-types.js';

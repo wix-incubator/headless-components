@@ -10,24 +10,20 @@ export enum AvailabilityStatus {
   NEXT_AVAILABILITY_PICKUP,
   NEXT_AVAILABILITY_DELIVERY,
 }
-export type NextAvailability =  |AvailabilityStatus.NEXT_AVAILABILITY_PICKUP
-|AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
+export type NextAvailability =
+  | AvailabilityStatus.NEXT_AVAILABILITY_PICKUP
+  | AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
 export type AvailabilityStatusWithActionObject = {
   text?: string;
   buttonText?: string;
-}
+};
 export type AvailabilityStatusObject = {
   text?: string;
-}
+};
 export type AvailabilityStatusMap = Partial<
   Record<
-    Exclude<
-      AvailabilityStatus,
-      NextAvailability
-    >,
+    Exclude<AvailabilityStatus, NextAvailability>,
     AvailabilityStatusObject
   >
 > &
-    Record<NextAvailability,
-    AvailabilityStatusWithActionObject
-    >;
+  Record<NextAvailability, AvailabilityStatusWithActionObject>;

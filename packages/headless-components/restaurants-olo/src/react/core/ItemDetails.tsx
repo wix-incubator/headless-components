@@ -272,18 +272,19 @@ export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
   const itemService = useService(ItemServiceDefinition);
   const availabilityStatus: AvailabilityStatus =
     itemService.availabilityStatus?.get?.() ?? AvailabilityStatus.AVAILABLE;
-    const availabilityStatusWithAction =
+  const availabilityStatusWithAction =
     availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_PICKUP ||
     availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
-      const availabilityStatusObject = availabilityStatusMap[availabilityStatus];
+  const availabilityStatusObject = availabilityStatusMap[availabilityStatus];
   const availabilityStatusButtonText = availabilityStatusWithAction
-    ? (availabilityStatusObject as AvailabilityStatusWithActionObject)?.buttonText
+    ? (availabilityStatusObject as AvailabilityStatusWithActionObject)
+        ?.buttonText
     : undefined;
   return children({
     availabilityStatus,
     availabilityAction: availabilityStatusWithAction
-    ? availabilityDispatchAction
-    : undefined,
+      ? availabilityDispatchAction
+      : undefined,
     availabilityStatusText: availabilityStatusObject?.text,
     availabilityStatusButtonText,
   });
