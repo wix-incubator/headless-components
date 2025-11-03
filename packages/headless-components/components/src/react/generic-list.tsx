@@ -377,12 +377,8 @@ export const Repeater = <T extends ListItem = ListItem>(
     );
   }
 
-  return (
-    <>
-      {items.map((item, index) =>
-        renderItem(item, children as React.ReactNode, index),
-      )}
-    </>
+  return items.map((item, index) =>
+    renderItem(item, children as React.ReactNode, index),
   );
 };
 
