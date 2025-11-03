@@ -304,7 +304,11 @@ Totals.displayName = 'GenericList.Totals';
 export interface GenericListRepeaterRenderProps<T extends ListItem = ListItem> {
   items: T[];
   variant?: ListVariant;
-  itemRenderer: (item: T, index: number) => React.ReactNode;
+  itemRenderer: (
+    item: T,
+    index: number,
+    children: React.ReactNode,
+  ) => React.ReactNode;
 }
 
 /**
@@ -353,22 +357,13 @@ export const Repeater = <T extends ListItem = ListItem>(
 
   if (items.length === 0) return null;
 
-  const itemRenderer = React.useCallback(
-    (item: T, index: number, customChildren?: React.ReactNode) => {
-      if (asChild && customChildren !== undefined) {
-        return renderItem(item, customChildren, index);
-      }
-
-      return renderItem(item, null, index);
-    },
-    [children, renderItem, asChild],
-  );
-
   if (asChild) {
     const asChildRenderProps: GenericListRepeaterRenderProps<T> = {
       items,
       variant,
-      itemRenderer,
+      itemRenderer: (item: T, index: number, children: React.ReactNode) => {
+        return renderItem(item, children, index);
+      },
     };
 
     return (
