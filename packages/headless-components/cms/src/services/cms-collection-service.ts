@@ -102,7 +102,65 @@ export interface CmsQueryOptions {
 }
 
 /**
- * Converts platform Filter format to WixDataFilter and applies it to the query
+ * Converts platform Filter format to WixDataQuery by applying filters directly to the query.
+ *
+ * Multiple fields are combined with AND logic. OR logic within a single field is achieved
+ * using operators like $hasSome or $in.
+ *
+ * @param query - The WixDataQuery to apply filters to
+ * @param filter - Filter object with field paths and values/operators
+ * @returns Modified query with all filters applied
+ *
+ * @example
+ * // Simple equality filters (AND between fields)
+ * {
+ *   "status": "published",
+ *   "category": "tech"
+ * }
+ * // Result: status="published" AND category="tech"
+ *
+ * @example
+ * // Range filters with comparison operators
+ * {
+ *   "price": { "$gte": 10, "$lte": 100 },
+ *   "stock": { "$gt": 0 }
+ * }
+ * // Result: price>=10 AND price<=100 AND stock>0
+ *
+ * @example
+ * // Array operators (OR within a field)
+ * {
+ *   "tags": { "$hasSome": ["javascript", "react"] },
+ *   "categories": { "$hasAll": ["frontend", "tutorial"] }
+ * }
+ * // Result: (tags contains "javascript" OR "react") AND (categories contains both "frontend" AND "tutorial")
+ *
+ * @example
+ * // String operators
+ * {
+ *   "title": { "$contains": "headless" },
+ *   "slug": { "$startsWith": "blog-" },
+ *   "email": { "$endsWith": "@example.com" }
+ * }
+ * // Result: title contains "headless" AND slug starts with "blog-" AND email ends with "@example.com"
+ *
+ * @example
+ * // Existence operators
+ * {
+ *   "description": { "$isNotEmpty": true },
+ *   "deletedAt": { "$isEmpty": true }
+ * }
+ * // Result: description has a value AND deletedAt is empty
+ *
+ * @example
+ * // Mixed operators (real-world example: blue or red shirts in stock, priced $20-50)
+ * {
+ *   "category": "shirts",
+ *   "color": { "$hasSome": ["blue", "red"] },
+ *   "price": { "$gte": 20, "$lte": 50 },
+ *   "inStock": { "$gt": 0 }
+ * }
+ * // Result: category="shirts" AND (color="blue" OR color="red") AND price>=20 AND price<=50 AND inStock>0
  */
 function applyFilterToQuery(
   query: items.WixDataQuery,
@@ -111,9 +169,6 @@ function applyFilterToQuery(
   if (!filter) {
     return query;
   }
-
-  let wixFilter = items.filter();
-  let hasFilters = false;
 
   for (const [fieldPath, value] of Object.entries(filter)) {
     if (value === null || value === undefined) {
@@ -127,51 +182,49 @@ function applyFilterToQuery(
           continue;
         }
 
-        hasFilters = true;
-
         switch (operator) {
           case '$eq':
-            wixFilter = wixFilter.eq(fieldPath, operandValue as any);
+            query = query.eq(fieldPath, operandValue as any);
             break;
           case '$ne':
-            wixFilter = wixFilter.ne(fieldPath, operandValue as any);
+            query = query.ne(fieldPath, operandValue as any);
             break;
           case '$gt':
-            wixFilter = wixFilter.gt(fieldPath, operandValue as any);
+            query = query.gt(fieldPath, operandValue as any);
             break;
           case '$gte':
-            wixFilter = wixFilter.ge(fieldPath, operandValue as any);
+            query = query.ge(fieldPath, operandValue as any);
             break;
           case '$lt':
-            wixFilter = wixFilter.lt(fieldPath, operandValue as any);
+            query = query.lt(fieldPath, operandValue as any);
             break;
           case '$lte':
-            wixFilter = wixFilter.le(fieldPath, operandValue as any);
+            query = query.le(fieldPath, operandValue as any);
             break;
           case '$hasSome':
             if (Array.isArray(operandValue) && operandValue.length > 0) {
-              wixFilter = wixFilter.hasSome(fieldPath, operandValue as any);
+              query = query.hasSome(fieldPath, operandValue as any);
             }
             break;
           case '$hasAll':
             if (Array.isArray(operandValue) && operandValue.length > 0) {
-              wixFilter = wixFilter.hasAll(fieldPath, operandValue as any);
+              query = query.hasAll(fieldPath, operandValue as any);
             }
             break;
           case '$startsWith':
-            wixFilter = wixFilter.startsWith(fieldPath, operandValue as string);
+            query = query.startsWith(fieldPath, operandValue as string);
             break;
           case '$endsWith':
-            wixFilter = wixFilter.endsWith(fieldPath, operandValue as string);
+            query = query.endsWith(fieldPath, operandValue as string);
             break;
           case '$contains':
-            wixFilter = wixFilter.contains(fieldPath, operandValue as string);
+            query = query.contains(fieldPath, operandValue as string);
             break;
           case '$isEmpty':
-            wixFilter = wixFilter.isEmpty(fieldPath);
+            query = query.isEmpty(fieldPath);
             break;
           case '$isNotEmpty':
-            wixFilter = wixFilter.isNotEmpty(fieldPath);
+            query = query.isNotEmpty(fieldPath);
             break;
           case '$between':
             if (
@@ -180,7 +233,7 @@ function applyFilterToQuery(
               operandValue[0] !== null &&
               operandValue[1] !== null
             ) {
-              wixFilter = wixFilter.between(
+              query = query.between(
                 fieldPath,
                 operandValue[0] as any,
                 operandValue[1] as any,
@@ -194,12 +247,11 @@ function applyFilterToQuery(
       }
     } else {
       // Direct value means equality
-      hasFilters = true;
-      wixFilter = wixFilter.eq(fieldPath, value);
+      query = query.eq(fieldPath, value);
     }
   }
 
-  return hasFilters ? (query as any).filter(wixFilter) : query; // (query as any).filter(wixFilter) or query.and(wixFilter) ??
+  return query;
 }
 
 /**
