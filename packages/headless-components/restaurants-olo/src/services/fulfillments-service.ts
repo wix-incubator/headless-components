@@ -39,14 +39,12 @@ export const FulfillmentsService =
         initialSelected,
       );
 
-      console.log('initialSelected', initialSelected);
       selectedFulfillment.set(initialSelected);
 
       const setSelectedFulfillment = (fulfillment: TimeSlot) => {
         selectedFulfillment.set(fulfillment);
       };
 
-      console.log('config.operation', config.operation);
       if (!config.fulfillments && config.operation) {
         loadFulfillmentsServiceConfig(config.operation).then((config) => {
           const fulfillmentsMap = new Map(
@@ -58,7 +56,6 @@ export const FulfillmentsService =
             // @ts-expect-error - operation is not typed
             fulfillmentsMap.get(config.operation?.id ?? '') ?? [],
           );
-          console.log('fulfillments', fulfillments.get());
           const initialSelected = fulfillments.get()?.[0] ?? null;
           selectedFulfillment.set(initialSelected);
         });
@@ -90,12 +87,10 @@ export const loadFulfillmentsServiceConfig = async (
   // const fulfillments = await operationsSDK.calculateFirstAvailableTimeSlotsPerOperation([
   //   operationId,
   // ]);
-  console.log('timeSlots', timeSlots.timeSlotsPerOperation);
   console.log('fulfillments', fulfillments.items);
   // const fulfillmentsMap = new Map(fulfillments.timeSlotsPerOperation?.map(processFulfillmentTimeSlotByOperationList));
   return {
     fulfillments: timeSlots.timeSlotsPerOperation, //fulfillmentsMap.get(operationId) ?? [],
-    // @ts-expect-error - operation is not typed
-    operationId: operation?.id,
+    operation: operation,
   };
 };

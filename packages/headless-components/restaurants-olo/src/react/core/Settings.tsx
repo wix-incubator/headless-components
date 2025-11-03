@@ -89,10 +89,7 @@ export const Root: React.FC<SettingsRootProps> = ({ children }) => {
     FulfillmentsServiceDefinition,
   ) as ServiceAPI<typeof FulfillmentsServiceDefinition>;
 
-  console.log('fulfillmentsService', fulfillmentsService.fulfillments?.get());
-
   const operation = service.operation?.get();
-  console.log('operation', operation);
   const selectedFulfillment = fulfillmentsService.selectedFulfillment?.get();
   console.log('selectedFulfillment', selectedFulfillment);
 

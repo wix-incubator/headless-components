@@ -125,6 +125,6 @@ export const OperationMapper = (
     operationGroupId: operation.operationGroupId || '',
     locationId: operation.businessLocationId || '',
     // @ts-expect-error - operation is not typed
-    locationDetails: operation.locationDetails as OSLocation | undefined,
+    locationDetails: operation.businessLocationDetails as OSLocation | undefined,
   };
 };
