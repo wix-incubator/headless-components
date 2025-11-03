@@ -225,10 +225,10 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
  * Render props for ProductRepeater asChild pattern
  */
 export interface ProductRepeaterRenderProps {
-  items: (V3Product & { id: string })[];
+  items: V3Product[];
   variant?: ListVariant;
   itemRenderer: (
-    item: V3Product & { id: string },
+    item: V3Product,
     index: number,
     children?: React.ReactNode,
   ) => React.ReactNode;
@@ -281,13 +281,10 @@ export const ProductRepeater = React.forwardRef<
   const { children, asChild = false } = props;
 
   return (
-    <GenericList.Repeater<V3Product & { id: string }>
+    <GenericList.Repeater<V3Product>
       ref={ref}
       asChild={asChild}
-      renderItem={(
-        product: V3Product & { id: string },
-        children: React.ReactNode,
-      ) => (
+      renderItem={(product: V3Product, children: React.ReactNode) => (
         <Product.Root
           key={product._id}
           product={product}

@@ -6,7 +6,6 @@ export type ListVariant = 'list' | 'grid';
 
 /** List item interface - generic item with id */
 export interface ListItem {
-  id: string | number;
   [key: string]: any;
 }
 
