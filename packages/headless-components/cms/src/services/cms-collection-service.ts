@@ -102,11 +102,11 @@ export interface CmsQueryOptions {
 }
 
 /**
- * Converts platform Filter object into a WixDataFilter using the Wix Data SDK's filter() method.
- * This creates a filter object that can be combined with other filters using and()/or() methods.
+ * Converts platform Filter object into a WixDataFilter by chaining Wix Data SDK filter methods.
+ * All filter conditions are chained on a single filter object (implicit AND logic).
  *
  * @param filter - Filter object with field paths and values/operators
- * @returns WixDataFilter object that can be used with query.filter()
+ * @returns WixDataFilter object with all conditions chained
  *
  * @example
  * // Simple equality filters (AND between fields)
@@ -168,88 +168,69 @@ export interface CmsQueryOptions {
  * ```
  */
 function buildWixDataFilter(filter: Filter): items.WixDataFilter {
-  let wixFilter: items.WixDataFilter | null = null;
   // Ensure filter is not null before processing
   if (!filter) {
     return items.filter();
   }
+
+  // Start with a single filter object and chain all conditions
+  let wixFilter: items.WixDataFilter = items.filter();
 
   for (const [fieldId, value] of Object.entries(filter)) {
     if (value === null || value === undefined) {
       continue;
     }
 
-    let fieldFilter: items.WixDataFilter;
-
     if (typeof value === 'object' && !Array.isArray(value)) {
-      // Handle operators - combine all operators for the same field with AND
-      const operators = Object.entries(value);
-      let combinedFieldFilter: items.WixDataFilter | null = null;
-
-      for (const [operator, operandValue] of operators) {
+      // Handle operators - chain all operators for the field
+      for (const [operator, operandValue] of Object.entries(value)) {
         if (operandValue === null || operandValue === undefined) {
           continue;
         }
 
-        let operatorFilter: items.WixDataFilter;
-
         switch (operator) {
           case '$eq':
-            operatorFilter = items.filter().eq(fieldId, operandValue as any);
+            wixFilter = wixFilter.eq(fieldId, operandValue as any);
             break;
           case '$ne':
-            operatorFilter = items.filter().ne(fieldId, operandValue as any);
+            wixFilter = wixFilter.ne(fieldId, operandValue as any);
             break;
           case '$gt':
-            operatorFilter = items.filter().gt(fieldId, operandValue as any);
+            wixFilter = wixFilter.gt(fieldId, operandValue as any);
             break;
           case '$gte':
-            operatorFilter = items.filter().ge(fieldId, operandValue as any);
+            wixFilter = wixFilter.ge(fieldId, operandValue as any);
             break;
           case '$lt':
-            operatorFilter = items.filter().lt(fieldId, operandValue as any);
+            wixFilter = wixFilter.lt(fieldId, operandValue as any);
             break;
           case '$lte':
-            operatorFilter = items.filter().le(fieldId, operandValue as any);
+            wixFilter = wixFilter.le(fieldId, operandValue as any);
             break;
           case '$hasSome':
             if (Array.isArray(operandValue) && operandValue.length > 0) {
-              operatorFilter = items
-                .filter()
-                .hasSome(fieldId, operandValue as any);
-            } else {
-              continue;
+              wixFilter = wixFilter.hasSome(fieldId, operandValue as any);
             }
             break;
           case '$hasAll':
             if (Array.isArray(operandValue) && operandValue.length > 0) {
-              operatorFilter = items
-                .filter()
-                .hasAll(fieldId, operandValue as any);
-            } else {
-              continue;
+              wixFilter = wixFilter.hasAll(fieldId, operandValue as any);
             }
             break;
           case '$startsWith':
-            operatorFilter = items
-              .filter()
-              .startsWith(fieldId, operandValue as string);
+            wixFilter = wixFilter.startsWith(fieldId, operandValue as string);
             break;
           case '$endsWith':
-            operatorFilter = items
-              .filter()
-              .endsWith(fieldId, operandValue as string);
+            wixFilter = wixFilter.endsWith(fieldId, operandValue as string);
             break;
           case '$contains':
-            operatorFilter = items
-              .filter()
-              .contains(fieldId, operandValue as string);
+            wixFilter = wixFilter.contains(fieldId, operandValue as string);
             break;
           case '$isEmpty':
-            operatorFilter = items.filter().isEmpty(fieldId);
+            wixFilter = wixFilter.isEmpty(fieldId);
             break;
           case '$isNotEmpty':
-            operatorFilter = items.filter().isNotEmpty(fieldId);
+            wixFilter = wixFilter.isNotEmpty(fieldId);
             break;
           case '$between':
             if (
@@ -258,41 +239,25 @@ function buildWixDataFilter(filter: Filter): items.WixDataFilter {
               operandValue[0] !== null &&
               operandValue[1] !== null
             ) {
-              operatorFilter = items
-                .filter()
-                .between(
-                  fieldId,
-                  operandValue[0] as any,
-                  operandValue[1] as any,
-                );
-            } else {
-              continue;
+              wixFilter = wixFilter.between(
+                fieldId,
+                operandValue[0] as any,
+                operandValue[1] as any,
+              );
             }
             break;
+          // Skip unsupported operators
           default:
-            // Skip unsupported operators
-            continue;
+            break;
         }
-
-        combinedFieldFilter = combinedFieldFilter
-          ? combinedFieldFilter.and(operatorFilter)
-          : operatorFilter;
-      }
-
-      if (combinedFieldFilter) {
-        fieldFilter = combinedFieldFilter;
-      } else {
-        continue;
       }
     } else {
       // Direct value means equality
-      fieldFilter = items.filter().eq(fieldId, value);
+      wixFilter = wixFilter.eq(fieldId, value);
     }
-
-    wixFilter = wixFilter ? wixFilter.and(fieldFilter) : fieldFilter;
   }
 
-  return wixFilter || items.filter();
+  return wixFilter;
 }
 
 /**
