@@ -53,4 +53,5 @@ export type {
   GenericListTotalsProps,
   GenericListTotalsRenderProps,
   GenericListRepeaterProps,
+  GenericListRepeaterRenderProps,
 } from './generic-list.js';

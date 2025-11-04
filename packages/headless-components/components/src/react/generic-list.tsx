@@ -298,16 +298,21 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
 Totals.displayName = 'GenericList.Totals';
 
 /**
+ * Props passed to itemWrapper function
+ */
+export interface GenericListItemWrapperProps<T extends ListItem = ListItem> {
+  item: T;
+  index: number;
+  children: React.ReactNode;
+}
+
+/**
  * Render props for GenericList Repeater asChild pattern
  */
 export interface GenericListRepeaterRenderProps<T extends ListItem = ListItem> {
   items: T[];
   variant?: ListVariant;
-  itemRenderer: (
-    item: T,
-    index: number,
-    children: React.ReactNode,
-  ) => React.ReactNode;
+  itemWrapper: (props: GenericListItemWrapperProps<T>) => React.ReactNode;
 }
 
 /**
@@ -322,11 +327,7 @@ export interface GenericListRepeaterProps<T extends ListItem = ListItem> {
         ref: React.Ref<HTMLElement>,
       ) => React.ReactNode);
   /** Function that wraps each item with its container/root component */
-  renderItem?: (
-    item: T,
-    children: React.ReactNode,
-    index: number,
-  ) => React.ReactNode;
+  itemWrapper?: (props: GenericListItemWrapperProps<T>) => React.ReactNode;
   /** Whether to render as child component (asChild pattern) */
   asChild?: boolean;
   /** CSS classes */
@@ -347,7 +348,7 @@ export const Repeater = <T extends ListItem = ListItem>(
   const {
     ref,
     children,
-    renderItem = (item, children) => (
+    itemWrapper = ({ item, children }) => (
       <React.Fragment key={item['id'] || item['_id']}>
         {children}
       </React.Fragment>
@@ -364,9 +365,7 @@ export const Repeater = <T extends ListItem = ListItem>(
     const asChildRenderProps: GenericListRepeaterRenderProps<T> = {
       items,
       variant,
-      itemRenderer: (item: T, index: number, children: React.ReactNode) => {
-        return renderItem(item, children, index);
-      },
+      itemWrapper,
     };
 
     return (
@@ -382,7 +381,7 @@ export const Repeater = <T extends ListItem = ListItem>(
   }
 
   return items.map((item, index) =>
-    renderItem(item, children as React.ReactNode, index),
+    itemWrapper({ item, index, children: children as React.ReactNode }),
   );
 };
 

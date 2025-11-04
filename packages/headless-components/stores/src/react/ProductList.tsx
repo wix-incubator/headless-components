@@ -5,6 +5,7 @@ import {
   GenericListLoadMoreRenderProps,
   GenericList,
   ListVariant,
+  GenericListRepeaterRenderProps,
 } from '@wix/headless-components/react';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
@@ -224,15 +225,8 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
 /**
  * Render props for ProductRepeater asChild pattern
  */
-export interface ProductRepeaterRenderProps {
-  items: V3Product[];
-  variant?: ListVariant;
-  itemRenderer: (
-    item: V3Product,
-    index: number,
-    children?: React.ReactNode,
-  ) => React.ReactNode;
-}
+export type ProductRepeaterRenderProps =
+  GenericListRepeaterRenderProps<V3Product>;
 
 /**
  * Props for ProductList ProductRepeater component
@@ -284,7 +278,7 @@ export const ProductRepeater = React.forwardRef<
     <GenericList.Repeater<V3Product>
       ref={ref}
       asChild={asChild}
-      renderItem={(product: V3Product, children: React.ReactNode) => (
+      itemWrapper={({ item: product, children }) => (
         <Product.Root
           key={product._id}
           product={product}
