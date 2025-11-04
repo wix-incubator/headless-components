@@ -278,7 +278,7 @@ export const ProductRepeater = React.forwardRef<
   HTMLElement,
   ProductRepeaterProps
 >((props, ref) => {
-  const { children, asChild = false } = props;
+  const { children, asChild } = props;
 
   return (
     <GenericList.Repeater<V3Product>
