@@ -226,6 +226,7 @@ export const Products = React.forwardRef<HTMLElement, ProductsProps>(
  */
 export interface ProductRepeaterRenderProps {
   items: V3Product[];
+  variant?: ListVariant;
   itemRenderer: (
     item: V3Product,
     index: number,
