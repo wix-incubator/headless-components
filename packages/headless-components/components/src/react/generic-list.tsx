@@ -322,7 +322,7 @@ export interface GenericListRepeaterProps<T extends ListItem = ListItem> {
         ref: React.Ref<HTMLElement>,
       ) => React.ReactNode);
   /** Function that wraps each item with its container/root component */
-  renderItem: (
+  renderItem?: (
     item: T,
     children: React.ReactNode,
     index: number,
@@ -347,7 +347,11 @@ export const Repeater = <T extends ListItem = ListItem>(
   const {
     ref,
     children,
-    renderItem,
+    renderItem = (item, children) => (
+      <React.Fragment key={item['id'] || item['_id']}>
+        {children}
+      </React.Fragment>
+    ),
     asChild = false,
     className,
     ...otherProps
