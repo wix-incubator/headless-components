@@ -6,7 +6,6 @@ import {
 import { type LineItem } from '@wix/ecom/services';
 import { itemVariants } from '@wix/restaurants';
 import type { EnhancedItem } from '@wix/headless-restaurants-menus/services';
-import { OLOSettingsServiceDefinition } from './olo-settings-service.js';
 import { AvailabilityStatus } from './common-types.js';
 import { getModifiersInitState } from './utils.js';
 
@@ -68,7 +67,7 @@ export interface ItemServiceConfig {
   itemId?: string;
 
   operationId?: string;
-  menuId?: string;
+  availabilityStatus?: AvailabilityStatus;
 }
 
 /**
@@ -110,14 +109,8 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ItemServiceDefinition,
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
-    const oloSettingsService = getService(OLOSettingsServiceDefinition);
-    const getAvailabilityStatusFn =
-      oloSettingsService.getAvailabilityStatus?.get?.();
-    const initialAvailabilityStatus =
-      getAvailabilityStatusFn?.(config.menuId ?? '') ??
-      AvailabilityStatus.AVAILABLE;
     const availabilityStatus: Signal<AvailabilityStatus> =
-      signalsService.signal(initialAvailabilityStatus);
+      signalsService.signal(config.availabilityStatus ?? AvailabilityStatus.AVAILABLE);
     const item: Signal<EnhancedItem | undefined> = signalsService.signal(
       config.item,
     );
@@ -363,11 +356,13 @@ export interface NotFoundItemServiceConfigResult {
 export function loadItemServiceConfig({
   item,
   operationId,
+  availabilityStatus = AvailabilityStatus.AVAILABLE,
 }: {
   item: EnhancedItem;
   operationId: string;
+  availabilityStatus?: AvailabilityStatus;
 }): ItemServiceConfig {
-  return { item, operationId };
+  return { item, operationId, availabilityStatus };
 }
 // try {
 //   if (item === null) {
