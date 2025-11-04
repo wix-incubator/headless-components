@@ -258,11 +258,16 @@ export interface ProductRepeaterProps {
  *
  * // AsChild usage with GalleryWrapper
  * <ProductList.ProductRepeater asChild>
- *   {({ items, variant, itemRenderer }) => (
+ *   {({ items, variant, itemWrapper }) => (
  *     <GalleryWrapper
  *       items={items}
  *       variant={variant}
- *       itemRenderer={itemRenderer}
+ *       itemRenderer={(item, index) =>
+ *         itemWrapper({ item, index, children: <>
+ *           <Product.Name />
+ *           <Product.Price />
+ *         </> })
+ *       }
  *     />
  *   )}
  * </ProductList.ProductRepeater>
