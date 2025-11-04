@@ -16,6 +16,7 @@ import {
   type SortOption,
   Filter as FilterPrimitive,
   type FilterOption,
+  type FilterValue,
 } from '@wix/headless-components/react';
 import { CmsCollectionSort as CmsCollectionSortPrimitive } from './core/CmsCollectionSort.js';
 import * as CoreCmsCollectionFilters from './core/CmsCollectionFilters.js';
@@ -44,6 +45,18 @@ export interface RootProps {
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
     initialSort?: SortValue;
+    /** Default filters that are always applied (set by site owner).
+     * These filters are combined with user-applied filters using AND logic.
+     * @example
+     * ```tsx
+     * // Only show yellow or red cars
+     * defaultFilter={{ color: { $hasSome: ['yellow', 'red'] } }}
+     *
+     * // When user filters by model: Toyota
+     * // Result: Toyota cars that are yellow or red
+     * ```
+     */
+    defaultFilter?: FilterValue;
     /** List of field IDs for single reference fields to include */
     singleRefFieldIds?: string[];
     /** List of field IDs for multi reference fields to include */
@@ -109,6 +122,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       queryResult: collection?.queryResult,
       queryOptions: collection?.queryOptions,
       initialSort: collection?.initialSort,
+      defaultFilter: collection?.defaultFilter,
       singleRefFieldIds: collection?.singleRefFieldIds,
       multiRefFieldIds: collection?.multiRefFieldIds,
     };

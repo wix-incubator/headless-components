@@ -102,14 +102,11 @@ export interface CmsQueryOptions {
 }
 
 /**
- * Converts platform Filter format to WixDataQuery by applying filters directly to the query.
+ * Converts platform Filter object into a WixDataFilter by chaining Wix Data SDK filter methods.
+ * All filter conditions are chained on a single filter object (implicit AND logic).
  *
- * Multiple fields are combined with AND logic. OR logic within a single field is achieved
- * using operators like $hasSome or $in.
- *
- * @param query - The WixDataQuery to apply filters to
  * @param filter - Filter object with field paths and values/operators
- * @returns Modified query with all filters applied
+ * @returns WixDataFilter object with all conditions chained
  *
  * @example
  * // Simple equality filters (AND between fields)
@@ -161,22 +158,31 @@ export interface CmsQueryOptions {
  *   "inStock": { "$gt": 0 }
  * }
  * // Result: category="shirts" AND (color="blue" OR color="red") AND price>=20 AND price<=50 AND inStock>0
+
+ * @example
+ * ```ts
+ * const colorFilter = buildWixDataFilter({ color: { $hasSome: ['yellow', 'red'] } });
+ * const modelFilter = buildWixDataFilter({ model: { $eq: 'Toyota' } });
+ * const combinedFilter = colorFilter.and(modelFilter);
+ * const query = items.query('Cars').filter(combinedFilter);
+ * ```
  */
-function applyFilterToQuery(
-  query: items.WixDataQuery,
-  filter: Filter,
-): items.WixDataQuery {
+function buildWixDataFilter(filter: Filter): items.WixDataFilter {
+  // Ensure filter is not null before processing
   if (!filter) {
-    return query;
+    return items.filter();
   }
 
-  for (const [fieldPath, value] of Object.entries(filter)) {
+  // Start with a single filter object and chain all conditions
+  let wixFilter: items.WixDataFilter = items.filter();
+
+  for (const [fieldId, value] of Object.entries(filter)) {
     if (value === null || value === undefined) {
       continue;
     }
 
     if (typeof value === 'object' && !Array.isArray(value)) {
-      // Handle operators
+      // Handle operators - chain all operators for the field
       for (const [operator, operandValue] of Object.entries(value)) {
         if (operandValue === null || operandValue === undefined) {
           continue;
@@ -184,47 +190,47 @@ function applyFilterToQuery(
 
         switch (operator) {
           case '$eq':
-            query = query.eq(fieldPath, operandValue as any);
+            wixFilter = wixFilter.eq(fieldId, operandValue as any);
             break;
           case '$ne':
-            query = query.ne(fieldPath, operandValue as any);
+            wixFilter = wixFilter.ne(fieldId, operandValue as any);
             break;
           case '$gt':
-            query = query.gt(fieldPath, operandValue as any);
+            wixFilter = wixFilter.gt(fieldId, operandValue as any);
             break;
           case '$gte':
-            query = query.ge(fieldPath, operandValue as any);
+            wixFilter = wixFilter.ge(fieldId, operandValue as any);
             break;
           case '$lt':
-            query = query.lt(fieldPath, operandValue as any);
+            wixFilter = wixFilter.lt(fieldId, operandValue as any);
             break;
           case '$lte':
-            query = query.le(fieldPath, operandValue as any);
+            wixFilter = wixFilter.le(fieldId, operandValue as any);
             break;
           case '$hasSome':
             if (Array.isArray(operandValue) && operandValue.length > 0) {
-              query = query.hasSome(fieldPath, operandValue as any);
+              wixFilter = wixFilter.hasSome(fieldId, operandValue as any);
             }
             break;
           case '$hasAll':
             if (Array.isArray(operandValue) && operandValue.length > 0) {
-              query = query.hasAll(fieldPath, operandValue as any);
+              wixFilter = wixFilter.hasAll(fieldId, operandValue as any);
             }
             break;
           case '$startsWith':
-            query = query.startsWith(fieldPath, operandValue as string);
+            wixFilter = wixFilter.startsWith(fieldId, operandValue as string);
             break;
           case '$endsWith':
-            query = query.endsWith(fieldPath, operandValue as string);
+            wixFilter = wixFilter.endsWith(fieldId, operandValue as string);
             break;
           case '$contains':
-            query = query.contains(fieldPath, operandValue as string);
+            wixFilter = wixFilter.contains(fieldId, operandValue as string);
             break;
           case '$isEmpty':
-            query = query.isEmpty(fieldPath);
+            wixFilter = wixFilter.isEmpty(fieldId);
             break;
           case '$isNotEmpty':
-            query = query.isNotEmpty(fieldPath);
+            wixFilter = wixFilter.isNotEmpty(fieldId);
             break;
           case '$between':
             if (
@@ -233,8 +239,8 @@ function applyFilterToQuery(
               operandValue[0] !== null &&
               operandValue[1] !== null
             ) {
-              query = query.between(
-                fieldPath,
+              wixFilter = wixFilter.between(
+                fieldId,
                 operandValue[0] as any,
                 operandValue[1] as any,
               );
@@ -247,22 +253,24 @@ function applyFilterToQuery(
       }
     } else {
       // Direct value means equality
-      query = query.eq(fieldPath, value);
+      wixFilter = wixFilter.eq(fieldId, value);
     }
   }
 
-  return query;
+  return wixFilter;
 }
 
 /**
  * Shared function to load collection items from Wix Data with pagination support.
  * Returns a WixDataQueryResult that contains items, pagination info, and navigation methods.
+ * Uses Wix Data SDK's filter() and and() methods to combine default and user filters.
  */
 const loadCollectionItems = async (
   collectionId: string,
   options: CmsQueryOptions = {},
   sort?: SortValue,
-  filter?: Filter | null,
+  userFilter?: Filter | null,
+  defaultFilter?: Filter | null,
   singleRefFieldIds: string[] = [],
   multiRefFieldIds: string[] = [],
 ) => {
@@ -274,8 +282,23 @@ const loadCollectionItems = async (
 
   let query = items.query(collectionId);
 
-  if (filter && Object.keys(filter).length > 0) {
-    query = applyFilterToQuery(query, filter);
+  // Build WixDataFilter objects and combine using Wix Data SDK's and() method
+  const hasDefaultFilter =
+    defaultFilter && Object.keys(defaultFilter).length > 0;
+  const hasUserFilter = userFilter && Object.keys(userFilter).length > 0;
+
+  if (hasDefaultFilter && hasUserFilter) {
+    // Both filters present - combine with and() method
+    const defaultWixFilter = buildWixDataFilter(defaultFilter);
+    const userWixFilter = buildWixDataFilter(userFilter);
+    // Use and() to combine the two filters
+    query = query.and(defaultWixFilter).and(userWixFilter);
+  } else if (hasDefaultFilter) {
+    // Only default filter - apply directly
+    query = query.and(buildWixDataFilter(defaultFilter));
+  } else if (hasUserFilter) {
+    // Only user filter - apply directly
+    query = query.and(buildWixDataFilter(userFilter));
   }
 
   if (sort && sort.length > 0 && sort[0]) {
@@ -320,6 +343,9 @@ export interface CmsCollectionServiceConfig {
   initialSort?: SortValue;
   /** Optional initial filter value */
   initialFilter?: Filter | null;
+  /** Default filters that are always applied (set by site owner).
+   * These filters are combined with user-applied filters using AND logic. */
+  defaultFilter?: Filter | null;
   /** List of field IDs for single reference fields to include */
   singleRefFieldIds?: string[];
   /** List of field IDs for multi reference fields to include */
@@ -375,6 +401,7 @@ export const CmsCollectionServiceImplementation =
             mergedOptions,
             sortSignal.get(),
             filterSignal.get(),
+            config.defaultFilter,
             config.singleRefFieldIds,
             config.multiRefFieldIds,
           );
@@ -573,6 +600,7 @@ export type CmsCollectionServiceConfigResult = {
  * @param options - Query options for pagination and filtering
  * @param sort - Optional sort value
  * @param filter - Optional filter value
+ * @param defaultFilter - Optional default filter that's always applied
  * @param singleRefFieldIds - List of field IDs for single reference fields to include
  * @param multiRefFieldIds - List of field IDs for multi reference fields to include
  * @returns Promise resolving to service configuration with queryResult containing all data
@@ -585,6 +613,7 @@ export type CmsCollectionServiceConfigResult = {
  *   { limit: 10, skip: 0 },
  *   undefined,
  *   { status: { $eq: 'published' } },
+ *   { color: { $hasSome: ['yellow', 'red'] } },
  *   ['author', 'category'],
  *   ['tags', 'relatedItems']
  * );
@@ -598,6 +627,7 @@ export const loadCmsCollectionServiceInitialData = async (
   options: CmsQueryOptions = {},
   sort?: SortValue,
   filter?: Filter | null,
+  defaultFilter?: Filter | null,
   singleRefFieldIds?: string[],
   multiRefFieldIds?: string[],
 ): Promise<CmsCollectionServiceConfigResult> => {
@@ -612,6 +642,7 @@ export const loadCmsCollectionServiceInitialData = async (
       options,
       sort,
       filter,
+      defaultFilter,
       singleRefFieldIds,
       multiRefFieldIds,
     );
@@ -623,6 +654,7 @@ export const loadCmsCollectionServiceInitialData = async (
         queryOptions: options,
         initialSort: sort,
         initialFilter: filter,
+        defaultFilter,
         singleRefFieldIds,
         multiRefFieldIds,
       },
