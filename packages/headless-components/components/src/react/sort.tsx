@@ -243,6 +243,7 @@ const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
         {options.map((option, index) => (
           <Option
             key={`${option?.fieldName ?? ''}-${option?.order ?? ''}-${index}`}
+            className={otherProps.className}
             fieldName={option.fieldName!}
             order={option.order!}
             label={option.label}
@@ -525,6 +526,7 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
           onClick={handleSelect}
           data-testid={TestIds.sortOption}
           data-selected={isSelected}
+          className={otherProps.className}
           data-field-name={fieldName}
           data-order={order}
           {...otherProps}
