@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+/* Tailwind theme configuration */
+@theme {
+  /* Dark theme colors - hardcoded for dark appearance */
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #8b5cf6;
+  --color-secondary-foreground: #ffffff;
+  --color-background: #1e293b;
+  --color-foreground: #f1f5f9;
+  --color-muted: #334155;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #475569;
+  --color-input: #1e293b;
+  --color-ring: #3b82f6;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+}
+
+/* Custom CSS variables for our theme */
+:root {
+  /* Primary Theme Colors */
+  --theme-primary-500: #3b82f6;
+  --theme-primary-600: #2563eb;
+  --theme-secondary-500: #8b5cf6;
+  --theme-secondary-600: #7c3aed;
+
+  --theme-info-500: #3b82f6;
+  --theme-success-500: #10b981;
+  --theme-danger-500: #ef4444;
+
+  /* Background Colors with Opacity */
+  --theme-bg-primary-10: rgba(59, 130, 246, 0.1);
+  --theme-bg-card: rgba(255, 255, 255, 0.05);
+  --theme-bg-modal: rgba(0, 0, 0, 0.9);
+  --theme-bg-options: rgba(255, 255, 255, 0.08);
+
+  /* Border Colors */
+  --theme-border-card: rgba(255, 255, 255, 0.1);
+  --theme-border-card-hover: rgba(255, 255, 255, 0.2);
+
+  /* Text Colors */
+  --theme-text-content: #ffffff;
+  --theme-text-content-60: rgba(255, 255, 255, 0.6);
+  --theme-text-content-80: rgba(255, 255, 255, 0.8);
+  --theme-text-primary-400: #60a5fa;
+  --theme-text-success: #34d399;
+  --theme-text-error: #f87171;
+
+  /* Button Gradients */
+  --theme-btn-primary: linear-gradient(to right, #3b82f6, #8b5cf6);
+  --theme-btn-primary-hover: linear-gradient(to right, #2563eb, #7c3aed);
+  --theme-btn-primary-text: #ffffff;
+
+  /* Gradient Colors */
+  --theme-gradient-primary: linear-gradient(to right, #3b82f6, #8b5cf6);
+
+  /* Hero Section Gradients */
+  --theme-hero-text-gradient: linear-gradient(to right, #93c5fd, #c4b5fd);
+  --theme-hero-card-gradient: linear-gradient(
+    to right,
+    rgba(59, 130, 246, 0.1),
+    rgba(139, 92, 246, 0.1)
+  );
+}
