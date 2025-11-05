@@ -113,7 +113,7 @@ export const Name = React.forwardRef<HTMLElement, VariantNameProps>(
  * <Variant.Price asChild>
  *   {React.forwardRef(({price, formattedPrice, hasPrice, ...props}, ref) => (
  *     <span ref={ref} {...props} className="text-lg font-bold text-primary">
- *       {formattedPrice || price || 'No price'}
+ *       {formattedPrice || price || null}
  *     </span>
  *   ))}
  * </Variant.Price>
@@ -126,7 +126,11 @@ export const Price = React.forwardRef<HTMLElement, VariantPriceProps>(
     return (
       <VariantPrice>
         {({ price, formattedPrice, hasPrice }) => {
-          const displayPrice = formattedPrice || price || 'No price';
+          if (!hasPrice && !formattedPrice && !price) {
+            return null;
+          }
+
+          const displayPrice = formattedPrice || price;
 
           return (
             <AsChildSlot
