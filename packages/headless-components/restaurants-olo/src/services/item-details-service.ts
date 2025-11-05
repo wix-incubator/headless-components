@@ -110,7 +110,9 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
     const availabilityStatus: Signal<AvailabilityStatus> =
-      signalsService.signal(config.availabilityStatus ?? AvailabilityStatus.AVAILABLE);
+      signalsService.signal(
+        config.availabilityStatus ?? AvailabilityStatus.AVAILABLE,
+      );
     const item: Signal<EnhancedItem | undefined> = signalsService.signal(
       config.item,
     );
