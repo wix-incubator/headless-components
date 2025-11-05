@@ -93,17 +93,124 @@ const PhoneError = React.forwardRef<HTMLDivElement, PhoneErrorProps>(
 
 PhoneError.displayName = 'PhoneField.Error';
 
+export interface CountryCodeProps {
+  asChild?: boolean;
+  className?: string;
+  id: string;
+  value: string | null | undefined;
+  required: boolean;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  onFocus: () => void;
+  allowedCountryCodes: string[];
+  defaultCountryCode: string | null | undefined;
+  readOnly: boolean;
+}
+
+const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
+  (
+    {
+      id,
+      value,
+      required,
+      onChange,
+      onBlur,
+      onFocus,
+      allowedCountryCodes,
+      defaultCountryCode,
+      readOnly,
+      ...rest
+    },
+    ref,
+  ) => {
+    return (
+      <Form.Field.Input ref={ref} {...rest} asChild>
+        <select
+          id={`${id}-country`}
+          defaultValue={defaultCountryCode || ''}
+          disabled={readOnly}
+        >
+          {allowedCountryCodes?.map((code: string) => (
+            <option key={code} value={code}>
+              {code}
+            </option>
+          ))}
+        </select>
+      </Form.Field.Input>
+    );
+  },
+);
+
+CountryCode.displayName = 'PhoneField.CountryCode';
+
+export interface PhoneFieldInputProps {
+  asChild?: boolean;
+  className?: string;
+  id: string;
+  value: string | null | undefined;
+  required: boolean;
+  readOnly: boolean;
+  placeholder?: string;
+  descriptionId?: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  onFocus: () => void;
+}
+
+const PhoneFieldInput = React.forwardRef<HTMLDivElement, PhoneFieldInputProps>(
+  (
+    {
+      id,
+      value,
+      required,
+      readOnly,
+      placeholder,
+      descriptionId,
+      onChange,
+      onBlur,
+      onFocus,
+      ...rest
+    },
+    ref,
+  ) => {
+    return (
+      <Form.Field.Input ref={ref} {...rest} asChild>
+        <input
+          id={id}
+          type="tel"
+          value={value || ''}
+          required={required}
+          readOnly={readOnly}
+          placeholder={placeholder}
+          aria-describedby={descriptionId}
+          aria-invalid={!!(required && !value)}
+          aria-required={required}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={() => onBlur()}
+          onFocus={() => onFocus()}
+        />
+      </Form.Field.Input>
+    );
+  },
+);
+
+PhoneFieldInput.displayName = 'PhoneField.Input';
+
 interface PhoneFieldComponent
   extends React.ForwardRefExoticComponent<
     PhoneFieldProps & React.RefAttributes<HTMLDivElement>
   > {
   Label: typeof PhoneLabel;
   Error: typeof PhoneError;
+  Input: typeof PhoneFieldInput;
+  CountryCode: typeof CountryCode;
 }
 
 export const PhoneField = PhoneFieldRoot as PhoneFieldComponent;
 PhoneField.Label = PhoneLabel;
 PhoneField.Error = PhoneError;
+PhoneField.Input = PhoneFieldInput;
+PhoneField.CountryCode = CountryCode;
 
 // const Phone = ({
 //   id,

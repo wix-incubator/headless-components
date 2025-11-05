@@ -56,31 +56,27 @@ const Phone = ({
           }
         >
           <div className="flex gap-2">
-            <select
-              id={`${id}-country`}
-              defaultValue={defaultCountryCode}
-              disabled={readOnly}
+            <PhoneField.CountryCode
               className="px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {allowedCountryCodes?.map((code: string) => (
-                <option key={code} value={code}>
-                  {code}
-                </option>
-              ))}
-            </select>
-            <input
               id={id}
-              type="tel"
-              value={value || ''}
+              value={value}
+              required={required}
+              readOnly={readOnly}
+              onChange={onChange}
+              onBlur={onBlur}
+              onFocus={onFocus}
+              allowedCountryCodes={allowedCountryCodes}
+              defaultCountryCode={defaultCountryCode}
+            />
+            <PhoneField.Input
+              id={id}
+              value={value}
               required={required}
               readOnly={readOnly}
               placeholder={placeholder}
-              aria-describedby={descriptionId}
-              aria-invalid={!!(required && !value)}
-              aria-required={required}
-              onChange={e => onChange(e.target.value)}
-              onBlur={() => onBlur()}
-              onFocus={() => onFocus()}
+              onChange={onChange}
+              onBlur={onBlur}
+              onFocus={onFocus}
               className="flex-1 px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
