@@ -21,6 +21,28 @@ export interface MediaGalleryRepeaterProps {
 /**
  * Repeats children for each Instagram media item, providing a per-item service context.
  * Uses render props pattern to provide mediaItem and index directly to children.
+ *
+ * @example
+ * ```tsx
+ * <InstagramMedia.MediaGalleryRepeater>
+ *   {({ mediaItem, index }) => (
+ *     <div>
+ *       <div>Post #{index + 1}</div>
+ *       <div>Type: {mediaItem.type}</div>
+ *       <MediaGallery.Viewport asChild>
+ *         {({ src, alt }) => (
+ *           <img src={src} alt={alt} />
+ *         )}
+ *       </MediaGallery.Viewport>
+ *       <InstagramMedia.Caption />
+ *     </div>
+ *   )}
+ * </InstagramMedia.MediaGalleryRepeater>
+ * ```
+ *
+ * @param props.children - Render prop function that receives:
+ *   - `mediaItem`: The Instagram media item object (id, type, mediaUrl, caption, timestamp, etc.)
+ *   - `index`: The zero-based index of the media item in the feed (useful for navigation and numbering)
  */
 export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
   children,

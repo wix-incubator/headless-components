@@ -17,21 +17,25 @@ import { MediaGallery } from '@wix/headless-media/react';
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
       <InstagramMedia.MediaGalleryRepeater>
-        <MediaGallery.Previous/>
-        <MediaGallery.Viewport asChild>
+        {({ mediaItem, index }) => (
+          <>
+            <MediaGallery.Previous/>
+            <MediaGallery.Viewport asChild>
               {({ src, alt }) => (
-                 <img
-                src={src}
-                alt={alt || ''}
-                className="w-full h-full object-cover cursor-pointer"
+                <img
+                  src={src}
+                  alt={alt || ''}
+                  className="w-full h-full object-cover cursor-pointer"
                 />
               )}
-        </MediaGallery.Viewport>
-        <MediaGallery.Next/>
-        <InstagramMedia.Caption />
-        <InstagramMedia.MediaType />
-        <InstagramMedia.UserName />
-        <InstagramMedia.Timestamp />
+            </MediaGallery.Viewport>
+            <MediaGallery.Next/>
+            <InstagramMedia.Caption />
+            <InstagramMedia.MediaType />
+            <InstagramMedia.UserName />
+            <InstagramMedia.Timestamp />
+          </>
+        )}
       </InstagramMedia.MediaGalleryRepeater>
     </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
@@ -53,17 +57,19 @@ import { MediaGallery } from '@wix/headless-media/react';
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
       <InstagramMedia.MediaGalleryRepeater>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <MediaGallery.Viewport asChild>
+        {({ mediaItem, index }) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <MediaGallery.Viewport asChild>
               {({ src, alt }) => (
-                 <img
-                src={src}
-                alt={alt || ''}
-                className="w-full h-full object-cover cursor-pointer"
+                <img
+                  src={src}
+                  alt={alt || ''}
+                  className="w-full h-full object-cover cursor-pointer"
                 />
               )}
-        </MediaGallery.Viewport>
-        </div>
+            </MediaGallery.Viewport>
+          </div>
+        )}
       </InstagramMedia.MediaGalleryRepeater>
     </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
@@ -81,17 +87,19 @@ import { MediaGallery } from '@wix/headless-media/react';
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
       <InstagramMedia.MediaGalleryRepeater>
-        <div className="grid grid-cols-3 gap-2">
-          <MediaGallery.Viewport asChild>
+        {({ mediaItem, index }) => (
+          <div className="grid grid-cols-3 gap-2">
+            <MediaGallery.Viewport asChild>
               {({ src, alt }) => (
-                 <img
-                src={src}
-                alt={alt || ''}
-                className="w-full h-full object-cover cursor-pointer"
+                <img
+                  src={src}
+                  alt={alt || ''}
+                  className="w-full h-full object-cover cursor-pointer"
                 />
               )}
-        </MediaGallery.Viewport>
-        </div>
+            </MediaGallery.Viewport>
+          </div>
+        )}
       </InstagramMedia.MediaGalleryRepeater>
     </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
@@ -111,15 +119,17 @@ import { MediaGallery } from '@wix/headless-media/react';
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
       <InstagramMedia.MediaGalleryRepeater>
-        <MediaGallery.Viewport asChild>
-              {({ src, alt }) => (
-                 <img
+        {({ mediaItem, index }) => (
+          <MediaGallery.Viewport asChild>
+            {({ src, alt }) => (
+              <img
                 src={src}
                 alt={alt || ''}
                 className="w-full h-full object-cover cursor-pointer"
-                />
-              )}
-        </MediaGallery.Viewport>
+              />
+            )}
+          </MediaGallery.Viewport>
+        )}
       </InstagramMedia.MediaGalleryRepeater>
     </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
@@ -149,17 +159,19 @@ import { MediaGallery } from '@wix/headless-media/react';
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
       <InstagramMedia.MediaGalleryRepeater>
-        <div className="masonry-layout">
-          <MediaGallery.Viewport asChild>
+        {({ mediaItem, index }) => (
+          <div className="masonry-layout">
+            <MediaGallery.Viewport asChild>
               {({ src, alt }) => (
-                 <img
-                src={src}
-                alt={alt || ''}
-                className="w-full h-full object-cover cursor-pointer"
+                <img
+                  src={src}
+                  alt={alt || ''}
+                  className="w-full h-full object-cover cursor-pointer"
                 />
               )}
-        </MediaGallery.Viewport>
-        </div>
+            </MediaGallery.Viewport>
+          </div>
+        )}
       </InstagramMedia.MediaGalleryRepeater>
     </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
@@ -181,15 +193,17 @@ import { MediaGallery } from '@wix/headless-media/react';
       }
     >
       <InstagramMedia.MediaGalleryRepeater>
-        <MediaGallery.Viewport asChild>
-              {({ src, alt }) => (
-                 <img
+        {({ mediaItem, index }) => (
+          <MediaGallery.Viewport asChild>
+            {({ src, alt }) => (
+              <img
                 src={src}
                 alt={alt || ''}
                 className="w-full h-full object-cover cursor-pointer"
-                />
-              )}
-        </MediaGallery.Viewport>
+              />
+            )}
+          </MediaGallery.Viewport>
+        )}
       </InstagramMedia.MediaGalleryRepeater>
     </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
@@ -254,8 +268,33 @@ interface MediaGalleriesProps {
 ### InstagramMedia.MediaGalleryRepeater
 ```tsx
 interface MediaGalleryRepeaterProps {
-  children: React.ReactNode;
+  children: (props: {
+    mediaItem: InstagramMediaItem;
+    index: number;
+  }) => React.ReactNode;
 }
+```
+
+**Render Props:**
+- `mediaItem`: The Instagram media item object containing `id`, `type`, `mediaUrl`, `caption`, `timestamp`, etc.
+- `index`: The zero-based index of the media item in the feed (useful for navigation, numbering, etc.)
+
+**Example with mediaItem and index:**
+```tsx
+<InstagramMedia.MediaGalleryRepeater>
+  {({ mediaItem, index }) => (
+    <div>
+      <div>Post #{index + 1}</div>
+      <div>Type: {mediaItem.type}</div>
+      <MediaGallery.Viewport asChild>
+        {({ src, alt }) => (
+          <img src={src} alt={alt} />
+        )}
+      </MediaGallery.Viewport>
+      <InstagramMedia.Caption />
+    </div>
+  )}
+</InstagramMedia.MediaGalleryRepeater>
 ```
 
 ### InstagramMedia.Caption
@@ -447,6 +486,55 @@ function CustomInstagramComponent() {
 }
 ```
 
+### Accessing Media Item Data and Index
+
+The `MediaGalleryRepeater` provides access to the media item data and index through render props, enabling advanced use cases like navigation, numbering, and conditional rendering:
+
+```tsx
+<InstagramFeed.Root instagramFeedServiceConfig={{ accountId: 'account123' }}>
+  <InstagramFeed.InstagramMedias>
+    <InstagramMedia.MediaGalleries>
+      <InstagramMedia.MediaGalleryRepeater>
+        {({ mediaItem, index }) => (
+          <div className="instagram-post-card">
+            {/* Display post number and type */}
+            <div className="post-header">
+              <span>Post #{index + 1}</span>
+              <span className="badge">{mediaItem.type}</span>
+            </div>
+
+            {/* Media content */}
+            <MediaGallery.Viewport asChild>
+              {({ src, alt }) => (
+                <img src={src} alt={alt} className="post-image" />
+              )}
+            </MediaGallery.Viewport>
+
+            {/* Post metadata */}
+            <div className="post-footer">
+              <InstagramMedia.Caption />
+              <InstagramMedia.Timestamp />
+            </div>
+
+            {/* Navigation example - link to specific post */}
+            <a href={mediaItem.permalink} target="_blank" rel="noopener noreferrer">
+              View on Instagram
+            </a>
+          </div>
+        )}
+      </InstagramMedia.MediaGalleryRepeater>
+    </InstagramMedia.MediaGalleries>
+  </InstagramFeed.InstagramMedias>
+</InstagramFeed.Root>
+```
+
+**Use Cases:**
+- **Post numbering**: Display post position using `index + 1`
+- **Navigation**: Create navigation between posts using `index`
+- **Conditional rendering**: Show different UI based on `mediaItem.type` (image/video/carousel)
+- **Direct links**: Access `mediaItem.permalink` for linking to Instagram posts
+- **Metadata display**: Show post-specific information like `mediaItem.caption`, `mediaItem.timestamp`
+
 ## Integration with Media Gallery
 
 Instagram components integrate seamlessly with Media Gallery components:
@@ -456,20 +544,24 @@ Instagram components integrate seamlessly with Media Gallery components:
   <InstagramFeed.InstagramMedias>
     <InstagramMedia.MediaGalleries>
       <InstagramMedia.MediaGalleryRepeater>
-        {/* Use Media Gallery primitives like Viewport within the repeater */}
-        <MediaGallery.Viewport asChild>
+        {({ mediaItem, index }) => (
+          <>
+            {/* Use Media Gallery primitives like Viewport within the repeater */}
+            <MediaGallery.Viewport asChild>
               {({ src, alt }) => (
-                 <img
-                src={src}
-                alt={alt || ''}
-                className="w-full h-full object-cover cursor-pointer"
+                <img
+                  src={src}
+                  alt={alt || ''}
+                  className="w-full h-full object-cover cursor-pointer"
                 />
               )}
-        </MediaGallery.Viewport>
-        <InstagramMedia.Caption />
-        <InstagramMedia.MediaType />
-        <InstagramMedia.UserName />
-        <InstagramMedia.Timestamp />
+            </MediaGallery.Viewport>
+            <InstagramMedia.Caption />
+            <InstagramMedia.MediaType />
+            <InstagramMedia.UserName />
+            <InstagramMedia.Timestamp />
+          </>
+        )}
       </InstagramMedia.MediaGalleryRepeater>
     </InstagramMedia.MediaGalleries>
   </InstagramFeed.InstagramMedias>
