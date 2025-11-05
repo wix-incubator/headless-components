@@ -1,5 +1,8 @@
 import React from 'react';
-import type { EnhancedModifierGroup, Modifier } from '../services/types.js';
+import type {
+  EnhancedModifier,
+  EnhancedModifierGroup,
+} from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds.js';
 import {
@@ -109,20 +112,11 @@ export const ModifiersRepeater = (
 
   return (
     <>
-      {modifierGroupModifiers.map(
-        (
-          modifier: Modifier & {
-            additionalChargeInfo?: {
-              additionalCharge?: string;
-              formattedAdditionalCharge?: string;
-            };
-          },
-        ) => (
-          <ModifierComponent.Root key={modifier._id} modifier={modifier}>
-            {children}
-          </ModifierComponent.Root>
-        ),
-      )}
+      {modifierGroupModifiers.map((modifier: EnhancedModifier) => (
+        <ModifierComponent.Root key={modifier._id} modifier={modifier}>
+          {children}
+        </ModifierComponent.Root>
+      ))}
     </>
   );
 };

@@ -1,16 +1,11 @@
 import React from 'react';
-import type { Modifier } from '../services/types.js';
+import type { EnhancedModifier } from '../services/types.js';
 import { AsChildSlot, type AsChildChildren } from '@wix/headless-utils/react';
 import { TestIds } from './TestIds.js';
 import { CoreModifier, ModifierName, ModifierPrice } from './core/index.js';
 
 export interface ModifierRootProps {
-  modifier?: Modifier & {
-    additionalChargeInfo?: {
-      additionalCharge?: string;
-      formattedAdditionalCharge?: string;
-    };
-  };
+  modifier?: EnhancedModifier;
   children: React.ReactNode;
 }
 

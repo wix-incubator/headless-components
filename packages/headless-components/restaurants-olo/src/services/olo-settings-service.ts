@@ -5,12 +5,14 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
+
 export interface OLOSettingsServiceAPI {
   operationGroup: Signal<operationGroupsApi.OperationGroup | undefined>;
   operation: Signal<operationsApi.Operation | undefined>;
   selectedItem?: Signal<unknown>;
   isLoading: Signal<boolean>;
   error: Signal<string | null>;
+  availabilityDispatchAction?: Signal<(() => void) | undefined>;
   //   fetchOperationGroups: () => Promise<void>;
   //   fetchOperations: () => Promise<void>;
 }
@@ -18,6 +20,7 @@ export interface OLOSettingsServiceAPI {
 export interface OLOSettingsServiceConfig {
   operationGroup?: operationGroupsApi.OperationGroup;
   operation?: operationsApi.Operation;
+  availabilityDispatchAction?: () => void;
 }
 
 export const OLOSettingsServiceDefinition =
@@ -28,6 +31,9 @@ export const OLOSettingsService =
     OLOSettingsServiceDefinition,
     ({ getService, config }) => {
       const signalsService = getService(SignalsServiceDefinition);
+      const availabilityDispatchAction = signalsService.signal<
+        (() => void) | undefined
+      >(config.availabilityDispatchAction);
       const operationGroup = signalsService.signal<
         operationGroupsApi.OperationGroup | undefined
       >(config.operationGroup);
@@ -44,6 +50,7 @@ export const OLOSettingsService =
         isLoading,
         error,
         selectedItem,
+        availabilityDispatchAction,
       };
     },
   );

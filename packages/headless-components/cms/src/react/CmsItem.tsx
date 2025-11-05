@@ -98,6 +98,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     const attributes = {
       'data-testid': TestIds.cmsItemRoot,
+      'data-collection-id': item.collectionId,
       'data-collection-item-id': item.id,
     };
 
