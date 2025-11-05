@@ -79,10 +79,10 @@ export function getCustomLineItemCheckoutURLFactory(
         channelType: checkout.ChannelType.WEB,
         ...(factoryOpts.currency
           ? {
-            checkoutInfo: {
-              currency: factoryOpts.currency,
-            },
-          }
+              checkoutInfo: {
+                currency: factoryOpts.currency,
+              },
+            }
           : {}),
       });
 
