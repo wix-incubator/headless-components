@@ -46,7 +46,8 @@ function buildSearchFilterData(
       type: 'range',
       displayType: 'range',
       validValues: [availableMinPrice, availableMaxPrice],
-      valueFormatter: (value: FilterPrimitive.FilterOptionValueType) => `$${value}`,
+      valueFormatter: (value: FilterPrimitive.FilterOptionValueType) =>
+        `$${value}`,
       fieldName: [
         'actualPriceRange.minValue.amount',
         'actualPriceRange.maxValue.amount',
