@@ -312,15 +312,15 @@ interface FilterOption {
   /** Current filter value */
   value?: any; // number[] (for range) | string[] (for multi) | string (for single) | boolean
   /** Function to format values for display */
-  valueFormatter?: (value: string | number | boolean) => string;
+  valueFormatter?: (value: FilterPrimitive.FilterOptionValueType) => string;
   /** Valid values for this filter (for validation and shared field logic) */
-  validValues?: Array<string | number | boolean>;
+  validValues?: Array<FilterPrimitive.FilterOptionValueType>;
   /** Filter input type */
   type: 'single' | 'multi' | 'range';
   /** Display type for styling/rendering */
   displayType: 'color' | 'text' | 'range';
   /** Function to format background color for color filters */
-  valueBgColorFormatter?: (value: string | number | boolean) => string | null;
+  valueBgColorFormatter?: (value: FilterPrimitive.FilterOptionValueType) => string | null;
 }
 
 interface FilterRootProps {
