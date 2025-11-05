@@ -232,12 +232,11 @@ interface ListRendererProps
   extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onChange'> {
   currentSort: { fieldName?: string; order?: string };
   options: SortOptionRenderable[];
-  onChange: (fieldName?: string, order?: string) => void;
 }
 
 const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
   (props, ref) => {
-    const { currentSort, options, onChange, ...otherProps } = props;
+    const { currentSort, options, ...otherProps } = props;
 
     return (
       <ul ref={ref} {...otherProps}>
@@ -525,7 +524,6 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
         <button
           onClick={handleSelect}
           data-testid={TestIds.sortOption}
-          className="data-[selected=true]:text-[var(--theme-btn-primary-text)]"
           data-selected={isSelected}
           data-field-name={fieldName}
           data-order={order}

@@ -431,7 +431,7 @@ export interface FilterOptionsProps
    * This is a simple container component that provides structural organization
    * for filter option groups.
    */
-  children: React.ReactNode;
+  children: React.ReactNode; // should be asChild slot children (do we have more? )
 }
 
 /**
