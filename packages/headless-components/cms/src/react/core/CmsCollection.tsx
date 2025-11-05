@@ -6,6 +6,7 @@ import {
   CmsCollectionServiceImplementation,
   type WixDataItem,
   type WixDataQueryResult,
+  type InsertItemOrReferenceParams,
 } from '../../services/cms-collection-service.js';
 import { createServicesMap } from '@wix/services-manager';
 
@@ -97,6 +98,8 @@ export interface NextActionRenderProps {
   hasNext: boolean;
   /** Whether a page is currently loading */
   isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
   /** Current page number */
   currentPage: WixDataQueryResult['currentPage'];
   /** Total number of items */
@@ -116,6 +119,7 @@ export function NextAction(props: NextActionProps) {
   >;
 
   const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
   const queryResult = service.queryResultSignal.get();
   const loadNext = service.loadNextPage;
 
@@ -123,6 +127,7 @@ export function NextAction(props: NextActionProps) {
     loadNext,
     hasNext: queryResult?.hasNext() ?? false,
     isLoading,
+    error,
     currentPage: queryResult?.currentPage,
     totalCount: queryResult?.totalCount,
     pageSize: queryResult?.pageSize,
@@ -148,6 +153,8 @@ export interface PrevActionRenderProps {
   hasPrev: boolean;
   /** Whether a page is currently loading */
   isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
   /** Current page number */
   currentPage: WixDataQueryResult['currentPage'];
   /** Total number of items */
@@ -167,6 +174,7 @@ export function PrevAction(props: PrevActionProps) {
   >;
 
   const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
   const queryResult = service.queryResultSignal.get();
   const loadPrev = service.loadPrevPage;
 
@@ -174,6 +182,7 @@ export function PrevAction(props: PrevActionProps) {
     loadPrev,
     hasPrev: queryResult?.hasPrev() ?? false,
     isLoading,
+    error,
     currentPage: queryResult?.currentPage,
     totalCount: queryResult?.totalCount,
     pageSize: queryResult?.pageSize,
@@ -195,6 +204,10 @@ export interface TotalsCountProps {
 export interface TotalsCountRenderProps {
   /** Total number of items in the collection */
   total: number;
+  /** Whether the collection is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
 }
 
 /**
@@ -206,9 +219,13 @@ export function TotalsCount(props: TotalsCountProps) {
   >;
 
   const queryResult = service.queryResultSignal.get();
+  const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
 
   return props.children({
     total: queryResult?.totalCount ?? 0,
+    isLoading,
+    error,
   });
 }
 
@@ -237,6 +254,10 @@ export interface TotalsDisplayedProps {
 export interface TotalsDisplayedRenderProps {
   /** Number based on the specified displayType */
   displayed: number;
+  /** Whether the collection is currently loading */
+  isLoading: boolean;
+  /** Error message if loading failed, null otherwise */
+  error: string | null;
 }
 
 /**
@@ -249,6 +270,8 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
   >;
 
   const queryResult = service.queryResultSignal.get();
+  const isLoading = service.loadingSignal.get();
+  const error = service.errorSignal.get();
 
   // Extract data from queryResult
   const currentPage = queryResult?.currentPage ?? 0; // 0-based index
@@ -281,6 +304,8 @@ export function TotalsDisplayed(props: TotalsDisplayedProps) {
 
   return props.children({
     displayed,
+    isLoading,
+    error,
   });
 }
 
@@ -296,8 +321,10 @@ export interface CreateItemActionProps {
  * Render props for CmsCollection.CreateItemAction component
  */
 export interface CreateItemActionRenderProps {
-  /** Function to create a new item */
-  createItem: (itemData: Partial<WixDataItem>) => Promise<void>;
+  /** Function to create a new item or insert a reference. Returns the created item when creating, or void when inserting references. */
+  insertItemOrReference: (
+    params: InsertItemOrReferenceParams,
+  ) => Promise<WixDataItem | void>;
   /** Whether creation is currently in progress */
   isLoading: boolean;
   /** Error message if creation failed, null otherwise */
@@ -336,10 +363,10 @@ export function CreateItemAction(props: CreateItemActionProps) {
 
   const isLoading = service.loadingSignal.get();
   const error = service.errorSignal.get();
-  const createItem = service.createItem;
+  const insertItemOrReference = service.insertItemOrReference;
 
   return props.children({
-    createItem,
+    insertItemOrReference,
     isLoading,
     error,
   });

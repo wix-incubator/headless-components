@@ -8,7 +8,7 @@ import {
   FormService,
 } from '../../services/form-service.js';
 import { FormValues } from '../types.js';
-import { calculateGridStyles, findFieldLayout } from '../utils.js';
+import { calculateGridStyles } from '../utils.js';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -187,7 +187,7 @@ export function LoadingError(props: FormErrorProps) {
 }
 
 /**
- * Props for Form Error headless component
+ * Props for Form Submit Error headless component
  */
 export interface FormSubmitErrorProps {
   /** Render prop function that receives submit error state data */
@@ -195,7 +195,7 @@ export interface FormSubmitErrorProps {
 }
 
 /**
- * Render props for Form Error component
+ * Render props for Form Submit Error component
  */
 export interface FormSubmitErrorRenderProps {
   /** Submit error message */
@@ -305,15 +305,18 @@ export function Submitted(props: FormSubmittedProps) {
 /**
  * Render props for Fields component
  */
-interface FieldsRenderProps {
+export interface FieldsRenderProps {
+  /** The form data, or null if not loaded */
   form: forms.Form | null;
+  /** Function to submit the form with values */
   submitForm: (formValues: FormValues) => Promise<void>;
 }
 
 /**
  * Props for Fields headless component
  */
-interface FieldsProps {
+export interface FieldsProps {
+  /** Render prop function that receives form data and submit handler */
   children: (props: FieldsRenderProps) => React.ReactNode;
 }
 
@@ -370,6 +373,8 @@ export interface FormView {
  */
 export interface Layout {
   column: number;
+  row: number;
+  height: number;
   width: number;
 }
 
@@ -391,7 +396,6 @@ export interface FieldRenderProps {
   layout: Layout;
   /** Grid styles for container */
   gridStyles: {
-    container: React.CSSProperties;
     label: React.CSSProperties;
     input: React.CSSProperties;
   };
@@ -403,6 +407,8 @@ export interface FieldRenderProps {
 export interface FieldProps {
   /** The unique identifier for this field */
   id: string;
+  /** The field layout configuration */
+  layout: Layout;
   /** Render prop function that receives field layout data */
   children: (props: FieldRenderProps) => React.ReactNode;
 }
@@ -418,11 +424,11 @@ export interface FieldProps {
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
  *
- * function CustomField({ id }) {
+ * function CustomField({ id, layout }) {
  *   return (
- *     <Form.Field id={id}>
- *       {({ layout, gridStyles }) => (
- *         <div style={gridStyles.container}>
+ *     <Form.Field id={id} layout={layout}>
+ *       {({ id, layout, gridStyles }) => (
+ *         <div data-field-id={id}>
  *           <div style={gridStyles.label}>Label</div>
  *           <div style={gridStyles.input}>Input</div>
  *         </div>
@@ -433,7 +439,7 @@ export interface FieldProps {
  * ```
  */
 export function Field(props: FieldProps) {
-  const { id, children } = props;
+  const { id, children, layout } = props;
   const { formSignal } = useService(FormServiceDefinition);
   const form = formSignal.get();
 
@@ -441,17 +447,11 @@ export function Field(props: FieldProps) {
     return null;
   }
 
-  const fieldLayout = findFieldLayout(form, id);
-
-  if (!fieldLayout) {
-    return null;
-  }
-
-  const gridStyles = calculateGridStyles(fieldLayout);
+  const gridStyles = calculateGridStyles(layout);
 
   return children({
     id,
-    layout: fieldLayout,
+    layout,
     gridStyles,
   });
 }

@@ -228,14 +228,21 @@ See [Sort.Root](./PLATFORM_INTERFACE.md#sortroot) and [Sort.Option](./PLATFORM_I
 
 ### CmsCollection.Filters
 
-Container for collection item filters and controls (we should go over cms implementation and update it).
+Container for collection item filters and controls. Provides comprehensive filtering functionality for CMS collections by wrapping the generic Filter primitive with CMS-specific state management.
+
+**Architecture Note:** This component internally manages filter state through the CMS Collection service and integrates with the generic `Filter` primitive. The component does NOT expose render props to users. Instead, users compose their filter UI using the generic `Filter.*` components as children.
 
 **Props**
 
 ```tsx
 interface CmsCollectionFiltersProps {
-  children?: React.ReactNode;
+  /** Filter options configuration */
+  filterOptions: FilterOption[];
+  /** Whether to render as a child component */
   asChild?: boolean;
+  /** Child components (Filter.* primitives) that will have access to filter functionality */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
   className?: string;
 }
 ```
@@ -243,23 +250,175 @@ interface CmsCollectionFiltersProps {
 **Example**
 
 ```tsx
-<CmsCollection.Filters className="flex gap-4"> // defines the <Filter.Root value={filter} onChange={setFilter}>
+// ✅ CORRECT - Basic usage with filter options
+// Children are Filter.* primitives, NOT render functions
+<CmsCollection.Filters
+  filterOptions={[
+    {
+      key: 'category',
+      label: 'Category',
+      type: 'single',
+      displayType: 'text',
+      fieldName: 'category',
+      validValues: ['tech', 'lifestyle', 'business'],
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'multi',
+      displayType: 'text',
+      fieldName: 'status',
+      fieldType: 'singular',
+      validValues: ['draft', 'published', 'archived'],
+    },
+    {
+      key: 'dateRange',
+      label: 'Created Date',
+      type: 'range',
+      displayType: 'range',
+      fieldName: ['_createdDate.min', '_createdDate.max'],
+      validValues: [0, Date.now()],
+      valueFormatter: (value) => new Date(value).toLocaleDateString(),
+    },
+  ]}
+  className="space-y-4"
+>
   <Filter.FilterOptions>
     <Filter.FilterOptionRepeater>
-      <Filter.SingleFilter/> // define how to render a single filter (i.e. radio button)
-      <Filter.MultiFilter/> // define how to render a multi filter (i.e. checkbox)
-      <Filter.RangeFilter/> // define how to render a range filter (i.e. slider)
+      <Filter.FilterOption.Label className="block font-medium mb-2" />
+      <Filter.FilterOption.SingleFilter className="w-full" />
+      <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2" />
+      <Filter.FilterOption.RangeFilter className="w-full" />
+    </Filter.FilterOptionRepeater>
+  </Filter.FilterOptions>
+</CmsCollection.Filters>
+
+// ❌ INCORRECT - CmsCollection.Filters does NOT expose render props
+<CmsCollection.Filters filterOptions={options}>
+  {({ filterValue, updateFilter }) => (  // ❌ This pattern is NOT supported
+    <div>Custom UI</div>
+  )}
+</CmsCollection.Filters>
+
+// With custom container using asChild
+<CmsCollection.Filters
+  asChild
+  filterOptions={filterOptions}
+>
+  <aside className="filter-sidebar bg-background p-4 rounded-lg">
+    <h3 className="font-heading text-lg font-semibold mb-4 text-foreground">Filters</h3>
+    <Filter.FilterOptions>
+      <Filter.FilterOptionRepeater>
+        <div className="mb-4">
+          <Filter.FilterOption.Label className="block font-paragraph text-sm font-medium text-foreground mb-2" />
+          <Filter.FilterOption.SingleFilter />
+          <Filter.FilterOption.MultiFilter />
+          <Filter.FilterOption.RangeFilter />
+        </div>
+      </Filter.FilterOptionRepeater>
+    </Filter.FilterOptions>
+    <CmsCollection.FilterResetTrigger label="Clear All" className="mt-4 w-full" />
+  </aside>
+</CmsCollection.Filters>
+
+// With color swatches for multi-select
+<CmsCollection.Filters
+  filterOptions={[
+    {
+      key: 'tags',
+      label: 'Tags',
+      type: 'multi',
+      displayType: 'color',
+      fieldName: 'tags',
+      fieldType: 'array',
+      validValues: ['red', 'blue', 'green', 'yellow'],
+      valueBgColorFormatter: (value) => value.toString().toLowerCase(),
+    },
+  ]}
+>
+  <Filter.FilterOptions>
+    <Filter.FilterOptionRepeater>
+      <Filter.FilterOption.Label />
+      <Filter.FilterOption.MultiFilter className="grid grid-cols-6 gap-2" />
     </Filter.FilterOptionRepeater>
   </Filter.FilterOptions>
 </CmsCollection.Filters>
 ```
 
-Refer to [Filter.Root](./PLATFORM_INTERFACE.md#filterroot) for more details.
+Refer to [Filter.Root](./PLATFORM_INTERFACE.md#filterroot) and related Filter components for more details on the generic Filter primitives.
 
 **Data Attributes**
 
 - `data-testid="cms-collection-filters"` - Applied to filters container
-- `data-has-active-filters` - Present when filters are active
+
+---
+
+### CmsCollection.FilterResetTrigger
+
+Displays a button to reset all active filters. Only renders when filters are currently applied.
+
+**Props**
+
+```tsx
+interface FilterResetTriggerProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    resetFilters: () => void;
+    isFiltered: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the button */
+  label?: string;
+}
+```
+
+**Example**
+
+```tsx
+// Default usage
+<CmsCollection.FilterResetTrigger
+  label="Clear All Filters"
+  className="bg-secondary text-secondary-foreground px-4 py-2 rounded"
+/>
+
+// Custom rendering with asChild
+<CmsCollection.FilterResetTrigger asChild>
+  {({ resetFilters, isFiltered }, ref) => (
+    <button
+      ref={ref}
+      onClick={resetFilters}
+      disabled={!isFiltered}
+      className="bg-destructive text-destructive-foreground px-4 py-2 rounded disabled:opacity-50"
+    >
+      ✕ Reset All Filters
+    </button>
+  )}
+</CmsCollection.FilterResetTrigger>
+
+// Within Filter.Filtered conditional container
+<CmsCollection.Filters filterOptions={filterOptions}>
+  <Filter.Filtered>
+    <div className="bg-background border border-foreground/10 p-4 rounded mb-4">
+      <p className="font-paragraph text-secondary-foreground mb-2">Active filters:</p>
+      <CmsCollection.FilterResetTrigger label="Clear All" />
+    </div>
+  </Filter.Filtered>
+  <Filter.FilterOptions>
+    <Filter.FilterOptionRepeater>
+      <Filter.FilterOption.Label />
+      <Filter.FilterOption.MultiFilter />
+    </Filter.FilterOptionRepeater>
+  </Filter.FilterOptions>
+</CmsCollection.Filters>
+```
+
+**Data Attributes**
+
+- `data-testid="cms-collection-filter-reset-trigger"` - Applied to reset button
+- `data-filtered` - Boolean indicating if filters are active
 
 ---
 
@@ -271,7 +430,9 @@ Main container for the collection items display with support for empty states an
 
 ```tsx
 interface ItemsProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { items: WixDataItem[]; isLoading: boolean; error: string | null }) => React.ReactNode);
   emptyState?: React.ReactNode;
   asChild?: boolean;
   className?: string;
@@ -437,7 +598,9 @@ Displays a button to load the next/prev page of items. Not rendered if infiniteS
 
 ```tsx
 interface CmsCollectionNextActionProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: { loadNext: () => void; hasNext: boolean; isLoading: boolean; error: string | null }) => React.ReactNode);
   asChild?: boolean;
   className?: string;
 }
@@ -475,6 +638,8 @@ interface TotalsCountProps {
   children?:
     | AsChildChildren<{
         total: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;
@@ -517,6 +682,8 @@ interface TotalsDisplayedProps {
   children?:
     | AsChildChildren<{
         displayed: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   className?: string;
@@ -562,7 +729,13 @@ type DisplayType =
 
 ### CmsCollection.CreateItemAction
 
-Displays a button to create a new item in the collection. Integrates with the collection service to handle item creation with loading states.
+Button component for creating new items in a CMS collection or inserting references between items. Handles loading and errors states.
+
+**Two Operation Modes:**
+
+1. **Create New Item Mode** - Use when adding a new item to a collection. Pass `itemData` prop with the item's field values.
+
+2. **Insert Reference Mode** - Use when linking existing items via reference fields. Pass `referenceFieldId`, `itemId`, and `referencedItemIds` (single ID or array of IDs).
 
 **Props**
 
@@ -574,47 +747,61 @@ interface CreateItemActionProps {
     | AsChildChildren<{
         disabled: boolean;
         isLoading: boolean;
-        onClick: () => void;
+        insertItemOrReference: (params: InsertItemOrReferenceParams) => Promise<WixDataItem | void>;
       }>
     | React.ReactNode;
   className?: string;
   loadingState?: string | React.ReactNode;
+  // For creating new items:
   itemData?: Partial<WixDataItem>;
+  // For inserting references:
+  referenceFieldId?: string;
+  itemId?: string;
+  referencedItemIds?: string | string[]; // Single ID or array of IDs
 }
+
+type InsertItemOrReferenceParams =
+  | { itemData: Partial<WixDataItem> }
+  | { referenceFieldId: string; itemId: string; referencedItemIds: string | string[] };
 ```
 
-**Example**
+**Examples**
 
 ```tsx
-// Default usage
+// MODE 1: Create new item - Simple usage with direct props
 <CmsCollection.CreateItemAction
-  label="Add Item"
-  className="btn-primary"
+  label="Add Article"
   loadingState="Creating..."
-  itemData={{ title: "New Item", status: "draft" }}
+  itemData={{ title: "New Article", status: "draft" }}
 />
 
-// Simple content override
-<CmsCollection.CreateItemAction
-  label="New Post"
-  loadingState="Publishing..."
-  itemData={{ category: "blog", status: "published" }}
->
-  📝 Create Post
-</CmsCollection.CreateItemAction>
+// MODE 1: Create new item - With dynamic data from state
+function DynamicCreateButton() {
+  const [formData, setFormData] = useState({ title: '', content: '' });
 
-// With asChild pattern - custom button
-<CmsCollection.CreateItemAction asChild itemData={{ title: "New Article" }}>
-  <Button>Add New Item</Button>
-</CmsCollection.CreateItemAction>
+  return (
+    <>
+      <input
+        value={formData.title}
+        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+      />
+      <CmsCollection.CreateItemAction
+        label="Submit"
+        itemData={formData}
+      />
+    </>
+  );
+}
 
-// With asChild pattern - full control
-<CmsCollection.CreateItemAction asChild itemData={{ status: "draft" }}>
-  {({ disabled, isLoading, onClick }) => (
+// MODE 1: Create new item - Custom design with asChild
+<CmsCollection.CreateItemAction asChild>
+  {({ insertItemOrReference, disabled, isLoading }) => (
     <button
       disabled={disabled}
-      onClick={onClick}
-      className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+      onClick={() => insertItemOrReference({
+        itemData: { title: "New Article", status: "draft" }
+      })}
+      className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
     >
       {isLoading ? (
         <>
@@ -624,13 +811,77 @@ interface CreateItemActionProps {
       ) : (
         <>
           <Plus className="h-4 w-4" />
-          Add Item
+          Add Article
         </>
       )}
     </button>
   )}
 </CmsCollection.CreateItemAction>
+
+// MODE 2: Insert reference - Link existing items (single ID)
+<CmsCollection.CreateItemAction
+  label="Add Actor to Movie"
+  referenceFieldId="actors"
+  itemId="movie-123"
+  referencedItemIds="actor-456"
+/>
+
+// MODE 2: Insert reference - Link multiple items at once
+<CmsCollection.CreateItemAction
+  label="Add Multiple Actors"
+  referenceFieldId="actors"
+  itemId="movie-123"
+  referencedItemIds={["actor-456", "actor-789", "actor-321"]}
+/>
+
+// ADVANCED: Chaining - Create item then add references
+<CmsCollection.CreateItemAction asChild>
+  {({ insertItemOrReference, disabled, isLoading }) => {
+    const [title, setTitle] = useState('');
+    const [tags, setTags] = useState(['tag-1', 'tag-2']);
+
+    const handleSubmit = async () => {
+      try {
+        // Step 1: Create the post
+        const newPost = await insertItemOrReference({
+          itemData: { title, status: 'published' }
+        });
+
+        // Step 2: Add tags using the returned ID
+        if (newPost?._id) {
+          await insertItemOrReference({
+            referenceFieldId: 'tags',
+            itemId: newPost._id,
+            referencedItemIds: tags  // Pass array of tag IDs
+          });
+        }
+
+        alert('Post created with tags!');
+      } catch (error) {
+        console.error('Failed:', error);
+      }
+    };
+
+    return (
+      <button
+        onClick={handleSubmit}
+        disabled={disabled}
+        className="btn-primary"
+      >
+        {isLoading ? 'Creating...' : 'Create Post with Tags'}
+      </button>
+    );
+  }}
+</CmsCollection.CreateItemAction>
 ```
+
+**Key Features**
+
+- **Dual functionality**: Create items OR insert references
+- **Returns created item**: Enables chaining operations (create → reference)
+- **Flexible reference insertion**: Accept single ID or array of IDs
+- **Automatic loading states**: Handles loading/disabled states internally
+- **Error handling**: Catches and reports errors automatically
 
 **Data Attributes**
 
@@ -784,28 +1035,30 @@ interface ErrorRenderProps {
 
 ## Data Attributes Summary
 
-| Attribute                                      | Applied To                     | Purpose                      |
-| ---------------------------------------------- | ------------------------------ | ---------------------------- |
-| `data-testid="cms-collection-root"`            | CmsCollection.Root             | Collection root container    |
-| `data-collection-id`                           | CmsCollection.Root             | Collection identifier        |
-| `data-testid="cms-collection-sorting"`         | CmsCollection.Sort             | Sorting container            |
-| `data-testid="cms-collection-filters"`         | CmsCollection.Filters          | Filters container            |
-| `data-testid="cms-collection-items"`           | CmsCollection.Items            | Items container              |
-| `data-testid="cms-collection-item"`            | CmsCollection.ItemRepeater     | Individual collection item   |
-| `data-collection-item-id`                      | CmsCollection.ItemRepeater     | Item identifier              |
-| `data-testid="cms-collection-load-more"`       | CmsCollection.ShowMoreAction   | Load more button             |
-| `data-testid="cms-collection-next"`            | CmsCollection.NextAction       | Next page button             |
-| `data-testid="cms-collection-prev"`            | CmsCollection.PrevAction       | Previous page button         |
-| `data-testid="cms-collection-create-item"`     | CmsCollection.CreateItemAction | Create item button           |
-| `data-testid="cms-collection-bulk-update"`     | CmsCollection.BulkUpdateAction | Bulk update button           |
-| `data-testid="cms-collection-items-totals"`    | CmsCollection.Totals.Count     | Totals container             |
-| `data-testid="cms-collection-items-displayed"` | CmsCollection.Totals.Displayed | Displayed count container    |
-| `data-empty`                                   | CmsCollection.Items            | Empty collection status      |
-| `data-infinite-scroll`                         | CmsCollection.Items            | Infinite scroll mode         |
-| `data-total`                                   | CmsCollection.Totals.Count     | Total number of items        |
-| `data-displayed`                               | CmsCollection.Totals.Displayed | Number based on displayType  |
-| `data-display-type`                            | CmsCollection.Totals.Displayed | The displayType used         |
-| `data-loading`                                 | Action components              | Operation in progress status |
+| Attribute                                          | Applied To                           | Purpose                      |
+| -------------------------------------------------- | ------------------------------------ | ---------------------------- |
+| `data-testid="cms-collection-root"`                | CmsCollection.Root                   | Collection root container    |
+| `data-collection-id`                               | CmsCollection.Root                   | Collection identifier        |
+| `data-testid="cms-collection-sorting"`             | CmsCollection.Sort                   | Sorting container            |
+| `data-testid="cms-collection-filters"`             | CmsCollection.Filters                | Filters container            |
+| `data-testid="cms-collection-filter-reset-trigger"`| CmsCollection.FilterResetTrigger     | Filter reset button          |
+| `data-filtered`                                    | CmsCollection.FilterResetTrigger     | Whether filters are active   |
+| `data-testid="cms-collection-items"`               | CmsCollection.Items                  | Items container              |
+| `data-testid="cms-collection-item"`                | CmsCollection.ItemRepeater           | Individual collection item   |
+| `data-collection-item-id`                          | CmsCollection.ItemRepeater           | Item identifier              |
+| `data-testid="cms-collection-load-more"`           | CmsCollection.ShowMoreAction         | Load more button             |
+| `data-testid="cms-collection-next"`                | CmsCollection.NextAction             | Next page button             |
+| `data-testid="cms-collection-prev"`                | CmsCollection.PrevAction             | Previous page button         |
+| `data-testid="cms-collection-create-item"`         | CmsCollection.CreateItemAction       | Create item button           |
+| `data-testid="cms-collection-bulk-update"`         | CmsCollection.BulkUpdateAction       | Bulk update button           |
+| `data-testid="cms-collection-items-totals"`        | CmsCollection.Totals.Count           | Totals container             |
+| `data-testid="cms-collection-items-displayed"`     | CmsCollection.Totals.Displayed       | Displayed count container    |
+| `data-empty`                                       | CmsCollection.Items                  | Empty collection status      |
+| `data-infinite-scroll`                             | CmsCollection.Items                  | Infinite scroll mode         |
+| `data-total`                                       | CmsCollection.Totals.Count           | Total number of items        |
+| `data-displayed`                                   | CmsCollection.Totals.Displayed       | Number based on displayType  |
+| `data-display-type`                                | CmsCollection.Totals.Displayed       | The displayType used         |
+| `data-loading`                                     | Action components                    | Operation in progress status |
 
 ## Usage Examples
 
@@ -830,17 +1083,44 @@ function CmsCollectionDisplay() {
           <div className="flex gap-4">
             <CmsCollection.Sort
               as="select"
-              valueFormatter={({ sortBy, sortDirection }) =>
-                `${sortBy === 'title' ? 'Title' : sortBy === 'created' ? 'Date Created' : 'Modified'} (${sortDirection === 'asc' ? 'A-Z' : 'Z-A'})`
-              }
+              sortOptions={[
+                { fieldName: 'title', order: 'ASC', label: 'Title (A-Z)' },
+                { fieldName: 'title', order: 'DESC', label: 'Title (Z-A)' },
+                { fieldName: '_createdDate', order: 'DESC', label: 'Newest First' },
+                { fieldName: '_updatedDate', order: 'DESC', label: 'Recently Modified' },
+              ]}
             />
 
-            <CmsCollection.Filters>
+            <CmsCollection.Filters
+              filterOptions={[
+                {
+                  key: 'category',
+                  label: 'Category',
+                  type: 'single',
+                  displayType: 'text',
+                  fieldName: 'category',
+                  validValues: ['tech', 'lifestyle', 'business'],
+                },
+                {
+                  key: 'status',
+                  label: 'Status',
+                  type: 'multi',
+                  displayType: 'text',
+                  fieldName: 'status',
+                  fieldType: 'singular',
+                  validValues: ['draft', 'published'],
+                },
+              ]}
+            >
+              <Filter.Filtered>
+                <CmsCollection.FilterResetTrigger label="Clear All" />
+              </Filter.Filtered>
               <Filter.FilterOptions>
                 <Filter.FilterOptionRepeater>
-                  <Filter.SingleFilter />
-                  <Filter.MultiFilter />
-                  <Filter.RangeFilter />
+                  <Filter.FilterOption.Label />
+                  <Filter.FilterOption.SingleFilter />
+                  <Filter.FilterOption.MultiFilter />
+                  <Filter.FilterOption.RangeFilter />
                 </Filter.FilterOptionRepeater>
               </Filter.FilterOptions>
             </CmsCollection.Filters>

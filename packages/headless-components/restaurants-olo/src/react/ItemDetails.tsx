@@ -3,15 +3,25 @@ import { Commerce } from '@wix/ecom/components';
 import { type LineItem } from '@wix/ecom/services';
 import { type AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { Quantity as QuantityComponent } from '@wix/headless-components/react';
+import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
+import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import {
   Item,
-  Label,
   Modifier,
   ModifierGroup,
-  Variant,
-} from '@wix/restaurants/components';
+  useModifierContext,
+} from '@wix/headless-restaurants-menus/react';
 import * as CoreItemDetails from './core/ItemDetails.js';
 import { ItemServiceConfig } from '../services/item-details-service.js';
+import {
+  EnhancedModifier,
+  EnhancedModifierGroup,
+  EnhancedVariant,
+} from '@wix/headless-restaurants-menus/services';
+import {
+  AvailabilityStatus,
+  AvailabilityStatusMap,
+} from '../services/common-types.js';
 
 enum TestIds {
   itemName = 'item-name',
@@ -21,9 +31,25 @@ enum TestIds {
   itemAddToCart = 'item-add-to-cart',
   itemSpecialRequest = 'item-special-request',
   itemLabels = 'item-labels',
-  itemModifierGroups = 'item-modifier-groups',
   itemVariants = 'item-variants',
+  itemModifier = 'item-modifier',
+  itemAvailability = 'item-availability',
 }
+
+const CheckIcon = () => (
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 15 15"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"
+      fill="currentColor"
+    />
+  </svg>
+);
 
 /**
  * Root component for menu item display and interaction.
@@ -96,52 +122,6 @@ export const Name = React.forwardRef<HTMLElement, ItemDetailsNameProps>(
 Name.displayName = 'ItemDetails.Name';
 
 /**
- * Displays the item image with customizable rendering.
- *
- * @component
- * @example
- * ```tsx
- * <ItemDetails.Image />
- * <ItemDetails.Image asChild>
- *   <img className="rounded" />
- * </ItemDetails.Image>
- * ```
- */
-export interface ItemDetailsImageProps {
-  asChild?: boolean;
-  /**
-   * Custom render function when using asChild.
-   * Receives an object with:
-   * - hasImage: boolean - whether the item has an image
-   * - image: string - the actual image element (WixMediaImage)
-   * - altText: string - the alt text for the image
-   */
-  children?: (props: {
-    hasImage: boolean;
-    image?: string;
-    altText: string;
-  }) => React.ReactNode;
-  /** CSS classes to apply to the default element */
-  className?: string;
-}
-
-export const Image = React.forwardRef<HTMLElement, ItemDetailsImageProps>(
-  ({ asChild, children, className, ...rest }) => {
-    return (
-      <Item.Image
-        asChild={asChild}
-        className={className}
-        data-testid={TestIds.itemImage}
-        {...rest}
-      >
-        {children}
-      </Item.Image>
-    );
-  },
-);
-Image.displayName = 'ItemDetails.Image';
-
-/**
  * Displays the item price with customizable rendering.
  *
  * @component
@@ -209,67 +189,141 @@ export const Description = React.forwardRef<
 Description.displayName = 'ItemDetails.Description';
 
 /**
- * Wrapper component for Item.LabelsRepeater.
- * Renders the labels for the item using the headless component.
+ * Wrapper component for CoreItemDetails.ModifierComponent.
+ * Renders a single modifier with checkbox functionality.
  *
  * @component
  * @example
  * ```tsx
- * <ItemDetails.Labels>
- *   {(label) => <span>{label.name}</span>}
- * </ItemDetails.Labels>
+ * <ItemDetails.Modifier>
+ *   {({ modifier, isSelected, onToggle }) => (
+ *     <div style={{ display: "flex", alignItems: "center" }}>
+ *       <CheckboxPrimitive.Root
+ *         className="CheckboxRoot"
+ *         checked={isSelected}
+ *         onCheckedChange={onToggle}
+ *         id={modifier._id}
+ *       >
+ *         <CheckboxPrimitive.Indicator className="CheckboxIndicator">
+ *           <CheckIcon />
+ *         </CheckboxPrimitive.Indicator>
+ *       </CheckboxPrimitive.Root>
+ *       <label className="Label" htmlFor={modifier._id}>
+ *         {modifier.name}
+ *       </label>
+ *     </div>
+ *   )}
+ * </ItemDetails.Modifier>
  * ```
  */
-export interface ItemDetailsLabelsProps {
-  children?: AsChildChildren<{ label: string }>;
-  className?: string;
-  asChild?: boolean;
-  iconClassName?: string;
-  nameClassName?: string;
-}
-
-export const Labels = React.forwardRef<HTMLElement, ItemDetailsLabelsProps>(
-  ({ children, className, asChild, iconClassName, nameClassName, ...rest }) => {
-    return (
-      <Item.LabelsRepeater {...rest}>
-        <AsChildSlot
-          asChild={asChild}
-          testId={TestIds.itemLabels}
-          className={className}
-          customElement={children}
-        >
-          <Label.Icon className={iconClassName} />
-          <Label.Name className={nameClassName} />
-        </AsChildSlot>
-      </Item.LabelsRepeater>
-    );
-  },
-);
-Labels.displayName = 'ItemDetails.Labels';
-
-/**
- * Wrapper component for Item.ModifierGroupsRepeater.
- * Renders the modifier groups for the item using the headless component.
- *
- * @component
- * @example
- * ```tsx
- * <ItemDetails.ModifierGroups>
- *   {(modifierGroup) => <span>{modifierGroup.name}</span>}
- * </ItemDetails.ModifierGroups>
- * ```
- */
-export interface ItemDetailsModifierGroupsProps {
-  children?: AsChildChildren<{ modifierGroup: any }>;
+export interface ItemDetailsModifiersSingleSelectProps {
+  children?: AsChildChildren<{
+    selectedModifierIds: string[];
+    onToggle: (modifierId: string) => void;
+    modifierGroup: EnhancedModifierGroup;
+    modifiers: EnhancedModifier[];
+  }>;
   className?: string;
   asChild?: boolean;
   modifierNameClassName?: string;
   modifierPriceClassName?: string;
 }
 
-export const ModifierGroups = React.forwardRef<
+export interface ModifierCheckboxProps {
+  selectedModifierIds: string[];
+  onToggle: (modifierId: string) => void;
+  className?: string;
+  asChild?: boolean;
+  modifierNameClassName?: string;
+  modifierPriceClassName?: string;
+  children?: AsChildChildren<{
+    selectedModifierIds: string[];
+    onToggle: (modifierId: string) => void;
+  }>;
+}
+
+export const ModifierCheckbox = React.forwardRef<
   HTMLElement,
-  ItemDetailsModifierGroupsProps
+  ModifierCheckboxProps
+>(
+  ({
+    selectedModifierIds,
+    onToggle,
+    className,
+    asChild,
+    modifierNameClassName,
+    modifierPriceClassName,
+    children,
+    ...rest
+  }) => {
+    const { modifier } = useModifierContext();
+    const isSelected = selectedModifierIds.includes(modifier._id || '');
+
+    return (
+      <AsChildSlot
+        asChild={asChild}
+        testId={TestIds.itemModifier}
+        className={className}
+        customElement={children}
+        customElementProps={{
+          selectedModifierIds,
+          onToggle,
+        }}
+        {...rest}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <CheckboxPrimitive.Root
+            className="CheckboxRoot"
+            checked={isSelected}
+            onCheckedChange={() => onToggle(modifier._id || '')}
+            id={modifier._id || undefined}
+          >
+            <CheckboxPrimitive.Indicator className="CheckboxIndicator">
+              <CheckIcon />
+            </CheckboxPrimitive.Indicator>
+          </CheckboxPrimitive.Root>
+          <label className="Label" htmlFor={modifier._id || undefined}>
+            <Modifier.Name className={modifierNameClassName} />
+            <Modifier.Price className={modifierPriceClassName} />
+          </label>
+        </div>
+      </AsChildSlot>
+    );
+  },
+);
+ModifierCheckbox.displayName = 'ItemDetails.ModifierCheckbox';
+
+export interface ModifierRadioProps {
+  modifierNameClassName?: string;
+  modifierPriceClassName?: string;
+}
+
+export const ModifierRadio = React.forwardRef<HTMLElement, ModifierRadioProps>(
+  ({ modifierNameClassName, modifierPriceClassName }) => {
+    const { modifier } = useModifierContext();
+
+    return (
+      <RadioGroupPrimitive.Item
+        className="RadioGroupItem"
+        value={modifier._id || ''}
+        id={modifier._id || undefined}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <RadioGroupPrimitive.Indicator className="RadioGroupIndicator" />
+          <label className="Label" htmlFor={modifier._id || undefined}>
+            <Modifier.Name className={modifierNameClassName} />
+            <Modifier.Price className={modifierPriceClassName} />
+          </label>
+        </div>
+      </RadioGroupPrimitive.Item>
+    );
+  },
+);
+ModifierRadio.displayName = 'ItemDetails.ModifierRadio';
+
+export const ModifiersSingleSelect = React.forwardRef<
+  HTMLElement,
+  ItemDetailsModifiersSingleSelectProps
 >(
   ({
     children,
@@ -280,25 +334,107 @@ export const ModifierGroups = React.forwardRef<
     ...rest
   }) => {
     return (
-      <Item.ModifierGroupsRepeater {...rest}>
-        <AsChildSlot
-          asChild={asChild}
-          testId={TestIds.itemModifierGroups}
-          className={className}
-          customElement={children}
-        >
-          <ModifierGroup.ModifiersRepeater>
-            <Modifier.Name className={modifierNameClassName} />
-            <Modifier.Price className={modifierPriceClassName} />
-          </ModifierGroup.ModifiersRepeater>
-        </AsChildSlot>
-      </Item.ModifierGroupsRepeater>
+      <CoreItemDetails.ModifiersComponent singleSelect={true}>
+        {({ selectedModifierIds, onToggle, modifierGroup, modifiers }) => {
+          const selectedModifierId =
+            selectedModifierIds.length > 0 ? selectedModifierIds[0] : '';
+
+          return (
+            <AsChildSlot
+              asChild={asChild}
+              testId={TestIds.itemModifier}
+              className={className}
+              customElement={children}
+              customElementProps={{
+                selectedModifierIds,
+                onToggle,
+                modifierGroup,
+                modifiers,
+              }}
+              {...rest}
+            >
+              <RadioGroupPrimitive.Root
+                value={selectedModifierId}
+                onValueChange={onToggle}
+              >
+                <ModifierGroup.ModifiersRepeater>
+                  <ModifierRadio
+                    modifierNameClassName={modifierNameClassName}
+                    modifierPriceClassName={modifierPriceClassName}
+                  />
+                </ModifierGroup.ModifiersRepeater>
+              </RadioGroupPrimitive.Root>
+            </AsChildSlot>
+          );
+        }}
+      </CoreItemDetails.ModifiersComponent>
     );
   },
 );
+ModifiersSingleSelect.displayName = 'ItemDetails.ModifiersSingleSelect';
+
+export interface ItemDetailsModifiersMultiSelectProps {
+  children?: AsChildChildren<{
+    selectedModifierIds: string[];
+    onToggle: (modifierId: string) => void;
+    modifierGroup: EnhancedModifierGroup;
+    modifiers: EnhancedModifier[];
+  }>;
+  className?: string;
+  asChild?: boolean;
+  modifierNameClassName?: string;
+  modifierPriceClassName?: string;
+}
+
+export const ModifiersMultiSelect = React.forwardRef<
+  HTMLElement,
+  ItemDetailsModifiersMultiSelectProps
+>(
+  ({
+    children,
+    className,
+    asChild,
+    modifierNameClassName,
+    modifierPriceClassName,
+    ...rest
+  }) => {
+    return (
+      <CoreItemDetails.ModifiersComponent singleSelect={false}>
+        {({ selectedModifierIds, onToggle, modifierGroup, modifiers }) => {
+          return (
+            <AsChildSlot
+              asChild={asChild}
+              testId={TestIds.itemModifier}
+              className={className}
+              customElement={children}
+              customElementProps={{
+                selectedModifierIds,
+                onToggle,
+                modifierGroup,
+                modifiers,
+              }}
+              {...rest}
+            >
+              <ModifierGroup.ModifiersRepeater>
+                <ModifierCheckbox
+                  selectedModifierIds={selectedModifierIds}
+                  onToggle={onToggle}
+                  modifierNameClassName={modifierNameClassName}
+                  modifierPriceClassName={modifierPriceClassName}
+                />
+              </ModifierGroup.ModifiersRepeater>
+            </AsChildSlot>
+          );
+        }}
+      </CoreItemDetails.ModifiersComponent>
+    );
+  },
+);
+ModifiersMultiSelect.displayName = 'ItemDetails.ModifiersMultiSelect';
+
 /**
- * Wrapper component for Item.VariantsRepeater.
- * Renders the variants for the item using the headless component.
+ * Wrapper component for CoreItemDetails.VariantsComponent.
+ * Renders the variants for the item using Radix UI RadioGroup.
  *
  * @component
  * @example
@@ -309,40 +445,81 @@ export const ModifierGroups = React.forwardRef<
  * ```
  */
 export interface ItemDetailsVariantsProps {
-  children?: AsChildChildren<{ variant: any }>;
+  children?: AsChildChildren<{
+    variant: EnhancedVariant;
+    variants: EnhancedVariant[];
+    hasVariants: boolean;
+    selectedVariantId?: string;
+    onVariantChange?: (variantId: string) => void;
+  }>;
   className?: string;
   asChild?: boolean;
   variantNameClassName?: string;
   variantPriceClassName?: string;
+  emptyState?: React.ReactNode;
 }
 
 export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
-  ({
-    children,
-    className,
-    asChild,
-    variantNameClassName,
-    variantPriceClassName,
-    ...rest
-  }) => {
+  (
+    {
+      children,
+      className,
+      asChild,
+      variantNameClassName,
+      variantPriceClassName,
+      emptyState,
+    },
+    ref,
+  ) => {
     return (
-      <Item.VariantsRepeater {...rest}>
-        <AsChildSlot
-          asChild={asChild}
-          testId={TestIds.itemVariants}
-          className={className}
-          customElement={children}
-        >
-          <Variant.Name className={variantNameClassName} />
-          <Variant.Price className={variantPriceClassName} />
-        </AsChildSlot>
-      </Item.VariantsRepeater>
+      <CoreItemDetails.VariantsComponent>
+        {({ variants, hasVariants, selectedVariantId, onVariantChange }) => {
+          if (!hasVariants) {
+            return emptyState || null;
+          }
+
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              testId={TestIds.itemVariants}
+              className={className}
+              customElement={children}
+              customElementProps={{
+                variants,
+                hasVariants,
+                selectedVariantId,
+                onVariantChange,
+              }}
+            >
+              <RadioGroupPrimitive.Root
+                value={selectedVariantId}
+                onValueChange={onVariantChange}
+              >
+                {variants.map((variant) => (
+                  <RadioGroupPrimitive.Item
+                    key={variant._id}
+                    value={variant._id ?? ''}
+                  >
+                    <div>
+                      <div className={variantNameClassName}>{variant.name}</div>
+                      <div className={variantPriceClassName}>
+                        {variant.priceInfo?.formattedPrice ||
+                          variant.priceInfo?.price ||
+                          ''}
+                      </div>
+                    </div>
+                  </RadioGroupPrimitive.Item>
+                ))}
+              </RadioGroupPrimitive.Root>
+            </AsChildSlot>
+          );
+        }}
+      </CoreItemDetails.VariantsComponent>
     );
   },
 );
 Variants.displayName = 'ItemDetails.Variants';
-
-ModifierGroups.displayName = 'ItemDetails.ModifierGroups';
 
 export interface AddToCartActionProps {
   /** Whether to render as a child component */
@@ -563,3 +740,83 @@ export const SpecialRequest = React.forwardRef<
 );
 
 SpecialRequest.displayName = 'SpecialRequest';
+
+export interface ItemDetailsAvailabilityProps {
+  asChild?: boolean;
+  textClassName?: string;
+  buttonClassName?: string;
+  availabilityStatusMap: AvailabilityStatusMap;
+  children: (props: {
+    availabilityStatus: AvailabilityStatus;
+    availabilityStatusText?: string;
+    availabilityStatusButtonText?: string;
+    availabilityAction?: () => void;
+  }) => React.ReactNode;
+}
+
+export const AvailabilityComponent = React.forwardRef<
+  HTMLElement,
+  ItemDetailsAvailabilityProps
+>(
+  (
+    {
+      asChild,
+      children,
+      textClassName,
+      buttonClassName,
+      availabilityStatusMap,
+      ...rest
+    },
+    ref,
+  ) => {
+    return (
+      <CoreItemDetails.AvailabilityComponent
+        availabilityStatusMap={availabilityStatusMap}
+      >
+        {({
+          availabilityStatus,
+          availabilityAction,
+          availabilityStatusText,
+          availabilityStatusButtonText,
+        }: {
+          availabilityStatus: AvailabilityStatus;
+          availabilityAction?: (() => void) | undefined;
+          availabilityStatusText?: string | undefined;
+          availabilityStatusButtonText?: string | undefined;
+        }) => {
+          if (availabilityStatus === AvailabilityStatus.AVAILABLE) {
+            return null;
+          }
+
+          return (
+            <AsChildSlot
+              asChild={asChild}
+              data-testid={TestIds.itemAvailability}
+              customElement={children}
+              customElementProps={{
+                availabilityStatus,
+                availabilityStatusText,
+                availabilityStatusButtonText,
+                availabilityAction,
+              }}
+              ref={ref}
+              {...rest}
+            >
+              <p className={textClassName}>{availabilityStatusText}</p>
+              {availabilityStatusButtonText && availabilityAction && (
+                <button
+                  className={buttonClassName}
+                  onClick={availabilityAction}
+                >
+                  {availabilityStatusButtonText}
+                </button>
+              )}
+            </AsChildSlot>
+          );
+        }}
+      </CoreItemDetails.AvailabilityComponent>
+    );
+  },
+);
+
+AvailabilityComponent.displayName = 'AvailabilityComponent';

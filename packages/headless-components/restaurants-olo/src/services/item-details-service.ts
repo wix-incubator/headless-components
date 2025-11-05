@@ -3,8 +3,14 @@ import {
   SignalsServiceDefinition,
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
-import * as items from '@wix/auto_sdk_restaurants_items';
 import { type LineItem } from '@wix/ecom/services';
+import { itemVariants } from '@wix/restaurants';
+import type { EnhancedItem } from '@wix/headless-restaurants-menus/services';
+import { OLOSettingsServiceDefinition } from './olo-settings-service.js';
+import { AvailabilityStatus } from './common-types.js';
+import { getModifiersInitState } from './utils.js';
+
+type Variant = itemVariants.Variant;
 
 /**
  * API interface for the Item Detailsservice, providing reactive item data management.
@@ -14,10 +20,13 @@ import { type LineItem } from '@wix/ecom/services';
  */
 export interface ItemServiceAPI {
   /** Reactive signal containing the current item data */
-  item?: Signal<items.Item | undefined>;
+  item?: Signal<EnhancedItem | undefined>;
   quantity: Signal<number>;
   specialRequest: Signal<string>;
   lineItem: Signal<LineItem>;
+  selectedVariant: Signal<Variant | undefined>;
+  selectedModifiers: Signal<Record<string, Array<string>>>;
+  availabilityStatus: Signal<AvailabilityStatus>;
   /** Reactive signal indicating if a item is currently being loaded */
   isLoading: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
@@ -26,6 +35,16 @@ export interface ItemServiceAPI {
   updateQuantity: (quantity: number) => void;
   /** Function to update the special request of the item */
   updateSpecialRequest: (specialRequest: string) => void;
+  /** Function to update the selected variant of the item */
+  updateSelectedVariant: (variant: Variant) => void;
+  /** Function to toggle a modifier instance in a specific group */
+  toggleModifier: (
+    modifierGroupId: string,
+    modifierId: string,
+    singleSelect?: boolean,
+  ) => void;
+  /** Function to get the selected modifiers for a specific group */
+  getSelectedModifiers: (modifierGroupId: string) => Array<string>;
 }
 
 /**
@@ -44,11 +63,12 @@ export const ItemServiceDefinition = defineService<ItemServiceAPI>('item');
  */
 export interface ItemServiceConfig {
   /** The initial item data to configure the service with */
-  item?: items.Item;
+  item?: EnhancedItem;
 
   itemId?: string;
 
   operationId?: string;
+  menuId?: string;
 }
 
 /**
@@ -90,17 +110,36 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
   ItemServiceDefinition,
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
-
-    const item: Signal<items.Item | undefined> = signalsService.signal(
+    const oloSettingsService = getService(OLOSettingsServiceDefinition);
+    const getAvailabilityStatusFn =
+      oloSettingsService.getAvailabilityStatus?.get?.();
+    const initialAvailabilityStatus =
+      getAvailabilityStatusFn?.(config.menuId ?? '') ??
+      AvailabilityStatus.AVAILABLE;
+    const availabilityStatus: Signal<AvailabilityStatus> =
+      signalsService.signal(initialAvailabilityStatus);
+    const item: Signal<EnhancedItem | undefined> = signalsService.signal(
       config.item,
     );
     const isLoading: Signal<boolean> = signalsService.signal(!!config.item);
+
     const error: Signal<string | null> = signalsService.signal(
       config.item ? null : 'Item not found',
     );
     const quantity: Signal<number> = signalsService.signal(1);
     const specialRequest: Signal<string> = signalsService.signal('');
     const lineItem: Signal<LineItem> = signalsService.signal({});
+
+    const priceVariants = config.item?.priceVariants || [];
+    const initialVariant =
+      priceVariants.length > 0 ? priceVariants[0] : undefined;
+    const selectedVariant: Signal<Variant | undefined> =
+      signalsService.signal(initialVariant);
+
+    const modifierGroups = config.item?.modifierGroups || [];
+    const initialSelectedModifiers = getModifiersInitState(modifierGroups);
+    const selectedModifiers: Signal<Record<string, Array<string>>> =
+      signalsService.signal(initialSelectedModifiers);
 
     if (config.item) {
       console.log('config.item', config.item);
@@ -145,15 +184,78 @@ export const ItemService = implementService.withConfig<ItemServiceConfig>()(
       });
     };
 
+    const updateSelectedVariant = (variant: Variant) => {
+      selectedVariant.set(variant);
+    };
+
+    const getModifierIds = (
+      modifierGroupId: string,
+      modifierId: string,
+      singleSelect: boolean = false,
+    ) => {
+      const currentSelectedModifiers = selectedModifiers.get();
+      const groupModifierIds = currentSelectedModifiers[modifierGroupId] || [];
+
+      // Check if this modifier is already selected
+      const isModifierSelected = groupModifierIds.includes(modifierId);
+
+      if (singleSelect) {
+        // Single select behavior: select the modifier, replacing any existing selection
+        return [modifierId];
+      } else {
+        // Multi-select behavior: toggle the modifier
+        if (isModifierSelected) {
+          // Remove the modifier if it exists
+          const updatedModifierIds = groupModifierIds.filter(
+            (id) => id !== modifierId,
+          );
+
+          return updatedModifierIds;
+        } else {
+          // Add the modifier to the existing selection
+          return [...groupModifierIds, modifierId];
+        }
+      }
+    };
+
+    const toggleModifier = (
+      modifierGroupId: string,
+      modifierId: string,
+      singleSelect: boolean = false,
+    ) => {
+      const currentSelectedModifiers = selectedModifiers.get();
+      const modifierIds = getModifierIds(
+        modifierGroupId,
+        modifierId,
+        singleSelect,
+      );
+
+      selectedModifiers.set({
+        ...currentSelectedModifiers,
+        [modifierGroupId]: modifierIds,
+      });
+    };
+
+    const getSelectedModifiers = (modifierGroupId: string) => {
+      const currentSelectedModifiers = selectedModifiers.get();
+      return currentSelectedModifiers[modifierGroupId] || [];
+    };
+
     return {
       item,
       quantity,
       updateQuantity,
       updateSpecialRequest,
+      updateSelectedVariant,
+      toggleModifier,
       isLoading,
       error,
       specialRequest,
       lineItem,
+      selectedVariant,
+      selectedModifiers,
+      availabilityStatus,
+      getSelectedModifiers,
     };
   },
 );
@@ -262,7 +364,7 @@ export function loadItemServiceConfig({
   item,
   operationId,
 }: {
-  item: any;
+  item: EnhancedItem;
   operationId: string;
 }): ItemServiceConfig {
   return { item, operationId };

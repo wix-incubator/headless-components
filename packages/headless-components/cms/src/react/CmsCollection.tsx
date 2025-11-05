@@ -5,6 +5,7 @@ import {
   type CmsCollectionServiceConfig,
   type WixDataItem,
   type CmsQueryOptions,
+  type InsertItemOrReferenceParams,
 } from '../services/cms-collection-service.js';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import type { DisplayType } from './core/CmsCollection.js';
@@ -13,8 +14,12 @@ import {
   Sort as SortPrimitive,
   type SortValue,
   type SortOption,
+  Filter as FilterPrimitive,
+  type FilterOption,
+  type FilterValue,
 } from '@wix/headless-components/react';
 import { CmsCollectionSort as CmsCollectionSortPrimitive } from './core/CmsCollectionSort.js';
+import * as CoreCmsCollectionFilters from './core/CmsCollectionFilters.js';
 
 enum TestIds {
   cmsCollectionRoot = 'cms-collection-root',
@@ -26,6 +31,8 @@ enum TestIds {
   cmsCollectionItems = 'cms-collection-items',
   cmsCollectionItem = 'cms-collection-item',
   cmsCollectionSort = 'cms-collection-sort',
+  cmsCollectionFilters = 'cms-collection-filters',
+  cmsCollectionFilterResetTrigger = 'cms-collection-filter-reset-trigger',
 }
 
 /**
@@ -38,6 +45,18 @@ export interface RootProps {
     queryResult?: WixDataQueryResult;
     queryOptions?: CmsQueryOptions;
     initialSort?: SortValue;
+    /** Default filters that are always applied (set by site owner).
+     * These filters are combined with user-applied filters using AND logic.
+     * @example
+     * ```tsx
+     * // Only show yellow or red cars
+     * defaultFilter={{ color: { $hasSome: ['yellow', 'red'] } }}
+     *
+     * // When user filters by model: Toyota
+     * // Result: Toyota cars that are yellow or red
+     * ```
+     */
+    defaultFilter?: FilterValue;
     /** List of field IDs for single reference fields to include */
     singleRefFieldIds?: string[];
     /** List of field IDs for multi reference fields to include */
@@ -103,6 +122,7 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
       queryResult: collection?.queryResult,
       queryOptions: collection?.queryOptions,
       initialSort: collection?.initialSort,
+      defaultFilter: collection?.defaultFilter,
       singleRefFieldIds: collection?.singleRefFieldIds,
       multiRefFieldIds: collection?.multiRefFieldIds,
     };
@@ -437,6 +457,7 @@ export interface NextActionProps {
         loadNext: () => void;
         hasNext: boolean;
         isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -485,7 +506,7 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
 
     return (
       <CoreCmsCollection.NextAction>
-        {({ loadNext, hasNext, isLoading }) => {
+        {({ loadNext, hasNext, isLoading, error }) => {
           // Don't render if no next page available
           if (!hasNext) {
             return null;
@@ -505,6 +526,7 @@ export const NextAction = React.forwardRef<HTMLButtonElement, NextActionProps>(
                 loadNext,
                 hasNext,
                 isLoading,
+                error,
               }}
               content="Next"
               {...otherProps}
@@ -530,6 +552,7 @@ export interface PrevActionProps {
         loadPrev: () => void;
         hasPrev: boolean;
         isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -578,7 +601,7 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
 
     return (
       <CoreCmsCollection.PrevAction>
-        {({ loadPrev, hasPrev, isLoading }) => {
+        {({ loadPrev, hasPrev, isLoading, error }) => {
           // Don't render if no previous page available
           if (!hasPrev) {
             return null;
@@ -598,6 +621,7 @@ export const PrevAction = React.forwardRef<HTMLButtonElement, PrevActionProps>(
                 loadPrev,
                 hasPrev,
                 isLoading,
+                error,
               }}
               content="Previous"
               {...otherProps}
@@ -621,6 +645,8 @@ export interface TotalsCountProps {
   children?:
     | AsChildChildren<{
         total: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -646,9 +672,9 @@ export interface TotalsCountProps {
  * function CustomTotalCount() {
  *   return (
  *     <CmsCollection.Totals.Count asChild>
- *       {({ total }) => (
+ *       {({ total, isLoading, error }) => (
  *         <strong className="text-lg font-bold">
- *           {total} items total
+ *           {isLoading ? 'Loading...' : error ? 'Error' : `${total} items total`}
  *         </strong>
  *       )}
  *     </CmsCollection.Totals.Count>
@@ -661,7 +687,7 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
 
   return (
     <CoreCmsCollection.TotalsCount>
-      {({ total }) => {
+      {({ total, isLoading, error }) => {
         return (
           <AsChildSlot
             ref={ref}
@@ -672,6 +698,8 @@ const Count = React.forwardRef<HTMLElement, TotalsCountProps>((props, ref) => {
             customElement={children}
             customElementProps={{
               total,
+              isLoading,
+              error,
             }}
             content={total}
             {...otherProps}
@@ -696,6 +724,8 @@ export interface TotalsDisplayedProps {
   children?:
     | AsChildChildren<{
         displayed: number;
+        isLoading: boolean;
+        error: string | null;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -726,10 +756,18 @@ export interface TotalsDisplayedProps {
  * function CustomDisplayedCount() {
  *   return (
  *     <CmsCollection.Totals.Displayed displayType="displayed" asChild>
- *       {({ displayed }) => (
+ *       {({ displayed, isLoading, error }) => (
  *         <div className="count-badge">
- *           <span className="count-number">{displayed}</span>
- *           <span className="count-label">items shown</span>
+ *           {isLoading ? (
+ *             <span className="count-label">Loading...</span>
+ *           ) : error ? (
+ *             <span className="count-label text-destructive">Error</span>
+ *           ) : (
+ *             <>
+ *               <span className="count-number">{displayed}</span>
+ *               <span className="count-label">items shown</span>
+ *             </>
+ *           )}
  *         </div>
  *       )}
  *     </CmsCollection.Totals.Displayed>
@@ -743,7 +781,7 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
 
     return (
       <CoreCmsCollection.TotalsDisplayed displayType={displayType}>
-        {({ displayed }) => {
+        {({ displayed, isLoading, error }) => {
           return (
             <AsChildSlot
               ref={ref}
@@ -755,6 +793,8 @@ const Displayed = React.forwardRef<HTMLElement, TotalsDisplayedProps>(
               customElement={children}
               customElementProps={{
                 displayed,
+                isLoading,
+                error,
               }}
               content={displayed}
               {...otherProps}
@@ -789,7 +829,10 @@ export interface CreateItemActionProps {
     | AsChildChildren<{
         disabled: boolean;
         isLoading: boolean;
-        onClick: () => void;
+        error: string | null;
+        insertItemOrReference: (
+          params: InsertItemOrReferenceParams,
+        ) => Promise<WixDataItem | void>;
       }>
     | React.ReactNode;
   /** CSS classes to apply to the default element */
@@ -798,58 +841,94 @@ export interface CreateItemActionProps {
   loadingState?: string | React.ReactNode;
   /** Data to use when creating the item. If not provided, creates an empty item. */
   itemData?: Partial<WixDataItem>;
+  /** Reference property name (for insertReference) */
+  referenceFieldId?: string;
+  /** Item ID (for insertReference) */
+  itemId?: string;
+  /** Referenced item ID(s) - can be a single ID or array of IDs (for insertReference) */
+  referencedItemIds?: string | string[];
 }
 
 /**
- * Displays a button to create a new item in the collection. Integrates with the collection service to handle item creation with loading states.
+ * Button component for creating new items in a CMS collection or inserting references between items.
+ * Handles loading states, errors, and supports both simple prop-based and advanced asChild patterns.
  *
  * @component
  * @example
  * ```tsx
  * import { CmsCollection } from '@wix/cms/components';
  *
- * // Default usage
+ * // MODE 1: Create new item - Simple usage with direct props
  * function CreateButton() {
  *   return (
  *     <CmsCollection.CreateItemAction
- *       label="Add Item"
- *       className="btn-primary"
+ *       label="Add Article"
  *       loadingState="Creating..."
- *       itemData={{ title: "New Item", status: "draft" }}
+ *       itemData={{ title: "New Article", status: "draft" }}
  *     />
  *   );
  * }
  *
- * // Custom implementation using asChild pattern
+ * // MODE 1: Create new item - Custom design with asChild
  * function CustomCreateButton() {
  *   return (
- *     <CmsCollection.CreateItemAction
- *       asChild
- *       itemData={{ title: "New Article", status: "draft" }}
- *     >
- *       {({ disabled, isLoading, onClick }) => (
+ *     <CmsCollection.CreateItemAction asChild>
+ *       {({ insertItemOrReference, disabled, isLoading }) => (
  *         <button
  *           disabled={disabled}
- *           onClick={onClick}
- *           className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+ *           onClick={() => insertItemOrReference({ itemData: { title: "New Article", status: "draft" } })}
+ *           className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
  *         >
- *           <PlusIcon className="w-4 h-4" />
- *           {isLoading ? 'Creating...' : 'Add New Article'}
+ *           {isLoading ? 'Creating...' : 'Add Article'}
  *         </button>
  *       )}
  *     </CmsCollection.CreateItemAction>
  *   );
  * }
  *
- * // Simple content override
- * function SimpleCreateButton() {
+ * // MODE 2: Insert reference - Link existing items (single or multiple)
+ * function LinkActorButton() {
  *   return (
  *     <CmsCollection.CreateItemAction
- *       label="New Post"
- *       loadingState="Publishing..."
- *       itemData={{ category: "blog", status: "published" }}
- *     >
- *       📝 Create Post
+ *       label="Add Actor to Movie"
+ *       referenceFieldId="actors"
+ *       itemId="movie-123"
+ *       referencedItemIds="actor-456"  // Single ID
+ *       // Or multiple: referencedItemIds={["actor-456", "actor-789"]}
+ *     />
+ *   );
+ * }
+ *
+ * // ADVANCED: Chaining - Create item then add references
+ * function CreatePostWithTags() {
+ *   return (
+ *     <CmsCollection.CreateItemAction asChild>
+ *       {({ insertItemOrReference, disabled, isLoading }) => {
+ *         const [title, setTitle] = useState('');
+ *         const [tags, setTags] = useState(['tag-1', 'tag-2']);
+ *
+ *         const handleSubmit = async () => {
+ *           // Step 1: Create the post
+ *           const newPost = await insertItemOrReference({
+ *             itemData: { title, status: 'published' }
+ *           });
+ *
+ *           // Step 2: Add tags using the returned ID (can pass array of IDs)
+ *           if (newPost?._id) {
+ *             await insertItemOrReference({
+ *               referenceFieldId: 'tags',
+ *               itemId: newPost._id,
+ *               referencedItemIds: tags  // Pass array of tag IDs
+ *             });
+ *           }
+ *         };
+ *
+ *         return (
+ *           <button onClick={handleSubmit} disabled={disabled}>
+ *             {isLoading ? 'Creating...' : 'Create Post with Tags'}
+ *           </button>
+ *         );
+ *       }}
  *     </CmsCollection.CreateItemAction>
  *   );
  * }
@@ -866,28 +945,39 @@ export const CreateItemAction = React.forwardRef<
     label = 'Create Item',
     loadingState = 'Creating...',
     itemData = {},
+    referenceFieldId,
+    itemId,
+    referencedItemIds,
     ...otherProps
   } = props;
 
   return (
     <CoreCmsCollection.CreateItemAction>
-      {({ createItem, isLoading }) => {
+      {({ insertItemOrReference, isLoading, error }) => {
         const disabled = isLoading;
-        // const onClick = async () => {
-        //   try {
-        //     await createItem(itemData);
-        //   } catch (error) {
-        //     // Error handling is managed by the service
-        //     console.error('Failed to create item:', error);
-        //   }
-        // };
+
+        // Build params based on provided props
+        const getCreateParams = () => {
+          if (referenceFieldId && itemId && referencedItemIds) {
+            return {
+              referenceFieldId,
+              itemId,
+              referencedItemIds,
+            };
+          }
+          return { itemData };
+        };
 
         return (
           <AsChildSlot
             ref={ref}
             asChild={asChild}
             className={className}
-            onClick={() => createItem(itemData)}
+            onClick={
+              children
+                ? undefined
+                : () => insertItemOrReference(getCreateParams())
+            }
             disabled={disabled}
             data-testid={TestIds.cmsCollectionCreateItem}
             data-loading={isLoading}
@@ -895,7 +985,9 @@ export const CreateItemAction = React.forwardRef<
             customElementProps={{
               disabled,
               isLoading,
-              onClick: () => createItem(itemData),
+              error,
+              insertItemOrReference: (params: InsertItemOrReferenceParams) =>
+                insertItemOrReference(params),
             }}
             content={isLoading ? loadingState : label}
             {...otherProps}
@@ -1033,3 +1125,196 @@ SortOptionComponent.displayName = 'CmsCollection.SortOption';
 
 // Export as named export
 export { SortOptionComponent as SortOption };
+
+/**
+ * Props for CmsCollection.Filters component
+ */
+export interface FiltersProps {
+  /** Filter options configuration */
+  filterOptions: FilterOption[];
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Child components that will have access to filter functionality */
+  children: React.ReactNode;
+  /** CSS classes to apply to the default element */
+  className?: string;
+}
+
+/**
+ * Filter component that provides comprehensive filtering functionality for CMS collections.
+ * This component integrates with the CmsCollection service and wraps the generic Filter primitive.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Basic usage with generic Filter primitives
+ * <CmsCollection.Filters
+ *   filterOptions={[
+ *     {
+ *       key: 'category',
+ *       label: 'Category',
+ *       type: 'single',
+ *       displayType: 'text',
+ *       fieldName: 'category',
+ *       validValues: ['tech', 'lifestyle', 'business'],
+ *     },
+ *     {
+ *       key: 'dateRange',
+ *       label: 'Date',
+ *       type: 'range',
+ *       displayType: 'range',
+ *       fieldName: ['createdDate.min', 'createdDate.max'],
+ *       validValues: [0, Date.now()],
+ *     },
+ *   ]}
+ * >
+ *   <Filter.FilterOptions>
+ *     <Filter.FilterOptionRepeater>
+ *       <Filter.FilterOption.Label />
+ *       <Filter.FilterOption.SingleFilter />
+ *       <Filter.FilterOption.MultiFilter />
+ *       <Filter.FilterOption.RangeFilter />
+ *     </Filter.FilterOptionRepeater>
+ *   </Filter.FilterOptions>
+ * </CmsCollection.Filters>
+ *
+ * // With custom container using asChild
+ * <CmsCollection.Filters
+ *   asChild
+ *   filterOptions={filterOptions}
+ * >
+ *   <aside className="filter-sidebar">
+ *     <Filter.FilterOptions>
+ *       <Filter.FilterOptionRepeater>
+ *         <Filter.FilterOption.Label />
+ *         <Filter.FilterOption.MultiFilter />
+ *       </Filter.FilterOptionRepeater>
+ *     </Filter.FilterOptions>
+ *   </aside>
+ * </CmsCollection.Filters>
+ * ```
+ */
+export const Filters = React.forwardRef<HTMLElement, FiltersProps>(
+  (props, ref) => {
+    const { filterOptions, asChild, children, className, ...otherProps } =
+      props;
+
+    return (
+      <CoreCmsCollectionFilters.CmsCollectionFilters
+        filterOptions={filterOptions}
+      >
+        {({ filterValue, updateFilter }) => (
+          <FilterPrimitive.Root
+            value={filterValue}
+            onChange={updateFilter}
+            filterOptions={filterOptions}
+          >
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              data-testid={TestIds.cmsCollectionFilters}
+              customElement={children}
+              {...otherProps}
+            >
+              {children}
+            </AsChildSlot>
+          </FilterPrimitive.Root>
+        )}
+      </CoreCmsCollectionFilters.CmsCollectionFilters>
+    );
+  },
+);
+
+Filters.displayName = 'CmsCollection.Filters';
+
+/**
+ * Props for CmsCollection.FilterResetTrigger component
+ */
+export interface FilterResetTriggerProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** Custom render function when using asChild */
+  children?: AsChildChildren<{
+    resetFilters: () => void;
+    isFiltered: boolean;
+  }>;
+  /** CSS classes to apply to the default element */
+  className?: string;
+  /** Label for the button */
+  label?: string;
+}
+
+/**
+ * Reset trigger component for clearing all applied filters.
+ * Provides reset functionality and filter state to custom render functions.
+ * Only renders when filters are applied.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // Default usage
+ * <CmsCollection.FilterResetTrigger
+ *   label="Clear All Filters"
+ *   className="reset-btn"
+ * />
+ *
+ * // Custom rendering with asChild
+ * <CmsCollection.FilterResetTrigger asChild>
+ *   {({ resetFilters, isFiltered }, ref) => (
+ *     <button
+ *       ref={ref}
+ *       onClick={resetFilters}
+ *       disabled={!isFiltered}
+ *       className="custom-reset-button"
+ *     >
+ *       Reset All Filters
+ *     </button>
+ *   )}
+ * </CmsCollection.FilterResetTrigger>
+ * ```
+ */
+export const FilterResetTrigger = React.forwardRef<
+  HTMLButtonElement,
+  FilterResetTriggerProps
+>((props, ref) => {
+  const {
+    asChild,
+    children,
+    className,
+    label = 'Reset Filters',
+    ...otherProps
+  } = props;
+
+  return (
+    <CoreCmsCollectionFilters.ResetTrigger>
+      {({ resetFilters, isFiltered }) => {
+        if (!isFiltered) {
+          return null;
+        }
+
+        return (
+          <AsChildSlot
+            ref={ref}
+            asChild={asChild}
+            className={className}
+            onClick={resetFilters}
+            disabled={!isFiltered}
+            data-testid={TestIds.cmsCollectionFilterResetTrigger}
+            data-filtered={isFiltered}
+            customElement={children}
+            customElementProps={{ resetFilters, isFiltered }}
+            content={label}
+            {...otherProps}
+          >
+            <button disabled={!isFiltered}>{label}</button>
+          </AsChildSlot>
+        );
+      }}
+    </CoreCmsCollectionFilters.ResetTrigger>
+  );
+});
+
+FilterResetTrigger.displayName = 'CmsCollection.FilterResetTrigger';
+
+export type { FilterOption };

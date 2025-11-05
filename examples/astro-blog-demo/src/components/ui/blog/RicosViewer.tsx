@@ -27,6 +27,7 @@ import React, { useEffect, useState } from "react";
 import "@wix/ricos/css/ricos-viewer.global.css";
 
 /* Plugins supported by Wix Blog */
+import { cn } from "@/lib/utils";
 import "@wix/ricos/css/plugin-audio-viewer.global.css";
 import "@wix/ricos/css/plugin-collapsible-list-viewer.global.css";
 import "@wix/ricos/css/plugin-divider-viewer.global.css";
@@ -36,7 +37,6 @@ import "@wix/ricos/css/plugin-html-viewer.global.css";
 import "@wix/ricos/css/plugin-image-viewer.global.css";
 import "@wix/ricos/css/plugin-table-viewer.global.css";
 import "@wix/ricos/css/plugin-video-viewer.global.css";
-import { cn } from "@/lib/utils";
 
 const cssVars = {
   foreground: "var(--wix-theme-foreground)",
@@ -149,3 +149,36 @@ export const RicosViewer: React.FC<RicosViewerProps> = (props) => {
 };
 
 RicosViewer.displayName = "RicosViewer";
+
+type PlainTextRicosViewerProps = {
+  className?: string;
+  content?: RichContent;
+};
+
+export const PlainTextRicosViewer: React.FC<PlainTextRicosViewerProps> = (
+  props
+) => {
+  const { content, className } = props;
+
+  const [plainText, setPlainText] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (content) {
+      toPlainText(content)
+        .then((plainText) => {
+          setPlainText(plainText);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [content]);
+
+  return (
+    <span title={plainText} className={cn(className)}>
+      {plainText}
+    </span>
+  );
+};
+
+PlainTextRicosViewer.displayName = "PlainTextRicosViewer";

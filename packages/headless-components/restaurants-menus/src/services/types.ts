@@ -33,19 +33,17 @@ export type ModifierGroup = itemModifierGroups.ModifierGroup;
 export type Modifier = itemModifiers.Modifier;
 export type CursorPagingMetadata = menus.CursorPagingMetadata;
 
-// Enhanced types with connected entities
+export type EnhancedVariant = Variant & {
+  priceInfo?: {
+    price?: string;
+    formattedPrice?: string;
+  };
+};
 export interface EnhancedItem
   extends Omit<Item, 'labels' | 'modifierGroups' | 'priceVariants'> {
   labels: Label[];
   modifierGroups: EnhancedModifierGroup[];
-  priceVariants?: Array<
-    Variant & {
-      priceInfo?: {
-        price?: string;
-        formattedPrice?: string;
-      };
-    }
-  >;
+  priceVariants?: Array<EnhancedVariant>;
 }
 
 export interface EnhancedModifierGroup
@@ -58,4 +56,5 @@ export type EnhancedModifier = Modifier & {
     additionalCharge?: string;
     formattedAdditionalCharge?: string;
   };
+  preSelected?: boolean;
 };

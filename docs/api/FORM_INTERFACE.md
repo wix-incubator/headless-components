@@ -90,7 +90,11 @@ type FormServiceConfig =
     }
   }}
 >
-  <Form.Fields fieldMap={FIELD_MAP} />
+  <Form.Fields
+    fieldMap={FIELD_MAP}
+    rowGapClassname="gap-y-4"
+    columnGapClassname="gap-x-2"
+  />
   <Form.Error />
   <Form.Submitted />
 </Form.Root>
@@ -148,7 +152,11 @@ const handleCustomSubmit = async (
     onSubmit: handleCustomSubmit
   }}
 >
-  <Form.Fields fieldMap={FIELD_MAP} />
+  <Form.Fields
+    fieldMap={FIELD_MAP}
+    rowGapClassname="gap-y-4"
+    columnGapClassname="gap-x-2"
+  />
   <Form.Error className="text-destructive p-4" />
   <Form.Submitted className="text-green-500 p-4" />
 </Form.Root>
@@ -340,6 +348,7 @@ The component automatically handles:
 - Field validation and error display
 - Form state management
 - Field value updates
+- Grid layout with configurable row and column gaps
 
 Must be used within Form.Root to access form context.
 
@@ -348,8 +357,16 @@ Must be used within Form.Root to access form context.
 ```tsx
 interface FieldsProps {
   fieldMap: FieldMap;
+  rowGapClassname: string;
+  columnGapClassname: string;
 }
 ```
+
+**Props**
+
+- `fieldMap` - A mapping of field types to their corresponding React components
+- `rowGapClassname` - CSS class name for gap between form rows (e.g., `"gap-y-4"`)
+- `columnGapClassname` - CSS class name for gap between form columns (e.g., `"gap-x-2"`)
 
 **Behavior**
 
@@ -359,11 +376,17 @@ The Fields component:
 - Maps each field type to its corresponding React component using the provided fieldMap
 - Handles form validation and error display
 - Manages form state and field value updates
+- Applies configurable spacing between rows and columns using Tailwind gap utilities
 
 **Example**
 
 ```tsx
-<Form.Fields fieldMap={FIELD_MAP} />
+// Default usage with gap classes
+<Form.Fields
+  fieldMap={FIELD_MAP}
+  rowGapClassname="gap-y-4"
+  columnGapClassname="gap-x-2"
+/>
 ```
 
 ## Field Mapping System
@@ -654,7 +677,11 @@ function FormPage({ formServiceConfig }) {
     <Form.Root formServiceConfig={formServiceConfig}>
       <Form.Loading className="flex justify-center p-4" />
       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
-      <Form.Fields fieldMap={FIELD_MAP} />
+      <Form.Fields
+        fieldMap={FIELD_MAP}
+        rowGapClassname="gap-y-4"
+        columnGapClassname="gap-x-2"
+      />
       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
     </Form.Root>
@@ -667,7 +694,11 @@ function DynamicFormPage({ formId }) {
     <Form.Root formServiceConfig={{ formId }}>
       <Form.Loading className="flex justify-center p-4" />
       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
-      <Form.Fields fieldMap={FIELD_MAP} />
+      <Form.Fields
+        fieldMap={FIELD_MAP}
+        rowGapClassname="gap-y-4"
+        columnGapClassname="gap-x-2"
+      />
       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
     </Form.Root>
@@ -707,7 +738,11 @@ function CustomFormPage({ formServiceConfig }) {
     >
       <Form.Loading className="flex justify-center p-4" />
       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
-      <Form.Fields fieldMap={FIELD_MAP} />
+      <Form.Fields
+        fieldMap={FIELD_MAP}
+        rowGapClassname="gap-y-4"
+        columnGapClassname="gap-x-2"
+      />
       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
     </Form.Root>

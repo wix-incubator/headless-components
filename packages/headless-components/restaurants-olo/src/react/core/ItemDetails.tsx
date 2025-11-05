@@ -10,6 +10,23 @@ import {
   loadItemServiceConfig,
 } from '../../services/item-details-service.js';
 import { OLOSettingsServiceDefinition } from '../../services/olo-settings-service.js';
+import {
+  useItemContext,
+  useModifierGroupContext,
+} from '@wix/headless-restaurants-menus/react';
+import {
+  EnhancedItem,
+  EnhancedModifier,
+  EnhancedModifierGroup,
+  EnhancedVariant,
+} from '@wix/headless-restaurants-menus/services';
+import {
+  AvailabilityStatus,
+  AvailabilityStatusMap,
+  AvailabilityStatusWithActionObject,
+} from '../../services/common-types.js';
+import { convertModifierToFormModifier } from '../../services/utils.js';
+
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -34,7 +51,7 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
   let config = itemDetailsServiceConfig;
   if (!config) {
     config = loadItemServiceConfig({
-      item: selectedItem,
+      item: selectedItem as EnhancedItem,
       operationId: service.operation?.get()?._id ?? '',
     });
   }
@@ -54,58 +71,6 @@ export const Root: React.FC<ItemDetailsRootProps> = ({
       {children({ item: itemDetailsServiceConfig?.item ?? selectedItem })}
     </WixServices>
   );
-};
-
-// ========================================
-// MODIFIERS REPEATER COMPONENT
-// ========================================
-
-interface ItemDetailsModifiersRepeaterProps {
-  children: (props: {
-    modifiers: []; // TODO: Use proper Modifier type
-    hasModifiers: boolean;
-  }) => React.ReactNode;
-}
-
-export const ModifiersRepeater: React.FC<ItemDetailsModifiersRepeaterProps> = ({
-  children,
-}) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<
-    typeof ItemServiceDefinition
-  >;
-  const item = service.item?.get();
-
-  // TODO: Check if modifiers exist on item type - might be in a different property
-  const modifiers = (item as unknown as { modifiers: [] })?.modifiers || [];
-  const hasModifiers = modifiers.length > 0;
-
-  return children({ modifiers, hasModifiers });
-};
-
-// ========================================
-// VARIANTS REPEATER COMPONENT
-// ========================================
-
-interface ItemDetailsVariantsRepeaterProps {
-  children: (props: {
-    variants: []; // TODO: Use proper Variant type
-    hasVariants: boolean;
-  }) => React.ReactNode;
-}
-
-export const VariantsRepeater: React.FC<ItemDetailsVariantsRepeaterProps> = ({
-  children,
-}) => {
-  const service = useService(ItemServiceDefinition) as ServiceAPI<
-    typeof ItemServiceDefinition
-  >;
-  const item = service.item?.get();
-
-  // TODO: Check if variants exist on item type - might be in a different property
-  const variants = (item as unknown as { variants: [] })?.variants || [];
-  const hasVariants = variants.length > 0;
-
-  return children({ variants, hasVariants });
 };
 
 // ========================================
@@ -193,5 +158,134 @@ export const QuantityComponent: React.FC<ItemDetailsQuantityProps> = ({
     canIncrement,
     canDecrement,
     onValueChange,
+  });
+};
+
+// ========================================
+// VARIANTS COMPONENT
+// ========================================
+
+interface ItemDetailsVariantsProps {
+  children: (props: {
+    variants: EnhancedVariant[];
+    hasVariants: boolean;
+    selectedVariantId?: string;
+    onVariantChange?: (variantId: string) => void;
+    selectedVariant?: EnhancedVariant;
+  }) => React.ReactNode;
+}
+
+export const VariantsComponent: React.FC<ItemDetailsVariantsProps> = ({
+  children,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
+  const { item } = useItemContext();
+  const selectedVariant = service.selectedVariant?.get?.();
+
+  // Get variants from item context
+  const variants = item?.priceVariants || [];
+  const hasVariants = variants.length > 0;
+  const selectedVariantId = selectedVariant?._id ?? undefined;
+
+  const onVariantChange = (variantId: string) => {
+    const variant = variants.find((v: EnhancedVariant) => v._id === variantId);
+    if (variant) {
+      service.updateSelectedVariant?.(variant);
+    }
+  };
+
+  return children({
+    variants,
+    hasVariants,
+    selectedVariantId,
+    onVariantChange,
+    selectedVariant,
+  });
+};
+
+// ========================================
+// MODIFIER COMPONENT
+// ========================================
+
+interface ItemDetailsModifiersProps {
+  children: (props: {
+    selectedModifierIds: string[];
+    onToggle: (modifierId: string) => void;
+    modifierGroup: EnhancedModifierGroup;
+    modifiers: EnhancedModifier[];
+  }) => React.ReactNode;
+  singleSelect?: boolean;
+}
+
+export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
+  children,
+  singleSelect,
+}) => {
+  const service = useService(ItemServiceDefinition) as ServiceAPI<
+    typeof ItemServiceDefinition
+  >;
+  const { modifierGroup } = useModifierGroupContext();
+
+  // Get selected modifier IDs for this group
+  const groupId = modifierGroup._id;
+  const groupSelectedModifierIds = service.getSelectedModifiers?.(
+    groupId ?? '',
+  );
+
+  const onToggle = (modifierId: string) => {
+    if (groupId) {
+      service.toggleModifier?.(groupId, modifierId, singleSelect);
+    }
+  };
+
+  return children({
+    selectedModifierIds: groupSelectedModifierIds,
+    onToggle,
+    modifierGroup,
+    modifiers: modifierGroup.modifiers.map(convertModifierToFormModifier),
+  });
+};
+
+// ========================================
+// Availability COMPONENT
+// ========================================
+
+interface ItemDetailsAvailabilityProps {
+  availabilityStatusMap: AvailabilityStatusMap;
+  children: (props: {
+    availabilityStatus: AvailabilityStatus;
+    availabilityAction?: () => void;
+    availabilityStatusText?: string;
+    availabilityStatusButtonText?: string;
+  }) => React.ReactNode;
+}
+
+export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
+  children,
+  availabilityStatusMap,
+}) => {
+  const oloSettingsService = useService(OLOSettingsServiceDefinition);
+  const availabilityDispatchAction =
+    oloSettingsService.availabilityDispatchAction?.get?.();
+  const itemService = useService(ItemServiceDefinition);
+  const availabilityStatus: AvailabilityStatus =
+    itemService.availabilityStatus?.get?.() ?? AvailabilityStatus.AVAILABLE;
+  const availabilityStatusWithAction =
+    availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_PICKUP ||
+    availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
+  const availabilityStatusObject = availabilityStatusMap[availabilityStatus];
+  const availabilityStatusButtonText = availabilityStatusWithAction
+    ? (availabilityStatusObject as AvailabilityStatusWithActionObject)
+        ?.buttonText
+    : undefined;
+  return children({
+    availabilityStatus,
+    availabilityAction: availabilityStatusWithAction
+      ? availabilityDispatchAction
+      : undefined,
+    availabilityStatusText: availabilityStatusObject?.text,
+    availabilityStatusButtonText,
   });
 };

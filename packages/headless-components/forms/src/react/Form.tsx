@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 import {
-  Form as FormViewer,
   type FormValues,
   type FormError,
+  useForm,
+  FormProvider,
 } from '@wix/form-public';
 import {
   type CheckboxGroupProps,
@@ -44,6 +45,7 @@ import {
   Field as CoreField,
   type Layout,
 } from './core/Form.js';
+import { forms } from '@wix/forms';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -639,6 +641,8 @@ export interface FieldMap {
  *
  * @interface FieldsProps
  * @property {FieldMap} fieldMap - A mapping of field types to their corresponding React components
+ * @property {string} rowGapClassname - CSS class name for gap between rows
+ * @property {string} columnGapClassname - CSS class name for gap between columns
  * @example
  * ```tsx
  * const FIELD_MAP = {
@@ -652,11 +656,13 @@ export interface FieldMap {
  *   // ... remaining field components
  * };
  *
- * <Form.Fields fieldMap={FIELD_MAP} />
+ * <Form.Fields fieldMap={FIELD_MAP} rowGapClassname="gap-y-4" columnGapClassname="gap-x-2" />
  * ```
  */
 interface FieldsProps {
   fieldMap: FieldMap;
+  rowGapClassname: string;
+  columnGapClassname: string;
 }
 
 /**
@@ -667,6 +673,8 @@ interface FieldsProps {
  * @component
  * @param {FieldsProps} props - Component props
  * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components
+ * @param {string} props.rowGapClassname - CSS class name for gap between rows
+ * @param {string} props.columnGapClassname - CSS class name for gap between columns
  * @example
  * ```tsx
  * import { Form } from '@wix/headless-forms/react';
@@ -685,7 +693,11 @@ interface FieldsProps {
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
- *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Fields
+ *         fieldMap={FIELD_MAP}
+ *         rowGapClassname="gap-y-4"
+ *         columnGapClassname="gap-x-2"
+ *       />
  *     </Form.Root>
  *   );
  * }
@@ -701,12 +713,15 @@ interface FieldsProps {
  * - Field validation and error display
  * - Form state management
  * - Field value updates
+ * - Grid layout with configurable row and column gaps
  *
  * Must be used within Form.Root to access form context.
  *
  * @component
  * @param {FieldsProps} props - The component props
  * @param {FieldMap} props.fieldMap - A mapping of field types to their corresponding React components. Each key represents a field type (e.g., 'TEXT_INPUT', 'CHECKBOX') and the value is the React component that should render that field type.
+ * @param {string} props.rowGapClassname - CSS class name for gap between form rows
+ * @param {string} props.columnGapClassname - CSS class name for gap between form columns
  *
  * @example
  * ```tsx
@@ -774,7 +789,11 @@ interface FieldsProps {
  *     <Form.Root formServiceConfig={formServiceConfig}>
  *       <Form.Loading className="flex justify-center p-4" />
  *       <Form.LoadingError className="text-destructive px-4 py-3 rounded mb-4" />
- *       <Form.Fields fieldMap={FIELD_MAP} />
+ *       <Form.Fields
+ *         fieldMap={FIELD_MAP}
+ *         rowGapClassname="gap-y-4"
+ *         columnGapClassname="gap-x-2"
+ *       />
  *       <Form.Error className="text-destructive p-4 rounded-lg mb-4" />
  *       <Form.Submitted className="text-green-500 p-4 rounded-lg mb-4" />
  *     </Form.Root>
@@ -842,15 +861,19 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormViewer
-                form={form}
-                values={formValues}
-                onChange={handleFormChange}
-                errors={formErrors}
-                onValidate={handleFormValidate}
-                fields={props.fieldMap}
-                submitForm={() => submitForm(formValues)}
-              />
+              <FormProvider>
+                <FieldsWithForm
+                  form={form}
+                  values={formValues}
+                  onChange={handleFormChange}
+                  errors={formErrors}
+                  onValidate={handleFormValidate}
+                  fields={props.fieldMap}
+                  submitForm={() => submitForm(formValues)}
+                  rowGapClassname={props.rowGapClassname}
+                  columnGapClassname={props.columnGapClassname}
+                />
+              </FormProvider>
             </div>
           );
         }}
@@ -859,6 +882,126 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
   },
 );
 
+const FieldsWithForm = ({
+  form,
+  submitForm,
+  values,
+  onChange,
+  errors,
+  onValidate,
+  fields: fieldMap,
+  rowGapClassname,
+  columnGapClassname,
+}: {
+  form: forms.Form;
+  submitForm: () => void;
+  values: FormValues;
+  onChange: (values: FormValues) => void;
+  errors: FormError[];
+  onValidate: (errors: FormError[]) => void;
+  fields: FieldMap;
+  rowGapClassname: string;
+  columnGapClassname: string;
+}) => {
+  const formData = useForm({
+    form,
+    values,
+    onChange,
+    errors,
+    onValidate,
+    submitForm,
+    fieldMap,
+  });
+
+  if (!formData) return null;
+  console.log('formData', formData);
+  const { columnCount, fieldElements, fieldsLayout } = formData;
+
+  return (
+    // TODO: use readOnly, isDisabled
+    // TODO: step title a11y support
+    // TODO: mobile support?
+    <FieldLayoutProvider value={fieldsLayout}>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <fieldset
+          style={{ display: 'flex', flexDirection: 'column' }}
+          className={rowGapClassname}
+        >
+          {fieldElements.map((rowElements, index) => {
+            return (
+              <div
+                key={index}
+                style={{
+                  display: 'grid',
+                  width: '100%',
+                  gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+                  gridAutoRows: 'minmax(min-content, max-content)',
+                }}
+                className={columnGapClassname}
+              >
+                {rowElements}
+              </div>
+            );
+          })}
+        </fieldset>
+      </form>
+    </FieldLayoutProvider>
+  );
+};
+
+/**
+ * Mapping of field IDs to their layout configurations
+ */
+interface FieldLayoutMap {
+  [fieldId: string]: Layout;
+}
+
+/**
+ * Context for sharing field layout data across the form
+ * @internal
+ */
+const FieldLayoutContext = React.createContext<FieldLayoutMap | null>(null);
+
+/**
+ * Props for FieldLayoutProvider component
+ * @internal
+ */
+interface FieldLayoutProviderProps {
+  /** The layout map to provide to children */
+  value: FieldLayoutMap;
+  /** Child components that need access to layout data */
+  children: React.ReactNode;
+}
+
+/**
+ * Provider component that makes field layout data available to child components
+ * @internal
+ */
+const FieldLayoutProvider: React.FC<FieldLayoutProviderProps> = ({
+  value,
+  children,
+}) => {
+  return (
+    <FieldLayoutContext.Provider value={value}>
+      {children}
+    </FieldLayoutContext.Provider>
+  );
+};
+
+/**
+ * Hook to access layout configuration for a specific field
+ * @internal
+ * @param {string} fieldId - The unique identifier of the field
+ * @returns {Layout | null} The layout configuration for the field, or null if not found
+ */
+function useFieldLayout(fieldId: string): Layout | null {
+  const layoutMap = React.useContext(FieldLayoutContext);
+  if (!layoutMap) {
+    return null;
+  }
+  return layoutMap[fieldId] || null;
+}
+
 /**
  * Context for sharing field data between Field container and its children
  */
@@ -866,7 +1009,6 @@ interface FieldContextValue {
   id: string;
   layout: Layout;
   gridStyles: {
-    container: React.CSSProperties;
     label: React.CSSProperties;
     input: React.CSSProperties;
   };
@@ -965,8 +1107,14 @@ export interface FieldInputProps {
 const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
   const { id, children, asChild, className, ...otherProps } = props;
 
+  const layout = useFieldLayout(id);
+
+  if (!layout) {
+    return null;
+  }
+
   return (
-    <CoreField id={id}>
+    <CoreField id={id} layout={layout}>
       {(fieldData) => {
         const contextValue: FieldContextValue = {
           id,
@@ -980,13 +1128,12 @@ const FieldRoot = React.forwardRef<HTMLDivElement, FieldProps>((props, ref) => {
               ref={ref}
               asChild={asChild}
               className={className}
-              style={fieldData.gridStyles.container}
               data-testid={TestIds.fieldRoot}
               customElement={children}
               customElementProps={{}}
               {...otherProps}
             >
-              <div>{children}</div>
+              {children}
             </AsChildSlot>
           </FieldContext.Provider>
         );
@@ -1066,13 +1213,6 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
     const { children, description, asChild, className, ...otherProps } = props;
     const { gridStyles } = useFieldContext();
 
-    const content = (
-      <>
-        {children}
-        {description}
-      </>
-    );
-
     return (
       <AsChildSlot
         ref={ref}
@@ -1084,7 +1224,7 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
         customElementProps={{}}
         {...otherProps}
       >
-        <div>{content}</div>
+        <div>{children}</div>
       </AsChildSlot>
     );
   },

@@ -1,4 +1,3 @@
-import type { ServiceAPI } from '@wix/services-definitions';
 import { useService } from '@wix/services-manager-react';
 import React from 'react';
 import {
@@ -30,33 +29,3 @@ export const Root = (props: RootProps) => {
 };
 
 Root.displayName = 'Blog.Post.Root/Core';
-
-export interface RichContentProps {
-  children: (props: RichContentRenderProps) => React.ReactNode;
-}
-
-export interface RichContentRenderProps {
-  content: any;
-  pricingPlanIds: string[];
-}
-
-/**
- * Core RichContent component for accessing post rich content
- */
-export const RichContent = (props: RichContentProps) => {
-  const service = useService(BlogPostServiceDefinition) as ServiceAPI<
-    typeof BlogPostServiceDefinition
-  >;
-
-  const post = service.post.get();
-  const content = post?.richContent;
-  const pricingPlanIds = post?.pricingPlanIds ?? [];
-
-  if (!content) {
-    return null;
-  }
-
-  return props.children({ content, pricingPlanIds });
-};
-
-RichContent.displayName = 'Blog.Post.RichContent/Core';

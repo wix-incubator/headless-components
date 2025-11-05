@@ -3,7 +3,7 @@ import {
   useItemContext,
   useMenuContext,
   useSectionContext,
-} from '@wix/restaurants/components';
+} from '@wix/headless-restaurants-menus/react';
 import { useService } from '@wix/services-manager-react';
 import { OLOSettingsServiceDefinition } from '@wix/headless-restaurants-olo/services';
 // import { OLOSettingsServiceDefinition } from "../../services/OLOSettingsService";
