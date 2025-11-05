@@ -290,7 +290,7 @@ const buildCategoryFilterProps = (
         ALL_CATEGORIES,
         ...categories.map((category) => category._id!),
       ],
-      valueFormatter: (value: string | number) =>
+      valueFormatter: (value: string | number | boolean) =>
         value === ALL_CATEGORIES
           ? allCategoriesLabel
           : categories.find((category) => category._id === value)!.name!,
@@ -323,7 +323,7 @@ const buildStatusFilterProps = (
     {
       ...FILTER_BASE,
       validValues: [ALL_EVENTS, UPCOMING_EVENTS, PAST_EVENTS],
-      valueFormatter: (value: string | number) => {
+      valueFormatter: (value: string | number | boolean) => {
         switch (value) {
           case ALL_EVENTS:
             return allEventsLabel;

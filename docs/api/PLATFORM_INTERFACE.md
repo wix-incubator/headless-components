@@ -310,17 +310,17 @@ interface FilterOption {
    */
   fieldType?: 'array' | 'singular';
   /** Current filter value */
-  value?: any; // number[] (for range) | string[] (for multi) | string (for single)
+  value?: any; // number[] (for range) | string[] (for multi) | string (for single) | boolean
   /** Function to format values for display */
-  valueFormatter?: (value: string | number) => string;
+  valueFormatter?: (value: string | number | boolean) => string;
   /** Valid values for this filter (for validation and shared field logic) */
-  validValues?: Array<string | number>;
+  validValues?: Array<string | number | boolean>;
   /** Filter input type */
   type: 'single' | 'multi' | 'range';
   /** Display type for styling/rendering */
   displayType: 'color' | 'text' | 'range';
   /** Function to format background color for color filters */
-  valueBgColorFormatter?: (value: string | number) => string | null;
+  valueBgColorFormatter?: (value: string | number | boolean) => string | null;
 }
 
 interface FilterRootProps {

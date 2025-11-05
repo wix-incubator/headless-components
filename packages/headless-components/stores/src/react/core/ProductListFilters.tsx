@@ -46,7 +46,7 @@ function buildSearchFilterData(
       type: 'range',
       displayType: 'range',
       validValues: [availableMinPrice, availableMaxPrice],
-      valueFormatter: (value: string | number) => `$${value}`,
+      valueFormatter: (value: string | number | boolean) => `$${value}`,
       fieldName: [
         'actualPriceRange.minValue.amount',
         'actualPriceRange.maxValue.amount',
@@ -65,7 +65,7 @@ function buildSearchFilterData(
       fieldName: 'options.choicesSettings.choices.choiceId',
       fieldType: 'array' as const,
       validValues: option.choices.map((choice: ProductChoice) => choice.id),
-      valueFormatter: (value: string | number) => {
+      valueFormatter: (value: string | number | boolean) => {
         const choice = option.choices.find(
           (c: ProductChoice) => c.id === value,
         );
@@ -74,7 +74,7 @@ function buildSearchFilterData(
           ? name.toLowerCase()
           : name;
       },
-      valueBgColorFormatter: (value: string | number) => {
+      valueBgColorFormatter: (value: string | number | boolean) => {
         const choice = option.choices.find(
           (c: ProductChoice) => c.id === value,
         );
@@ -91,7 +91,7 @@ function buildSearchFilterData(
       fieldName: 'inventory.availabilityStatus',
       fieldType: 'singular' as const,
       validValues: availableInventoryStatuses,
-      valueFormatter: (value: string | number) =>
+      valueFormatter: (value: string | number | boolean) =>
         getInventoryStatusLabel(value as InventoryStatusType),
     },
   ];
