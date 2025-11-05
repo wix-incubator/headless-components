@@ -106,7 +106,7 @@ export type Filter = {
   [fieldPath: string]: FilterValue;
 } | null;
 
-type FilterOptionValueType = string | number | boolean;
+export type FilterOptionValueType = string | number | boolean;
 
 /**
  * Filter option configuration
