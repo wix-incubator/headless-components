@@ -10,7 +10,7 @@ export default function ProductList({
   showLabel,
   options,
   onChange,
-  target,
+  error,
 }: ProductListProps) {
   const handleToggle = (productId: string) => {
     const currentValue = (value as unknown as string[]) || [];
@@ -74,10 +74,8 @@ export default function ProductList({
             })}
           </div>
         </Form.Field.Input>
-        <Form.Field.Error path={target}>
-          <span className="text-destructive text-sm font-paragraph">
-            This field is required
-          </span>
+        <Form.Field.Error className="text-destructive text-sm font-paragraph">
+          {error}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

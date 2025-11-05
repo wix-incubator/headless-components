@@ -12,7 +12,7 @@ const Signature = ({
   onChange,
   onBlur,
   onFocus,
-  target,
+  error,
 }: SignatureProps) => {
   return (
     <Form.Field id={id}>
@@ -60,10 +60,8 @@ const Signature = ({
             </div>
           )}
         </Form.Field.Input>
-        <Form.Field.Error path={target}>
-          <span className="text-destructive text-sm font-paragraph">
-            This field is required
-          </span>
+        <Form.Field.Error className="text-destructive text-sm font-paragraph">
+          {error}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

@@ -54,10 +54,6 @@ import {
   FieldLayoutProvider,
   useFieldLayout,
 } from './context/FieldLayoutContext.js';
-import {
-  FormErrorsContext,
-  FormErrorsProvider,
-} from './context/FormErrorsContext.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -934,33 +930,31 @@ const FieldsWithForm = ({
     // TODO: use readOnly, isDisabled
     // TODO: step title a11y support
     // TODO: mobile support?
-    <FormErrorsProvider errors={errors}>
-      <FieldLayoutProvider value={fieldsLayout}>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <fieldset
-            style={{ display: 'flex', flexDirection: 'column' }}
-            className={rowGapClassname}
-          >
-            {fieldElements.map((rowElements, index) => {
-              return (
-                <div
-                  key={index}
-                  style={{
-                    display: 'grid',
-                    width: '100%',
-                    gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
-                    gridAutoRows: 'minmax(min-content, max-content)',
-                  }}
-                  className={columnGapClassname}
-                >
-                  {rowElements}
-                </div>
-              );
-            })}
-          </fieldset>
-        </form>
-      </FieldLayoutProvider>
-    </FormErrorsProvider>
+    <FieldLayoutProvider value={fieldsLayout}>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <fieldset
+          style={{ display: 'flex', flexDirection: 'column' }}
+          className={rowGapClassname}
+        >
+          {fieldElements.map((rowElements, index) => {
+            return (
+              <div
+                key={index}
+                style={{
+                  display: 'grid',
+                  width: '100%',
+                  gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+                  gridAutoRows: 'minmax(min-content, max-content)',
+                }}
+                className={columnGapClassname}
+              >
+                {rowElements}
+              </div>
+            );
+          })}
+        </fieldset>
+      </form>
+    </FieldLayoutProvider>
   );
 };
 
@@ -1312,13 +1306,7 @@ FieldInput.displayName = 'Form.Field.Input';
  */
 export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
   (props, ref) => {
-    const { children, asChild, className, path, ...otherProps } = props;
-    const formErrors = React.useContext(FormErrorsContext);
-    const error = formErrors.find((error) => error.errorPath === path);
-
-    if (!error) {
-      return null;
-    }
+    const { children, asChild, className, ...otherProps } = props;
 
     return (
       <AsChildSlot
@@ -1327,10 +1315,6 @@ export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
         className={className}
         data-testid={TestIds.fieldError}
         customElement={children}
-        customElementProps={{
-          type: error.errorType,
-          message: error.errorMessage,
-        }}
         {...otherProps}
       >
         {children}
